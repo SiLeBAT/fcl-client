@@ -2,34 +2,17 @@
 
 /*global angular*/
 
-angular.module('app').controller('PeopleCtrl', ['$scope', 'peopleGraph', function($scope, peopleGraph) {
+angular.module('app').controller('GraphCtrl', ['$scope', 'dataProvider', 'graph', function($scope, dataProvider, graph) {
 
-  $scope.people = [{
-    id: 'l',
-    name: 'Laurel',
-    weight: 65
-  }, {
-    id: 'h',
-    name: 'Hardy',
-    weight: 110
-  }];
+  $scope.nodes = dataProvider.getNodes();
+  $scope.edges = dataProvider.getEdges();
 
-  var peopleById = {};
-
-  for (var i = 0; i < $scope.people.length; i++) {
-    var p = $scope.people[i];
-
-    peopleById[p.id] = p;
-  }
-
-  // you would probably want some ui to prevent use of PeopleCtrl until cy is loaded
-  peopleGraph($scope.people).then(function(peopleCy) {
-    // use this variable to hide ui until cy loaded if you want
+  graph($scope.nodes, $scope.edges).then(function(peopleCy) {
     $scope.cyLoaded = true;
   });
 
-  $scope.onWeightChange = function(person) {
-    peopleGraph.setPersonWeight(person.id, person.weight);
+  $scope.onWeightChange = function(node) {
+    graph.setNodeWeight(node.id, node.weight);
   };
 
 }]);
