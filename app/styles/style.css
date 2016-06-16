@@ -1,19 +1,5 @@
-body { 
+body {
   font: 14px helvetica neue, helvetica, arial, sans-serif;
-}
-
-#logo {
-  position: absolute;
-  left: 0;
-  top: 0;
-  background-image: url('https://raw.githubusercontent.com/angular/angular.js/master/images/logo/AngularJS-Shield.exports/AngularJS-Shield-medium.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  width: 33%;
-  height: 33%;
-  z-index: -1;
-  opacity: 0.5;
-  pointer-events: none;
 }
 
 #cy {
