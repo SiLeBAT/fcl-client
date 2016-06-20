@@ -49,7 +49,11 @@ angular.module('app').factory('graph', ['$q', function($q) {
         })
         .selector('edge')
         .css({
-          'target-arrow-shape': 'triangle'
+          'target-arrow-shape': 'triangle',
+          'width': 4,
+          'line-color': '#ddd',
+          'target-arrow-color': '#ddd',
+          'curve-style': 'bezier'
         })
         .selector(':selected')
         .css({
@@ -65,10 +69,20 @@ angular.module('app').factory('graph', ['$q', function($q) {
         padding: 10
       },
 
+      minZoom: 0.5,
+      maxZoom: 2,
+      zoomingEnabled: true,
+
       elements: graphElements,
 
       ready: function() {
         deferred.resolve(this);
+
+        cy.on('zoom', function(event) {
+          cy.nodes().css({
+            'font-size': Math.max(12 / cy.zoom(), 12)
+          });
+        });
       }
     });
 
