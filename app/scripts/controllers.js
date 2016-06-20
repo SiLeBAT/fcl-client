@@ -7,7 +7,7 @@ angular.module('app').controller('GraphCtrl', ['$scope', 'dataProvider', 'graph'
   $scope.nodes = dataProvider.getNodes();
   $scope.edges = dataProvider.getEdges();
 
-  graph($scope.nodes, $scope.edges).then(function(peopleCy) {
+  graph($scope.nodes, $scope.edges).then(function(cy) {
     $scope.cyLoaded = true;
   });
 

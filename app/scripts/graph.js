@@ -8,22 +8,22 @@ angular.module('app').factory('graph', ['$q', function($q) {
 
   var graph = function(nodes, edges) {
     var deferred = $q.defer();
-    var eles = [];
+    var graphElements = [];
     var i;
 
     for (i = 0; i < nodes.length; i++) {
-      eles.push({
+      graphElements.push({
         group: 'nodes',
         data: {
           id: nodes[i].id,
-          weight: nodes[i].weight,
-          name: nodes[i].name
+          name: nodes[i].name,
+          type: nodes[i].type
         }
       });
     }
 
     for (i = 0; i < edges.length; i++) {
-      eles.push({
+      graphElements.push({
         group: 'edges',
         data: {
           id: edges[i].id,
@@ -40,8 +40,8 @@ angular.module('app').factory('graph', ['$q', function($q) {
         .selector('node')
         .css({
           'content': 'data(name)',
-          'height': 'mapData(weight, 1, 200, 1, 200)',
-          'width': 'mapData(weight, 1, 200, 1, 200)',
+          'height': '50',
+          'width': '50',
           'text-valign': 'center',
           'color': 'white',
           'text-outline-width': 2,
@@ -65,7 +65,7 @@ angular.module('app').factory('graph', ['$q', function($q) {
         padding: 10
       },
 
-      elements: eles,
+      elements: graphElements,
 
       ready: function() {
         deferred.resolve(this);
