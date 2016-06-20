@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular, cytoscape, $*/
+/*global angular, cytoscape, $, console*/
 
 angular.module('app').factory('graph', ['$q', function($q) {
 
@@ -50,9 +50,9 @@ angular.module('app').factory('graph', ['$q', function($q) {
         .selector('edge')
         .css({
           'target-arrow-shape': 'triangle',
-          'width': 4,
-          'line-color': '#ddd',
-          'target-arrow-color': '#ddd',
+          'width': 1,
+          'line-color': 'dark gray',
+          'target-arrow-color': 'dark gray',
           'curve-style': 'bezier'
         })
         .selector(':selected')
@@ -69,16 +69,27 @@ angular.module('app').factory('graph', ['$q', function($q) {
         padding: 10
       },
 
-      minZoom: 0.5,
-      maxZoom: 2,
-      zoomingEnabled: true,
-
       elements: graphElements,
+
+      // initial viewport state:
+      zoom: 1,
+      pan: {
+        x: 0,
+        y: 0
+      },
+
+      // interaction options:
+      minZoom: 0.3,
+      maxZoom: 3,
+
+      // rendering options:
+      wheelSensitivity: 0.5,
 
       ready: function() {
         deferred.resolve(this);
 
         cy.on('zoom', function(event) {
+          console.log(cy.zoom());
           cy.nodes().css({
             'font-size': Math.max(12 / cy.zoom(), 12)
           });
