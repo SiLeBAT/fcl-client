@@ -10,31 +10,40 @@
   <title>FoodChain-Lab</title>
 
   <!-- build:css styles/main.css -->
+  <link href="../bower_components/angular-material/angular-material.min.css" rel="stylesheet" />
   <link href="styles/style.css" rel="stylesheet" />
   <!-- endbuild -->
 </head>
 
-<body ng-app="app">
-  <div id="cy"></div>
+<body ng-app="app" layout="column">
 
-  <div id="menu" class="container" ng-controller="GraphCtrl">
-    <div class="row">
-      <div class="col-xs-12">
-        <form class="form-horizontal" role="form" name="menuForm" novalidate>
-          <div class="form-group">
-            <div class="col-sm-3 col-sm-offset-1">
-              <select class="form-control" ng-model="nodeSize" ng-options="size.value as size.label for size in sizes" ng-change="onNodeSizeChange()"></select>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+  <md-toolbar>
+    <h1>FoodChain-Lab</h1>
+  </md-toolbar>
+
+  <div class="container" layout="row" ng-controller="GraphCtrl" flex>
+    <md-sidenav id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="true">
+      <md-input-container class="md-block" flex-gt-sm="">
+        <label>Node Size</label>
+        <md-select ng-model="nodeSize" ng-change="onNodeSizeChange()">
+          <md-option ng-repeat="(label, value) in sizes" value="{{value}}">
+            {{label}}
+          </md-option>
+        </md-select>
+      </md-input-container>
+    </md-sidenav>
+    <md-content id="cy" flex>
+      Content
+    </md-content>
   </div>
 
   <!-- build:js scripts/main.js -->
-  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/angular/angular.min.js"></script>
   <script src="../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="../bower_components/angular-animate/angular-animate.min.js"></script>
+  <script src="../bower_components/angular-aria/angular-aria.min.js"></script>
+  <script src="../bower_components/angular-material/angular-material.min.js"></script>
+  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/cytoscape/dist/cytoscape.min.js"></script>
   <script src="scripts/app.js"></script>
   <script src="scripts/controllers.js"></script>

@@ -14,3 +14,7 @@
   z-index: 999;
   background: rgb(255, 200, 200);
 }
+
+#sidenav {
+  background-color: lightblue;
+}

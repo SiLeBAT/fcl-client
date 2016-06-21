@@ -2,4 +2,4 @@
 
 /*global angular*/
 
-angular.module('app', []);
+angular.module('app', ['ngMaterial']);

@@ -19,10 +19,10 @@
     "bower_components"
   ],
   "dependencies": {
-    "bootstrap": "^3.3.5",
-    "font-awesome": "^4.4.0",
     "angular": "^1.5.6",
     "angular-ui-router": "^0.3.1",
-    "cytoscape": "^2.7.2"
+    "cytoscape": "^2.7.2",
+    "angular-material": "^1.0.9",
+    "jquery": "^3.0.0"
   }
 }

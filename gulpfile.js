@@ -17,14 +17,12 @@ gulp.task('jshint', function () {
         .pipe(jshint.reporter(stylish));
 });
 
-// Clean
 gulp.task('clean', function () {
     return del(['dist']);
 });
 
-// Default task
 gulp.task('default', ['clean'], function () {
-    return gulp.start('usemin', 'imagemin', 'copyfonts');
+    return gulp.start('usemin', 'imagemin');
 });
 
 gulp.task('usemin', ['jshint'], function () {
@@ -36,16 +34,8 @@ gulp.task('usemin', ['jshint'], function () {
         .pipe(gulp.dest('dist/'));
 });
 
-// Images
 gulp.task('imagemin', function () {
     return gulp.src('app/images/**/*')
         .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
         .pipe(gulp.dest('dist/images'));
-});
-
-gulp.task('copyfonts', ['clean'], function () {
-    return gulp.src([
-        './bower_components/font-awesome/fonts/**/*.{ttf,woff,eof,svg}*',
-        './bower_components/bootstrap/dist/fonts/**/*.{ttf,woff,eof,svg}*'
-    ]).pipe(gulp.dest('./dist/fonts'));    
 });
