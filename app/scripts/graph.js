@@ -8,30 +8,6 @@ angular.module('app').factory('graph', ['$q', function($q) {
 
   var graph = function(nodes, edges) {
     var deferred = $q.defer();
-    var graphElements = [];
-    var i;
-
-    for (i = 0; i < nodes.length; i++) {
-      graphElements.push({
-        group: 'nodes',
-        data: {
-          id: nodes[i].id,
-          name: nodes[i].name,
-          type: nodes[i].type
-        }
-      });
-    }
-
-    for (i = 0; i < edges.length; i++) {
-      graphElements.push({
-        group: 'edges',
-        data: {
-          id: edges[i].id,
-          source: edges[i].source,
-          target: edges[i].target
-        }
-      });
-    }
 
     cy = cytoscape({
       container: $('#cy')[0],
@@ -42,34 +18,43 @@ angular.module('app').factory('graph', ['$q', function($q) {
           'content': 'data(name)',
           'height': '50',
           'width': '50',
-          'text-valign': 'center',
-          'color': 'white',
-          'text-outline-width': 2,
-          'text-outline-color': '#888'
+          'background-color': '#FFFFFF',
+          'border-width': 3,
+          'border-color': '#000000',
+          'text-valign': 'bottom',
+          'text-halign': 'right',
+          'color': '#000000'
         })
         .selector('edge')
         .css({
           'target-arrow-shape': 'triangle',
           'width': 1,
-          'line-color': 'dark gray',
-          'target-arrow-color': 'dark gray',
+          'line-color': '#000000',
+          'target-arrow-color': '#000000',
           'curve-style': 'bezier'
         })
-        .selector(':selected')
+        .selector('node:selected')
         .css({
-          'background-color': 'black',
-          'line-color': 'black',
-          'target-arrow-color': 'black',
-          'source-arrow-color': 'black',
-          'text-outline-color': 'black'
+          'background-color': '#9999FF',
+          'border-width': 6,
+          'border-color': '#0000FF',
+          'color': '#0000FF'
+        })
+        .selector('edge:selected')
+        .css({
+          'width': 3,
+          'line-color': '#00FF00',
+          'target-arrow-color': '#00FF00'
         }),
 
       layout: {
-        name: 'cose',
-        padding: 10
+        name: 'cose'
       },
 
-      elements: graphElements,
+      elements: {
+        nodes: nodes,
+        edges: edges
+      },
 
       // initial viewport state:
       zoom: 1,
