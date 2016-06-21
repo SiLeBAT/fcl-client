@@ -15,17 +15,21 @@
 </head>
 
 <body ng-app="app">
-  <div id="logo"></div>
   <div id="cy"></div>
 
-  <table id="people-table" ng-controller="GraphCtrl">
-    <tbody>
-      <tr>
-        <th>Name</th>
-        <th>Weight</th>
-      </tr>
-    </tbody>
-  </table>
+  <div id="menu" class="container" ng-controller="GraphCtrl">
+    <div class="row">
+      <div class="col-xs-12">
+        <form class="form-horizontal" role="form" name="menuForm" novalidate>
+          <div class="form-group">
+            <div class="col-sm-3 col-sm-offset-1">
+              <select class="form-control" ng-model="nodeSize" ng-options="size.value as size.label for size in sizes" ng-change="onNodeSizeChange()"></select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- build:js scripts/main.js -->
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>

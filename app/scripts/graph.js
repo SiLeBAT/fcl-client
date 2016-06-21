@@ -85,8 +85,11 @@ angular.module('app').factory('graph', ['$q', function($q) {
     return deferred.promise;
   };
 
-  graph.setNodeWeight = function(id, weight) {
-    cy.$('#' + id).data('weight', weight);
+  graph.setNodeSize = function(size) {
+    cy.nodes().css({
+      'height': size,
+      'width': size
+    });
   };
 
   return graph;

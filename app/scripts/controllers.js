@@ -4,15 +4,15 @@
 
 angular.module('app').controller('GraphCtrl', ['$scope', 'dataProvider', 'graph', function($scope, dataProvider, graph) {
 
-  $scope.nodes = dataProvider.getNodes();
-  $scope.edges = dataProvider.getEdges();
-
-  graph($scope.nodes, $scope.edges).then(function(cy) {
+  graph(dataProvider.getNodes(), dataProvider.getEdges()).then(function(cy) {
     $scope.cyLoaded = true;
   });
+  
+  $scope.nodeSize = 50;
+  $scope.sizes = [{value: 50, label: "Small"}, {value: 100, label: "Large"}];
 
-  $scope.onWeightChange = function(node) {
-    graph.setNodeWeight(node.id, node.weight);
+  $scope.onNodeSizeChange = function() {
+    graph.setNodeSize($scope.nodeSize);
   };
 
 }]);
