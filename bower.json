@@ -3,21 +3,10 @@
   "version": "1.0.0",
   "description": "FoodChain-Lab Web App",
   "main": "index.html",
-  "moduleType": [],
-  "keywords": [
-    "FoodChain-Lab",
-    "Web App"
-  ],
   "authors": [
     "Christian Thoens"
   ],
   "license": "GPL v3",
-  "homepage": "",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components"
-  ],
   "dependencies": {
     "angular": "^1.5.6",
     "angular-ui-router": "^0.3.1",
