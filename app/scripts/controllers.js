@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').controller('GraphCtrl', ['$scope', 'dataProvider', 'graph', function($scope, dataProvider, graph) {
+angular.module('app').controller('GraphCtrl', ['$scope', '$mdSidenav', 'dataProvider', 'graph', function($scope, $mdSidenav, dataProvider, graph) {
 
   graph(dataProvider.getNodes(), dataProvider.getEdges()).then(function(cy) {
     $scope.cyLoaded = true;
@@ -17,5 +17,9 @@ angular.module('app').controller('GraphCtrl', ['$scope', 'dataProvider', 'graph'
   $scope.onNodeSizeChange = function() {
     graph.setNodeSize($scope.nodeSize);
   };
+  
+  $scope.toogleList = function() {
+    $mdSidenav('sidenav').toggle();
+  }
 
 }]);

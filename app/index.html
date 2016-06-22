@@ -15,15 +15,18 @@
   <!-- endbuild -->
 </head>
 
-<body ng-app="app" layout="column">
+<body ng-app="app" layout="column" ng-controller="GraphCtrl">
 
-  <md-toolbar>
-    <h1>FoodChain-Lab</h1>
+  <md-toolbar layout="row">
+    <md-button class="menu" aria-label="Menu" ng-click="toogleList()" hide-gt-sm>
+      <md-icon md-svg-icon="menu"></md-icon>
+    </md-button>
+    <h3 id="header" flex>FoodChain-Lab</h3>
   </md-toolbar>
 
-  <div class="container" layout="row" ng-controller="GraphCtrl" flex>
-    <md-sidenav id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="true">
-      <md-input-container class="md-block" flex-gt-sm="">
+  <div class="container" layout="row" flex>
+    <md-sidenav id="sidenav" md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia('gt-sm')">
+      <md-input-container class="md-block">
         <label>Node Size</label>
         <md-select ng-model="nodeSize" ng-change="onNodeSizeChange()">
           <md-option ng-repeat="(label, value) in sizes" value="{{value}}">

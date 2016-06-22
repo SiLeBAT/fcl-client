@@ -1,3 +1,7 @@
 #sidenav {
-  background-color: lightblue;
+    background-color: lightblue;
+}
+
+#header {
+    text-align: center;
 }
