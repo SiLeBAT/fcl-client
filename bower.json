@@ -12,6 +12,7 @@
     "angular-ui-router": "^0.3.1",
     "cytoscape": "^2.7.2",
     "angular-material": "^1.0.9",
-    "jquery": "^3.0.0"
+    "jquery": "^2.2.4",
+    "cytoscape-cxtmenu": "^2.7.1"
   }
 }
