@@ -22,7 +22,7 @@ gulp.task('clean', function () {
 });
 
 gulp.task('default', ['clean'], function () {
-    return gulp.start('usemin', 'imagemin');
+    return gulp.start('usemin', 'imagemin', 'iconcopy');
 });
 
 gulp.task('usemin', ['jshint'], function () {
@@ -38,4 +38,9 @@ gulp.task('imagemin', function () {
     return gulp.src('app/images/**/*')
         .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
         .pipe(gulp.dest('dist/images'));
+});
+
+gulp.task('iconcopy', function () {
+    return gulp.src('app/icons/**/*')
+        .pipe(gulp.dest('dist/icons'));
 });

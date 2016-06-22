@@ -17,9 +17,9 @@ angular.module('app').controller('GraphCtrl', ['$scope', '$mdSidenav', 'dataProv
   $scope.onNodeSizeChange = function() {
     graph.setNodeSize($scope.nodeSize);
   };
-  
+
   $scope.toogleList = function() {
     $mdSidenav('sidenav').toggle();
-  }
+  };
 
 }]);
