@@ -29,7 +29,7 @@
   <div class="container" layout="row" flex>
     <md-sidenav id="sidenav" md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia('gt-sm')">
       <md-input-container class="md-block">
-        <label>Node Size</label>
+        <label>Station Size</label>
         <md-select ng-model="nodeSize" ng-change="onNodeSizeChange()">
           <md-option ng-repeat="(label, value) in sizes" value="{{value}}">
             {{label}}

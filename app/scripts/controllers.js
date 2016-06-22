@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').controller('GraphCtrl', ['$scope', '$mdSidenav', 'dataProvider', 'graph', function($scope, $mdSidenav, dataProvider, graph) {
+angular.module('app').controller('GraphCtrl', function($scope, $mdSidenav, dataProvider, graph) {
 
   graph(dataProvider.getNodes(), dataProvider.getEdges()).then(function(cy) {
     $scope.cyLoaded = true;
@@ -22,4 +22,4 @@ angular.module('app').controller('GraphCtrl', ['$scope', '$mdSidenav', 'dataProv
     $mdSidenav('sidenav').toggle();
   };
 
-}]);
+});

@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape, $, console*/
 
-angular.module('app').factory('graph', ['$q', function($q) {
+angular.module('app').factory('graph', function($q) {
 
   var cy;
 
@@ -28,9 +28,9 @@ angular.module('app').factory('graph', ['$q', function($q) {
         .selector('edge')
         .css({
           'target-arrow-shape': 'triangle',
-          'width': 1,
+          'width': 6,
           'line-color': '#000000',
-          'target-arrow-color': '#000000',
+          'target-arrow-color': '#FF0000',
           'curve-style': 'bezier'
         })
         .selector('node:selected')
@@ -42,9 +42,9 @@ angular.module('app').factory('graph', ['$q', function($q) {
         })
         .selector('edge:selected')
         .css({
-          'width': 3,
+          'width': 12,
           'line-color': '#00FF00',
-          'target-arrow-color': '#00FF00'
+          'target-arrow-color': '#FF0000'
         }),
 
       layout: {
@@ -94,4 +94,4 @@ angular.module('app').factory('graph', ['$q', function($q) {
 
   return graph;
 
-}]);
+});
