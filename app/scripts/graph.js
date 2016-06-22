@@ -10,7 +10,7 @@ angular.module('app').factory('graph', ['$q', function($q) {
     var deferred = $q.defer();
 
     cy = cytoscape({
-      container: $('#cy')[0],
+      container: $('#graph')[0],
 
       style: cytoscape.stylesheet()
         .selector('node')
