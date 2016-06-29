@@ -2,12 +2,11 @@
 
 /*global angular, cytoscape, $, console*/
 
-angular.module('app').factory('graph', function($q) {
+angular.module('app').factory('graph', function() {
 
   var cy;
 
   var graph = function(nodes, edges) {
-    var deferred = $q.defer();
 
     cy = cytoscape({
       container: $('#graph')[0],
@@ -70,114 +69,110 @@ angular.module('app').factory('graph', function($q) {
       // rendering options:
       wheelSensitivity: 0.5,
 
-      ready: function() {
-        deferred.resolve(this);
-
-        cy.on('zoom', function(event) {
-          console.log(cy.zoom());
-          cy.nodes().css({
-            'font-size': Math.max(12 / cy.zoom(), 12)
-          });
-        });
-
-        cy.cxtmenu({
-          selector: 'node',
-          commands: [{
-            content: 'bg1',
-            select: function() {
-              console.log('bg1');
-            }
-          }, {
-            content: 'bg2',
-            select: function() {
-              console.log('bg2');
-            }
-          }, {
-            content: 'bg3',
-            select: function() {
-              console.log('bg3');
-            }
-          }, {
-            content: 'bg4',
-            select: function() {
-              console.log('bg4');
-            }
-          }, {
-            content: 'bg5',
-            select: function() {
-              console.log('bg5');
-            }
-          }]
-        });
-
-        cy.cxtmenu({
-          selector: 'edge',
-          commands: [{
-            content: 'bg1',
-            select: function() {
-              console.log('bg1');
-            }
-          }, {
-            content: 'bg2',
-            select: function() {
-              console.log('bg2');
-            }
-          }, {
-            content: 'bg3',
-            select: function() {
-              console.log('bg3');
-            }
-          }, {
-            content: 'bg4',
-            select: function() {
-              console.log('bg4');
-            }
-          }]
-        });
-
-        cy.cxtmenu({
-          selector: 'core',
-          commands: [{
-            content: 'bg1',
-            select: function() {
-              console.log('bg1');
-            }
-          }, {
-            content: 'bg2',
-            select: function() {
-              console.log('bg2');
-            }
-          }, {
-            content: 'bg3',
-            select: function() {
-              console.log('bg3');
-            }
-          }, {
-            content: 'bg4',
-            select: function() {
-              console.log('bg4');
-            }
-          }, {
-            content: 'bg5',
-            select: function() {
-              console.log('bg5');
-            }
-          }, {
-            content: 'bg6',
-            select: function() {
-              console.log('bg6');
-            }
-          }, {
-            content: 'bg7',
-            select: function() {
-              console.log('bg7');
-            }
-          }]
-        });
-      }
     });
 
-    return deferred.promise;
+    cy.on('zoom', function(event) {
+      console.log(cy.zoom());
+      cy.nodes().css({
+        'font-size': Math.max(12 / cy.zoom(), 12)
+      });
+    });
+
+    cy.cxtmenu({
+      selector: 'node',
+      commands: [{
+        content: 'bg1',
+        select: function() {
+          console.log('bg1');
+        }
+      }, {
+        content: 'bg2',
+        select: function() {
+          console.log('bg2');
+        }
+      }, {
+        content: 'bg3',
+        select: function() {
+          console.log('bg3');
+        }
+      }, {
+        content: 'bg4',
+        select: function() {
+          console.log('bg4');
+        }
+      }, {
+        content: 'bg5',
+        select: function() {
+          console.log('bg5');
+        }
+      }]
+    });
+
+    cy.cxtmenu({
+      selector: 'edge',
+      commands: [{
+        content: 'bg1',
+        select: function() {
+          console.log('bg1');
+        }
+      }, {
+        content: 'bg2',
+        select: function() {
+          console.log('bg2');
+        }
+      }, {
+        content: 'bg3',
+        select: function() {
+          console.log('bg3');
+        }
+      }, {
+        content: 'bg4',
+        select: function() {
+          console.log('bg4');
+        }
+      }]
+    });
+
+    cy.cxtmenu({
+      selector: 'core',
+      commands: [{
+        content: 'bg1',
+        select: function() {
+          console.log('bg1');
+        }
+      }, {
+        content: 'bg2',
+        select: function() {
+          console.log('bg2');
+        }
+      }, {
+        content: 'bg3',
+        select: function() {
+          console.log('bg3');
+        }
+      }, {
+        content: 'bg4',
+        select: function() {
+          console.log('bg4');
+        }
+      }, {
+        content: 'bg5',
+        select: function() {
+          console.log('bg5');
+        }
+      }, {
+        content: 'bg6',
+        select: function() {
+          console.log('bg6');
+        }
+      }, {
+        content: 'bg7',
+        select: function() {
+          console.log('bg7');
+        }
+      }]
+    });
+    
   };
 
   graph.setNodeSize = function(size) {
