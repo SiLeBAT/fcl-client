@@ -28,14 +28,7 @@
 
   <div class="container" layout="row" flex ng-controller="GraphController">
     <md-sidenav id="sidenav" md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia('gt-sm')">
-      <md-input-container class="md-block">
-        <label>Station Size</label>
-        <md-select ng-model="nodeSize" ng-change="onNodeSizeChange()">
-          <md-option ng-repeat="(label, value) in sizes" value="{{value}}">
-            {{label}}
-          </md-option>
-        </md-select>
-      </md-input-container>
+      <settings node-size="nodeSize" on-change="onNodeSizeChange(value)"></settings>
     </md-sidenav>
     <div id="graph" flex>
     </div>
@@ -55,6 +48,7 @@
   <script src="scripts/toolbar_controller.js"></script>
   <script src="scripts/graph.js"></script>
   <script src="scripts/data_provider.js"></script>
+  <script src="scripts/settings_component.js"></script>
   <!-- endbuild -->
 </body>
 
