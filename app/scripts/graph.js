@@ -83,23 +83,58 @@ angular.module('app').factory('graph', function($q) {
         cy.cxtmenu({
           selector: 'node',
           commands: [{
-            content: '<span class="fa fa-flash fa-2x"></span>',
-            select: function(ele) {
-              console.log(ele.id());
+            content: 'bg1',
+            select: function() {
+              console.log('bg1');
             }
           }, {
-            content: '<span class="fa fa-star fa-2x"></span>',
-            select: function(ele) {
-              console.log(ele.data('name'));
-            },
-            disabled: true
+            content: 'bg2',
+            select: function() {
+              console.log('bg2');
+            }
           }, {
-            content: 'Text',
-            select: function(ele) {
-              console.log(ele.position());
+            content: 'bg3',
+            select: function() {
+              console.log('bg3');
+            }
+          }, {
+            content: 'bg4',
+            select: function() {
+              console.log('bg4');
+            }
+          }, {
+            content: 'bg5',
+            select: function() {
+              console.log('bg5');
             }
           }]
         });
+
+        cy.cxtmenu({
+          selector: 'edge',
+          commands: [{
+            content: 'bg1',
+            select: function() {
+              console.log('bg1');
+            }
+          }, {
+            content: 'bg2',
+            select: function() {
+              console.log('bg2');
+            }
+          }, {
+            content: 'bg3',
+            select: function() {
+              console.log('bg3');
+            }
+          }, {
+            content: 'bg4',
+            select: function() {
+              console.log('bg4');
+            }
+          }]
+        });
+
         cy.cxtmenu({
           selector: 'core',
           commands: [{
