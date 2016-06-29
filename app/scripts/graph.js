@@ -2,12 +2,11 @@
 
 /*global angular, cytoscape, $, console*/
 
-angular.module('app').factory('graph', function() {
+angular.module('app').service('graph', function() {
 
   var cy;
 
-  var graph = function(nodes, edges) {
-
+  this.init = function(nodes, edges) {
     cy = cytoscape({
       container: $('#graph')[0],
 
@@ -172,16 +171,13 @@ angular.module('app').factory('graph', function() {
         }
       }]
     });
-    
   };
 
-  graph.setNodeSize = function(size) {
+  this.setNodeSize = function(size) {
     cy.nodes().css({
       'height': size,
       'width': size
     });
   };
-
-  return graph;
 
 });
