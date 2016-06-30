@@ -3,10 +3,14 @@
 /*global angular, cytoscape, $, console*/
 
 angular.module('app').service('graph', function() {
+  
+  var graph = this;
 
   var cy;
 
-  this.init = function(nodes, edges) {
+  var fontSize = 12;
+
+  graph.init = function(nodes, edges) {
     cy = cytoscape({
       container: $('#graph')[0],
 
@@ -71,10 +75,7 @@ angular.module('app').service('graph', function() {
     });
 
     cy.on('zoom', function(event) {
-      console.log(cy.zoom());
-      cy.nodes().css({
-        'font-size': Math.max(12 / cy.zoom(), 12)
-      });
+      graph.setFontSize(fontSize);
     });
 
     cy.cxtmenu({
@@ -173,10 +174,18 @@ angular.module('app').service('graph', function() {
     });
   };
 
-  this.setNodeSize = function(size) {
+  graph.setNodeSize = function(size) {
     cy.nodes().css({
       'height': size,
       'width': size
+    });
+  };
+
+  graph.setFontSize = function(size) {
+    fontSize = size;
+
+    cy.nodes().css({
+      'font-size': Math.max(fontSize / cy.zoom(), fontSize)
     });
   };
 
