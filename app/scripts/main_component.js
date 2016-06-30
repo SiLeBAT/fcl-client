@@ -5,6 +5,14 @@
 angular.module('app').component('main', {
     bindings: {},
     controller: function($mdSidenav, dataProvider, graph) {
+        this.graphStyle = {
+            height: '100%',
+            width: '100%',
+            position: 'absolute',
+            left: 0,
+            top: 0
+        };
+
         this.toogleList = function() {
             $mdSidenav('sidenav').toggle();
         };
@@ -32,6 +40,6 @@ angular.module('app').component('main', {
         '   <md-sidenav md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia(\'gt-sm\')" flex>' +
         '       <settings node-size="$ctrl.nodeSize" on-change="$ctrl.onNodeSizeChange(value)"></settings>' +
         '   </md-sidenav>' +
-        '   <div id="graph" flex></div>' +
+        '   <div id="graph" ng-style="$ctrl.graphStyle" flex></div>' +
         '</div>'
 });
