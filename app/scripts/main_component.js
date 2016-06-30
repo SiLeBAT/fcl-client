@@ -21,9 +21,13 @@ angular.module('app').component('main', {
 
         graph.init(dataProvider.getNodes(), dataProvider.getEdges());
 
-        this.onNodeSizeChange = function(size) {
-            this.nodeSize = size;
-            graph.setNodeSize(size);
+        this.onNodeSizeChange = function(property, value) {
+            switch (property) {
+                case "nodeSize":
+                    this.nodeSize = value;
+                    graph.setNodeSize(value);
+                    break;
+            }
         };
     },
     template: '' +
@@ -38,7 +42,7 @@ angular.module('app').component('main', {
         '   </md-toolbar>' +
         '   <div class="container" layout="row" flex>' +
         '       <md-sidenav md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia(\'gt-sm\')" flex>' +
-        '           <settings node-size="$ctrl.nodeSize" on-change="$ctrl.onNodeSizeChange(value)"></settings>' +
+        '           <settings node-size="$ctrl.nodeSize" on-change="$ctrl.onNodeSizeChange(property, value)"></settings>' +
         '       </md-sidenav>' +
         '       <div id="graph" ng-style="$ctrl.graphStyle" flex></div>' +
         '   </div>' +
