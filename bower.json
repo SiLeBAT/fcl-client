@@ -9,7 +9,6 @@
   "license": "GPL v3",
   "dependencies": {
     "angular": "^1.5.6",
-    "angular-ui-router": "^0.3.1",
     "cytoscape": "^2.7.2",
     "angular-material": "^1.0.9",
     "jquery": "^2.2.4",
