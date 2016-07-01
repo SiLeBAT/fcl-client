@@ -3,7 +3,7 @@
 /*global angular, cytoscape, $, console*/
 
 angular.module('app').service('graph', function() {
-  
+
   var graph = this;
 
   var cy;
@@ -71,6 +71,10 @@ angular.module('app').service('graph', function() {
 
       // rendering options:
       wheelSensitivity: 0.5,
+
+      ready: function() {
+        graph.setFontSize(fontSize);
+      }
 
     });
 
