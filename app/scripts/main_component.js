@@ -16,7 +16,7 @@ angular.module('app').component('main', {
         this.nodeSize = 50;
         this.fontSize = 12;
 
-        graph.init(dataProvider.getNodes(), dataProvider.getEdges());
+        graph.init(dataProvider.getStations(), dataProvider.getDeliveries());
 
         this.onNodeSizeChange = function(property, value) {
             switch (property) {

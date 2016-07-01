@@ -4,7 +4,7 @@
 
 angular.module('app').service('dataProvider', function() {
 
-    var nodes = [{
+    var stations = [{
         data: {
             "id": 1,
             "name": "Heckmair Andreas",
@@ -132,7 +132,7 @@ angular.module('app').service('dataProvider', function() {
         }
     }];
 
-    var edges = [{
+    var deliveries = [{
         data: {
             "id": 10001,
             "source": 20,
@@ -284,12 +284,216 @@ angular.module('app').service('dataProvider', function() {
         }
     }];
 
-    this.getNodes = function() {
-        return nodes;
+    var deliveriesRelations = [{
+        data: {
+            "id": 1000000,
+            "from": 10001,
+            "to": 10009
+        }
+    }, {
+        data: {
+            "id": 1000001,
+            "from": 10002,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000002,
+            "from": 10002,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000003,
+            "from": 10003,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000004,
+            "from": 10003,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000005,
+            "from": 10004,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000006,
+            "from": 10004,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000007,
+            "from": 10005,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000008,
+            "from": 10005,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000009,
+            "from": 10006,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000010,
+            "from": 10006,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000011,
+            "from": 10007,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000012,
+            "from": 10007,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000013,
+            "from": 10008,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000014,
+            "from": 10008,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000015,
+            "from": 10011,
+            "to": 10001
+        }
+    }, {
+        data: {
+            "id": 1000016,
+            "from": 10011,
+            "to": 10010
+        }
+    }, {
+        data: {
+            "id": 1000017,
+            "from": 10013,
+            "to": 10012
+        }
+    }, {
+        data: {
+            "id": 1000018,
+            "from": 10014,
+            "to": 10012
+        }
+    }, {
+        data: {
+            "id": 1000019,
+            "from": 10015,
+            "to": 10012
+        }
+    }, {
+        data: {
+            "id": 1000020,
+            "from": 10019,
+            "to": 10011
+        }
+    }, {
+        data: {
+            "id": 1000021,
+            "from": 10018,
+            "to": 10017
+        }
+    }, {
+        data: {
+            "id": 1000022,
+            "from": 10021,
+            "to": 10004
+        }
+    }, {
+        data: {
+            "id": 1000023,
+            "from": 10021,
+            "to": 10014
+        }
+    }, {
+        data: {
+            "id": 1000024,
+            "from": 10020,
+            "to": 10003
+        }
+    }, {
+        data: {
+            "id": 1000025,
+            "from": 10023,
+            "to": 10006
+        }
+    }, {
+        data: {
+            "id": 1000026,
+            "from": 10022,
+            "to": 10005
+        }
+    }, {
+        data: {
+            "id": 1000027,
+            "from": 10025,
+            "to": 10008
+        }
+    }, {
+        data: {
+            "id": 1000028,
+            "from": 10024,
+            "to": 10007
+        }
+    }, {
+        data: {
+            "id": 1000029,
+            "from": 10027,
+            "to": 10004
+        }
+    }, {
+        data: {
+            "id": 1000030,
+            "from": 10027,
+            "to": 10014
+        }
+    }, {
+        data: {
+            "id": 1000031,
+            "from": 10026,
+            "to": 10013
+        }
+    }, {
+        data: {
+            "id": 1000032,
+            "from": 10028,
+            "to": 10015
+        }
+    }];
+
+    this.getStations = function() {
+        return stations;
     };
 
-    this.getEdges = function() {
-        return edges;
+    this.getDeliveries = function() {
+        return deliveries;
+    };
+
+    this.getDeliveryRelations = function() {
+        return deliveriesRelations;
     };
 
 });
