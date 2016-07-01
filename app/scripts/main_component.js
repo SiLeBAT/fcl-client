@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular*/
+/*global angular, console*/
 
 angular.module('app').component('main', {
     bindings: {},
@@ -16,7 +16,9 @@ angular.module('app').component('main', {
         this.nodeSize = 50;
         this.fontSize = 12;
 
-        graph.init(dataProvider.getStations(), dataProvider.getDeliveries());
+        dataProvider.get(function(data) {
+            graph.init(data.stations, data.deliveries);
+        });
 
         this.onNodeSizeChange = function(property, value) {
             switch (property) {
