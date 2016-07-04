@@ -6,7 +6,7 @@ angular.module('app').component('main', {
     bindings: {},
     controller: function(dataProvider, graph) {
         var ctrl = this;
-        
+
         ctrl.graphStyle = {
             height: '100%',
             width: '100%',
@@ -20,6 +20,8 @@ angular.module('app').component('main', {
 
         dataProvider.get(function(data) {
             graph.init(data.stations, data.deliveries);
+        }, function(error) {
+            console.log(error);
         });
 
         ctrl.onNodeSizeChange = function(property, value) {
