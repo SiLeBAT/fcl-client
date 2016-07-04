@@ -1,7 +1,7 @@
 'use strict';
 
-/*global angular */
+/*global angular*/
 
 angular.module('app').factory('dataProvider', function($resource) {
-    return $resource('../data/bbk.json');
+    return $resource('data/bbk.json');
 });
