@@ -9,12 +9,14 @@ angular.module('app').component('settings', {
         onChange: '&'
     },
     controller: function() {
-        this.nodeSizes = {
+        var ctrl = this;
+
+        ctrl.nodeSizes = {
             Small: 50,
             Large: 100
         };
 
-        this.fontSizes = {
+        ctrl.fontSizes = {
             Small: 12,
             Large: 18
         };

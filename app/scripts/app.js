@@ -18,7 +18,9 @@ angular.module('app', ['ngMaterial', 'ngComponentRouter', 'ngResource'])
             name: 'Test'
         }],
         controller: function($mdSidenav) {
-            this.toogleList = function() {
+            var ctrl = this;
+            
+            ctrl.toogleList = function() {
                 $mdSidenav('sidenav').toggle();
             };
         },

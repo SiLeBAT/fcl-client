@@ -5,7 +5,9 @@
 angular.module('app').component('main', {
     bindings: {},
     controller: function(dataProvider, graph) {
-        this.graphStyle = {
+        var ctrl = this;
+        
+        ctrl.graphStyle = {
             height: '100%',
             width: '100%',
             position: 'absolute',
@@ -13,21 +15,21 @@ angular.module('app').component('main', {
             top: 0
         };
 
-        this.nodeSize = 50;
-        this.fontSize = 12;
+        ctrl.nodeSize = 50;
+        ctrl.fontSize = 12;
 
         dataProvider.get(function(data) {
             graph.init(data.stations, data.deliveries);
         });
 
-        this.onNodeSizeChange = function(property, value) {
+        ctrl.onNodeSizeChange = function(property, value) {
             switch (property) {
                 case "nodeSize":
-                    this.nodeSize = value;
+                    ctrl.nodeSize = value;
                     graph.setNodeSize(value);
                     break;
                 case "fontSize":
-                    this.fontSize = value;
+                    ctrl.fontSize = value;
                     graph.setFontSize(value);
                     break;
             }
@@ -35,7 +37,7 @@ angular.module('app').component('main', {
     },
     template: '' +
         '<div class="container" layout="row" flex>' +
-        '   <md-sidenav md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia(\'gt-sm\')" flex>' +
+        '   <md-sidenav md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia(\'gt-sm\')">' +
         '       <settings node-size="$ctrl.nodeSize" font-size="$ctrl.fontSize" on-change="$ctrl.onNodeSizeChange(property, value)"></settings>' +
         '   </md-sidenav>' +
         '   <div id="graph" ng-style="$ctrl.graphStyle" flex></div>' +
