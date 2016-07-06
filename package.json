@@ -7,9 +7,7 @@
     "gulp-clean-css": "^2.0.10",
     "gulp-jshint": "^2.0.1",
     "gulp-rev": "^7.1.0",
-    "gulp-usemin": "^0.3.23",
-    "jshint": "^2.9.2",
-    "jshint-stylish": "^2.2.0"
+    "gulp-usemin": "^0.3.23"
   },
   "engines": {
     "node": ">=0.10.0"

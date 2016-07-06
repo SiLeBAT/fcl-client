@@ -3,15 +3,13 @@
 var gulp = require('gulp'),
     cleancss = require('gulp-clean-css'),
     jshint = require('gulp-jshint'),
-    stylish = require('jshint-stylish'),
     usemin = require('gulp-usemin'),
     rev = require('gulp-rev'),
     del = require('del');
 
 gulp.task('jshint', function() {
     return gulp.src('src/app/**/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter(stylish));
+        .pipe(jshint());
 });
 
 gulp.task('clean', function() {
@@ -39,4 +37,10 @@ gulp.task('iconcopy', function() {
 gulp.task('datacopy', function() {
     return gulp.src('src/data/**/*')
         .pipe(gulp.dest('dist/data'));
+});
+
+gulp.task('watch', ['default'], function() {
+    gulp.watch('{src/app/**/*.js,src/styles/**/*.css,src/**/*.html}', ['usemin']);
+    gulp.watch('src/icons/**/*', ['iconcopy']);
+    gulp.watch('src/data/**/*', ['datacopy']);
 });
