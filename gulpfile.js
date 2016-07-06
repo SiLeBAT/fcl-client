@@ -5,7 +5,6 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     stylish = require('jshint-stylish'),
     usemin = require('gulp-usemin'),
-    imagemin = require('gulp-imagemin'),
     rev = require('gulp-rev'),
     del = require('del');
 
@@ -20,7 +19,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('default', ['clean'], function() {
-    return gulp.start('usemin', 'imagemin', 'iconcopy', 'datacopy');
+    return gulp.start('usemin', 'iconcopy', 'datacopy');
 });
 
 gulp.task('usemin', ['jshint'], function() {
@@ -30,16 +29,6 @@ gulp.task('usemin', ['jshint'], function() {
             js: [rev()]
         }))
         .pipe(gulp.dest('dist/'));
-});
-
-gulp.task('imagemin', function() {
-    return gulp.src('app/images/**/*')
-        .pipe(imagemin({
-            optimizationLevel: 3,
-            progressive: true,
-            interlaced: true
-        }))
-        .pipe(gulp.dest('dist/images'));
 });
 
 gulp.task('iconcopy', function() {
