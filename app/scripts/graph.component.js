@@ -2,7 +2,7 @@
 
 /*global angular, console*/
 
-angular.module('app').component('main', {
+angular.module('app').component('graph', {
     bindings: {},
     controller: function(dataProvider, graph) {
         var ctrl = this;
@@ -37,11 +37,5 @@ angular.module('app').component('main', {
             }
         };
     },
-    template: '' +
-        '<div class="container" layout="row" flex>' +
-        '   <md-sidenav md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia(\'gt-sm\')">' +
-        '       <settings node-size="$ctrl.nodeSize" font-size="$ctrl.fontSize" on-change="$ctrl.onNodeSizeChange(property, value)"></settings>' +
-        '   </md-sidenav>' +
-        '   <div id="graph" ng-style="$ctrl.graphStyle" flex></div>' +
-        '</div>'
+    templateUrl: 'scripts/graph.component.html'
 });

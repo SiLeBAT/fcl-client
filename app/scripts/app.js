@@ -10,8 +10,8 @@ angular.module('app', ['ngMaterial', 'ngComponentRouter', 'ngResource'])
     .component('app', {
         $routeConfig: [{
             path: '/',
-            component: 'main',
-            name: 'Main'
+            component: 'graph',
+            name: 'Graph'
         }, {
             path: '/test',
             component: 'test',
@@ -30,7 +30,7 @@ angular.module('app', ['ngMaterial', 'ngComponentRouter', 'ngResource'])
             '       <md-button class="menu" aria-label="Menu" ng-click="$ctrl.toogleList()" hide-gt-sm>' +
             '           <md-icon md-svg-icon="menu"></md-icon>' +
             '       </md-button>' +
-            '       <md-button ng-link="[\'Main\']">Eins</md-button>' +
+            '       <md-button ng-link="[\'Graph\']">Eins</md-button>' +
             '       <md-button ng-link="[\'Test\']">Zwei</md-button>' +
             '       <div class="md-toolbar-tools">' +
             '           <span>FoodChain-Lab</span>' +

@@ -1,25 +1,25 @@
 'use strict';
 
-/*global angular, btoa, $*/
+/*global angular*/
 
 angular.module('app').factory('dataProvider', function($resource) {
-    var authent = btoa('bfr_test:Ifupofetu843');
+    // var authent = btoa('bfr_test:Ifupofetu843');
 
-    $.ajax({
-        type: 'GET',
-        url: 'https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json',
-        //crossDomain: true,
-        dataType: 'json',
-        headers: {
-            'Authentication': "Basic " + authent
-        },
-        success: function(responseData, textStatus, jqXHR) {
-            console.log(responseData);
-        },
-        error: function(responseData, textStatus, errorThrown) {
-            console.warn(responseData, textStatus, errorThrown);
-        }
-    });
+    // $.ajax({
+    //     type: 'GET',
+    //     url: 'https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json',
+    //     //crossDomain: true,
+    //     dataType: 'json',
+    //     headers: {
+    //         'Authentication': "Basic " + authent
+    //     },
+    //     success: function(responseData, textStatus, jqXHR) {
+    //         console.log(responseData);
+    //     },
+    //     error: function(responseData, textStatus, errorThrown) {
+    //         console.warn(responseData, textStatus, errorThrown);
+    //     }
+    // });
 
     return $resource('data/bbk.json');
     // return $resource('https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json', {}, {
