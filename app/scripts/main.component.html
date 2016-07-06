@@ -1,0 +1,13 @@
+<div class="container" layout="column">
+    <md-toolbar layout="row" class="md-whiteframe-4dp">
+        <md-button class="menu" aria-label="Menu" ng-click="$ctrl.toogleList()" hide-gt-sm>
+            <md-icon md-svg-icon="menu"></md-icon>
+        </md-button>
+        <md-button ng-link="['Graph']">Eins</md-button>
+        <md-button ng-link="['Test']">Zwei</md-button>
+        <div class="md-toolbar-tools">
+            <span>FoodChain-Lab</span>
+        </div>
+    </md-toolbar>
+    <ng-outlet></ng-outlet>
+</div>
