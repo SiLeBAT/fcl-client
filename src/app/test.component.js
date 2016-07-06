@@ -15,5 +15,5 @@ angular.module('app').component('test', {
             ctrl.deliveries = data.deliveries;
         });
     },
-    templateUrl: 'scripts/test.component.html'
+    templateUrl: 'app/test.component.html'
 });

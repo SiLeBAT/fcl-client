@@ -37,5 +37,5 @@ angular.module('app').component('graph', {
             }
         };
     },
-    templateUrl: 'scripts/graph.component.html'
+    templateUrl: 'app/graph.component.html'
 });

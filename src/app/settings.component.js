@@ -21,5 +21,5 @@ angular.module('app').component('settings', {
             Large: 18
         };
     },
-    templateUrl: 'scripts/settings.component.html'
+    templateUrl: 'app/settings.component.html'
 });

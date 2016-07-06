@@ -19,5 +19,5 @@ angular.module('app').component('main', {
             $mdSidenav('sidenav').toggle();
         };
     },
-    templateUrl: 'scripts/main.component.html'
+    templateUrl: 'app/main.component.html'
 });

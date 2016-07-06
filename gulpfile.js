@@ -9,7 +9,7 @@ var gulp = require('gulp'),
     del = require('del');
 
 gulp.task('jshint', function() {
-    return gulp.src('app/scripts/**/*.js')
+    return gulp.src('src/app/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter(stylish));
 });
@@ -23,7 +23,7 @@ gulp.task('default', ['clean'], function() {
 });
 
 gulp.task('usemin', ['jshint'], function() {
-    return gulp.src('./app/**/*.html')
+    return gulp.src('src/**/*.html')
         .pipe(usemin({
             css: [cleancss(), rev()],
             js: [rev()]
@@ -32,11 +32,11 @@ gulp.task('usemin', ['jshint'], function() {
 });
 
 gulp.task('iconcopy', function() {
-    return gulp.src('app/icons/**/*')
+    return gulp.src('src/icons/**/*')
         .pipe(gulp.dest('dist/icons'));
 });
 
 gulp.task('datacopy', function() {
-    return gulp.src('app/data/**/*')
+    return gulp.src('src/data/**/*')
         .pipe(gulp.dest('dist/data'));
 });
