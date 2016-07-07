@@ -1,16 +1,16 @@
 'use strict';
 
-/*global angular, cytoscape, $, console*/
+/*global angular, cytoscape, $*/
 
-angular.module('app').service('graph', function() {
+angular.module('app').service('graph', function(graphComputations) {
 
   var graph = this;
 
   var cy;
 
-  var fontSize = 12;
+  var fontSize;
 
-  graph.init = function(nodes, edges) {
+  graph.init = function(data) {
     cy = cytoscape({
       container: $('#graph')[0],
 
@@ -37,7 +37,7 @@ angular.module('app').service('graph', function() {
         })
         .selector('node:selected')
         .css({
-          'background-color': '#9999FF',
+          'background-color': '#8080FF',
           'border-width': 6,
           'border-color': '#0000FF',
           'color': '#0000FF'
@@ -47,6 +47,15 @@ angular.module('app').service('graph', function() {
           'width': 12,
           'line-color': '#00FF00',
           'target-arrow-color': '#FF0000'
+        }).selector('node[?forward]')
+        .css({
+          'background-color': '#00FF00'
+        }).selector('node:selected[?forward]')
+        .css({
+          'background-color': '#008080'
+        }).selector('edge[?forward]')
+        .css({
+          'line-color': '#00FF00'
         }),
 
       layout: {
@@ -54,28 +63,24 @@ angular.module('app').service('graph', function() {
       },
 
       elements: {
-        nodes: nodes,
-        edges: edges
+        nodes: data.stations,
+        edges: data.deliveries
       },
 
-      // initial viewport state:
       zoom: 1,
       pan: {
         x: 0,
         y: 0
       },
 
-      // interaction options:
       minZoom: 0.3,
       maxZoom: 3,
 
-      // rendering options:
       wheelSensitivity: 0.5,
 
       ready: function() {
-        graph.setFontSize(fontSize);
+        graph.setFontSize(12);
       }
-
     });
 
     cy.on('zoom', function(event) {
@@ -85,29 +90,24 @@ angular.module('app').service('graph', function() {
     cy.cxtmenu({
       selector: 'node',
       commands: [{
-        content: 'bg1',
-        select: function() {
-          console.log('bg1');
+        content: 'Show Forward Trace',
+        select: function(station) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.showStationForwardTrace(station);
+          });
         }
       }, {
         content: 'bg2',
         select: function() {
-          console.log('bg2');
         }
       }, {
         content: 'bg3',
         select: function() {
-          console.log('bg3');
         }
       }, {
         content: 'bg4',
         select: function() {
-          console.log('bg4');
-        }
-      }, {
-        content: 'bg5',
-        select: function() {
-          console.log('bg5');
         }
       }]
     });
@@ -117,22 +117,14 @@ angular.module('app').service('graph', function() {
       commands: [{
         content: 'bg1',
         select: function() {
-          console.log('bg1');
         }
       }, {
         content: 'bg2',
         select: function() {
-          console.log('bg2');
         }
       }, {
         content: 'bg3',
         select: function() {
-          console.log('bg3');
-        }
-      }, {
-        content: 'bg4',
-        select: function() {
-          console.log('bg4');
         }
       }]
     });
@@ -142,40 +134,15 @@ angular.module('app').service('graph', function() {
       commands: [{
         content: 'bg1',
         select: function() {
-          console.log('bg1');
         }
       }, {
         content: 'bg2',
         select: function() {
-          console.log('bg2');
-        }
-      }, {
-        content: 'bg3',
-        select: function() {
-          console.log('bg3');
-        }
-      }, {
-        content: 'bg4',
-        select: function() {
-          console.log('bg4');
-        }
-      }, {
-        content: 'bg5',
-        select: function() {
-          console.log('bg5');
-        }
-      }, {
-        content: 'bg6',
-        select: function() {
-          console.log('bg6');
-        }
-      }, {
-        content: 'bg7',
-        select: function() {
-          console.log('bg7');
         }
       }]
     });
+    
+    graphComputations.init(data, cy);
   };
 
   graph.setNodeSize = function(size) {

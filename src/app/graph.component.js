@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular, console*/
+/*global angular*/
 
 angular.module('app').component('graph', {
     bindings: {},
@@ -19,7 +19,7 @@ angular.module('app').component('graph', {
         ctrl.fontSize = 12;
 
         dataProvider.get(function(data) {
-            graph.init(data.stations, data.deliveries);
+            graph.init(data);
         }, function(error) {
             console.log(error);
         });
