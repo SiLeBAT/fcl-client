@@ -80,6 +80,23 @@ angular.module('app').service('graph', function(graphComputations) {
 
       ready: function() {
         graph.setFontSize(12);
+
+        var relations = data.deliveriesRelations;
+
+        cy.batch(function() {
+          cy.edges().data('from', []);
+          cy.edges().data('to', []);
+
+          for (var i = 0, j = relations.length; i < j; i++) {
+            var from = relations[i].data.from;
+            var to = relations[i].data.to;
+            var fromDelivery = cy.$('#' + from);
+            var toDelivery = cy.$('#' + to);
+            
+            fromDelivery.data('to', fromDelivery.data('to').concat(to));
+            toDelivery.data('from', toDelivery.data('from').concat(from));
+          }
+        });
       }
     });
 
@@ -99,16 +116,13 @@ angular.module('app').service('graph', function(graphComputations) {
         }
       }, {
         content: 'bg2',
-        select: function() {
-        }
+        select: function() {}
       }, {
         content: 'bg3',
-        select: function() {
-        }
+        select: function() {}
       }, {
         content: 'bg4',
-        select: function() {
-        }
+        select: function() {}
       }]
     });
 
@@ -116,16 +130,13 @@ angular.module('app').service('graph', function(graphComputations) {
       selector: 'edge',
       commands: [{
         content: 'bg1',
-        select: function() {
-        }
+        select: function() {}
       }, {
         content: 'bg2',
-        select: function() {
-        }
+        select: function() {}
       }, {
         content: 'bg3',
-        select: function() {
-        }
+        select: function() {}
       }]
     });
 
@@ -133,16 +144,14 @@ angular.module('app').service('graph', function(graphComputations) {
       selector: 'core',
       commands: [{
         content: 'bg1',
-        select: function() {
-        }
+        select: function() {}
       }, {
         content: 'bg2',
-        select: function() {
-        }
+        select: function() {}
       }]
     });
-    
-    graphComputations.init(data, cy);
+
+    graphComputations.init(cy);
   };
 
   graph.setNodeSize = function(size) {
