@@ -21,7 +21,7 @@ angular.module('app').factory('dataProvider', function($resource) {
     //     }
     // });
 
-    return $resource('data/bbk.json');
+    return $resource('data/small_network.json');
     // return $resource('https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json', {}, {
     //     login: {
     //         method: 'GET',

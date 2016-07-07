@@ -30,7 +30,7 @@ angular.module('app').service('graphComputations', function() {
         var to = delivery.data('to');
 
         cy.filter(function(i, e) {
-            return e.isEdge() && to.includes(parseInt(e.id(), 10));
+            return e.isEdge() && to.includes(e.id());
         }).forEach(function(d) {
             comp.showDeliveryForwardTrace(d);
         });
