@@ -56,7 +56,7 @@ angular.module('app').service('graphComputations', function() {
         cy.filter(function(i, e) {
             return e.isEdge() && from.includes(e.id());
         }).forEach(function(d) {
-            comp.showDeliveryForwardTrace(d);
+            comp.showDeliveryBackwardTrace(d);
         });
     };
 });
