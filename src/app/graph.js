@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape, $*/
 
-angular.module('app').service('graph', function(graphComputations) {
+angular.module('app').service('graph', function(graphComputations, $mdDialog) {
 
   var graph = this;
 
@@ -154,7 +154,19 @@ angular.module('app').service('graph', function(graphComputations) {
       selector: 'core',
       commands: [{
         content: 'bg1',
-        select: function() {}
+        select: function() {
+          $mdDialog.show({
+            controller: function($scope, $mdDialog, data) {
+              $scope.data = data;
+            },
+            templateUrl: 'app/dialog.template.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            locals: {
+              data: data
+            }
+          });
+        }
       }, {
         content: 'bg2',
         select: function() {}
