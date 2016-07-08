@@ -158,6 +158,10 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
           $mdDialog.show({
             controller: function($scope, $mdDialog, data) {
               $scope.data = data;
+
+              $scope.closeDialog = function() {
+                $mdDialog.hide();
+              };
             },
             templateUrl: 'app/dialog.template.html',
             parent: angular.element(document.body),
