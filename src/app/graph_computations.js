@@ -21,21 +21,21 @@ angular.module('app').service('graphComputations', function() {
     };
 
     comp.showStationForwardTrace = function(station) {
-        cy.$('#' + station.id()).data('forward', true);
+        station.data('forward', true);
         cy.$('edge[source = "' + station.id() + '"]').forEach(function(d) {
             comp.showDeliveryForwardTrace(d);
         });
     };
 
     comp.showStationBackwardTrace = function(station) {
-        cy.$('#' + station.id()).data('backward', true);
+        station.data('backward', true);
         cy.$('edge[target = "' + station.id() + '"]').forEach(function(d) {
             comp.showDeliveryBackwardTrace(d);
         });
     };
     
     comp.showDeliveryForwardTrace = function(delivery) {
-        cy.$('#' + delivery.id()).data('forward', true);
+        delivery.data('forward', true);
         cy.$('#' + delivery.data('target')).data('forward', true);
 
         var to = delivery.data('to');
@@ -48,7 +48,7 @@ angular.module('app').service('graphComputations', function() {
     };
 
     comp.showDeliveryBackwardTrace = function(delivery) {
-        cy.$('#' + delivery.id()).data('backward', true);
+        delivery.data('backward', true);
         cy.$('#' + delivery.data('source')).data('backward', true);
 
         var from = delivery.data('from');
