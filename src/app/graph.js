@@ -47,13 +47,13 @@ angular.module('app').service('graph', function(graphComputations) {
           'width': 12,
           'line-color': '#00FF00',
           'target-arrow-color': '#FF0000'
-        }).selector('node[?forward]')
+        }).selector('node[?forward], node[?backward]')
         .css({
           'background-color': '#00FF00'
-        }).selector('node:selected[?forward]')
+        }).selector('node:selected[?forward], node:selected[?backward]')
         .css({
           'background-color': '#008080'
-        }).selector('edge[?forward]')
+        }).selector('edge[?forward], edge[?backward]')
         .css({
           'line-color': '#00FF00'
         }),
@@ -92,7 +92,7 @@ angular.module('app').service('graph', function(graphComputations) {
             var to = relations[i].data.to;
             var fromDelivery = cy.$('#' + from);
             var toDelivery = cy.$('#' + to);
-            
+
             fromDelivery.data('to', fromDelivery.data('to').concat(to));
             toDelivery.data('from', toDelivery.data('from').concat(from));
           }
@@ -111,32 +111,42 @@ angular.module('app').service('graph', function(graphComputations) {
         select: function(station) {
           cy.batch(function() {
             graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
             graphComputations.showStationForwardTrace(station);
           });
         }
       }, {
-        content: 'bg2',
-        select: function() {}
-      }, {
-        content: 'bg3',
-        select: function() {}
-      }, {
-        content: 'bg4',
-        select: function() {}
+        content: 'Show Backward Trace',
+        select: function(station) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showStationBackwardTrace(station);
+          });
+        }
       }]
     });
 
     cy.cxtmenu({
       selector: 'edge',
       commands: [{
-        content: 'bg1',
-        select: function() {}
+        content: 'Show Forward Trace',
+        select: function(delivery) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showDeliveryForwardTrace(delivery);
+          });
+        }
       }, {
-        content: 'bg2',
-        select: function() {}
-      }, {
-        content: 'bg3',
-        select: function() {}
+        content: 'Show Backward Trace',
+        select: function(delivery) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showDeliveryBackwardTrace(delivery);
+          });
+        }
       }]
     });
 
