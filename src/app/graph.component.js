@@ -24,7 +24,7 @@ angular.module('app').component('graph', {
             console.log(error);
         });
 
-        ctrl.onNodeSizeChange = function(property, value) {
+        ctrl.onChange = function(property, value) {
             switch (property) {
                 case "nodeSize":
                     ctrl.nodeSize = value;
