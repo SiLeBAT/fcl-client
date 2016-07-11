@@ -81,21 +81,8 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
       ready: function() {
         graph.setFontSize(12);
 
-        var relations = data.deliveriesRelations;
-
         cy.batch(function() {
-          cy.edges().data('from', []);
-          cy.edges().data('to', []);
-
-          for (var i = 0, j = relations.length; i < j; i++) {
-            var from = relations[i].data.from;
-            var to = relations[i].data.to;
-            var fromDelivery = cy.$('#' + from);
-            var toDelivery = cy.$('#' + to);
-
-            fromDelivery.data('to', fromDelivery.data('to').concat(to));
-            toDelivery.data('from', toDelivery.data('from').concat(from));
-          }
+          addRelationsDataToDeliveries(data.deliveriesRelations);
         });
       }
     });
@@ -104,52 +91,28 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
       graph.setFontSize(fontSize);
     });
 
-    cy.cxtmenu({
-      selector: 'node',
-      commands: [{
-        content: 'Show Forward Trace',
-        select: function(station) {
-          cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showStationForwardTrace(station);
-          });
-        }
-      }, {
-        content: 'Show Backward Trace',
-        select: function(station) {
-          cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showStationBackwardTrace(station);
-          });
-        }
-      }]
-    });
+    addGraphContextMenu(data);
+    addStationContextMenu();
+    addDeliveryContextMenu();
+    graphComputations.init(cy);
+  };
 
-    cy.cxtmenu({
-      selector: 'edge',
-      commands: [{
-        content: 'Show Forward Trace',
-        select: function(delivery) {
-          cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showDeliveryForwardTrace(delivery);
-          });
-        }
-      }, {
-        content: 'Show Backward Trace',
-        select: function(delivery) {
-          cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showDeliveryBackwardTrace(delivery);
-          });
-        }
-      }]
+  graph.setNodeSize = function(size) {
+    cy.nodes().css({
+      'height': size,
+      'width': size
     });
+  };
 
+  graph.setFontSize = function(size) {
+    fontSize = size;
+
+    cy.nodes().css({
+      'font-size': Math.max(fontSize / cy.zoom(), fontSize)
+    });
+  };
+
+  var addGraphContextMenu = function(data) {
     cy.cxtmenu({
       selector: 'core',
       commands: [{
@@ -184,23 +147,71 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
         }
       }]
     });
-
-    graphComputations.init(cy);
   };
 
-  graph.setNodeSize = function(size) {
-    cy.nodes().css({
-      'height': size,
-      'width': size
+  var addStationContextMenu = function() {
+    cy.cxtmenu({
+      selector: 'node',
+      commands: [{
+        content: 'Show Forward Trace',
+        select: function(station) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showStationForwardTrace(station);
+          });
+        }
+      }, {
+        content: 'Show Backward Trace',
+        select: function(station) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showStationBackwardTrace(station);
+          });
+        }
+      }]
     });
   };
 
-  graph.setFontSize = function(size) {
-    fontSize = size;
-
-    cy.nodes().css({
-      'font-size': Math.max(fontSize / cy.zoom(), fontSize)
+  var addDeliveryContextMenu = function() {
+    cy.cxtmenu({
+      selector: 'edge',
+      commands: [{
+        content: 'Show Forward Trace',
+        select: function(delivery) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showDeliveryForwardTrace(delivery);
+          });
+        }
+      }, {
+        content: 'Show Backward Trace',
+        select: function(delivery) {
+          cy.batch(function() {
+            graphComputations.clearForwardTrace();
+            graphComputations.clearBackwardTrace();
+            graphComputations.showDeliveryBackwardTrace(delivery);
+          });
+        }
+      }]
     });
+  };
+
+  var addRelationsDataToDeliveries = function(relations) {
+    cy.edges().data('from', []);
+    cy.edges().data('to', []);
+
+    for (var i = 0, j = relations.length; i < j; i++) {
+      var from = relations[i].data.from;
+      var to = relations[i].data.to;
+      var fromDelivery = cy.$('#' + from);
+      var toDelivery = cy.$('#' + to);
+
+      fromDelivery.data('to', fromDelivery.data('to').concat(to));
+      toDelivery.data('from', toDelivery.data('from').concat(from));
+    }
   };
 
 });
