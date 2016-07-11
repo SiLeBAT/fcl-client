@@ -159,7 +159,7 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
             controller: function($scope, data) {
               $scope.data = data;
             },
-            template: '<testtest elements="data.stations"></testtest>',
+            template: '<md-dialog aria-label="Stations"><testtest elements="data.stations"></testtest></md-dialog>',
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             locals: {
@@ -174,7 +174,7 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
             controller: function($scope, data) {
               $scope.data = data;
             },
-            template: '<testtest elements="data.deliveries"></testtest>',
+            template: '<md-dialog aria-label="Deliveries"><testtest elements="data.deliveries"></testtest></md-dialog>',
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             locals: {
