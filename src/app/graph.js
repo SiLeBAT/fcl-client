@@ -156,30 +156,30 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
         content: 'Show Station Data',
         select: function() {
           $mdDialog.show({
-            controller: function($scope, data) {
+            controller: function($scope) {
               $scope.data = data;
             },
-            template: '<md-dialog aria-label="Stations"><testtest elements="data.stations"></testtest></md-dialog>',
+            template: '<md-dialog aria-label="Stations">' +
+              '<md-toolbar><dialog-toolbar title="Stations"></dialog-toolbar></md-toolbar>' +
+              '<md-dialog-content><dialog-content elements="data.stations"></dialog-content></md-dialog-content>' +
+              '</md-dialog>',
             parent: angular.element(document.body),
-            clickOutsideToClose: true,
-            locals: {
-              data: data
-            }
+            clickOutsideToClose: true
           });
         }
       }, {
         content: 'Show Delivery Data',
         select: function() {
           $mdDialog.show({
-            controller: function($scope, data) {
+            controller: function($scope) {
               $scope.data = data;
             },
-            template: '<md-dialog aria-label="Deliveries"><testtest elements="data.deliveries"></testtest></md-dialog>',
+            template: '<md-dialog aria-label="Deliveries">' +
+              '<md-toolbar><dialog-toolbar title="Deliveries"></dialog-toolbar></md-toolbar>' +
+              '<md-dialog-content><dialog-content elements="data.deliveries"></dialog-content></md-dialog-content>' +
+              '</md-dialog>',
             parent: angular.element(document.body),
-            clickOutsideToClose: true,
-            locals: {
-              data: data
-            }
+            clickOutsideToClose: true
           });
         }
       }]

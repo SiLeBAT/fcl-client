@@ -2,9 +2,9 @@
 
 /*global angular*/
 
-angular.module('app').component('testtest', {
+angular.module('app').component('dialogToolbar', {
     bindings: {
-        elements: '<'
+        title: '@'
     },
     controller: function($mdDialog) {
         var ctrl = this;
@@ -13,5 +13,5 @@ angular.module('app').component('testtest', {
             $mdDialog.hide();
         };
     },
-    templateUrl: 'app/dialog.component.html'
+    templateUrl: 'app/dialogs/toolbar.component.html'
 });
