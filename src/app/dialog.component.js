@@ -4,7 +4,7 @@
 
 angular.module('app').component('testtest', {
     bindings: {
-        stations: '<'
+        elements: '<'
     },
     controller: function($mdDialog) {
         var ctrl = this;

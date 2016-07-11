@@ -153,17 +153,13 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
     cy.cxtmenu({
       selector: 'core',
       commands: [{
-        content: 'bg1',
+        content: 'Show Station Data',
         select: function() {
           $mdDialog.show({
-            controller: function($scope, $mdDialog, data) {
+            controller: function($scope, data) {
               $scope.data = data;
-
-              $scope.closeDialog = function() {
-                $mdDialog.hide();
-              };
             },
-            templateUrl: 'app/dialog.template.html',
+            template: '<testtest elements="data.stations"></testtest>',
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             locals: {
@@ -172,8 +168,20 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
           });
         }
       }, {
-        content: 'bg2',
-        select: function() {}
+        content: 'Show Delivery Data',
+        select: function() {
+          $mdDialog.show({
+            controller: function($scope, data) {
+              $scope.data = data;
+            },
+            template: '<testtest elements="data.deliveries"></testtest>',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            locals: {
+              data: data
+            }
+          });
+        }
       }]
     });
 
