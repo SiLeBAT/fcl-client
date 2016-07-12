@@ -15,27 +15,9 @@ angular.module('app').component('graph', {
             top: 0
         };
 
-        ctrl.nodeSize = 50;
-        ctrl.fontSize = 12;
-
         dataProvider.get(function(data) {
             graph.init(data);
-        }, function(error) {
-            console.log(error);
         });
-
-        ctrl.onChange = function(property, value) {
-            switch (property) {
-                case "nodeSize":
-                    ctrl.nodeSize = value;
-                    graph.setNodeSize(value);
-                    break;
-                case "fontSize":
-                    ctrl.fontSize = value;
-                    graph.setFontSize(value);
-                    break;
-            }
-        };
     },
     templateUrl: 'app/graph.component.html'
 });

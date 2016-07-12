@@ -3,12 +3,7 @@
 /*global angular*/
 
 angular.module('app').component('settings', {
-    bindings: {
-        nodeSize: '<',
-        fontSize: '<',
-        onChange: '&'
-    },
-    controller: function() {
+    controller: function(graph) {
         var ctrl = this;
 
         ctrl.nodeSizes = {
@@ -19,6 +14,22 @@ angular.module('app').component('settings', {
         ctrl.fontSizes = {
             Small: 12,
             Large: 18
+        };
+
+        ctrl.nodeSize = ctrl.nodeSizes.Small;
+        ctrl.fontSize = ctrl.fontSizes.Small;
+
+        ctrl.onChange = function(property, value) {
+            switch (property) {
+                case "nodeSize":
+                    ctrl.nodeSize = value;
+                    graph.setNodeSize(value);
+                    break;
+                case "fontSize":
+                    ctrl.fontSize = value;
+                    graph.setFontSize(value);
+                    break;
+            }
         };
     },
     templateUrl: 'app/settings.component.html'

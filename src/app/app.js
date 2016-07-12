@@ -17,6 +17,9 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource'])
                     },
                     'content': {
                         template: '<graph></graph>'
+                    },
+                    'sidenav' : {
+                        template: '<settings></settings>'
                     }
                 }
 
