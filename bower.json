@@ -13,6 +13,7 @@
     "angular-material": "^1.1.0",
     "jquery": "^2.2.4",
     "cytoscape-cxtmenu": "^2.8.0",
-    "angular-resource": "^1.5.7"
+    "angular-resource": "^1.5.7",
+    "angular-ui-router": "^0.3.1"
   }
 }

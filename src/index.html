@@ -17,10 +17,16 @@
 
 <body ng-app="app">
 
-  <main></main>
+  <div class="container" layout="column">
+    <md-toolbar class="md-whiteframe-4dp">
+      <div ui-view="toolbar"></div>
+    </md-toolbar>
+    <div ui-view="content"></div>
+  </div>
 
   <!-- build:js scripts/main.js -->
   <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
   <script src="../bower_components/angular-resource/angular-resource.min.js"></script>
   <script src="../bower_components/angular-messages/angular-messages.min.js"></script>
   <script src="../bower_components/angular-animate/angular-animate.min.js"></script>
@@ -29,12 +35,11 @@
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/cytoscape/dist/cytoscape.min.js"></script>
   <script src="../bower_components/cytoscape-cxtmenu/cytoscape-cxtmenu.js"></script>
-  <script src="lib/angular_1_router.js"></script>
   <script src="app/app.js"></script>
   <script src="app/graph.js"></script>
   <script src="app/graph_computations.js"></script>
   <script src="app/data_provider.js"></script>
-  <script src="app/main.component.js"></script>
+  <script src="app/toolbar.component.js"></script>
   <script src="app/graph.component.js"></script>
   <script src="app/test.component.js"></script>
   <script src="app/settings.component.js"></script>
