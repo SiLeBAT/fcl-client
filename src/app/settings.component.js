@@ -3,7 +3,11 @@
 /*global angular*/
 
 angular.module('app').component('settings', {
-    controller: function(graph) {
+    controller: function(graph, dataProvider) {
+        dataProvider.get(function(data) {
+            graph.init(data);
+        });
+        
         var ctrl = this;
 
         ctrl.nodeSizes = {

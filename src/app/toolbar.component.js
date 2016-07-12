@@ -3,12 +3,10 @@
 /*global angular*/
 
 angular.module('app').component('toolbar', {
-    controller: function($mdSidenav) {
+    controller: function($state) {
         var ctrl = this;
 
-        ctrl.toogleList = function() {
-            $mdSidenav('sidenav').toggle();
-        };
+        ctrl.currentNavItem = $state.current.name;
     },
     templateUrl: 'app/toolbar.component.html'
 });

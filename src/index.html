@@ -18,11 +18,11 @@
 <body ng-app="app" layout="column">
 
   <md-toolbar class="md-whiteframe-4dp">
-    <div ui-view="toolbar"></div>
+    <toolbar></toolbar>
   </md-toolbar>
 
   <div class="container" layout="row" flex>
-    <md-sidenav md-component-id="sidenav" class="md-whiteframe-4dp" md-is-locked-open="$mdMedia('gt-sm')">
+    <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
       <div ui-view="sidenav"></div>
     </md-sidenav>
     <md-content flex>
@@ -46,7 +46,6 @@
   <script src="app/graph_computations.js"></script>
   <script src="app/data_provider.js"></script>
   <script src="app/toolbar.component.js"></script>
-  <script src="app/graph.component.js"></script>
   <script src="app/test.component.js"></script>
   <script src="app/settings.component.js"></script>
   <script src="app/dialogs/toolbar.component.js"></script>
