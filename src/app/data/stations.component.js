@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').component('test', {
+angular.module('app').component('stations', {
     bindings: {},
     controller: function(dataService) {
         var ctrl = this;
@@ -17,5 +17,5 @@ angular.module('app').component('test', {
         
         ctrl.order = "data.id";
     },
-    templateUrl: 'app/test.component.html'
+    templateUrl: 'app/data/stations.component.html'
 });

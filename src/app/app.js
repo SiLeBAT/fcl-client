@@ -19,11 +19,11 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource', 'md.data.table']
                     }
                 }
             })
-            .state('test', {
-                url: '/test',
+            .state('stations', {
+                url: '/stations',
                 views: {
                     'content': {
-                        template: '<test></test>'
+                        template: '<stations></stations>'
                     }
                 }
             });
