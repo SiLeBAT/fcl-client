@@ -2,7 +2,7 @@
 
 /*global angular, $*/
 
-angular.module('app').service('graphComputations', function() {
+angular.module('app').service('tracing', function() {
 
     var comp = this;
 

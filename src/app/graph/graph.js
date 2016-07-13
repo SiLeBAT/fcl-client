@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape, $*/
 
-angular.module('app').service('graph', function(graphComputations, $mdDialog) {
+angular.module('app').service('graph', function(tracing, $mdDialog) {
 
   var graph = this;
 
@@ -94,7 +94,7 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
     addGraphContextMenu(data);
     addStationContextMenu();
     addDeliveryContextMenu();
-    graphComputations.init(cy);
+    tracing.init(cy);
   };
 
   graph.setNodeSize = function(size) {
@@ -156,18 +156,18 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
         content: 'Show Forward Trace',
         select: function(station) {
           cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showStationForwardTrace(station);
+            tracing.clearForwardTrace();
+            tracing.clearBackwardTrace();
+            tracing.showStationForwardTrace(station);
           });
         }
       }, {
         content: 'Show Backward Trace',
         select: function(station) {
           cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showStationBackwardTrace(station);
+            tracing.clearForwardTrace();
+            tracing.clearBackwardTrace();
+            tracing.showStationBackwardTrace(station);
           });
         }
       }]
@@ -181,18 +181,18 @@ angular.module('app').service('graph', function(graphComputations, $mdDialog) {
         content: 'Show Forward Trace',
         select: function(delivery) {
           cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showDeliveryForwardTrace(delivery);
+            tracing.clearForwardTrace();
+            tracing.clearBackwardTrace();
+            tracing.showDeliveryForwardTrace(delivery);
           });
         }
       }, {
         content: 'Show Backward Trace',
         select: function(delivery) {
           cy.batch(function() {
-            graphComputations.clearForwardTrace();
-            graphComputations.clearBackwardTrace();
-            graphComputations.showDeliveryBackwardTrace(delivery);
+            tracing.clearForwardTrace();
+            tracing.clearBackwardTrace();
+            tracing.showDeliveryBackwardTrace(delivery);
           });
         }
       }]
