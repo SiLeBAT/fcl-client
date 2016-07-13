@@ -14,6 +14,8 @@ angular.module('app').component('test', {
             ctrl.stations = data.stations;
             ctrl.deliveries = data.deliveries;
         });
+        
+        ctrl.order = "data.id";
     },
     templateUrl: 'app/test.component.html'
 });

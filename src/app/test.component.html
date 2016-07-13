@@ -1,5 +1,18 @@
-<md-list>
-    <md-list-item ng-repeat="station in $ctrl.stations" class="noright">
-        <p>{{station.data.name}}</p>
-    </md-list-item>
-</md-list>
+<md-table-container>
+    <table md-table>
+        <thead md-head md-order="$ctrl.order">
+            <tr md-row>
+                <th md-column md-order-by="data.id"><span>ID</span></th>
+                <th md-column md-order-by="data.name"><span>Name</span></th>
+                <th md-column md-order-by="data.type"><span>Type</span></th>
+            </tr>
+        </thead>
+        <tbody md-body>
+            <tr md-row md-select="station" ng-repeat="station in $ctrl.stations | orderBy:$ctrl.order">
+                <td md-cell>{{station.data.id}}</td>
+                <td md-cell>{{station.data.name}}</td>
+                <td md-cell>{{station.data.type}}</td>
+            </tr>
+        </tbody>
+    </table>
+</md-table-container>
