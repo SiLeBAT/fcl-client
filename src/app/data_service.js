@@ -2,7 +2,28 @@
 
 /*global angular*/
 
-angular.module('app').factory('dataProvider', function($resource) {
+angular.module('app').service('dataService', function($q, $resource) {
+
+    var srvc = this;
+
+    var data;
+
+    srvc.getData = function() {
+        var deferred = $q.defer();
+
+        if (data !== undefined) {
+            deferred.resolve(data);
+        }
+        else {
+            $resource('data/small_network.json').get(function(d) {
+                data = d;
+                deferred.resolve(data);
+            });
+        }
+
+        return deferred.promise;
+    };
+
     // var authent = btoa('bfr_test:Ifupofetu843');
 
     // $.ajax({
@@ -21,7 +42,6 @@ angular.module('app').factory('dataProvider', function($resource) {
     //     }
     // });
 
-    return $resource('data/small_network.json');
     // return $resource('https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json', {}, {
     //     login: {
     //         method: 'GET',

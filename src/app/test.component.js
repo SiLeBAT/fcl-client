@@ -4,13 +4,13 @@
 
 angular.module('app').component('test', {
     bindings: {},
-    controller: function(dataProvider) {
+    controller: function(dataService) {
         var ctrl = this;
 
         ctrl.stations = {};
         ctrl.deliveries = {};
 
-        dataProvider.get(function(data) {
+        dataService.getData().then(function(data) {
             ctrl.stations = data.stations;
             ctrl.deliveries = data.deliveries;
         });
