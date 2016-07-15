@@ -9,19 +9,17 @@ angular.module('app').service('dataService', function($q, $resource) {
     var data;
 
     srvc.getData = function() {
-        var deferred = $q.defer();
-
-        if (data !== undefined) {
-            deferred.resolve(data);
-        }
-        else {
-            $resource('data/small_network.json').get(function(d) {
-                data = d;
-                deferred.resolve(data);
-            });
-        }
-
-        return deferred.promise;
+        return $q(function(resolve, reject) {
+            if (data !== undefined) {
+                resolve(data);
+            }
+            else {
+                $resource('data/small_network.json').get(function(d) {
+                    data = d;
+                    resolve(data);
+                });
+            }
+        });
     };
 
     // var authent = btoa('bfr_test:Ifupofetu843');
