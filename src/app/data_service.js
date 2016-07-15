@@ -14,9 +14,11 @@ angular.module('app').service('dataService', function($q, $resource) {
                 resolve(data);
             }
             else {
-                $resource('data/small_network.json').get(function(d) {
-                    data = d;
+                $resource('data/small_network.json').get(function(response) {
+                    data = response;
                     resolve(data);
+                }, function(error) {
+                    reject(error);
                 });
             }
         });
