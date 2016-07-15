@@ -8,7 +8,7 @@
             </tr>
         </thead>
         <tbody md-body>
-            <tr md-row md-select="station" ng-repeat="station in $ctrl.stations | orderBy:$ctrl.order">
+            <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order">
                 <td md-cell>{{station.data.id}}</td>
                 <td md-cell>{{station.data.name}}</td>
                 <td md-cell>{{station.data.type}}</td>

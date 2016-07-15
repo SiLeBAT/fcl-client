@@ -1,0 +1,18 @@
+<md-table-container>
+    <table md-table>
+        <thead md-head md-order="$ctrl.order">
+            <tr md-row>
+                <th md-column md-order-by="data.id"><span>ID</span></th>
+                <th md-column md-order-by="data.source"><span>Source</span></th>
+                <th md-column md-order-by="data.target"><span>Target</span></th>
+            </tr>
+        </thead>
+        <tbody md-body>
+            <tr md-row ng-repeat="delivery in $ctrl.deliveries | orderBy: $ctrl.order">
+                <td md-cell>{{delivery.data.id}}</td>
+                <td md-cell>{{delivery.data.source}}</td>
+                <td md-cell>{{delivery.data.target}}</td>
+            </tr>
+        </tbody>
+    </table>
+</md-table-container>

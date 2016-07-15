@@ -26,6 +26,14 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource', 'md.data.table']
                         template: '<stations></stations>'
                     }
                 }
+            })
+            .state('deliveries', {
+                url: '/deliveries',
+                views: {
+                    'content': {
+                        template: '<deliveries></deliveries>'
+                    }
+                }
             });
 
         $urlRouterProvider.otherwise('/');
