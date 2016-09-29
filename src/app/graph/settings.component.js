@@ -4,9 +4,14 @@
 
 angular.module('app').component('settings', {
     controller: function(graph, dataService) {
-        dataService.getData().then(function(data) {
-            graph.init(data);
-        });
+        if (graph.getJson() !== undefined) {
+            graph.initFromJson(graph.getJson());
+        }
+        else {
+            dataService.getData().then(function(data) {
+                graph.init(data);
+            });
+        }
 
         var ctrl = this;
 

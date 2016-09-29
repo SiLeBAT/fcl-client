@@ -6,7 +6,53 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
 
   var graph = this;
 
+  var style = cytoscape.stylesheet()
+    .selector('node')
+    .css({
+      'content': 'data(name)',
+      'height': '50',
+      'width': '50',
+      'background-color': '#FFFFFF',
+      'border-width': 3,
+      'border-color': '#000000',
+      'text-valign': 'bottom',
+      'text-halign': 'right',
+      'color': '#000000'
+    })
+    .selector('edge')
+    .css({
+      'target-arrow-shape': 'triangle',
+      'width': 6,
+      'line-color': '#000000',
+      'target-arrow-color': '#FF0000',
+      'curve-style': 'bezier'
+    })
+    .selector('node:selected')
+    .css({
+      'background-color': '#8080FF',
+      'border-width': 6,
+      'border-color': '#0000FF',
+      'color': '#0000FF'
+    })
+    .selector('edge:selected')
+    .css({
+      'width': 12,
+      'line-color': '#00FF00',
+      'target-arrow-color': '#FF0000'
+    }).selector('node[?forward], node[?backward]')
+    .css({
+      'background-color': '#00FF00'
+    }).selector('node:selected[?forward], node:selected[?backward]')
+    .css({
+      'background-color': '#008080'
+    }).selector('edge[?forward], edge[?backward]')
+    .css({
+      'line-color': '#00FF00'
+    });
+
   var cy;
+
+  var elements;
 
   var fontSize;
 
@@ -14,49 +60,7 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     cy = cytoscape({
       container: $('#graph')[0],
 
-      style: cytoscape.stylesheet()
-        .selector('node')
-        .css({
-          'content': 'data(name)',
-          'height': '50',
-          'width': '50',
-          'background-color': '#FFFFFF',
-          'border-width': 3,
-          'border-color': '#000000',
-          'text-valign': 'bottom',
-          'text-halign': 'right',
-          'color': '#000000'
-        })
-        .selector('edge')
-        .css({
-          'target-arrow-shape': 'triangle',
-          'width': 6,
-          'line-color': '#000000',
-          'target-arrow-color': '#FF0000',
-          'curve-style': 'bezier'
-        })
-        .selector('node:selected')
-        .css({
-          'background-color': '#8080FF',
-          'border-width': 6,
-          'border-color': '#0000FF',
-          'color': '#0000FF'
-        })
-        .selector('edge:selected')
-        .css({
-          'width': 12,
-          'line-color': '#00FF00',
-          'target-arrow-color': '#FF0000'
-        }).selector('node[?forward], node[?backward]')
-        .css({
-          'background-color': '#00FF00'
-        }).selector('node:selected[?forward], node:selected[?backward]')
-        .css({
-          'background-color': '#008080'
-        }).selector('edge[?forward], edge[?backward]')
-        .css({
-          'line-color': '#00FF00'
-        }),
+      style: style,
 
       layout: {
         name: 'cose-bilkent'
@@ -93,6 +97,45 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
         tracing.init(cy);
       }
     });
+  };
+
+  graph.initFromJson = function(json) {
+    console.log(json.zoom);
+    cy = cytoscape({
+      container: $('#graph')[0],
+
+      style: style,
+      layout: {
+        name: 'preset'
+      },
+
+      elements: json.elements,
+      zoom: json.zoom,
+      pan: json.pan,
+      minZoom: json.minZoom,
+      maxZoom: json.maxZoom,
+      wheelSensitivity: json.wheelSensitivity,
+
+      ready: function() {
+        cy.on('zoom', function(event) {
+          graph.setFontSize(fontSize);
+        });
+
+        addGraphContextMenu();
+        addStationContextMenu();
+        addDeliveryContextMenu();
+        tracing.init(cy);
+      }
+    });
+  };
+
+  graph.getJson = function() {
+    if (cy !== undefined) {
+      return cy.json();
+    }
+    else {
+      return undefined;
+    }
   };
 
   graph.setNodeSize = function(size) {
