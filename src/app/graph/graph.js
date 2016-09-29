@@ -79,22 +79,20 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       wheelSensitivity: 0.5,
 
       ready: function() {
-        graph.setFontSize(12);
-
         cy.batch(function() {
           addRelationsDataToDeliveries(data.deliveriesRelations);
         });
+        cy.on('zoom', function(event) {
+          graph.setFontSize(fontSize);
+        });
+
+        graph.setFontSize(12);
+        addGraphContextMenu();
+        addStationContextMenu();
+        addDeliveryContextMenu();
+        tracing.init(cy);
       }
     });
-
-    cy.on('zoom', function(event) {
-      graph.setFontSize(fontSize);
-    });
-
-    addGraphContextMenu(data);
-    addStationContextMenu();
-    addDeliveryContextMenu();
-    tracing.init(cy);
   };
 
   graph.setNodeSize = function(size) {
@@ -112,7 +110,7 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     });
   };
 
-  var addGraphContextMenu = function(data) {
+  var addGraphContextMenu = function() {
     cy.cxtmenu({
       selector: 'core',
       commands: [{
@@ -131,7 +129,10 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
             parent: angular.element(document.body),
             clickOutsideToClose: true
           }).then(function(layout) {
-            cy.layout({ name: layout, animate: true });
+            cy.layout({
+              name: layout,
+              animate: true
+            });
           });
         }
       }, {
@@ -139,11 +140,11 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
         select: function() {
           $mdDialog.show({
             controller: function($scope) {
-              $scope.data = data;
+              $scope.deliveries = cy.edges().data();
             },
             template: '<md-dialog aria-label="Data">' +
               '<md-toolbar><dialog-toolbar title="Deliveries"></dialog-toolbar></md-toolbar>' +
-              '<md-dialog-content><dialog-content elements="data.deliveries"></dialog-content></md-dialog-content>' +
+              '<md-dialog-content><dialog-content elements="deliveries"></dialog-content></md-dialog-content>' +
               '</md-dialog>',
             parent: angular.element(document.body),
             clickOutsideToClose: true
