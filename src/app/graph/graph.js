@@ -116,28 +116,33 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     cy.cxtmenu({
       selector: 'core',
       commands: [{
-        content: 'Show Station Data',
+        content: 'Apply Layout',
         select: function() {
           $mdDialog.show({
             controller: function($scope) {
-              $scope.data = data;
+              $scope.select = function(layout) {
+                $mdDialog.hide(layout);
+              };
             },
-            template: '<md-dialog aria-label="Stations">' +
-              '<md-toolbar><dialog-toolbar title="Stations"></dialog-toolbar></md-toolbar>' +
-              '<md-dialog-content><dialog-content elements="data.stations"></dialog-content></md-dialog-content>' +
+            template: '<md-dialog aria-label="Apply Layout">' +
+              '<md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>' +
+              '<md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>' +
               '</md-dialog>',
             parent: angular.element(document.body),
             clickOutsideToClose: true
+          }).then(function(layout) {
+            cy.layout({ name: layout });
+          }, function() {
           });
         }
       }, {
-        content: 'Show Delivery Data',
+        content: 'Show Data',
         select: function() {
           $mdDialog.show({
             controller: function($scope) {
               $scope.data = data;
             },
-            template: '<md-dialog aria-label="Deliveries">' +
+            template: '<md-dialog aria-label="Data">' +
               '<md-toolbar><dialog-toolbar title="Deliveries"></dialog-toolbar></md-toolbar>' +
               '<md-dialog-content><dialog-content elements="data.deliveries"></dialog-content></md-dialog-content>' +
               '</md-dialog>',
