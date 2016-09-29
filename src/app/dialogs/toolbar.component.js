@@ -10,7 +10,7 @@ angular.module('app').component('dialogToolbar', {
         var ctrl = this;
 
         ctrl.closeDialog = function() {
-            $mdDialog.hide();
+            $mdDialog.cancel();
         };
     },
     templateUrl: 'app/dialogs/toolbar.component.html'

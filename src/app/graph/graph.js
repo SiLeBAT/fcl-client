@@ -59,7 +59,7 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
         }),
 
       layout: {
-        name: 'cose'
+        name: 'cose-bilkent'
       },
 
       elements: {
@@ -131,8 +131,7 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
             parent: angular.element(document.body),
             clickOutsideToClose: true
           }).then(function(layout) {
-            cy.layout({ name: layout });
-          }, function() {
+            cy.layout({ name: layout, animate: true });
           });
         }
       }, {
