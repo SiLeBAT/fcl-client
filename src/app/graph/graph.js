@@ -50,6 +50,94 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       'line-color': '#00FF00'
     });
 
+  var contextMenu = {
+    selector: 'core',
+    commands: [{
+      content: 'Apply Layout',
+      select: function() {
+        $mdDialog.show({
+          controller: function($scope) {
+            $scope.select = function(layout) {
+              $mdDialog.hide(layout);
+            };
+          },
+          template: '<md-dialog aria-label="Apply Layout">' +
+            '<md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>' +
+            '<md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>' +
+            '</md-dialog>',
+          parent: angular.element(document.body),
+          clickOutsideToClose: true
+        }).then(function(layout) {
+          cy.layout({
+            name: layout,
+            animate: true
+          });
+        });
+      }
+    }, {
+      content: 'Show Data',
+      select: function() {
+        $mdDialog.show({
+          controller: function($scope) {
+            $scope.deliveries = cy.edges().data();
+          },
+          template: '<md-dialog aria-label="Data">' +
+            '<md-toolbar><dialog-toolbar title="Deliveries"></dialog-toolbar></md-toolbar>' +
+            '<md-dialog-content><dialog-content elements="deliveries"></dialog-content></md-dialog-content>' +
+            '</md-dialog>',
+          parent: angular.element(document.body),
+          clickOutsideToClose: true
+        });
+      }
+    }]
+  };
+
+  var stationContextMenu = {
+    selector: 'node',
+    commands: [{
+      content: 'Show Forward Trace',
+      select: function(station) {
+        cy.batch(function() {
+          tracing.clearForwardTrace();
+          tracing.clearBackwardTrace();
+          tracing.showStationForwardTrace(station);
+        });
+      }
+    }, {
+      content: 'Show Backward Trace',
+      select: function(station) {
+        cy.batch(function() {
+          tracing.clearForwardTrace();
+          tracing.clearBackwardTrace();
+          tracing.showStationBackwardTrace(station);
+        });
+      }
+    }]
+  };
+
+  var deliveryContextMenu = {
+    selector: 'edge',
+    commands: [{
+      content: 'Show Forward Trace',
+      select: function(delivery) {
+        cy.batch(function() {
+          tracing.clearForwardTrace();
+          tracing.clearBackwardTrace();
+          tracing.showDeliveryForwardTrace(delivery);
+        });
+      }
+    }, {
+      content: 'Show Backward Trace',
+      select: function(delivery) {
+        cy.batch(function() {
+          tracing.clearForwardTrace();
+          tracing.clearBackwardTrace();
+          tracing.showDeliveryBackwardTrace(delivery);
+        });
+      }
+    }]
+  };
+
   var cy;
 
   var fontSize;
@@ -73,51 +161,47 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       wheelSensitivity: 0.5,
 
       ready: function() {
-        cy.batch(function() {
-          addRelationsDataToDeliveries(data.deliveriesRelations);
-        });
-        cy.on('zoom', function(event) {
-          graph.setFontSize(fontSize);
-        });
-
         graph.setFontSize(12);
-        addGraphContextMenu();
-        addStationContextMenu();
-        addDeliveryContextMenu();
-        tracing.init(cy);
       }
     });
+
+    cy.batch(function() {
+      addRelationsDataToDeliveries(data.deliveriesRelations);
+    });
+    cy.on('zoom', function(event) {
+      graph.setFontSize(fontSize);
+    });
+    cy.cxtmenu(contextMenu);
+    cy.cxtmenu(stationContextMenu);
+    cy.cxtmenu(deliveryContextMenu);
+    tracing.init(cy);
   };
 
   graph.initFromJson = function(json) {
-    console.log(json.zoom);
     cy = cytoscape({
       container: $('#graph')[0],
 
       elements: json.elements,
 
       layout: {
-        name: 'preset'
+        name: 'preset',
+        zoom: json.zoom,
+        pan: json.pan
       },
 
       style: style,
       minZoom: json.minZoom,
       maxZoom: json.maxZoom,
       wheelSensitivity: json.wheelSensitivity,
-      zoom: json.zoom,
-      pan: json.pan,
-
-      ready: function() {
-        cy.on('zoom', function(event) {
-          graph.setFontSize(fontSize);
-        });
-
-        addGraphContextMenu();
-        addStationContextMenu();
-        addDeliveryContextMenu();
-        tracing.init(cy);
-      }
     });
+
+    cy.on('zoom', function(event) {
+      graph.setFontSize(fontSize);
+    });
+    cy.cxtmenu(contextMenu);
+    cy.cxtmenu(stationContextMenu);
+    cy.cxtmenu(deliveryContextMenu);
+    tracing.init(cy);
   };
 
   graph.getJson = function() {
@@ -141,100 +225,6 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
 
     cy.nodes().css({
       'font-size': Math.max(fontSize / cy.zoom(), fontSize)
-    });
-  };
-
-  var addGraphContextMenu = function() {
-    cy.cxtmenu({
-      selector: 'core',
-      commands: [{
-        content: 'Apply Layout',
-        select: function() {
-          $mdDialog.show({
-            controller: function($scope) {
-              $scope.select = function(layout) {
-                $mdDialog.hide(layout);
-              };
-            },
-            template: '<md-dialog aria-label="Apply Layout">' +
-              '<md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>' +
-              '<md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>' +
-              '</md-dialog>',
-            parent: angular.element(document.body),
-            clickOutsideToClose: true
-          }).then(function(layout) {
-            cy.layout({
-              name: layout,
-              animate: true
-            });
-          });
-        }
-      }, {
-        content: 'Show Data',
-        select: function() {
-          $mdDialog.show({
-            controller: function($scope) {
-              $scope.deliveries = cy.edges().data();
-            },
-            template: '<md-dialog aria-label="Data">' +
-              '<md-toolbar><dialog-toolbar title="Deliveries"></dialog-toolbar></md-toolbar>' +
-              '<md-dialog-content><dialog-content elements="deliveries"></dialog-content></md-dialog-content>' +
-              '</md-dialog>',
-            parent: angular.element(document.body),
-            clickOutsideToClose: true
-          });
-        }
-      }]
-    });
-  };
-
-  var addStationContextMenu = function() {
-    cy.cxtmenu({
-      selector: 'node',
-      commands: [{
-        content: 'Show Forward Trace',
-        select: function(station) {
-          cy.batch(function() {
-            tracing.clearForwardTrace();
-            tracing.clearBackwardTrace();
-            tracing.showStationForwardTrace(station);
-          });
-        }
-      }, {
-        content: 'Show Backward Trace',
-        select: function(station) {
-          cy.batch(function() {
-            tracing.clearForwardTrace();
-            tracing.clearBackwardTrace();
-            tracing.showStationBackwardTrace(station);
-          });
-        }
-      }]
-    });
-  };
-
-  var addDeliveryContextMenu = function() {
-    cy.cxtmenu({
-      selector: 'edge',
-      commands: [{
-        content: 'Show Forward Trace',
-        select: function(delivery) {
-          cy.batch(function() {
-            tracing.clearForwardTrace();
-            tracing.clearBackwardTrace();
-            tracing.showDeliveryForwardTrace(delivery);
-          });
-        }
-      }, {
-        content: 'Show Backward Trace',
-        select: function(delivery) {
-          cy.batch(function() {
-            tracing.clearForwardTrace();
-            tracing.clearBackwardTrace();
-            tracing.showDeliveryBackwardTrace(delivery);
-          });
-        }
-      }]
     });
   };
 
