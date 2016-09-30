@@ -52,34 +52,24 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
 
   var cy;
 
-  var elements;
-
   var fontSize;
 
   graph.init = function(data) {
     cy = cytoscape({
       container: $('#graph')[0],
 
-      style: style,
-
-      layout: {
-        name: 'cose-bilkent'
-      },
-
       elements: {
         nodes: data.stations,
         edges: data.deliveries
       },
 
-      zoom: 1,
-      pan: {
-        x: 0,
-        y: 0
+      layout: {
+        name: 'cose-bilkent'
       },
 
+      style: style,
       minZoom: 0.3,
       maxZoom: 3,
-
       wheelSensitivity: 0.5,
 
       ready: function() {
@@ -104,17 +94,18 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     cy = cytoscape({
       container: $('#graph')[0],
 
-      style: style,
+      elements: json.elements,
+
       layout: {
         name: 'preset'
       },
 
-      elements: json.elements,
-      zoom: json.zoom,
-      pan: json.pan,
+      style: style,
       minZoom: json.minZoom,
       maxZoom: json.maxZoom,
       wheelSensitivity: json.wheelSensitivity,
+      zoom: json.zoom,
+      pan: json.pan,
 
       ready: function() {
         cy.on('zoom', function(event) {
