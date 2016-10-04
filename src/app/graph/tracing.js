@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular, $*/
+/*global angular*/
 
 angular.module('app').service('tracing', function() {
 
@@ -8,8 +8,8 @@ angular.module('app').service('tracing', function() {
 
     var cy;
 
-    comp.init = function(cyGraph) {
-        cy = cyGraph;
+    comp.init = function(cytoscape) {
+        cy = cytoscape;
     };
 
     comp.clearForwardTrace = function() {

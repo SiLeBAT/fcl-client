@@ -139,7 +139,6 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
   };
 
   var cy;
-
   var fontSize;
 
   graph.init = function(data) {
@@ -156,18 +155,11 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       },
 
       style: style,
-      minZoom: 0.3,
-      maxZoom: 3,
+      minZoom: 0.1,
+      maxZoom: 10,
       wheelSensitivity: 0.5,
-
-      ready: function() {
-        graph.setFontSize(12);
-      }
     });
 
-    cy.batch(function() {
-      addRelationsDataToDeliveries(data.deliveriesRelations);
-    });
     cy.on('zoom', function(event) {
       graph.setFontSize(fontSize);
     });
@@ -226,21 +218,6 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     cy.nodes().css({
       'font-size': Math.max(fontSize / cy.zoom(), fontSize)
     });
-  };
-
-  var addRelationsDataToDeliveries = function(relations) {
-    cy.edges().data('from', []);
-    cy.edges().data('to', []);
-
-    for (var i = 0, j = relations.length; i < j; i++) {
-      var from = relations[i].data.from;
-      var to = relations[i].data.to;
-      var fromDelivery = cy.$('#' + from);
-      var toDelivery = cy.$('#' + to);
-
-      fromDelivery.data('to', fromDelivery.data('to').concat(to));
-      toDelivery.data('from', toDelivery.data('from').concat(from));
-    }
   };
 
 });

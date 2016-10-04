@@ -4,39 +4,36 @@
 
 angular.module('app').component('settings', {
     controller: function(graph, dataService) {
-        if (graph.getJson() !== undefined) {
-            graph.initFromJson(graph.getJson());
-        }
-        else {
-            dataService.getData().then(function(data) {
-                graph.init(data);
-            });
-        }
-
         var ctrl = this;
 
-        ctrl.nodeSizes = {
-            Small: 50,
-            Large: 100
-        };
+        ctrl.nodeSizes = dataService.nodeSizes;
+        ctrl.fontSizes = dataService.fontSizes;
+        ctrl.nodeSize = dataService.getNodeSize();
+        ctrl.fontSize = dataService.getFontSize();
 
-        ctrl.fontSizes = {
-            Small: 12,
-            Large: 18
-        };
+        dataService.getData().then(function(data) {
+            if (graph.getJson() !== undefined) {
+                graph.initFromJson(graph.getJson());
+            }
+            else {
+                graph.init(data);
+            }
 
-        ctrl.nodeSize = ctrl.nodeSizes.Small;
-        ctrl.fontSize = ctrl.fontSizes.Small;
+            graph.setNodeSize(ctrl.nodeSize);
+            graph.setFontSize(ctrl.fontSize);
+        });
 
         ctrl.onChange = function(property, value) {
             switch (property) {
                 case "nodeSize":
                     ctrl.nodeSize = value;
                     graph.setNodeSize(value);
+                    dataService.setNodeSize(value);
                     break;
                 case "fontSize":
                     ctrl.fontSize = value;
                     graph.setFontSize(value);
+                    dataService.setFontSize(value);
                     break;
             }
         };
