@@ -10,8 +10,6 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     .selector('node')
     .css({
       'content': 'data(name)',
-      'height': '50',
-      'width': '50',
       'background-color': '#FFFFFF',
       'border-width': 3,
       'border-color': '#000000',
