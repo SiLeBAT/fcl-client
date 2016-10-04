@@ -6,6 +6,86 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
 
   var graph = this;
 
+  var cy;
+  var fontSize;
+
+  graph.initFromData = function(data) {
+    cy = cytoscape({
+      container: $('#graph')[0],
+
+      elements: {
+        nodes: data.stations,
+        edges: data.deliveries
+      },
+
+      layout: {
+        name: 'cose-bilkent'
+      },
+
+      style: style,
+      minZoom: 0.1,
+      maxZoom: 10,
+      wheelSensitivity: 0.5,
+    });
+
+    init();
+  };
+
+  graph.initFromJson = function(json) {
+    cy = cytoscape({
+      container: $('#graph')[0],
+
+      elements: json.elements,
+
+      layout: {
+        name: 'preset',
+        zoom: json.zoom,
+        pan: json.pan
+      },
+
+      style: style,
+      minZoom: json.minZoom,
+      maxZoom: json.maxZoom,
+      wheelSensitivity: json.wheelSensitivity,
+    });
+
+    init();
+  };
+
+  graph.getJson = function() {
+    if (cy !== undefined) {
+      return cy.json();
+    }
+    else {
+      return undefined;
+    }
+  };
+
+  graph.setNodeSize = function(size) {
+    cy.nodes().css({
+      'height': size,
+      'width': size
+    });
+  };
+
+  graph.setFontSize = function(size) {
+    fontSize = size;
+
+    cy.nodes().css({
+      'font-size': Math.max(fontSize / cy.zoom(), fontSize)
+    });
+  };
+
+  var init = function() {
+    cy.on('zoom', function(event) {
+      graph.setFontSize(fontSize);
+    });
+    cy.cxtmenu(contextMenu);
+    cy.cxtmenu(stationContextMenu);
+    cy.cxtmenu(deliveryContextMenu);
+    tracing.init(cy);
+  };
+
   var style = cytoscape.stylesheet()
     .selector('node')
     .css({
@@ -135,87 +215,4 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       }
     }]
   };
-
-  var cy;
-  var fontSize;
-
-  graph.init = function(data) {
-    cy = cytoscape({
-      container: $('#graph')[0],
-
-      elements: {
-        nodes: data.stations,
-        edges: data.deliveries
-      },
-
-      layout: {
-        name: 'cose-bilkent'
-      },
-
-      style: style,
-      minZoom: 0.1,
-      maxZoom: 10,
-      wheelSensitivity: 0.5,
-    });
-
-    cy.on('zoom', function(event) {
-      graph.setFontSize(fontSize);
-    });
-    cy.cxtmenu(contextMenu);
-    cy.cxtmenu(stationContextMenu);
-    cy.cxtmenu(deliveryContextMenu);
-    tracing.init(cy);
-  };
-
-  graph.initFromJson = function(json) {
-    cy = cytoscape({
-      container: $('#graph')[0],
-
-      elements: json.elements,
-
-      layout: {
-        name: 'preset',
-        zoom: json.zoom,
-        pan: json.pan
-      },
-
-      style: style,
-      minZoom: json.minZoom,
-      maxZoom: json.maxZoom,
-      wheelSensitivity: json.wheelSensitivity,
-    });
-
-    cy.on('zoom', function(event) {
-      graph.setFontSize(fontSize);
-    });
-    cy.cxtmenu(contextMenu);
-    cy.cxtmenu(stationContextMenu);
-    cy.cxtmenu(deliveryContextMenu);
-    tracing.init(cy);
-  };
-
-  graph.getJson = function() {
-    if (cy !== undefined) {
-      return cy.json();
-    }
-    else {
-      return undefined;
-    }
-  };
-
-  graph.setNodeSize = function(size) {
-    cy.nodes().css({
-      'height': size,
-      'width': size
-    });
-  };
-
-  graph.setFontSize = function(size) {
-    fontSize = size;
-
-    cy.nodes().css({
-      'font-size': Math.max(fontSize / cy.zoom(), fontSize)
-    });
-  };
-
 });

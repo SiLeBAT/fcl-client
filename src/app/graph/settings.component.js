@@ -16,7 +16,7 @@ angular.module('app').component('settings', {
                 graph.initFromJson(graph.getJson());
             }
             else {
-                graph.init(data);
+                graph.initFromData(data);
             }
 
             graph.setNodeSize(ctrl.nodeSize);
