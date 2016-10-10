@@ -3,7 +3,6 @@
 /*global angular*/
 
 angular.module('app').component('stations', {
-    bindings: {},
     controller: function(dataService) {
         var ctrl = this;
 

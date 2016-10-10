@@ -1,22 +1,24 @@
-<md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
-</md-sidenav>
-<md-content flex>
-    <md-table-container>
-        <table md-table>
-            <thead md-head md-order="$ctrl.order">
-                <tr md-row>
-                    <th md-column md-order-by="data.id"><span>ID</span></th>
-                    <th md-column md-order-by="data.name"><span>Name</span></th>
-                    <th md-column md-order-by="data.type"><span>Type</span></th>
-                </tr>
-            </thead>
-            <tbody md-body>
-                <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order">
-                    <td md-cell>{{station.data.id}}</td>
-                    <td md-cell>{{station.data.name}}</td>
-                    <td md-cell>{{station.data.type}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </md-table-container>
-</md-content>
+<div class="container" layout="row" flex>
+    <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
+    </md-sidenav>
+    <md-content flex>
+        <md-table-container>
+            <table md-table>
+                <thead md-head md-order="$ctrl.order">
+                    <tr md-row>
+                        <th md-column md-order-by="data.id"><span>ID</span></th>
+                        <th md-column md-order-by="data.name"><span>Name</span></th>
+                        <th md-column md-order-by="data.type"><span>Type</span></th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order">
+                        <td md-cell>{{station.data.id}}</td>
+                        <td md-cell>{{station.data.name}}</td>
+                        <td md-cell>{{station.data.type}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+    </md-content>
+</div>

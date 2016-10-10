@@ -1,9 +1,11 @@
-<md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
-    <md-content layout-fill>
-        <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
-        <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
+<div class="container" layout="row" flex>
+    <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
+        <md-content layout-fill>
+            <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
+            <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
+        </md-content>
+    </md-sidenav>
+    <md-content flex>
+        <div id="graph"></div>
     </md-content>
-</md-sidenav>
-<md-content flex>
-    <div id="graph"></div>
-</md-content>
+</div>
