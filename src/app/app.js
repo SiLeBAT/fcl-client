@@ -10,7 +10,7 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource', 'md.data.table']
         $stateProvider
             .state('graph', {
                 url: '/',
-                template: '<settings></settings>'
+                template: '<graph></graph>'
             })
             .state('stations', {
                 url: '/stations',

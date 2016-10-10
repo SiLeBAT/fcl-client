@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').component('settings', {
+angular.module('app').component('graph', {
     controller: function(graph, dataService) {
         var ctrl = this;
 
@@ -38,5 +38,5 @@ angular.module('app').component('settings', {
             graph.setFontSize(ctrl.fontSize);
         });
     },
-    templateUrl: 'app/graph/settings.component.html'
+    templateUrl: 'app/graph/graph.component.html'
 });
