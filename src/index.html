@@ -23,13 +23,7 @@
     <toolbar></toolbar>
   </md-toolbar>
 
-  <div class="container" layout="row" flex>
-    <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
-      <div ui-view="sidenav"></div>
-    </md-sidenav>
-    <md-content flex>
-      <div ui-view="content"></div>
-    </md-content>
+  <div class="container ui-view-component-fix" flex ui-view>
   </div>
 
   <!-- build:js scripts/main.js -->

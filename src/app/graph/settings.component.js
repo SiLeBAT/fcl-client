@@ -11,18 +11,6 @@ angular.module('app').component('settings', {
         ctrl.nodeSize = dataService.getNodeSize();
         ctrl.fontSize = dataService.getFontSize();
 
-        dataService.getData().then(function(data) {
-            if (graph.getJson() !== undefined) {
-                graph.initFromJson(graph.getJson());
-            }
-            else {
-                graph.initFromData(data);
-            }
-
-            graph.setNodeSize(ctrl.nodeSize);
-            graph.setFontSize(ctrl.fontSize);
-        });
-
         ctrl.onChange = function(property, value) {
             switch (property) {
                 case "nodeSize":
@@ -37,6 +25,18 @@ angular.module('app').component('settings', {
                     break;
             }
         };
+
+        dataService.getData().then(function(data) {
+            if (graph.getJson() !== undefined) {
+                graph.initFromJson(graph.getJson());
+            }
+            else {
+                graph.initFromData(data);
+            }
+
+            graph.setNodeSize(ctrl.nodeSize);
+            graph.setFontSize(ctrl.fontSize);
+        });
     },
     templateUrl: 'app/graph/settings.component.html'
 });

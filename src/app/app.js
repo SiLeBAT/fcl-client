@@ -10,30 +10,15 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource', 'md.data.table']
         $stateProvider
             .state('graph', {
                 url: '/',
-                views: {
-                    'content': {
-                        template: '<div id="graph"></div>'
-                    },
-                    'sidenav': {
-                        template: '<settings></settings>'
-                    }
-                }
+                template: '<settings></settings>'
             })
             .state('stations', {
                 url: '/stations',
-                views: {
-                    'content': {
-                        template: '<stations></stations>'
-                    }
-                }
+                template: '<stations></stations>'
             })
             .state('deliveries', {
                 url: '/deliveries',
-                views: {
-                    'content': {
-                        template: '<deliveries></deliveries>'
-                    }
-                }
+                template: '<deliveries></deliveries>'
             });
 
         $urlRouterProvider.otherwise('/');
