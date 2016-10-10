@@ -153,19 +153,9 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
         });
       }
     }, {
-      content: 'Show Data',
+      content: 'Zoom to Graph',
       select: function() {
-        $mdDialog.show({
-          controller: function($scope) {
-            $scope.deliveries = cy.edges().data();
-          },
-          template: '<md-dialog aria-label="Data">' +
-            '<md-toolbar><dialog-toolbar title="Deliveries"></dialog-toolbar></md-toolbar>' +
-            '<md-dialog-content><dialog-content elements="deliveries"></dialog-content></md-dialog-content>' +
-            '</md-dialog>',
-          parent: angular.element(document.body),
-          clickOutsideToClose: true
-        });
+        cy.fit();
       }
     }]
   };
