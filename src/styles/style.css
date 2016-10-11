@@ -11,3 +11,7 @@
     height: 100%;
     display: flex;
 }
+
+.green {
+    background-color: #00FF00;
+}

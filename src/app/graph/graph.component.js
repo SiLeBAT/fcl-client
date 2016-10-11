@@ -27,8 +27,10 @@ angular.module('app').component('graph', {
         };
 
         dataService.getData().then(function(data) {
-            if (graph.getJson() !== undefined) {
-                graph.initFromJson(graph.getJson());
+            var json = graph.getJson();
+            
+            if (json !== undefined) {
+                graph.initFromJson(graph.getJson(), data);
             }
             else {
                 graph.initFromData(data);

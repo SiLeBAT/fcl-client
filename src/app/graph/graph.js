@@ -31,14 +31,22 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     init();
   };
 
-  graph.initFromJson = function(json) {
+  graph.initFromJson = function(json, data) {
     cy = cytoscape({
       container: $('#graph')[0],
 
-      elements: json.elements,
+      elements: {
+        nodes: data.stations,
+        edges: data.deliveries
+      },
 
       layout: {
         name: 'preset',
+        positions: function(node) {
+          return json.elements.nodes.find(function(n) {
+            return n.data.id === node.id();
+          }).position;
+        },
         zoom: json.zoom,
         pan: json.pan
       },

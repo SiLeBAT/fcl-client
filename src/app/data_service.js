@@ -53,18 +53,17 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     var preprocessData = function(rawData) {
+        var deliveriesById = {};
+
         rawData.deliveries.forEach(function(d) {
             d.data.from = [];
             d.data.to = [];
+            deliveriesById[d.data.id] = d;
         });
 
         rawData.deliveriesRelations.forEach(function(r) {
-            var from = rawData.deliveries.find(function(d) {
-                return d.data.id === r.data.from;
-            });
-            var to = rawData.deliveries.find(function(d) {
-                return d.data.id === r.data.to;
-            });
+            var from = deliveriesById[r.data.from];
+            var to = deliveriesById[r.data.to];
 
             from.data.to = from.data.to.concat(r.data.to);
             to.data.from = to.data.from.concat(r.data.from);
