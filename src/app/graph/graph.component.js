@@ -3,7 +3,7 @@
 /*global angular*/
 
 angular.module('app').component('graph', {
-    controller: function(graph, dataService) {
+    controller: function(graphService, dataService) {
         var ctrl = this;
 
         ctrl.nodeSizes = dataService.nodeSizes;
@@ -15,27 +15,21 @@ angular.module('app').component('graph', {
             switch (property) {
                 case "nodeSize":
                     ctrl.nodeSize = value;
-                    graph.setNodeSize(value);
+                    graphService.setNodeSize(value);
                     dataService.setNodeSize(value);
                     break;
                 case "fontSize":
                     ctrl.fontSize = value;
-                    graph.setFontSize(value);
+                    graphService.setFontSize(value);
                     dataService.setFontSize(value);
                     break;
             }
         };
 
         dataService.getData().then(function(data) {
-            if (graph.getJson() !== undefined) {
-                graph.initFromJson(graph.getJson(), data);
-            }
-            else {
-                graph.initFromData(data);
-            }
-
-            graph.setNodeSize(ctrl.nodeSize);
-            graph.setFontSize(ctrl.fontSize);
+            graphService.init(data);
+            graphService.setNodeSize(ctrl.nodeSize);
+            graphService.setFontSize(ctrl.fontSize);
         });
     },
     templateUrl: 'app/graph/graph.component.html'

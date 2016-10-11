@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').service('tracing', function() {
+angular.module('app').service('tracingService', function() {
 
     var comp = this;
 

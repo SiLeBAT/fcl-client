@@ -2,71 +2,69 @@
 
 /*global angular, cytoscape, $*/
 
-angular.module('app').service('graph', function(tracing, $mdDialog) {
+angular.module('app').service('graphService', function(tracingService, $mdDialog) {
 
   var graph = this;
 
   var cy;
   var fontSize;
 
-  graph.initFromData = function(data) {
-    cy = cytoscape({
-      container: $('#graph')[0],
+  graph.init = function(data) {
+    if (cy === undefined) {
+      cy = cytoscape({
+        container: $('#graph')[0],
 
-      elements: {
-        nodes: data.stations,
-        edges: data.deliveries
-      },
-
-      layout: {
-        name: 'cose-bilkent'
-      },
-
-      style: style,
-      minZoom: 0.1,
-      maxZoom: 10,
-      wheelSensitivity: 0.5,
-    });
-
-    init();
-  };
-
-  graph.initFromJson = function(json, data) {
-    cy = cytoscape({
-      container: $('#graph')[0],
-
-      elements: {
-        nodes: data.stations,
-        edges: data.deliveries
-      },
-
-      layout: {
-        name: 'preset',
-        positions: function(node) {
-          return json.elements.nodes.find(function(n) {
-            return n.data.id === node.id();
-          }).position;
+        elements: {
+          nodes: data.stations,
+          edges: data.deliveries
         },
-        zoom: json.zoom,
-        pan: json.pan
-      },
 
-      style: style,
-      minZoom: json.minZoom,
-      maxZoom: json.maxZoom,
-      wheelSensitivity: json.wheelSensitivity,
-    });
+        layout: {
+          name: 'cose-bilkent'
+        },
 
-    init();
-  };
-
-  graph.getJson = function() {
-    if (cy !== undefined) {
-      return cy.json();
+        style: style,
+        minZoom: 0.1,
+        maxZoom: 10,
+        wheelSensitivity: 0.5,
+      });
     }
     else {
-      return undefined;
+      var json = cy.json();
+
+      cy = cytoscape({
+        container: $('#graph')[0],
+
+        elements: {
+          nodes: data.stations,
+          edges: data.deliveries
+        },
+
+        layout: {
+          name: 'preset',
+          positions: function(node) {
+            return json.elements.nodes.find(function(n) {
+              return n.data.id === node.id();
+            }).position;
+          },
+          zoom: json.zoom,
+          pan: json.pan
+        },
+
+        style: style,
+        minZoom: json.minZoom,
+        maxZoom: json.maxZoom,
+        wheelSensitivity: json.wheelSensitivity,
+      });
     }
+
+    cy.on('zoom', function(event) {
+      graph.setFontSize(fontSize);
+    });
+    cy.cxtmenu(contextMenu);
+    cy.cxtmenu(stationContextMenu);
+    cy.cxtmenu(deliveryContextMenu);
+    tracingService.init(cy);
   };
 
   graph.setNodeSize = function(size) {
@@ -82,16 +80,6 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
     cy.nodes().css({
       'font-size': Math.max(fontSize / cy.zoom(), fontSize)
     });
-  };
-
-  var init = function() {
-    cy.on('zoom', function(event) {
-      graph.setFontSize(fontSize);
-    });
-    cy.cxtmenu(contextMenu);
-    cy.cxtmenu(stationContextMenu);
-    cy.cxtmenu(deliveryContextMenu);
-    tracing.init(cy);
   };
 
   var style = cytoscape.stylesheet()
@@ -147,10 +135,12 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
               $mdDialog.hide(layout);
             };
           },
-          template: '<md-dialog aria-label="Apply Layout">' +
-            '<md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>' +
-            '<md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>' +
-            '</md-dialog>',
+          template: `
+            <md-dialog aria-label="Apply Layout">' 
+              <md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>
+              <md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>
+            </md-dialog>
+          `,
           parent: angular.element(document.body),
           clickOutsideToClose: true
         }).then(function(layout) {
@@ -165,6 +155,14 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       select: function() {
         cy.fit();
       }
+    }, {
+      content: 'Clear Trace',
+      select: function() {
+        cy.batch(function() {
+          tracingService.clearForwardTrace();
+          tracingService.clearBackwardTrace();
+        });
+      }
     }]
   };
 
@@ -174,18 +172,18 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       content: 'Show Forward Trace',
       select: function(station) {
         cy.batch(function() {
-          tracing.clearForwardTrace();
-          tracing.clearBackwardTrace();
-          tracing.showStationForwardTrace(station);
+          tracingService.clearForwardTrace();
+          tracingService.clearBackwardTrace();
+          tracingService.showStationForwardTrace(station);
         });
       }
     }, {
       content: 'Show Backward Trace',
       select: function(station) {
         cy.batch(function() {
-          tracing.clearForwardTrace();
-          tracing.clearBackwardTrace();
-          tracing.showStationBackwardTrace(station);
+          tracingService.clearForwardTrace();
+          tracingService.clearBackwardTrace();
+          tracingService.showStationBackwardTrace(station);
         });
       }
     }]
@@ -197,18 +195,18 @@ angular.module('app').service('graph', function(tracing, $mdDialog) {
       content: 'Show Forward Trace',
       select: function(delivery) {
         cy.batch(function() {
-          tracing.clearForwardTrace();
-          tracing.clearBackwardTrace();
-          tracing.showDeliveryForwardTrace(delivery);
+          tracingService.clearForwardTrace();
+          tracingService.clearBackwardTrace();
+          tracingService.showDeliveryForwardTrace(delivery);
         });
       }
     }, {
       content: 'Show Backward Trace',
       select: function(delivery) {
         cy.batch(function() {
-          tracing.clearForwardTrace();
-          tracing.clearBackwardTrace();
-          tracing.showDeliveryBackwardTrace(delivery);
+          tracingService.clearForwardTrace();
+          tracingService.clearBackwardTrace();
+          tracingService.showDeliveryBackwardTrace(delivery);
         });
       }
     }]
