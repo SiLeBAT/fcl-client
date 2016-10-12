@@ -1,5 +1,6 @@
 <div class="container" layout="row" flex>
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
+        <table-settings show-trace-only="$ctrl.showTraceOnly" on-toggle="$ctrl.toggle(property)"></table-settings>
     </md-sidenav>
     <md-content flex>
         <md-table-container>
@@ -12,7 +13,7 @@
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-class="station.data.forward || station.data.backward ? 'green' : ''">
+                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-class="$ctrl.isOnTrace(station) ? 'green' : ''">
                         <td md-cell>{{station.data.id}}</td>
                         <td md-cell>{{station.data.name}}</td>
                         <td md-cell>{{station.data.type}}</td>

@@ -5,12 +5,31 @@
 angular.module('app').component('stations', {
     controller: function(dataService) {
         var ctrl = this;
+        var allStations = [];
+        var getFilteredStations = function() {
+            return ctrl.showTraceOnly ? allStations.filter(ctrl.isOnTrace) : allStations;
+        };
 
-        ctrl.stations = [];
+        ctrl.stations = getFilteredStations();
         ctrl.order = "data.id";
+        ctrl.showTraceOnly = false;
+
+        ctrl.isOnTrace = function(station) {
+            return station.data.forward || station.data.backward;
+        };
+
+        ctrl.toggle = function(property) {
+            switch (property) {
+                case "showTraceOnly":
+                    ctrl.showTraceOnly = !ctrl.showTraceOnly;
+                    ctrl.stations = getFilteredStations();
+                    break;
+            }
+        };
 
         dataService.getData().then(function(data) {
-            ctrl.stations = data.stations;
+            allStations = data.stations;
+            ctrl.stations = getFilteredStations();
         });
     },
     templateUrl: 'app/data/stations.component.html'
