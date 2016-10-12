@@ -9,7 +9,7 @@
   "license": "GPL v3",
   "dependencies": {
     "angular": "^1.5.8",
-    "angular-material": "^1.1.0",
+    "angular-material": "^1.1.1",
     "angular-material-data-table": "^0.10.9",
     "angular-resource": "^1.5.8",
     "angular-ui-router": "^1.0.0",

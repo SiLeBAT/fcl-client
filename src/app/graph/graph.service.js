@@ -136,7 +136,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
             };
           },
           template: `
-            <md-dialog aria-label="Apply Layout">' 
+            <md-dialog aria-label="Apply Layout">
               <md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>
               <md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>
             </md-dialog>
