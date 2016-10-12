@@ -61,6 +61,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     cy.on('zoom', function(event) {
       graph.setFontSize(fontSize);
     });
+    cy.panzoom();
     cy.cxtmenu(contextMenu);
     cy.cxtmenu(stationContextMenu);
     cy.cxtmenu(deliveryContextMenu);
