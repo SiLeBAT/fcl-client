@@ -63,23 +63,17 @@ angular.module('app').service('dataService', function($q, $resource) {
         });
 
         rawData.deliveries.forEach(function(d) {
-            var source = stationsById[d.data.source];
-            var target = stationsById[d.data.target];
-            
-            source.data.out = source.data.out.concat(d.data.id);
-            target.data.in = target.data.in.concat(d.data.id);
-            
+            stationsById[d.data.source].data.out.push(d.data.id);
+            stationsById[d.data.target].data.in.push(d.data.id);
+
             d.data.in = [];
             d.data.out = [];
             deliveriesById[d.data.id] = d;
         });
 
         rawData.deliveriesRelations.forEach(function(r) {
-            var source = deliveriesById[r.data.source];
-            var target = deliveriesById[r.data.target];
-
-            source.data.out = source.data.out.concat(r.data.target);
-            target.data.in = target.data.in.concat(r.data.source);
+            deliveriesById[r.data.source].data.out.push(r.data.target);
+            deliveriesById[r.data.target].data.in.push(r.data.source);
         });
 
         return {

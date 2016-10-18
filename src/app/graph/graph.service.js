@@ -5,6 +5,7 @@
 angular.module('app').service('graphService', function(tracingService, $mdDialog) {
 
   var graph = this;
+  var mergeDeliveries = true;
 
   var cy;
   var fontSize;
@@ -14,10 +15,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       cy = cytoscape({
         container: $('#graph')[0],
 
-        elements: {
-          nodes: data.stations,
-          edges: data.deliveries
-        },
+        elements: dataToElements(data, mergeDeliveries),
 
         layout: {
           name: 'cose-bilkent'
@@ -35,10 +33,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       cy = cytoscape({
         container: $('#graph')[0],
 
-        elements: {
-          nodes: data.stations,
-          edges: data.deliveries
-        },
+        elements: dataToElements(data, mergeDeliveries),
 
         layout: {
           name: 'preset',
@@ -84,7 +79,46 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   };
 
   graph.updateData = function() {
-    cy.$().data('update', true);
+    cy.elements().data('update', true);
+  };
+
+  var dataToElements = function(data, mergeDeliveries) {
+    if (mergeDeliveries) {
+      var sourceTargetMap = new Map();
+
+      data.deliveries.forEach(function(d) {
+        var key = d.data.source + '->' + d.data.target;
+        var value = sourceTargetMap.get(key);
+
+        sourceTargetMap.set(key, value !== undefined ? value.concat(d) : [d]);
+      });
+
+      var joinedDeliveries = [];
+
+      for (var value of sourceTargetMap.values()) {
+        var source = value[0].data.source;
+        var target = value[0].data.target;
+
+        joinedDeliveries.push({
+          data: {
+            id: source + '->' + target,
+            source: source,
+            target: target
+          }
+        });
+      }
+
+      return {
+        nodes: data.stations,
+        edges: joinedDeliveries
+      };
+    }
+    else {
+      return {
+        nodes: data.stations,
+        edges: data.deliveries
+      };
+    }
   };
 
   var style = cytoscape.stylesheet()
