@@ -8,14 +8,17 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   var mergeDeliveries = true;
 
   var cy;
+  var rawData;
   var fontSize;
 
   graph.init = function(data) {
+    rawData = data;
+
     if (cy === undefined) {
       cy = cytoscape({
         container: $('#graph')[0],
 
-        elements: dataToElements(data, mergeDeliveries),
+        elements: dataToElements(data),
 
         layout: {
           name: 'cose-bilkent'
@@ -33,7 +36,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       cy = cytoscape({
         container: $('#graph')[0],
 
-        elements: dataToElements(data, mergeDeliveries),
+        elements: dataToElements(data),
 
         layout: {
           name: 'preset',
@@ -79,10 +82,23 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   };
 
   graph.updateData = function() {
-    cy.elements().data('update', true);
+    if (mergeDeliveries) {
+      var mergedDeliveries = dataToElements(rawData).edges;
+
+      mergedDeliveries.forEach(function(d) {
+        d.group = "edges";
+      });
+
+      cy.edges().remove();
+      cy.add(mergedDeliveries);
+      cy.nodes().data('update', true);
+    }
+    else {
+      cy.elements().data('update', true);
+    }
   };
 
-  var dataToElements = function(data, mergeDeliveries) {
+  var dataToElements = function(data) {
     if (mergeDeliveries) {
       var sourceTargetMap = new Map();
 
@@ -93,24 +109,30 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         sourceTargetMap.set(key, value !== undefined ? value.concat(d) : [d]);
       });
 
-      var joinedDeliveries = [];
+      var mergedDeliveries = [];
 
       for (var value of sourceTargetMap.values()) {
         var source = value[0].data.source;
         var target = value[0].data.target;
 
-        joinedDeliveries.push({
+        mergedDeliveries.push({
           data: {
             id: source + '->' + target,
             source: source,
-            target: target
+            target: target,
+            backward: value.find(function(d) {
+              return d.data.backward === true;
+            }) !== undefined,
+            forward: value.find(function(d) {
+              return d.data.forward === true;
+            }) !== undefined
           }
         });
       }
 
       return {
         nodes: data.stations,
-        edges: joinedDeliveries
+        edges: mergedDeliveries
       };
     }
     else {
