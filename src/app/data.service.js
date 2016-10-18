@@ -53,20 +53,33 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     var preprocessData = function(rawData) {
+        var stationsById = {};
         var deliveriesById = {};
 
+        rawData.stations.forEach(function(s) {
+            s.data.in = [];
+            s.data.out = [];
+            stationsById[s.data.id] = s;
+        });
+
         rawData.deliveries.forEach(function(d) {
-            d.data.from = [];
-            d.data.to = [];
+            var source = stationsById[d.data.source];
+            var target = stationsById[d.data.target];
+            
+            source.data.out = source.data.out.concat(d.data.target);
+            target.data.in = target.data.in.concat(d.data.source);
+            
+            d.data.in = [];
+            d.data.out = [];
             deliveriesById[d.data.id] = d;
         });
 
         rawData.deliveriesRelations.forEach(function(r) {
-            var from = deliveriesById[r.data.from];
-            var to = deliveriesById[r.data.to];
+            var source = deliveriesById[r.data.source];
+            var target = deliveriesById[r.data.target];
 
-            from.data.to = from.data.to.concat(r.data.to);
-            to.data.from = to.data.from.concat(r.data.from);
+            source.data.out = source.data.out.concat(r.data.target);
+            target.data.in = target.data.in.concat(r.data.source);
         });
 
         return {

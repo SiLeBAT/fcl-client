@@ -38,10 +38,10 @@ angular.module('app').service('tracingService', function() {
         delivery.data('forward', true);
         cy.$('#' + delivery.data('target')).data('forward', true);
 
-        var to = delivery.data('to');
+        var outgoing = delivery.data('out');
 
         cy.filter(function(i, e) {
-            return e.isEdge() && to.includes(e.id());
+            return e.isEdge() && outgoing.includes(e.id());
         }).forEach(function(d) {
             comp.showDeliveryForwardTrace(d);
         });
@@ -51,10 +51,10 @@ angular.module('app').service('tracingService', function() {
         delivery.data('backward', true);
         cy.$('#' + delivery.data('source')).data('backward', true);
 
-        var from = delivery.data('from');
+        var incoming = delivery.data('in');
 
         cy.filter(function(i, e) {
-            return e.isEdge() && from.includes(e.id());
+            return e.isEdge() && incoming.includes(e.id());
         }).forEach(function(d) {
             comp.showDeliveryBackwardTrace(d);
         });
