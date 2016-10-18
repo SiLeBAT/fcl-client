@@ -6,56 +6,79 @@ angular.module('app').service('tracingService', function() {
 
     var comp = this;
 
-    var cy;
+    var stations;
+    var deliveries;
 
-    comp.init = function(cytoscape) {
-        cy = cytoscape;
+    var stationsById;
+    var deliveriesById;
+
+    comp.init = function(data) {
+        stations = data.stations;
+        deliveries = data.deliveries;
+        stationsById = {};
+        deliveriesById = {};
+
+        stations.forEach(function(s) {
+            stationsById[s.data.id] = s;
+        });
+
+        deliveries.forEach(function(d) {
+            deliveriesById[d.data.id] = d;
+        });
     };
 
     comp.clearForwardTrace = function() {
-        cy.$().data('forward', false);
+        stations.forEach(function(s) {
+            s.data.forward = false;
+        });
+        deliveries.forEach(function(d) {
+            d.data.forward = false;
+        });
     };
 
     comp.clearBackwardTrace = function() {
-        cy.$().data('backward', false);
+        stations.forEach(function(s) {
+            s.data.backward = false;
+        });
+        deliveries.forEach(function(d) {
+            d.data.backward = false;
+        });
     };
 
-    comp.showStationForwardTrace = function(station) {
-        station.data('forward', true);
-        cy.$('edge[source = "' + station.id() + '"]').forEach(function(d) {
+    comp.showStationForwardTrace = function(id) {
+        var station = stationsById[id];
+
+        station.data.forward = true;
+        station.data.out.forEach(function(d) {
             comp.showDeliveryForwardTrace(d);
         });
     };
 
-    comp.showStationBackwardTrace = function(station) {
-        station.data('backward', true);
-        cy.$('edge[target = "' + station.id() + '"]').forEach(function(d) {
+    comp.showStationBackwardTrace = function(id) {
+        var station = stationsById[id];
+
+        station.data.backward = true;
+        station.data.in.forEach(function(d) {
             comp.showDeliveryBackwardTrace(d);
         });
     };
-    
-    comp.showDeliveryForwardTrace = function(delivery) {
-        delivery.data('forward', true);
-        cy.$('#' + delivery.data('target')).data('forward', true);
 
-        var outgoing = delivery.data('out');
+    comp.showDeliveryForwardTrace = function(id) {
+        var delivery = deliveriesById[id];
 
-        cy.filter(function(i, e) {
-            return e.isEdge() && outgoing.includes(e.id());
-        }).forEach(function(d) {
+        delivery.data.forward = true;
+        stationsById[delivery.data.target].data.forward = true;
+        delivery.data.out.forEach(function(d) {
             comp.showDeliveryForwardTrace(d);
         });
     };
 
-    comp.showDeliveryBackwardTrace = function(delivery) {
-        delivery.data('backward', true);
-        cy.$('#' + delivery.data('source')).data('backward', true);
+    comp.showDeliveryBackwardTrace = function(id) {
+        var delivery = deliveriesById[id];
 
-        var incoming = delivery.data('in');
-
-        cy.filter(function(i, e) {
-            return e.isEdge() && incoming.includes(e.id());
-        }).forEach(function(d) {
+        delivery.data.backward = true;
+        stationsById[delivery.data.source].data.backward = true;
+        delivery.data.in.forEach(function(d) {
             comp.showDeliveryBackwardTrace(d);
         });
     };

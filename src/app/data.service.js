@@ -66,8 +66,8 @@ angular.module('app').service('dataService', function($q, $resource) {
             var source = stationsById[d.data.source];
             var target = stationsById[d.data.target];
             
-            source.data.out = source.data.out.concat(d.data.target);
-            target.data.in = target.data.in.concat(d.data.source);
+            source.data.out = source.data.out.concat(d.data.id);
+            target.data.in = target.data.in.concat(d.data.id);
             
             d.data.in = [];
             d.data.out = [];
