@@ -20,6 +20,7 @@ angular.module('app').service('dataService', function($q, $resource) {
     var nodeSize = srvc.nodeSizes.Small;
     var fontSize = srvc.fontSizes.Small;
     var mergeDeliveries = false;
+    var showTraceOnly = false;
 
     srvc.getData = function() {
         return $q(function(resolve, reject) {
@@ -59,6 +60,14 @@ angular.module('app').service('dataService', function($q, $resource) {
 
     srvc.setMergeDeliveries = function(merge) {
         mergeDeliveries = merge;
+    };
+
+    srvc.getShowTraceOnly = function() {
+        return showTraceOnly;
+    };
+
+    srvc.setShowTraceOnly = function(traceOnly) {
+        showTraceOnly = traceOnly;
     };
 
     var preprocessData = function(rawData) {

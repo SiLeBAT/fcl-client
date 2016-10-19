@@ -12,7 +12,7 @@ angular.module('app').component('deliveries', {
 
         ctrl.deliveries = getFilteredDeliveries();
         ctrl.order = "data.id";
-        ctrl.showTraceOnly = false;
+        ctrl.showTraceOnly = dataService.getShowTraceOnly();
 
         ctrl.isOnTrace = function(delivery) {
             return delivery.data.forward || delivery.data.backward;
@@ -22,6 +22,7 @@ angular.module('app').component('deliveries', {
             switch (property) {
                 case "showTraceOnly":
                     ctrl.showTraceOnly = value;
+                    dataService.setShowTraceOnly(value);
                     ctrl.deliveries = getFilteredDeliveries();
                     break;
             }

@@ -12,7 +12,7 @@ angular.module('app').component('stations', {
 
         ctrl.stations = getFilteredStations();
         ctrl.order = "data.id";
-        ctrl.showTraceOnly = false;
+        ctrl.showTraceOnly = dataService.getShowTraceOnly();
 
         ctrl.isOnTrace = function(station) {
             return station.data.forward || station.data.backward;
@@ -22,6 +22,7 @@ angular.module('app').component('stations', {
             switch (property) {
                 case "showTraceOnly":
                     ctrl.showTraceOnly = value;
+                    dataService.setShowTraceOnly(value);
                     ctrl.stations = getFilteredStations();
                     break;
             }
