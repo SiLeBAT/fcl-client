@@ -249,7 +249,6 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearTrace();
         tracingService.showStationForwardTrace(station.id());
         repaint();
-        console.log(station.data('observed'));
       }
     }, {
       content: 'Show Backward Trace',
@@ -269,7 +268,6 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearTrace();
         tracingService.showDeliveryForwardTrace(delivery.id());
         repaint();
-        console.log(delivery.data('observed'));
       }
     }, {
       content: 'Show Backward Trace',
