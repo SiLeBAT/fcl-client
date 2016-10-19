@@ -180,18 +180,25 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     })
     .selector('edge:selected')
     .css({
-      'width': 12,
-      'line-color': '#00FF00',
-      'target-arrow-color': '#FF0000'
+      'width': 12
     }).selector('node[?forward], node[?backward]')
     .css({
       'background-color': '#00FF00'
+    }).selector('node[?observed]')
+    .css({
+      'background-color': '#0000FF'
     }).selector('node:selected[?forward], node:selected[?backward]')
     .css({
       'background-color': '#008080'
+    }).selector('node:selected[?observed]')
+    .css({
+      'background-color': '#0000FF'
     }).selector('edge[?forward], edge[?backward]')
     .css({
       'line-color': '#00FF00'
+    }).selector('edge[?observed]')
+    .css({
+      'line-color': '#0000FF'
     });
 
   var contextMenu = {
@@ -228,8 +235,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }, {
       content: 'Clear Trace',
       select: function() {
-        tracingService.clearForwardTrace();
-        tracingService.clearBackwardTrace();
+        tracingService.clearTrace();
         repaint();
       }
     }]
@@ -240,16 +246,15 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     commands: [{
       content: 'Show Forward Trace',
       select: function(station) {
-        tracingService.clearForwardTrace();
-        tracingService.clearBackwardTrace();
+        tracingService.clearTrace();
         tracingService.showStationForwardTrace(station.id());
         repaint();
+        console.log(station.data('observed'));
       }
     }, {
       content: 'Show Backward Trace',
       select: function(station) {
-        tracingService.clearForwardTrace();
-        tracingService.clearBackwardTrace();
+        tracingService.clearTrace();
         tracingService.showStationBackwardTrace(station.id());
         repaint();
       }
@@ -261,16 +266,15 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     commands: [{
       content: 'Show Forward Trace',
       select: function(delivery) {
-        tracingService.clearForwardTrace();
-        tracingService.clearBackwardTrace();
+        tracingService.clearTrace();
         tracingService.showDeliveryForwardTrace(delivery.id());
         repaint();
+        console.log(delivery.data('observed'));
       }
     }, {
       content: 'Show Backward Trace',
       select: function(delivery) {
-        tracingService.clearForwardTrace();
-        tracingService.clearBackwardTrace();
+        tracingService.clearTrace();
         tracingService.showDeliveryBackwardTrace(delivery.id());
         repaint();
       }

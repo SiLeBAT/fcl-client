@@ -27,20 +27,15 @@ angular.module('app').service('tracingService', function() {
         });
     };
 
-    comp.clearForwardTrace = function() {
+    comp.clearTrace = function() {
         stations.forEach(function(s) {
+            s.data.observed = false;
             s.data.forward = false;
-        });
-        deliveries.forEach(function(d) {
-            d.data.forward = false;
-        });
-    };
-
-    comp.clearBackwardTrace = function() {
-        stations.forEach(function(s) {
             s.data.backward = false;
         });
         deliveries.forEach(function(d) {
+            d.data.observed = false;
+            d.data.forward = false;
             d.data.backward = false;
         });
     };
@@ -48,38 +43,58 @@ angular.module('app').service('tracingService', function() {
     comp.showStationForwardTrace = function(id) {
         var station = stationsById[id];
 
-        station.data.forward = true;
+        station.data.observed = true;
         station.data.out.forEach(function(d) {
-            comp.showDeliveryForwardTrace(d);
+            showDeliveryForwardTraceInternal(d);
         });
     };
 
     comp.showStationBackwardTrace = function(id) {
         var station = stationsById[id];
 
-        station.data.backward = true;
+        station.data.observed = true;
         station.data.in.forEach(function(d) {
-            comp.showDeliveryBackwardTrace(d);
+            showDeliveryBackwardTraceInternal(d);
         });
     };
 
     comp.showDeliveryForwardTrace = function(id) {
         var delivery = deliveriesById[id];
 
-        delivery.data.forward = true;
+        delivery.data.observed = true;
         stationsById[delivery.data.target].data.forward = true;
         delivery.data.out.forEach(function(d) {
-            comp.showDeliveryForwardTrace(d);
+            showDeliveryForwardTraceInternal(d);
         });
     };
 
     comp.showDeliveryBackwardTrace = function(id) {
         var delivery = deliveriesById[id];
 
+        delivery.data.observed = true;
+        stationsById[delivery.data.source].data.backward = true;
+        delivery.data.in.forEach(function(d) {
+            showDeliveryBackwardTraceInternal(d);
+        });
+    };
+
+    var showDeliveryForwardTraceInternal = function(id) {
+        var delivery = deliveriesById[id];
+
+        delivery.data.forward = true;
+        stationsById[delivery.data.target].data.forward = true;
+        delivery.data.out.forEach(function(d) {
+            showDeliveryForwardTraceInternal(d);
+        });
+    };
+
+    var showDeliveryBackwardTraceInternal = function(id) {
+        var delivery = deliveriesById[id];
+
         delivery.data.backward = true;
         stationsById[delivery.data.source].data.backward = true;
         delivery.data.in.forEach(function(d) {
-            comp.showDeliveryBackwardTrace(d);
+            showDeliveryBackwardTraceInternal(d);
         });
     };
 });
