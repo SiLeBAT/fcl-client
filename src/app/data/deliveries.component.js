@@ -18,10 +18,10 @@ angular.module('app').component('deliveries', {
             return delivery.data.forward || delivery.data.backward;
         };
 
-        ctrl.toggle = function(property) {
+        ctrl.onChange = function(property, value) {
             switch (property) {
                 case "showTraceOnly":
-                    ctrl.showTraceOnly = !ctrl.showTraceOnly;
+                    ctrl.showTraceOnly = value;
                     ctrl.deliveries = getFilteredDeliveries();
                     break;
             }

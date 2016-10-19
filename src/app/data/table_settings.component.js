@@ -5,7 +5,7 @@
 angular.module('app').component('tableSettings', {
     bindings: {
         showTraceOnly: '<',
-        onToggle: '&'
+        onChange: '&'
     },
     templateUrl: 'app/data/table_settings.component.html'
 });
