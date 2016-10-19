@@ -10,6 +10,7 @@ angular.module('app').component('graph', {
         ctrl.fontSizes = dataService.fontSizes;
         ctrl.nodeSize = dataService.getNodeSize();
         ctrl.fontSize = dataService.getFontSize();
+        ctrl.mergeDeliveries = dataService.getMergeDeliveries();
 
         ctrl.onChange = function(property, value) {
             switch (property) {
@@ -23,6 +24,11 @@ angular.module('app').component('graph', {
                     graphService.setFontSize(value);
                     dataService.setFontSize(value);
                     break;
+                case "mergeDeliveries":
+                    ctrl.mergeDeliveries = value;
+                    graphService.setMergeDeliveries(value);
+                    dataService.setMergeDeliveries(value);
+                    break;
             }
         };
 
@@ -30,6 +36,7 @@ angular.module('app').component('graph', {
             graphService.init(data);
             graphService.setNodeSize(ctrl.nodeSize);
             graphService.setFontSize(ctrl.fontSize);
+            graphService.setMergeDeliveries(ctrl.mergeDeliveries);
         });
     },
     templateUrl: 'app/graph/graph.component.html'

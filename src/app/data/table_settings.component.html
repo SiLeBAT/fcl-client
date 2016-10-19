@@ -1,5 +1,3 @@
 <md-content layout-fill>
-    <md-input-container class="md-block">
-        <md-checkbox ng-checked="$ctrl.showTraceOnly" ng-click="$ctrl.onToggle({property: 'showTraceOnly'})">Show Trace only</md-checkbox>
-    </md-input-container>
+    <checkbox label="Show Trace only" selected="$ctrl.showTraceOnly" on-change="$ctrl.onToggle({property: 'showTraceOnly'})"></checkbox>
 </md-content>

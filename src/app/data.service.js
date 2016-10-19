@@ -19,6 +19,7 @@ angular.module('app').service('dataService', function($q, $resource) {
     var data;
     var nodeSize = srvc.nodeSizes.Small;
     var fontSize = srvc.fontSizes.Small;
+    var mergeDeliveries = false;
 
     srvc.getData = function() {
         return $q(function(resolve, reject) {
@@ -50,6 +51,14 @@ angular.module('app').service('dataService', function($q, $resource) {
 
     srvc.setFontSize = function(size) {
         fontSize = size;
+    };
+
+    srvc.getMergeDeliveries = function() {
+        return mergeDeliveries;
+    };
+
+    srvc.setMergeDeliveries = function(merge) {
+        mergeDeliveries = merge;
     };
 
     var preprocessData = function(rawData) {

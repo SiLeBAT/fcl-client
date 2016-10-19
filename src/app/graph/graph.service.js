@@ -5,20 +5,20 @@
 angular.module('app').service('graphService', function(tracingService, $mdDialog) {
 
   var graph = this;
-  var mergeDeliveries = true;
 
   var cy;
-  var rawData;
+  var graphData;
+  var mergeDeliveries;
   var fontSize;
 
   graph.init = function(data) {
-    rawData = data;
+    graphData = data;
 
     if (cy === undefined) {
       cy = cytoscape({
         container: $('#graph')[0],
 
-        elements: dataToElements(data),
+        elements: createElements(),
 
         layout: {
           name: 'cose-bilkent'
@@ -36,7 +36,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       cy = cytoscape({
         container: $('#graph')[0],
 
-        elements: dataToElements(data),
+        elements: createElements(),
 
         layout: {
           name: 'preset',
@@ -66,6 +66,11 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     tracingService.init(data);
   };
 
+  graph.setMergeDeliveries = function(merge) {
+    mergeDeliveries = merge;
+    updateEdges();
+  };
+
   graph.setNodeSize = function(size) {
     cy.nodes().css({
       'height': size,
@@ -81,16 +86,9 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     });
   };
 
-  graph.updateData = function() {
+  var repaint = function() {
     if (mergeDeliveries) {
-      var mergedDeliveries = dataToElements(rawData).edges;
-
-      mergedDeliveries.forEach(function(d) {
-        d.group = "edges";
-      });
-
-      cy.edges().remove();
-      cy.add(mergedDeliveries);
+      updateEdges();
       cy.nodes().data('update', true);
     }
     else {
@@ -98,11 +96,22 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }
   };
 
-  var dataToElements = function(data) {
+  var updateEdges = function() {
+    var edges = createElements().edges;
+
+    edges.forEach(function(d) {
+      d.group = "edges";
+    });
+
+    cy.edges().remove();
+    cy.add(edges);
+  };
+
+  var createElements = function() {
     if (mergeDeliveries) {
       var sourceTargetMap = new Map();
 
-      data.deliveries.forEach(function(d) {
+      graphData.deliveries.forEach(function(d) {
         var key = d.data.source + '->' + d.data.target;
         var value = sourceTargetMap.get(key);
 
@@ -131,14 +140,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       }
 
       return {
-        nodes: data.stations,
+        nodes: graphData.stations,
         edges: mergedDeliveries
       };
     }
     else {
       return {
-        nodes: data.stations,
-        edges: data.deliveries
+        nodes: graphData.stations,
+        edges: graphData.deliveries
       };
     }
   };
@@ -221,7 +230,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       select: function() {
         tracingService.clearForwardTrace();
         tracingService.clearBackwardTrace();
-        graph.updateData();
+        repaint();
       }
     }]
   };
@@ -234,7 +243,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearForwardTrace();
         tracingService.clearBackwardTrace();
         tracingService.showStationForwardTrace(station.id());
-        graph.updateData();
+        repaint();
       }
     }, {
       content: 'Show Backward Trace',
@@ -242,7 +251,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearForwardTrace();
         tracingService.clearBackwardTrace();
         tracingService.showStationBackwardTrace(station.id());
-        graph.updateData();
+        repaint();
       }
     }]
   };
@@ -255,7 +264,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearForwardTrace();
         tracingService.clearBackwardTrace();
         tracingService.showDeliveryForwardTrace(delivery.id());
-        graph.updateData();
+        repaint();
       }
     }, {
       content: 'Show Backward Trace',
@@ -263,7 +272,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearForwardTrace();
         tracingService.clearBackwardTrace();
         tracingService.showDeliveryBackwardTrace(delivery.id());
-        graph.updateData();
+        repaint();
       }
     }]
   };
