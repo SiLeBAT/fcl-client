@@ -21,11 +21,11 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         elements: createElements(),
 
         layout: {
-          name: 'cose-bilkent'
+          name: 'random'
         },
 
         style: style,
-        minZoom: 0.1,
+        minZoom: 0.01,
         maxZoom: 10,
         wheelSensitivity: 0.5,
       });
@@ -223,6 +223,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         }).then(function(layout) {
           cy.layout({
             name: layout,
+            avoidOverlap: false,
             animate: true
           });
         });
