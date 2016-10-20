@@ -221,11 +221,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
           parent: angular.element(document.body),
           clickOutsideToClose: true
         }).then(function(layout) {
-          cy.layout({
-            name: layout,
-            avoidOverlap: false,
-            animate: true
-          });
+          cy.layout(layout);
         });
       }
     }, {

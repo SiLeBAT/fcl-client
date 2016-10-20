@@ -1,13 +1,13 @@
 <div class="container" layout="column">
-    <md-button ng-click="$ctrl.onSelect({layout: 'random'})">Random</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'grid'})">Grid</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'circle'})">Circle</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'concentric'})">Concentric</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'breadthfirst'})">Breadthfirst</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'cose'})">Cose</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'cose-bilkent'})">Cose Bilkent</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'cola'})">Cola</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'spread'})">Spread</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'dagre'})">Dagre</md-button>
-    <md-button ng-click="$ctrl.onSelect({layout: 'springy'})">Springy</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'random'}})">Random</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'grid'}})">Grid</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'circle'}})">Circle</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'concentric'}})">Concentric</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'breadthfirst'}})">Breadthfirst</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'cose'}})">Cose</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'cose-bilkent', animate: 'during'}})">Cose Bilkent</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'cola', ungrabifyWhileSimulating: false, avoidOverlap: false, animate: true, maxSimulationTime: 20000}})">Cola</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'spread'}})">Spread</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'dagre', animate: true}})">Dagre</md-button>
+    <md-button ng-click="$ctrl.onSelect({layout: {name: 'springy'}})">Springy</md-button>
 </div>
