@@ -197,15 +197,19 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       'observed': [0, 0, 255],
     };
 
-    var nodePropsArray = Object.keys(nodeProps);
+    for (let combination of getAllCombination(Object.keys(nodeProps))) {
+      var s = [];
+      var c1 = [];
+      var c2 = [];
 
-    for (let prop of nodePropsArray) {
-      style = style
-        .selector('node[?' + prop + ']')
-        .css(createNodeBackground([nodeProps[prop]]));
-      style = style
-        .selector('node:selected[?' + prop + ']')
-        .css(createNodeBackground([mix(nodeProps[prop], [0, 0, 255])]));
+      for (let prop of combination) {
+        s.push('[?' + prop + ']');
+        c1.push(nodeProps[prop]);
+        c2.push(mix(nodeProps[prop], [0, 0, 255]));
+      }
+
+      style = style.selector('node' + s.join('')).css(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).css(createNodeBackground(c2));
     }
 
     for (let prop of Object.keys(edgeProps)) {
@@ -215,6 +219,30 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }
 
     return style;
+  };
+
+  var getAllCombination = function(values) {
+    var n = Math.pow(2, values.length);
+    var combinations = [];
+
+    for (let i = 1; i < n; i++) {
+      var bits = i.toString(2).split('').reverse().join('');
+      var combination = [];
+
+      for (let j = 0; j < values.length; j++) {
+        if (bits[j] === '1') {
+          combination.push(values[j]);
+        }
+      }
+
+      combinations.push(combination);
+    }
+
+    combinations.sort(function(c1, c2) {
+      return c1.length - c2.length;
+    });
+
+    return combinations;
   };
 
   var createNodeBackground = function(colors) {
