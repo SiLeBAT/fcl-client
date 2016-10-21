@@ -99,9 +99,9 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   var updateEdges = function() {
     var edges = createElements().edges;
 
-    edges.forEach(function(d) {
-      d.group = "edges";
-    });
+    for (let e of edges) {
+      e.group = "edges";
+    }
 
     cy.edges().remove();
     cy.add(edges);
@@ -111,16 +111,16 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     if (mergeDeliveries) {
       var sourceTargetMap = new Map();
 
-      graphData.deliveries.forEach(function(d) {
+      for (let d of graphData.deliveries) {
         var key = d.data.source + '->' + d.data.target;
         var value = sourceTargetMap.get(key);
 
         sourceTargetMap.set(key, value !== undefined ? value.concat(d) : [d]);
-      });
+      }
 
       var mergedDeliveries = [];
 
-      for (var value of sourceTargetMap.values()) {
+      for (let value of sourceTargetMap.values()) {
         var source = value[0].data.source;
         var target = value[0].data.target;
 
@@ -187,32 +187,31 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     var nodeProps = {
       'forward': [0, 255, 0],
       'backward': [0, 128, 128],
-      'observed': [0, 0, 255]
+      'observed': [0, 0, 255],
+      'outbreak': [255, 0, 0]
     };
 
     var edgeProps = {
       'forward': [0, 255, 0],
       'backward': [0, 128, 128],
-      'observed': [0, 0, 255]
+      'observed': [0, 0, 255],
     };
 
-    for (var prop in nodeProps) {
-      if (nodeProps.hasOwnProperty(prop)) {
-        style = style
-          .selector('node[?' + prop + ']')
-          .css(createNodeBackground([nodeProps[prop]]));
-        style = style
-          .selector('node:selected[?' + prop + ']')
-          .css(createNodeBackground([mix(nodeProps[prop], [0, 0, 255])]));
-      }
+    var nodePropsArray = Object.keys(nodeProps);
+
+    for (let prop of nodePropsArray) {
+      style = style
+        .selector('node[?' + prop + ']')
+        .css(createNodeBackground([nodeProps[prop]]));
+      style = style
+        .selector('node:selected[?' + prop + ']')
+        .css(createNodeBackground([mix(nodeProps[prop], [0, 0, 255])]));
     }
 
-    for (var prop in edgeProps) {
-      if (edgeProps.hasOwnProperty(prop)) {
-        style = style
-          .selector('edge[?' + prop + ']')
-          .css(createEdgeColor(edgeProps[prop]));
-      }
+    for (let prop of Object.keys(edgeProps)) {
+      style = style
+        .selector('edge[?' + prop + ']')
+        .css(createEdgeColor(edgeProps[prop]));
     }
 
     return style;
@@ -312,6 +311,12 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.clearTrace();
         tracingService.showStationForwardTrace(station.id());
         tracingService.showStationBackwardTrace(station.id());
+        repaint();
+      }
+    }, {
+      content: 'Mark/Unmark as Outbreak',
+      select: function(station) {
+        tracingService.toggleOutbreakStation(station.id());
         repaint();
       }
     }]

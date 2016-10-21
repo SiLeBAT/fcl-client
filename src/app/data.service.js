@@ -74,25 +74,25 @@ angular.module('app').service('dataService', function($q, $resource) {
         var stationsById = {};
         var deliveriesById = {};
 
-        rawData.stations.forEach(function(s) {
+        for (let s of rawData.stations) {
             s.data.in = [];
             s.data.out = [];
             stationsById[s.data.id] = s;
-        });
+        }
 
-        rawData.deliveries.forEach(function(d) {
+        for (let d of rawData.deliveries) {
             stationsById[d.data.source].data.out.push(d.data.id);
             stationsById[d.data.target].data.in.push(d.data.id);
 
             d.data.in = [];
             d.data.out = [];
             deliveriesById[d.data.id] = d;
-        });
+        }
 
-        rawData.deliveriesRelations.forEach(function(r) {
+        for (let r of rawData.deliveriesRelations) {
             deliveriesById[r.data.source].data.out.push(r.data.target);
             deliveriesById[r.data.target].data.in.push(r.data.source);
-        });
+        }
 
         return {
             stations: rawData.stations,

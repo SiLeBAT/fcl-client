@@ -18,44 +18,46 @@ angular.module('app').service('tracingService', function() {
         stationsById = {};
         deliveriesById = {};
 
-        stations.forEach(function(s) {
+        for (let s of stations) {
             stationsById[s.data.id] = s;
-        });
+        }
 
-        deliveries.forEach(function(d) {
+        for (let d of deliveries) {
             deliveriesById[d.data.id] = d;
-        });
+        }
+    };
+
+    comp.toggleOutbreakStation = function(id) {
+        var station = stationsById[id];
+
+        station.data.outbreak = !station.data.outbreak;
     };
 
     comp.clearTrace = function() {
-        stations.forEach(function(s) {
+        for (let s of stations) {
             s.data.observed = false;
             s.data.forward = false;
             s.data.backward = false;
-        });
-        deliveries.forEach(function(d) {
+        }
+        for (let d of deliveries) {
             d.data.observed = false;
             d.data.forward = false;
             d.data.backward = false;
-        });
+        }
     };
 
     comp.showStationForwardTrace = function(id) {
         var station = stationsById[id];
 
         station.data.observed = true;
-        station.data.out.forEach(function(d) {
-            showDeliveryForwardTraceInternal(d);
-        });
+        station.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
     comp.showStationBackwardTrace = function(id) {
         var station = stationsById[id];
 
         station.data.observed = true;
-        station.data.in.forEach(function(d) {
-            showDeliveryBackwardTraceInternal(d);
-        });
+        station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
     comp.showDeliveryForwardTrace = function(id) {
@@ -63,9 +65,7 @@ angular.module('app').service('tracingService', function() {
 
         delivery.data.observed = true;
         stationsById[delivery.data.target].data.forward = true;
-        delivery.data.out.forEach(function(d) {
-            showDeliveryForwardTraceInternal(d);
-        });
+        delivery.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
     comp.showDeliveryBackwardTrace = function(id) {
@@ -73,9 +73,7 @@ angular.module('app').service('tracingService', function() {
 
         delivery.data.observed = true;
         stationsById[delivery.data.source].data.backward = true;
-        delivery.data.in.forEach(function(d) {
-            showDeliveryBackwardTraceInternal(d);
-        });
+        delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
     var showDeliveryForwardTraceInternal = function(id) {
@@ -83,9 +81,7 @@ angular.module('app').service('tracingService', function() {
 
         delivery.data.forward = true;
         stationsById[delivery.data.target].data.forward = true;
-        delivery.data.out.forEach(function(d) {
-            showDeliveryForwardTraceInternal(d);
-        });
+        delivery.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
     var showDeliveryBackwardTraceInternal = function(id) {
@@ -93,8 +89,6 @@ angular.module('app').service('tracingService', function() {
 
         delivery.data.backward = true;
         stationsById[delivery.data.source].data.backward = true;
-        delivery.data.in.forEach(function(d) {
-            showDeliveryBackwardTraceInternal(d);
-        });
+        delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 });
