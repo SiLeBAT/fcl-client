@@ -213,9 +213,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }
 
     for (let prop of Object.keys(edgeProps)) {
-      style = style
-        .selector('edge[?' + prop + ']')
-        .css(createEdgeColor(edgeProps[prop]));
+      style = style.selector('edge[?' + prop + ']').css(createEdgeColor(edgeProps[prop]));
     }
 
     return style;
