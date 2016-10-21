@@ -24,7 +24,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
           name: 'random'
         },
 
-        style: style,
+        style: createStyle(),
         minZoom: 0.01,
         maxZoom: 10,
         wheelSensitivity: 0.5,
@@ -49,7 +49,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
           pan: json.pan
         },
 
-        style: style,
+        style: createStyle(),
         minZoom: json.minZoom,
         maxZoom: json.maxZoom,
         wheelSensitivity: json.wheelSensitivity,
@@ -152,54 +152,106 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }
   };
 
-  var style = cytoscape.stylesheet()
-    .selector('node')
-    .css({
-      'content': 'data(name)',
-      'background-color': '#FFFFFF',
-      'border-width': 3,
-      'border-color': '#000000',
-      'text-valign': 'bottom',
-      'text-halign': 'right',
-      'color': '#000000'
-    })
-    .selector('edge')
-    .css({
-      'target-arrow-shape': 'triangle',
-      'width': 6,
-      'line-color': '#000000',
-      'target-arrow-color': '#FF0000',
-      'curve-style': 'bezier'
-    })
-    .selector('node:selected')
-    .css({
-      'background-color': '#8080FF',
-      'border-width': 6,
-      'border-color': '#0000FF',
-      'color': '#0000FF'
-    })
-    .selector('edge:selected')
-    .css({
-      'width': 12
-    }).selector('node[?forward], node[?backward]')
-    .css({
-      'background-color': '#00FF00'
-    }).selector('node[?observed]')
-    .css({
-      'background-color': '#0000FF'
-    }).selector('node:selected[?forward], node:selected[?backward]')
-    .css({
-      'background-color': '#008080'
-    }).selector('node:selected[?observed]')
-    .css({
-      'background-color': '#0000FF'
-    }).selector('edge[?forward], edge[?backward]')
-    .css({
-      'line-color': '#00FF00'
-    }).selector('edge[?observed]')
-    .css({
-      'line-color': '#0000FF'
-    });
+  var createStyle = function() {
+    var style = cytoscape.stylesheet()
+      .selector('node')
+      .css({
+        'content': 'data(name)',
+        'background-color': '#FFFFFF',
+        'border-width': 3,
+        'border-color': '#000000',
+        'text-valign': 'bottom',
+        'text-halign': 'right',
+        'color': '#000000'
+      })
+      .selector('edge')
+      .css({
+        'target-arrow-shape': 'triangle',
+        'width': 6,
+        'line-color': '#000000',
+        'target-arrow-color': '#FF0000',
+        'curve-style': 'bezier'
+      })
+      .selector('node:selected')
+      .css({
+        'background-color': '#8080FF',
+        'border-width': 6,
+        'border-color': '#0000FF',
+        'color': '#0000FF'
+      })
+      .selector('edge:selected')
+      .css({
+        'width': 12
+      });
+
+    var nodeProps = {
+      'forward': [0, 255, 0],
+      'backward': [0, 128, 128],
+      'observed': [0, 0, 255]
+    };
+
+    var edgeProps = {
+      'forward': [0, 255, 0],
+      'backward': [0, 128, 128],
+      'observed': [0, 0, 255]
+    };
+
+    for (var prop in nodeProps) {
+      if (nodeProps.hasOwnProperty(prop)) {
+        style = style
+          .selector('node[?' + prop + ']')
+          .css(createNodeBackground([nodeProps[prop]]));
+        style = style
+          .selector('node:selected[?' + prop + ']')
+          .css(createNodeBackground([mix(nodeProps[prop], [0, 0, 255])]));
+      }
+    }
+
+    for (var prop in edgeProps) {
+      if (edgeProps.hasOwnProperty(prop)) {
+        style = style
+          .selector('edge[?' + prop + ']')
+          .css(createEdgeColor(edgeProps[prop]));
+      }
+    }
+
+    return style;
+  };
+
+  var createNodeBackground = function(colors) {
+    if (colors.length == 1) {
+      return {
+        'background-color': toRGB(colors[0])
+      };
+    }
+
+    var css = {};
+
+    for (var i = 0; i < colors.length; i++) {
+      css['pie-' + (i + 1) + '-background-color'] = toRGB(colors[i]);
+      css['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+    }
+
+    return css;
+  };
+
+  var createEdgeColor = function(color) {
+    return {
+      'line-color': toRGB(color)
+    };
+  };
+
+  var mix = function(color1, color2) {
+    var r = Math.round((color1[0] + color2[0]) / 2);
+    var g = Math.round((color1[1] + color2[1]) / 2);
+    var b = Math.round((color1[2] + color2[2]) / 2);
+
+    return [r, g, b];
+  };
+
+  var toRGB = function(color) {
+    return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
+  };
 
   var contextMenu = {
     selector: 'core',
@@ -254,6 +306,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         tracingService.showStationBackwardTrace(station.id());
         repaint();
       }
+    }, {
+      content: 'Show Whole Trace',
+      select: function(station) {
+        tracingService.clearTrace();
+        tracingService.showStationForwardTrace(station.id());
+        tracingService.showStationBackwardTrace(station.id());
+        repaint();
+      }
     }]
   };
 
@@ -270,6 +330,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       content: 'Show Backward Trace',
       select: function(delivery) {
         tracingService.clearTrace();
+        tracingService.showDeliveryBackwardTrace(delivery.id());
+        repaint();
+      }
+    }, {
+      content: 'Show Whole Trace',
+      select: function(delivery) {
+        tracingService.clearTrace();
+        tracingService.showDeliveryForwardTrace(delivery.id());
         tracingService.showDeliveryBackwardTrace(delivery.id());
         repaint();
       }
