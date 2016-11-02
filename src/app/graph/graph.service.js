@@ -354,7 +354,6 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       select: function(station) {
         tracingService.toggleOutbreakStation(station.id());
         graph.setNodeSize(_nodeSize);
-        repaint();
       }
     }]
   };
