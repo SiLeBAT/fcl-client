@@ -80,7 +80,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     _nodeSize = nodeSize;
 
     for (let s of _data.stations) {
-      s.data.size = s.data.score !== undefined ? (1 + s.data.score) * nodeSize : nodeSize;
+      s.data.size = s.data.score !== undefined ? 0.5 * (1 + s.data.score) * nodeSize : nodeSize;
     }
 
     repaint();
