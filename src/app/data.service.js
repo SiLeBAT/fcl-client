@@ -16,21 +16,21 @@ angular.module('app').service('dataService', function($q, $resource) {
         Large: 18
     };
 
-    var data;
-    var nodeSize = srvc.nodeSizes.Small;
-    var fontSize = srvc.fontSizes.Small;
-    var mergeDeliveries = false;
-    var showTraceOnly = false;
+    var _data;
+    var _nodeSize = srvc.nodeSizes.Small;
+    var _fontSize = srvc.fontSizes.Small;
+    var _mergeDeliveries = false;
+    var _showTraceOnly = false;
 
     srvc.getData = function() {
         return $q(function(resolve, reject) {
-            if (data !== undefined) {
-                resolve(data);
+            if (_data !== undefined) {
+                resolve(_data);
             }
             else {
-                $resource('data/small_network.json').get(function(response) {
-                    data = preprocessData(response);
-                    resolve(data);
+                $resource('data/small_network.json').get(function(data) {
+                    _data = preprocessData(data);
+                    resolve(_data);
                 }, function(error) {
                     reject(error);
                 });
@@ -39,48 +39,48 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     srvc.getNodeSize = function() {
-        return nodeSize;
+        return _nodeSize;
     };
 
     srvc.setNodeSize = function(size) {
-        nodeSize = size;
+        _nodeSize = size;
     };
 
     srvc.getFontSize = function() {
-        return fontSize;
+        return _fontSize;
     };
 
     srvc.setFontSize = function(size) {
-        fontSize = size;
+        _fontSize = size;
     };
 
     srvc.getMergeDeliveries = function() {
-        return mergeDeliveries;
+        return _mergeDeliveries;
     };
 
     srvc.setMergeDeliveries = function(merge) {
-        mergeDeliveries = merge;
+        _mergeDeliveries = merge;
     };
 
     srvc.getShowTraceOnly = function() {
-        return showTraceOnly;
+        return _showTraceOnly;
     };
 
     srvc.setShowTraceOnly = function(traceOnly) {
-        showTraceOnly = traceOnly;
+        _showTraceOnly = traceOnly;
     };
 
-    var preprocessData = function(rawData) {
+    function preprocessData(data) {
         var stationsById = {};
         var deliveriesById = {};
 
-        for (let s of rawData.stations) {
+        for (let s of data.stations) {
             s.data.in = [];
             s.data.out = [];
             stationsById[s.data.id] = s;
         }
 
-        for (let d of rawData.deliveries) {
+        for (let d of data.deliveries) {
             stationsById[d.data.source].data.out.push(d.data.id);
             stationsById[d.data.target].data.in.push(d.data.id);
 
@@ -89,16 +89,16 @@ angular.module('app').service('dataService', function($q, $resource) {
             deliveriesById[d.data.id] = d;
         }
 
-        for (let r of rawData.deliveriesRelations) {
+        for (let r of data.deliveriesRelations) {
             deliveriesById[r.data.source].data.out.push(r.data.target);
             deliveriesById[r.data.target].data.in.push(r.data.source);
         }
 
         return {
-            stations: rawData.stations,
-            deliveries: rawData.deliveries
+            stations: data.stations,
+            deliveries: data.deliveries
         };
-    };
+    }
 
     // $.ajax({
     //     type: 'GET',
@@ -128,5 +128,5 @@ angular.module('app').service('dataService', function($q, $resource) {
     //         }
     //     }
     // });
-    
+
 });

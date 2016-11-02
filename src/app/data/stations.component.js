@@ -5,10 +5,11 @@
 angular.module('app').component('stations', {
     controller: function(dataService) {
         var ctrl = this;
-        var allStations = [];
-        var getFilteredStations = function() {
-            return ctrl.showTraceOnly ? allStations.filter(ctrl.isOnTrace) : allStations;
-        };
+        var _allStations = [];
+
+        function getFilteredStations() {
+            return ctrl.showTraceOnly ? _allStations.filter(ctrl.isOnTrace) : _allStations;
+        }
 
         ctrl.stations = getFilteredStations();
         ctrl.order = "data.id";
@@ -29,7 +30,7 @@ angular.module('app').component('stations', {
         };
 
         dataService.getData().then(function(data) {
-            allStations = data.stations;
+            _allStations = data.stations;
             ctrl.stations = getFilteredStations();
         });
     },

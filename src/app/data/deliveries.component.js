@@ -5,10 +5,11 @@
 angular.module('app').component('deliveries', {
     controller: function(dataService) {
         var ctrl = this;
-        var allDeliveries = [];
-        var getFilteredDeliveries = function() {
-            return ctrl.showTraceOnly ? allDeliveries.filter(ctrl.isOnTrace) : allDeliveries;
-        };
+        var _allDeliveries = [];
+
+        function getFilteredDeliveries() {
+            return ctrl.showTraceOnly ? _allDeliveries.filter(ctrl.isOnTrace) : _allDeliveries;
+        }
 
         ctrl.deliveries = getFilteredDeliveries();
         ctrl.order = "data.id";
@@ -29,7 +30,7 @@ angular.module('app').component('deliveries', {
         };
 
         dataService.getData().then(function(data) {
-            allDeliveries = data.deliveries;
+            _allDeliveries = data.deliveries;
             ctrl.deliveries = getFilteredDeliveries();
         });
     },

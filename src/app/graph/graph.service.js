@@ -6,16 +6,21 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
 
   var graph = this;
 
-  var cy;
-  var graphData;
-  var mergeDeliveries;
-  var fontSize;
+  var _cy;
+  var _data;
+  var _mergeDeliveries = false;
+  var _nodeSize = 10;
+  var _fontSize = 10;
 
   graph.init = function(data) {
-    graphData = data;
+    for (let s of data.stations) {
+      s.data.size = _nodeSize;
+    }
 
-    if (cy === undefined) {
-      cy = cytoscape({
+    _data = data;
+
+    if (_cy === undefined) {
+      _cy = cytoscape({
         container: $('#graph')[0],
 
         elements: createElements(),
@@ -31,9 +36,9 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       });
     }
     else {
-      var json = cy.json();
+      var json = _cy.json();
 
-      cy = cytoscape({
+      _cy = cytoscape({
         container: $('#graph')[0],
 
         elements: createElements(),
@@ -56,62 +61,65 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       });
     }
 
-    cy.on('zoom', function(event) {
-      graph.setFontSize(fontSize);
+    _cy.on('zoom', function(event) {
+      graph.setFontSize(_fontSize);
     });
-    cy.panzoom();
-    cy.cxtmenu(contextMenu);
-    cy.cxtmenu(stationContextMenu);
-    cy.cxtmenu(deliveryContextMenu);
+    _cy.panzoom();
+    _cy.cxtmenu(contextMenu);
+    _cy.cxtmenu(stationContextMenu);
+    _cy.cxtmenu(deliveryContextMenu);
     tracingService.init(data);
   };
 
-  graph.setMergeDeliveries = function(merge) {
-    mergeDeliveries = merge;
+  graph.setMergeDeliveries = function(mergeDeliveries) {
+    _mergeDeliveries = mergeDeliveries;
     updateEdges();
   };
 
-  graph.setNodeSize = function(size) {
-    cy.nodes().css({
-      'height': size,
-      'width': size
+  graph.setNodeSize = function(nodeSize) {
+    _nodeSize = nodeSize;
+
+    for (let s of _data.stations) {
+      s.data.size = s.data.score !== undefined ? (1 + s.data.score) * nodeSize : nodeSize;
+    }
+
+    repaint();
+  };
+
+  graph.setFontSize = function(fontSize) {
+    _fontSize = fontSize;
+
+    _cy.nodes().css({
+      'font-size': Math.max(fontSize / _cy.zoom(), fontSize)
     });
   };
 
-  graph.setFontSize = function(size) {
-    fontSize = size;
-
-    cy.nodes().css({
-      'font-size': Math.max(fontSize / cy.zoom(), fontSize)
-    });
-  };
-
-  var repaint = function() {
-    if (mergeDeliveries) {
+  function repaint() {
+    if (_mergeDeliveries) {
       updateEdges();
-      cy.nodes().data('update', true);
+      _cy.nodes().data('update', true);
     }
     else {
-      cy.elements().data('update', true);
+      _cy.elements().data('update', true);
     }
-  };
+  }
 
-  var updateEdges = function() {
+  function updateEdges() {
     var edges = createElements().edges;
 
     for (let e of edges) {
       e.group = "edges";
     }
 
-    cy.edges().remove();
-    cy.add(edges);
-  };
+    _cy.edges().remove();
+    _cy.add(edges);
+  }
 
-  var createElements = function() {
-    if (mergeDeliveries) {
+  function createElements() {
+    if (_mergeDeliveries) {
       var sourceTargetMap = new Map();
 
-      for (let d of graphData.deliveries) {
+      for (let d of _data.deliveries) {
         var key = d.data.source + '->' + d.data.target;
         var value = sourceTargetMap.get(key);
 
@@ -140,23 +148,25 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       }
 
       return {
-        nodes: graphData.stations,
+        nodes: _data.stations,
         edges: mergedDeliveries
       };
     }
     else {
       return {
-        nodes: graphData.stations,
-        edges: graphData.deliveries
+        nodes: _data.stations,
+        edges: _data.deliveries
       };
     }
-  };
+  }
 
-  var createStyle = function() {
+  function createStyle() {
     var style = cytoscape.stylesheet()
       .selector('node')
       .css({
         'content': 'data(name)',
+        'height': 'data(size)',
+        'width': 'data(size)',
         'background-color': '#FFFFFF',
         'border-width': 3,
         'border-color': '#000000',
@@ -217,9 +227,9 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }
 
     return style;
-  };
+  }
 
-  var getAllCombination = function(values) {
+  function getAllCombination(values) {
     var n = Math.pow(2, values.length);
     var combinations = [];
 
@@ -241,9 +251,9 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     });
 
     return combinations;
-  };
+  }
 
-  var createNodeBackground = function(colors) {
+  function createNodeBackground(colors) {
     if (colors.length == 1) {
       return {
         'background-color': toRGB(colors[0])
@@ -258,25 +268,25 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     }
 
     return css;
-  };
+  }
 
-  var createEdgeColor = function(color) {
+  function createEdgeColor(color) {
     return {
       'line-color': toRGB(color)
     };
-  };
+  }
 
-  var mix = function(color1, color2) {
+  function mix(color1, color2) {
     var r = Math.round((color1[0] + color2[0]) / 2);
     var g = Math.round((color1[1] + color2[1]) / 2);
     var b = Math.round((color1[2] + color2[2]) / 2);
 
     return [r, g, b];
-  };
+  }
 
-  var toRGB = function(color) {
+  function toRGB(color) {
     return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
-  };
+  }
 
   var contextMenu = {
     selector: 'core',
@@ -298,13 +308,13 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
           parent: angular.element(document.body),
           clickOutsideToClose: true
         }).then(function(layout) {
-          cy.layout(layout);
+          _cy.layout(layout);
         });
       }
     }, {
       content: 'Zoom to Graph',
       select: function() {
-        cy.fit();
+        _cy.fit();
       }
     }, {
       content: 'Clear Trace',
@@ -343,6 +353,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       content: 'Mark/Unmark as Outbreak',
       select: function(station) {
         tracingService.toggleOutbreakStation(station.id());
+        graph.setNodeSize(_nodeSize);
         repaint();
       }
     }]
