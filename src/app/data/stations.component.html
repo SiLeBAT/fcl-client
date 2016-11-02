@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-class="$ctrl.isOnTrace(station) ? 'green' : ''">
+                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-class="$ctrl.getClass(station)">
                         <td md-cell>{{station.data.id}}</td>
                         <td md-cell>{{station.data.name}}</td>
                         <td md-cell>{{station.data.type}}</td>

@@ -12,6 +12,18 @@
     display: flex;
 }
 
-.green {
-    background-color: #00FF00;
+.tracing-forward {
+    background-color: #0F0;
+}
+
+.tracing-backward {
+    background-color: #088;
+}
+
+.tracing-observed {
+    background-color: #00F;
+}
+
+.tracing-outbreak {
+    background-color: #F00;
 }

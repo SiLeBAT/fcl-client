@@ -3,20 +3,20 @@
 /*global angular*/
 
 angular.module('app').component('stations', {
-    controller: function(dataService) {
+    controller: function(dataService, tableService) {
         var ctrl = this;
         var _allStations = [];
 
         function getFilteredStations() {
-            return ctrl.showTraceOnly ? _allStations.filter(ctrl.isOnTrace) : _allStations;
+            return ctrl.showTraceOnly ? tableService.getElementsOnTrace(_allStations) : _allStations;
         }
 
         ctrl.stations = getFilteredStations();
         ctrl.order = "data.id";
         ctrl.showTraceOnly = dataService.getShowTraceOnly();
 
-        ctrl.isOnTrace = function(station) {
-            return station.data.forward || station.data.backward;
+        ctrl.getClass = function(station) {
+            return tableService.getClass(station);
         };
 
         ctrl.onChange = function(property, value) {

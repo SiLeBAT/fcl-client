@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row ng-repeat="delivery in $ctrl.deliveries | orderBy: $ctrl.order" ng-class="delivery.data.forward || delivery.data.backward ? 'green' : ''">
+                    <tr md-row ng-repeat="delivery in $ctrl.deliveries | orderBy: $ctrl.order" ng-class="$ctrl.getClass(delivery)">
                         <td md-cell>{{delivery.data.id}}</td>
                         <td md-cell>{{delivery.data.source}}</td>
                         <td md-cell>{{delivery.data.target}}</td>
