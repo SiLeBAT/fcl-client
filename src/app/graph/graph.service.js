@@ -4,7 +4,7 @@
 
 angular.module('app').service('graphService', function(tracingService, dataService, $mdDialog) {
 
-  var graph = this;
+  var _this = this;
 
   var _cy;
   var _data;
@@ -12,7 +12,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
   var _nodeSize = 10;
   var _fontSize = 10;
 
-  graph.init = function(data) {
+  _this.init = function(data) {
     _data = data;
 
     if (_cy === undefined) {
@@ -58,7 +58,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     _cy.on('zoom', function(event) {
-      graph.setFontSize(_fontSize);
+      _this.setFontSize(_fontSize);
     });
     _cy.panzoom();
     _cy.cxtmenu(contextMenu);
@@ -67,12 +67,12 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     tracingService.init(data);
   };
 
-  graph.setMergeDeliveries = function(mergeDeliveries) {
+  _this.setMergeDeliveries = function(mergeDeliveries) {
     _mergeDeliveries = mergeDeliveries;
     updateEdges();
   };
 
-  graph.setNodeSize = function(nodeSize) {
+  _this.setNodeSize = function(nodeSize) {
     var maxScore = 0;
 
     for (let s of _data.stations) {
@@ -94,7 +94,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     repaint();
   };
 
-  graph.setFontSize = function(fontSize) {
+  _this.setFontSize = function(fontSize) {
     _fontSize = fontSize;
 
     _cy.nodes().style({
@@ -363,7 +363,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
       content: 'Mark/Unmark as Outbreak',
       select: function(station) {
         tracingService.toggleOutbreakStation(station.id());
-        graph.setNodeSize(_nodeSize);
+        _this.setNodeSize(_nodeSize);
       }
     }]
   };

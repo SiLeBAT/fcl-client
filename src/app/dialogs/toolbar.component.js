@@ -7,9 +7,9 @@ angular.module('app').component('dialogToolbar', {
         title: '@'
     },
     controller: function($mdDialog) {
-        var ctrl = this;
+        var _this = this;
 
-        ctrl.closeDialog = function() {
+        _this.closeDialog = function() {
             $mdDialog.cancel();
         };
     },

@@ -4,28 +4,28 @@
 
 angular.module('app').component('graph', {
     controller: function(graphService, dataService) {
-        var ctrl = this;
+        var _this = this;
 
-        ctrl.nodeSizes = dataService.NODE_SIZES;
-        ctrl.fontSizes = dataService.FONT_SIZES;
-        ctrl.nodeSize = dataService.getNodeSize();
-        ctrl.fontSize = dataService.getFontSize();
-        ctrl.mergeDeliveries = dataService.getMergeDeliveries();
+        _this.nodeSizes = dataService.NODE_SIZES;
+        _this.fontSizes = dataService.FONT_SIZES;
+        _this.nodeSize = dataService.getNodeSize();
+        _this.fontSize = dataService.getFontSize();
+        _this.mergeDeliveries = dataService.getMergeDeliveries();
 
-        ctrl.onChange = function(property, value) {
+        _this.onChange = function(property, value) {
             switch (property) {
                 case "nodeSize":
-                    ctrl.nodeSize = value;
+                    _this.nodeSize = value;
                     graphService.setNodeSize(value);
                     dataService.setNodeSize(value);
                     break;
                 case "fontSize":
-                    ctrl.fontSize = value;
+                    _this.fontSize = value;
                     graphService.setFontSize(value);
                     dataService.setFontSize(value);
                     break;
                 case "mergeDeliveries":
-                    ctrl.mergeDeliveries = value;
+                    _this.mergeDeliveries = value;
                     graphService.setMergeDeliveries(value);
                     dataService.setMergeDeliveries(value);
                     break;
@@ -34,9 +34,9 @@ angular.module('app').component('graph', {
 
         dataService.getData().then(function(data) {
             graphService.init(data);
-            graphService.setNodeSize(ctrl.nodeSize);
-            graphService.setFontSize(ctrl.fontSize);
-            graphService.setMergeDeliveries(ctrl.mergeDeliveries);
+            graphService.setNodeSize(_this.nodeSize);
+            graphService.setFontSize(_this.fontSize);
+            graphService.setMergeDeliveries(_this.mergeDeliveries);
         });
     },
     templateUrl: 'app/graph/graph.component.html'

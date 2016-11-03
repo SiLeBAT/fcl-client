@@ -4,14 +4,14 @@
 
 angular.module('app').service('tracingService', function() {
 
-    var comp = this;
+    var _this = this;
 
     var _stations;
     var _deliveries;
     var _stationsById;
     var _deliveriesById;
 
-    comp.init = function(data) {
+    _this.init = function(data) {
         _stations = data.stations;
         _deliveries = data.deliveries;
         _stationsById = {};
@@ -26,7 +26,7 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    comp.clearOutbreakStations = function() {
+    _this.clearOutbreakStations = function() {
         for (let s of _stations) {
             s.data.outbreak = false;
             s.data.score = 0;
@@ -36,14 +36,14 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    comp.toggleOutbreakStation = function(id) {
+    _this.toggleOutbreakStation = function(id) {
         var station = _stationsById[id];
 
         station.data.outbreak = !station.data.outbreak;
         updateScores();
     };
 
-    comp.clearTrace = function() {
+    _this.clearTrace = function() {
         for (let s of _stations) {
             s.data.observed = false;
             s.data.forward = false;
@@ -56,21 +56,21 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    comp.showStationForwardTrace = function(id) {
+    _this.showStationForwardTrace = function(id) {
         var station = _stationsById[id];
 
         station.data.observed = true;
         station.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
-    comp.showStationBackwardTrace = function(id) {
+    _this.showStationBackwardTrace = function(id) {
         var station = _stationsById[id];
 
         station.data.observed = true;
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
-    comp.showDeliveryForwardTrace = function(id) {
+    _this.showDeliveryForwardTrace = function(id) {
         var delivery = _deliveriesById[id];
 
         delivery.data.observed = true;
@@ -78,7 +78,7 @@ angular.module('app').service('tracingService', function() {
         delivery.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
-    comp.showDeliveryBackwardTrace = function(id) {
+    _this.showDeliveryBackwardTrace = function(id) {
         var delivery = _deliveriesById[id];
 
         delivery.data.observed = true;

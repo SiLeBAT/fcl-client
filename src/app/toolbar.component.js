@@ -4,9 +4,9 @@
 
 angular.module('app').component('toolbar', {
     controller: function($state) {
-        var ctrl = this;
+        var _this = this;
 
-        ctrl.currentNavItem = $state.current.name;
+        _this.currentNavItem = $state.current.name;
     },
     templateUrl: 'app/toolbar.component.html'
 });

@@ -4,19 +4,19 @@
 
 angular.module('app').service('dataService', function($q, $resource) {
 
-    var srvc = this;
+    var _this = this;
 
-    srvc.NODE_SIZES = {
+    _this.NODE_SIZES = {
         Small: 50,
         Large: 100
     };
 
-    srvc.FONT_SIZES = {
+    _this.FONT_SIZES = {
         Small: 12,
         Large: 18
     };
 
-    srvc.COLORS = {
+    _this.COLORS = {
         forward: [0, 255, 0],
         backward: [0, 128, 128],
         observed: [0, 0, 255],
@@ -24,12 +24,12 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     var _data;
-    var _nodeSize = srvc.NODE_SIZES.Small;
-    var _fontSize = srvc.FONT_SIZES.Small;
+    var _nodeSize = _this.NODE_SIZES.Small;
+    var _fontSize = _this.FONT_SIZES.Small;
     var _mergeDeliveries = false;
     var _showTraceOnly = false;
 
-    srvc.getData = function() {
+    _this.getData = function() {
         return $q(function(resolve, reject) {
             if (_data !== undefined) {
                 resolve(_data);
@@ -45,39 +45,39 @@ angular.module('app').service('dataService', function($q, $resource) {
         });
     };
 
-    srvc.getNodeSize = function() {
+    _this.getNodeSize = function() {
         return _nodeSize;
     };
 
-    srvc.setNodeSize = function(size) {
+    _this.setNodeSize = function(size) {
         _nodeSize = size;
     };
 
-    srvc.getFontSize = function() {
+    _this.getFontSize = function() {
         return _fontSize;
     };
 
-    srvc.setFontSize = function(size) {
+    _this.setFontSize = function(size) {
         _fontSize = size;
     };
 
-    srvc.getMergeDeliveries = function() {
+    _this.getMergeDeliveries = function() {
         return _mergeDeliveries;
     };
 
-    srvc.setMergeDeliveries = function(merge) {
+    _this.setMergeDeliveries = function(merge) {
         _mergeDeliveries = merge;
     };
 
-    srvc.getShowTraceOnly = function() {
+    _this.getShowTraceOnly = function() {
         return _showTraceOnly;
     };
 
-    srvc.setShowTraceOnly = function(traceOnly) {
+    _this.setShowTraceOnly = function(traceOnly) {
         _showTraceOnly = traceOnly;
     };
 
-    srvc.colorToCss = function(color) {
+    _this.colorToCss = function(color) {
         return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
     };
 

@@ -4,34 +4,34 @@
 
 angular.module('app').component('deliveries', {
     controller: function(dataService, tableService) {
-        var ctrl = this;
+        var _this = this;
         var _allDeliveries = [];
 
         function getFilteredDeliveries() {
-            return ctrl.showTraceOnly ? tableService.getElementsOnTrace(_allDeliveries) : _allDeliveries;
+            return _this.showTraceOnly ? tableService.getElementsOnTrace(_allDeliveries) : _allDeliveries;
         }
 
-        ctrl.deliveries = getFilteredDeliveries();
-        ctrl.order = "data.id";
-        ctrl.showTraceOnly = dataService.getShowTraceOnly();
+        _this.deliveries = getFilteredDeliveries();
+        _this.order = "data.id";
+        _this.showTraceOnly = dataService.getShowTraceOnly();
 
-        ctrl.getStyle = function(delivery) {
+        _this.getStyle = function(delivery) {
             return tableService.getStyle(delivery);
         };
 
-        ctrl.onChange = function(property, value) {
+        _this.onChange = function(property, value) {
             switch (property) {
                 case "showTraceOnly":
-                    ctrl.showTraceOnly = value;
+                    _this.showTraceOnly = value;
                     dataService.setShowTraceOnly(value);
-                    ctrl.deliveries = getFilteredDeliveries();
+                    _this.deliveries = getFilteredDeliveries();
                     break;
             }
         };
 
         dataService.getData().then(function(data) {
             _allDeliveries = data.deliveries;
-            ctrl.deliveries = getFilteredDeliveries();
+            _this.deliveries = getFilteredDeliveries();
         });
     },
     templateUrl: 'app/data/deliveries.component.html'

@@ -4,34 +4,34 @@
 
 angular.module('app').component('stations', {
     controller: function(dataService, tableService) {
-        var ctrl = this;
+        var _this = this;
         var _allStations = [];
 
         function getFilteredStations() {
-            return ctrl.showTraceOnly ? tableService.getElementsOnTrace(_allStations) : _allStations;
+            return _this.showTraceOnly ? tableService.getElementsOnTrace(_allStations) : _allStations;
         }
 
-        ctrl.stations = getFilteredStations();
-        ctrl.order = "data.id";
-        ctrl.showTraceOnly = dataService.getShowTraceOnly();
+        _this.stations = getFilteredStations();
+        _this.order = "data.id";
+        _this.showTraceOnly = dataService.getShowTraceOnly();
 
-        ctrl.getStyle = function(station) {
+        _this.getStyle = function(station) {
             return tableService.getStyle(station);
         };
 
-        ctrl.onChange = function(property, value) {
+        _this.onChange = function(property, value) {
             switch (property) {
                 case "showTraceOnly":
-                    ctrl.showTraceOnly = value;
+                    _this.showTraceOnly = value;
                     dataService.setShowTraceOnly(value);
-                    ctrl.stations = getFilteredStations();
+                    _this.stations = getFilteredStations();
                     break;
             }
         };
 
         dataService.getData().then(function(data) {
             _allStations = data.stations;
-            ctrl.stations = getFilteredStations();
+            _this.stations = getFilteredStations();
         });
     },
     templateUrl: 'app/data/stations.component.html'
