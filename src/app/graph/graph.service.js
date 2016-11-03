@@ -13,14 +13,6 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   var _fontSize = 10;
 
   graph.init = function(data) {
-    tracingService.init(data);
-    tracingService.clearOutbreakStations();
-    tracingService.clearTrace();
-
-    for (let s of data.stations) {
-      s.data._size = _nodeSize;
-    }
-
     _data = data;
 
     if (_cy === undefined) {
@@ -72,6 +64,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     _cy.cxtmenu(contextMenu);
     _cy.cxtmenu(stationContextMenu);
     _cy.cxtmenu(deliveryContextMenu);
+    tracingService.init(data);
   };
 
   graph.setMergeDeliveries = function(mergeDeliveries) {
@@ -86,14 +79,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       maxScore = Math.max(maxScore, s.data.score);
     }
 
-    if (maxScore === 0) {
+    if (maxScore > 0) {
       for (let s of _data.stations) {
-        s.data._size = nodeSize;
+        s.data._size = (0.5 + 0.5 * s.data.score / maxScore) * nodeSize;
       }
     }
     else {
       for (let s of _data.stations) {
-        s.data._size = (0.5 + 0.5 * s.data.score / maxScore) * nodeSize;
+        s.data._size = nodeSize;
       }
     }
 
@@ -104,7 +97,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   graph.setFontSize = function(fontSize) {
     _fontSize = fontSize;
 
-    _cy.nodes().css({
+    _cy.nodes().style({
       'font-size': Math.max(fontSize / _cy.zoom(), fontSize)
     });
   };
@@ -176,12 +169,16 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   }
 
   function createStyle() {
+    var sizeFunction = function(node) {
+      return node.data('_size') !== undefined ? node.data('_size') : _nodeSize;
+    };
+
     var style = cytoscape.stylesheet()
       .selector('node')
-      .css({
+      .style({
         'content': 'data(name)',
-        'height': 'data(_size)',
-        'width': 'data(_size)',
+        'height': sizeFunction,
+        'width': sizeFunction,
         'background-color': '#FFFFFF',
         'border-width': 3,
         'border-color': '#000000',
@@ -190,7 +187,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         'color': '#000000'
       })
       .selector('edge')
-      .css({
+      .style({
         'target-arrow-shape': 'triangle',
         'width': 6,
         'line-color': '#000000',
@@ -198,14 +195,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         'curve-style': 'bezier'
       })
       .selector('node:selected')
-      .css({
+      .style({
         'background-color': '#8080FF',
         'border-width': 6,
         'border-color': '#0000FF',
         'color': '#0000FF'
       })
       .selector('edge:selected')
-      .css({
+      .style({
         'width': 12
       });
 
@@ -233,12 +230,12 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
         c2.push(mix(nodeProps[prop], [0, 0, 255]));
       }
 
-      style = style.selector('node' + s.join('')).css(createNodeBackground(c1));
-      style = style.selector('node:selected' + s.join('')).css(createNodeBackground(c2));
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
 
     for (let prop of Object.keys(edgeProps)) {
-      style = style.selector('edge[?' + prop + ']').css(createEdgeColor(edgeProps[prop]));
+      style = style.selector('edge[?' + prop + ']').style(createEdgeColor(edgeProps[prop]));
     }
 
     return style;
@@ -275,14 +272,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       };
     }
 
-    var css = {};
+    var style = {};
 
     for (var i = 0; i < colors.length; i++) {
-      css['pie-' + (i + 1) + '-background-color'] = toRGB(colors[i]);
-      css['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+      style['pie-' + (i + 1) + '-background-color'] = toRGB(colors[i]);
+      style['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
     }
 
-    return css;
+    return style;
   }
 
   function createEdgeColor(color) {

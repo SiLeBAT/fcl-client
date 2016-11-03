@@ -41,10 +41,6 @@ angular.module('app').service('tracingService', function() {
 
         station.data.outbreak = !station.data.outbreak;
         updateScores();
-        
-        for (let s of _stations) {
-            console.log(s.data.score);
-        }
     };
 
     comp.clearTrace = function() {
