@@ -6,8 +6,8 @@ angular.module('app').component('graph', {
     controller: function(graphService, dataService) {
         var ctrl = this;
 
-        ctrl.nodeSizes = dataService.nodeSizes;
-        ctrl.fontSizes = dataService.fontSizes;
+        ctrl.nodeSizes = dataService.NODE_SIZES;
+        ctrl.fontSizes = dataService.FONT_SIZES;
         ctrl.nodeSize = dataService.getNodeSize();
         ctrl.fontSize = dataService.getFontSize();
         ctrl.mergeDeliveries = dataService.getMergeDeliveries();

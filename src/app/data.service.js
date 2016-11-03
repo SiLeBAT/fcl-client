@@ -6,19 +6,26 @@ angular.module('app').service('dataService', function($q, $resource) {
 
     var srvc = this;
 
-    srvc.nodeSizes = {
+    srvc.NODE_SIZES = {
         Small: 50,
         Large: 100
     };
 
-    srvc.fontSizes = {
+    srvc.FONT_SIZES = {
         Small: 12,
         Large: 18
     };
 
+    srvc.COLORS = {
+        forward: [0, 255, 0],
+        backward: [0, 128, 128],
+        observed: [0, 0, 255],
+        outbreak: [255, 0, 0]
+    };
+
     var _data;
-    var _nodeSize = srvc.nodeSizes.Small;
-    var _fontSize = srvc.fontSizes.Small;
+    var _nodeSize = srvc.NODE_SIZES.Small;
+    var _fontSize = srvc.FONT_SIZES.Small;
     var _mergeDeliveries = false;
     var _showTraceOnly = false;
 
@@ -68,6 +75,10 @@ angular.module('app').service('dataService', function($q, $resource) {
 
     srvc.setShowTraceOnly = function(traceOnly) {
         _showTraceOnly = traceOnly;
+    };
+
+    srvc.colorToCss = function(color) {
+        return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
     };
 
     function preprocessData(data) {

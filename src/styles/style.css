@@ -11,19 +11,3 @@
     height: 100%;
     display: flex;
 }
-
-.tracing-forward {
-    background-color: #0F0;
-}
-
-.tracing-backward {
-    background-color: #088;
-}
-
-.tracing-observed {
-    background-color: #00F;
-}
-
-.tracing-outbreak {
-    background-color: #F00;
-}

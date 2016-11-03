@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape, $*/
 
-angular.module('app').service('graphService', function(tracingService, $mdDialog) {
+angular.module('app').service('graphService', function(tracingService, dataService, $mdDialog) {
 
   var graph = this;
 
@@ -207,16 +207,16 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       });
 
     var nodeProps = {
-      'forward': [0, 255, 0],
-      'backward': [0, 128, 128],
-      'observed': [0, 0, 255],
-      'outbreak': [255, 0, 0]
+      'forward': dataService.COLORS.forward,
+      'backward': dataService.COLORS.backward,
+      'observed': dataService.COLORS.observed,
+      'outbreak': dataService.COLORS.outbreak
     };
 
     var edgeProps = {
-      'forward': [0, 255, 0],
-      'backward': [0, 128, 128],
-      'observed': [0, 0, 255],
+      'forward': dataService.COLORS.forward,
+      'backward': dataService.COLORS.backward,
+      'observed': dataService.COLORS.observed
     };
 
     for (let combination of getAllCombination(Object.keys(nodeProps))) {
@@ -268,14 +268,14 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   function createNodeBackground(colors) {
     if (colors.length == 1) {
       return {
-        'background-color': toRGB(colors[0])
+        'background-color': dataService.colorToCss(colors[0])
       };
     }
 
     var style = {};
 
     for (var i = 0; i < colors.length; i++) {
-      style['pie-' + (i + 1) + '-background-color'] = toRGB(colors[i]);
+      style['pie-' + (i + 1) + '-background-color'] = dataService.colorToCss(colors[i]);
       style['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
     }
 
@@ -284,7 +284,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
 
   function createEdgeColor(color) {
     return {
-      'line-color': toRGB(color)
+      'line-color': dataService.colorToCss(color)
     };
   }
 
@@ -294,10 +294,6 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     var b = Math.round((color1[2] + color2[2]) / 2);
 
     return [r, g, b];
-  }
-
-  function toRGB(color) {
-    return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
   }
 
   var contextMenu = {

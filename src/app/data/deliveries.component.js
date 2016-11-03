@@ -15,8 +15,8 @@ angular.module('app').component('deliveries', {
         ctrl.order = "data.id";
         ctrl.showTraceOnly = dataService.getShowTraceOnly();
 
-        ctrl.getClass = function(delivery) {
-            return tableService.getClass(delivery);
+        ctrl.getStyle = function(delivery) {
+            return tableService.getStyle(delivery);
         };
 
         ctrl.onChange = function(property, value) {
