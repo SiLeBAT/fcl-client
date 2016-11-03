@@ -26,11 +26,25 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
+    comp.clearOutbreakStations = function() {
+        for (let s of _stations) {
+            s.data.outbreak = false;
+            s.data.score = 0;
+        }
+        for (let d of _deliveries) {
+            d.data.score = 0;
+        }
+    };
+
     comp.toggleOutbreakStation = function(id) {
         var station = _stationsById[id];
 
         station.data.outbreak = !station.data.outbreak;
         updateScores();
+        
+        for (let s of _stations) {
+            console.log(s.data.score);
+        }
     };
 
     comp.clearTrace = function() {
@@ -97,12 +111,12 @@ angular.module('app').service('tracingService', function() {
         if (nOutbreaks !== 0) {
             for (let s of _stations) {
                 s.data.score /= nOutbreaks;
-                s.data.visited = undefined;
+                s.data._visited = undefined;
             }
 
             for (let d of _deliveries) {
                 d.data.score /= nOutbreaks;
-                d.data.visited = undefined;
+                d.data._visited = undefined;
             }
         }
     }
@@ -110,8 +124,8 @@ angular.module('app').service('tracingService', function() {
     function updateStationScore(id, outbreakId) {
         var station = _stationsById[id];
 
-        if (station.data.visited !== outbreakId) {
-            station.data.visited = outbreakId;
+        if (station.data._visited !== outbreakId) {
+            station.data._visited = outbreakId;
             station.data.score++;
 
             for (let d of station.data.in) {
@@ -123,14 +137,14 @@ angular.module('app').service('tracingService', function() {
     function updateDeliveryScore(id, outbreakId) {
         var delivery = _deliveriesById[id];
 
-        if (delivery.data.visited !== outbreakId) {
-            delivery.data.visited = outbreakId;
+        if (delivery.data._visited !== outbreakId) {
+            delivery.data._visited = outbreakId;
             delivery.data.score++;
 
             var source = _stationsById[delivery.data.source];
 
-            if (source.data.visited !== outbreakId) {
-                source.data.visited = outbreakId;
+            if (source.data._visited !== outbreakId) {
+                source.data._visited = outbreakId;
                 source.data.score++;
             }
 

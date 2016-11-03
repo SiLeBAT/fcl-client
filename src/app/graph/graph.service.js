@@ -13,8 +13,12 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   var _fontSize = 10;
 
   graph.init = function(data) {
+    tracingService.init(data);
+    tracingService.clearOutbreakStations();
+    tracingService.clearTrace();
+
     for (let s of data.stations) {
-      s.data.size = _nodeSize;
+      s.data._size = _nodeSize;
     }
 
     _data = data;
@@ -68,7 +72,6 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
     _cy.cxtmenu(contextMenu);
     _cy.cxtmenu(stationContextMenu);
     _cy.cxtmenu(deliveryContextMenu);
-    tracingService.init(data);
   };
 
   graph.setMergeDeliveries = function(mergeDeliveries) {
@@ -77,12 +80,24 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   };
 
   graph.setNodeSize = function(nodeSize) {
-    _nodeSize = nodeSize;
+    var maxScore = 0;
 
     for (let s of _data.stations) {
-      s.data.size = s.data.score !== undefined ? 0.5 * (1 + s.data.score) * nodeSize : nodeSize;
+      maxScore = Math.max(maxScore, s.data.score);
     }
 
+    if (maxScore === 0) {
+      for (let s of _data.stations) {
+        s.data._size = nodeSize;
+      }
+    }
+    else {
+      for (let s of _data.stations) {
+        s.data._size = (0.5 + 0.5 * s.data.score / maxScore) * nodeSize;
+      }
+    }
+
+    _nodeSize = nodeSize;
     repaint();
   };
 
@@ -97,10 +112,10 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
   function repaint() {
     if (_mergeDeliveries) {
       updateEdges();
-      _cy.nodes().data('update', true);
+      _cy.nodes().data('_update', true);
     }
     else {
-      _cy.elements().data('update', true);
+      _cy.elements().data('_update', true);
     }
   }
 
@@ -165,8 +180,8 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
       .selector('node')
       .css({
         'content': 'data(name)',
-        'height': 'data(size)',
-        'width': 'data(size)',
+        'height': 'data(_size)',
+        'width': 'data(_size)',
         'background-color': '#FFFFFF',
         'border-width': 3,
         'border-color': '#000000',
@@ -290,6 +305,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
 
   var contextMenu = {
     selector: 'core',
+    openMenuEvents: 'cxttapstart',
     commands: [{
       content: 'Apply Layout',
       select: function() {
@@ -327,6 +343,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
 
   var stationContextMenu = {
     selector: 'node',
+    openMenuEvents: 'cxttapstart',
     commands: [{
       content: 'Show Forward Trace',
       select: function(station) {
@@ -360,6 +377,7 @@ angular.module('app').service('graphService', function(tracingService, $mdDialog
 
   var deliveryContextMenu = {
     selector: 'edge',
+    openMenuEvents: 'cxttapstart',
     commands: [{
       content: 'Show Forward Trace',
       select: function(delivery) {
