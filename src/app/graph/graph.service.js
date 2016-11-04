@@ -238,7 +238,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             for (let prop of combination) {
                 s.push('[?' + prop + ']');
                 c1.push(nodeProps[prop]);
-                c2.push(mix(nodeProps[prop], [0, 0, 255]));
+                c2.push(dataService.mixColors(nodeProps[prop], [0, 0, 255]));
             }
 
             style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
@@ -297,14 +297,6 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         return {
             'line-color': dataService.colorToCss(color)
         };
-    }
-
-    function mix(color1, color2) {
-        var r = Math.round((color1[0] + color2[0]) / 2);
-        var g = Math.round((color1[1] + color2[1]) / 2);
-        var b = Math.round((color1[2] + color2[2]) / 2);
-
-        return [r, g, b];
     }
 
     var contextMenu = {

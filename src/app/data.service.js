@@ -81,6 +81,14 @@ angular.module('app').service('dataService', function($q, $resource) {
         return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
     };
 
+    _this.mixColors = function(color1, color2) {
+        var r = Math.round((color1[0] + color2[0]) / 2);
+        var g = Math.round((color1[1] + color2[1]) / 2);
+        var b = Math.round((color1[2] + color2[2]) / 2);
+
+        return [r, g, b];
+    };
+
     function preprocessData(data) {
         var stationsById = {};
         var deliveriesById = {};

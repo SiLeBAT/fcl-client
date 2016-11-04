@@ -20,30 +20,43 @@ angular.module('app').service('tableService', function(dataService) {
         var colors = [];
 
         if (element.data.forward) {
-            colors.push(dataService.colorToCss(dataService.COLORS.forward));
+            colors.push(dataService.COLORS.forward);
         }
         if (element.data.backward) {
-            colors.push(dataService.colorToCss(dataService.COLORS.backward));
+            colors.push(dataService.COLORS.backward);
         }
         if (element.data.observed) {
-            colors.push(dataService.colorToCss(dataService.COLORS.observed));
+            colors.push(dataService.COLORS.observed);
         }
         if (element.data.outbreak) {
-            colors.push(dataService.colorToCss(dataService.COLORS.outbreak));
+            colors.push(dataService.COLORS.outbreak);
         }
 
         if (colors.length === 0) {
-            return {};
+            colors.push([255, 255, 255]);
         }
-        else if (colors.length === 1) {
+
+        if (element.data.selected) {
+            for (let i = 0; i < colors.length; i++) {
+                colors[i] = dataService.mixColors(colors[i], [0, 0, 255]);
+            }
+        }
+
+        if (colors.length === 1) {
             return {
-                'background-color': colors[0]
+                'background-color': dataService.colorToCss(colors[0])
             };
         }
         else {
+            var css = [];
+
+            for (let c of colors) {
+                css.push(dataService.colorToCss(c));
+            }
+
             return {
                 'background-repeat': 'no-repeat',
-                'background-image': 'linear-gradient(' + colors.join(',') + ')'
+                'background-image': 'linear-gradient(' + css.join(',') + ')'
             };
         }
     };
