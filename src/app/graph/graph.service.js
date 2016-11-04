@@ -63,12 +63,18 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         _cy.on('click boxselect', function(event) {
             var element = event.cyTarget;
 
-            tracingService.setSelected(element.id(), element.selected());
+            if (element.length === 1) {
+                tracingService.setSelected(element.id(), element.selected());
+            }
+            else {
+                tracingService.clearSelection();
+            }
         });
         _cy.panzoom();
         _cy.cxtmenu(contextMenu);
         _cy.cxtmenu(stationContextMenu);
         _cy.cxtmenu(deliveryContextMenu);
+        _cy.$('[?selected]').select();
         tracingService.init(data);
     };
 

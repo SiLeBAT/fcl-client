@@ -28,6 +28,15 @@ angular.module('app').service('tracingService', function() {
         _elementsById[id].data.selected = selected;
     };
 
+    _this.clearSelection = function() {
+        for (let s of _stations) {
+            s.data.selected = false;
+        }
+        for (let d of _deliveries) {
+            d.data.selected = false;
+        }
+    };
+
     _this.clearOutbreakStations = function() {
         for (let s of _stations) {
             s.data.outbreak = false;
