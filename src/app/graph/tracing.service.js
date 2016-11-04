@@ -8,22 +8,24 @@ angular.module('app').service('tracingService', function() {
 
     var _stations;
     var _deliveries;
-    var _stationsById;
-    var _deliveriesById;
+    var _elementsById;
 
     _this.init = function(data) {
         _stations = data.stations;
         _deliveries = data.deliveries;
-        _stationsById = {};
-        _deliveriesById = {};
+        _elementsById = {};
 
         for (let s of _stations) {
-            _stationsById[s.data.id] = s;
+            _elementsById[s.data.id] = s;
         }
 
         for (let d of _deliveries) {
-            _deliveriesById[d.data.id] = d;
+            _elementsById[d.data.id] = d;
         }
+    };
+
+    _this.setSelected = function(id, selected) {
+        _elementsById[id].data.selected = selected;
     };
 
     _this.clearOutbreakStations = function() {
@@ -37,7 +39,7 @@ angular.module('app').service('tracingService', function() {
     };
 
     _this.toggleOutbreakStation = function(id) {
-        var station = _stationsById[id];
+        var station = _elementsById[id];
 
         station.data.outbreak = !station.data.outbreak;
         updateScores();
@@ -57,32 +59,32 @@ angular.module('app').service('tracingService', function() {
     };
 
     _this.showStationForwardTrace = function(id) {
-        var station = _stationsById[id];
+        var station = _elementsById[id];
 
         station.data.observed = true;
         station.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
     _this.showStationBackwardTrace = function(id) {
-        var station = _stationsById[id];
+        var station = _elementsById[id];
 
         station.data.observed = true;
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
     _this.showDeliveryForwardTrace = function(id) {
-        var delivery = _deliveriesById[id];
+        var delivery = _elementsById[id];
 
         delivery.data.observed = true;
-        _stationsById[delivery.data.target].data.forward = true;
+        _elementsById[delivery.data.target].data.forward = true;
         delivery.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
     _this.showDeliveryBackwardTrace = function(id) {
-        var delivery = _deliveriesById[id];
+        var delivery = _elementsById[id];
 
         delivery.data.observed = true;
-        _stationsById[delivery.data.source].data.backward = true;
+        _elementsById[delivery.data.source].data.backward = true;
         delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
@@ -118,7 +120,7 @@ angular.module('app').service('tracingService', function() {
     }
 
     function updateStationScore(id, outbreakId) {
-        var station = _stationsById[id];
+        var station = _elementsById[id];
 
         if (station.data._visited !== outbreakId) {
             station.data._visited = outbreakId;
@@ -131,13 +133,13 @@ angular.module('app').service('tracingService', function() {
     }
 
     function updateDeliveryScore(id, outbreakId) {
-        var delivery = _deliveriesById[id];
+        var delivery = _elementsById[id];
 
         if (delivery.data._visited !== outbreakId) {
             delivery.data._visited = outbreakId;
             delivery.data.score++;
 
-            var source = _stationsById[delivery.data.source];
+            var source = _elementsById[delivery.data.source];
 
             if (source.data._visited !== outbreakId) {
                 source.data._visited = outbreakId;
@@ -151,21 +153,21 @@ angular.module('app').service('tracingService', function() {
     }
 
     function showDeliveryForwardTraceInternal(id) {
-        var delivery = _deliveriesById[id];
+        var delivery = _elementsById[id];
 
         if (delivery.data.forward !== true) {
             delivery.data.forward = true;
-            _stationsById[delivery.data.target].data.forward = true;
+            _elementsById[delivery.data.target].data.forward = true;
             delivery.data.out.forEach(showDeliveryForwardTraceInternal);
         }
     }
 
     function showDeliveryBackwardTraceInternal(id) {
-        var delivery = _deliveriesById[id];
+        var delivery = _elementsById[id];
 
         if (delivery.data.backward !== true) {
             delivery.data.backward = true;
-            _stationsById[delivery.data.source].data.backward = true;
+            _elementsById[delivery.data.source].data.backward = true;
             delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
         }
     }

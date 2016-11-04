@@ -12,6 +12,10 @@ angular.module('app').service('tableService', function(dataService) {
         });
     };
 
+    _this.getClass = function(element) {
+        return element.data.selected ? 'selected' : '';
+    };
+
     _this.getStyle = function(element) {
         var colors = [];
 
@@ -33,7 +37,8 @@ angular.module('app').service('tableService', function(dataService) {
         }
         else if (colors.length === 1) {
             return {
-                'background-color': colors[0]
+                'background-color': colors[0],
+                'border': '5px solid #00f'
             };
         }
         else {

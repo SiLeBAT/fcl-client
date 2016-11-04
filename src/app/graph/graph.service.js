@@ -60,6 +60,11 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         _cy.on('zoom', function(event) {
             _this.setFontSize(_fontSize);
         });
+        _cy.on('click boxselect', function(event) {
+            var element = event.cyTarget;
+
+            tracingService.setSelected(element.id(), element.selected());
+        });
         _cy.panzoom();
         _cy.cxtmenu(contextMenu);
         _cy.cxtmenu(stationContextMenu);

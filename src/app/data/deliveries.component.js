@@ -15,6 +15,10 @@ angular.module('app').component('deliveries', {
         _this.order = "data.id";
         _this.showTraceOnly = dataService.getShowTraceOnly();
 
+        _this.getClass = function(delivery) {
+            return tableService.getClass(delivery);
+        };
+
         _this.getStyle = function(delivery) {
             return tableService.getStyle(delivery);
         };
