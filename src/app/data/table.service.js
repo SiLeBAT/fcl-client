@@ -38,7 +38,9 @@ angular.module('app').service('tableService', function(dataService) {
         }
         else {
             return {
-                'background': 'linear-gradient(to top,' + colors.join(',') + ')'
+                'background-color': 'rgb(128, 128, 128)',
+                'background-repeat': 'no-repeat',
+                'background-image': 'linear-gradient(' + colors.join(',') + ')'
             };
         }
     };
