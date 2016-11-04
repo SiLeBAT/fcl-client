@@ -17,8 +17,8 @@
 }
 
 .md-column {
-    border-top: 1px #eee solid !important;
-    border-bottom: 1px #eee solid !important;
+    border-top: 1px #eee solid;
+    border-bottom: 1px #eee solid;
 }
 
 .md-cell {

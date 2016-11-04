@@ -37,8 +37,7 @@ angular.module('app').service('tableService', function(dataService) {
         }
         else if (colors.length === 1) {
             return {
-                'background-color': colors[0],
-                'border': '5px solid #00f'
+                'background-color': colors[0]
             };
         }
         else {
