@@ -15,3 +15,7 @@
 .md-cell {
     border-top: 1px #eee solid;
 }
+
+md-nav-bar .md-button._md-nav-button.md-unselected {
+    color: rgba(255, 255, 255, 0.87);
+}

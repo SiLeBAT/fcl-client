@@ -17,10 +17,10 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     _this.COLORS = {
-        forward: [200, 255, 100],
-        backward: [255, 200, 100],
-        observed: [100, 200, 255],
-        outbreak: [255, 100, 100]
+        forward: [150, 255, 75],
+        backward: [255, 200, 75],
+        observed: [75, 150, 255],
+        outbreak: [255, 50, 50]
     };
 
     var _data;
