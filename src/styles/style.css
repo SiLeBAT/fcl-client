@@ -11,3 +11,7 @@
     height: 100%;
     display: flex;
 }
+
+.md-cell {
+    border-top: 1px #eee solid;
+}
