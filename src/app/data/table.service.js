@@ -16,7 +16,7 @@ angular.module('app').service('tableService', function(dataService) {
         return element.data.selected ? 'selected' : '';
     };
 
-    _this.getStyle = function(element) {
+    _this.getRowStyle = function(element) {
         var colors = [];
 
         if (element.data.forward) {

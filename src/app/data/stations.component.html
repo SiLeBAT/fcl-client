@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-style="$ctrl.getStyle(station)">
+                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-style="$ctrl.getRowStyle(station)">
                         <td md-cell ng-class="$ctrl.getClass(station)">{{station.data.id}}</td>
                         <td md-cell ng-class="$ctrl.getClass(station)">{{station.data.name}}</td>
                         <td md-cell ng-class="$ctrl.getClass(station)">{{station.data.type}}</td>

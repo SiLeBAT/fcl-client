@@ -19,8 +19,8 @@ angular.module('app').component('deliveries', {
             return tableService.getClass(delivery);
         };
 
-        _this.getStyle = function(delivery) {
-            return tableService.getStyle(delivery);
+        _this.getRowStyle = function(delivery) {
+            return tableService.getRowStyle(delivery);
         };
 
         _this.onChange = function(property, value) {

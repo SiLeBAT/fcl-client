@@ -19,8 +19,8 @@ angular.module('app').component('stations', {
             return tableService.getClass(station);
         };
 
-        _this.getStyle = function(station) {
-            return tableService.getStyle(station);
+        _this.getRowStyle = function(station) {
+            return tableService.getRowStyle(station);
         };
 
         _this.onChange = function(property, value) {

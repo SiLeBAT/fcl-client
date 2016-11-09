@@ -57,24 +57,22 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             });
         }
 
-        _cy.on('zoom', function(event) {
-            _this.setFontSize(_fontSize);
-        });
-        _cy.on('click boxselect', function(event) {
-            var element = event.cyTarget;
-
-            if (element.length === 1) {
-                tracingService.setSelected(element.id(), element.selected());
-            }
-            else {
-                tracingService.clearSelection();
-            }
-        });
         _cy.panzoom();
         _cy.cxtmenu(contextMenu);
         _cy.cxtmenu(stationContextMenu);
         _cy.cxtmenu(deliveryContextMenu);
         _cy.$('[?selected]').select();
+
+        _cy.on('zoom', function(event) {
+            _this.setFontSize(_fontSize);
+        });
+        _cy.on('select', function(event) {
+            tracingService.setSelected(event.cyTarget.id(), true);
+        });
+        _cy.on('unselect', function(event) {
+            tracingService.setSelected(event.cyTarget.id(), false);
+        });
+
         tracingService.init(data);
     };
 
