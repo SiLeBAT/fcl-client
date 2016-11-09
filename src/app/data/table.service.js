@@ -12,8 +12,30 @@ angular.module('app').service('tableService', function(dataService) {
         });
     };
 
-    _this.getClass = function(element) {
-        return element.data.selected ? 'selected' : '';
+    _this.getCellStyle = function(element, position) {
+        if (element !== undefined && element.data.selected) {
+            var css = {
+                'border-top': '2px #00f solid',
+                'border-bottom': '2px #00f solid'
+            };
+
+            switch (position) {
+                case 'first':
+                    css['border-left'] = '2px #00f solid';
+                    break;
+                case 'last':
+                    css['border-right'] = '2px #00f solid';
+                    break;
+            }
+
+            return css;
+        }
+        else {
+            return {
+                'border-top': '1px #eee solid',
+                'border-bottom': '1px #eee solid'
+            };
+        }
     };
 
     _this.getRowStyle = function(element) {

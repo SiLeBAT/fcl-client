@@ -15,8 +15,8 @@ angular.module('app').component('stations', {
         _this.order = "data.id";
         _this.showTraceOnly = dataService.getShowTraceOnly();
 
-        _this.getClass = function(station) {
-            return tableService.getClass(station);
+        _this.getCellStyle = function(station, position) {
+            return tableService.getCellStyle(station, position);
         };
 
         _this.getRowStyle = function(station) {
