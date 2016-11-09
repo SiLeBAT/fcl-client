@@ -19,7 +19,10 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             _cy = cytoscape({
                 container: $('#graph')[0],
 
-                elements: createElements(),
+                elements: {
+                    nodes: createNodes(),
+                    edges: createEdges()
+                },
 
                 layout: {
                     name: 'random'
@@ -37,7 +40,10 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             _cy = cytoscape({
                 container: $('#graph')[0],
 
-                elements: createElements(),
+                elements: {
+                    nodes: createNodes(),
+                    edges: createEdges()
+                },
 
                 layout: {
                     name: 'preset',
@@ -61,7 +67,6 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         _cy.cxtmenu(contextMenu);
         _cy.cxtmenu(stationContextMenu);
         _cy.cxtmenu(deliveryContextMenu);
-        _cy.$('[?selected]').select();
 
         _cy.on('zoom', function(event) {
             _this.setFontSize(_fontSize);
@@ -122,7 +127,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function updateEdges() {
-        var edges = createElements().edges;
+        var edges = createEdges();
 
         for (let e of edges) {
             e.group = "edges";
@@ -132,7 +137,23 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         _cy.add(edges);
     }
 
-    function createElements() {
+    function createNodes() {
+        var stations = [];
+
+        for (let s of _data.stations) {
+            stations.push({
+                data: s.data,
+                selected: s.data.selected
+            });
+        }
+
+        return stations;
+    }
+
+
+    function createEdges() {
+        var deliveries = [];
+
         if (_mergeDeliveries) {
             var sourceTargetMap = new Map();
 
@@ -143,13 +164,11 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 sourceTargetMap.set(key, value !== undefined ? value.concat(d) : [d]);
             }
 
-            var mergedDeliveries = [];
-
             for (let value of sourceTargetMap.values()) {
                 var source = value[0].data.source;
                 var target = value[0].data.target;
 
-                mergedDeliveries.push({
+                deliveries.push({
                     data: {
                         id: source + '->' + target,
                         source: source,
@@ -160,21 +179,23 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                         forward: value.find(function(d) {
                             return d.data.forward === true;
                         }) !== undefined
-                    }
+                    },
+                    selected: value.find(function(d) {
+                        return d.data.selected === true;
+                    }) !== undefined
                 });
             }
-
-            return {
-                nodes: _data.stations,
-                edges: mergedDeliveries
-            };
         }
         else {
-            return {
-                nodes: _data.stations,
-                edges: _data.deliveries
-            };
+            for (let d of _data.deliveries) {
+                deliveries.push({
+                    data: d.data,
+                    selected: d.data.selected
+                });
+            }
         }
+
+        return deliveries;
     }
 
     function createStyle() {
