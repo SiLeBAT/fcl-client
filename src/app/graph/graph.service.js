@@ -170,7 +170,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
 
                 deliveries.push({
                     data: {
-                        id: source + '->' + target,
+                        id: value.length === 1 ? value[0].data.id : source + '->' + target,
                         source: source,
                         target: target,
                         backward: value.find(function(d) {
@@ -178,7 +178,8 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                         }) !== undefined,
                         forward: value.find(function(d) {
                             return d.data.forward === true;
-                        }) !== undefined
+                        }) !== undefined,
+                        merged: value.length > 1
                     },
                     selected: value.find(function(d) {
                         return d.data.selected === true;
@@ -188,10 +189,13 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         }
         else {
             for (let d of _data.deliveries) {
-                deliveries.push({
+                var delivery = {
                     data: d.data,
-                    selected: d.data.selected
-                });
+                    selected: d.data.selected,
+                };
+
+                delivery.data.merged = false;
+                deliveries.push(delivery);
             }
         }
 
@@ -318,6 +322,22 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         };
     }
 
+    function isDeliveryTracePossible(delivery) {
+        if (delivery.data('merged')) {
+            $mdDialog
+                .show($mdDialog.alert({
+                    title: 'Error',
+                    textContent: 'Showing Trace of merged delivery is not supported!',
+                    ok: 'Close'
+                }));
+
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     var contextMenu = {
         selector: 'core',
         openMenuEvents: 'cxttapstart',
@@ -396,24 +416,30 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         commands: [{
             content: 'Show Forward Trace',
             select: function(delivery) {
-                tracingService.clearTrace();
-                tracingService.showDeliveryForwardTrace(delivery.id());
-                repaint();
+                if (isDeliveryTracePossible(delivery)) {
+                    tracingService.clearTrace();
+                    tracingService.showDeliveryForwardTrace(delivery.id());
+                    repaint();
+                }
             }
         }, {
             content: 'Show Backward Trace',
             select: function(delivery) {
-                tracingService.clearTrace();
-                tracingService.showDeliveryBackwardTrace(delivery.id());
-                repaint();
+                if (isDeliveryTracePossible(delivery)) {
+                    tracingService.clearTrace();
+                    tracingService.showDeliveryBackwardTrace(delivery.id());
+                    repaint();
+                }
             }
         }, {
             content: 'Show Whole Trace',
             select: function(delivery) {
-                tracingService.clearTrace();
-                tracingService.showDeliveryForwardTrace(delivery.id());
-                tracingService.showDeliveryBackwardTrace(delivery.id());
-                repaint();
+                if (isDeliveryTracePossible(delivery)) {
+                    tracingService.clearTrace();
+                    tracingService.showDeliveryForwardTrace(delivery.id());
+                    tracingService.showDeliveryBackwardTrace(delivery.id());
+                    repaint();
+                }
             }
         }]
     };
