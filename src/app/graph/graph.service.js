@@ -72,10 +72,10 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             _this.setFontSize(_fontSize);
         });
         _cy.on('select', function(event) {
-            tracingService.setSelected(event.cyTarget.id(), true);
+            setSelected(event.cyTarget, true);
         });
         _cy.on('unselect', function(event) {
-            tracingService.setSelected(event.cyTarget.id(), false);
+            setSelected(event.cyTarget, false);
         });
 
         tracingService.init(data);
@@ -158,38 +158,55 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             var sourceTargetMap = new Map();
 
             for (let d of _data.deliveries) {
-                var key = d.data.source + '->' + d.data.target;
-                var value = sourceTargetMap.get(key);
+                let key = d.data.source + '->' + d.data.target;
+                let value = sourceTargetMap.get(key);
 
                 sourceTargetMap.set(key, value !== undefined ? value.concat(d) : [d]);
             }
 
             for (let value of sourceTargetMap.values()) {
-                var source = value[0].data.source;
-                var target = value[0].data.target;
+                let delivery;
 
-                deliveries.push({
-                    data: {
-                        id: value.length === 1 ? value[0].data.id : source + '->' + target,
-                        source: source,
-                        target: target,
-                        backward: value.find(function(d) {
-                            return d.data.backward === true;
-                        }) !== undefined,
-                        forward: value.find(function(d) {
-                            return d.data.forward === true;
-                        }) !== undefined,
-                        merged: value.length > 1
-                    },
-                    selected: value.find(function(d) {
-                        return d.data.selected === true;
-                    }) !== undefined
-                });
+                if (value.length === 1) {
+                    delivery = {
+                        data: value[0].data,
+                        selected: value[0].data.selected,
+                    };
+
+                    delivery.data.merged = false;
+                }
+                else {
+                    let source = value[0].data.source;
+                    let target = value[0].data.target;
+
+                    delivery = {
+                        data: {
+                            id: source + '->' + target,
+                            source: source,
+                            target: target,
+                            backward: value.find(function(d) {
+                                return d.data.backward === true;
+                            }) !== undefined,
+                            forward: value.find(function(d) {
+                                return d.data.forward === true;
+                            }) !== undefined,
+                            merged: value.length > 1,
+                            contains: value.map(function(d) {
+                                return d.data.id;
+                            })
+                        },
+                        selected: value.find(function(d) {
+                            return d.data.selected === true;
+                        }) !== undefined
+                    };
+                }
+
+                deliveries.push(delivery);
             }
         }
         else {
             for (let d of _data.deliveries) {
-                var delivery = {
+                let delivery = {
                     data: d.data,
                     selected: d.data.selected,
                 };
@@ -200,6 +217,17 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         }
 
         return deliveries;
+    }
+
+    function setSelected(element, selected) {
+        if (element.data('contains') !== undefined) {
+            for (let id of element.data('contains')) {
+                tracingService.setSelected(id, selected);
+            }
+        }
+        else {
+            tracingService.setSelected(element.id(), selected);
+        }
     }
 
     function createStyle() {
