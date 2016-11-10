@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular, cytoscape, $*/
+/*global angular, cytoscape*/
 
 angular.module('app').service('graphService', function(tracingService, dataService, $mdDialog) {
 
@@ -12,12 +12,12 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     var _nodeSize = 10;
     var _fontSize = 10;
 
-    _this.init = function(data) {
+    _this.init = function(container, data) {
         _data = data;
 
         if (_cy === undefined) {
             _cy = cytoscape({
-                container: $('#graph')[0],
+                container: container,
 
                 elements: {
                     nodes: createNodes(),
@@ -38,7 +38,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             var json = _cy.json();
 
             _cy = cytoscape({
-                container: $('#graph')[0],
+                container: container,
 
                 elements: {
                     nodes: createNodes(),

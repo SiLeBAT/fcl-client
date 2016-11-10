@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular*/
+/*global angular,$*/
 
 angular.module('app').component('graph', {
     controller: function(graphService, dataService) {
@@ -32,8 +32,16 @@ angular.module('app').component('graph', {
             }
         };
 
+        _this.style = {
+            height: '100%',
+            width: '100%',
+            position: 'absolute',
+            left: 0,
+            top: 0
+        };
+
         dataService.getData().then(function(data) {
-            graphService.init(data);
+            graphService.init($('#graph')[0], data);
             graphService.setNodeSize(_this.nodeSize);
             graphService.setFontSize(_this.fontSize);
             graphService.setMergeDeliveries(_this.mergeDeliveries);
