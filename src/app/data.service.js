@@ -35,7 +35,7 @@ angular.module('app').service('dataService', function($q, $resource) {
                 resolve(_data);
             }
             else {
-                $resource('data/large_network.json').get(function(data) {
+                $resource('data/small_network.json').get(function(data) {
                     _data = preprocessData(data);
                     resolve(_data);
                 }, function(error) {

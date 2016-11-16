@@ -64,9 +64,6 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         }
 
         _cy.panzoom();
-        _cy.cxtmenu(contextMenu);
-        _cy.cxtmenu(stationContextMenu);
-        _cy.cxtmenu(deliveryContextMenu);
 
         _cy.on('zoom', function(event) {
             _this.setFontSize(_fontSize);
@@ -76,6 +73,17 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         });
         _cy.on('unselect', function(event) {
             setSelected(event.cyTarget, false);
+        });
+        _cy.on('cxttap', function(event) {
+            if (event.cyTarget.length === undefined) {
+                showGraphContextMenu(event);
+            }
+            else if (event.cyTarget.group() === 'nodes') {
+                showStationContextMenu(event);
+            }
+            else if (event.cyTarget.group() === 'edges') {
+                showDeliveryContextMenu(event);
+            }
         });
 
         tracingService.init(data);
@@ -366,109 +374,144 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         }
     }
 
-    var contextMenu = {
-        selector: 'core',
-        openMenuEvents: 'cxttapstart',
-        commands: [{
-            content: 'Apply Layout',
-            select: function() {
-                $mdDialog.show({
-                    controller: function($scope) {
-                        $scope.select = function(layout) {
-                            $mdDialog.hide(layout);
-                        };
-                    },
-                    template: `
-                        <md-dialog aria-label="Apply Layout">
-                        <md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>
-                        <md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>
-                        </md-dialog>
-                    `,
-                    parent: angular.element(document.body),
-                    clickOutsideToClose: true
-                }).then(function(layout) {
-                    _cy.layout(layout);
-                });
-            }
-        }, {
-            content: 'Zoom to Graph',
-            select: function() {
-                _cy.fit();
-            }
-        }, {
-            content: 'Clear Trace',
-            select: function() {
-                tracingService.clearTrace();
-                repaint();
-            }
-        }]
-    };
+    function showGraphContextMenu(event) {
+        $mdDialog.show({
+            controller: function($scope) {
+                $scope.options = ['Apply Layout', 'Zoom to Graph', 'Clear Trace'];
 
-    var stationContextMenu = {
-        selector: 'node',
-        openMenuEvents: 'cxttapstart',
-        commands: [{
-            content: 'Show Forward Trace',
-            select: function(station) {
-                tracingService.clearTrace();
-                tracingService.showStationForwardTrace(station.id());
-                repaint();
+                $scope.select = function(option) {
+                    $mdDialog.hide(option);
+                };
+            },
+            template: `
+                <md-dialog aria-label="Graph Menu">
+                <md-toolbar><dialog-toolbar title="Graph Menu"></dialog-toolbar></md-toolbar>
+                <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
+                </md-dialog>
+            `,
+            parent: angular.element(document.body),
+            clickOutsideToClose: true
+        }).then(function(option) {
+            switch (option) {
+                case 'Apply Layout':
+                    showLayoutMenu();
+                    break;
+                case 'Zoom to Graph':
+                    _cy.fit();
+                    break;
+                case 'Clear Trace':
+                    tracingService.clearTrace();
+                    repaint();
+                    break;
             }
-        }, {
-            content: 'Show Backward Trace',
-            select: function(station) {
-                tracingService.clearTrace();
-                tracingService.showStationBackwardTrace(station.id());
-                repaint();
-            }
-        }, {
-            content: 'Show Whole Trace',
-            select: function(station) {
-                tracingService.clearTrace();
-                tracingService.showStationForwardTrace(station.id());
-                tracingService.showStationBackwardTrace(station.id());
-                repaint();
-            }
-        }, {
-            content: 'Mark/Unmark as Outbreak',
-            select: function(station) {
-                tracingService.toggleOutbreakStation(station.id());
-                _this.setNodeSize(_nodeSize);
-            }
-        }]
-    };
+        });
+    }
 
-    var deliveryContextMenu = {
-        selector: 'edge',
-        openMenuEvents: 'cxttapstart',
-        commands: [{
-            content: 'Show Forward Trace',
-            select: function(delivery) {
-                if (isDeliveryTracePossible(delivery)) {
+    function showStationContextMenu(event) {
+        $mdDialog.show({
+            controller: function($scope) {
+                $scope.options = ['Show Forward Trace', 'Show Backward Trace', 'Show Whole Trace', 'Mark/Unmark as Outbreak'];
+
+                $scope.select = function(option) {
+                    $mdDialog.hide(option);
+                };
+            },
+            template: `
+                <md-dialog aria-label="Station Menu">
+                <md-toolbar><dialog-toolbar title="Station Menu"></dialog-toolbar></md-toolbar>
+                <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
+                </md-dialog>
+            `,
+            parent: angular.element(document.body),
+            clickOutsideToClose: true
+        }).then(function(option) {
+            var station = event.cyTarget;
+
+            switch (option) {
+                case 'Show Forward Trace':
                     tracingService.clearTrace();
-                    tracingService.showDeliveryForwardTrace(delivery.id());
+                    tracingService.showStationForwardTrace(station.id());
                     repaint();
+                    break;
+                case 'Show Backward Trace':
+                    tracingService.clearTrace();
+                    tracingService.showStationBackwardTrace(station.id());
+                    repaint();
+                    break;
+                case 'Show Whole Trace':
+                    tracingService.clearTrace();
+                    tracingService.showStationForwardTrace(station.id());
+                    tracingService.showStationBackwardTrace(station.id());
+                    repaint();
+                    break;
+                case 'Mark/Unmark as Outbreak':
+                    tracingService.toggleOutbreakStation(station.id());
+                    _this.setNodeSize(_nodeSize);
+                    break;
+            }
+        });
+    }
+
+    function showDeliveryContextMenu(event) {
+        $mdDialog.show({
+            controller: function($scope) {
+                $scope.options = ['Show Forward Trace', 'Show Backward Trace', 'Show Whole Trace'];
+
+                $scope.select = function(option) {
+                    $mdDialog.hide(option);
+                };
+            },
+            template: `
+                <md-dialog aria-label="Delivery Menu">
+                <md-toolbar><dialog-toolbar title="Delivery Menu"></dialog-toolbar></md-toolbar>
+                <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
+                </md-dialog>
+            `,
+            parent: angular.element(document.body),
+            clickOutsideToClose: true
+        }).then(function(option) {
+            var delivery = event.cyTarget;
+
+            if (isDeliveryTracePossible(delivery)) {
+                switch (option) {
+                    case 'Show Forward Trace':
+                        tracingService.clearTrace();
+                        tracingService.showDeliveryForwardTrace(delivery.id());
+                        repaint();
+                        break;
+                    case 'Show Backward Trace':
+                        tracingService.clearTrace();
+                        tracingService.showDeliveryBackwardTrace(delivery.id());
+                        repaint();
+                        break;
+                    case 'Show Whole Trace':
+                        tracingService.clearTrace();
+                        tracingService.showDeliveryForwardTrace(delivery.id());
+                        tracingService.showDeliveryBackwardTrace(delivery.id());
+                        repaint();
+                        break;
                 }
             }
-        }, {
-            content: 'Show Backward Trace',
-            select: function(delivery) {
-                if (isDeliveryTracePossible(delivery)) {
-                    tracingService.clearTrace();
-                    tracingService.showDeliveryBackwardTrace(delivery.id());
-                    repaint();
-                }
-            }
-        }, {
-            content: 'Show Whole Trace',
-            select: function(delivery) {
-                if (isDeliveryTracePossible(delivery)) {
-                    tracingService.clearTrace();
-                    tracingService.showDeliveryForwardTrace(delivery.id());
-                    tracingService.showDeliveryBackwardTrace(delivery.id());
-                    repaint();
-                }
-            }
-        }]
-    };
+        });
+    }
+
+    function showLayoutMenu() {
+        $mdDialog.show({
+            controller: function($scope) {
+                $scope.select = function(layout) {
+                    $mdDialog.hide(layout);
+                };
+            },
+            template: `
+                <md-dialog aria-label="Apply Layout">
+                <md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>
+                <md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>
+                </md-dialog>
+            `,
+            parent: angular.element(document.body),
+            clickOutsideToClose: true
+        }).then(function(layout) {
+            _cy.layout(layout);
+        });
+    }
 });
