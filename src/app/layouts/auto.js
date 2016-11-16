@@ -1,57 +1,42 @@
 'use strict';
 
-/*global cytoscape, dagre*/
+/*global cytoscape*/
 
 var register = function(cytoscape) {
 
     var defaults = {
-        nodeSep: undefined,
-        edgeSep: undefined,
-        rankSep: undefined,
-        rankDir: undefined,
-        minLen: function(edge) {
-            return 1;
-        },
-        edgeWeight: function(edge) {
-            return 1;
-        },
-
-        fit: true,
-        padding: 30,
-        animate: false,
-        animationDuration: 500,
-        animationEasing: undefined,
-        boundingBox: undefined,
-        ready: function() {},
-        stop: function() {}
+        animate: false
     };
 
     function AutoLayout(options) {
         var opts = this.options = {};
-        for (var i in defaults) {
+
+        for (let i in defaults) {
             opts[i] = defaults[i];
         }
-        for (var i in options) {
+
+        for (let i in options) {
             opts[i] = options[i];
         }
     }
 
     AutoLayout.prototype.run = function() {
         var options = this.options;
-
         var cy = options.cy;
 
         cy.layout({
             name: 'spread',
+            animate: false,
+            randomize: true,
             maxExpandIterations: 0,
             ready: function() {
-                // cy.layout({
-                //     name: 'cola',
-                //     ungrabifyWhileSimulating: false,
-                //     avoidOverlap: false,
-                //     animate: true,
-                //     maxSimulationTime: 20000
-                // });
+                cy.layout({
+                    name: 'cola',
+                    ungrabifyWhileSimulating: false,
+                    avoidOverlap: false,
+                    animate: options.animate,
+                    maxSimulationTime: 5000,
+                });
             }
         });
 
