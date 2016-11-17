@@ -75,14 +75,24 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             setSelected(event.cyTarget, false);
         });
         _cy.on('cxttap', function(event) {
-            if (event.cyTarget.length === undefined) {
-                showGraphContextMenu(event);
+            var element = event.cyTarget;
+            var origin = {
+                bounds: {
+                    top: event.originalEvent.pageY,
+                    left: event.originalEvent.pageX,
+                    height: 1,
+                    width: 1
+                }
+            };
+
+            if (element.length === undefined) {
+                showGraphContextMenu(origin);
             }
-            else if (event.cyTarget.group() === 'nodes') {
-                showStationContextMenu(event);
+            else if (element.group() === 'nodes') {
+                showStationContextMenu(element, origin);
             }
-            else if (event.cyTarget.group() === 'edges') {
-                showDeliveryContextMenu(event);
+            else if (element.group() === 'edges') {
+                showDeliveryContextMenu(element, origin);
             }
         });
 
@@ -374,7 +384,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         }
     }
 
-    function showGraphContextMenu(event) {
+    function showGraphContextMenu(origin) {
         $mdDialog.show({
             controller: function($scope) {
                 $scope.options = ['Apply Layout', 'Zoom to Graph', 'Clear Trace'];
@@ -389,6 +399,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
+            origin: origin,
             parent: angular.element(document.body),
             clickOutsideToClose: true
         }).then(function(option) {
@@ -407,7 +418,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         });
     }
 
-    function showStationContextMenu(event) {
+    function showStationContextMenu(station, origin) {
         $mdDialog.show({
             controller: function($scope) {
                 $scope.options = ['Show Forward Trace', 'Show Backward Trace', 'Show Whole Trace', 'Mark/Unmark as Outbreak'];
@@ -422,11 +433,10 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
+            origin: origin,
             parent: angular.element(document.body),
             clickOutsideToClose: true
         }).then(function(option) {
-            var station = event.cyTarget;
-
             switch (option) {
                 case 'Show Forward Trace':
                     tracingService.clearTrace();
@@ -452,7 +462,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         });
     }
 
-    function showDeliveryContextMenu(event) {
+    function showDeliveryContextMenu(delivery, origin) {
         $mdDialog.show({
             controller: function($scope) {
                 $scope.options = ['Show Forward Trace', 'Show Backward Trace', 'Show Whole Trace'];
@@ -467,11 +477,10 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
+            origin: origin,
             parent: angular.element(document.body),
             clickOutsideToClose: true
         }).then(function(option) {
-            var delivery = event.cyTarget;
-
             if (isDeliveryTracePossible(delivery)) {
                 switch (option) {
                     case 'Show Forward Trace':
