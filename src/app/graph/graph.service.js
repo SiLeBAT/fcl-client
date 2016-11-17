@@ -385,116 +385,83 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showGraphContextMenu(origin) {
-        $mdDialog.show({
-            controller: function($scope) {
-                $scope.options = {
-                    'Apply Layout': showLayoutMenu,
-                    'Zoom to Graph': function() {
-                        _cy.fit();
-                    },
-                    'Clear Trace': function() {
-                        tracingService.clearTrace();
-                        repaint();
-                    }
-                };
-
-                $scope.select = function(value) {
-                    $mdDialog.hide(value);
-                };
+        showContextMenu("Graph Menu", {
+            'Apply Layout': showLayoutMenu,
+            'Zoom to Graph': function() {
+                _cy.fit();
             },
-            template: `
-                <md-dialog aria-label="Graph Menu">
-                <md-toolbar><dialog-toolbar title="Graph Menu"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
-                </md-dialog>
-            `,
-            origin: origin,
-            parent: angular.element(document.body),
-            clickOutsideToClose: true
-        }).then(function(value) {
-            value.call();
-        });
+            'Clear Trace': function() {
+                tracingService.clearTrace();
+                repaint();
+            }
+        }, origin);
     }
 
     function showStationContextMenu(station, origin) {
-        $mdDialog.show({
-            controller: function($scope) {
-                $scope.options = {
-                    'Show Forward Trace': function() {
-                        tracingService.clearTrace();
-                        tracingService.showStationForwardTrace(station.id());
-                        repaint();
-                    },
-                    'Show Backward Trace': function() {
-                        tracingService.clearTrace();
-                        tracingService.showStationBackwardTrace(station.id());
-                        repaint();
-                    },
-                    'Show Whole Trace': function() {
-                        tracingService.clearTrace();
-                        tracingService.showStationForwardTrace(station.id());
-                        tracingService.showStationBackwardTrace(station.id());
-                        repaint();
-                    },
-                    'Mark/Unmark as Outbreak': function() {
-                        tracingService.toggleOutbreakStation(station.id());
-                        _this.setNodeSize(_nodeSize);
-                    }
-                };
-
-                $scope.select = function(value) {
-                    $mdDialog.hide(value);
-                };
+        showContextMenu("Station Menu", {
+            'Show Forward Trace': function() {
+                tracingService.clearTrace();
+                tracingService.showStationForwardTrace(station.id());
+                repaint();
             },
-            template: `
-                <md-dialog aria-label="Station Menu">
-                <md-toolbar><dialog-toolbar title="Station Menu"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
-                </md-dialog>
-            `,
-            origin: origin,
-            parent: angular.element(document.body),
-            clickOutsideToClose: true
-        }).then(function(value) {
-            value.call();
-        });
+            'Show Backward Trace': function() {
+                tracingService.clearTrace();
+                tracingService.showStationBackwardTrace(station.id());
+                repaint();
+            },
+            'Show Whole Trace': function() {
+                tracingService.clearTrace();
+                tracingService.showStationForwardTrace(station.id());
+                tracingService.showStationBackwardTrace(station.id());
+                repaint();
+            },
+            'Mark/Unmark as Outbreak': function() {
+                tracingService.toggleOutbreakStation(station.id());
+                _this.setNodeSize(_nodeSize);
+            }
+        }, origin);
     }
 
     function showDeliveryContextMenu(delivery, origin) {
+        showContextMenu('Delivery Menu', {
+            'Show Forward Trace': function() {
+                if (isDeliveryTracePossible(delivery)) {
+                    tracingService.clearTrace();
+                    tracingService.showDeliveryForwardTrace(delivery.id());
+                    repaint();
+                }
+            },
+            'Show Backward Trace': function() {
+                if (isDeliveryTracePossible(delivery)) {
+                    tracingService.clearTrace();
+                    tracingService.showDeliveryBackwardTrace(delivery.id());
+                    repaint();
+                }
+            },
+            'Show Whole Trace': function() {
+                if (isDeliveryTracePossible(delivery)) {
+                    tracingService.clearTrace();
+                    tracingService.showDeliveryForwardTrace(delivery.id());
+                    tracingService.showDeliveryBackwardTrace(delivery.id());
+                    repaint();
+                }
+            }
+        }, origin);
+    }
+
+    function showContextMenu(title, options, origin) {
         $mdDialog.show({
             controller: function($scope) {
-                $scope.options = {
-                    'Show Forward Trace': function() {
-                        if (isDeliveryTracePossible(delivery)) {
-                            tracingService.clearTrace();
-                            tracingService.showDeliveryForwardTrace(delivery.id());
-                            repaint();
-                        }
-                    },
-                    'Show Backward Trace': function() {
-                        if (isDeliveryTracePossible(delivery)) {
-                            tracingService.clearTrace();
-                            tracingService.showDeliveryBackwardTrace(delivery.id());
-                            repaint();
-                        }
-                    },
-                    'Show Whole Trace': function() {
-                        if (isDeliveryTracePossible(delivery)) {
-                            tracingService.clearTrace();
-                            tracingService.showDeliveryForwardTrace(delivery.id());
-                            tracingService.showDeliveryBackwardTrace(delivery.id());
-                            repaint();
-                        }
-                    }
-                };
+                $scope.title = title;
+                $scope.options = options;
 
                 $scope.select = function(value) {
                     $mdDialog.hide(value);
                 };
             },
             template: `
-                <md-dialog aria-label="Delivery Menu">
-                <md-toolbar><dialog-toolbar title="Delivery Menu"></dialog-toolbar></md-toolbar>
+                <md-dialog aria-label="{{title}}">
+                <md-toolbar><dialog-toolbar title="{{title}}"></dialog-toolbar></md-toolbar>
                 <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
