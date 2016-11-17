@@ -5,7 +5,7 @@
 var register = function(cytoscape) {
 
     var defaults = {
-        animate: false
+        fit: true
     };
 
     function ForceDirectedLayout(options) {
@@ -25,21 +25,21 @@ var register = function(cytoscape) {
         var cy = options.cy;
         var width = cy.width();
         var height = cy.height();
-        var graph = new Graph("Graph", false);
+        var graph = new Graph();
         var vertices = new Map();
 
         cy.nodes().forEach(function(node) {
-            var v = new Vertex(node.id(), Math.random() * width, Math.random() * height);
+            var v = new Vertex(Math.random() * width, Math.random() * height);
 
             vertices.set(node.id(), v);
             graph.insertVertex(v);
         });
 
         cy.edges().forEach(function(edge) {
-            graph.insertEdge("", 1, vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+            graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
         });
 
-        var layoutManager = new ForceDirectedVertexLayout(width, height, 100, false, 20);
+        var layoutManager = new ForceDirectedVertexLayout(width, height, 100);
 
         layoutManager.layout(graph);
 
@@ -51,6 +51,10 @@ var register = function(cytoscape) {
                 y: vertex.y
             };
         });
+
+        if (options.fit) {
+            cy.fit();
+        }
 
         return this;
     };
@@ -65,9 +69,9 @@ function insertVertex(vertex) {
     this.vertexCount++;
 }
 
-function insertEdge(label, weight, vertex1, vertex2, style) {
-    var e1 = new Edge(label, weight, vertex2, style);
-    var e2 = new Edge(null, weight, vertex1, null);
+function insertEdge(vertex1, vertex2) {
+    var e1 = new Edge(vertex2);
+    var e2 = new Edge(vertex1);
 
     vertex1.edges.push(e1);
     vertex2.reverseEdges.push(e2);
@@ -110,11 +114,9 @@ function removeVertex(vertex) {
     this.vertexCount--;
 }
 
-function Graph(label, directed) {
+function Graph() {
     /* Fields. */
-    this.label = label;
     this.vertices = new Array();
-    this.directed = directed;
     this.vertexCount = 0;
 
     /* Graph methods. */
@@ -124,8 +126,7 @@ function Graph(label, directed) {
     this.removeEdge = removeEdge;
 }
 
-function Vertex(label, x, y) {
-    this.label = label;
+function Vertex(x, y) {
     this.edges = new Array();
     this.reverseEdges = new Array();
     this.x = x;
@@ -138,26 +139,9 @@ function Vertex(label, x, y) {
     this.fixed = false;
 }
 
-Vertex.prototype.toString = function() {
-    return "[v:" + this.label + "] ";
-};
-
-Edge.prototype.toString = function() {
-    return "[e:" + this.endVertex.label + "] ";
-};
-
-function Edge(label, weight, endVertex) {
-    this.label = label;
-    this.weight = weight;
+function Edge(endVertex) {
     this.endVertex = endVertex;
-    this.style = null;
     this.hidden = false;
-
-    // Curving information
-    this.curved = false;
-    this.controlX = -1; // Control coordinates for Bezier curve drawing
-    this.controlY = -1;
-    this.original = null; // If this is a temporary edge it holds the original edge
 }
 
 Graph.prototype.normalize = function(width, height, preserveAspect) {
@@ -208,12 +192,10 @@ Graph.prototype.normalize = function(width, height, preserveAspect) {
     }
 };
 
-function ForceDirectedVertexLayout(width, height, iterations, randomize) {
+function ForceDirectedVertexLayout(width, height, iterations) {
     this.width = width;
     this.height = height;
     this.iterations = iterations;
-    this.randomize = randomize;
-    this.callback = function() {};
 }
 
 ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
@@ -392,10 +374,6 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
 
         /* Cool. */
         t -= dt;
-
-        if (q % 10 == 0) {
-            this.callback();
-        }
     }
 
     // Remove virtual center vertices
@@ -404,7 +382,4 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
             graph.removeVertex(centers[i]);
         }
     }
-
-    // graph.normalize(this.width, this.height);
-    
 };
