@@ -387,120 +387,122 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     function showGraphContextMenu(origin) {
         $mdDialog.show({
             controller: function($scope) {
-                $scope.options = ['Apply Layout', 'Zoom to Graph', 'Clear Trace'];
+                $scope.options = {
+                    'Apply Layout': showLayoutMenu,
+                    'Zoom to Graph': function() {
+                        _cy.fit();
+                    },
+                    'Clear Trace': function() {
+                        tracingService.clearTrace();
+                        repaint();
+                    }
+                };
 
-                $scope.select = function(option) {
-                    $mdDialog.hide(option);
+                $scope.select = function(value) {
+                    $mdDialog.hide(value);
                 };
             },
             template: `
                 <md-dialog aria-label="Graph Menu">
                 <md-toolbar><dialog-toolbar title="Graph Menu"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
+                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
             origin: origin,
             parent: angular.element(document.body),
             clickOutsideToClose: true
-        }).then(function(option) {
-            switch (option) {
-                case 'Apply Layout':
-                    showLayoutMenu();
-                    break;
-                case 'Zoom to Graph':
-                    _cy.fit();
-                    break;
-                case 'Clear Trace':
-                    tracingService.clearTrace();
-                    repaint();
-                    break;
-            }
+        }).then(function(value) {
+            value.call();
         });
     }
 
     function showStationContextMenu(station, origin) {
         $mdDialog.show({
             controller: function($scope) {
-                $scope.options = ['Show Forward Trace', 'Show Backward Trace', 'Show Whole Trace', 'Mark/Unmark as Outbreak'];
+                $scope.options = {
+                    'Show Forward Trace': function() {
+                        tracingService.clearTrace();
+                        tracingService.showStationForwardTrace(station.id());
+                        repaint();
+                    },
+                    'Show Backward Trace': function() {
+                        tracingService.clearTrace();
+                        tracingService.showStationBackwardTrace(station.id());
+                        repaint();
+                    },
+                    'Show Whole Trace': function() {
+                        tracingService.clearTrace();
+                        tracingService.showStationForwardTrace(station.id());
+                        tracingService.showStationBackwardTrace(station.id());
+                        repaint();
+                    },
+                    'Mark/Unmark as Outbreak': function() {
+                        tracingService.toggleOutbreakStation(station.id());
+                        _this.setNodeSize(_nodeSize);
+                    }
+                };
 
-                $scope.select = function(option) {
-                    $mdDialog.hide(option);
+                $scope.select = function(value) {
+                    $mdDialog.hide(value);
                 };
             },
             template: `
                 <md-dialog aria-label="Station Menu">
                 <md-toolbar><dialog-toolbar title="Station Menu"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
+                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
             origin: origin,
             parent: angular.element(document.body),
             clickOutsideToClose: true
-        }).then(function(option) {
-            switch (option) {
-                case 'Show Forward Trace':
-                    tracingService.clearTrace();
-                    tracingService.showStationForwardTrace(station.id());
-                    repaint();
-                    break;
-                case 'Show Backward Trace':
-                    tracingService.clearTrace();
-                    tracingService.showStationBackwardTrace(station.id());
-                    repaint();
-                    break;
-                case 'Show Whole Trace':
-                    tracingService.clearTrace();
-                    tracingService.showStationForwardTrace(station.id());
-                    tracingService.showStationBackwardTrace(station.id());
-                    repaint();
-                    break;
-                case 'Mark/Unmark as Outbreak':
-                    tracingService.toggleOutbreakStation(station.id());
-                    _this.setNodeSize(_nodeSize);
-                    break;
-            }
+        }).then(function(value) {
+            value.call();
         });
     }
 
     function showDeliveryContextMenu(delivery, origin) {
         $mdDialog.show({
             controller: function($scope) {
-                $scope.options = ['Show Forward Trace', 'Show Backward Trace', 'Show Whole Trace'];
+                $scope.options = {
+                    'Show Forward Trace': function() {
+                        if (isDeliveryTracePossible(delivery)) {
+                            tracingService.clearTrace();
+                            tracingService.showDeliveryForwardTrace(delivery.id());
+                            repaint();
+                        }
+                    },
+                    'Show Backward Trace': function() {
+                        if (isDeliveryTracePossible(delivery)) {
+                            tracingService.clearTrace();
+                            tracingService.showDeliveryBackwardTrace(delivery.id());
+                            repaint();
+                        }
+                    },
+                    'Show Whole Trace': function() {
+                        if (isDeliveryTracePossible(delivery)) {
+                            tracingService.clearTrace();
+                            tracingService.showDeliveryForwardTrace(delivery.id());
+                            tracingService.showDeliveryBackwardTrace(delivery.id());
+                            repaint();
+                        }
+                    }
+                };
 
-                $scope.select = function(option) {
-                    $mdDialog.hide(option);
+                $scope.select = function(value) {
+                    $mdDialog.hide(value);
                 };
             },
             template: `
                 <md-dialog aria-label="Delivery Menu">
                 <md-toolbar><dialog-toolbar title="Delivery Menu"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(selected)"></context-menu></md-dialog-content>
+                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
                 </md-dialog>
             `,
             origin: origin,
             parent: angular.element(document.body),
             clickOutsideToClose: true
-        }).then(function(option) {
-            if (isDeliveryTracePossible(delivery)) {
-                switch (option) {
-                    case 'Show Forward Trace':
-                        tracingService.clearTrace();
-                        tracingService.showDeliveryForwardTrace(delivery.id());
-                        repaint();
-                        break;
-                    case 'Show Backward Trace':
-                        tracingService.clearTrace();
-                        tracingService.showDeliveryBackwardTrace(delivery.id());
-                        repaint();
-                        break;
-                    case 'Show Whole Trace':
-                        tracingService.clearTrace();
-                        tracingService.showDeliveryForwardTrace(delivery.id());
-                        tracingService.showDeliveryBackwardTrace(delivery.id());
-                        repaint();
-                        break;
-                }
-            }
+        }).then(function(value) {
+            value.call();
         });
     }
 
