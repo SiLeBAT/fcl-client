@@ -474,22 +474,73 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showLayoutMenu() {
-        $mdDialog.show({
-            controller: function($scope) {
-                $scope.select = function(layout) {
-                    $mdDialog.hide(layout);
-                };
+        showContextMenu("Apply Layout", {
+            'Fruchterman-Reingold': function() {
+                _cy.layout({
+                    name: 'fruchterman'
+                });
             },
-            template: `
-                <md-dialog aria-label="Apply Layout">
-                <md-toolbar><dialog-toolbar title="Apply Layout"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><layout-select on-select="select(layout)"></layout-select></md-dialog-content>
-                </md-dialog>
-            `,
-            parent: angular.element(document.body),
-            clickOutsideToClose: true
-        }).then(function(layout) {
-            _cy.layout(layout);
+            'Random': function() {
+                _cy.layout({
+                    name: 'random'
+                });
+            },
+            'Grid': function() {
+                _cy.layout({
+                    name: 'grid'
+                });
+            },
+            'Circle': function() {
+                _cy.layout({
+                    name: 'circle'
+                });
+            },
+            'Concentric': function() {
+                _cy.layout({
+                    name: 'concentric'
+                });
+            },
+            'Breadthfirst': function() {
+                _cy.layout({
+                    name: 'breadthfirst'
+                });
+            },
+            'Cose': function() {
+                _cy.layout({
+                    name: 'cose'
+                });
+            },
+            'Cose Bilkent': function() {
+                _cy.layout({
+                    name: 'cose-bilkent',
+                    animate: 'during'
+                });
+            },
+            'Cola': function() {
+                _cy.layout({
+                    name: 'cola',
+                    ungrabifyWhileSimulating: false,
+                    avoidOverlap: false,
+                    animate: true,
+                    maxSimulationTime: 5000
+                });
+            },
+            'Spread': function() {
+                _cy.layout({
+                    name: 'spread'
+                });
+            },
+            'Dagre': function() {
+                _cy.layout({
+                    name: 'dagre',
+                    animate: true
+                });
+            },
+            'Springy': function() {
+                _cy.layout({
+                    name: 'springy'
+                });
+            }
         });
     }
 });
