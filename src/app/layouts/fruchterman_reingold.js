@@ -8,7 +8,7 @@ var register = function(cytoscape) {
         fit: true
     };
 
-    function ForceDirectedLayout(options) {
+    function FruchtermanLayout(options) {
         var opts = this.options = {};
 
         for (let i in defaults) {
@@ -20,7 +20,7 @@ var register = function(cytoscape) {
         }
     }
 
-    ForceDirectedLayout.prototype.run = function() {
+    FruchtermanLayout.prototype.run = function() {
         var options = this.options;
         var cy = options.cy;
         var width = cy.width();
@@ -59,7 +59,7 @@ var register = function(cytoscape) {
         return this;
     };
 
-    cytoscape('layout', 'forcedirected', ForceDirectedLayout);
+    cytoscape('layout', 'fruchterman', FruchtermanLayout);
 };
 
 register(cytoscape);
