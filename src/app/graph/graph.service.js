@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape*/
 
-angular.module('app').service('graphService', function(tracingService, dataService, $mdDialog) {
+angular.module('app').service('graphService', function(tracingService, dataService, $mdDialog, $mdPanel) {
 
     var _this = this;
 
@@ -542,5 +542,38 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 });
             }
         });
+    }
+
+    function mdPanelExample() {
+        var position = $mdPanel.newPanelPosition()
+            .absolute()
+            .top('150px')
+            .left('400px');
+
+        var config = {
+            attachTo: angular.element(document.body),
+            controller: function() {},
+            controllerAs: 'ctrl',
+            template: `
+                <div role="dialog" aria-label="Eat me!" layout="column" layout-align="center center">
+                    <md-toolbar>
+                        <div class="md-toolbar-tools">
+                            <h2>Surprise!</h2>
+                        </div>
+                    </md-toolbar>
+                    <md-content>
+                    <md-button md-autofocus flex class="md-primary" ng-click="ctrl.closeDialog()">Close</md-button>
+                    </md-content>
+                </div>
+                `,
+            position: position,
+            trapFocus: true,
+            zIndex: 150,
+            clickOutsideToClose: true,
+            clickEscapeToClose: true,
+            hasBackdrop: true,
+        };
+
+        $mdPanel.open(config);
     }
 });
