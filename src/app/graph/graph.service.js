@@ -544,7 +544,8 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 $scope.options = options;
 
                 $scope.select = function(value) {
-                    $mdDialog.hide(value);
+                    $mdDialog.hide();
+                    value.call();
                 };
             },
             template: `
@@ -555,8 +556,6 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             `,
             parent: angular.element(document.body),
             clickOutsideToClose: true
-        }).then(function(value) {
-            value.call();
         });
     }
 });
