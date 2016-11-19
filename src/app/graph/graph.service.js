@@ -529,11 +529,9 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             },
             template: '<md-content><context-menu options="options" on-select="select(value)"></context-menu></md-content>',
             position: position,
-            trapFocus: true,
-            zIndex: 150,
             clickOutsideToClose: true,
             clickEscapeToClose: true,
-            hasBackdrop: true,
+            hasBackdrop: true
         });
     }
 
@@ -555,7 +553,8 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 </md-dialog>
             `,
             parent: angular.element(document.body),
-            clickOutsideToClose: true
+            clickOutsideToClose: true,
+            clickEscapeToClose: true
         });
     }
 });
