@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape*/
 
-angular.module('app').service('graphService', function(tracingService, dataService, $mdDialog, $mdPanel) {
+angular.module('app').service('graphService', function(tracingService, dataService, dialogService) {
 
     var _this = this;
 
@@ -76,9 +76,10 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         });
         _cy.on('cxttap', function(event) {
             var element = event.cyTarget;
-            var position = $mdPanel.newPanelPosition().absolute()
-                .top(event.originalEvent.pageY + 'px')
-                .left(event.originalEvent.pageX + 'px');
+            var position = {
+                x: event.originalEvent.pageX,
+                y: event.originalEvent.pageY
+            };
 
             if (element.length === undefined) {
                 showGraphContextMenu(position);
@@ -365,13 +366,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
 
     function isDeliveryTracePossible(delivery) {
         if (delivery.data('merged')) {
-            $mdDialog
-                .show($mdDialog.alert({
-                    title: 'Error',
-                    textContent: 'Showing Trace of merged delivery is not supported!',
-                    ok: 'Close'
-                }));
-
+            dialogService.showErrorAlert('Showing Trace of merged delivery is not supported!');
             return false;
         }
         else {
@@ -380,7 +375,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showGraphContextMenu(position) {
-        showContextMenu(position, {
+        dialogService.showContextMenu(position, {
             'Apply Layout': showLayoutMenu,
             'Zoom to Graph': function() {
                 _cy.fit();
@@ -393,7 +388,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showStationContextMenu(station, position) {
-        showContextMenu(position, {
+        dialogService.showContextMenu(position, {
             'Show Forward Trace': function() {
                 tracingService.clearTrace();
                 tracingService.showStationForwardTrace(station.id());
@@ -418,7 +413,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showDeliveryContextMenu(delivery, position) {
-        showContextMenu(position, {
+        dialogService.showContextMenu(position, {
             'Show Forward Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.clearTrace();
@@ -445,7 +440,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showLayoutMenu() {
-        showDialogMenu("Apply Layout", {
+        dialogService.showDialogMenu("Apply Layout", {
             'Fruchterman-Reingold': function() {
                 _cy.layout({
                     name: 'fruchterman'
@@ -512,49 +507,6 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                     name: 'springy'
                 });
             }
-        });
-    }
-
-    function showContextMenu(position, options) {
-        $mdPanel.open({
-            attachTo: angular.element(document.body),
-            controller: function($scope, mdPanelRef) {
-                $scope.options = options;
-
-                $scope.select = function(value) {
-                    mdPanelRef.close();
-                    mdPanelRef.destroy();
-                    value.call();
-                };
-            },
-            template: '<md-content><context-menu options="options" on-select="select(value)"></context-menu></md-content>',
-            position: position,
-            clickOutsideToClose: true,
-            clickEscapeToClose: true,
-            hasBackdrop: true
-        });
-    }
-
-    function showDialogMenu(title, options) {
-        $mdDialog.show({
-            controller: function($scope) {
-                $scope.title = title;
-                $scope.options = options;
-
-                $scope.select = function(value) {
-                    $mdDialog.hide();
-                    value.call();
-                };
-            },
-            template: `
-                <md-dialog aria-label="{{title}}">
-                <md-toolbar><dialog-toolbar title="{{title}}"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
-                </md-dialog>
-            `,
-            parent: angular.element(document.body),
-            clickOutsideToClose: true,
-            clickEscapeToClose: true
         });
     }
 });
