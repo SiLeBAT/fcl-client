@@ -6,10 +6,22 @@ angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
 
     var _this = this;
 
-    _this.showContextMenu = function(position, options) {
-        var positions = $mdPanel.newPanelPosition().relativeTo(angular.element(document.body))
-            .addPanelPosition().left(position.x + 'px').top(position.y + 'px');
+    _this.init = function() {
+        var panel = $mdPanel.create({
+            template: '<md-content><context-menu></context-menu></md-content>',
+            attachTo: angular.element(document.body),
+            position: $mdPanel.newPanelPosition().relativeTo(angular.element(document.body))
+                .addPanelPosition().left('0px').top('0px'),
+            onDomAdded: function() {
+                panel.close();
+                panel.destroy();
+            }
+        });
 
+        panel.open();
+    };
+
+    _this.showContextMenu = function(position, options) {
         $mdPanel.open({
             controller: function($scope, mdPanelRef) {
                 $scope.options = options;
@@ -22,7 +34,8 @@ angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
             },
             template: '<md-content><context-menu options="options" on-select="select(value)"></context-menu></md-content>',
             attachTo: angular.element(document.body),
-            position: positions,
+            position: $mdPanel.newPanelPosition().relativeTo(angular.element(document.body))
+                .addPanelPosition().left(position.x + 'px').top(position.y + 'px'),
             clickOutsideToClose: true,
             clickEscapeToClose: true,
             hasBackdrop: true

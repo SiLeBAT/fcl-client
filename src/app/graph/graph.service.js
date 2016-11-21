@@ -93,6 +93,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         });
 
         tracingService.init(data);
+        dialogService.init();
     };
 
     _this.setMergeDeliveries = function(mergeDeliveries) {
