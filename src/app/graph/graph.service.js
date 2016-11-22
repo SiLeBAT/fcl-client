@@ -354,18 +354,19 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     function showGraphContextMenu(position) {
         dialogService.showContextMenu(position, {
             'Apply Layout': showLayoutMenu,
-            'Zoom to Graph': function() {
-                _cy.fit();
-            },
             'Clear Trace': function() {
                 tracingService.clearTrace();
                 repaint();
+            },
+            'Clear Outbreaks': function() {
+                tracingService.clearOutbreakStations();
+                _this.setNodeSize(_nodeSize);
             }
         });
     }
 
     function showStationContextMenu(station, position) {
-        dialogService.showContextMenu(position, {
+        var options = {
             'Show Forward Trace': function() {
                 tracingService.clearTrace();
                 tracingService.showStationForwardTrace(station.id());
@@ -381,12 +382,15 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 tracingService.showStationForwardTrace(station.id());
                 tracingService.showStationBackwardTrace(station.id());
                 repaint();
-            },
-            'Mark/Unmark as Outbreak': function() {
-                tracingService.toggleOutbreakStation(station.id());
-                _this.setNodeSize(_nodeSize);
             }
-        });
+        };
+
+        options[station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak'] = function() {
+            tracingService.toggleOutbreakStation(station.id());
+            _this.setNodeSize(_nodeSize);
+        };
+
+        dialogService.showContextMenu(position, options);
     }
 
     function showDeliveryContextMenu(delivery, position) {
