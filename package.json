@@ -2,13 +2,13 @@
     "name": "fcl",
     "private": true,
     "devDependencies": {
-        "del": "^2.2.0",
+        "del": "^2.2.2",
+        "jshint": "^2.9.4",
         "gulp": "^3.9.1",
-        "gulp-clean-css": "^2.0.10",
-        "gulp-jshint": "^2.0.1",
-        "gulp-rev": "^7.1.0",
-        "gulp-usemin": "^0.3.23",
-        "jshint": "^2.9.4"
+        "gulp-clean-css": "^2.0.13",
+        "gulp-jshint": "^2.0.4",
+        "gulp-rev": "^7.1.2",
+        "gulp-usemin": "^0.3.25"
     },
     "engines": {
         "node": ">=0.10.0"
