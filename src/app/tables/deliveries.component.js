@@ -38,5 +38,5 @@ angular.module('app').component('deliveries', {
             _this.deliveries = getFilteredDeliveries();
         });
     },
-    templateUrl: 'app/data/deliveries.component.html'
+    templateUrl: 'app/tables/deliveries.component.html'
 });

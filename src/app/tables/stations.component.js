@@ -38,5 +38,5 @@ angular.module('app').component('stations', {
             _this.stations = getFilteredStations();
         });
     },
-    templateUrl: 'app/data/stations.component.html'
+    templateUrl: 'app/tables/stations.component.html'
 });

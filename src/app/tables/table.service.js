@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').service('tableService', function(dataService) {
+angular.module('app').service('tableService', function(dataService, utilService) {
 
     var _this = this;
 
@@ -60,20 +60,20 @@ angular.module('app').service('tableService', function(dataService) {
 
         if (element.data.selected) {
             for (let i = 0; i < colors.length; i++) {
-                colors[i] = dataService.mixColors(colors[i], [0, 0, 255]);
+                colors[i] = utilService.mixColors(colors[i], [0, 0, 255]);
             }
         }
 
         if (colors.length === 1) {
             return {
-                'background-color': dataService.colorToCss(colors[0])
+                'background-color': utilService.colorToCss(colors[0])
             };
         }
         else {
             var css = [];
 
             for (let c of colors) {
-                css.push(dataService.colorToCss(c));
+                css.push(utilService.colorToCss(c));
             }
 
             return {

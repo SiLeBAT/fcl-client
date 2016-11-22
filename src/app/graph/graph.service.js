@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape*/
 
-angular.module('app').service('graphService', function(tracingService, dataService, dialogService) {
+angular.module('app').service('graphService', function(tracingService, dataService, dialogService, utilService) {
 
     var _this = this;
 
@@ -296,7 +296,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             'observed': dataService.COLORS.observed
         };
 
-        for (let combination of getAllCombination(Object.keys(nodeProps))) {
+        for (let combination of utilService.getAllCombination(Object.keys(nodeProps))) {
             var s = [];
             var c1 = [];
             var c2 = [];
@@ -304,7 +304,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             for (let prop of combination) {
                 s.push('[?' + prop + ']');
                 c1.push(nodeProps[prop]);
-                c2.push(dataService.mixColors(nodeProps[prop], [0, 0, 255]));
+                c2.push(utilService.mixColors(nodeProps[prop], [0, 0, 255]));
             }
 
             style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
@@ -318,41 +318,17 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         return style;
     }
 
-    function getAllCombination(values) {
-        var n = Math.pow(2, values.length);
-        var combinations = [];
-
-        for (let i = 1; i < n; i++) {
-            var bits = i.toString(2).split('').reverse().join('');
-            var combination = [];
-
-            for (let j = 0; j < values.length; j++) {
-                if (bits[j] === '1') {
-                    combination.push(values[j]);
-                }
-            }
-
-            combinations.push(combination);
-        }
-
-        combinations.sort(function(c1, c2) {
-            return c1.length - c2.length;
-        });
-
-        return combinations;
-    }
-
     function createNodeBackground(colors) {
         if (colors.length == 1) {
             return {
-                'background-color': dataService.colorToCss(colors[0])
+                'background-color': utilService.colorToCss(colors[0])
             };
         }
 
         var style = {};
 
         for (var i = 0; i < colors.length; i++) {
-            style['pie-' + (i + 1) + '-background-color'] = dataService.colorToCss(colors[i]);
+            style['pie-' + (i + 1) + '-background-color'] = utilService.colorToCss(colors[i]);
             style['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
 
@@ -361,7 +337,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
 
     function createEdgeColor(color) {
         return {
-            'line-color': dataService.colorToCss(color)
+            'line-color': utilService.colorToCss(color)
         };
     }
 

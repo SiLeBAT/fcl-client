@@ -49,44 +49,32 @@ angular.module('app').service('dataService', function($q, $resource) {
         return _nodeSize;
     };
 
-    _this.setNodeSize = function(size) {
-        _nodeSize = size;
+    _this.setNodeSize = function(nodeSize) {
+        _nodeSize = nodeSize;
     };
 
     _this.getFontSize = function() {
         return _fontSize;
     };
 
-    _this.setFontSize = function(size) {
-        _fontSize = size;
+    _this.setFontSize = function(fontSize) {
+        _fontSize = fontSize;
     };
 
     _this.getMergeDeliveries = function() {
         return _mergeDeliveries;
     };
 
-    _this.setMergeDeliveries = function(merge) {
-        _mergeDeliveries = merge;
+    _this.setMergeDeliveries = function(mergeDeliveries) {
+        _mergeDeliveries = mergeDeliveries;
     };
 
     _this.getShowTraceOnly = function() {
         return _showTraceOnly;
     };
 
-    _this.setShowTraceOnly = function(traceOnly) {
-        _showTraceOnly = traceOnly;
-    };
-
-    _this.colorToCss = function(color) {
-        return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
-    };
-
-    _this.mixColors = function(color1, color2) {
-        var r = Math.round((color1[0] + color2[0]) / 2);
-        var g = Math.round((color1[1] + color2[1]) / 2);
-        var b = Math.round((color1[2] + color2[2]) / 2);
-
-        return [r, g, b];
+    _this.setShowTraceOnly = function(showTraceOnly) {
+        _showTraceOnly = showTraceOnly;
     };
 
     function preprocessData(data) {
@@ -118,34 +106,5 @@ angular.module('app').service('dataService', function($q, $resource) {
             deliveries: data.deliveries
         };
     }
-
-    // $.ajax({
-    //     type: 'GET',
-    //     url: 'https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json',
-    //     crossDomain: true,
-    //     dataType: 'json',
-    //     headers: {
-    //         'Authentication': "Basic " + btoa('bfr_test:Ifupofetu843')
-    //     },
-    //     success: function(responseData, textStatus, jqXHR) {
-    //         console.log(responseData);
-    //     },
-    //     error: function(responseData, textStatus, errorThrown) {
-    //         console.warn(responseData, textStatus, errorThrown);
-    //     }
-    // });
-
-    // $resource('https://foodrisklabs.bfr.bund.de/busstop/rest/items/rdt_json', {}, {
-    //     login: {
-    //         method: 'GET',
-    //         dataType: "jsonp",
-    //         isArray: false,
-    //         headers: {
-    //             'Authentication': function() {
-    //                 return btoa('bfr_test:Ifupofetu843');
-    //             }
-    //         }
-    //     }
-    // });
 
 });

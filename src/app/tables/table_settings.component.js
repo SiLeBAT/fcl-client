@@ -7,5 +7,5 @@ angular.module('app').component('tableSettings', {
         showTraceOnly: '<',
         onChange: '&'
     },
-    templateUrl: 'app/data/table_settings.component.html'
+    templateUrl: 'app/tables/table_settings.component.html'
 });
