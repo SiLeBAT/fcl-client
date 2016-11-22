@@ -296,7 +296,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             'observed': dataService.COLORS.observed
         };
 
-        for (let combination of utilService.getAllCombination(Object.keys(nodeProps))) {
+        for (let combination of utilService.getAllCombinations(Object.keys(nodeProps))) {
             var s = [];
             var c1 = [];
             var c2 = [];

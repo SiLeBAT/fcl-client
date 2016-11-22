@@ -18,7 +18,7 @@ angular.module('app').service('utilService', function($q, $resource) {
         return [r, g, b];
     };
 
-    _this.getAllCombination = function(values) {
+    _this.getAllCombinations = function(values) {
         var n = Math.pow(2, values.length);
         var combinations = [];
 

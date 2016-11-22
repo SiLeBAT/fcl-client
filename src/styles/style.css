@@ -3,3 +3,7 @@
     height: 100%;
     display: flex;
 }
+
+.cy-panzoom {
+    z-index: 1;
+}

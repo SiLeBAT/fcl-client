@@ -8,7 +8,7 @@ angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
 
     _this.init = function() {
         var panel = $mdPanel.create({
-            template: '<md-content><context-menu></context-menu></md-content>',
+            template: '<md-content><dialog-menu></dialog-menu></md-content>',
             attachTo: angular.element(document.body),
             position: $mdPanel.newPanelPosition().relativeTo(angular.element(document.body))
                 .addPanelPosition().left('0px').top('0px'),
@@ -32,7 +32,11 @@ angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
                     value.call();
                 };
             },
-            template: '<md-content><context-menu options="options" on-select="select(value)"></context-menu></md-content>',
+            template: `
+                <md-content>
+                    <dialog-menu options="options" on-select="select(value)"></dialog-menu>
+                </md-content>
+            `,
             attachTo: angular.element(document.body),
             position: $mdPanel.newPanelPosition().relativeTo(angular.element(document.body))
                 .addPanelPosition().left(position.x + 'px').top(position.y + 'px'),
@@ -55,8 +59,12 @@ angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
             },
             template: `
                 <md-dialog aria-label="{{title}}">
-                <md-toolbar><dialog-toolbar title="{{title}}"></dialog-toolbar></md-toolbar>
-                <md-dialog-content><context-menu options="options" on-select="select(value)"></context-menu></md-dialog-content>
+                    <md-toolbar>
+                        <dialog-toolbar title="{{title}}"></dialog-toolbar>
+                    </md-toolbar>
+                    <md-dialog-content>
+                        <dialog-menu options="options" on-select="select(value)"></dialog-menu>
+                    </md-dialog-content>
                 </md-dialog>
             `,
             parent: angular.element(document.body),
