@@ -141,6 +141,26 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         }
     }
 
+    function updateAll() {
+        var nodes = createNodes();
+        var edges = createEdges();
+
+        for (let e of edges) {
+            e.group = "edges";
+        }
+
+        for (let n of nodes) {
+            n.group = "nodes";
+            n.position = _cy.nodes('#' + n.data.id).position();
+        }
+
+        _cy.batch(function() {
+            _cy.elements().remove();
+            _cy.add(nodes);
+            _cy.add(edges);
+        });
+    }
+
     function updateEdges() {
         var edges = createEdges();
 
@@ -148,18 +168,22 @@ angular.module('app').service('graphService', function(tracingService, dataServi
             e.group = "edges";
         }
 
-        _cy.edges().remove();
-        _cy.add(edges);
+        _cy.batch(function() {
+            _cy.edges().remove();
+            _cy.add(edges);
+        });
     }
 
     function createNodes() {
         var stations = [];
 
         for (let s of _data.stations) {
-            stations.push({
-                data: s.data,
-                selected: s.data.selected
-            });
+            if (!s.data.hide) {
+                stations.push({
+                    data: s.data,
+                    selected: s.data.selected
+                });
+            }
         }
 
         return stations;
@@ -366,29 +390,45 @@ angular.module('app').service('graphService', function(tracingService, dataServi
     }
 
     function showStationContextMenu(station, position) {
-        var options = {
-            'Show Forward Trace': function() {
-                tracingService.clearTrace();
-                tracingService.showStationForwardTrace(station.id());
-                repaint();
-            },
-            'Show Backward Trace': function() {
-                tracingService.clearTrace();
-                tracingService.showStationBackwardTrace(station.id());
-                repaint();
-            },
-            'Show Whole Trace': function() {
-                tracingService.clearTrace();
-                tracingService.showStationForwardTrace(station.id());
-                tracingService.showStationBackwardTrace(station.id());
-                repaint();
-            }
-        };
+        var selectedStations = _cy.nodes(':selected');
+        var options;
 
-        options[station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak'] = function() {
-            tracingService.toggleOutbreakStation(station.id());
-            _this.setNodeSize(_nodeSize);
-        };
+        if (station.selected() && selectedStations.size() > 1) {
+            options = {
+                'Merge Stations': function() {
+                    dialogService.showPrompt("Please specify name of meta station:", "Meta Station Name", function(result) {
+                        console.log(result);
+                    });
+                    // tracingService.mergeStations(selectedStations.id());
+                    // updateAll();
+                }
+            };
+        }
+        else {
+            options = {
+                'Show Forward Trace': function() {
+                    tracingService.clearTrace();
+                    tracingService.showStationForwardTrace(station.id());
+                    repaint();
+                },
+                'Show Backward Trace': function() {
+                    tracingService.clearTrace();
+                    tracingService.showStationBackwardTrace(station.id());
+                    repaint();
+                },
+                'Show Whole Trace': function() {
+                    tracingService.clearTrace();
+                    tracingService.showStationForwardTrace(station.id());
+                    tracingService.showStationBackwardTrace(station.id());
+                    repaint();
+                }
+            };
+
+            options[station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak'] = function() {
+                tracingService.toggleOutbreakStation(station.id());
+                _this.setNodeSize(_nodeSize);
+            };
+        }
 
         dialogService.showContextMenu(position, options);
     }

@@ -80,4 +80,15 @@ angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
             ok: 'Close'
         }));
     };
+
+    _this.showPrompt = function(text, placeholder, resultFunction, errorFunction) {
+        $mdDialog.show($mdDialog.prompt({
+            title: 'Input',
+            ariaLabel: 'Input',
+            textContent: text,
+            placeholder: placeholder,
+            ok: 'OK',
+            cancel: 'Cancel'
+        })).then(resultFunction, errorFunction);
+    };
 });

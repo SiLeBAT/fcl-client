@@ -24,8 +24,35 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    _this.setSelected = function(id, selected) {
-        _elementsById[id].data.selected = selected;
+    _this.mergeStations = function(ids, name) {
+        var metaId;
+
+        for (let i = 1;; i++) {
+            if (_elementsById[i] === undefined) {
+                metaId = i.toString();
+                break;
+            }
+        }
+
+        var metaStation = {
+            data: {
+                id: metaId,
+                name: name,
+                type: 'Meta Station',
+                contains: ids
+            }
+        };
+
+        for (let id of ids) {
+            _elementsById[id].data.hide = true;
+        }
+
+        // for (let d of _deliveries) {
+        //     if (ids.includes(d.data.))
+        // }
+
+        _stations.push(metaStation);
+        _elementsById[metaId] = metaStation;
     };
 
     _this.clearSelection = function() {
@@ -35,6 +62,10 @@ angular.module('app').service('tracingService', function() {
         for (let d of _deliveries) {
             d.data.selected = false;
         }
+    };
+
+    _this.setSelected = function(id, selected) {
+        _elementsById[id].data.selected = selected;
     };
 
     _this.clearOutbreakStations = function() {
