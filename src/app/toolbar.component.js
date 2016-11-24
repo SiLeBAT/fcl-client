@@ -3,15 +3,14 @@
 /*global angular*/
 
 angular.module('app').component('toolbar', {
-    controller: function($state, $rootScope) {
+    controller: function($state, $transitions) {
         var _this = this;
 
         _this.currentNavItem = $state.current.name;
 
-        $rootScope.$on('$stateChangeStart',
-            function(event, toState, toParams, fromState, fromParams, options) {
-                _this.currentNavItem = toState.name;
-            });
+        $transitions.onEnter({}, function(transition, state) {
+            _this.currentNavItem = state.name;
+        });
     },
     templateUrl: 'app/toolbar.component.html'
 });
