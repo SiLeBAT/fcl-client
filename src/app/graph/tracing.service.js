@@ -47,9 +47,22 @@ angular.module('app').service('tracingService', function() {
             _elementsById[id].data.hide = true;
         }
 
-        // for (let d of _deliveries) {
-        //     if (ids.includes(d.data.))
-        // }
+        metaStation.data.in = [];
+        metaStation.data.out = [];
+
+        for (let d of _deliveries) {
+            if (ids.includes(d.data.source)) {
+                d.data.originalSource = d.data.source;
+                d.data.source = metaId;
+                metaStation.data.out.push(d.data.id);
+            }
+
+            if (ids.includes(d.data.target)) {
+                d.data.originalTarget = d.data.target;
+                d.data.target = metaId;
+                metaStation.data.in.push(d.data.id);
+            }
+        }
 
         _stations.push(metaStation);
         _elementsById[metaId] = metaStation;

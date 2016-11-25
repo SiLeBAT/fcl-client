@@ -151,7 +151,17 @@ angular.module('app').service('graphService', function(tracingService, dataServi
 
         for (let n of nodes) {
             n.group = "nodes";
-            n.position = _cy.nodes('#' + n.data.id).position();
+
+            var pos = _cy.nodes('#' + n.data.id).position();
+
+            if (pos === undefined && n.data.contains !== undefined) {
+                n.position = utilService.getCenter(n.data.contains.map(function(id) {
+                    return _cy.nodes('#' + id).position();
+                }));
+            }
+            else {
+                n.position = pos;
+            }
         }
 
         _cy.batch(function() {
@@ -396,11 +406,12 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         if (station.selected() && selectedStations.size() > 1) {
             options = {
                 'Merge Stations': function() {
-                    dialogService.showPrompt("Please specify name of meta station:", "Meta Station Name", function(result) {
-                        console.log(result);
+                    dialogService.showPrompt("Please specify name of meta station:", "Meta Station Name", function(name) {
+                        tracingService.mergeStations(selectedStations.map(function(station) {
+                            return station.id();
+                        }), name);
+                        updateAll();
                     });
-                    // tracingService.mergeStations(selectedStations.id());
-                    // updateAll();
                 }
             };
         }

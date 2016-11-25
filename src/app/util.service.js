@@ -42,4 +42,19 @@ angular.module('app').service('utilService', function($q, $resource) {
         return combinations;
     };
 
+    _this.getCenter = function(positions) {
+        var xSum = 0;
+        var ySum = 0;
+
+        for (let pos of positions) {
+            xSum += pos.x;
+            ySum += pos.y;
+        }
+
+        return {
+            x: xSum / positions.length,
+            y: ySum / positions.length
+        };
+    };
+
 });
