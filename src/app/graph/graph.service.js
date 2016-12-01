@@ -432,19 +432,15 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         else {
             options = {
                 'Show Forward Trace': function() {
-                    tracingService.clearTrace();
                     tracingService.showStationForwardTrace(station.id());
                     repaint();
                 },
                 'Show Backward Trace': function() {
-                    tracingService.clearTrace();
                     tracingService.showStationBackwardTrace(station.id());
                     repaint();
                 },
                 'Show Whole Trace': function() {
-                    tracingService.clearTrace();
-                    tracingService.showStationForwardTrace(station.id());
-                    tracingService.showStationBackwardTrace(station.id());
+                    tracingService.showStationTrace(station.id());
                     repaint();
                 }
             };
@@ -469,23 +465,19 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         dialogService.showContextMenu(position, {
             'Show Forward Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
-                    tracingService.clearTrace();
                     tracingService.showDeliveryForwardTrace(delivery.id());
                     repaint();
                 }
             },
             'Show Backward Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
-                    tracingService.clearTrace();
                     tracingService.showDeliveryBackwardTrace(delivery.id());
                     repaint();
                 }
             },
             'Show Whole Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
-                    tracingService.clearTrace();
-                    tracingService.showDeliveryForwardTrace(delivery.id());
-                    tracingService.showDeliveryBackwardTrace(delivery.id());
+                    tracingService.showDeliveryTrace(delivery.id());
                     repaint();
                 }
             }

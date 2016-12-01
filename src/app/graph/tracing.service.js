@@ -140,9 +140,19 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
+    _this.showStationTrace = function(id) {
+        var station = _elementsById[id];
+
+        _this.clearTrace();
+        station.data.observed = true;
+        station.data.out.forEach(showDeliveryForwardTraceInternal);
+        station.data.in.forEach(showDeliveryBackwardTraceInternal);
+    };
+
     _this.showStationForwardTrace = function(id) {
         var station = _elementsById[id];
 
+        _this.clearTrace();
         station.data.observed = true;
         station.data.out.forEach(showDeliveryForwardTraceInternal);
     };
@@ -150,13 +160,26 @@ angular.module('app').service('tracingService', function() {
     _this.showStationBackwardTrace = function(id) {
         var station = _elementsById[id];
 
+        _this.clearTrace();
         station.data.observed = true;
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
+    };
+
+    _this.showDeliveryTrace = function(id) {
+        var delivery = _elementsById[id];
+
+        _this.clearTrace();
+        delivery.data.observed = true;
+        _elementsById[delivery.data.target].data.forward = true;
+        _elementsById[delivery.data.source].data.backward = true;
+        delivery.data.out.forEach(showDeliveryForwardTraceInternal);
+        delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
     _this.showDeliveryForwardTrace = function(id) {
         var delivery = _elementsById[id];
 
+        _this.clearTrace();
         delivery.data.observed = true;
         _elementsById[delivery.data.target].data.forward = true;
         delivery.data.out.forEach(showDeliveryForwardTraceInternal);
@@ -165,6 +188,7 @@ angular.module('app').service('tracingService', function() {
     _this.showDeliveryBackwardTrace = function(id) {
         var delivery = _elementsById[id];
 
+        _this.clearTrace();
         delivery.data.observed = true;
         _elementsById[delivery.data.source].data.backward = true;
         delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
