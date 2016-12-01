@@ -154,17 +154,21 @@ angular.module('app').service('graphService', function(tracingService, dataServi
 
             var pos = _cy.nodes('#' + n.data.id).position();
 
-            if (pos === undefined && n.data.contains !== undefined) {
-                n.position = utilService.getCenter(n.data.contains.map(function(id) {
-                    return _cy.nodes('#' + id).position();
-                }));
+            if (pos === undefined) {
+                if (n.data.contains !== undefined) {
+                    n.position = utilService.getCenter(n.data.contains.map(function(id) {
+                        return _cy.nodes('#' + id).position();
+                    }));
 
-                for (let contained of tracingService.getElementsById(n.data.contains)) {
-                    var containedPos = _cy.nodes('#' + contained.data.id).position();
+                    for (let contained of tracingService.getElementsById(n.data.contains)) {
+                        var containedPos = _cy.nodes('#' + contained.data.id).position();
 
-                    contained.data._relativePosition = utilService.difference(containedPos, n.position);
-                    
-                    console.log(contained.data._relativePosition);
+                        contained.data._relativeTo = n.data.id;
+                        contained.data._relativePosition = utilService.difference(containedPos, n.position);
+                    }
+                }
+                else if (n.data._relativeTo !== undefined && n.data._relativePosition !== undefined) {
+                    n.position = utilService.sum(_cy.nodes('#' + n.data._relativeTo).position(), n.data._relativePosition);
                 }
             }
             else {
@@ -196,7 +200,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
         var stations = [];
 
         for (let s of _data.stations) {
-            if (!s.data.hide) {
+            if (!s.data.containedIn) {
                 stations.push({
                     data: s.data,
                     selected: s.data.selected
@@ -447,6 +451,13 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 tracingService.toggleOutbreakStation(station.id());
                 _this.setNodeSize(_nodeSize);
             };
+
+            if (station.data('contains')) {
+                options['Expand'] = function() {
+                    tracingService.expandStation(station.id());
+                    updateAll();
+                };
+            }
         }
 
         dialogService.showContextMenu(position, options);

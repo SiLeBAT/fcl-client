@@ -50,7 +50,7 @@ angular.module('app').service('tracingService', function() {
         };
 
         for (let id of ids) {
-            _elementsById[id].data.hide = true;
+            _elementsById[id].data.containedIn = metaId;
         }
 
         metaStation.data.in = [];
@@ -72,6 +72,29 @@ angular.module('app').service('tracingService', function() {
 
         _stations.push(metaStation);
         _elementsById[metaId] = metaStation;
+    };
+
+    _this.expandStation = function(id) {
+        var station = _elementsById[id];
+
+        _elementsById[id] = undefined;
+        _stations.splice(_stations.indexOf(station), 1);
+
+        for (let containedId of station.data.contains) {
+            _elementsById[containedId].data.containedIn = undefined;
+        }
+
+        for (let d of _deliveries) {
+            if (d.data.source === id) {
+                d.data.source = d.data.originalSource;
+                d.data.originalSource = undefined;
+            }
+
+            if (d.data.target === id) {
+                d.data.target = d.data.originalTarget;
+                d.data.originalTarget = undefined;
+            }
+        }
     };
 
     _this.clearSelection = function() {
