@@ -57,4 +57,11 @@ angular.module('app').service('utilService', function($q, $resource) {
         };
     };
 
+    _this.difference = function(position1, position2) {
+        return {
+            x: position1.x - position2.x,
+            y: position1.y - position2.y
+        };
+    };
+
 });

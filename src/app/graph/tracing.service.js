@@ -24,6 +24,16 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
+    _this.getElementsById = function(ids) {
+        var elements = [];
+
+        for (let id of ids) {
+            elements.push(_elementsById[id]);
+        }
+
+        return elements;
+    };
+
     _this.mergeStations = function(ids, name) {
         var metaId;
 

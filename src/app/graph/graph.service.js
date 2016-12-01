@@ -158,6 +158,12 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 n.position = utilService.getCenter(n.data.contains.map(function(id) {
                     return _cy.nodes('#' + id).position();
                 }));
+
+                for (let contained of tracingService.getElementsById(n.data.contains)) {
+                    var containedPos = _cy.nodes('#' + contained.data.id).position();
+
+                    contained.data._relativePosition = utilService.difference(containedPos, n.position);
+                }
             }
             else {
                 n.position = pos;
