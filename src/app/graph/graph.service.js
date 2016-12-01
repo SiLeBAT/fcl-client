@@ -247,6 +247,7 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                             id: source + '->' + target,
                             source: source,
                             target: target,
+                            isEdge: true,
                             backward: value.find(function(d) {
                                 return d.data.backward;
                             }) !== undefined,

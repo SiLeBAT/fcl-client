@@ -44,6 +44,7 @@ angular.module('app').service('tracingService', function() {
             data: {
                 id: metaId,
                 name: name,
+                isEdge: false,
                 type: 'Meta Station',
                 contains: ids
             }
@@ -72,6 +73,7 @@ angular.module('app').service('tracingService', function() {
 
         _stations.push(metaStation);
         _elementsById[metaId] = metaStation;
+        updateTrace(ids);
     };
 
     _this.expandStation = function(id) {
@@ -95,6 +97,8 @@ angular.module('app').service('tracingService', function() {
                 d.data.originalTarget = undefined;
             }
         }
+
+        updateTrace([id]);
     };
 
     _this.clearSelection = function() {
@@ -129,12 +133,12 @@ angular.module('app').service('tracingService', function() {
 
     _this.clearTrace = function() {
         for (let s of _stations) {
-            s.data.observed = false;
+            s.data.observed = undefined;
             s.data.forward = false;
             s.data.backward = false;
         }
         for (let d of _deliveries) {
-            d.data.observed = false;
+            d.data.observed = undefined;
             d.data.forward = false;
             d.data.backward = false;
         }
@@ -144,7 +148,7 @@ angular.module('app').service('tracingService', function() {
         var station = _elementsById[id];
 
         _this.clearTrace();
-        station.data.observed = true;
+        station.data.observed = 'full';
         station.data.out.forEach(showDeliveryForwardTraceInternal);
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
@@ -153,7 +157,7 @@ angular.module('app').service('tracingService', function() {
         var station = _elementsById[id];
 
         _this.clearTrace();
-        station.data.observed = true;
+        station.data.observed = 'forward';
         station.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
@@ -161,7 +165,7 @@ angular.module('app').service('tracingService', function() {
         var station = _elementsById[id];
 
         _this.clearTrace();
-        station.data.observed = true;
+        station.data.observed = 'backward';
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
@@ -169,7 +173,7 @@ angular.module('app').service('tracingService', function() {
         var delivery = _elementsById[id];
 
         _this.clearTrace();
-        delivery.data.observed = true;
+        delivery.data.observed = 'full';
         _elementsById[delivery.data.target].data.forward = true;
         _elementsById[delivery.data.source].data.backward = true;
         delivery.data.out.forEach(showDeliveryForwardTraceInternal);
@@ -180,7 +184,7 @@ angular.module('app').service('tracingService', function() {
         var delivery = _elementsById[id];
 
         _this.clearTrace();
-        delivery.data.observed = true;
+        delivery.data.observed = 'forward';
         _elementsById[delivery.data.target].data.forward = true;
         delivery.data.out.forEach(showDeliveryForwardTraceInternal);
     };
@@ -189,7 +193,7 @@ angular.module('app').service('tracingService', function() {
         var delivery = _elementsById[id];
 
         _this.clearTrace();
-        delivery.data.observed = true;
+        delivery.data.observed = 'backward';
         _elementsById[delivery.data.source].data.backward = true;
         delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
@@ -275,6 +279,49 @@ angular.module('app').service('tracingService', function() {
             delivery.data.backward = true;
             _elementsById[delivery.data.source].data.backward = true;
             delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
+        }
+    }
+
+    function updateTrace(changedIds) {
+        var observedElement = _stations.concat(_deliveries).find(function(e) {
+            return e.data.observed;
+        });
+
+        if (observedElement === undefined) {
+            _this.clearTrace();
+        }
+        else {
+            var id = observedElement.data.id;
+            var observed = observedElement.data.observed;
+
+            if (!changedIds.includes(id)) {
+                if (observedElement.data.isEdge) {
+                    switch (observed) {
+                        case 'full':
+                            _this.showDeliveryTrace(id);
+                            break;
+                        case 'forward':
+                            _this.showDeliveryForwardTrace(id);
+                            break;
+                        case 'backward':
+                            _this.showDeliveryBackwardTrace(id);
+                            break;
+                    }
+                }
+                else {
+                    switch (observed) {
+                        case 'full':
+                            _this.showStationTrace(id);
+                            break;
+                        case 'forward':
+                            _this.showStationForwardTrace(id);
+                            break;
+                        case 'backward':
+                            _this.showStationBackwardTrace(id);
+                            break;
+                    }
+                }
+            }
         }
     }
 });

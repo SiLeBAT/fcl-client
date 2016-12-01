@@ -82,6 +82,7 @@ angular.module('app').service('dataService', function($q, $resource) {
         var deliveriesById = {};
 
         for (let s of data.stations) {
+            s.data.isEdge = false;
             s.data.in = [];
             s.data.out = [];
             stationsById[s.data.id] = s;
@@ -91,6 +92,7 @@ angular.module('app').service('dataService', function($q, $resource) {
             stationsById[d.data.source].data.out.push(d.data.id);
             stationsById[d.data.target].data.in.push(d.data.id);
 
+            d.data.isEdge = true;
             d.data.in = [];
             d.data.out = [];
             deliveriesById[d.data.id] = d;
