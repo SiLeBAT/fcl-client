@@ -248,10 +248,13 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                             source: source,
                             target: target,
                             backward: value.find(function(d) {
-                                return d.data.backward === true;
+                                return d.data.backward;
                             }) !== undefined,
                             forward: value.find(function(d) {
-                                return d.data.forward === true;
+                                return d.data.forward;
+                            }) !== undefined,
+                            observed: value.find(function(d) {
+                                return d.data.observed;
                             }) !== undefined,
                             merged: value.length > 1,
                             contains: value.map(function(d) {
