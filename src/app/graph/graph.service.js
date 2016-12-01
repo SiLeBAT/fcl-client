@@ -169,6 +169,8 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                 }
                 else if (n.data._relativeTo !== undefined && n.data._relativePosition !== undefined) {
                     n.position = utilService.sum(_cy.nodes('#' + n.data._relativeTo).position(), n.data._relativePosition);
+                    n.data._relativeTo = undefined;
+                    n.data._relativePosition = undefined;
                 }
             }
             else {
