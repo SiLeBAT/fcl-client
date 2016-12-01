@@ -163,6 +163,8 @@ angular.module('app').service('graphService', function(tracingService, dataServi
                     var containedPos = _cy.nodes('#' + contained.data.id).position();
 
                     contained.data._relativePosition = utilService.difference(containedPos, n.position);
+                    
+                    console.log(contained.data._relativePosition);
                 }
             }
             else {

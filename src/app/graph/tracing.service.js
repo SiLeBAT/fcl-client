@@ -25,13 +25,9 @@ angular.module('app').service('tracingService', function() {
     };
 
     _this.getElementsById = function(ids) {
-        var elements = [];
-
-        for (let id of ids) {
-            elements.push(_elementsById[id]);
-        }
-
-        return elements;
+        return ids.map(function(id) {
+            return _elementsById[id];
+        });
     };
 
     _this.mergeStations = function(ids, name) {
