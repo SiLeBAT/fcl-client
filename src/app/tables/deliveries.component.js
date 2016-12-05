@@ -13,7 +13,7 @@ angular.module('app').component('deliveries', {
 
         _this.deliveries = getFilteredDeliveries();
         _this.order = "data.id";
-        _this.showTraceOnly = dataService.getShowTraceOnly();
+        _this.showTraceOnly = dataService.getTableSettings().showTraceOnly;
 
         _this.getCellStyle = function(delivery, position) {
             return tableService.getCellStyle(delivery, position);
@@ -27,10 +27,11 @@ angular.module('app').component('deliveries', {
             switch (property) {
                 case "showTraceOnly":
                     _this.showTraceOnly = value;
-                    dataService.setShowTraceOnly(value);
                     _this.deliveries = getFilteredDeliveries();
                     break;
             }
+
+            dataService.setShowTraceOnly(value);
         };
 
         dataService.getData().then(function(data) {

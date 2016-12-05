@@ -8,28 +8,27 @@ angular.module('app').component('graph', {
 
         _this.nodeSizes = dataService.NODE_SIZES;
         _this.fontSizes = dataService.FONT_SIZES;
-        _this.nodeSize = dataService.getNodeSize();
-        _this.fontSize = dataService.getFontSize();
-        _this.mergeDeliveries = dataService.getMergeDeliveries();
+        _this.nodeSize = dataService.getGraphSettings().nodeSize;
+        _this.fontSize = dataService.getGraphSettings().fontSize;
+        _this.mergeDeliveries = dataService.getGraphSettings().mergeDeliveries;
 
         _this.onChange = function(property, value) {
             switch (property) {
                 case "nodeSize":
                     _this.nodeSize = value;
                     graphService.setNodeSize(value);
-                    dataService.setNodeSize(value);
                     break;
                 case "fontSize":
                     _this.fontSize = value;
                     graphService.setFontSize(value);
-                    dataService.setFontSize(value);
                     break;
                 case "mergeDeliveries":
                     _this.mergeDeliveries = value;
                     graphService.setMergeDeliveries(value);
-                    dataService.setMergeDeliveries(value);
                     break;
             }
+
+            dataService.getGraphSettings()[property] = value;
         };
 
         _this.style = {

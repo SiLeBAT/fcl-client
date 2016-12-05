@@ -24,10 +24,14 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     var _data;
-    var _nodeSize = _this.NODE_SIZES.Small;
-    var _fontSize = _this.FONT_SIZES.Small;
-    var _mergeDeliveries = false;
-    var _showTraceOnly = false;
+    var _graphSettings = {
+        nodeSize: _this.NODE_SIZES.Small,
+        fontSize: _this.FONT_SIZES.Small,
+        mergeDeliveries: false
+    };
+    var _tableSettings = {
+        showTraceOnly: false
+    };
 
     _this.getData = function() {
         return $q(function(resolve, reject) {
@@ -45,36 +49,12 @@ angular.module('app').service('dataService', function($q, $resource) {
         });
     };
 
-    _this.getNodeSize = function() {
-        return _nodeSize;
+    _this.getGraphSettings = function() {
+        return _graphSettings;
     };
 
-    _this.setNodeSize = function(nodeSize) {
-        _nodeSize = nodeSize;
-    };
-
-    _this.getFontSize = function() {
-        return _fontSize;
-    };
-
-    _this.setFontSize = function(fontSize) {
-        _fontSize = fontSize;
-    };
-
-    _this.getMergeDeliveries = function() {
-        return _mergeDeliveries;
-    };
-
-    _this.setMergeDeliveries = function(mergeDeliveries) {
-        _mergeDeliveries = mergeDeliveries;
-    };
-
-    _this.getShowTraceOnly = function() {
-        return _showTraceOnly;
-    };
-
-    _this.setShowTraceOnly = function(showTraceOnly) {
-        _showTraceOnly = showTraceOnly;
+    _this.getTableSettings = function() {
+        return _tableSettings;
     };
 
     function preprocessData(data) {
