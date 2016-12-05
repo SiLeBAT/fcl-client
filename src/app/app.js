@@ -11,15 +11,11 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource', 'md.data.table']
         $stateProvider
             .state('graph', {
                 url: '/',
-                template: '<graph></graph>'
+                template: '<graph-view></graph-view>'
             })
-            .state('stations', {
-                url: '/stations',
-                template: '<stations></stations>'
-            })
-            .state('deliveries', {
-                url: '/deliveries',
-                template: '<deliveries></deliveries>'
+            .state('table', {
+                url: '/table',
+                template: '<table-view></table-view>'
             });
 
         $urlRouterProvider.otherwise('/');

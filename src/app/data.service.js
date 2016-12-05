@@ -23,6 +23,11 @@ angular.module('app').service('dataService', function($q, $resource) {
         outbreak: [255, 50, 50]
     };
 
+    _this.TABLE_MODES = {
+        Stations: 'stations',
+        Deliveries: 'deliveries'
+    };
+
     var _data;
     var _graphSettings = {
         nodeSize: _this.NODE_SIZES.Small,
@@ -30,6 +35,7 @@ angular.module('app').service('dataService', function($q, $resource) {
         mergeDeliveries: false
     };
     var _tableSettings = {
+        mode: 'stations',
         showTraceOnly: false
     };
 

@@ -2,7 +2,7 @@
 
 /*global angular,$*/
 
-angular.module('app').component('graph', {
+angular.module('app').component('graphView', {
     controller: function(graphService, dataService) {
         var _this = this;
 
@@ -46,5 +46,5 @@ angular.module('app').component('graph', {
             graphService.setMergeDeliveries(_this.mergeDeliveries);
         });
     },
-    templateUrl: 'app/graph/graph.component.html'
+    templateUrl: 'app/graph/graph_view.component.html'
 });

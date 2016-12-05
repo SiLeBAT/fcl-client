@@ -1,6 +1,11 @@
 <div class="container" layout="row" flex>
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
-        <table-settings show-trace-only="$ctrl.showTraceOnly" on-change="$ctrl.onChange(property, value)"></table-settings>
+        <md-content>
+            <md-nav-bar md-selected-nav-item="$ctrl.mode" nav-bar-aria-label="Data Type">
+                <md-nav-item ng-repeat="(label, value) in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(value)" name="{{value}}">{{label}}</md-nav-item>
+            </md-nav-bar>
+            <checkbox label="Show Trace only" selected="$ctrl.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
+        </md-content>
     </md-sidenav>
     <md-content flex>
         <md-table-container>
