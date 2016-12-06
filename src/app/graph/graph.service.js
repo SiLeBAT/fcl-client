@@ -2,15 +2,18 @@
 
 /*global angular, cytoscape*/
 
-angular.module('app').service('graphService', function(tracingService, dataService, dialogService, utilService) {
+angular.module('app').service('graphService', function($timeout, tracingService, dataService, dialogService, utilService) {
 
     var _this = this;
 
     var _cy;
     var _data;
+
     var _mergeDeliveries = false;
     var _nodeSize = 10;
     var _fontSize = 10;
+
+    var _selectionTimer;
 
     _this.init = function(container, data) {
         _data = data;
@@ -128,6 +131,16 @@ angular.module('app').service('graphService', function(tracingService, dataServi
 
         _cy.nodes().style({
             'font-size': Math.max(fontSize / _cy.zoom(), fontSize)
+        });
+    };
+
+    _this.onSelectionChange = function(f) {
+        _cy.on('select unselect', function(event) {
+            if (_selectionTimer) {
+                $timeout.cancel(_selectionTimer);
+            }
+
+            _selectionTimer = $timeout(f, 50);
         });
     };
 

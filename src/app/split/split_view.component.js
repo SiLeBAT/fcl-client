@@ -3,7 +3,7 @@
 /*global angular,$*/
 
 angular.module('app').component('splitView', {
-    controller: function(graphService, dataService, tableService) {
+    controller: function($scope, graphService, dataService, tableService) {
         var _this = this;
         var _stations = [];
         var _deliveries = [];
@@ -104,6 +104,9 @@ angular.module('app').component('splitView', {
             graphService.setNodeSize(_this.nodeSize);
             graphService.setFontSize(_this.fontSize);
             graphService.setMergeDeliveries(_this.mergeDeliveries);
+            graphService.onSelectionChange(function() {
+                $scope.$apply();
+            });
             _stations = data.stations;
             _deliveries = data.deliveries;
             updateElements();
