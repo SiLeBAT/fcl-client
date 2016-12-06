@@ -16,6 +16,10 @@ angular.module('app', ['ngMaterial', 'ui.router', 'ngResource', 'md.data.table']
             .state('table', {
                 url: '/table',
                 template: '<table-view></table-view>'
+            })
+            .state('split', {
+                url: '/split',
+                template: '<split-view></split-view>'
             });
 
         $urlRouterProvider.otherwise('/');
