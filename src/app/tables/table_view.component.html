@@ -1,10 +1,12 @@
 <div class="container" layout="row" flex>
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
-        <md-content>
-            <md-nav-bar md-selected-nav-item="$ctrl.mode" nav-bar-aria-label="Data Type">
-                <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(mode)" name="{{mode}}">{{mode}}</md-nav-item>
-            </md-nav-bar>
-            <checkbox label="Show Trace only" selected="$ctrl.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
+        <md-nav-bar md-selected-nav-item="$ctrl.mode" nav-bar-aria-label="Data Type">
+            <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(mode)" name="{{mode}}">{{mode}}</md-nav-item>
+        </md-nav-bar>
+        <md-content layout-padding-sm>
+            <div>
+                <checkbox label="Show Trace only" selected="$ctrl.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
+            </div>
         </md-content>
     </md-sidenav>
     <md-content flex>
@@ -12,7 +14,7 @@
             <table md-table>
                 <thead md-head md-order="$ctrl.order">
                     <tr md-row>
-                        <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column}}</span></th>
+                        <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column | uppercase}}</span></th>
                     </tr>
                 </thead>
                 <tbody md-body>

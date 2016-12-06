@@ -7,3 +7,9 @@
 .cy-panzoom {
     z-index: 1;
 }
+
+md-sidenav {
+    min-width: 0px !important;
+    width: auto !important;
+    max-width: none !important;
+}
