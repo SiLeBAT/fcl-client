@@ -73,5 +73,5 @@ angular.module('app').component('tableView', {
             updateElements();
         });
     },
-    templateUrl: 'app/tables/table_view.component.html'
+    templateUrl: 'app/table/table_view.component.html'
 });

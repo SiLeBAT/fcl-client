@@ -13,5 +13,5 @@ angular.module('app').component('dialogToolbar', {
             $mdDialog.cancel();
         };
     },
-    templateUrl: 'app/dialogs/toolbar.component.html'
+    templateUrl: 'app/dialog/toolbar.component.html'
 });

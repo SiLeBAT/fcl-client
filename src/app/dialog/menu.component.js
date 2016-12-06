@@ -7,5 +7,5 @@ angular.module('app').component('dialogMenu', {
         options: '<',
         onSelect: '&'
     },
-    templateUrl: 'app/dialogs/menu.component.html'
+    templateUrl: 'app/dialog/menu.component.html'
 });
