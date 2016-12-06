@@ -2,7 +2,7 @@
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
         <md-content>
             <md-nav-bar md-selected-nav-item="$ctrl.mode" nav-bar-aria-label="Data Type">
-                <md-nav-item ng-repeat="(label, value) in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(value)" name="{{value}}">{{label}}</md-nav-item>
+                <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(mode)" name="{{mode}}">{{mode}}</md-nav-item>
             </md-nav-bar>
             <checkbox label="Show Trace only" selected="$ctrl.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
         </md-content>
@@ -12,18 +12,12 @@
             <table md-table>
                 <thead md-head md-order="$ctrl.order">
                     <tr md-row>
-                        <th md-column ng-style="$ctrl.getCellStyle()" md-order-by="data.id"><span>ID</span></th>
-                        <th md-column ng-style="$ctrl.getCellStyle()" md-order-by="data.name"><span>Name</span></th>
-                        <th md-column ng-style="$ctrl.getCellStyle()" md-order-by="data.type"><span>Type</span></th>
-                        <th md-column ng-style="$ctrl.getCellStyle()" md-order-by="data.score"><span>Score</span></th>
+                        <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column}}</span></th>
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row ng-repeat="station in $ctrl.stations | orderBy: $ctrl.order" ng-style="$ctrl.getRowStyle(station)">
-                        <td md-cell ng-style="$ctrl.getCellStyle(station,'first')">{{station.data.id}}</td>
-                        <td md-cell ng-style="$ctrl.getCellStyle(station,'')">{{station.data.name}}</td>
-                        <td md-cell ng-style="$ctrl.getCellStyle(station,'')">{{station.data.type}}</td>
-                        <td md-cell ng-style="$ctrl.getCellStyle(station,'last')">{{station.data.score}}</td>
+                    <tr md-row ng-repeat="station in $ctrl.elements | orderBy: $ctrl.order" ng-style="$ctrl.getRowStyle(station)">
+                        <td md-cell ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle(station,column)">{{station.data[column]}}</td>
                     </tr>
                 </tbody>
             </table>

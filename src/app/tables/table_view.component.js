@@ -5,19 +5,44 @@
 angular.module('app').component('tableView', {
     controller: function(dataService, tableService) {
         var _this = this;
-        var _allStations = [];
+        var _stations = [];
+        var _deliveries = [];
 
-        function getFilteredStations() {
-            return _this.showTraceOnly ? tableService.getElementsOnTrace(_allStations) : _allStations;
+        function updateElements() {
+            _this.columns = dataService.TABLE_COLUMNS[_this.mode];
+
+            switch (_this.mode) {
+                case "stations":
+                    _this.elements = _this.showTraceOnly ? tableService.getElementsOnTrace(_stations) : _stations;
+                    break;
+                case "deliveries":
+                    _this.elements = _this.showTraceOnly ? tableService.getElementsOnTrace(_deliveries) : _deliveries;
+                    break;
+                default:
+                    _this.elements = undefined;
+                    break;
+            }
         }
 
         _this.modes = dataService.TABLE_MODES;
+
         _this.mode = dataService.getTableSettings().mode;
-        _this.stations = getFilteredStations();
-        _this.order = "data.id";
+        _this.order = dataService.getTableSettings().order;
         _this.showTraceOnly = dataService.getTableSettings().showTraceOnly;
 
-        _this.getCellStyle = function(station, position) {
+        updateElements();
+
+        _this.getCellStyle = function(station, column) {
+            var index = _this.columns.indexOf(column);
+            var position;
+
+            if (index === 0) {
+                position = 'first';
+            }
+            else if (index === _this.columns.length - 1) {
+                position = 'last';
+            }
+
             return tableService.getCellStyle(station, position);
         };
 
@@ -28,13 +53,14 @@ angular.module('app').component('tableView', {
         _this.switchModeTo = function(mode) {
             _this.mode = mode;
             dataService.getTableSettings().mode = mode;
+            updateElements();
         };
 
         _this.onChange = function(property, value) {
             switch (property) {
                 case "showTraceOnly":
                     _this.showTraceOnly = value;
-                    _this.stations = getFilteredStations();
+                    updateElements();
                     break;
             }
 
@@ -42,8 +68,9 @@ angular.module('app').component('tableView', {
         };
 
         dataService.getData().then(function(data) {
-            _allStations = data.stations;
-            _this.stations = getFilteredStations();
+            _stations = data.stations;
+            _deliveries = data.deliveries;
+            updateElements();
         });
     },
     templateUrl: 'app/tables/table_view.component.html'

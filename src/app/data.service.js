@@ -23,9 +23,10 @@ angular.module('app').service('dataService', function($q, $resource) {
         outbreak: [255, 50, 50]
     };
 
-    _this.TABLE_MODES = {
-        Stations: 'stations',
-        Deliveries: 'deliveries'
+    _this.TABLE_MODES = ['stations', 'deliveries'];
+    _this.TABLE_COLUMNS = {
+        'stations': ['id', 'name', 'type', 'score'],
+        'deliveries': ['id', 'source', 'target', 'score']
     };
 
     var _data;
@@ -35,7 +36,8 @@ angular.module('app').service('dataService', function($q, $resource) {
         mergeDeliveries: false
     };
     var _tableSettings = {
-        mode: 'stations',
+        mode: _this.TABLE_MODES[0],
+        order: 'data.id',
         showTraceOnly: false
     };
 
