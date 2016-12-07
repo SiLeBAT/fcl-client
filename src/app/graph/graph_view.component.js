@@ -28,7 +28,7 @@ angular.module('app').component('graphView', {
         };
 
         dataService.getData().then(function(data) {
-            graphService.init($('#graph')[0], data);
+            graphService.init('#graph', data);
             graphService.setNodeSize(_this.settings.nodeSize);
             graphService.setFontSize(_this.settings.fontSize);
             graphService.setMergeDeliveries(_this.settings.mergeDeliveries);

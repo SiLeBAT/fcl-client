@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular, cytoscape*/
+/*global angular, cytoscape, $*/
 
 angular.module('app').service('graphService', function($timeout, tracingService, dataService, dialogService, utilService) {
 
@@ -15,12 +15,12 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
     var _selectionTimer;
 
-    _this.init = function(container, data) {
+    _this.init = function(containerSelector, data) {
         _data = data;
 
         if (_cy === undefined) {
             _cy = cytoscape({
-                container: container,
+                container: $(containerSelector)[0],
 
                 elements: {
                     nodes: createNodes(),
@@ -41,7 +41,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             var json = _cy.json();
 
             _cy = cytoscape({
-                container: container,
+                container: $(containerSelector)[0],
 
                 elements: {
                     nodes: createNodes(),
@@ -66,8 +66,13 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             });
         }
 
-        _cy.panzoom();
+        $(containerSelector).on("mresize", function() {
+            $timeout(function() {
+                _cy.resize();
+            }, 50);
+        });
 
+        _cy.panzoom();
         _cy.on('zoom', function(event) {
             _this.setFontSize(_fontSize);
         });
@@ -142,10 +147,6 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
             _selectionTimer = $timeout(f, 50);
         });
-    };
-    
-    _this.updateSize = function() {
-        _cy.resize();
     };
 
     function repaint() {

@@ -52,7 +52,7 @@ angular.module('app').component('splitView', {
         };
 
         dataService.getData().then(function(data) {
-            graphService.init($('#graph')[0], data);
+            graphService.init('#graph', data);
             graphService.setNodeSize(_this.graphSettings.nodeSize);
             graphService.setFontSize(_this.graphSettings.fontSize);
             graphService.setMergeDeliveries(_this.graphSettings.mergeDeliveries);
