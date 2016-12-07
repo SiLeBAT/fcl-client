@@ -8,15 +8,10 @@ angular.module('app').component('tableView', {
         var _stations = [];
         var _deliveries = [];
 
-
         _this.modes = dataService.TABLE_MODES;
-
-        _this.mode = dataService.getTableSettings().mode;
-        _this.order = dataService.getTableSettings().order;
-        _this.showTraceOnly = dataService.getTableSettings().showTraceOnly;
-
-        _this.columns = dataService.TABLE_COLUMNS[_this.mode];
-        _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
+        _this.settings = dataService.getTableSettings();
+        _this.columns = dataService.TABLE_COLUMNS[_this.settings.mode];
+        _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
 
         _this.getCellStyle = function(station, column) {
             return tableService.getCellStyle(station, column, _this.columns);
@@ -27,27 +22,24 @@ angular.module('app').component('tableView', {
         };
 
         _this.switchModeTo = function(mode) {
-            _this.mode = mode;
-            _this.columns = dataService.TABLE_COLUMNS[_this.mode];
-            _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
-            dataService.getTableSettings().mode = mode;
+            _this.settings.mode = mode;
+            _this.columns = dataService.TABLE_COLUMNS[mode];
+            _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
         };
 
         _this.onChange = function(property, value) {
             switch (property) {
                 case "showTraceOnly":
-                    _this.showTraceOnly = value;
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
+                    _this.settings.showTraceOnly = value;
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
                     break;
             }
-
-            dataService.getTableSettings()[property] = value;
         };
 
         dataService.getData().then(function(data) {
             _stations = data.stations;
             _deliveries = data.deliveries;
-            _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
+            _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
         });
     },
     templateUrl: 'app/table/table_view.component.html'

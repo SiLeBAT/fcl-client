@@ -6,10 +6,10 @@ angular.module('app').service('tableService', function(dataService, utilService)
 
     var _this = this;
 
-    _this.getElements = function(stations, deliveries, mode, showTraceOnly) {
+    _this.getElements = function(stations, deliveries, settings) {
         var elements;
 
-        switch (mode) {
+        switch (settings.mode) {
             case "stations":
                 elements = stations;
                 break;
@@ -21,7 +21,7 @@ angular.module('app').service('tableService', function(dataService, utilService)
                 break;
         }
 
-        if (showTraceOnly) {
+        if (settings.showTraceOnly) {
             elements = elements.filter(function(elements) {
                 return elements.data.forward || elements.data.backward;
             });

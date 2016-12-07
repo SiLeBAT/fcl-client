@@ -2,17 +2,17 @@
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
         <md-content layout-padding-sm>
             <div>
-                <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
-                <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
-                <checkbox label="Merge Deliveries" selected="$ctrl.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
+                <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.graphSettings.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
+                <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.graphSettings.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
+                <checkbox label="Merge Deliveries" selected="$ctrl.graphSettings.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
             </div>
         </md-content>
-        <md-nav-bar md-selected-nav-item="$ctrl.mode" nav-bar-aria-label="Data Type">
+        <md-nav-bar md-selected-nav-item="$ctrl.tableSettings.mode" nav-bar-aria-label="Data Type">
             <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(mode)" name="{{mode}}">{{mode}}</md-nav-item>
         </md-nav-bar>
         <md-content layout-padding-sm>
             <div>
-                <checkbox label="Show Trace only" selected="$ctrl.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
+                <checkbox label="Show Trace only" selected="$ctrl.tableSettings.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
             </div>
         </md-content>
     </md-sidenav>
@@ -22,14 +22,14 @@
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
         <md-table-container>
             <table md-table>
-                <thead md-head md-order="$ctrl.order">
+                <thead md-head md-order="$ctrl.tableSettings.order">
                     <tr md-row>
                         <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column | uppercase}}</span></th>
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row ng-repeat="station in $ctrl.elements | orderBy: $ctrl.order" ng-style="$ctrl.getRowStyle(station)">
-                        <td md-cell ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle(station,column)">{{station.data[column]}}</td>
+                    <tr md-row ng-repeat="element in $ctrl.elements | orderBy: $ctrl.tableSettings.order" ng-style="$ctrl.getRowStyle(element)">
+                        <td md-cell ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle(element,column)">{{element.data[column]}}</td>
                     </tr>
                 </tbody>
             </table>

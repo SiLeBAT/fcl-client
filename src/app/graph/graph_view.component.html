@@ -2,9 +2,9 @@
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
         <md-content layout-padding-sm>
             <div>
-                <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
-                <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
-                <checkbox label="Merge Deliveries" selected="$ctrl.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
+                <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.settings.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
+                <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.settings.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
+                <checkbox label="Merge Deliveries" selected="$ctrl.settings.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
             </div>
         </md-content>
     </md-sidenav>
