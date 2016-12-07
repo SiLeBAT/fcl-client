@@ -19,19 +19,24 @@ angular.module('app').component('splitView', {
 
         _this.onChange = function(property, value) {
             switch (property) {
-                case "nodeSize":
+                case 'nodeSize':
                     _this.graphSettings.nodeSize = value;
                     graphService.setNodeSize(value);
                     break;
-                case "fontSize":
+                case 'fontSize':
                     _this.graphSettings.fontSize = value;
                     graphService.setFontSize(value);
                     break;
-                case "mergeDeliveries":
+                case 'mergeDeliveries':
                     _this.graphSettings.mergeDeliveries = value;
                     graphService.setMergeDeliveries(value);
                     break;
-                case "showTraceOnly":
+                case 'mode':
+                    _this.tableSettings.mode = value;
+                    _this.columns = dataService.TABLE_COLUMNS[value];
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    break;
+                case 'showTraceOnly':
                     _this.tableSettings.showTraceOnly = value;
                     _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
                     break;
@@ -44,12 +49,6 @@ angular.module('app').component('splitView', {
 
         _this.getRowStyle = function(station) {
             return tableService.getRowStyle(station);
-        };
-
-        _this.switchModeTo = function(mode) {
-            _this.tableSettings.mode = mode;
-            _this.columns = dataService.TABLE_COLUMNS[mode];
-            _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
         };
 
         dataService.getData().then(function(data) {

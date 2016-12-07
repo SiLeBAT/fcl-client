@@ -1,7 +1,7 @@
 <div class="container" layout="row" flex>
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
         <md-nav-bar md-selected-nav-item="$ctrl.settings.mode" nav-bar-aria-label="Data Type">
-            <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.switchModeTo(mode)" name="{{mode}}">{{mode}}</md-nav-item>
+            <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.onChange('mode', mode)" name="{{mode}}">{{mode}}</md-nav-item>
         </md-nav-bar>
         <md-content layout-padding-sm>
             <div>

@@ -29,7 +29,12 @@ angular.module('app').component('tableView', {
 
         _this.onChange = function(property, value) {
             switch (property) {
-                case "showTraceOnly":
+                case 'mode':
+                    _this.settings.mode = value;
+                    _this.columns = dataService.TABLE_COLUMNS[value];
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
+                    break;
+                case 'showTraceOnly':
                     _this.settings.showTraceOnly = value;
                     _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
                     break;
