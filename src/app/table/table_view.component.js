@@ -21,12 +21,6 @@ angular.module('app').component('tableView', {
             return tableService.getRowStyle(station);
         };
 
-        _this.switchModeTo = function(mode) {
-            _this.settings.mode = mode;
-            _this.columns = dataService.TABLE_COLUMNS[mode];
-            _this.elements = tableService.getElements(_stations, _deliveries, _this.settings);
-        };
-
         _this.onChange = function(property, value) {
             switch (property) {
                 case 'mode':
