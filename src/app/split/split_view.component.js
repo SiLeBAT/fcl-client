@@ -59,6 +59,9 @@ angular.module('app').component('splitView', {
             graphService.onSelectionChange(function() {
                 $scope.$apply();
             });
+            graphService.onUpdate(function() {
+                _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+            });
             _stations = data.stations;
             _deliveries = data.deliveries;
             _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);

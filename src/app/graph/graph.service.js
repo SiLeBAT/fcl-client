@@ -14,6 +14,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     var _fontSize = 10;
 
     var _selectionTimer;
+    var _updateFunction;
 
     _this.init = function(containerSelector, data) {
         _data = data;
@@ -128,7 +129,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         }
 
         _nodeSize = nodeSize;
-        repaint();
+        updateProperties();
     };
 
     _this.setFontSize = function(fontSize) {
@@ -149,13 +150,38 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         });
     };
 
-    function repaint() {
+    _this.onUpdate = function(f) {
+        _updateFunction = f;
+    };
+
+    function updateProperties() {
         if (_mergeDeliveries) {
             updateEdges();
             _cy.nodes().data('_update', true);
         }
         else {
             _cy.elements().data('_update', true);
+
+            if (_updateFunction) {
+                _updateFunction.call();
+            }
+        }
+    }
+
+    function updateEdges() {
+        var edges = createEdges();
+
+        for (let e of edges) {
+            e.group = "edges";
+        }
+
+        _cy.batch(function() {
+            _cy.edges().remove();
+            _cy.add(edges);
+        });
+
+        if (_updateFunction) {
+            _updateFunction.call();
         }
     }
 
@@ -201,19 +227,10 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             _cy.add(nodes);
             _cy.add(edges);
         });
-    }
 
-    function updateEdges() {
-        var edges = createEdges();
-
-        for (let e of edges) {
-            e.group = "edges";
+        if (_updateFunction) {
+            _updateFunction.call();
         }
-
-        _cy.batch(function() {
-            _cy.edges().remove();
-            _cy.add(edges);
-        });
     }
 
     function createNodes() {
@@ -426,7 +443,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             'Apply Layout': showLayoutMenu,
             'Clear Trace': function() {
                 tracingService.clearTrace();
-                repaint();
+                updateProperties();
             },
             'Clear Outbreaks': function() {
                 tracingService.clearOutbreakStations();
@@ -455,15 +472,15 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             options = {
                 'Show Forward Trace': function() {
                     tracingService.showStationForwardTrace(station.id());
-                    repaint();
+                    updateProperties();
                 },
                 'Show Backward Trace': function() {
                     tracingService.showStationBackwardTrace(station.id());
-                    repaint();
+                    updateProperties();
                 },
                 'Show Whole Trace': function() {
                     tracingService.showStationTrace(station.id());
-                    repaint();
+                    updateProperties();
                 }
             };
 
@@ -488,19 +505,19 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             'Show Forward Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.showDeliveryForwardTrace(delivery.id());
-                    repaint();
+                    updateProperties();
                 }
             },
             'Show Backward Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.showDeliveryBackwardTrace(delivery.id());
-                    repaint();
+                    updateProperties();
                 }
             },
             'Show Whole Trace': function() {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.showDeliveryTrace(delivery.id());
-                    repaint();
+                    updateProperties();
                 }
             }
         });
