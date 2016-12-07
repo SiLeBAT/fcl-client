@@ -143,6 +143,10 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             _selectionTimer = $timeout(f, 50);
         });
     };
+    
+    _this.updateSize = function() {
+        _cy.resize();
+    };
 
     function repaint() {
         if (_mergeDeliveries) {
