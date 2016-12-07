@@ -31,14 +31,6 @@ angular.module('app').component('graphView', {
             dataService.getGraphSettings()[property] = value;
         };
 
-        _this.style = {
-            height: '100%',
-            width: '100%',
-            position: 'absolute',
-            left: 0,
-            top: 0
-        };
-
         dataService.getData().then(function(data) {
             graphService.init($('#graph')[0], data);
             graphService.setNodeSize(_this.nodeSize);

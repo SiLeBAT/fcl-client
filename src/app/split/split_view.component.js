@@ -43,14 +43,6 @@ angular.module('app').component('splitView', {
             }
         };
 
-        _this.style = {
-            height: '100%',
-            width: '100%',
-            position: 'absolute',
-            left: 0,
-            top: 0
-        };
-
         _this.modes = dataService.TABLE_MODES;
 
         _this.mode = dataService.getTableSettings().mode;
