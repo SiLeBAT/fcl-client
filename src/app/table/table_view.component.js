@@ -8,21 +8,6 @@ angular.module('app').component('tableView', {
         var _stations = [];
         var _deliveries = [];
 
-        function updateElements() {
-            _this.columns = dataService.TABLE_COLUMNS[_this.mode];
-
-            switch (_this.mode) {
-                case "stations":
-                    _this.elements = _this.showTraceOnly ? tableService.getElementsOnTrace(_stations) : _stations;
-                    break;
-                case "deliveries":
-                    _this.elements = _this.showTraceOnly ? tableService.getElementsOnTrace(_deliveries) : _deliveries;
-                    break;
-                default:
-                    _this.elements = undefined;
-                    break;
-            }
-        }
 
         _this.modes = dataService.TABLE_MODES;
 
@@ -30,20 +15,11 @@ angular.module('app').component('tableView', {
         _this.order = dataService.getTableSettings().order;
         _this.showTraceOnly = dataService.getTableSettings().showTraceOnly;
 
-        updateElements();
+        _this.columns = dataService.TABLE_COLUMNS[_this.mode];
+        _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
 
         _this.getCellStyle = function(station, column) {
-            var index = _this.columns.indexOf(column);
-            var position;
-
-            if (index === 0) {
-                position = 'first';
-            }
-            else if (index === _this.columns.length - 1) {
-                position = 'last';
-            }
-
-            return tableService.getCellStyle(station, position);
+            return tableService.getCellStyle(station, column, _this.columns);
         };
 
         _this.getRowStyle = function(station) {
@@ -52,15 +28,16 @@ angular.module('app').component('tableView', {
 
         _this.switchModeTo = function(mode) {
             _this.mode = mode;
+            _this.columns = dataService.TABLE_COLUMNS[_this.mode];
+            _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
             dataService.getTableSettings().mode = mode;
-            updateElements();
         };
 
         _this.onChange = function(property, value) {
             switch (property) {
                 case "showTraceOnly":
                     _this.showTraceOnly = value;
-                    updateElements();
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
                     break;
             }
 
@@ -70,7 +47,7 @@ angular.module('app').component('tableView', {
         dataService.getData().then(function(data) {
             _stations = data.stations;
             _deliveries = data.deliveries;
-            updateElements();
+            _this.elements = tableService.getElements(_stations, _deliveries, _this.mode, _this.showTraceOnly);
         });
     },
     templateUrl: 'app/table/table_view.component.html'

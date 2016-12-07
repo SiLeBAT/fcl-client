@@ -6,26 +6,43 @@ angular.module('app').service('tableService', function(dataService, utilService)
 
     var _this = this;
 
-    _this.getElementsOnTrace = function(elements) {
-        return elements.filter(function(elements) {
-            return elements.data.forward || elements.data.backward;
-        });
+    _this.getElements = function(stations, deliveries, mode, showTraceOnly) {
+        var elements;
+
+        switch (mode) {
+            case "stations":
+                elements = stations;
+                break;
+            case "deliveries":
+                elements = deliveries;
+                break;
+            default:
+                elements = [];
+                break;
+        }
+
+        if (showTraceOnly) {
+            elements = elements.filter(function(elements) {
+                return elements.data.forward || elements.data.backward;
+            });
+        }
+
+        return elements;
     };
 
-    _this.getCellStyle = function(element, position) {
+    _this.getCellStyle = function(element, column, allColumns) {
         if (element !== undefined && element.data.selected) {
             var css = {
                 'border-top': '2px #00f solid',
                 'border-bottom': '2px #00f solid'
             };
+            var index = allColumns.indexOf(column);
 
-            switch (position) {
-                case 'first':
-                    css['border-left'] = '2px #00f solid';
-                    break;
-                case 'last':
-                    css['border-right'] = '2px #00f solid';
-                    break;
+            if (index === 0) {
+                css['border-left'] = '2px #00f solid';
+            }
+            else if (index === allColumns.length - 1) {
+                css['border-right'] = '2px #00f solid';
             }
 
             return css;
