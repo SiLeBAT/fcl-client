@@ -1,5 +1,8 @@
 <div class="container" layout="row" flex>
     <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
+        <md-toolbar class="md-hue-1">
+            <span class="md-toolbar-tools">Graph Settings</span>
+        </md-toolbar>
         <md-content layout-padding-sm>
             <div>
                 <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.graphSettings.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
@@ -7,6 +10,9 @@
                 <checkbox label="Merge Deliveries" selected="$ctrl.graphSettings.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
             </div>
         </md-content>
+        <md-toolbar class="md-hue-1">
+            <span class="md-toolbar-tools">Data Table Settings</span>
+        </md-toolbar>
         <md-nav-bar md-selected-nav-item="$ctrl.tableSettings.mode" nav-bar-aria-label="Data Type">
             <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.onChange('mode', mode)" name="{{mode}}">{{mode}}</md-nav-item>
         </md-nav-bar>
