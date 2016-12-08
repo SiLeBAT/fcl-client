@@ -13,11 +13,13 @@
         <md-toolbar class="md-hue-1">
             <span class="md-toolbar-tools">Data Table Settings</span>
         </md-toolbar>
-        <md-nav-bar md-selected-nav-item="$ctrl.tableSettings.mode" nav-bar-aria-label="Data Type">
-            <md-nav-item ng-repeat="mode in $ctrl.modes" md-nav-click="$ctrl.onChange('mode', mode)" name="{{mode}}">{{mode}}</md-nav-item>
-        </md-nav-bar>
         <md-content layout-padding-sm>
             <div>
+                <md-input-container class="md-block">
+                    <md-radio-group layout="row" ng-model="$ctrl.tableSettings.mode" ng-change="$ctrl.onChange('mode', $ctrl.tableSettings.mode)">
+                        <md-radio-button ng-repeat="mode in $ctrl.modes" value="{{mode}}">{{mode}}</md-radio-button>
+                    </md-radio-group>
+                </md-input-container>
                 <checkbox label="Show Trace only" selected="$ctrl.tableSettings.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
             </div>
         </md-content>

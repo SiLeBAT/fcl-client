@@ -10,10 +10,10 @@ angular.module('app').service('tableService', function(dataService, utilService)
         var elements;
 
         switch (settings.mode) {
-            case "stations":
+            case "Stations":
                 elements = stations;
                 break;
-            case "deliveries":
+            case "Deliveries":
                 elements = deliveries;
                 break;
             default:

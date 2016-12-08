@@ -23,10 +23,10 @@ angular.module('app').service('dataService', function($q, $resource) {
         outbreak: [255, 50, 50]
     };
 
-    _this.TABLE_MODES = ['stations', 'deliveries'];
+    _this.TABLE_MODES = ['Stations', 'Deliveries'];
     _this.TABLE_COLUMNS = {
-        'stations': ['id', 'name', 'type', 'score'],
-        'deliveries': ['id', 'source', 'target', 'score']
+        'Stations': ['id', 'name', 'type', 'score'],
+        'Deliveries': ['id', 'source', 'target', 'score']
     };
 
     var _data;
