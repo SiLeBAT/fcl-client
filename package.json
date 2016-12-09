@@ -18,9 +18,9 @@
         "cytoscape-spread": "^1.2.0",
         "cytoscape-springy": "^1.2.1",
         "dagre": "^0.7.4",
-        "graphlib": "^2.1.1",
+        "graphlib": "^1.0.7",
         "jquery": "^2.2.4",
-        "lodash": "^4.17.2",
+        "lodash": "^3.10.1",
         "mresize": "^1.0.1",
         "springy": "^2.7.1",
         "webcola": "^3.2.0"
