@@ -3,14 +3,12 @@
 /*global angular*/
 
 angular.module('app').component('toolbar', {
-    controller: function($state, $transitions) {
+    controller: function($mdSidenav) {
         var _this = this;
-
-        _this.currentNavItem = $state.current.name;
-
-        $transitions.onEnter({}, function(transition, state) {
-            _this.currentNavItem = state.name;
-        });
+        
+        _this.toggle = function(id) {
+            $mdSidenav(id).toggle();
+        };
     },
     templateUrl: 'app/toolbar.component.html'
 });

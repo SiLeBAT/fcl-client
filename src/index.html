@@ -22,17 +22,17 @@
 </head>
 
 <body ng-app="app" layout="column">
-
-    <md-toolbar class="md-whiteframe-4dp">
+    
+    <md-toolbar md-whiteframe="4">
         <toolbar></toolbar>
     </md-toolbar>
-
-    <div class="container ui-view-component-fix" flex ui-view>
+    
+    <div class="container layout-fix" flex>
+        <split-view></split-view>
     </div>
 
     <!-- build:js scripts/main.js -->
     <script src="../node_modules/angular/angular.min.js"></script>
-    <script src="../node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="../node_modules/angular-resource/angular-resource.min.js"></script>
     <script src="../node_modules/angular-messages/angular-messages.min.js"></script>
     <script src="../node_modules/angular-animate/angular-animate.min.js"></script>
@@ -65,9 +65,7 @@
     <script src="app/dialog/menu.component.js"></script>
     <script src="app/graph/graph.service.js"></script>
     <script src="app/graph/tracing.service.js"></script>
-    <script src="app/graph/graph_view.component.js"></script>
     <script src="app/graph/fruchterman_reingold.js"></script>
-    <script src="app/table/table_view.component.js"></script>
     <script src="app/table/table.service.js"></script>
     <script src="app/split/split_view.component.js"></script>
     <!-- endbuild -->

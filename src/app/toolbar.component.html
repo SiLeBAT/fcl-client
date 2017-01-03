@@ -1,8 +1,10 @@
 <div class="md-toolbar-tools" layout="row">
+    <md-button class="md-icon-button" aria-label="Toogle Left Sidebar" ng-click="$ctrl.toggle('left')">
+        <md-icon md-svg-icon="menu"></md-icon>
+    </md-button>
     <span>FoodChain-Lab</span>
-    <md-nav-bar md-theme="dark" md-selected-nav-item="$ctrl.currentNavItem" nav-bar-aria-label="Navigation Links">
-        <md-nav-item md-nav-sref="graph" name="graph">Graph View</md-nav-item>
-        <md-nav-item md-nav-sref="table" name="table">Data Table View</md-nav-item>
-        <md-nav-item md-nav-sref="split" name="split">Split View</md-nav-item>
-    </md-nav-bar>
+    <span flex></span>
+    <md-button class="md-icon-button" aria-label="Toogle Right Sidebar" ng-click="$ctrl.toggle('right')">
+        <md-icon md-svg-icon="menu"></md-icon>
+    </md-button>
 </div>

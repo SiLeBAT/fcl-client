@@ -1,5 +1,5 @@
-<div class="container" layout="row" flex>
-    <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
+<md-content layout="row" flex>
+    <md-sidenav md-component-id="left" class="md-sidenav-left" md-whiteframe="4" md-disable-backdrop="">
         <md-toolbar class="md-hue-1">
             <span class="md-toolbar-tools">Graph Settings</span>
         </md-toolbar>
@@ -27,7 +27,7 @@
     <md-content flex>
         <div id="graph" style="height: 100%; width: 100%; position: absolute; left: 0; top: 0"></div>
     </md-content>
-    <md-sidenav class="md-whiteframe-4dp" md-is-locked-open="true">
+    <md-sidenav md-component-id="right" class="md-sidenav-right" md-whiteframe="4" md-disable-backdrop="">
         <md-table-container>
             <table md-table>
                 <thead md-head md-order="$ctrl.tableSettings.order">
@@ -43,4 +43,4 @@
             </table>
         </md-table-container>
     </md-sidenav>
-</div>
+</md-content>
