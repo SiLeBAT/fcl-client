@@ -2,31 +2,30 @@
 
 var gulp = require('gulp'),
     cleancss = require('gulp-clean-css'),
-    jshint = require('gulp-jshint'),
     usemin = require('gulp-usemin'),
     rev = require('gulp-rev'),
     del = require('del');
-
-gulp.task('jshint', function() {
-    return gulp.src('src/app/**/*.js')
-        .pipe(jshint());
-});
 
 gulp.task('clean', function() {
     return del(['dist']);
 });
 
 gulp.task('default', ['clean'], function() {
-    return gulp.start('usemin', 'iconcopy', 'datacopy');
+    return gulp.start('usemin', 'fontcopy', 'iconcopy', 'datacopy');
 });
 
-gulp.task('usemin', ['jshint'], function() {
+gulp.task('usemin', function() {
     return gulp.src('src/**/*.html')
         .pipe(usemin({
             css: [cleancss(), rev()],
             js: [rev()]
         }))
         .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('fontcopy', function() {
+    return gulp.src('src/fonts/**/*')
+        .pipe(gulp.dest('dist/fonts'));
 });
 
 gulp.task('iconcopy', function() {
@@ -41,6 +40,7 @@ gulp.task('datacopy', function() {
 
 gulp.task('watch', ['default'], function() {
     gulp.watch('{src/app/**/*.js,src/styles/**/*.css,src/**/*.html}', ['usemin']);
+    gulp.watch('src/fonts/**/*', ['fontcopy']);
     gulp.watch('src/icons/**/*', ['iconcopy']);
     gulp.watch('src/data/**/*', ['datacopy']);
 });
