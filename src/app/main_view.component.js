@@ -3,10 +3,12 @@
 /*global angular,$*/
 
 angular.module('app').component('mainView', {
-    controller: function($scope, $mdSidenav, graphService, dataService, tableService) {
+    controller: function($scope, graphService, dataService, tableService) {
         var _this = this;
         var _stations = [];
         var _deliveries = [];
+
+        _this.settings = dataService.getSettings();
 
         _this.nodeSizes = dataService.NODE_SIZES;
         _this.fontSizes = dataService.FONT_SIZES;
@@ -16,10 +18,6 @@ angular.module('app').component('mainView', {
         _this.tableSettings = dataService.getTableSettings();
         _this.columns = dataService.TABLE_COLUMNS[_this.tableSettings.mode];
         _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
-        
-        _this.toggle = function(id) {
-            $mdSidenav(id).toggle();
-        };
 
         _this.onChange = function(property, value) {
             switch (property) {

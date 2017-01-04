@@ -30,6 +30,10 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     var _data;
+    var _settings = {
+        leftSidenavOpen: false,  
+        rightSidenavOpen: false
+    };
     var _graphSettings = {
         nodeSize: _this.NODE_SIZES.Small,
         fontSize: _this.FONT_SIZES.Small,
@@ -55,6 +59,10 @@ angular.module('app').service('dataService', function($q, $resource) {
                 });
             }
         });
+    };
+    
+    _this.getSettings = function() {
+        return _settings;  
     };
 
     _this.getGraphSettings = function() {
