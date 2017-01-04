@@ -1,9 +1,3 @@
-.layout-fix>* {
-    width: 100%;
-    height: 100%;
-    display: flex;
-}
-
 .cy-panzoom {
     z-index: 1;
 }

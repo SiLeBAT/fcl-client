@@ -1,46 +1,52 @@
-<md-content layout="row" flex>
-    <md-sidenav md-component-id="left" class="md-sidenav-left" md-whiteframe="4" md-disable-backdrop="">
-        <md-toolbar class="md-hue-1">
-            <span class="md-toolbar-tools">Graph Settings</span>
-        </md-toolbar>
-        <md-content layout-padding-sm>
-            <div>
-                <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.graphSettings.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
-                <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.graphSettings.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
-                <checkbox label="Merge Deliveries" selected="$ctrl.graphSettings.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
-            </div>
+<div layout="column" flex>
+    <md-toolbar md-whiteframe="4">
+        <toolbar></toolbar>
+    </md-toolbar>
+
+    <md-content layout="row" flex>
+        <md-sidenav md-component-id="left" class="md-sidenav-left" md-whiteframe="4" md-disable-backdrop="">
+            <md-toolbar class="md-hue-1">
+                <span class="md-toolbar-tools">Graph Settings</span>
+            </md-toolbar>
+            <md-content layout-padding-sm>
+                <div>
+                    <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.graphSettings.nodeSize" on-change="$ctrl.onChange('nodeSize', selectedValue)"></value-select>
+                    <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.graphSettings.fontSize" on-change="$ctrl.onChange('fontSize', selectedValue)"></value-select>
+                    <checkbox label="Merge Deliveries" selected="$ctrl.graphSettings.mergeDeliveries" on-change="$ctrl.onChange('mergeDeliveries', selected)"></checkbox>
+                </div>
+            </md-content>
+            <md-toolbar class="md-hue-1">
+                <span class="md-toolbar-tools">Data Table Settings</span>
+            </md-toolbar>
+            <md-content layout-padding-sm>
+                <div>
+                    <md-input-container class="md-block">
+                        <md-radio-group layout="row" ng-model="$ctrl.tableSettings.mode" ng-change="$ctrl.onChange('mode', $ctrl.tableSettings.mode)">
+                            <md-radio-button ng-repeat="mode in $ctrl.modes" value="{{mode}}">{{mode}}</md-radio-button>
+                        </md-radio-group>
+                    </md-input-container>
+                    <checkbox label="Show Trace only" selected="$ctrl.tableSettings.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
+                </div>
+            </md-content>
+        </md-sidenav>
+        <md-content flex>
+            <div id="graph" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0"></div>
         </md-content>
-        <md-toolbar class="md-hue-1">
-            <span class="md-toolbar-tools">Data Table Settings</span>
-        </md-toolbar>
-        <md-content layout-padding-sm>
-            <div>
-                <md-input-container class="md-block">
-                    <md-radio-group layout="row" ng-model="$ctrl.tableSettings.mode" ng-change="$ctrl.onChange('mode', $ctrl.tableSettings.mode)">
-                        <md-radio-button ng-repeat="mode in $ctrl.modes" value="{{mode}}">{{mode}}</md-radio-button>
-                    </md-radio-group>
-                </md-input-container>
-                <checkbox label="Show Trace only" selected="$ctrl.tableSettings.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
-            </div>
-        </md-content>
-    </md-sidenav>
-    <md-content flex>
-        <div id="graph" style="height: 100%; width: 100%; position: absolute; left: 0; top: 0"></div>
+        <md-sidenav md-component-id="right" class="md-sidenav-right" md-whiteframe="4" md-disable-backdrop="">
+            <md-table-container>
+                <table md-table>
+                    <thead md-head md-order="$ctrl.tableSettings.order">
+                        <tr md-row>
+                            <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column | uppercase}}</span></th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="element in $ctrl.elements | orderBy: $ctrl.tableSettings.order" ng-style="$ctrl.getRowStyle(element)">
+                            <td md-cell ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle(element,column)">{{element.data[column]}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+        </md-sidenav>
     </md-content>
-    <md-sidenav md-component-id="right" class="md-sidenav-right" md-whiteframe="4" md-disable-backdrop="">
-        <md-table-container>
-            <table md-table>
-                <thead md-head md-order="$ctrl.tableSettings.order">
-                    <tr md-row>
-                        <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column | uppercase}}</span></th>
-                    </tr>
-                </thead>
-                <tbody md-body>
-                    <tr md-row ng-repeat="element in $ctrl.elements | orderBy: $ctrl.tableSettings.order" ng-style="$ctrl.getRowStyle(element)">
-                        <td md-cell ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle(element,column)">{{element.data[column]}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </md-table-container>
-    </md-sidenav>
-</md-content>
+</div>
