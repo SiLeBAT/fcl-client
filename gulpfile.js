@@ -37,10 +37,3 @@ gulp.task('datacopy', function() {
     return gulp.src('src/data/**/*')
         .pipe(gulp.dest('dist/data'));
 });
-
-gulp.task('watch', ['default'], function() {
-    gulp.watch('{src/app/**/*.js,src/styles/**/*.css,src/**/*.html}', ['usemin']);
-    gulp.watch('src/fonts/**/*', ['fontcopy']);
-    gulp.watch('src/icons/**/*', ['iconcopy']);
-    gulp.watch('src/data/**/*', ['datacopy']);
-});

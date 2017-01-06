@@ -406,7 +406,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function createNodeBackground(colors) {
-        if (colors.length == 1) {
+        if (colors.length === 1) {
             return {
                 'background-color': utilService.colorToCss(colors[0])
             };
