@@ -31,7 +31,7 @@ angular.module('app').service('dataService', function($q, $resource) {
 
     var _data;
     var _settings = {
-        leftSidenavOpen: false,  
+        leftSidenavOpen: false,
         rightSidenavOpen: false
     };
     var _graphSettings = {
@@ -42,7 +42,11 @@ angular.module('app').service('dataService', function($q, $resource) {
     var _tableSettings = {
         mode: _this.TABLE_MODES[0],
         order: 'data.id',
-        showTraceOnly: false
+        showAll: true,
+        showSelected: false,
+        showObserved: false,
+        showTrace: false,
+        showOutbreak: false
     };
 
     _this.getData = function() {
@@ -60,9 +64,9 @@ angular.module('app').service('dataService', function($q, $resource) {
             }
         });
     };
-    
+
     _this.getSettings = function() {
-        return _settings;  
+        return _settings;
     };
 
     _this.getGraphSettings = function() {

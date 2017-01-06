@@ -21,13 +21,13 @@ angular.module('app').service('tableService', function(dataService, utilService)
                 break;
         }
 
-        if (settings.showTraceOnly) {
-            elements = elements.filter(function(elements) {
-                return elements.data.forward || elements.data.backward;
-            });
-        }
+        return elements.filter(function(e) {
+            if (e.data.contains) {
+                return false;
+            }
 
-        return elements;
+            return settings.showAll || (settings.showTrace && (e.data.forward || e.data.backward));
+        });
     };
 
     _this.getCellStyle = function(element, column, allColumns) {

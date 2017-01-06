@@ -34,13 +34,16 @@
                             <md-radio-button ng-repeat="mode in $ctrl.modes" value="{{mode}}">{{mode}}</md-radio-button>
                         </md-radio-group>
                     </md-input-container>
-                    <checkbox label="Show Trace only" selected="$ctrl.tableSettings.showTraceOnly" on-change="$ctrl.onChange('showTraceOnly', selected)"></checkbox>
+                    <checkbox label="Show All" selected="$ctrl.tableSettings.showAll" on-change="$ctrl.onChange('showAll', selected)"></checkbox>
+                    <checkbox label="Show Trace" disabled="$ctrl.tableSettings.showAll" selected="$ctrl.tableSettings.showTrace" on-change="$ctrl.onChange('showTrace', selected)"></checkbox>
                 </div>
             </md-content>
         </md-sidenav>
+
         <md-content flex>
             <div id="graph" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0"></div>
         </md-content>
+
         <md-sidenav class="md-sidenav-right" md-whiteframe="4" md-is-locked-open="$ctrl.settings.rightSidenavOpen" style="width: auto; min-width: 0px; max-width: none">
             <md-table-container>
                 <table md-table>

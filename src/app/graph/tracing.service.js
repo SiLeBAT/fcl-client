@@ -46,7 +46,8 @@ angular.module('app').service('tracingService', function() {
                 name: name,
                 isEdge: false,
                 type: 'Meta Station',
-                contains: ids
+                contains: ids,
+                selected: true
             }
         };
 

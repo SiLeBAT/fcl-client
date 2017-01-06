@@ -38,8 +38,12 @@ angular.module('app').component('mainView', {
                     _this.columns = dataService.TABLE_COLUMNS[value];
                     _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
                     break;
-                case 'showTraceOnly':
-                    _this.tableSettings.showTraceOnly = value;
+                case 'showAll':
+                    _this.tableSettings.showAll = value;
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    break;
+                case 'showTrace':
+                    _this.tableSettings.showTrace = value;
                     _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
                     break;
             }
