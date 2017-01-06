@@ -19,7 +19,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     _this.init = function(containerSelector, data) {
         _data = data;
 
-        if (_cy === undefined) {
+        if (typeof _cy === 'undefined') {
             _cy = cytoscape({
                 container: $(containerSelector)[0],
 
@@ -90,7 +90,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                 y: event.originalEvent.pageY
             };
 
-            if (element.length === undefined) {
+            if (!element.hasOwnProperty('length')) {
                 showGraphContextMenu(position);
             }
             else if (element.group() === 'nodes') {
@@ -198,8 +198,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
             var pos = _cy.nodes('#' + n.data.id).position();
 
-            if (pos === undefined) {
-                if (n.data.contains !== undefined) {
+            if (typeof pos === 'undefined') {
+                if (n.data.hasOwnProperty('contains')) {
                     n.position = utilService.getCenter(n.data.contains.map(function(id) {
                         return _cy.nodes('#' + id).position();
                     }));
@@ -211,10 +211,10 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                         contained.data._relativePosition = utilService.difference(containedPos, n.position);
                     }
                 }
-                else if (n.data._relativeTo !== undefined && n.data._relativePosition !== undefined) {
+                else if (n.data.hasOwnProperty('_relativeTo') && n.data.hasOwnProperty('_relativePosition')) {
                     n.position = utilService.sum(_cy.nodes('#' + n.data._relativeTo).position(), n.data._relativePosition);
-                    n.data._relativeTo = undefined;
-                    n.data._relativePosition = undefined;
+                    delete n.data._relativeTo;
+                    delete n.data._relativePosition;
                 }
             }
             else {
@@ -259,7 +259,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                 let key = d.data.source + '->' + d.data.target;
                 let value = sourceTargetMap.get(key);
 
-                sourceTargetMap.set(key, value !== undefined ? value.concat(d) : [d]);
+                sourceTargetMap.set(key, typeof value === 'undefined' ? [d] : value.concat(d));
             }
 
             for (let value of sourceTargetMap.values()) {
@@ -283,23 +283,23 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                             source: source,
                             target: target,
                             isEdge: true,
-                            backward: value.find(function(d) {
+                            backward: typeof value.find(function(d) {
                                 return d.data.backward;
-                            }) !== undefined,
-                            forward: value.find(function(d) {
+                            }) !== 'undefined',
+                            forward: typeof value.find(function(d) {
                                 return d.data.forward;
-                            }) !== undefined,
-                            observed: value.find(function(d) {
+                            }) !== 'undefined',
+                            observed: typeof value.find(function(d) {
                                 return d.data.observed;
-                            }) !== undefined,
+                            }) !== 'undefined',
                             merged: value.length > 1,
                             contains: value.map(function(d) {
                                 return d.data.id;
                             })
                         },
-                        selected: value.find(function(d) {
+                        selected: typeof value.find(function(d) {
                             return d.data.selected === true;
-                        }) !== undefined
+                        }) !== 'undefined'
                     };
                 }
 
@@ -322,7 +322,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function setSelected(element, selected) {
-        if (element.data('contains') !== undefined) {
+        if (typeof element.data('contains') !== 'undefined') {
             for (let id of element.data('contains')) {
                 tracingService.setSelected(id, selected);
             }
@@ -334,7 +334,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
     function createStyle() {
         var sizeFunction = function(node) {
-            return node.data('_size') !== undefined ? node.data('_size') : _nodeSize;
+            return typeof node.data('_size') === 'undefined' ? _nodeSize : node.data('_size');
         };
 
         var style = cytoscape.stylesheet()

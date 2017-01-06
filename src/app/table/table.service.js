@@ -35,7 +35,7 @@ angular.module('app').service('tableService', function(dataService, utilService)
     };
 
     _this.getCellStyle = function(element, column, allColumns) {
-        if (element !== undefined && element.data.selected) {
+        if (typeof element !== 'undefined' && element.data.selected) {
             var css = {
                 'border-top': '2px #00f solid',
                 'border-bottom': '2px #00f solid'

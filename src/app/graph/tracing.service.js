@@ -34,7 +34,7 @@ angular.module('app').service('tracingService', function() {
         var metaId;
 
         for (let i = 1;; i++) {
-            if (_elementsById[i] === undefined) {
+            if (!_elementsById.hasOwnProperty(i.toString())) {
                 metaId = i.toString();
                 break;
             }
@@ -80,22 +80,22 @@ angular.module('app').service('tracingService', function() {
     _this.expandStation = function(id) {
         var station = _elementsById[id];
 
-        _elementsById[id] = undefined;
+        delete _elementsById[id];
         _stations.splice(_stations.indexOf(station), 1);
 
         for (let containedId of station.data.contains) {
-            _elementsById[containedId].data.containedIn = undefined;
+            delete _elementsById[containedId].data.containedIn;
         }
 
         for (let d of _deliveries) {
             if (d.data.source === id) {
                 d.data.source = d.data.originalSource;
-                d.data.originalSource = undefined;
+                delete d.data.originalSource;
             }
 
             if (d.data.target === id) {
                 d.data.target = d.data.originalTarget;
-                d.data.originalTarget = undefined;
+                delete d.data.originalTarget;
             }
         }
 
@@ -134,12 +134,12 @@ angular.module('app').service('tracingService', function() {
 
     _this.clearTrace = function() {
         for (let s of _stations) {
-            s.data.observed = undefined;
+            s.data.observed = false;
             s.data.forward = false;
             s.data.backward = false;
         }
         for (let d of _deliveries) {
-            d.data.observed = undefined;
+            d.data.observed = false;
             d.data.forward = false;
             d.data.backward = false;
         }
@@ -220,12 +220,12 @@ angular.module('app').service('tracingService', function() {
         if (nOutbreaks !== 0) {
             for (let s of _stations) {
                 s.data.score /= nOutbreaks;
-                s.data._visited = undefined;
+                delete s.data._visited;
             }
 
             for (let d of _deliveries) {
                 d.data.score /= nOutbreaks;
-                d.data._visited = undefined;
+                delete d.data._visited;
             }
         }
     }
@@ -288,7 +288,7 @@ angular.module('app').service('tracingService', function() {
             return e.data.observed;
         });
 
-        if (observedElement === undefined) {
+        if (typeof observedElement === 'undefined') {
             _this.clearTrace();
         }
         else {
