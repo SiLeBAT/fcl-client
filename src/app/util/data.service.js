@@ -43,7 +43,7 @@ angular.module('app').service('dataService', function($q, $resource) {
         mode: _this.TABLE_MODES[0],
         order: 'data.id',
         showAll: true,
-        showSelected: false,
+        showSelected: true,
         showObserved: false,
         showTrace: false,
         showOutbreak: false

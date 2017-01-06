@@ -42,8 +42,20 @@ angular.module('app').component('mainView', {
                     _this.tableSettings.showAll = value;
                     _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
                     break;
+                case 'showSelected':
+                    _this.tableSettings.showSelected = value;
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    break;
+                case 'showObserved':
+                    _this.tableSettings.showObserved = value;
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    break;
                 case 'showTrace':
                     _this.tableSettings.showTrace = value;
+                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    break;
+                case 'showOutbreak':
+                    _this.tableSettings.showOutbreak = value;
                     _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
                     break;
             }
@@ -64,6 +76,7 @@ angular.module('app').component('mainView', {
             graphService.setMergeDeliveries(_this.graphSettings.mergeDeliveries);
             graphService.onSelectionChange(function() {
                 $scope.$apply();
+                _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
             });
             graphService.onUpdate(function() {
                 _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);

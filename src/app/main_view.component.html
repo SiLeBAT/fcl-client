@@ -35,7 +35,10 @@
                         </md-radio-group>
                     </md-input-container>
                     <checkbox label="Show All" selected="$ctrl.tableSettings.showAll" on-change="$ctrl.onChange('showAll', selected)"></checkbox>
+                    <checkbox label="Show Selected" disabled="$ctrl.tableSettings.showAll" selected="$ctrl.tableSettings.showSelected" on-change="$ctrl.onChange('showSelected', selected)"></checkbox>
+                    <checkbox label="Show Observed" disabled="$ctrl.tableSettings.showAll" selected="$ctrl.tableSettings.showObserved" on-change="$ctrl.onChange('showObserved', selected)"></checkbox>
                     <checkbox label="Show Trace" disabled="$ctrl.tableSettings.showAll" selected="$ctrl.tableSettings.showTrace" on-change="$ctrl.onChange('showTrace', selected)"></checkbox>
+                    <checkbox label="Show Outbreak" disabled="$ctrl.tableSettings.showAll" selected="$ctrl.tableSettings.showOutbreak" on-change="$ctrl.onChange('showOutbreak', selected)"></checkbox>
                 </div>
             </md-content>
         </md-sidenav>

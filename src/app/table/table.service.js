@@ -26,7 +26,11 @@ angular.module('app').service('tableService', function(dataService, utilService)
                 return false;
             }
 
-            return settings.showAll || (settings.showTrace && (e.data.forward || e.data.backward));
+            return settings.showAll ||
+                (settings.showSelected && e.data.selected) ||
+                (settings.showObserved && e.data.observed) ||
+                (settings.showTrace && (e.data.forward || e.data.backward)) ||
+                (settings.showOutbreak && e.data.outbreak);
         });
     };
 
