@@ -322,7 +322,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function setSelected(element, selected) {
-        if (typeof element.data('contains') !== 'undefined') {
+        if (element.data('isEdge') && typeof element.data('contains') !== 'undefined') {
             for (let id of element.data('contains')) {
                 tracingService.setSelected(id, selected);
             }

@@ -1,0 +1,14 @@
+<md-table-container>
+    <table md-table>
+        <thead md-head md-order="$ctrl.settings.order">
+            <tr md-row>
+                <th md-column ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle()" md-order-by="data.{{column}}"><span>{{column | uppercase}}</span></th>
+            </tr>
+        </thead>
+        <tbody md-body>
+            <tr md-row ng-repeat="element in $ctrl.elements | orderBy: $ctrl.settings.order" ng-style="$ctrl.getRowStyle(element)">
+                <td md-cell ng-repeat="column in $ctrl.columns" ng-style="$ctrl.getCellStyle(element,column)">{{element.data[column]}}</td>
+            </tr>
+        </tbody>
+    </table>
+</md-table-container>

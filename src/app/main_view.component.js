@@ -3,11 +3,15 @@
 /*global angular,$*/
 
 angular.module('app').component('mainView', {
-    controller: function($scope, graphService, dataService, tableService) {
+    controller: function($scope, graphService, dataService) {
         var _this = this;
-        var _stations = [];
-        var _deliveries = [];
 
+        function updateTable() {
+            _this.updateTable++;
+        }
+
+        _this.stations = [];
+        _this.deliveries = [];
         _this.settings = dataService.getSettings();
 
         _this.nodeSizes = dataService.NODE_SIZES;
@@ -16,8 +20,7 @@ angular.module('app').component('mainView', {
 
         _this.modes = dataService.TABLE_MODES;
         _this.tableSettings = dataService.getTableSettings();
-        _this.columns = dataService.TABLE_COLUMNS[_this.tableSettings.mode];
-        _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+        _this.updateTable = 0;
 
         _this.onChange = function(property, value) {
             switch (property) {
@@ -35,38 +38,29 @@ angular.module('app').component('mainView', {
                     break;
                 case 'mode':
                     _this.tableSettings.mode = value;
-                    _this.columns = dataService.TABLE_COLUMNS[value];
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    updateTable();
                     break;
                 case 'showAll':
                     _this.tableSettings.showAll = value;
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    updateTable();
                     break;
                 case 'showSelected':
                     _this.tableSettings.showSelected = value;
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    updateTable();
                     break;
                 case 'showObserved':
                     _this.tableSettings.showObserved = value;
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    updateTable();
                     break;
                 case 'showTrace':
                     _this.tableSettings.showTrace = value;
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    updateTable();
                     break;
                 case 'showOutbreak':
                     _this.tableSettings.showOutbreak = value;
-                    _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                    updateTable();
                     break;
             }
-        };
-
-        _this.getCellStyle = function(station, column) {
-            return tableService.getCellStyle(station, column, _this.columns);
-        };
-
-        _this.getRowStyle = function(station) {
-            return tableService.getRowStyle(station);
         };
 
         dataService.getData().then(function(data) {
@@ -75,15 +69,14 @@ angular.module('app').component('mainView', {
             graphService.setFontSize(_this.graphSettings.fontSize);
             graphService.setMergeDeliveries(_this.graphSettings.mergeDeliveries);
             graphService.onSelectionChange(function() {
-                $scope.$apply();
-                _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                updateTable();
             });
             graphService.onUpdate(function() {
-                _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+                updateTable();
             });
-            _stations = data.stations;
-            _deliveries = data.deliveries;
-            _this.elements = tableService.getElements(_stations, _deliveries, _this.tableSettings);
+            _this.stations = data.stations;
+            _this.deliveries = data.deliveries;
+            updateTable();
         });
     },
     templateUrl: 'app/main_view.component.html'

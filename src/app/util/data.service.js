@@ -52,7 +52,7 @@ angular.module('app').service('dataService', function($q, $resource) {
     _this.getData = function() {
         return $q(function(resolve, reject) {
             if (typeof _data === 'undefined') {
-                $resource('data/small_network.json').get(function(data) {
+                $resource('data/large_network.json').get(function(data) {
                     _data = preprocessData(data);
                     resolve(_data);
                 }, function(error) {
