@@ -1,15 +1,6 @@
 <div layout="column" flex>
     <md-toolbar md-whiteframe="4">
-        <div class="md-toolbar-tools" layout="row">
-            <md-button class="md-icon-button" aria-label="Toogle Left Sidebar" ng-click="$ctrl.settings.leftSidenavOpen = !$ctrl.settings.leftSidenavOpen">
-                <md-icon md-svg-icon="menu"></md-icon>
-            </md-button>
-            <span>FoodChain-Lab</span>
-            <span flex></span>
-            <md-button class="md-icon-button" aria-label="Toogle Right Sidebar" ng-click="$ctrl.settings.rightSidenavOpen = !$ctrl.settings.rightSidenavOpen">
-                <md-icon md-svg-icon="menu"></md-icon>
-            </md-button>
-        </div>
+        <main-toolbar settings="$ctrl.settings" on-change="$ctrl.onChange(property, value)"></main-toolbar>
     </md-toolbar>
 
     <md-content layout="row" flex>

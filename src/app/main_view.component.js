@@ -13,14 +13,18 @@ angular.module('app').component('mainView', {
         _this.stations = [];
         _this.deliveries = [];
         _this.settings = dataService.getSettings();
-
         _this.graphSettings = dataService.getGraphSettings();
-
         _this.tableSettings = dataService.getTableSettings();
         _this.updateTable = 0;
 
         _this.onChange = function(property, value) {
             switch (property) {
+                case 'leftSidenavOpen':
+                    _this.settings.leftSidenavOpen = value;
+                    break;
+                case 'rightSidenavOpen':
+                    _this.settings.rightSidenavOpen = value;
+                    break;
                 case 'nodeSize':
                     _this.graphSettings.nodeSize = value;
                     graphService.setNodeSize(value);
