@@ -14,11 +14,8 @@ angular.module('app').component('mainView', {
         _this.deliveries = [];
         _this.settings = dataService.getSettings();
 
-        _this.nodeSizes = dataService.NODE_SIZES;
-        _this.fontSizes = dataService.FONT_SIZES;
         _this.graphSettings = dataService.getGraphSettings();
 
-        _this.modes = dataService.TABLE_MODES;
         _this.tableSettings = dataService.getTableSettings();
         _this.updateTable = 0;
 

@@ -1,0 +1,5 @@
+<div style="width: 100%; height: 100%; padding: 4px;">
+    <value-select label="Station Size" values="$ctrl.nodeSizes" selected-value="$ctrl.settings.nodeSize" on-change="$ctrl.onChange({property: 'nodeSize', value: selectedValue})"></value-select>
+    <value-select label="Font Size" values="$ctrl.fontSizes" selected-value="$ctrl.settings.fontSize" on-change="$ctrl.onChange({property: 'fontSize', value: selectedValue})"></value-select>
+    <checkbox label="Merge Deliveries" selected="$ctrl.settings.mergeDeliveries" on-change="$ctrl.onChange({property: 'mergeDeliveries', value: selected})"></checkbox>
+</div>
