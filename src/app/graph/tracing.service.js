@@ -52,7 +52,7 @@ angular.module('app').service('tracingService', function() {
         };
 
         for (let id of ids) {
-            _elementsById[id].data.containedIn = metaId;
+            _elementsById[id].data.contained = true;
         }
 
         metaStation.data.in = [];
@@ -75,6 +75,7 @@ angular.module('app').service('tracingService', function() {
         _stations.push(metaStation);
         _elementsById[metaId] = metaStation;
         updateTrace(ids);
+        updateScores();
     };
 
     _this.expandStation = function(id) {
@@ -84,7 +85,7 @@ angular.module('app').service('tracingService', function() {
         _stations.splice(_stations.indexOf(station), 1);
 
         for (let containedId of station.data.contains) {
-            delete _elementsById[containedId].data.containedIn;
+            _elementsById[containedId].data.contained = false;
         }
 
         for (let d of _deliveries) {
@@ -100,6 +101,7 @@ angular.module('app').service('tracingService', function() {
         }
 
         updateTrace([id]);
+        updateScores();
     };
 
     _this.clearSelection = function() {
@@ -118,17 +120,23 @@ angular.module('app').service('tracingService', function() {
     _this.clearOutbreakStations = function() {
         for (let s of _stations) {
             s.data.outbreak = false;
-            s.data.score = 0;
         }
-        for (let d of _deliveries) {
-            d.data.score = 0;
-        }
+
+        updateScores();
     };
 
     _this.toggleOutbreakStation = function(id) {
         var station = _elementsById[id];
 
         station.data.outbreak = !station.data.outbreak;
+        updateScores();
+    };
+
+    _this.markStationsAsOutbreak = function(ids) {
+        for (let id of ids) {
+            _elementsById[id].data.outbreak = true;
+        }
+
         updateScores();
     };
 
@@ -211,7 +219,7 @@ angular.module('app').service('tracingService', function() {
         }
 
         for (let s of _stations) {
-            if (s.data.outbreak === true) {
+            if (s.data.outbreak && !s.data.contained) {
                 nOutbreaks++;
                 updateStationScore(s.data.id, s.data.id);
             }
@@ -266,7 +274,7 @@ angular.module('app').service('tracingService', function() {
     function showDeliveryForwardTraceInternal(id) {
         var delivery = _elementsById[id];
 
-        if (delivery.data.forward !== true) {
+        if (!delivery.data.forward) {
             delivery.data.forward = true;
             _elementsById[delivery.data.target].data.forward = true;
             delivery.data.out.forEach(showDeliveryForwardTraceInternal);
@@ -276,7 +284,7 @@ angular.module('app').service('tracingService', function() {
     function showDeliveryBackwardTraceInternal(id) {
         var delivery = _elementsById[id];
 
-        if (delivery.data.backward !== true) {
+        if (!delivery.data.backward) {
             delivery.data.backward = true;
             _elementsById[delivery.data.source].data.backward = true;
             delivery.data.in.forEach(showDeliveryBackwardTraceInternal);

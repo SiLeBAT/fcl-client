@@ -32,7 +32,7 @@ angular.module('app').component('elementsTable', {
 
             _this.columns = dataService.TABLE_COLUMNS[_this.settings.mode];
             _this.elements = elements.filter(function(e) {
-                if (typeof e.data.containedIn !== 'undefined') {
+                if (e.data.contained) {
                     return false;
                 }
 

@@ -237,7 +237,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         var stations = [];
 
         for (let s of _data.stations) {
-            if (!s.data.containedIn) {
+            if (!s.data.contained) {
                 stations.push({
                     data: s.data,
                     selected: s.data.selected
@@ -465,6 +465,12 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                         }), name);
                         updateAll();
                     });
+                },
+                'Mark as Outbreak': function() {
+                    tracingService.markStationsAsOutbreak(selectedStations.map(function(s) {
+                        return s.id();
+                    }));
+                    _this.setNodeSize(_nodeSize);
                 }
             };
         }
