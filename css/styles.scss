@@ -1,0 +1,88 @@
+---
+---
+
+@import "bootstrap/flatly/variables";
+@import "bootstrap";
+@import "bootstrap/flatly/bootswatch";
+@import "syntax-highlight";
+
+body {
+    padding-top: 75px;
+}
+
+img {
+    max-width: 100%
+}
+
+footer {
+    text-align: right;
+    margin-top: 70px;
+}
+
+h1[id],
+h2[id],
+h3[id],
+h4[id],
+h5[id],
+h6[id],
+dt[id] {
+    padding-top: 60px;
+    margin-top: -40px
+}
+
+.material-icons {
+    vertical-align: middle;
+}
+
+.material-icons.md-18 {
+    font-size: 18px;
+}
+
+.material-icons.md-24 {
+    font-size: 24px;
+}
+
+.material-icons.md-36 {
+    font-size: 36px;
+}
+
+.material-icons.md-48 {
+    font-size: 48px;
+}
+
+#summary {
+    font-size: $font-size-large;
+    margin: 20px 0px 20px 0px;
+    border-left: 5px solid $brand-primary;
+    padding-left: 10px;
+}
+
+#markdown-toc {
+    font-size: $font-size-large;
+    background-color: $well-bg;
+    border: 1px solid $well-border;
+    padding: 10px 40px;
+    border-radius: $border-radius-base;
+}
+
+@media (min-width: $screen-md-min) {
+    #sidebar {
+        position: fixed;
+        width: 225px;
+    }
+}
+
+.panel-heading {
+    padding: 0px;
+    a {
+        display: block;
+        padding: $panel-heading-padding;
+    }
+}
+    
+.panel-heading.active {
+    background-color: $component-active-bg;
+    a {
+        color: $component-active-color;
+    }
+}
