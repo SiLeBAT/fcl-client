@@ -53,6 +53,7 @@ angular.module('app').service('tracingService', function() {
 
         for (let id of ids) {
             _elementsById[id].data.contained = true;
+            _elementsById[id].data.observed = false;
         }
 
         metaStation.data.in = [];
@@ -74,7 +75,7 @@ angular.module('app').service('tracingService', function() {
 
         _stations.push(metaStation);
         _elementsById[metaId] = metaStation;
-        updateTrace(ids);
+        updateTrace();
         updateScores();
     };
 
@@ -100,7 +101,7 @@ angular.module('app').service('tracingService', function() {
             }
         }
 
-        updateTrace([id]);
+        updateTrace();
         updateScores();
     };
 
@@ -115,6 +116,32 @@ angular.module('app').service('tracingService', function() {
 
     _this.setSelected = function(id, selected) {
         _elementsById[id].data.selected = selected;
+    };
+
+    _this.clearInvisibility = function() {
+        for (let s of _stations) {
+            s.data.invisible = false;
+        }
+        for (let d of _deliveries) {
+            d.data.invisible = false;
+        }
+
+        updateTrace();
+        updateScores();
+    };
+
+    _this.makeStationsInvisible = function(ids) {
+        for (let id of ids) {
+            _elementsById[id].data.invisible = true;
+        }
+        for (let d of _deliveries) {
+            if (ids.includes(d.data.source) || ids.includes(d.data.target)) {
+                d.data.invisible = true;
+            }
+        }
+
+        updateTrace();
+        updateScores();
     };
 
     _this.clearOutbreakStations = function() {
@@ -219,7 +246,7 @@ angular.module('app').service('tracingService', function() {
         }
 
         for (let s of _stations) {
-            if (s.data.outbreak && !s.data.contained) {
+            if (s.data.outbreak && !s.data.contained && !s.data.invisible) {
                 nOutbreaks++;
                 updateStationScore(s.data.id, s.data.id);
             }
@@ -241,7 +268,7 @@ angular.module('app').service('tracingService', function() {
     function updateStationScore(id, outbreakId) {
         var station = _elementsById[id];
 
-        if (station.data._visited !== outbreakId) {
+        if (station.data._visited !== outbreakId && !station.data.contained && !station.data.invisible) {
             station.data._visited = outbreakId;
             station.data.score++;
 
@@ -254,7 +281,7 @@ angular.module('app').service('tracingService', function() {
     function updateDeliveryScore(id, outbreakId) {
         var delivery = _elementsById[id];
 
-        if (delivery.data._visited !== outbreakId) {
+        if (delivery.data._visited !== outbreakId && !delivery.data.invisible) {
             delivery.data._visited = outbreakId;
             delivery.data.score++;
 
@@ -274,7 +301,7 @@ angular.module('app').service('tracingService', function() {
     function showDeliveryForwardTraceInternal(id) {
         var delivery = _elementsById[id];
 
-        if (!delivery.data.forward) {
+        if (!delivery.data.forward && !delivery.data.invisible) {
             delivery.data.forward = true;
             _elementsById[delivery.data.target].data.forward = true;
             delivery.data.out.forEach(showDeliveryForwardTraceInternal);
@@ -284,14 +311,14 @@ angular.module('app').service('tracingService', function() {
     function showDeliveryBackwardTraceInternal(id) {
         var delivery = _elementsById[id];
 
-        if (!delivery.data.backward) {
+        if (!delivery.data.backward && !delivery.data.invisible) {
             delivery.data.backward = true;
             _elementsById[delivery.data.source].data.backward = true;
             delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
         }
     }
 
-    function updateTrace(changedIds) {
+    function updateTrace() {
         var observedElement = _stations.concat(_deliveries).find(function(e) {
             return e.data.observed;
         });
@@ -303,7 +330,7 @@ angular.module('app').service('tracingService', function() {
             var id = observedElement.data.id;
             var observed = observedElement.data.observed;
 
-            if (!changedIds.includes(id)) {
+            if (!observedElement.data.invisible && !observedElement.data.contained) {
                 if (observedElement.data.isEdge) {
                     switch (observed) {
                         case 'full':

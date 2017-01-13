@@ -111,24 +111,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     };
 
     _this.setNodeSize = function(nodeSize) {
-        var maxScore = 0;
-
-        for (let s of _data.stations) {
-            maxScore = Math.max(maxScore, s.data.score);
-        }
-
-        if (maxScore > 0) {
-            for (let s of _data.stations) {
-                s.data._size = (0.5 + 0.5 * s.data.score / maxScore) * nodeSize;
-            }
-        }
-        else {
-            for (let s of _data.stations) {
-                s.data._size = nodeSize;
-            }
-        }
-
         _nodeSize = nodeSize;
+        recalculateNodeSizes();
         updateProperties();
     };
 
@@ -189,6 +173,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         var nodes = createNodes();
         var edges = createEdges();
 
+        recalculateNodeSizes();
+
         for (let e of edges) {
             e.group = "edges";
         }
@@ -237,7 +223,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         var stations = [];
 
         for (let s of _data.stations) {
-            if (!s.data.contained) {
+            if (!s.data.contained && !s.data.invisible) {
                 stations.push({
                     data: s.data,
                     selected: s.data.selected
@@ -256,10 +242,12 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             var sourceTargetMap = new Map();
 
             for (let d of _data.deliveries) {
-                let key = d.data.source + '->' + d.data.target;
-                let value = sourceTargetMap.get(key);
+                if (!d.data.invisible) {
+                    let key = d.data.source + '->' + d.data.target;
+                    let value = sourceTargetMap.get(key);
 
-                sourceTargetMap.set(key, typeof value === 'undefined' ? [d] : value.concat(d));
+                    sourceTargetMap.set(key, typeof value === 'undefined' ? [d] : value.concat(d));
+                }
             }
 
             for (let value of sourceTargetMap.values()) {
@@ -308,17 +296,38 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         }
         else {
             for (let d of _data.deliveries) {
-                let delivery = {
-                    data: d.data,
-                    selected: d.data.selected,
-                };
+                if (!d.data.invisible) {
+                    let delivery = {
+                        data: d.data,
+                        selected: d.data.selected,
+                    };
 
-                delivery.data.merged = false;
-                deliveries.push(delivery);
+                    delivery.data.merged = false;
+                    deliveries.push(delivery);
+                }
             }
         }
 
         return deliveries;
+    }
+
+    function recalculateNodeSizes() {
+        var maxScore = 0;
+
+        for (let s of _data.stations) {
+            maxScore = Math.max(maxScore, s.data.score);
+        }
+
+        if (maxScore > 0) {
+            for (let s of _data.stations) {
+                s.data._size = (0.5 + 0.5 * s.data.score / maxScore) * _nodeSize;
+            }
+        }
+        else {
+            for (let s of _data.stations) {
+                s.data._size = _nodeSize;
+            }
+        }
     }
 
     function setSelected(element, selected) {
@@ -448,6 +457,10 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             'Clear Outbreaks': function() {
                 tracingService.clearOutbreakStations();
                 _this.setNodeSize(_nodeSize);
+            },
+            'Clear Invisible': function() {
+                tracingService.clearInvisibility();
+                updateAll();
             }
         });
     }
@@ -471,6 +484,12 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                         return s.id();
                     }));
                     _this.setNodeSize(_nodeSize);
+                },
+                'Make Invisible': function() {
+                    tracingService.makeStationsInvisible(selectedStations.map(function(s) {
+                        return s.id();
+                    }));
+                    updateAll();
                 }
             };
         }
@@ -493,6 +512,11 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             options[station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak'] = function() {
                 tracingService.toggleOutbreakStation(station.id());
                 _this.setNodeSize(_nodeSize);
+            };
+
+            options['Make Invisible'] = function() {
+                tracingService.makeStationsInvisible([station.id()]);
+                updateAll();
             };
 
             if (station.data('contains')) {
