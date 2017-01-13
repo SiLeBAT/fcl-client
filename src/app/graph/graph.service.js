@@ -170,6 +170,16 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function updateAll() {
+        for (let s of _data.stations) {
+            if (s.data.invisible) {
+                let pos = _cy.nodes('#' + s.data.id).position();
+
+                if (typeof pos !== 'undefined') {
+                    s.data._position = pos;
+                }
+            }
+        }
+
         var nodes = createNodes();
         var edges = createEdges();
 
@@ -182,10 +192,14 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         for (let n of nodes) {
             n.group = "nodes";
 
-            var pos = _cy.nodes('#' + n.data.id).position();
+            let pos = _cy.nodes('#' + n.data.id).position();
 
             if (typeof pos === 'undefined') {
-                if (n.data.hasOwnProperty('contains')) {
+                if (n.data.hasOwnProperty('_position')) {
+                    n.position = n.data._position;
+                    delete n.data._position;
+                }
+                else if (n.data.hasOwnProperty('contains')) {
                     n.position = utilService.getCenter(n.data.contains.map(function(id) {
                         return _cy.nodes('#' + id).position();
                     }));
