@@ -1,3 +1,4 @@
 {
-	"strict": "global"
+	"strict": "global",
+	"esversion": 6
 }

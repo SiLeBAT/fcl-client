@@ -4,17 +4,17 @@
 
 angular.module('app').service('graphService', function($timeout, tracingService, dataService, dialogService, utilService) {
 
-    var _this = this;
+    let _this = this;
 
-    var _cy;
-    var _data;
+    let _cy;
+    let _data;
 
-    var _mergeDeliveries = false;
-    var _nodeSize = 10;
-    var _fontSize = 10;
+    let _mergeDeliveries = false;
+    let _nodeSize = 10;
+    let _fontSize = 10;
 
-    var _selectionTimer;
-    var _updateFunction;
+    let _selectionTimer;
+    let _updateFunction;
 
     _this.init = function(containerSelector, data) {
         _data = data;
@@ -39,7 +39,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             });
         }
         else {
-            var json = _cy.json();
+            let json = _cy.json();
 
             _cy = cytoscape({
                 container: $(containerSelector)[0],
@@ -84,8 +84,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             setSelected(event.cyTarget, false);
         });
         _cy.on('cxttap', function(event) {
-            var element = event.cyTarget;
-            var position = {
+            let element = event.cyTarget;
+            let position = {
                 x: event.originalEvent.pageX,
                 y: event.originalEvent.pageY
             };
@@ -125,7 +125,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     };
 
     _this.onSelectionChange = function(f) {
-        _cy.on('select unselect', function(event) {
+        _cy.on('select unselect', function() {
             if (_selectionTimer) {
                 $timeout.cancel(_selectionTimer);
             }
@@ -153,7 +153,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function updateEdges() {
-        var edges = createEdges();
+        let edges = createEdges();
 
         for (let e of edges) {
             e.group = "edges";
@@ -180,8 +180,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             }
         }
 
-        var nodes = createNodes();
-        var edges = createEdges();
+        let nodes = createNodes();
+        let edges = createEdges();
 
         recalculateNodeSizes();
 
@@ -205,7 +205,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                     }));
 
                     for (let contained of tracingService.getElementsById(n.data.contains)) {
-                        var containedPos = _cy.nodes('#' + contained.data.id).position();
+                        let containedPos = _cy.nodes('#' + contained.data.id).position();
 
                         contained.data._relativeTo = n.data.id;
                         contained.data._relativePosition = utilService.difference(containedPos, n.position);
@@ -234,7 +234,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function createNodes() {
-        var stations = [];
+        let stations = [];
 
         for (let s of _data.stations) {
             if (!s.data.contained && !s.data.invisible) {
@@ -250,10 +250,10 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
 
     function createEdges() {
-        var deliveries = [];
+        let deliveries = [];
 
         if (_mergeDeliveries) {
-            var sourceTargetMap = new Map();
+            let sourceTargetMap = new Map();
 
             for (let d of _data.deliveries) {
                 if (!d.data.invisible) {
@@ -326,7 +326,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function recalculateNodeSizes() {
-        var maxScore = 0;
+        let maxScore = 0;
 
         for (let s of _data.stations) {
             maxScore = Math.max(maxScore, s.data.score);
@@ -356,11 +356,11 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function createStyle() {
-        var sizeFunction = function(node) {
+        let sizeFunction = function(node) {
             return typeof node.data('_size') === 'undefined' ? _nodeSize : node.data('_size');
         };
 
-        var style = cytoscape.stylesheet()
+        let style = cytoscape.stylesheet()
             .selector('node')
             .style({
                 'content': 'data(name)',
@@ -393,23 +393,23 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                 'width': 12
             });
 
-        var nodeProps = {
+        let nodeProps = {
             'forward': dataService.COLORS.forward,
             'backward': dataService.COLORS.backward,
             'observed': dataService.COLORS.observed,
             'outbreak': dataService.COLORS.outbreak
         };
 
-        var edgeProps = {
+        let edgeProps = {
             'forward': dataService.COLORS.forward,
             'backward': dataService.COLORS.backward,
             'observed': dataService.COLORS.observed
         };
 
         for (let combination of utilService.getAllCombinations(Object.keys(nodeProps))) {
-            var s = [];
-            var c1 = [];
-            var c2 = [];
+            let s = [];
+            let c1 = [];
+            let c2 = [];
 
             for (let prop of combination) {
                 s.push('[?' + prop + ']');
@@ -435,9 +435,9 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             };
         }
 
-        var style = {};
+        let style = {};
 
-        for (var i = 0; i < colors.length; i++) {
+        for (let i = 0; i < colors.length; i++) {
             style['pie-' + (i + 1) + '-background-color'] = utilService.colorToCss(colors[i]);
             style['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
@@ -480,8 +480,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function showStationContextMenu(station, position) {
-        var selectedStations = _cy.nodes(':selected');
-        var options;
+        let selectedStations = _cy.nodes(':selected');
+        let options;
 
         if (station.selected() && selectedStations.size() > 1) {
             options = {
