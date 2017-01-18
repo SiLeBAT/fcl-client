@@ -2,15 +2,15 @@
 
 /*global angular*/
 
-angular.module('app').service('tracingService', function() {
+angular.module('app').service('tracingService', function () {
 
-    var _this = this;
+    let _this = this;
 
-    var _stations;
-    var _deliveries;
-    var _elementsById;
+    let _stations;
+    let _deliveries;
+    let _elementsById;
 
-    _this.init = function(data) {
+    _this.init = function (data) {
         _stations = data.stations;
         _deliveries = data.deliveries;
         _elementsById = {};
@@ -24,23 +24,23 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    _this.getElementsById = function(ids) {
-        return ids.map(function(id) {
+    _this.getElementsById = function (ids) {
+        return ids.map(function (id) {
             return _elementsById[id];
         });
     };
 
-    _this.mergeStations = function(ids, name) {
-        var metaId;
+    _this.mergeStations = function (ids, name) {
+        let metaId;
 
-        for (let i = 1;; i++) {
+        for (let i = 1; ; i++) {
             if (!_elementsById.hasOwnProperty(i.toString())) {
                 metaId = i.toString();
                 break;
             }
         }
 
-        var metaStation = {
+        let metaStation = {
             data: {
                 id: metaId,
                 name: name,
@@ -79,8 +79,8 @@ angular.module('app').service('tracingService', function() {
         updateScores();
     };
 
-    _this.expandStation = function(id) {
-        var station = _elementsById[id];
+    _this.expandStation = function (id) {
+        let station = _elementsById[id];
 
         delete _elementsById[id];
         _stations.splice(_stations.indexOf(station), 1);
@@ -105,7 +105,7 @@ angular.module('app').service('tracingService', function() {
         updateScores();
     };
 
-    _this.clearSelection = function() {
+    _this.clearSelection = function () {
         for (let s of _stations) {
             s.data.selected = false;
         }
@@ -114,11 +114,11 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    _this.setSelected = function(id, selected) {
+    _this.setSelected = function (id, selected) {
         _elementsById[id].data.selected = selected;
     };
 
-    _this.clearInvisibility = function() {
+    _this.clearInvisibility = function () {
         for (let s of _stations) {
             s.data.invisible = false;
         }
@@ -130,7 +130,7 @@ angular.module('app').service('tracingService', function() {
         updateScores();
     };
 
-    _this.makeStationsInvisible = function(ids) {
+    _this.makeStationsInvisible = function (ids) {
         for (let id of ids) {
             _elementsById[id].data.invisible = true;
         }
@@ -144,7 +144,7 @@ angular.module('app').service('tracingService', function() {
         updateScores();
     };
 
-    _this.clearOutbreakStations = function() {
+    _this.clearOutbreakStations = function () {
         for (let s of _stations) {
             s.data.outbreak = false;
         }
@@ -152,14 +152,14 @@ angular.module('app').service('tracingService', function() {
         updateScores();
     };
 
-    _this.toggleOutbreakStation = function(id) {
-        var station = _elementsById[id];
+    _this.toggleOutbreakStation = function (id) {
+        let station = _elementsById[id];
 
         station.data.outbreak = !station.data.outbreak;
         updateScores();
     };
 
-    _this.markStationsAsOutbreak = function(ids) {
+    _this.markStationsAsOutbreak = function (ids) {
         for (let id of ids) {
             _elementsById[id].data.outbreak = true;
         }
@@ -167,7 +167,7 @@ angular.module('app').service('tracingService', function() {
         updateScores();
     };
 
-    _this.clearTrace = function() {
+    _this.clearTrace = function () {
         for (let s of _stations) {
             s.data.observed = false;
             s.data.forward = false;
@@ -180,8 +180,8 @@ angular.module('app').service('tracingService', function() {
         }
     };
 
-    _this.showStationTrace = function(id) {
-        var station = _elementsById[id];
+    _this.showStationTrace = function (id) {
+        let station = _elementsById[id];
 
         _this.clearTrace();
         station.data.observed = 'full';
@@ -189,24 +189,24 @@ angular.module('app').service('tracingService', function() {
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
-    _this.showStationForwardTrace = function(id) {
-        var station = _elementsById[id];
+    _this.showStationForwardTrace = function (id) {
+        let station = _elementsById[id];
 
         _this.clearTrace();
         station.data.observed = 'forward';
         station.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
-    _this.showStationBackwardTrace = function(id) {
-        var station = _elementsById[id];
+    _this.showStationBackwardTrace = function (id) {
+        let station = _elementsById[id];
 
         _this.clearTrace();
         station.data.observed = 'backward';
         station.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
-    _this.showDeliveryTrace = function(id) {
-        var delivery = _elementsById[id];
+    _this.showDeliveryTrace = function (id) {
+        let delivery = _elementsById[id];
 
         _this.clearTrace();
         delivery.data.observed = 'full';
@@ -216,8 +216,8 @@ angular.module('app').service('tracingService', function() {
         delivery.data.in.forEach(showDeliveryBackwardTraceInternal);
     };
 
-    _this.showDeliveryForwardTrace = function(id) {
-        var delivery = _elementsById[id];
+    _this.showDeliveryForwardTrace = function (id) {
+        let delivery = _elementsById[id];
 
         _this.clearTrace();
         delivery.data.observed = 'forward';
@@ -225,8 +225,8 @@ angular.module('app').service('tracingService', function() {
         delivery.data.out.forEach(showDeliveryForwardTraceInternal);
     };
 
-    _this.showDeliveryBackwardTrace = function(id) {
-        var delivery = _elementsById[id];
+    _this.showDeliveryBackwardTrace = function (id) {
+        let delivery = _elementsById[id];
 
         _this.clearTrace();
         delivery.data.observed = 'backward';
@@ -235,7 +235,7 @@ angular.module('app').service('tracingService', function() {
     };
 
     function updateScores() {
-        var nOutbreaks = 0;
+        let nOutbreaks = 0;
 
         for (let s of _stations) {
             s.data.score = 0;
@@ -266,7 +266,7 @@ angular.module('app').service('tracingService', function() {
     }
 
     function updateStationScore(id, outbreakId) {
-        var station = _elementsById[id];
+        let station = _elementsById[id];
 
         if (station.data._visited !== outbreakId && !station.data.contained && !station.data.invisible) {
             station.data._visited = outbreakId;
@@ -279,13 +279,13 @@ angular.module('app').service('tracingService', function() {
     }
 
     function updateDeliveryScore(id, outbreakId) {
-        var delivery = _elementsById[id];
+        let delivery = _elementsById[id];
 
         if (delivery.data._visited !== outbreakId && !delivery.data.invisible) {
             delivery.data._visited = outbreakId;
             delivery.data.score++;
 
-            var source = _elementsById[delivery.data.source];
+            let source = _elementsById[delivery.data.source];
 
             if (source.data._visited !== outbreakId) {
                 source.data._visited = outbreakId;
@@ -299,7 +299,7 @@ angular.module('app').service('tracingService', function() {
     }
 
     function showDeliveryForwardTraceInternal(id) {
-        var delivery = _elementsById[id];
+        let delivery = _elementsById[id];
 
         if (!delivery.data.forward && !delivery.data.invisible) {
             delivery.data.forward = true;
@@ -309,7 +309,7 @@ angular.module('app').service('tracingService', function() {
     }
 
     function showDeliveryBackwardTraceInternal(id) {
-        var delivery = _elementsById[id];
+        let delivery = _elementsById[id];
 
         if (!delivery.data.backward && !delivery.data.invisible) {
             delivery.data.backward = true;
@@ -319,7 +319,7 @@ angular.module('app').service('tracingService', function() {
     }
 
     function updateTrace() {
-        var observedElement = _stations.concat(_deliveries).find(function(e) {
+        let observedElement = _stations.concat(_deliveries).find(function (e) {
             return e.data.observed;
         });
 
@@ -327,8 +327,8 @@ angular.module('app').service('tracingService', function() {
             _this.clearTrace();
         }
         else {
-            var id = observedElement.data.id;
-            var observed = observedElement.data.observed;
+            let id = observedElement.data.id;
+            let observed = observedElement.data.observed;
 
             if (!observedElement.data.invisible && !observedElement.data.contained) {
                 if (observedElement.data.isEdge) {

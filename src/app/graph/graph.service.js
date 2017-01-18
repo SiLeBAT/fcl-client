@@ -2,7 +2,7 @@
 
 /*global angular, cytoscape, $*/
 
-angular.module('app').service('graphService', function($timeout, tracingService, dataService, dialogService, utilService) {
+angular.module('app').service('graphService', function ($timeout, tracingService, dataService, dialogService, utilService) {
 
     let _this = this;
 
@@ -16,7 +16,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     let _selectionTimer;
     let _updateFunction;
 
-    _this.init = function(containerSelector, data) {
+    _this.init = function (containerSelector, data) {
         _data = data;
 
         if (typeof _cy === 'undefined') {
@@ -51,8 +51,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
                 layout: {
                     name: 'preset',
-                    positions: function(node) {
-                        return json.elements.nodes.find(function(n) {
+                    positions: function (node) {
+                        return json.elements.nodes.find(function (n) {
                             return n.data.id === node.id();
                         }).position;
                     },
@@ -67,23 +67,23 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             });
         }
 
-        $(containerSelector).on("mresize", function() {
-            $timeout(function() {
+        $(containerSelector).on("mresize", function () {
+            $timeout(function () {
                 _cy.resize();
             }, 50);
         });
 
         _cy.panzoom();
-        _cy.on('zoom', function(event) {
+        _cy.on('zoom', function (event) {
             _this.setFontSize(_fontSize);
         });
-        _cy.on('select', function(event) {
+        _cy.on('select', function (event) {
             setSelected(event.cyTarget, true);
         });
-        _cy.on('unselect', function(event) {
+        _cy.on('unselect', function (event) {
             setSelected(event.cyTarget, false);
         });
-        _cy.on('cxttap', function(event) {
+        _cy.on('cxttap', function (event) {
             let element = event.cyTarget;
             let position = {
                 x: event.originalEvent.pageX,
@@ -105,18 +105,18 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         dialogService.init();
     };
 
-    _this.setMergeDeliveries = function(mergeDeliveries) {
+    _this.setMergeDeliveries = function (mergeDeliveries) {
         _mergeDeliveries = mergeDeliveries;
         updateEdges();
     };
 
-    _this.setNodeSize = function(nodeSize) {
+    _this.setNodeSize = function (nodeSize) {
         _nodeSize = nodeSize;
         recalculateNodeSizes();
         updateProperties();
     };
 
-    _this.setFontSize = function(fontSize) {
+    _this.setFontSize = function (fontSize) {
         _fontSize = fontSize;
 
         _cy.nodes().style({
@@ -124,8 +124,8 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         });
     };
 
-    _this.onSelectionChange = function(f) {
-        _cy.on('select unselect', function() {
+    _this.onSelectionChange = function (f) {
+        _cy.on('select unselect', function () {
             if (_selectionTimer) {
                 $timeout.cancel(_selectionTimer);
             }
@@ -134,7 +134,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         });
     };
 
-    _this.onUpdate = function(f) {
+    _this.onUpdate = function (f) {
         _updateFunction = f;
     };
 
@@ -159,7 +159,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             e.group = "edges";
         }
 
-        _cy.batch(function() {
+        _cy.batch(function () {
             _cy.edges().remove();
             _cy.add(edges);
         });
@@ -189,6 +189,10 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             e.group = "edges";
         }
 
+        let idToPosition = function (id) {
+            return _cy.nodes('#' + id).position();
+        };
+
         for (let n of nodes) {
             n.group = "nodes";
 
@@ -200,9 +204,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                     delete n.data._position;
                 }
                 else if (n.data.hasOwnProperty('contains')) {
-                    n.position = utilService.getCenter(n.data.contains.map(function(id) {
-                        return _cy.nodes('#' + id).position();
-                    }));
+                    n.position = utilService.getCenter(n.data.contains.map(idToPosition));
 
                     for (let contained of tracingService.getElementsById(n.data.contains)) {
                         let containedPos = _cy.nodes('#' + contained.data.id).position();
@@ -222,7 +224,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
             }
         }
 
-        _cy.batch(function() {
+        _cy.batch(function () {
             _cy.elements().remove();
             _cy.add(nodes);
             _cy.add(edges);
@@ -285,21 +287,21 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                             source: source,
                             target: target,
                             isEdge: true,
-                            backward: typeof value.find(function(d) {
+                            backward: typeof value.find(function (d) {
                                 return d.data.backward;
                             }) !== 'undefined',
-                            forward: typeof value.find(function(d) {
+                            forward: typeof value.find(function (d) {
                                 return d.data.forward;
                             }) !== 'undefined',
-                            observed: typeof value.find(function(d) {
+                            observed: typeof value.find(function (d) {
                                 return d.data.observed;
                             }) !== 'undefined',
                             merged: value.length > 1,
-                            contains: value.map(function(d) {
+                            contains: value.map(function (d) {
                                 return d.data.id;
                             })
                         },
-                        selected: typeof value.find(function(d) {
+                        selected: typeof value.find(function (d) {
                             return d.data.selected === true;
                         }) !== 'undefined'
                     };
@@ -356,7 +358,7 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     }
 
     function createStyle() {
-        let sizeFunction = function(node) {
+        let sizeFunction = function (node) {
             return typeof node.data('_size') === 'undefined' ? _nodeSize : node.data('_size');
         };
 
@@ -464,15 +466,15 @@ angular.module('app').service('graphService', function($timeout, tracingService,
     function showGraphContextMenu(position) {
         dialogService.showContextMenu(position, {
             'Apply Layout': showLayoutMenu,
-            'Clear Trace': function() {
+            'Clear Trace': function () {
                 tracingService.clearTrace();
                 updateProperties();
             },
-            'Clear Outbreaks': function() {
+            'Clear Outbreaks': function () {
                 tracingService.clearOutbreakStations();
                 _this.setNodeSize(_nodeSize);
             },
-            'Clear Invisible': function() {
+            'Clear Invisible': function () {
                 tracingService.clearInvisibility();
                 updateAll();
             }
@@ -485,22 +487,22 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
         if (station.selected() && selectedStations.size() > 1) {
             options = {
-                'Merge Stations': function() {
-                    dialogService.showPrompt("Please specify name of meta station:", "Meta Station Name", function(name) {
-                        tracingService.mergeStations(selectedStations.map(function(station) {
+                'Merge Stations': function () {
+                    dialogService.showPrompt("Please specify name of meta station:", "Meta Station Name", function (name) {
+                        tracingService.mergeStations(selectedStations.map(function (station) {
                             return station.id();
                         }), name);
                         updateAll();
                     });
                 },
-                'Mark as Outbreak': function() {
-                    tracingService.markStationsAsOutbreak(selectedStations.map(function(s) {
+                'Mark as Outbreak': function () {
+                    tracingService.markStationsAsOutbreak(selectedStations.map(function (s) {
                         return s.id();
                     }));
                     _this.setNodeSize(_nodeSize);
                 },
-                'Make Invisible': function() {
-                    tracingService.makeStationsInvisible(selectedStations.map(function(s) {
+                'Make Invisible': function () {
+                    tracingService.makeStationsInvisible(selectedStations.map(function (s) {
                         return s.id();
                     }));
                     updateAll();
@@ -509,32 +511,32 @@ angular.module('app').service('graphService', function($timeout, tracingService,
         }
         else {
             options = {
-                'Show Forward Trace': function() {
+                'Show Forward Trace': function () {
                     tracingService.showStationForwardTrace(station.id());
                     updateProperties();
                 },
-                'Show Backward Trace': function() {
+                'Show Backward Trace': function () {
                     tracingService.showStationBackwardTrace(station.id());
                     updateProperties();
                 },
-                'Show Whole Trace': function() {
+                'Show Whole Trace': function () {
                     tracingService.showStationTrace(station.id());
                     updateProperties();
                 }
             };
 
-            options[station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak'] = function() {
+            options[station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak'] = function () {
                 tracingService.toggleOutbreakStation(station.id());
                 _this.setNodeSize(_nodeSize);
             };
 
-            options['Make Invisible'] = function() {
+            options['Make Invisible'] = function () {
                 tracingService.makeStationsInvisible([station.id()]);
                 updateAll();
             };
 
             if (station.data('contains')) {
-                options['Expand'] = function() {
+                options.Expand = function () {
                     tracingService.expandStation(station.id());
                     updateAll();
                 };
@@ -546,19 +548,19 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
     function showDeliveryContextMenu(delivery, position) {
         dialogService.showContextMenu(position, {
-            'Show Forward Trace': function() {
+            'Show Forward Trace': function () {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.showDeliveryForwardTrace(delivery.id());
                     updateProperties();
                 }
             },
-            'Show Backward Trace': function() {
+            'Show Backward Trace': function () {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.showDeliveryBackwardTrace(delivery.id());
                     updateProperties();
                 }
             },
-            'Show Whole Trace': function() {
+            'Show Whole Trace': function () {
                 if (isDeliveryTracePossible(delivery)) {
                     tracingService.showDeliveryTrace(delivery.id());
                     updateProperties();
@@ -569,48 +571,48 @@ angular.module('app').service('graphService', function($timeout, tracingService,
 
     function showLayoutMenu() {
         dialogService.showDialogMenu("Apply Layout", {
-            'Fruchterman-Reingold': function() {
+            'Fruchterman-Reingold': function () {
                 _cy.layout({
                     name: 'fruchterman'
                 });
             },
-            'Random': function() {
+            'Random': function () {
                 _cy.layout({
                     name: 'random'
                 });
             },
-            'Grid': function() {
+            'Grid': function () {
                 _cy.layout({
                     name: 'grid'
                 });
             },
-            'Circle': function() {
+            'Circle': function () {
                 _cy.layout({
                     name: 'circle'
                 });
             },
-            'Concentric': function() {
+            'Concentric': function () {
                 _cy.layout({
                     name: 'concentric'
                 });
             },
-            'Breadthfirst': function() {
+            'Breadthfirst': function () {
                 _cy.layout({
                     name: 'breadthfirst'
                 });
             },
-            'Cose': function() {
+            'Cose': function () {
                 _cy.layout({
                     name: 'cose'
                 });
             },
-            'Cose Bilkent': function() {
+            'Cose Bilkent': function () {
                 _cy.layout({
                     name: 'cose-bilkent',
                     animate: 'during'
                 });
             },
-            'Cola': function() {
+            'Cola': function () {
                 _cy.layout({
                     name: 'cola',
                     ungrabifyWhileSimulating: false,
@@ -619,18 +621,18 @@ angular.module('app').service('graphService', function($timeout, tracingService,
                     maxSimulationTime: 5000
                 });
             },
-            'Spread': function() {
+            'Spread': function () {
                 _cy.layout({
                     name: 'spread'
                 });
             },
-            'Dagre': function() {
+            'Dagre': function () {
                 _cy.layout({
                     name: 'dagre',
                     animate: true
                 });
             },
-            'Springy': function() {
+            'Springy': function () {
                 _cy.layout({
                     name: 'springy'
                 });
