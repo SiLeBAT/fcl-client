@@ -10,13 +10,13 @@ angular.module('app').component('elementsTable', {
         update: '<'
     },
     controller: function($scope, dataService, utilService) {
-        var _this = this;
+        let _this = this;
 
         _this.columns = [];
         _this.elements = [];
 
         $scope.$watch('$ctrl.update', function() {
-            var elements;
+            let elements;
 
             switch (_this.settings.mode) {
                 case "Stations":
@@ -46,12 +46,12 @@ angular.module('app').component('elementsTable', {
 
         _this.getCellStyle = function(element, column) {
             if (typeof element !== 'undefined' && element.data.selected) {
-                var css = {
+                let css = {
                     'border-top': '2px #00f solid',
                     'border-bottom': '2px #00f solid'
                 };
 
-                var index = _this.columns.indexOf(column);
+                let index = _this.columns.indexOf(column);
 
                 if (index === 0) {
                     css['border-left'] = '2px #00f solid';
@@ -71,7 +71,7 @@ angular.module('app').component('elementsTable', {
         };
 
         _this.getRowStyle = function(element) {
-            var colors = [];
+            let colors = [];
 
             if (element.data.forward) {
                 colors.push(dataService.COLORS.forward);
@@ -102,7 +102,7 @@ angular.module('app').component('elementsTable', {
                 };
             }
             else {
-                var css = [];
+                let css = [];
 
                 for (let c of colors) {
                     css.push(utilService.colorToCss(c));

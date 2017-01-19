@@ -8,7 +8,7 @@ angular.module('app').component('tableSettings', {
         onChange: '&'
     },
     controller: function(dataService) {
-        var _this = this;
+        let _this = this;
 
         _this.modes = dataService.TABLE_MODES;
     },

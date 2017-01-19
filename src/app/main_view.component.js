@@ -4,7 +4,7 @@
 
 angular.module('app').component('mainView', {
     controller: function($scope, graphService, dataService) {
-        var _this = this;
+        let _this = this;
 
         function updateTable() {
             _this.updateTable++;

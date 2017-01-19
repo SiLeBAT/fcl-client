@@ -4,7 +4,7 @@
 
 angular.module('app').service('dataService', function($q, $resource) {
 
-    var _this = this;
+    let _this = this;
 
     _this.NODE_SIZES = {
         Small: 50,
@@ -29,17 +29,17 @@ angular.module('app').service('dataService', function($q, $resource) {
         'Deliveries': ['id', 'source', 'target', 'score']
     };
 
-    var _data;
-    var _settings = {
+    let _data;
+    let _settings = {
         leftSidenavOpen: false,
         rightSidenavOpen: false
     };
-    var _graphSettings = {
+    let _graphSettings = {
         nodeSize: _this.NODE_SIZES.Small,
         fontSize: _this.FONT_SIZES.Small,
         mergeDeliveries: false
     };
-    var _tableSettings = {
+    let _tableSettings = {
         mode: _this.TABLE_MODES[0],
         order: 'data.id',
         showAll: true,
@@ -78,8 +78,8 @@ angular.module('app').service('dataService', function($q, $resource) {
     };
 
     function preprocessData(data) {
-        var stationsById = {};
-        var deliveriesById = {};
+        let stationsById = {};
+        let deliveriesById = {};
 
         for (let s of data.stations) {
             s.data.isEdge = false;

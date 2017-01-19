@@ -8,7 +8,7 @@ angular.module('app').component('graphSettings', {
         onChange: '&'
     },
     controller: function(dataService) {
-        var _this = this;
+        let _this = this;
 
         _this.nodeSizes = dataService.NODE_SIZES;
         _this.fontSizes = dataService.FONT_SIZES;

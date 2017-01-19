@@ -74,7 +74,7 @@ angular.module('app').service('graphService', function ($timeout, tracingService
         });
 
         _cy.panzoom();
-        _cy.on('zoom', function (event) {
+        _cy.on('zoom', function () {
             _this.setFontSize(_fontSize);
         });
         _cy.on('select', function (event) {
@@ -615,7 +615,7 @@ angular.module('app').service('graphService', function ($timeout, tracingService
             'Cola': function () {
                 _cy.layout({
                     name: 'cola',
-                    ungrabifyWhileSimulating: false,
+                    ungrabifyWhileSimulating: true,
                     avoidOverlap: false,
                     animate: true,
                     maxSimulationTime: 5000

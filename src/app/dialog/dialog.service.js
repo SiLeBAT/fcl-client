@@ -4,10 +4,10 @@
 
 angular.module('app').service('dialogService', function($mdDialog, $mdPanel) {
 
-    var _this = this;
+    let _this = this;
 
     _this.init = function() {
-        var panel = $mdPanel.create({
+        let panel = $mdPanel.create({
             template: '<md-content><dialog-menu></dialog-menu></md-content>',
             attachTo: angular.element(document.body),
             position: $mdPanel.newPanelPosition().relativeTo(angular.element(document.body))
