@@ -576,43 +576,7 @@ angular.module('app').service('graphService', function ($timeout, tracingService
                     name: 'fruchterman'
                 });
             },
-            'Random': function () {
-                _cy.layout({
-                    name: 'random'
-                });
-            },
-            'Grid': function () {
-                _cy.layout({
-                    name: 'grid'
-                });
-            },
-            'Circle': function () {
-                _cy.layout({
-                    name: 'circle'
-                });
-            },
-            'Concentric': function () {
-                _cy.layout({
-                    name: 'concentric'
-                });
-            },
-            'Breadthfirst': function () {
-                _cy.layout({
-                    name: 'breadthfirst'
-                });
-            },
-            'Cose': function () {
-                _cy.layout({
-                    name: 'cose'
-                });
-            },
-            'Cose Bilkent': function () {
-                _cy.layout({
-                    name: 'cose-bilkent',
-                    animate: 'during'
-                });
-            },
-            'Cola': function () {
+            'Constraint-Based': function () {
                 let layout;
 
                 dialogService.showDialogMenu('Layout running', {
@@ -633,20 +597,39 @@ angular.module('app').service('graphService', function ($timeout, tracingService
                 });
                 layout.run();
             },
+            'Random': function () {
+                _cy.layout({
+                    name: 'random'
+                });
+            },
+            'Grid': function () {
+                _cy.layout({
+                    name: 'grid'
+                });
+            },
+            'Circle': function () {
+                _cy.layout({
+                    name: 'circle'
+                });
+            },
+            'Concentric': function () {
+                _cy.layout({
+                    name: 'concentric'
+                });
+            },
+            'Breadth-first': function () {
+                _cy.layout({
+                    name: 'breadthfirst'
+                });
+            },
             'Spread': function () {
                 _cy.layout({
                     name: 'spread'
                 });
             },
-            'Dagre': function () {
+            'Directed acyclic graph': function () {
                 _cy.layout({
-                    name: 'dagre',
-                    animate: true
-                });
-            },
-            'Springy': function () {
-                _cy.layout({
-                    name: 'springy'
+                    name: 'dagre'
                 });
             }
         });
