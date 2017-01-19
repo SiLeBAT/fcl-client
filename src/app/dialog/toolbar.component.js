@@ -4,7 +4,8 @@
 
 angular.module('app').component('dialogToolbar', {
     bindings: {
-        title: '@'
+        title: '@',
+        closable: '<'
     },
     controller: function($mdDialog) {
         var _this = this;

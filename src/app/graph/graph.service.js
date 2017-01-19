@@ -613,13 +613,25 @@ angular.module('app').service('graphService', function ($timeout, tracingService
                 });
             },
             'Cola': function () {
-                _cy.layout({
+                let layout;
+
+                dialogService.showDialogMenu('Layout running', {
+                    'Stop': function () {
+                        layout.stop();
+                    }
+                }, false);
+
+                layout = _cy.elements().makeLayout({
                     name: 'cola',
                     ungrabifyWhileSimulating: true,
                     avoidOverlap: false,
                     animate: true,
-                    maxSimulationTime: 5000
+                    maxSimulationTime: 60000,
+                    stop: function () {
+                        dialogService.hideDialogMenu();
+                    }
                 });
+                layout.run();
             },
             'Spread': function () {
                 _cy.layout({
