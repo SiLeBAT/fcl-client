@@ -4,32 +4,30 @@
 
 var register = function(cytoscape) {
 
-    var defaults = {
-        fit: true
-    };
-
     function FruchtermanLayout(options) {
-        var opts = this.options = {};
+        let defaults = {
+            fit: true
+        };
 
         for (let i in defaults) {
-            opts[i] = defaults[i];
+            this.options[i] = defaults[i];
         }
 
         for (let i in options) {
-            opts[i] = options[i];
+            this.options[i] = options[i];
         }
     }
 
     FruchtermanLayout.prototype.run = function() {
-        var options = this.options;
-        var cy = options.cy;
-        var width = cy.width();
-        var height = cy.height();
-        var graph = new Graph();
-        var vertices = new Map();
+        let options = this.options;
+        let cy = options.cy;
+        let width = cy.width();
+        let height = cy.height();
+        let graph = new Graph();
+        let vertices = new Map();
 
         cy.nodes().forEach(function(node) {
-            var v = new Vertex(Math.random() * width, Math.random() * height);
+            let v = new Vertex(Math.random() * width, Math.random() * height);
 
             vertices.set(node.id(), v);
             graph.insertVertex(v);
@@ -39,12 +37,12 @@ var register = function(cytoscape) {
             graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
         });
 
-        var layoutManager = new ForceDirectedVertexLayout(width, height, 100);
+        let layoutManager = new ForceDirectedVertexLayout(width, height, 100);
 
         layoutManager.layout(graph);
 
         cy.nodes().layoutPositions(this, options, function(i, node) {
-            var vertex = vertices.get(node.id());
+            let vertex = vertices.get(node.id());
 
             return {
                 x: vertex.x,
@@ -80,14 +78,14 @@ function insertEdge(vertex1, vertex2) {
 }
 
 function removeEdge(vertex1, vertex2) {
-    for (var i = vertex1.edges.length - 1; i >= 0; i--) {
+    for (let i = vertex1.edges.length - 1; i >= 0; i--) {
         if (vertex1.edges[i].endVertex == vertex2) {
             vertex1.edges.splice(i, 1);
             break;
         }
     }
 
-    for (var i = vertex2.reverseEdges.length - 1; i >= 0; i--) {
+    for (let i = vertex2.reverseEdges.length - 1; i >= 0; i--) {
         if (vertex2.reverseEdges[i].endVertex == vertex1) {
             vertex2.reverseEdges.splice(i, 1);
             break;
@@ -96,15 +94,15 @@ function removeEdge(vertex1, vertex2) {
 }
 
 function removeVertex(vertex) {
-    for (var i = vertex.edges.length - 1; i >= 0; i--) {
+    for (let i = vertex.edges.length - 1; i >= 0; i--) {
         this.removeEdge(vertex, vertex.edges[i].endVertex);
     }
 
-    for (var i = vertex.reverseEdges.length - 1; i >= 0; i--) {
+    for (let i = vertex.reverseEdges.length - 1; i >= 0; i--) {
         this.removeEdge(vertex.reverseEdges[i].endVertex, vertex);
     }
 
-    for (var i = this.vertices.length - 1; i >= 0; i--) {
+    for (let i = this.vertices.length - 1; i >= 0; i--) {
         if (this.vertices[i] == vertex) {
             this.vertices.splice(i, 1);
             break;
@@ -116,7 +114,7 @@ function removeVertex(vertex) {
 
 function Graph() {
     /* Fields. */
-    this.vertices = new Array();
+    this.vertices = [];
     this.vertexCount = 0;
 
     /* Graph methods. */
@@ -127,14 +125,12 @@ function Graph() {
 }
 
 function Vertex(x, y) {
-    this.edges = new Array();
-    this.reverseEdges = new Array();
+    this.edges = [];
+    this.reverseEdges = [];
     this.x = x;
     this.y = y;
     this.dx = 0;
     this.dy = 0;
-    this.level = -1;
-    this.numberOfParents = 0;
     this.hidden = false;
     this.fixed = false;
 }
@@ -144,54 +140,6 @@ function Edge(endVertex) {
     this.hidden = false;
 }
 
-Graph.prototype.normalize = function(width, height, preserveAspect) {
-    for (let i8 in this.vertices) {
-        let v = this.vertices[i8];
-        v.oldX = v.x;
-        v.oldY = v.y;
-    }
-    var mnx = 10;
-    var mxx = width - 100;
-    var mny = 10;
-    var mxy = height - 50;
-    if (preserveAspect == null)
-        preserveAspect = true;
-
-    var minx = Number.MAX_VALUE;
-    var miny = Number.MAX_VALUE;
-    var maxx = Number.MIN_VALUE;
-    var maxy = Number.MIN_VALUE;
-
-    for (let i7 in this.vertices) {
-        let v = this.vertices[i7];
-        if (v.x < minx)
-            minx = v.x;
-        if (v.y < miny)
-            miny = v.y;
-        if (v.x > maxx)
-            maxx = v.x;
-        if (v.y > maxy)
-            maxy = v.y;
-    }
-    var dx = mnx - minx;
-    var dy = mny - miny;
-    var kx = (mxx - mnx) / (maxx - minx);
-    var ky = (mxy - mny) / (maxy - miny);
-
-    if (preserveAspect) {
-        kx = Math.min(kx, ky);
-        ky = Math.min(kx, ky);
-    }
-
-    for (var i8 in this.vertices) {
-        var v = this.vertices[i8];
-        v.x += dx;
-        v.x *= kx;
-        v.y += dy;
-        v.y *= ky;
-    }
-};
-
 function ForceDirectedVertexLayout(width, height, iterations) {
     this.width = width;
     this.height = height;
@@ -199,13 +147,13 @@ function ForceDirectedVertexLayout(width, height, iterations) {
 }
 
 ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
-    var componentCenters = new Array();
-    var components = new Array();
+    var componentCenters = [];
+    var components = [];
 
     // Depth first search
     function dfs(vertex) {
-        var stack = new Array();
-        var component = new Array();
+        var stack = [];
+        var component = [];
         var centerVertex = new Vertex("component_center", -1, -1);
         centerVertex.hidden = true;
         componentCenters.push(centerVertex);
@@ -215,13 +163,13 @@ ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
             component.push(v);
             v.__dfsVisited = true;
 
-            for (var i in v.edges) {
-                var e = v.edges[i];
+            for (let i in v.edges) {
+                let e = v.edges[i];
                 if (!e.hidden)
                     stack.push(e.endVertex);
             }
 
-            for (var i in v.reverseEdges) {
+            for (let i in v.reverseEdges) {
                 if (!v.reverseEdges[i].hidden)
                     stack.push(v.reverseEdges[i].endVertex);
             }
@@ -229,7 +177,7 @@ ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
 
         visitVertex(vertex);
         while (stack.length > 0) {
-            var u = stack.pop();
+            let u = stack.pop();
 
             if (!u.__dfsVisited && !u.hidden) {
                 visitVertex(u);
@@ -238,7 +186,7 @@ ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
     }
 
     // Clear DFS visited flag
-    for (var i in graph.vertices) {
+    for (let i in graph.vertices) {
         let v = graph.vertices[i];
         v.__dfsVisited = false;
     }
@@ -253,21 +201,21 @@ ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
 
     // Interconnect all center vertices
     if (componentCenters.length > 1) {
-        for (var i in componentCenters) {
+        for (let i in componentCenters) {
             graph.insertVertex(componentCenters[i]);
         }
-        for (var i in components) {
-            for (var j in components[i]) {
+        for (let i in components) {
+            for (let j in components[i]) {
                 // Connect visited vertex to "central" component vertex
-                var edge = graph.insertEdge("", 1, components[i][j], componentCenters[i]);
+                let edge = graph.insertEdge("", 1, components[i][j], componentCenters[i]);
                 edge.hidden = true;
             }
         }
 
-        for (var i in componentCenters) {
-            for (var j in componentCenters) {
+        for (let i in componentCenters) {
+            for (let j in componentCenters) {
                 if (i != j) {
-                    var e = graph.insertEdge("", 3, componentCenters[i], componentCenters[j]);
+                    let e = graph.insertEdge("", 3, componentCenters[i], componentCenters[j]);
                     e.hidden = true;
                 }
             }
@@ -280,7 +228,6 @@ ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
 };
 
 ForceDirectedVertexLayout.prototype.layout = function(graph) {
-    this.graph = graph;
     var area = this.width * this.height;
     var k = Math.sqrt(area / graph.vertexCount);
 
