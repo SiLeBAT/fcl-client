@@ -2,72 +2,67 @@
 
 /*global cytoscape*/
 
-var register = function(cytoscape) {
+cytoscape('layout', 'fruchterman', FruchtermanLayout);
 
-    function FruchtermanLayout(options) {
-        let defaults = {
-            fit: true
-        };
-
-        for (let i in defaults) {
-            this.options[i] = defaults[i];
-        }
-
-        for (let i in options) {
-            this.options[i] = options[i];
-        }
-    }
-
-    FruchtermanLayout.prototype.run = function() {
-        let options = this.options;
-        let cy = options.cy;
-        let width = cy.width();
-        let height = cy.height();
-        let graph = new Graph();
-        let vertices = new Map();
-
-        cy.nodes().forEach(function(node) {
-            let v = new Vertex(Math.random() * width, Math.random() * height);
-
-            vertices.set(node.id(), v);
-            graph.insertVertex(v);
-        });
-
-        cy.edges().forEach(function(edge) {
-            graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
-        });
-
-        let layoutManager = new ForceDirectedVertexLayout(width, height, 100);
-
-        layoutManager.layout(graph);
-
-        cy.nodes().layoutPositions(this, options, function(i, node) {
-            let vertex = vertices.get(node.id());
-
-            return {
-                x: vertex.x,
-                y: vertex.y
-            };
-        });
-
-        if (options.fit) {
-            cy.fit();
-        }
-
-        return this;
+function FruchtermanLayout(options) {
+    let defaults = {
+        fit: true
     };
 
-    cytoscape('layout', 'fruchterman', FruchtermanLayout);
-};
+    for (let i in defaults) {
+        this.options[i] = defaults[i];
+    }
 
-register(cytoscape);
-
-function insertVertex(vertex) {
-    this.vertices.push(vertex);
-    this.vertexCount++;
+    for (let i in options) {
+        this.options[i] = options[i];
+    }
 }
 
-function insertEdge(vertex1, vertex2) {
+FruchtermanLayout.prototype.run = function() {
+    let options = this.options;
+    let cy = options.cy;
+    let width = cy.width();
+    let height = cy.height();
+    let graph = new Graph();
+    let vertices = new Map();
+
+    cy.nodes().forEach(function(node) {
+        let v = new Vertex(Math.random() * width, Math.random() * height);
+
+        vertices.set(node.id(), v);
+        graph.insertVertex(v);
+    });
+
+    cy.edges().forEach(function(edge) {
+        graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+    });
+
+    let layoutManager = new ForceDirectedVertexLayout(width, height, 100);
+
+    layoutManager.layout(graph);
+
+    cy.nodes().layoutPositions(this, options, function(i, node) {
+        let vertex = vertices.get(node.id());
+
+        return {
+            x: vertex.x,
+            y: vertex.y
+        };
+    });
+
+    if (options.fit) {
+        cy.fit();
+    }
+
+    return this;
+};
+
+function Graph() {
+    this.vertices = [];
+    this.vertexCount = 0;
+}
+
+Graph.prototype.insertEdge = function(vertex1, vertex2) {
     var e1 = new Edge(vertex2);
     var e2 = new Edge(vertex1);
 
@@ -75,9 +70,9 @@ function insertEdge(vertex1, vertex2) {
     vertex2.reverseEdges.push(e2);
 
     return e1;
-}
+};
 
-function removeEdge(vertex1, vertex2) {
+Graph.prototype.removeEdge = function(vertex1, vertex2) {
     for (let i = vertex1.edges.length - 1; i >= 0; i--) {
         if (vertex1.edges[i].endVertex == vertex2) {
             vertex1.edges.splice(i, 1);
@@ -91,9 +86,14 @@ function removeEdge(vertex1, vertex2) {
             break;
         }
     }
-}
+};
 
-function removeVertex(vertex) {
+Graph.prototype.insertVertex = function(vertex) {
+    this.vertices.push(vertex);
+    this.vertexCount++;
+};
+
+Graph.prototype.removeVertex = function(vertex) {
     for (let i = vertex.edges.length - 1; i >= 0; i--) {
         this.removeEdge(vertex, vertex.edges[i].endVertex);
     }
@@ -110,19 +110,7 @@ function removeVertex(vertex) {
     }
 
     this.vertexCount--;
-}
-
-function Graph() {
-    /* Fields. */
-    this.vertices = [];
-    this.vertexCount = 0;
-
-    /* Graph methods. */
-    this.insertVertex = insertVertex;
-    this.removeVertex = removeVertex;
-    this.insertEdge = insertEdge;
-    this.removeEdge = removeEdge;
-}
+};
 
 function Vertex(x, y) {
     this.edges = [];
@@ -146,7 +134,7 @@ function ForceDirectedVertexLayout(width, height, iterations) {
     this.iterations = iterations;
 }
 
-ForceDirectedVertexLayout.prototype.__identifyComponents = function(graph) {
+ForceDirectedVertexLayout.prototype.identifyComponents = function(graph) {
     var componentCenters = [];
     var components = [];
 
@@ -249,7 +237,7 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
 
     // Initiate component identification and virtual vertex creation
     // to prevent disconnected graph components from drifting too far apart
-    var centers = this.__identifyComponents(graph);
+    var centers = this.identifyComponents(graph);
 
     // Run through some iterations
     for (var q = 0; q < this.iterations; q++) {
