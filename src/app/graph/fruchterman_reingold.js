@@ -119,13 +119,11 @@ function Vertex(x, y) {
     this.y = y;
     this.dx = 0;
     this.dy = 0;
-    this.hidden = false;
     this.fixed = false;
 }
 
 function Edge(endVertex) {
     this.endVertex = endVertex;
-    this.hidden = false;
 }
 
 function ForceDirectedVertexLayout(width, height, iterations) {
@@ -142,9 +140,8 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
     function dfs(vertex) {
         let stack = [];
         let component = [];
-        let centerVertex = new Vertex("component_center", -1, -1);
-        centerVertex.hidden = true;
-        componentCenters.push(centerVertex);
+
+        componentCenters.push(new Vertex(-1, -1));
         components.push(component);
 
         function visitVertex(v) {
@@ -152,13 +149,11 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
             v.__dfsVisited = true;
 
             for (let e of v.edges) {
-                if (!e.hidden)
-                    stack.push(e.endVertex);
+                stack.push(e.endVertex);
             }
 
             for (let e of v.reverseEdges) {
-                if (!e.hidden)
-                    stack.push(e.endVertex);
+                stack.push(e.endVertex);
             }
         }
 
@@ -166,7 +161,7 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
         while (stack.length > 0) {
             let u = stack.pop();
 
-            if (!u.__dfsVisited && !u.hidden) {
+            if (!u.__dfsVisited) {
                 visitVertex(u);
             }
         }
@@ -180,36 +175,30 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
     // Iterate through all vertices starting DFS from each vertex
     // that hasn't been visited yet.
     for (let v of graph.vertices) {
-        if (!v.__dfsVisited && !v.hidden)
+        if (!v.__dfsVisited)
             dfs(v);
     }
 
     // Interconnect all center vertices
     if (componentCenters.length > 1) {
-        for (let i in componentCenters) {
-            graph.insertVertex(componentCenters[i]);
+        for (let c of componentCenters) {
+            graph.insertVertex(c);
         }
         for (let i in components) {
-            for (let j in components[i]) {
+            for (let v of components[i]) {
                 // Connect visited vertex to "central" component vertex
-                let edge = graph.insertEdge("", 1, components[i][j], componentCenters[i]);
-                edge.hidden = true;
+                graph.insertEdge(v, componentCenters[i]);
             }
         }
 
-        for (let i in componentCenters) {
-            for (let j in componentCenters) {
-                if (i != j) {
-                    let e = graph.insertEdge("", 3, componentCenters[i], componentCenters[j]);
-                    e.hidden = true;
+        for (let c1 of componentCenters) {
+            for (let c2 of componentCenters) {
+                if (c1 !== c2) {
+                    graph.insertEdge(c1, c2);
                 }
             }
         }
-
-        return componentCenters;
     }
-
-    return null;
 };
 
 ForceDirectedVertexLayout.prototype.layout = function (graph) {
@@ -225,7 +214,7 @@ ForceDirectedVertexLayout.prototype.layout = function (graph) {
 
     // Initiate component identification and virtual vertex creation
     // to prevent disconnected graph components from drifting too far apart
-    let centers = this.identifyComponents(graph);
+    this.identifyComponents(graph);
 
     // Run through some iterations
     for (let q = 0; q < this.iterations; q++) {
@@ -290,12 +279,5 @@ ForceDirectedVertexLayout.prototype.layout = function (graph) {
 
         /* Cool. */
         t -= dt;
-    }
-
-    // Remove virtual center vertices
-    if (centers) {
-        for (let c of centers) {
-            graph.removeVertex(c);
-        }
     }
 };
