@@ -9,16 +9,16 @@ function FruchtermanLayout(options) {
         fit: true
     };
 
-    for (let i in defaults) {
-        this.options[i] = defaults[i];
-    }
-
-    for (let i in options) {
-        this.options[i] = options[i];
+    for (let key of Object.keys(defaults)) {
+        if (options.hasOwnProperty(key)) {
+            this.options[key] = options[key];
+        } else {
+            this.options[key] = defaults[key];
+        }
     }
 }
 
-FruchtermanLayout.prototype.run = function() {
+FruchtermanLayout.prototype.run = function () {
     let options = this.options;
     let cy = options.cy;
     let width = cy.width();
@@ -26,14 +26,14 @@ FruchtermanLayout.prototype.run = function() {
     let graph = new Graph();
     let vertices = new Map();
 
-    cy.nodes().forEach(function(node) {
+    cy.nodes().forEach(function (node) {
         let v = new Vertex(Math.random() * width, Math.random() * height);
 
         vertices.set(node.id(), v);
         graph.insertVertex(v);
     });
 
-    cy.edges().forEach(function(edge) {
+    cy.edges().forEach(function (edge) {
         graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
 
@@ -41,7 +41,7 @@ FruchtermanLayout.prototype.run = function() {
 
     layoutManager.layout(graph);
 
-    cy.nodes().layoutPositions(this, options, function(i, node) {
+    cy.nodes().layoutPositions(this, options, function (i, node) {
         let vertex = vertices.get(node.id());
 
         return {
@@ -62,9 +62,9 @@ function Graph() {
     this.vertexCount = 0;
 }
 
-Graph.prototype.insertEdge = function(vertex1, vertex2) {
-    var e1 = new Edge(vertex2);
-    var e2 = new Edge(vertex1);
+Graph.prototype.insertEdge = function (vertex1, vertex2) {
+    let e1 = new Edge(vertex2);
+    let e2 = new Edge(vertex1);
 
     vertex1.edges.push(e1);
     vertex2.reverseEdges.push(e2);
@@ -72,7 +72,7 @@ Graph.prototype.insertEdge = function(vertex1, vertex2) {
     return e1;
 };
 
-Graph.prototype.removeEdge = function(vertex1, vertex2) {
+Graph.prototype.removeEdge = function (vertex1, vertex2) {
     for (let i = vertex1.edges.length - 1; i >= 0; i--) {
         if (vertex1.edges[i].endVertex == vertex2) {
             vertex1.edges.splice(i, 1);
@@ -88,12 +88,12 @@ Graph.prototype.removeEdge = function(vertex1, vertex2) {
     }
 };
 
-Graph.prototype.insertVertex = function(vertex) {
+Graph.prototype.insertVertex = function (vertex) {
     this.vertices.push(vertex);
     this.vertexCount++;
 };
 
-Graph.prototype.removeVertex = function(vertex) {
+Graph.prototype.removeVertex = function (vertex) {
     for (let i = vertex.edges.length - 1; i >= 0; i--) {
         this.removeEdge(vertex, vertex.edges[i].endVertex);
     }
@@ -134,15 +134,15 @@ function ForceDirectedVertexLayout(width, height, iterations) {
     this.iterations = iterations;
 }
 
-ForceDirectedVertexLayout.prototype.identifyComponents = function(graph) {
-    var componentCenters = [];
-    var components = [];
+ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
+    let componentCenters = [];
+    let components = [];
 
     // Depth first search
     function dfs(vertex) {
-        var stack = [];
-        var component = [];
-        var centerVertex = new Vertex("component_center", -1, -1);
+        let stack = [];
+        let component = [];
+        let centerVertex = new Vertex("component_center", -1, -1);
         centerVertex.hidden = true;
         componentCenters.push(centerVertex);
         components.push(component);
@@ -151,15 +151,14 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function(graph) {
             component.push(v);
             v.__dfsVisited = true;
 
-            for (let i in v.edges) {
-                let e = v.edges[i];
+            for (let e of v.edges) {
                 if (!e.hidden)
                     stack.push(e.endVertex);
             }
 
-            for (let i in v.reverseEdges) {
-                if (!v.reverseEdges[i].hidden)
-                    stack.push(v.reverseEdges[i].endVertex);
+            for (let e of v.reverseEdges) {
+                if (!e.hidden)
+                    stack.push(e.endVertex);
             }
         }
 
@@ -174,15 +173,13 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function(graph) {
     }
 
     // Clear DFS visited flag
-    for (let i in graph.vertices) {
-        let v = graph.vertices[i];
+    for (let v of graph.vertices) {
         v.__dfsVisited = false;
     }
 
     // Iterate through all vertices starting DFS from each vertex
     // that hasn't been visited yet.
-    for (var k in graph.vertices) {
-        let v = graph.vertices[k];
+    for (let v of graph.vertices) {
         if (!v.__dfsVisited && !v.hidden)
             dfs(v);
     }
@@ -215,43 +212,31 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function(graph) {
     return null;
 };
 
-ForceDirectedVertexLayout.prototype.layout = function(graph) {
-    var area = this.width * this.height;
-    var k = Math.sqrt(area / graph.vertexCount);
+ForceDirectedVertexLayout.prototype.layout = function (graph) {
+    let area = this.width * this.height;
+    let k = Math.sqrt(area / graph.vertexCount);
 
-    var t = this.width / 10; // Temperature.
-    var dt = t / (this.iterations + 1);
+    let t = this.width / 10; // Temperature.
+    let dt = t / (this.iterations + 1);
 
-    var eps = 20; // Minimum vertex distance.
-    var A = 1.5; // Fine tune attraction.
-    var R = 0.5; // Fine tune repulsion.
-
-    // Attractive and repulsive forces
-    function Fa(z) {
-        return A * z * z / k;
-    }
-
-    function Fr(z) {
-        return R * k * k / z;
-    }
+    let eps = 20; // Minimum vertex distance.
+    let A = 1.5; // Fine tune attraction.
+    let R = 0.5; // Fine tune repulsion.
 
     // Initiate component identification and virtual vertex creation
     // to prevent disconnected graph components from drifting too far apart
-    var centers = this.identifyComponents(graph);
+    let centers = this.identifyComponents(graph);
 
     // Run through some iterations
-    for (var q = 0; q < this.iterations; q++) {
+    for (let q = 0; q < this.iterations; q++) {
 
         /* Calculate repulsive forces. */
-        for (var i1 in graph.vertices) {
-            let v = graph.vertices[i1];
-
+        for (let v of graph.vertices) {
             v.dx = 0;
             v.dy = 0;
             // Do not move fixed vertices
             if (!v.fixed) {
-                for (var i2 in graph.vertices) {
-                    let u = graph.vertices[i2];
+                for (let u of graph.vertices) {
                     if (v != u && !u.fixed) {
                         /* Difference vector between the two vertices. */
                         let difx = v.x - u.x;
@@ -259,7 +244,7 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
 
                         /* Length of the dif vector. */
                         let d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
-                        let force = Fr(d);
+                        let force = R * k * k / d;
                         v.dx = v.dx + (difx / d) * force;
                         v.dy = v.dy + (dify / d) * force;
                     }
@@ -268,18 +253,15 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
         }
 
         /* Calculate attractive forces. */
-        for (var i3 in graph.vertices) {
-            let v = graph.vertices[i3];
-
+        for (let v of graph.vertices) {
             // Do not move fixed vertices
             if (!v.fixed) {
-                for (var i4 in v.edges) {
-                    let e = v.edges[i4];
+                for (let e of v.edges) {
                     let u = e.endVertex;
                     let difx = v.x - u.x;
                     let dify = v.y - u.y;
                     let d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
-                    let force = Fa(d);
+                    let force = A * d * d / k;
 
                     v.dx = v.dx - (difx / d) * force;
                     v.dy = v.dy - (dify / d) * force;
@@ -291,12 +273,11 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
         }
 
         /* Limit the maximum displacement to the temperature t
-            and prevent from being displaced outside frame.     */
-        for (var i5 in graph.vertices) {
-            var v = graph.vertices[i5];
+         and prevent from being displaced outside frame.     */
+        for (let v of graph.vertices) {
             if (!v.fixed) {
                 /* Length of the displacement vector. */
-                var d = Math.max(eps, Math.sqrt(v.dx * v.dx + v.dy * v.dy));
+                let d = Math.max(eps, Math.sqrt(v.dx * v.dx + v.dy * v.dy));
 
                 /* Limit to the temperature t. */
                 v.x = v.x + (v.dx / d) * Math.min(d, t);
@@ -313,8 +294,8 @@ ForceDirectedVertexLayout.prototype.layout = function(graph) {
 
     // Remove virtual center vertices
     if (centers) {
-        for (var i in centers) {
-            graph.removeVertex(centers[i]);
+        for (let c of centers) {
+            graph.removeVertex(c);
         }
     }
 };
