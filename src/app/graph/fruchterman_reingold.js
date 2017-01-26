@@ -59,8 +59,11 @@ FruchtermanLayout.prototype.run = function () {
 
 function Graph() {
     this.vertices = [];
-    this.vertexCount = 0;
 }
+
+Graph.prototype.insertVertex = function (vertex) {
+    this.vertices.push(vertex);
+};
 
 Graph.prototype.insertEdge = function (vertex1, vertex2) {
     let e1 = new Edge(vertex2);
@@ -70,46 +73,6 @@ Graph.prototype.insertEdge = function (vertex1, vertex2) {
     vertex2.reverseEdges.push(e2);
 
     return e1;
-};
-
-Graph.prototype.removeEdge = function (vertex1, vertex2) {
-    for (let i = vertex1.edges.length - 1; i >= 0; i--) {
-        if (vertex1.edges[i].endVertex == vertex2) {
-            vertex1.edges.splice(i, 1);
-            break;
-        }
-    }
-
-    for (let i = vertex2.reverseEdges.length - 1; i >= 0; i--) {
-        if (vertex2.reverseEdges[i].endVertex == vertex1) {
-            vertex2.reverseEdges.splice(i, 1);
-            break;
-        }
-    }
-};
-
-Graph.prototype.insertVertex = function (vertex) {
-    this.vertices.push(vertex);
-    this.vertexCount++;
-};
-
-Graph.prototype.removeVertex = function (vertex) {
-    for (let i = vertex.edges.length - 1; i >= 0; i--) {
-        this.removeEdge(vertex, vertex.edges[i].endVertex);
-    }
-
-    for (let i = vertex.reverseEdges.length - 1; i >= 0; i--) {
-        this.removeEdge(vertex.reverseEdges[i].endVertex, vertex);
-    }
-
-    for (let i = this.vertices.length - 1; i >= 0; i--) {
-        if (this.vertices[i] == vertex) {
-            this.vertices.splice(i, 1);
-            break;
-        }
-    }
-
-    this.vertexCount--;
 };
 
 function Vertex(x, y) {
@@ -133,7 +96,6 @@ function ForceDirectedVertexLayout(width, height, iterations) {
 }
 
 ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
-    let componentCenters = [];
     let components = [];
 
     // Depth first search
@@ -141,7 +103,6 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
         let stack = [];
         let component = [];
 
-        componentCenters.push(new Vertex(-1, -1));
         components.push(component);
 
         function visitVertex(v) {
@@ -180,22 +141,22 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
     }
 
     // Interconnect all center vertices
-    if (componentCenters.length > 1) {
-        for (let c of componentCenters) {
-            graph.insertVertex(c);
-        }
-        for (let i in components) {
-            for (let v of components[i]) {
-                // Connect visited vertex to "central" component vertex
-                graph.insertEdge(v, componentCenters[i]);
-            }
-        }
+    if (components.length > 1) {
+        let componentCenters = [];
 
-        for (let c1 of componentCenters) {
-            for (let c2 of componentCenters) {
-                if (c1 !== c2) {
-                    graph.insertEdge(c1, c2);
-                }
+        for (let component of components) {
+            let center = new Vertex(-1, -1);
+
+            graph.insertVertex(center);
+
+            for (let otherCenter of componentCenters) {
+                graph.insertEdge(center, otherCenter);
+            }
+
+            componentCenters.push(center);
+
+            for (let v of component) {
+                graph.insertEdge(v, center);
             }
         }
     }
@@ -203,7 +164,7 @@ ForceDirectedVertexLayout.prototype.identifyComponents = function (graph) {
 
 ForceDirectedVertexLayout.prototype.layout = function (graph) {
     let area = this.width * this.height;
-    let k = Math.sqrt(area / graph.vertexCount);
+    let k = Math.sqrt(area / graph.vertices.length);
 
     let t = this.width / 10; // Temperature.
     let dt = t / (this.iterations + 1);
