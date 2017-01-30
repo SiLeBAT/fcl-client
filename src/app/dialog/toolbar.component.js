@@ -7,10 +7,10 @@ angular.module('app').component('dialogToolbar', {
         title: '@',
         closable: '<'
     },
-    controller: function($mdDialog) {
-        var _this = this;
+    controller: function ($mdDialog) {
+        let _this = this;
 
-        _this.closeDialog = function() {
+        _this.closeDialog = function () {
             $mdDialog.cancel();
         };
     },

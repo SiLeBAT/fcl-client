@@ -3,7 +3,7 @@
 /*global angular,$*/
 
 angular.module('app').component('mainView', {
-    controller: function($scope, graphService, dataService) {
+    controller: function ($scope, graphService, dataService) {
         let _this = this;
 
         function updateTable() {
@@ -17,7 +17,7 @@ angular.module('app').component('mainView', {
         _this.tableSettings = dataService.getTableSettings();
         _this.updateTable = 0;
 
-        _this.onChange = function(property, value) {
+        _this.onChange = function (property, value) {
             switch (property) {
                 case 'leftSidenavOpen':
                     _this.settings.leftSidenavOpen = value;
@@ -64,15 +64,15 @@ angular.module('app').component('mainView', {
             }
         };
 
-        dataService.getData().then(function(data) {
+        dataService.getData().then(function (data) {
             graphService.init('#graph', data);
             graphService.setNodeSize(_this.graphSettings.nodeSize);
             graphService.setFontSize(_this.graphSettings.fontSize);
             graphService.setMergeDeliveries(_this.graphSettings.mergeDeliveries);
-            graphService.onSelectionChange(function() {
+            graphService.onSelectionChange(function () {
                 updateTable();
             });
-            graphService.onUpdate(function() {
+            graphService.onUpdate(function () {
                 updateTable();
             });
             _this.stations = data.stations;

@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').service('utilService', function ($resource) {
+angular.module('app').service('utilService', function () {
 
     let _this = this;
 

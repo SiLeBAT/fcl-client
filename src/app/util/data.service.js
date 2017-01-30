@@ -2,7 +2,7 @@
 
 /*global angular*/
 
-angular.module('app').service('dataService', function($q, $resource) {
+angular.module('app').service('dataService', function ($q, $resource) {
 
     let _this = this;
 
@@ -49,13 +49,13 @@ angular.module('app').service('dataService', function($q, $resource) {
         showOutbreak: false
     };
 
-    _this.getData = function() {
-        return $q(function(resolve, reject) {
+    _this.getData = function () {
+        return $q(function (resolve, reject) {
             if (typeof _data === 'undefined') {
-                $resource('data/large_network.json').get(function(data) {
+                $resource('data/large_network.json').get(function (data) {
                     _data = preprocessData(data);
                     resolve(_data);
-                }, function(error) {
+                }, function (error) {
                     reject(error);
                 });
             }
@@ -65,15 +65,15 @@ angular.module('app').service('dataService', function($q, $resource) {
         });
     };
 
-    _this.getSettings = function() {
+    _this.getSettings = function () {
         return _settings;
     };
 
-    _this.getGraphSettings = function() {
+    _this.getGraphSettings = function () {
         return _graphSettings;
     };
 
-    _this.getTableSettings = function() {
+    _this.getTableSettings = function () {
         return _tableSettings;
     };
 

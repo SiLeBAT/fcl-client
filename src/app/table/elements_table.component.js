@@ -9,13 +9,13 @@ angular.module('app').component('elementsTable', {
         settings: '<',
         update: '<'
     },
-    controller: function($scope, dataService, utilService) {
+    controller: function ($scope, dataService, utilService) {
         let _this = this;
 
         _this.columns = [];
         _this.elements = [];
 
-        $scope.$watch('$ctrl.update', function() {
+        $scope.$watch('$ctrl.update', function () {
             let elements;
 
             switch (_this.settings.mode) {
@@ -31,7 +31,7 @@ angular.module('app').component('elementsTable', {
             }
 
             _this.columns = dataService.TABLE_COLUMNS[_this.settings.mode];
-            _this.elements = elements.filter(function(e) {
+            _this.elements = elements.filter(function (e) {
                 if (e.data.contained) {
                     return false;
                 }
@@ -44,7 +44,7 @@ angular.module('app').component('elementsTable', {
             });
         });
 
-        _this.getCellStyle = function(element, column) {
+        _this.getCellStyle = function (element, column) {
             if (typeof element !== 'undefined' && element.data.selected) {
                 let css = {
                     'border-top': '2px #00f solid',
@@ -70,7 +70,7 @@ angular.module('app').component('elementsTable', {
             }
         };
 
-        _this.getRowStyle = function(element) {
+        _this.getRowStyle = function (element) {
             let colors = [];
 
             if (element.data.forward) {

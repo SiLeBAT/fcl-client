@@ -1,12 +1,18 @@
 <div style="width: 100%; height: 100%; padding: 4px;">
     <md-input-container class="md-block">
-        <md-radio-group layout="row" ng-model="$ctrl.settings.mode" ng-change="$ctrl.onChange({property: 'mode', value: $ctrl.settings.mode})">
+        <md-radio-group layout="row" ng-model="$ctrl.settings.mode"
+                        ng-change="$ctrl.onChange({property: 'mode', value: $ctrl.settings.mode})">
             <md-radio-button ng-repeat="mode in $ctrl.modes" value="{{mode}}">{{mode}}</md-radio-button>
         </md-radio-group>
     </md-input-container>
-    <checkbox label="Show All" selected="$ctrl.settings.showAll" on-change="$ctrl.onChange({property: 'showAll', value: selected})"></checkbox>
-    <checkbox label="Show Selected" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showSelected" on-change="$ctrl.onChange({property: 'showSelected', value: selected})"></checkbox>
-    <checkbox label="Show Observed" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showObserved" on-change="$ctrl.onChange({property: 'showObserved', value: selected})"></checkbox>
-    <checkbox label="Show Trace" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showTrace" on-change="$ctrl.onChange({property: 'showTrace', value: selected})"></checkbox>
-    <checkbox label="Show Outbreak" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showOutbreak" on-change="$ctrl.onChange({property: 'showOutbreak', value: selected})"></checkbox>
+    <checkbox label="Show All" selected="$ctrl.settings.showAll"
+              on-change="$ctrl.onChange({property: 'showAll', value: selected})"></checkbox>
+    <checkbox label="Show Selected" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showSelected"
+              on-change="$ctrl.onChange({property: 'showSelected', value: selected})"></checkbox>
+    <checkbox label="Show Observed" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showObserved"
+              on-change="$ctrl.onChange({property: 'showObserved', value: selected})"></checkbox>
+    <checkbox label="Show Trace" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showTrace"
+              on-change="$ctrl.onChange({property: 'showTrace', value: selected})"></checkbox>
+    <checkbox label="Show Outbreak" disabled="$ctrl.settings.showAll" selected="$ctrl.settings.showOutbreak"
+              on-change="$ctrl.onChange({property: 'showOutbreak', value: selected})"></checkbox>
 </div>

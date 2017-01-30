@@ -1,6 +1,6 @@
 'use strict';
 
-/*global angular*/
+/*global angular, document*/
 
 angular.module('app').service('dialogService', function ($mdDialog, $mdPanel) {
 

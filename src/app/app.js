@@ -3,11 +3,11 @@
 /*global angular*/
 
 angular.module('app', ['ngMaterial', 'ngResource', 'md.data.table'])
-    .config(function($mdIconProvider, $mdThemingProvider) {
-        var primary = 'indigo';
-        var accent = 'pink';
-        var warn = 'red';
-        var background = 'grey';
+    .config(function ($mdIconProvider, $mdThemingProvider) {
+        let primary = 'indigo';
+        let accent = 'pink';
+        let warn = 'red';
+        let background = 'grey';
 
         $mdThemingProvider.theme('default').primaryPalette(primary).accentPalette(accent).warnPalette(warn).backgroundPalette(background);
         $mdThemingProvider.theme('dark').primaryPalette(primary).accentPalette(accent).warnPalette(warn).backgroundPalette(background).dark();
