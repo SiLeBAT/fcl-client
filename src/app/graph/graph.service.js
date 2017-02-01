@@ -107,21 +107,29 @@ angular.module('app').service('graphService', function ($timeout, tracingService
 
     _this.setMergeDeliveries = function (mergeDeliveries) {
         _mergeDeliveries = mergeDeliveries;
-        updateEdges();
+
+        if (typeof _cy !== 'undefined') {
+            updateEdges();
+        }
     };
 
     _this.setNodeSize = function (nodeSize) {
         _nodeSize = nodeSize;
-        recalculateNodeSizes();
-        updateProperties();
+
+        if (typeof _cy !== 'undefined') {
+            recalculateNodeSizes();
+            updateProperties();
+        }
     };
 
     _this.setFontSize = function (fontSize) {
         _fontSize = fontSize;
 
-        _cy.nodes().style({
-            'font-size': Math.max(fontSize / _cy.zoom(), fontSize)
-        });
+        if (typeof _cy !== 'undefined') {
+            _cy.nodes().style({
+                'font-size': Math.max(fontSize / _cy.zoom(), fontSize)
+            });
+        }
     };
 
     _this.onSelectionChange = function (f) {
