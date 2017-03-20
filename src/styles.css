@@ -12,35 +12,3 @@ body {
 datatable-scroller {
   width: 100% !important;
 }
-
-datatable-header > div > div > datatable-header-cell:first-child {
-  padding: 0px !important;
-}
-
-datatable-body-row > div > datatable-body-cell:first-child {
-  padding: 0px !important;
-}
-
-datatable-body-row.selected > div > datatable-body-cell:first-child {
-  background-color: rgb(0, 0, 255);
-}
-
-datatable-body-row.green {
-  background-color: rgb(150, 255, 75);
-}
-
-datatable-body-row.orange {
-  background-color: rgb(255, 150, 75);
-}
-
-datatable-body-row.blue {
-  background-color: rgb(75, 150, 255);
-}
-
-datatable-body-row.yellow {
-  background-color: rgb(255, 255, 75);
-}
-
-datatable-body-row.red {
-  background-color: rgb(255, 50, 50);
-}

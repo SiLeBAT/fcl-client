@@ -4,6 +4,7 @@ import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {scrollbarWidth} from '@swimlane/ngx-datatable/release/utils/scrollbar-width';
 
 import {DataService} from '../util/data.service';
+import {UtilService} from '../util/util.service';
 
 declare const ResizeSensor: any;
 
@@ -51,6 +52,39 @@ export class TableComponent implements OnInit {
   }
 
   constructor() {
+    const style = document.createElement('style');
+
+    style.type = 'text/css';
+    style.innerHTML = '';
+    style.innerHTML += 'datatable-header > div > div > datatable-header-cell:first-child { padding: 0px !important; }';
+    style.innerHTML += 'datatable-body-row > div > datatable-body-cell:first-child { padding: 0px !important; }';
+    style.innerHTML += 'datatable-body-row.selected > div > datatable-body-cell:first-child { background-color: rgb(0, 0, 255); }';
+
+    for (const props of UtilService.getAllCombinations(Object.keys(DataService.COLORS))) {
+      style.innerHTML += 'datatable-body-row';
+
+      if (props.length === 1) {
+        style.innerHTML += '.' + props[0] + ' { background-color: rgb(' + DataService.COLORS[props[0]].join(', ') + '); }';
+      } else {
+        for (const prop of props) {
+          style.innerHTML += '.' + prop;
+        }
+
+        style.innerHTML += ' { background: repeating-linear-gradient(90deg';
+
+        for (let i = 0; i < props.length; i++) {
+          const color = 'rgb(' + DataService.COLORS[props[i]].join(', ') + ')';
+          const from = i / props.length * 100 + '%';
+          const to = (i + 1) / props.length * 100 + '%';
+
+          style.innerHTML += ', ' + color + ' ' + from + ', ' + color + ' ' + to;
+        }
+
+        style.innerHTML += '); }';
+      }
+    }
+
+    document.head.appendChild(style);
   }
 
   ngOnInit() {
@@ -141,12 +175,12 @@ export class TableComponent implements OnInit {
   //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
   private getRowClass(row) {
     return {
-      'selected': row.selected,
-      'green': row.forward,
-      'orange': row.backward,
-      'blue': row.observed === 'full' || row.observed === 'forward' || row.observed === 'backward',
-      'yellow': row.commonLink,
-      'red': row.outbreak
+      'selected': row.selected === true,
+      'forward': row.forward === true,
+      'backward': row.backward === true,
+      'observed': row.observed === 'full' || row.observed === 'forward' || row.observed === 'backward',
+      'outbreak': row.outbreak === true,
+      'commonLink': row.commonLink === true
     };
   }
 
