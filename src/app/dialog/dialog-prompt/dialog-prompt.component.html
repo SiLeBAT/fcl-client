@@ -1,0 +1,11 @@
+<h1 md-dialog-title>{{data.title}}</h1>
+<div md-dialog-content>
+  <span>{{data.message}}</span>
+  <md-input-container>
+    <input mdInput placeholder="{{data.placeholder}}" [(ngModel)]="value">
+  </md-input-container>
+</div>
+<div md-dialog-actions>
+  <button md-button (click)="dialogRef.close(value)">OK</button>
+  <button md-button md-dialog-close>Cancel</button>
+</div>

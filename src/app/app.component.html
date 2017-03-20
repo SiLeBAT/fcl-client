@@ -1,0 +1,82 @@
+<md-toolbar id="mainToolbar" class="mat-elevation-z5" color="primary">
+  <button md-icon-button (click)="leftSidenav.toggle()">
+    <md-icon>menu</md-icon>
+  </button>
+  <button md-button style="font-size: 20px">FoodChain-Lab</button>
+  <span style="flex: 1 1 auto"></span>
+  <input id="fileInput" type="file" style="display:none;" (change)="onLoad($event)"/>
+  <button md-icon-button onclick="$('#fileInput').click()">
+    <md-icon>file_upload</md-icon>
+  </button>
+  <button md-icon-button (click)="onSave()">
+    <md-icon>file_download</md-icon>
+  </button>
+  <button *ngIf="!rightSidenav.opened" md-icon-button (click)="rightSidenav.toggle()">
+    <md-icon>info</md-icon>
+  </button>
+  <button *ngIf="rightSidenav.opened" md-mini-fab (click)="rightSidenav.toggle()">
+    <md-icon>info</md-icon>
+  </button>
+</md-toolbar>
+
+<md-sidenav-container id="mainContent">
+  <md-sidenav id="leftSidenav" #leftSidenav align="start" mode="side">
+    <md-toolbar>
+      <span>Graph Settings</span>
+    </md-toolbar>
+    <md-list>
+      <md-list-item>
+        <md-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize"
+                   (ngModelChange)="onGraphChange('nodeSize')">
+          <md-option *ngFor="let nodeSize of nodeSizes" [value]="nodeSize.value">
+            {{nodeSize.viewValue}}
+          </md-option>
+        </md-select>
+      </md-list-item>
+      <md-list-item>
+        <md-select placeholder="Font Size" [(ngModel)]="graphSettings.fontSize"
+                   (ngModelChange)="onGraphChange('fontSize')">
+          <md-option *ngFor="let fontSize of fontSizes" [value]="fontSize.value">
+            {{fontSize.viewValue}}
+          </md-option>
+        </md-select>
+      </md-list-item>
+      <md-list-item>
+        <md-checkbox [(ngModel)]="graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
+          Merge Deliveries
+        </md-checkbox>
+      </md-list-item>
+    </md-list>
+    <md-toolbar>
+      <span>Table Settings</span>
+    </md-toolbar>
+    <md-list>
+      <md-list-item>
+        <md-radio-group [(ngModel)]="tableSettings.mode" (ngModelChange)="onTableChange('mode')">
+          <md-radio-button *ngFor="let mode of tableModes" [value]="mode">
+            {{mode}}
+          </md-radio-button>
+        </md-radio-group>
+      </md-list-item>
+      <md-list-item>
+        <button md-raised-button (click)="changeColumns()">Change Columns</button>
+      </md-list-item>
+      <md-list-item>
+        <md-checkbox [(ngModel)]="tableSettings.showSelectedOnly" (ngModelChange)="onTableChange('showSelectedOnly')">
+          Show Selected Only
+        </md-checkbox>
+      </md-list-item>
+    </md-list>
+  </md-sidenav>
+
+  <app-graph #graph></app-graph>
+
+  <md-sidenav id="rightSidenav" #rightSidenav align="end" mode="side">
+    <div id="rightSidenavContent">
+      <div id="sidenavSlider">
+        <div id="sidenavSliderCenter"></div>
+      </div>
+      <app-table id="table" #table></app-table>
+    </div>
+  </md-sidenav>
+</md-sidenav-container>

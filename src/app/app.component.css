@@ -1,0 +1,78 @@
+:host {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+md-sidenav {
+  box-shadow: none !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.2) !important;
+}
+
+md-radio-button {
+  padding-right: 10px;
+}
+
+md-radio-button:last-child {
+  padding-right: 0;
+}
+
+md-list-item md-select {
+  width: 100%;
+  padding-top: 10px;
+}
+
+md-list-item button {
+  width: 100%;
+}
+
+#mainToolbar {
+  z-index: 3;
+}
+
+#mainContent {
+  width: 100%;
+  height: 100%;
+}
+
+#leftSidenav {
+  z-index: 2;
+}
+
+#rightSidenav {
+  min-width: 200px;
+  z-index: 1;
+}
+
+#rightSidenavContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+#sidenavSlider {
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  background-color: rgb(240, 240, 240);
+}
+
+#sidenavSliderCenter {
+  width: 10px;
+  height: 50px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgb(180, 180, 180);
+}
+
+#table {
+  width: calc(100% - 10px);
+  height: 100%;
+}

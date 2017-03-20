@@ -1,8 +1,0 @@
-<md-input-container class="md-block">
-    <label>{{$ctrl.label}}</label>
-    <md-select ng-model="$ctrl.selectedValue" ng-change="$ctrl.onChange({selectedValue: $ctrl.selectedValue})">
-        <md-option ng-repeat="(label, value) in $ctrl.values" value="{{value}}">
-            {{label}}
-        </md-option>
-    </md-select>
-</md-input-container>

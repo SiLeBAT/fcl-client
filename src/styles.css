@@ -1,0 +1,46 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+
+body {
+  margin: 0;
+}
+
+datatable-scroller {
+  width: 100% !important;
+}
+
+datatable-header > div > div > datatable-header-cell:first-child {
+  padding: 0px !important;
+}
+
+datatable-body-row > div > datatable-body-cell:first-child {
+  padding: 0px !important;
+}
+
+datatable-body-row.selected > div > datatable-body-cell:first-child {
+  background-color: rgb(0, 0, 255);
+}
+
+datatable-body-row.green {
+  background-color: rgb(150, 255, 75);
+}
+
+datatable-body-row.orange {
+  background-color: rgb(255, 150, 75);
+}
+
+datatable-body-row.blue {
+  background-color: rgb(75, 150, 255);
+}
+
+datatable-body-row.yellow {
+  background-color: rgb(255, 255, 75);
+}
+
+datatable-body-row.red {
+  background-color: rgb(255, 50, 50);
+}

@@ -1,0 +1,2 @@
+<h1 md-dialog-title>{{data.title}}</h1>
+<button md-button md-dialog-close *ngFor="let action of data.actions" (click)="action[1]()">{{action[0]}}</button>

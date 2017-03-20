@@ -1,0 +1,69 @@
+import {Injectable} from '@angular/core';
+
+@Injectable()
+export class UtilService {
+
+  static colorToCss(color: number[]): string {
+    return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
+  };
+
+  static mixColors(color1: number[], color2: number[]): number[] {
+    const r = Math.round((color1[0] + color2[0]) / 2);
+    const g = Math.round((color1[1] + color2[1]) / 2);
+    const b = Math.round((color1[2] + color2[2]) / 2);
+
+    return [r, g, b];
+  };
+
+  static getAllCombinations(values: any[]): any[][] {
+    const n = Math.pow(2, values.length);
+    const combinations = [];
+
+    for (let i = 1; i < n; i++) {
+      const bits = i.toString(2).split('').reverse().join('');
+      const combination = [];
+
+      for (let j = 0; j < values.length; j++) {
+        if (bits[j] === '1') {
+          combination.push(values[j]);
+        }
+      }
+
+      combinations.push(combination);
+    }
+
+    combinations.sort((c1, c2) => c1.length - c2.length);
+
+    return combinations;
+  };
+
+  static getCenter(positions: any[]): any {
+    let xSum = 0;
+    let ySum = 0;
+
+    for (const pos of positions) {
+      xSum += pos.x;
+      ySum += pos.y;
+    }
+
+    return {
+      x: xSum / positions.length,
+      y: ySum / positions.length
+    };
+  };
+
+  static sum(position1: any, position2: any): any {
+    return {
+      x: position1.x + position2.x,
+      y: position1.y + position2.y
+    };
+  };
+
+  static difference(position1: any, position2: any): any {
+    return {
+      x: position1.x - position2.x,
+      y: position1.y - position2.y
+    };
+  };
+
+}

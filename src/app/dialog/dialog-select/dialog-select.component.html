@@ -1,0 +1,8 @@
+<h1 md-dialog-title>{{data.title}}</h1>
+<div>
+  <md-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.name}}</md-checkbox>
+</div>
+<div md-dialog-actions>
+  <button md-button (click)="close()">OK</button>
+  <button md-button md-dialog-close>Cancel</button>
+</div>

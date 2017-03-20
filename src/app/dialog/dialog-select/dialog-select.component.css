@@ -1,0 +1,7 @@
+md-checkbox {
+  padding-right: 10px;
+}
+
+md-checkbox:last-child {
+  padding-right: 0;
+}
