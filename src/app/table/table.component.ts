@@ -74,8 +74,8 @@ export class TableComponent implements OnInit {
 
         for (let i = 0; i < props.length; i++) {
           const color = 'rgb(' + DataService.COLORS[props[i]].join(', ') + ')';
-          const from = i / props.length * 100 + '%';
-          const to = (i + 1) / props.length * 100 + '%';
+          const from = i === 0 ? i / props.length * 100 + '%' : (i + 0.2) / props.length * 100 + '%';
+          const to = i === props.length - 1 ? (i + 1) / props.length * 100 + '%' : (i + 0.8) / props.length * 100 + '%';
 
           style.innerHTML += ', ' + color + ' ' + from + ', ' + color + ' ' + to;
         }
