@@ -9,6 +9,10 @@ body {
   margin: 0;
 }
 
+.mat-sidenav-content {
+  overflow: hidden !important;
+}
+
 datatable-scroller {
   width: 100% !important;
 }
