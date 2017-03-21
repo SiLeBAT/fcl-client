@@ -65,7 +65,7 @@ export class TableComponent implements OnInit {
       style.innerHTML += 'datatable-body-row';
 
       if (props.length === 1) {
-        style.innerHTML += '.' + props[0] + ' { background-color: rgb(' + DataService.COLORS[props[0]].join(', ') + '); }';
+        style.innerHTML += '.' + props[0] + ' { background-color: rgb(' + DataService.COLORS[props[0]].join(', ') + ') !important; }';
       } else {
         for (const prop of props) {
           style.innerHTML += '.' + prop;
