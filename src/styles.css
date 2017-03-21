@@ -16,3 +16,7 @@ body {
 datatable-scroller {
   width: 100% !important;
 }
+
+datatable-body-row > .datatable-row-group {
+  background: none !important;
+}

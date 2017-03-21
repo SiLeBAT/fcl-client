@@ -59,6 +59,7 @@ export class TableComponent implements OnInit {
     style.innerHTML += 'datatable-header > div > div > datatable-header-cell:first-child { padding: 0px !important; }';
     style.innerHTML += 'datatable-body-row > div > datatable-body-cell:first-child { padding: 0px !important; }';
     style.innerHTML += 'datatable-body-row.selected > div > datatable-body-cell:first-child { background-color: rgb(0, 0, 255); }';
+    style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
     for (const props of UtilService.getAllCombinations(Object.keys(DataService.COLORS))) {
       style.innerHTML += 'datatable-body-row';
@@ -80,7 +81,7 @@ export class TableComponent implements OnInit {
           style.innerHTML += ', ' + color + ' ' + from + ', ' + color + ' ' + to;
         }
 
-        style.innerHTML += '); }';
+        style.innerHTML += ') !important; }';
       }
     }
 
