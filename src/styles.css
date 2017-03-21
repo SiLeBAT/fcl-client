@@ -17,6 +17,10 @@ datatable-scroller {
   width: 100% !important;
 }
 
-datatable-body-row > .datatable-row-group {
+.datatable-row-group {
   background: none !important;
+}
+
+.datatable-checkbox {
+  padding: 0 0 !important;
 }

@@ -49,7 +49,8 @@ export class AppComponent implements OnInit {
       this.showErrorMessage(error);
     });
 
-    this.graph.onColorChange(() => this.table.update());
+    this.graph.onChange(() => this.table.update());
+    this.table.onSelectionChange(() => this.graph.updateSelection());
     this.rightSidenav.onOpenStart.subscribe(() => this.updateRightSidenav());
     new Hammer(document.getElementById('sidenavSlider')).on('pan', event => {
       const newWidth = 1 - event.center.x / document.getElementById('mainContent').offsetWidth;

@@ -1,5 +1,6 @@
 <div id="tableContainer">
-  <ngx-datatable #table class="material" [rows]="rows" [rowClass]="getRowClass" [columns]="columns" columnMode="force"
-                 scrollbarV="true">
+  <ngx-datatable #table class="material" [rows]="rows" [selected]="selected" [rowClass]="getRowClass"
+                 [columns]="columns" columnMode="force" scrollbarV="true" selectionType="checkbox"
+                 (select)="onSelect()">
   </ngx-datatable>
 </div>

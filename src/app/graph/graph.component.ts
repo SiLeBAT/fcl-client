@@ -130,7 +130,7 @@ export class GraphComponent implements OnInit {
     this.tracingService.init(this.data);
   }
 
-  onColorChange(changeFunction: () => void) {
+  onChange(changeFunction: () => void) {
     this.changeFunction = changeFunction;
   }
 
@@ -178,6 +178,13 @@ export class GraphComponent implements OnInit {
         'font-size': Math.max(fontSize / this.cy.zoom(), fontSize)
       });
     }
+  }
+
+  updateSelection() {
+    this.cy.batch(() => {
+      this.cy.elements(':selected[!selected]').unselect();
+      this.cy.elements(':unselected[?selected]').select();
+    });
   }
 
   private createNodes(): any[] {

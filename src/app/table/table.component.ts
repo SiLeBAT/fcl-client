@@ -18,6 +18,7 @@ export class TableComponent implements OnInit {
   private columns: any[];
   //noinspection JSMismatchedCollectionQueryUpdate
   private rows: any[];
+  private selected: any[];
 
   private data: any;
   private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
@@ -27,18 +28,21 @@ export class TableComponent implements OnInit {
 
   private resizeTimer: any;
 
+  private changeFunction: () => void;
+
   @ViewChild('table') table: DatatableComponent;
 
   private static getUpdatedColumns(columns: any[]): any[] {
+    const selectColumnWidth = 38.375;
     const width = document.getElementById('tableContainer').offsetWidth - scrollbarWidth;
-    const columnWidth = (width - 5) / (columns.length - 1);
+    const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
     let first = true;
 
     for (const column of columns) {
       if (first) {
-        column.width = 5;
-        column.minWidth = 5;
-        column.maxWidth = 5;
+        column.width = selectColumnWidth;
+        column.minWidth = selectColumnWidth;
+        column.maxWidth = selectColumnWidth;
       } else {
         column.width = columnWidth;
         column.minWidth = columnWidth;
@@ -56,9 +60,6 @@ export class TableComponent implements OnInit {
 
     style.type = 'text/css';
     style.innerHTML = '';
-    style.innerHTML += 'datatable-header > div > div > datatable-header-cell:first-child { padding: 0px !important; }';
-    style.innerHTML += 'datatable-body-row > div > datatable-body-cell:first-child { padding: 0px !important; }';
-    style.innerHTML += 'datatable-body-row.selected > div > datatable-body-cell:first-child { background-color: rgb(0, 0, 255); }';
     style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
     for (const props of UtilService.getAllCombinations(Object.keys(DataService.COLORS))) {
@@ -134,9 +135,8 @@ export class TableComponent implements OnInit {
 
   update() {
     const selectColumn = {
-      name: '',
-      prop: '',
-      resizable: false
+      resizable: false,
+      checkboxable: true
     };
     let columns = DataService.TABLE_COLUMNS[this.mode].map(column => {
       return {
@@ -168,9 +168,14 @@ export class TableComponent implements OnInit {
       }
 
       this.rows = elements.map(e => JSON.parse(JSON.stringify(e.data)));
+      this.selected = this.rows.filter(r => r.selected);
     }
 
     this.table.recalculate();
+  }
+
+  onSelectionChange(changeFunction: () => void) {
+    this.changeFunction = changeFunction;
   }
 
   //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
@@ -185,4 +190,29 @@ export class TableComponent implements OnInit {
     };
   }
 
+  //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
+  private onSelect() {
+    let elements = [];
+
+    if (this.mode === 'Stations') {
+      elements = this.data.stations;
+    } else if (this.mode === 'Deliveries') {
+      elements = this.data.deliveries;
+    }
+
+    const selected = new Set(this.selected.map(e => e.id));
+
+    for (const e of elements) {
+      const currentValue = e.data.selected === true;
+      const newValue = selected.has(e.data.id);
+
+      if (currentValue !== newValue) {
+        e.data.selected = newValue;
+      }
+    }
+
+    if (this.changeFunction != null) {
+      this.changeFunction();
+    }
+  }
 }
