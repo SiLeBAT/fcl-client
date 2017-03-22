@@ -160,10 +160,12 @@ export class TableComponent implements OnInit {
       let elements = [];
 
       if (this.mode === 'Stations') {
-        elements = this.data.stations;
+        elements = this.data.stations.filter(e => !e.data.contained);
       } else if (this.mode === 'Deliveries') {
         elements = this.data.deliveries;
       }
+
+      elements = elements.filter(e => !e.data.invisible);
 
       if (this.showSelectedOnly) {
         elements = elements.filter(e => e.data.selected);
@@ -183,12 +185,12 @@ export class TableComponent implements OnInit {
   //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
   private getRowClass(row) {
     return {
-      'selected': row.selected === true,
-      'forward': row.forward === true,
-      'backward': row.backward === true,
+      'selected': row.selected,
+      'forward': row.forward,
+      'backward': row.backward,
       'observed': row.observed === 'full' || row.observed === 'forward' || row.observed === 'backward',
-      'outbreak': row.outbreak === true,
-      'commonLink': row.commonLink === true
+      'outbreak': row.outbreak,
+      'commonLink': row.commonLink
     };
   }
 
@@ -205,12 +207,7 @@ export class TableComponent implements OnInit {
     const selected = new Set(this.selected.map(e => e.id));
 
     for (const e of elements) {
-      const currentValue = e.data.selected === true;
-      const newValue = selected.has(e.data.id);
-
-      if (currentValue !== newValue) {
-        e.data.selected = newValue;
-      }
+      e.data.selected = selected.has(e.data.id);
     }
 
     if (this.changeFunction != null) {

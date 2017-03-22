@@ -53,7 +53,7 @@ export class TracingService {
 
     for (const id of ids) {
       this.elementsById[id].data.contained = true;
-      this.elementsById[id].data.observed = false;
+      delete this.elementsById[id].data.observed;
     }
 
     for (const d of this.deliveries) {
@@ -157,12 +157,12 @@ export class TracingService {
 
   clearTrace() {
     for (const s of this.stations) {
-      s.data.observed = false;
+      delete s.data.observed;
       s.data.forward = false;
       s.data.backward = false;
     }
     for (const d of this.deliveries) {
-      d.data.observed = false;
+      delete d.data.observed;
       d.data.forward = false;
       d.data.backward = false;
     }

@@ -181,10 +181,13 @@ export class GraphComponent implements OnInit {
   }
 
   updateSelection() {
-    this.cy.batch(() => {
-      this.cy.elements(':selected[!selected]').unselect();
-      this.cy.elements(':unselected[?selected]').select();
-    });
+    if (this.cy != null) {
+      this.cy.batch(() => {
+        this.cy.elements(':selected[!selected]').unselect();
+        this.cy.elements(':unselected[?selected]').select();
+      });
+      this.updateEdges();
+    }
   }
 
   private createNodes(): any[] {
@@ -244,7 +247,7 @@ export class GraphComponent implements OnInit {
               merged: value.length > 1,
               contains: value.map(d => d.data.id)
             },
-            selected: value.find(d => d.data.selected === true) != null
+            selected: value.find(d => d.data.selected) != null
           };
         }
 
@@ -517,6 +520,7 @@ export class GraphComponent implements OnInit {
           text: 'Make Invisible',
           action: () => {
             this.tracingService.makeStationsInvisible(selectedStations.map(s => s.id()));
+            this.updateAll();
             this.changeFunction();
           }
         }

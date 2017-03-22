@@ -3,6 +3,7 @@ ngx-datatable {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 }
 
+/*noinspection CssUnusedSymbol*/
 ngx-datatable .empty-row {
   height: 50px;
   text-align: center;
@@ -10,20 +11,24 @@ ngx-datatable .empty-row {
   padding: 10px;
 }
 
-datatable-header {
+ngx-datatable datatable-header {
   border-bottom: 1px solid rgb(150, 150, 150);
 }
 
-datatable-header-cell {
+ngx-datatable datatable-header-cell {
   text-align: left;
   padding: 5px 10px;
   color: rgb(64, 64, 64);
   transition: width 0.3s ease;
 }
 
-datatable-body-cell {
+ngx-datatable datatable-body-cell {
   text-align: left;
   padding: 5px 10px;
   color: rgb(32, 32, 32);
   transition: width 0.3s ease;
+}
+
+ngx-datatable datatable-scroller {
+  width: 100% !important;
 }

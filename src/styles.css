@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+/*noinspection CssUnknownTarget*/
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 @import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
 @import '~@swimlane/ngx-datatable/release/index.css';
@@ -9,10 +10,7 @@ body {
   margin: 0;
 }
 
+/*noinspection CssUnusedSymbol*/
 .mat-sidenav-content {
   overflow: hidden !important;
-}
-
-datatable-scroller {
-  width: 100% !important;
 }
