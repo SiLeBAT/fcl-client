@@ -135,6 +135,8 @@ export class TableComponent implements OnInit {
 
   update() {
     const selectColumn = {
+      name: ' ',
+      prop: ' ',
       resizable: false,
       checkboxable: true
     };

@@ -27,36 +27,3 @@ datatable-body-cell {
   color: rgb(32, 32, 32);
   transition: width 0.3s ease;
 }
-
-.datatable-checkbox input {
-  position: relative;
-  margin: 0 1rem 0 0;
-  cursor: pointer;
-  outline: none;
-}
-
-.datatable-checkbox input:before {
-  content: "";
-  position: absolute;
-  left: 0;
-  z-index: 1;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid rgb(100, 100, 100);
-}
-
-.datatable-checkbox input:checked:before {
-  background-color: rgb(127, 127, 255);
-  border-color: rgb(0, 0, 255);
-}
-
-.datatable-checkbox input:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1rem;
-  height: 1rem;
-  background: #fff;
-  cursor: pointer;
-}
