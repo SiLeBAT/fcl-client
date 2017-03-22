@@ -10,8 +10,8 @@
 
 md-sidenav {
   box-shadow: none !important;
-  border-left: 1px solid rgba(0, 0, 0, 0.2) !important;
-  border-right: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.4) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.4) !important;
 }
 
 md-radio-button {
@@ -60,7 +60,7 @@ md-list-item button {
   width: 10px;
   height: 100%;
   cursor: ew-resize;
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(200, 200, 200);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -69,7 +69,7 @@ md-list-item button {
 #sidenavSliderCenter {
   width: 100%;
   height: 50px;
-  background-color: rgb(180, 180, 180);
+  background-color: rgb(100, 100, 100);
 }
 
 #table {

@@ -33,7 +33,7 @@ export class TableComponent implements OnInit {
   @ViewChild('table') table: DatatableComponent;
 
   private static getUpdatedColumns(columns: any[]): any[] {
-    const selectColumnWidth = 38.375;
+    const selectColumnWidth = 30;
     const width = document.getElementById('tableContainer').offsetWidth - scrollbarWidth;
     const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
     let first = true;
