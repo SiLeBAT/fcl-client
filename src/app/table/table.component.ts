@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, TemplateRef} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {scrollbarWidth} from '@swimlane/ngx-datatable/release/utils/scrollbar-width';
@@ -18,7 +18,6 @@ export class TableComponent implements OnInit {
   private columns: any[];
   //noinspection JSMismatchedCollectionQueryUpdate
   private rows: any[];
-  private selected: any[];
 
   private data: any;
   private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
@@ -31,9 +30,10 @@ export class TableComponent implements OnInit {
   private changeFunction: () => void;
 
   @ViewChild('table') table: DatatableComponent;
+  @ViewChild('selectTmpl') selectTmpl: TemplateRef<any>;
 
   private static getUpdatedColumns(columns: any[]): any[] {
-    const selectColumnWidth = 30;
+    const selectColumnWidth = 40;
     const width = document.getElementById('tableContainer').offsetWidth - scrollbarWidth;
     const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
     let first = true;
@@ -136,9 +136,9 @@ export class TableComponent implements OnInit {
   update() {
     const selectColumn = {
       name: ' ',
-      prop: ' ',
+      prop: 'selected',
       resizable: false,
-      checkboxable: true
+      cellTemplate: this.selectTmpl
     };
     let columns = DataService.TABLE_COLUMNS[this.mode].map(column => {
       return {
@@ -172,7 +172,6 @@ export class TableComponent implements OnInit {
       }
 
       this.rows = elements.map(e => JSON.parse(JSON.stringify(e.data)));
-      this.selected = this.rows.filter(r => r.selected);
     }
 
     this.table.recalculate();
@@ -195,19 +194,15 @@ export class TableComponent implements OnInit {
   }
 
   //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
-  private onSelect() {
-    let elements = [];
-
+  private onSelect(row) {
     if (this.mode === 'Stations') {
-      elements = this.data.stations;
+      this.data.stations.find(s => s.data.id === row.id).data.selected = row.selected;
     } else if (this.mode === 'Deliveries') {
-      elements = this.data.deliveries;
+      this.data.deliveries.find(d => d.data.id === row.id).data.selected = row.selected;
     }
 
-    const selected = new Set(this.selected.map(e => e.id));
-
-    for (const e of elements) {
-      e.data.selected = selected.has(e.data.id);
+    if (this.showSelectedOnly && !row.selected) {
+      this.rows.splice(this.rows.findIndex(r => r.id === row.id), 1);
     }
 
     if (this.changeFunction != null) {

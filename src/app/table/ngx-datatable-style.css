@@ -15,6 +15,10 @@ ngx-datatable datatable-header {
   border-bottom: 1px solid rgb(150, 150, 150);
 }
 
+ngx-datatable datatable-body-row {
+  /*margin-top: 5px !important;*/
+}
+
 ngx-datatable datatable-header-cell {
   text-align: left;
   padding: 5px 10px;
@@ -24,7 +28,7 @@ ngx-datatable datatable-header-cell {
 
 ngx-datatable datatable-body-cell {
   text-align: left;
-  padding: 5px 10px;
+  padding: 0 10px;
   color: rgb(32, 32, 32);
   transition: width 0.3s ease;
 }
@@ -32,3 +36,23 @@ ngx-datatable datatable-body-cell {
 ngx-datatable datatable-scroller {
   width: 100% !important;
 }
+
+/*ngx-datatable md-checkbox {*/
+/*transition: none !important;*/
+/*}*/
+
+/*ngx-datatable .mat-checkbox-background {*/
+/*animation: none !important;*/
+/*}*/
+
+/*ngx-datatable .mat-checkbox-checkmark {*/
+/*animation: none !important;*/
+/*}*/
+
+/*ngx-datatable .mat-checkbox-checkmark-path {*/
+/*animation: none !important;*/
+/*}*/
+
+/*ngx-datatable .mat-checkbox-mixedmark {*/
+/*animation: none !important;*/
+/*}*/

@@ -43,6 +43,7 @@ export class GraphComponent implements OnInit {
   private nodeSize = DataService.DEFAULT_GRAPH_SETTINGS.nodeSize;
   private fontSize = DataService.DEFAULT_GRAPH_SETTINGS.fontSize;
 
+  private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
 
@@ -182,11 +183,13 @@ export class GraphComponent implements OnInit {
 
   updateSelection() {
     if (this.cy != null) {
+      this.selectTimerActivated = false;
       this.cy.batch(() => {
-        this.cy.elements(':selected[!selected]').unselect();
+        this.cy.elements(':selected[!selected][^contains]').unselect();
         this.cy.elements(':unselected[?selected]').select();
       });
       this.updateEdges();
+      this.selectTimerActivated = true;
     }
   }
 
@@ -245,7 +248,7 @@ export class GraphComponent implements OnInit {
               forward: value.find(d => d.data.forward) != null,
               observed: value.find(d => d.data.observed) != null,
               merged: value.length > 1,
-              contains: value.map(d => d.data.id)
+              contains: value.map(d => d.data.id),
             },
             selected: value.find(d => d.data.selected) != null
           };
@@ -449,11 +452,13 @@ export class GraphComponent implements OnInit {
       this.tracingService.setSelected(element.id(), selected);
     }
 
-    if (this.selectTimer != null) {
-      this.selectTimer.unsubscribe();
-    }
+    if (this.selectTimerActivated) {
+      if (this.selectTimer != null) {
+        this.selectTimer.unsubscribe();
+      }
 
-    this.selectTimer = Observable.timer(50).subscribe(() => this.changeFunction());
+      this.selectTimer = Observable.timer(50).subscribe(() => this.callChangeFunction());
+    }
   }
 
   private createGraphActions(): MenuAction[] {
@@ -466,21 +471,21 @@ export class GraphComponent implements OnInit {
         action: () => {
           this.tracingService.clearTrace();
           this.updateProperties();
-          this.changeFunction();
+          this.callChangeFunction();
         }
       }, {
         text: 'Clear Outbreak Stations',
         action: () => {
           this.tracingService.clearOutbreakStations();
           this.setNodeSize(this.nodeSize);
-          this.changeFunction();
+          this.callChangeFunction();
         }
       }, {
         text: 'Clear Invisibility',
         action: () => {
           this.tracingService.clearInvisibility();
           this.updateAll();
-          this.changeFunction();
+          this.callChangeFunction();
         }
       }
     ];
@@ -505,7 +510,7 @@ export class GraphComponent implements OnInit {
               if (name != null) {
                 this.tracingService.mergeStations(selectedStations.map(s => s.id()), name);
                 this.updateAll();
-                this.changeFunction();
+                this.callChangeFunction();
               }
             });
           }
@@ -514,14 +519,14 @@ export class GraphComponent implements OnInit {
           action: () => {
             this.tracingService.markStationsAsOutbreak(selectedStations.map(s => s.id()));
             this.setNodeSize(this.nodeSize);
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }, {
           text: 'Make Invisible',
           action: () => {
             this.tracingService.makeStationsInvisible(selectedStations.map(s => s.id()));
             this.updateAll();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }
       ];
@@ -532,35 +537,35 @@ export class GraphComponent implements OnInit {
           action: () => {
             this.tracingService.showStationForwardTrace(station.id());
             this.updateProperties();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }, {
           text: 'Show Backward Trace',
           action: () => {
             this.tracingService.showStationBackwardTrace(station.id());
             this.updateProperties();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }, {
           text: 'Show Whole Trace',
           action: () => {
             this.tracingService.showStationTrace(station.id());
             this.updateProperties();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }, {
           text: station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak',
           action: () => {
             this.tracingService.toggleOutbreakStation(station.id());
             this.setNodeSize(this.nodeSize);
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }, {
           text: 'Make Invisible',
           action: () => {
             this.tracingService.makeStationsInvisible([station.id()]);
             this.updateAll();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }
       ];
@@ -571,7 +576,7 @@ export class GraphComponent implements OnInit {
           action: () => {
             this.tracingService.expandStation(station.id());
             this.updateAll();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         });
       }
@@ -588,7 +593,7 @@ export class GraphComponent implements OnInit {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryForwardTrace(delivery.id());
             this.updateProperties();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }
       }, {
@@ -597,7 +602,7 @@ export class GraphComponent implements OnInit {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryBackwardTrace(delivery.id());
             this.updateProperties();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }
       }, {
@@ -606,7 +611,7 @@ export class GraphComponent implements OnInit {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryTrace(delivery.id());
             this.updateProperties();
-            this.changeFunction();
+            this.callChangeFunction();
           }
         }
       }
@@ -679,6 +684,12 @@ export class GraphComponent implements OnInit {
       return false;
     } else {
       return true;
+    }
+  }
+
+  private callChangeFunction() {
+    if (this.changeFunction != null) {
+      this.changeFunction();
     }
   }
 
