@@ -4,10 +4,16 @@
 <div id="cy-menu" style="position: fixed;" [mdMenuTriggerFor]="cyMenu"></div>
 <md-menu #cyMenu>
   <ng-container *ngFor="let action of menuActions">
-    <button md-menu-item *ngIf="!action.openLayoutMenu" (click)="action.action()">{{action.text}}</button>
-    <button md-menu-item *ngIf="action.openLayoutMenu" [mdMenuTriggerFor]="layoutMenu">{{action.text}}</button>
+    <button md-menu-item *ngIf="action.type == actionTypes.runAction" (click)="action.action()">
+      {{action.name}}
+    </button>
+    <button md-menu-item *ngIf="action.type == actionTypes.openLayoutMenu" [mdMenuTriggerFor]="layoutMenu">
+      {{action.name}}
+    </button>
   </ng-container>
 </md-menu>
 <md-menu #layoutMenu>
-  <button md-menu-item *ngFor="let action of layoutMenuActions" (click)="action.action()">{{action.text}}</button>
+  <button md-menu-item *ngFor="let action of layoutMenuActions" (click)="action.action()">
+    {{action.name}}
+  </button>
 </md-menu>

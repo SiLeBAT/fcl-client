@@ -12,10 +12,14 @@ import {TracingService} from './tracing.service';
 declare const cytoscape: any;
 declare const ResizeSensor: any;
 
+enum MenuActionType {
+  runAction, openLayoutMenu
+}
+
 interface MenuAction {
-  text: string;
+  name: string;
+  type: MenuActionType;
   action?: () => void;
-  openLayoutMenu?: boolean;
 }
 
 @Component({
@@ -27,6 +31,8 @@ export class GraphComponent implements OnInit {
 
   @ViewChild(MdMenuTrigger) trigger: MdMenuTrigger;
 
+  //noinspection JSUnusedLocalSymbols
+  private actionTypes = MenuActionType;
   //noinspection JSMismatchedCollectionQueryUpdate
   private menuActions: MenuAction[];
   //noinspection JSMismatchedCollectionQueryUpdate
@@ -461,24 +467,27 @@ export class GraphComponent implements OnInit {
   private createGraphActions(): MenuAction[] {
     return [
       {
-        text: 'Apply Layout',
-        openLayoutMenu: true
+        name: 'Apply Layout',
+        type: MenuActionType.openLayoutMenu
       }, {
-        text: 'Clear Trace',
+        name: 'Clear Trace',
+        type: MenuActionType.runAction,
         action: () => {
           this.tracingService.clearTrace();
           this.updateProperties();
           this.callChangeFunction();
         }
       }, {
-        text: 'Clear Outbreak Stations',
+        name: 'Clear Outbreak Stations',
+        type: MenuActionType.runAction,
         action: () => {
           this.tracingService.clearOutbreakStations();
           this.setNodeSize(this.nodeSize);
           this.callChangeFunction();
         }
       }, {
-        text: 'Clear Invisibility',
+        name: 'Clear Invisibility',
+        type: MenuActionType.runAction,
         action: () => {
           this.tracingService.clearInvisibility();
           this.updateAll();
@@ -495,7 +504,8 @@ export class GraphComponent implements OnInit {
     if (station.selected() && selectedStations.size() > 1) {
       actions = [
         {
-          text: 'Merge Stations',
+          name: 'Merge Stations',
+          type: MenuActionType.runAction,
           action: () => {
             const dialogData: DialogPromptData = {
               title: 'Input',
@@ -512,14 +522,16 @@ export class GraphComponent implements OnInit {
             });
           }
         }, {
-          text: 'Mark as Outbreak',
+          name: 'Mark as Outbreak',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.markStationsAsOutbreak(selectedStations.map(s => s.id()));
             this.setNodeSize(this.nodeSize);
             this.callChangeFunction();
           }
         }, {
-          text: 'Make Invisible',
+          name: 'Make Invisible',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.makeStationsInvisible(selectedStations.map(s => s.id()));
             this.updateAll();
@@ -530,35 +542,40 @@ export class GraphComponent implements OnInit {
     } else {
       actions = [
         {
-          text: 'Show Forward Trace',
+          name: 'Show Forward Trace',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.showStationForwardTrace(station.id());
             this.updateProperties();
             this.callChangeFunction();
           }
         }, {
-          text: 'Show Backward Trace',
+          name: 'Show Backward Trace',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.showStationBackwardTrace(station.id());
             this.updateProperties();
             this.callChangeFunction();
           }
         }, {
-          text: 'Show Whole Trace',
+          name: 'Show Whole Trace',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.showStationTrace(station.id());
             this.updateProperties();
             this.callChangeFunction();
           }
         }, {
-          text: station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak',
+          name: station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.toggleOutbreakStation(station.id());
             this.setNodeSize(this.nodeSize);
             this.callChangeFunction();
           }
         }, {
-          text: 'Make Invisible',
+          name: 'Make Invisible',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.makeStationsInvisible([station.id()]);
             this.updateAll();
@@ -569,7 +586,8 @@ export class GraphComponent implements OnInit {
 
       if (station.data('contains')) {
         actions.push({
-          text: 'Expand',
+          name: 'Expand',
+          type: MenuActionType.runAction,
           action: () => {
             this.tracingService.expandStation(station.id());
             this.updateAll();
@@ -585,7 +603,8 @@ export class GraphComponent implements OnInit {
   private createDeliveryActions(delivery): MenuAction[] {
     return [
       {
-        text: 'Show Forward Trace',
+        name: 'Show Forward Trace',
+        type: MenuActionType.runAction,
         action: () => {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryForwardTrace(delivery.id());
@@ -594,7 +613,8 @@ export class GraphComponent implements OnInit {
           }
         }
       }, {
-        text: 'Show Backward Trace',
+        name: 'Show Backward Trace',
+        type: MenuActionType.runAction,
         action: () => {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryBackwardTrace(delivery.id());
@@ -603,7 +623,8 @@ export class GraphComponent implements OnInit {
           }
         }
       }, {
-        text: 'Show Whole Trace',
+        name: 'Show Whole Trace',
+        type: MenuActionType.runAction,
         action: () => {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryTrace(delivery.id());
@@ -618,10 +639,12 @@ export class GraphComponent implements OnInit {
   private createLayoutActions(): MenuAction[] {
     return [
       {
-        text: 'Fruchterman-Reingold',
+        name: 'Fruchterman-Reingold',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'fruchterman'})
       }, {
-        text: 'Constraint-Based',
+        name: 'Constraint-Based',
+        type: MenuActionType.runAction,
         action: () => {
           let layout;
           const layoutDialogData: DialogActionsData = {
@@ -646,25 +669,32 @@ export class GraphComponent implements OnInit {
           layout.run();
         }
       }, {
-        text: 'Random',
+        name: 'Random',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'random'})
       }, {
-        text: 'Grid',
+        name: 'Grid',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'grid'})
       }, {
-        text: 'Circle',
+        name: 'Circle',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'circle'})
       }, {
-        text: 'Concentric',
+        name: 'Concentric',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'concentric'})
       }, {
-        text: 'Breadth-first',
+        name: 'Breadth-first',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'breadthfirst'})
       }, {
-        text: 'Spread',
+        name: 'Spread',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'spread'})
       }, {
-        text: 'Directed acyclic graph',
+        name: 'Directed acyclic graph',
+        type: MenuActionType.runAction,
         action: () => this.cy.layout({name: 'dagre'})
       }
     ];
