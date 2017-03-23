@@ -139,20 +139,17 @@ export class GraphComponent implements OnInit {
   }
 
   getJson(): any {
-    const json = this.cy.json();
     const positions = {};
 
-    for (const n of json.elements.nodes) {
-      positions[n.data.id] = n.position;
-    }
+    this.cy.nodes().forEach(n => positions[n.id()] = n.position());
 
     return {
       elements: this.data,
       layout: {
         name: 'preset',
         positions: positions,
-        zoom: json.zoom,
-        pan: json.pan
+        zoom: this.cy.zoom(),
+        pan: this.cy.pan()
       }
     };
   }
