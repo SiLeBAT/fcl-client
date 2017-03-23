@@ -22,6 +22,40 @@ export class TracingService {
     for (const d of this.deliveries) {
       this.elementsById[d.data.id] = d;
     }
+
+    for (const id of Object.keys(this.elementsById)) {
+      const e = this.elementsById[id];
+
+      if (e.data.score == null) {
+        e.data.score = 0;
+      }
+
+      if (e.data.invisible == null) {
+        e.data.invisible = false;
+      }
+
+      if (e.data.selected == null) {
+        e.data.selected = false;
+      }
+
+      if (e.data.forward == null) {
+        e.data.forward = false;
+      }
+
+      if (e.data.backward == null) {
+        e.data.backward = false;
+      }
+
+      if (!e.data.isEdge) {
+        if (e.data.outbreak == null) {
+          e.data.outbreak = false;
+        }
+
+        if (e.data.commonLink == null) {
+          e.data.commonLink = false;
+        }
+      }
+    }
   }
 
   getElementsById(ids: any[]) {
@@ -46,6 +80,8 @@ export class TracingService {
         type: 'Meta Station',
         contains: ids,
         selected: true,
+        invisible: false,
+        outbreak: false,
         incoming: [],
         outgoing: []
       }

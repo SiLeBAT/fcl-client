@@ -5,7 +5,7 @@
   <button md-button style="font-size: 20px">FoodChain-Lab</button>
   <span style="flex: 1 1 auto"></span>
   <input id="fileInput" type="file" style="display:none;" (change)="onLoad($event)"/>
-  <button md-icon-button onclick="$('#fileInput').click()">
+  <button md-icon-button onclick="document.getElementById('fileInput').click()">
     <md-icon>file_upload</md-icon>
   </button>
   <button md-icon-button (click)="onSave()">
