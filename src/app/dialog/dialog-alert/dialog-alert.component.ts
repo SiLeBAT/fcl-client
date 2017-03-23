@@ -1,7 +1,10 @@
 import {Component, Inject} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
 
-import {DialogAlertData} from './dialog-alert.data';
+export interface DialogAlertData {
+  title: string;
+  message: string;
+}
 
 @Component({
   selector: 'app-dialog-alert',

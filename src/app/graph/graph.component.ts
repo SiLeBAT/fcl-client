@@ -2,12 +2,9 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdMenuTrigger} from '@angular/material';
 import {Observable} from 'rxjs/Rx';
 
-import {DialogActionsComponent} from '../dialog/dialog-actions/dialog-actions.component';
-import {DialogActionsData} from '../dialog/dialog-actions/dialog-actions.data';
-import {DialogAlertComponent} from '../dialog/dialog-alert/dialog-alert.component';
-import {DialogAlertData} from '../dialog/dialog-alert/dialog-alert.data';
-import {DialogPromptComponent} from '../dialog/dialog-prompt/dialog-prompt.component';
-import {DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.data';
+import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
+import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
+import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
@@ -629,7 +626,7 @@ export class GraphComponent implements OnInit {
           let layout;
           const layoutDialogData: DialogActionsData = {
             title: 'Layout running',
-            actions: [['Stop', () => layout.stop()]]
+            actions: [{name: 'Stop', action: () => layout.stop()}]
           };
           const layoutDialog = this.dialogService.open(DialogActionsComponent, {
             disableClose: true,

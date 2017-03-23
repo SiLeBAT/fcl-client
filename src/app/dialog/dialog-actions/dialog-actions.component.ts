@@ -1,7 +1,10 @@
 import {Component, Inject} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
 
-import {DialogActionsData} from './dialog-actions.data';
+export interface DialogActionsData {
+  title: string;
+  actions: { name: string, action: () => void }[];
+}
 
 @Component({
   templateUrl: './dialog-actions.component.html',

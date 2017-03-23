@@ -4,10 +4,8 @@ import {MdSidenav, MdDialog} from '@angular/material';
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
-import {DialogAlertComponent} from './dialog/dialog-alert/dialog-alert.component';
-import {DialogAlertData} from './dialog/dialog-alert/dialog-alert.data';
-import {DialogSelectComponent} from './dialog/dialog-select/dialog-select.component';
-import {DialogSelectData} from './dialog/dialog-select/dialog-select.data';
+import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
+import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 
 declare const Hammer: any;
 
@@ -149,15 +147,15 @@ export class AppComponent implements OnInit {
   }
 
   changeColumns() {
-    const options: [string, boolean][] = [];
+    const options: { name: string, selected: boolean }[] = [];
 
     if (this.tableSettings.mode === 'Stations') {
       for (const column of DataService.TABLE_COLUMNS['Stations']) {
-        options.push([column.name, this.tableSettings.stationColumns.includes(column.name)]);
+        options.push({name: column.name, selected: this.tableSettings.stationColumns.includes(column.name)});
       }
     } else if (this.tableSettings.mode === 'Deliveries') {
       for (const column of DataService.TABLE_COLUMNS['Deliveries']) {
-        options.push([column.name, this.tableSettings.deliveryColumns.includes(column.name)]);
+        options.push({name: column.name, selected: this.tableSettings.deliveryColumns.includes(column.name)});
       }
     }
 
