@@ -1,8 +1,4 @@
-declare const cytoscape: any;
-
-cytoscape('layout', 'fruchterman', FruchtermanLayout);
-
-function FruchtermanLayout(options) {
+export function FruchtermanLayout(options) {
   const defaults = {
     fit: true
   };

@@ -1,8 +1,6 @@
 import {Subject} from 'rxjs/Rx';
 
-declare const $: any;
-
-const legend = function (params: Subject<string>) {
+export function Legend(params: Subject<string>) {
   params.subscribe(s => console.log(s));
 
   const mainDiv = document.createElement('div');
@@ -18,6 +16,4 @@ const legend = function (params: Subject<string>) {
   this.container().appendChild(mainDiv);
 
   return this;
-};
-
-cytoscape('core', 'legend', legend);
+}

@@ -18,8 +18,10 @@ import {DataService} from './util/data.service';
 import {UtilService} from './util/util.service';
 import {TracingService} from './graph/tracing.service';
 
-import './graph/fruchterman_reingold';
-import './graph/legend';
+import {FruchtermanLayout} from './graph/fruchterman_reingold';
+import {Legend} from './graph/legend';
+
+declare const cytoscape: any;
 
 @NgModule({
   declarations: [
@@ -53,4 +55,9 @@ import './graph/legend';
   ]
 })
 export class AppModule {
+
+  constructor() {
+    cytoscape('core', 'legend', Legend);
+    cytoscape('layout', 'fruchterman', FruchtermanLayout);
+  }
 }
