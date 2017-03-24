@@ -19,6 +19,7 @@ import {UtilService} from './util/util.service';
 import {TracingService} from './graph/tracing.service';
 
 import './graph/fruchterman_reingold';
+import './graph/legend';
 
 @NgModule({
   declarations: [

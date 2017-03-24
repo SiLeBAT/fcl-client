@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdMenuTrigger} from '@angular/material';
-import {Observable} from 'rxjs/Rx';
+import {Observable, Subject} from 'rxjs/Rx';
 
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
@@ -107,8 +107,11 @@ export class GraphComponent implements OnInit {
       wheelSensitivity: 0.5,
     });
 
+    const subject: Subject<string> = new Subject();
+
     this.layoutMenuActions = this.createLayoutActions();
     this.cy.panzoom();
+    this.cy.legend(subject);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
     this.cy.on('select', event => this.setSelected(event.cyTarget, true));
     this.cy.on('unselect', event => this.setSelected(event.cyTarget, false));
