@@ -16,6 +16,7 @@ export class FruchtermanLayout {
     }
   }
 
+  //noinspection JSUnusedGlobalSymbols
   run() {
     const options = this.options;
     const cy = options.cy;
@@ -32,7 +33,7 @@ export class FruchtermanLayout {
     });
 
     cy.edges().forEach(function (edge) {
-      graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+      Graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
 
     const layoutManager = new ForceDirectedVertexLayout(width, height, 100);
@@ -57,13 +58,9 @@ export class FruchtermanLayout {
 }
 
 class Graph {
-  vertices = [];
+  vertices: Vertex[] = [];
 
-  insertVertex(vertex) {
-    this.vertices.push(vertex);
-  }
-
-  insertEdge(vertex1, vertex2) {
+  static insertEdge(vertex1: Vertex, vertex2: Vertex) {
     const e1 = new Edge(vertex2);
     const e2 = new Edge(vertex1);
 
@@ -72,27 +69,32 @@ class Graph {
 
     return e1;
   }
+
+  insertVertex(vertex: Vertex) {
+    this.vertices.push(vertex);
+  }
 }
 
 class Vertex {
-  edges = [];
-  reverseEdges = [];
-  x: any;
-  y: any;
+  edges: Edge[] = [];
+  reverseEdges: Edge[] = [];
+  x: number;
+  y: number;
   dx = 0;
   dy = 0;
   fixed = false;
+  visited: boolean;
 
-  constructor(x, y) {
+  constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
   }
 }
 
 class Edge {
-  endVertex: any;
+  endVertex: Vertex;
 
-  constructor(endVertex) {
+  constructor(endVertex: Vertex) {
     this.endVertex = endVertex;
   }
 }
@@ -104,25 +106,25 @@ class ForceDirectedVertexLayout {
   height: number;
   iterations: number;
 
-  constructor(width, height, iterations) {
+  constructor(width: number, height: number, iterations: number) {
     this.width = width;
     this.height = height;
     this.iterations = iterations;
   }
 
-  identifyComponents(graph) {
+  identifyComponents(graph: Graph) {
     const components = [];
 
     // Depth first search
-    function dfs(vertex) {
-      const stack = [];
-      const component = [];
+    function dfs(vertex: Vertex) {
+      const stack: Vertex[] = [];
+      const component: Vertex[] = [];
 
       components.push(component);
 
-      function visitVertex(v) {
+      function visitVertex(v: Vertex) {
         component.push(v);
-        v.__dfsVisited = true;
+        v.visited = true;
 
         for (const e of v.edges) {
           stack.push(e.endVertex);
@@ -137,7 +139,7 @@ class ForceDirectedVertexLayout {
       while (stack.length > 0) {
         const u = stack.pop();
 
-        if (!u.__dfsVisited) {
+        if (!u.visited) {
           visitVertex(u);
         }
       }
@@ -145,13 +147,13 @@ class ForceDirectedVertexLayout {
 
     // Clear DFS visited flag
     for (const v of graph.vertices) {
-      v.__dfsVisited = false;
+      v.visited = false;
     }
 
     // Iterate through all vertices starting DFS from each vertex
     // that hasn't been visited yet.
     for (const v of graph.vertices) {
-      if (!v.__dfsVisited) {
+      if (!v.visited) {
         dfs(v);
       }
     }
@@ -166,19 +168,19 @@ class ForceDirectedVertexLayout {
         graph.insertVertex(center);
 
         for (const otherCenter of componentCenters) {
-          graph.insertEdge(center, otherCenter);
+          Graph.insertEdge(center, otherCenter);
         }
 
         componentCenters.push(center);
 
         for (const v of component) {
-          graph.insertEdge(v, center);
+          Graph.insertEdge(v, center);
         }
       }
     }
   }
 
-  layout(graph) {
+  layout(graph: Graph) {
     const area = this.width * this.height;
     const k = Math.sqrt(area / graph.vertices.length);
 
