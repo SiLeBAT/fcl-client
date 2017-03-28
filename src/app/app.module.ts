@@ -20,6 +20,7 @@ import {TracingService} from './graph/tracing.service';
 
 import {FruchtermanLayout} from './graph/fruchterman_reingold';
 import {Legend} from './graph/legend';
+import {Panzoom} from './graph/panzoom';
 
 declare const cytoscape: any;
 
@@ -58,6 +59,7 @@ export class AppModule {
 
   constructor() {
     cytoscape('core', 'legend', Legend);
+    cytoscape('core', 'panzoom', Panzoom);
     cytoscape('layout', 'fruchterman', FruchtermanLayout);
   }
 }
