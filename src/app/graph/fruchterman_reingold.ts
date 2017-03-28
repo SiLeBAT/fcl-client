@@ -1,4 +1,8 @@
-export class FruchtermanLayout {
+export function FruchtermanLayout(options) {
+  return new FruchtermanLayoutClass(options);
+}
+
+class FruchtermanLayoutClass {
 
   private options: any;
 
@@ -52,8 +56,6 @@ export class FruchtermanLayout {
     if (options.fit) {
       cy.fit();
     }
-
-    return this;
   }
 }
 

@@ -2,7 +2,7 @@ import {Subject} from 'rxjs/Rx';
 import {DataService} from '../util/data.service';
 
 export function Legend(params: Subject<Set<string>>) {
-  new LegendClass(this.container(), params);
+  return new LegendClass(this.container(), params);
 }
 
 class LegendClass {
@@ -18,21 +18,21 @@ class LegendClass {
   private update(properties: Set<string>) {
     const table = document.createElement('table');
 
-    for (const prop of Object.keys(DataService.COLORS)) {
-      if (properties.has(prop)) {
+    DataService.PROPERTIES.forEach((value, key) => {
+      if (properties.has(key)) {
         const row = document.createElement('tr');
         const rowLabel = document.createElement('td');
         const rowColor = document.createElement('td');
 
-        rowLabel.innerText = prop;
-        rowColor.style.backgroundColor = 'rgb(' + DataService.COLORS[prop].join(', ') + ')';
+        rowLabel.innerText = value.name;
+        rowColor.style.backgroundColor = 'rgb(' + value.color.join(', ') + ')';
         rowColor.width = '20px';
         rowColor.height = '100%';
         row.appendChild(rowLabel);
         row.appendChild(rowColor);
         table.appendChild(row);
       }
-    }
+    });
 
     if (this.legendDiv != null) {
       this.legendDiv.remove();

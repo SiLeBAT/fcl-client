@@ -62,11 +62,13 @@ export class TableComponent implements OnInit {
     style.innerHTML = '';
     style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
-    for (const props of UtilService.getAllCombinations(Object.keys(DataService.COLORS))) {
+    for (const props of UtilService.getAllCombinations(Array.from(DataService.PROPERTIES.keys()))) {
       style.innerHTML += 'datatable-body-row';
 
       if (props.length === 1) {
-        style.innerHTML += '.' + props[0] + ' { background-color: rgb(' + DataService.COLORS[props[0]].join(', ') + ') !important; }';
+        const color = UtilService.colorToCss(DataService.PROPERTIES.get(props[0]).color);
+
+        style.innerHTML += '.' + props[0] + ' { background-color: ' + color + ' !important; }';
       } else {
         for (const prop of props) {
           style.innerHTML += '.' + prop;
@@ -75,7 +77,7 @@ export class TableComponent implements OnInit {
         style.innerHTML += ' { background: repeating-linear-gradient(90deg';
 
         for (let i = 0; i < props.length; i++) {
-          const color = 'rgb(' + DataService.COLORS[props[i]].join(', ') + ')';
+          const color = UtilService.colorToCss(DataService.PROPERTIES.get(props[i]).color);
           const from = i === 0 ? i / props.length * 100 + '%' : (i + 0.2) / props.length * 100 + '%';
           const to = i === props.length - 1 ? (i + 1) / props.length * 100 + '%' : (i + 0.8) / props.length * 100 + '%';
 

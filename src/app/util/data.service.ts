@@ -16,13 +16,13 @@ export class DataService {
     {value: 18, viewValue: 'Large'}
   ];
 
-  static COLORS = {
-    forward: [150, 255, 75],
-    backward: [255, 150, 75],
-    observed: [75, 150, 255],
-    outbreak: [255, 50, 50],
-    commonLink: [255, 255, 75]
-  };
+  static PROPERTIES: Map<string, { name: string, color: number[] }> = new Map([
+    ['forward', {name: 'Forward', color: [150, 255, 75]}],
+    ['backward', {name: 'Backward', color: [255, 150, 75]}],
+    ['observed', {name: 'Observed', color: [75, 150, 255]}],
+    ['outbreak', {name: 'Outbreak', color: [255, 50, 50]}],
+    ['commonLink', {name: 'Common Link', color: [255, 255, 75]}]
+  ]);
 
   static TABLE_MODES = ['Stations', 'Deliveries'];
 

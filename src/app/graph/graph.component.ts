@@ -135,7 +135,7 @@ export class GraphComponent implements OnInit {
 
     this.setFontSize(this.fontSize);
     this.tracingService.init(this.data);
-    this.legend.next(new Set(Object.keys(DataService.COLORS)));
+    this.legend.next(new Set(DataService.PROPERTIES.keys()));
   }
 
   onChange(changeFunction: () => void) {
@@ -409,38 +409,29 @@ export class GraphComponent implements OnInit {
         'width': 12
       });
 
-    const nodeProps = {
-      'forward': DataService.COLORS.forward,
-      'backward': DataService.COLORS.backward,
-      'observed': DataService.COLORS.observed,
-      'outbreak': DataService.COLORS.outbreak,
-      'commonLink': DataService.COLORS.commonLink
-    };
+    const nodeProps = ['forward', 'backward', 'observed', 'outbreak', 'commonLink'];
+    const edgeProps = ['forward', 'backward', 'observed'];
 
-    const edgeProps = {
-      'forward': DataService.COLORS.forward,
-      'backward': DataService.COLORS.backward,
-      'observed': DataService.COLORS.observed
-    };
-
-    for (const combination of UtilService.getAllCombinations(Object.keys(nodeProps))) {
+    for (const combination of UtilService.getAllCombinations(nodeProps)) {
       const s = [];
       const c1 = [];
       const c2 = [];
 
       for (const prop of combination) {
+        const color = DataService.PROPERTIES.get(prop).color;
+
         s.push('[?' + prop + ']');
-        c1.push(nodeProps[prop]);
-        c2.push(UtilService.mixColors(nodeProps[prop], [0, 0, 255]));
+        c1.push(color);
+        c2.push(UtilService.mixColors(color, [0, 0, 255]));
       }
 
       style = style.selector('node' + s.join('')).style(GraphComponent.createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(GraphComponent.createNodeBackground(c2));
     }
 
-    for (const prop of Object.keys(edgeProps)) {
+    for (const prop of edgeProps) {
       style = style.selector('edge[?' + prop + ']').style({
-        'line-color': UtilService.colorToCss(edgeProps[prop])
+        'line-color': UtilService.colorToCss(DataService.PROPERTIES.get(prop).color)
       });
     }
 
