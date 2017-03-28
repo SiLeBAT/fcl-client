@@ -6,7 +6,28 @@ declare const $: any;
 
 class ZoomingClass {
 
-  constructor(self: any) {
+  private static createElement(id: string) {
+    const div = document.createElement('div');
+
+    div.id = id;
+
+    return div;
+  }
+
+  private static createIconButton(id: string, icon: string): HTMLElement {
+    const div = document.createElement('div');
+    const i = document.createElement('i');
+
+    i.className = 'material-icons';
+    i.innerText = icon;
+
+    div.id = id;
+    div.appendChild(i);
+
+    return div;
+  }
+
+  constructor(cy: any) {
     const options = {
       zoomFactor: 0.05, // zoom factor per zoom tick
       zoomDelay: 45, // how many ms between zoom ticks
@@ -25,45 +46,42 @@ class ZoomingClass {
       fitAnimationDuration: 1000, // duration of animation on fit
     };
 
-    const $container = $(self.container());
+    const container: HTMLElement = cy.container();
     const $win = $(window);
     let sliding = false;
-    const cy = self;
 
-    const $panzoom = $('<div id="cy-zoom"></div>');
-    $container.prepend($panzoom);
+    const zoomDiv = document.createElement('div');
 
-    $panzoom.css('position', 'absolute');
+    zoomDiv.id = 'cy-zoom';
+    container.appendChild(zoomDiv);
 
-    const $zoomIn =
-      $('<div id="cy-zoom-in"><i class="material-icons">add</i></div>');
-    $panzoom.append($zoomIn);
+    const zoomIn = ZoomingClass.createIconButton('cy-zoom-in', 'add');
+    zoomDiv.appendChild(zoomIn);
 
-    const $zoomOut =
-      $('<div id="cy-zoom-out"><i class="material-icons">remove</i></div>');
-    $panzoom.append($zoomOut);
+    const zoomOut = ZoomingClass.createIconButton('cy-zoom-out', 'remove');
+    zoomDiv.appendChild(zoomOut);
 
-    const $reset =
-      $('<div id="cy-zoom-reset"><i class="material-icons">zoom_out_map</i></div>');
-    $panzoom.append($reset);
+    const reset = ZoomingClass.createIconButton('cy-zoom-reset', 'zoom_out_map');
+    zoomDiv.appendChild(reset);
 
-    const $slider = $('<div id="cy-zoom-slider"></div>');
-    $panzoom.append($slider);
+    const slider = ZoomingClass.createElement('cy-zoom-slider');
+    zoomDiv.appendChild(slider);
 
-    $slider.append('<div id="cy-zoom-slider-background"></div>');
+    const sliderBackground = ZoomingClass.createElement('cy-zoom-slider-background');
+    slider.appendChild(sliderBackground);
 
-    const $sliderHandle = $('<div id="cy-zoom-slider-handle"></div>');
-    $slider.append($sliderHandle);
+    const sliderHandle = ZoomingClass.createElement('cy-zoom-slider-handle');
+    slider.appendChild(sliderHandle);
 
-    const $noZoomTick = $('<div id="cy-zoom-no-zoom-tick"></div>');
-    $slider.append($noZoomTick);
+    const noZoomTick = ZoomingClass.createElement('cy-zoom-no-zoom-tick');
+    slider.appendChild(noZoomTick);
 
     let zx, zy;
     let zooming = false;
 
     function calculateZoomCenterPoint() {
-      zx = $container.width() / 2;
-      zy = $container.height() / 2;
+      zx = container.offsetWidth / 2;
+      zy = container.offsetHeight / 2;
     }
 
     function startZooming() {
@@ -78,19 +96,17 @@ class ZoomingClass {
     }
 
     function zoomTo(level) {
-      const cy2 = $container.cytoscape('get');
-
       if (!zooming) { // for non-continuous zooming (e.g. click slider at pt)
         calculateZoomCenterPoint();
       }
 
-      cy2.zoom({
+      cy.zoom({
         level: level,
         renderedPosition: {x: zx, y: zy}
       });
     }
 
-    $slider.bind('mousedown', function () {
+    $(slider).bind('mousedown', function () {
       return false; // so we don't pan close to the slider handle
     });
 
@@ -103,8 +119,8 @@ class ZoomingClass {
 
       const padding = sliderPadding;
       const min = padding;
-      const max = $slider.height() - $sliderHandle.height() - 2 * padding;
-      let top = evt.pageY - $slider.offset().top - handleOffset;
+      const max = $(slider).height() - $(sliderHandle).height() - 2 * padding;
+      let top = evt.pageY - $(slider).offset().top - handleOffset;
 
       // constrain to slider bounds
       if (top < min) {
@@ -117,7 +133,7 @@ class ZoomingClass {
       const percent = 1 - (top - min) / ( max - min );
 
       // move the handle
-      $sliderHandle.css('top', top);
+      $(sliderHandle).css('top', top);
 
       const zmin = options.minZoom;
       const zmax = options.maxZoom;
@@ -140,12 +156,12 @@ class ZoomingClass {
     }
 
     let sliderMdownHandler, sliderMmoveHandler;
-    $sliderHandle.bind('mousedown', sliderMdownHandler = function (mdEvt) {
-      const handleOffset = mdEvt.target === $sliderHandle[0] ? mdEvt.offsetY : 0;
+    $(sliderHandle).bind('mousedown', sliderMdownHandler = function (mdEvt) {
+      const handleOffset = mdEvt.target === $(sliderHandle)[0] ? mdEvt.offsetY : 0;
       sliding = true;
 
       startZooming();
-      $sliderHandle.addClass('active');
+      $(sliderHandle).addClass('active');
 
       let lastMove = 0;
       $win.bind('mousemove', sliderMmoveHandler = function (mmEvt) {
@@ -169,23 +185,22 @@ class ZoomingClass {
       $win.bind('mouseup', function () {
         sliding = false;
 
-        $sliderHandle.removeClass('active');
+        $(sliderHandle).removeClass('active');
         endZooming();
       });
 
       return false;
     });
 
-    $slider.bind('mousedown', function (e) {
-      if (e.target !== $sliderHandle[0]) {
+    $(slider).bind('mousedown', function (e) {
+      if (e.target !== $(sliderHandle)[0]) {
         sliderMdownHandler(e);
         setSliderFromMouse(e, undefined);
       }
     });
 
     function positionSliderFromZoom() {
-      const cy2 = $container.cytoscape('get');
-      const z = cy2.zoom();
+      const z = cy.zoom();
       const zmin = options.minZoom;
       const zmax = options.maxZoom;
 
@@ -195,7 +210,7 @@ class ZoomingClass {
       const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
 
       const min = sliderPadding;
-      const max = $slider.height() - $sliderHandle.height() - 2 * sliderPadding;
+      const max = $(slider).height() - $(sliderHandle).height() - 2 * sliderPadding;
       let top = percent * ( max - min );
 
       // constrain to slider bounds
@@ -207,7 +222,7 @@ class ZoomingClass {
       }
 
       // move the handle
-      $sliderHandle.css('top', top);
+      $(sliderHandle).css('top', top);
     }
 
     positionSliderFromZoom();
@@ -230,12 +245,12 @@ class ZoomingClass {
       const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
 
       if (percent > 1 || percent < 0) {
-        $noZoomTick.hide();
+        $(noZoomTick).hide();
         return;
       }
 
       const min = sliderPadding;
-      const max = $slider.height() - $sliderHandle.height() - 2 * sliderPadding;
+      const max = $(slider).height() - $(sliderHandle).height() - 2 * sliderPadding;
       let top = percent * ( max - min );
 
       // constrain to slider bounds
@@ -246,7 +261,7 @@ class ZoomingClass {
         top = max;
       }
 
-      $noZoomTick.css('top', top);
+      $(noZoomTick).css('top', top);
     })();
 
     function bindButton($button, factor) {
@@ -260,10 +275,9 @@ class ZoomingClass {
           return;
         }
 
-        const cy2 = $container.cytoscape('get');
         const doZoom = function () {
-          const zoom = cy2.zoom();
-          let lvl = cy2.zoom() * factor;
+          const zoom = cy.zoom();
+          let lvl = cy.zoom() * factor;
 
           if (lvl < options.minZoom) {
             lvl = options.minZoom;
@@ -295,10 +309,10 @@ class ZoomingClass {
       });
     }
 
-    bindButton($zoomIn, (1 + options.zoomFactor));
-    bindButton($zoomOut, (1 - options.zoomFactor));
+    bindButton($(zoomIn), (1 + options.zoomFactor));
+    bindButton($(zoomOut), (1 - options.zoomFactor));
 
-    $reset.bind('mousedown', function (e) {
+    $(reset).bind('mousedown', function (e) {
       e.preventDefault();
       e.stopPropagation();
 

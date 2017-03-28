@@ -2,7 +2,7 @@ import {Subject} from 'rxjs/Rx';
 import {DataService} from '../util/data.service';
 
 export function Legend(params: Subject<Set<string>>) {
-  return new LegendClass(this.container(), params);
+  return new LegendClass(this, params);
 }
 
 class LegendClass {
@@ -10,8 +10,8 @@ class LegendClass {
   private container: HTMLElement;
   private legendDiv: HTMLElement;
 
-  constructor(container: HTMLElement, params: Subject<Set<string>>) {
-    this.container = container;
+  constructor(cy: any, params: Subject<Set<string>>) {
+    this.container = cy.container();
     params.subscribe(properties => this.update(properties));
   }
 
@@ -40,7 +40,6 @@ class LegendClass {
 
     this.legendDiv = document.createElement('div');
     this.legendDiv.appendChild(table);
-    this.legendDiv.id = 'cy-legend';
     this.legendDiv.style.position = 'absolute';
     this.legendDiv.style.left = '0';
     this.legendDiv.style.bottom = '0';
