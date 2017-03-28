@@ -1,38 +1,50 @@
 import {Subject} from 'rxjs/Rx';
+import {DataService} from '../util/data.service';
 
-export class Legend {
+export function Legend(params: Subject<Set<string>>) {
+  new LegendClass(this.container(), params);
+}
 
-  constructor(params: Subject<string>) {
-    params.subscribe(s => console.log(s));
+class LegendClass {
 
-    const mainDiv = document.createElement('div');
+  private container: HTMLElement;
+  private legendDiv: HTMLElement;
 
+  constructor(container: HTMLElement, params: Subject<Set<string>>) {
+    this.container = container;
+    params.subscribe(properties => this.update(properties));
+  }
+
+  private update(properties: Set<string>) {
     const table = document.createElement('table');
 
-    const observed = document.createElement('tr');
+    for (const prop of Object.keys(DataService.COLORS)) {
+      if (properties.has(prop)) {
+        const row = document.createElement('tr');
+        const rowLabel = document.createElement('td');
+        const rowColor = document.createElement('td');
 
-    const observedLabel = document.createElement('td');
+        rowLabel.innerText = prop;
+        rowColor.style.backgroundColor = 'rgb(' + DataService.COLORS[prop].join(', ') + ')';
+        rowColor.width = '20px';
+        rowColor.height = '100%';
+        row.appendChild(rowLabel);
+        row.appendChild(rowColor);
+        table.appendChild(row);
+      }
+    }
 
-    observedLabel.innerText = 'Observed';
+    if (this.legendDiv != null) {
+      this.legendDiv.remove();
+    }
 
-    const observedColor = document.createElement('td');
-
-    observedColor.style.backgroundColor = 'rgb(0, 0, 255)';
-    observedColor.width = '20px';
-    observedColor.height = '100%';
-
-    observed.appendChild(observedLabel);
-    observed.appendChild(observedColor);
-
-    table.appendChild(observed);
-
-    mainDiv.appendChild(table);
-    mainDiv.id = 'cy-legend';
-    mainDiv.style.position = 'absolute';
-    mainDiv.style.left = '0';
-    mainDiv.style.bottom = '0';
-    mainDiv.style.backgroundColor = 'rgb(200, 200, 200)';
-
-    this['container']().appendChild(mainDiv);
+    this.legendDiv = document.createElement('div');
+    this.legendDiv.appendChild(table);
+    this.legendDiv.id = 'cy-legend';
+    this.legendDiv.style.position = 'absolute';
+    this.legendDiv.style.left = '0';
+    this.legendDiv.style.bottom = '0';
+    this.legendDiv.style.backgroundColor = 'rgb(200, 200, 200)';
+    this.container.appendChild(this.legendDiv);
   }
 }

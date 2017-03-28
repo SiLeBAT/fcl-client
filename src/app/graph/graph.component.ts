@@ -49,6 +49,7 @@ export class GraphComponent implements OnInit {
   private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
+  private legend: Subject<Set<string>>;
 
   private static createNodeBackground(colors: number[][]): any {
     if (colors.length === 1) {
@@ -107,11 +108,10 @@ export class GraphComponent implements OnInit {
       wheelSensitivity: 0.5,
     });
 
-    const subject: Subject<string> = new Subject();
-
     this.layoutMenuActions = this.createLayoutActions();
     this.cy.panzoom();
-    this.cy.legend(subject);
+    this.legend = new Subject();
+    this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
     this.cy.on('select', event => this.setSelected(event.cyTarget, true));
     this.cy.on('unselect', event => this.setSelected(event.cyTarget, false));
@@ -135,6 +135,7 @@ export class GraphComponent implements OnInit {
 
     this.setFontSize(this.fontSize);
     this.tracingService.init(this.data);
+    this.legend.next(new Set(Object.keys(DataService.COLORS)));
   }
 
   onChange(changeFunction: () => void) {
