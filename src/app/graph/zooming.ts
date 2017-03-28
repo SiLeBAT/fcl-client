@@ -1,10 +1,10 @@
-export function Panzoom() {
-  return new PanzoomClass(this);
+export function Zooming() {
+  return new ZoomingClass(this);
 }
 
 declare const $: any;
 
-class PanzoomClass {
+class ZoomingClass {
 
   constructor(self: any) {
     const options = {
@@ -32,28 +32,8 @@ class PanzoomClass {
     };
 
     const $container = $(self.container());
-    const winbdgs = [];
     const $win = $(window);
-
-    const windowBind = function (evt, fn) {
-      winbdgs.push({evt: evt, fn: fn});
-
-      $win.bind(evt, fn);
-    };
-
-    const windowUnbind = function (evt, fn) {
-      for (let i = 0; i < winbdgs.length; i++) {
-        const l = winbdgs[i];
-
-        if (l.evt === evt && l.fn === fn) {
-          winbdgs.splice(i, 1);
-          break;
-        }
-      }
-
-      $win.unbind(evt, fn);
-    };
-
+    let sliding = false;
     const cybdgs = [];
     const cy = self;
 
@@ -63,139 +43,36 @@ class PanzoomClass {
       cy.on(evt, fn);
     };
 
-    const $panzoom = $('<div class="cy-panzoom"></div>');
+    const $panzoom = $('<div id="cy-zoom"></div>');
     $container.prepend($panzoom);
 
     $panzoom.css('position', 'absolute'); // must be absolute regardless of stylesheet
-
-    $panzoom.data('winbdgs', winbdgs);
-    $panzoom.data('cybdgs', cybdgs);
-
-    if (options.zoomOnly) {
-      $panzoom.addClass('cy-panzoom-zoom-only');
-    }
 
     // add base html elements
     /////////////////////////
 
     const $zoomIn =
-      $('<div class="cy-panzoom-zoom-in cy-panzoom-zoom-button"><span class="icon ' + options.zoomInIcon + '"></span></div>');
+      $('<div id="cy-zoom-in" class="cy-panzoom-zoom-button"><span class="icon ' + options.zoomInIcon + '"></span></div>');
     $panzoom.append($zoomIn);
 
     const $zoomOut =
-      $('<div class="cy-panzoom-zoom-out cy-panzoom-zoom-button"><span class="icon ' + options.zoomOutIcon + '"></span></div>');
+      $('<div id="cy-zoom-out" class="cy-panzoom-zoom-button"><span class="icon ' + options.zoomOutIcon + '"></span></div>');
     $panzoom.append($zoomOut);
 
     const $reset =
-      $('<div class="cy-panzoom-reset cy-panzoom-zoom-button"><span class="icon ' + options.resetIcon + '"></span></div>');
+      $('<div id="cy-zoom-reset" class="cy-panzoom-zoom-button"><span class="icon ' + options.resetIcon + '"></span></div>');
     $panzoom.append($reset);
 
-    const $slider = $('<div class="cy-panzoom-slider"></div>');
+    const $slider = $('<div id="cy-zoom-slider"></div>');
     $panzoom.append($slider);
 
-    $slider.append('<div class="cy-panzoom-slider-background"></div>');
+    $slider.append('<div id="cy-zoom-slider-background"></div>');
 
-    const $sliderHandle = $('<div class="cy-panzoom-slider-handle"><span class="icon ' + options.sliderHandleIcon + '"></span></div>');
+    const $sliderHandle = $('<div id="cy-zoom-slider-handle"><span class="icon ' + options.sliderHandleIcon + '"></span></div>');
     $slider.append($sliderHandle);
 
-    const $noZoomTick = $('<div class="cy-panzoom-no-zoom-tick"></div>');
+    const $noZoomTick = $('<div id="cy-zoom-no-zoom-tick"></div>');
     $slider.append($noZoomTick);
-
-    const $panner = $('<div class="cy-panzoom-panner"></div>');
-    $panzoom.append($panner);
-
-    const $pHandle = $('<div class="cy-panzoom-panner-handle"></div>');
-    $panner.append($pHandle);
-
-    const $pUp = $('<div class="cy-panzoom-pan-up cy-panzoom-pan-button"></div>');
-    const $pDown = $('<div class="cy-panzoom-pan-down cy-panzoom-pan-button"></div>');
-    const $pLeft = $('<div class="cy-panzoom-pan-left cy-panzoom-pan-button"></div>');
-    const $pRight = $('<div class="cy-panzoom-pan-right cy-panzoom-pan-button"></div>');
-    $panner.append($pUp).append($pDown).append($pLeft).append($pRight);
-
-    const $pIndicator = $('<div class="cy-panzoom-pan-indicator"></div>');
-    $panner.append($pIndicator);
-
-    // functions for calculating panning
-    ////////////////////////////////////
-
-    function handle2pan(e) {
-      let v = {
-        x: e.originalEvent.pageX - $panner.offset().left - $panner.width() / 2,
-        y: e.originalEvent.pageY - $panner.offset().top - $panner.height() / 2
-      };
-
-      const r = options.panDragAreaSize;
-      const d = Math.sqrt(v.x * v.x + v.y * v.y);
-      let percent = Math.min(d / r, 1);
-
-      if (d < options.panInactiveArea) {
-        return {
-          x: NaN,
-          y: NaN
-        };
-      }
-
-      v = {
-        x: v.x / d,
-        y: v.y / d
-      };
-
-      percent = Math.max(options.panMinPercentSpeed, percent);
-
-      return {
-        x: -1 * v.x * (percent * options.panDistance),
-        y: -1 * v.y * (percent * options.panDistance)
-      };
-    }
-
-    let panInterval;
-
-    const handler = function (e) {
-      e.stopPropagation(); // don't trigger dragging of panzoom
-      e.preventDefault(); // don't cause text selection
-      clearInterval(panInterval);
-
-      const pan = handle2pan(e);
-
-      if (isNaN(pan.x) || isNaN(pan.y)) {
-        $pIndicator.hide();
-        return;
-      }
-
-      positionIndicator(pan);
-      panInterval = setInterval(function () {
-        $container.cytoscape('get').panBy(pan);
-      }, options.panSpeed);
-    };
-
-    function donePanning() {
-      clearInterval(panInterval);
-      windowUnbind('mousemove', handler);
-
-      $pIndicator.hide();
-    }
-
-    function positionIndicator(pan) {
-      const v = pan;
-      const d = Math.sqrt(v.x * v.x + v.y * v.y);
-      const vnorm = {
-        x: -1 * v.x / d,
-        y: -1 * v.y / d
-      };
-
-      const w = $panner.width();
-      const h = $panner.height();
-      const percent = d / options.panDistance;
-      const opacity = Math.max(options.panIndicatorMinOpacity, percent);
-      const color = 255 - Math.round(opacity * 255);
-
-      $pIndicator.show().css({
-        left: w / 2 * vnorm.x + w / 2,
-        top: h / 2 * vnorm.y + h / 2,
-        background: 'rgb(' + color + ', ' + color + ', ' + color + ')'
-      });
-    }
 
     let zx, zy;
     let zooming = false;
@@ -229,31 +106,10 @@ class PanzoomClass {
       });
     }
 
-    $pHandle.bind('mousedown', function (e) {
-      // handle click of icon
-      handler(e);
-
-      // update on mousemove
-      windowBind('mousemove', handler);
-    });
-
-    $pHandle.bind('mouseup', function () {
-      donePanning();
-    });
-
-    windowBind('mouseup blur', function () {
-      donePanning();
-    });
-
-
-    // set up slider behaviour
-    //////////////////////////
-
     $slider.bind('mousedown', function () {
       return false; // so we don't pan close to the slider handle
     });
 
-    let sliding = false;
     const sliderPadding = 2;
 
     function setSliderFromMouse(evt, handleOffset) {
@@ -308,24 +164,25 @@ class PanzoomClass {
       $sliderHandle.addClass('active');
 
       let lastMove = 0;
-      windowBind('mousemove', sliderMmoveHandler = function (mmEvt) {
-        const now = +new Date;
+      $win.bind('mousemove', sliderMmoveHandler = function (mmEvt) {
+        if (sliding) {
+          const now = +new Date;
 
-        // throttle the zooms every 10 ms so we don't call zoom too often and cause lag
-        if (now > lastMove + 10) {
-          lastMove = now;
-        } else {
+          // throttle the zooms every 10 ms so we don't call zoom too often and cause lag
+          if (now > lastMove + 10) {
+            lastMove = now;
+          } else {
+            return false;
+          }
+
+          setSliderFromMouse(mmEvt, handleOffset);
+
           return false;
         }
-
-        setSliderFromMouse(mmEvt, handleOffset);
-
-        return false;
       });
 
       // unbind when
-      windowBind('mouseup', function () {
-        windowUnbind('mousemove', sliderMmoveHandler);
+      $win.bind('mouseup', function () {
         sliding = false;
 
         $sliderHandle.removeClass('active');
@@ -451,7 +308,7 @@ class PanzoomClass {
         return false;
       });
 
-      windowBind('mouseup blur', function () {
+      $win.bind('mouseup blur', function () {
         clearInterval(zoomInterval);
         endZooming();
       });

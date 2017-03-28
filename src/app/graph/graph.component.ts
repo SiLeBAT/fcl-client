@@ -109,7 +109,7 @@ export class GraphComponent implements OnInit {
     });
 
     this.layoutMenuActions = this.createLayoutActions();
-    this.cy.panzoom();
+    this.cy.zooming();
     this.legend = new Subject();
     this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
