@@ -23,44 +23,28 @@ class ZoomingClass {
       zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
       fitSelector: undefined, // selector of elements to fit
       fitAnimationDuration: 1000, // duration of animation on fit
-
-      // icon class names
-      sliderHandleIcon: 'fa fa-minus',
-      zoomInIcon: 'fa fa-plus',
-      zoomOutIcon: 'fa fa-minus',
-      resetIcon: 'fa fa-expand'
     };
 
     const $container = $(self.container());
     const $win = $(window);
     let sliding = false;
-    const cybdgs = [];
     const cy = self;
-
-    const cyOn = function (evt, fn) {
-      cybdgs.push({evt: evt, fn: fn});
-
-      cy.on(evt, fn);
-    };
 
     const $panzoom = $('<div id="cy-zoom"></div>');
     $container.prepend($panzoom);
 
-    $panzoom.css('position', 'absolute'); // must be absolute regardless of stylesheet
-
-    // add base html elements
-    /////////////////////////
+    $panzoom.css('position', 'absolute');
 
     const $zoomIn =
-      $('<div id="cy-zoom-in" class="cy-panzoom-zoom-button"><span class="icon ' + options.zoomInIcon + '"></span></div>');
+      $('<div id="cy-zoom-in"><i class="material-icons">add</i></div>');
     $panzoom.append($zoomIn);
 
     const $zoomOut =
-      $('<div id="cy-zoom-out" class="cy-panzoom-zoom-button"><span class="icon ' + options.zoomOutIcon + '"></span></div>');
+      $('<div id="cy-zoom-out"><i class="material-icons">remove</i></div>');
     $panzoom.append($zoomOut);
 
     const $reset =
-      $('<div id="cy-zoom-reset" class="cy-panzoom-zoom-button"><span class="icon ' + options.resetIcon + '"></span></div>');
+      $('<div id="cy-zoom-reset"><i class="material-icons">zoom_out_map</i></div>');
     $panzoom.append($reset);
 
     const $slider = $('<div id="cy-zoom-slider"></div>');
@@ -68,7 +52,7 @@ class ZoomingClass {
 
     $slider.append('<div id="cy-zoom-slider-background"></div>');
 
-    const $sliderHandle = $('<div id="cy-zoom-slider-handle"><span class="icon ' + options.sliderHandleIcon + '"></span></div>');
+    const $sliderHandle = $('<div id="cy-zoom-slider-handle"></div>');
     $slider.append($sliderHandle);
 
     const $noZoomTick = $('<div id="cy-zoom-no-zoom-tick"></div>');
@@ -228,7 +212,7 @@ class ZoomingClass {
 
     positionSliderFromZoom();
 
-    cyOn('zoom', function () {
+    cy.on('zoom', function () {
       if (!sliding) {
         positionSliderFromZoom();
       }
@@ -264,9 +248,6 @@ class ZoomingClass {
 
       $noZoomTick.css('top', top);
     })();
-
-    // set up zoom in/out buttons
-    /////////////////////////////
 
     function bindButton($button, factor) {
       let zoomInterval;
@@ -318,20 +299,16 @@ class ZoomingClass {
     bindButton($zoomOut, (1 - options.zoomFactor));
 
     $reset.bind('mousedown', function (e) {
-      if (e.button !== 0) {
-        return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (e.button === 0) {
+        if (cy.elements().size() === 0) {
+          cy.reset();
+        } else {
+          cy.fit();
+        }
       }
-
-      const cy2 = $container.cytoscape('get');
-      const elesToFit = options.fitSelector ? cy2.elements(options.fitSelector) : cy2.elements();
-
-      if (elesToFit.size() === 0) {
-        cy2.reset();
-      } else {
-        cy2.fit(elesToFit, options.fitPadding);
-      }
-
-      return false;
     });
   }
 }

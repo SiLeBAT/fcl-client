@@ -10,17 +10,14 @@
 
 #cy-zoom-in, #cy-zoom-out, #cy-zoom-reset {
   cursor: pointer;
-  padding: 3px;
   text-align: center;
   position: absolute;
-  border-radius: 3px;
-  width: 10px;
-  height: 10px;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
   left: 16px;
   background: #fff;
   border: 1px solid #999;
-  margin-left: -1px;
-  margin-top: -1px;
   z-index: 1;
   box-sizing: content-box;
 }
@@ -32,11 +29,11 @@
 }
 
 #cy-zoom-in {
-  top: 45px;
+  top: 53px;
 }
 
 #cy-zoom-out {
-  top: 162px;
+  top: 178px;
 }
 
 #cy-zoom-reset {
@@ -45,8 +42,8 @@
 
 #cy-zoom-slider {
   position: absolute;
-  top: 62px;
-  left: 17px;
+  top: 78px;
+  left: 22px;
   height: 100px;
   width: 15px;
   box-sizing: content-box;
@@ -75,12 +72,6 @@
   z-index: 999;
   line-height: 8px;
   cursor: default;
-  box-sizing: content-box;
-}
-
-#cy-zoom-slider-handle .icon {
-  margin: 0 4px;
-  line-height: 10px;
   box-sizing: content-box;
 }
 
