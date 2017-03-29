@@ -3,8 +3,12 @@ export function Zooming() {
 }
 
 declare const $: any;
+declare const Hammer: any;
 
 class ZoomingClass {
+
+  private static ZOOM_FACTOR = 1.05;
+  private static ZOOM_DELAY = 45;
 
   private static createElement(id: string) {
     const div = document.createElement('div');
@@ -28,24 +32,6 @@ class ZoomingClass {
   }
 
   constructor(cy: any) {
-    const options = {
-      zoomFactor: 0.05, // zoom factor per zoom tick
-      zoomDelay: 45, // how many ms between zoom ticks
-      minZoom: 0.1, // min zoom level
-      maxZoom: 10, // max zoom level
-      fitPadding: 50, // padding when fitting
-      panSpeed: 10, // how many ms in between pan ticks
-      panDistance: 10, // max pan distance per tick
-      panDragAreaSize: 75, // the length of the pan drag box in which the vector for panning is calculated
-      // (bigger = finer control of pan speed and direction)
-      panMinPercentSpeed: 0.25, // the slowest speed we can pan by (as a percent of panSpeed)
-      panInactiveArea: 8, // radius of inactive area in pan drag box
-      panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib); scales from this to 1.0
-      zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
-      fitSelector: undefined, // selector of elements to fit
-      fitAnimationDuration: 1000, // duration of animation on fit
-    };
-
     const container: HTMLElement = cy.container();
     const $win = $(window);
     let sliding = false;
@@ -76,34 +62,17 @@ class ZoomingClass {
     const noZoomTick = ZoomingClass.createElement('cy-zoom-no-zoom-tick');
     slider.appendChild(noZoomTick);
 
-    let zx, zy;
     let zooming = false;
 
-    function calculateZoomCenterPoint() {
-      zx = container.offsetWidth / 2;
-      zy = container.offsetHeight / 2;
-    }
+    function zoomTo(newZoom: number) {
+      newZoom = Math.min(Math.max(newZoom, cy.minZoom()), cy.maxZoom());
 
-    function startZooming() {
-      zooming = true;
-
-      calculateZoomCenterPoint();
-    }
-
-
-    function endZooming() {
-      zooming = false;
-    }
-
-    function zoomTo(level) {
-      if (!zooming) { // for non-continuous zooming (e.g. click slider at pt)
-        calculateZoomCenterPoint();
+      if (newZoom !== cy.zoom()) {
+        cy.zoom({
+          level: newZoom,
+          renderedPosition: {x: container.offsetWidth / 2, y: container.offsetHeight / 2}
+        });
       }
-
-      cy.zoom({
-        level: level,
-        renderedPosition: {x: zx, y: zy}
-      });
     }
 
     $(slider).bind('mousedown', function () {
@@ -117,9 +86,8 @@ class ZoomingClass {
         handleOffset = 0;
       }
 
-      const padding = sliderPadding;
-      const min = padding;
-      const max = $(slider).height() - $(sliderHandle).height() - 2 * padding;
+      const min = sliderPadding;
+      const max = $(slider).height() - $(sliderHandle).height() - 2 * sliderPadding;
       let top = evt.pageY - $(slider).offset().top - handleOffset;
 
       // constrain to slider bounds
@@ -135,8 +103,8 @@ class ZoomingClass {
       // move the handle
       $(sliderHandle).css('top', top);
 
-      const zmin = options.minZoom;
-      const zmax = options.maxZoom;
+      const zmin = cy.minZoom();
+      const zmax = cy.maxZoom();
 
       // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
       const x = Math.log(zmin) / Math.log(zmax);
@@ -155,16 +123,15 @@ class ZoomingClass {
       zoomTo(z);
     }
 
-    let sliderMdownHandler, sliderMmoveHandler;
+    let sliderMdownHandler;
     $(sliderHandle).bind('mousedown', sliderMdownHandler = function (mdEvt) {
       const handleOffset = mdEvt.target === $(sliderHandle)[0] ? mdEvt.offsetY : 0;
       sliding = true;
-
-      startZooming();
+      zooming = true;
       $(sliderHandle).addClass('active');
 
       let lastMove = 0;
-      $win.bind('mousemove', sliderMmoveHandler = function (mmEvt) {
+      $win.bind('mousemove', function (mmEvt) {
         if (sliding) {
           const now = +new Date;
 
@@ -186,7 +153,7 @@ class ZoomingClass {
         sliding = false;
 
         $(sliderHandle).removeClass('active');
-        endZooming();
+        zooming = false;
       });
 
       return false;
@@ -201,8 +168,8 @@ class ZoomingClass {
 
     function positionSliderFromZoom() {
       const z = cy.zoom();
-      const zmin = options.minZoom;
-      const zmax = options.maxZoom;
+      const zmin = cy.minZoom();
+      const zmax = cy.maxZoom();
 
       // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
       const x = Math.log(zmin) / Math.log(zmax);
@@ -236,8 +203,8 @@ class ZoomingClass {
     // set the position of the zoom=1 tick
     (function () {
       const z = 1;
-      const zmin = options.minZoom;
-      const zmax = options.maxZoom;
+      const zmin = cy.minZoom();
+      const zmax = cy.maxZoom();
 
       // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
       const x = Math.log(zmin) / Math.log(zmax);
@@ -264,64 +231,49 @@ class ZoomingClass {
       $(noZoomTick).css('top', top);
     })();
 
-    function bindButton($button, factor) {
-      let zoomInterval;
+    let zoomInterval;
 
-      $button.bind('mousedown', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
+    zoomIn.onmousedown = e => e.stopPropagation();
+    zoomOut.onmousedown = e => e.stopPropagation();
+    reset.onmousedown = e => e.stopPropagation();
 
-        if (e.button !== 0) {
-          return;
-        }
+    new Hammer(zoomIn).on('press tap', e => {
+      const zoomFunction = () => zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR);
 
-        const doZoom = function () {
-          const zoom = cy.zoom();
-          let lvl = cy.zoom() * factor;
+      zoomFunction();
 
-          if (lvl < options.minZoom) {
-            lvl = options.minZoom;
-          }
+      if (e.type === 'press') {
+        zooming = true;
+        zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
+      }
+    });
 
-          if (lvl > options.maxZoom) {
-            lvl = options.maxZoom;
-          }
+    new Hammer(zoomIn).on('pressup panend', () => {
+      clearInterval(zoomInterval);
+      zooming = false;
+    });
 
-          if ((lvl === options.maxZoom && zoom === options.maxZoom) ||
-            (lvl === options.minZoom && zoom === options.minZoom)
-          ) {
-            return;
-          }
+    new Hammer(zoomOut).on('press tap', e => {
+      const zoomFunction = () => zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR);
 
-          zoomTo(lvl);
-        };
+      zoomFunction();
 
-        startZooming();
-        doZoom();
-        zoomInterval = setInterval(doZoom, options.zoomDelay);
+      if (e.type === 'press') {
+        zooming = true;
+        zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
+      }
+    });
 
-        return false;
-      });
+    new Hammer(zoomOut).on('pressup panend', () => {
+      clearInterval(zoomInterval);
+      zooming = false;
+    });
 
-      $win.bind('mouseup blur', function () {
-        clearInterval(zoomInterval);
-        endZooming();
-      });
-    }
-
-    bindButton($(zoomIn), (1 + options.zoomFactor));
-    bindButton($(zoomOut), (1 - options.zoomFactor));
-
-    $(reset).bind('mousedown', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (e.button === 0) {
-        if (cy.elements().size() === 0) {
-          cy.reset();
-        } else {
-          cy.fit();
-        }
+    new Hammer(reset).on('press tap', () => {
+      if (cy.elements().size() === 0) {
+        cy.reset();
+      } else {
+        cy.fit();
       }
     });
   }
