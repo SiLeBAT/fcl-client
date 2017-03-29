@@ -9,6 +9,7 @@ class ZoomingClass {
 
   private static ZOOM_FACTOR = 1.05;
   private static ZOOM_DELAY = 45;
+  private static SLIDER_PADDING = 2;
 
   private cy: any;
   private container: HTMLElement;
@@ -72,50 +73,6 @@ class ZoomingClass {
 
     let zooming = false;
 
-    const sliderPadding = 2;
-
-    const setSliderFromMouse = (evt, handleOffset) => {
-      if (handleOffset === undefined) {
-        handleOffset = 0;
-      }
-
-      const min = sliderPadding;
-      const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * sliderPadding;
-      let top = evt.pageY - $(this.slider).offset().top - handleOffset;
-
-      // constrain to slider bounds
-      if (top < min) {
-        top = min;
-      }
-      if (top > max) {
-        top = max;
-      }
-
-      const percent = 1 - (top - min) / ( max - min );
-
-      // move the handle
-      $(this.sliderHandle).css('top', top);
-
-      const zmin = cy.minZoom();
-      const zmax = cy.maxZoom();
-
-      // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
-      const x = Math.log(zmin) / Math.log(zmax);
-      const p = (1 - x) * percent + x;
-
-      // change the zoom level
-      let z = Math.pow(zmax, p);
-
-      // bound the zoom value in case of floating pt rounding error
-      if (z < zmin) {
-        z = zmin;
-      } else if (z > zmax) {
-        z = zmax;
-      }
-
-      this.zoomTo(z);
-    };
-
     let sliderMdownHandler;
     $(this.sliderHandle).bind('mousedown', sliderMdownHandler = (mdEvt) => {
       const handleOffset = mdEvt.target === $(this.sliderHandle)[0] ? mdEvt.offsetY : 0;
@@ -135,7 +92,7 @@ class ZoomingClass {
             return false;
           }
 
-          setSliderFromMouse(mmEvt, handleOffset);
+          this.setSliderFromMouse(mmEvt, handleOffset);
 
           return false;
         }
@@ -155,41 +112,15 @@ class ZoomingClass {
     $(this.slider).bind('mousedown', (e) => {
       if (e.target !== $(this.sliderHandle)[0]) {
         sliderMdownHandler(e);
-        setSliderFromMouse(e, undefined);
+        this.setSliderFromMouse(e, undefined);
       }
     });
 
-    const positionSliderFromZoom = () => {
-      const z = cy.zoom();
-      const zmin = cy.minZoom();
-      const zmax = cy.maxZoom();
-
-      // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
-      const x = Math.log(zmin) / Math.log(zmax);
-      const p = Math.log(z) / Math.log(zmax);
-      const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
-
-      const min = sliderPadding;
-      const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * sliderPadding;
-      let top = percent * ( max - min );
-
-      // constrain to slider bounds
-      if (top < min) {
-        top = min;
-      }
-      if (top > max) {
-        top = max;
-      }
-
-      // move the handle
-      $(this.sliderHandle).css('top', top);
-    };
-
-    positionSliderFromZoom();
+    this.positionSliderFromZoom();
 
     cy.on('zoom', () => {
       if (!sliding) {
-        positionSliderFromZoom();
+        this.positionSliderFromZoom();
       }
     });
 
@@ -208,8 +139,8 @@ class ZoomingClass {
       return;
     }
 
-    const min = sliderPadding;
-    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * sliderPadding;
+    const min = ZoomingClass.SLIDER_PADDING;
+    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * ZoomingClass.SLIDER_PADDING;
     let top = percent * ( max - min );
 
     // constrain to slider bounds
@@ -279,5 +210,73 @@ class ZoomingClass {
         renderedPosition: {x: this.container.offsetWidth / 2, y: this.container.offsetHeight / 2}
       });
     }
+  }
+
+  private setSliderFromMouse(evt, handleOffset) {
+    if (handleOffset === undefined) {
+      handleOffset = 0;
+    }
+
+    const min = ZoomingClass.SLIDER_PADDING;
+    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * ZoomingClass.SLIDER_PADDING;
+    let top = evt.pageY - $(this.slider).offset().top - handleOffset;
+
+    // constrain to slider bounds
+    if (top < min) {
+      top = min;
+    }
+    if (top > max) {
+      top = max;
+    }
+
+    const percent = 1 - (top - min) / ( max - min );
+
+    // move the handle
+    $(this.sliderHandle).css('top', top);
+
+    const zmin = this.cy.minZoom();
+    const zmax = this.cy.maxZoom();
+
+    // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
+    const x = Math.log(zmin) / Math.log(zmax);
+    const p = (1 - x) * percent + x;
+
+    // change the zoom level
+    let z = Math.pow(zmax, p);
+
+    // bound the zoom value in case of floating pt rounding error
+    if (z < zmin) {
+      z = zmin;
+    } else if (z > zmax) {
+      z = zmax;
+    }
+
+    this.zoomTo(z);
+  }
+
+  private positionSliderFromZoom() {
+    const z = this.cy.zoom();
+    const zmin = this.cy.minZoom();
+    const zmax = this.cy.maxZoom();
+
+    // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
+    const x = Math.log(zmin) / Math.log(zmax);
+    const p = Math.log(z) / Math.log(zmax);
+    const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
+
+    const min = ZoomingClass.SLIDER_PADDING;
+    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * ZoomingClass.SLIDER_PADDING;
+    let top = percent * ( max - min );
+
+    // constrain to slider bounds
+    if (top < min) {
+      top = min;
+    }
+    if (top > max) {
+      top = max;
+    }
+
+    // move the handle
+    $(this.sliderHandle).css('top', top);
   }
 }
