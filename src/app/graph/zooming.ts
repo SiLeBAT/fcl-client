@@ -10,6 +10,18 @@ class ZoomingClass {
   private static ZOOM_FACTOR = 1.05;
   private static ZOOM_DELAY = 45;
 
+  private cy: any;
+  private container: HTMLElement;
+
+  private zoomDiv: HTMLElement;
+  private zoomIn: HTMLElement;
+  private zoomOut: HTMLElement;
+  private reset: HTMLElement;
+  private slider: HTMLElement;
+  private sliderBackground: HTMLElement;
+  private sliderHandle: HTMLElement;
+  private noZoomTick: HTMLElement;
+
   private static createElement(id: string) {
     const div = document.createElement('div');
 
@@ -18,7 +30,7 @@ class ZoomingClass {
     return div;
   }
 
-  private static createIconButton(id: string, icon: string): HTMLElement {
+  private static createIconElement(id: string, icon: string): HTMLElement {
     const div = document.createElement('div');
     const i = document.createElement('i');
 
@@ -32,63 +44,44 @@ class ZoomingClass {
   }
 
   constructor(cy: any) {
-    const container: HTMLElement = cy.container();
+    this.cy = cy;
+    this.container = cy.container();
+
     const $win = $(window);
     let sliding = false;
 
-    const zoomDiv = document.createElement('div');
+    this.zoomDiv = ZoomingClass.createElement('cy-zoom');
+    this.zoomIn = ZoomingClass.createIconElement('cy-zoom-in', 'add');
+    this.zoomOut = ZoomingClass.createIconElement('cy-zoom-out', 'remove');
+    this.reset = ZoomingClass.createIconElement('cy-zoom-reset', 'zoom_out_map');
+    this.slider = ZoomingClass.createElement('cy-zoom-slider');
+    this.sliderBackground = ZoomingClass.createElement('cy-zoom-slider-background');
+    this.sliderHandle = ZoomingClass.createElement('cy-zoom-slider-handle');
+    this.noZoomTick = ZoomingClass.createElement('cy-zoom-no-zoom-tick');
 
-    zoomDiv.id = 'cy-zoom';
-    container.appendChild(zoomDiv);
+    this.slider.appendChild(this.sliderBackground);
+    this.slider.appendChild(this.sliderHandle);
+    this.slider.appendChild(this.noZoomTick);
 
-    const zoomIn = ZoomingClass.createIconButton('cy-zoom-in', 'add');
-    zoomDiv.appendChild(zoomIn);
+    this.zoomDiv.appendChild(this.reset);
+    this.zoomDiv.appendChild(this.zoomIn);
+    this.zoomDiv.appendChild(this.zoomOut);
+    this.zoomDiv.appendChild(this.slider);
 
-    const zoomOut = ZoomingClass.createIconButton('cy-zoom-out', 'remove');
-    zoomDiv.appendChild(zoomOut);
-
-    const reset = ZoomingClass.createIconButton('cy-zoom-reset', 'zoom_out_map');
-    zoomDiv.appendChild(reset);
-
-    const slider = ZoomingClass.createElement('cy-zoom-slider');
-    zoomDiv.appendChild(slider);
-
-    const sliderBackground = ZoomingClass.createElement('cy-zoom-slider-background');
-    slider.appendChild(sliderBackground);
-
-    const sliderHandle = ZoomingClass.createElement('cy-zoom-slider-handle');
-    slider.appendChild(sliderHandle);
-
-    const noZoomTick = ZoomingClass.createElement('cy-zoom-no-zoom-tick');
-    slider.appendChild(noZoomTick);
+    this.container.appendChild(this.zoomDiv);
 
     let zooming = false;
 
-    function zoomTo(newZoom: number) {
-      newZoom = Math.min(Math.max(newZoom, cy.minZoom()), cy.maxZoom());
-
-      if (newZoom !== cy.zoom()) {
-        cy.zoom({
-          level: newZoom,
-          renderedPosition: {x: container.offsetWidth / 2, y: container.offsetHeight / 2}
-        });
-      }
-    }
-
-    $(slider).bind('mousedown', function () {
-      return false; // so we don't pan close to the slider handle
-    });
-
     const sliderPadding = 2;
 
-    function setSliderFromMouse(evt, handleOffset) {
+    const setSliderFromMouse = (evt, handleOffset) => {
       if (handleOffset === undefined) {
         handleOffset = 0;
       }
 
       const min = sliderPadding;
-      const max = $(slider).height() - $(sliderHandle).height() - 2 * sliderPadding;
-      let top = evt.pageY - $(slider).offset().top - handleOffset;
+      const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * sliderPadding;
+      let top = evt.pageY - $(this.slider).offset().top - handleOffset;
 
       // constrain to slider bounds
       if (top < min) {
@@ -101,7 +94,7 @@ class ZoomingClass {
       const percent = 1 - (top - min) / ( max - min );
 
       // move the handle
-      $(sliderHandle).css('top', top);
+      $(this.sliderHandle).css('top', top);
 
       const zmin = cy.minZoom();
       const zmax = cy.maxZoom();
@@ -120,18 +113,18 @@ class ZoomingClass {
         z = zmax;
       }
 
-      zoomTo(z);
-    }
+      this.zoomTo(z);
+    };
 
     let sliderMdownHandler;
-    $(sliderHandle).bind('mousedown', sliderMdownHandler = function (mdEvt) {
-      const handleOffset = mdEvt.target === $(sliderHandle)[0] ? mdEvt.offsetY : 0;
+    $(this.sliderHandle).bind('mousedown', sliderMdownHandler = (mdEvt) => {
+      const handleOffset = mdEvt.target === $(this.sliderHandle)[0] ? mdEvt.offsetY : 0;
       sliding = true;
       zooming = true;
-      $(sliderHandle).addClass('active');
+      $(this.sliderHandle).addClass('active');
 
       let lastMove = 0;
-      $win.bind('mousemove', function (mmEvt) {
+      $win.bind('mousemove', (mmEvt) => {
         if (sliding) {
           const now = +new Date;
 
@@ -149,24 +142,24 @@ class ZoomingClass {
       });
 
       // unbind when
-      $win.bind('mouseup', function () {
+      $win.bind('mouseup', () => {
         sliding = false;
 
-        $(sliderHandle).removeClass('active');
+        $(this.sliderHandle).removeClass('active');
         zooming = false;
       });
 
       return false;
     });
 
-    $(slider).bind('mousedown', function (e) {
-      if (e.target !== $(sliderHandle)[0]) {
+    $(this.slider).bind('mousedown', (e) => {
+      if (e.target !== $(this.sliderHandle)[0]) {
         sliderMdownHandler(e);
         setSliderFromMouse(e, undefined);
       }
     });
 
-    function positionSliderFromZoom() {
+    const positionSliderFromZoom = () => {
       const z = cy.zoom();
       const zmin = cy.minZoom();
       const zmax = cy.maxZoom();
@@ -177,7 +170,7 @@ class ZoomingClass {
       const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
 
       const min = sliderPadding;
-      const max = $(slider).height() - $(sliderHandle).height() - 2 * sliderPadding;
+      const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * sliderPadding;
       let top = percent * ( max - min );
 
       // constrain to slider bounds
@@ -189,72 +182,55 @@ class ZoomingClass {
       }
 
       // move the handle
-      $(sliderHandle).css('top', top);
-    }
+      $(this.sliderHandle).css('top', top);
+    };
 
     positionSliderFromZoom();
 
-    cy.on('zoom', function () {
+    cy.on('zoom', () => {
       if (!sliding) {
         positionSliderFromZoom();
       }
     });
 
-    // set the position of the zoom=1 tick
-    (function () {
-      const z = 1;
-      const zmin = cy.minZoom();
-      const zmax = cy.maxZoom();
 
-      // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
-      const x = Math.log(zmin) / Math.log(zmax);
-      const p = Math.log(z) / Math.log(zmax);
-      const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
+    const z = 1;
+    const zmin = cy.minZoom();
+    const zmax = cy.maxZoom();
 
-      if (percent > 1 || percent < 0) {
-        $(noZoomTick).hide();
-        return;
-      }
+    // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
+    const x = Math.log(zmin) / Math.log(zmax);
+    const p = Math.log(z) / Math.log(zmax);
+    const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
 
-      const min = sliderPadding;
-      const max = $(slider).height() - $(sliderHandle).height() - 2 * sliderPadding;
-      let top = percent * ( max - min );
+    if (percent > 1 || percent < 0) {
+      $(this.noZoomTick).hide();
+      return;
+    }
 
-      // constrain to slider bounds
-      if (top < min) {
-        top = min;
-      }
-      if (top > max) {
-        top = max;
-      }
+    const min = sliderPadding;
+    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * sliderPadding;
+    let top = percent * ( max - min );
 
-      $(noZoomTick).css('top', top);
-    })();
+    // constrain to slider bounds
+    if (top < min) {
+      top = min;
+    }
+    if (top > max) {
+      top = max;
+    }
+
+    $(this.noZoomTick).css('top', top);
+
 
     let zoomInterval;
 
-    zoomIn.onmousedown = e => e.stopPropagation();
-    zoomOut.onmousedown = e => e.stopPropagation();
-    reset.onmousedown = e => e.stopPropagation();
+    this.zoomIn.onmousedown = e => e.stopPropagation();
+    this.zoomOut.onmousedown = e => e.stopPropagation();
+    this.reset.onmousedown = e => e.stopPropagation();
 
-    new Hammer(zoomIn).on('press tap', e => {
-      const zoomFunction = () => zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR);
-
-      zoomFunction();
-
-      if (e.type === 'press') {
-        zooming = true;
-        zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
-      }
-    });
-
-    new Hammer(zoomIn).on('pressup panend', () => {
-      clearInterval(zoomInterval);
-      zooming = false;
-    });
-
-    new Hammer(zoomOut).on('press tap', e => {
-      const zoomFunction = () => zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR);
+    new Hammer(this.zoomIn).on('press tap', e => {
+      const zoomFunction = () => this.zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR);
 
       zoomFunction();
 
@@ -264,17 +240,44 @@ class ZoomingClass {
       }
     });
 
-    new Hammer(zoomOut).on('pressup panend', () => {
+    new Hammer(this.zoomIn).on('pressup panend', () => {
       clearInterval(zoomInterval);
       zooming = false;
     });
 
-    new Hammer(reset).on('press tap', () => {
+    new Hammer(this.zoomOut).on('press tap', e => {
+      const zoomFunction = () => this.zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR);
+
+      zoomFunction();
+
+      if (e.type === 'press') {
+        zooming = true;
+        zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
+      }
+    });
+
+    new Hammer(this.zoomOut).on('pressup panend', () => {
+      clearInterval(zoomInterval);
+      zooming = false;
+    });
+
+    new Hammer(this.reset).on('press tap', () => {
       if (cy.elements().size() === 0) {
         cy.reset();
       } else {
         cy.fit();
       }
     });
+  }
+
+  private zoomTo(newZoom: number) {
+    newZoom = Math.min(Math.max(newZoom, this.cy.minZoom()), this.cy.maxZoom());
+
+    if (newZoom !== this.cy.zoom()) {
+      this.cy.zoom({
+        level: newZoom,
+        renderedPosition: {x: this.container.offsetWidth / 2, y: this.container.offsetHeight / 2}
+      });
+    }
   }
 }
