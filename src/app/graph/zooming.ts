@@ -2,7 +2,6 @@ export function Zooming() {
   return new ZoomingClass(this);
 }
 
-declare const $: any;
 declare const Hammer: any;
 
 class ZoomingClass {
@@ -72,11 +71,11 @@ class ZoomingClass {
 
     this.container.appendChild(this.zoomDiv);
 
-    this.positionNoZoomTick();
-    this.positionSliderFromZoom();
+    this.noZoomTick.style.top = this.convertZoomToSliderPosition(1) + 'px';
+    this.setSliderFromZoom();
     this.cy.on('zoom', () => {
       if (!this.sliding) {
-        this.positionSliderFromZoom();
+        this.setSliderFromZoom();
       }
     });
 
@@ -173,59 +172,17 @@ class ZoomingClass {
     this.zoomTo(Math.pow(maxZoom, percent + Math.log(minZoom) / Math.log(maxZoom) * (1 - percent)));
   }
 
-  private positionSliderFromZoom() {
-    const z = this.cy.zoom();
-    const zmin = this.cy.minZoom();
-    const zmax = this.cy.maxZoom();
-
-    // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
-    const x = Math.log(zmin) / Math.log(zmax);
-    const p = Math.log(z) / Math.log(zmax);
-    const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
-
-    const min = ZoomingClass.SLIDER_PADDING;
-    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * ZoomingClass.SLIDER_PADDING;
-    let top = percent * ( max - min );
-
-    // constrain to slider bounds
-    if (top < min) {
-      top = min;
-    }
-    if (top > max) {
-      top = max;
-    }
-
-    // move the handle
-    $(this.sliderHandle).css('top', top);
+  private setSliderFromZoom() {
+    this.sliderHandle.style.top = this.convertZoomToSliderPosition(this.cy.zoom()) + 'px';
   }
 
-  private positionNoZoomTick() {
-    const z = 1;
-    const zmin = this.cy.minZoom();
-    const zmax = this.cy.maxZoom();
+  private convertZoomToSliderPosition(zoom: number): number {
+    const minZoom = this.cy.minZoom();
+    const maxZoom = this.cy.maxZoom();
+    const percent = 1 - Math.log(zoom / minZoom) / Math.log(maxZoom / minZoom);
+    const minPos = ZoomingClass.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - this.sliderHandle.offsetHeight - ZoomingClass.SLIDER_PADDING;
 
-    // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
-    const x = Math.log(zmin) / Math.log(zmax);
-    const p = Math.log(z) / Math.log(zmax);
-    const percent = 1 - (p - x) / (1 - x); // the 1- bit at the front b/c up is in the -ve y direction
-
-    if (percent > 1 || percent < 0) {
-      $(this.noZoomTick).hide();
-      return;
-    }
-
-    const min = ZoomingClass.SLIDER_PADDING;
-    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * ZoomingClass.SLIDER_PADDING;
-    let top = percent * ( max - min );
-
-    // constrain to slider bounds
-    if (top < min) {
-      top = min;
-    }
-    if (top > max) {
-      top = max;
-    }
-
-    $(this.noZoomTick).css('top', top);
+    return Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos);
   }
 }
