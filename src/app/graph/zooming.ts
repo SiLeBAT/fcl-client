@@ -84,6 +84,7 @@ class ZoomingClass {
     this.zoomOut.onmousedown = e => e.stopPropagation();
     this.reset.onmousedown = e => e.stopPropagation();
     this.slider.onmousedown = e => e.stopPropagation();
+    this.sliderHandle.onmousedown = e => e.stopPropagation();
 
     const zoomHandler = (event, zoomFunction) => {
       if (event.type === 'tap') {
@@ -101,7 +102,6 @@ class ZoomingClass {
 
     new Hammer(this.zoomIn).on('tap press pressup panend', e => zoomHandler(e, () => this.zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR)));
     new Hammer(this.zoomOut).on('tap press pressup panend', e => zoomHandler(e, () => this.zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR)));
-
     new Hammer(this.reset).on('press tap', () => {
       if (cy.elements().size() === 0) {
         cy.reset();
@@ -110,25 +110,41 @@ class ZoomingClass {
       }
     });
 
-    new Hammer(this.slider).on('press tap', e => {
+    const sliderHammer = new Hammer(this.slider);
+
+    sliderHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
+    sliderHammer.on('press tap', e => {
       this.setSliderFromMouse(e.srcEvent);
     });
-
-    const slidingHammer = new Hammer(this.sliderHandle);
-
-    slidingHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
-    slidingHammer.on('panstart', () => {
+    sliderHammer.on('panstart', () => {
       this.sliding = true;
       this.zooming = true;
-      $(this.sliderHandle).addClass('active');
+      this.sliderHandle.className = 'active';
     });
-    slidingHammer.on('panmove', e => {
+    sliderHammer.on('panmove', e => {
       this.setSliderFromMouse(e.srcEvent);
     });
-    slidingHammer.on('panend', () => {
+    sliderHammer.on('panend', () => {
       this.sliding = false;
       this.zooming = false;
-      $(this.sliderHandle).removeClass('active');
+      this.sliderHandle.className = '';
+    });
+
+    const sliderHandleHammer = new Hammer(this.sliderHandle);
+
+    sliderHandleHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
+    sliderHandleHammer.on('panstart', () => {
+      this.sliding = true;
+      this.zooming = true;
+      this.sliderHandle.className = 'active';
+    });
+    sliderHandleHammer.on('panmove', e => {
+      this.setSliderFromMouse(e.srcEvent);
+    });
+    sliderHandleHammer.on('panend', () => {
+      this.sliding = false;
+      this.zooming = false;
+      this.sliderHandle.className = '';
     });
   }
 
@@ -143,42 +159,18 @@ class ZoomingClass {
     }
   }
 
-  private setSliderFromMouse(evt) {
-    const min = ZoomingClass.SLIDER_PADDING;
-    const max = $(this.slider).height() - $(this.sliderHandle).height() - 2 * ZoomingClass.SLIDER_PADDING;
-    let top = evt.pageY - $(this.slider).offset().top;
+  private setSliderFromMouse(e: MouseEvent) {
+    const minPos = ZoomingClass.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - this.sliderHandle.offsetHeight - ZoomingClass.SLIDER_PADDING;
+    const pos = Math.min(Math.max(e.pageY - this.slider.getBoundingClientRect().top - this.sliderHandle.offsetHeight / 2, minPos), maxPos);
 
-    // constrain to slider bounds
-    if (top < min) {
-      top = min;
-    }
-    if (top > max) {
-      top = max;
-    }
+    this.sliderHandle.style.top = pos + 'px';
 
-    const percent = 1 - (top - min) / ( max - min );
+    const percent = 1 - (pos - minPos) / (maxPos - minPos);
+    const minZoom = this.cy.minZoom();
+    const maxZoom = this.cy.maxZoom();
 
-    // move the handle
-    $(this.sliderHandle).css('top', top);
-
-    const zmin = this.cy.minZoom();
-    const zmax = this.cy.maxZoom();
-
-    // assume (zoom = zmax ^ p) where p ranges on (x, 1) with x negative
-    const x = Math.log(zmin) / Math.log(zmax);
-    const p = (1 - x) * percent + x;
-
-    // change the zoom level
-    let z = Math.pow(zmax, p);
-
-    // bound the zoom value in case of floating pt rounding error
-    if (z < zmin) {
-      z = zmin;
-    } else if (z > zmax) {
-      z = zmax;
-    }
-
-    this.zoomTo(z);
+    this.zoomTo(Math.pow(maxZoom, percent + Math.log(minZoom) / Math.log(maxZoom) * (1 - percent)));
   }
 
   private positionSliderFromZoom() {
