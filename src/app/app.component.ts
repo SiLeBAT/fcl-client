@@ -3,7 +3,7 @@ import {MdSidenav, MdDialog} from '@angular/material';
 
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
-import {DataService} from './util/data.service';
+import {DataService, ShowType} from './util/data.service';
 import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
   nodeSizes = DataService.NODE_SIZES;
   fontSizes = DataService.FONT_SIZES;
   tableModes = DataService.TABLE_MODES;
+  showTypes = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
 
   graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
   tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
@@ -87,7 +88,7 @@ export class AppComponent implements OnInit {
         this.table.setMode(this.tableSettings.mode);
         this.table.setStationColumns(this.tableSettings.stationColumns);
         this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
-        this.table.setShowSelectedOnly(this.tableSettings.showSelectedOnly);
+        this.table.setShowType(this.tableSettings.showType);
         break;
       case 'width':
         break;
@@ -100,8 +101,8 @@ export class AppComponent implements OnInit {
       case 'deliveryColumns':
         this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
         break;
-      case 'showSelectedOnly':
-        this.table.setShowSelectedOnly(this.tableSettings.showSelectedOnly);
+      case 'showType':
+        this.table.setShowType(this.tableSettings.showType);
         break;
     }
   }

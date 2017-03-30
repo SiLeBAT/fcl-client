@@ -67,9 +67,12 @@
         <button md-raised-button (click)="changeColumns()">Change Columns</button>
       </md-list-item>
       <md-list-item>
-        <md-checkbox [(ngModel)]="tableSettings.showSelectedOnly" (ngModelChange)="onTableChange('showSelectedOnly')">
-          Show Selected Only
-        </md-checkbox>
+        <md-select placeholder="Show Type" [(ngModel)]="tableSettings.showType"
+                   (ngModelChange)="onTableChange('showType')">
+          <md-option *ngFor="let showType of showTypes" [value]="showType">
+            {{showType}}
+          </md-option>
+        </md-select>
       </md-list-item>
     </md-list>
   </md-sidenav>

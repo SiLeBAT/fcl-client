@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {scrollbarWidth} from '@swimlane/ngx-datatable/release/utils/scrollbar-width';
 
-import {DataService} from '../util/data.service';
+import {DataService, ShowType} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 
 declare const ResizeSensor: any;
@@ -22,7 +22,7 @@ export class TableComponent implements OnInit {
   private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
   private stationColumns = DataService.DEFAULT_TABLE_SETTINGS.stationColumns;
   private deliveryColumns = DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns;
-  private showSelectedOnly = DataService.DEFAULT_TABLE_SETTINGS.showSelectedOnly;
+  private showType = DataService.DEFAULT_TABLE_SETTINGS.showType;
 
   private resizeTimer: any;
 
@@ -129,8 +129,8 @@ export class TableComponent implements OnInit {
     this.update();
   }
 
-  setShowSelectedOnly(showSelectedOnly: boolean) {
-    this.showSelectedOnly = showSelectedOnly;
+  setShowType(showType: ShowType) {
+    this.showType = showType;
     this.update();
   }
 
@@ -168,8 +168,10 @@ export class TableComponent implements OnInit {
 
       elements = elements.filter(e => !e.data.invisible);
 
-      if (this.showSelectedOnly) {
+      if (this.showType === ShowType.SELECTED_ONLY) {
         elements = elements.filter(e => e.data.selected);
+      } else if (this.showType === ShowType.TRACE_ONLY) {
+        elements = elements.filter(e => e.data.forward || e.data.backward || e.data.observed);
       }
 
       this.rows = elements.map(e => JSON.parse(JSON.stringify(e.data)));
@@ -188,7 +190,7 @@ export class TableComponent implements OnInit {
       'selected': row.selected,
       'forward': row.forward,
       'backward': row.backward,
-      'observed': row.observed === 'full' || row.observed === 'forward' || row.observed === 'backward',
+      'observed': row.observed != null,
       'outbreak': row.outbreak,
       'commonLink': row.commonLink
     };
@@ -201,7 +203,7 @@ export class TableComponent implements OnInit {
       this.data.deliveries.find(d => d.data.id === row.id).data.selected = row.selected;
     }
 
-    if (this.showSelectedOnly && !row.selected) {
+    if (this.showType === ShowType.SELECTED_ONLY && !row.selected) {
       this.rows.splice(this.rows.findIndex(r => r.id === row.id), 1);
     }
 

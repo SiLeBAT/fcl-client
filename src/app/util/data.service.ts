@@ -3,6 +3,12 @@ import {Http} from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
+export enum ShowType {
+  ALL = 'All' as any,
+  SELECTED_ONLY = 'Selected Only' as any,
+  TRACE_ONLY = 'Trace Only' as any
+}
+
 @Injectable()
 export class DataService {
 
@@ -17,8 +23,8 @@ export class DataService {
   ];
 
   static PROPERTIES: Map<string, { name: string, color: number[] }> = new Map([
-    ['forward', {name: 'Forward', color: [150, 255, 75]}],
-    ['backward', {name: 'Backward', color: [255, 150, 75]}],
+    ['forward', {name: 'Forward Trace', color: [150, 255, 75]}],
+    ['backward', {name: 'Backward Trace', color: [255, 150, 75]}],
     ['observed', {name: 'Observed', color: [75, 150, 255]}],
     ['outbreak', {name: 'Outbreak', color: [255, 50, 50]}],
     ['commonLink', {name: 'Common Link', color: [255, 255, 75]}]
@@ -53,7 +59,7 @@ export class DataService {
     width: 0.25,
     stationColumns: DataService.TABLE_COLUMNS['Stations'].map(c => c.name),
     deliveryColumns: DataService.TABLE_COLUMNS['Deliveries'].map(c => c.name),
-    showSelectedOnly: false
+    showType: ShowType.ALL
   };
 
   private dataSource: string | File;
