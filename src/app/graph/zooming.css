@@ -1,3 +1,4 @@
+/*noinspection CssUnusedSymbol*/
 #cy-zoom {
   position: absolute;
   font-family: arial, helvetica, sans-serif;
@@ -8,6 +9,7 @@
   box-sizing: content-box;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-in, #cy-zoom-out, #cy-zoom-reset {
   cursor: pointer;
   text-align: center;
@@ -28,18 +30,22 @@
   background: #ddd;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-in {
   top: 53px;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-out {
   top: 178px;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-reset {
   top: 20px;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-slider {
   position: absolute;
   top: 78px;
@@ -49,6 +55,7 @@
   box-sizing: content-box;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-slider-background {
   position: absolute;
   top: 0;
@@ -61,6 +68,7 @@
   box-sizing: content-box;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-slider-handle {
   position: absolute;
   width: 16px;
@@ -75,6 +83,7 @@
   box-sizing: content-box;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-zoom-no-zoom-tick {
   position: absolute;
   background: #666;
