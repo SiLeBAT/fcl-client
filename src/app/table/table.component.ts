@@ -15,9 +15,8 @@ declare const ResizeSensor: any;
 })
 export class TableComponent implements OnInit {
 
-  private columns: any[];
-  //noinspection JSMismatchedCollectionQueryUpdate
-  private rows: any[];
+  columns: any[];
+  rows: any[];
 
   private data: any;
   private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
@@ -183,8 +182,8 @@ export class TableComponent implements OnInit {
     this.changeFunction = changeFunction;
   }
 
-  //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
-  private getRowClass(row) {
+  //noinspection JSMethodCanBeStatic
+  getRowClass(row) {
     return {
       'selected': row.selected,
       'forward': row.forward,
@@ -195,8 +194,7 @@ export class TableComponent implements OnInit {
     };
   }
 
-  //noinspection JSUnusedLocalSymbols,JSMethodCanBeStatic
-  private onSelect(row) {
+  onSelect(row) {
     if (this.mode === 'Stations') {
       this.data.stations.find(s => s.data.id === row.id).data.selected = row.selected;
     } else if (this.mode === 'Deliveries') {

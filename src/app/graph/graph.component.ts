@@ -31,12 +31,9 @@ export class GraphComponent implements OnInit {
 
   @ViewChild(MdMenuTrigger) trigger: MdMenuTrigger;
 
-  //noinspection JSUnusedLocalSymbols
-  private actionTypes = MenuActionType;
-  //noinspection JSMismatchedCollectionQueryUpdate
-  private menuActions: MenuAction[];
-  //noinspection JSMismatchedCollectionQueryUpdate
-  private layoutMenuActions: MenuAction[];
+  actionTypes = MenuActionType;
+  menuActions: MenuAction[];
+  layoutMenuActions: MenuAction[];
 
   private cy: any;
   private data: any;

@@ -1,7 +1,9 @@
 <div id="tableContainer">
-  <ngx-datatable #table class="material" [rows]="rows" [rowClass]="getRowClass"
-                 [columns]="columns" columnMode="force" scrollbarV="true" selectionType="checkbox"
-                 (select)="onSelect()">
+  <!--<ngx-datatable #table class="material" [rows]="rows" [rowClass]="getRowClass"-->
+  <!--[columns]="columns" columnMode="force" scrollbarV="true" selectionType="checkbox"-->
+  <!--(select)="onSelect()">-->
+  <!--</ngx-datatable>-->
+  <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" columnMode="force" scrollbarV="true">
   </ngx-datatable>
   <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
     <md-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary" disableRipple="true">

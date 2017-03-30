@@ -20,15 +20,12 @@ export class AppComponent implements OnInit {
   @ViewChild('table') table: TableComponent;
   @ViewChild('rightSidenav') rightSidenav: MdSidenav;
 
-  //noinspection JSUnusedLocalSymbols
-  private nodeSizes = DataService.NODE_SIZES;
-  //noinspection JSUnusedLocalSymbols
-  private fontSizes = DataService.FONT_SIZES;
-  //noinspection JSUnusedLocalSymbols
-  private tableModes = DataService.TABLE_MODES;
+  nodeSizes = DataService.NODE_SIZES;
+  fontSizes = DataService.FONT_SIZES;
+  tableModes = DataService.TABLE_MODES;
 
-  private graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
-  private tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
+  graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
+  tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
 
   constructor(private dataService: DataService, private dialogService: MdDialog) {
     document.body.oncontextmenu = e => e.preventDefault();
