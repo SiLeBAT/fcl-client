@@ -42,6 +42,7 @@ export class GraphComponent implements OnInit {
   private mergeDeliveries = DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries;
   private nodeSize = DataService.DEFAULT_GRAPH_SETTINGS.nodeSize;
   private fontSize = DataService.DEFAULT_GRAPH_SETTINGS.fontSize;
+  private showLegend = DataService.DEFAULT_GRAPH_SETTINGS.showLegend;
 
   private selectTimerActivated = true;
   private resizeTimer: any;
@@ -131,8 +132,8 @@ export class GraphComponent implements OnInit {
     });
 
     this.setFontSize(this.fontSize);
+    this.setShowLegend(this.showLegend);
     this.tracingService.init(this.data);
-    this.legend.next(new Set(DataService.PROPERTIES.keys()));
   }
 
   onChange(changeFunction: () => void) {
@@ -179,6 +180,14 @@ export class GraphComponent implements OnInit {
       this.cy.nodes().style({
         'font-size': Math.max(fontSize / this.cy.zoom(), fontSize)
       });
+    }
+  }
+
+  setShowLegend(showLegend: boolean) {
+    this.showLegend = showLegend;
+
+    if (this.cy != null) {
+      this.legend.next(showLegend ? new Set(DataService.PROPERTIES.keys()) : new Set());
     }
   }
 

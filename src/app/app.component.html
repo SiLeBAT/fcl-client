@@ -46,6 +46,11 @@
           Merge Deliveries
         </md-checkbox>
       </md-list-item>
+      <md-list-item>
+        <md-checkbox [(ngModel)]="graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
+          Show Legend
+        </md-checkbox>
+      </md-list-item>
     </md-list>
     <md-toolbar>
       <span>Table Settings</span>

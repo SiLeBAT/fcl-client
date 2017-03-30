@@ -16,34 +16,34 @@ class LegendClass {
   }
 
   private update(properties: Set<string>) {
-    const table = document.createElement('table');
-
-    DataService.PROPERTIES.forEach((value, key) => {
-      if (properties.has(key)) {
-        const row = document.createElement('tr');
-        const rowLabel = document.createElement('td');
-        const rowColor = document.createElement('td');
-
-        rowLabel.innerText = value.name;
-        rowColor.style.backgroundColor = 'rgb(' + value.color.join(', ') + ')';
-        rowColor.width = '20px';
-        rowColor.height = '100%';
-        row.appendChild(rowLabel);
-        row.appendChild(rowColor);
-        table.appendChild(row);
-      }
-    });
-
     if (this.legendDiv != null) {
       this.legendDiv.remove();
     }
 
-    this.legendDiv = document.createElement('div');
-    this.legendDiv.appendChild(table);
-    this.legendDiv.style.position = 'absolute';
-    this.legendDiv.style.left = '0';
-    this.legendDiv.style.bottom = '0';
-    this.legendDiv.style.backgroundColor = 'rgb(200, 200, 200)';
-    this.container.appendChild(this.legendDiv);
+    if (properties.size > 0) {
+      const table = document.createElement('table');
+
+      DataService.PROPERTIES.forEach((value, key) => {
+        if (properties.has(key)) {
+          const row = document.createElement('tr');
+          const labelCell = document.createElement('td');
+          const colorCell = document.createElement('td');
+          const colorCellDiv = document.createElement('div');
+
+          labelCell.innerText = value.name;
+          colorCellDiv.style.backgroundColor = 'rgb(' + value.color.join(', ') + ')';
+          colorCell.appendChild(colorCellDiv);
+          row.appendChild(labelCell);
+          row.appendChild(colorCell);
+          table.appendChild(row);
+        }
+      });
+
+      this.legendDiv = document.createElement('div');
+      this.legendDiv.appendChild(table);
+      this.legendDiv.id = 'cy-legend';
+      this.legendDiv.onmousedown = e => e.stopPropagation();
+      this.container.appendChild(this.legendDiv);
+    }
   }
 }

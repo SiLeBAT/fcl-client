@@ -44,7 +44,8 @@ export class DataService {
   static DEFAULT_GRAPH_SETTINGS = {
     nodeSize: DataService.NODE_SIZES[0].value,
     fontSize: DataService.FONT_SIZES[0].value,
-    mergeDeliveries: false
+    mergeDeliveries: false,
+    showLegend: true
   };
 
   static DEFAULT_TABLE_SETTINGS = {

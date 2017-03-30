@@ -63,6 +63,7 @@ export class AppComponent implements OnInit {
         this.graph.setNodeSize(this.graphSettings.nodeSize);
         this.graph.setFontSize(this.graphSettings.fontSize);
         this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
+        this.graph.setShowLegend(this.graphSettings.showLegend);
         break;
       case 'nodeSize':
         this.graph.setNodeSize(this.graphSettings.nodeSize);
@@ -72,6 +73,9 @@ export class AppComponent implements OnInit {
         break;
       case 'mergeDeliveries':
         this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
+        break;
+      case 'showLegend':
+        this.graph.setShowLegend(this.graphSettings.showLegend);
         break;
     }
   }
