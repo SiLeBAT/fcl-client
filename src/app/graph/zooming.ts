@@ -47,6 +47,12 @@ class ZoomingClass {
     return div;
   }
 
+  private static getHeightWithoutBorder(element: HTMLElement) {
+    const style: CSSStyleDeclaration = getComputedStyle(element);
+
+    return element.offsetHeight - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
+  }
+
   constructor(cy: any) {
     this.cy = cy;
     this.container = cy.container();
@@ -71,7 +77,7 @@ class ZoomingClass {
 
     this.container.appendChild(this.zoomDiv);
 
-    this.noZoomTick.style.top = this.convertZoomToSliderPosition(1) + 'px';
+    this.setTickToNoZoom();
     this.setSliderFromZoom();
     this.cy.on('zoom', () => {
       if (!this.sliding) {
@@ -160,7 +166,7 @@ class ZoomingClass {
 
   private setSliderFromMouse(e: MouseEvent) {
     const minPos = ZoomingClass.SLIDER_PADDING;
-    const maxPos = this.slider.offsetHeight - this.sliderHandle.offsetHeight - ZoomingClass.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - ZoomingClass.getHeightWithoutBorder(this.sliderHandle) - ZoomingClass.SLIDER_PADDING;
     const pos = Math.min(Math.max(e.pageY - this.slider.getBoundingClientRect().top - this.sliderHandle.offsetHeight / 2, minPos), maxPos);
 
     this.sliderHandle.style.top = pos + 'px';
@@ -173,16 +179,22 @@ class ZoomingClass {
   }
 
   private setSliderFromZoom() {
-    this.sliderHandle.style.top = this.convertZoomToSliderPosition(this.cy.zoom()) + 'px';
-  }
-
-  private convertZoomToSliderPosition(zoom: number): number {
     const minZoom = this.cy.minZoom();
     const maxZoom = this.cy.maxZoom();
-    const percent = 1 - Math.log(zoom / minZoom) / Math.log(maxZoom / minZoom);
+    const percent = 1 - Math.log(this.cy.zoom() / minZoom) / Math.log(maxZoom / minZoom);
     const minPos = ZoomingClass.SLIDER_PADDING;
-    const maxPos = this.slider.offsetHeight - this.sliderHandle.offsetHeight - ZoomingClass.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - ZoomingClass.getHeightWithoutBorder(this.sliderHandle) - ZoomingClass.SLIDER_PADDING;
 
-    return Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos);
+    this.sliderHandle.style.top = Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos) + 'px';
+  }
+
+  private setTickToNoZoom() {
+    const minZoom = this.cy.minZoom();
+    const maxZoom = this.cy.maxZoom();
+    const percent = 1 - Math.log(1 / minZoom) / Math.log(maxZoom / minZoom);
+    const minPos = ZoomingClass.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - ZoomingClass.getHeightWithoutBorder(this.noZoomTick) - ZoomingClass.SLIDER_PADDING;
+
+    this.noZoomTick.style.top = Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos) + 'px';
   }
 }
