@@ -9,15 +9,19 @@
 }
 
 /*noinspection CssUnusedSymbol*/
+#cy-legend td {
+  height: 30px;
+  line-height: 30px;
+  font-size: 16px;
+}
+
+/*noinspection CssUnusedSymbol*/
 #cy-legend td:first-child {
-  padding-top: 5px;
-  padding-bottom: 5px;
   padding-right: 20px;
 }
 
 #cy-legend td:last-child {
   width: 30px;
-  height: 100%;
 }
 
 #cy-legend td:last-child div {
