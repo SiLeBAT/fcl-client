@@ -20,10 +20,12 @@
   padding-right: 20px;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-legend td:last-child {
   width: 30px;
 }
 
+/*noinspection CssUnusedSymbol*/
 #cy-legend td:last-child div {
   width: 100%;
   height: 100%;
