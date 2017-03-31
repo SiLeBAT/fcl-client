@@ -1,29 +1,38 @@
 export function FruchtermanLayout(options) {
-  return new FruchtermanLayoutClass(options);
+  this.options = options;
 }
+
+FruchtermanLayout.prototype.run = function () {
+  new FruchtermanLayoutClass(this).run();
+};
 
 class FruchtermanLayoutClass {
 
+  private static DEFAULTS = {
+    fit: true
+  };
+
+  private layout: any;
   private options: any;
 
-  constructor(options) {
-    const defaults = {
-      fit: true
-    };
+  constructor(layout: any) {
+    this.layout = layout;
+    this.options = {};
 
-    for (const key of Object.keys(defaults)) {
-      if (options.hasOwnProperty(key)) {
-        this.options[key] = options[key];
-      } else {
-        this.options[key] = defaults[key];
+    for (const key of Object.keys(layout.options)) {
+      this.options[key] = layout.options[key];
+    }
+
+    for (const key of Object.keys(FruchtermanLayoutClass.DEFAULTS)) {
+      if (!this.options.hasOwnProperty(key)) {
+        this.options[key] = FruchtermanLayoutClass.DEFAULTS[key];
       }
     }
   }
 
   //noinspection JSUnusedGlobalSymbols
   run() {
-    const options = this.options;
-    const cy = options.cy;
+    const cy = this.options.cy;
     const width = cy.width();
     const height = cy.height();
     const graph = new Graph();
@@ -44,7 +53,7 @@ class FruchtermanLayoutClass {
 
     layoutManager.layout(graph);
 
-    cy.nodes().layoutPositions(this, options, function (i, node) {
+    cy.nodes().layoutPositions(this.layout, this.options, function (i, node) {
       const vertex = vertices.get(node.id());
 
       return {
@@ -53,7 +62,7 @@ class FruchtermanLayoutClass {
       };
     });
 
-    if (options.fit) {
+    if (this.options.fit) {
       cy.fit();
     }
   }
