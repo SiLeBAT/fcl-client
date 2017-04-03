@@ -1,5 +1,6 @@
 /*noinspection CssUnusedSymbol*/
 #cy-legend {
+  z-index: 20;
   position: absolute;
   left: 16px;
   bottom: 20px;
@@ -13,6 +14,7 @@
   height: 30px;
   line-height: 30px;
   font-size: 16px;
+  white-space: nowrap;
 }
 
 /*noinspection CssUnusedSymbol*/
@@ -23,6 +25,7 @@
 /*noinspection CssUnusedSymbol*/
 #cy-legend td:last-child {
   width: 30px;
+  min-width: 30px;
 }
 
 /*noinspection CssUnusedSymbol*/

@@ -30,7 +30,6 @@ class FruchtermanLayoutClass {
     }
   }
 
-  //noinspection JSUnusedGlobalSymbols
   run() {
     const cy = this.options.cy;
     const width = cy.width();
