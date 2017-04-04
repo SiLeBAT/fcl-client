@@ -148,6 +148,20 @@ export class AppComponent implements OnInit {
     a.remove();
   }
 
+  onSaveImage() {
+    const blob = new Blob([this.graph.getPng()], {type: 'image/png'});
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'graph.png';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
+
   changeColumns() {
     const options: { name: string, selected: boolean }[] = [];
 

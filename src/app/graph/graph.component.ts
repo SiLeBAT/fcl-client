@@ -77,6 +77,7 @@ export class GraphComponent implements OnInit {
         }
       });
     };
+    document.getElementById('graphContainer').style.backgroundColor = UtilService.colorToCss(DataService.GRAPH_BACKGROUND);
 
     new ResizeSensor(document.getElementById('graphContainer'), () => {
       if (this.resizeTimer != null) {
@@ -154,6 +155,19 @@ export class GraphComponent implements OnInit {
         pan: this.cy.pan()
       }
     };
+  }
+
+  getPng(): any {
+    const buf = atob(this.cy.png({bg: UtilService.colorToCss(DataService.GRAPH_BACKGROUND)}).substring(22));
+    const length = buf.length;
+    const fixedBuf = new ArrayBuffer(length);
+    const arr = new Uint8Array(fixedBuf);
+
+    for (let i = 0; i < length; i++) {
+      arr[i] = buf.charCodeAt(i);
+    }
+
+    return fixedBuf;
   }
 
   setMergeDeliveries(mergeDeliveries: boolean) {

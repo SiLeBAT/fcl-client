@@ -12,6 +12,8 @@ export enum ShowType {
 @Injectable()
 export class DataService {
 
+  static GRAPH_BACKGROUND = [245, 245, 245];
+
   static NODE_SIZES = [
     {value: 50, viewValue: 'Small'},
     {value: 100, viewValue: 'Large'}
