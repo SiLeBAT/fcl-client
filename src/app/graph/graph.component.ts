@@ -413,6 +413,14 @@ export class GraphComponent implements OnInit {
       .selector('edge:selected')
       .style({
         'width': 12
+      })
+      .selector('node[?contains]')
+      .style({
+        'border-width': 6
+      })
+      .selector('node:selected[?contains]')
+      .style({
+        'border-width': 9
       });
 
     const nodeProps = ['forward', 'backward', 'observed', 'outbreak', 'commonLink'];
