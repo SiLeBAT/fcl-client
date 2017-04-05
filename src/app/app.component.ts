@@ -135,31 +135,12 @@ export class AppComponent implements OnInit {
       graphSettings: this.graphSettings,
       tableSettings: this.tableSettings
     };
-    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'data.json';
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+    this.openSaveDialog(new Blob([JSON.stringify(data)], {type: 'application/json'}), 'data.json');
   }
 
   onSaveImage() {
     this.graph.getCanvas().then(canvas => {
-      const url = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'graph.png';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
+      canvas.toBlob((blob) => this.openSaveDialog(blob, 'graph.png'), 'image/png');
     });
   }
 
@@ -205,6 +186,23 @@ export class AppComponent implements OnInit {
     };
 
     this.dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
+  }
+
+  private openSaveDialog(blob: any, fileName: string) {
+    if (window.navigator.msSaveOrOpenBlob != null) {
+      window.navigator.msSaveOrOpenBlob(blob, fileName);
+    } else {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+
+      a.style.display = 'none';
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    }
   }
 
 }
