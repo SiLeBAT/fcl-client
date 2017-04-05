@@ -107,6 +107,8 @@ export class TableComponent implements OnInit {
         this.table.recalculate();
       });
     });
+
+    this.table.onColumnReorder = () => void(0);
   }
 
   init(data: any) {
@@ -139,6 +141,7 @@ export class TableComponent implements OnInit {
       name: ' ',
       prop: 'selected',
       resizable: false,
+      draggable: false,
       cellTemplate: this.selectTmpl
     };
     let columns = DataService.TABLE_COLUMNS[this.mode].map(column => {
@@ -146,6 +149,7 @@ export class TableComponent implements OnInit {
         name: column.name,
         prop: column.prop,
         resizeable: false,
+        draggable: false
       };
     });
 
