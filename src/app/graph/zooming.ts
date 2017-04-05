@@ -26,7 +26,7 @@ class ZoomingClass {
   private sliding = false;
   private zoomInterval: any;
 
-  private static createElement(id: string) {
+  private static createElement(id: string): HTMLElement {
     const div = document.createElement('div');
 
     div.id = id;
@@ -87,24 +87,9 @@ class ZoomingClass {
       }
     });
 
-    const zoomHandler = (event, zoomFunction) => {
-      if (event.type === 'tap') {
-        this.zooming = true;
-        zoomFunction();
-        this.zooming = false;
-      } else if (event.type === 'press') {
-        this.zooming = true;
-        clearInterval(this.zoomInterval);
-        this.zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
-      } else if (event.type === 'pressup' || event.type === 'panend') {
-        clearInterval(this.zoomInterval);
-        this.zooming = false;
-      }
-    };
-
-    new Hammer(this.zoomIn).on('tap press pressup panend', e => zoomHandler(e, () => this.zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR)));
-    new Hammer(this.zoomOut).on('tap press pressup panend', e => zoomHandler(e, () => this.zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR)));
-    new Hammer(this.reset).on('press tap', () => {
+    this.addZoomListener(this.zoomIn, () => this.zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR));
+    this.addZoomListener(this.zoomOut, () => this.zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR));
+    new Hammer(this.reset).on('tap press', () => {
       if (cy.elements().size() === 0) {
         cy.reset();
       } else {
@@ -148,6 +133,32 @@ class ZoomingClass {
       this.zooming = false;
       this.sliderHandle.className = '';
     });
+  }
+
+  private addZoomListener(element: HTMLElement, zoomFunction: () => void) {
+    new Hammer(element).on('tap press pressup', event => {
+      switch (event.type) {
+        case 'tap':
+          this.zooming = true;
+          zoomFunction();
+          this.zooming = false;
+          break;
+        case 'press':
+          this.zooming = true;
+          clearInterval(this.zoomInterval);
+          this.zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
+          break;
+        case 'pressup':
+          clearInterval(this.zoomInterval);
+          this.zooming = false;
+          break;
+      }
+    });
+
+    element.onmouseout = () => {
+      clearInterval(this.zoomInterval);
+      this.zooming = false;
+    };
   }
 
   private zoomTo(newZoom: number) {
