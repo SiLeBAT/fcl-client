@@ -28,6 +28,18 @@ export class AppComponent implements OnInit {
   graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
   tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
 
+  private static openSaveDialog(url: string, fileName: string) {
+    const a = document.createElement('a');
+
+    a.style.display = 'none';
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
+
   constructor(private dataService: DataService, private dialogService: MdDialog) {
     document.body.oncontextmenu = e => e.preventDefault();
   }
@@ -135,12 +147,25 @@ export class AppComponent implements OnInit {
       graphSettings: this.graphSettings,
       tableSettings: this.tableSettings
     };
-    this.openSaveDialog(new Blob([JSON.stringify(data)], {type: 'application/json'}), 'data.json');
+    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    const fileName = 'data.json';
+
+    if (window.navigator.msSaveOrOpenBlob != null) {
+      window.navigator.msSaveOrOpenBlob(blob, fileName);
+    } else {
+      AppComponent.openSaveDialog(window.URL.createObjectURL(blob), fileName);
+    }
   }
 
   onSaveImage() {
     this.graph.getCanvas().then(canvas => {
-      canvas.toBlob((blob) => this.openSaveDialog(blob, 'graph.png'), 'image/png');
+      const fileName = 'graph.png';
+
+      if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
+        window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
+      } else {
+        AppComponent.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+      }
     });
   }
 
@@ -186,23 +211,6 @@ export class AppComponent implements OnInit {
     };
 
     this.dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
-  }
-
-  private openSaveDialog(blob: any, fileName: string) {
-    if (window.navigator.msSaveOrOpenBlob != null) {
-      window.navigator.msSaveOrOpenBlob(blob, fileName);
-    } else {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-
-      a.style.display = 'none';
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    }
   }
 
 }
