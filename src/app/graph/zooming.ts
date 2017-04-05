@@ -8,8 +8,7 @@ declare const Hammer: any;
 
 class ZoomingClass {
 
-  private static ZOOM_FACTOR = 1.05;
-  private static ZOOM_DELAY = 45;
+  private static ZOOM_FACTOR = 1.5;
   private static SLIDER_PADDING = 2;
 
   private cy: any;
@@ -26,7 +25,6 @@ class ZoomingClass {
 
   private zooming = false;
   private sliding = false;
-  private zoomInterval: any;
 
   private static createElement(id: string): HTMLElement {
     const div = document.createElement('div');
@@ -99,9 +97,17 @@ class ZoomingClass {
       }
     });
 
-    this.addZoomListener(this.zoomIn, () => this.zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR));
-    this.addZoomListener(this.zoomOut, () => this.zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR));
-    new Hammer(this.reset).on('tap press', () => {
+    new Hammer(this.zoomIn).on('tap pressup', () => {
+      this.zooming = true;
+      this.zoomTo(cy.zoom() * ZoomingClass.ZOOM_FACTOR);
+      this.zooming = false;
+    });
+    new Hammer(this.zoomOut).on('tap pressup', () => {
+      this.zooming = true;
+      this.zoomTo(cy.zoom() / ZoomingClass.ZOOM_FACTOR);
+      this.zooming = false;
+    });
+    new Hammer(this.reset).on('tap pressup', () => {
       if (cy.elements().size() === 0) {
         cy.reset();
       } else {
@@ -145,32 +151,6 @@ class ZoomingClass {
       this.zooming = false;
       this.sliderHandle.className = '';
     });
-  }
-
-  private addZoomListener(element: HTMLElement, zoomFunction: () => void) {
-    new Hammer(element).on('tap press pressup', event => {
-      switch (event.type) {
-        case 'tap':
-          this.zooming = true;
-          zoomFunction();
-          this.zooming = false;
-          break;
-        case 'press':
-          this.zooming = true;
-          clearInterval(this.zoomInterval);
-          this.zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
-          break;
-        case 'pressup':
-          clearInterval(this.zoomInterval);
-          this.zooming = false;
-          break;
-      }
-    });
-
-    element.onmouseout = () => {
-      clearInterval(this.zoomInterval);
-      this.zooming = false;
-    };
   }
 
   private zoomTo(newZoom: number) {
