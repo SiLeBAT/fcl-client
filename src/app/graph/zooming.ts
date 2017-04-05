@@ -94,6 +94,7 @@ class ZoomingClass {
         this.zooming = false;
       } else if (event.type === 'press') {
         this.zooming = true;
+        clearInterval(this.zoomInterval);
         this.zoomInterval = setInterval(zoomFunction, ZoomingClass.ZOOM_DELAY);
       } else if (event.type === 'pressup' || event.type === 'panend') {
         clearInterval(this.zoomInterval);
