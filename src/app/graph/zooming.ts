@@ -74,6 +74,8 @@ class ZoomingClass {
     this.zoomDiv.appendChild(this.zoomIn);
     this.zoomDiv.appendChild(this.zoomOut);
     this.zoomDiv.appendChild(this.slider);
+    this.zoomDiv.onmousedown = e => e.stopPropagation();
+    this.zoomDiv.ontouchstart = e => e.stopPropagation();
 
     this.container.appendChild(this.zoomDiv);
 
@@ -84,12 +86,6 @@ class ZoomingClass {
         this.setSliderFromZoom();
       }
     });
-
-    this.zoomIn.onmousedown = e => e.stopPropagation();
-    this.zoomOut.onmousedown = e => e.stopPropagation();
-    this.reset.onmousedown = e => e.stopPropagation();
-    this.slider.onmousedown = e => e.stopPropagation();
-    this.sliderHandle.onmousedown = e => e.stopPropagation();
 
     const zoomHandler = (event, zoomFunction) => {
       if (event.type === 'tap') {

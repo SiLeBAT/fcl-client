@@ -43,6 +43,7 @@ class LegendClass {
       this.legendDiv.appendChild(table);
       this.legendDiv.id = 'cy-legend';
       this.legendDiv.onmousedown = e => e.stopPropagation();
+      this.legendDiv.ontouchstart = e => e.stopPropagation();
       this.container.appendChild(this.legendDiv);
     }
   }
