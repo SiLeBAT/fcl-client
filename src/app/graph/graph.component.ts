@@ -11,6 +11,7 @@ import {TracingService} from './tracing.service';
 
 declare const cytoscape: any;
 declare const ResizeSensor: any;
+declare const html2canvas: any;
 
 enum MenuActionType {
   runAction, openLayoutMenu
@@ -47,6 +48,7 @@ export class GraphComponent implements OnInit {
   private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
+  private zoom: Subject<boolean>;
   private legend: Subject<Set<string>>;
 
   private static createNodeBackground(colors: number[][]): any {
@@ -108,7 +110,8 @@ export class GraphComponent implements OnInit {
     });
 
     this.layoutMenuActions = this.createLayoutActions();
-    this.cy.zooming();
+    this.zoom = new Subject();
+    this.cy.zooming(this.zoom);
     this.legend = new Subject();
     this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
@@ -157,17 +160,17 @@ export class GraphComponent implements OnInit {
     };
   }
 
-  getPng(): any {
-    const buf = atob(this.cy.png({bg: UtilService.colorToCss(DataService.GRAPH_BACKGROUND)}).substring(22));
-    const length = buf.length;
-    const fixedBuf = new ArrayBuffer(length);
-    const arr = new Uint8Array(fixedBuf);
-
-    for (let i = 0; i < length; i++) {
-      arr[i] = buf.charCodeAt(i);
-    }
-
-    return fixedBuf;
+  getCanvas(): Promise<HTMLCanvasElement> {
+    return new Promise(resolve => {
+      this.zoom.next(false);
+      //noinspection JSUnusedGlobalSymbols
+      html2canvas(document.getElementById('graphContainer'), {
+        onrendered: (canvas) => {
+          this.zoom.next(true);
+          resolve(canvas);
+        }
+      });
+    });
   }
 
   setMergeDeliveries(mergeDeliveries: boolean) {

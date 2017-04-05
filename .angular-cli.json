@@ -33,7 +33,8 @@
         "../node_modules/graphlib/dist/graphlib.core.min.js",
         "../node_modules/dagre/dist/dagre.core.min.js",
         "../node_modules/cytoscape-dagre/cytoscape-dagre.js",
-        "../node_modules/cytoscape-spread/cytoscape-spread.js"
+        "../node_modules/cytoscape-spread/cytoscape-spread.js",
+        "../node_modules/html2canvas/dist/html2canvas.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

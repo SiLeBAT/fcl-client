@@ -1,5 +1,7 @@
-export function Zooming() {
-  return new ZoomingClass(this);
+import {Subject} from 'rxjs/Rx';
+
+export function Zooming(params: Subject<boolean>) {
+  return new ZoomingClass(this, params);
 }
 
 declare const Hammer: any;
@@ -53,7 +55,17 @@ class ZoomingClass {
     return element.offsetHeight - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
   }
 
-  constructor(cy: any) {
+  constructor(cy: any, params: Subject<boolean>) {
+    params.subscribe(show => {
+      if (show) {
+        if (this.zoomDiv.parentNode == null) {
+          this.container.appendChild(this.zoomDiv);
+        }
+      } else {
+        this.zoomDiv.remove();
+      }
+    });
+
     this.cy = cy;
     this.container = cy.container();
 
