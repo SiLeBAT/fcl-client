@@ -3,6 +3,11 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class UtilService {
 
+  static setElementPosition(element: HTMLElement, x: number, y: number) {
+    element.style.left = x + 'px';
+    element.style.top = y + 'px';
+  }
+
   static colorToCss(color: number[]): string {
     return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
   };

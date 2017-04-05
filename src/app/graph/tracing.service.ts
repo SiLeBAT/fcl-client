@@ -58,11 +58,11 @@ export class TracingService {
     }
   }
 
-  getElementsById(ids: any[]) {
+  getElementsById(ids: string[]) {
     return ids.map(id => this.elementsById[id]);
   }
 
-  mergeStations(ids: any[], name: string) {
+  mergeStations(ids: string[], name: string) {
     let metaId;
 
     for (let i = 1; ; i++) {
@@ -112,25 +112,27 @@ export class TracingService {
     this.updateScores();
   }
 
-  expandStation(id: any) {
-    const station = this.elementsById[id];
+  expandStations(ids: string[]) {
+    for (const id of ids) {
+      const station = this.elementsById[id];
 
-    delete this.elementsById[id];
-    this.stations.splice(this.stations.indexOf(station), 1);
+      delete this.elementsById[id];
+      this.stations.splice(this.stations.indexOf(station), 1);
 
-    for (const containedId of station.data.contains) {
-      this.elementsById[containedId].data.contained = false;
-    }
-
-    for (const d of this.deliveries) {
-      if (d.data.source === id) {
-        d.data.source = d.data.originalSource;
-        delete d.data.originalSource;
+      for (const containedId of station.data.contains) {
+        this.elementsById[containedId].data.contained = false;
       }
 
-      if (d.data.target === id) {
-        d.data.target = d.data.originalTarget;
-        delete d.data.originalTarget;
+      for (const d of this.deliveries) {
+        if (d.data.source === id) {
+          d.data.source = d.data.originalSource;
+          delete d.data.originalSource;
+        }
+
+        if (d.data.target === id) {
+          d.data.target = d.data.originalTarget;
+          delete d.data.originalTarget;
+        }
       }
     }
 
@@ -138,7 +140,7 @@ export class TracingService {
     this.updateScores();
   }
 
-  setSelected(id: any, selected: boolean) {
+  setSelected(id: string, selected: boolean) {
     this.elementsById[id].data.selected = selected;
   }
 
@@ -154,7 +156,7 @@ export class TracingService {
     this.updateScores();
   }
 
-  makeStationsInvisible(ids: any[]) {
+  makeStationsInvisible(ids: string[]) {
     for (const id of ids) {
       this.elementsById[id].data.invisible = true;
     }
@@ -176,16 +178,9 @@ export class TracingService {
     this.updateScores();
   }
 
-  toggleOutbreakStation(id: any) {
-    const station = this.elementsById[id];
-
-    station.data.outbreak = !station.data.outbreak;
-    this.updateScores();
-  }
-
-  markStationsAsOutbreak(ids: any[]) {
+  markStationsAsOutbreak(ids: string[], outbreak: boolean) {
     for (const id of ids) {
-      this.elementsById[id].data.outbreak = true;
+      this.elementsById[id].data.outbreak = outbreak;
     }
 
     this.updateScores();
@@ -204,7 +199,7 @@ export class TracingService {
     }
   }
 
-  showStationTrace(id: any) {
+  showStationTrace(id: string) {
     const station = this.elementsById[id];
 
     this.clearTrace();
@@ -213,7 +208,7 @@ export class TracingService {
     station.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
-  showStationForwardTrace(id: any) {
+  showStationForwardTrace(id: string) {
     const station = this.elementsById[id];
 
     this.clearTrace();
@@ -221,7 +216,7 @@ export class TracingService {
     station.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
   }
 
-  showStationBackwardTrace(id: any) {
+  showStationBackwardTrace(id: string) {
     const station = this.elementsById[id];
 
     this.clearTrace();
@@ -229,7 +224,7 @@ export class TracingService {
     station.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
-  showDeliveryTrace(id: any) {
+  showDeliveryTrace(id: string) {
     const delivery = this.elementsById[id];
 
     this.clearTrace();
@@ -240,7 +235,7 @@ export class TracingService {
     delivery.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
-  showDeliveryForwardTrace(id: any) {
+  showDeliveryForwardTrace(id: string) {
     const delivery = this.elementsById[id];
 
     this.clearTrace();
@@ -249,7 +244,7 @@ export class TracingService {
     delivery.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
   }
 
-  showDeliveryBackwardTrace(id: any) {
+  showDeliveryBackwardTrace(id: string) {
     const delivery = this.elementsById[id];
 
     this.clearTrace();
@@ -291,7 +286,7 @@ export class TracingService {
     }
   }
 
-  private updateStationScore(id: any, outbreakId: any) {
+  private updateStationScore(id: string, outbreakId: string) {
     const station = this.elementsById[id];
 
     if (station.data._visited !== outbreakId && !station.data.contained && !station.data.invisible) {
@@ -304,7 +299,7 @@ export class TracingService {
     }
   }
 
-  private updateDeliveryScore(id: any, outbreakId: any) {
+  private updateDeliveryScore(id: string, outbreakId: string) {
     const delivery = this.elementsById[id];
 
     if (delivery.data._visited !== outbreakId && !delivery.data.invisible) {
@@ -324,7 +319,7 @@ export class TracingService {
     }
   }
 
-  private showDeliveryForwardTraceInternal(id: any) {
+  private showDeliveryForwardTraceInternal(id: string) {
     const delivery = this.elementsById[id];
 
     if (!delivery.data.forward && !delivery.data.invisible) {
@@ -334,7 +329,7 @@ export class TracingService {
     }
   }
 
-  private showDeliveryBackwardTraceInternal(id: any) {
+  private showDeliveryBackwardTraceInternal(id: string) {
     const delivery = this.elementsById[id];
 
     if (!delivery.data.backward && !delivery.data.invisible) {

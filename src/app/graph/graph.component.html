@@ -1,19 +1,45 @@
 <div id="graphContainer">
   <div id="cy" style="display: flex; width: 100%; height: 100%;"></div>
 </div>
-<div id="cy-menu" style="position: fixed;" [mdMenuTriggerFor]="cyMenu"></div>
-<md-menu #cyMenu>
-  <ng-container *ngFor="let action of menuActions">
-    <button md-menu-item *ngIf="action.type == actionTypes.runAction" (click)="action.action()">
+<div id="graphMenu" style="position: fixed;" [mdMenuTriggerFor]="graphMenu"
+     #graphMenuTrigger="mdMenuTrigger"></div>
+<div id="stationMenu" style="position: fixed;" [mdMenuTriggerFor]="stationMenu"
+     #stationMenuTrigger="mdMenuTrigger"></div>
+<div id="deliveryMenu" style="position: fixed;" [mdMenuTriggerFor]="deliveryMenu"
+     #deliveryMenuTrigger="mdMenuTrigger"></div>
+<md-menu #graphMenu>
+  <ng-container *ngFor="let action of graphMenuActions">
+    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
+            [disabled]="!action.enabled" (click)="action.action()">
       {{action.name}}
     </button>
-    <button md-menu-item *ngIf="action.type == actionTypes.openLayoutMenu" [mdMenuTriggerFor]="layoutMenu">
+    <button md-menu-item *ngIf="action.type == actionTypes.openLayoutMenu"
+            [disabled]="!action.enabled" [mdMenuTriggerFor]="layoutMenu">
+      {{action.name}}
+    </button>
+  </ng-container>
+</md-menu>
+<md-menu #stationMenu>
+  <ng-container *ngFor="let action of stationMenuActions">
+    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
+            [disabled]="!action.enabled" (click)="action.action()">
+      {{action.name}}
+    </button>
+  </ng-container>
+</md-menu>
+<md-menu #deliveryMenu>
+  <ng-container *ngFor="let action of deliveryMenuActions">
+    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
+            [disabled]="!action.enabled" (click)="action.action()">
       {{action.name}}
     </button>
   </ng-container>
 </md-menu>
 <md-menu #layoutMenu>
-  <button md-menu-item *ngFor="let action of layoutMenuActions" (click)="action.action()">
-    {{action.name}}
-  </button>
+  <ng-container *ngFor="let action of layoutMenuActions">
+    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
+            [disabled]="!action.enabled" (click)="action.action()">
+      {{action.name}}
+    </button>
+  </ng-container>
 </md-menu>

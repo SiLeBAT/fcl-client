@@ -20,6 +20,7 @@ enum MenuActionType {
 interface MenuAction {
   name: string;
   type: MenuActionType;
+  enabled: boolean;
   action?: () => void;
 }
 
@@ -30,11 +31,15 @@ interface MenuAction {
 })
 export class GraphComponent implements OnInit {
 
-  @ViewChild(MdMenuTrigger) trigger: MdMenuTrigger;
+  @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
+  @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
+  @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
 
   actionTypes = MenuActionType;
-  menuActions: MenuAction[];
-  layoutMenuActions: MenuAction[];
+  graphMenuActions = this.createGraphActions();
+  stationMenuActions = this.createStationActions(null);
+  deliveryMenuActions = this.createDeliveryActions(null);
+  layoutMenuActions = this.createLayoutActions();
 
   private cy: any;
   private data: any;
@@ -121,18 +126,17 @@ export class GraphComponent implements OnInit {
       const element = event.cyTarget;
 
       if (!element.hasOwnProperty('length')) {
-        this.menuActions = this.createGraphActions();
+        UtilService.setElementPosition(document.getElementById('graphMenu'), event.originalEvent.offsetX, event.originalEvent.offsetY);
+        this.graphMenuTrigger.openMenu();
       } else if (element.group() === 'nodes') {
-        this.menuActions = this.createStationActions(element);
+        this.stationMenuActions = this.createStationActions(element);
+        UtilService.setElementPosition(document.getElementById('stationMenu'), event.originalEvent.offsetX, event.originalEvent.offsetY);
+        this.stationMenuTrigger.openMenu();
       } else if (element.group() === 'edges') {
-        this.menuActions = this.createDeliveryActions(element);
+        this.deliveryMenuActions = this.createDeliveryActions(element);
+        UtilService.setElementPosition(document.getElementById('deliveryMenu'), event.originalEvent.offsetX, event.originalEvent.offsetY);
+        this.deliveryMenuTrigger.openMenu();
       }
-
-      const menu = document.getElementById('cy-menu');
-
-      menu.style.left = event.originalEvent.offsetX + 'px';
-      menu.style.top = event.originalEvent.offsetY + 'px';
-      this.trigger.openMenu();
     });
 
     this.setFontSize(this.fontSize);
@@ -491,10 +495,12 @@ export class GraphComponent implements OnInit {
     return [
       {
         name: 'Apply Layout',
-        type: MenuActionType.openLayoutMenu
+        type: MenuActionType.openLayoutMenu,
+        enabled: true
       }, {
         name: 'Clear Trace',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           this.tracingService.clearTrace();
           this.updateProperties();
@@ -503,6 +509,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Clear Outbreak Stations',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           this.tracingService.clearOutbreakStations();
           this.setNodeSize(this.nodeSize);
@@ -511,6 +518,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Clear Invisibility',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           this.tracingService.clearInvisibility();
           this.updateAll();
@@ -521,106 +529,101 @@ export class GraphComponent implements OnInit {
   }
 
   private createStationActions(station): MenuAction[] {
-    const selectedStations = this.cy.nodes(':selected');
-    let actions: MenuAction[];
+    let selectedStations = null;
+    let multipleStationsSelected = false;
+    let allOutbreakStations = false;
+    let allMetaStations = false;
+    let allNonMetaStations = false;
 
-    if (station.selected() && selectedStations.size() > 1) {
-      actions = [
-        {
-          name: 'Merge Stations',
-          type: MenuActionType.runAction,
-          action: () => {
-            const dialogData: DialogPromptData = {
-              title: 'Input',
-              message: 'Please specify name of meta station:',
-              placeholder: 'Name'
-            };
-
-            this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
-              if (name != null) {
-                this.tracingService.mergeStations(selectedStations.map(s => s.id()), name);
-                this.updateAll();
-                this.callChangeFunction();
-              }
-            });
-          }
-        }, {
-          name: 'Mark as Outbreak',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.markStationsAsOutbreak(selectedStations.map(s => s.id()));
-            this.setNodeSize(this.nodeSize);
-            this.callChangeFunction();
-          }
-        }, {
-          name: 'Make Invisible',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.makeStationsInvisible(selectedStations.map(s => s.id()));
-            this.updateAll();
-            this.callChangeFunction();
-          }
-        }
-      ];
-    } else {
-      actions = [
-        {
-          name: 'Show Forward Trace',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.showStationForwardTrace(station.id());
-            this.updateProperties();
-            this.callChangeFunction();
-          }
-        }, {
-          name: 'Show Backward Trace',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.showStationBackwardTrace(station.id());
-            this.updateProperties();
-            this.callChangeFunction();
-          }
-        }, {
-          name: 'Show Whole Trace',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.showStationTrace(station.id());
-            this.updateProperties();
-            this.callChangeFunction();
-          }
-        }, {
-          name: station.data('outbreak') ? 'Unmark as Outbreak' : 'Mark as Outbreak',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.toggleOutbreakStation(station.id());
-            this.setNodeSize(this.nodeSize);
-            this.callChangeFunction();
-          }
-        }, {
-          name: 'Make Invisible',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.makeStationsInvisible([station.id()]);
-            this.updateAll();
-            this.callChangeFunction();
-          }
-        }
-      ];
-
-      if (station.data('contains')) {
-        actions.push({
-          name: 'Expand',
-          type: MenuActionType.runAction,
-          action: () => {
-            this.tracingService.expandStation(station.id());
-            this.updateAll();
-            this.callChangeFunction();
-          }
-        });
-      }
+    if (this.cy != null && station != null) {
+      selectedStations = this.cy.nodes(':selected');
+      multipleStationsSelected = station.selected() && selectedStations.size() > 1;
+      allOutbreakStations = multipleStationsSelected ? selectedStations.allAre('[?outbreak]') : station.data('outbreak');
+      allMetaStations = multipleStationsSelected ? selectedStations.allAre('[?contains]') : station.data('contains');
+      allNonMetaStations = multipleStationsSelected ? !selectedStations.is('[?contains]') : !station.data('contains');
     }
 
-    return actions;
+    return [
+      {
+        name: 'Show Forward Trace',
+        type: MenuActionType.runAction,
+        enabled: !multipleStationsSelected,
+        action: () => {
+          this.tracingService.showStationForwardTrace(station.id());
+          this.updateProperties();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Show Backward Trace',
+        type: MenuActionType.runAction,
+        enabled: !multipleStationsSelected,
+        action: () => {
+          this.tracingService.showStationBackwardTrace(station.id());
+          this.updateProperties();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Show Whole Trace',
+        type: MenuActionType.runAction,
+        enabled: !multipleStationsSelected,
+        action: () => {
+          this.tracingService.showStationTrace(station.id());
+          this.updateProperties();
+          this.callChangeFunction();
+        }
+      }, {
+        name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          this.tracingService
+            .markStationsAsOutbreak(multipleStationsSelected ? selectedStations.map(s => s.id()) : [station.id()], !allOutbreakStations);
+          this.setNodeSize(this.nodeSize);
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Make Invisible',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          if (multipleStationsSelected) {
+            this.tracingService.makeStationsInvisible(selectedStations.map(s => s.id()));
+          } else {
+            this.tracingService.makeStationsInvisible([station.id()]);
+          }
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Merge Stations',
+        type: MenuActionType.runAction,
+        enabled: multipleStationsSelected && allNonMetaStations,
+        action: () => {
+          const dialogData: DialogPromptData = {
+            title: 'Input',
+            message: 'Please specify name of meta station:',
+            placeholder: 'Name'
+          };
+
+          this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
+            if (name != null) {
+              this.tracingService.mergeStations(selectedStations.map(s => s.id()), name);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Expand',
+        type: MenuActionType.runAction,
+        enabled: allMetaStations,
+        action: () => {
+          this.tracingService.expandStations(multipleStationsSelected ? selectedStations.map(s => s.id()) : station.id());
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }
+    ];
   }
 
   private createDeliveryActions(delivery): MenuAction[] {
@@ -628,6 +631,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Show Forward Trace',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryForwardTrace(delivery.id());
@@ -638,6 +642,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Show Backward Trace',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryBackwardTrace(delivery.id());
@@ -648,6 +653,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Show Whole Trace',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           if (this.isDeliveryTracePossible(delivery)) {
             this.tracingService.showDeliveryTrace(delivery.id());
@@ -664,10 +670,12 @@ export class GraphComponent implements OnInit {
       {
         name: 'Fruchterman-Reingold',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'fruchterman'})
       }, {
         name: 'Constraint-Based',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => {
           let layout;
           const layoutDialogData: DialogActionsData = {
@@ -694,30 +702,37 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Random',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'random'})
       }, {
         name: 'Grid',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'grid'})
       }, {
         name: 'Circle',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'circle'})
       }, {
         name: 'Concentric',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'concentric'})
       }, {
         name: 'Breadth-first',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'breadthfirst'})
       }, {
         name: 'Spread',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'spread'})
       }, {
         name: 'Directed acyclic graph',
         type: MenuActionType.runAction,
+        enabled: true,
         action: () => this.cy.layout({name: 'dagre'})
       }
     ];
