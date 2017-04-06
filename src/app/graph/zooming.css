@@ -2,6 +2,7 @@
 #cy-zoom {
   z-index: 10;
   color: rgb(102, 102, 102);
+  user-select: none !important;
 }
 
 /*noinspection CssUnusedSymbol*/

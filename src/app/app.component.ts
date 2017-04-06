@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
     const a = document.createElement('a');
 
     a.style.display = 'none';
+    a.target = '_blank';
     a.href = url;
     a.download = fileName;
     document.body.appendChild(a);

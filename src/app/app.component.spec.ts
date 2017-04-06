@@ -44,8 +44,8 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render title in a md-toolbar', async(() => {
+  it('should render title in a md-toolbar', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('md-toolbar').textContent).toContain('FoodChain-Lab');
-  }));
+  });
 });
