@@ -27,57 +27,43 @@
     <md-toolbar>
       <span>Graph Settings</span>
     </md-toolbar>
-    <md-list>
-      <md-list-item>
-        <md-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize"
-                   (ngModelChange)="onGraphChange('nodeSize')">
-          <md-option *ngFor="let nodeSize of nodeSizes" [value]="nodeSize.value">
-            {{nodeSize.viewValue}}
-          </md-option>
-        </md-select>
-      </md-list-item>
-      <md-list-item>
-        <md-select placeholder="Font Size" [(ngModel)]="graphSettings.fontSize"
-                   (ngModelChange)="onGraphChange('fontSize')">
-          <md-option *ngFor="let fontSize of fontSizes" [value]="fontSize.value">
-            {{fontSize.viewValue}}
-          </md-option>
-        </md-select>
-      </md-list-item>
-      <md-list-item>
-        <md-checkbox [(ngModel)]="graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
-          Merge Deliveries
-        </md-checkbox>
-      </md-list-item>
-      <md-list-item>
-        <md-checkbox [(ngModel)]="graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
-          Show Legend
-        </md-checkbox>
-      </md-list-item>
-    </md-list>
+    <div class="sidenav-elements">
+      <md-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize"
+                 (ngModelChange)="onGraphChange('nodeSize')">
+        <md-option *ngFor="let nodeSize of nodeSizes" [value]="nodeSize.value">
+          {{nodeSize.viewValue}}
+        </md-option>
+      </md-select>
+      <md-select placeholder="Font Size" [(ngModel)]="graphSettings.fontSize"
+                 (ngModelChange)="onGraphChange('fontSize')">
+        <md-option *ngFor="let fontSize of fontSizes" [value]="fontSize.value">
+          {{fontSize.viewValue}}
+        </md-option>
+      </md-select>
+      <md-checkbox [(ngModel)]="graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
+        Merge Deliveries
+      </md-checkbox>
+      <md-checkbox [(ngModel)]="graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
+        Show Legend
+      </md-checkbox>
+    </div>
     <md-toolbar>
       <span>Table Settings</span>
     </md-toolbar>
-    <md-list>
-      <md-list-item>
-        <md-radio-group [(ngModel)]="tableSettings.mode" (ngModelChange)="onTableChange('mode')">
-          <md-radio-button *ngFor="let mode of tableModes" [value]="mode">
-            {{mode}}
-          </md-radio-button>
-        </md-radio-group>
-      </md-list-item>
-      <md-list-item>
-        <button md-raised-button (click)="changeColumns()">Change Columns</button>
-      </md-list-item>
-      <md-list-item>
-        <md-select placeholder="Show Type" [(ngModel)]="tableSettings.showType"
-                   (ngModelChange)="onTableChange('showType')">
-          <md-option *ngFor="let showType of showTypes" [value]="showType">
-            {{showType}}
-          </md-option>
-        </md-select>
-      </md-list-item>
-    </md-list>
+    <div class="sidenav-elements">
+      <md-radio-group [(ngModel)]="tableSettings.mode" (ngModelChange)="onTableChange('mode')">
+        <md-radio-button *ngFor="let mode of tableModes" [value]="mode">
+          {{mode}}
+        </md-radio-button>
+      </md-radio-group>
+      <button md-raised-button (click)="changeColumns()">Change Columns</button>
+      <md-select placeholder="Show Type" [(ngModel)]="tableSettings.showType"
+                 (ngModelChange)="onTableChange('showType')">
+        <md-option *ngFor="let showType of showTypes" [value]="showType">
+          {{showType}}
+        </md-option>
+      </md-select>
+    </div>
   </md-sidenav>
 
   <app-graph #graph></app-graph>

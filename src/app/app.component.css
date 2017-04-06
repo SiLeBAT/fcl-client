@@ -14,21 +14,27 @@ md-sidenav {
   border-right: 1px solid rgba(0, 0, 0, 0.4) !important;
 }
 
-md-radio-button {
-  padding-right: 10px;
+.sidenav-elements {
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
 }
 
-md-radio-button:last-child {
-  padding-right: 0;
+.sidenav-elements > * {
+  margin: 8px 0;
 }
 
-md-list-item md-select {
+.sidenav-elements > md-select {
   width: 100%;
-  padding-top: 20px;
+  margin-top: 20px;
 }
 
-md-list-item button {
+.sidenav-elements > button {
   width: 100%;
+}
+
+.sidenav-elements > md-radio-group > md-radio-button:not(:last-child) {
+  padding-right: 8px;
 }
 
 #mainToolbar {
