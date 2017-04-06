@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gh-pages": "ng build -prod -bh /fcl-web-app/"
+    "gh-pages": "ng build -prod -bh /fcl-web-app/",
+    "cloud9": "ng serve --host $IP --port $PORT"
   },
   "private": true,
   "dependencies": {

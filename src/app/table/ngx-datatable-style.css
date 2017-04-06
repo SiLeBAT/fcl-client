@@ -1,6 +1,7 @@
 ngx-datatable {
   background: rgb(255, 255, 255);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+  user-select: none !important;
 }
 
 /*noinspection CssUnusedSymbol*/
@@ -37,15 +38,4 @@ ngx-datatable datatable-body-cell {
 
 ngx-datatable datatable-scroller {
   width: 100% !important;
-}
-
-ngx-datatable * {
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  user-drag: none !important;
-  -webkit-user-drag: none !important;
-  -moz-user-drag: none !important;
-  -ms-user-drag: none !important;
 }

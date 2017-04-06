@@ -7,6 +7,7 @@
   padding: 3px;
   background: rgb(255, 255, 255);
   border: 1px solid rgb(153, 153, 153);
+  user-select: none !important;
 }
 
 /*noinspection CssUnusedSymbol*/
