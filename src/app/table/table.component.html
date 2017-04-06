@@ -1,5 +1,5 @@
 <div id="tableContainer">
-  <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass">
+  <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" scrollbarV="true">
   </ngx-datatable>
   <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
     <md-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary" disableRipple="true">
