@@ -1,23 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 /*noinspection CssUnknownTarget*/
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
-@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
-@import '~@swimlane/ngx-datatable/release/index.css';
-@import '~@swimlane/ngx-datatable/release/assets/icons.css';
-@import './app/graph/zooming.css';
-@import './app/graph/legend.css';
-@import './app/table/ngx-datatable-style.css';
+@import "https://fonts.googleapis.com/icon?family=Material+Icons";
+@import "~@angular/material/core/theming/prebuilt/deeppurple-amber.css";
+@import "~@swimlane/ngx-datatable/release/index.css";
+@import "~@swimlane/ngx-datatable/release/assets/icons.css";
+@import "./app/material-style.css";
+@import "./app/graph/zooming.css";
+@import "./app/graph/legend.css";
+@import "./app/table/ngx-datatable-style.css";
 
 body {
   margin: 0;
-}
-
-/*noinspection CssUnusedSymbol*/
-.mat-sidenav-content {
-  overflow: hidden !important;
-}
-
-/*noinspection CssUnusedSymbol*/
-.mat-toolbar-row {
-  height: 64px !important;
 }

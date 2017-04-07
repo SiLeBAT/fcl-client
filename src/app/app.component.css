@@ -34,7 +34,7 @@ md-sidenav {
 }
 
 .sidenav-elements > md-radio-group > md-radio-button:not(:last-child) {
-  padding-right: 8px;
+  margin-right: 8px;
 }
 
 #mainToolbar {
