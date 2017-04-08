@@ -2,8 +2,3 @@
 .mat-sidenav-content {
   overflow: hidden !important;
 }
-
-/*noinspection CssUnusedSymbol*/
-.mat-toolbar-row {
-  height: 64px !important;
-}

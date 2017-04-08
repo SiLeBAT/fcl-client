@@ -38,6 +38,8 @@ md-sidenav {
 }
 
 #mainToolbar {
+  height: 64px !important;
+  justify-content: center !important;
   z-index: 3;
 }
 
