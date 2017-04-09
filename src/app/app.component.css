@@ -43,9 +43,15 @@ md-sidenav {
   z-index: 3;
 }
 
-#mainContent {
+#mainContainer {
   width: 100%;
   height: calc(100% - 64px);
+}
+
+#mainContent {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 #leftSidenav {
@@ -80,7 +86,12 @@ md-sidenav {
   background-color: rgb(100, 100, 100);
 }
 
-#table {
+app-graph {
+  width: 100%;
+  height: 100%;
+}
+
+app-table {
   width: calc(100% - 10px);
   height: 100%;
 }

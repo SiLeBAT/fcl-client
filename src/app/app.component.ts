@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
     this.table.onSelectionChange(() => this.graph.updateSelection());
     this.rightSidenav.onOpenStart.subscribe(() => this.updateRightSidenav());
     new Hammer(document.getElementById('sidenavSlider')).on('pan', event => {
-      const newWidth = 1 - event.center.x / document.getElementById('mainContent').offsetWidth;
+      const newWidth = 1 - event.center.x / document.getElementById('mainContainer').offsetWidth;
 
       if (newWidth > 0 && newWidth < 1) {
         this.tableSettings.width = newWidth;

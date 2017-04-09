@@ -7,7 +7,7 @@
   <button md-icon-button (click)="onSaveImage()">
     <md-icon>image</md-icon>
   </button>
-  <input id="fileInput" type="file" style="display:none;" (change)="onLoad($event)"/>
+  <input id="fileInput" type="file" style="display:none;" (change)="onLoad($event)">
   <button md-icon-button onclick="document.getElementById('fileInput').click()">
     <md-icon>file_upload</md-icon>
   </button>
@@ -22,7 +22,7 @@
   </button>
 </md-toolbar>
 
-<md-sidenav-container id="mainContent">
+<md-sidenav-container id="mainContainer">
   <md-sidenav id="leftSidenav" #leftSidenav align="start" mode="side">
     <md-toolbar>
       <span>Graph Settings</span>
@@ -66,14 +66,16 @@
     </div>
   </md-sidenav>
 
-  <app-graph #graph></app-graph>
+  <div id="mainContent">
+    <app-graph #graph></app-graph>
+  </div>
 
   <md-sidenav id="rightSidenav" #rightSidenav align="end" mode="side">
     <div id="rightSidenavContent">
       <div id="sidenavSlider">
         <div id="sidenavSliderCenter"></div>
       </div>
-      <app-table id="table" #table></app-table>
+      <app-table #table></app-table>
     </div>
   </md-sidenav>
 </md-sidenav-container>
