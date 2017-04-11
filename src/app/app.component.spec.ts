@@ -3,6 +3,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
+import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
@@ -29,7 +30,8 @@ describe('AppComponent', () => {
       ],
       providers: [
         DataService,
-        TracingService
+        TracingService,
+        ScrollbarHelper
       ]
     }).compileComponents().then();
   }));

@@ -1,5 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
+import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import {MaterialModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 
@@ -16,7 +17,12 @@ describe('TableComponent', () => {
         MaterialModule,
         FormsModule
       ],
-      declarations: [TableComponent]
+      declarations: [
+        TableComponent
+      ],
+      providers: [
+        ScrollbarHelper
+      ]
     }).compileComponents().then();
   }));
 

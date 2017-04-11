@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild, TemplateRef} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
-import {scrollbarWidth} from '@swimlane/ngx-datatable/release/utils/scrollbar-width';
+import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 
 import {DataService, ShowType} from '../util/data.service';
 import {UtilService} from '../util/util.service';
@@ -31,30 +31,7 @@ export class TableComponent implements OnInit {
   @ViewChild('table') table: DatatableComponent;
   @ViewChild('selectTmpl') selectTmpl: TemplateRef<any>;
 
-  private static getUpdatedColumns(columns: any[]): any[] {
-    const selectColumnWidth = 40;
-    const width = document.getElementById('tableContainer').offsetWidth - scrollbarWidth;
-    const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
-    let first = true;
-
-    for (const column of columns) {
-      if (first) {
-        column.width = selectColumnWidth;
-        column.minWidth = selectColumnWidth;
-        column.maxWidth = selectColumnWidth;
-      } else {
-        column.width = columnWidth;
-        column.minWidth = columnWidth;
-        column.maxWidth = columnWidth;
-      }
-
-      first = false;
-    }
-
-    return columns;
-  }
-
-  constructor() {
+  constructor(private scrollbarHelper: ScrollbarHelper) {
     const style = document.createElement('style');
 
     style.type = 'text/css';
@@ -103,7 +80,7 @@ export class TableComponent implements OnInit {
       }
 
       this.resizeTimer = Observable.timer(100).subscribe(() => {
-        this.columns = TableComponent.getUpdatedColumns(this.columns);
+        this.columns = this.getUpdatedColumns(this.columns);
         this.table.recalculate();
       });
     });
@@ -159,7 +136,7 @@ export class TableComponent implements OnInit {
       columns = columns.filter(c => this.deliveryColumns.includes(c.name));
     }
 
-    this.columns = TableComponent.getUpdatedColumns([selectColumn].concat(columns));
+    this.columns = this.getUpdatedColumns([selectColumn].concat(columns));
 
     if (this.data != null) {
       let elements = [];
@@ -214,5 +191,28 @@ export class TableComponent implements OnInit {
     if (this.changeFunction != null) {
       this.changeFunction();
     }
+  }
+
+  private getUpdatedColumns(columns: any[]): any[] {
+    const selectColumnWidth = 40;
+    const width = document.getElementById('tableContainer').offsetWidth - this.scrollbarHelper.width;
+    const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
+    let first = true;
+
+    for (const column of columns) {
+      if (first) {
+        column.width = selectColumnWidth;
+        column.minWidth = selectColumnWidth;
+        column.maxWidth = selectColumnWidth;
+      } else {
+        column.width = columnWidth;
+        column.minWidth = columnWidth;
+        column.maxWidth = columnWidth;
+      }
+
+      first = false;
+    }
+
+    return columns;
   }
 }

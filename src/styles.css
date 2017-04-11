@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~material-design-icons/iconfont/material-icons.css";
-@import "~@angular/material/core/theming/prebuilt/deeppurple-amber.css";
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import "~@swimlane/ngx-datatable/release/index.css";
 @import "~@swimlane/ngx-datatable/release/assets/icons.css";
 @import "./app/graph/zooming.css";

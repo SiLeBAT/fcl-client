@@ -2,8 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
-import {DialogSelectComponent} from './dialog-select.component';
-import {DialogSelectData} from './dialog-select.data';
+import {DialogSelectComponent, DialogSelectData} from './dialog-select.component';
 
 describe('DialogSelectComponent', () => {
   let component: DialogSelectComponent;
@@ -12,7 +11,7 @@ describe('DialogSelectComponent', () => {
   beforeEach(async(() => {
     const data: DialogSelectData = {
       title: 'Prompt',
-      options: ['Eins', 'Zwei', 'Drei']
+      options: [{name: 'Eins', selected: true}, {name: 'Zwei', selected: false}, {name: 'Drei', selected: true}]
     };
 
     TestBed.configureTestingModule({

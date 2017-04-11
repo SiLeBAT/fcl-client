@@ -1,8 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
-import {DialogActionsComponent} from './dialog-actions.component';
-import {DialogActionsData} from './dialog-actions.data';
+import {DialogActionsComponent, DialogActionsData} from './dialog-actions.component';
 
 describe('DialogActionsComponent', () => {
   let component: DialogActionsComponent;
@@ -11,7 +10,7 @@ describe('DialogActionsComponent', () => {
   beforeEach(async(() => {
     const data: DialogActionsData = {
       title: 'Actions',
-      actions: [['action1', () => void(0)]]
+      actions: [{name: 'action1', action: () => void(0)}]
     };
 
     TestBed.configureTestingModule({

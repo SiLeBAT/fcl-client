@@ -1,9 +1,9 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-import {DialogPromptComponent} from './dialog-prompt.component';
-import {DialogPromptData} from './dialog-prompt.data';
+import {DialogPromptComponent, DialogPromptData} from './dialog-prompt.component';
 
 describe('DialogPromptComponent', () => {
   let component: DialogPromptComponent;
@@ -19,7 +19,8 @@ describe('DialogPromptComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         MaterialModule,
-        FormsModule
+        FormsModule,
+        BrowserAnimationsModule
       ],
       declarations: [DialogPromptComponent],
       providers: [

@@ -1,8 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
-import {DialogAlertComponent} from './dialog-alert.component';
-import {DialogAlertData} from './dialog-alert.data';
+import {DialogAlertComponent, DialogAlertData} from './dialog-alert.component';
 
 describe('DialogAlertComponent', () => {
   let component: DialogAlertComponent;
