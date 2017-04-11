@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
 import {DialogAlertComponent, DialogAlertData} from './dialog-alert.component';
 
@@ -14,7 +14,7 @@ describe('DialogAlertComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [DialogAlertComponent],
       providers: [
         {provide: MdDialogRef, useValue: {}},

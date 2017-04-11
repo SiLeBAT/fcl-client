@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MaterialModule} from '@angular/material';
+import {MdDialogModule, MdMenuModule} from '@angular/material';
 import {TracingService} from './tracing.service';
 
 import {GraphComponent} from './graph.component';
@@ -10,7 +10,7 @@ describe('GraphComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [MdDialogModule, MdMenuModule],
       declarations: [GraphComponent],
       providers: [TracingService]
     }).compileComponents().then();

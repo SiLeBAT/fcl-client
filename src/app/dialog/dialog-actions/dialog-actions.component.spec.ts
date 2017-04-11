@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {MdDialogModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
 import {DialogActionsComponent, DialogActionsData} from './dialog-actions.component';
 
@@ -14,7 +14,7 @@ describe('DialogActionsComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [MdDialogModule],
       declarations: [DialogActionsComponent],
       providers: [
         {provide: MdDialogRef, useValue: {}},
@@ -33,7 +33,7 @@ describe('DialogActionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render title in a md-toolbar', async(() => {
+  it('should render title', async(() => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Actions');
   }));

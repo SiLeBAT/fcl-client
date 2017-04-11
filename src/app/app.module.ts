@@ -3,7 +3,18 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
-import {MaterialModule} from '@angular/material';
+import {
+  MdButtonModule,
+  MdCheckboxModule,
+  MdDialogModule,
+  MdIconModule,
+  MdInputModule,
+  MdMenuModule,
+  MdRadioModule,
+  MdSelectModule,
+  MdSidenavModule,
+  MdToolbarModule
+} from '@angular/material';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 
@@ -40,7 +51,16 @@ declare const cytoscape: any;
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
-    MaterialModule,
+    MdButtonModule,
+    MdCheckboxModule,
+    MdDialogModule,
+    MdIconModule,
+    MdInputModule,
+    MdMenuModule,
+    MdRadioModule,
+    MdSelectModule,
+    MdSidenavModule,
+    MdToolbarModule,
     NgxDatatableModule
   ],
   providers: [

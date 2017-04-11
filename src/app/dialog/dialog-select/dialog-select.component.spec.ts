@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
-import {MaterialModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {MdCheckboxModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
 import {DialogSelectComponent, DialogSelectData} from './dialog-select.component';
 
@@ -16,8 +16,8 @@ describe('DialogSelectComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        MaterialModule,
-        FormsModule
+        FormsModule,
+        MdCheckboxModule
       ],
       declarations: [DialogSelectComponent],
       providers: [

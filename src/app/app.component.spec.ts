@@ -1,6 +1,15 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MaterialModule} from '@angular/material';
+import {
+  MdCheckboxModule,
+  MdDialogModule,
+  MdIconModule,
+  MdMenuModule,
+  MdRadioModule,
+  MdSelectModule,
+  MdSidenavModule,
+  MdToolbarModule
+} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
@@ -19,8 +28,15 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
-        MaterialModule,
         FormsModule,
+        MdCheckboxModule,
+        MdDialogModule,
+        MdIconModule,
+        MdMenuModule,
+        MdRadioModule,
+        MdSelectModule,
+        MdSidenavModule,
+        MdToolbarModule,
         NgxDatatableModule
       ],
       declarations: [
@@ -30,8 +46,8 @@ describe('AppComponent', () => {
       ],
       providers: [
         DataService,
-        TracingService,
-        ScrollbarHelper
+        ScrollbarHelper,
+        TracingService
       ]
     }).compileComponents().then();
   }));
