@@ -3,6 +3,18 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class UtilService {
 
+  static openSaveDialog(url: string, fileName: string) {
+    const a = document.createElement('a');
+
+    a.style.display = 'none';
+    a.target = '_blank';
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
   static setElementPosition(element: HTMLElement, x: number, y: number) {
     element.style.left = x + 'px';
     element.style.top = y + 'px';

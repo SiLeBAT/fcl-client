@@ -6,6 +6,7 @@ import {TableComponent} from './table/table.component';
 import {DataService, ShowType} from './util/data.service';
 import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
+import {UtilService} from './util/util.service';
 
 declare const Hammer: any;
 
@@ -27,19 +28,6 @@ export class AppComponent implements OnInit {
 
   graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
   tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
-
-  private static openSaveDialog(url: string, fileName: string) {
-    const a = document.createElement('a');
-
-    a.style.display = 'none';
-    a.target = '_blank';
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
-  }
 
   constructor(private dataService: DataService, private dialogService: MdDialog) {
     document.body.oncontextmenu = e => e.preventDefault();
@@ -154,7 +142,10 @@ export class AppComponent implements OnInit {
     if (window.navigator.msSaveOrOpenBlob != null) {
       window.navigator.msSaveOrOpenBlob(blob, fileName);
     } else {
-      AppComponent.openSaveDialog(window.URL.createObjectURL(blob), fileName);
+      const url = window.URL.createObjectURL(blob);
+
+      UtilService.openSaveDialog(url, fileName);
+      window.URL.revokeObjectURL(url);
     }
   }
 
@@ -165,7 +156,7 @@ export class AppComponent implements OnInit {
       if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
         window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
       } else {
-        AppComponent.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+        UtilService.openSaveDialog(canvas.toDataURL('image/png'), fileName);
       }
     });
   }
