@@ -5,6 +5,7 @@ import {Observable, Subject} from 'rxjs/Rx';
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
+import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
@@ -545,6 +546,17 @@ export class GraphComponent implements OnInit {
 
     return [
       {
+        name: 'Show Properties',
+        type: MenuActionType.runAction,
+        enabled: !multipleStationsSelected,
+        action: () => {
+          const dialogData: StationPropertiesData = {
+            station: this.tracingService.getElementsById([station.id()])[0]
+          };
+
+          this.dialogService.open(StationPropertiesComponent, {data: dialogData});
+        }
+      }, {
         name: 'Show Forward Trace',
         type: MenuActionType.runAction,
         enabled: !multipleStationsSelected,

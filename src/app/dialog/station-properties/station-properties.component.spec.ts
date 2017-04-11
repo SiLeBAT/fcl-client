@@ -1,21 +1,20 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MdDialogModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
-import {DialogActionsComponent, DialogActionsData} from './dialog-actions.component';
+import {StationPropertiesComponent, StationPropertiesData} from './station-properties.component';
 
-describe('DialogActionsComponent', () => {
-  let component: DialogActionsComponent;
-  let fixture: ComponentFixture<DialogActionsComponent>;
+describe('StationPropertiesComponent', () => {
+  let component: StationPropertiesComponent;
+  let fixture: ComponentFixture<StationPropertiesComponent>;
 
   beforeEach(async(() => {
-    const data: DialogActionsData = {
-      title: 'Actions',
-      actions: [{name: 'action1', action: () => void(0)}]
+    const data: StationPropertiesData = {
+      station: {data: {id: 1, name: 'Test'}}
     };
 
     TestBed.configureTestingModule({
       imports: [MdDialogModule],
-      declarations: [DialogActionsComponent],
+      declarations: [StationPropertiesComponent],
       providers: [
         {provide: MdDialogRef, useValue: {}},
         {provide: MD_DIALOG_DATA, useValue: data}
@@ -24,7 +23,7 @@ describe('DialogActionsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DialogActionsComponent);
+    fixture = TestBed.createComponent(StationPropertiesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -35,6 +34,6 @@ describe('DialogActionsComponent', () => {
 
   it('should render title', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Actions');
+    expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Station Properties');
   });
 });

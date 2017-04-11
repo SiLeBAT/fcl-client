@@ -25,6 +25,7 @@ import {DialogActionsComponent} from './dialog/dialog-actions/dialog-actions.com
 import {DialogAlertComponent} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent} from './dialog/dialog-prompt/dialog-prompt.component';
 import {DialogSelectComponent} from './dialog/dialog-select/dialog-select.component';
+import {StationPropertiesComponent} from './dialog/station-properties/station-properties.component';
 
 import {DataService} from './util/data.service';
 import {UtilService} from './util/util.service';
@@ -44,7 +45,8 @@ declare const cytoscape: any;
     DialogActionsComponent,
     DialogAlertComponent,
     DialogPromptComponent,
-    DialogSelectComponent
+    DialogSelectComponent,
+    StationPropertiesComponent
   ],
   imports: [
     BrowserModule,
@@ -74,7 +76,8 @@ declare const cytoscape: any;
     DialogActionsComponent,
     DialogAlertComponent,
     DialogPromptComponent,
-    DialogSelectComponent
+    DialogSelectComponent,
+    StationPropertiesComponent
   ]
 })
 export class AppModule {
