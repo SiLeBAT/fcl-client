@@ -54,8 +54,8 @@ export class GraphComponent implements OnInit {
   private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
-  private zoom: Subject<boolean>;
-  private legend: Subject<Set<string>>;
+  private zoom: Subject<boolean> = new Subject();
+  private legend: Subject<Set<string>> = new Subject();
 
   private static createNodeBackground(colors: number[][]): any {
     if (colors.length === 1) {
@@ -100,6 +100,8 @@ export class GraphComponent implements OnInit {
 
   init(data: any) {
     this.data = data.elements;
+    this.tracingService.init(this.data);
+
     this.cy = cytoscape({
       container: document.getElementById('cy'),
 
@@ -115,10 +117,7 @@ export class GraphComponent implements OnInit {
       wheelSensitivity: 0.5,
     });
 
-    this.layoutMenuActions = this.createLayoutActions();
-    this.zoom = new Subject();
     this.cy.zooming(this.zoom);
-    this.legend = new Subject();
     this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
     this.cy.on('select', event => this.setSelected(event.cyTarget, true));
@@ -142,7 +141,6 @@ export class GraphComponent implements OnInit {
 
     this.setFontSize(this.fontSize);
     this.setShowLegend(this.showLegend);
-    this.tracingService.init(this.data);
   }
 
   onChange(changeFunction: () => void) {
@@ -190,7 +188,6 @@ export class GraphComponent implements OnInit {
     this.nodeSize = nodeSize;
 
     if (this.cy != null) {
-      this.recalculateNodeSizes();
       this.updateProperties();
     }
   }
@@ -321,9 +318,9 @@ export class GraphComponent implements OnInit {
   private updateProperties() {
     if (this.mergeDeliveries) {
       this.updateEdges();
-      this.cy.nodes().data('_update', true);
+      this.cy.nodes().scratch('_update', true);
     } else {
-      this.cy.elements().data('_update', true);
+      this.cy.elements().scratch('_update', true);
     }
   }
 
@@ -340,8 +337,6 @@ export class GraphComponent implements OnInit {
 
     const nodes = this.createNodes();
     const edges = this.createEdges();
-
-    this.recalculateNodeSizes();
 
     for (const e of edges) {
       e.group = 'edges';
@@ -383,26 +378,14 @@ export class GraphComponent implements OnInit {
     });
   }
 
-  private recalculateNodeSizes() {
-    let maxScore = 0;
-
-    for (const s of this.data.stations) {
-      maxScore = Math.max(maxScore, s.data.score);
-    }
-
-    if (maxScore > 0) {
-      for (const s of this.data.stations) {
-        s.data._size = (0.5 + 0.5 * s.data.score / maxScore) * this.nodeSize;
-      }
-    } else {
-      for (const s of this.data.stations) {
-        s.data._size = this.nodeSize;
-      }
-    }
-  }
-
   private createStyle(): any {
-    const sizeFunction = node => node.data('_size') == null ? this.nodeSize : node.data('_size');
+    const sizeFunction = node => {
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * this.nodeSize;
+      } else {
+        return this.nodeSize;
+      }
+    };
 
     let style = cytoscape.stylesheet()
       .selector('node')

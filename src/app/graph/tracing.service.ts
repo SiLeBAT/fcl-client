@@ -6,6 +6,7 @@ export class TracingService {
   private stations = [];
   private deliveries = [];
   private elementsById = {};
+  private maxScore: number;
 
   constructor() {
   }
@@ -14,6 +15,7 @@ export class TracingService {
     this.stations = data.stations;
     this.deliveries = data.deliveries;
     this.elementsById = {};
+    this.maxScore = 0;
 
     for (const s of this.stations) {
       this.elementsById[s.data.id] = s;
@@ -54,8 +56,14 @@ export class TracingService {
         if (e.data.commonLink == null) {
           e.data.commonLink = false;
         }
+
+        this.maxScore = Math.max(this.maxScore, e.data.score);
       }
     }
+  }
+
+  getMaxScore() {
+    return this.maxScore;
   }
 
   getElementsById(ids: string[]) {
@@ -256,6 +264,8 @@ export class TracingService {
   private updateScores() {
     let nOutbreaks = 0;
 
+    this.maxScore = 0;
+
     for (const s of this.stations) {
       s.data.score = 0;
       s.data.commonLink = false;
@@ -276,6 +286,7 @@ export class TracingService {
       for (const s of this.stations) {
         s.data.score /= nOutbreaks;
         s.data.commonLink = s.data.score === 1.0;
+        this.maxScore = Math.max(this.maxScore, s.data.score);
         delete s.data._visited;
       }
 
