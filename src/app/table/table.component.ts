@@ -5,6 +5,7 @@ import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollba
 
 import {DataService, ShowType} from '../util/data.service';
 import {UtilService} from '../util/util.service';
+import {FclElements} from '../util/datatypes';
 
 declare const ResizeSensor: any;
 
@@ -18,7 +19,7 @@ export class TableComponent implements OnInit {
   columns: any[];
   rows: any[];
 
-  private data: any;
+  private data: FclElements;
   private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
   private stationColumns = DataService.DEFAULT_TABLE_SETTINGS.stationColumns;
   private deliveryColumns = DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns;
@@ -88,7 +89,7 @@ export class TableComponent implements OnInit {
     this.table.onColumnReorder = () => void(0);
   }
 
-  init(data: any) {
+  init(data: FclElements) {
     this.data = data;
     this.update();
   }

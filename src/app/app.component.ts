@@ -7,6 +7,7 @@ import {DataService, ShowType} from './util/data.service';
 import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {UtilService} from './util/util.service';
+import {FclData, FclElements} from './util/datatypes';
 
 declare const Hammer: any;
 
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
   tableModes = DataService.TABLE_MODES;
   showTypes = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
 
+  elements: FclElements;
   graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
   tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
 
@@ -36,12 +38,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.dataService.setDataSource('assets/data/small_network.json');
     this.dataService.getData().then(data => {
-      this.graphSettings = data.graphSettings;
-      this.tableSettings = data.tableSettings;
-      this.onGraphChange('all');
-      this.onTableChange('all');
-      this.graph.init(data.graphData);
-      this.table.init(data.graphData.elements);
+      this.update(data);
     }).catch(error => {
       this.showErrorMessage(error);
     });
@@ -114,12 +111,7 @@ export class AppComponent implements OnInit {
     if (files.length === 1) {
       this.dataService.setDataSource(files[0]);
       this.dataService.getData().then(data => {
-        this.graphSettings = data.graphSettings;
-        this.tableSettings = data.tableSettings;
-        this.onGraphChange('all');
-        this.onTableChange('all');
-        this.graph.init(data.graphData);
-        this.table.init(data.graphData.elements);
+        this.update(data);
       }).catch(error => {
         this.showErrorMessage(error);
       });
@@ -131,8 +123,9 @@ export class AppComponent implements OnInit {
   }
 
   onSave() {
-    const data = {
-      graphData: this.graph.getJson(),
+    const data: FclData = {
+      elements: this.elements,
+      layout: this.graph.getLayout(),
       graphSettings: this.graphSettings,
       tableSettings: this.tableSettings
     };
@@ -190,6 +183,16 @@ export class AppComponent implements OnInit {
         }
       }
     });
+  }
+
+  private update(data: FclData) {
+    this.elements = data.elements;
+    this.graphSettings = data.graphSettings;
+    this.tableSettings = data.tableSettings;
+    this.onGraphChange('all');
+    this.onTableChange('all');
+    this.graph.init(data.elements, data.layout);
+    this.table.init(data.elements);
   }
 
   private updateRightSidenav() {

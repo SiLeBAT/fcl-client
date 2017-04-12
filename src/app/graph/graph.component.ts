@@ -9,6 +9,7 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
+import {FclElements} from '../util/datatypes';
 
 declare const cytoscape: any;
 declare const ResizeSensor: any;
@@ -43,7 +44,7 @@ export class GraphComponent implements OnInit {
   layoutMenuActions = this.createLayoutActions();
 
   private cy: any;
-  private data: any;
+  private data: FclElements;
   private changeFunction: () => void;
 
   private mergeDeliveries = DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries;
@@ -98,9 +99,9 @@ export class GraphComponent implements OnInit {
     });
   }
 
-  init(data: any) {
-    this.data = data.elements;
-    this.tracingService.init(this.data);
+  init(data: FclElements, layout: any) {
+    this.data = data;
+    this.tracingService.init(data);
 
     this.cy = cytoscape({
       container: document.getElementById('cy'),
@@ -110,7 +111,7 @@ export class GraphComponent implements OnInit {
         edges: this.createEdges()
       },
 
-      layout: data.layout,
+      layout: layout,
       style: this.createStyle(),
       minZoom: 0.01,
       maxZoom: 10,
@@ -147,19 +148,16 @@ export class GraphComponent implements OnInit {
     this.changeFunction = changeFunction;
   }
 
-  getJson(): any {
+  getLayout(): any {
     const positions = {};
 
     this.cy.nodes().forEach(n => positions[n.id()] = n.position());
 
     return {
-      elements: this.data,
-      layout: {
-        name: 'preset',
-        positions: positions,
-        zoom: this.cy.zoom(),
-        pan: this.cy.pan()
-      }
+      name: 'preset',
+      positions: positions,
+      zoom: this.cy.zoom(),
+      pan: this.cy.pan()
     };
   }
 

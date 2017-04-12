@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {FclElements} from '../util/datatypes';
 
 @Injectable()
 export class TracingService {
@@ -11,7 +12,7 @@ export class TracingService {
   constructor() {
   }
 
-  init(data: any) {
+  init(data: FclElements) {
     this.stations = data.stations;
     this.deliveries = data.deliveries;
     this.elementsById = {};

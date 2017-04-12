@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
+import {FclData} from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -65,10 +66,11 @@ export class DataService {
   };
 
   private dataSource: string | File;
-  private data: any;
+  private data: FclData;
 
-  private static preprocessData(data: any): any {
-    if (data.hasOwnProperty('graphData') && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings')) {
+  private static preprocessData(data: any): FclData {
+    if (data.hasOwnProperty('elements') && data.hasOwnProperty('layout')
+      && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings')) {
       for (const prop of Object.keys(DataService.DEFAULT_GRAPH_SETTINGS)) {
         if (!data.graphSettings.hasOwnProperty(prop)) {
           data.graphSettings[prop] = JSON.parse(JSON.stringify(DataService.DEFAULT_GRAPH_SETTINGS[prop]));
@@ -120,14 +122,12 @@ export class DataService {
       }
 
       return {
-        graphData: {
-          elements: {
-            stations: data.stations,
-            deliveries: data.deliveries
-          },
-          layout: {
-            name: 'random'
-          }
+        elements: {
+          stations: data.stations,
+          deliveries: data.deliveries
+        },
+        layout: {
+          name: 'random'
         },
         graphSettings: graphSettings,
         tableSettings: tableSettings
@@ -143,7 +143,7 @@ export class DataService {
     this.dataSource = source;
   }
 
-  getData(): Promise<any> {
+  getData(): Promise<FclData> {
     if (this.data != null) {
       return new Promise((resolve, reject) => resolve(this.data));
     } else if (typeof this.dataSource === 'string') {
