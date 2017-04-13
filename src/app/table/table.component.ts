@@ -81,8 +81,10 @@ export class TableComponent implements OnInit {
       }
 
       this.resizeTimer = Observable.timer(100).subscribe(() => {
-        this.columns = this.getUpdatedColumns(this.columns);
-        this.table.recalculate();
+        if (this.columns != null) {
+          this.columns = this.getUpdatedColumns(this.columns);
+          this.table.recalculate();
+        }
       });
     });
 

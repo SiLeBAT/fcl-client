@@ -53,8 +53,12 @@ export class DataService {
   private data: FclData;
 
   private static preprocessData(data: any): FclData {
-    if (data.hasOwnProperty('elements') && data.hasOwnProperty('layout')
-      && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings')) {
+    const containsDataAndSettings = data.hasOwnProperty('elements') && data.hasOwnProperty('layout')
+      && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings');
+    const containsRawData = data.hasOwnProperty('stations') && data.hasOwnProperty('deliveries')
+      && data.hasOwnProperty('deliveriesRelations');
+
+    if (containsDataAndSettings) {
       for (const prop of Object.keys(DataService.DEFAULT_GRAPH_SETTINGS)) {
         if (!data.graphSettings.hasOwnProperty(prop)) {
           data.graphSettings[prop] = JSON.parse(JSON.stringify(DataService.DEFAULT_GRAPH_SETTINGS[prop]));
@@ -68,7 +72,7 @@ export class DataService {
       }
 
       return data;
-    } else {
+    } else if (containsRawData) {
       const stationsById = {};
       const deliveriesById = {};
 
@@ -119,6 +123,8 @@ export class DataService {
         graphSettings: graphSettings,
         tableSettings: tableSettings
       };
+    } else {
+      throw new SyntaxError('Invalid data format');
     }
   }
 
@@ -140,19 +146,22 @@ export class DataService {
           this.data = DataService.preprocessData(response.json());
 
           return this.data;
-        }).catch(error => Promise.reject(error.text()));
+        }).catch(error => Promise.reject(error));
     } else if (this.dataSource instanceof File) {
       const file: File = this.dataSource;
 
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const fileReader = new FileReader();
 
         fileReader.onload = (event: Event) => {
           const contents: any = event.target;
 
-          this.data = DataService.preprocessData(JSON.parse(contents.result));
-
-          resolve(this.data);
+          try {
+            this.data = DataService.preprocessData(JSON.parse(contents.result));
+            resolve(this.data);
+          } catch (e) {
+            reject(e);
+          }
         };
 
         fileReader.readAsText(file);
