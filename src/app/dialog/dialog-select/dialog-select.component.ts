@@ -3,7 +3,7 @@ import {MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
 export interface DialogSelectData {
   title: string;
-  options: { name: string, selected: boolean }[];
+  options: { value: string, viewValue: string, selected: boolean }[];
 }
 
 @Component({
@@ -21,7 +21,7 @@ export class DialogSelectComponent {
 
   //noinspection JSUnusedGlobalSymbols
   close() {
-    this.dialogRef.close(this.options.filter(o => o.selected).map(o => o.name));
+    this.dialogRef.close(this.options.filter(o => o.selected).map(o => o.value));
   }
 
 }

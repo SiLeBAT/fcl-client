@@ -6,7 +6,7 @@ import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-action
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
-import {DataService} from '../util/data.service';
+import {DataService, Size} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
 import {FclElements} from '../util/datatypes';
@@ -33,6 +33,18 @@ interface MenuAction {
 })
 export class GraphComponent implements OnInit {
 
+  private static NODE_SIZES: Map<Size, number> = new Map([
+    [Size.SMALL, 50],
+    [Size.MEDIUM, 75],
+    [Size.LARGE, 100]
+  ]);
+
+  private static FONT_SIZES: Map<Size, number> = new Map([
+    [Size.SMALL, 10],
+    [Size.MEDIUM, 14],
+    [Size.LARGE, 18]
+  ]);
+
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
   @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
@@ -56,7 +68,7 @@ export class GraphComponent implements OnInit {
   private resizeTimer: any;
   private selectTimer: any;
   private zoom: Subject<boolean> = new Subject();
-  private legend: Subject<Set<string>> = new Subject();
+  private legend: Subject<string[]> = new Subject();
 
   private static createNodeBackground(colors: number[][]): any {
     if (colors.length === 1) {
@@ -182,7 +194,7 @@ export class GraphComponent implements OnInit {
     }
   }
 
-  setNodeSize(nodeSize: number) {
+  setNodeSize(nodeSize: Size) {
     this.nodeSize = nodeSize;
 
     if (this.cy != null) {
@@ -190,12 +202,14 @@ export class GraphComponent implements OnInit {
     }
   }
 
-  setFontSize(fontSize: number) {
+  setFontSize(fontSize: Size) {
     this.fontSize = fontSize;
 
     if (this.cy != null) {
+      const size = GraphComponent.FONT_SIZES.get(fontSize);
+
       this.cy.nodes().style({
-        'font-size': Math.max(fontSize / this.cy.zoom(), fontSize)
+        'font-size': Math.max(size / this.cy.zoom(), size)
       });
     }
   }
@@ -204,7 +218,7 @@ export class GraphComponent implements OnInit {
     this.showLegend = showLegend;
 
     if (this.cy != null) {
-      this.legend.next(showLegend ? new Set(DataService.PROPERTIES.keys()) : new Set());
+      this.legend.next(showLegend ? DataService.PROPERTIES_WITH_COLORS : []);
     }
   }
 
@@ -378,10 +392,12 @@ export class GraphComponent implements OnInit {
 
   private createStyle(): any {
     const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+
       if (this.tracingService.getMaxScore() > 0) {
-        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * this.nodeSize;
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
-        return this.nodeSize;
+        return size;
       }
     };
 

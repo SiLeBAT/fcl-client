@@ -3,7 +3,7 @@ import {MdSidenav, MdDialog} from '@angular/material';
 
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
-import {DataService, ShowType} from './util/data.service';
+import {DataService, TableMode} from './util/data.service';
 import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {UtilService} from './util/util.service';
@@ -22,10 +22,9 @@ export class AppComponent implements OnInit {
   @ViewChild('table') table: TableComponent;
   @ViewChild('rightSidenav') rightSidenav: MdSidenav;
 
-  nodeSizes = DataService.NODE_SIZES;
-  fontSizes = DataService.FONT_SIZES;
   tableModes = DataService.TABLE_MODES;
-  showTypes = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
+  showTypes = DataService.SHOW_TYPES;
+  sizes = DataService.SIZES;
 
   elements: FclElements;
   graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
@@ -155,16 +154,18 @@ export class AppComponent implements OnInit {
   }
 
   changeColumns() {
-    const options: { name: string, selected: boolean }[] = [];
+    const options: { value: string, viewValue: string, selected: boolean }[] = [];
 
-    if (this.tableSettings.mode === 'Stations') {
-      for (const column of DataService.TABLE_COLUMNS['Stations']) {
-        options.push({name: column.name, selected: this.tableSettings.stationColumns.includes(column.name)});
+    for (const column of DataService.TABLE_COLUMNS.get(this.tableSettings.mode)) {
+      let selected;
+
+      if (this.tableSettings.mode === TableMode.STATIONS) {
+        selected = this.tableSettings.stationColumns.includes(column);
+      } else if (this.tableSettings.mode === TableMode.STATIONS) {
+        selected = this.tableSettings.deliveryColumns.includes(column);
       }
-    } else if (this.tableSettings.mode === 'Deliveries') {
-      for (const column of DataService.TABLE_COLUMNS['Deliveries']) {
-        options.push({name: column.name, selected: this.tableSettings.deliveryColumns.includes(column.name)});
-      }
+
+      options.push({value: column, viewValue: DataService.PROPERTIES.get(column).name, selected: selected});
     }
 
     const dialogData: DialogSelectData = {
@@ -174,10 +175,10 @@ export class AppComponent implements OnInit {
 
     this.dialogService.open(DialogSelectComponent, {data: dialogData}).afterClosed().subscribe(selections => {
       if (selections != null) {
-        if (this.tableSettings.mode === 'Stations') {
+        if (this.tableSettings.mode === TableMode.STATIONS) {
           this.tableSettings.stationColumns = selections;
           this.onTableChange('stationColumns');
-        } else if (this.tableSettings.mode === 'Deliveries') {
+        } else if (this.tableSettings.mode === TableMode.DELIVERIES) {
           this.tableSettings.deliveryColumns = selections;
           this.onTableChange('deliveryColumns');
         }

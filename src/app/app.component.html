@@ -30,14 +30,14 @@
     <div class="sidenav-elements">
       <md-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize"
                  (ngModelChange)="onGraphChange('nodeSize')">
-        <md-option *ngFor="let nodeSize of nodeSizes" [value]="nodeSize.value">
-          {{nodeSize.viewValue}}
+        <md-option *ngFor="let size of sizes" [value]="size">
+          {{size}}
         </md-option>
       </md-select>
       <md-select placeholder="Font Size" [(ngModel)]="graphSettings.fontSize"
                  (ngModelChange)="onGraphChange('fontSize')">
-        <md-option *ngFor="let fontSize of fontSizes" [value]="fontSize.value">
-          {{fontSize.viewValue}}
+        <md-option *ngFor="let size of sizes" [value]="size">
+          {{size}}
         </md-option>
       </md-select>
       <md-checkbox [(ngModel)]="graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">

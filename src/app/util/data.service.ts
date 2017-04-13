@@ -4,10 +4,21 @@ import {FclData} from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
 
+export enum TableMode {
+  STATIONS = 'Stations' as any,
+  DELIVERIES = 'Deliveries' as any
+}
+
 export enum ShowType {
   ALL = 'All' as any,
   SELECTED_ONLY = 'Selected Only' as any,
   TRACE_ONLY = 'Trace Only' as any
+}
+
+export enum Size {
+  SMALL = 'Small' as any,
+  MEDIUM = 'Medium' as any,
+  LARGE = 'Large' as any
 }
 
 @Injectable()
@@ -15,55 +26,45 @@ export class DataService {
 
   static GRAPH_BACKGROUND = [245, 245, 245];
 
-  static NODE_SIZES = [
-    {value: 50, viewValue: 'Small'},
-    {value: 100, viewValue: 'Large'}
-  ];
-
-  static FONT_SIZES = [
-    {value: 12, viewValue: 'Small'},
-    {value: 18, viewValue: 'Large'}
-  ];
+  static TABLE_MODES = [TableMode.STATIONS, TableMode.DELIVERIES];
+  static SHOW_TYPES = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
+  static SIZES = [Size.SMALL, Size.MEDIUM, Size.LARGE];
 
   static PROPERTIES: Map<string, { name: string, color: number[] }> = new Map([
+    ['id', {name: 'ID', color: null}],
+    ['name', {name: 'Name', color: null}],
+    ['type', {name: 'Type', color: null}],
+    ['source', {name: 'Source', color: null}],
+    ['target', {name: 'Target', color: null}],
     ['forward', {name: 'Forward Trace', color: [150, 255, 75]}],
     ['backward', {name: 'Backward Trace', color: [255, 150, 75]}],
     ['observed', {name: 'Observed', color: [75, 150, 255]}],
     ['outbreak', {name: 'Outbreak', color: [255, 50, 50]}],
-    ['commonLink', {name: 'Common Link', color: [255, 255, 75]}]
+    ['commonLink', {name: 'Common Link', color: [255, 255, 75]}],
+    ['score', {name: 'Score', color: null}]
   ]);
 
-  static TABLE_MODES = ['Stations', 'Deliveries'];
-
-  static TABLE_COLUMNS = {
-    'Stations': [
-      {name: 'ID', prop: 'id'},
-      {name: 'Name', prop: 'name'},
-      {name: 'Type', prop: 'type'},
-      {name: 'Score', prop: 'score'}
-    ],
-    'Deliveries': [
-      {name: 'ID', prop: 'id'},
-      {name: 'Source', prop: 'source'},
-      {name: 'Target', prop: 'target'},
-      {name: 'Score', prop: 'score'}
-    ]
-  };
+  static TABLE_COLUMNS: Map<TableMode, string[]> = new Map([
+    [TableMode.STATIONS, ['id', 'name', 'type', 'score']],
+    [TableMode.DELIVERIES, ['id', 'source', 'target', 'score']]
+  ]);
 
   static DEFAULT_GRAPH_SETTINGS = {
-    nodeSize: DataService.NODE_SIZES[0].value,
-    fontSize: DataService.FONT_SIZES[0].value,
+    nodeSize: Size.MEDIUM,
+    fontSize: Size.MEDIUM,
     mergeDeliveries: false,
     showLegend: true
   };
 
   static DEFAULT_TABLE_SETTINGS = {
-    mode: DataService.TABLE_MODES[0],
+    mode: TableMode.STATIONS,
     width: 0.25,
-    stationColumns: DataService.TABLE_COLUMNS['Stations'].map(c => c.name),
-    deliveryColumns: DataService.TABLE_COLUMNS['Deliveries'].map(c => c.name),
+    stationColumns: DataService.TABLE_COLUMNS.get(TableMode.STATIONS),
+    deliveryColumns: DataService.TABLE_COLUMNS.get(TableMode.DELIVERIES),
     showType: ShowType.ALL
   };
+
+  static PROPERTIES_WITH_COLORS = Array.from(DataService.PROPERTIES).filter(p => p[1].color != null).map(p => p[0]);
 
   private dataSource: string | File;
   private data: FclData;

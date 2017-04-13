@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 
-import {DataService, ShowType} from '../util/data.service';
+import {DataService, ShowType, TableMode} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {FclElements} from '../util/datatypes';
 
@@ -39,7 +39,7 @@ export class TableComponent implements OnInit {
     style.innerHTML = '';
     style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
-    for (const props of UtilService.getAllCombinations(Array.from(DataService.PROPERTIES.keys()))) {
+    for (const props of UtilService.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
       style.innerHTML += 'datatable-body-row';
 
       if (props.length === 1) {
@@ -94,7 +94,7 @@ export class TableComponent implements OnInit {
     this.update();
   }
 
-  setMode(mode: string) {
+  setMode(mode: TableMode) {
     this.mode = mode;
     this.update();
   }
@@ -115,26 +115,26 @@ export class TableComponent implements OnInit {
   }
 
   update() {
-    const selectColumn = {
+    const selectColumn: any = {
       name: ' ',
       prop: 'selected',
       resizable: false,
       draggable: false,
       cellTemplate: this.selectTmpl
     };
-    let columns = DataService.TABLE_COLUMNS[this.mode].map(column => {
+    let columns: any[] = DataService.TABLE_COLUMNS.get(this.mode).map(prop => {
       return {
-        name: column.name,
-        prop: column.prop,
+        name: DataService.PROPERTIES.get(prop).name,
+        prop: prop,
         resizeable: false,
-        draggable: false
+        draggable: false,
       };
     });
 
-    if (this.mode === 'Stations') {
-      columns = columns.filter(c => this.stationColumns.includes(c.name));
-    } else if (this.mode === 'Deliveries') {
-      columns = columns.filter(c => this.deliveryColumns.includes(c.name));
+    if (this.mode === TableMode.STATIONS) {
+      columns = columns.filter(c => this.stationColumns.includes(c.prop));
+    } else if (this.mode === TableMode.DELIVERIES) {
+      columns = columns.filter(c => this.deliveryColumns.includes(c.prop));
     }
 
     this.columns = this.getUpdatedColumns([selectColumn].concat(columns));
@@ -142,9 +142,9 @@ export class TableComponent implements OnInit {
     if (this.data != null) {
       let elements = [];
 
-      if (this.mode === 'Stations') {
+      if (this.mode === TableMode.STATIONS) {
         elements = this.data.stations.filter(e => !e.data.contained);
-      } else if (this.mode === 'Deliveries') {
+      } else if (this.mode === TableMode.DELIVERIES) {
         elements = this.data.deliveries;
       }
 
@@ -179,9 +179,9 @@ export class TableComponent implements OnInit {
   }
 
   onSelect(row) {
-    if (this.mode === 'Stations') {
+    if (this.mode === TableMode.STATIONS) {
       this.data.stations.find(s => s.data.id === row.id).data.selected = row.selected;
-    } else if (this.mode === 'Deliveries') {
+    } else if (this.mode === TableMode.DELIVERIES) {
       this.data.deliveries.find(d => d.data.id === row.id).data.selected = row.selected;
     }
 
