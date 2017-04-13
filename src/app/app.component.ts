@@ -3,11 +3,11 @@ import {MdSidenav, MdDialog} from '@angular/material';
 
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
-import {DataService, TableMode} from './util/data.service';
+import {DataService} from './util/data.service';
 import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {UtilService} from './util/util.service';
-import {FclData, FclElements} from './util/datatypes';
+import {FclData, FclElements, TableMode} from './util/datatypes';
 
 declare const Hammer: any;
 

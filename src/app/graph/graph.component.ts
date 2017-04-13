@@ -6,10 +6,10 @@ import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-action
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
-import {DataService, Size} from '../util/data.service';
+import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
-import {FclElements} from '../util/datatypes';
+import {FclElements, Size} from '../util/datatypes';
 
 declare const cytoscape: any;
 declare const ResizeSensor: any;

@@ -3,9 +3,9 @@ import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 
-import {DataService, ShowType, TableMode} from '../util/data.service';
+import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
-import {FclElements} from '../util/datatypes';
+import {FclElements, ShowType, TableMode} from '../util/datatypes';
 
 declare const ResizeSensor: any;
 

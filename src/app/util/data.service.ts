@@ -1,25 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {FclData} from './datatypes';
+import {FclData, GraphSettings, ShowType, Size, TableMode, TableSettings} from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
-
-export enum TableMode {
-  STATIONS = 'Stations' as any,
-  DELIVERIES = 'Deliveries' as any
-}
-
-export enum ShowType {
-  ALL = 'All' as any,
-  SELECTED_ONLY = 'Selected Only' as any,
-  TRACE_ONLY = 'Trace Only' as any
-}
-
-export enum Size {
-  SMALL = 'Small' as any,
-  MEDIUM = 'Medium' as any,
-  LARGE = 'Large' as any
-}
 
 @Injectable()
 export class DataService {
@@ -49,14 +32,14 @@ export class DataService {
     [TableMode.DELIVERIES, ['id', 'source', 'target', 'score']]
   ]);
 
-  static DEFAULT_GRAPH_SETTINGS = {
+  static DEFAULT_GRAPH_SETTINGS: GraphSettings = {
     nodeSize: Size.MEDIUM,
     fontSize: Size.MEDIUM,
     mergeDeliveries: false,
     showLegend: true
   };
 
-  static DEFAULT_TABLE_SETTINGS = {
+  static DEFAULT_TABLE_SETTINGS: TableSettings = {
     mode: TableMode.STATIONS,
     width: 0.25,
     stationColumns: DataService.TABLE_COLUMNS.get(TableMode.STATIONS),
@@ -111,16 +94,19 @@ export class DataService {
         deliveriesById[r.data.target].data.incoming.push(r.data.source);
       }
 
-      const graphSettings = {};
-      const tableSettings = {};
-
-      for (const prop of Object.keys(DataService.DEFAULT_GRAPH_SETTINGS)) {
-        graphSettings[prop] = JSON.parse(JSON.stringify(DataService.DEFAULT_GRAPH_SETTINGS[prop]));
-      }
-
-      for (const prop of Object.keys(DataService.DEFAULT_TABLE_SETTINGS)) {
-        tableSettings[prop] = JSON.parse(JSON.stringify(DataService.DEFAULT_TABLE_SETTINGS[prop]));
-      }
+      const graphSettings: GraphSettings = {
+        nodeSize: DataService.DEFAULT_GRAPH_SETTINGS.nodeSize,
+        fontSize: DataService.DEFAULT_GRAPH_SETTINGS.fontSize,
+        mergeDeliveries: DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries,
+        showLegend: DataService.DEFAULT_GRAPH_SETTINGS.showLegend
+      };
+      const tableSettings: TableSettings = {
+        mode: DataService.DEFAULT_TABLE_SETTINGS.mode,
+        width: DataService.DEFAULT_TABLE_SETTINGS.width,
+        stationColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.stationColumns),
+        deliveryColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
+        showType: DataService.DEFAULT_TABLE_SETTINGS.showType
+      };
 
       return {
         elements: {
