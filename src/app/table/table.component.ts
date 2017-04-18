@@ -5,7 +5,7 @@ import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollba
 
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
-import {FclElements, ShowType, TableMode} from '../util/datatypes';
+import {FclElements, ObservedType, ShowType, TableMode} from '../util/datatypes';
 
 declare const ResizeSensor: any;
 
@@ -155,7 +155,7 @@ export class TableComponent implements OnInit {
       if (this.showType === ShowType.SELECTED_ONLY) {
         elements = elements.filter(e => e.data.selected);
       } else if (this.showType === ShowType.TRACE_ONLY) {
-        elements = elements.filter(e => e.data.forward || e.data.backward || e.data.observed);
+        elements = elements.filter(e => e.data.forward || e.data.backward || e.data.observed !== ObservedType.NONE);
       }
 
       this.rows = elements.map(e => JSON.parse(JSON.stringify(e.data)));
@@ -174,7 +174,7 @@ export class TableComponent implements OnInit {
       'selected': row.selected,
       'forward': row.forward,
       'backward': row.backward,
-      'observed': row.observed != null,
+      'observed': row.observed !== ObservedType.NONE,
       'outbreak': row.outbreak,
       'commonLink': row.commonLink
     };

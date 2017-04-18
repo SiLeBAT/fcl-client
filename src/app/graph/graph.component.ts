@@ -9,7 +9,7 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
-import {FclElements, Size} from '../util/datatypes';
+import {FclElements, ObservedType, Size} from '../util/datatypes';
 
 declare const cytoscape: any;
 declare const ResizeSensor: any;
@@ -277,6 +277,7 @@ export class GraphComponent implements OnInit {
         } else {
           const source = value[0].data.source;
           const target = value[0].data.target;
+          const observedElement = value.find(d => d.data.observed !== ObservedType.NONE);
 
           delivery = {
             data: {
@@ -286,7 +287,7 @@ export class GraphComponent implements OnInit {
               isEdge: true,
               backward: value.find(d => d.data.backward) != null,
               forward: value.find(d => d.data.forward) != null,
-              observed: value.find(d => d.data.observed) != null,
+              observed: observedElement != null ? observedElement.data.observed : ObservedType.NONE,
               merged: value.length > 1,
               contains: value.map(d => d.data.id),
             },
@@ -441,10 +442,15 @@ export class GraphComponent implements OnInit {
         'border-width': 9
       });
 
-    const nodeProps = ['forward', 'backward', 'observed', 'outbreak', 'commonLink'];
-    const edgeProps = ['forward', 'backward', 'observed'];
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
 
-    for (const combination of UtilService.getAllCombinations(nodeProps)) {
+    for (const combination of UtilService.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
       const s = [];
       const c1 = [];
       const c2 = [];
@@ -452,7 +458,7 @@ export class GraphComponent implements OnInit {
       for (const prop of combination) {
         const color = DataService.PROPERTIES.get(prop).color;
 
-        s.push('[?' + prop + ']');
+        s.push(createSelector(prop));
         c1.push(color);
         c2.push(UtilService.mixColors(color, [0, 0, 255]));
       }
@@ -461,8 +467,8 @@ export class GraphComponent implements OnInit {
       style = style.selector('node:selected' + s.join('')).style(GraphComponent.createNodeBackground(c2));
     }
 
-    for (const prop of edgeProps) {
-      style = style.selector('edge[?' + prop + ']').style({
+    for (const prop of DataService.PROPERTIES_WITH_COLORS) {
+      style = style.selector('edge' + createSelector(prop)).style({
         'line-color': UtilService.colorToCss(DataService.PROPERTIES.get(prop).color)
       });
     }

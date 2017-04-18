@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FclElements} from '../util/datatypes';
+import {FclElements, ObservedType} from '../util/datatypes';
 
 @Injectable()
 export class TracingService {
@@ -39,6 +39,10 @@ export class TracingService {
 
       if (e.data.selected == null) {
         e.data.selected = false;
+      }
+
+      if (e.data.observed == null) {
+        e.data.observed = ObservedType.NONE;
       }
 
       if (e.data.forward == null) {
@@ -98,7 +102,7 @@ export class TracingService {
 
     for (const id of ids) {
       this.elementsById[id].data.contained = true;
-      delete this.elementsById[id].data.observed;
+      this.elementsById[id].data.observed = ObservedType.NONE;
     }
 
     for (const d of this.deliveries) {
@@ -197,12 +201,12 @@ export class TracingService {
 
   clearTrace() {
     for (const s of this.stations) {
-      delete s.data.observed;
+      s.data.observed = ObservedType.NONE;
       s.data.forward = false;
       s.data.backward = false;
     }
     for (const d of this.deliveries) {
-      delete d.data.observed;
+      d.data.observed = ObservedType.NONE;
       d.data.forward = false;
       d.data.backward = false;
     }
@@ -212,7 +216,7 @@ export class TracingService {
     const station = this.elementsById[id];
 
     this.clearTrace();
-    station.data.observed = 'full';
+    station.data.observed = ObservedType.FULL;
     station.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
     station.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
@@ -221,7 +225,7 @@ export class TracingService {
     const station = this.elementsById[id];
 
     this.clearTrace();
-    station.data.observed = 'forward';
+    station.data.observed = ObservedType.FORWARD;
     station.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
   }
 
@@ -229,7 +233,7 @@ export class TracingService {
     const station = this.elementsById[id];
 
     this.clearTrace();
-    station.data.observed = 'backward';
+    station.data.observed = ObservedType.BACKWARD;
     station.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
@@ -237,7 +241,7 @@ export class TracingService {
     const delivery = this.elementsById[id];
 
     this.clearTrace();
-    delivery.data.observed = 'full';
+    delivery.data.observed = ObservedType.FULL;
     this.elementsById[delivery.data.target].data.forward = true;
     this.elementsById[delivery.data.source].data.backward = true;
     delivery.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
@@ -248,7 +252,7 @@ export class TracingService {
     const delivery = this.elementsById[id];
 
     this.clearTrace();
-    delivery.data.observed = 'forward';
+    delivery.data.observed = ObservedType.FORWARD;
     this.elementsById[delivery.data.target].data.forward = true;
     delivery.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
   }
@@ -257,7 +261,7 @@ export class TracingService {
     const delivery = this.elementsById[id];
 
     this.clearTrace();
-    delivery.data.observed = 'backward';
+    delivery.data.observed = ObservedType.BACKWARD;
     this.elementsById[delivery.data.source].data.backward = true;
     delivery.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
@@ -352,39 +356,37 @@ export class TracingService {
   }
 
   private updateTrace() {
-    const observedElement = this.stations.concat(this.deliveries).find(e => e.data.observed);
+    const observedElement = this.stations.concat(this.deliveries).find(e => e.data.observed !== ObservedType.NONE);
 
-    if (observedElement == null) {
+    if (observedElement == null || observedElement.data.invisible || observedElement.data.contained) {
       this.clearTrace();
     } else {
       const id = observedElement.data.id;
       const observed = observedElement.data.observed;
 
-      if (!observedElement.data.invisible && !observedElement.data.contained) {
-        if (observedElement.data.isEdge) {
-          switch (observed) {
-            case 'full':
-              this.showDeliveryTrace(id);
-              break;
-            case 'forward':
-              this.showDeliveryForwardTrace(id);
-              break;
-            case 'backward':
-              this.showDeliveryBackwardTrace(id);
-              break;
-          }
-        } else {
-          switch (observed) {
-            case 'full':
-              this.showStationTrace(id);
-              break;
-            case 'forward':
-              this.showStationForwardTrace(id);
-              break;
-            case 'backward':
-              this.showStationBackwardTrace(id);
-              break;
-          }
+      if (observedElement.data.isEdge) {
+        switch (observed) {
+          case ObservedType.FULL:
+            this.showDeliveryTrace(id);
+            break;
+          case ObservedType.FORWARD:
+            this.showDeliveryForwardTrace(id);
+            break;
+          case ObservedType.BACKWARD:
+            this.showDeliveryBackwardTrace(id);
+            break;
+        }
+      } else {
+        switch (observed) {
+          case ObservedType.FULL:
+            this.showStationTrace(id);
+            break;
+          case ObservedType.FORWARD:
+            this.showStationForwardTrace(id);
+            break;
+          case ObservedType.BACKWARD:
+            this.showStationBackwardTrace(id);
+            break;
         }
       }
     }

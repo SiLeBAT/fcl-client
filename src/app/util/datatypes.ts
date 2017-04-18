@@ -41,3 +41,10 @@ export enum Size {
   MEDIUM = 'Medium' as any,
   LARGE = 'Large' as any
 }
+
+export enum ObservedType {
+  NONE = 'none' as any,
+  FULL = 'full' as any,
+  FORWARD = 'forward' as any,
+  BACKWARD = 'backward' as any
+}
