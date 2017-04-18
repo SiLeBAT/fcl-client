@@ -7,8 +7,6 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class DataService {
 
-  static GRAPH_BACKGROUND = [245, 245, 245];
-
   static TABLE_MODES = [TableMode.STATIONS, TableMode.DELIVERIES];
   static SHOW_TYPES = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
   static SIZES = [Size.SMALL, Size.MEDIUM, Size.LARGE];

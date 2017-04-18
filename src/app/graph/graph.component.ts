@@ -98,7 +98,6 @@ export class GraphComponent implements OnInit {
         }
       });
     };
-    document.getElementById('graphContainer').style.backgroundColor = UtilService.colorToCss(DataService.GRAPH_BACKGROUND);
 
     new ResizeSensor(document.getElementById('graphContainer'), () => {
       if (this.resizeTimer != null) {

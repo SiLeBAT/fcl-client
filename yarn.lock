@@ -4968,7 +4968,7 @@ weaverjs@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/weaverjs/-/weaverjs-1.2.0.tgz#654c15cc735b660a1dae4c7c263cd7c746512fa0"
 
-webcola@^3.1.2, webcola@^3.3.3:
+webcola@^3.1.2:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/webcola/-/webcola-3.3.3.tgz#563e4045d69db0c00acceded3bd6fed119407d9f"
   dependencies:
