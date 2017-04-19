@@ -26,7 +26,6 @@ export interface CyEdge {
 export interface StationData {
   id: string;
   name: string;
-  isEdge: boolean;
   incoming: string[];
   outgoing: string[];
   invisible: boolean;
@@ -47,7 +46,8 @@ export interface DeliveryData {
   id: string;
   source: string;
   target: string;
-  isEdge: boolean;
+  originalSource: string;
+  originalTarget: string;
   incoming: string[];
   outgoing: string[];
   invisible: boolean;

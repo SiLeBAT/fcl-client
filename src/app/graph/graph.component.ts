@@ -57,6 +57,7 @@ export class GraphComponent implements OnInit {
 
   private cy: any;
   private data: FclElements;
+  private mergeMap: Map<string, string[]>;
   private changeFunction: () => void;
 
   private mergeDeliveries = DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries;
@@ -64,7 +65,6 @@ export class GraphComponent implements OnInit {
   private fontSize = DataService.DEFAULT_GRAPH_SETTINGS.fontSize;
   private showLegend = DataService.DEFAULT_GRAPH_SETTINGS.showLegend;
 
-  private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
   private zoom: Subject<boolean> = new Subject();
@@ -223,13 +223,7 @@ export class GraphComponent implements OnInit {
 
   updateSelection() {
     if (this.cy != null) {
-      this.selectTimerActivated = false;
-      this.cy.batch(() => {
-        this.cy.elements(':selected[!selected][^contains]').unselect();
-        this.cy.elements(':unselected[?selected]').select();
-      });
-      this.updateEdges();
-      this.selectTimerActivated = true;
+      this.updateAll();
     }
   }
 
@@ -250,6 +244,8 @@ export class GraphComponent implements OnInit {
 
   private createEdges(): any[] {
     const deliveries = [];
+
+    this.mergeMap = new Map();
 
     if (this.mergeDeliveries) {
       const sourceTargetMap = {};
@@ -272,27 +268,24 @@ export class GraphComponent implements OnInit {
             data: value[0].data,
             selected: value[0].data.selected,
           };
-
-          delivery.data.merged = false;
         } else {
           const source = value[0].data.source;
           const target = value[0].data.target;
           const observedElement = value.find(d => d.data.observed !== ObservedType.NONE);
+          const id = source + '->' + target;
 
           delivery = {
             data: {
-              id: source + '->' + target,
+              id: id,
               source: source,
               target: target,
-              isEdge: true,
               backward: value.find(d => d.data.backward) != null,
               forward: value.find(d => d.data.forward) != null,
               observed: observedElement != null ? observedElement.data.observed : ObservedType.NONE,
-              merged: value.length > 1,
-              contains: value.map(d => d.data.id),
             },
             selected: value.find(d => d.data.selected) != null
           };
+          this.mergeMap.set(id, value.map(d => d.data.id));
         }
 
         deliveries.push(delivery);
@@ -305,7 +298,6 @@ export class GraphComponent implements OnInit {
             selected: d.data.selected,
           };
 
-          delivery.data.merged = false;
           deliveries.push(delivery);
         }
       }
@@ -366,7 +358,7 @@ export class GraphComponent implements OnInit {
         } else if (n.data.hasOwnProperty('contains')) {
           n.position = UtilService.getCenter(n.data.contains.map(id => this.cy.nodes().getElementById(id).position()));
 
-          for (const contained of this.tracingService.getElementsById(n.data.contains)) {
+          for (const contained of this.tracingService.getStationsById(n.data.contains)) {
             const containedPos = this.cy.nodes().getElementById(contained.data.id).position();
 
             contained.data._relativeTo = n.data.id;
@@ -477,21 +469,19 @@ export class GraphComponent implements OnInit {
   }
 
   private setSelected(element: any, selected: boolean) {
-    if (element.data('isEdge') && element.data('contains') != null) {
-      for (const id of element.data('contains')) {
+    if (this.mergeMap.has(element.id())) {
+      for (const id of this.mergeMap.get(element.id())) {
         this.tracingService.setSelected(id, selected);
       }
     } else {
       this.tracingService.setSelected(element.id(), selected);
     }
 
-    if (this.selectTimerActivated) {
-      if (this.selectTimer != null) {
-        this.selectTimer.unsubscribe();
-      }
-
-      this.selectTimer = Observable.timer(50).subscribe(() => this.callChangeFunction());
+    if (this.selectTimer != null) {
+      this.selectTimer.unsubscribe();
     }
+
+    this.selectTimer = Observable.timer(50).subscribe(() => this.callChangeFunction());
   }
 
   private createGraphActions(): MenuAction[] {
@@ -553,7 +543,7 @@ export class GraphComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: () => {
           const dialogData: StationPropertiesData = {
-            station: this.tracingService.getElementsById([station.id()])[0]
+            station: this.tracingService.getStationsById([station.id()])[0]
           };
 
           this.dialogService.open(StationPropertiesComponent, {data: dialogData});
@@ -753,7 +743,7 @@ export class GraphComponent implements OnInit {
   }
 
   private isDeliveryTracePossible(delivery): boolean {
-    if (delivery.data('merged')) {
+    if (this.mergeMap.has(delivery.id())) {
       const dialogData: DialogAlertData = {
         title: 'Error',
         message: 'Showing Trace of merged delivery is not supported!'
