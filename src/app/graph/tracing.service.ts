@@ -4,6 +4,7 @@ import {FclElements, ObservedType} from '../util/datatypes';
 @Injectable()
 export class TracingService {
 
+  private data: FclElements;
   private stationsById: Map<string, any> = new Map();
   private deliveriesById: Map<string, any> = new Map();
   private maxScore: number;
@@ -12,6 +13,7 @@ export class TracingService {
   }
 
   init(data: FclElements) {
+    this.data = data;
     this.stationsById.clear();
     this.deliveriesById.clear();
     this.maxScore = 0;
@@ -42,7 +44,7 @@ export class TracingService {
     let metaId;
 
     for (let i = 1; ; i++) {
-      if (!this.stationsById.has(i.toString()) || !this.deliveriesById.has(i.toString())) {
+      if (!this.stationsById.has(i.toString()) && !this.deliveriesById.has(i.toString())) {
         metaId = i.toString();
         break;
       }
@@ -53,6 +55,7 @@ export class TracingService {
         id: metaId,
         name: name,
         type: 'Meta Station',
+        observed: ObservedType.NONE,
         contains: ids,
         selected: true,
         invisible: false,
@@ -80,6 +83,7 @@ export class TracingService {
     });
 
     this.stationsById.set(metaId, metaStation);
+    this.data.stations.push(metaStation);
     this.updateTrace();
     this.updateScores();
   }
@@ -89,6 +93,7 @@ export class TracingService {
       const station = this.stationsById.get(id);
 
       this.stationsById.delete(id);
+      this.data.stations.slice(this.data.stations.indexOf(station), 1);
 
       for (const containedId of station.data.contains) {
         this.stationsById.get(containedId).data.contained = false;
