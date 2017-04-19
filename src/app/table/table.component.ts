@@ -142,21 +142,21 @@ export class TableComponent implements OnInit {
     this.columns = this.getUpdatedColumns([selectColumn].concat(columns));
 
     if (this.data != null) {
-      let elements: { data: StationData | DeliveryData }[] = [];
+      let elements: (StationData | DeliveryData)[] = [];
 
       if (this.mode === TableMode.STATIONS) {
-        elements = this.data.stations.filter(s => !s.data.invisible && !s.data.contained);
+        elements = this.data.stations.filter(s => !s.invisible && !s.contained);
       } else if (this.mode === TableMode.DELIVERIES) {
-        elements = this.data.deliveries.filter(d => !d.data.invisible);
+        elements = this.data.deliveries.filter(d => !d.invisible);
       }
 
       if (this.showType === ShowType.SELECTED_ONLY) {
-        elements = elements.filter(e => e.data.selected);
+        elements = elements.filter(e => e.selected);
       } else if (this.showType === ShowType.TRACE_ONLY) {
-        elements = elements.filter(e => e.data.forward || e.data.backward || e.data.observed !== ObservedType.NONE);
+        elements = elements.filter(e => e.forward || e.backward || e.observed !== ObservedType.NONE);
       }
 
-      this.rows = elements.map(e => JSON.parse(JSON.stringify(e.data)));
+      this.rows = elements.map(e => JSON.parse(JSON.stringify(e)));
     }
 
     this.table.recalculate();
@@ -180,9 +180,9 @@ export class TableComponent implements OnInit {
 
   onSelect(row) {
     if (this.mode === TableMode.STATIONS) {
-      this.data.stations.find(s => s.data.id === row.id).data.selected = row.selected;
+      this.data.stations.find(s => s.id === row.id).selected = row.selected;
     } else if (this.mode === TableMode.DELIVERIES) {
-      this.data.deliveries.find(d => d.data.id === row.id).data.selected = row.selected;
+      this.data.deliveries.find(d => d.id === row.id).selected = row.selected;
     }
 
     if (this.showType === ShowType.SELECTED_ONLY && !row.selected) {

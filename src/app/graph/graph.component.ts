@@ -10,7 +10,7 @@ import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/del
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
-import {CyEdge, CyNode, FclElements, ObservedType, Size} from '../util/datatypes';
+import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Size} from '../util/datatypes';
 
 declare const cytoscape: any;
 declare const ResizeSensor: any;
@@ -232,11 +232,11 @@ export class GraphComponent implements OnInit {
     const stations: CyNode[] = [];
 
     for (const s of this.data.stations) {
-      if (!s.data.contained && !s.data.invisible) {
+      if (!s.contained && !s.invisible) {
         stations.push({
           group: 'nodes',
-          data: s.data,
-          selected: s.data.selected
+          data: s,
+          selected: s.selected
         });
       }
     }
@@ -250,62 +250,57 @@ export class GraphComponent implements OnInit {
     this.mergeMap = new Map();
 
     if (this.mergeDeliveries) {
-      const sourceTargetMap = {};
+      const sourceTargetMap: Map<string, DeliveryData[]> = new Map();
 
       for (const d of this.data.deliveries) {
-        if (!d.data.invisible) {
-          const key = d.data.source + '->' + d.data.target;
-          const value = sourceTargetMap[key];
+        if (!d.invisible) {
+          const key = d.source + '->' + d.target;
+          const value = sourceTargetMap.get(key);
 
-          sourceTargetMap[key] = value == null ? [d] : value.concat(d);
+          sourceTargetMap.set(key, value == null ? [d] : value.concat(d));
         }
       }
 
-      for (const key of Object.keys(sourceTargetMap)) {
-        const value = sourceTargetMap[key];
-
+      sourceTargetMap.forEach((value, key) => {
         if (value.length === 1) {
           deliveries.push({
             group: 'edges',
-            data: value[0].data,
-            selected: value[0].data.selected,
+            data: value[0],
+            selected: value[0].selected,
           });
         } else {
-          const source = value[0].data.source;
-          const target = value[0].data.target;
-          const observedElement = value.find(d => d.data.observed !== ObservedType.NONE);
-          const id = source + '->' + target;
-          const selected = value.find(d => d.data.selected) != null;
+          const observedElement = value.find(d => d.observed !== ObservedType.NONE);
+          const selected = value.find(d => d.selected) != null;
 
-          this.mergeMap.set(id, value.map(d => d.data.id));
+          this.mergeMap.set(key, value.map(d => d.id));
           deliveries.push({
             group: 'edges',
             data: {
-              id: id,
-              source: source,
-              target: target,
-              originalSource: source,
-              originalTarget: target,
+              id: key,
+              source: value[0].source,
+              target: value[0].target,
+              originalSource: value[0].source,
+              originalTarget: value[0].target,
               incoming: null,
               outgoing: null,
               invisible: false,
               selected: selected,
-              observed: observedElement != null ? observedElement.data.observed : ObservedType.NONE,
-              forward: value.find(d => d.data.forward) != null,
-              backward: value.find(d => d.data.backward) != null,
-              score: null
+              observed: observedElement != null ? observedElement.observed : ObservedType.NONE,
+              forward: value.find(d => d.forward) != null,
+              backward: value.find(d => d.backward) != null,
+              score: 0
             },
             selected: selected
           });
         }
-      }
+      });
     } else {
       for (const d of this.data.deliveries) {
-        if (!d.data.invisible) {
+        if (!d.invisible) {
           deliveries.push({
             group: 'edges',
-            data: d.data,
-            selected: d.data.selected,
+            data: d,
+            selected: d.selected,
           });
         }
       }
@@ -332,11 +327,11 @@ export class GraphComponent implements OnInit {
 
   private updateAll() {
     for (const s of this.data.stations) {
-      if (s.data.invisible) {
-        const pos = this.cy.nodes().getElementById(s.data.id).position();
+      if (s.invisible) {
+        const pos = this.cy.nodes().getElementById(s.id).position();
 
         if (pos != null) {
-          s.data.position = pos;
+          s.position = pos;
         }
       }
     }
@@ -361,10 +356,10 @@ export class GraphComponent implements OnInit {
           n.position = UtilService.getCenter(n.data.contains.map(id => this.cy.nodes().getElementById(id).position()));
 
           for (const contained of this.tracingService.getStationsById(n.data.contains)) {
-            const containedPos = this.cy.nodes().getElementById(contained.data.id).position();
+            const containedPos = this.cy.nodes().getElementById(contained.id).position();
 
-            contained.data.positionRelativeTo = n.data.id;
-            contained.data.position = UtilService.difference(containedPos, n.position);
+            contained.positionRelativeTo = n.data.id;
+            contained.position = UtilService.difference(containedPos, n.position);
           }
         }
       } else {

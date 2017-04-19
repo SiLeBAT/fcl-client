@@ -1,8 +1,9 @@
 import {Component, Inject} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
+import {StationData} from '../../util/datatypes';
 
 export interface StationPropertiesData {
-  station: any;
+  station: StationData;
 }
 
 @Component({
@@ -14,8 +15,8 @@ export class StationPropertiesComponent {
   properties: { name: string, value: string }[];
 
   constructor(@Inject(MD_DIALOG_DATA) public data: StationPropertiesData) {
-    this.properties = Object.keys(data.station.data).map(key => {
-      const value = data.station.data[key];
+    this.properties = Object.keys(data.station).map(key => {
+      const value = data.station[key];
 
       return {
         name: key,

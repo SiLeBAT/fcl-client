@@ -73,23 +73,23 @@ export class DataService {
     const deliveriesById = {};
 
     for (const s of data.stations) {
-      s.data.incoming = [];
-      s.data.outgoing = [];
-      stationsById[s.data.id] = s;
+      s.incoming = [];
+      s.outgoing = [];
+      stationsById[s.id] = s;
     }
 
     for (const d of data.deliveries) {
-      stationsById[d.data.source].data.outgoing.push(d.data.id);
-      stationsById[d.data.target].data.incoming.push(d.data.id);
+      stationsById[d.source].outgoing.push(d.id);
+      stationsById[d.target].incoming.push(d.id);
 
-      d.data.incoming = [];
-      d.data.outgoing = [];
-      deliveriesById[d.data.id] = d;
+      d.incoming = [];
+      d.outgoing = [];
+      deliveriesById[d.id] = d;
     }
 
     for (const r of data.deliveriesRelations) {
-      deliveriesById[r.data.source].data.outgoing.push(r.data.target);
-      deliveriesById[r.data.target].data.incoming.push(r.data.source);
+      deliveriesById[r.source].outgoing.push(r.target);
+      deliveriesById[r.target].incoming.push(r.source);
     }
 
     const graphSettings: GraphSettings = {
@@ -150,55 +150,51 @@ export class DataService {
     };
   }
 
-  private static createStations(elements: any[]): { data: StationData }[] {
-    const stations: { data: StationData }[] = [];
+  private static createStations(elements: any[]): StationData[] {
+    const stations: StationData[] = [];
 
     for (const e of elements) {
       stations.push({
-        data: {
-          id: e.data.id,
-          name: e.data.name,
-          incoming: e.data.incoming,
-          outgoing: e.data.outgoing,
-          invisible: e.data.invisible != null ? e.data.invisible : false,
-          contained: e.data.contained != null ? e.data.contained : false,
-          contains: e.data.contains != null ? e.data.contains : null,
-          selected: e.data.selected != null ? e.data.selected : false,
-          observed: e.data.observed != null ? e.data.observed : ObservedType.NONE,
-          forward: e.data.forward != null ? e.data.forward : false,
-          backward: e.data.backward != null ? e.data.backward : false,
-          outbreak: e.data.outbreak != null ? e.data.outbreak : false,
-          score: e.data.score != null ? e.data.score : 0,
-          commonLink: e.data.commonLink != null ? e.data.commonLink : false,
-          position: e.data.position != null ? e.data.position : null,
-          positionRelativeTo: e.data.positionRelativeTo != null ? e.data.positionRelativeTo : null
-        }
+        id: e.id,
+        name: e.name,
+        incoming: e.incoming,
+        outgoing: e.outgoing,
+        invisible: e.invisible != null ? e.invisible : false,
+        contained: e.contained != null ? e.contained : false,
+        contains: e.contains != null ? e.contains : null,
+        selected: e.selected != null ? e.selected : false,
+        observed: e.observed != null ? e.observed : ObservedType.NONE,
+        forward: e.forward != null ? e.forward : false,
+        backward: e.backward != null ? e.backward : false,
+        outbreak: e.outbreak != null ? e.outbreak : false,
+        score: e.score != null ? e.score : 0,
+        commonLink: e.commonLink != null ? e.commonLink : false,
+        position: e.position != null ? e.position : null,
+        positionRelativeTo: e.positionRelativeTo != null ? e.positionRelativeTo : null
       });
     }
 
     return stations;
   }
 
-  private static createDeliveries(elements: any[]): { data: DeliveryData }[] {
-    const deliveries: { data: DeliveryData }[] = [];
+  private static createDeliveries(elements: any[]): DeliveryData[] {
+    const deliveries: DeliveryData[] = [];
 
     for (const e of elements) {
       deliveries.push({
-        data: {
-          id: e.data.id,
-          source: e.data.source,
-          target: e.data.target,
-          originalSource: e.data.source,
-          originalTarget: e.data.target,
-          incoming: e.data.incoming,
-          outgoing: e.data.outgoing,
-          invisible: e.data.invisible != null ? e.data.invisible : false,
-          selected: e.data.selected != null ? e.data.selected : false,
-          observed: e.data.observed != null ? e.data.observed : ObservedType.NONE,
-          forward: e.data.forward != null ? e.data.forward : false,
-          backward: e.data.backward != null ? e.data.backward : false,
-          score: e.data.score != null ? e.data.score : 0
-        }
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        originalSource: e.source,
+        originalTarget: e.target,
+        incoming: e.incoming,
+        outgoing: e.outgoing,
+        invisible: e.invisible != null ? e.invisible : false,
+        selected: e.selected != null ? e.selected : false,
+        observed: e.observed != null ? e.observed : ObservedType.NONE,
+        forward: e.forward != null ? e.forward : false,
+        backward: e.backward != null ? e.backward : false,
+        score: e.score != null ? e.score : 0
       });
     }
 

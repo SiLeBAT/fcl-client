@@ -5,8 +5,8 @@ import {DeliveryData, FclElements, ObservedType, StationData} from '../util/data
 export class TracingService {
 
   private data: FclElements;
-  private stationsById: Map<string, { data: StationData }> = new Map();
-  private deliveriesById: Map<string, { data: DeliveryData }> = new Map();
+  private stationsById: Map<string, StationData> = new Map();
+  private deliveriesById: Map<string, DeliveryData> = new Map();
   private maxScore: number;
 
   private visited: Set<string> = new Set();
@@ -21,12 +21,12 @@ export class TracingService {
     this.maxScore = 0;
 
     for (const s of data.stations) {
-      this.stationsById.set(s.data.id, s);
-      this.maxScore = Math.max(this.maxScore, s.data.score);
+      this.stationsById.set(s.id, s);
+      this.maxScore = Math.max(this.maxScore, s.score);
     }
 
     for (const d of data.deliveries) {
-      this.deliveriesById.set(d.data.id, d);
+      this.deliveriesById.set(d.id, d);
     }
   }
 
@@ -34,11 +34,11 @@ export class TracingService {
     return this.maxScore;
   }
 
-  getStationsById(ids: string[]): { data: StationData }[] {
+  getStationsById(ids: string[]): StationData[] {
     return ids.map(id => this.stationsById.get(id));
   }
 
-  getDeliveriesById(ids: string[]): { data: DeliveryData }[] {
+  getDeliveriesById(ids: string[]): DeliveryData[] {
     return ids.map(id => this.deliveriesById.get(id));
   }
 
@@ -52,41 +52,39 @@ export class TracingService {
       }
     }
 
-    const metaStation: { data: StationData } = {
-      data: {
-        id: metaId,
-        name: name,
-        incoming: [],
-        outgoing: [],
-        invisible: false,
-        contained: false,
-        contains: ids,
-        selected: true,
-        observed: ObservedType.NONE,
-        forward: false,
-        backward: false,
-        outbreak: false,
-        score: 0,
-        commonLink: false,
-        position: null,
-        positionRelativeTo: null
-      }
+    const metaStation: StationData = {
+      id: metaId,
+      name: name,
+      incoming: [],
+      outgoing: [],
+      invisible: false,
+      contained: false,
+      contains: ids,
+      selected: true,
+      observed: ObservedType.NONE,
+      forward: false,
+      backward: false,
+      outbreak: false,
+      score: 0,
+      commonLink: false,
+      position: null,
+      positionRelativeTo: null
     };
 
     for (const id of ids) {
-      this.stationsById.get(id).data.contained = true;
-      this.stationsById.get(id).data.observed = ObservedType.NONE;
+      this.stationsById.get(id).contained = true;
+      this.stationsById.get(id).observed = ObservedType.NONE;
     }
 
     this.deliveriesById.forEach(d => {
-      if (ids.indexOf(d.data.source) !== -1) {
-        d.data.source = metaId;
-        metaStation.data.outgoing.push(d.data.id);
+      if (ids.indexOf(d.source) !== -1) {
+        d.source = metaId;
+        metaStation.outgoing.push(d.id);
       }
 
-      if (ids.indexOf(d.data.target) !== -1) {
-        d.data.target = metaId;
-        metaStation.data.incoming.push(d.data.id);
+      if (ids.indexOf(d.target) !== -1) {
+        d.target = metaId;
+        metaStation.incoming.push(d.id);
       }
     });
 
@@ -103,17 +101,17 @@ export class TracingService {
       this.stationsById.delete(id);
       this.data.stations.slice(this.data.stations.indexOf(station), 1);
 
-      for (const containedId of station.data.contains) {
-        this.stationsById.get(containedId).data.contained = false;
+      for (const containedId of station.contains) {
+        this.stationsById.get(containedId).contained = false;
       }
 
       this.deliveriesById.forEach(d => {
-        if (d.data.source === id) {
-          d.data.source = d.data.originalSource;
+        if (d.source === id) {
+          d.source = d.originalSource;
         }
 
-        if (d.data.target === id) {
-          d.data.target = d.data.originalTarget;
+        if (d.target === id) {
+          d.target = d.originalTarget;
         }
       });
     }
@@ -124,18 +122,18 @@ export class TracingService {
 
   setSelected(id: string, selected: boolean) {
     if (this.stationsById.has(id)) {
-      this.stationsById.get(id).data.selected = selected;
+      this.stationsById.get(id).selected = selected;
     } else if (this.deliveriesById.has(id)) {
-      this.deliveriesById.get(id).data.selected = selected;
+      this.deliveriesById.get(id).selected = selected;
     }
   }
 
   clearInvisibility() {
     this.stationsById.forEach(s => {
-      s.data.invisible = false;
+      s.invisible = false;
     });
     this.deliveriesById.forEach(d => {
-      d.data.invisible = false;
+      d.invisible = false;
     });
 
     this.updateTrace();
@@ -144,12 +142,12 @@ export class TracingService {
 
   makeStationsInvisible(ids: string[]) {
     for (const id of ids) {
-      this.stationsById.get(id).data.invisible = true;
+      this.stationsById.get(id).invisible = true;
     }
 
     this.deliveriesById.forEach(d => {
-      if (ids.indexOf(d.data.source) !== -1 || ids.indexOf(d.data.target) !== -1) {
-        d.data.invisible = true;
+      if (ids.indexOf(d.source) !== -1 || ids.indexOf(d.target) !== -1) {
+        d.invisible = true;
       }
     });
 
@@ -159,7 +157,7 @@ export class TracingService {
 
   clearOutbreakStations() {
     this.stationsById.forEach(s => {
-      s.data.outbreak = false;
+      s.outbreak = false;
     });
 
     this.updateScores();
@@ -167,7 +165,7 @@ export class TracingService {
 
   markStationsAsOutbreak(ids: string[], outbreak: boolean) {
     for (const id of ids) {
-      this.stationsById.get(id).data.outbreak = outbreak;
+      this.stationsById.get(id).outbreak = outbreak;
     }
 
     this.updateScores();
@@ -175,14 +173,14 @@ export class TracingService {
 
   clearTrace() {
     this.stationsById.forEach(s => {
-      s.data.observed = ObservedType.NONE;
-      s.data.forward = false;
-      s.data.backward = false;
+      s.observed = ObservedType.NONE;
+      s.forward = false;
+      s.backward = false;
     });
     this.deliveriesById.forEach(d => {
-      d.data.observed = ObservedType.NONE;
-      d.data.forward = false;
-      d.data.backward = false;
+      d.observed = ObservedType.NONE;
+      d.forward = false;
+      d.backward = false;
     });
   }
 
@@ -190,54 +188,54 @@ export class TracingService {
     const station = this.stationsById.get(id);
 
     this.clearTrace();
-    station.data.observed = ObservedType.FULL;
-    station.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
-    station.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+    station.observed = ObservedType.FULL;
+    station.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+    station.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
   showStationForwardTrace(id: string) {
     const station = this.stationsById.get(id);
 
     this.clearTrace();
-    station.data.observed = ObservedType.FORWARD;
-    station.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+    station.observed = ObservedType.FORWARD;
+    station.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
   }
 
   showStationBackwardTrace(id: string) {
     const station = this.stationsById.get(id);
 
     this.clearTrace();
-    station.data.observed = ObservedType.BACKWARD;
-    station.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+    station.observed = ObservedType.BACKWARD;
+    station.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
   showDeliveryTrace(id: string) {
     const delivery = this.deliveriesById.get(id);
 
     this.clearTrace();
-    delivery.data.observed = ObservedType.FULL;
-    this.stationsById.get(delivery.data.target).data.forward = true;
-    this.stationsById.get(delivery.data.source).data.backward = true;
-    delivery.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
-    delivery.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+    delivery.observed = ObservedType.FULL;
+    this.stationsById.get(delivery.target).forward = true;
+    this.stationsById.get(delivery.source).backward = true;
+    delivery.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+    delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
   showDeliveryForwardTrace(id: string) {
     const delivery = this.deliveriesById.get(id);
 
     this.clearTrace();
-    delivery.data.observed = ObservedType.FORWARD;
-    this.stationsById.get(delivery.data.target).data.forward = true;
-    delivery.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+    delivery.observed = ObservedType.FORWARD;
+    this.stationsById.get(delivery.target).forward = true;
+    delivery.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
   }
 
   showDeliveryBackwardTrace(id: string) {
     const delivery = this.deliveriesById.get(id);
 
     this.clearTrace();
-    delivery.data.observed = ObservedType.BACKWARD;
-    this.stationsById.get(delivery.data.source).data.backward = true;
-    delivery.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+    delivery.observed = ObservedType.BACKWARD;
+    this.stationsById.get(delivery.source).backward = true;
+    delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
   private updateScores() {
@@ -246,29 +244,29 @@ export class TracingService {
     this.maxScore = 0;
 
     this.stationsById.forEach(s => {
-      s.data.score = 0;
-      s.data.commonLink = false;
+      s.score = 0;
+      s.commonLink = false;
     });
     this.deliveriesById.forEach(d => {
-      d.data.score = 0;
+      d.score = 0;
     });
 
     this.stationsById.forEach(s => {
-      if (s.data.outbreak && !s.data.contained && !s.data.invisible) {
+      if (s.outbreak && !s.contained && !s.invisible) {
         nOutbreaks++;
         this.visited.clear();
-        this.updateStationScore(s.data.id, s.data.id);
+        this.updateStationScore(s.id, s.id);
       }
     });
 
     if (nOutbreaks !== 0) {
       this.stationsById.forEach(s => {
-        s.data.score /= nOutbreaks;
-        s.data.commonLink = s.data.score === 1.0;
-        this.maxScore = Math.max(this.maxScore, s.data.score);
+        s.score /= nOutbreaks;
+        s.commonLink = s.score === 1.0;
+        this.maxScore = Math.max(this.maxScore, s.score);
       });
       this.deliveriesById.forEach(d => {
-        d.data.score /= nOutbreaks;
+        d.score /= nOutbreaks;
       });
     }
   }
@@ -276,11 +274,11 @@ export class TracingService {
   private updateStationScore(id: string, outbreakId: string) {
     const station = this.stationsById.get(id);
 
-    if (!this.visited.has(station.data.id) && !station.data.contained && !station.data.invisible) {
-      this.visited.add(station.data.id);
-      station.data.score++;
+    if (!this.visited.has(station.id) && !station.contained && !station.invisible) {
+      this.visited.add(station.id);
+      station.score++;
 
-      for (const d of station.data.incoming) {
+      for (const d of station.incoming) {
         this.updateDeliveryScore(d, outbreakId);
       }
     }
@@ -289,18 +287,18 @@ export class TracingService {
   private updateDeliveryScore(id: string, outbreakId: string) {
     const delivery = this.deliveriesById.get(id);
 
-    if (!this.visited.has(delivery.data.id) && !delivery.data.invisible) {
-      this.visited.add(delivery.data.id);
-      delivery.data.score++;
+    if (!this.visited.has(delivery.id) && !delivery.invisible) {
+      this.visited.add(delivery.id);
+      delivery.score++;
 
-      const source = this.stationsById.get(delivery.data.source);
+      const source = this.stationsById.get(delivery.source);
 
-      if (this.visited.has(source.data.id)) {
-        this.visited.add(source.data.id);
-        source.data.score++;
+      if (!this.visited.has(source.id)) {
+        this.visited.add(source.id);
+        source.score++;
       }
 
-      for (const d of delivery.data.incoming) {
+      for (const d of delivery.incoming) {
         this.updateDeliveryScore(d, outbreakId);
       }
     }
@@ -309,67 +307,67 @@ export class TracingService {
   private showDeliveryForwardTraceInternal(id: string) {
     const delivery = this.deliveriesById.get(id);
 
-    if (!delivery.data.forward && !delivery.data.invisible) {
-      delivery.data.forward = true;
-      this.stationsById.get(delivery.data.target).data.forward = true;
-      delivery.data.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+    if (!delivery.forward && !delivery.invisible) {
+      delivery.forward = true;
+      this.stationsById.get(delivery.target).forward = true;
+      delivery.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
     }
   }
 
   private showDeliveryBackwardTraceInternal(id: string) {
     const delivery = this.deliveriesById.get(id);
 
-    if (!delivery.data.backward && !delivery.data.invisible) {
-      delivery.data.backward = true;
-      this.stationsById.get(delivery.data.source).data.backward = true;
-      delivery.data.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+    if (!delivery.backward && !delivery.invisible) {
+      delivery.backward = true;
+      this.stationsById.get(delivery.source).backward = true;
+      delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
     }
   }
 
   private updateTrace() {
-    let observedStation = null;
-    let observedDelivery = null;
+    let observedStation: StationData = null;
+    let observedDelivery: DeliveryData = null;
 
     this.stationsById.forEach(s => {
-      if (s.data.observed !== ObservedType.NONE) {
+      if (s.observed !== ObservedType.NONE) {
         observedStation = s;
       }
     });
     this.deliveriesById.forEach(d => {
-      if (d.data.observed !== ObservedType.NONE) {
+      if (d.observed !== ObservedType.NONE) {
         observedDelivery = d;
       }
     });
 
     if (observedStation != null) {
-      if (observedStation.data.invisible || observedStation.data.contained) {
+      if (observedStation.invisible || observedStation.contained) {
         this.clearTrace();
       } else {
-        switch (observedStation.data.observed) {
+        switch (observedStation.observed) {
           case ObservedType.FULL:
-            this.showStationTrace(observedStation.data.id);
+            this.showStationTrace(observedStation.id);
             break;
           case ObservedType.FORWARD:
-            this.showStationForwardTrace(observedStation.data.id);
+            this.showStationForwardTrace(observedStation.id);
             break;
           case ObservedType.BACKWARD:
-            this.showStationBackwardTrace(observedStation.data.id);
+            this.showStationBackwardTrace(observedStation.id);
             break;
         }
       }
     } else if (observedDelivery != null) {
-      if (observedDelivery.data.invisible) {
+      if (observedDelivery.invisible) {
         this.clearTrace();
       } else {
-        switch (observedDelivery.data.observed) {
+        switch (observedDelivery.observed) {
           case ObservedType.FULL:
-            this.showDeliveryTrace(observedDelivery.data.id);
+            this.showDeliveryTrace(observedDelivery.id);
             break;
           case ObservedType.FORWARD:
-            this.showDeliveryForwardTrace(observedDelivery.data.id);
+            this.showDeliveryForwardTrace(observedDelivery.id);
             break;
           case ObservedType.BACKWARD:
-            this.showDeliveryBackwardTrace(observedDelivery.data.id);
+            this.showDeliveryBackwardTrace(observedDelivery.id);
             break;
         }
       }
