@@ -10,6 +10,54 @@ export interface FclElements {
   deliveries: any[];
 }
 
+export interface CyNode {
+  group: string;
+  data: StationData;
+  position?: any;
+  selected?: boolean;
+}
+
+export interface CyEdge {
+  group: string;
+  data: DeliveryData;
+  selected?: boolean;
+}
+
+export interface StationData {
+  id: string;
+  name: string;
+  isEdge: boolean;
+  incoming: string[];
+  outgoing: string[];
+  invisible: boolean;
+  contained: boolean;
+  contains: string[];
+  selected: boolean;
+  observed: ObservedType;
+  forward: boolean;
+  backward: boolean;
+  outbreak: boolean;
+  score: number;
+  commonLink: boolean;
+  position: any;
+  positionRelativeTo: string;
+}
+
+export interface DeliveryData {
+  id: string;
+  source: string;
+  target: string;
+  isEdge: boolean;
+  incoming: string[];
+  outgoing: string[];
+  invisible: boolean;
+  selected: boolean;
+  observed: ObservedType;
+  forward: boolean;
+  backward: boolean;
+  score: number;
+}
+
 export interface GraphSettings {
   nodeSize: Size;
   fontSize: Size;
