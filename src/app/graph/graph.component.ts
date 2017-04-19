@@ -10,7 +10,7 @@ import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/del
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
-import {FclElements, ObservedType, Size} from '../util/datatypes';
+import {CyEdge, CyNode, FclElements, ObservedType, Size} from '../util/datatypes';
 
 declare const cytoscape: any;
 declare const ResizeSensor: any;
@@ -133,8 +133,8 @@ export class GraphComponent implements OnInit {
     this.cy.zooming(this.zoom);
     this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
-    this.cy.on('select', event => this.setSelected(event.cyTarget, true));
-    this.cy.on('unselect', event => this.setSelected(event.cyTarget, false));
+    this.cy.on('select', event => this.setSelected(event.cyTarget.id(), true));
+    this.cy.on('unselect', event => this.setSelected(event.cyTarget.id(), false));
     this.cy.on('cxttap', event => {
       const element = event.cyTarget;
 
@@ -228,12 +228,13 @@ export class GraphComponent implements OnInit {
     }
   }
 
-  private createNodes(): any[] {
-    const stations = [];
+  private createNodes(): CyNode[] {
+    const stations: CyNode[] = [];
 
     for (const s of this.data.stations) {
       if (!s.data.contained && !s.data.invisible) {
         stations.push({
+          group: 'nodes',
           data: s.data,
           selected: s.data.selected
         });
@@ -243,8 +244,8 @@ export class GraphComponent implements OnInit {
     return stations;
   }
 
-  private createEdges(): any[] {
-    const deliveries = [];
+  private createEdges(): CyEdge[] {
+    const deliveries: CyEdge[] = [];
 
     this.mergeMap = new Map();
 
@@ -262,44 +263,50 @@ export class GraphComponent implements OnInit {
 
       for (const key of Object.keys(sourceTargetMap)) {
         const value = sourceTargetMap[key];
-        let delivery;
 
         if (value.length === 1) {
-          delivery = {
+          deliveries.push({
+            group: 'edges',
             data: value[0].data,
             selected: value[0].data.selected,
-          };
+          });
         } else {
           const source = value[0].data.source;
           const target = value[0].data.target;
           const observedElement = value.find(d => d.data.observed !== ObservedType.NONE);
           const id = source + '->' + target;
+          const selected = value.find(d => d.data.selected) != null;
 
-          delivery = {
+          this.mergeMap.set(id, value.map(d => d.data.id));
+          deliveries.push({
+            group: 'edges',
             data: {
               id: id,
               source: source,
               target: target,
-              backward: value.find(d => d.data.backward) != null,
-              forward: value.find(d => d.data.forward) != null,
+              originalSource: source,
+              originalTarget: target,
+              incoming: null,
+              outgoing: null,
+              invisible: false,
+              selected: selected,
               observed: observedElement != null ? observedElement.data.observed : ObservedType.NONE,
+              forward: value.find(d => d.data.forward) != null,
+              backward: value.find(d => d.data.backward) != null,
+              score: null
             },
-            selected: value.find(d => d.data.selected) != null
-          };
-          this.mergeMap.set(id, value.map(d => d.data.id));
+            selected: selected
+          });
         }
-
-        deliveries.push(delivery);
       }
     } else {
       for (const d of this.data.deliveries) {
         if (!d.data.invisible) {
-          const delivery = {
+          deliveries.push({
+            group: 'edges',
             data: d.data,
             selected: d.data.selected,
-          };
-
-          deliveries.push(delivery);
+          });
         }
       }
     }
@@ -308,15 +315,9 @@ export class GraphComponent implements OnInit {
   }
 
   private updateEdges() {
-    const edges = this.createEdges();
-
-    for (const e of edges) {
-      e.group = 'edges';
-    }
-
     this.cy.batch(() => {
       this.cy.edges().remove();
-      this.cy.add(edges);
+      this.cy.add(this.createEdges());
     });
   }
 
@@ -335,7 +336,7 @@ export class GraphComponent implements OnInit {
         const pos = this.cy.nodes().getElementById(s.data.id).position();
 
         if (pos != null) {
-          s.data._position = pos;
+          s.data.position = pos;
         }
       }
     }
@@ -343,32 +344,28 @@ export class GraphComponent implements OnInit {
     const nodes = this.createNodes();
     const edges = this.createEdges();
 
-    for (const e of edges) {
-      e.group = 'edges';
-    }
-
     for (const n of nodes) {
-      n.group = 'nodes';
-
       const pos = this.cy.nodes().getElementById(n.data.id).position();
 
       if (pos == null) {
-        if (n.data.hasOwnProperty('_position')) {
-          n.position = n.data._position;
-          delete n.data._position;
-        } else if (n.data.hasOwnProperty('contains')) {
+        if (n.data.position != null) {
+          if (n.data.positionRelativeTo != null) {
+            n.position = UtilService.sum(this.cy.nodes().getElementById(n.data.positionRelativeTo).position(), n.data.position);
+            n.data.position = null;
+            n.data.positionRelativeTo = null;
+          } else {
+            n.position = n.data.position;
+            n.data.position = null;
+          }
+        } else if (n.data.contains != null) {
           n.position = UtilService.getCenter(n.data.contains.map(id => this.cy.nodes().getElementById(id).position()));
 
           for (const contained of this.tracingService.getStationsById(n.data.contains)) {
             const containedPos = this.cy.nodes().getElementById(contained.data.id).position();
 
-            contained.data._relativeTo = n.data.id;
-            contained.data._relativePosition = UtilService.difference(containedPos, n.position);
+            contained.data.positionRelativeTo = n.data.id;
+            contained.data.position = UtilService.difference(containedPos, n.position);
           }
-        } else if (n.data.hasOwnProperty('_relativeTo') && n.data.hasOwnProperty('_relativePosition')) {
-          n.position = UtilService.sum(this.cy.nodes().getElementById(n.data._relativeTo).position(), n.data._relativePosition);
-          delete n.data._relativeTo;
-          delete n.data._relativePosition;
         }
       } else {
         n.position = pos;
@@ -469,13 +466,13 @@ export class GraphComponent implements OnInit {
     return style;
   }
 
-  private setSelected(element: any, selected: boolean) {
-    if (this.mergeMap.has(element.id())) {
-      for (const id of this.mergeMap.get(element.id())) {
-        this.tracingService.setSelected(id, selected);
+  private setSelected(id: string, selected: boolean) {
+    if (this.mergeMap.has(id)) {
+      for (const containedId of this.mergeMap.get(id)) {
+        this.tracingService.setSelected(containedId, selected);
       }
     } else {
-      this.tracingService.setSelected(element.id(), selected);
+      this.tracingService.setSelected(id, selected);
     }
 
     if (this.selectTimer != null) {

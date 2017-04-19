@@ -6,8 +6,8 @@ export interface FclData {
 }
 
 export interface FclElements {
-  stations: any[];
-  deliveries: any[];
+  stations: { data: StationData }[];
+  deliveries: { data: DeliveryData }[];
 }
 
 export interface CyNode {

@@ -5,7 +5,7 @@ import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollba
 
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
-import {FclElements, ObservedType, ShowType, TableMode} from '../util/datatypes';
+import {DeliveryData, FclElements, ObservedType, ShowType, StationData, TableMode} from '../util/datatypes';
 
 declare const ResizeSensor: any;
 
@@ -142,15 +142,13 @@ export class TableComponent implements OnInit {
     this.columns = this.getUpdatedColumns([selectColumn].concat(columns));
 
     if (this.data != null) {
-      let elements = [];
+      let elements: { data: StationData | DeliveryData }[] = [];
 
       if (this.mode === TableMode.STATIONS) {
-        elements = this.data.stations.filter(e => !e.data.contained);
+        elements = this.data.stations.filter(s => !s.data.invisible && !s.data.contained);
       } else if (this.mode === TableMode.DELIVERIES) {
-        elements = this.data.deliveries;
+        elements = this.data.deliveries.filter(d => !d.data.invisible);
       }
-
-      elements = elements.filter(e => !e.data.invisible);
 
       if (this.showType === ShowType.SELECTED_ONLY) {
         elements = elements.filter(e => e.data.selected);

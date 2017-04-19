@@ -1,6 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {FclData, FclElements, GraphSettings, ObservedType, ShowType, Size, TableMode, TableSettings} from './datatypes';
+import {
+  DeliveryData, FclData, FclElements, GraphSettings, ObservedType, ShowType, Size, StationData, TableMode,
+  TableSettings
+} from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -26,7 +29,7 @@ export class DataService {
   ]);
 
   static TABLE_COLUMNS: Map<TableMode, string[]> = new Map([
-    [TableMode.STATIONS, ['id', 'name', 'type', 'score']],
+    [TableMode.STATIONS, ['id', 'name', 'score']],
     [TableMode.DELIVERIES, ['id', 'source', 'target', 'score']]
   ]);
 
@@ -51,147 +54,155 @@ export class DataService {
   private data: FclData;
 
   private static preprocessData(data: any): FclData {
-    const containsDataAndSettings = data.hasOwnProperty('elements') && data.hasOwnProperty('layout')
-      && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings');
     const containsRawData = data.hasOwnProperty('stations') && data.hasOwnProperty('deliveries')
       && data.hasOwnProperty('deliveriesRelations');
+    const containsDataWithSettings = data.hasOwnProperty('elements') && data.hasOwnProperty('layout')
+      && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings');
 
-    if (containsDataAndSettings) {
-      for (const prop of Object.keys(DataService.DEFAULT_GRAPH_SETTINGS)) {
-        if (!data.graphSettings.hasOwnProperty(prop)) {
-          data.graphSettings[prop] = JSON.parse(JSON.stringify(DataService.DEFAULT_GRAPH_SETTINGS[prop]));
-        }
-      }
-
-      for (const prop of Object.keys(DataService.DEFAULT_TABLE_SETTINGS)) {
-        if (!data.tableSettings.hasOwnProperty(prop)) {
-          data.tableSettings[prop] = JSON.parse(JSON.stringify(DataService.DEFAULT_TABLE_SETTINGS[prop]));
-        }
-      }
-
-      this.addMissingProperties(data.elements);
-
-      return data;
-    } else if (containsRawData) {
-      const stationsById = {};
-      const deliveriesById = {};
-
-      for (const s of data.stations) {
-        s.data.incoming = [];
-        s.data.outgoing = [];
-        stationsById[s.data.id] = s;
-      }
-
-      for (const d of data.deliveries) {
-        stationsById[d.data.source].data.outgoing.push(d.data.id);
-        stationsById[d.data.target].data.incoming.push(d.data.id);
-
-        d.data.incoming = [];
-        d.data.outgoing = [];
-        deliveriesById[d.data.id] = d;
-      }
-
-      for (const r of data.deliveriesRelations) {
-        deliveriesById[r.data.source].data.outgoing.push(r.data.target);
-        deliveriesById[r.data.target].data.incoming.push(r.data.source);
-      }
-
-      const graphSettings: GraphSettings = {
-        nodeSize: DataService.DEFAULT_GRAPH_SETTINGS.nodeSize,
-        fontSize: DataService.DEFAULT_GRAPH_SETTINGS.fontSize,
-        mergeDeliveries: DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries,
-        showLegend: DataService.DEFAULT_GRAPH_SETTINGS.showLegend
-      };
-      const tableSettings: TableSettings = {
-        mode: DataService.DEFAULT_TABLE_SETTINGS.mode,
-        width: DataService.DEFAULT_TABLE_SETTINGS.width,
-        stationColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.stationColumns),
-        deliveryColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
-        showType: DataService.DEFAULT_TABLE_SETTINGS.showType
-      };
-      const elements: FclElements = {
-        stations: data.stations,
-        deliveries: data.deliveries
-      };
-
-      this.addMissingProperties(elements);
-
-      return {
-        elements: elements,
-        layout: {
-          name: 'random'
-        },
-        graphSettings: graphSettings,
-        tableSettings: tableSettings
-      };
+    if (containsRawData) {
+      return DataService.preprocessRawData(data);
+    } else if (containsDataWithSettings) {
+      return DataService.preprocessDataWithSettings(data);
     } else {
       throw new SyntaxError('Invalid data format');
     }
   }
 
-  private static addMissingProperties(elements: FclElements) {
-    for (const s of elements.stations) {
-      if (s.data.score == null) {
-        s.data.score = 0;
-      }
+  private static preprocessRawData(data: any): FclData {
+    const stationsById = {};
+    const deliveriesById = {};
 
-      if (s.data.invisible == null) {
-        s.data.invisible = false;
-      }
-
-      if (s.data.selected == null) {
-        s.data.selected = false;
-      }
-
-      if (s.data.observed == null) {
-        s.data.observed = ObservedType.NONE;
-      }
-
-      if (s.data.forward == null) {
-        s.data.forward = false;
-      }
-
-      if (s.data.backward == null) {
-        s.data.backward = false;
-      }
-
-      if (s.data.outbreak == null) {
-        s.data.outbreak = false;
-      }
-
-      if (s.data.commonLink == null) {
-        s.data.commonLink = false;
-      }
+    for (const s of data.stations) {
+      s.data.incoming = [];
+      s.data.outgoing = [];
+      stationsById[s.data.id] = s;
     }
 
-    for (const d of elements.deliveries) {
-      d.data.originalSource = d.data.source;
-      d.data.originalTarget = d.data.target;
+    for (const d of data.deliveries) {
+      stationsById[d.data.source].data.outgoing.push(d.data.id);
+      stationsById[d.data.target].data.incoming.push(d.data.id);
 
-      if (d.data.score == null) {
-        d.data.score = 0;
-      }
-
-      if (d.data.invisible == null) {
-        d.data.invisible = false;
-      }
-
-      if (d.data.selected == null) {
-        d.data.selected = false;
-      }
-
-      if (d.data.observed == null) {
-        d.data.observed = ObservedType.NONE;
-      }
-
-      if (d.data.forward == null) {
-        d.data.forward = false;
-      }
-
-      if (d.data.backward == null) {
-        d.data.backward = false;
-      }
+      d.data.incoming = [];
+      d.data.outgoing = [];
+      deliveriesById[d.data.id] = d;
     }
+
+    for (const r of data.deliveriesRelations) {
+      deliveriesById[r.data.source].data.outgoing.push(r.data.target);
+      deliveriesById[r.data.target].data.incoming.push(r.data.source);
+    }
+
+    const graphSettings: GraphSettings = {
+      nodeSize: DataService.DEFAULT_GRAPH_SETTINGS.nodeSize,
+      fontSize: DataService.DEFAULT_GRAPH_SETTINGS.fontSize,
+      mergeDeliveries: DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries,
+      showLegend: DataService.DEFAULT_GRAPH_SETTINGS.showLegend
+    };
+    const tableSettings: TableSettings = {
+      mode: DataService.DEFAULT_TABLE_SETTINGS.mode,
+      width: DataService.DEFAULT_TABLE_SETTINGS.width,
+      stationColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.stationColumns),
+      deliveryColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
+      showType: DataService.DEFAULT_TABLE_SETTINGS.showType
+    };
+    const elements: FclElements = {
+      stations: DataService.createStations(data.stations),
+      deliveries: DataService.createDeliveries(data.deliveries)
+    };
+
+    return {
+      elements: elements,
+      layout: {
+        name: 'random'
+      },
+      graphSettings: graphSettings,
+      tableSettings: tableSettings
+    };
+  }
+
+  private static preprocessDataWithSettings(data: any): FclData {
+    const graphSettings: GraphSettings = {
+      nodeSize: data.graphSettings.nodeSize != null ? data.graphSettings.nodeSize : DataService.DEFAULT_GRAPH_SETTINGS.nodeSize,
+      fontSize: data.graphSettings.fontSize != null ? data.graphSettings.fontSize : DataService.DEFAULT_GRAPH_SETTINGS.fontSize,
+      mergeDeliveries: data.graphSettings.mergeDeliveries != null
+        ? data.graphSettings.mergeDeliveries : DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries,
+      showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : DataService.DEFAULT_GRAPH_SETTINGS.showLegend
+    };
+    const tableSettings: TableSettings = {
+      mode: data.tableSettings.mode != null ? data.tableSettings.mode : DataService.DEFAULT_TABLE_SETTINGS.mode,
+      width: data.tableSettings.width != null ? data.tableSettings.width : DataService.DEFAULT_TABLE_SETTINGS.width,
+      stationColumns: data.tableSettings.stationColumns != null
+        ? data.tableSettings.stationColumns : Array.from(DataService.DEFAULT_TABLE_SETTINGS.stationColumns),
+      deliveryColumns: data.tableSettings.deliveryColumns != null
+        ? data.tableSettings.deliveryColumns : Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
+      showType: data.tableSettings.showType != null ? data.tableSettings.showType : DataService.DEFAULT_TABLE_SETTINGS.showType
+    };
+    const elements: FclElements = {
+      stations: DataService.createStations(data.elements.stations),
+      deliveries: DataService.createDeliveries(data.elements.deliveries)
+    };
+
+    return {
+      elements: elements,
+      layout: data.layout,
+      graphSettings: graphSettings,
+      tableSettings: tableSettings
+    };
+  }
+
+  private static createStations(elements: any[]): { data: StationData }[] {
+    const stations: { data: StationData }[] = [];
+
+    for (const e of elements) {
+      stations.push({
+        data: {
+          id: e.data.id,
+          name: e.data.name,
+          incoming: e.data.incoming,
+          outgoing: e.data.outgoing,
+          invisible: e.data.invisible != null ? e.data.invisible : false,
+          contained: e.data.contained != null ? e.data.contained : false,
+          contains: e.data.contains != null ? e.data.contains : null,
+          selected: e.data.selected != null ? e.data.selected : false,
+          observed: e.data.observed != null ? e.data.observed : ObservedType.NONE,
+          forward: e.data.forward != null ? e.data.forward : false,
+          backward: e.data.backward != null ? e.data.backward : false,
+          outbreak: e.data.outbreak != null ? e.data.outbreak : false,
+          score: e.data.score != null ? e.data.score : 0,
+          commonLink: e.data.commonLink != null ? e.data.commonLink : false,
+          position: e.data.position != null ? e.data.position : null,
+          positionRelativeTo: e.data.positionRelativeTo != null ? e.data.positionRelativeTo : null
+        }
+      });
+    }
+
+    return stations;
+  }
+
+  private static createDeliveries(elements: any[]): { data: DeliveryData }[] {
+    const deliveries: { data: DeliveryData }[] = [];
+
+    for (const e of elements) {
+      deliveries.push({
+        data: {
+          id: e.data.id,
+          source: e.data.source,
+          target: e.data.target,
+          originalSource: e.data.source,
+          originalTarget: e.data.target,
+          incoming: e.data.incoming,
+          outgoing: e.data.outgoing,
+          invisible: e.data.invisible != null ? e.data.invisible : false,
+          selected: e.data.selected != null ? e.data.selected : false,
+          observed: e.data.observed != null ? e.data.observed : ObservedType.NONE,
+          forward: e.data.forward != null ? e.data.forward : false,
+          backward: e.data.backward != null ? e.data.backward : false,
+          score: e.data.score != null ? e.data.score : 0
+        }
+      });
+    }
+
+    return deliveries;
   }
 
   constructor(private http: Http) {

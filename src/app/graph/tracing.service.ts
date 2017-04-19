@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
-import {FclElements, ObservedType} from '../util/datatypes';
+import {DeliveryData, FclElements, ObservedType, StationData} from '../util/datatypes';
 
 @Injectable()
 export class TracingService {
 
   private data: FclElements;
-  private stationsById: Map<string, any> = new Map();
-  private deliveriesById: Map<string, any> = new Map();
+  private stationsById: Map<string, { data: StationData }> = new Map();
+  private deliveriesById: Map<string, { data: DeliveryData }> = new Map();
   private maxScore: number;
+
+  private visited: Set<string> = new Set();
 
   constructor() {
   }
@@ -32,11 +34,11 @@ export class TracingService {
     return this.maxScore;
   }
 
-  getStationsById(ids: string[]) {
+  getStationsById(ids: string[]): { data: StationData }[] {
     return ids.map(id => this.stationsById.get(id));
   }
 
-  getDeliveriesById(ids: string[]) {
+  getDeliveriesById(ids: string[]): { data: DeliveryData }[] {
     return ids.map(id => this.deliveriesById.get(id));
   }
 
@@ -50,18 +52,24 @@ export class TracingService {
       }
     }
 
-    const metaStation = {
+    const metaStation: { data: StationData } = {
       data: {
         id: metaId,
         name: name,
-        type: 'Meta Station',
-        observed: ObservedType.NONE,
+        incoming: [],
+        outgoing: [],
+        invisible: false,
+        contained: false,
         contains: ids,
         selected: true,
-        invisible: false,
+        observed: ObservedType.NONE,
+        forward: false,
+        backward: false,
         outbreak: false,
-        incoming: [],
-        outgoing: []
+        score: 0,
+        commonLink: false,
+        position: null,
+        positionRelativeTo: null
       }
     };
 
@@ -248,6 +256,7 @@ export class TracingService {
     this.stationsById.forEach(s => {
       if (s.data.outbreak && !s.data.contained && !s.data.invisible) {
         nOutbreaks++;
+        this.visited.clear();
         this.updateStationScore(s.data.id, s.data.id);
       }
     });
@@ -257,11 +266,9 @@ export class TracingService {
         s.data.score /= nOutbreaks;
         s.data.commonLink = s.data.score === 1.0;
         this.maxScore = Math.max(this.maxScore, s.data.score);
-        delete s.data._visited;
       });
       this.deliveriesById.forEach(d => {
         d.data.score /= nOutbreaks;
-        delete d.data._visited;
       });
     }
   }
@@ -269,8 +276,8 @@ export class TracingService {
   private updateStationScore(id: string, outbreakId: string) {
     const station = this.stationsById.get(id);
 
-    if (station.data._visited !== outbreakId && !station.data.contained && !station.data.invisible) {
-      station.data._visited = outbreakId;
+    if (!this.visited.has(station.data.id) && !station.data.contained && !station.data.invisible) {
+      this.visited.add(station.data.id);
       station.data.score++;
 
       for (const d of station.data.incoming) {
@@ -282,14 +289,14 @@ export class TracingService {
   private updateDeliveryScore(id: string, outbreakId: string) {
     const delivery = this.deliveriesById.get(id);
 
-    if (delivery.data._visited !== outbreakId && !delivery.data.invisible) {
-      delivery.data._visited = outbreakId;
+    if (!this.visited.has(delivery.data.id) && !delivery.data.invisible) {
+      this.visited.add(delivery.data.id);
       delivery.data.score++;
 
       const source = this.stationsById.get(delivery.data.source);
 
-      if (source.data._visited !== outbreakId) {
-        source.data._visited = outbreakId;
+      if (this.visited.has(source.data.id)) {
+        this.visited.add(source.data.id);
         source.data.score++;
       }
 
