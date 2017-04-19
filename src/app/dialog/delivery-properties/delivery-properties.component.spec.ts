@@ -1,20 +1,20 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MdDialogModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
-import {StationPropertiesComponent, StationPropertiesData} from './station-properties.component';
+import {DeliveryPropertiesComponent, DeliveryPropertiesData} from './delivery-properties.component';
 
 describe('DeliveryPropertiesComponent', () => {
-  let component: StationPropertiesComponent;
-  let fixture: ComponentFixture<StationPropertiesComponent>;
+  let component: DeliveryPropertiesComponent;
+  let fixture: ComponentFixture<DeliveryPropertiesComponent>;
 
   beforeEach(async(() => {
-    const data: StationPropertiesData = {
-      station: {data: {id: 1, name: 'Test'}}
+    const data: DeliveryPropertiesData = {
+      delivery: {data: {id: 1, name: 'Test'}}
     };
 
     TestBed.configureTestingModule({
       imports: [MdDialogModule],
-      declarations: [StationPropertiesComponent],
+      declarations: [DeliveryPropertiesComponent],
       providers: [
         {provide: MdDialogRef, useValue: {}},
         {provide: MD_DIALOG_DATA, useValue: data}
@@ -23,7 +23,7 @@ describe('DeliveryPropertiesComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StationPropertiesComponent);
+    fixture = TestBed.createComponent(DeliveryPropertiesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -34,6 +34,6 @@ describe('DeliveryPropertiesComponent', () => {
 
   it('should render title', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Station Properties');
+    expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Delivery Properties');
   });
 });

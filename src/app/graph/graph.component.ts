@@ -6,6 +6,7 @@ import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-action
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
+import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
@@ -633,6 +634,27 @@ export class GraphComponent implements OnInit {
   private createDeliveryActions(delivery): MenuAction[] {
     return [
       {
+        name: 'Show Properties',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          if (this.mergeMap.has(delivery.id())) {
+            const dialogData: DialogAlertData = {
+              title: 'Error',
+              message: 'Showing Properties of merged delivery is not supported!'
+            };
+
+            this.dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
+            return false;
+          } else {
+            const dialogData: DeliveryPropertiesData = {
+              delivery: this.tracingService.getDeliveriesById([delivery.id()])[0]
+            };
+
+            this.dialogService.open(DeliveryPropertiesComponent, {data: dialogData});
+          }
+        }
+      }, {
         name: 'Show Forward Trace',
         type: MenuActionType.runAction,
         enabled: true,
