@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {CyPosition} from './datatypes';
+import {MdDialog} from '@angular/material';
+import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 
 @Injectable()
 export class UtilService {
@@ -14,6 +16,15 @@ export class UtilService {
     document.body.appendChild(a);
     a.click();
     a.remove();
+  }
+
+  static showErrorMessage(dialogService: MdDialog, message: string) {
+    const dialogData: DialogAlertData = {
+      title: 'Error',
+      message: message
+    };
+
+    dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
   static setElementPosition(element: HTMLElement, x: number, y: number) {

@@ -4,7 +4,6 @@ import {MdSidenav, MdDialog} from '@angular/material';
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
-import {DialogAlertComponent, DialogAlertData} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {UtilService} from './util/util.service';
 import {FclData, FclElements, TableMode} from './util/datatypes';
@@ -39,7 +38,7 @@ export class AppComponent implements OnInit {
     this.dataService.getData().then(data => {
       this.update(data);
     }).catch(error => {
-      this.showErrorMessage(error);
+      UtilService.showErrorMessage(this.dialogService, error);
     });
 
     this.graph.onChange(() => this.table.update());
@@ -112,10 +111,10 @@ export class AppComponent implements OnInit {
       this.dataService.getData().then(data => {
         this.update(data);
       }).catch(error => {
-        this.showErrorMessage(error);
+        UtilService.showErrorMessage(this.dialogService, error);
       });
     } else {
-      this.showErrorMessage('Please select one .json file!');
+      UtilService.showErrorMessage(this.dialogService, 'Please select one .json file!');
     }
 
     (<HTMLInputElement>document.getElementById('fileInput')).value = '';
@@ -198,15 +197,6 @@ export class AppComponent implements OnInit {
 
   private updateRightSidenav() {
     document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
-  }
-
-  private showErrorMessage(message: string) {
-    const dialogData: DialogAlertData = {
-      title: 'Error',
-      message: message
-    };
-
-    this.dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
 }

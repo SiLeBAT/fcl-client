@@ -3,7 +3,6 @@ import {MdDialog, MdMenuTrigger} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
 
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
-import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
@@ -629,13 +628,7 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => {
           if (this.mergeMap.has(delivery.id())) {
-            const dialogData: DialogAlertData = {
-              title: 'Error',
-              message: 'Showing Properties of merged delivery is not supported!'
-            };
-
-            this.dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
-            return false;
+            UtilService.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!');
           } else {
             const dialogData: DeliveryPropertiesData = {
               delivery: this.tracingService.getDeliveriesById([delivery.id()])[0]
@@ -649,7 +642,9 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.isDeliveryTracePossible(delivery)) {
+          if (this.mergeMap.has(delivery.id())) {
+            UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+          } else {
             this.tracingService.showDeliveryForwardTrace(delivery.id());
             this.updateProperties();
             this.callChangeFunction();
@@ -660,7 +655,9 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.isDeliveryTracePossible(delivery)) {
+          if (this.mergeMap.has(delivery.id())) {
+            UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+          } else {
             this.tracingService.showDeliveryBackwardTrace(delivery.id());
             this.updateProperties();
             this.callChangeFunction();
@@ -671,7 +668,9 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.isDeliveryTracePossible(delivery)) {
+          if (this.mergeMap.has(delivery.id())) {
+            UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+          } else {
             this.tracingService.showDeliveryTrace(delivery.id());
             this.updateProperties();
             this.callChangeFunction();
@@ -752,20 +751,6 @@ export class GraphComponent implements OnInit {
         action: () => this.cy.layout({name: 'dagre'})
       }
     ];
-  }
-
-  private isDeliveryTracePossible(delivery): boolean {
-    if (this.mergeMap.has(delivery.id())) {
-      const dialogData: DialogAlertData = {
-        title: 'Error',
-        message: 'Showing Trace of merged delivery is not supported!'
-      };
-
-      this.dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
-      return false;
-    } else {
-      return true;
-    }
   }
 
   private callChangeFunction() {
