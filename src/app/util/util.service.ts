@@ -95,4 +95,8 @@ export class UtilService {
     };
   };
 
+  static stringify(value: any) {
+    return typeof value === 'string' ? value : JSON.stringify(value);
+  }
+
 }
