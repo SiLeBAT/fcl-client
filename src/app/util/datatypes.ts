@@ -45,6 +45,7 @@ export interface StationData {
   commonLink: boolean;
   position: CyPosition;
   positionRelativeTo: string;
+  properties: { name: string, value: string }[];
 }
 
 export interface DeliveryData {
@@ -61,6 +62,7 @@ export interface DeliveryData {
   forward: boolean;
   backward: boolean;
   score: number;
+  properties: { name: string, value: string }[];
 }
 
 export interface GraphSettings {

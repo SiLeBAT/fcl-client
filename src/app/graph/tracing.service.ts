@@ -68,7 +68,8 @@ export class TracingService {
       score: 0,
       commonLink: false,
       position: null,
-      positionRelativeTo: null
+      positionRelativeTo: null,
+      properties: []
     };
 
     for (const id of ids) {

@@ -10,6 +10,16 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class DataService {
 
+  private static STATION_DATA: StationData = {
+    id: null, name: null, incoming: null, outgoing: null, invisible: null, contained: null, contains: null, selected: null, observed: null,
+    forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null, positionRelativeTo: null, properties: null
+  };
+
+  private static DELIVERY_DATA: DeliveryData = {
+    id: null, source: null, target: null, originalSource: null, originalTarget: null, incoming: null, outgoing: null, invisible: null,
+    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
+  };
+
   static TABLE_MODES = [TableMode.STATIONS, TableMode.DELIVERIES];
   static SHOW_TYPES = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
   static SIZES = [Size.SMALL, Size.MEDIUM, Size.LARGE];
@@ -156,8 +166,17 @@ export class DataService {
 
   private static createStations(elements: any[]): StationData[] {
     const stations: StationData[] = [];
+    const defaultKeys: Set<string> = new Set(Object.keys(DataService.STATION_DATA));
 
     for (const e of elements) {
+      const properties: { name: string, value: string }[] = [];
+
+      for (const key of Object.keys(e)) {
+        if (!defaultKeys.has(key)) {
+          properties.push({name: key, value: e[key]});
+        }
+      }
+
       stations.push({
         id: e.id,
         name: e.name,
@@ -174,7 +193,8 @@ export class DataService {
         score: e.score != null ? e.score : 0,
         commonLink: e.commonLink != null ? e.commonLink : false,
         position: e.position != null ? e.position : null,
-        positionRelativeTo: e.positionRelativeTo != null ? e.positionRelativeTo : null
+        positionRelativeTo: e.positionRelativeTo != null ? e.positionRelativeTo : null,
+        properties: e.properties != null ? e.properties : properties
       });
     }
 
@@ -183,8 +203,17 @@ export class DataService {
 
   private static createDeliveries(elements: any[]): DeliveryData[] {
     const deliveries: DeliveryData[] = [];
+    const defaultKeys: Set<string> = new Set(Object.keys(DataService.DELIVERY_DATA));
 
     for (const e of elements) {
+      const properties: { name: string, value: string }[] = [];
+
+      for (const key of Object.keys(e)) {
+        if (!defaultKeys.has(key)) {
+          properties.push({name: key, value: e[key]});
+        }
+      }
+
       deliveries.push({
         id: e.id,
         source: e.source,
@@ -198,7 +227,8 @@ export class DataService {
         observed: e.observed != null ? e.observed : ObservedType.NONE,
         forward: e.forward != null ? e.forward : false,
         backward: e.backward != null ? e.backward : false,
-        score: e.score != null ? e.score : 0
+        score: e.score != null ? e.score : 0,
+        properties: e.properties != null ? e.properties : properties
       });
     }
 

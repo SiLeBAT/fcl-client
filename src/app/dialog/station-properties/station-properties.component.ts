@@ -22,7 +22,7 @@ export class StationPropertiesComponent {
         name: DataService.PROPERTIES.get(key).name,
         value: UtilService.stringify(data.station[key])
       };
-    });
+    }).concat(data.station.properties);
   }
 
 }

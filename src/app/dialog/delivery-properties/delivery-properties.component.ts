@@ -22,7 +22,7 @@ export class DeliveryPropertiesComponent {
         name: DataService.PROPERTIES.get(key).name,
         value: UtilService.stringify(data.delivery[key])
       };
-    });
+    }).concat(data.delivery.properties);
   }
 
 }

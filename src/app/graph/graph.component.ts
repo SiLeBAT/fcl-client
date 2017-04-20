@@ -308,7 +308,8 @@ export class GraphComponent implements OnInit {
               observed: observedElement != null ? observedElement.observed : ObservedType.NONE,
               forward: value.find(d => d.forward) != null,
               backward: value.find(d => d.backward) != null,
-              score: 0
+              score: 0,
+              properties: []
             },
             selected: selected
           });
