@@ -66,6 +66,7 @@ export class GraphComponent implements OnInit {
   private fontSize = DataService.DEFAULT_GRAPH_SETTINGS.fontSize;
   private showLegend = DataService.DEFAULT_GRAPH_SETTINGS.showLegend;
 
+  private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
   private zoom: Subject<boolean> = new Subject();
@@ -228,7 +229,22 @@ export class GraphComponent implements OnInit {
 
   updateSelection() {
     if (this.cy != null) {
-      this.updateAll();
+      this.selectTimerActivated = false;
+
+      if (this.mergeDeliveries) {
+        this.updateEdges();
+        this.cy.batch(() => {
+          this.cy.nodes(':selected[!selected]').unselect();
+          this.cy.nodes(':unselected[?selected]').select();
+        });
+      } else {
+        this.cy.batch(() => {
+          this.cy.elements(':selected[!selected]').unselect();
+          this.cy.elements(':unselected[?selected]').select();
+        });
+      }
+
+      this.selectTimerActivated = true;
     }
   }
 
@@ -450,11 +466,13 @@ export class GraphComponent implements OnInit {
       this.tracingService.setSelected(id, selected);
     }
 
-    if (this.selectTimer != null) {
-      this.selectTimer.unsubscribe();
-    }
+    if (this.selectTimerActivated) {
+      if (this.selectTimer != null) {
+        this.selectTimer.unsubscribe();
+      }
 
-    this.selectTimer = Observable.timer(50).subscribe(() => this.callChangeFunction());
+      this.selectTimer = Observable.timer(50).subscribe(() => this.callChangeFunction());
+    }
   }
 
   private createGraphActions(): MenuAction[] {
