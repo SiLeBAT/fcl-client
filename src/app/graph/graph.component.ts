@@ -135,6 +135,7 @@ export class GraphComponent implements OnInit {
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
     this.cy.on('select', event => this.setSelected(event.cyTarget.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.cyTarget.id(), false));
+    this.cy.on('position', event => this.tracingService.getStationsById([event.cyTarget.id()])[0].position = event.cyTarget.position());
     this.cy.on('cxttap', event => {
       const element = event.cyTarget;
 
@@ -154,6 +155,14 @@ export class GraphComponent implements OnInit {
 
     this.setFontSize(this.fontSize);
     this.setShowLegend(this.showLegend);
+
+    for (const s of data.stations) {
+      const pos = this.cy.nodes().getElementById(s.id).position();
+
+      if (pos != null) {
+        s.position = pos;
+      }
+    }
   }
 
   onChange(changeFunction: () => void) {
@@ -161,13 +170,8 @@ export class GraphComponent implements OnInit {
   }
 
   getLayout(): any {
-    const positions = {};
-
-    this.cy.nodes().forEach(n => positions[n.id()] = n.position());
-
     return {
       name: 'preset',
-      positions: positions,
       zoom: this.cy.zoom(),
       pan: this.cy.pan()
     };
@@ -236,7 +240,8 @@ export class GraphComponent implements OnInit {
         stations.push({
           group: 'nodes',
           data: s,
-          selected: s.selected
+          selected: s.selected,
+          position: s.position
         });
       }
     }
@@ -327,45 +332,20 @@ export class GraphComponent implements OnInit {
 
   private updateAll() {
     for (const s of this.data.stations) {
-      if (s.invisible) {
-        const pos = this.cy.nodes().getElementById(s.id).position();
+      if (!s.contained && s.positionRelativeTo != null) {
+        s.position = UtilService.sum(this.cy.nodes().getElementById(s.positionRelativeTo).position(), s.position);
+      } else if (s.position == null && s.contains != null) {
+        s.position = UtilService.getCenter(s.contains.map(id => this.tracingService.getStationsById([id])[0].position));
 
-        if (pos != null) {
-          s.position = pos;
+        for (const contained of this.tracingService.getStationsById(s.contains)) {
+          contained.positionRelativeTo = s.id;
+          contained.position = UtilService.difference(contained.position, s.position);
         }
       }
     }
 
     const nodes = this.createNodes();
     const edges = this.createEdges();
-
-    for (const n of nodes) {
-      const pos = this.cy.nodes().getElementById(n.data.id).position();
-
-      if (pos == null) {
-        if (n.data.position != null) {
-          if (n.data.positionRelativeTo != null) {
-            n.position = UtilService.sum(this.cy.nodes().getElementById(n.data.positionRelativeTo).position(), n.data.position);
-            n.data.position = null;
-            n.data.positionRelativeTo = null;
-          } else {
-            n.position = n.data.position;
-            n.data.position = null;
-          }
-        } else if (n.data.contains != null) {
-          n.position = UtilService.getCenter(n.data.contains.map(id => this.cy.nodes().getElementById(id).position()));
-
-          for (const contained of this.tracingService.getStationsById(n.data.contains)) {
-            const containedPos = this.cy.nodes().getElementById(contained.id).position();
-
-            contained.positionRelativeTo = n.data.id;
-            contained.position = UtilService.difference(containedPos, n.position);
-          }
-        }
-      } else {
-        n.position = pos;
-      }
-    }
 
     this.cy.batch(() => {
       this.cy.elements().remove();

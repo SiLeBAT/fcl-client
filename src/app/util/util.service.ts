@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {CyPosition} from './datatypes';
 
 @Injectable()
 export class UtilService {
@@ -54,7 +55,7 @@ export class UtilService {
     return combinations;
   };
 
-  static getCenter(positions: any[]): any {
+  static getCenter(positions: CyPosition[]): CyPosition {
     let xSum = 0;
     let ySum = 0;
 
@@ -69,14 +70,14 @@ export class UtilService {
     };
   };
 
-  static sum(position1: any, position2: any): any {
+  static sum(position1: CyPosition, position2: CyPosition): CyPosition {
     return {
       x: position1.x + position2.x,
       y: position1.y + position2.y
     };
   };
 
-  static difference(position1: any, position2: any): any {
+  static difference(position1: CyPosition, position2: CyPosition): CyPosition {
     return {
       x: position1.x - position2.x,
       y: position1.y - position2.y

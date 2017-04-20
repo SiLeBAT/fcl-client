@@ -99,7 +99,7 @@ export class TracingService {
       const station = this.stationsById.get(id);
 
       this.stationsById.delete(id);
-      this.data.stations.slice(this.data.stations.indexOf(station), 1);
+      this.data.stations.splice(this.data.stations.indexOf(station), 1);
 
       for (const containedId of station.contains) {
         this.stationsById.get(containedId).contained = false;

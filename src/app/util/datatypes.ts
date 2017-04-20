@@ -13,14 +13,19 @@ export interface FclElements {
 export interface CyNode {
   group: string;
   data: StationData;
-  position?: any;
-  selected?: boolean;
+  selected: boolean;
+  position: CyPosition;
 }
 
 export interface CyEdge {
   group: string;
   data: DeliveryData;
-  selected?: boolean;
+  selected: boolean;
+}
+
+export interface CyPosition {
+  x: number;
+  y: number;
 }
 
 export interface StationData {
@@ -38,7 +43,7 @@ export interface StationData {
   outbreak: boolean;
   score: number;
   commonLink: boolean;
-  position: any;
+  position: CyPosition;
   positionRelativeTo: string;
 }
 
