@@ -248,11 +248,11 @@ export class GraphComponent implements OnInit {
   }
 
   private createNodes(): CyNode[] {
-    const stations: CyNode[] = [];
+    const nodes: CyNode[] = [];
 
     for (const s of this.data.stations) {
       if (!s.contained && !s.invisible) {
-        stations.push({
+        nodes.push({
           group: 'nodes',
           data: s,
           selected: s.selected,
@@ -261,11 +261,11 @@ export class GraphComponent implements OnInit {
       }
     }
 
-    return stations;
+    return nodes;
   }
 
   private createEdges(): CyEdge[] {
-    const deliveries: CyEdge[] = [];
+    const edges: CyEdge[] = [];
 
     this.mergeMap = new Map();
 
@@ -283,7 +283,7 @@ export class GraphComponent implements OnInit {
 
       sourceTargetMap.forEach((value, key) => {
         if (value.length === 1) {
-          deliveries.push({
+          edges.push({
             group: 'edges',
             data: value[0],
             selected: value[0].selected,
@@ -293,7 +293,7 @@ export class GraphComponent implements OnInit {
           const selected = value.find(d => d.selected) != null;
 
           this.mergeMap.set(key, value.map(d => d.id));
-          deliveries.push({
+          edges.push({
             group: 'edges',
             data: {
               id: key,
@@ -318,7 +318,7 @@ export class GraphComponent implements OnInit {
     } else {
       for (const d of this.data.deliveries) {
         if (!d.invisible) {
-          deliveries.push({
+          edges.push({
             group: 'edges',
             data: d,
             selected: d.selected,
@@ -327,7 +327,7 @@ export class GraphComponent implements OnInit {
       }
     }
 
-    return deliveries;
+    return edges;
   }
 
   private updateEdges() {
@@ -360,13 +360,10 @@ export class GraphComponent implements OnInit {
       }
     }
 
-    const nodes = this.createNodes();
-    const edges = this.createEdges();
-
     this.cy.batch(() => {
       this.cy.elements().remove();
-      this.cy.add(nodes);
-      this.cy.add(edges);
+      this.cy.add(this.createNodes());
+      this.cy.add(this.createEdges());
       this.setFontSize(this.fontSize);
     });
   }
@@ -512,19 +509,19 @@ export class GraphComponent implements OnInit {
     ];
   }
 
-  private createStationActions(station): MenuAction[] {
-    let selectedStations = null;
+  private createStationActions(node): MenuAction[] {
+    let selectedNodes = null;
     let multipleStationsSelected = false;
     let allOutbreakStations = false;
     let allMetaStations = false;
     let allNonMetaStations = false;
 
-    if (this.cy != null && station != null) {
-      selectedStations = this.cy.nodes(':selected');
-      multipleStationsSelected = station.selected() && selectedStations.size() > 1;
-      allOutbreakStations = multipleStationsSelected ? selectedStations.allAre('[?outbreak]') : station.data('outbreak');
-      allMetaStations = multipleStationsSelected ? selectedStations.allAre('[?contains]') : station.data('contains');
-      allNonMetaStations = multipleStationsSelected ? !selectedStations.is('[?contains]') : !station.data('contains');
+    if (this.cy != null && node != null) {
+      selectedNodes = this.cy.nodes(':selected');
+      multipleStationsSelected = node.selected() && selectedNodes.size() > 1;
+      allOutbreakStations = multipleStationsSelected ? selectedNodes.allAre('[?outbreak]') : node.data('outbreak');
+      allMetaStations = multipleStationsSelected ? selectedNodes.allAre('[?contains]') : node.data('contains');
+      allNonMetaStations = multipleStationsSelected ? !selectedNodes.is('[?contains]') : !node.data('contains');
     }
 
     return [
@@ -533,8 +530,11 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: !multipleStationsSelected,
         action: () => {
+          const station = this.tracingService.getStationsById([node.id()])[0];
+          const connected = this.tracingService.getDeliveriesById(Array.from(new Set(station.incoming.concat(station.outgoing)).values()));
           const dialogData: StationPropertiesData = {
-            station: this.tracingService.getStationsById([station.id()])[0]
+            station: station,
+            connectedDeliveries: connected
           };
 
           this.dialogService.open(StationPropertiesComponent, {data: dialogData});
@@ -544,7 +544,7 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: !multipleStationsSelected,
         action: () => {
-          this.tracingService.showStationForwardTrace(station.id());
+          this.tracingService.showStationForwardTrace(node.id());
           this.updateProperties();
           this.callChangeFunction();
         }
@@ -553,7 +553,7 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: !multipleStationsSelected,
         action: () => {
-          this.tracingService.showStationBackwardTrace(station.id());
+          this.tracingService.showStationBackwardTrace(node.id());
           this.updateProperties();
           this.callChangeFunction();
         }
@@ -562,7 +562,7 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: !multipleStationsSelected,
         action: () => {
-          this.tracingService.showStationTrace(station.id());
+          this.tracingService.showStationTrace(node.id());
           this.updateProperties();
           this.callChangeFunction();
         }
@@ -572,7 +572,7 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => {
           this.tracingService
-            .markStationsAsOutbreak(multipleStationsSelected ? selectedStations.map(s => s.id()) : [station.id()], !allOutbreakStations);
+            .markStationsAsOutbreak(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()], !allOutbreakStations);
           this.setNodeSize(this.nodeSize);
           this.callChangeFunction();
         }
@@ -581,39 +581,39 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (multipleStationsSelected) {
-            this.tracingService.makeStationsInvisible(selectedStations.map(s => s.id()));
-          } else {
-            this.tracingService.makeStationsInvisible([station.id()]);
-          }
+          this.tracingService.makeStationsInvisible(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()]);
           this.updateAll();
           this.callChangeFunction();
         }
       }, {
         name: 'Merge Stations',
         type: MenuActionType.runAction,
-        enabled: multipleStationsSelected && allNonMetaStations,
+        enabled: multipleStationsSelected,
         action: () => {
-          const dialogData: DialogPromptData = {
-            title: 'Input',
-            message: 'Please specify name of meta station:',
-            placeholder: 'Name'
-          };
+          if (allNonMetaStations) {
+            const dialogData: DialogPromptData = {
+              title: 'Input',
+              message: 'Please specify name of meta station:',
+              placeholder: 'Name'
+            };
 
-          this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
-            if (name != null) {
-              this.tracingService.mergeStations(selectedStations.map(s => s.id()), name);
-              this.updateAll();
-              this.callChangeFunction();
-            }
-          });
+            this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
+              if (name != null) {
+                this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
+                this.updateAll();
+                this.callChangeFunction();
+              }
+            });
+          } else {
+            UtilService.showErrorMessage(this.dialogService, 'Merging is only provided for non-meta stations!');
+          }
         }
       }, {
         name: 'Expand',
         type: MenuActionType.runAction,
         enabled: allMetaStations,
         action: () => {
-          this.tracingService.expandStations(multipleStationsSelected ? selectedStations.map(s => s.id()) : station.id());
+          this.tracingService.expandStations(multipleStationsSelected ? selectedNodes.map(s => s.id()) : node.id());
           this.updateAll();
           this.callChangeFunction();
         }
@@ -621,18 +621,18 @@ export class GraphComponent implements OnInit {
     ];
   }
 
-  private createDeliveryActions(delivery): MenuAction[] {
+  private createDeliveryActions(edge): MenuAction[] {
     return [
       {
         name: 'Show Properties',
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(delivery.id())) {
+          if (this.mergeMap.has(edge.id())) {
             UtilService.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!');
           } else {
             const dialogData: DeliveryPropertiesData = {
-              delivery: this.tracingService.getDeliveriesById([delivery.id()])[0]
+              delivery: this.tracingService.getDeliveriesById([edge.id()])[0]
             };
 
             this.dialogService.open(DeliveryPropertiesComponent, {data: dialogData});
@@ -643,10 +643,10 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(delivery.id())) {
+          if (this.mergeMap.has(edge.id())) {
             UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
-            this.tracingService.showDeliveryForwardTrace(delivery.id());
+            this.tracingService.showDeliveryForwardTrace(edge.id());
             this.updateProperties();
             this.callChangeFunction();
           }
@@ -656,10 +656,10 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(delivery.id())) {
+          if (this.mergeMap.has(edge.id())) {
             UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
-            this.tracingService.showDeliveryBackwardTrace(delivery.id());
+            this.tracingService.showDeliveryBackwardTrace(edge.id());
             this.updateProperties();
             this.callChangeFunction();
           }
@@ -669,10 +669,10 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(delivery.id())) {
+          if (this.mergeMap.has(edge.id())) {
             UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
-            this.tracingService.showDeliveryTrace(delivery.id());
+            this.tracingService.showDeliveryTrace(edge.id());
             this.updateProperties();
             this.callChangeFunction();
           }

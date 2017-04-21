@@ -1,11 +1,12 @@
 import {Component, Inject} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
-import {StationData} from '../../util/datatypes';
+import {DeliveryData, StationData} from '../../util/datatypes';
 import {DataService} from '../../util/data.service';
 import {UtilService} from '../../util/util.service';
 
 export interface StationPropertiesData {
   station: StationData;
+  connectedDeliveries: DeliveryData[];
 }
 
 @Component({
