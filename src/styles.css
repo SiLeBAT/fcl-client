@@ -6,6 +6,7 @@
 @import "./app/graph/zooming.css";
 @import "./app/graph/legend.css";
 @import "./app/table/ngx-datatable-style.css";
+@import "./app/dialog/station-properties/in-out-connector.css";
 
 body {
   margin: 0;
