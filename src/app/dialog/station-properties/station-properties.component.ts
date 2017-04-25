@@ -15,6 +15,12 @@ export interface StationPropertiesData {
 })
 export class StationPropertiesComponent implements OnInit {
 
+  private static NODE = 'node';
+  private static CONNECT = 'connect';
+
+  private static EDGE = 'edge';
+  private static HIDDEN = 'hidden';
+
   properties: { name: string, value: string }[];
 
   constructor(@Inject(MD_DIALOG_DATA) public data: StationPropertiesData) {
@@ -40,8 +46,7 @@ export class StationPropertiesComponent implements OnInit {
       thisGraph.edges = edges || [];
 
       thisGraph.state = {
-        mouseDownNode: null,
-        mouseDownLink: null
+        mouseDownNode: null
       };
 
       // define arrow markers for graph links
@@ -68,13 +73,12 @@ export class StationPropertiesComponent implements OnInit {
         .attr('d', 'M0,-5L10,0L0,5');
 
       thisGraph.svg = svg;
-      thisGraph.svgG = svg.append('g')
-        .classed(thisGraph.consts.graphClass, true);
+      thisGraph.svgG = svg.append('g');
       const svgG = thisGraph.svgG;
 
       // displayed when dragging between nodes
       thisGraph.dragLine = svgG.append('svg:path')
-        .attr('class', 'link dragline hidden')
+        .attr('class', StationPropertiesComponent.EDGE + ' ' + StationPropertiesComponent.HIDDEN)
         .attr('d', 'M0,0L0,0')
         .style('marker-end', 'url(#mark-end-arrow)');
 
@@ -93,7 +97,7 @@ export class StationPropertiesComponent implements OnInit {
           thisGraph.dragmove.call(thisGraph, args);
         })
         .on('dragend', function () {
-          thisGraph.dragLine.classed('hidden', true);
+          thisGraph.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
         });
       svg.on('mousedown', function (d) {
         thisGraph.svgMouseDown.call(thisGraph, d);
@@ -101,14 +105,6 @@ export class StationPropertiesComponent implements OnInit {
       svg.on('mouseup', function (d) {
         thisGraph.svgMouseUp.call(thisGraph, d);
       });
-    };
-
-    GraphCreator.prototype.consts = {
-      connectClass: 'connect-node',
-      circleGClass: 'conceptG',
-      graphClass: 'graph',
-      activeEditId: 'active-editing',
-      nodeRadius: 50
     };
 
     /* PROTOTYPE FUNCTIONS */
@@ -135,46 +131,24 @@ export class StationPropertiesComponent implements OnInit {
       }
     };
 
-
-    // remove edges associated with a node
-    GraphCreator.prototype.spliceLinksForNode = function (node) {
-      const thisGraph = this,
-        toSplice = thisGraph.edges.filter(function (l) {
-          return (l.source === node || l.target === node);
-        });
-      toSplice.map(function (l) {
-        thisGraph.edges.splice(thisGraph.edges.indexOf(l), 1);
-      });
-    };
-
-    GraphCreator.prototype.pathMouseDown = function (d3path, d) {
-      const thisGraph = this,
-        state = thisGraph.state;
-      d3.event.stopPropagation();
-      state.mouseDownLink = d;
-    };
-
     // mousedown on node
     GraphCreator.prototype.circleMouseDown = function (d3node, d) {
-      const thisGraph = this,
-        state = thisGraph.state;
-      d3.event.stopPropagation();
-      state.mouseDownNode = d;
+      const thisGraph = this;
 
+      d3.event.stopPropagation();
+      thisGraph.state.mouseDownNode = d;
       // reposition dragged directed edge
-      thisGraph.dragLine.classed('hidden', false)
+      thisGraph.dragLine.classed(StationPropertiesComponent.HIDDEN, false)
         .attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
     };
 
     // mouseup on nodes
     GraphCreator.prototype.circleMouseUp = function (d3node, d) {
-      const thisGraph = this,
-        state = thisGraph.state,
-        consts = thisGraph.consts;
+      const thisGraph = this;
       // reset the states
-      d3node.classed(consts.connectClass, false);
+      d3node.classed(StationPropertiesComponent.CONNECT, false);
 
-      const mouseDownNode = state.mouseDownNode;
+      const mouseDownNode = thisGraph.state.mouseDownNode;
 
       if (!mouseDownNode) {
         return;
@@ -197,7 +171,7 @@ export class StationPropertiesComponent implements OnInit {
           thisGraph.updateGraph();
         }
       }
-      state.mouseDownNode = null;
+      thisGraph.state.mouseDownNode = null;
       return;
 
     }; // end of circles mouseup
@@ -209,18 +183,14 @@ export class StationPropertiesComponent implements OnInit {
 
     // mouseup on main svg
     GraphCreator.prototype.svgMouseUp = function () {
-      const thisGraph = this,
-        state = thisGraph.state;
-      thisGraph.dragLine.classed('hidden', true);
-      state.graphMouseDown = false;
+      const thisGraph = this;
+      thisGraph.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
+      thisGraph.state.graphMouseDown = false;
     };
 
     // call to propagate changes to graph
     GraphCreator.prototype.updateGraph = function () {
-
-      const thisGraph = this,
-        consts = thisGraph.consts,
-        state = thisGraph.state;
+      const thisGraph = this;
 
       thisGraph.paths = thisGraph.paths.data(thisGraph.edges, function (d) {
         return String(d.source.id) + '+' + String(d.target.id);
@@ -236,15 +206,9 @@ export class StationPropertiesComponent implements OnInit {
       paths.enter()
         .append('path')
         .style('marker-end', 'url(#end-arrow)')
-        .classed('link', true)
+        .classed(StationPropertiesComponent.EDGE, true)
         .attr('d', function (d) {
           return 'M' + d.source.x + ',' + d.source.y + 'L' + d.target.x + ',' + d.target.y;
-        })
-        .on('mousedown', function (d) {
-          thisGraph.pathMouseDown.call(thisGraph, d3.select(this), d);
-        })
-        .on('mouseup', function () {
-          state.mouseDownLink = null;
         });
 
       // remove old links
@@ -262,15 +226,15 @@ export class StationPropertiesComponent implements OnInit {
       const newGs = thisGraph.circles.enter()
         .append('g');
 
-      newGs.classed(consts.circleGClass, true)
+      newGs.classed(StationPropertiesComponent.NODE, true)
         .attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         })
         .on('mouseover', function () {
-          d3.select(this).classed(consts.connectClass, true);
+          d3.select(this).classed(StationPropertiesComponent.CONNECT, true);
         })
         .on('mouseout', function () {
-          d3.select(this).classed(consts.connectClass, false);
+          d3.select(this).classed(StationPropertiesComponent.CONNECT, false);
         })
         .on('mousedown', function (d) {
           thisGraph.circleMouseDown.call(thisGraph, d3.select(this), d);
@@ -281,7 +245,7 @@ export class StationPropertiesComponent implements OnInit {
         .call(thisGraph.drag);
 
       newGs.append('circle')
-        .attr('r', String(consts.nodeRadius));
+        .attr('r', '50');
 
       newGs.each(function (d) {
         thisGraph.insertTitleLinebreaks(d3.select(this), d.title);

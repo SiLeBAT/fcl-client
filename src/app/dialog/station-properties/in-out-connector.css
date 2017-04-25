@@ -1,27 +1,23 @@
-marker {
+#in-out-connector marker {
   fill: #333;
 }
 
-g.conceptG circle {
+#in-out-connector g.node circle {
   fill: #F6FBFF;
   stroke: #333;
   stroke-width: 2px;
 }
 
-g.conceptG:hover circle {
+#in-out-connector g.node:hover circle {
   fill: rgb(200, 238, 241);
 }
 
-g.selected circle {
-  fill: rgb(250, 232, 255);
-}
-
-g.selected:hover circle {
-  fill: rgb(250, 232, 255);
+#in-out-connector g.node.connect circle {
+  fill: #BEFFFF;
 }
 
 /*noinspection CssUnusedSymbol*/
-path.link {
+#in-out-connector path.edge {
   fill: none;
   stroke: #333;
   stroke-width: 6px;
@@ -29,20 +25,11 @@ path.link {
 }
 
 /*noinspection CssUnusedSymbol*/
-path.link:hover {
+#in-out-connector path.edge:hover {
   stroke: rgb(94, 196, 204);
 }
 
-g.connect-node circle {
-  fill: #BEFFFF;
-}
-
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
-path.link.hidden {
+#in-out-connector path.edge.hidden {
   stroke-width: 0;
-}
-
-/*noinspection CssUnusedSymbol*/
-path.link.selected {
-  stroke: rgb(229, 172, 247);
 }
