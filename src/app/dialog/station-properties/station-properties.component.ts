@@ -28,7 +28,7 @@ export class StationPropertiesComponent implements OnInit {
   private edges: any[];
   private svg: any;
   private svgG: any;
-  private mouseDownNode: any;
+  private overNode: any;
   private drag: any;
   private dragLine: any;
   private paths: any;
@@ -96,18 +96,29 @@ export class StationPropertiesComponent implements OnInit {
     this.paths = this.svgG.append('g').selectAll('g');
     this.circles = this.svgG.append('g').selectAll('g');
 
-    this.drag = this.d3.behavior.drag()
-      .origin(d => {
-        return {
-          x: d.x,
-          y: d.y
-        };
+    this.drag = this.d3.drag()
+      .on('start', d => {
+        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false)
+          .attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
       })
       .on('drag', d => {
         this.dragLine.attr('d', 'M' + d.x + ',' + d.y + 'L' +
           this.d3.mouse(this.svgG.node())[0] + ',' + this.d3.mouse(this.svgG.node())[1]);
       })
-      .on('dragend', () => {
+      .on('end', d => {
+        if (this.overNode != null && this.overNode !== d) {
+          // we're in a different node: create new edge for mousedown edge and add to graph
+          const newEdge = {
+            source: d,
+            target: this.overNode
+          };
+
+          if (this.edges.find(e => e.source === newEdge.source && e.target === newEdge.target) == null) {
+            this.edges.push(newEdge);
+            this.updateGraph();
+          }
+        }
+
         this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
       });
     svg.on('mouseup', () => {
@@ -158,40 +169,14 @@ export class StationPropertiesComponent implements OnInit {
         return 'translate(' + d.x + ',' + d.y + ')';
       })
       .on('mouseover', function (d) {
+        self.overNode = d;
         self.d3.select(this).classed(StationPropertiesComponent.CONNECT, true);
       })
-      .on('mouseout', function (d) {
+      .on('mouseout', function () {
+        self.overNode = null;
         self.d3.select(this).classed(StationPropertiesComponent.CONNECT, false);
       })
-      .on('mousedown', d => {
-        this.mouseDownNode = d;
-        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false)
-          .attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
-      })
-      .on('mouseup', function (d) {
-        self.d3.select(this).classed(StationPropertiesComponent.CONNECT, false);
-
-        if (self.mouseDownNode != null && self.mouseDownNode !== d) {
-          // we're in a different node: create new edge for mousedown edge and add to graph
-          const newEdge = {
-            source: self.mouseDownNode,
-            target: d
-          };
-          const filtRes = self.paths.filter(dd => {
-            if (dd.source === newEdge.target && dd.target === newEdge.source) {
-              self.edges.splice(self.edges.indexOf(dd), 1);
-            }
-            return dd.source === newEdge.source && dd.target === newEdge.target;
-          });
-          if (!filtRes[0].length) {
-            self.edges.push(newEdge);
-            self.updateGraph();
-          }
-        }
-
-        self.mouseDownNode = null;
-      })
-      .call(self.drag);
+      .call(this.drag);
 
     newGs.append('circle').attr('r', '50');
 
