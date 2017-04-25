@@ -35,20 +35,13 @@ export class StationPropertiesComponent implements OnInit {
     // define graphcreator object
     const GraphCreator = function (svg, nodes, edges) {
       const thisGraph = this;
-      thisGraph.idct = 0;
 
       thisGraph.nodes = nodes || [];
       thisGraph.edges = edges || [];
 
       thisGraph.state = {
-        selectedNode: null,
-        selectedEdge: null,
         mouseDownNode: null,
-        mouseDownLink: null,
-        justDragged: false,
-        justScaleTransGraph: false,
-        lastKeyDown: -1,
-        selectedText: null
+        mouseDownLink: null
       };
 
       // define arrow markers for graph links
@@ -90,18 +83,17 @@ export class StationPropertiesComponent implements OnInit {
       thisGraph.circles = svgG.append('g').selectAll('g');
 
       thisGraph.drag = d3.behavior.drag()
-        .origin(function (d) {
+        .origin(d => {
           return {
             x: d.x,
             y: d.y
           };
         })
-        .on('drag', function (args) {
-          thisGraph.state.justDragged = true;
+        .on('drag', args => {
           thisGraph.dragmove.call(thisGraph, args);
         })
         .on('dragend', function () {
-          // todo check if edge-mode is selected
+          thisGraph.dragLine.classed('hidden', true);
         });
       svg.on('mousedown', function (d) {
         thisGraph.svgMouseDown.call(thisGraph, d);
@@ -111,19 +103,11 @@ export class StationPropertiesComponent implements OnInit {
       });
     };
 
-    GraphCreator.prototype.setIdCt = function (idct) {
-      this.idct = idct;
-    };
-
     GraphCreator.prototype.consts = {
-      selectedClass: 'selected',
       connectClass: 'connect-node',
       circleGClass: 'conceptG',
       graphClass: 'graph',
       activeEditId: 'active-editing',
-      BACKSPACE_KEY: 8,
-      DELETE_KEY: 46,
-      ENTER_KEY: 13,
       nodeRadius: 50
     };
 
@@ -163,56 +147,11 @@ export class StationPropertiesComponent implements OnInit {
       });
     };
 
-    GraphCreator.prototype.replaceSelectEdge = function (d3Path, edgeData) {
-      const thisGraph = this;
-      d3Path.classed(thisGraph.consts.selectedClass, true);
-      if (thisGraph.state.selectedEdge) {
-        thisGraph.removeSelectFromEdge();
-      }
-      thisGraph.state.selectedEdge = edgeData;
-    };
-
-    GraphCreator.prototype.replaceSelectNode = function (d3Node, nodeData) {
-      const thisGraph = this;
-      d3Node.classed(this.consts.selectedClass, true);
-      if (thisGraph.state.selectedNode) {
-        thisGraph.removeSelectFromNode();
-      }
-      thisGraph.state.selectedNode = nodeData;
-    };
-
-    GraphCreator.prototype.removeSelectFromNode = function () {
-      const thisGraph = this;
-      thisGraph.circles.filter(function (cd) {
-        return cd.id === thisGraph.state.selectedNode.id;
-      }).classed(thisGraph.consts.selectedClass, false);
-      thisGraph.state.selectedNode = null;
-    };
-
-    GraphCreator.prototype.removeSelectFromEdge = function () {
-      const thisGraph = this;
-      thisGraph.paths.filter(function (cd) {
-        return cd === thisGraph.state.selectedEdge;
-      }).classed(thisGraph.consts.selectedClass, false);
-      thisGraph.state.selectedEdge = null;
-    };
-
     GraphCreator.prototype.pathMouseDown = function (d3path, d) {
       const thisGraph = this,
         state = thisGraph.state;
       d3.event.stopPropagation();
       state.mouseDownLink = d;
-
-      if (state.selectedNode) {
-        thisGraph.removeSelectFromNode();
-      }
-
-      const prevEdge = state.selectedEdge;
-      if (!prevEdge || prevEdge !== d) {
-        thisGraph.replaceSelectEdge(d3path, d);
-      } else {
-        thisGraph.removeSelectFromEdge();
-      }
     };
 
     // mousedown on node
@@ -241,8 +180,6 @@ export class StationPropertiesComponent implements OnInit {
         return;
       }
 
-      thisGraph.dragLine.classed('hidden', true);
-
       if (mouseDownNode !== d) {
         // we're in a different node: create new edge for mousedown edge and add to graph
         const newEdge = {
@@ -259,8 +196,6 @@ export class StationPropertiesComponent implements OnInit {
           thisGraph.edges.push(newEdge);
           thisGraph.updateGraph();
         }
-      } else {
-        state.justDragged = false;
       }
       state.mouseDownNode = null;
       return;
@@ -293,9 +228,6 @@ export class StationPropertiesComponent implements OnInit {
       const paths = thisGraph.paths;
       // update existing paths
       paths.style('marker-end', 'url(#end-arrow)')
-        .classed(consts.selectedClass, function (d) {
-          return d === state.selectedEdge;
-        })
         .attr('d', function (d) {
           return 'M' + d.source.x + ',' + d.source.y + 'L' + d.target.x + ',' + d.target.y;
         });
@@ -360,30 +292,22 @@ export class StationPropertiesComponent implements OnInit {
     };
 
     /**** MAIN ****/
-
-      // initial node data
     const nodes = [{
-        title: 'in1',
-        id: 0,
-        x: 100,
-        y: 100
-      }, {
-        title: 'out1',
-        id: 1,
-        x: 300,
-        y: 100
-      }];
+      title: 'in1',
+      id: 0,
+      x: 100,
+      y: 100
+    }, {
+      title: 'out1',
+      id: 1,
+      x: 300,
+      y: 100
+    }];
     const edges = [];
-
-
-    /** MAIN SVG **/
     const svg = d3.select('#in-out-connector').append('svg')
       .attr('width', 400)
       .attr('height', 400);
     const graph = new GraphCreator(svg, nodes, edges);
-    graph.setIdCt(2);
     graph.updateGraph();
   }
-
-
 }
