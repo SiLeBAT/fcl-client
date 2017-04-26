@@ -1,7 +1,3 @@
-#in-out-connector marker {
-  fill: #333;
-}
-
 #in-out-connector g.node circle {
   fill: #F6FBFF;
   stroke: #333;
@@ -16,20 +12,32 @@
   fill: #BEFFFF;
 }
 
-/*noinspection CssUnusedSymbol*/
+/*noinspection CssUnusedSymbol,CssUnknownTarget*/
 #in-out-connector path.edge {
   fill: none;
   stroke: #333;
   stroke-width: 6px;
   cursor: default;
+  marker-end: url(#end-arrow);
 }
 
-/*noinspection CssUnusedSymbol*/
+/*noinspection CssUnusedSymbol,CssUnknownTarget*/
 #in-out-connector path.edge:hover {
   stroke: rgb(94, 196, 204);
+  marker-end: url(#end-arrow-hover);
 }
 
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 #in-out-connector path.edge.hidden {
   stroke-width: 0;
+}
+
+/*noinspection CssUnusedSymbol*/
+#in-out-connector #end-arrow {
+  fill: #333;
+}
+
+/*noinspection CssUnusedSymbol*/
+#in-out-connector #end-arrow-hover {
+  fill: rgb(94, 196, 204);
 }
