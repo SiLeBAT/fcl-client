@@ -57,11 +57,12 @@ export class StationPropertiesComponent implements OnInit {
       y: 100
     }];
     this.edges = [];
+
     const svg = this.d3.select('#in-out-connector').append('svg')
       .attr('width', 400)
       .attr('height', 400);
-
     const defs = svg.append('svg:defs');
+
     defs.append('svg:marker')
       .attr('id', 'end-arrow')
       .attr('viewBox', '0 -5 10 10')
@@ -97,14 +98,10 @@ export class StationPropertiesComponent implements OnInit {
     this.circles = this.svgG.append('g').selectAll('g');
 
     this.drag = this.d3.drag()
-      .on('start', d => {
-        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false)
-          .attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
-      })
-      .on('drag', d => {
-        this.dragLine.attr('d', 'M' + d.x + ',' + d.y + 'L' +
-          this.d3.mouse(this.svgG.node())[0] + ',' + this.d3.mouse(this.svgG.node())[1]);
-      })
+      .on('start', d => this.dragLine.classed(StationPropertiesComponent.HIDDEN, false)
+        .attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y))
+      .on('drag', d => this.dragLine
+        .attr('d', 'M' + d.x + ',' + d.y + 'L' + this.d3.mouse(this.svgG.node())[0] + ',' + this.d3.mouse(this.svgG.node())[1]))
       .on('end', d => {
         if (this.overNode != null && this.overNode !== d) {
           // we're in a different node: create new edge for mousedown edge and add to graph
@@ -121,53 +118,39 @@ export class StationPropertiesComponent implements OnInit {
 
         this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
       });
-    svg.on('mouseup', () => {
-      this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
-    });
+
+    svg.on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
 
     this.updateGraph();
   }
 
   private updateGraph() {
-    this.paths = this.paths.data(this.edges, d => {
-      return String(d.source.id) + '+' + String(d.target.id);
-    });
-    const paths = this.paths;
+    this.paths = this.paths.data(this.edges, d => String(d.source.id) + '+' + String(d.target.id));
+
     // update existing paths
-    paths.style('marker-end', 'url(#end-arrow)')
-      .attr('d', d => {
-        return 'M' + d.source.x + ',' + d.source.y + 'L' + d.target.x + ',' + d.target.y;
-      });
+    this.paths.style('marker-end', 'url(#end-arrow)')
+      .attr('d', d => 'M' + d.source.x + ',' + d.source.y + 'L' + d.target.x + ',' + d.target.y);
 
     // add new paths
-    paths.enter()
+    this.paths.enter()
       .append('path')
       .style('marker-end', 'url(#end-arrow)')
       .classed(StationPropertiesComponent.EDGE, true)
-      .attr('d', d => {
-        return 'M' + d.source.x + ',' + d.source.y + 'L' + d.target.x + ',' + d.target.y;
-      });
+      .attr('d', d => 'M' + d.source.x + ',' + d.source.y + 'L' + d.target.x + ',' + d.target.y);
 
     // remove old links
-    paths.exit().remove();
+    this.paths.exit().remove();
 
     // update existing nodes
-    this.circles = this.circles.data(this.nodes, d => {
-      return d.id;
-    });
-    this.circles.attr('transform', d => {
-      return 'translate(' + d.x + ',' + d.y + ')';
-    });
+    this.circles = this.circles.data(this.nodes, d => d.id);
+    this.circles.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
     // add new nodes
-    const newGs = this.circles.enter()
-      .append('g');
+    const newGs = this.circles.enter().append('g');
     const self = this;
 
     newGs.classed(StationPropertiesComponent.NODE, true)
-      .attr('transform', d => {
-        return 'translate(' + d.x + ',' + d.y + ')';
-      })
+      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
       .on('mouseover', function (d) {
         self.overNode = d;
         self.d3.select(this).classed(StationPropertiesComponent.CONNECT, true);
@@ -182,12 +165,11 @@ export class StationPropertiesComponent implements OnInit {
 
     newGs.each(function (d) {
       const words = d.title.split(/\s+/g), nwords = words.length;
-      const el = self.d3.select(this).append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', '-' + (nwords - 1) * 7.5);
+      const el = self.d3.select(this).append('text').attr('text-anchor', 'middle').attr('dy', '-' + (nwords - 1) * 7.5);
 
       for (let i = 0; i < words.length; i++) {
         const tspan = el.append('tspan').text(words[i]);
+
         if (i > 0) {
           tspan.attr('x', 0).attr('dy', '15');
         }
