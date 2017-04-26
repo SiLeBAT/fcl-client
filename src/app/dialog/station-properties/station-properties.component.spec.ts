@@ -2,14 +2,20 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MdDialogModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
 
 import {StationPropertiesComponent, StationPropertiesData} from './station-properties.component';
+import {D3Service} from 'd3-ng2-service';
 
-describe('DeliveryPropertiesComponent', () => {
+describe('StationPropertiesComponent', () => {
   let component: StationPropertiesComponent;
   let fixture: ComponentFixture<StationPropertiesComponent>;
 
   beforeEach(async(() => {
     const data: StationPropertiesData = {
-      station: {data: {id: 1, name: 'Test'}}
+      station: {
+        id: null, name: null, incoming: null, outgoing: null, invisible: null, contained: null, contains: null, selected: null,
+        observed: null, forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null,
+        positionRelativeTo: null, properties: []
+      },
+      connectedDeliveries: []
     };
 
     TestBed.configureTestingModule({
@@ -17,7 +23,8 @@ describe('DeliveryPropertiesComponent', () => {
       declarations: [StationPropertiesComponent],
       providers: [
         {provide: MdDialogRef, useValue: {}},
-        {provide: MD_DIALOG_DATA, useValue: data}
+        {provide: MD_DIALOG_DATA, useValue: data},
+        D3Service
       ]
     }).compileComponents().then();
   }));

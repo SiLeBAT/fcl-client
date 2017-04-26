@@ -1,5 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
+import {D3Service, D3, DragBehavior, SubjectPosition} from 'd3-ng2-service';
+
 import {DeliveryData, StationData} from '../../util/datatypes';
 import {DataService} from '../../util/data.service';
 import {UtilService} from '../../util/util.service';
@@ -7,6 +9,18 @@ import {UtilService} from '../../util/util.service';
 export interface StationPropertiesData {
   station: StationData;
   connectedDeliveries: DeliveryData[];
+}
+
+interface NodeDatum {
+  id: string;
+  title: string;
+  x: number;
+  y: number;
+}
+
+interface EdgeDatum {
+  source: NodeDatum;
+  target: NodeDatum;
 }
 
 @Component({
@@ -23,36 +37,36 @@ export class StationPropertiesComponent implements OnInit {
 
   properties: { name: string, value: string }[];
 
-  private d3: any;
-  private nodes: any[];
-  private edges: any[];
+  private d3: D3;
+  private nodes: NodeDatum[];
+  private edges: EdgeDatum[];
   private svg: any;
   private svgG: any;
-  private overNode: any;
-  private drag: any;
+  private overNode: NodeDatum;
+  private drag: DragBehavior<Element, NodeDatum, NodeDatum | SubjectPosition>;
   private dragLine: any;
   private paths: any;
   private circles: any;
 
-  constructor(@Inject(MD_DIALOG_DATA) public data: StationPropertiesData) {
+  constructor(@Inject(MD_DIALOG_DATA) public data: StationPropertiesData, d3Service: D3Service) {
     this.properties = Object.keys(data.station).filter(key => DataService.PROPERTIES.has(key)).map(key => {
       return {
         name: DataService.PROPERTIES.get(key).name,
         value: UtilService.stringify(data.station[key])
       };
     }).concat(data.station.properties);
+    this.d3 = d3Service.getD3();
   }
 
   ngOnInit() {
-    this.d3 = window['d3'];
     this.nodes = [{
+      id: '0',
       title: 'in1',
-      id: 0,
       x: 100,
       y: 100
     }, {
+      id: '1',
       title: 'out1',
-      id: 1,
       x: 300,
       y: 100
     }];
@@ -97,7 +111,7 @@ export class StationPropertiesComponent implements OnInit {
     this.paths = this.svgG.append('g').selectAll('g');
     this.circles = this.svgG.append('g').selectAll('g');
 
-    this.drag = this.d3.drag()
+    this.drag = this.d3.drag<Element, NodeDatum>()
       .on('start', d => this.dragLine.classed(StationPropertiesComponent.HIDDEN, false)
         .attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y))
       .on('drag', d => this.dragLine
@@ -105,7 +119,7 @@ export class StationPropertiesComponent implements OnInit {
       .on('end', d => {
         if (this.overNode != null && this.overNode !== d) {
           // we're in a different node: create new edge for mousedown edge and add to graph
-          const newEdge = {
+          const newEdge: EdgeDatum = {
             source: d,
             target: this.overNode
           };
