@@ -30,7 +30,7 @@ interface EdgeDatum {
 export class StationPropertiesComponent implements OnInit {
 
   private static NODE = 'node';
-  private static CONNECT = 'connect';
+  private static HOVER = 'hover';
 
   private static EDGE = 'edge';
   private static HIDDEN = 'hidden';
@@ -41,10 +41,9 @@ export class StationPropertiesComponent implements OnInit {
 
   private nodeData: NodeDatum[];
   private edgeData: EdgeDatum[];
-  private overNode: NodeDatum;
 
+  private g: any;
   private defs: any;
-  private nodes: any;
   private edges: any;
   private dragLine: any;
 
@@ -73,87 +72,20 @@ export class StationPropertiesComponent implements OnInit {
     this.edgeData = [];
 
     const svg = this.d3.select('#in-out-connector').append('svg')
-      .attr('width', 400)
-      .attr('height', 400);
+      .attr('width', 400).attr('height', 400)
+      .on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
 
     this.defs = svg.append('svg:defs');
     this.appendArrowToDefs('end-arrow');
     this.appendArrowToDefs('end-arrow-hover');
 
-    const svgG = svg.append('g');
-
-    this.dragLine = svgG.append('svg:path')
+    this.g = svg.append('g');
+    this.dragLine = this.g.append('svg:path')
       .attr('class', StationPropertiesComponent.EDGE + ' ' + StationPropertiesComponent.HIDDEN);
-    this.edges = svgG.append('g').selectAll('g');
-    this.nodes = svgG.append('g').selectAll('g');
+    this.edges = this.g.append('g').selectAll('g');
 
-    svg.on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
-
-    this.updateGraph();
-  }
-
-  private updateGraph() {
-    this.edges = this.edges.data(this.edgeData, d => String(d.source.id) + '+' + String(d.target.id));
-
-    // update existing paths
-    this.edges.attr('d', d => 'M' + d.source.x + ',' + d.source.y + 'L' + (d.target.x - 50) + ',' + d.target.y);
-
-    // add new paths
-    this.edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true)
-      .attr('d', d => 'M' + d.source.x + ',' + d.source.y + 'L' + (d.target.x - 50) + ',' + d.target.y);
-
-    // remove old links
-    this.edges.exit().remove();
-
-    // update existing nodes
-    this.nodes = this.nodes.data(this.nodeData, d => d.id);
-    this.nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-
-    // add new nodes
-    const newGs = this.nodes.enter().append('g');
-
-    newGs.classed(StationPropertiesComponent.NODE, true)
-      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')').append('circle').attr('r', '50');
-
-    newGs.call(this.d3.drag<Element, NodeDatum>()
-      .on('start', d => {
-        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false).attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
-      })
-      .on('drag', d => {
-        const mousePos = this.d3.mouse(document.getElementById('in-out-connector'));
-
-        this.dragLine.attr('d', 'M' + d.x + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
-      })
-      .on('end', d => {
-        if (this.overNode != null && this.overNode !== d) {
-          const newEdge: EdgeDatum = {
-            source: d,
-            target: this.overNode
-          };
-
-          if (this.edgeData.find(e => e.source === newEdge.source && e.target === newEdge.target) == null) {
-            this.edgeData.push(newEdge);
-            this.updateGraph();
-          }
-        }
-
-        this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
-      }));
-
-    newGs.each((d, i) => {
-      const node = this.d3.select(newGs.nodes()[i]);
-
-      node.append('text').attr('text-anchor', 'middle').append('tspan').text(d.title);
-      node.on('mouseover', () => {
-        this.overNode = d;
-        node.classed(StationPropertiesComponent.CONNECT, true);
-      }).on('mouseout', () => {
-        this.overNode = null;
-        node.classed(StationPropertiesComponent.CONNECT, false);
-      });
-    });
-
-    this.nodes.exit().remove();
+    this.addNodes();
+    this.updateEdges();
   }
 
   private appendArrowToDefs(id: string) {
@@ -166,5 +98,63 @@ export class StationPropertiesComponent implements OnInit {
       .attr('orient', 'auto')
       .append('svg:path')
       .attr('d', 'M0,-5L10,0L0,5');
+  }
+
+  private addNodes() {
+    let hoverD;
+    const nodes = this.g.append('g').selectAll('g').data(this.nodeData, d => d.id).enter().append('g');
+
+    nodes.classed(StationPropertiesComponent.NODE, true)
+      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')').append('circle').attr('r', '50');
+
+    nodes.call(this.d3.drag<Element, NodeDatum>()
+      .on('start', d => {
+        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false);
+      })
+      .on('drag', d => {
+        const mousePos = this.d3.mouse(document.getElementById('in-out-connector'));
+
+        this.dragLine.attr('d', 'M' + (d.x + 50) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
+      })
+      .on('end', d => {
+        if (hoverD != null && hoverD !== d) {
+          const newEdge: EdgeDatum = {
+            source: d,
+            target: hoverD
+          };
+
+          if (this.edgeData.find(e => e.source === newEdge.source && e.target === newEdge.target) == null) {
+            this.edgeData.push(newEdge);
+            this.updateEdges();
+          }
+        }
+
+        this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
+      }));
+
+    nodes.each((d, i) => {
+      const node = this.d3.select(nodes.nodes()[i]);
+
+      node.append('text').attr('text-anchor', 'middle').append('tspan').text(d.title);
+      node.on('mouseover', () => {
+        hoverD = d;
+        node.classed(StationPropertiesComponent.HOVER, true);
+      }).on('mouseout', () => {
+        hoverD = null;
+        node.classed(StationPropertiesComponent.HOVER, false);
+      });
+    });
+  }
+
+  private updateEdges() {
+    this.edges.enter().remove();
+    this.edges = this.edges.data(this.edgeData, d => String(d.source.id) + '+' + String(d.target.id));
+    this.edges.attr('d', d => 'M' + (d.source.x + 50) + ',' + d.source.y + 'L' + (d.target.x - 50) + ',' + d.target.y);
+    this.edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true)
+      .attr('d', d => 'M' + d.source.x + ',' + d.source.y + 'L' + (d.target.x - 50) + ',' + d.target.y)
+      .on('click', d => {
+        this.edgeData.splice(this.edgeData.indexOf(d), 1);
+        this.updateEdges();
+      });
   }
 }

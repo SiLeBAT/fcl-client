@@ -4,11 +4,7 @@
   stroke-width: 2px;
 }
 
-#in-out-connector g.node:hover circle {
-  fill: rgb(200, 238, 241);
-}
-
-#in-out-connector g.node.connect circle {
+#in-out-connector g.node.hover circle {
   fill: #BEFFFF;
 }
 
