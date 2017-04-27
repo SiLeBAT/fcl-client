@@ -55,12 +55,13 @@ export class StationPropertiesComponent implements OnInit {
 
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
               d3Service: D3Service) {
-    this.properties = Object.keys(data.station).filter(key => DataService.PROPERTIES.has(key)).map(key => {
-      return {
-        name: DataService.PROPERTIES.get(key).name,
-        value: UtilService.stringify(data.station[key])
-      };
-    }).concat(data.station.properties);
+    this.properties = Object.keys(data.station).filter(key => DataService.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
+      .map(key => {
+        return {
+          name: DataService.PROPERTIES.get(key).name,
+          value: UtilService.stringify(data.station[key])
+        };
+      }).concat(data.station.properties);
     this.d3 = d3Service.getD3();
 
     if (data.station.incoming.length > 0 && data.station.outgoing.length > 0) {
