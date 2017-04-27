@@ -155,16 +155,20 @@ export class AppComponent implements OnInit {
   changeColumns() {
     const options: { value: string, viewValue: string, selected: boolean }[] = [];
 
-    for (const column of DataService.TABLE_COLUMNS.get(this.tableSettings.mode)) {
+    for (const column of UtilService.getTableProperties(this.tableSettings.mode, this.elements)) {
       let selected;
 
       if (this.tableSettings.mode === TableMode.STATIONS) {
         selected = this.tableSettings.stationColumns.includes(column);
-      } else if (this.tableSettings.mode === TableMode.STATIONS) {
+      } else if (this.tableSettings.mode === TableMode.DELIVERIES) {
         selected = this.tableSettings.deliveryColumns.includes(column);
       }
 
-      options.push({value: column, viewValue: DataService.PROPERTIES.get(column).name, selected: selected});
+      options.push({
+        value: column,
+        viewValue: DataService.PROPERTIES.has(column) ? DataService.PROPERTIES.get(column).name : column,
+        selected: selected
+      });
     }
 
     const dialogData: DialogSelectData = {

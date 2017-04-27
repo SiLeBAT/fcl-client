@@ -124,22 +124,22 @@ export class TableComponent implements OnInit {
       draggable: false,
       cellTemplate: this.selectTmpl
     };
-    let columns: any[] = DataService.TABLE_COLUMNS.get(this.mode).map(prop => {
+    let columns: string[];
+
+    if (this.mode === TableMode.STATIONS) {
+      columns = this.stationColumns;
+    } else if (this.mode === TableMode.DELIVERIES) {
+      columns = this.deliveryColumns;
+    }
+
+    this.columns = this.getUpdatedColumns([selectColumn].concat(columns.map(prop => {
       return {
-        name: DataService.PROPERTIES.get(prop).name,
+        name: DataService.PROPERTIES.has(prop) ? DataService.PROPERTIES.get(prop).name : prop,
         prop: prop,
         resizeable: false,
         draggable: false,
       };
-    });
-
-    if (this.mode === TableMode.STATIONS) {
-      columns = columns.filter(c => this.stationColumns.includes(c.prop));
-    } else if (this.mode === TableMode.DELIVERIES) {
-      columns = columns.filter(c => this.deliveryColumns.includes(c.prop));
-    }
-
-    this.columns = this.getUpdatedColumns([selectColumn].concat(columns));
+    })));
 
     if (this.data != null) {
       let elements: (StationData | DeliveryData)[] = [];
@@ -156,7 +156,15 @@ export class TableComponent implements OnInit {
         elements = elements.filter(e => e.forward || e.backward || e.observed !== ObservedType.NONE);
       }
 
-      this.rows = elements.map(e => JSON.parse(JSON.stringify(e)));
+      this.rows = elements.map(e => {
+        const copy = JSON.parse(JSON.stringify(e));
+
+        for (const prop of e.properties) {
+          copy[prop.name] = prop.value;
+        }
+
+        return copy;
+      });
     }
 
     this.table.recalculate();

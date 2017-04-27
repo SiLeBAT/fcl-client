@@ -1,10 +1,59 @@
 import {Injectable} from '@angular/core';
-import {CyPosition} from './datatypes';
+import {CyPosition, DeliveryData, FclElements, StationData, TableMode} from './datatypes';
 import {MdDialog} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
+import {DataService} from './data.service';
 
 @Injectable()
 export class UtilService {
+
+  private static STATION_DATA: StationData = {
+    id: null, name: null, incoming: null, outgoing: null, invisible: null, contained: null, contains: null, selected: null, observed: null,
+    forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null, positionRelativeTo: null, properties: null
+  };
+
+  private static DELIVERY_DATA: DeliveryData = {
+    id: null, source: null, target: null, originalSource: null, originalTarget: null, incoming: null, outgoing: null, invisible: null,
+    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
+  };
+
+  static getStationProperties(): string[] {
+    return Object.keys(UtilService.STATION_DATA);
+  }
+
+  static getDeliveryProperties(): string[] {
+    return Object.keys(UtilService.DELIVERY_DATA);
+  }
+
+  static getTableProperties(mode: TableMode, data: FclElements): string[] {
+    let properties: string[];
+
+    if (mode === TableMode.STATIONS) {
+      const additionalProps: Set<string> = new Set();
+
+      for (const station of data.stations) {
+        for (const p of station.properties) {
+          additionalProps.add(p.name);
+        }
+      }
+
+      properties = UtilService.getStationProperties().filter(prop => DataService.PROPERTIES.has(prop))
+        .concat(Array.from(additionalProps));
+    } else if (mode === TableMode.DELIVERIES) {
+      const additionalProps: Set<string> = new Set();
+
+      for (const delivery of data.deliveries) {
+        for (const p of delivery.properties) {
+          additionalProps.add(p.name);
+        }
+      }
+
+      properties = UtilService.getDeliveryProperties().filter(prop => DataService.PROPERTIES.has(prop))
+        .concat(Array.from(additionalProps));
+    }
+
+    return properties;
+  }
 
   static openSaveDialog(url: string, fileName: string) {
     const a = document.createElement('a');

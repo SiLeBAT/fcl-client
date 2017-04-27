@@ -6,19 +6,10 @@ import {
 } from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
+import {UtilService} from './util.service';
 
 @Injectable()
 export class DataService {
-
-  private static STATION_DATA: StationData = {
-    id: null, name: null, incoming: null, outgoing: null, invisible: null, contained: null, contains: null, selected: null, observed: null,
-    forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null, positionRelativeTo: null, properties: null
-  };
-
-  private static DELIVERY_DATA: DeliveryData = {
-    id: null, source: null, target: null, originalSource: null, originalTarget: null, incoming: null, outgoing: null, invisible: null,
-    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
-  };
 
   static TABLE_MODES = [TableMode.STATIONS, TableMode.DELIVERIES];
   static SHOW_TYPES = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
@@ -42,11 +33,6 @@ export class DataService {
     ['score', {name: 'Score', color: null}]
   ]);
 
-  static TABLE_COLUMNS: Map<TableMode, string[]> = new Map([
-    [TableMode.STATIONS, ['id', 'name', 'score']],
-    [TableMode.DELIVERIES, ['id', 'source', 'target', 'score']]
-  ]);
-
   static DEFAULT_GRAPH_SETTINGS: GraphSettings = {
     nodeSize: Size.MEDIUM,
     fontSize: Size.MEDIUM,
@@ -57,8 +43,8 @@ export class DataService {
   static DEFAULT_TABLE_SETTINGS: TableSettings = {
     mode: TableMode.STATIONS,
     width: 0.25,
-    stationColumns: DataService.TABLE_COLUMNS.get(TableMode.STATIONS),
-    deliveryColumns: DataService.TABLE_COLUMNS.get(TableMode.DELIVERIES),
+    stationColumns: ['id', 'name', 'score'],
+    deliveryColumns: ['id', 'source', 'target', 'score'],
     showType: ShowType.ALL
   };
 
@@ -166,7 +152,7 @@ export class DataService {
 
   private static createStations(elements: any[]): StationData[] {
     const stations: StationData[] = [];
-    const defaultKeys: Set<string> = new Set(Object.keys(DataService.STATION_DATA));
+    const defaultKeys: Set<string> = new Set(UtilService.getStationProperties());
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
@@ -203,7 +189,7 @@ export class DataService {
 
   private static createDeliveries(elements: any[]): DeliveryData[] {
     const deliveries: DeliveryData[] = [];
-    const defaultKeys: Set<string> = new Set(Object.keys(DataService.DELIVERY_DATA));
+    const defaultKeys: Set<string> = new Set(UtilService.getDeliveryProperties());
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
