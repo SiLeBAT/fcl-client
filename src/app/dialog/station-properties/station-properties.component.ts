@@ -38,13 +38,17 @@ export class StationPropertiesComponent implements OnInit {
   private static EDGE = 'edge';
   private static HIDDEN = 'hidden';
 
+  private static SVG_WIDTH = 400;
+  private static NODE_PADDING = 15;
+  private static NODE_WIDTH = 100;
+  private static NODE_HEIGHT = 30;
+
   properties: { name: string, value: string }[];
 
   private d3: D3;
 
   private nodeData: NodeDatum[];
   private edgeData: EdgeDatum[];
-  private width: number;
   private height: number;
 
   private g: Selection<SVGElement, any, any, any>;
@@ -66,8 +70,8 @@ export class StationPropertiesComponent implements OnInit {
 
     if (data.station.incoming.length > 0 && data.station.outgoing.length > 0) {
       const nodeMap: Map<string, NodeDatum> = new Map();
-      let yIn = 100;
-      let yOut = 100;
+      let yIn = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
+      let yOut = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
 
       for (const id of data.station.incoming) {
         const delivery = data.connectedDeliveries.find(d => d.id === id);
@@ -76,10 +80,10 @@ export class StationPropertiesComponent implements OnInit {
           id: id,
           type: NodeType.IN,
           title: delivery.id,
-          x: 100,
+          x: StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_WIDTH / 2,
           y: yIn
         });
-        yIn += 100;
+        yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
       this.edgeData = [];
@@ -91,10 +95,10 @@ export class StationPropertiesComponent implements OnInit {
           id: id,
           type: NodeType.OUT,
           title: delivery.id,
-          x: 300,
+          x: StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_PADDING - StationPropertiesComponent.NODE_WIDTH / 2,
           y: yOut
         });
-        yOut += 100;
+        yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
 
         for (const prevId of delivery.incoming) {
           this.edgeData.push({
@@ -105,8 +109,7 @@ export class StationPropertiesComponent implements OnInit {
       }
 
       this.nodeData = Array.from(nodeMap.values());
-      this.width = 400;
-      this.height = Math.max(yIn, yOut);
+      this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_HEIGHT / 2;
     }
   }
 
@@ -140,10 +143,10 @@ export class StationPropertiesComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.width != null && this.height != null) {
+    if (this.height != null) {
       const svg: Selection<SVGElement, any, any, any> = this.d3
         .select('#in-out-connector').append<SVGElement>('svg')
-        .attr('width', this.width).attr('height', this.height)
+        .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
         .on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
 
       this.defs = svg.append<SVGElement>('defs');
@@ -183,12 +186,14 @@ export class StationPropertiesComponent implements OnInit {
     const nodes = this.nodesG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeData, d => d.id).enter().append<SVGElement>('g');
 
     nodes.classed(StationPropertiesComponent.NODE, true)
-      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')').append('circle').attr('r', '50');
+      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')').append('rect')
+      .attr('x', -StationPropertiesComponent.NODE_WIDTH / 2).attr('y', -StationPropertiesComponent.NODE_HEIGHT / 2)
+      .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
 
     nodes.each((d, i) => {
       const node = this.d3.select<SVGElement, NodeDatum>(nodes.nodes()[i]);
 
-      node.append('text').attr('text-anchor', 'middle').append('tspan').text(d.title);
+      node.append('text').attr('text-anchor', 'middle').attr('dy', 5).append('tspan').text(d.title);
 
       node.on('mouseover', () => {
         hoverD = d;
