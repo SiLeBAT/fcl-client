@@ -239,6 +239,11 @@ export class TracingService {
     delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
   }
 
+  update() {
+    this.updateTrace();
+    this.updateScores();
+  }
+
   private updateScores() {
     let nOutbreaks = 0;
 

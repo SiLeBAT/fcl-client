@@ -537,7 +537,12 @@ export class GraphComponent implements OnInit {
             connectedDeliveries: connected
           };
 
-          this.dialogService.open(StationPropertiesComponent, {data: dialogData});
+          this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(updated => {
+            if (updated) {
+              this.tracingService.update();
+              this.updateProperties();
+            }
+          });
         }
       }, {
         name: 'Show Forward Trace',

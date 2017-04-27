@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MD_DIALOG_DATA} from '@angular/material';
+import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 import {D3Service, D3, Selection} from 'd3-ng2-service';
 
 import {DeliveryData, StationData} from '../../util/datatypes';
@@ -53,7 +53,8 @@ export class StationPropertiesComponent implements OnInit {
   private edgesG: Selection<SVGElement, any, any, any>;
   private dragLine: Selection<SVGElement, any, any, any>;
 
-  constructor(@Inject(MD_DIALOG_DATA) public data: StationPropertiesData, d3Service: D3Service) {
+  constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
+              d3Service: D3Service) {
     this.properties = Object.keys(data.station).filter(key => DataService.PROPERTIES.has(key)).map(key => {
       return {
         name: DataService.PROPERTIES.get(key).name,
@@ -104,8 +105,37 @@ export class StationPropertiesComponent implements OnInit {
 
       this.nodeData = Array.from(nodeMap.values());
       this.width = 400;
-      this.height = Math.max(yIn, yOut) + 100;
+      this.height = Math.max(yIn, yOut);
     }
+  }
+
+  //noinspection JSUnusedGlobalSymbols
+  close() {
+    for (const id of this.data.station.incoming) {
+      const delivery = this.data.connectedDeliveries.find(d => d.id === id);
+
+      delivery.outgoing = [];
+
+      for (const edge of this.edgeData) {
+        if (edge.source.id === id) {
+          delivery.outgoing.push(edge.target.id);
+        }
+      }
+    }
+
+    for (const id of this.data.station.outgoing) {
+      const delivery = this.data.connectedDeliveries.find(d => d.id === id);
+
+      delivery.incoming = [];
+
+      for (const edge of this.edgeData) {
+        if (edge.target.id === id) {
+          delivery.incoming.push(edge.source.id);
+        }
+      }
+    }
+
+    this.dialogRef.close(true);
   }
 
   ngOnInit() {
