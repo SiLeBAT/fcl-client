@@ -1,0 +1,7 @@
+td {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+td:first-child {
+  padding-right: 20px;
+}

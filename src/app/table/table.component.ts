@@ -184,6 +184,7 @@ export class TableComponent implements OnInit {
         for (const prop of e.properties) {
           if (columnsSet.has(prop.name)) {
             copy[prop.name] = prop.value;
+            stringContent += prop.value.trim().toLowerCase() + ' ';
           }
         }
 

@@ -1,0 +1,618 @@
+{
+  "title": "bhs",
+  "investigator": "rdt",
+  "stations": [
+    {
+      "city": "Oberstdorf",
+      "country": "DE",
+      "housenumber": "46",
+      "id": "S1",
+      "name": "Heckmair Andreas",
+      "street": "Nebelhornstrasse",
+      "zip": "87561"
+    },
+    {
+      "city": "Fischen",
+      "country": "DE",
+      "housenumber": "5",
+      "id": "S3",
+      "name": "Voggel Anton",
+      "street": "Weiler Strasse",
+      "zip": "87527"
+    },
+    {
+      "city": "SONTHOFEN",
+      "country": "DE",
+      "housenumber": "2",
+      "id": "S4",
+      "name": "Schaich Peter",
+      "street": "Bogenstrasse",
+      "zip": "87527"
+    },
+    {
+      "city": "Grenzach-Wyhlen",
+      "country": "DE",
+      "housenumber": "11",
+      "id": "S6",
+      "name": "Otte",
+      "street": "Lettenweg",
+      "zip": "79639"
+    },
+    {
+      "city": "Bad Säckingen",
+      "country": "DE",
+      "housenumber": "92",
+      "id": "S8",
+      "name": "Riedl-Leirer Monika",
+      "street": "Friedrichstrasse",
+      "zip": "79713"
+    },
+    {
+      "city": "Radolfzell",
+      "country": "DE",
+      "housenumber": "9",
+      "id": "S20",
+      "name": "Bäcker Mees",
+      "street": "Tegginger Strasse",
+      "zip": "78315"
+    },
+    {
+      "city": "Eiterfeld",
+      "country": "DE",
+      "housenumber": "2",
+      "id": "S22",
+      "name": "JungMarkt",
+      "street": "Am Ehrenmal",
+      "zip": "36132"
+    },
+    {
+      "city": "Gammertingen",
+      "country": "DE",
+      "housenumber": "10",
+      "id": "S102",
+      "name": "Bäckerei Altdoerfer",
+      "street": "KORNBUEHLWEG",
+      "zip": "72501"
+    },
+    {
+      "city": "Pappenheim",
+      "country": "DE",
+      "housenumber": "7",
+      "id": "S236",
+      "name": "MarktSchleuse",
+      "street": "Bahnhofstrasse",
+      "zip": "91788"
+    },
+    {
+      "city": "Greding",
+      "country": "DE",
+      "housenumber": "11",
+      "id": "S261",
+      "name": "Schmidt Fritz",
+      "street": "Am Kirchplatz",
+      "zip": "91171"
+    },
+    {
+      "city": "Reinheim",
+      "country": "DE",
+      "housenumber": "33",
+      "id": "S346",
+      "name": "Albert Benno",
+      "street": "Darmstädter Strasse",
+      "zip": "64354"
+    },
+    {
+      "city": "Gerolzhofen",
+      "country": "DE",
+      "housenumber": "2",
+      "id": "S354",
+      "name": "Bio-Haus",
+      "street": "Bahnhofstrasse",
+      "zip": "97447"
+    },
+    {
+      "city": "Lichtenfels",
+      "country": "DE",
+      "housenumber": "10",
+      "id": "S394",
+      "name": "Adolf Roland",
+      "street": "Konrad-Adenauer-Strasse",
+      "zip": "96215"
+    },
+    {
+      "city": "Solms",
+      "country": "DE",
+      "housenumber": "2",
+      "id": "S451",
+      "name": "Prophete Hermann",
+      "street": "Marienstrasse",
+      "zip": "35606"
+    },
+    {
+      "city": "Schmalkalden",
+      "country": "DE",
+      "housenumber": "17",
+      "id": "S463",
+      "name": "Anschütz Heinz",
+      "street": "Stiller Gasse",
+      "zip": "98574"
+    },
+    {
+      "city": "Schloß Holte-Stukenbrock",
+      "country": "DE",
+      "housenumber": "25",
+      "id": "S598",
+      "name": "Baak Helmut",
+      "street": "Pollstrasse",
+      "zip": "33758"
+    },
+    {
+      "city": "Hannover",
+      "country": "DE",
+      "housenumber": "30",
+      "id": "S640",
+      "name": "Alex",
+      "street": "Alte Döhrener Strasse",
+      "zip": "30169"
+    },
+    {
+      "city": "Sachsenhagen",
+      "country": "DE",
+      "housenumber": "28",
+      "id": "S642",
+      "name": "Bio-Lager",
+      "street": "Schaumburger Strasse",
+      "zip": "31714"
+    },
+    {
+      "city": "Syke",
+      "country": "DE",
+      "housenumber": "26",
+      "id": "S679",
+      "name": "Bäcker Haake",
+      "street": "Falldorf",
+      "zip": "28857"
+    },
+    {
+      "city": "Nossen",
+      "country": "DE",
+      "housenumber": "71",
+      "id": "S740",
+      "name": "Mlady  Kurt",
+      "street": "Waldheimer Strasse",
+      "zip": "01683"
+    },
+    {
+      "city": "Bad Neustadt",
+      "country": "DE",
+      "housenumber": "24",
+      "id": "S742",
+      "name": "Wolf Bernhard",
+      "street": "Saalestrasse",
+      "zip": "97616"
+    },
+    {
+      "city": "Waldfischbach-Burgalben",
+      "country": "DE",
+      "housenumber": "169",
+      "id": "S749",
+      "name": "Gewürz Arno",
+      "street": "Hauptstrasse",
+      "zip": "67714"
+    },
+    {
+      "city": "Hennigsdorf",
+      "country": "DE",
+      "housenumber": "48",
+      "id": "S750",
+      "name": "MarktEber",
+      "street": "Berliner Strasse",
+      "zip": "16761"
+    },
+    {
+      "city": "Unsleben",
+      "country": "DE",
+      "housenumber": "7",
+      "id": "S754",
+      "name": "Bio Geisler",
+      "street": "Hauptstrasse",
+      "zip": "97618"
+    }
+  ],
+  "deliveries": [
+    {
+      "chargennummer": "BK_150310",
+      "datedelivery": "2015-03-10",
+      "id": "D1",
+      "name": "Butterkuchen",
+      "source": "S102",
+      "target": "S463"
+    },
+    {
+      "chargennummer": "Mehl_122",
+      "datedelivery": null,
+      "id": "D2",
+      "name": "Mehl",
+      "source": "S346",
+      "target": "S102"
+    },
+    {
+      "chargennummer": "Pfl_1",
+      "datedelivery": null,
+      "id": "D3",
+      "name": "Pflaumen",
+      "source": "S354",
+      "target": "S102"
+    },
+    {
+      "chargennummer": "KK_150312",
+      "datedelivery": "2015-03-12",
+      "id": "D4",
+      "name": "Kirschkuchen",
+      "source": "S679",
+      "target": "S1"
+    },
+    {
+      "chargennummer": "KK_150311",
+      "datedelivery": "2015-03-11",
+      "id": "D5",
+      "name": "Kirschkuchen",
+      "source": "S679",
+      "target": "S463"
+    },
+    {
+      "chargennummer": "Zucker_39",
+      "datedelivery": null,
+      "id": "D6",
+      "name": "Zucker",
+      "source": "S750",
+      "target": "S679"
+    },
+    {
+      "chargennummer": "Zucker_3",
+      "datedelivery": null,
+      "id": "D7",
+      "name": "Zucker",
+      "source": "S236",
+      "target": "S679"
+    },
+    {
+      "chargennummer": "Sugar_1",
+      "datedelivery": null,
+      "id": "D15",
+      "name": "Zucker",
+      "source": "S236",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Mehl_1",
+      "datedelivery": null,
+      "id": "D8",
+      "name": "Mehl",
+      "source": "S750",
+      "target": "S679"
+    },
+    {
+      "chargennummer": "Kirschen_2",
+      "datedelivery": null,
+      "id": "D9",
+      "name": "Kirschen",
+      "source": "S642",
+      "target": "S679"
+    },
+    {
+      "chargennummer": "BK_150313",
+      "datedelivery": "2015-03-13",
+      "id": "D10",
+      "name": "Backekuchen",
+      "source": "S20",
+      "target": "S4"
+    },
+    {
+      "chargennummer": "BK_150313",
+      "datedelivery": "2015-03-13",
+      "id": "D11",
+      "name": "Backekuchen",
+      "source": "S20",
+      "target": "S3"
+    },
+    {
+      "chargennummer": "Safran_1",
+      "datedelivery": null,
+      "id": "D12",
+      "name": "Safran",
+      "source": "S749",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Egg_1",
+      "datedelivery": "2015-03-14",
+      "id": "D13",
+      "name": "Eier",
+      "source": "S22",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Milk_1",
+      "datedelivery": null,
+      "id": "D14",
+      "name": "Milch",
+      "source": "S236",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Schmalz_1",
+      "datedelivery": null,
+      "id": "D16",
+      "name": "Schmalz",
+      "source": "S754",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Salt_1",
+      "datedelivery": null,
+      "id": "D17",
+      "name": "Salz",
+      "source": "S236",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Mehl_1",
+      "datedelivery": null,
+      "id": "D18",
+      "name": "Mehl",
+      "source": "S236",
+      "target": "S20"
+    },
+    {
+      "chargennummer": "Schm_1",
+      "datedelivery": null,
+      "id": "D19",
+      "name": "Schmlaz",
+      "source": "S640",
+      "target": "S754"
+    },
+    {
+      "chargennummer": "K_1221",
+      "datedelivery": null,
+      "id": "D20",
+      "name": "Kirschen",
+      "source": "S8",
+      "target": "S642"
+    },
+    {
+      "chargennummer": "S_2",
+      "datedelivery": null,
+      "id": "D21",
+      "name": "Safran",
+      "source": "S742",
+      "target": "S749"
+    },
+    {
+      "chargennummer": "E_2",
+      "datedelivery": null,
+      "id": "D22",
+      "name": "Eier",
+      "source": "S394",
+      "target": "S22"
+    },
+    {
+      "chargennummer": "M1",
+      "datedelivery": null,
+      "id": "D23",
+      "name": "Mehl",
+      "source": "S346",
+      "target": "S750"
+    },
+    {
+      "chargennummer": "M9",
+      "datedelivery": null,
+      "id": "D27",
+      "name": "Mehl",
+      "source": "S346",
+      "target": "S236"
+    },
+    {
+      "chargennummer": "M8",
+      "datedelivery": null,
+      "id": "D24",
+      "name": "Milch",
+      "source": "S261",
+      "target": "S236"
+    },
+    {
+      "chargennummer": "S7",
+      "datedelivery": null,
+      "id": "D25",
+      "name": "Salz",
+      "source": "S740",
+      "target": "S236"
+    },
+    {
+      "chargennummer": "Z6",
+      "datedelivery": null,
+      "id": "D26",
+      "name": "Zucker",
+      "source": "S598",
+      "target": "S236"
+    },
+    {
+      "chargennummer": "Zuk7",
+      "datedelivery": null,
+      "id": "D28",
+      "name": "Zucker",
+      "source": "S451",
+      "target": "S236"
+    },
+    {
+      "chargennummer": "Bäckerkauf_1",
+      "datedelivery": "2015-03-13",
+      "id": "D29",
+      "name": "Kuchenmitbringsel",
+      "source": "S3",
+      "target": "S6"
+    }
+  ],
+  "deliveriesRelations": [
+    {
+      "id": "0",
+      "source": "D2",
+      "target": "D1"
+    },
+    {
+      "id": "1",
+      "source": "D3",
+      "target": "D1"
+    },
+    {
+      "id": "2",
+      "source": "D6",
+      "target": "D4"
+    },
+    {
+      "id": "3",
+      "source": "D7",
+      "target": "D5"
+    },
+    {
+      "id": "4",
+      "source": "D8",
+      "target": "D4"
+    },
+    {
+      "id": "5",
+      "source": "D9",
+      "target": "D4"
+    },
+    {
+      "id": "6",
+      "source": "D9",
+      "target": "D5"
+    },
+    {
+      "id": "7",
+      "source": "D11",
+      "target": "D29"
+    },
+    {
+      "id": "8",
+      "source": "D12",
+      "target": "D10"
+    },
+    {
+      "id": "9",
+      "source": "D12",
+      "target": "D11"
+    },
+    {
+      "id": "10",
+      "source": "D13",
+      "target": "D10"
+    },
+    {
+      "id": "11",
+      "source": "D13",
+      "target": "D11"
+    },
+    {
+      "id": "12",
+      "source": "D14",
+      "target": "D10"
+    },
+    {
+      "id": "13",
+      "source": "D14",
+      "target": "D11"
+    },
+    {
+      "id": "14",
+      "source": "D15",
+      "target": "D10"
+    },
+    {
+      "id": "15",
+      "source": "D15",
+      "target": "D11"
+    },
+    {
+      "id": "16",
+      "source": "D17",
+      "target": "D10"
+    },
+    {
+      "id": "17",
+      "source": "D17",
+      "target": "D11"
+    },
+    {
+      "id": "18",
+      "source": "D16",
+      "target": "D10"
+    },
+    {
+      "id": "19",
+      "source": "D16",
+      "target": "D11"
+    },
+    {
+      "id": "20",
+      "source": "D19",
+      "target": "D16"
+    },
+    {
+      "id": "21",
+      "source": "D18",
+      "target": "D10"
+    },
+    {
+      "id": "22",
+      "source": "D18",
+      "target": "D11"
+    },
+    {
+      "id": "23",
+      "source": "D21",
+      "target": "D12"
+    },
+    {
+      "id": "24",
+      "source": "D20",
+      "target": "D9"
+    },
+    {
+      "id": "25",
+      "source": "D23",
+      "target": "D8"
+    },
+    {
+      "id": "26",
+      "source": "D22",
+      "target": "D13"
+    },
+    {
+      "id": "27",
+      "source": "D25",
+      "target": "D17"
+    },
+    {
+      "id": "28",
+      "source": "D24",
+      "target": "D14"
+    },
+    {
+      "id": "29",
+      "source": "D27",
+      "target": "D18"
+    },
+    {
+      "id": "30",
+      "source": "D26",
+      "target": "D15"
+    },
+    {
+      "id": "31",
+      "source": "D28",
+      "target": "D7"
+    }
+  ]
+}

@@ -8,6 +8,7 @@
   background: rgb(255, 255, 255);
   border: 1px solid rgb(153, 153, 153);
   user-select: none !important;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 /*noinspection CssUnusedSymbol*/

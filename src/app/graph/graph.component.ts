@@ -388,7 +388,8 @@ export class GraphComponent implements OnInit {
         'border-color': '#000000',
         'text-valign': 'bottom',
         'text-halign': 'right',
-        'color': '#000000'
+        'color': '#000000',
+        'font-family': 'Roboto, Helvetica Neue, sans-serif'
       })
       .selector('edge')
       .style({
