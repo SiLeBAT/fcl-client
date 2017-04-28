@@ -42,9 +42,7 @@ export class TableComponent implements OnInit {
   static filterRows(elements: FilterableRow[], filter: string): any[] {
     const words: string[] = filter == null ? [] : filter.split(/\s+/g).map(w => w.trim().toLowerCase()).filter(w => w.length > 0);
 
-    return elements.filter(e => {
-      return words.find(w => e.stringContent.indexOf(w) === -1) == null;
-    }).map(e => e.content);
+    return elements.filter(e => words.find(w => e.stringContent.indexOf(w) === -1) == null).map(e => e.content);
   }
 
   constructor(private scrollbarHelper: ScrollbarHelper) {
@@ -266,16 +264,11 @@ export class TableComponent implements OnInit {
     let first = true;
 
     for (const column of columns) {
-      if (first) {
-        column.width = selectColumnWidth;
-        column.minWidth = selectColumnWidth;
-        column.maxWidth = selectColumnWidth;
-      } else {
-        column.width = columnWidth;
-        column.minWidth = columnWidth;
-        column.maxWidth = columnWidth;
-      }
+      const w = first ? selectColumnWidth : columnWidth;
 
+      column.width = w;
+      column.minWidth = w;
+      column.maxWidth = w;
       first = false;
     }
 
