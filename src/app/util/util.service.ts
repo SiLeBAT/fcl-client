@@ -26,34 +26,35 @@ export class UtilService {
     return Object.keys(UtilService.DELIVERY_DATA);
   }
 
+  static getTableElements(mode: TableMode, data: FclElements): (StationData | DeliveryData)[] {
+    if (mode === TableMode.STATIONS) {
+      return data.stations;
+    } else if (mode === TableMode.DELIVERIES) {
+      return data.deliveries;
+    }
+
+    return null;
+  }
+
   static getTableProperties(mode: TableMode, data: FclElements): string[] {
     let properties: string[];
 
     if (mode === TableMode.STATIONS) {
-      const additionalProps: Set<string> = new Set();
-
-      for (const station of data.stations) {
-        for (const p of station.properties) {
-          additionalProps.add(p.name);
-        }
-      }
-
-      properties = UtilService.getStationProperties().filter(prop => DataService.PROPERTIES.has(prop))
-        .concat(Array.from(additionalProps));
+      properties = UtilService.getStationProperties();
     } else if (mode === TableMode.DELIVERIES) {
-      const additionalProps: Set<string> = new Set();
-
-      for (const delivery of data.deliveries) {
-        for (const p of delivery.properties) {
-          additionalProps.add(p.name);
-        }
-      }
-
-      properties = UtilService.getDeliveryProperties().filter(prop => DataService.PROPERTIES.has(prop))
-        .concat(Array.from(additionalProps));
+      properties = UtilService.getDeliveryProperties();
     }
 
-    return properties;
+    const additionalProps: Set<string> = new Set();
+
+    for (const element of UtilService.getTableElements(mode, data)) {
+      for (const p of element.properties) {
+        additionalProps.add(p.name);
+      }
+    }
+
+    return properties.filter(prop => DataService.PROPERTIES.has(prop))
+      .concat(Array.from(additionalProps));
   }
 
   static openSaveDialog(url: string, fileName: string) {
@@ -144,9 +145,5 @@ export class UtilService {
       y: position1.y - position2.y
     };
   };
-
-  static stringify(value: any) {
-    return typeof value === 'string' ? value : JSON.stringify(value);
-  }
 
 }

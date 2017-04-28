@@ -4,7 +4,6 @@ import {D3Service, D3, Selection} from 'd3-ng2-service';
 
 import {Connection, DeliveryData, StationData} from '../../util/datatypes';
 import {DataService} from '../../util/data.service';
-import {UtilService} from '../../util/util.service';
 
 export interface StationPropertiesData {
   station: StationData;
@@ -64,7 +63,7 @@ export class StationPropertiesComponent implements OnInit {
       .map(key => {
         return {
           name: DataService.PROPERTIES.get(key).name,
-          value: UtilService.stringify(data.station[key])
+          value: String(data.station[key])
         };
       }).concat(data.station.properties);
     this.d3 = d3Service.getD3();

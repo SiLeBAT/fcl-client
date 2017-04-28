@@ -9,6 +9,11 @@ import {DeliveryData, FclElements, ObservedType, ShowType, StationData, TableMod
 
 declare const ResizeSensor: any;
 
+interface FilterableRow {
+  content: any;
+  stringContent: string;
+}
+
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -18,6 +23,8 @@ export class TableComponent implements OnInit {
 
   columns: any[];
   rows: any[];
+  filter: string;
+  unfilteredRows: FilterableRow[];
 
   private data: FclElements;
   private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
@@ -31,6 +38,14 @@ export class TableComponent implements OnInit {
 
   @ViewChild('table') table: DatatableComponent;
   @ViewChild('selectTmpl') selectTmpl: TemplateRef<any>;
+
+  static filterRows(elements: FilterableRow[], filter: string): any[] {
+    const words: string[] = filter == null ? [] : filter.split(/\s+/g).map(w => w.trim().toLowerCase()).filter(w => w.length > 0);
+
+    return elements.filter(e => {
+      return words.find(w => e.stringContent.indexOf(w) === -1) == null;
+    }).map(e => e.content);
+  }
 
   constructor(private scrollbarHelper: ScrollbarHelper) {
     const style = document.createElement('style');
@@ -156,15 +171,31 @@ export class TableComponent implements OnInit {
         elements = elements.filter(e => e.forward || e.backward || e.observed !== ObservedType.NONE);
       }
 
-      this.rows = elements.map(e => {
-        const copy = JSON.parse(JSON.stringify(e));
+      const columnsSet = new Set(columns);
 
-        for (const prop of e.properties) {
-          copy[prop.name] = prop.value;
+      this.unfilteredRows = elements.map(e => {
+        const copy = JSON.parse(JSON.stringify(e));
+        let stringContent = '';
+
+        for (const key of Object.keys(e)) {
+          if (columnsSet.has(key)) {
+            stringContent += String(e[key]).trim().toLowerCase() + ' ';
+          }
         }
 
-        return copy;
+        for (const prop of e.properties) {
+          if (columnsSet.has(prop.name)) {
+            copy[prop.name] = prop.value;
+          }
+        }
+
+        return {
+          content: copy,
+          stringContent: stringContent.trim()
+        };
       });
+
+      this.rows = TableComponent.filterRows(this.unfilteredRows, this.filter);
     }
 
     this.table.recalculate();
@@ -172,6 +203,11 @@ export class TableComponent implements OnInit {
 
   onSelectionChange(changeFunction: () => void) {
     this.changeFunction = changeFunction;
+  }
+
+  onFilterChange() {
+    this.rows = TableComponent.filterRows(this.unfilteredRows, this.filter);
+    this.table.recalculatePages();
   }
 
   //noinspection JSMethodCanBeStatic
@@ -198,6 +234,27 @@ export class TableComponent implements OnInit {
     }
 
     if (this.changeFunction != null) {
+      this.changeFunction();
+    }
+  }
+
+  onSelectAll() {
+    this.rows.forEach(r => r.selected = true);
+
+    const ids: Set<string> = new Set(this.rows.map(r => r.id));
+    let changed = false;
+
+    for (const element of UtilService.getTableElements(this.mode, this.data)) {
+      if (ids.has(element.id)) {
+        if (!element.selected) {
+          changed = true;
+        }
+
+        element.selected = true;
+      }
+    }
+
+    if (changed && this.changeFunction != null) {
       this.changeFunction();
     }
   }

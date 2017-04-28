@@ -1,4 +1,10 @@
 <div id="tableContainer">
+  <div id="optionsBar">
+    <button md-raised-button (click)="onSelectAll()">Select All</button>
+    <md-input-container>
+      <input mdInput [(ngModel)]="filter" (ngModelChange)="onFilterChange()" placeholder="Filter">
+    </md-input-container>
+  </div>
   <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" scrollbarV="true">
   </ngx-datatable>
   <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
