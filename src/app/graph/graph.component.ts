@@ -301,8 +301,6 @@ export class GraphComponent implements OnInit {
               target: value[0].target,
               originalSource: value[0].source,
               originalTarget: value[0].target,
-              incoming: null,
-              outgoing: null,
               invisible: false,
               selected: selected,
               observed: observedElement != null ? observedElement.observed : ObservedType.NONE,

@@ -8,13 +8,14 @@ import {DataService} from './data.service';
 export class UtilService {
 
   private static STATION_DATA: StationData = {
-    id: null, name: null, incoming: null, outgoing: null, invisible: null, contained: null, contains: null, selected: null, observed: null,
-    forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null, positionRelativeTo: null, properties: null
+    id: null, name: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null, contains: null,
+    selected: null, observed: null, forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null,
+    positionRelativeTo: null, properties: null
   };
 
   private static DELIVERY_DATA: DeliveryData = {
-    id: null, source: null, target: null, originalSource: null, originalTarget: null, incoming: null, outgoing: null, invisible: null,
-    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
+    id: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null, selected: null, observed: null,
+    forward: null, backward: null, score: null, properties: null
   };
 
   static getStationProperties(): string[] {

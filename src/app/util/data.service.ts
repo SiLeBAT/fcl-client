@@ -75,6 +75,7 @@ export class DataService {
     for (const s of data.stations) {
       s.incoming = [];
       s.outgoing = [];
+      s.connections = [];
       stationsById[s.id] = s;
     }
 
@@ -82,14 +83,18 @@ export class DataService {
       stationsById[d.source].outgoing.push(d.id);
       stationsById[d.target].incoming.push(d.id);
 
-      d.incoming = [];
-      d.outgoing = [];
       deliveriesById[d.id] = d;
     }
 
     for (const r of data.deliveriesRelations) {
-      deliveriesById[r.source].outgoing.push(r.target);
-      deliveriesById[r.target].incoming.push(r.source);
+      const sourceD = deliveriesById[r.source];
+      const targetD = deliveriesById[r.target];
+
+      if (sourceD.target !== targetD.source) {
+        throw new SyntaxError('Invalid delivery relation: ' + JSON.stringify(r));
+      }
+
+      stationsById[sourceD.target].connections.push(r);
     }
 
     const graphSettings: GraphSettings = {
@@ -168,6 +173,7 @@ export class DataService {
         name: e.name,
         incoming: e.incoming,
         outgoing: e.outgoing,
+        connections: e.connections,
         invisible: e.invisible != null ? e.invisible : false,
         contained: e.contained != null ? e.contained : false,
         contains: e.contains != null ? e.contains : null,
@@ -206,8 +212,6 @@ export class DataService {
         target: e.target,
         originalSource: e.originalSource != null ? e.originalSource : e.source,
         originalTarget: e.originalTarget != null ? e.originalTarget : e.target,
-        incoming: e.incoming,
-        outgoing: e.outgoing,
         invisible: e.invisible != null ? e.invisible : false,
         selected: e.selected != null ? e.selected : false,
         observed: e.observed != null ? e.observed : ObservedType.NONE,

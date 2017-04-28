@@ -33,6 +33,7 @@ export interface StationData {
   name: string;
   incoming: string[];
   outgoing: string[];
+  connections: { source: string, target: string }[];
   invisible: boolean;
   contained: boolean;
   contains: string[];
@@ -54,8 +55,6 @@ export interface DeliveryData {
   target: string;
   originalSource: string;
   originalTarget: string;
-  incoming: string[];
-  outgoing: string[];
   invisible: boolean;
   selected: boolean;
   observed: ObservedType;

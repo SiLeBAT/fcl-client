@@ -59,7 +59,8 @@ export class StationPropertiesComponent implements OnInit {
 
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
               d3Service: D3Service) {
-    this.properties = Object.keys(data.station).filter(key => DataService.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
+    this.properties = Object.keys(data.station)
+      .filter(key => DataService.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
       .map(key => {
         return {
           name: DataService.PROPERTIES.get(key).name,
@@ -86,8 +87,6 @@ export class StationPropertiesComponent implements OnInit {
         yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
-      this.edgeData = [];
-
       for (const id of data.station.outgoing) {
         const delivery = data.connectedDeliveries.find(d => d.id === id);
 
@@ -99,13 +98,15 @@ export class StationPropertiesComponent implements OnInit {
           y: yOut
         });
         yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+      }
 
-        for (const prevId of delivery.incoming) {
-          this.edgeData.push({
-            source: nodeMap.get(prevId),
-            target: nodeMap.get(id)
-          });
-        }
+      this.edgeData = [];
+
+      for (const c of data.station.connections) {
+        this.edgeData.push({
+          source: nodeMap.get(c.source),
+          target: nodeMap.get(c.target)
+        });
       }
 
       this.nodeData = Array.from(nodeMap.values());
@@ -115,28 +116,13 @@ export class StationPropertiesComponent implements OnInit {
 
   //noinspection JSUnusedGlobalSymbols
   close() {
-    for (const id of this.data.station.incoming) {
-      const delivery = this.data.connectedDeliveries.find(d => d.id === id);
+    this.data.station.connections = [];
 
-      delivery.outgoing = [];
-
-      for (const edge of this.edgeData) {
-        if (edge.source.id === id) {
-          delivery.outgoing.push(edge.target.id);
-        }
-      }
-    }
-
-    for (const id of this.data.station.outgoing) {
-      const delivery = this.data.connectedDeliveries.find(d => d.id === id);
-
-      delivery.incoming = [];
-
-      for (const edge of this.edgeData) {
-        if (edge.target.id === id) {
-          delivery.incoming.push(edge.source.id);
-        }
-      }
+    for (const edge of this.edgeData) {
+      this.data.station.connections.push({
+        source: edge.source.id,
+        target: edge.target.id
+      });
     }
 
     this.dialogRef.close(true);

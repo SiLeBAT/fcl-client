@@ -57,6 +57,7 @@ export class TracingService {
       name: name,
       incoming: [],
       outgoing: [],
+      connections: [],
       invisible: false,
       contained: false,
       contains: ids,
@@ -73,21 +74,18 @@ export class TracingService {
     };
 
     for (const id of ids) {
-      this.stationsById.get(id).contained = true;
-      this.stationsById.get(id).observed = ObservedType.NONE;
+      const station = this.stationsById.get(id);
+
+      station.contained = true;
+      station.observed = ObservedType.NONE;
+
+      metaStation.incoming = metaStation.incoming.concat(station.incoming);
+      metaStation.outgoing = metaStation.outgoing.concat(station.outgoing);
+      metaStation.connections = metaStation.connections.concat(station.connections);
+
+      station.incoming.forEach(d => this.deliveriesById.get(d).target = metaId);
+      station.outgoing.forEach(d => this.deliveriesById.get(d).source = metaId);
     }
-
-    this.deliveriesById.forEach(d => {
-      if (ids.indexOf(d.source) !== -1) {
-        d.source = metaId;
-        metaStation.outgoing.push(d.id);
-      }
-
-      if (ids.indexOf(d.target) !== -1) {
-        d.target = metaId;
-        metaStation.incoming.push(d.id);
-      }
-    });
 
     this.stationsById.set(metaId, metaStation);
     this.data.stations.push(metaStation);
@@ -215,10 +213,14 @@ export class TracingService {
 
     this.clearTrace();
     delivery.observed = ObservedType.FULL;
-    this.stationsById.get(delivery.target).forward = true;
-    this.stationsById.get(delivery.source).backward = true;
-    delivery.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
-    delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+
+    const sourceStation = this.stationsById.get(delivery.source);
+    const targetStation = this.stationsById.get(delivery.target);
+
+    sourceStation.backward = true;
+    sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
+    targetStation.forward = true;
+    targetStation.connections.filter(c => c.source === id).forEach(c => this.showDeliveryForwardTraceInternal(c.target));
   }
 
   showDeliveryForwardTrace(id: string) {
@@ -226,8 +228,11 @@ export class TracingService {
 
     this.clearTrace();
     delivery.observed = ObservedType.FORWARD;
-    this.stationsById.get(delivery.target).forward = true;
-    delivery.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+
+    const targetStation = this.stationsById.get(delivery.target);
+
+    targetStation.forward = true;
+    targetStation.connections.filter(c => c.source === id).forEach(c => this.showDeliveryForwardTraceInternal(c.target));
   }
 
   showDeliveryBackwardTrace(id: string) {
@@ -235,8 +240,11 @@ export class TracingService {
 
     this.clearTrace();
     delivery.observed = ObservedType.BACKWARD;
-    this.stationsById.get(delivery.source).backward = true;
-    delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+
+    const sourceStation = this.stationsById.get(delivery.source);
+
+    sourceStation.backward = true;
+    sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
   }
 
   update() {
@@ -304,9 +312,7 @@ export class TracingService {
         source.score++;
       }
 
-      for (const d of delivery.incoming) {
-        this.updateDeliveryScore(d, outbreakId);
-      }
+      source.connections.filter(c => c.target === id).forEach(c => this.updateDeliveryScore(c.source, outbreakId));
     }
   }
 
@@ -315,8 +321,11 @@ export class TracingService {
 
     if (!delivery.forward && !delivery.invisible) {
       delivery.forward = true;
-      this.stationsById.get(delivery.target).forward = true;
-      delivery.outgoing.forEach(outId => this.showDeliveryForwardTraceInternal(outId));
+
+      const targetStation = this.stationsById.get(delivery.target);
+
+      targetStation.forward = true;
+      targetStation.connections.filter(c => c.source === id).forEach(c => this.showDeliveryForwardTraceInternal(c.target));
     }
   }
 
@@ -325,8 +334,11 @@ export class TracingService {
 
     if (!delivery.backward && !delivery.invisible) {
       delivery.backward = true;
-      this.stationsById.get(delivery.source).backward = true;
-      delivery.incoming.forEach(inId => this.showDeliveryBackwardTraceInternal(inId));
+
+      const sourceStation = this.stationsById.get(delivery.source);
+
+      sourceStation.backward = true;
+      sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
     }
   }
 
