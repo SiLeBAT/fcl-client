@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 import {D3Service, D3, Selection} from 'd3-ng2-service';
 
-import {DeliveryData, StationData} from '../../util/datatypes';
+import {Connection, DeliveryData, StationData} from '../../util/datatypes';
 import {DataService} from '../../util/data.service';
 import {UtilService} from '../../util/util.service';
 
@@ -116,16 +116,14 @@ export class StationPropertiesComponent implements OnInit {
 
   //noinspection JSUnusedGlobalSymbols
   close() {
-    this.data.station.connections = [];
-
-    for (const edge of this.edgeData) {
-      this.data.station.connections.push({
+    const connections: Connection[] = this.edgeData.map(edge => {
+      return {
         source: edge.source.id,
         target: edge.target.id
-      });
-    }
+      };
+    });
 
-    this.dialogRef.close(true);
+    this.dialogRef.close(connections);
   }
 
   ngOnInit() {

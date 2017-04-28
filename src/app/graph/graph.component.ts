@@ -535,9 +535,9 @@ export class GraphComponent implements OnInit {
             connectedDeliveries: connected
           };
 
-          this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(updated => {
-            if (updated) {
-              this.tracingService.update();
+          this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(connections => {
+            if (connections) {
+              this.tracingService.setConnectionsOfStation(node.id(), connections);
               this.updateProperties();
             }
           });

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {DeliveryData, FclElements, ObservedType, StationData} from '../util/datatypes';
+import {Connection, DeliveryData, FclElements, ObservedType, StationData} from '../util/datatypes';
 
 @Injectable()
 export class TracingService {
@@ -247,7 +247,8 @@ export class TracingService {
     sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
   }
 
-  update() {
+  setConnectionsOfStation(id: string, connections: Connection[]) {
+    this.stationsById.get(id).connections = connections;
     this.updateTrace();
     this.updateScores();
   }

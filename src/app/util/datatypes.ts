@@ -28,12 +28,17 @@ export interface CyPosition {
   y: number;
 }
 
+export interface Connection {
+  source: string;
+  target: string;
+}
+
 export interface StationData {
   id: string;
   name: string;
   incoming: string[];
   outgoing: string[];
-  connections: { source: string, target: string }[];
+  connections: Connection[];
   invisible: boolean;
   contained: boolean;
   contains: string[];
