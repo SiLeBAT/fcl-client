@@ -80,7 +80,7 @@ export class StationPropertiesComponent implements OnInit {
           id: id,
           type: NodeType.IN,
           title: delivery.id,
-          x: StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_WIDTH / 2,
+          x: StationPropertiesComponent.NODE_WIDTH / 2 + 1,
           y: yIn
         });
         yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
@@ -93,7 +93,7 @@ export class StationPropertiesComponent implements OnInit {
           id: id,
           type: NodeType.OUT,
           title: delivery.id,
-          x: StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_PADDING - StationPropertiesComponent.NODE_WIDTH / 2,
+          x: StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH / 2 - 1,
           y: yOut
         });
         yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;

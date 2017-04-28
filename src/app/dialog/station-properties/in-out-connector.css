@@ -3,19 +3,20 @@
 }
 
 #in-out-connector g.node rect {
-  fill: #F6FBFF;
-  stroke: #333;
+  fill: rgb(255, 255, 255);
+  stroke: rgb(0, 0, 0);
   stroke-width: 2px;
 }
 
 #in-out-connector g.node.hover rect {
-  fill: #BEFFFF;
+  fill: rgb(128, 128, 255);
+  stroke: rgb(0, 0, 255);
 }
 
 /*noinspection CssUnusedSymbol,CssUnknownTarget*/
 #in-out-connector path.edge {
   fill: none;
-  stroke: #333;
+  stroke: rgb(0, 0, 0);
   stroke-width: 6px;
   cursor: default;
   marker-end: url(#end-arrow);
@@ -23,7 +24,7 @@
 
 /*noinspection CssUnusedSymbol,CssUnknownTarget*/
 #in-out-connector path.edge:hover {
-  stroke: rgb(94, 196, 204);
+  stroke: rgb(0, 0, 255);
   marker-end: url(#end-arrow-hover);
 }
 
@@ -34,10 +35,10 @@
 
 /*noinspection CssUnusedSymbol*/
 #in-out-connector #end-arrow {
-  fill: #333;
+  fill: rgb(0, 0, 0);
 }
 
 /*noinspection CssUnusedSymbol*/
 #in-out-connector #end-arrow-hover {
-  fill: rgb(94, 196, 204);
+  fill: rgb(0, 0, 255);
 }
