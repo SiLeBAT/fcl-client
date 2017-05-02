@@ -133,22 +133,23 @@ export class GraphComponent implements OnInit {
     this.cy.zooming(this.zoom);
     this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
-    this.cy.on('select', event => this.setSelected(event.cyTarget.id(), true));
-    this.cy.on('unselect', event => this.setSelected(event.cyTarget.id(), false));
-    this.cy.on('position', event => this.tracingService.getStationsById([event.cyTarget.id()])[0].position = event.cyTarget.position());
+    this.cy.on('select', event => this.setSelected(event.target.id(), true));
+    this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
+    this.cy.on('position', event => this.tracingService.getStationsById([event.target.id()])[0].position = event.target.position());
     this.cy.on('cxttap', event => {
-      const element = event.cyTarget;
+      const element = event.target;
+      const mouseEvent: MouseEvent = event.originalEvent;
 
-      if (!element.hasOwnProperty('length')) {
-        UtilService.setElementPosition(document.getElementById('graphMenu'), event.originalEvent.offsetX, event.originalEvent.offsetY);
+      if (element.group == null) {
+        UtilService.setElementPosition(document.getElementById('graphMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.graphMenuTrigger.openMenu();
       } else if (element.group() === 'nodes') {
         this.stationMenuActions = this.createStationActions(element);
-        UtilService.setElementPosition(document.getElementById('stationMenu'), event.originalEvent.offsetX, event.originalEvent.offsetY);
+        UtilService.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.stationMenuTrigger.openMenu();
       } else if (element.group() === 'edges') {
         this.deliveryMenuActions = this.createDeliveryActions(element);
-        UtilService.setElementPosition(document.getElementById('deliveryMenu'), event.originalEvent.offsetX, event.originalEvent.offsetY);
+        UtilService.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.deliveryMenuTrigger.openMenu();
       }
     });
@@ -691,7 +692,7 @@ export class GraphComponent implements OnInit {
         name: 'Fruchterman-Reingold',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'fruchterman'})
+        action: () => this.cy.layout({name: 'fruchterman'}).run()
       }, {
         name: 'Constraint-Based',
         type: MenuActionType.runAction,
@@ -707,7 +708,7 @@ export class GraphComponent implements OnInit {
             data: layoutDialogData
           });
 
-          layout = this.cy.elements().makeLayout({
+          layout = this.cy.layout({
             name: 'cola',
             ungrabifyWhileSimulating: true,
             avoidOverlap: false,
@@ -723,37 +724,37 @@ export class GraphComponent implements OnInit {
         name: 'Random',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'random'})
+        action: () => this.cy.layout({name: 'random'}).run()
       }, {
         name: 'Grid',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'grid'})
+        action: () => this.cy.layout({name: 'grid'}).run()
       }, {
         name: 'Circle',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'circle'})
+        action: () => this.cy.layout({name: 'circle'}).run()
       }, {
         name: 'Concentric',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'concentric'})
+        action: () => this.cy.layout({name: 'concentric'}).run()
       }, {
         name: 'Breadth-first',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'breadthfirst'})
+        action: () => this.cy.layout({name: 'breadthfirst'}).run()
       }, {
         name: 'Spread',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'spread'})
+        action: () => this.cy.layout({name: 'spread'}).run()
       }, {
         name: 'Directed acyclic graph',
         type: MenuActionType.runAction,
         enabled: true,
-        action: () => this.cy.layout({name: 'dagre'})
+        action: () => this.cy.layout({name: 'dagre'}).run()
       }
     ];
   }

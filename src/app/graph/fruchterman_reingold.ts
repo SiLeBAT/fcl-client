@@ -37,14 +37,14 @@ class FruchtermanLayoutClass {
     const graph = new Graph();
     const vertices = new Map();
 
-    cy.nodes().forEach(function (node) {
+    cy.nodes().each(node => {
       const v = new Vertex(Math.random() * width, Math.random() * height);
 
       vertices.set(node.id(), v);
       graph.insertVertex(v);
     });
 
-    cy.edges().forEach(function (edge) {
+    cy.edges().each(edge => {
       Graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
 
@@ -52,7 +52,7 @@ class FruchtermanLayoutClass {
 
     layoutManager.layout(graph);
 
-    cy.nodes().layoutPositions(this.layout, this.options, function (i, node) {
+    cy.nodes().layoutPositions(this.layout, this.options, node => {
       const vertex = vertices.get(node.id());
 
       return {

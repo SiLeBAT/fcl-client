@@ -1395,9 +1395,9 @@ cytoscape-spread@^1.3.0:
   dependencies:
     weaverjs "^1.2.0"
 
-cytoscape@^2.7.16:
-  version "2.7.17"
-  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-2.7.17.tgz#7d2e7dbaaef553fe4c28700a06ecc1d7a52be1d8"
+cytoscape@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.0.0.tgz#d47ed5bd7fb0206325cd6343f7fd0e1be0d106b2"
 
 d3-array@1, d3-array@1.2:
   version "1.2.0"
