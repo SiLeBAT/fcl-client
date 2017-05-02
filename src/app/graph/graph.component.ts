@@ -1,6 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdMenuTrigger} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
+import cytoscape from 'cytoscape';
+import cola from 'cytoscape-cola';
+import dagre from 'cytoscape-dagre';
+import spread from 'cytoscape-spread';
 
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
@@ -10,8 +14,10 @@ import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {TracingService} from './tracing.service';
 import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Size} from '../util/datatypes';
+import {FruchtermanLayout} from './fruchterman_reingold';
+import {Legend} from './legend';
+import {Zooming} from './zooming';
 
-declare const cytoscape: any;
 declare const ResizeSensor: any;
 declare const html2canvas: any;
 
@@ -89,6 +95,12 @@ export class GraphComponent implements OnInit {
   }
 
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
+    cytoscape.use(cola);
+    cytoscape.use(dagre);
+    cytoscape.use(spread);
+    cytoscape('core', 'legend', Legend);
+    cytoscape('core', 'zooming', Zooming);
+    cytoscape('layout', 'fruchterman', FruchtermanLayout);
   }
 
   ngOnInit() {

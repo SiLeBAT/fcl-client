@@ -25,16 +25,7 @@
         "../node_modules/hammerjs/hammer.min.js",
         "../node_modules/css-element-queries/src/ResizeSensor.js",
         "../node_modules/css-element-queries/src/ElementQueries.js",
-        "../node_modules/html2canvas/dist/html2canvas.min.js",
-        "../node_modules/cytoscape/dist/cytoscape.min.js",
-        "../node_modules/webcola/WebCola/cola.min.js",
-        "../node_modules/cytoscape-cola/cytoscape-cola.js",
-        "../node_modules/graphlib/node_modules/lodash/index.js",
-        "../node_modules/graphlib/dist/graphlib.core.min.js",
-        "../node_modules/dagre/dist/dagre.core.min.js",
-        "../node_modules/cytoscape-dagre/cytoscape-dagre.js",
-        "../node_modules/weaverjs/dist/weaver.min.js",
-        "../node_modules/cytoscape-spread/cytoscape-spread.js"
+        "../node_modules/html2canvas/dist/html2canvas.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
