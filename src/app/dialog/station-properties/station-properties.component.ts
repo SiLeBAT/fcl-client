@@ -25,22 +25,21 @@ interface EdgeDatum {
   target: NodeDatum;
 }
 
+const NODE = 'node';
+const HOVER = 'hover';
+const EDGE = 'edge';
+const HIDDEN = 'hidden';
+
+const SVG_WIDTH = 400;
+const NODE_PADDING = 15;
+const NODE_WIDTH = 100;
+const NODE_HEIGHT = 30;
+
 @Component({
   templateUrl: './station-properties.component.html',
   styleUrls: ['./station-properties.component.css']
 })
 export class StationPropertiesComponent implements OnInit {
-
-  private static NODE = 'node';
-  private static HOVER = 'hover';
-
-  private static EDGE = 'edge';
-  private static HIDDEN = 'hidden';
-
-  private static SVG_WIDTH = 400;
-  private static NODE_PADDING = 15;
-  private static NODE_WIDTH = 100;
-  private static NODE_HEIGHT = 30;
 
   properties: { name: string, value: string }[];
 
@@ -50,8 +49,6 @@ export class StationPropertiesComponent implements OnInit {
   private edgeData: EdgeDatum[];
   private height: number;
 
-  private g: Selection<SVGElement, any, any, any>;
-  private defs: Selection<SVGElement, any, any, any>;
   private nodesG: Selection<SVGElement, any, any, any>;
   private edgesG: Selection<SVGElement, any, any, any>;
   private dragLine: Selection<SVGElement, any, any, any>;
@@ -70,8 +67,8 @@ export class StationPropertiesComponent implements OnInit {
 
     if (data.station.incoming.length > 0 && data.station.outgoing.length > 0) {
       const nodeMap: Map<string, NodeDatum> = new Map();
-      let yIn = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
-      let yOut = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
+      let yIn = NODE_PADDING + NODE_HEIGHT / 2;
+      let yOut = NODE_PADDING + NODE_HEIGHT / 2;
 
       for (const id of data.station.incoming) {
         const delivery = data.connectedDeliveries.find(d => d.id === id);
@@ -80,10 +77,10 @@ export class StationPropertiesComponent implements OnInit {
           id: id,
           type: NodeType.IN,
           title: delivery.id,
-          x: StationPropertiesComponent.NODE_WIDTH / 2 + 1,
+          x: NODE_WIDTH / 2 + 1,
           y: yIn
         });
-        yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+        yIn += NODE_HEIGHT + NODE_PADDING;
       }
 
       for (const id of data.station.outgoing) {
@@ -93,10 +90,10 @@ export class StationPropertiesComponent implements OnInit {
           id: id,
           type: NodeType.OUT,
           title: delivery.id,
-          x: StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH / 2 - 1,
+          x: SVG_WIDTH - NODE_WIDTH / 2 - 1,
           y: yOut
         });
-        yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+        yOut += NODE_HEIGHT + NODE_PADDING;
       }
 
       this.edgeData = [];
@@ -109,7 +106,7 @@ export class StationPropertiesComponent implements OnInit {
       }
 
       this.nodeData = Array.from(nodeMap.values());
-      this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_HEIGHT / 2;
+      this.height = Math.max(yIn, yOut) - NODE_HEIGHT / 2;
     }
   }
 
@@ -129,34 +126,30 @@ export class StationPropertiesComponent implements OnInit {
     if (this.height != null) {
       const svg: Selection<SVGElement, any, any, any> = this.d3
         .select('#in-out-connector').append<SVGElement>('svg')
-        .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
-        .on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
+        .attr('width', SVG_WIDTH).attr('height', this.height)
+        .on('mouseup', () => this.dragLine.classed(HIDDEN, true));
 
-      this.defs = svg.append<SVGElement>('defs');
-      this.appendArrowToDefs('end-arrow');
-      this.appendArrowToDefs('end-arrow-hover');
+      const defs = svg.append<SVGElement>('defs');
 
-      this.g = svg.append<SVGElement>('g');
-      this.dragLine = this.g.append<SVGElement>('path')
-        .attr('class', StationPropertiesComponent.EDGE + ' ' + StationPropertiesComponent.HIDDEN);
-      this.edgesG = this.g.append<SVGElement>('g');
-      this.nodesG = this.g.append<SVGElement>('g');
+      defs.append('marker')
+        .attr('id', 'end-arrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 7)
+        .attr('markerWidth', 3.5)
+        .attr('markerHeight', 3.5)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5');
+
+      const g = svg.append<SVGElement>('g');
+
+      this.dragLine = g.append<SVGElement>('path').attr('class', EDGE + ' ' + HIDDEN).attr('marker-end', 'url(#end-arrow)');
+      this.edgesG = g.append<SVGElement>('g');
+      this.nodesG = g.append<SVGElement>('g');
 
       this.addNodes();
       this.updateEdges();
     }
-  }
-
-  private appendArrowToDefs(id: string) {
-    this.defs.append('marker')
-      .attr('id', id)
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 7)
-      .attr('markerWidth', 3.5)
-      .attr('markerHeight', 3.5)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-5L10,0L0,5');
   }
 
   private addNodes() {
@@ -164,27 +157,25 @@ export class StationPropertiesComponent implements OnInit {
     let hoverD: NodeDatum;
 
     const nodes = this.nodesG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeData, d => d.id).enter().append<SVGElement>('g')
-      .classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+      .classed(NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
-    nodes.append('rect')
-      .attr('x', -StationPropertiesComponent.NODE_WIDTH / 2).attr('y', -StationPropertiesComponent.NODE_HEIGHT / 2)
-      .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
-    nodes.append('text').attr('text-anchor', 'middle').attr('dy', 5).append('tspan').text(d => d.title);
+    nodes.append('rect').attr('x', -NODE_WIDTH / 2).attr('y', -NODE_HEIGHT / 2).attr('width', NODE_WIDTH).attr('height', NODE_HEIGHT);
+    nodes.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(d => d.title);
 
     nodes.on('mouseover', function (d) {
       hoverD = d;
-      d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      d3.select(this).classed(HOVER, true);
     }).on('mouseout', function () {
       hoverD = null;
-      d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      d3.select(this).classed(HOVER, false);
     });
 
     nodes.filter(d => d.type === NodeType.IN).call(this.d3.drag<SVGElement, NodeDatum>()
       .on('start drag', d => {
         const mousePos = d3.mouse(document.getElementById('in-out-connector'));
 
-        this.dragLine.attr('d', 'M' + (d.x + 50) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
-        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false);
+        this.dragLine.attr('d', 'M' + (d.x + NODE_WIDTH / 2) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
+        this.dragLine.classed(HIDDEN, false);
       })
       .on('end', d => {
         if (hoverD != null && hoverD.type === NodeType.OUT) {
@@ -199,15 +190,15 @@ export class StationPropertiesComponent implements OnInit {
           }
         }
 
-        this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
+        this.dragLine.classed(HIDDEN, true);
       }));
   }
 
   private updateEdges() {
     const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path').data(this.edgeData, d => d.source.id + '->' + d.target.id);
 
-    edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true)
-      .attr('d', d => 'M' + (d.source.x + 50) + ',' + d.source.y + 'L' + (d.target.x - 50) + ',' + d.target.y)
+    edges.enter().append('path').classed(EDGE, true)
+      .attr('d', d => 'M' + (d.source.x + NODE_WIDTH / 2) + ',' + d.source.y + 'L' + (d.target.x - NODE_WIDTH / 2) + ',' + d.target.y)
       .on('click', d => {
         this.edgeData.splice(this.edgeData.indexOf(d), 1);
         this.updateEdges();

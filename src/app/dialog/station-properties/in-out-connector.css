@@ -19,13 +19,11 @@
   stroke: rgb(0, 0, 0);
   stroke-width: 6px;
   cursor: default;
-  marker-end: url(#end-arrow);
 }
 
 /*noinspection CssUnusedSymbol,CssUnknownTarget*/
 #in-out-connector path.edge:hover {
   stroke: rgb(0, 0, 255);
-  marker-end: url(#end-arrow-hover);
 }
 
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
@@ -36,9 +34,4 @@
 /*noinspection CssUnusedSymbol*/
 #in-out-connector #end-arrow {
   fill: rgb(0, 0, 0);
-}
-
-/*noinspection CssUnusedSymbol*/
-#in-out-connector #end-arrow-hover {
-  fill: rgb(0, 0, 255);
 }
