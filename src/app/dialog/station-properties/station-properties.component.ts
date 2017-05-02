@@ -163,11 +163,6 @@ export class StationPropertiesComponent implements OnInit {
     const d3 = this.d3;
     let hoverD: NodeDatum;
 
-    const updateDragLinePosition = d => {
-      const mousePos = d3.mouse(document.getElementById('in-out-connector'));
-
-      this.dragLine.attr('d', 'M' + (d.x + 50) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
-    };
     const nodes = this.nodesG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeData, d => d.id).enter().append<SVGElement>('g')
       .classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
@@ -185,11 +180,12 @@ export class StationPropertiesComponent implements OnInit {
     });
 
     nodes.filter(d => d.type === NodeType.IN).call(this.d3.drag<SVGElement, NodeDatum>()
-      .on('start', d => {
-        updateDragLinePosition(d);
+      .on('start drag', d => {
+        const mousePos = d3.mouse(document.getElementById('in-out-connector'));
+
+        this.dragLine.attr('d', 'M' + (d.x + 50) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
         this.dragLine.classed(StationPropertiesComponent.HIDDEN, false);
       })
-      .on('drag', updateDragLinePosition)
       .on('end', d => {
         if (hoverD != null && hoverD.type === NodeType.OUT) {
           const newEdge: EdgeDatum = {
