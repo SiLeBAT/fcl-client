@@ -160,58 +160,51 @@ export class StationPropertiesComponent implements OnInit {
   }
 
   private addNodes() {
+    const d3 = this.d3;
     let hoverD: NodeDatum;
+
     const updateDragLinePosition = d => {
-      const mousePos = this.d3.mouse(document.getElementById('in-out-connector'));
+      const mousePos = d3.mouse(document.getElementById('in-out-connector'));
 
       this.dragLine.attr('d', 'M' + (d.x + 50) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
     };
-    const nodes = this.nodesG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeData, d => d.id).enter().append<SVGElement>('g');
+    const nodes = this.nodesG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeData, d => d.id).enter().append<SVGElement>('g')
+      .classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
 
-    nodes.classed(StationPropertiesComponent.NODE, true)
-      .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')').append('rect')
+    nodes.append('rect')
       .attr('x', -StationPropertiesComponent.NODE_WIDTH / 2).attr('y', -StationPropertiesComponent.NODE_HEIGHT / 2)
       .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
+    nodes.append('text').attr('text-anchor', 'middle').attr('dy', 5).append('tspan').text(d => d.title);
 
-    nodes.each((d, i) => {
-      const node = this.d3.select<SVGElement, NodeDatum>(nodes.nodes()[i]);
-
-      node.append('text').attr('text-anchor', 'middle').attr('dy', 5).append('tspan').text(d.title);
-
-      node.on('mouseover', () => {
-        hoverD = d;
-        node.classed(StationPropertiesComponent.HOVER, true);
-      }).on('mouseout', () => {
-        hoverD = null;
-        node.classed(StationPropertiesComponent.HOVER, false);
-      });
-
-      if (node.datum().type === NodeType.IN) {
-        node.call(this.d3.drag<SVGElement, NodeDatum>()
-          .on('start', () => {
-            updateDragLinePosition(d);
-            this.dragLine.classed(StationPropertiesComponent.HIDDEN, false);
-          })
-          .on('drag', updateDragLinePosition)
-          .on('end', () => {
-            if (hoverD != null && hoverD.type === NodeType.OUT) {
-              const newEdge: EdgeDatum = {
-                source: d,
-                target: hoverD
-              };
-
-              if (this.edgeData.find(e => e.source === newEdge.source && e.target === newEdge.target) == null) {
-                this.edgeData.push(newEdge);
-                this.updateEdges();
-              }
-            }
-
-            this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
-          }));
-      } else {
-        node.call(this.d3.drag<SVGElement, NodeDatum>());
-      }
+    nodes.on('mouseover', function (d) {
+      hoverD = d;
+      d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+    }).on('mouseout', function () {
+      hoverD = null;
+      d3.select(this).classed(StationPropertiesComponent.HOVER, false);
     });
+
+    nodes.filter(d => d.type === NodeType.IN).call(this.d3.drag<SVGElement, NodeDatum>()
+      .on('start', d => {
+        updateDragLinePosition(d);
+        this.dragLine.classed(StationPropertiesComponent.HIDDEN, false);
+      })
+      .on('drag', updateDragLinePosition)
+      .on('end', d => {
+        if (hoverD != null && hoverD.type === NodeType.OUT) {
+          const newEdge: EdgeDatum = {
+            source: d,
+            target: hoverD
+          };
+
+          if (this.edgeData.find(e => e.source === newEdge.source && e.target === newEdge.target) == null) {
+            this.edgeData.push(newEdge);
+            this.updateEdges();
+          }
+        }
+
+        this.dragLine.classed(StationPropertiesComponent.HIDDEN, true);
+      }));
   }
 
   private updateEdges() {
