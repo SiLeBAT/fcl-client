@@ -110,6 +110,7 @@ class ZoomingClass {
       if (cy.elements().size() === 0) {
         cy.reset();
       } else {
+        cy.nodes().style({'font-size': 0});
         cy.fit();
       }
     });

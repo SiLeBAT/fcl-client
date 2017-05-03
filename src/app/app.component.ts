@@ -42,13 +42,13 @@ export class AppComponent implements OnInit {
 
     this.graph.onChange(() => this.table.update());
     this.table.onSelectionChange(() => this.graph.updateSelection());
-    this.rightSidenav.onOpenStart.subscribe(() => this.updateRightSidenav());
+    this.rightSidenav.onOpenStart.subscribe(() => this.onTableChange('width'));
     new Hammer(document.getElementById('sidenavSlider')).on('pan', event => {
       const newWidth = 1 - event.center.x / document.getElementById('mainContainer').offsetWidth;
 
       if (newWidth > 0 && newWidth < 1) {
         this.tableSettings.width = newWidth;
-        this.updateRightSidenav();
+        this.onTableChange('width');
       }
     });
   }
@@ -79,13 +79,14 @@ export class AppComponent implements OnInit {
   onTableChange(property: string) {
     switch (property) {
       case 'all':
-        this.updateRightSidenav();
+        document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
         this.table.setMode(this.tableSettings.mode);
         this.table.setStationColumns(this.tableSettings.stationColumns);
         this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
         this.table.setShowType(this.tableSettings.showType);
         break;
       case 'width':
+        document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
         break;
       case 'mode':
         this.table.setMode(this.tableSettings.mode);
@@ -196,10 +197,6 @@ export class AppComponent implements OnInit {
     this.onTableChange('all');
     this.graph.init(data.elements, data.layout);
     this.table.init(data.elements);
-  }
-
-  private updateRightSidenav() {
-    document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
   }
 
 }
