@@ -1,10 +1,9 @@
 import {Subject} from 'rxjs/Rx';
+import Hammer from 'hammerjs';
 
 export function Zooming(params: Subject<boolean>) {
   return new ZoomingClass(this, params);
 }
-
-declare const Hammer: any;
 
 class ZoomingClass {
 

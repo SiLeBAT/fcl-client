@@ -5,6 +5,8 @@ import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
 import spread from 'cytoscape-spread';
+import html2canvas from 'html2canvas';
+import {ResizeSensor} from 'css-element-queries';
 
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
@@ -17,9 +19,6 @@ import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Size} from '../
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Legend} from './legend';
 import {Zooming} from './zooming';
-
-declare const ResizeSensor: any;
-declare const html2canvas: any;
 
 enum MenuActionType {
   runAction, openLayoutMenu

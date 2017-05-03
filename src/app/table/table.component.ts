@@ -2,12 +2,11 @@ import {Component, OnInit, ViewChild, TemplateRef} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
+import {ResizeSensor} from 'css-element-queries';
 
 import {DataService} from '../util/data.service';
 import {UtilService} from '../util/util.service';
 import {DeliveryData, FclElements, ObservedType, ShowType, StationData, TableMode} from '../util/datatypes';
-
-declare const ResizeSensor: any;
 
 interface FilterableRow {
   content: any;
