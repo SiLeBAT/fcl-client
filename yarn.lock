@@ -6,7 +6,7 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.1.0.tgz#97b642aee01b5406e03ec65e499342ba91e2dd38"
 
-"@angular/cli@1.0.1":
+"@angular/cli@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.0.1.tgz#95bc1e02c564ff2bddc7c6d975fdf355b47216cb"
   dependencies:
@@ -110,7 +110,7 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.1.0.tgz#b981386be1a36f2af7f0679447fd97b7267b25de"
 
-"@angular/router@4.1.0":
+"@angular/router@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.1.0.tgz#dd3563662f95ca3aa3dd9ff13c6ed4bea1d90b06"
 
@@ -133,9 +133,9 @@
     magic-string "^0.19.0"
     source-map "^0.5.6"
 
-"@swimlane/ngx-datatable@^8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@swimlane/ngx-datatable/-/ngx-datatable-8.2.1.tgz#b310ac7522312e301dbea3be7cf2a4b9bf172818"
+"@swimlane/ngx-datatable@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@swimlane/ngx-datatable/-/ngx-datatable-9.0.0.tgz#77cdd9febf94b99188e50fba46e35b8e05dc6b7b"
 
 "@types/d3-array@1.2":
   version "1.2.0"
