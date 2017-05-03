@@ -95,12 +95,14 @@ export class GraphComponent implements OnInit {
   }
 
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
-    cytoscape.use(cola);
-    cytoscape.use(dagre);
-    cytoscape.use(spread);
-    cytoscape('core', 'legend', Legend);
-    cytoscape('core', 'zooming', Zooming);
-    cytoscape('layout', 'fruchterman', FruchtermanLayout);
+    if (cytoscape != null) {
+      cytoscape.use(cola);
+      cytoscape.use(dagre);
+      cytoscape.use(spread);
+      cytoscape('core', 'legend', Legend);
+      cytoscape('core', 'zooming', Zooming);
+      cytoscape('layout', 'fruchterman', FruchtermanLayout);
+    }
   }
 
   ngOnInit() {
