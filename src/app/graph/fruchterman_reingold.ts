@@ -36,16 +36,25 @@ class FruchtermanLayoutClass {
     const height = cy.height();
     const graph = new Graph();
     const vertices = new Map();
+    const elementIds: Set<string> = new Set();
+
+    this.options.eles.each(e => elementIds.add(e.id()));
 
     cy.nodes().each(node => {
-      const v = new Vertex(Math.random() * width, Math.random() * height);
+      let v: Vertex;
+
+      if (elementIds.has(node.id())) {
+        v = new Vertex(Math.random() * width, Math.random() * height, false);
+      } else {
+        v = new Vertex(node.position().x, node.position().y, true);
+      }
 
       vertices.set(node.id(), v);
       graph.insertVertex(v);
     });
 
     cy.edges().each(edge => {
-      Graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+      graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
 
     const layoutManager = new ForceDirectedVertexLayout(graph);
@@ -68,32 +77,38 @@ class FruchtermanLayoutClass {
 }
 
 class Graph {
-  vertices: Vertex[] = [];
 
-  static insertEdge(vertex1: Vertex, vertex2: Vertex) {
-    vertex1.edges.push(vertex2);
-    vertex2.reverseEdges.push(vertex1);
-  }
+  vertices: Vertex[] = [];
+  edges: { vertex1: Vertex, vertex2: Vertex }[] = [];
 
   insertVertex(vertex: Vertex) {
     this.vertices.push(vertex);
+  }
+
+  insertEdge(vertex1: Vertex, vertex2: Vertex) {
+    if (!vertex1.connections.has(vertex2)) {
+      vertex1.connections.add(vertex2);
+      vertex2.connections.add(vertex1);
+      this.edges.push({vertex1: vertex1, vertex2: vertex2});
+    }
   }
 }
 
 class Vertex {
 
-  edges: Vertex[] = [];
-  reverseEdges: Vertex[] = [];
   x: number;
   y: number;
+  fixed: boolean;
+  connections: Set<Vertex> = new Set();
+
   dx: number;
   dy: number;
-  fixed = false;
   visited: boolean;
 
-  constructor(x: number, y: number) {
+  constructor(x: number, y: number, fixed: boolean) {
     this.x = x;
     this.y = y;
+    this.fixed = fixed;
   }
 }
 
@@ -122,46 +137,54 @@ class ForceDirectedVertexLayout {
 
     // Run through some iterations
     for (let q = 0; q < iterations; q++) {
-
-      /* Calculate repulsive forces. */
       for (const v of this.graph.vertices) {
         v.dx = 0;
         v.dy = 0;
-        // Do not move fixed vertices
-        if (!v.fixed) {
-          for (const u of this.graph.vertices) {
-            if (v !== u && !u.fixed) {
-              /* Difference vector between the two vertices. */
-              const difx = v.x - u.x;
-              const dify = v.y - u.y;
+      }
 
-              /* Length of the dif vector. */
-              const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
-              const force = R * k * k / d;
-              v.dx = v.dx + (difx / d) * force;
-              v.dy = v.dy + (dify / d) * force;
-            }
+      const n = this.graph.vertices.length;
+
+      /* Calculate repulsive forces. */
+      for (let i1 = 0; i1 < n - 1; i1++) {
+        for (let i2 = i1 + 1; i2 < n; i2++) {
+          const u = this.graph.vertices[i1];
+          const v = this.graph.vertices[i2];
+
+          if (!u.fixed || !v.fixed) {
+            /* Difference vector between the two vertices. */
+            const difx = v.x - u.x;
+            const dify = v.y - u.y;
+            /* Length of the dif vector. */
+            const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
+            const force = R * k * k / d;
+
+            u.dx = u.dx - (difx / d) * force;
+            u.dy = u.dy - (dify / d) * force;
+
+            v.dx = v.dx + (difx / d) * force;
+            v.dy = v.dy + (dify / d) * force;
           }
         }
       }
 
       /* Calculate attractive forces. */
-      for (const v of this.graph.vertices) {
-        // Do not move fixed vertices
-        if (!v.fixed) {
-          for (const e of v.edges) {
-            const u = e;
-            const difx = v.x - u.x;
-            const dify = v.y - u.y;
-            const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
-            const force = A * d * d / k;
+      for (const c of this.graph.edges) {
+        const u = c.vertex1;
+        const v = c.vertex2;
 
-            v.dx = v.dx - (difx / d) * force;
-            v.dy = v.dy - (dify / d) * force;
+        if (!u.fixed || !v.fixed) {
+          /* Difference vector between the two vertices. */
+          const difx = v.x - u.x;
+          const dify = v.y - u.y;
+          /* Length of the dif vector. */
+          const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
+          const force = A * d * d / k;
 
-            u.dx = u.dx + (difx / d) * force;
-            u.dy = u.dy + (dify / d) * force;
-          }
+          u.dx = u.dx + (difx / d) * force;
+          u.dy = u.dy + (dify / d) * force;
+
+          v.dx = v.dx - (difx / d) * force;
+          v.dy = v.dy - (dify / d) * force;
         }
       }
 
@@ -184,7 +207,7 @@ class ForceDirectedVertexLayout {
   }
 
   private connectComponents() {
-    const components = [];
+    const components: Vertex[][] = [];
 
     // Clear DFS visited flag
     for (const v of this.graph.vertices) {
@@ -195,26 +218,19 @@ class ForceDirectedVertexLayout {
     // that hasn't been visited yet.
     for (const v of this.graph.vertices) {
       if (!v.visited) {
-        const stack: Vertex[] = [v];
         const component: Vertex[] = [];
+        const stack: Vertex[] = [v];
 
         while (stack.length > 0) {
           const u = stack.pop();
 
-          u.visited = true;
           component.push(u);
-
-          for (const e of u.edges) {
+          u.visited = true;
+          u.connections.forEach(e => {
             if (!e.visited) {
               stack.push(e);
             }
-          }
-
-          for (const e of u.reverseEdges) {
-            if (!e.visited) {
-              stack.push(e);
-            }
-          }
+          });
         }
 
         components.push(component);
@@ -223,21 +239,21 @@ class ForceDirectedVertexLayout {
 
     // Interconnect all center vertices
     if (components.length > 1) {
-      const componentCenters = [];
+      const componentCenters: Vertex[] = [];
 
       for (const component of components) {
-        const center = new Vertex(-1, -1);
+        const center = new Vertex(-1, -1, false);
 
         this.graph.insertVertex(center);
 
         for (const otherCenter of componentCenters) {
-          Graph.insertEdge(center, otherCenter);
+          this.graph.insertEdge(center, otherCenter);
         }
 
         componentCenters.push(center);
 
         for (const v of component) {
-          Graph.insertEdge(v, center);
+          this.graph.insertEdge(v, center);
         }
       }
     }
