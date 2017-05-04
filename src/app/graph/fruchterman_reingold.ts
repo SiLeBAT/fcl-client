@@ -48,9 +48,9 @@ class FruchtermanLayoutClass {
       Graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
 
-    const layoutManager = new ForceDirectedVertexLayout(width, height, 100);
+    const layoutManager = new ForceDirectedVertexLayout(graph);
 
-    layoutManager.layout(graph);
+    layoutManager.layout(width, height, 100);
 
     cy.nodes().layoutPositions(this.layout, this.options, node => {
       const vertex = vertices.get(node.id());
@@ -71,13 +71,8 @@ class Graph {
   vertices: Vertex[] = [];
 
   static insertEdge(vertex1: Vertex, vertex2: Vertex) {
-    const e1 = new Edge(vertex2);
-    const e2 = new Edge(vertex1);
-
-    vertex1.edges.push(e1);
-    vertex2.reverseEdges.push(e2);
-
-    return e1;
+    vertex1.edges.push(vertex2);
+    vertex2.reverseEdges.push(vertex1);
   }
 
   insertVertex(vertex: Vertex) {
@@ -86,12 +81,13 @@ class Graph {
 }
 
 class Vertex {
-  edges: Edge[] = [];
-  reverseEdges: Edge[] = [];
+
+  edges: Vertex[] = [];
+  reverseEdges: Vertex[] = [];
   x: number;
   y: number;
-  dx = 0;
-  dy = 0;
+  dx: number;
+  dy: number;
   fixed = false;
   visited: boolean;
 
@@ -101,120 +97,39 @@ class Vertex {
   }
 }
 
-class Edge {
-  endVertex: Vertex;
-
-  constructor(endVertex: Vertex) {
-    this.endVertex = endVertex;
-  }
-}
-
-
 class ForceDirectedVertexLayout {
 
-  width: number;
-  height: number;
-  iterations: number;
+  private graph: Graph;
 
-  constructor(width: number, height: number, iterations: number) {
-    this.width = width;
-    this.height = height;
-    this.iterations = iterations;
+  constructor(graph: Graph) {
+    this.graph = graph;
   }
 
-  identifyComponents(graph: Graph) {
-    const components = [];
+  layout(width: number, height: number, iterations: number) {
+    // Initiate component identification and virtual vertex creation
+    // to prevent disconnected graph components from drifting too far apart
+    this.connectComponents();
 
-    // Depth first search
-    function dfs(vertex: Vertex) {
-      const stack: Vertex[] = [];
-      const component: Vertex[] = [];
+    const area = width * height;
+    const k = Math.sqrt(area / this.graph.vertices.length);
 
-      components.push(component);
-
-      function visitVertex(v: Vertex) {
-        component.push(v);
-        v.visited = true;
-
-        for (const e of v.edges) {
-          stack.push(e.endVertex);
-        }
-
-        for (const e of v.reverseEdges) {
-          stack.push(e.endVertex);
-        }
-      }
-
-      visitVertex(vertex);
-      while (stack.length > 0) {
-        const u = stack.pop();
-
-        if (!u.visited) {
-          visitVertex(u);
-        }
-      }
-    }
-
-    // Clear DFS visited flag
-    for (const v of graph.vertices) {
-      v.visited = false;
-    }
-
-    // Iterate through all vertices starting DFS from each vertex
-    // that hasn't been visited yet.
-    for (const v of graph.vertices) {
-      if (!v.visited) {
-        dfs(v);
-      }
-    }
-
-    // Interconnect all center vertices
-    if (components.length > 1) {
-      const componentCenters = [];
-
-      for (const component of components) {
-        const center = new Vertex(-1, -1);
-
-        graph.insertVertex(center);
-
-        for (const otherCenter of componentCenters) {
-          Graph.insertEdge(center, otherCenter);
-        }
-
-        componentCenters.push(center);
-
-        for (const v of component) {
-          Graph.insertEdge(v, center);
-        }
-      }
-    }
-  }
-
-  layout(graph: Graph) {
-    const area = this.width * this.height;
-    const k = Math.sqrt(area / graph.vertices.length);
-
-    let t = this.width / 10; // Temperature.
-    const dt = t / (this.iterations + 1);
+    let t = width / 10; // Temperature.
+    const dt = t / (iterations + 1);
 
     const eps = 20; // Minimum vertex distance.
     const A = 1.5; // Fine tune attraction.
     const R = 0.5; // Fine tune repulsion.
 
-    // Initiate component identification and virtual vertex creation
-    // to prevent disconnected graph components from drifting too far apart
-    this.identifyComponents(graph);
-
     // Run through some iterations
-    for (let q = 0; q < this.iterations; q++) {
+    for (let q = 0; q < iterations; q++) {
 
       /* Calculate repulsive forces. */
-      for (const v of graph.vertices) {
+      for (const v of this.graph.vertices) {
         v.dx = 0;
         v.dy = 0;
         // Do not move fixed vertices
         if (!v.fixed) {
-          for (const u of graph.vertices) {
+          for (const u of this.graph.vertices) {
             if (v !== u && !u.fixed) {
               /* Difference vector between the two vertices. */
               const difx = v.x - u.x;
@@ -231,11 +146,11 @@ class ForceDirectedVertexLayout {
       }
 
       /* Calculate attractive forces. */
-      for (const v of graph.vertices) {
+      for (const v of this.graph.vertices) {
         // Do not move fixed vertices
         if (!v.fixed) {
           for (const e of v.edges) {
-            const u = e.endVertex;
+            const u = e;
             const difx = v.x - u.x;
             const dify = v.y - u.y;
             const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
@@ -252,7 +167,7 @@ class ForceDirectedVertexLayout {
 
       /* Limit the maximum displacement to the temperature t
        and prevent from being displaced outside frame.     */
-      for (const v of graph.vertices) {
+      for (const v of this.graph.vertices) {
         if (!v.fixed) {
           /* Length of the displacement vector. */
           const d = Math.max(eps, Math.sqrt(v.dx * v.dx + v.dy * v.dy));
@@ -265,6 +180,66 @@ class ForceDirectedVertexLayout {
 
       /* Cool. */
       t -= dt;
+    }
+  }
+
+  private connectComponents() {
+    const components = [];
+
+    // Clear DFS visited flag
+    for (const v of this.graph.vertices) {
+      v.visited = false;
+    }
+
+    // Iterate through all vertices starting DFS from each vertex
+    // that hasn't been visited yet.
+    for (const v of this.graph.vertices) {
+      if (!v.visited) {
+        const stack: Vertex[] = [v];
+        const component: Vertex[] = [];
+
+        while (stack.length > 0) {
+          const u = stack.pop();
+
+          u.visited = true;
+          component.push(u);
+
+          for (const e of u.edges) {
+            if (!e.visited) {
+              stack.push(e);
+            }
+          }
+
+          for (const e of u.reverseEdges) {
+            if (!e.visited) {
+              stack.push(e);
+            }
+          }
+        }
+
+        components.push(component);
+      }
+    }
+
+    // Interconnect all center vertices
+    if (components.length > 1) {
+      const componentCenters = [];
+
+      for (const component of components) {
+        const center = new Vertex(-1, -1);
+
+        this.graph.insertVertex(center);
+
+        for (const otherCenter of componentCenters) {
+          Graph.insertEdge(center, otherCenter);
+        }
+
+        componentCenters.push(center);
+
+        for (const v of component) {
+          Graph.insertEdge(v, center);
+        }
+      }
     }
   }
 }
