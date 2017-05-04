@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MdSidenav, MdDialog} from '@angular/material';
-import Hammer from 'hammerjs';
 
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
@@ -8,6 +7,8 @@ import {DataService} from './util/data.service';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {UtilService} from './util/util.service';
 import {FclData, FclElements, TableMode} from './util/datatypes';
+
+declare const Hammer;
 
 @Component({
   selector: 'app-root',
