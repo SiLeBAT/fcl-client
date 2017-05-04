@@ -7,7 +7,7 @@ import {DataService} from '../../util/data.service';
 
 export interface StationPropertiesData {
   station: StationData;
-  connectedDeliveries: DeliveryData[];
+  deliveries: Map<string, DeliveryData>;
 }
 
 enum NodeType {IN, OUT}
@@ -47,6 +47,7 @@ export class StationPropertiesComponent implements OnInit {
 
   private nodeData: NodeDatum[];
   private edgeData: EdgeDatum[];
+  private lotBased: boolean;
   private height: number;
 
   private nodesG: Selection<SVGElement, any, any, any>;
@@ -73,58 +74,71 @@ export class StationPropertiesComponent implements OnInit {
     this.d3 = d3Service.getD3();
 
     if (data.station.incoming.length > 0 && data.station.outgoing.length > 0) {
-      const nodeMap: Map<string, NodeDatum> = new Map();
+      const ingredientsByLot = this.getIngredientsByLot();
+
+      this.lotBased = ingredientsByLot != null;
+
+      if (this.lotBased) {
+        this.initLotBasedData(ingredientsByLot);
+      } else {
+        this.initDeliveryBasedData();
+      }
+
       let yIn = NODE_PADDING + NODE_HEIGHT / 2;
       let yOut = NODE_PADDING + NODE_HEIGHT / 2;
 
-      for (const id of data.station.incoming) {
-        const delivery = data.connectedDeliveries.find(d => d.id === id);
-
-        nodeMap.set(id, {
-          id: id,
-          type: NodeType.IN,
-          title: delivery.id,
-          x: NODE_WIDTH / 2 + 1,
-          y: yIn
-        });
-        yIn += NODE_HEIGHT + NODE_PADDING;
+      for (const n of this.nodeData) {
+        switch (n.type) {
+          case NodeType.IN:
+            n.x = NODE_WIDTH / 2 + 1;
+            n.y = yIn;
+            yIn += NODE_HEIGHT + NODE_PADDING;
+            break;
+          case NodeType.OUT:
+            n.x = SVG_WIDTH - NODE_WIDTH / 2 - 1;
+            n.y = yOut;
+            yOut += NODE_HEIGHT + NODE_PADDING;
+            break;
+        }
       }
 
-      for (const id of data.station.outgoing) {
-        const delivery = data.connectedDeliveries.find(d => d.id === id);
-
-        nodeMap.set(id, {
-          id: id,
-          type: NodeType.OUT,
-          title: delivery.id,
-          x: SVG_WIDTH - NODE_WIDTH / 2 - 1,
-          y: yOut
-        });
-        yOut += NODE_HEIGHT + NODE_PADDING;
-      }
-
-      this.edgeData = [];
-
-      for (const c of data.station.connections) {
-        this.edgeData.push({
-          source: nodeMap.get(c.source),
-          target: nodeMap.get(c.target)
-        });
-      }
-
-      this.nodeData = Array.from(nodeMap.values());
       this.height = Math.max(yIn, yOut) - NODE_HEIGHT / 2;
     }
   }
 
   //noinspection JSUnusedGlobalSymbols
   close() {
-    const connections: Connection[] = this.edgeData.map(edge => {
-      return {
-        source: edge.source.id,
-        target: edge.target.id
-      };
-    });
+    let connections: Connection[];
+
+    if (this.lotBased) {
+      const deliveriesByLot: Map<string, string[]> = new Map();
+
+      this.data.deliveries.forEach(d => {
+        if (deliveriesByLot.has(d.lot)) {
+          deliveriesByLot.get(d.lot).push(d.id);
+        } else {
+          deliveriesByLot.set(d.lot, [d.id]);
+        }
+      });
+
+      connections = [];
+
+      for (const e of this.edgeData) {
+        for (const d of deliveriesByLot.get(e.target.id)) {
+          connections.push({
+            source: e.source.id,
+            target: d
+          });
+        }
+      }
+    } else {
+      connections = this.edgeData.map(edge => {
+        return {
+          source: edge.source.id,
+          target: edge.target.id
+        };
+      });
+    }
 
     this.dialogRef.close(connections);
   }
@@ -157,6 +171,115 @@ export class StationPropertiesComponent implements OnInit {
       this.addNodes();
       this.updateEdges();
     }
+  }
+
+  private getIngredientsByLot(): Map<string, Set<string>> {
+    const ingredientsByDelivery: Map<string, Set<string>> = new Map();
+
+    for (const id of this.data.station.outgoing) {
+      ingredientsByDelivery.set(id, new Set());
+    }
+
+    for (const c of this.data.station.connections) {
+      ingredientsByDelivery.get(c.target).add(c.source);
+    }
+
+    const ingredientsByLot: Map<string, Set<string>> = new Map();
+    let invalid = false;
+
+    ingredientsByDelivery.forEach((value, key) => {
+      const lot = this.data.deliveries.get(key).lot;
+
+      if (lot == null) {
+        invalid = true;
+      } else {
+        if (!ingredientsByLot.has(lot)) {
+          ingredientsByLot.set(lot, value);
+        } else {
+          const oldValue = ingredientsByLot.get(lot);
+          const areEqual = value.size === oldValue.size && Array.from(value).find(v => !oldValue.has(v)) == null;
+
+          if (!areEqual) {
+            invalid = true;
+          }
+        }
+      }
+    });
+
+    if (invalid) {
+      return null;
+    }
+
+    return ingredientsByLot;
+  }
+
+  private initDeliveryBasedData() {
+    const nodeMap: Map<string, NodeDatum> = new Map();
+
+    for (const id of this.data.station.incoming) {
+      nodeMap.set(id, {
+        id: id,
+        type: NodeType.IN,
+        title: this.data.deliveries.get(id).name,
+        x: null,
+        y: null
+      });
+    }
+
+    for (const id of this.data.station.outgoing) {
+      nodeMap.set(id, {
+        id: id,
+        type: NodeType.OUT,
+        title: this.data.deliveries.get(id).name,
+        x: null,
+        y: null
+      });
+    }
+
+    this.edgeData = [];
+
+    for (const c of this.data.station.connections) {
+      this.edgeData.push({
+        source: nodeMap.get(c.source),
+        target: nodeMap.get(c.target)
+      });
+    }
+
+    this.nodeData = Array.from(nodeMap.values());
+  }
+
+  private initLotBasedData(ingredientsByLot: Map<string, Set<string>>) {
+    const nodeMap: Map<string, NodeDatum> = new Map();
+
+    for (const id of this.data.station.incoming) {
+      nodeMap.set(id, {
+        id: id,
+        type: NodeType.IN,
+        title: this.data.deliveries.get(id).name,
+        x: null,
+        y: null
+      });
+    }
+
+    this.edgeData = [];
+
+    ingredientsByLot.forEach((ingredients, lot) => {
+      nodeMap.set(lot, {
+        id: lot,
+        type: NodeType.OUT,
+        title: lot,
+        x: null,
+        y: null
+      });
+      ingredients.forEach(d => {
+        this.edgeData.push({
+          source: nodeMap.get(d),
+          target: nodeMap.get(lot)
+        });
+      });
+    });
+
+    this.nodeData = Array.from(nodeMap.values());
   }
 
   private addNodes() {

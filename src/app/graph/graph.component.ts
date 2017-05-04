@@ -546,10 +546,15 @@ export class GraphComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: () => {
           const station = this.tracingService.getStationsById([node.id()])[0];
-          const connected = this.tracingService.getDeliveriesById(Array.from(new Set(station.incoming.concat(station.outgoing)).values()));
+          const connected: Map<string, DeliveryData> = new Map();
+
+          for (const d of this.tracingService.getDeliveriesById(station.incoming.concat(station.outgoing))) {
+            connected.set(d.id, d);
+          }
+
           const dialogData: StationPropertiesData = {
             station: station,
-            connectedDeliveries: connected
+            deliveries: connected
           };
 
           this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(connections => {
