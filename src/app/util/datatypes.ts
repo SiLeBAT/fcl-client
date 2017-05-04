@@ -56,6 +56,8 @@ export interface StationData {
 
 export interface DeliveryData {
   id: string;
+  name: string;
+  lot: string;
   source: string;
   target: string;
   originalSource: string;

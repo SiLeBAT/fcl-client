@@ -18,6 +18,7 @@ export class DataService {
   static PROPERTIES: Map<string, { name: string, color: number[] }> = new Map([
     ['id', {name: 'ID', color: null}],
     ['name', {name: 'Name', color: null}],
+    ['lot', {name: 'Lot', color: null}],
     ['source', {name: 'Source', color: null}],
     ['target', {name: 'Target', color: null}],
     ['originalSource', {name: 'Original Source', color: null}],
@@ -208,6 +209,8 @@ export class DataService {
 
       deliveries.push({
         id: e.id,
+        name: e.name != null ? e.name : e.id,
+        lot: e.lot,
         source: e.source,
         target: e.target,
         originalSource: e.originalSource != null ? e.originalSource : e.source,

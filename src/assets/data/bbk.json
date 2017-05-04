@@ -221,7 +221,7 @@
   ],
   "deliveries": [
     {
-      "chargennummer": "BK_150310",
+      "lot": "BK_150310",
       "datedelivery": "2015-03-10",
       "id": "D1",
       "name": "Butterkuchen",
@@ -229,7 +229,7 @@
       "target": "S463"
     },
     {
-      "chargennummer": "Mehl_122",
+      "lot": "Mehl_122",
       "datedelivery": null,
       "id": "D2",
       "name": "Mehl",
@@ -237,7 +237,7 @@
       "target": "S102"
     },
     {
-      "chargennummer": "Pfl_1",
+      "lot": "Pfl_1",
       "datedelivery": null,
       "id": "D3",
       "name": "Pflaumen",
@@ -245,7 +245,7 @@
       "target": "S102"
     },
     {
-      "chargennummer": "KK_150312",
+      "lot": "KK_150312",
       "datedelivery": "2015-03-12",
       "id": "D4",
       "name": "Kirschkuchen",
@@ -253,7 +253,7 @@
       "target": "S1"
     },
     {
-      "chargennummer": "KK_150311",
+      "lot": "KK_150311",
       "datedelivery": "2015-03-11",
       "id": "D5",
       "name": "Kirschkuchen",
@@ -261,7 +261,7 @@
       "target": "S463"
     },
     {
-      "chargennummer": "Zucker_39",
+      "lot": "Zucker_39",
       "datedelivery": null,
       "id": "D6",
       "name": "Zucker",
@@ -269,7 +269,7 @@
       "target": "S679"
     },
     {
-      "chargennummer": "Zucker_3",
+      "lot": "Zucker_3",
       "datedelivery": null,
       "id": "D7",
       "name": "Zucker",
@@ -277,7 +277,7 @@
       "target": "S679"
     },
     {
-      "chargennummer": "Sugar_1",
+      "lot": "Sugar_1",
       "datedelivery": null,
       "id": "D15",
       "name": "Zucker",
@@ -285,7 +285,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Mehl_1",
+      "lot": "Mehl_1",
       "datedelivery": null,
       "id": "D8",
       "name": "Mehl",
@@ -293,7 +293,7 @@
       "target": "S679"
     },
     {
-      "chargennummer": "Kirschen_2",
+      "lot": "Kirschen_2",
       "datedelivery": null,
       "id": "D9",
       "name": "Kirschen",
@@ -301,7 +301,7 @@
       "target": "S679"
     },
     {
-      "chargennummer": "BK_150313",
+      "lot": "BK_150313",
       "datedelivery": "2015-03-13",
       "id": "D10",
       "name": "Backekuchen",
@@ -309,7 +309,7 @@
       "target": "S4"
     },
     {
-      "chargennummer": "BK_150313",
+      "lot": "BK_150313",
       "datedelivery": "2015-03-13",
       "id": "D11",
       "name": "Backekuchen",
@@ -317,7 +317,7 @@
       "target": "S3"
     },
     {
-      "chargennummer": "Safran_1",
+      "lot": "Safran_1",
       "datedelivery": null,
       "id": "D12",
       "name": "Safran",
@@ -325,7 +325,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Egg_1",
+      "lot": "Egg_1",
       "datedelivery": "2015-03-14",
       "id": "D13",
       "name": "Eier",
@@ -333,7 +333,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Milk_1",
+      "lot": "Milk_1",
       "datedelivery": null,
       "id": "D14",
       "name": "Milch",
@@ -341,7 +341,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Schmalz_1",
+      "lot": "Schmalz_1",
       "datedelivery": null,
       "id": "D16",
       "name": "Schmalz",
@@ -349,7 +349,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Salt_1",
+      "lot": "Salt_1",
       "datedelivery": null,
       "id": "D17",
       "name": "Salz",
@@ -357,7 +357,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Mehl_1",
+      "lot": "Mehl_1",
       "datedelivery": null,
       "id": "D18",
       "name": "Mehl",
@@ -365,7 +365,7 @@
       "target": "S20"
     },
     {
-      "chargennummer": "Schm_1",
+      "lot": "Schm_1",
       "datedelivery": null,
       "id": "D19",
       "name": "Schmlaz",
@@ -373,7 +373,7 @@
       "target": "S754"
     },
     {
-      "chargennummer": "K_1221",
+      "lot": "K_1221",
       "datedelivery": null,
       "id": "D20",
       "name": "Kirschen",
@@ -381,7 +381,7 @@
       "target": "S642"
     },
     {
-      "chargennummer": "S_2",
+      "lot": "S_2",
       "datedelivery": null,
       "id": "D21",
       "name": "Safran",
@@ -389,7 +389,7 @@
       "target": "S749"
     },
     {
-      "chargennummer": "E_2",
+      "lot": "E_2",
       "datedelivery": null,
       "id": "D22",
       "name": "Eier",
@@ -397,7 +397,7 @@
       "target": "S22"
     },
     {
-      "chargennummer": "M1",
+      "lot": "M1",
       "datedelivery": null,
       "id": "D23",
       "name": "Mehl",
@@ -405,7 +405,7 @@
       "target": "S750"
     },
     {
-      "chargennummer": "M9",
+      "lot": "M9",
       "datedelivery": null,
       "id": "D27",
       "name": "Mehl",
@@ -413,7 +413,7 @@
       "target": "S236"
     },
     {
-      "chargennummer": "M8",
+      "lot": "M8",
       "datedelivery": null,
       "id": "D24",
       "name": "Milch",
@@ -421,7 +421,7 @@
       "target": "S236"
     },
     {
-      "chargennummer": "S7",
+      "lot": "S7",
       "datedelivery": null,
       "id": "D25",
       "name": "Salz",
@@ -429,7 +429,7 @@
       "target": "S236"
     },
     {
-      "chargennummer": "Z6",
+      "lot": "Z6",
       "datedelivery": null,
       "id": "D26",
       "name": "Zucker",
@@ -437,7 +437,7 @@
       "target": "S236"
     },
     {
-      "chargennummer": "Zuk7",
+      "lot": "Zuk7",
       "datedelivery": null,
       "id": "D28",
       "name": "Zucker",
@@ -445,7 +445,7 @@
       "target": "S236"
     },
     {
-      "chargennummer": "Bäckerkauf_1",
+      "lot": "Bäckerkauf_1",
       "datedelivery": "2015-03-13",
       "id": "D29",
       "name": "Kuchenmitbringsel",

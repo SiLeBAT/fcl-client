@@ -17,11 +17,18 @@ export class DeliveryPropertiesComponent {
 
   constructor(@Inject(MD_DIALOG_DATA) public data: DeliveryPropertiesData) {
     this.properties = Object.keys(data.delivery).filter(key => DataService.PROPERTIES.has(key)).map(key => {
+      const value = data.delivery[key];
+
       return {
         name: DataService.PROPERTIES.get(key).name,
-        value: String(data.delivery[key])
+        value: value != null ? String(value) : ''
       };
-    }).concat(data.delivery.properties);
+    }).concat(data.delivery.properties.map(prop => {
+      return {
+        name: prop.name,
+        value: prop.value != null ? prop.value : ''
+      };
+    }));
   }
 
 }

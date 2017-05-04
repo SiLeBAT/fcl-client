@@ -58,11 +58,18 @@ export class StationPropertiesComponent implements OnInit {
     this.properties = Object.keys(data.station)
       .filter(key => DataService.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
       .map(key => {
+        const value = data.station[key];
+
         return {
           name: DataService.PROPERTIES.get(key).name,
-          value: String(data.station[key])
+          value: value != null ? String(value) : ''
         };
-      }).concat(data.station.properties);
+      }).concat(data.station.properties.map(prop => {
+        return {
+          name: prop.name,
+          value: prop.value != null ? prop.value : ''
+        };
+      }));
     this.d3 = d3Service.getD3();
 
     if (data.station.incoming.length > 0 && data.station.outgoing.length > 0) {

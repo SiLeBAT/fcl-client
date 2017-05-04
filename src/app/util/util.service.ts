@@ -14,8 +14,8 @@ export class UtilService {
   };
 
   private static DELIVERY_DATA: DeliveryData = {
-    id: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null, selected: null, observed: null,
-    forward: null, backward: null, score: null, properties: null
+    id: null, name: null, lot: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null,
+    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
   };
 
   static getStationProperties(): string[] {

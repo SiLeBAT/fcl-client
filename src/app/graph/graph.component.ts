@@ -311,6 +311,8 @@ export class GraphComponent implements OnInit {
             group: 'edges',
             data: {
               id: key,
+              name: key,
+              lot: null,
               source: value[0].source,
               target: value[0].target,
               originalSource: value[0].source,
