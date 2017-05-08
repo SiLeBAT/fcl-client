@@ -185,13 +185,13 @@ export class StationPropertiesComponent implements OnInit {
     }
 
     const ingredientsByLot: Map<string, Set<string>> = new Map();
-    let invalid = false;
+    let valid = true;
 
     ingredientsByDelivery.forEach((value, key) => {
       const lot = this.data.deliveries.get(key).lot;
 
       if (lot == null) {
-        invalid = true;
+        valid = false;
       } else {
         if (!ingredientsByLot.has(lot)) {
           ingredientsByLot.set(lot, value);
@@ -200,17 +200,13 @@ export class StationPropertiesComponent implements OnInit {
           const areEqual = value.size === oldValue.size && Array.from(value).find(v => !oldValue.has(v)) == null;
 
           if (!areEqual) {
-            invalid = true;
+            valid = false;
           }
         }
       }
     });
 
-    if (invalid) {
-      return null;
-    }
-
-    return ingredientsByLot;
+    return valid ? ingredientsByLot : null;
   }
 
   private initDeliveryBasedData() {

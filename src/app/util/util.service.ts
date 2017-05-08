@@ -14,7 +14,7 @@ export class UtilService {
   };
 
   private static DELIVERY_DATA: DeliveryData = {
-    id: null, name: null, lot: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null,
+    id: null, name: null, lot: null, date: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null,
     selected: null, observed: null, forward: null, backward: null, score: null, properties: null
   };
 
@@ -85,7 +85,7 @@ export class UtilService {
 
   static colorToCss(color: number[]): string {
     return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
-  };
+  }
 
   static mixColors(color1: number[], color2: number[]): number[] {
     const r = Math.round((color1[0] + color2[0]) / 2);
@@ -93,7 +93,7 @@ export class UtilService {
     const b = Math.round((color1[2] + color2[2]) / 2);
 
     return [r, g, b];
-  };
+  }
 
   static getAllCombinations(values: any[]): any[][] {
     const n = Math.pow(2, values.length);
@@ -115,7 +115,7 @@ export class UtilService {
     combinations.sort((c1, c2) => c1.length - c2.length);
 
     return combinations;
-  };
+  }
 
   static getCenter(positions: CyPosition[]): CyPosition {
     let xSum = 0;
@@ -130,20 +130,31 @@ export class UtilService {
       x: xSum / positions.length,
       y: ySum / positions.length
     };
-  };
+  }
 
   static sum(position1: CyPosition, position2: CyPosition): CyPosition {
     return {
       x: position1.x + position2.x,
       y: position1.y + position2.y
     };
-  };
+  }
 
   static difference(position1: CyPosition, position2: CyPosition): CyPosition {
     return {
       x: position1.x - position2.x,
       y: position1.y - position2.y
     };
-  };
+  }
 
+  static parseDate(dateString: string): Date {
+    try {
+      return new Date(dateString);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static printDate(date: Date): string {
+    return date.toISOString();
+  }
 }

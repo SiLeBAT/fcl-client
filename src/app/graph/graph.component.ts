@@ -313,6 +313,7 @@ export class GraphComponent implements OnInit {
               id: key,
               name: key,
               lot: null,
+              date: null,
               source: value[0].source,
               target: value[0].target,
               originalSource: value[0].source,

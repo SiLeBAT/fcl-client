@@ -222,7 +222,7 @@
   "deliveries": [
     {
       "lot": "BK_150310",
-      "datedelivery": "2015-03-10",
+      "date": "2015-03-10",
       "id": "D1",
       "name": "Butterkuchen",
       "source": "S102",
@@ -230,7 +230,7 @@
     },
     {
       "lot": "Mehl_122",
-      "datedelivery": null,
+      "date": null,
       "id": "D2",
       "name": "Mehl",
       "source": "S346",
@@ -238,7 +238,7 @@
     },
     {
       "lot": "Pfl_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D3",
       "name": "Pflaumen",
       "source": "S354",
@@ -246,7 +246,7 @@
     },
     {
       "lot": "KK_150312",
-      "datedelivery": "2015-03-12",
+      "date": "2015-03-12",
       "id": "D4",
       "name": "Kirschkuchen",
       "source": "S679",
@@ -254,7 +254,7 @@
     },
     {
       "lot": "KK_150311",
-      "datedelivery": "2015-03-11",
+      "date": "2015-03-11",
       "id": "D5",
       "name": "Kirschkuchen",
       "source": "S679",
@@ -262,7 +262,7 @@
     },
     {
       "lot": "Zucker_39",
-      "datedelivery": null,
+      "date": null,
       "id": "D6",
       "name": "Zucker",
       "source": "S750",
@@ -270,7 +270,7 @@
     },
     {
       "lot": "Zucker_3",
-      "datedelivery": null,
+      "date": null,
       "id": "D7",
       "name": "Zucker",
       "source": "S236",
@@ -278,7 +278,7 @@
     },
     {
       "lot": "Sugar_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D15",
       "name": "Zucker",
       "source": "S236",
@@ -286,7 +286,7 @@
     },
     {
       "lot": "Mehl_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D8",
       "name": "Mehl",
       "source": "S750",
@@ -294,7 +294,7 @@
     },
     {
       "lot": "Kirschen_2",
-      "datedelivery": null,
+      "date": null,
       "id": "D9",
       "name": "Kirschen",
       "source": "S642",
@@ -302,7 +302,7 @@
     },
     {
       "lot": "BK_150313",
-      "datedelivery": "2015-03-13",
+      "date": "2015-03-13",
       "id": "D10",
       "name": "Backekuchen",
       "source": "S20",
@@ -310,7 +310,7 @@
     },
     {
       "lot": "BK_150313",
-      "datedelivery": "2015-03-13",
+      "date": "2015-03-13",
       "id": "D11",
       "name": "Backekuchen",
       "source": "S20",
@@ -318,7 +318,7 @@
     },
     {
       "lot": "Safran_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D12",
       "name": "Safran",
       "source": "S749",
@@ -326,7 +326,7 @@
     },
     {
       "lot": "Egg_1",
-      "datedelivery": "2015-03-14",
+      "date": "2015-03-14",
       "id": "D13",
       "name": "Eier",
       "source": "S22",
@@ -334,7 +334,7 @@
     },
     {
       "lot": "Milk_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D14",
       "name": "Milch",
       "source": "S236",
@@ -342,7 +342,7 @@
     },
     {
       "lot": "Schmalz_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D16",
       "name": "Schmalz",
       "source": "S754",
@@ -350,7 +350,7 @@
     },
     {
       "lot": "Salt_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D17",
       "name": "Salz",
       "source": "S236",
@@ -358,7 +358,7 @@
     },
     {
       "lot": "Mehl_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D18",
       "name": "Mehl",
       "source": "S236",
@@ -366,7 +366,7 @@
     },
     {
       "lot": "Schm_1",
-      "datedelivery": null,
+      "date": null,
       "id": "D19",
       "name": "Schmlaz",
       "source": "S640",
@@ -374,7 +374,7 @@
     },
     {
       "lot": "K_1221",
-      "datedelivery": null,
+      "date": null,
       "id": "D20",
       "name": "Kirschen",
       "source": "S8",
@@ -382,7 +382,7 @@
     },
     {
       "lot": "S_2",
-      "datedelivery": null,
+      "date": null,
       "id": "D21",
       "name": "Safran",
       "source": "S742",
@@ -390,7 +390,7 @@
     },
     {
       "lot": "E_2",
-      "datedelivery": null,
+      "date": null,
       "id": "D22",
       "name": "Eier",
       "source": "S394",
@@ -398,7 +398,7 @@
     },
     {
       "lot": "M1",
-      "datedelivery": null,
+      "date": null,
       "id": "D23",
       "name": "Mehl",
       "source": "S346",
@@ -406,7 +406,7 @@
     },
     {
       "lot": "M9",
-      "datedelivery": null,
+      "date": null,
       "id": "D27",
       "name": "Mehl",
       "source": "S346",
@@ -414,7 +414,7 @@
     },
     {
       "lot": "M8",
-      "datedelivery": null,
+      "date": null,
       "id": "D24",
       "name": "Milch",
       "source": "S261",
@@ -422,7 +422,7 @@
     },
     {
       "lot": "S7",
-      "datedelivery": null,
+      "date": null,
       "id": "D25",
       "name": "Salz",
       "source": "S740",
@@ -430,7 +430,7 @@
     },
     {
       "lot": "Z6",
-      "datedelivery": null,
+      "date": null,
       "id": "D26",
       "name": "Zucker",
       "source": "S598",
@@ -438,7 +438,7 @@
     },
     {
       "lot": "Zuk7",
-      "datedelivery": null,
+      "date": null,
       "id": "D28",
       "name": "Zucker",
       "source": "S451",
@@ -446,7 +446,7 @@
     },
     {
       "lot": "Bäckerkauf_1",
-      "datedelivery": "2015-03-13",
+      "date": "2015-03-13",
       "id": "D29",
       "name": "Kuchenmitbringsel",
       "source": "S3",

@@ -19,6 +19,7 @@ export class DataService {
     ['id', {name: 'ID', color: null}],
     ['name', {name: 'Name', color: null}],
     ['lot', {name: 'Lot', color: null}],
+    ['date', {name: 'Date', color: null}],
     ['source', {name: 'Source', color: null}],
     ['target', {name: 'Target', color: null}],
     ['originalSource', {name: 'Original Source', color: null}],
@@ -211,6 +212,7 @@ export class DataService {
         id: e.id,
         name: e.name != null ? e.name : e.id,
         lot: e.lot,
+        date: UtilService.parseDate(e.date),
         source: e.source,
         target: e.target,
         originalSource: e.originalSource != null ? e.originalSource : e.source,
@@ -222,7 +224,8 @@ export class DataService {
         backward: e.backward != null ? e.backward : false,
         score: e.score != null ? e.score : 0,
         properties: e.properties != null ? e.properties : properties
-      });
+      })
+      ;
     }
 
     return deliveries;
