@@ -30,7 +30,6 @@ import {StationPropertiesComponent} from './dialog/station-properties/station-pr
 import {DeliveryPropertiesComponent} from './dialog/delivery-properties/delivery-properties.component';
 
 import {DataService} from './util/data.service';
-import {UtilService} from './util/util.service';
 import {TracingService} from './graph/tracing.service';
 
 @NgModule({
@@ -64,7 +63,6 @@ import {TracingService} from './graph/tracing.service';
   ],
   providers: [
     DataService,
-    UtilService,
     TracingService,
     ScrollbarHelper,
     D3Service

@@ -5,7 +5,7 @@ import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollba
 import {ResizeSensor} from 'css-element-queries';
 
 import {DataService} from '../util/data.service';
-import {UtilService} from '../util/util.service';
+import {Utils} from '../util/utils';
 import {DeliveryData, FclElements, ObservedType, ShowType, StationData, TableMode} from '../util/datatypes';
 
 interface FilterableRow {
@@ -51,11 +51,11 @@ export class TableComponent implements OnInit {
     style.innerHTML = '';
     style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
-    for (const props of UtilService.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
+    for (const props of Utils.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
       style.innerHTML += 'datatable-body-row';
 
       if (props.length === 1) {
-        const color = UtilService.colorToCss(DataService.PROPERTIES.get(props[0]).color);
+        const color = Utils.colorToCss(DataService.PROPERTIES.get(props[0]).color);
 
         style.innerHTML += '.' + props[0] + ' { background-color: ' + color + ' !important; }';
       } else {
@@ -66,7 +66,7 @@ export class TableComponent implements OnInit {
         style.innerHTML += ' { background: repeating-linear-gradient(90deg';
 
         for (let i = 0; i < props.length; i++) {
-          const color = UtilService.colorToCss(DataService.PROPERTIES.get(props[i]).color);
+          const color = Utils.colorToCss(DataService.PROPERTIES.get(props[i]).color);
           const from = i === 0 ? i / props.length * 100 + '%' : (i + 0.2) / props.length * 100 + '%';
           const to = i === props.length - 1 ? (i + 1) / props.length * 100 + '%' : (i + 0.8) / props.length * 100 + '%';
 
@@ -242,7 +242,7 @@ export class TableComponent implements OnInit {
     const ids: Set<string> = new Set(this.rows.map(r => r.id));
     let changed = false;
 
-    for (const element of UtilService.getTableElements(this.mode, this.data)) {
+    for (const element of Utils.getTableElements(this.mode, this.data)) {
       if (ids.has(element.id)) {
         if (!element.selected) {
           changed = true;

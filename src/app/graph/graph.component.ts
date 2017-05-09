@@ -13,7 +13,7 @@ import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/d
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {DataService} from '../util/data.service';
-import {UtilService} from '../util/util.service';
+import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
 import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Size} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
@@ -79,14 +79,14 @@ export class GraphComponent implements OnInit {
   private static createNodeBackground(colors: number[][]): any {
     if (colors.length === 1) {
       return {
-        'background-color': UtilService.colorToCss(colors[0])
+        'background-color': Utils.colorToCss(colors[0])
       };
     }
 
     const style = {};
 
     for (let i = 0; i < colors.length; i++) {
-      style['pie-' + (i + 1) + '-background-color'] = UtilService.colorToCss(colors[i]);
+      style['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
       style['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
     }
 
@@ -154,15 +154,15 @@ export class GraphComponent implements OnInit {
       const mouseEvent: MouseEvent = event.originalEvent;
 
       if (element.group == null) {
-        UtilService.setElementPosition(document.getElementById('graphMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        Utils.setElementPosition(document.getElementById('graphMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.graphMenuTrigger.openMenu();
       } else if (element.group() === 'nodes') {
         this.stationMenuActions = this.createStationActions(element);
-        UtilService.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        Utils.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.stationMenuTrigger.openMenu();
       } else if (element.group() === 'edges') {
         this.deliveryMenuActions = this.createDeliveryActions(element);
-        UtilService.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        Utils.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.deliveryMenuTrigger.openMenu();
       }
     });
@@ -288,7 +288,7 @@ export class GraphComponent implements OnInit {
 
       for (const d of this.data.deliveries) {
         if (!d.invisible) {
-          const key = d.source + UtilService.ARROW_STRING + d.target;
+          const key = d.source + DataService.ARROW_STRING + d.target;
           const value = sourceTargetMap.get(key);
 
           sourceTargetMap.set(key, value == null ? [d] : value.concat(d));
@@ -364,13 +364,13 @@ export class GraphComponent implements OnInit {
   private updateAll() {
     for (const s of this.data.stations) {
       if (!s.contained && s.positionRelativeTo != null) {
-        s.position = UtilService.sum(this.cy.nodes().getElementById(s.positionRelativeTo).position(), s.position);
+        s.position = Utils.sum(this.cy.nodes().getElementById(s.positionRelativeTo).position(), s.position);
       } else if (s.position == null && s.contains != null) {
-        s.position = UtilService.getCenter(s.contains.map(id => this.tracingService.getStationsById([id])[0].position));
+        s.position = Utils.getCenter(s.contains.map(id => this.tracingService.getStationsById([id])[0].position));
 
         for (const contained of this.tracingService.getStationsById(s.contains)) {
           contained.positionRelativeTo = s.id;
-          contained.position = UtilService.difference(contained.position, s.position);
+          contained.position = Utils.difference(contained.position, s.position);
         }
       }
     }
@@ -444,7 +444,7 @@ export class GraphComponent implements OnInit {
       }
     };
 
-    for (const combination of UtilService.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
+    for (const combination of Utils.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
       const s = [];
       const c1 = [];
       const c2 = [];
@@ -454,7 +454,7 @@ export class GraphComponent implements OnInit {
 
         s.push(createSelector(prop));
         c1.push(color);
-        c2.push(UtilService.mixColors(color, [0, 0, 255]));
+        c2.push(Utils.mixColors(color, [0, 0, 255]));
       }
 
       style = style.selector('node' + s.join('')).style(GraphComponent.createNodeBackground(c1));
@@ -463,7 +463,7 @@ export class GraphComponent implements OnInit {
 
     for (const prop of DataService.PROPERTIES_WITH_COLORS) {
       style = style.selector('edge' + createSelector(prop)).style({
-        'line-color': UtilService.colorToCss(DataService.PROPERTIES.get(prop).color)
+        'line-color': Utils.colorToCss(DataService.PROPERTIES.get(prop).color)
       });
     }
 
@@ -631,7 +631,7 @@ export class GraphComponent implements OnInit {
               }
             });
           } else {
-            UtilService.showErrorMessage(this.dialogService, 'Merging is only provided for non-meta stations!');
+            Utils.showErrorMessage(this.dialogService, 'Merging is only provided for non-meta stations!');
           }
         }
       }, {
@@ -655,7 +655,7 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => {
           if (this.mergeMap.has(edge.id())) {
-            UtilService.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!');
+            Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!');
           } else {
             const dialogData: DeliveryPropertiesData = {
               delivery: this.tracingService.getDeliveriesById([edge.id()])[0]
@@ -670,7 +670,7 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => {
           if (this.mergeMap.has(edge.id())) {
-            UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
             this.tracingService.showDeliveryForwardTrace(edge.id());
             this.updateProperties();
@@ -683,7 +683,7 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => {
           if (this.mergeMap.has(edge.id())) {
-            UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
             this.tracingService.showDeliveryBackwardTrace(edge.id());
             this.updateProperties();
@@ -696,7 +696,7 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => {
           if (this.mergeMap.has(edge.id())) {
-            UtilService.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
             this.tracingService.showDeliveryTrace(edge.id());
             this.updateProperties();

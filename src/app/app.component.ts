@@ -5,7 +5,7 @@ import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
-import {UtilService} from './util/util.service';
+import {Utils} from './util/utils';
 import {FclData, FclElements, TableMode} from './util/datatypes';
 
 declare const Hammer;
@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
     this.dataService.getData().then(data => {
       this.update(data);
     }).catch(error => {
-      UtilService.showErrorMessage(this.dialogService, error);
+      Utils.showErrorMessage(this.dialogService, error);
     });
 
     this.graph.onChange(() => this.table.update());
@@ -112,10 +112,10 @@ export class AppComponent implements OnInit {
       this.dataService.getData().then(data => {
         this.update(data);
       }).catch(error => {
-        UtilService.showErrorMessage(this.dialogService, error);
+        Utils.showErrorMessage(this.dialogService, error);
       });
     } else {
-      UtilService.showErrorMessage(this.dialogService, 'Please select one .json file!');
+      Utils.showErrorMessage(this.dialogService, 'Please select one .json file!');
     }
 
     (<HTMLInputElement>document.getElementById('fileInput')).value = '';
@@ -136,7 +136,7 @@ export class AppComponent implements OnInit {
     } else {
       const url = window.URL.createObjectURL(blob);
 
-      UtilService.openSaveDialog(url, fileName);
+      Utils.openSaveDialog(url, fileName);
       window.URL.revokeObjectURL(url);
     }
   }
@@ -148,7 +148,7 @@ export class AppComponent implements OnInit {
       if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
         window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
       } else {
-        UtilService.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+        Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
       }
     });
   }
@@ -156,7 +156,7 @@ export class AppComponent implements OnInit {
   changeColumns() {
     const options: { value: string, viewValue: string, selected: boolean }[] = [];
 
-    for (const column of UtilService.getTableProperties(this.tableSettings.mode, this.elements)) {
+    for (const column of Utils.getTableProperties(this.tableSettings.mode, this.elements)) {
       let selected;
 
       if (this.tableSettings.mode === TableMode.STATIONS) {

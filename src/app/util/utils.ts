@@ -1,13 +1,9 @@
-import {Injectable} from '@angular/core';
 import {CyPosition, DeliveryData, FclElements, StationData, TableMode} from './datatypes';
 import {MdDialog} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {DataService} from './data.service';
 
-@Injectable()
-export class UtilService {
-
-  static ARROW_STRING = '->';
+export class Utils {
 
   private static STATION_DATA: StationData = {
     id: null, name: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null, contains: null,
@@ -21,11 +17,11 @@ export class UtilService {
   };
 
   static getStationProperties(): string[] {
-    return Object.keys(UtilService.STATION_DATA);
+    return Object.keys(Utils.STATION_DATA);
   }
 
   static getDeliveryProperties(): string[] {
-    return Object.keys(UtilService.DELIVERY_DATA);
+    return Object.keys(Utils.DELIVERY_DATA);
   }
 
   static getTableElements(mode: TableMode, data: FclElements): (StationData | DeliveryData)[] {
@@ -42,14 +38,14 @@ export class UtilService {
     let properties: string[];
 
     if (mode === TableMode.STATIONS) {
-      properties = UtilService.getStationProperties();
+      properties = Utils.getStationProperties();
     } else if (mode === TableMode.DELIVERIES) {
-      properties = UtilService.getDeliveryProperties();
+      properties = Utils.getDeliveryProperties();
     }
 
     const additionalProps: Set<string> = new Set();
 
-    for (const element of UtilService.getTableElements(mode, data)) {
+    for (const element of Utils.getTableElements(mode, data)) {
       for (const p of element.properties) {
         additionalProps.add(p.name);
       }

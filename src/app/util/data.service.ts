@@ -6,11 +6,12 @@ import {
 } from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
-import {UtilService} from './util.service';
+import {Utils} from './utils';
 
 @Injectable()
 export class DataService {
 
+  static ARROW_STRING = '->';
   static TABLE_MODES = [TableMode.STATIONS, TableMode.DELIVERIES];
   static SHOW_TYPES = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
   static SIZES = [Size.SMALL, Size.MEDIUM, Size.LARGE];
@@ -159,8 +160,8 @@ export class DataService {
         throw new SyntaxError('Duplicate id: ' + id);
       }
 
-      if (id.includes(UtilService.ARROW_STRING)) {
-        throw new SyntaxError('ids are not allowed to contain "' + UtilService.ARROW_STRING + '"');
+      if (id.includes(DataService.ARROW_STRING)) {
+        throw new SyntaxError('ids are not allowed to contain "' + DataService.ARROW_STRING + '"');
       }
 
       ids.add(id);
@@ -169,8 +170,8 @@ export class DataService {
     for (const d of deliveryElements) {
       const lot: string = d.lot;
 
-      if (lot != null && lot.includes(UtilService.ARROW_STRING)) {
-        throw new SyntaxError('lots are not allowed to contain "' + UtilService.ARROW_STRING + '"');
+      if (lot != null && lot.includes(DataService.ARROW_STRING)) {
+        throw new SyntaxError('lots are not allowed to contain "' + DataService.ARROW_STRING + '"');
       }
     }
 
@@ -182,7 +183,7 @@ export class DataService {
 
   private static createStations(elements: any[]): StationData[] {
     const stations: StationData[] = [];
-    const defaultKeys: Set<string> = new Set(UtilService.getStationProperties());
+    const defaultKeys: Set<string> = new Set(Utils.getStationProperties());
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
@@ -220,7 +221,7 @@ export class DataService {
 
   private static createDeliveries(elements: any[]): DeliveryData[] {
     const deliveries: DeliveryData[] = [];
-    const defaultKeys: Set<string> = new Set(UtilService.getDeliveryProperties());
+    const defaultKeys: Set<string> = new Set(Utils.getDeliveryProperties());
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
@@ -235,7 +236,7 @@ export class DataService {
         id: e.id,
         name: e.name != null ? e.name : e.id,
         lot: e.lot,
-        date: UtilService.dateToString(UtilService.stringToDate(e.date)),
+        date: Utils.dateToString(Utils.stringToDate(e.date)),
         source: e.source,
         target: e.target,
         originalSource: e.originalSource != null ? e.originalSource : e.source,
