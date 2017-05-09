@@ -58,7 +58,7 @@ export interface DeliveryData {
   id: string;
   name: string;
   lot: string;
-  date: Date;
+  date: string;
   source: string;
   target: string;
   originalSource: string;

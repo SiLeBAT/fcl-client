@@ -212,7 +212,7 @@ export class DataService {
         id: e.id,
         name: e.name != null ? e.name : e.id,
         lot: e.lot,
-        date: UtilService.parseDate(e.date),
+        date: UtilService.dateToString(UtilService.stringToDate(e.date)),
         source: e.source,
         target: e.target,
         originalSource: e.originalSource != null ? e.originalSource : e.source,

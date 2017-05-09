@@ -146,15 +146,27 @@ export class UtilService {
     };
   }
 
-  static parseDate(dateString: string): Date {
-    try {
-      return new Date(dateString);
-    } catch (e) {
+  static stringToDate(dateString: string): Date {
+    if (dateString != null) {
+      const date = new Date(dateString);
+
+      if (isNaN(date.getTime())) {
+        throw new SyntaxError('Invalid date: ' + dateString);
+      } else {
+        return date;
+      }
+    } else {
       return null;
     }
   }
 
-  static printDate(date: Date): string {
-    return date.toISOString();
+  static dateToString(date: Date): string {
+    if (date != null) {
+      const isoString = date.toISOString();
+
+      return isoString.substring(0, isoString.indexOf('T'));
+    } else {
+      return null;
+    }
   }
 }
