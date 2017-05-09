@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MdDialogModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {MD_DIALOG_DATA, MdDialogModule, MdDialogRef} from '@angular/material';
 
 import {DialogActionsComponent, DialogActionsData} from './dialog-actions.component';
 

@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MdDialogModule, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {MD_DIALOG_DATA, MdDialogModule, MdDialogRef} from '@angular/material';
 
 import {StationPropertiesComponent, StationPropertiesData} from './station-properties.component';
 import {D3Service} from 'd3-ng2-service';

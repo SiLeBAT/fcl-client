@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MdSidenav, MdDialog} from '@angular/material';
+import {MdDialog, MdSidenav} from '@angular/material';
 
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
@@ -7,6 +7,7 @@ import {DataService} from './util/data.service';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {Utils} from './util/utils';
 import {FclData, FclElements, TableMode} from './util/datatypes';
+import {Constants} from './util/constants';
 
 declare const Hammer;
 
@@ -21,13 +22,13 @@ export class AppComponent implements OnInit {
   @ViewChild('table') table: TableComponent;
   @ViewChild('rightSidenav') rightSidenav: MdSidenav;
 
-  tableModes = DataService.TABLE_MODES;
-  showTypes = DataService.SHOW_TYPES;
-  sizes = DataService.SIZES;
+  tableModes = Constants.TABLE_MODES;
+  showTypes = Constants.SHOW_TYPES;
+  sizes = Constants.SIZES;
 
   elements: FclElements;
-  graphSettings = DataService.DEFAULT_GRAPH_SETTINGS;
-  tableSettings = DataService.DEFAULT_TABLE_SETTINGS;
+  graphSettings = DataService.getDefaultGraphSettings();
+  tableSettings = DataService.getDefaultTableSettings();
 
   constructor(private dataService: DataService, private dialogService: MdDialog) {
     document.body.oncontextmenu = e => e.preventDefault();
@@ -167,7 +168,7 @@ export class AppComponent implements OnInit {
 
       options.push({
         value: column,
-        viewValue: DataService.PROPERTIES.has(column) ? DataService.PROPERTIES.get(column).name : column,
+        viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : column,
         selected: selected
       });
     }

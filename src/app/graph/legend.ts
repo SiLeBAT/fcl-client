@@ -1,5 +1,5 @@
 import {Subject} from 'rxjs/Rx';
-import {DataService} from '../util/data.service';
+import {Constants} from '../util/constants';
 
 export function Legend(params: Subject<string[]>) {
   return new LegendClass(this, params);
@@ -24,7 +24,7 @@ class LegendClass {
       const table = document.createElement('table');
 
       for (const prop of properties) {
-        const propValue = DataService.PROPERTIES.get(prop);
+        const propValue = Constants.PROPERTIES.get(prop);
         const row = document.createElement('tr');
         const labelCell = document.createElement('td');
         const colorCell = document.createElement('td');

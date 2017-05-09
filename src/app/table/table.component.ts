@@ -1,12 +1,12 @@
-import {Component, OnInit, ViewChild, TemplateRef} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import {ResizeSensor} from 'css-element-queries';
 
-import {DataService} from '../util/data.service';
 import {Utils} from '../util/utils';
 import {DeliveryData, FclElements, ObservedType, ShowType, StationData, TableMode} from '../util/datatypes';
+import {Constants} from '../util/constants';
 
 interface FilterableRow {
   content: any;
@@ -26,10 +26,10 @@ export class TableComponent implements OnInit {
   unfilteredRows: FilterableRow[];
 
   private data: FclElements;
-  private mode = DataService.DEFAULT_TABLE_SETTINGS.mode;
-  private stationColumns = DataService.DEFAULT_TABLE_SETTINGS.stationColumns;
-  private deliveryColumns = DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns;
-  private showType = DataService.DEFAULT_TABLE_SETTINGS.showType;
+  private mode = Constants.DEFAULT_TABLE_MODE;
+  private stationColumns = Constants.DEFAULT_TABLE_STATION_COLUMNS;
+  private deliveryColumns = Constants.DEFAULT_TABLE_DELIVERY_COLUMNS;
+  private showType = Constants.DEFAULT_TABLE_SHOW_TYPE;
 
   private resizeTimer: any;
 
@@ -51,11 +51,11 @@ export class TableComponent implements OnInit {
     style.innerHTML = '';
     style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
-    for (const props of Utils.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
+    for (const props of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS)) {
       style.innerHTML += 'datatable-body-row';
 
       if (props.length === 1) {
-        const color = Utils.colorToCss(DataService.PROPERTIES.get(props[0]).color);
+        const color = Utils.colorToCss(Constants.PROPERTIES.get(props[0]).color);
 
         style.innerHTML += '.' + props[0] + ' { background-color: ' + color + ' !important; }';
       } else {
@@ -66,7 +66,7 @@ export class TableComponent implements OnInit {
         style.innerHTML += ' { background: repeating-linear-gradient(90deg';
 
         for (let i = 0; i < props.length; i++) {
-          const color = Utils.colorToCss(DataService.PROPERTIES.get(props[i]).color);
+          const color = Utils.colorToCss(Constants.PROPERTIES.get(props[i]).color);
           const from = i === 0 ? i / props.length * 100 + '%' : (i + 0.2) / props.length * 100 + '%';
           const to = i === props.length - 1 ? (i + 1) / props.length * 100 + '%' : (i + 0.8) / props.length * 100 + '%';
 
@@ -146,7 +146,7 @@ export class TableComponent implements OnInit {
 
     this.columns = this.getUpdatedColumns([selectColumn].concat(columns.map(prop => {
       return {
-        name: DataService.PROPERTIES.has(prop) ? DataService.PROPERTIES.get(prop).name : prop,
+        name: Constants.PROPERTIES.has(prop) ? Constants.PROPERTIES.get(prop).name : prop,
         prop: prop,
         resizeable: false,
         draggable: false,

@@ -12,13 +12,13 @@ import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-action
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
-import {DataService} from '../util/data.service';
 import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
 import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Size} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Legend} from './legend';
 import {Zooming} from './zooming';
+import {Constants} from '../util/constants';
 
 enum MenuActionType {
   runAction, openLayoutMenu
@@ -65,10 +65,10 @@ export class GraphComponent implements OnInit {
   private mergeMap: Map<string, string[]>;
   private changeFunction: () => void;
 
-  private mergeDeliveries = DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries;
-  private nodeSize = DataService.DEFAULT_GRAPH_SETTINGS.nodeSize;
-  private fontSize = DataService.DEFAULT_GRAPH_SETTINGS.fontSize;
-  private showLegend = DataService.DEFAULT_GRAPH_SETTINGS.showLegend;
+  private mergeDeliveries = Constants.DEFAULT_GRAPH_MERGE_DELIVERIES;
+  private nodeSize = Constants.DEFAULT_GRAPH_NODE_SIZE;
+  private fontSize = Constants.DEFAULT_GRAPH_FONT_SIZE;
+  private showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
 
   private selectTimerActivated = true;
   private resizeTimer: any;
@@ -236,7 +236,7 @@ export class GraphComponent implements OnInit {
     this.showLegend = showLegend;
 
     if (this.cy != null) {
-      this.legend.next(showLegend ? DataService.PROPERTIES_WITH_COLORS : []);
+      this.legend.next(showLegend ? Constants.PROPERTIES_WITH_COLORS : []);
     }
   }
 
@@ -288,7 +288,7 @@ export class GraphComponent implements OnInit {
 
       for (const d of this.data.deliveries) {
         if (!d.invisible) {
-          const key = d.source + DataService.ARROW_STRING + d.target;
+          const key = d.source + Constants.ARROW_STRING + d.target;
           const value = sourceTargetMap.get(key);
 
           sourceTargetMap.set(key, value == null ? [d] : value.concat(d));
@@ -444,13 +444,13 @@ export class GraphComponent implements OnInit {
       }
     };
 
-    for (const combination of Utils.getAllCombinations(DataService.PROPERTIES_WITH_COLORS)) {
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS)) {
       const s = [];
       const c1 = [];
       const c2 = [];
 
       for (const prop of combination) {
-        const color = DataService.PROPERTIES.get(prop).color;
+        const color = Constants.PROPERTIES.get(prop).color;
 
         s.push(createSelector(prop));
         c1.push(color);
@@ -461,9 +461,9 @@ export class GraphComponent implements OnInit {
       style = style.selector('node:selected' + s.join('')).style(GraphComponent.createNodeBackground(c2));
     }
 
-    for (const prop of DataService.PROPERTIES_WITH_COLORS) {
+    for (const prop of Constants.PROPERTIES_WITH_COLORS) {
       style = style.selector('edge' + createSelector(prop)).style({
-        'line-color': Utils.colorToCss(DataService.PROPERTIES.get(prop).color)
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
 

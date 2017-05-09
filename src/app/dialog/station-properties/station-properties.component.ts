@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
-import {D3Service, D3, Selection} from 'd3-ng2-service';
+import {D3, D3Service, Selection} from 'd3-ng2-service';
 
 import {Connection, DeliveryData, StationData} from '../../util/datatypes';
-import {DataService} from '../../util/data.service';
+import {Constants} from '../../util/constants';
 
 export interface StationPropertiesData {
   station: StationData;
@@ -56,12 +56,12 @@ export class StationPropertiesComponent implements OnInit {
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
               d3Service: D3Service) {
     this.properties = Object.keys(data.station)
-      .filter(key => DataService.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
+      .filter(key => Constants.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
       .map(key => {
         const value = data.station[key];
 
         return {
-          name: DataService.PROPERTIES.get(key).name,
+          name: Constants.PROPERTIES.get(key).name,
           value: value != null ? String(value) : ''
         };
       }).concat(data.station.properties.map(prop => {
@@ -343,7 +343,7 @@ export class StationPropertiesComponent implements OnInit {
 
   private updateEdges() {
     const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
-      .data(this.edgeData, d => d.source.id + DataService.ARROW_STRING + d.target.id);
+      .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
 
     edges.enter().append('path').classed(EDGE, true)
       .attr('d', d => 'M' + (d.source.x + NODE_WIDTH / 2) + ',' + d.source.y + 'L' + (d.target.x - NODE_WIDTH / 2) + ',' + d.target.y)

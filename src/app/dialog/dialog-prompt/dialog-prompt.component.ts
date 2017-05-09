@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 
 export interface DialogPromptData {
   title: string;

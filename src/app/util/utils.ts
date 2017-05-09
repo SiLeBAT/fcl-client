@@ -1,28 +1,9 @@
 import {CyPosition, DeliveryData, FclElements, StationData, TableMode} from './datatypes';
 import {MdDialog} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
-import {DataService} from './data.service';
+import {Constants} from './constants';
 
 export class Utils {
-
-  private static STATION_DATA: StationData = {
-    id: null, name: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null, contains: null,
-    selected: null, observed: null, forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null,
-    positionRelativeTo: null, properties: null
-  };
-
-  private static DELIVERY_DATA: DeliveryData = {
-    id: null, name: null, lot: null, date: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null,
-    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
-  };
-
-  static getStationProperties(): string[] {
-    return Object.keys(Utils.STATION_DATA);
-  }
-
-  static getDeliveryProperties(): string[] {
-    return Object.keys(Utils.DELIVERY_DATA);
-  }
 
   static getTableElements(mode: TableMode, data: FclElements): (StationData | DeliveryData)[] {
     if (mode === TableMode.STATIONS) {
@@ -38,9 +19,9 @@ export class Utils {
     let properties: string[];
 
     if (mode === TableMode.STATIONS) {
-      properties = Utils.getStationProperties();
+      properties = Constants.STATION_PROPERTIES;
     } else if (mode === TableMode.DELIVERIES) {
-      properties = Utils.getDeliveryProperties();
+      properties = Constants.DELIVERY_PROPERTIES;
     }
 
     const additionalProps: Set<string> = new Set();
@@ -51,8 +32,7 @@ export class Utils {
       }
     }
 
-    return properties.filter(prop => DataService.PROPERTIES.has(prop))
-      .concat(Array.from(additionalProps));
+    return properties.filter(prop => Constants.PROPERTIES.has(prop)).concat(Array.from(additionalProps));
   }
 
   static openSaveDialog(url: string, fileName: string) {

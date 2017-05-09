@@ -1,60 +1,35 @@
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {
-  DeliveryData, FclData, FclElements, GraphSettings, ObservedType, ShowType, Size, StationData, TableMode,
-  TableSettings
-} from './datatypes';
+import {DeliveryData, FclData, FclElements, GraphSettings, ObservedType, StationData, TableSettings} from './datatypes';
 
 import 'rxjs/add/operator/toPromise';
 import {Utils} from './utils';
+import {Constants} from './constants';
 
 @Injectable()
 export class DataService {
 
-  static ARROW_STRING = '->';
-  static TABLE_MODES = [TableMode.STATIONS, TableMode.DELIVERIES];
-  static SHOW_TYPES = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
-  static SIZES = [Size.SMALL, Size.MEDIUM, Size.LARGE];
-
-  static PROPERTIES: Map<string, { name: string, color: number[] }> = new Map([
-    ['id', {name: 'ID', color: null}],
-    ['name', {name: 'Name', color: null}],
-    ['lot', {name: 'Lot', color: null}],
-    ['date', {name: 'Date', color: null}],
-    ['source', {name: 'Source', color: null}],
-    ['target', {name: 'Target', color: null}],
-    ['originalSource', {name: 'Original Source', color: null}],
-    ['originalTarget', {name: 'Original Target', color: null}],
-    ['incoming', {name: 'Incoming', color: null}],
-    ['outgoing', {name: 'Outgoing', color: null}],
-    ['contains', {name: 'Contains', color: null}],
-    ['forward', {name: 'Forward Trace', color: [150, 255, 75]}],
-    ['backward', {name: 'Backward Trace', color: [255, 150, 75]}],
-    ['observed', {name: 'Observed', color: [75, 150, 255]}],
-    ['outbreak', {name: 'Outbreak', color: [255, 50, 50]}],
-    ['commonLink', {name: 'Common Link', color: [255, 255, 75]}],
-    ['score', {name: 'Score', color: null}]
-  ]);
-
-  static DEFAULT_GRAPH_SETTINGS: GraphSettings = {
-    nodeSize: Size.MEDIUM,
-    fontSize: Size.MEDIUM,
-    mergeDeliveries: false,
-    showLegend: true
-  };
-
-  static DEFAULT_TABLE_SETTINGS: TableSettings = {
-    mode: TableMode.STATIONS,
-    width: 0.25,
-    stationColumns: ['id', 'name', 'score'],
-    deliveryColumns: ['id', 'source', 'target', 'score'],
-    showType: ShowType.ALL
-  };
-
-  static PROPERTIES_WITH_COLORS = Array.from(DataService.PROPERTIES).filter(p => p[1].color != null).map(p => p[0]);
-
   private dataSource: string | File;
   private data: FclData;
+
+  static getDefaultGraphSettings(): GraphSettings {
+    return {
+      nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
+      fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
+      mergeDeliveries: Constants.DEFAULT_GRAPH_MERGE_DELIVERIES,
+      showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND
+    };
+  }
+
+  static getDefaultTableSettings(): TableSettings {
+    return {
+      mode: Constants.DEFAULT_TABLE_MODE,
+      width: Constants.DEFAULT_TABLE_WIDTH,
+      stationColumns: Array.from(Constants.DEFAULT_TABLE_STATION_COLUMNS),
+      deliveryColumns: Array.from(Constants.DEFAULT_TABLE_DELIVERY_COLUMNS),
+      showType: Constants.DEFAULT_TABLE_SHOW_TYPE
+    };
+  }
 
   private static preprocessData(data: any): FclData {
     const containsRawData = data.hasOwnProperty('stations') && data.hasOwnProperty('deliveries')
@@ -100,46 +75,32 @@ export class DataService {
       stationsById[sourceD.target].connections.push(r);
     }
 
-    const graphSettings: GraphSettings = {
-      nodeSize: DataService.DEFAULT_GRAPH_SETTINGS.nodeSize,
-      fontSize: DataService.DEFAULT_GRAPH_SETTINGS.fontSize,
-      mergeDeliveries: DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries,
-      showLegend: DataService.DEFAULT_GRAPH_SETTINGS.showLegend
-    };
-    const tableSettings: TableSettings = {
-      mode: DataService.DEFAULT_TABLE_SETTINGS.mode,
-      width: DataService.DEFAULT_TABLE_SETTINGS.width,
-      stationColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.stationColumns),
-      deliveryColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
-      showType: DataService.DEFAULT_TABLE_SETTINGS.showType
-    };
-
     return {
       elements: DataService.createElements(data.stations, data.deliveries),
       layout: {
         name: 'random'
       },
-      graphSettings: graphSettings,
-      tableSettings: tableSettings
+      graphSettings: DataService.getDefaultGraphSettings(),
+      tableSettings: DataService.getDefaultTableSettings()
     };
   }
 
   private static preprocessDataWithSettings(data: any): FclData {
     const graphSettings: GraphSettings = {
-      nodeSize: data.graphSettings.nodeSize != null ? data.graphSettings.nodeSize : DataService.DEFAULT_GRAPH_SETTINGS.nodeSize,
-      fontSize: data.graphSettings.fontSize != null ? data.graphSettings.fontSize : DataService.DEFAULT_GRAPH_SETTINGS.fontSize,
+      nodeSize: data.graphSettings.nodeSize != null ? data.graphSettings.nodeSize : Constants.DEFAULT_GRAPH_NODE_SIZE,
+      fontSize: data.graphSettings.fontSize != null ? data.graphSettings.fontSize : Constants.DEFAULT_GRAPH_FONT_SIZE,
       mergeDeliveries: data.graphSettings.mergeDeliveries != null
-        ? data.graphSettings.mergeDeliveries : DataService.DEFAULT_GRAPH_SETTINGS.mergeDeliveries,
-      showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : DataService.DEFAULT_GRAPH_SETTINGS.showLegend
+        ? data.graphSettings.mergeDeliveries : Constants.DEFAULT_GRAPH_MERGE_DELIVERIES,
+      showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : Constants.DEFAULT_GRAPH_SHOW_LEGEND
     };
     const tableSettings: TableSettings = {
-      mode: data.tableSettings.mode != null ? data.tableSettings.mode : DataService.DEFAULT_TABLE_SETTINGS.mode,
-      width: data.tableSettings.width != null ? data.tableSettings.width : DataService.DEFAULT_TABLE_SETTINGS.width,
+      mode: data.tableSettings.mode != null ? data.tableSettings.mode : Constants.DEFAULT_TABLE_MODE,
+      width: data.tableSettings.width != null ? data.tableSettings.width : Constants.DEFAULT_TABLE_WIDTH,
       stationColumns: data.tableSettings.stationColumns != null
-        ? data.tableSettings.stationColumns : Array.from(DataService.DEFAULT_TABLE_SETTINGS.stationColumns),
+        ? data.tableSettings.stationColumns : Array.from(Constants.DEFAULT_TABLE_STATION_COLUMNS),
       deliveryColumns: data.tableSettings.deliveryColumns != null
-        ? data.tableSettings.deliveryColumns : Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
-      showType: data.tableSettings.showType != null ? data.tableSettings.showType : DataService.DEFAULT_TABLE_SETTINGS.showType
+        ? data.tableSettings.deliveryColumns : Array.from(Constants.DEFAULT_TABLE_DELIVERY_COLUMNS),
+      showType: data.tableSettings.showType != null ? data.tableSettings.showType : Constants.DEFAULT_TABLE_SHOW_TYPE
     };
 
     return {
@@ -160,8 +121,8 @@ export class DataService {
         throw new SyntaxError('Duplicate id: ' + id);
       }
 
-      if (id.includes(DataService.ARROW_STRING)) {
-        throw new SyntaxError('ids are not allowed to contain "' + DataService.ARROW_STRING + '"');
+      if (id.includes(Constants.ARROW_STRING)) {
+        throw new SyntaxError('ids are not allowed to contain "' + Constants.ARROW_STRING + '"');
       }
 
       ids.add(id);
@@ -170,8 +131,8 @@ export class DataService {
     for (const d of deliveryElements) {
       const lot: string = d.lot;
 
-      if (lot != null && lot.includes(DataService.ARROW_STRING)) {
-        throw new SyntaxError('lots are not allowed to contain "' + DataService.ARROW_STRING + '"');
+      if (lot != null && lot.includes(Constants.ARROW_STRING)) {
+        throw new SyntaxError('lots are not allowed to contain "' + Constants.ARROW_STRING + '"');
       }
     }
 
@@ -183,7 +144,7 @@ export class DataService {
 
   private static createStations(elements: any[]): StationData[] {
     const stations: StationData[] = [];
-    const defaultKeys: Set<string> = new Set(Utils.getStationProperties());
+    const defaultKeys: Set<string> = new Set(Constants.STATION_PROPERTIES);
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
@@ -221,7 +182,7 @@ export class DataService {
 
   private static createDeliveries(elements: any[]): DeliveryData[] {
     const deliveries: DeliveryData[] = [];
-    const defaultKeys: Set<string> = new Set(Utils.getDeliveryProperties());
+    const defaultKeys: Set<string> = new Set(Constants.DELIVERY_PROPERTIES);
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
