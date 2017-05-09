@@ -28,9 +28,9 @@ const HOVER = 'hover';
 const EDGE = 'edge';
 const HIDDEN = 'hidden';
 
-const SVG_WIDTH = 400;
+const SVG_WIDTH = 600;
 const NODE_PADDING = 15;
-const NODE_WIDTH = 100;
+const NODE_WIDTH = 200;
 const NODE_HEIGHT = 30;
 
 @Component({
@@ -171,6 +171,17 @@ export class StationPropertiesComponent implements OnInit {
     }
   }
 
+  private getDeliveryLabel(id: string): string {
+    const delivery = this.data.deliveries.get(id);
+    let label = delivery.name;
+
+    if (delivery.date != null) {
+      label += ' ' + delivery.date;
+    }
+
+    return label;
+  }
+
   private getIngredientsByLot(): Map<string, Set<string>> {
     const ingredientsByDelivery: Map<string, Set<string>> = new Map();
 
@@ -214,7 +225,7 @@ export class StationPropertiesComponent implements OnInit {
     for (const id of this.data.station.incoming) {
       nodeInMap.set(id, {
         id: id,
-        title: this.data.deliveries.get(id).name,
+        title: this.getDeliveryLabel(id),
         x: null,
         y: null
       });
@@ -223,7 +234,7 @@ export class StationPropertiesComponent implements OnInit {
     for (const id of this.data.station.outgoing) {
       nodeOutMap.set(id, {
         id: id,
-        title: this.data.deliveries.get(id).name,
+        title: this.getDeliveryLabel(id),
         x: null,
         y: null
       });
@@ -249,7 +260,7 @@ export class StationPropertiesComponent implements OnInit {
     for (const id of this.data.station.incoming) {
       nodeInMap.set(id, {
         id: id,
-        title: this.data.deliveries.get(id).name,
+        title: this.getDeliveryLabel(id),
         x: null,
         y: null
       });
