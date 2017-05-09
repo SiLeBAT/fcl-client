@@ -18,7 +18,6 @@ import {
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import {D3Service} from 'd3-ng2-service';
-import 'hammerjs';
 
 import {AppComponent} from './app.component';
 import {GraphComponent} from './graph/graph.component';
