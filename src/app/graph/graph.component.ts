@@ -288,7 +288,7 @@ export class GraphComponent implements OnInit {
 
       for (const d of this.data.deliveries) {
         if (!d.invisible) {
-          const key = d.source + '->' + d.target;
+          const key = d.source + UtilService.ARROW_STRING + d.target;
           const value = sourceTargetMap.get(key);
 
           sourceTargetMap.set(key, value == null ? [d] : value.concat(d));

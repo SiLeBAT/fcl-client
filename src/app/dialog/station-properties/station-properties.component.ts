@@ -4,17 +4,15 @@ import {D3Service, D3, Selection} from 'd3-ng2-service';
 
 import {Connection, DeliveryData, StationData} from '../../util/datatypes';
 import {DataService} from '../../util/data.service';
+import {UtilService} from '../../util/util.service';
 
 export interface StationPropertiesData {
   station: StationData;
   deliveries: Map<string, DeliveryData>;
 }
 
-enum NodeType {IN, OUT}
-
 interface NodeDatum {
   id: string;
-  type: NodeType;
   title: string;
   x: number;
   y: number;
@@ -45,12 +43,14 @@ export class StationPropertiesComponent implements OnInit {
 
   private d3: D3;
 
-  private nodeData: NodeDatum[];
+  private nodeInData: NodeDatum[];
+  private nodeOutData: NodeDatum[];
   private edgeData: EdgeDatum[];
   private lotBased: boolean;
   private height: number;
 
-  private nodesG: Selection<SVGElement, any, any, any>;
+  private nodesInG: Selection<SVGElement, any, any, any>;
+  private nodesOutG: Selection<SVGElement, any, any, any>;
   private edgesG: Selection<SVGElement, any, any, any>;
   private dragLine: Selection<SVGElement, any, any, any>;
 
@@ -87,19 +87,16 @@ export class StationPropertiesComponent implements OnInit {
       let yIn = NODE_PADDING + NODE_HEIGHT / 2;
       let yOut = NODE_PADDING + NODE_HEIGHT / 2;
 
-      for (const n of this.nodeData) {
-        switch (n.type) {
-          case NodeType.IN:
-            n.x = NODE_WIDTH / 2 + 1;
-            n.y = yIn;
-            yIn += NODE_HEIGHT + NODE_PADDING;
-            break;
-          case NodeType.OUT:
-            n.x = SVG_WIDTH - NODE_WIDTH / 2 - 1;
-            n.y = yOut;
-            yOut += NODE_HEIGHT + NODE_PADDING;
-            break;
-        }
+      for (const n of this.nodeInData) {
+        n.x = NODE_WIDTH / 2 + 1;
+        n.y = yIn;
+        yIn += NODE_HEIGHT + NODE_PADDING;
+      }
+
+      for (const n of this.nodeOutData) {
+        n.x = SVG_WIDTH - NODE_WIDTH / 2 - 1;
+        n.y = yOut;
+        yOut += NODE_HEIGHT + NODE_PADDING;
       }
 
       this.height = Math.max(yIn, yOut) - NODE_HEIGHT / 2;
@@ -166,7 +163,8 @@ export class StationPropertiesComponent implements OnInit {
 
       this.dragLine = g.append<SVGElement>('path').attr('class', EDGE + ' ' + HIDDEN).attr('marker-end', 'url(#end-arrow)');
       this.edgesG = g.append<SVGElement>('g');
-      this.nodesG = g.append<SVGElement>('g');
+      this.nodesInG = g.append<SVGElement>('g');
+      this.nodesOutG = g.append<SVGElement>('g');
 
       this.addNodes();
       this.updateEdges();
@@ -210,12 +208,12 @@ export class StationPropertiesComponent implements OnInit {
   }
 
   private initDeliveryBasedData() {
-    const nodeMap: Map<string, NodeDatum> = new Map();
+    const nodeInMap: Map<string, NodeDatum> = new Map();
+    const nodeOutMap: Map<string, NodeDatum> = new Map();
 
     for (const id of this.data.station.incoming) {
-      nodeMap.set(id, {
+      nodeInMap.set(id, {
         id: id,
-        type: NodeType.IN,
         title: this.data.deliveries.get(id).name,
         x: null,
         y: null
@@ -223,9 +221,8 @@ export class StationPropertiesComponent implements OnInit {
     }
 
     for (const id of this.data.station.outgoing) {
-      nodeMap.set(id, {
+      nodeOutMap.set(id, {
         id: id,
-        type: NodeType.OUT,
         title: this.data.deliveries.get(id).name,
         x: null,
         y: null
@@ -236,21 +233,22 @@ export class StationPropertiesComponent implements OnInit {
 
     for (const c of this.data.station.connections) {
       this.edgeData.push({
-        source: nodeMap.get(c.source),
-        target: nodeMap.get(c.target)
+        source: nodeInMap.get(c.source),
+        target: nodeOutMap.get(c.target)
       });
     }
 
-    this.nodeData = Array.from(nodeMap.values());
+    this.nodeInData = Array.from(nodeInMap.values());
+    this.nodeOutData = Array.from(nodeOutMap.values());
   }
 
   private initLotBasedData(ingredientsByLot: Map<string, Set<string>>) {
-    const nodeMap: Map<string, NodeDatum> = new Map();
+    const nodeInMap: Map<string, NodeDatum> = new Map();
+    const nodeOutMap: Map<string, NodeDatum> = new Map();
 
     for (const id of this.data.station.incoming) {
-      nodeMap.set(id, {
+      nodeInMap.set(id, {
         id: id,
-        type: NodeType.IN,
         title: this.data.deliveries.get(id).name,
         x: null,
         y: null
@@ -260,68 +258,82 @@ export class StationPropertiesComponent implements OnInit {
     this.edgeData = [];
 
     ingredientsByLot.forEach((ingredients, lot) => {
-      nodeMap.set(lot, {
+      nodeOutMap.set(lot, {
         id: lot,
-        type: NodeType.OUT,
         title: lot,
         x: null,
         y: null
       });
       ingredients.forEach(d => {
         this.edgeData.push({
-          source: nodeMap.get(d),
-          target: nodeMap.get(lot)
+          source: nodeInMap.get(d),
+          target: nodeOutMap.get(lot)
         });
       });
     });
 
-    this.nodeData = Array.from(nodeMap.values());
+    this.nodeInData = Array.from(nodeInMap.values());
+    this.nodeOutData = Array.from(nodeOutMap.values());
   }
 
   private addNodes() {
     const d3 = this.d3;
-    let hoverD: NodeDatum;
+    const dragLine = this.dragLine;
+    let nodeOut: NodeDatum;
 
-    const nodes = this.nodesG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeData, d => d.id).enter().append<SVGElement>('g')
-      .classed(NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+    const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>) => {
+      nodes.classed(NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+      nodes.append('rect').attr('x', -NODE_WIDTH / 2).attr('y', -NODE_HEIGHT / 2).attr('width', NODE_WIDTH).attr('height', NODE_HEIGHT);
+      nodes.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(d => d.title);
+    };
 
-    nodes.append('rect').attr('x', -NODE_WIDTH / 2).attr('y', -NODE_HEIGHT / 2).attr('width', NODE_WIDTH).attr('height', NODE_HEIGHT);
-    nodes.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(d => d.title);
+    const nodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter().append<SVGElement>('g');
+    const nodesOut = this.nodesOutG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeOutData, d => d.id).enter().append<SVGElement>('g');
 
-    nodes.on('mouseover', function (d) {
-      hoverD = d;
-      d3.select(this).classed(HOVER, true);
+    initRectAndText(nodesIn);
+    initRectAndText(nodesOut);
+
+    nodesIn.on('mouseover', function () {
+      if (dragLine.classed(HIDDEN)) {
+        d3.select(this).classed(HOVER, true);
+      }
     }).on('mouseout', function () {
-      hoverD = null;
       d3.select(this).classed(HOVER, false);
     });
 
-    nodes.filter(d => d.type === NodeType.IN).call(this.d3.drag<SVGElement, NodeDatum>()
+    nodesOut.on('mouseover', function (d) {
+      if (!dragLine.classed(HIDDEN)) {
+        nodeOut = d;
+        d3.select(this).classed(HOVER, true);
+      }
+    }).on('mouseout', function () {
+      nodeOut = null;
+      d3.select(this).classed(HOVER, false);
+    });
+
+    nodesIn.call(this.d3.drag<SVGElement, NodeDatum>()
       .on('start drag', d => {
         const mousePos = d3.mouse(document.getElementById('in-out-connector'));
 
-        this.dragLine.attr('d', 'M' + (d.x + NODE_WIDTH / 2) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
-        this.dragLine.classed(HIDDEN, false);
+        dragLine.attr('d', 'M' + (d.x + NODE_WIDTH / 2) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
+        dragLine.classed(HIDDEN, false);
       })
       .on('end', d => {
-        if (hoverD != null && hoverD.type === NodeType.OUT) {
-          const newEdge: EdgeDatum = {
+        if (nodeOut != null && this.edgeData.find(e => e.source === d && e.target === nodeOut) == null) {
+          this.edgeData.push({
             source: d,
-            target: hoverD
-          };
-
-          if (this.edgeData.find(e => e.source === newEdge.source && e.target === newEdge.target) == null) {
-            this.edgeData.push(newEdge);
-            this.updateEdges();
-          }
+            target: nodeOut
+          });
+          this.updateEdges();
         }
 
-        this.dragLine.classed(HIDDEN, true);
+        dragLine.classed(HIDDEN, true);
       }));
   }
 
   private updateEdges() {
-    const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path').data(this.edgeData, d => d.source.id + '->' + d.target.id);
+    const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
+      .data(this.edgeData, d => d.source.id + UtilService.ARROW_STRING + d.target.id);
 
     edges.enter().append('path').classed(EDGE, true)
       .attr('d', d => 'M' + (d.source.x + NODE_WIDTH / 2) + ',' + d.source.y + 'L' + (d.target.x - NODE_WIDTH / 2) + ',' + d.target.y)

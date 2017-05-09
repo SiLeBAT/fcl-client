@@ -7,6 +7,8 @@ import {DataService} from './data.service';
 @Injectable()
 export class UtilService {
 
+  static ARROW_STRING = '->';
+
   private static STATION_DATA: StationData = {
     id: null, name: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null, contains: null,
     selected: null, observed: null, forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null,

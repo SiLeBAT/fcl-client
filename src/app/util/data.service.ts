@@ -112,13 +112,9 @@ export class DataService {
       deliveryColumns: Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
       showType: DataService.DEFAULT_TABLE_SETTINGS.showType
     };
-    const elements: FclElements = {
-      stations: DataService.createStations(data.stations),
-      deliveries: DataService.createDeliveries(data.deliveries)
-    };
 
     return {
-      elements: elements,
+      elements: DataService.createElements(data.stations, data.deliveries),
       layout: {
         name: 'random'
       },
@@ -144,16 +140,43 @@ export class DataService {
         ? data.tableSettings.deliveryColumns : Array.from(DataService.DEFAULT_TABLE_SETTINGS.deliveryColumns),
       showType: data.tableSettings.showType != null ? data.tableSettings.showType : DataService.DEFAULT_TABLE_SETTINGS.showType
     };
-    const elements: FclElements = {
-      stations: DataService.createStations(data.elements.stations),
-      deliveries: DataService.createDeliveries(data.elements.deliveries)
-    };
 
     return {
-      elements: elements,
+      elements: DataService.createElements(data.elements.stations, data.elements.deliveries),
       layout: data.layout,
       graphSettings: graphSettings,
       tableSettings: tableSettings
+    };
+  }
+
+  private static createElements(stationElements: any[], deliveryElements: any[]): FclElements {
+    const ids: Set<string> = new Set();
+
+    for (const e of stationElements.concat(deliveryElements)) {
+      const id: string = e.id;
+
+      if (ids.has(id)) {
+        throw new SyntaxError('Duplicate id: ' + id);
+      }
+
+      if (id.includes(UtilService.ARROW_STRING)) {
+        throw new SyntaxError('ids are not allowed to contain "' + UtilService.ARROW_STRING + '"');
+      }
+
+      ids.add(id);
+    }
+
+    for (const d of deliveryElements) {
+      const lot: string = d.lot;
+
+      if (lot != null && lot.includes(UtilService.ARROW_STRING)) {
+        throw new SyntaxError('lots are not allowed to contain "' + UtilService.ARROW_STRING + '"');
+      }
+    }
+
+    return {
+      stations: DataService.createStations(stationElements),
+      deliveries: DataService.createDeliveries(deliveryElements)
     };
   }
 
