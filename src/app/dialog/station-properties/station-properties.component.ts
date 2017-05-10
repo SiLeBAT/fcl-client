@@ -22,21 +22,21 @@ interface EdgeDatum {
   target: NodeDatum;
 }
 
-const NODE = 'node';
-const HOVER = 'hover';
-const EDGE = 'edge';
-const HIDDEN = 'hidden';
-
-const SVG_WIDTH = 600;
-const NODE_PADDING = 15;
-const NODE_WIDTH = 200;
-const NODE_HEIGHT = 30;
-
 @Component({
   templateUrl: './station-properties.component.html',
   styleUrls: ['./station-properties.component.css']
 })
 export class StationPropertiesComponent implements OnInit {
+
+  private static readonly NODE = 'node';
+  private static readonly HOVER = 'hover';
+  private static readonly EDGE = 'edge';
+  private static readonly HIDDEN = 'hidden';
+
+  private static readonly SVG_WIDTH = 600;
+  private static readonly NODE_PADDING = 15;
+  private static readonly NODE_WIDTH = 200;
+  private static readonly NODE_HEIGHT = 30;
 
   properties: { name: string, value: string }[];
 
@@ -83,22 +83,22 @@ export class StationPropertiesComponent implements OnInit {
         this.initDeliveryBasedData();
       }
 
-      let yIn = NODE_PADDING + NODE_HEIGHT / 2;
-      let yOut = NODE_PADDING + NODE_HEIGHT / 2;
+      let yIn = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
+      let yOut = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
 
       for (const n of this.nodeInData) {
-        n.x = NODE_WIDTH / 2 + 1;
+        n.x = StationPropertiesComponent.NODE_WIDTH / 2 + 1;
         n.y = yIn;
-        yIn += NODE_HEIGHT + NODE_PADDING;
+        yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
       for (const n of this.nodeOutData) {
-        n.x = SVG_WIDTH - NODE_WIDTH / 2 - 1;
+        n.x = StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH / 2 - 1;
         n.y = yOut;
-        yOut += NODE_HEIGHT + NODE_PADDING;
+        yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
-      this.height = Math.max(yIn, yOut) - NODE_HEIGHT / 2;
+      this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_HEIGHT / 2;
     }
   }
 
@@ -143,8 +143,8 @@ export class StationPropertiesComponent implements OnInit {
     if (this.height != null) {
       const svg: Selection<SVGElement, any, any, any> = this.d3
         .select('#in-out-connector').append<SVGElement>('svg')
-        .attr('width', SVG_WIDTH).attr('height', this.height)
-        .on('mouseup', () => this.dragLine.classed(HIDDEN, true));
+        .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
+        .on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
 
       const defs = svg.append<SVGElement>('defs');
 
@@ -160,7 +160,8 @@ export class StationPropertiesComponent implements OnInit {
 
       const g = svg.append<SVGElement>('g');
 
-      this.dragLine = g.append<SVGElement>('path').attr('class', EDGE + ' ' + HIDDEN).attr('marker-end', 'url(#end-arrow)');
+      this.dragLine = g.append<SVGElement>('path').classed(StationPropertiesComponent.EDGE, true)
+        .classed(StationPropertiesComponent.HIDDEN, true).attr('marker-end', 'url(#end-arrow)');
       this.edgesG = g.append<SVGElement>('g');
       this.nodesInG = g.append<SVGElement>('g');
       this.nodesOutG = g.append<SVGElement>('g');
@@ -292,8 +293,9 @@ export class StationPropertiesComponent implements OnInit {
     let nodeOut: NodeDatum;
 
     const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>) => {
-      nodes.classed(NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-      nodes.append('rect').attr('x', -NODE_WIDTH / 2).attr('y', -NODE_HEIGHT / 2).attr('width', NODE_WIDTH).attr('height', NODE_HEIGHT);
+      nodes.classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+      nodes.append('rect').attr('x', -StationPropertiesComponent.NODE_WIDTH / 2).attr('y', -StationPropertiesComponent.NODE_HEIGHT / 2)
+        .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
       nodes.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(d => d.title);
     };
 
@@ -304,29 +306,29 @@ export class StationPropertiesComponent implements OnInit {
     initRectAndText(nodesOut);
 
     nodesIn.on('mouseover', function () {
-      if (dragLine.classed(HIDDEN)) {
-        d3.select(this).classed(HOVER, true);
+      if (dragLine.classed(StationPropertiesComponent.HIDDEN)) {
+        d3.select(this).classed(StationPropertiesComponent.HOVER, true);
       }
     }).on('mouseout', function () {
-      d3.select(this).classed(HOVER, false);
+      d3.select(this).classed(StationPropertiesComponent.HOVER, false);
     });
 
     nodesOut.on('mouseover', function (d) {
-      if (!dragLine.classed(HIDDEN)) {
+      if (!dragLine.classed(StationPropertiesComponent.HIDDEN)) {
         nodeOut = d;
-        d3.select(this).classed(HOVER, true);
+        d3.select(this).classed(StationPropertiesComponent.HOVER, true);
       }
     }).on('mouseout', function () {
       nodeOut = null;
-      d3.select(this).classed(HOVER, false);
+      d3.select(this).classed(StationPropertiesComponent.HOVER, false);
     });
 
     nodesIn.call(this.d3.drag<SVGElement, NodeDatum>()
       .on('start drag', d => {
         const mousePos = d3.mouse(document.getElementById('in-out-connector'));
 
-        dragLine.attr('d', 'M' + (d.x + NODE_WIDTH / 2) + ',' + d.y + 'L' + mousePos[0] + ',' + mousePos[1]);
-        dragLine.classed(HIDDEN, false);
+        dragLine.attr('d', this.line(d.x + StationPropertiesComponent.NODE_WIDTH / 2, d.y, mousePos[0], mousePos[1]));
+        dragLine.classed(StationPropertiesComponent.HIDDEN, false);
       })
       .on('end', d => {
         if (nodeOut != null && this.edgeData.find(e => e.source === d && e.target === nodeOut) == null) {
@@ -337,7 +339,7 @@ export class StationPropertiesComponent implements OnInit {
           this.updateEdges();
         }
 
-        dragLine.classed(HIDDEN, true);
+        dragLine.classed(StationPropertiesComponent.HIDDEN, true);
       }));
   }
 
@@ -345,12 +347,28 @@ export class StationPropertiesComponent implements OnInit {
     const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
       .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
 
-    edges.enter().append('path').classed(EDGE, true)
-      .attr('d', d => 'M' + (d.source.x + NODE_WIDTH / 2) + ',' + d.source.y + 'L' + (d.target.x - NODE_WIDTH / 2) + ',' + d.target.y)
+    edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true)
+      .attr('d', d => {
+        const x1 = d.source.x + StationPropertiesComponent.NODE_WIDTH / 2;
+        const y1 = d.source.y;
+        const x2 = d.target.x - StationPropertiesComponent.NODE_WIDTH / 2;
+        const y2 = d.target.y;
+
+        return this.line(x1, y1, x2, y2);
+      })
       .on('click', d => {
         this.edgeData.splice(this.edgeData.indexOf(d), 1);
         this.updateEdges();
       });
     edges.exit().remove();
+  }
+
+  private line(x1: number, y1: number, x2: number, y2: number) {
+    const path = this.d3.path();
+
+    path.moveTo(x1, y1);
+    path.lineTo(x2, y2);
+
+    return path.toString();
   }
 }

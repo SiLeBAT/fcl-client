@@ -8,8 +8,8 @@ export function Zooming(params: Subject<boolean>) {
 
 class ZoomingClass {
 
-  private static ZOOM_FACTOR = 1.5;
-  private static SLIDER_PADDING = 2;
+  private static readonly ZOOM_FACTOR = 1.5;
+  private static readonly SLIDER_PADDING = 2;
 
   private cy: any;
   private container: HTMLElement;

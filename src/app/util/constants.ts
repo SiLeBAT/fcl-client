@@ -37,7 +37,7 @@ export class Constants {
     commonLink: {name: 'Common Link', color: [255, 255, 75]},
     score: {name: 'Score', color: null}
   });
-  static readonly PROPERTIES_WITH_COLORS: List<string> = List(Constants.PROPERTIES.filter(p => p.color != null).keys());
+  static readonly PROPERTIES_WITH_COLORS = List(Constants.PROPERTIES.filter(p => p.color != null).keys());
 
   static readonly TABLE_MODES = List.of(TableMode.STATIONS, TableMode.DELIVERIES);
   static readonly SHOW_TYPES = List.of(ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY);
