@@ -22,6 +22,90 @@ interface EdgeDatum {
   target: NodeDatum;
 }
 
+class DataOptimizer {
+
+  private inIds: string[];
+  private inConnections: Map<string, string[]>;
+  private outIds: string[];
+  private outConnections: Map<string, string[]>;
+
+  constructor(private nodeInData: NodeDatum[], private nodeOutData: NodeDatum[], private edgeData: EdgeDatum[]) {
+    this.inIds = [];
+    this.inConnections = new Map();
+    this.outIds = [];
+    this.outConnections = new Map();
+
+    for (const n of nodeInData) {
+      this.inIds.push(n.id);
+      this.inConnections.set(n.id, []);
+    }
+
+    for (const n of nodeOutData) {
+      this.outIds.push(n.id);
+      this.outConnections.set(n.id, []);
+    }
+
+    for (const e of edgeData) {
+      this.inConnections.get(e.source.id).push(e.target.id);
+      this.outConnections.get(e.target.id).push(e.source.id);
+    }
+  }
+
+  optimize() {
+    for (let i = 0; i < 1; i++) {
+      this.step(this.inIds, this.inConnections, this.outIds);
+      this.step(this.outIds, this.outConnections, this.inIds);
+    }
+
+    const nodesInById: Map<string, NodeDatum> = new Map();
+    const nodesOutById: Map<string, NodeDatum> = new Map();
+
+    for (const n of this.nodeInData) {
+      nodesInById.set(n.id, n);
+    }
+
+    for (const n of this.nodeOutData) {
+      nodesOutById.set(n.id, n);
+    }
+
+    this.inIds.forEach((id, index) => {
+      this.nodeInData[index] = nodesInById.get(id);
+    });
+
+    this.outIds.forEach((id, index) => {
+      this.nodeOutData[index] = nodesOutById.get(id);
+    });
+  }
+
+  private step(ids1: string[], connections1: Map<string, string[]>, ids2: string[]) {
+    const indices2: Map<string, number> = new Map();
+
+    ids2.forEach((id, index) => indices2.set(id, index));
+
+    const centers1: Map<string, number> = new Map();
+
+    for (const id of ids1) {
+      const connections = connections1.get(id);
+      let sum = 0;
+
+      for (const c of connections) {
+        sum += indices2.get(c);
+      }
+
+      centers1.set(id, connections.length > 0 ? sum / connections.length : Infinity);
+    }
+
+    console.log(centers1);
+
+    const sortedCenters1 = Array.from(centers1.entries());
+
+    sortedCenters1.sort((a, b) => a[1] - b[1]);
+    sortedCenters1.forEach((center, index) => {
+      ids1[index] = center[0];
+    });
+  }
+}
+
 @Component({
   templateUrl: './station-properties.component.html',
   styleUrls: ['./station-properties.component.css']
@@ -73,7 +157,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       }));
     this.d3 = d3Service.getD3();
 
-    if (data.station.incoming.length > 0 && data.station.outgoing.length > 0) {
+    if (data.station.incoming.length > 0 || data.station.outgoing.length > 0) {
       const ingredientsByLot = this.getIngredientsByLot();
 
       this.lotBased = ingredientsByLot != null;
@@ -83,6 +167,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       } else {
         this.initDeliveryBasedData();
       }
+
+      const optimizer = new DataOptimizer(this.nodeInData, this.nodeOutData, this.edgeData);
+
+      optimizer.optimize();
 
       let yIn = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
       let yOut = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
@@ -249,6 +337,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       });
     }
 
+    this.nodeInData = Array.from(nodeInMap.values());
+    this.nodeOutData = Array.from(nodeOutMap.values());
     this.edgeData = [];
 
     for (const c of this.data.station.connections) {
@@ -257,9 +347,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         target: nodeOutMap.get(c.target)
       });
     }
-
-    this.nodeInData = Array.from(nodeInMap.values());
-    this.nodeOutData = Array.from(nodeOutMap.values());
   }
 
   private initLotBasedData(ingredientsByLot: Map<string, Set<string>>) {
@@ -275,6 +362,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       });
     }
 
+    this.nodeInData = Array.from(nodeInMap.values());
     this.edgeData = [];
 
     ingredientsByLot.forEach((ingredients, lot) => {
@@ -292,7 +380,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.nodeInData = Array.from(nodeInMap.values());
     this.nodeOutData = Array.from(nodeOutMap.values());
   }
 
