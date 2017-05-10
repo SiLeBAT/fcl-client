@@ -236,7 +236,7 @@ export class GraphComponent implements OnInit {
     this.showLegend = showLegend;
 
     if (this.cy != null) {
-      this.legend.next(showLegend ? Constants.PROPERTIES_WITH_COLORS : []);
+      this.legend.next(showLegend ? Constants.PROPERTIES_WITH_COLORS.toArray() : []);
     }
   }
 
@@ -444,7 +444,7 @@ export class GraphComponent implements OnInit {
       }
     };
 
-    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS)) {
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
@@ -461,7 +461,7 @@ export class GraphComponent implements OnInit {
       style = style.selector('node:selected' + s.join('')).style(GraphComponent.createNodeBackground(c2));
     }
 
-    for (const prop of Constants.PROPERTIES_WITH_COLORS) {
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });

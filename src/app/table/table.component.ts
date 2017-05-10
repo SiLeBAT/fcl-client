@@ -27,8 +27,8 @@ export class TableComponent implements OnInit {
 
   private data: FclElements;
   private mode = Constants.DEFAULT_TABLE_MODE;
-  private stationColumns = Constants.DEFAULT_TABLE_STATION_COLUMNS;
-  private deliveryColumns = Constants.DEFAULT_TABLE_DELIVERY_COLUMNS;
+  private stationColumns = Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray();
+  private deliveryColumns = Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray();
   private showType = Constants.DEFAULT_TABLE_SHOW_TYPE;
 
   private resizeTimer: any;
@@ -51,7 +51,7 @@ export class TableComponent implements OnInit {
     style.innerHTML = '';
     style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
 
-    for (const props of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS)) {
+    for (const props of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       style.innerHTML += 'datatable-body-row';
 
       if (props.length === 1) {

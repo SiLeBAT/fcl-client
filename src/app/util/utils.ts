@@ -19,9 +19,9 @@ export class Utils {
     let properties: string[];
 
     if (mode === TableMode.STATIONS) {
-      properties = Constants.STATION_PROPERTIES;
+      properties = Constants.STATION_PROPERTIES.toArray();
     } else if (mode === TableMode.DELIVERIES) {
-      properties = Constants.DELIVERY_PROPERTIES;
+      properties = Constants.DELIVERY_PROPERTIES.toArray();
     }
 
     const additionalProps: Set<string> = new Set();

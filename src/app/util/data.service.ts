@@ -25,8 +25,8 @@ export class DataService {
     return {
       mode: Constants.DEFAULT_TABLE_MODE,
       width: Constants.DEFAULT_TABLE_WIDTH,
-      stationColumns: Array.from(Constants.DEFAULT_TABLE_STATION_COLUMNS),
-      deliveryColumns: Array.from(Constants.DEFAULT_TABLE_DELIVERY_COLUMNS),
+      stationColumns: Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray(),
+      deliveryColumns: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray(),
       showType: Constants.DEFAULT_TABLE_SHOW_TYPE
     };
   }
@@ -97,9 +97,9 @@ export class DataService {
       mode: data.tableSettings.mode != null ? data.tableSettings.mode : Constants.DEFAULT_TABLE_MODE,
       width: data.tableSettings.width != null ? data.tableSettings.width : Constants.DEFAULT_TABLE_WIDTH,
       stationColumns: data.tableSettings.stationColumns != null
-        ? data.tableSettings.stationColumns : Array.from(Constants.DEFAULT_TABLE_STATION_COLUMNS),
+        ? data.tableSettings.stationColumns : Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray(),
       deliveryColumns: data.tableSettings.deliveryColumns != null
-        ? data.tableSettings.deliveryColumns : Array.from(Constants.DEFAULT_TABLE_DELIVERY_COLUMNS),
+        ? data.tableSettings.deliveryColumns : Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray(),
       showType: data.tableSettings.showType != null ? data.tableSettings.showType : Constants.DEFAULT_TABLE_SHOW_TYPE
     };
 
@@ -144,7 +144,7 @@ export class DataService {
 
   private static createStations(elements: any[]): StationData[] {
     const stations: StationData[] = [];
-    const defaultKeys: Set<string> = new Set(Constants.STATION_PROPERTIES);
+    const defaultKeys: Set<string> = new Set(Constants.STATION_PROPERTIES.toArray());
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
@@ -182,7 +182,7 @@ export class DataService {
 
   private static createDeliveries(elements: any[]): DeliveryData[] {
     const deliveries: DeliveryData[] = [];
-    const defaultKeys: Set<string> = new Set(Constants.DELIVERY_PROPERTIES);
+    const defaultKeys: Set<string> = new Set(Constants.DELIVERY_PROPERTIES.toArray());
 
     for (const e of elements) {
       const properties: { name: string, value: string }[] = [];
