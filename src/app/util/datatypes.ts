@@ -14,7 +14,7 @@ export interface CyNode {
   group: string;
   data: StationData;
   selected: boolean;
-  position: CyPosition;
+  position: Position;
 }
 
 export interface CyEdge {
@@ -23,7 +23,7 @@ export interface CyEdge {
   selected: boolean;
 }
 
-export interface CyPosition {
+export interface Position {
   x: number;
   y: number;
 }
@@ -49,7 +49,7 @@ export interface StationData {
   outbreak: boolean;
   score: number;
   commonLink: boolean;
-  position: CyPosition;
+  position: Position;
   positionRelativeTo: string;
   properties: { name: string, value: string }[];
 }

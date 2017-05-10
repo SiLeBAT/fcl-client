@@ -22,7 +22,7 @@
 }
 
 /*noinspection CssUnusedSymbol,CssUnknownTarget*/
-#in-out-connector path.edge:hover {
+#in-out-connector path.edge.hover {
   stroke: rgb(0, 0, 255);
 }
 

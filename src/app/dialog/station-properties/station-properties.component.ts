@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 import {D3, D3Service, Selection} from 'd3-ng2-service';
 
@@ -26,7 +26,7 @@ interface EdgeDatum {
   templateUrl: './station-properties.component.html',
   styleUrls: ['./station-properties.component.css']
 })
-export class StationPropertiesComponent implements OnInit {
+export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private static readonly NODE = 'node';
   private static readonly HOVER = 'hover';
@@ -47,11 +47,12 @@ export class StationPropertiesComponent implements OnInit {
   private edgeData: EdgeDatum[];
   private lotBased: boolean;
   private height: number;
+  private selected: NodeDatum;
 
   private nodesInG: Selection<SVGElement, any, any, any>;
   private nodesOutG: Selection<SVGElement, any, any, any>;
   private edgesG: Selection<SVGElement, any, any, any>;
-  private dragLine: Selection<SVGElement, any, any, any>;
+  private connectLine: Selection<SVGElement, any, any, any>;
 
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
               d3Service: D3Service) {
@@ -144,8 +145,10 @@ export class StationPropertiesComponent implements OnInit {
       const svg: Selection<SVGElement, any, any, any> = this.d3
         .select('#in-out-connector').append<SVGElement>('svg')
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
-        .on('mouseup', () => this.dragLine.classed(StationPropertiesComponent.HIDDEN, true));
-
+        .on('click', () => {
+          this.selected = null;
+          this.updateConnectLine();
+        });
       const defs = svg.append<SVGElement>('defs');
 
       defs.append('marker')
@@ -160,7 +163,7 @@ export class StationPropertiesComponent implements OnInit {
 
       const g = svg.append<SVGElement>('g');
 
-      this.dragLine = g.append<SVGElement>('path').classed(StationPropertiesComponent.EDGE, true)
+      this.connectLine = g.append<SVGElement>('path').classed(StationPropertiesComponent.EDGE, true)
         .classed(StationPropertiesComponent.HIDDEN, true).attr('marker-end', 'url(#end-arrow)');
       this.edgesG = g.append<SVGElement>('g');
       this.nodesInG = g.append<SVGElement>('g');
@@ -168,7 +171,13 @@ export class StationPropertiesComponent implements OnInit {
 
       this.addNodes();
       this.updateEdges();
+
+      this.d3.select('body').on('mousemove', () => this.updateConnectLine());
     }
+  }
+
+  ngOnDestroy() {
+    this.d3.select('body').on('mousemove', null);
   }
 
   private getDeliveryLabel(id: string): string {
@@ -288,10 +297,6 @@ export class StationPropertiesComponent implements OnInit {
   }
 
   private addNodes() {
-    const d3 = this.d3;
-    const dragLine = this.dragLine;
-    let nodeOut: NodeDatum;
-
     const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>) => {
       nodes.classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
       nodes.append('rect').attr('x', -StationPropertiesComponent.NODE_WIDTH / 2).attr('y', -StationPropertiesComponent.NODE_HEIGHT / 2)
@@ -305,61 +310,70 @@ export class StationPropertiesComponent implements OnInit {
     initRectAndText(nodesIn);
     initRectAndText(nodesOut);
 
+    const self = this;
+
     nodesIn.on('mouseover', function () {
-      if (dragLine.classed(StationPropertiesComponent.HIDDEN)) {
-        d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      if (self.selected == null) {
+        self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
       }
     }).on('mouseout', function () {
-      d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+    }).on('click', function (d) {
+      if (self.selected == null) {
+        self.selected = d;
+        self.updateConnectLine();
+        self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+        self.d3.event.stopPropagation();
+      }
     });
 
-    nodesOut.on('mouseover', function (d) {
-      if (!dragLine.classed(StationPropertiesComponent.HIDDEN)) {
-        nodeOut = d;
-        d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+    nodesOut.on('mouseover', function () {
+      if (self.selected != null) {
+        self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
       }
     }).on('mouseout', function () {
-      nodeOut = null;
-      d3.select(this).classed(StationPropertiesComponent.HOVER, false);
-    });
+      self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+    }).on('click', function (d) {
+      if (self.selected != null) {
+        self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
 
-    nodesIn.call(this.d3.drag<SVGElement, NodeDatum>()
-      .on('start drag', d => {
-        const mousePos = d3.mouse(document.getElementById('in-out-connector'));
-
-        dragLine.attr('d', this.line(d.x + StationPropertiesComponent.NODE_WIDTH / 2, d.y, mousePos[0], mousePos[1]));
-        dragLine.classed(StationPropertiesComponent.HIDDEN, false);
-      })
-      .on('end', d => {
-        if (nodeOut != null && this.edgeData.find(e => e.source === d && e.target === nodeOut) == null) {
-          this.edgeData.push({
-            source: d,
-            target: nodeOut
+        if (self.edgeData.find(e => e.source === self.selected && e.target === d) == null) {
+          self.edgeData.push({
+            source: self.selected,
+            target: d
           });
-          this.updateEdges();
+          self.updateEdges();
         }
-
-        dragLine.classed(StationPropertiesComponent.HIDDEN, true);
-      }));
+      }
+    });
   }
 
   private updateEdges() {
     const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
       .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
 
-    edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true)
-      .attr('d', d => {
-        const x1 = d.source.x + StationPropertiesComponent.NODE_WIDTH / 2;
-        const y1 = d.source.y;
-        const x2 = d.target.x - StationPropertiesComponent.NODE_WIDTH / 2;
-        const y2 = d.target.y;
+    const self = this;
 
-        return this.line(x1, y1, x2, y2);
-      })
-      .on('click', d => {
-        this.edgeData.splice(this.edgeData.indexOf(d), 1);
-        this.updateEdges();
-      });
+    edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true).attr('d', d => {
+      const x1 = d.source.x + StationPropertiesComponent.NODE_WIDTH / 2;
+      const y1 = d.source.y;
+      const x2 = d.target.x - StationPropertiesComponent.NODE_WIDTH / 2;
+      const y2 = d.target.y;
+
+      return this.line(x1, y1, x2, y2);
+    }).on('mouseover', function () {
+      if (self.selected == null) {
+        self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      }
+    }).on('mouseout', function () {
+      self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+    }).on('click', function (d) {
+      if (self.selected == null) {
+        self.edgeData.splice(self.edgeData.indexOf(d), 1);
+        self.updateEdges();
+      }
+    });
+
     edges.exit().remove();
   }
 
@@ -370,5 +384,17 @@ export class StationPropertiesComponent implements OnInit {
     path.lineTo(x2, y2);
 
     return path.toString();
+  }
+
+  private updateConnectLine() {
+    if (this.selected != null) {
+      const mousePos = this.d3.mouse(document.getElementById('in-out-connector'));
+
+      this.connectLine
+        .attr('d', this.line(this.selected.x + StationPropertiesComponent.NODE_WIDTH / 2, this.selected.y, mousePos[0], mousePos[1]));
+      this.connectLine.classed(StationPropertiesComponent.HIDDEN, false);
+    } else {
+      this.connectLine.classed(StationPropertiesComponent.HIDDEN, true);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {CyPosition, DeliveryData, FclElements, StationData, TableMode} from './datatypes';
+import {DeliveryData, FclElements, Position, StationData, TableMode} from './datatypes';
 import {MdDialog} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
@@ -95,7 +95,7 @@ export class Utils {
     return combinations;
   }
 
-  static getCenter(positions: CyPosition[]): CyPosition {
+  static getCenter(positions: Position[]): Position {
     let xSum = 0;
     let ySum = 0;
 
@@ -110,14 +110,14 @@ export class Utils {
     };
   }
 
-  static sum(position1: CyPosition, position2: CyPosition): CyPosition {
+  static sum(position1: Position, position2: Position): Position {
     return {
       x: position1.x + position2.x,
       y: position1.y + position2.y
     };
   }
 
-  static difference(position1: CyPosition, position2: CyPosition): CyPosition {
+  static difference(position1: Position, position2: Position): Position {
     return {
       x: position1.x - position2.x,
       y: position1.y - position2.y
