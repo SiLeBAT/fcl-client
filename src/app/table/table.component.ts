@@ -114,12 +114,12 @@ export class TableComponent implements OnInit {
   }
 
   setStationColumns(stationColumns: string[]) {
-    this.stationColumns = stationColumns;
+    this.stationColumns = Array.from(stationColumns);
     this.update();
   }
 
   setDeliveryColumns(deliveryColumns: string[]) {
-    this.deliveryColumns = deliveryColumns;
+    this.deliveryColumns = Array.from(deliveryColumns);
     this.update();
   }
 
@@ -129,6 +129,7 @@ export class TableComponent implements OnInit {
   }
 
   update() {
+    const properties = Utils.getTableProperties(this.mode, this.stationColumns, this.deliveryColumns);
     const selectColumn: any = {
       name: ' ',
       prop: 'selected',
@@ -136,15 +137,8 @@ export class TableComponent implements OnInit {
       draggable: false,
       cellTemplate: this.selectTmpl
     };
-    let columns: string[];
 
-    if (this.mode === TableMode.STATIONS) {
-      columns = this.stationColumns;
-    } else if (this.mode === TableMode.DELIVERIES) {
-      columns = this.deliveryColumns;
-    }
-
-    this.columns = this.getUpdatedColumns([selectColumn].concat(columns.map(prop => {
+    this.columns = this.getUpdatedColumns([selectColumn].concat(properties.map(prop => {
       return {
         name: Constants.PROPERTIES.has(prop) ? Constants.PROPERTIES.get(prop).name : prop,
         prop: prop,
@@ -168,20 +162,20 @@ export class TableComponent implements OnInit {
         elements = elements.filter(e => e.forward || e.backward || e.observed !== ObservedType.NONE);
       }
 
-      const columnsSet = new Set(columns);
+      const propertySet = new Set(properties);
 
       this.unfilteredRows = elements.map(e => {
         const copy = JSON.parse(JSON.stringify(e));
         let stringContent = '';
 
         for (const key of Object.keys(e)) {
-          if (columnsSet.has(key)) {
+          if (propertySet.has(key)) {
             stringContent += String(e[key]).trim().toLowerCase() + ' ';
           }
         }
 
         for (const prop of e.properties) {
-          if (columnsSet.has(prop.name)) {
+          if (propertySet.has(prop.name)) {
             copy[prop.name] = prop.value;
             stringContent += prop.value.trim().toLowerCase() + ' ';
           }
@@ -194,6 +188,9 @@ export class TableComponent implements OnInit {
       });
 
       this.rows = TableComponent.filterRows(this.unfilteredRows, this.filter);
+    } else {
+      this.unfilteredRows = [];
+      this.rows = [];
     }
 
     this.table.recalculate();

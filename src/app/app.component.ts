@@ -157,19 +157,12 @@ export class AppComponent implements OnInit {
   changeColumns() {
     const options: { value: string, viewValue: string, selected: boolean }[] = [];
 
-    for (const column of Utils.getTableProperties(this.tableSettings.mode, this.elements)) {
-      let selected;
-
-      if (this.tableSettings.mode === TableMode.STATIONS) {
-        selected = this.tableSettings.stationColumns.includes(column);
-      } else if (this.tableSettings.mode === TableMode.DELIVERIES) {
-        selected = this.tableSettings.deliveryColumns.includes(column);
-      }
-
+    for (const column of Utils.getAllTableProperties(this.tableSettings.mode, this.elements)) {
       options.push({
         value: column,
         viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : column,
-        selected: selected
+        selected: Utils.getTableProperties(this.tableSettings.mode, this.tableSettings.stationColumns, this.tableSettings.deliveryColumns)
+          .includes(column)
       });
     }
 

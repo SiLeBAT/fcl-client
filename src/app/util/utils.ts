@@ -15,7 +15,17 @@ export class Utils {
     return null;
   }
 
-  static getTableProperties(mode: TableMode, data: FclElements): string[] {
+  static getTableProperties(mode: TableMode, stationColumns: string[], deliveryColumns: string[]): string[] {
+    if (mode === TableMode.STATIONS) {
+      return stationColumns;
+    } else if (mode === TableMode.DELIVERIES) {
+      return deliveryColumns;
+    }
+
+    return null;
+  }
+
+  static getAllTableProperties(mode: TableMode, data: FclElements): string[] {
     let properties: string[];
 
     if (mode === TableMode.STATIONS) {
