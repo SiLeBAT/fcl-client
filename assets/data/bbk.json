@@ -270,7 +270,7 @@
     },
     {
       "lot": "Zucker_3",
-      "date": null,
+      "date": "2015-03-05",
       "id": "D7",
       "name": "Zucker",
       "source": "S236",
@@ -278,7 +278,7 @@
     },
     {
       "lot": "Sugar_1",
-      "date": null,
+      "date": "2015-03-05",
       "id": "D15",
       "name": "Zucker",
       "source": "S236",
@@ -334,7 +334,7 @@
     },
     {
       "lot": "Milk_1",
-      "date": null,
+      "date": "2015-03-03",
       "id": "D14",
       "name": "Milch",
       "source": "S236",
@@ -350,7 +350,7 @@
     },
     {
       "lot": "Salt_1",
-      "date": null,
+      "date": "2015-03-03",
       "id": "D17",
       "name": "Salz",
       "source": "S236",
@@ -358,7 +358,7 @@
     },
     {
       "lot": "Mehl_1",
-      "date": null,
+      "date": "2015-03-05",
       "id": "D18",
       "name": "Mehl",
       "source": "S236",
@@ -406,7 +406,7 @@
     },
     {
       "lot": "M9",
-      "date": null,
+      "date": "2015-03-04",
       "id": "D27",
       "name": "Mehl",
       "source": "S346",
@@ -414,7 +414,7 @@
     },
     {
       "lot": "M8",
-      "date": null,
+      "date": "2015-03-01",
       "id": "D24",
       "name": "Milch",
       "source": "S261",
@@ -422,7 +422,7 @@
     },
     {
       "lot": "S7",
-      "date": null,
+      "date": "2015-03-01",
       "id": "D25",
       "name": "Salz",
       "source": "S740",
@@ -430,7 +430,7 @@
     },
     {
       "lot": "Z6",
-      "date": null,
+      "date": "2015-03-04",
       "id": "D26",
       "name": "Zucker",
       "source": "S598",
@@ -438,7 +438,7 @@
     },
     {
       "lot": "Zuk7",
-      "date": null,
+      "date": "2015-03-04",
       "id": "D28",
       "name": "Zucker",
       "source": "S451",
