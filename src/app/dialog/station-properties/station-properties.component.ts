@@ -478,8 +478,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         this.selected.x + StationPropertiesComponent.NODE_WIDTH / 2,
         this.selected.y,
         mouseEvent.clientX - svgPos.e,
-        mouseEvent.clientY - svgPos.f)
-      );
+        mouseEvent.clientY - svgPos.f
+      ));
     }
   }
 }
