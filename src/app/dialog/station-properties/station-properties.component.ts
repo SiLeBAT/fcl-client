@@ -132,6 +132,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private height: number;
   private selected: NodeDatum;
 
+  private svg: Selection<SVGGElement, any, any, any>;
   private nodesInG: Selection<SVGElement, any, any, any>;
   private nodesOutG: Selection<SVGElement, any, any, any>;
   private edgesG: Selection<SVGElement, any, any, any>;
@@ -229,14 +230,16 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.height != null) {
-      const svg: Selection<SVGElement, any, any, any> = this.d3
-        .select('#in-out-connector').append<SVGElement>('svg')
+      this.svg = this.d3
+        .select('#in-out-connector').append<SVGGElement>('svg')
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
         .on('click', () => {
           this.selected = null;
           this.updateConnectLine();
         });
-      const defs = svg.append<SVGElement>('defs');
+
+      const defs = this.svg.append<SVGElement>('defs');
+      const g = this.svg.append<SVGElement>('g');
 
       defs.append('marker')
         .attr('id', 'end-arrow')
@@ -247,8 +250,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         .attr('orient', 'auto')
         .append('path')
         .attr('d', 'M0,-5L10,0L0,5');
-
-      const g = svg.append<SVGElement>('g');
 
       this.connectLine = g.append<SVGElement>('path').classed(StationPropertiesComponent.EDGE, true)
         .classed(StationPropertiesComponent.HIDDEN, true).attr('marker-end', 'url(#end-arrow)');
@@ -474,7 +475,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private updateConnectLine() {
     if (this.selected != null) {
-      const mousePos = this.d3.mouse(document.getElementById('in-out-connector'));
+      const mousePos = this.d3.mouse(this.svg.node());
 
       this.connectLine
         .attr('d', this.line(this.selected.x + StationPropertiesComponent.NODE_WIDTH / 2, this.selected.y, mousePos[0], mousePos[1]));
