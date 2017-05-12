@@ -138,6 +138,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private edgesG: Selection<SVGElement, any, any, any>;
   private connectLine: Selection<SVGElement, any, any, any>;
 
+  private static line(x1: number, y1: number, x2: number, y2: number) {
+    return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
+  }
+
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
               d3Service: D3Service) {
     this.properties = Object.keys(data.station)
@@ -235,7 +239,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
         .on('click', () => {
           this.selected = null;
-          this.updateConnectLine();
+          this.connectLine.classed(StationPropertiesComponent.HIDDEN, true);
         });
 
       const defs = this.svg.append<SVGElement>('defs');
@@ -409,6 +413,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       if (self.selected == null) {
         self.selected = d;
         self.updateConnectLine();
+        self.connectLine.classed(StationPropertiesComponent.HIDDEN, false);
         self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
         self.d3.event.stopPropagation();
       }
@@ -442,12 +447,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     const self = this;
 
     edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true).attr('d', d => {
-      const x1 = d.source.x + StationPropertiesComponent.NODE_WIDTH / 2;
-      const y1 = d.source.y;
-      const x2 = d.target.x - StationPropertiesComponent.NODE_WIDTH / 2;
-      const y2 = d.target.y;
-
-      return this.line(x1, y1, x2, y2);
+      return StationPropertiesComponent.line(
+        d.source.x + StationPropertiesComponent.NODE_WIDTH / 2,
+        d.source.y,
+        d.target.x - StationPropertiesComponent.NODE_WIDTH / 2,
+        d.target.y
+      );
     }).on('mouseover', function () {
       if (self.selected == null) {
         self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
@@ -464,24 +469,17 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     edges.exit().remove();
   }
 
-  private line(x1: number, y1: number, x2: number, y2: number) {
-    const path = this.d3.path();
-
-    path.moveTo(x1, y1);
-    path.lineTo(x2, y2);
-
-    return path.toString();
-  }
-
   private updateConnectLine() {
     if (this.selected != null) {
-      const mousePos = this.d3.mouse(this.svg.node());
+      const mouseEvent: MouseEvent = this.d3.event;
+      const svgPos = this.svg.node().getScreenCTM();
 
-      this.connectLine
-        .attr('d', this.line(this.selected.x + StationPropertiesComponent.NODE_WIDTH / 2, this.selected.y, mousePos[0], mousePos[1]));
-      this.connectLine.classed(StationPropertiesComponent.HIDDEN, false);
-    } else {
-      this.connectLine.classed(StationPropertiesComponent.HIDDEN, true);
+      this.connectLine.attr('d', StationPropertiesComponent.line(
+        this.selected.x + StationPropertiesComponent.NODE_WIDTH / 2,
+        this.selected.y,
+        mouseEvent.clientX - svgPos.e,
+        mouseEvent.clientY - svgPos.f)
+      );
     }
   }
 }
