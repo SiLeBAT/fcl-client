@@ -5,8 +5,8 @@ export class Constants {
 
   private static readonly STATION_DATA: StationData = {
     id: null, name: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null, contains: null,
-    selected: null, observed: null, forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null,
-    positionRelativeTo: null, properties: null
+    selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null, commonLink: null,
+    position: null, positionRelativeTo: null, properties: null
   };
 
   private static readonly DELIVERY_DATA: DeliveryData = {
@@ -34,6 +34,7 @@ export class Constants {
     backward: {name: 'Backward Trace', color: [255, 150, 75]},
     observed: {name: 'Observed', color: [75, 150, 255]},
     outbreak: {name: 'Outbreak', color: [255, 50, 50]},
+    crossContamination: {name: 'Cross Contamination', color: [150, 150, 150]},
     commonLink: {name: 'Common Link', color: [255, 255, 75]},
     score: {name: 'Score', color: null}
   });

@@ -11,6 +11,22 @@ export class TracingService {
 
   private visited: Set<string> = new Set();
 
+  private static getForwardDeliveries(station: StationData, deliveryId: string): string[] {
+    if (station.crossContamination) {
+      return station.outgoing;
+    } else {
+      return station.connections.filter(c => c.source === deliveryId).map(c => c.target);
+    }
+  }
+
+  private static getBackwardDeliveries(station: StationData, deliveryId: string): string[] {
+    if (station.crossContamination) {
+      return station.incoming;
+    } else {
+      return station.connections.filter(c => c.target === deliveryId).map(c => c.source);
+    }
+  }
+
   constructor() {
   }
 
@@ -66,6 +82,7 @@ export class TracingService {
       forward: false,
       backward: false,
       outbreak: false,
+      crossContamination: false,
       score: 0,
       commonLink: false,
       position: null,
@@ -170,6 +187,15 @@ export class TracingService {
     this.updateScores();
   }
 
+  setCrossContaminationOfStations(ids: string[], crossContamination: boolean) {
+    for (const id of ids) {
+      this.stationsById.get(id).crossContamination = crossContamination;
+    }
+
+    this.updateTrace();
+    this.updateScores();
+  }
+
   clearTrace() {
     this.stationsById.forEach(s => {
       s.observed = ObservedType.NONE;
@@ -218,9 +244,9 @@ export class TracingService {
     const targetStation = this.stationsById.get(delivery.target);
 
     sourceStation.backward = true;
-    sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
+    TracingService.getBackwardDeliveries(sourceStation, id).forEach(d => this.showDeliveryBackwardTraceInternal(d));
     targetStation.forward = true;
-    targetStation.connections.filter(c => c.source === id).forEach(c => this.showDeliveryForwardTraceInternal(c.target));
+    TracingService.getForwardDeliveries(targetStation, id).forEach(d => this.showDeliveryForwardTraceInternal(d));
   }
 
   showDeliveryForwardTrace(id: string) {
@@ -232,7 +258,7 @@ export class TracingService {
     const targetStation = this.stationsById.get(delivery.target);
 
     targetStation.forward = true;
-    targetStation.connections.filter(c => c.source === id).forEach(c => this.showDeliveryForwardTraceInternal(c.target));
+    TracingService.getForwardDeliveries(targetStation, id).forEach(d => this.showDeliveryForwardTraceInternal(d));
   }
 
   showDeliveryBackwardTrace(id: string) {
@@ -244,7 +270,7 @@ export class TracingService {
     const sourceStation = this.stationsById.get(delivery.source);
 
     sourceStation.backward = true;
-    sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
+    TracingService.getBackwardDeliveries(sourceStation, id).forEach(d => this.showDeliveryBackwardTraceInternal(d));
   }
 
   setConnectionsOfStation(id: string, connections: Connection[]) {
@@ -313,7 +339,7 @@ export class TracingService {
         source.score++;
       }
 
-      source.connections.filter(c => c.target === id).forEach(c => this.updateDeliveryScore(c.source, outbreakId));
+      TracingService.getBackwardDeliveries(source, id).forEach(d => this.updateDeliveryScore(d, outbreakId));
     }
   }
 
@@ -326,7 +352,7 @@ export class TracingService {
       const targetStation = this.stationsById.get(delivery.target);
 
       targetStation.forward = true;
-      targetStation.connections.filter(c => c.source === id).forEach(c => this.showDeliveryForwardTraceInternal(c.target));
+      TracingService.getForwardDeliveries(targetStation, id).forEach(d => this.showDeliveryForwardTraceInternal(d));
     }
   }
 
@@ -339,7 +365,7 @@ export class TracingService {
       const sourceStation = this.stationsById.get(delivery.source);
 
       sourceStation.backward = true;
-      sourceStation.connections.filter(c => c.target === id).forEach(c => this.showDeliveryBackwardTraceInternal(c.source));
+      TracingService.getBackwardDeliveries(sourceStation, id).forEach(d => this.showDeliveryBackwardTraceInternal(d));
     }
   }
 

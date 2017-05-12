@@ -169,6 +169,7 @@ export class DataService {
         forward: e.forward != null ? e.forward : false,
         backward: e.backward != null ? e.backward : false,
         outbreak: e.outbreak != null ? e.outbreak : false,
+        crossContamination: e.crossContamination != null ? e.crossContamination : false,
         score: e.score != null ? e.score : 0,
         commonLink: e.commonLink != null ? e.commonLink : false,
         position: e.position != null ? e.position : null,

@@ -213,6 +213,7 @@ export class TableComponent implements OnInit {
       'backward': row.backward,
       'observed': row.observed !== ObservedType.NONE,
       'outbreak': row.outbreak,
+      'crossContamination': row.crossContamination,
       'commonLink': row.commonLink
     };
   }

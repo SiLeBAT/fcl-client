@@ -532,6 +532,7 @@ export class GraphComponent implements OnInit {
     let selectedNodes = null;
     let multipleStationsSelected = false;
     let allOutbreakStations = false;
+    let allCrossContaminationStations = false;
     let allMetaStations = false;
     let allNonMetaStations = false;
 
@@ -539,6 +540,8 @@ export class GraphComponent implements OnInit {
       selectedNodes = this.cy.nodes(':selected');
       multipleStationsSelected = node.selected() && selectedNodes.size() > 1;
       allOutbreakStations = multipleStationsSelected ? selectedNodes.allAre('[?outbreak]') : node.data('outbreak');
+      allCrossContaminationStations = multipleStationsSelected ? selectedNodes.allAre('[?crossContamination]') :
+        node.data('crossContamination');
       allMetaStations = multipleStationsSelected ? selectedNodes.allAre('[?contains]') : node.data('contains');
       allNonMetaStations = multipleStationsSelected ? !selectedNodes.is('[?contains]') : !node.data('contains');
     }
@@ -579,6 +582,19 @@ export class GraphComponent implements OnInit {
         action: () => {
           this.tracingService
             .markStationsAsOutbreak(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()], !allOutbreakStations);
+          this.setNodeSize(this.nodeSize);
+          this.callChangeFunction();
+        }
+      }, {
+        name: allCrossContaminationStations ? 'Unset Cross Contamination' : 'Set Cross Contamination',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          this.tracingService.setCrossContaminationOfStations(
+            multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()],
+            !allCrossContaminationStations
+          );
+          this.updateProperties();
           this.setNodeSize(this.nodeSize);
           this.callChangeFunction();
         }

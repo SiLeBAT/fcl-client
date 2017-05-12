@@ -47,6 +47,7 @@ export interface StationData {
   forward: boolean;
   backward: boolean;
   outbreak: boolean;
+  crossContamination: boolean;
   score: number;
   commonLink: boolean;
   position: Position;
