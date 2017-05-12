@@ -95,8 +95,6 @@ class DataOptimizer {
       centers1.set(id, connections.length > 0 ? sum / connections.length : Infinity);
     }
 
-    console.log(centers1);
-
     const sortedCenters1 = Array.from(centers1.entries());
 
     sortedCenters1.sort((a, b) => a[1] - b[1]);
@@ -107,6 +105,7 @@ class DataOptimizer {
 }
 
 @Component({
+  selector: 'app-station-properties',
   templateUrl: './station-properties.component.html',
   styleUrls: ['./station-properties.component.css']
 })

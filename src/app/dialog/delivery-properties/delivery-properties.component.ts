@@ -8,6 +8,7 @@ export interface DeliveryPropertiesData {
 }
 
 @Component({
+  selector: 'app-delivery-properties',
   templateUrl: './delivery-properties.component.html',
   styleUrls: ['./delivery-properties.component.css']
 })
