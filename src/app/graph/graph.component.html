@@ -25,6 +25,10 @@
             [disabled]="!action.enabled" (click)="action.action()">
       {{action.name}}
     </button>
+    <button md-menu-item *ngIf="action.type == actionTypes.openTraceMenu"
+            [disabled]="!action.enabled" [mdMenuTriggerFor]="traceMenu">
+      {{action.name}}
+    </button>
   </ng-container>
 </md-menu>
 <md-menu #deliveryMenu>
@@ -33,10 +37,22 @@
             [disabled]="!action.enabled" (click)="action.action()">
       {{action.name}}
     </button>
+    <button md-menu-item *ngIf="action.type == actionTypes.openTraceMenu"
+            [disabled]="!action.enabled" [mdMenuTriggerFor]="traceMenu">
+      {{action.name}}
+    </button>
   </ng-container>
 </md-menu>
 <md-menu #layoutMenu>
   <ng-container *ngFor="let action of layoutMenuActions">
+    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
+            [disabled]="!action.enabled" (click)="action.action()">
+      {{action.name}}
+    </button>
+  </ng-container>
+</md-menu>
+<md-menu #traceMenu>
+  <ng-container *ngFor="let action of traceMenuActions">
     <button md-menu-item *ngIf="action.type == actionTypes.runAction"
             [disabled]="!action.enabled" (click)="action.action()">
       {{action.name}}

@@ -21,7 +21,7 @@ import {Zooming} from './zooming';
 import {Constants} from '../util/constants';
 
 enum MenuActionType {
-  runAction, openLayoutMenu
+  runAction, openLayoutMenu, openTraceMenu
 }
 
 interface MenuAction {
@@ -59,6 +59,7 @@ export class GraphComponent implements OnInit {
   stationMenuActions = this.createStationActions(null);
   deliveryMenuActions = this.createDeliveryActions(null);
   layoutMenuActions = this.createLayoutActions();
+  traceMenuActions = this.createTraceActions(null);
 
   private cy: any;
   private data: FclElements;
@@ -158,10 +159,12 @@ export class GraphComponent implements OnInit {
         this.graphMenuTrigger.openMenu();
       } else if (element.group() === 'nodes') {
         this.stationMenuActions = this.createStationActions(element);
+        this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.stationMenuTrigger.openMenu();
       } else if (element.group() === 'edges') {
         this.deliveryMenuActions = this.createDeliveryActions(element);
+        this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.deliveryMenuTrigger.openMenu();
       }
@@ -566,32 +569,9 @@ export class GraphComponent implements OnInit {
           });
         }
       }, {
-        name: 'Show Forward Trace',
-        type: MenuActionType.runAction,
-        enabled: !multipleStationsSelected,
-        action: () => {
-          this.tracingService.showStationForwardTrace(node.id());
-          this.updateProperties();
-          this.callChangeFunction();
-        }
-      }, {
-        name: 'Show Backward Trace',
-        type: MenuActionType.runAction,
-        enabled: !multipleStationsSelected,
-        action: () => {
-          this.tracingService.showStationBackwardTrace(node.id());
-          this.updateProperties();
-          this.callChangeFunction();
-        }
-      }, {
-        name: 'Show Whole Trace',
-        type: MenuActionType.runAction,
-        enabled: !multipleStationsSelected,
-        action: () => {
-          this.tracingService.showStationTrace(node.id());
-          this.updateProperties();
-          this.callChangeFunction();
-        }
+        name: 'Show Trace',
+        type: MenuActionType.openTraceMenu,
+        enabled: !multipleStationsSelected
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
         type: MenuActionType.runAction,
@@ -665,44 +645,9 @@ export class GraphComponent implements OnInit {
           }
         }
       }, {
-        name: 'Show Forward Trace',
-        type: MenuActionType.runAction,
-        enabled: true,
-        action: () => {
-          if (this.mergeMap.has(edge.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
-          } else {
-            this.tracingService.showDeliveryForwardTrace(edge.id());
-            this.updateProperties();
-            this.callChangeFunction();
-          }
-        }
-      }, {
-        name: 'Show Backward Trace',
-        type: MenuActionType.runAction,
-        enabled: true,
-        action: () => {
-          if (this.mergeMap.has(edge.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
-          } else {
-            this.tracingService.showDeliveryBackwardTrace(edge.id());
-            this.updateProperties();
-            this.callChangeFunction();
-          }
-        }
-      }, {
-        name: 'Show Whole Trace',
-        type: MenuActionType.runAction,
-        enabled: true,
-        action: () => {
-          if (this.mergeMap.has(edge.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
-          } else {
-            this.tracingService.showDeliveryTrace(edge.id());
-            this.updateProperties();
-            this.callChangeFunction();
-          }
-        }
+        name: 'Show Trace',
+        type: MenuActionType.openTraceMenu,
+        enabled: true
       }
     ];
   }
@@ -776,6 +721,66 @@ export class GraphComponent implements OnInit {
         type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'dagre'}).run()
+      }
+    ];
+  }
+
+  private createTraceActions(element): MenuAction[] {
+    return [
+      {
+        name: 'Forward Trace',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          if (this.mergeMap.has(element.id())) {
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+          } else {
+            if (element.group() === 'nodes') {
+              this.tracingService.showStationForwardTrace(element.id());
+            } else if (element.group() === 'edges') {
+              this.tracingService.showDeliveryForwardTrace(element.id());
+            }
+
+            this.updateProperties();
+            this.callChangeFunction();
+          }
+        }
+      }, {
+        name: 'Backward Trace',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          if (this.mergeMap.has(element.id())) {
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+          } else {
+            if (element.group() === 'nodes') {
+              this.tracingService.showStationBackwardTrace(element.id());
+            } else if (element.group() === 'edges') {
+              this.tracingService.showDeliveryBackwardTrace(element.id());
+            }
+
+            this.updateProperties();
+            this.callChangeFunction();
+          }
+        }
+      }, {
+        name: 'Full Trace',
+        type: MenuActionType.runAction,
+        enabled: true,
+        action: () => {
+          if (this.mergeMap.has(element.id())) {
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
+          } else {
+            if (element.group() === 'nodes') {
+              this.tracingService.showStationTrace(element.id());
+            } else if (element.group() === 'edges') {
+              this.tracingService.showDeliveryTrace(element.id());
+            }
+
+            this.updateProperties();
+            this.callChangeFunction();
+          }
+        }
       }
     ];
   }
