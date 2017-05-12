@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Connection, DeliveryData, FclElements, ObservedType, StationData} from '../util/datatypes';
+import {Utils} from '../util/utils';
 
 @Injectable()
 export class TracingService {
@@ -10,22 +11,6 @@ export class TracingService {
   private maxScore: number;
 
   private visited: Set<string> = new Set();
-
-  private static getForwardDeliveries(station: StationData, deliveryId: string): string[] {
-    if (station.crossContamination) {
-      return station.outgoing;
-    } else {
-      return station.connections.filter(c => c.source === deliveryId).map(c => c.target);
-    }
-  }
-
-  private static getBackwardDeliveries(station: StationData, deliveryId: string): string[] {
-    if (station.crossContamination) {
-      return station.incoming;
-    } else {
-      return station.connections.filter(c => c.target === deliveryId).map(c => c.source);
-    }
-  }
 
   constructor() {
   }
@@ -244,9 +229,9 @@ export class TracingService {
     const targetStation = this.stationsById.get(delivery.target);
 
     sourceStation.backward = true;
-    TracingService.getBackwardDeliveries(sourceStation, id).forEach(d => this.showDeliveryBackwardTraceInternal(d));
+    this.getBackwardDeliveries(sourceStation, delivery).forEach(d => this.showDeliveryBackwardTraceInternal(d));
     targetStation.forward = true;
-    TracingService.getForwardDeliveries(targetStation, id).forEach(d => this.showDeliveryForwardTraceInternal(d));
+    this.getForwardDeliveries(targetStation, delivery).forEach(d => this.showDeliveryForwardTraceInternal(d));
   }
 
   showDeliveryForwardTrace(id: string) {
@@ -258,7 +243,7 @@ export class TracingService {
     const targetStation = this.stationsById.get(delivery.target);
 
     targetStation.forward = true;
-    TracingService.getForwardDeliveries(targetStation, id).forEach(d => this.showDeliveryForwardTraceInternal(d));
+    this.getForwardDeliveries(targetStation, delivery).forEach(d => this.showDeliveryForwardTraceInternal(d));
   }
 
   showDeliveryBackwardTrace(id: string) {
@@ -270,7 +255,7 @@ export class TracingService {
     const sourceStation = this.stationsById.get(delivery.source);
 
     sourceStation.backward = true;
-    TracingService.getBackwardDeliveries(sourceStation, id).forEach(d => this.showDeliveryBackwardTraceInternal(d));
+    this.getBackwardDeliveries(sourceStation, delivery).forEach(d => this.showDeliveryBackwardTraceInternal(d));
   }
 
   setConnectionsOfStation(id: string, connections: Connection[]) {
@@ -339,7 +324,7 @@ export class TracingService {
         source.score++;
       }
 
-      TracingService.getBackwardDeliveries(source, id).forEach(d => this.updateDeliveryScore(d, outbreakId));
+      this.getBackwardDeliveries(source, delivery).forEach(d => this.updateDeliveryScore(d, outbreakId));
     }
   }
 
@@ -352,7 +337,7 @@ export class TracingService {
       const targetStation = this.stationsById.get(delivery.target);
 
       targetStation.forward = true;
-      TracingService.getForwardDeliveries(targetStation, id).forEach(d => this.showDeliveryForwardTraceInternal(d));
+      this.getForwardDeliveries(targetStation, delivery).forEach(d => this.showDeliveryForwardTraceInternal(d));
     }
   }
 
@@ -365,7 +350,65 @@ export class TracingService {
       const sourceStation = this.stationsById.get(delivery.source);
 
       sourceStation.backward = true;
-      TracingService.getBackwardDeliveries(sourceStation, id).forEach(d => this.showDeliveryBackwardTraceInternal(d));
+      this.getBackwardDeliveries(sourceStation, delivery).forEach(d => this.showDeliveryBackwardTraceInternal(d));
+    }
+  }
+
+  private getForwardDeliveries(station: StationData, delivery: DeliveryData): string[] {
+    if (station.crossContamination) {
+      if (delivery.date != null) {
+        const date = Utils.stringToDate(delivery.date);
+        const forward: Set<string> = new Set(station.connections.filter(c => c.source === delivery.id).map(c => c.target));
+
+        for (const id of station.outgoing) {
+          if (!forward.has(id)) {
+            const d = this.getDeliveriesById([id])[0];
+
+            if (d.date != null) {
+              if (date.getTime() <= Utils.stringToDate(d.date).getTime()) {
+                forward.add(id);
+              }
+            } else {
+              forward.add(id);
+            }
+          }
+        }
+
+        return Array.from(forward);
+      } else {
+        return station.outgoing;
+      }
+    } else {
+      return station.connections.filter(c => c.source === delivery.id).map(c => c.target);
+    }
+  }
+
+  private getBackwardDeliveries(station: StationData, delivery: DeliveryData): string[] {
+    if (station.crossContamination) {
+      if (delivery.date != null) {
+        const date = Utils.stringToDate(delivery.date);
+        const backward: Set<string> = new Set(station.connections.filter(c => c.target === delivery.id).map(c => c.source));
+
+        for (const id of station.incoming) {
+          if (!backward.has(id)) {
+            const d = this.getDeliveriesById([id])[0];
+
+            if (d.date != null) {
+              if (date.getTime() >= Utils.stringToDate(d.date).getTime()) {
+                backward.add(id);
+              }
+            } else {
+              backward.add(id);
+            }
+          }
+        }
+
+        return Array.from(backward);
+      } else {
+        return station.incoming;
+      }
+    } else {
+      return station.connections.filter(c => c.target === delivery.id).map(c => c.source);
     }
   }
 
