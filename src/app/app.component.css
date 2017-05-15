@@ -37,6 +37,10 @@ md-sidenav {
   margin-right: 8px;
 }
 
+.toolbarSpan {
+  flex: 1 1 auto;
+}
+
 #mainToolbar {
   height: 64px !important;
   justify-content: center !important;

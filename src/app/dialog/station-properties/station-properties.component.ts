@@ -104,6 +104,10 @@ class DataOptimizer {
   }
 }
 
+enum HorizontalPosition {
+  LEFT, CENTER, RIGHT
+}
+
 @Component({
   selector: 'app-station-properties',
   templateUrl: './station-properties.component.html',
@@ -123,6 +127,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   properties: { name: string, value: string }[];
 
+  private dialogPosition = HorizontalPosition.CENTER;
   private d3: D3;
 
   private nodeInData: NodeDatum[];
@@ -270,6 +275,46 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.d3.select('body').on('mousemove', null);
+  }
+
+  moveLeft() {
+    switch (this.dialogPosition) {
+      case HorizontalPosition.CENTER:
+        this.dialogPosition = HorizontalPosition.LEFT;
+        break;
+      case HorizontalPosition.RIGHT:
+        this.dialogPosition = HorizontalPosition.CENTER;
+        break;
+    }
+
+    this.updateDialogPosition();
+  }
+
+  moveRight() {
+    switch (this.dialogPosition) {
+      case HorizontalPosition.LEFT:
+        this.dialogPosition = HorizontalPosition.CENTER;
+        break;
+      case HorizontalPosition.CENTER:
+        this.dialogPosition = HorizontalPosition.RIGHT;
+        break;
+    }
+
+    this.updateDialogPosition();
+  }
+
+  private updateDialogPosition() {
+    switch (this.dialogPosition) {
+      case HorizontalPosition.LEFT:
+        this.dialogRef.updatePosition({left: '0px'});
+        break;
+      case HorizontalPosition.CENTER:
+        this.dialogRef.updatePosition({});
+        break;
+      case HorizontalPosition.RIGHT:
+        this.dialogRef.updatePosition({right: '0px'});
+        break;
+    }
   }
 
   private getDeliveryLabel(id: string): string {

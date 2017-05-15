@@ -1,4 +1,13 @@
-<h1 md-dialog-title>Station Properties</h1>
+<h1 md-dialog-title>
+  <button id="leftButton" md-icon-button (click)="moveLeft()">
+    <md-icon>keyboard_arrow_left</md-icon>
+  </button>
+  <span>Station Properties</span>
+  <span class="toolbarSpan"></span>
+  <button id="rightButton" md-icon-button (click)="moveRight()">
+    <md-icon>keyboard_arrow_right</md-icon>
+  </button>
+</h1>
 <div md-dialog-content>
   <table>
     <tr *ngFor="let prop of properties">
