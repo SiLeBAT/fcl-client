@@ -12,17 +12,17 @@ describe('StationPropertiesComponent', () => {
     const data: StationPropertiesData = {
       station: {
         id: null, name: null, incoming: [], outgoing: [], connections: [], invisible: null, contained: null, contains: null, selected: null,
-        observed: null, forward: null, backward: null, outbreak: null, score: null, commonLink: null, position: null,
-        positionRelativeTo: null, properties: []
+        observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null, commonLink: null,
+        position: null, positionRelativeTo: null, properties: []
       },
-      connectedDeliveries: []
+      deliveries: new Map()
     };
 
     TestBed.configureTestingModule({
       imports: [MdDialogModule],
       declarations: [StationPropertiesComponent],
       providers: [
-        {provide: MdDialogRef, useValue: {}},
+        {provide: MdDialogRef, useValue: {updatePosition: () => void(0)}},
         {provide: MD_DIALOG_DATA, useValue: data},
         D3Service
       ]
@@ -37,10 +37,5 @@ describe('StationPropertiesComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should render title', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Station Properties');
   });
 });

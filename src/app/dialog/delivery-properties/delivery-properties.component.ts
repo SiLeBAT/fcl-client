@@ -1,7 +1,8 @@
-import {Component, Inject} from '@angular/core';
-import {MD_DIALOG_DATA} from '@angular/material';
-import {DeliveryData} from '../../util/datatypes';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import {DeliveryData, DialogAlignment} from '../../util/datatypes';
 import {Constants} from '../../util/constants';
+import {Utils} from '../../util/utils';
 
 export interface DeliveryPropertiesData {
   delivery: DeliveryData;
@@ -12,11 +13,13 @@ export interface DeliveryPropertiesData {
   templateUrl: './delivery-properties.component.html',
   styleUrls: ['./delivery-properties.component.css']
 })
-export class DeliveryPropertiesComponent {
+export class DeliveryPropertiesComponent implements OnInit {
 
   properties: { name: string, value: string }[];
 
-  constructor(@Inject(MD_DIALOG_DATA) public data: DeliveryPropertiesData) {
+  private dialogAlign = DialogAlignment.CENTER;
+
+  constructor(public dialogRef: MdDialogRef<DeliveryPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: DeliveryPropertiesData) {
     this.properties = Object.keys(data.delivery).filter(key => Constants.PROPERTIES.has(key)).map(key => {
       const value = data.delivery[key];
 
@@ -30,6 +33,20 @@ export class DeliveryPropertiesComponent {
         value: prop.value != null ? prop.value : ''
       };
     }));
+  }
+
+  ngOnInit() {
+    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
+  }
+
+  moveLeft() {
+    this.dialogAlign = this.dialogAlign === DialogAlignment.RIGHT ? DialogAlignment.CENTER : DialogAlignment.LEFT;
+    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
+  }
+
+  moveRight() {
+    this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
+    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
   }
 
 }

@@ -111,3 +111,7 @@ export enum ObservedType {
   FORWARD = 'forward' as any,
   BACKWARD = 'backward' as any
 }
+
+export enum DialogAlignment {
+  LEFT, CENTER, RIGHT
+}

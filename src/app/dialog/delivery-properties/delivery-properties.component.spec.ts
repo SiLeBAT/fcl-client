@@ -11,8 +11,8 @@ describe('DeliveryPropertiesComponent', () => {
   beforeEach(async(() => {
     const data: DeliveryPropertiesData = {
       delivery: {
-        id: null, source: null, target: null, originalSource: null, originalTarget: null, incoming: null, outgoing: null, invisible: null,
-        selected: null, observed: null, forward: null, backward: null, score: null, properties: []
+        id: null, name: null, lot: null, date: null, source: null, target: null, originalSource: null, originalTarget: null,
+        invisible: null, selected: null, observed: null, forward: null, backward: null, score: null, properties: []
       }
     };
 
@@ -20,7 +20,7 @@ describe('DeliveryPropertiesComponent', () => {
       imports: [MdDialogModule],
       declarations: [DeliveryPropertiesComponent],
       providers: [
-        {provide: MdDialogRef, useValue: {}},
+        {provide: MdDialogRef, useValue: {updatePosition: () => void(0)}},
         {provide: MD_DIALOG_DATA, useValue: data},
         D3Service
       ]
@@ -35,10 +35,5 @@ describe('DeliveryPropertiesComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should render title', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.mat-dialog-title').textContent).toContain('Delivery Properties');
   });
 });

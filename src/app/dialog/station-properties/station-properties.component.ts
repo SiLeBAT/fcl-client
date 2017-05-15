@@ -2,8 +2,9 @@ import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 import {D3, D3Service, Selection} from 'd3-ng2-service';
 
-import {Connection, DeliveryData, StationData} from '../../util/datatypes';
+import {Connection, DeliveryData, DialogAlignment, StationData} from '../../util/datatypes';
 import {Constants} from '../../util/constants';
+import {Utils} from '../../util/utils';
 
 export interface StationPropertiesData {
   station: StationData;
@@ -104,10 +105,6 @@ class DataOptimizer {
   }
 }
 
-enum HorizontalPosition {
-  LEFT, CENTER, RIGHT
-}
-
 @Component({
   selector: 'app-station-properties',
   templateUrl: './station-properties.component.html',
@@ -127,7 +124,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   properties: { name: string, value: string }[];
 
-  private dialogPosition = HorizontalPosition.CENTER;
+  private dialogAlign = DialogAlignment.CENTER;
   private d3: D3;
 
   private nodeInData: NodeDatum[];
@@ -271,6 +268,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
       this.d3.select('body').on('mousemove', () => this.updateConnectLine());
     }
+
+    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
   }
 
   ngOnDestroy() {
@@ -278,43 +277,13 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   moveLeft() {
-    switch (this.dialogPosition) {
-      case HorizontalPosition.CENTER:
-        this.dialogPosition = HorizontalPosition.LEFT;
-        break;
-      case HorizontalPosition.RIGHT:
-        this.dialogPosition = HorizontalPosition.CENTER;
-        break;
-    }
-
-    this.updateDialogPosition();
+    this.dialogAlign = this.dialogAlign === DialogAlignment.RIGHT ? DialogAlignment.CENTER : DialogAlignment.LEFT;
+    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
   }
 
   moveRight() {
-    switch (this.dialogPosition) {
-      case HorizontalPosition.LEFT:
-        this.dialogPosition = HorizontalPosition.CENTER;
-        break;
-      case HorizontalPosition.CENTER:
-        this.dialogPosition = HorizontalPosition.RIGHT;
-        break;
-    }
-
-    this.updateDialogPosition();
-  }
-
-  private updateDialogPosition() {
-    switch (this.dialogPosition) {
-      case HorizontalPosition.LEFT:
-        this.dialogRef.updatePosition({left: '0px'});
-        break;
-      case HorizontalPosition.CENTER:
-        this.dialogRef.updatePosition({});
-        break;
-      case HorizontalPosition.RIGHT:
-        this.dialogRef.updatePosition({right: '0px'});
-        break;
-    }
+    this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
+    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
   }
 
   private getDeliveryLabel(id: string): string {

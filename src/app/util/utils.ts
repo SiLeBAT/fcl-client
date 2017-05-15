@@ -1,9 +1,22 @@
-import {DeliveryData, FclElements, Position, StationData, TableMode} from './datatypes';
-import {MdDialog} from '@angular/material';
+import {DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
+import {DialogPosition, MdDialog} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
 
 export class Utils {
+
+  static getDialogPosition(alignment: DialogAlignment): DialogPosition {
+    switch (alignment) {
+      case DialogAlignment.LEFT:
+        return {left: '0px'};
+      case DialogAlignment.CENTER:
+        return {};
+      case DialogAlignment.RIGHT:
+        return {right: '0px'};
+    }
+
+    return null;
+  }
 
   static getTableElements(mode: TableMode, data: FclElements): (StationData | DeliveryData)[] {
     if (mode === TableMode.STATIONS) {
