@@ -12,6 +12,7 @@ import {
   MdToolbarModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import {GraphComponent} from './graph/graph.component';
@@ -30,6 +31,7 @@ describe('AppComponent', () => {
       imports: [
         BrowserAnimationsModule,
         FormsModule,
+        HttpModule,
         MdCheckboxModule,
         MdDialogModule,
         MdIconModule,
