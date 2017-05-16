@@ -1,22 +1,33 @@
-<h1 md-dialog-title>
-  <button id="leftButton" md-icon-button (click)="moveLeft()">
+<h1 class="title" md-dialog-title>
+  <button class="leftButton" md-icon-button (click)="moveLeft()">
     <md-icon>keyboard_arrow_left</md-icon>
   </button>
-  <span>Station Properties</span>
-  <span class="toolbarSpan"></span>
-  <button id="rightButton" md-icon-button (click)="moveRight()">
+  <span>{{title}}</span>
+  <span class="titleSpan"></span>
+  <button class="rightButton" md-icon-button (click)="moveRight()">
     <md-icon>keyboard_arrow_right</md-icon>
   </button>
 </h1>
 <div md-dialog-content>
-  <table>
-    <tr *ngFor="let prop of properties">
-      <td>{{prop.name}}</td>
-      <td>{{prop.value}}</td>
-    </tr>
-  </table>
-  <div id="in-out-connector">
-  </div>
+  <md-card id="properties">
+    <md-card-title class="title">
+      <span>Properties</span>
+      <span class="titleSpan"></span>
+      <button class="rightButton" md-icon-button (click)="toggleProperties()">
+        <md-icon *ngIf="!propertiesHidden">expand_less</md-icon>
+        <md-icon *ngIf="propertiesHidden">expand_more</md-icon>
+      </button>
+    </md-card-title>
+    <md-card-content *ngIf="!propertiesHidden">
+      <table>
+        <tr *ngFor="let prop of properties">
+          <td>{{prop.name}}</td>
+          <td>{{prop.value}}</td>
+        </tr>
+      </table>
+    </md-card-content>
+  </md-card>
+  <div id="in-out-connector"></div>
 </div>
 <div md-dialog-actions>
   <button md-button (click)="close()">OK</button>

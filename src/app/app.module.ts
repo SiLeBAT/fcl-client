@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {
   MdButtonModule,
+  MdCardModule,
   MdCheckboxModule,
   MdDialogModule,
   MdIconModule,
@@ -50,6 +51,7 @@ import {TracingService} from './graph/tracing.service';
     FormsModule,
     HttpModule,
     MdButtonModule,
+    MdCardModule,
     MdCheckboxModule,
     MdDialogModule,
     MdIconModule,

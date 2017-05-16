@@ -122,6 +122,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private static readonly NODE_WIDTH = 200;
   private static readonly NODE_HEIGHT = 30;
 
+  title: string;
+  propertiesHidden = false;
   properties: { name: string, value: string }[];
 
   private dialogAlign = DialogAlignment.CENTER;
@@ -146,8 +148,9 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
               d3Service: D3Service) {
+    this.title = data.station.name;
     this.properties = Object.keys(data.station)
-      .filter(key => Constants.PROPERTIES.has(key) && key !== 'incoming' && key !== 'outgoing')
+      .filter(key => Constants.PROPERTIES.has(key) && key !== 'name' && key !== 'incoming' && key !== 'outgoing')
       .map(key => {
         const value = data.station[key];
 
@@ -284,6 +287,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   moveRight() {
     this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
     this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
+  }
+
+  toggleProperties() {
+    this.propertiesHidden = !this.propertiesHidden;
   }
 
   private getDeliveryLabel(id: string): string {

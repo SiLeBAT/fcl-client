@@ -1,29 +1,37 @@
-h1 {
+.title {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-#leftButton {
+.titleSpan {
+  flex: 1 1 auto;
+}
+
+.leftButton {
   margin-right: 20px;
 }
 
-#rightButton {
+.rightButton {
   margin-left: 20px;
 }
 
-.toolbarSpan {
-  flex: 1 1 auto;
+#properties {
+  margin-top: 10px;
 }
 
 #in-out-connector {
   margin-top: 20px;
 }
 
-td {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+md-card {
+  padding: 18px !important;
+}
+
+md-card-title {
+  font-size: 18px !important;
 }
 
 td:first-child {
-  padding-right: 20px;
+  padding-right: 40px;
 }

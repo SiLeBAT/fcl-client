@@ -1,7 +1,26 @@
-td {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+.title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.titleSpan {
+  flex: 1 1 auto;
+}
+
+#properties {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 td:first-child {
-  padding-right: 20px;
+  padding-right: 40px;
+}
+
+md-card {
+  padding: 18px !important;
+}
+
+md-card-title {
+  font-size: 18px !important;
 }

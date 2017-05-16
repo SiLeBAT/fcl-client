@@ -15,24 +15,28 @@ export interface DeliveryPropertiesData {
 })
 export class DeliveryPropertiesComponent implements OnInit {
 
+  title: string;
   properties: { name: string, value: string }[];
 
   private dialogAlign = DialogAlignment.CENTER;
 
   constructor(public dialogRef: MdDialogRef<DeliveryPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: DeliveryPropertiesData) {
-    this.properties = Object.keys(data.delivery).filter(key => Constants.PROPERTIES.has(key)).map(key => {
-      const value = data.delivery[key];
+    this.title = data.delivery.name;
+    this.properties = Object.keys(data.delivery)
+      .filter(key => Constants.PROPERTIES.has(key) && key !== 'name')
+      .map(key => {
+        const value = data.delivery[key];
 
-      return {
-        name: Constants.PROPERTIES.get(key).name,
-        value: value != null ? String(value) : ''
-      };
-    }).concat(data.delivery.properties.map(prop => {
-      return {
-        name: prop.name,
-        value: prop.value != null ? prop.value : ''
-      };
-    }));
+        return {
+          name: Constants.PROPERTIES.get(key).name,
+          value: value != null ? String(value) : ''
+        };
+      }).concat(data.delivery.properties.map(prop => {
+        return {
+          name: prop.name,
+          value: prop.value != null ? prop.value : ''
+        };
+      }));
   }
 
   ngOnInit() {
