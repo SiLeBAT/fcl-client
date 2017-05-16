@@ -154,15 +154,15 @@ export class GraphComponent implements OnInit {
       const element = event.target;
       const mouseEvent: MouseEvent = event.originalEvent;
 
-      if (element.group == null) {
+      if (element === this.cy) {
         Utils.setElementPosition(document.getElementById('graphMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.graphMenuTrigger.openMenu();
-      } else if (element.group() === 'nodes') {
+      } else if (element.isNode()) {
         this.stationMenuActions = this.createStationActions(element);
         this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.stationMenuTrigger.openMenu();
-      } else if (element.group() === 'edges') {
+      } else if (element.isEdge()) {
         this.deliveryMenuActions = this.createDeliveryActions(element);
         this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
@@ -751,9 +751,9 @@ export class GraphComponent implements OnInit {
           if (this.mergeMap.has(element.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
-            if (element.group() === 'nodes') {
+            if (element.isNode()) {
               this.tracingService.showStationForwardTrace(element.id());
-            } else if (element.group() === 'edges') {
+            } else if (element.isEdge()) {
               this.tracingService.showDeliveryForwardTrace(element.id());
             }
 
@@ -769,9 +769,9 @@ export class GraphComponent implements OnInit {
           if (this.mergeMap.has(element.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
-            if (element.group() === 'nodes') {
+            if (element.isNode()) {
               this.tracingService.showStationBackwardTrace(element.id());
-            } else if (element.group() === 'edges') {
+            } else if (element.isEdge()) {
               this.tracingService.showDeliveryBackwardTrace(element.id());
             }
 
@@ -787,9 +787,9 @@ export class GraphComponent implements OnInit {
           if (this.mergeMap.has(element.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
           } else {
-            if (element.group() === 'nodes') {
+            if (element.isNode()) {
               this.tracingService.showStationTrace(element.id());
-            } else if (element.group() === 'edges') {
+            } else if (element.isEdge()) {
               this.tracingService.showDeliveryTrace(element.id());
             }
 
