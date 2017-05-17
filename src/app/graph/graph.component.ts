@@ -14,21 +14,16 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
-import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Size} from '../util/datatypes';
+import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Legend} from './legend';
 import {Zooming} from './zooming';
 import {Constants} from '../util/constants';
 
-enum MenuActionType {
-  runAction, openLayoutMenu, openTraceMenu
-}
-
 interface MenuAction {
   name: string;
-  type: MenuActionType;
   enabled: boolean;
-  action?: () => void;
+  action: (event: MouseEvent) => void;
 }
 
 @Component({
@@ -53,8 +48,9 @@ export class GraphComponent implements OnInit {
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
   @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
+  @ViewChild('layoutMenuTrigger') layoutMenuTrigger: MdMenuTrigger;
+  @ViewChild('traceMenuTrigger') traceMenuTrigger: MdMenuTrigger;
 
-  actionTypes = MenuActionType;
   graphMenuActions = this.createGraphActions();
   stationMenuActions = this.createStationActions(null);
   deliveryMenuActions = this.createDeliveryActions(null);
@@ -80,6 +76,15 @@ export class GraphComponent implements OnInit {
 
   private static setOverlay(element, enabled: boolean) {
     element.style({'overlay-opacity': enabled ? 0.5 : 0});
+  }
+
+  private static getCyCoordinates(event: MouseEvent): Position {
+    const cyRect = document.getElementById('cy').getBoundingClientRect();
+
+    return {
+      x: event.pageX - cyRect.left,
+      y: event.pageY - cyRect.top
+    };
   }
 
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
@@ -113,9 +118,19 @@ export class GraphComponent implements OnInit {
     });
 
     this.stationMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
-    this.stationMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, false));
+    this.stationMenuTrigger.onMenuClose.subscribe(() => {
+      if (!this.traceMenuTrigger.menuOpen) {
+        GraphComponent.setOverlay(this.contextMenuElement, false);
+      }
+    });
     this.deliveryMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
-    this.deliveryMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, false));
+    this.deliveryMenuTrigger.onMenuClose.subscribe(() => {
+      if (!this.traceMenuTrigger.menuOpen) {
+        GraphComponent.setOverlay(this.contextMenuElement, false);
+      }
+    });
+    this.traceMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
+    this.traceMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, false));
   }
 
   init(data: FclElements, layout: any) {
@@ -145,22 +160,23 @@ export class GraphComponent implements OnInit {
     this.cy.on('position', event => this.tracingService.getStationsById([event.target.id()])[0].position = event.target.position());
     this.cy.on('cxttap', event => {
       const element = event.target;
-      const mouseEvent: MouseEvent = event.originalEvent;
+      const position: Position = {
+        x: event.originalEvent.offsetX,
+        y: event.originalEvent.offsetY
+      };
 
       if (element === this.cy) {
-        Utils.setElementPosition(document.getElementById('graphMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        Utils.setElementPosition(document.getElementById('graphMenu'), position);
         this.graphMenuTrigger.openMenu();
       } else if (element.isNode()) {
         this.contextMenuElement = element;
         this.stationMenuActions = this.createStationActions(element);
-        this.traceMenuActions = this.createTraceActions(element);
-        Utils.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        Utils.setElementPosition(document.getElementById('stationMenu'), position);
         this.stationMenuTrigger.openMenu();
       } else if (element.isEdge()) {
         this.contextMenuElement = element;
         this.deliveryMenuActions = this.createDeliveryActions(element);
-        this.traceMenuActions = this.createTraceActions(element);
-        Utils.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        Utils.setElementPosition(document.getElementById('deliveryMenu'), position);
         this.deliveryMenuTrigger.openMenu();
       }
     });
@@ -509,11 +525,13 @@ export class GraphComponent implements OnInit {
     return [
       {
         name: 'Apply Layout',
-        type: MenuActionType.openLayoutMenu,
-        enabled: true
+        enabled: true,
+        action: event => {
+          Utils.setElementPosition(document.getElementById('layoutMenu'), GraphComponent.getCyCoordinates(event));
+          this.layoutMenuTrigger.openMenu();
+        }
       }, {
         name: 'Clear Trace',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           this.tracingService.clearTrace();
@@ -522,7 +540,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Clear Outbreak Stations',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           this.tracingService.clearOutbreakStations();
@@ -531,7 +548,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Clear Invisibility',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           this.tracingService.clearInvisibility();
@@ -563,7 +579,6 @@ export class GraphComponent implements OnInit {
     return [
       {
         name: 'Show Properties',
-        type: MenuActionType.runAction,
         enabled: !multipleStationsSelected,
         action: () => {
           const station = this.tracingService.getStationsById([node.id()])[0];
@@ -587,11 +602,14 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Show Trace',
-        type: MenuActionType.openTraceMenu,
-        enabled: !multipleStationsSelected
+        enabled: !multipleStationsSelected,
+        action: event => {
+          this.traceMenuActions = this.createTraceActions(node);
+          Utils.setElementPosition(document.getElementById('traceMenu'), GraphComponent.getCyCoordinates(event));
+          this.traceMenuTrigger.openMenu();
+        }
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           this.tracingService
@@ -601,7 +619,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: allCrossContaminationStations ? 'Unset Cross Contamination' : 'Set Cross Contamination',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           this.tracingService.setCrossContaminationOfStations(
@@ -614,7 +631,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Make Invisible',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           this.tracingService.makeStationsInvisible(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()]);
@@ -623,7 +639,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Merge Stations',
-        type: MenuActionType.runAction,
         enabled: multipleStationsSelected,
         action: () => {
           if (allNonMetaStations) {
@@ -646,7 +661,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Expand',
-        type: MenuActionType.runAction,
         enabled: allMetaStations,
         action: () => {
           this.tracingService.expandStations(multipleStationsSelected ? selectedNodes.map(s => s.id()) : node.id());
@@ -661,9 +675,10 @@ export class GraphComponent implements OnInit {
     return [
       {
         name: 'Show Properties',
-        type: MenuActionType.runAction,
         enabled: true,
-        action: () => {
+        action: (event) => {
+          console.log(event);
+
           if (this.mergeMap.has(edge.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!');
           } else {
@@ -676,8 +691,12 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Show Trace',
-        type: MenuActionType.openTraceMenu,
-        enabled: true
+        enabled: true,
+        action: event => {
+          this.traceMenuActions = this.createTraceActions(edge);
+          Utils.setElementPosition(document.getElementById('traceMenu'), GraphComponent.getCyCoordinates(event));
+          this.traceMenuTrigger.openMenu();
+        }
       }
     ];
   }
@@ -686,12 +705,10 @@ export class GraphComponent implements OnInit {
     return [
       {
         name: 'Fruchterman-Reingold',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'fruchterman'}).run()
       }, {
         name: 'Constraint-Based',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           let layout;
@@ -718,37 +735,30 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Random',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'random'}).run()
       }, {
         name: 'Grid',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'grid'}).run()
       }, {
         name: 'Circle',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'circle'}).run()
       }, {
         name: 'Concentric',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'concentric'}).run()
       }, {
         name: 'Breadth-first',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'breadthfirst'}).run()
       }, {
         name: 'Spread',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'spread'}).run()
       }, {
         name: 'Directed acyclic graph',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => this.cy.layout({name: 'dagre'}).run()
       }
@@ -759,7 +769,6 @@ export class GraphComponent implements OnInit {
     return [
       {
         name: 'Forward Trace',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           if (this.mergeMap.has(element.id())) {
@@ -777,7 +786,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Backward Trace',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           if (this.mergeMap.has(element.id())) {
@@ -795,7 +803,6 @@ export class GraphComponent implements OnInit {
         }
       }, {
         name: 'Full Trace',
-        type: MenuActionType.runAction,
         enabled: true,
         action: () => {
           if (this.mergeMap.has(element.id())) {

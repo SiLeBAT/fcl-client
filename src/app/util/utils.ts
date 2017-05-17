@@ -79,9 +79,9 @@ export class Utils {
     dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
-  static setElementPosition(element: HTMLElement, x: number, y: number) {
-    element.style.left = x + 'px';
-    element.style.top = y + 'px';
+  static setElementPosition(element: HTMLElement, pos: Position) {
+    element.style.left = pos.x + 'px';
+    element.style.top = pos.y + 'px';
   }
 
   static colorToCss(color: number[]): string {

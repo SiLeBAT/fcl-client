@@ -4,55 +4,35 @@
 <div id="graphMenu" class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
 <div id="stationMenu" class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
 <div id="deliveryMenu" class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
+<div id="layoutMenu" class="menuTrigger" [mdMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="mdMenuTrigger"></div>
+<div id="traceMenu" class="menuTrigger" [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
 <md-menu #graphMenu>
-  <ng-container *ngFor="let action of graphMenuActions">
-    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
-            [disabled]="!action.enabled" (click)="action.action()">
-      {{action.name}}
-    </button>
-    <button md-menu-item *ngIf="action.type == actionTypes.openLayoutMenu"
-            [disabled]="!action.enabled" [mdMenuTriggerFor]="layoutMenu">
-      {{action.name}}
-    </button>
-  </ng-container>
+  <button md-menu-item *ngFor="let action of graphMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)">
+    {{action.name}}
+  </button>
 </md-menu>
 <md-menu #stationMenu>
-  <ng-container *ngFor="let action of stationMenuActions">
-    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
-            [disabled]="!action.enabled" (click)="action.action()">
-      {{action.name}}
-    </button>
-    <button md-menu-item *ngIf="action.type == actionTypes.openTraceMenu"
-            [disabled]="!action.enabled" [mdMenuTriggerFor]="traceMenu">
-      {{action.name}}
-    </button>
-  </ng-container>
+  <button md-menu-item *ngFor="let action of stationMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)">
+    {{action.name}}
+  </button>
 </md-menu>
 <md-menu #deliveryMenu>
-  <ng-container *ngFor="let action of deliveryMenuActions">
-    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
-            [disabled]="!action.enabled" (click)="action.action()">
-      {{action.name}}
-    </button>
-    <button md-menu-item *ngIf="action.type == actionTypes.openTraceMenu"
-            [disabled]="!action.enabled" [mdMenuTriggerFor]="traceMenu">
-      {{action.name}}
-    </button>
-  </ng-container>
+  <button md-menu-item *ngFor="let action of deliveryMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)">
+    {{action.name}}
+  </button>
 </md-menu>
 <md-menu #layoutMenu>
-  <ng-container *ngFor="let action of layoutMenuActions">
-    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
-            [disabled]="!action.enabled" (click)="action.action()">
-      {{action.name}}
-    </button>
-  </ng-container>
+  <button md-menu-item *ngFor="let action of layoutMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)">
+    {{action.name}}
+  </button>
 </md-menu>
 <md-menu #traceMenu>
-  <ng-container *ngFor="let action of traceMenuActions">
-    <button md-menu-item *ngIf="action.type == actionTypes.runAction"
-            [disabled]="!action.enabled" (click)="action.action()">
-      {{action.name}}
-    </button>
-  </ng-container>
+  <button md-menu-item *ngFor="let action of traceMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)">
+    {{action.name}}
+  </button>
 </md-menu>
