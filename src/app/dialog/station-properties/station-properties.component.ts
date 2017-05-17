@@ -1,6 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 import {D3, D3Service, Selection} from 'd3-ng2-service';
+import {Subject} from 'rxjs/Rx';
 
 import {Connection, DeliveryData, DialogAlignment, StationData} from '../../util/datatypes';
 import {Constants} from '../../util/constants';
@@ -9,6 +10,7 @@ import {Utils} from '../../util/utils';
 export interface StationPropertiesData {
   station: StationData;
   deliveries: Map<string, DeliveryData>;
+  hoverDeliveries: Subject<string[]>;
 }
 
 interface NodeDatum {
@@ -133,6 +135,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private nodeOutData: NodeDatum[];
   private edgeData: EdgeDatum[];
   private lotBased: boolean;
+  private deliveriesByLot: Map<string, string[]>;
   private height: number;
   private selected: NodeDatum;
 
@@ -173,6 +176,15 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
       if (this.lotBased) {
         this.initLotBasedData(ingredientsByLot);
+        this.deliveriesByLot = new Map();
+
+        this.data.deliveries.forEach(d => {
+          if (this.deliveriesByLot.has(d.lot)) {
+            this.deliveriesByLot.get(d.lot).push(d.id);
+          } else {
+            this.deliveriesByLot.set(d.lot, [d.id]);
+          }
+        });
       } else {
         this.initDeliveryBasedData();
       }
@@ -205,20 +217,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     let connections: Connection[];
 
     if (this.lotBased) {
-      const deliveriesByLot: Map<string, string[]> = new Map();
-
-      this.data.deliveries.forEach(d => {
-        if (deliveriesByLot.has(d.lot)) {
-          deliveriesByLot.get(d.lot).push(d.id);
-        } else {
-          deliveriesByLot.set(d.lot, [d.id]);
-        }
-      });
-
       connections = [];
 
       for (const e of this.edgeData) {
-        for (const d of deliveriesByLot.get(e.target.id)) {
+        for (const d of this.deliveriesByLot.get(e.target.id)) {
           connections.push({
             source: e.source.id,
             target: d
@@ -424,12 +426,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     const self = this;
 
-    nodesIn.on('mouseover', function () {
-      if (self.selected == null) {
-        self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
-      }
+    nodesIn.on('mouseover', function (d) {
+      self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      self.data.hoverDeliveries.next([d.id]);
     }).on('mouseout', function () {
       self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.selected = d;
@@ -440,12 +442,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       }
     });
 
-    nodesOut.on('mouseover', function () {
-      if (self.selected != null) {
-        self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
-      }
+    nodesOut.on('mouseover', function (d) {
+      self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      self.data.hoverDeliveries.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
     }).on('mouseout', function () {
       self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected != null) {
         self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);

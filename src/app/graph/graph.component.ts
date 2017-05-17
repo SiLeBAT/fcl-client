@@ -60,6 +60,7 @@ export class GraphComponent implements OnInit {
   private cy: any;
   private data: FclElements;
   private mergeMap: Map<string, string[]>;
+  private mergeToMap: Map<string, string>;
   private changeFunction: () => void;
 
   private mergeDeliveries = Constants.DEFAULT_GRAPH_MERGE_DELIVERIES;
@@ -73,9 +74,10 @@ export class GraphComponent implements OnInit {
   private selectTimer: any;
   private zoom: Subject<boolean> = new Subject();
   private legend: Subject<string[]> = new Subject();
+  private hoverDeliveries: Subject<string[]> = new Subject();
 
-  private static setOverlay(element, enabled: boolean) {
-    element.style({'overlay-opacity': enabled ? 0.5 : 0});
+  private static setOverlay(elements, enabled: boolean) {
+    elements.style({'overlay-opacity': enabled ? 0.5 : 0});
   }
 
   private static getCyCoordinates(event: MouseEvent): Position {
@@ -119,13 +121,13 @@ export class GraphComponent implements OnInit {
 
     this.stationMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
     this.stationMenuTrigger.onMenuClose.subscribe(() => {
-      if (!this.traceMenuTrigger.menuOpen) {
+      if (!this.traceMenuTrigger.menuOpen && this.dialogService._openDialogs.length === 0) {
         GraphComponent.setOverlay(this.contextMenuElement, false);
       }
     });
     this.deliveryMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
     this.deliveryMenuTrigger.onMenuClose.subscribe(() => {
-      if (!this.traceMenuTrigger.menuOpen) {
+      if (!this.traceMenuTrigger.menuOpen && this.dialogService._openDialogs.length === 0) {
         GraphComponent.setOverlay(this.contextMenuElement, false);
       }
     });
@@ -178,6 +180,13 @@ export class GraphComponent implements OnInit {
         this.deliveryMenuActions = this.createDeliveryActions(element);
         Utils.setElementPosition(document.getElementById('deliveryMenu'), position);
         this.deliveryMenuTrigger.openMenu();
+      }
+    });
+    this.hoverDeliveries.subscribe(ids => {
+      GraphComponent.setOverlay(this.cy.edges(), false);
+
+      for (const id of ids) {
+        GraphComponent.setOverlay(this.cy.getElementById(this.mergeToMap.has(id) ? this.mergeToMap.get(id) : id), true);
       }
     });
 
@@ -296,6 +305,7 @@ export class GraphComponent implements OnInit {
     const edges: CyEdge[] = [];
 
     this.mergeMap = new Map();
+    this.mergeToMap = new Map();
 
     if (this.mergeDeliveries) {
       const sourceTargetMap: Map<string, DeliveryData[]> = new Map();
@@ -320,6 +330,7 @@ export class GraphComponent implements OnInit {
           const observedElement = value.find(d => d.observed !== ObservedType.NONE);
           const selected = value.find(d => d.selected) != null;
 
+          value.forEach(d => this.mergeToMap.set(d.id, key));
           this.mergeMap.set(key, value.map(d => d.id));
           edges.push({
             group: 'edges',
@@ -590,10 +601,14 @@ export class GraphComponent implements OnInit {
 
           const dialogData: StationPropertiesData = {
             station: station,
-            deliveries: connected
+            deliveries: connected,
+            hoverDeliveries: this.hoverDeliveries
           };
 
+          GraphComponent.setOverlay(node, true);
           this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(connections => {
+            GraphComponent.setOverlay(node, false);
+
             if (connections) {
               this.tracingService.setConnectionsOfStation(node.id(), connections);
               this.updateProperties();
@@ -686,7 +701,9 @@ export class GraphComponent implements OnInit {
               delivery: this.tracingService.getDeliveriesById([edge.id()])[0]
             };
 
-            this.dialogService.open(DeliveryPropertiesComponent, {data: dialogData});
+            GraphComponent.setOverlay(edge, true);
+            this.dialogService.open(DeliveryPropertiesComponent, {data: dialogData}).afterClosed()
+              .subscribe(() => GraphComponent.setOverlay(edge, false));
           }
         }
       }, {
