@@ -15,7 +15,7 @@ export interface StationPropertiesData {
 
 interface NodeDatum {
   id: string;
-  title: string;
+  name: string;
   x: number;
   y: number;
 }
@@ -193,22 +193,22 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
       optimizer.optimize();
 
-      let yIn = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
-      let yOut = StationPropertiesComponent.NODE_PADDING + StationPropertiesComponent.NODE_HEIGHT / 2;
+      let yIn = StationPropertiesComponent.NODE_PADDING;
+      let yOut = StationPropertiesComponent.NODE_PADDING;
 
       for (const n of this.nodeInData) {
-        n.x = StationPropertiesComponent.NODE_WIDTH / 2 + 1;
+        n.x = 1;
         n.y = yIn;
         yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
       for (const n of this.nodeOutData) {
-        n.x = StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH / 2 - 1;
+        n.x = StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH - 1;
         n.y = yOut;
         yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
-      this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_HEIGHT / 2;
+      this.height = Math.max(yIn, yOut);
     }
   }
 
@@ -295,7 +295,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     this.propertiesHidden = !this.propertiesHidden;
   }
 
-  private getDeliveryLabel(id: string): string {
+  private createNode(id: string): NodeDatum {
     const delivery = this.data.deliveries.get(id);
     let label = delivery.name;
 
@@ -303,7 +303,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       label += ' ' + delivery.date;
     }
 
-    return label;
+    return {
+      id: id,
+      name: label,
+      x: null,
+      y: null
+    };
   }
 
   private getIngredientsByLot(): Map<string, Set<string>> {
@@ -347,21 +352,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     const nodeOutMap: Map<string, NodeDatum> = new Map();
 
     for (const id of this.data.station.incoming) {
-      nodeInMap.set(id, {
-        id: id,
-        title: this.getDeliveryLabel(id),
-        x: null,
-        y: null
-      });
+      nodeInMap.set(id, this.createNode(id));
     }
 
     for (const id of this.data.station.outgoing) {
-      nodeOutMap.set(id, {
-        id: id,
-        title: this.getDeliveryLabel(id),
-        x: null,
-        y: null
-      });
+      nodeOutMap.set(id, this.createNode(id));
     }
 
     this.nodeInData = Array.from(nodeInMap.values());
@@ -381,12 +376,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     const nodeOutMap: Map<string, NodeDatum> = new Map();
 
     for (const id of this.data.station.incoming) {
-      nodeInMap.set(id, {
-        id: id,
-        title: this.getDeliveryLabel(id),
-        x: null,
-        y: null
-      });
+      nodeInMap.set(id, this.createNode(id));
     }
 
     this.nodeInData = Array.from(nodeInMap.values());
@@ -395,7 +385,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     ingredientsByLot.forEach((ingredients, lot) => {
       nodeOutMap.set(lot, {
         id: lot,
-        title: lot,
+        name: lot,
         x: null,
         y: null
       });
@@ -413,9 +403,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private addNodes() {
     const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>) => {
       nodes.classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-      nodes.append('rect').attr('x', -StationPropertiesComponent.NODE_WIDTH / 2).attr('y', -StationPropertiesComponent.NODE_HEIGHT / 2)
-        .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
-      nodes.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(d => d.title);
+      nodes.append('rect').attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
+      nodes.append('text').attr('x', 5).attr('text-anchor', 'left').attr('dominant-baseline', 'text-before-edge').text(d => d.name);
     };
 
     const nodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter().append<SVGElement>('g');
@@ -471,10 +460,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true).attr('d', d => {
       return StationPropertiesComponent.line(
-        d.source.x + StationPropertiesComponent.NODE_WIDTH / 2,
-        d.source.y,
-        d.target.x - StationPropertiesComponent.NODE_WIDTH / 2,
-        d.target.y
+        d.source.x + StationPropertiesComponent.NODE_WIDTH,
+        d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
+        d.target.x,
+        d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
       );
     }).on('mouseover', function () {
       if (self.selected == null) {
@@ -498,8 +487,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       const svgPos = this.svg.node().getBoundingClientRect();
 
       this.connectLine.attr('d', StationPropertiesComponent.line(
-        this.selected.x + StationPropertiesComponent.NODE_WIDTH / 2,
-        this.selected.y,
+        this.selected.x + StationPropertiesComponent.NODE_WIDTH,
+        this.selected.y + StationPropertiesComponent.NODE_HEIGHT / 2,
         mouseEvent.clientX - svgPos.left,
         mouseEvent.clientY - svgPos.top
       ));
