@@ -77,21 +77,8 @@ export class GraphComponent implements OnInit {
   private zoom: Subject<boolean> = new Subject();
   private legend: Subject<string[]> = new Subject();
 
-  private static createNodeBackground(colors: number[][]): any {
-    if (colors.length === 1) {
-      return {
-        'background-color': Utils.colorToCss(colors[0])
-      };
-    }
-
-    const style = {};
-
-    for (let i = 0; i < colors.length; i++) {
-      style['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
-      style['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
-    }
-
-    return style;
+  private static setOverlay(element, enabled: boolean) {
+    element.style({'overlay-opacity': enabled ? 0.5 : 0});
   }
 
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
@@ -161,12 +148,16 @@ export class GraphComponent implements OnInit {
         this.stationMenuActions = this.createStationActions(element);
         this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        GraphComponent.setOverlay(element, true);
         this.stationMenuTrigger.openMenu();
+        this.stationMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(element, false));
       } else if (element.isEdge()) {
         this.deliveryMenuActions = this.createDeliveryActions(element);
         this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
+        GraphComponent.setOverlay(element, true);
         this.deliveryMenuTrigger.openMenu();
+        this.deliveryMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(element, false));
       }
     });
 
@@ -403,28 +394,32 @@ export class GraphComponent implements OnInit {
         'content': 'data(name)',
         'height': sizeFunction,
         'width': sizeFunction,
-        'background-color': '#FFFFFF',
+        'background-color': 'rgb(255, 255, 255)',
         'border-width': 3,
-        'border-color': '#000000',
+        'border-color': 'rgb(0, 0, 0)',
         'text-valign': 'bottom',
         'text-halign': 'right',
-        'color': '#000000',
-        'font-family': 'Roboto, Helvetica Neue, sans-serif'
+        'color': 'rgb(0, 0, 0)',
+        'font-family': 'Roboto, Helvetica Neue, sans-serif',
+        'overlay-color': 'rgb(0, 0, 255)',
+        'overlay-padding': 10
       })
       .selector('edge')
       .style({
         'target-arrow-shape': 'triangle',
         'width': 6,
-        'line-color': '#000000',
-        'target-arrow-color': '#FF0000',
-        'curve-style': 'bezier'
+        'line-color': 'rgb(0, 0, 0)',
+        'target-arrow-color': 'rgb(255, 0, 0)',
+        'curve-style': 'bezier',
+        'overlay-color': 'rgb(0, 0, 255)',
+        'overlay-padding': 10
       })
       .selector('node:selected')
       .style({
-        'background-color': '#8080FF',
+        'background-color': 'rgb(128, 128, 255)',
         'border-width': 6,
-        'border-color': '#0000FF',
-        'color': '#0000FF'
+        'border-color': 'rgb(0, 0, 255)',
+        'color': 'rgb(0, 0, 255)'
       })
       .selector('edge:selected')
       .style({
@@ -447,6 +442,21 @@ export class GraphComponent implements OnInit {
       }
     };
 
+    const createNodeBackground = (colors: number[][]) => {
+      const background = {};
+
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+
+      return background;
+    };
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
@@ -460,8 +470,8 @@ export class GraphComponent implements OnInit {
         c2.push(Utils.mixColors(color, [0, 0, 255]));
       }
 
-      style = style.selector('node' + s.join('')).style(GraphComponent.createNodeBackground(c1));
-      style = style.selector('node:selected' + s.join('')).style(GraphComponent.createNodeBackground(c2));
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
 
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
