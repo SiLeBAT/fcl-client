@@ -1,12 +1,9 @@
 <div id="graphContainer">
   <div id="cy"></div>
 </div>
-<div id="graphMenu" style="position: fixed;" [mdMenuTriggerFor]="graphMenu"
-     #graphMenuTrigger="mdMenuTrigger"></div>
-<div id="stationMenu" style="position: fixed;" [mdMenuTriggerFor]="stationMenu"
-     #stationMenuTrigger="mdMenuTrigger"></div>
-<div id="deliveryMenu" style="position: fixed;" [mdMenuTriggerFor]="deliveryMenu"
-     #deliveryMenuTrigger="mdMenuTrigger"></div>
+<div id="graphMenu" class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
+<div id="stationMenu" class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
+<div id="deliveryMenu" class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
 <md-menu #graphMenu>
   <ng-container *ngFor="let action of graphMenuActions">
     <button md-menu-item *ngIf="action.type == actionTypes.runAction"

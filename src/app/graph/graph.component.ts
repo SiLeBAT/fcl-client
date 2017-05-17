@@ -71,6 +71,7 @@ export class GraphComponent implements OnInit {
   private fontSize = Constants.DEFAULT_GRAPH_FONT_SIZE;
   private showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
 
+  private contextMenuElement: any;
   private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
@@ -110,6 +111,11 @@ export class GraphComponent implements OnInit {
         this.resizeTimer = Observable.timer(100).subscribe(() => this.cy.resize());
       }
     });
+
+    this.stationMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
+    this.stationMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, false));
+    this.deliveryMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
+    this.deliveryMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, false));
   }
 
   init(data: FclElements, layout: any) {
@@ -145,19 +151,17 @@ export class GraphComponent implements OnInit {
         Utils.setElementPosition(document.getElementById('graphMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
         this.graphMenuTrigger.openMenu();
       } else if (element.isNode()) {
+        this.contextMenuElement = element;
         this.stationMenuActions = this.createStationActions(element);
         this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('stationMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
-        GraphComponent.setOverlay(element, true);
         this.stationMenuTrigger.openMenu();
-        this.stationMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(element, false));
       } else if (element.isEdge()) {
+        this.contextMenuElement = element;
         this.deliveryMenuActions = this.createDeliveryActions(element);
         this.traceMenuActions = this.createTraceActions(element);
         Utils.setElementPosition(document.getElementById('deliveryMenu'), mouseEvent.offsetX, mouseEvent.offsetY);
-        GraphComponent.setOverlay(element, true);
         this.deliveryMenuTrigger.openMenu();
-        this.deliveryMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(element, false));
       }
     });
 
