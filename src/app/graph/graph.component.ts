@@ -68,6 +68,7 @@ export class GraphComponent implements OnInit {
   private fontSize = Constants.DEFAULT_GRAPH_FONT_SIZE;
   private showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
 
+  private overlay: Set<string> = new Set();
   private contextMenuElement: any;
   private selectTimerActivated = true;
   private resizeTimer: any;
@@ -75,10 +76,7 @@ export class GraphComponent implements OnInit {
   private zoom: Subject<boolean> = new Subject();
   private legend: Subject<string[]> = new Subject();
   private hoverDeliveries: Subject<string[]> = new Subject();
-
-  private static setOverlay(elements, enabled: boolean) {
-    elements.style({'overlay-opacity': enabled ? 0.5 : 0});
-  }
+  private hoverableEdges: any;
 
   private static getCyCoordinates(event: MouseEvent): Position {
     const cyRect = document.getElementById('cy').getBoundingClientRect();
@@ -119,20 +117,20 @@ export class GraphComponent implements OnInit {
       }
     });
 
-    this.stationMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
+    this.stationMenuTrigger.onMenuOpen.subscribe(() => this.setOverlay(this.contextMenuElement, true));
     this.stationMenuTrigger.onMenuClose.subscribe(() => {
       if (!this.traceMenuTrigger.menuOpen && this.dialogService._openDialogs.length === 0) {
-        GraphComponent.setOverlay(this.contextMenuElement, false);
+        this.setOverlay(this.contextMenuElement, false);
       }
     });
-    this.deliveryMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
+    this.deliveryMenuTrigger.onMenuOpen.subscribe(() => this.setOverlay(this.contextMenuElement, true));
     this.deliveryMenuTrigger.onMenuClose.subscribe(() => {
       if (!this.traceMenuTrigger.menuOpen && this.dialogService._openDialogs.length === 0) {
-        GraphComponent.setOverlay(this.contextMenuElement, false);
+        this.setOverlay(this.contextMenuElement, false);
       }
     });
-    this.traceMenuTrigger.onMenuOpen.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, true));
-    this.traceMenuTrigger.onMenuClose.subscribe(() => GraphComponent.setOverlay(this.contextMenuElement, false));
+    this.traceMenuTrigger.onMenuOpen.subscribe(() => this.setOverlay(this.contextMenuElement, true));
+    this.traceMenuTrigger.onMenuClose.subscribe(() => this.setOverlay(this.contextMenuElement, false));
   }
 
   init(data: FclElements, layout: any) {
@@ -183,11 +181,13 @@ export class GraphComponent implements OnInit {
       }
     });
     this.hoverDeliveries.subscribe(ids => {
-      GraphComponent.setOverlay(this.cy.edges(), false);
+      this.cy.batch(() => {
+        this.setOverlay(this.hoverableEdges, false);
 
-      for (const id of ids) {
-        GraphComponent.setOverlay(this.cy.getElementById(this.mergeToMap.has(id) ? this.mergeToMap.get(id) : id), true);
-      }
+        for (const id of ids) {
+          this.setOverlay(this.cy.getElementById(this.mergeToMap.has(id) ? this.mergeToMap.get(id) : id), true);
+        }
+      });
     });
 
     this.setFontSize(this.fontSize);
@@ -613,9 +613,10 @@ export class GraphComponent implements OnInit {
             hoverDeliveries: this.hoverDeliveries
           };
 
-          GraphComponent.setOverlay(node, true);
+          this.hoverableEdges = node.connectedEdges();
+          this.setOverlay(node, true);
           this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(connections => {
-            GraphComponent.setOverlay(node, false);
+            this.setOverlay(node, false);
 
             if (connections) {
               this.tracingService.setConnectionsOfStation(node.id(), connections);
@@ -709,9 +710,9 @@ export class GraphComponent implements OnInit {
               delivery: this.tracingService.getDeliveriesById([edge.id()])[0]
             };
 
-            GraphComponent.setOverlay(edge, true);
+            this.setOverlay(edge, true);
             this.dialogService.open(DeliveryPropertiesComponent, {data: dialogData}).afterClosed()
-              .subscribe(() => GraphComponent.setOverlay(edge, false));
+              .subscribe(() => this.setOverlay(edge, false));
           }
         }
       }, {
@@ -845,6 +846,22 @@ export class GraphComponent implements OnInit {
         }
       }
     ];
+  }
+
+  private setOverlay(elements, enabled: boolean) {
+    elements.forEach(e => {
+      if (this.overlay.has(e.id())) {
+        if (!enabled) {
+          this.overlay.delete(e.id());
+          e.style({'overlay-opacity': 0});
+        }
+      } else {
+        if (enabled) {
+          this.overlay.add(e.id());
+          e.style({'overlay-opacity': 0.5});
+        }
+      }
+    });
   }
 
   private callChangeFunction() {

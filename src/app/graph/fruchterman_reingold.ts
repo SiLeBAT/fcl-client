@@ -40,7 +40,7 @@ class FruchtermanLayoutClass {
 
     this.options.eles.each(e => elementIds.add(e.id()));
 
-    cy.nodes().each(node => {
+    cy.nodes().forEach(node => {
       let v: Vertex;
 
       if (elementIds.has(node.id())) {
@@ -53,7 +53,7 @@ class FruchtermanLayoutClass {
       graph.insertVertex(v);
     });
 
-    cy.edges().each(edge => {
+    cy.edges().forEach(edge => {
       graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
 
