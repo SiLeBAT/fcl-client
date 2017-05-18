@@ -274,6 +274,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.d3.select('body').on('mousemove', null);
+    this.data.hoverDeliveries.next([]);
   }
 
   moveLeft() {
