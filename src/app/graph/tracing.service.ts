@@ -44,6 +44,19 @@ export class TracingService {
   }
 
   mergeStations(ids: string[], name: string) {
+    let allIds: string[] = [];
+
+    for (const id of ids) {
+      const station = this.stationsById.get(id);
+
+      if (station.contains != null && station.contains.length > 0) {
+        allIds = allIds.concat(station.contains);
+        this.expandStationsInternal([id]);
+      } else {
+        allIds.push(id);
+      }
+    }
+
     let metaId;
 
     for (let i = 1; ; i++) {
@@ -61,7 +74,7 @@ export class TracingService {
       connections: [],
       invisible: false,
       contained: false,
-      contains: ids,
+      contains: allIds,
       selected: true,
       observed: ObservedType.NONE,
       forward: false,
@@ -75,7 +88,7 @@ export class TracingService {
       properties: []
     };
 
-    for (const id of ids) {
+    for (const id of allIds) {
       const station = this.stationsById.get(id);
 
       station.contained = true;
@@ -91,31 +104,13 @@ export class TracingService {
 
     this.stationsById.set(metaId, metaStation);
     this.data.stations.push(metaStation);
+
     this.updateTrace();
     this.updateScores();
   }
 
   expandStations(ids: string[]) {
-    for (const id of ids) {
-      const station = this.stationsById.get(id);
-
-      this.stationsById.delete(id);
-      this.data.stations.splice(this.data.stations.indexOf(station), 1);
-
-      for (const containedId of station.contains) {
-        this.stationsById.get(containedId).contained = false;
-      }
-
-      this.deliveriesById.forEach(d => {
-        if (d.source === id) {
-          d.source = d.originalSource;
-        }
-
-        if (d.target === id) {
-          d.target = d.originalTarget;
-        }
-      });
-    }
+    this.expandStationsInternal(ids);
 
     this.updateTrace();
     this.updateScores();
@@ -262,6 +257,29 @@ export class TracingService {
     this.stationsById.get(id).connections = connections;
     this.updateTrace();
     this.updateScores();
+  }
+
+  private expandStationsInternal(ids: string[]) {
+    for (const id of ids) {
+      const station = this.stationsById.get(id);
+
+      this.stationsById.delete(id);
+      this.data.stations.splice(this.data.stations.indexOf(station), 1);
+
+      for (const containedId of station.contains) {
+        this.stationsById.get(containedId).contained = false;
+      }
+
+      this.deliveriesById.forEach(d => {
+        if (d.source === id) {
+          d.source = d.originalSource;
+        }
+
+        if (d.target === id) {
+          d.target = d.originalTarget;
+        }
+      });
+    }
   }
 
   private updateScores() {

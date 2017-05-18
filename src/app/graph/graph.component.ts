@@ -199,7 +199,7 @@ export class GraphComponent implements OnInit {
     this.setShowLegend(this.showLegend);
 
     for (const s of data.stations) {
-      const pos = this.cy.nodes().getElementById(s.id).position();
+      const pos = this.cy.getElementById(s.id).position();
 
       if (pos != null) {
         s.position = pos;
@@ -394,13 +394,21 @@ export class GraphComponent implements OnInit {
   private updateAll() {
     for (const s of this.data.stations) {
       if (!s.contained && s.positionRelativeTo != null) {
-        s.position = Utils.sum(this.cy.nodes().getElementById(s.positionRelativeTo).position(), s.position);
+        s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
+        s.positionRelativeTo = null;
       } else if (s.position == null && s.contains != null) {
+        for (const contained of this.tracingService.getStationsById(s.contains)) {
+          if (contained.positionRelativeTo != null) {
+            contained.position = Utils.sum(this.cy.getElementById(contained.positionRelativeTo).position(), contained.position);
+            contained.positionRelativeTo = null;
+          }
+        }
+
         s.position = Utils.getCenter(s.contains.map(id => this.tracingService.getStationsById([id])[0].position));
 
         for (const contained of this.tracingService.getStationsById(s.contains)) {
-          contained.positionRelativeTo = s.id;
           contained.position = Utils.difference(contained.position, s.position);
+          contained.positionRelativeTo = s.id;
         }
       }
     }
@@ -580,7 +588,6 @@ export class GraphComponent implements OnInit {
     let allOutbreakStations = false;
     let allCrossContaminationStations = false;
     let allMetaStations = false;
-    let allNonMetaStations = false;
 
     if (this.cy != null && node != null) {
       selectedNodes = this.cy.nodes(':selected');
@@ -589,7 +596,6 @@ export class GraphComponent implements OnInit {
       allCrossContaminationStations = multipleStationsSelected ? selectedNodes.allAre('[?crossContamination]') :
         node.data('crossContamination');
       allMetaStations = multipleStationsSelected ? selectedNodes.allAre('[?contains]') : node.data('contains');
-      allNonMetaStations = multipleStationsSelected ? !selectedNodes.is('[?contains]') : !node.data('contains');
     }
 
     return [
@@ -670,23 +676,19 @@ export class GraphComponent implements OnInit {
         name: 'Merge Stations',
         enabled: multipleStationsSelected,
         action: () => {
-          if (allNonMetaStations) {
-            const dialogData: DialogPromptData = {
-              title: 'Input',
-              message: 'Please specify name of meta station:',
-              placeholder: 'Name'
-            };
+          const dialogData: DialogPromptData = {
+            title: 'Input',
+            message: 'Please specify name of meta station:',
+            placeholder: 'Name'
+          };
 
-            this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
-              if (name != null) {
-                this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
-                this.updateAll();
-                this.callChangeFunction();
-              }
-            });
-          } else {
-            Utils.showErrorMessage(this.dialogService, 'Merging is only provided for non-meta stations!');
-          }
+          this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
+            if (name != null) {
+              this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
         }
       }, {
         name: 'Expand',
