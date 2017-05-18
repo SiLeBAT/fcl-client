@@ -14,7 +14,7 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
-import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size} from '../util/datatypes';
+import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Legend} from './legend';
 import {Zooming} from './zooming';
@@ -593,15 +593,23 @@ export class GraphComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: () => {
           const station = this.tracingService.getStationsById([node.id()])[0];
-          const connected: Map<string, DeliveryData> = new Map();
+          const deliveries: Map<string, DeliveryData> = new Map();
+          const connectedStations: Map<string, StationData> = new Map();
 
-          for (const d of this.tracingService.getDeliveriesById(station.incoming.concat(station.outgoing))) {
-            connected.set(d.id, d);
+          for (const d of this.tracingService.getDeliveriesById(station.incoming)) {
+            deliveries.set(d.id, d);
+            connectedStations.set(d.source, this.tracingService.getStationsById([d.source])[0]);
+          }
+
+          for (const d of this.tracingService.getDeliveriesById(station.outgoing)) {
+            deliveries.set(d.id, d);
+            connectedStations.set(d.target, this.tracingService.getStationsById([d.target])[0]);
           }
 
           const dialogData: StationPropertiesData = {
             station: station,
-            deliveries: connected,
+            deliveries: deliveries,
+            connectedStations: connectedStations,
             hoverDeliveries: this.hoverDeliveries
           };
 

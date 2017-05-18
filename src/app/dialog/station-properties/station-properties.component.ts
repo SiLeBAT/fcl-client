@@ -10,12 +10,16 @@ import {Utils} from '../../util/utils';
 export interface StationPropertiesData {
   station: StationData;
   deliveries: Map<string, DeliveryData>;
+  connectedStations: Map<string, StationData>;
   hoverDeliveries: Subject<string[]>;
 }
 
 interface NodeDatum {
   id: string;
   name: string;
+  station: string;
+  lot: string;
+  date: string;
   x: number;
   y: number;
 }
@@ -122,7 +126,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private static readonly SVG_WIDTH = 600;
   private static readonly NODE_PADDING = 15;
   private static readonly NODE_WIDTH = 200;
-  private static readonly NODE_HEIGHT = 30;
+  private static readonly NODE_HEIGHT = 50;
 
   title: string;
   propertiesHidden = false;
@@ -176,15 +180,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
       if (this.lotBased) {
         this.initLotBasedData(ingredientsByLot);
-        this.deliveriesByLot = new Map();
-
-        this.data.deliveries.forEach(d => {
-          if (this.deliveriesByLot.has(d.lot)) {
-            this.deliveriesByLot.get(d.lot).push(d.id);
-          } else {
-            this.deliveriesByLot.set(d.lot, [d.id]);
-          }
-        });
       } else {
         this.initDeliveryBasedData();
       }
@@ -297,15 +292,14 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private createNode(id: string): NodeDatum {
     const delivery = this.data.deliveries.get(id);
-    let label = delivery.name;
-
-    if (delivery.date != null) {
-      label += ' ' + delivery.date;
-    }
+    const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target);
 
     return {
       id: id,
-      name: label,
+      name: delivery.name,
+      station: otherStation.name,
+      lot: delivery.lot,
+      date: delivery.date,
       x: null,
       y: null
     };
@@ -372,6 +366,16 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private initLotBasedData(ingredientsByLot: Map<string, Set<string>>) {
+    this.deliveriesByLot = new Map();
+
+    this.data.deliveries.forEach(d => {
+      if (this.deliveriesByLot.has(d.lot)) {
+        this.deliveriesByLot.get(d.lot).push(d.id);
+      } else {
+        this.deliveriesByLot.set(d.lot, [d.id]);
+      }
+    });
+
     const nodeInMap: Map<string, NodeDatum> = new Map();
     const nodeOutMap: Map<string, NodeDatum> = new Map();
 
@@ -383,9 +387,18 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     this.edgeData = [];
 
     ingredientsByLot.forEach((ingredients, lot) => {
+      const names: Set<string> = new Set();
+
+      for (const d of this.deliveriesByLot.get(lot)) {
+        names.add(this.data.deliveries.get(d).name);
+      }
+
       nodeOutMap.set(lot, {
         id: lot,
-        name: lot,
+        name: Array.from(names).join('/'),
+        station: null,
+        lot: lot,
+        date: null,
         x: null,
         y: null
       });
@@ -401,17 +414,24 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private addNodes() {
-    const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>) => {
+    const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
       nodes.classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
       nodes.append('rect').attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
-      nodes.append('text').attr('x', 5).attr('text-anchor', 'left').attr('dominant-baseline', 'text-before-edge').text(d => d.name);
+
+      const text = nodes.append('text').attr('text-anchor', 'left');
+
+      text.append('tspan').attr('x', 5).attr('dy', 15).style('font-size', '14px')
+        .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name);
+      text.filter(d => d.station != null).append('tspan').attr('x', 5).attr('dy', 15).style('font-size', '14px')
+        .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
+      text.filter(d => d.date != null).append('tspan').attr('x', 5).attr('dy', 15).style('font-size', '12px').text(d => d.date);
     };
 
     const nodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter().append<SVGElement>('g');
     const nodesOut = this.nodesOutG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeOutData, d => d.id).enter().append<SVGElement>('g');
 
-    initRectAndText(nodesIn);
-    initRectAndText(nodesOut);
+    initRectAndText(nodesIn, true);
+    initRectAndText(nodesOut, false);
 
     const self = this;
 
