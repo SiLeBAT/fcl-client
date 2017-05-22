@@ -1,5 +1,5 @@
 import {DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
-import {DialogPosition, MdDialog} from '@angular/material';
+import {DialogPosition, MdDialog, MdDialogRef} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
 
@@ -70,13 +70,13 @@ export class Utils {
     a.remove();
   }
 
-  static showErrorMessage(dialogService: MdDialog, message: string) {
+  static showErrorMessage(dialogService: MdDialog, message: string): MdDialogRef<any> {
     const dialogData: DialogAlertData = {
       title: 'Error',
       message: message
     };
 
-    dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
+    return dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
   static setElementPosition(element: HTMLElement, pos: Position) {

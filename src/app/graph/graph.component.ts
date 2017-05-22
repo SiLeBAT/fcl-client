@@ -119,20 +119,11 @@ export class GraphComponent implements OnInit {
       }
     });
 
-    this.stationMenuTrigger.onMenuOpen.subscribe(() => this.contextMenuElement.style(GraphComponent.OVERLAY));
-    this.stationMenuTrigger.onMenuClose.subscribe(() => {
-      if (!this.traceMenuTrigger.menuOpen && this.dialogService._openDialogs.length === 0) {
-        this.contextMenuElement.style(GraphComponent.NO_OVERLAY);
-      }
-    });
-    this.deliveryMenuTrigger.onMenuOpen.subscribe(() => this.contextMenuElement.style(GraphComponent.OVERLAY));
-    this.deliveryMenuTrigger.onMenuClose.subscribe(() => {
-      if (!this.traceMenuTrigger.menuOpen && this.dialogService._openDialogs.length === 0) {
-        this.contextMenuElement.style(GraphComponent.NO_OVERLAY);
-      }
-    });
-    this.traceMenuTrigger.onMenuOpen.subscribe(() => this.contextMenuElement.style(GraphComponent.OVERLAY));
-    this.traceMenuTrigger.onMenuClose.subscribe(() => this.contextMenuElement.style(GraphComponent.NO_OVERLAY));
+    this.stationMenuTrigger.onMenuOpen.subscribe(() => this.updateOverlay());
+    this.stationMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
+    this.deliveryMenuTrigger.onMenuOpen.subscribe(() => this.updateOverlay());
+    this.deliveryMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
+    this.traceMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
   }
 
   init(data: FclElements, layout: any) {
@@ -168,6 +159,7 @@ export class GraphComponent implements OnInit {
       };
 
       if (element === this.cy) {
+        this.contextMenuElement = null;
         Utils.setElementPosition(document.getElementById('graphMenu'), position);
         this.graphMenuTrigger.openMenu();
       } else if (element.isNode()) {
@@ -625,9 +617,8 @@ export class GraphComponent implements OnInit {
           };
 
           this.hoverableEdges = node.connectedEdges();
-          node.style(GraphComponent.OVERLAY);
           this.dialogService.open(StationPropertiesComponent, {data: dialogData}).afterClosed().subscribe(connections => {
-            node.style(GraphComponent.NO_OVERLAY);
+            this.updateOverlay();
 
             if (connections) {
               this.tracingService.setConnectionsOfStation(node.id(), connections);
@@ -711,24 +702,29 @@ export class GraphComponent implements OnInit {
           console.log(event);
 
           if (this.mergeMap.has(edge.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!');
+            Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!').afterClosed()
+              .subscribe(() => this.updateOverlay());
           } else {
             const dialogData: DeliveryPropertiesData = {
               delivery: this.tracingService.getDeliveriesById([edge.id()])[0]
             };
 
-            edge.style(GraphComponent.OVERLAY);
             this.dialogService.open(DeliveryPropertiesComponent, {data: dialogData}).afterClosed()
-              .subscribe(() => edge.style(GraphComponent.NO_OVERLAY));
+              .subscribe(() => this.updateOverlay());
           }
         }
       }, {
         name: 'Show Trace',
         enabled: true,
         action: event => {
-          this.traceMenuActions = this.createTraceActions(edge);
-          Utils.setElementPosition(document.getElementById('traceMenu'), GraphComponent.getCyCoordinates(event));
-          this.traceMenuTrigger.openMenu();
+          if (this.mergeMap.has(edge.id())) {
+            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!').afterClosed()
+              .subscribe(() => this.updateOverlay());
+          } else {
+            this.traceMenuActions = this.createTraceActions(edge);
+            Utils.setElementPosition(document.getElementById('traceMenu'), GraphComponent.getCyCoordinates(event));
+            this.traceMenuTrigger.openMenu();
+          }
         }
       }
     ];
@@ -804,52 +800,40 @@ export class GraphComponent implements OnInit {
         name: 'Forward Trace',
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(element.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
-          } else {
-            if (element.isNode()) {
-              this.tracingService.showStationForwardTrace(element.id());
-            } else if (element.isEdge()) {
-              this.tracingService.showDeliveryForwardTrace(element.id());
-            }
-
-            this.updateProperties();
-            this.callChangeFunction();
+          if (element.isNode()) {
+            this.tracingService.showStationForwardTrace(element.id());
+          } else if (element.isEdge()) {
+            this.tracingService.showDeliveryForwardTrace(element.id());
           }
+
+          this.updateProperties();
+          this.callChangeFunction();
         }
       }, {
         name: 'Backward Trace',
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(element.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
-          } else {
-            if (element.isNode()) {
-              this.tracingService.showStationBackwardTrace(element.id());
-            } else if (element.isEdge()) {
-              this.tracingService.showDeliveryBackwardTrace(element.id());
-            }
-
-            this.updateProperties();
-            this.callChangeFunction();
+          if (element.isNode()) {
+            this.tracingService.showStationBackwardTrace(element.id());
+          } else if (element.isEdge()) {
+            this.tracingService.showDeliveryBackwardTrace(element.id());
           }
+
+          this.updateProperties();
+          this.callChangeFunction();
         }
       }, {
         name: 'Full Trace',
         enabled: true,
         action: () => {
-          if (this.mergeMap.has(element.id())) {
-            Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!');
-          } else {
-            if (element.isNode()) {
-              this.tracingService.showStationTrace(element.id());
-            } else if (element.isEdge()) {
-              this.tracingService.showDeliveryTrace(element.id());
-            }
-
-            this.updateProperties();
-            this.callChangeFunction();
+          if (element.isNode()) {
+            this.tracingService.showStationTrace(element.id());
+          } else if (element.isEdge()) {
+            this.tracingService.showDeliveryTrace(element.id());
           }
+
+          this.updateProperties();
+          this.callChangeFunction();
         }
       }
     ];
@@ -858,6 +842,18 @@ export class GraphComponent implements OnInit {
   private callChangeFunction() {
     if (this.changeFunction != null) {
       this.changeFunction();
+    }
+  }
+
+  private updateOverlay() {
+    if (this.contextMenuElement != null) {
+      const elementMenuOrDialogOpen =
+        this.stationMenuTrigger.menuOpen ||
+        this.deliveryMenuTrigger.menuOpen ||
+        this.traceMenuTrigger.menuOpen ||
+        this.dialogService._openDialogs.length !== 0;
+
+      this.contextMenuElement.style(elementMenuOrDialogOpen ? GraphComponent.OVERLAY : GraphComponent.NO_OVERLAY);
     }
   }
 
