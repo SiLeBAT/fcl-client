@@ -9,7 +9,7 @@
   </button>
 </h1>
 <div md-dialog-content>
-  <md-card id="properties">
+  <md-card>
     <md-card-title class="title">
       <span>Properties</span>
       <span class="titleSpan"></span>
@@ -27,7 +27,11 @@
       </table>
     </md-card-content>
   </md-card>
-  <div id="in-out-connector"></div>
+  <md-card>
+    <md-card-content>
+      <div id="in-out-connector"></div>
+    </md-card-content>
+  </md-card>
 </div>
 <div md-dialog-actions>
   <button md-button (click)="close()">OK</button>

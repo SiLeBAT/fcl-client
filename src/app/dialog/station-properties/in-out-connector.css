@@ -1,5 +1,5 @@
-#in-out-connector {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+#in-out-connector svg {
+  display: block;
 }
 
 #in-out-connector g.node rect {

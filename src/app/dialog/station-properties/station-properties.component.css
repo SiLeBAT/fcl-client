@@ -16,16 +16,13 @@
   margin-left: 20px;
 }
 
-#properties {
-  margin-top: 10px;
-}
-
-#in-out-connector {
-  margin-top: 20px;
-}
-
 md-card {
   padding: 18px !important;
+  margin: 10px 0;
+}
+
+md-card:not(:last-child) {
+  margin-bottom: 20px;
 }
 
 md-card-title {

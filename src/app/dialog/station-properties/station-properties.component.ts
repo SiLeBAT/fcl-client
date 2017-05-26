@@ -188,8 +188,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
       optimizer.optimize();
 
-      let yIn = StationPropertiesComponent.NODE_PADDING;
-      let yOut = StationPropertiesComponent.NODE_PADDING;
+      let yIn = 1;
+      let yOut = 1;
 
       for (const n of this.nodeInData) {
         n.x = 1;
@@ -203,7 +203,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
       }
 
-      this.height = Math.max(yIn, yOut);
+      this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_PADDING + 1;
     }
   }
 
