@@ -179,8 +179,8 @@ export class GraphComponent implements OnInit {
       }
 
       this.cy.batch(() => {
-        this.hoverableEdges.filter(e => !idSet.has(e.id())).data('active', false);
-        this.hoverableEdges.filter(e => idSet.has(e.id())).data('active', true);
+        this.hoverableEdges.filter(e => !idSet.has(e.id())).scratch('_active', false);
+        this.hoverableEdges.filter(e => idSet.has(e.id())).scratch('_active', true);
       });
     });
 
@@ -422,6 +422,13 @@ export class GraphComponent implements OnInit {
     };
 
     let style = cytoscape.stylesheet()
+      .selector('*')
+      .style({
+        'font-family': 'Roboto, Helvetica Neue, sans-serif',
+        'overlay-color': 'rgb(0, 0, 255)',
+        'overlay-padding': 10,
+        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+      })
       .selector('node')
       .style({
         'content': 'data(name)',
@@ -432,11 +439,7 @@ export class GraphComponent implements OnInit {
         'border-color': 'rgb(0, 0, 0)',
         'text-valign': 'bottom',
         'text-halign': 'right',
-        'color': 'rgb(0, 0, 0)',
-        'font-family': 'Roboto, Helvetica Neue, sans-serif',
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': 0.0
+        'color': 'rgb(0, 0, 0)'
       })
       .selector('edge')
       .style({
@@ -444,10 +447,7 @@ export class GraphComponent implements OnInit {
         'width': 6,
         'line-color': 'rgb(0, 0, 0)',
         'target-arrow-color': 'rgb(255, 0, 0)',
-        'curve-style': 'bezier',
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': 0.0
+        'curve-style': 'bezier'
       })
       .selector('node:selected')
       .style({
@@ -467,7 +467,7 @@ export class GraphComponent implements OnInit {
       .selector('node:selected[?contains]')
       .style({
         'border-width': 9
-      }).selector(':active, [?active]')
+      }).selector(':active')
       .style({
         'overlay-opacity': 0.5
       });
@@ -855,7 +855,7 @@ export class GraphComponent implements OnInit {
         this.traceMenuTrigger.menuOpen ||
         this.dialogService._openDialogs.length !== 0;
 
-      this.contextMenuElement.data('active', elementMenuOrDialogOpen);
+      this.contextMenuElement.scratch('_active', elementMenuOrDialogOpen);
     }
   }
 
