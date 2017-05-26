@@ -1,4 +1,4 @@
-import {DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
+import {Color, DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
 import {DialogPosition, MdDialog, MdDialogRef} from '@angular/material';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
@@ -84,16 +84,16 @@ export class Utils {
     element.style.top = pos.y + 'px';
   }
 
-  static colorToCss(color: number[]): string {
-    return 'rgb(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')';
+  static colorToCss(color: Color): string {
+    return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
   }
 
-  static mixColors(color1: number[], color2: number[]): number[] {
-    const r = Math.round((color1[0] + color2[0]) / 2);
-    const g = Math.round((color1[1] + color2[1]) / 2);
-    const b = Math.round((color1[2] + color2[2]) / 2);
-
-    return [r, g, b];
+  static mixColors(color1: Color, color2: Color): Color {
+    return {
+      r: Math.round((color1[0] + color2[0]) / 2),
+      g: Math.round((color1[1] + color2[1]) / 2),
+      b: Math.round((color1[2] + color2[2]) / 2)
+    };
   }
 
   static getAllCombinations(values: any[]): any[][] {

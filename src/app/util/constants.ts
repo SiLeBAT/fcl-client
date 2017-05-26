@@ -1,4 +1,4 @@
-import {DeliveryData, ShowType, Size, StationData, TableMode} from './datatypes';
+import {Color, DeliveryData, ShowType, Size, StationData, TableMode} from './datatypes';
 import {List, Map} from 'immutable';
 
 export class Constants {
@@ -18,7 +18,7 @@ export class Constants {
 
   static readonly STATION_PROPERTIES = List(Object.keys(Constants.STATION_DATA));
   static readonly DELIVERY_PROPERTIES = List(Object.keys(Constants.DELIVERY_DATA));
-  static readonly PROPERTIES: Map<string, { name: string, color: number[] }> = Map({
+  static readonly PROPERTIES: Map<string, { name: string, color: Color }> = Map({
     id: {name: 'ID', color: null},
     name: {name: 'Name', color: null},
     lot: {name: 'Lot', color: null},
@@ -30,12 +30,12 @@ export class Constants {
     incoming: {name: 'Incoming', color: null},
     outgoing: {name: 'Outgoing', color: null},
     contains: {name: 'Contains', color: null},
-    forward: {name: 'Forward Trace', color: [150, 255, 75]},
-    backward: {name: 'Backward Trace', color: [255, 150, 75]},
-    observed: {name: 'Observed', color: [75, 150, 255]},
-    outbreak: {name: 'Outbreak', color: [255, 50, 50]},
-    crossContamination: {name: 'Cross Contamination', color: [150, 150, 150]},
-    commonLink: {name: 'Common Link', color: [255, 255, 75]},
+    forward: {name: 'Forward Trace', color: {r: 150, g: 255, b: 75}},
+    backward: {name: 'Backward Trace', color: {r: 255, g: 150, b: 75}},
+    observed: {name: 'Observed', color: {r: 75, g: 150, b: 255}},
+    outbreak: {name: 'Outbreak', color: {r: 255, g: 50, b: 50}},
+    crossContamination: {name: 'Cross Contamination', color: {r: 150, g: 150, b: 150}},
+    commonLink: {name: 'Common Link', color: {r: 255, g: 255, b: 75}},
     score: {name: 'Score', color: null}
   });
   static readonly PROPERTIES_WITH_COLORS = List(Constants.PROPERTIES.filter(p => p.color != null).keys());

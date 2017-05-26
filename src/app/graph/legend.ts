@@ -1,5 +1,6 @@
 import {Subject} from 'rxjs/Rx';
 import {Constants} from '../util/constants';
+import {Utils} from '../util/utils';
 
 export function Legend(params: Subject<string[]>) {
   return new LegendClass(this, params);
@@ -31,7 +32,7 @@ class LegendClass {
         const colorCellDiv = document.createElement('div');
 
         labelCell.innerText = propValue.name;
-        colorCellDiv.style.backgroundColor = 'rgb(' + propValue.color.join(', ') + ')';
+        colorCellDiv.style.backgroundColor = Utils.colorToCss(propValue.color);
         colorCell.appendChild(colorCellDiv);
         row.appendChild(labelCell);
         row.appendChild(colorCell);

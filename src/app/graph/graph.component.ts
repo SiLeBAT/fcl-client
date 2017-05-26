@@ -14,7 +14,7 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
-import {CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
+import {Color, CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Legend} from './legend';
 import {Zooming} from './zooming';
@@ -480,7 +480,7 @@ export class GraphComponent implements OnInit {
       }
     };
 
-    const createNodeBackground = (colors: number[][]) => {
+    const createNodeBackground = (colors: Color[]) => {
       const background = {};
 
       if (colors.length === 1) {
@@ -505,7 +505,7 @@ export class GraphComponent implements OnInit {
 
         s.push(createSelector(prop));
         c1.push(color);
-        c2.push(Utils.mixColors(color, [0, 0, 255]));
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
 
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
