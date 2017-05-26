@@ -45,9 +45,6 @@ export class GraphComponent implements OnInit {
     [Size.LARGE, 18]
   ]);
 
-  private static OVERLAY = {'overlay-opacity': 0.5};
-  private static NO_OVERLAY = {'overlay-opacity': 0.0};
-
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
   @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
@@ -182,8 +179,8 @@ export class GraphComponent implements OnInit {
       }
 
       this.cy.batch(() => {
-        this.hoverableEdges.filter(e => !idSet.has(e.id())).style(GraphComponent.NO_OVERLAY);
-        this.hoverableEdges.filter(e => idSet.has(e.id())).style(GraphComponent.OVERLAY);
+        this.hoverableEdges.filter(e => !idSet.has(e.id())).data('active', false);
+        this.hoverableEdges.filter(e => idSet.has(e.id())).data('active', true);
       });
     });
 
@@ -438,7 +435,8 @@ export class GraphComponent implements OnInit {
         'color': 'rgb(0, 0, 0)',
         'font-family': 'Roboto, Helvetica Neue, sans-serif',
         'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10
+        'overlay-padding': 10,
+        'overlay-opacity': 0.0
       })
       .selector('edge')
       .style({
@@ -448,7 +446,8 @@ export class GraphComponent implements OnInit {
         'target-arrow-color': 'rgb(255, 0, 0)',
         'curve-style': 'bezier',
         'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10
+        'overlay-padding': 10,
+        'overlay-opacity': 0.0
       })
       .selector('node:selected')
       .style({
@@ -468,6 +467,9 @@ export class GraphComponent implements OnInit {
       .selector('node:selected[?contains]')
       .style({
         'border-width': 9
+      }).selector(':active, [?active]')
+      .style({
+        'overlay-opacity': 0.5
       });
 
     const createSelector = (prop: string) => {
@@ -853,7 +855,7 @@ export class GraphComponent implements OnInit {
         this.traceMenuTrigger.menuOpen ||
         this.dialogService._openDialogs.length !== 0;
 
-      this.contextMenuElement.style(elementMenuOrDialogOpen ? GraphComponent.OVERLAY : GraphComponent.NO_OVERLAY);
+      this.contextMenuElement.data('active', elementMenuOrDialogOpen);
     }
   }
 

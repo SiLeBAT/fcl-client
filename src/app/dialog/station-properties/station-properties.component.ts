@@ -447,7 +447,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         self.selected = d;
         self.updateConnectLine();
         self.connectLine.classed(StationPropertiesComponent.HIDDEN, false);
-        self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
         self.d3.event.stopPropagation();
       }
     });
@@ -460,8 +459,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected != null) {
-        self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
-
         if (self.edgeData.find(e => e.source === self.selected && e.target === d) == null) {
           self.edgeData.push({
             source: self.selected,
