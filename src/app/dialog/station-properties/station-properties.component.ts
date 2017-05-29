@@ -167,7 +167,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         };
       }).concat(data.station.properties.map(prop => {
         return {
-          name: prop.name,
+          name: '"' + prop.name + '"',
           value: prop.value != null ? prop.value : ''
         };
       }));

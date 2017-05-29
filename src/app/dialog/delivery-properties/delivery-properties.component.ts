@@ -33,7 +33,7 @@ export class DeliveryPropertiesComponent implements OnInit {
         };
       }).concat(data.delivery.properties.map(prop => {
         return {
-          name: prop.name,
+          name: '"' + prop.name + '"',
           value: prop.value != null ? prop.value : ''
         };
       }));

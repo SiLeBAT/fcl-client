@@ -160,7 +160,7 @@ export class AppComponent implements OnInit {
     for (const column of Utils.getAllTableProperties(this.tableSettings.mode, this.elements)) {
       options.push({
         value: column,
-        viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : column,
+        viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : '"' + column + '"',
         selected: Utils.getTableProperties(this.tableSettings.mode, this.tableSettings.stationColumns, this.tableSettings.deliveryColumns)
           .includes(column)
       });

@@ -140,7 +140,7 @@ export class TableComponent implements OnInit {
 
     this.columns = this.getUpdatedColumns([selectColumn].concat(properties.map(prop => {
       return {
-        name: Constants.PROPERTIES.has(prop) ? Constants.PROPERTIES.get(prop).name : prop,
+        name: Constants.PROPERTIES.has(prop) ? Constants.PROPERTIES.get(prop).name : '"' + prop + '"',
         prop: prop,
         resizeable: false,
         draggable: false,
