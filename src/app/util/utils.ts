@@ -90,9 +90,9 @@ export class Utils {
 
   static mixColors(color1: Color, color2: Color): Color {
     return {
-      r: Math.round((color1[0] + color2[0]) / 2),
-      g: Math.round((color1[1] + color2[1]) / 2),
-      b: Math.round((color1[2] + color2[2]) / 2)
+      r: Math.round((color1.r + color2.r) / 2),
+      g: Math.round((color1.g + color2.g) / 2),
+      b: Math.round((color1.b + color2.b) / 2)
     };
   }
 
