@@ -15,7 +15,9 @@ describe('StationPropertiesComponent', () => {
         observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null, commonLink: null,
         position: null, positionRelativeTo: null, properties: []
       },
-      deliveries: new Map()
+      deliveries: new Map(),
+      connectedStations: new Map(),
+      hoverDeliveries: null
     };
 
     TestBed.configureTestingModule({

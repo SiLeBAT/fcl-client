@@ -11,7 +11,11 @@ describe('DialogSelectComponent', () => {
   beforeEach(async(() => {
     const data: DialogSelectData = {
       title: 'Prompt',
-      options: [{name: 'Eins', selected: true}, {name: 'Zwei', selected: false}, {name: 'Drei', selected: true}]
+      options: [
+        {value: 'Eins', viewValue: 'Eins', selected: true},
+        {value: 'Zwei', viewValue: 'Zwei', selected: false},
+        {value: 'Drei', viewValue: 'Drei', selected: true}
+      ]
     };
 
     TestBed.configureTestingModule({
