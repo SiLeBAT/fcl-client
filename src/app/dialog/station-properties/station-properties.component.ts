@@ -501,14 +501,13 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private updateConnectLine() {
     if (this.selected != null) {
-      const mouseEvent: MouseEvent = this.d3.event;
-      const svgPos = this.svg.node().getBoundingClientRect();
+      const mousePos = this.d3.mouse(this.svg.node());
 
       this.connectLine.attr('d', StationPropertiesComponent.line(
         this.selected.x + StationPropertiesComponent.NODE_WIDTH,
         this.selected.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-        mouseEvent.clientX - svgPos.left,
-        mouseEvent.clientY - svgPos.top
+        mousePos[0],
+        mousePos[1]
       ));
     }
   }
