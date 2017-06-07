@@ -9,8 +9,6 @@ import {Utils} from './util/utils';
 import {FclData, FclElements, TableMode} from './util/datatypes';
 import {Constants} from './util/constants';
 
-declare const Hammer;
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
