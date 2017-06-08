@@ -3,17 +3,10 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~@swimlane/ngx-datatable/release/index.css";
 @import "~@swimlane/ngx-datatable/release/assets/icons.css";
-@import "./app/table/ngx-datatable-style.css";
+@import "material-style.css";
+@import "ngx-datatable-style.css";
 
 body {
   margin: 0;
   overflow: hidden;
-}
-
-md-card {
-  padding: 18px !important;
-}
-
-md-card-title {
-  font-size: 18px !important;
 }
