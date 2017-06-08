@@ -59,10 +59,8 @@ class DataOptimizer {
   }
 
   optimize() {
-    for (let i = 0; i < 1; i++) {
-      this.step(this.inIds, this.inConnections, this.outIds);
-      this.step(this.outIds, this.outConnections, this.inIds);
-    }
+    this.step(this.inIds, this.inConnections, this.outIds);
+    this.step(this.outIds, this.outConnections, this.inIds);
 
     const nodesInById: Map<string, NodeDatum> = new Map();
     const nodesOutById: Map<string, NodeDatum> = new Map();
@@ -146,11 +144,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private static line(x1: number, y1: number, x2: number, y2: number) {
     return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
-  }
-
-  private static updatePaths(paths: Selection<any, any, any, any>, hidden: boolean, hovered: boolean) {
-    paths.style('fill', 'none').style('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)')
-      .style('stroke-width', hidden ? 0 : '6px').style('cursor', 'default');
   }
 
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
@@ -238,11 +231,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     if (this.height != null) {
       this.svg = this.d3
         .select('#in-out-connector').append<SVGGElement>('svg')
-        .style('display', 'block')
+        .attr('display', 'block')
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
         .on('click', () => {
           this.selected = null;
-          StationPropertiesComponent.updatePaths(this.connectLine, true, false);
+          this.connectLine.attr('visibility', 'hidden');
         });
 
       const defs = this.svg.append<SVGElement>('defs');
@@ -257,10 +250,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         .attr('orient', 'auto')
         .append('path')
         .attr('d', 'M0,-5L10,0L0,5')
-        .style('fill', 'rgb(0, 0, 0)');
+        .attr('fill', 'rgb(0, 0, 0)');
 
-      this.connectLine = g.append<SVGElement>('path').attr('marker-end', 'url(#end-arrow)');
-      StationPropertiesComponent.updatePaths(this.connectLine, true, false);
+      this.connectLine = g.append<SVGElement>('path').attr('marker-end', 'url(#end-arrow)').attr('visibility', 'hidden')
+        .attr('fill', 'none').attr('stroke', 'rgb(0, 0, 0)').attr('stroke-width', '6px').attr('cursor', 'default');
       this.edgesG = g.append<SVGElement>('g');
       this.nodesInG = g.append<SVGElement>('g');
       this.nodesOutG = g.append<SVGElement>('g');
@@ -417,54 +410,57 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private addNodes() {
-    const updateStyle = (nodes: Selection<SVGElement, NodeDatum, any, any>, hovered: boolean) => {
-      nodes.selectAll('rect').style('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
-        .style('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)').style('stroke-width', '2px');
+    const updateColor = (nodes: Selection<SVGElement, any, any, any>, hovered: boolean) => {
+      nodes.selectAll('rect')
+        .attr('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
+        .attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
     };
     const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
       nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-      nodes.append('rect')
+      nodes.append('rect').attr('stroke-width', '2px')
         .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
 
-      updateStyle(nodes, false);
+      updateColor(nodes, false);
 
       const text = nodes.append('text').attr('text-anchor', 'left');
 
-      text.append('tspan').attr('x', 5).attr('dy', 15).style('font-size', '14px')
+      text.append('tspan').attr('x', 5).attr('dy', 15).attr('font-size', '14px')
         .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name);
-      text.filter(d => d.station != null).append('tspan').attr('x', 5).attr('dy', 15).style('font-size', '14px')
+      text.filter(d => d.station != null).append('tspan').attr('x', 5).attr('dy', 15).attr('font-size', '14px')
         .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
-      text.filter(d => d.date != null).append('tspan').attr('x', 5).attr('dy', 15).style('font-size', '12px').text(d => d.date);
+      text.filter(d => d.date != null).append('tspan').attr('x', 5).attr('dy', 15).attr('font-size', '12px').text(d => d.date);
     };
 
-    const nodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter().append<SVGElement>('g');
-    const nodesOut = this.nodesOutG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeOutData, d => d.id).enter().append<SVGElement>('g');
+    const newNodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter()
+      .append<SVGElement>('g');
+    const newNodesOut = this.nodesOutG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeOutData, d => d.id).enter()
+      .append<SVGElement>('g');
 
-    initRectAndText(nodesIn, true);
-    initRectAndText(nodesOut, false);
+    initRectAndText(newNodesIn, true);
+    initRectAndText(newNodesOut, false);
 
     const self = this;
 
-    nodesIn.on('mouseover', function (d) {
-      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), true);
+    newNodesIn.on('mouseover', function (d) {
+      updateColor(self.d3.select(this), true);
       self.data.hoverDeliveries.next([d.id]);
     }).on('mouseout', function () {
-      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), false);
+      updateColor(self.d3.select(this), false);
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.selected = d;
         self.updateConnectLine();
-        StationPropertiesComponent.updatePaths(self.connectLine, false, false);
+        self.connectLine.attr('visibility', 'visible');
         self.d3.event.stopPropagation();
       }
     });
 
-    nodesOut.on('mouseover', function (d) {
-      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), true);
+    newNodesOut.on('mouseover', function (d) {
+      updateColor(self.d3.select(this), true);
       self.data.hoverDeliveries.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
     }).on('mouseout', function () {
-      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), false);
+      updateColor(self.d3.select(this), false);
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected != null) {
@@ -480,32 +476,38 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private updateEdges() {
+    const updateColor = (edges: Selection<SVGElement, any, any, any>, hovered: boolean) => {
+      edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
+    };
+
     const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
       .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
-
-    const self = this;
-    const paths = edges.enter().append('path').attr('d', d => {
+    const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => {
       return StationPropertiesComponent.line(
         d.source.x + StationPropertiesComponent.NODE_WIDTH,
         d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
         d.target.x,
         d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
       );
-    }).on('mouseover', function () {
+    }).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
+
+    updateColor(newEdges, false);
+    edges.exit().remove();
+
+    const self = this;
+
+    newEdges.on('mouseover', function () {
       if (self.selected == null) {
-        StationPropertiesComponent.updatePaths(self.d3.select(this), false, true);
+        updateColor(self.d3.select(this), true);
       }
     }).on('mouseout', function () {
-      StationPropertiesComponent.updatePaths(self.d3.select(this), false, false);
+      updateColor(self.d3.select(this), false);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.edgeData.splice(self.edgeData.indexOf(d), 1);
         self.updateEdges();
       }
     });
-
-    StationPropertiesComponent.updatePaths(paths, false, false);
-    edges.exit().remove();
   }
 
   private updateConnectLine() {
