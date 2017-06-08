@@ -118,11 +118,6 @@ class DataOptimizer {
 })
 export class StationPropertiesComponent implements OnInit, OnDestroy {
 
-  private static readonly NODE = 'node';
-  private static readonly HOVER = 'hover';
-  private static readonly EDGE = 'edge';
-  private static readonly HIDDEN = 'hidden';
-
   private static readonly SVG_WIDTH = 600;
   private static readonly NODE_PADDING = 15;
   private static readonly NODE_WIDTH = 200;
@@ -151,6 +146,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private static line(x1: number, y1: number, x2: number, y2: number) {
     return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
+  }
+
+  private static updatePaths(paths: Selection<any, any, any, any>, hidden: boolean, hovered: boolean) {
+    paths.style('fill', 'none').style('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)')
+      .style('stroke-width', hidden ? 0 : '6px').style('cursor', 'default');
   }
 
   constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
@@ -238,10 +238,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     if (this.height != null) {
       this.svg = this.d3
         .select('#in-out-connector').append<SVGGElement>('svg')
+        .style('display', 'block')
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
         .on('click', () => {
           this.selected = null;
-          this.connectLine.classed(StationPropertiesComponent.HIDDEN, true);
+          StationPropertiesComponent.updatePaths(this.connectLine, true, false);
         });
 
       const defs = this.svg.append<SVGElement>('defs');
@@ -255,10 +256,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         .attr('markerHeight', 3.5)
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M0,-5L10,0L0,5');
+        .attr('d', 'M0,-5L10,0L0,5')
+        .style('fill', 'rgb(0, 0, 0)');
 
-      this.connectLine = g.append<SVGElement>('path').classed(StationPropertiesComponent.EDGE, true)
-        .classed(StationPropertiesComponent.HIDDEN, true).attr('marker-end', 'url(#end-arrow)');
+      this.connectLine = g.append<SVGElement>('path').attr('marker-end', 'url(#end-arrow)');
+      StationPropertiesComponent.updatePaths(this.connectLine, true, false);
       this.edgesG = g.append<SVGElement>('g');
       this.nodesInG = g.append<SVGElement>('g');
       this.nodesOutG = g.append<SVGElement>('g');
@@ -415,9 +417,16 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private addNodes() {
+    const updateStyle = (nodes: Selection<SVGElement, NodeDatum, any, any>, hovered: boolean) => {
+      nodes.selectAll('rect').style('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
+        .style('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)').style('stroke-width', '2px');
+    };
     const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
-      nodes.classed(StationPropertiesComponent.NODE, true).attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-      nodes.append('rect').attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
+      nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
+      nodes.append('rect')
+        .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
+
+      updateStyle(nodes, false);
 
       const text = nodes.append('text').attr('text-anchor', 'left');
 
@@ -437,25 +446,25 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     const self = this;
 
     nodesIn.on('mouseover', function (d) {
-      self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), true);
       self.data.hoverDeliveries.next([d.id]);
     }).on('mouseout', function () {
-      self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), false);
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.selected = d;
         self.updateConnectLine();
-        self.connectLine.classed(StationPropertiesComponent.HIDDEN, false);
+        StationPropertiesComponent.updatePaths(self.connectLine, false, false);
         self.d3.event.stopPropagation();
       }
     });
 
     nodesOut.on('mouseover', function (d) {
-      self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), true);
       self.data.hoverDeliveries.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
     }).on('mouseout', function () {
-      self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      updateStyle(self.d3.select<SVGElement, NodeDatum>(this), false);
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected != null) {
@@ -475,8 +484,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
 
     const self = this;
-
-    edges.enter().append('path').classed(StationPropertiesComponent.EDGE, true).attr('d', d => {
+    const paths = edges.enter().append('path').attr('d', d => {
       return StationPropertiesComponent.line(
         d.source.x + StationPropertiesComponent.NODE_WIDTH,
         d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
@@ -485,10 +493,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       );
     }).on('mouseover', function () {
       if (self.selected == null) {
-        self.d3.select(this).classed(StationPropertiesComponent.HOVER, true);
+        StationPropertiesComponent.updatePaths(self.d3.select(this), false, true);
       }
     }).on('mouseout', function () {
-      self.d3.select(this).classed(StationPropertiesComponent.HOVER, false);
+      StationPropertiesComponent.updatePaths(self.d3.select(this), false, false);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.edgeData.splice(self.edgeData.indexOf(d), 1);
@@ -496,6 +504,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       }
     });
 
+    StationPropertiesComponent.updatePaths(paths, false, false);
     edges.exit().remove();
   }
 
