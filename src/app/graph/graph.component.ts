@@ -16,7 +16,6 @@ import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
 import {Color, CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
-import {Legend} from './legend';
 import {Zooming} from './zooming';
 import {Constants} from '../util/constants';
 
@@ -57,6 +56,16 @@ export class GraphComponent implements OnInit {
   layoutMenuActions = this.createLayoutActions();
   traceMenuActions = this.createTraceActions(null);
 
+  legend: { name: string; color: string }[] = Constants.PROPERTIES_WITH_COLORS.toArray().map(p => {
+    const prop = Constants.PROPERTIES.get(p);
+
+    return {
+      name: prop.name,
+      color: Utils.colorToCss(prop.color)
+    };
+  });
+  showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
+
   private cy: any;
   private data: FclElements;
   private mergeMap: Map<string, string[]>;
@@ -66,14 +75,12 @@ export class GraphComponent implements OnInit {
   private mergeDeliveries = Constants.DEFAULT_GRAPH_MERGE_DELIVERIES;
   private nodeSize = Constants.DEFAULT_GRAPH_NODE_SIZE;
   private fontSize = Constants.DEFAULT_GRAPH_FONT_SIZE;
-  private showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
 
   private contextMenuElement: any;
   private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
   private zoom: Subject<boolean> = new Subject();
-  private legend: Subject<string[]> = new Subject();
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
 
@@ -91,7 +98,6 @@ export class GraphComponent implements OnInit {
       cytoscape.use(cola);
       cytoscape.use(dagre);
       cytoscape.use(spread);
-      cytoscape('core', 'legend', Legend);
       cytoscape('core', 'zooming', Zooming);
       cytoscape('layout', 'fruchterman', FruchtermanLayout);
     }
@@ -143,7 +149,6 @@ export class GraphComponent implements OnInit {
     });
 
     this.cy.zooming(this.zoom);
-    this.cy.legend(this.legend);
     this.cy.on('zoom', () => this.setFontSize(this.fontSize));
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
@@ -251,10 +256,6 @@ export class GraphComponent implements OnInit {
 
   setShowLegend(showLegend: boolean) {
     this.showLegend = showLegend;
-
-    if (this.cy != null) {
-      this.legend.next(showLegend ? Constants.PROPERTIES_WITH_COLORS.toArray() : []);
-    }
   }
 
   updateSelection() {
