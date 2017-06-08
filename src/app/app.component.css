@@ -42,14 +42,12 @@ md-sidenav {
 }
 
 #mainToolbar {
-  height: 64px !important;
-  justify-content: center !important;
   z-index: 3;
 }
 
 #mainContainer {
   width: 100%;
-  height: calc(100% - 64px);
+  height: calc(100% - 56px);
 }
 
 #mainContent {

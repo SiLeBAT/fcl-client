@@ -1,7 +1,22 @@
-md-card {
+.mat-toolbar {
+  min-height: 56px !important;
+}
+
+.mat-toolbar-row {
+  height: 56px !important;
+}
+
+.mat-card {
   padding: 18px !important;
 }
 
-md-card-title {
+.mat-card-title {
   font-size: 18px !important;
+}
+
+.mat-menu-item {
+  font-size: 14px !important;
+  font-weight: 500;
+  height: 40px !important;
+  line-height: 40px !important;
 }
