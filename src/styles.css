@@ -3,7 +3,6 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~@swimlane/ngx-datatable/release/index.css";
 @import "~@swimlane/ngx-datatable/release/assets/icons.css";
-@import "./app/graph/zooming.css";
 @import "./app/table/ngx-datatable-style.css";
 @import "./app/dialog/station-properties/in-out-connector.css";
 

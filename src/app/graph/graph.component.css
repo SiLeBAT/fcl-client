@@ -9,6 +9,77 @@
   height: 100%;
 }
 
+#zoom {
+  color: rgb(102, 102, 102);
+  user-select: none !important;
+}
+
+#zoom-in, #zoom-out, #zoom-reset {
+  position: absolute;
+  z-index: 1;
+  left: 16px;
+  width: 24px;
+  height: 24px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(153, 153, 153);
+  cursor: pointer;
+}
+
+/*noinspection CssUnusedSymbol*/
+#zoom-in:active, #zoom-out:active, #zoom-reset:active,
+#zoom-slider-handle:active, #zoom-slider-handle.active {
+  background: rgb(221, 221, 221);
+}
+
+#zoom-in {
+  top: 53px;
+}
+
+#zoom-out {
+  top: 179px;
+}
+
+#zoom-reset {
+  top: 20px;
+}
+
+#zoom-slider {
+  position: absolute;
+  top: 78px;
+  left: 20px;
+  width: 18px;
+  height: 100px;
+}
+
+#zoom-slider-background {
+  position: absolute;
+  z-index: 1;
+  left: 7px;
+  width: 2px;
+  height: 100px;
+  background: #fff;
+  border: 1px solid rgb(153, 153, 153);
+}
+
+#zoom-slider-handle {
+  position: absolute;
+  z-index: 3;
+  width: 16px;
+  height: 8px;
+  background: #fff;
+  border: 1px solid rgb(153, 153, 153);
+}
+
+#zoom-no-zoom-tick {
+  position: absolute;
+  z-index: 2;
+  left: 4px;
+  width: 8px;
+  height: 2px;
+  background: rgb(102, 102, 102);
+  border: 1px solid #fff;
+}
+
 #legend {
   z-index: 20;
   position: absolute;

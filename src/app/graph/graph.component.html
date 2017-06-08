@@ -1,5 +1,15 @@
 <div id="graphContainer">
   <div id="cy">
+    <div id="zoom">
+      <div id="zoom-in"><i class="material-icons">add</i></div>
+      <div id="zoom-out"><i class="material-icons">remove</i></div>
+      <div id="zoom-reset"><i class="material-icons">zoom_out_map</i></div>
+      <div id="zoom-slider">
+        <div id="zoom-slider-background"></div>
+        <div id="zoom-slider-handle"></div>
+        <div id="zoom-no-zoom-tick"></div>
+      </div>
+    </div>
     <div id="legend" *ngIf="showLegend">
       <md-card>
         <md-card-content>

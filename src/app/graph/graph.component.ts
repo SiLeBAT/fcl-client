@@ -16,7 +16,6 @@ import {Utils} from '../util/utils';
 import {TracingService} from './tracing.service';
 import {Color, CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
-import {Zooming} from './zooming';
 import {Constants} from '../util/constants';
 
 interface MenuAction {
@@ -32,13 +31,16 @@ interface MenuAction {
 })
 export class GraphComponent implements OnInit {
 
-  private static NODE_SIZES: Map<Size, number> = new Map([
+  private static readonly ZOOM_FACTOR = 1.5;
+  private static readonly SLIDER_PADDING = 2;
+
+  private static readonly NODE_SIZES: Map<Size, number> = new Map([
     [Size.SMALL, 50],
     [Size.MEDIUM, 75],
     [Size.LARGE, 100]
   ]);
 
-  private static FONT_SIZES: Map<Size, number> = new Map([
+  private static readonly FONT_SIZES: Map<Size, number> = new Map([
     [Size.SMALL, 10],
     [Size.MEDIUM, 14],
     [Size.LARGE, 18]
@@ -56,6 +58,8 @@ export class GraphComponent implements OnInit {
   layoutMenuActions = this.createLayoutActions();
   traceMenuActions = this.createTraceActions(null);
 
+  showZoom = true;
+  showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
   legend: { name: string; color: string }[] = Constants.PROPERTIES_WITH_COLORS.toArray().map(p => {
     const prop = Constants.PROPERTIES.get(p);
 
@@ -64,7 +68,6 @@ export class GraphComponent implements OnInit {
       color: Utils.colorToCss(prop.color)
     };
   });
-  showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
 
   private cy: any;
   private data: FclElements;
@@ -80,9 +83,18 @@ export class GraphComponent implements OnInit {
   private selectTimerActivated = true;
   private resizeTimer: any;
   private selectTimer: any;
-  private zoom: Subject<boolean> = new Subject();
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
+
+  private zoomDiv: HTMLElement;
+  private zoomIn: HTMLElement;
+  private zoomOut: HTMLElement;
+  private reset: HTMLElement;
+  private slider: HTMLElement;
+  private sliderHandle: HTMLElement;
+  private noZoomTick: HTMLElement;
+  private zooming = false;
+  private sliding = false;
 
   private static getCyCoordinates(event: MouseEvent): Position {
     const cyRect = document.getElementById('cy').getBoundingClientRect();
@@ -93,12 +105,17 @@ export class GraphComponent implements OnInit {
     };
   }
 
+  private static getHeightWithoutBorder(element: HTMLElement) {
+    const style: CSSStyleDeclaration = getComputedStyle(element);
+
+    return element.offsetHeight - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
+  }
+
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
     if (cytoscape != null) {
       cytoscape.use(cola);
       cytoscape.use(dagre);
       cytoscape.use(spread);
-      cytoscape('core', 'zooming', Zooming);
       cytoscape('layout', 'fruchterman', FruchtermanLayout);
     }
   }
@@ -148,8 +165,24 @@ export class GraphComponent implements OnInit {
       wheelSensitivity: 0.5,
     });
 
-    this.cy.zooming(this.zoom);
-    this.cy.on('zoom', () => this.setFontSize(this.fontSize));
+    this.zoomDiv = document.getElementById('zoom');
+    this.zoomDiv.onmousedown = e => e.stopPropagation();
+    this.zoomDiv.ontouchstart = e => e.stopPropagation();
+    this.zoomIn = document.getElementById('zoom-in');
+    this.zoomOut = document.getElementById('zoom-out');
+    this.reset = document.getElementById('zoom-reset');
+    this.slider = document.getElementById('zoom-slider');
+    this.sliderHandle = document.getElementById('zoom-slider-handle');
+    this.noZoomTick = document.getElementById('zoom-no-zoom-tick');
+
+    this.addZoomListeners();
+    this.cy.on('zoom', () => {
+      this.setFontSize(this.fontSize);
+
+      if (!this.sliding) {
+        this.setSliderFromZoom();
+      }
+    });
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
     this.cy.on('position', event => this.tracingService.getStationsById([event.target.id()])[0].position = event.target.position());
@@ -191,6 +224,8 @@ export class GraphComponent implements OnInit {
 
     this.setFontSize(this.fontSize);
     this.setShowLegend(this.showLegend);
+    this.setTickToNoZoom();
+    this.setSliderFromZoom();
 
     for (const s of data.stations) {
       const pos = this.cy.getElementById(s.id).position();
@@ -215,11 +250,11 @@ export class GraphComponent implements OnInit {
 
   getCanvas(): Promise<HTMLCanvasElement> {
     return new Promise(resolve => {
-      this.zoom.next(false);
+      this.showZoom = false;
       //noinspection JSUnusedGlobalSymbols
       html2canvas(document.getElementById('graphContainer'), {
         onrendered: (canvas) => {
-          this.zoom.next(true);
+          this.showZoom = true;
           resolve(canvas);
         }
       });
@@ -860,4 +895,106 @@ export class GraphComponent implements OnInit {
     }
   }
 
+  private zoomTo(newZoom: number) {
+    newZoom = Math.min(Math.max(newZoom, this.cy.minZoom()), this.cy.maxZoom());
+
+    if (newZoom !== this.cy.zoom()) {
+      this.cy.zoom({
+        level: newZoom,
+        renderedPosition: {x: document.getElementById('cy').offsetWidth / 2, y: document.getElementById('cy').offsetHeight / 2}
+      });
+    }
+  }
+
+  private setSliderFromMouse(e: MouseEvent) {
+    const minPos = GraphComponent.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - GraphComponent.getHeightWithoutBorder(this.sliderHandle) - GraphComponent.SLIDER_PADDING;
+    const pos = Math.min(Math.max(e.pageY - this.slider.getBoundingClientRect().top - this.sliderHandle.offsetHeight / 2, minPos), maxPos);
+
+    this.sliderHandle.style.top = pos + 'px';
+
+    const percent = 1 - (pos - minPos) / (maxPos - minPos);
+    const minZoom = this.cy.minZoom();
+    const maxZoom = this.cy.maxZoom();
+
+    this.zoomTo(Math.pow(maxZoom, percent + Math.log(minZoom) / Math.log(maxZoom) * (1 - percent)));
+  }
+
+  private setSliderFromZoom() {
+    const minZoom = this.cy.minZoom();
+    const maxZoom = this.cy.maxZoom();
+    const percent = 1 - Math.log(this.cy.zoom() / minZoom) / Math.log(maxZoom / minZoom);
+    const minPos = GraphComponent.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - GraphComponent.getHeightWithoutBorder(this.sliderHandle) - GraphComponent.SLIDER_PADDING;
+
+    this.sliderHandle.style.top = Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos) + 'px';
+  }
+
+  private setTickToNoZoom() {
+    const minZoom = this.cy.minZoom();
+    const maxZoom = this.cy.maxZoom();
+    const percent = 1 - Math.log(1 / minZoom) / Math.log(maxZoom / minZoom);
+    const minPos = GraphComponent.SLIDER_PADDING;
+    const maxPos = this.slider.offsetHeight - GraphComponent.getHeightWithoutBorder(this.noZoomTick) - GraphComponent.SLIDER_PADDING;
+
+    this.noZoomTick.style.top = Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos) + 'px';
+  }
+
+  private addZoomListeners() {
+    new Hammer(this.zoomIn).on('tap pressup', () => {
+      this.zooming = true;
+      this.zoomTo(this.cy.zoom() * GraphComponent.ZOOM_FACTOR);
+      this.zooming = false;
+    });
+    new Hammer(this.zoomOut).on('tap pressup', () => {
+      this.zooming = true;
+      this.zoomTo(this.cy.zoom() / GraphComponent.ZOOM_FACTOR);
+      this.zooming = false;
+    });
+    new Hammer(this.reset).on('tap pressup', () => {
+      if (this.cy.elements().size() === 0) {
+        this.cy.reset();
+      } else {
+        this.cy.nodes().style({'font-size': 0});
+        this.cy.fit();
+      }
+    });
+
+    const sliderHammer = new Hammer(this.slider);
+
+    sliderHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
+    sliderHammer.on('press tap', e => {
+      this.setSliderFromMouse(e.srcEvent);
+    });
+    sliderHammer.on('panstart', () => {
+      this.sliding = true;
+      this.zooming = true;
+      this.sliderHandle.className = 'active';
+    });
+    sliderHammer.on('panmove', e => {
+      this.setSliderFromMouse(e.srcEvent);
+    });
+    sliderHammer.on('panend', () => {
+      this.sliding = false;
+      this.zooming = false;
+      this.sliderHandle.className = '';
+    });
+
+    const sliderHandleHammer = new Hammer(this.sliderHandle);
+
+    sliderHandleHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
+    sliderHandleHammer.on('panstart', () => {
+      this.sliding = true;
+      this.zooming = true;
+      this.sliderHandle.className = 'active';
+    });
+    sliderHandleHammer.on('panmove', e => {
+      this.setSliderFromMouse(e.srcEvent);
+    });
+    sliderHandleHammer.on('panend', () => {
+      this.sliding = false;
+      this.zooming = false;
+      this.sliderHandle.className = '';
+    });
+  }
 }
