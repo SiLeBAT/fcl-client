@@ -18,11 +18,6 @@
   position: absolute;
   z-index: 1;
   left: 16px;
-  width: 24px;
-  height: 24px;
-  background: rgb(255, 255, 255);
-  border: 1px solid rgb(153, 153, 153);
-  cursor: pointer;
 }
 
 /*noinspection CssUnusedSymbol*/
@@ -32,11 +27,11 @@
 }
 
 #zoom-in {
-  top: 53px;
+  top: 69px;
 }
 
 #zoom-out {
-  top: 179px;
+  top: 211px;
 }
 
 #zoom-reset {
@@ -45,8 +40,8 @@
 
 #zoom-slider {
   position: absolute;
-  top: 78px;
-  left: 20px;
+  top: 110px;
+  left: 27px;
   width: 18px;
   height: 100px;
 }

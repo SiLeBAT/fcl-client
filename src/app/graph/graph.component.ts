@@ -87,9 +87,6 @@ export class GraphComponent implements OnInit {
   private hoverableEdges: any;
 
   private zoomDiv: HTMLElement;
-  private zoomIn: HTMLElement;
-  private zoomOut: HTMLElement;
-  private reset: HTMLElement;
   private slider: HTMLElement;
   private sliderHandle: HTMLElement;
   private noZoomTick: HTMLElement;
@@ -168,9 +165,6 @@ export class GraphComponent implements OnInit {
     this.zoomDiv = document.getElementById('zoom');
     this.zoomDiv.onmousedown = e => e.stopPropagation();
     this.zoomDiv.ontouchstart = e => e.stopPropagation();
-    this.zoomIn = document.getElementById('zoom-in');
-    this.zoomOut = document.getElementById('zoom-out');
-    this.reset = document.getElementById('zoom-reset');
     this.slider = document.getElementById('zoom-slider');
     this.sliderHandle = document.getElementById('zoom-slider-handle');
     this.noZoomTick = document.getElementById('zoom-no-zoom-tick');
@@ -311,6 +305,27 @@ export class GraphComponent implements OnInit {
       }
 
       this.selectTimerActivated = true;
+    }
+  }
+
+  zoomInPressed() {
+    this.zooming = true;
+    this.zoomTo(this.cy.zoom() * GraphComponent.ZOOM_FACTOR);
+    this.zooming = false;
+  }
+
+  zoomOutPressed() {
+    this.zooming = true;
+    this.zoomTo(this.cy.zoom() / GraphComponent.ZOOM_FACTOR);
+    this.zooming = false;
+  }
+
+  zoomResetPressed() {
+    if (this.cy.elements().size() === 0) {
+      this.cy.reset();
+    } else {
+      this.cy.nodes().style({'font-size': 0});
+      this.cy.fit();
     }
   }
 
@@ -941,25 +956,6 @@ export class GraphComponent implements OnInit {
   }
 
   private addZoomListeners() {
-    new Hammer(this.zoomIn).on('tap pressup', () => {
-      this.zooming = true;
-      this.zoomTo(this.cy.zoom() * GraphComponent.ZOOM_FACTOR);
-      this.zooming = false;
-    });
-    new Hammer(this.zoomOut).on('tap pressup', () => {
-      this.zooming = true;
-      this.zoomTo(this.cy.zoom() / GraphComponent.ZOOM_FACTOR);
-      this.zooming = false;
-    });
-    new Hammer(this.reset).on('tap pressup', () => {
-      if (this.cy.elements().size() === 0) {
-        this.cy.reset();
-      } else {
-        this.cy.nodes().style({'font-size': 0});
-        this.cy.fit();
-      }
-    });
-
     const sliderHammer = new Hammer(this.slider);
 
     sliderHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});

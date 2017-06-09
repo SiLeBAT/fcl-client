@@ -1,9 +1,15 @@
 <div id="graphContainer">
   <div id="cy">
     <div id="zoom">
-      <div id="zoom-in"><i class="material-icons">add</i></div>
-      <div id="zoom-out"><i class="material-icons">remove</i></div>
-      <div id="zoom-reset"><i class="material-icons">zoom_out_map</i></div>
+      <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
+        <md-icon>add</md-icon>
+      </button>
+      <button id="zoom-out" md-mini-fab (click)="zoomOutPressed()">
+        <md-icon>remove</md-icon>
+      </button>
+      <button id="zoom-reset" md-mini-fab (click)="zoomResetPressed()">
+        <md-icon>zoom_out_map</md-icon>
+      </button>
       <div id="zoom-slider">
         <div id="zoom-slider-background"></div>
         <div id="zoom-slider-handle"></div>
