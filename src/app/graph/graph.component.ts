@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MdDialog, MdMenuTrigger} from '@angular/material';
+import {MdDialog, MdMenuTrigger, MdSlider} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
@@ -44,6 +44,8 @@ export class GraphComponent implements OnInit {
     [Size.MEDIUM, 14],
     [Size.LARGE, 18]
   ]);
+
+  @ViewChild('slider') slider: MdSlider;
 
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
@@ -312,7 +314,7 @@ export class GraphComponent implements OnInit {
 
   sliderChanged() {
     this.sliding = true;
-    this.zoomTo(Math.exp(this.zoomSliderValue / 100 * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
+    this.zoomTo(Math.exp(this.slider.value / 100 * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
     this.sliding = false;
   }
 
