@@ -14,6 +14,7 @@ import {
   MdRadioModule,
   MdSelectModule,
   MdSidenavModule,
+  MdSliderModule,
   MdToolbarModule
 } from '@angular/material';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
@@ -60,6 +61,7 @@ import {TracingService} from './graph/tracing.service';
     MdRadioModule,
     MdSelectModule,
     MdSidenavModule,
+    MdSliderModule,
     MdToolbarModule,
     NgxDatatableModule
   ],

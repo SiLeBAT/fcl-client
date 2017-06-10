@@ -20,18 +20,12 @@
   left: 16px;
 }
 
-/*noinspection CssUnusedSymbol*/
-#zoom-in:active, #zoom-out:active, #zoom-reset:active,
-#zoom-slider-handle:active, #zoom-slider-handle.active {
-  background: rgb(221, 221, 221);
-}
-
 #zoom-in {
   top: 69px;
 }
 
 #zoom-out {
-  top: 211px;
+  top: 239px;
 }
 
 #zoom-reset {
@@ -40,39 +34,10 @@
 
 #zoom-slider {
   position: absolute;
-  top: 110px;
-  left: 27px;
-  width: 18px;
-  height: 100px;
-}
-
-#zoom-slider-background {
-  position: absolute;
   z-index: 1;
-  left: 7px;
-  width: 2px;
-  height: 100px;
-  background: #fff;
-  border: 1px solid rgb(153, 153, 153);
-}
-
-#zoom-slider-handle {
-  position: absolute;
-  z-index: 3;
-  width: 16px;
-  height: 8px;
-  background: #fff;
-  border: 1px solid rgb(153, 153, 153);
-}
-
-#zoom-no-zoom-tick {
-  position: absolute;
-  z-index: 2;
-  left: 4px;
-  width: 8px;
-  height: 2px;
-  background: rgb(102, 102, 102);
-  border: 1px solid #fff;
+  top: 110px;
+  left: 12px;
+  height: 90px;
 }
 
 #legend {

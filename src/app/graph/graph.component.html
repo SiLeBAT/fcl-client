@@ -10,11 +10,8 @@
       <button id="zoom-reset" md-mini-fab (click)="zoomResetPressed()">
         <md-icon>zoom_out_map</md-icon>
       </button>
-      <div id="zoom-slider">
-        <div id="zoom-slider-background"></div>
-        <div id="zoom-slider-handle"></div>
-        <div id="zoom-no-zoom-tick"></div>
-      </div>
+      <md-slider id="zoom-slider" [(ngModel)]="zoomSliderValue" [vertical]="true" (slideend)="sliderChanged()">
+      </md-slider>
     </div>
     <div id="legend" *ngIf="showLegend">
       <md-card>

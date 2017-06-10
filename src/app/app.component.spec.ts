@@ -9,6 +9,7 @@ import {
   MdRadioModule,
   MdSelectModule,
   MdSidenavModule,
+  MdSliderModule,
   MdToolbarModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
@@ -40,6 +41,7 @@ describe('AppComponent', () => {
         MdRadioModule,
         MdSelectModule,
         MdSidenavModule,
+        MdSliderModule,
         MdToolbarModule,
         NgxDatatableModule
       ],

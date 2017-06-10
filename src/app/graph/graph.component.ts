@@ -32,7 +32,6 @@ interface MenuAction {
 export class GraphComponent implements OnInit {
 
   private static readonly ZOOM_FACTOR = 1.5;
-  private static readonly SLIDER_PADDING = 2;
 
   private static readonly NODE_SIZES: Map<Size, number> = new Map([
     [Size.SMALL, 50],
@@ -68,6 +67,9 @@ export class GraphComponent implements OnInit {
       color: Utils.colorToCss(prop.color)
     };
   });
+  zoomSliderValue: number;
+
+  private sliding = false;
 
   private cy: any;
   private data: FclElements;
@@ -86,13 +88,6 @@ export class GraphComponent implements OnInit {
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
 
-  private zoomDiv: HTMLElement;
-  private slider: HTMLElement;
-  private sliderHandle: HTMLElement;
-  private noZoomTick: HTMLElement;
-  private zooming = false;
-  private sliding = false;
-
   private static getCyCoordinates(event: MouseEvent): Position {
     const cyRect = document.getElementById('cy').getBoundingClientRect();
 
@@ -100,12 +95,6 @@ export class GraphComponent implements OnInit {
       x: event.pageX - cyRect.left,
       y: event.pageY - cyRect.top
     };
-  }
-
-  private static getHeightWithoutBorder(element: HTMLElement) {
-    const style: CSSStyleDeclaration = getComputedStyle(element);
-
-    return element.offsetHeight - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
   }
 
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
@@ -141,6 +130,11 @@ export class GraphComponent implements OnInit {
     this.deliveryMenuTrigger.onMenuOpen.subscribe(() => this.updateOverlay());
     this.deliveryMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
     this.traceMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
+
+    const zoomDiv = document.getElementById('zoom');
+
+    zoomDiv.onmousedown = e => e.stopPropagation();
+    zoomDiv.ontouchstart = e => e.stopPropagation();
   }
 
   init(data: FclElements, layout: any) {
@@ -162,19 +156,11 @@ export class GraphComponent implements OnInit {
       wheelSensitivity: 0.5,
     });
 
-    this.zoomDiv = document.getElementById('zoom');
-    this.zoomDiv.onmousedown = e => e.stopPropagation();
-    this.zoomDiv.ontouchstart = e => e.stopPropagation();
-    this.slider = document.getElementById('zoom-slider');
-    this.sliderHandle = document.getElementById('zoom-slider-handle');
-    this.noZoomTick = document.getElementById('zoom-no-zoom-tick');
-
-    this.addZoomListeners();
     this.cy.on('zoom', () => {
       this.setFontSize(this.fontSize);
 
       if (!this.sliding) {
-        this.setSliderFromZoom();
+        this.updateSlider();
       }
     });
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
@@ -218,8 +204,7 @@ export class GraphComponent implements OnInit {
 
     this.setFontSize(this.fontSize);
     this.setShowLegend(this.showLegend);
-    this.setTickToNoZoom();
-    this.setSliderFromZoom();
+    this.updateSlider();
 
     for (const s of data.stations) {
       const pos = this.cy.getElementById(s.id).position();
@@ -309,15 +294,11 @@ export class GraphComponent implements OnInit {
   }
 
   zoomInPressed() {
-    this.zooming = true;
     this.zoomTo(this.cy.zoom() * GraphComponent.ZOOM_FACTOR);
-    this.zooming = false;
   }
 
   zoomOutPressed() {
-    this.zooming = true;
     this.zoomTo(this.cy.zoom() / GraphComponent.ZOOM_FACTOR);
-    this.zooming = false;
   }
 
   zoomResetPressed() {
@@ -327,6 +308,12 @@ export class GraphComponent implements OnInit {
       this.cy.nodes().style({'font-size': 0});
       this.cy.fit();
     }
+  }
+
+  sliderChanged() {
+    this.sliding = true;
+    this.zoomTo(Math.exp(this.zoomSliderValue / 100 * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
+    this.sliding = false;
   }
 
   private createNodes(): CyNode[] {
@@ -921,76 +908,8 @@ export class GraphComponent implements OnInit {
     }
   }
 
-  private setSliderFromMouse(e: MouseEvent) {
-    const minPos = GraphComponent.SLIDER_PADDING;
-    const maxPos = this.slider.offsetHeight - GraphComponent.getHeightWithoutBorder(this.sliderHandle) - GraphComponent.SLIDER_PADDING;
-    const pos = Math.min(Math.max(e.pageY - this.slider.getBoundingClientRect().top - this.sliderHandle.offsetHeight / 2, minPos), maxPos);
-
-    this.sliderHandle.style.top = pos + 'px';
-
-    const percent = 1 - (pos - minPos) / (maxPos - minPos);
-    const minZoom = this.cy.minZoom();
-    const maxZoom = this.cy.maxZoom();
-
-    this.zoomTo(Math.pow(maxZoom, percent + Math.log(minZoom) / Math.log(maxZoom) * (1 - percent)));
-  }
-
-  private setSliderFromZoom() {
-    const minZoom = this.cy.minZoom();
-    const maxZoom = this.cy.maxZoom();
-    const percent = 1 - Math.log(this.cy.zoom() / minZoom) / Math.log(maxZoom / minZoom);
-    const minPos = GraphComponent.SLIDER_PADDING;
-    const maxPos = this.slider.offsetHeight - GraphComponent.getHeightWithoutBorder(this.sliderHandle) - GraphComponent.SLIDER_PADDING;
-
-    this.sliderHandle.style.top = Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos) + 'px';
-  }
-
-  private setTickToNoZoom() {
-    const minZoom = this.cy.minZoom();
-    const maxZoom = this.cy.maxZoom();
-    const percent = 1 - Math.log(1 / minZoom) / Math.log(maxZoom / minZoom);
-    const minPos = GraphComponent.SLIDER_PADDING;
-    const maxPos = this.slider.offsetHeight - GraphComponent.getHeightWithoutBorder(this.noZoomTick) - GraphComponent.SLIDER_PADDING;
-
-    this.noZoomTick.style.top = Math.min(Math.max(percent * (maxPos - minPos) + minPos, minPos), maxPos) + 'px';
-  }
-
-  private addZoomListeners() {
-    const sliderHammer = new Hammer(this.slider);
-
-    sliderHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
-    sliderHammer.on('press tap', e => {
-      this.setSliderFromMouse(e.srcEvent);
-    });
-    sliderHammer.on('panstart', () => {
-      this.sliding = true;
-      this.zooming = true;
-      this.sliderHandle.className = 'active';
-    });
-    sliderHammer.on('panmove', e => {
-      this.setSliderFromMouse(e.srcEvent);
-    });
-    sliderHammer.on('panend', () => {
-      this.sliding = false;
-      this.zooming = false;
-      this.sliderHandle.className = '';
-    });
-
-    const sliderHandleHammer = new Hammer(this.sliderHandle);
-
-    sliderHandleHammer.get('pan').set({threshold: 1, direction: Hammer.DIRECTION_ALL});
-    sliderHandleHammer.on('panstart', () => {
-      this.sliding = true;
-      this.zooming = true;
-      this.sliderHandle.className = 'active';
-    });
-    sliderHandleHammer.on('panmove', e => {
-      this.setSliderFromMouse(e.srcEvent);
-    });
-    sliderHandleHammer.on('panend', () => {
-      this.sliding = false;
-      this.zooming = false;
-      this.sliderHandle.className = '';
-    });
+  private updateSlider() {
+    this.zoomSliderValue =
+      Math.round(Math.log(this.cy.zoom() / this.cy.minZoom()) / Math.log(this.cy.maxZoom() / this.cy.minZoom()) * 100);
   }
 }
