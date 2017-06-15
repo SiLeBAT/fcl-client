@@ -8,12 +8,6 @@
   flex-direction: column;
 }
 
-md-sidenav {
-  box-shadow: none !important;
-  border-left: 1px solid rgba(0, 0, 0, 0.4) !important;
-  border-right: 1px solid rgba(0, 0, 0, 0.4) !important;
-}
-
 .sidenav-elements {
   padding: 8px 16px;
   display: flex;
