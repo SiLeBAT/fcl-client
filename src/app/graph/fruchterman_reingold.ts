@@ -32,10 +32,10 @@ class FruchtermanLayoutClass {
 
   run() {
     const cy = this.options.cy;
-    const width = cy.width();
-    const height = cy.height();
+    const width: number = cy.width();
+    const height: number = cy.height();
     const graph = new Graph();
-    const vertices = new Map();
+    const vertices: Map<string, Vertex> = new Map();
     const elementIds: Set<string> = new Set();
 
     this.options.eles.each(e => elementIds.add(e.id()));
