@@ -11,7 +11,7 @@
 
 #zoom {
   color: rgb(102, 102, 102);
-  user-select: none !important;
+  user-select: none;
 }
 
 #zoom-in, #zoom-out, #zoom-reset {
@@ -45,7 +45,7 @@
   position: absolute;
   left: 16px;
   bottom: 20px;
-  user-select: none !important;
+  user-select: none;
 }
 
 #legend td {
