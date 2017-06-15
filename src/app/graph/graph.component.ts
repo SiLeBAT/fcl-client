@@ -716,6 +716,8 @@ export class GraphComponent implements OnInit {
           };
 
           this.dialogService.open(DialogPromptComponent, {data: dialogData}).afterClosed().subscribe(name => {
+            this.updateOverlay();
+
             if (name != null) {
               this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
               this.updateAll();
@@ -740,9 +742,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Show Properties',
         enabled: true,
-        action: (event) => {
-          console.log(event);
-
+        action: () => {
           if (this.mergeMap.has(edge.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!').afterClosed()
               .subscribe(() => this.updateOverlay());
