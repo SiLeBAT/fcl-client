@@ -464,7 +464,6 @@ export class GraphComponent implements OnInit {
     let style = cytoscape.stylesheet()
       .selector('*')
       .style({
-        'font-family': 'Roboto, Helvetica Neue, sans-serif',
         'overlay-color': 'rgb(0, 0, 255)',
         'overlay-padding': 10,
         'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0

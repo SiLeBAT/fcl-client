@@ -51,10 +51,12 @@
 }
 
 #leftSidenav {
+  background-color: rgb(245, 245, 245);
   z-index: 2;
 }
 
 #rightSidenav {
+  background-color: rgb(245, 245, 245);
   min-width: 200px;
   z-index: 1;
 }
