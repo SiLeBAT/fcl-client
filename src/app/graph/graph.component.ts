@@ -59,7 +59,7 @@ export class GraphComponent implements OnInit {
   layoutMenuActions = this.createLayoutActions();
   traceMenuActions = this.createTraceActions(null);
 
-  showZoom = true;
+  showZoom = Constants.DEFAULT_GRAPH_SHOW_ZOOM;
   showLegend = Constants.DEFAULT_GRAPH_SHOW_LEGEND;
   legend: { name: string; color: string }[] = Constants.PROPERTIES_WITH_COLORS.toArray().map(p => {
     const prop = Constants.PROPERTIES.get(p);
@@ -132,11 +132,6 @@ export class GraphComponent implements OnInit {
     this.deliveryMenuTrigger.onMenuOpen.subscribe(() => this.updateOverlay());
     this.deliveryMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
     this.traceMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
-
-    const zoomDiv = document.getElementById('zoom');
-
-    zoomDiv.onmousedown = e => e.stopPropagation();
-    zoomDiv.ontouchstart = e => e.stopPropagation();
   }
 
   init(data: FclElements, layout: any) {
@@ -231,11 +226,9 @@ export class GraphComponent implements OnInit {
 
   getCanvas(): Promise<HTMLCanvasElement> {
     return new Promise(resolve => {
-      this.showZoom = false;
       //noinspection JSUnusedGlobalSymbols
       html2canvas(document.getElementById('graphContainer'), {
         onrendered: (canvas) => {
-          this.showZoom = true;
           resolve(canvas);
         }
       });
@@ -272,6 +265,10 @@ export class GraphComponent implements OnInit {
 
   setShowLegend(showLegend: boolean) {
     this.showLegend = showLegend;
+  }
+
+  setShowZoom(showZoom: boolean) {
+    this.showZoom = showZoom;
   }
 
   updateSelection() {

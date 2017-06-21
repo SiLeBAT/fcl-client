@@ -6,7 +6,7 @@ import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {Utils} from './util/utils';
-import {FclData, FclElements, TableMode} from './util/datatypes';
+import {FclData, FclElements, GraphType, TableMode} from './util/datatypes';
 import {Constants} from './util/constants';
 
 @Component({
@@ -17,13 +17,18 @@ import {Constants} from './util/constants';
 export class AppComponent implements OnInit {
 
   @ViewChild('graph') graph: GraphComponent;
+  @ViewChild('gis') gis: GraphComponent;
   @ViewChild('table') table: TableComponent;
   @ViewChild('rightSidenav') rightSidenav: MdSidenav;
 
+  graphTypes = Constants.GRAPH_TYPES;
+  graphType = GraphType.GRAPH;
+  gisType = GraphType.GIS;
   tableModes = Constants.TABLE_MODES;
   showTypes = Constants.SHOW_TYPES;
   sizes = Constants.SIZES;
 
+  data: FclData;
   elements: FclElements;
   graphSettings = DataService.getDefaultGraphSettings();
   tableSettings = DataService.getDefaultTableSettings();
@@ -35,13 +40,12 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.dataService.setDataSource('assets/data/bbk.json');
     this.dataService.getData().then(data => {
-      this.update(data);
+      this.data = data;
+      this.updateComponents();
     }).catch(error => {
       Utils.showErrorMessage(this.dialogService, error);
     });
 
-    this.graph.onChange(() => this.table.update());
-    this.table.onSelectionChange(() => this.graph.updateSelection());
     this.rightSidenav.onOpenStart.subscribe(() => this.onTableChange('width'));
     new Hammer(document.getElementById('sidenavSlider')).on('pan', event => {
       const newWidth = 1 - event.center.x / document.getElementById('mainContainer').offsetWidth;
@@ -55,36 +59,40 @@ export class AppComponent implements OnInit {
 
   onGraphChange(property: string) {
     switch (property) {
-      case 'all':
-        this.graph.setNodeSize(this.graphSettings.nodeSize);
-        this.graph.setFontSize(this.graphSettings.fontSize);
-        this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
-        this.graph.setShowLegend(this.graphSettings.showLegend);
+      case 'type':
+        this.updateData();
+        this.updateComponents();
         break;
       case 'nodeSize':
-        this.graph.setNodeSize(this.graphSettings.nodeSize);
+        if (this.graphSettings.type === GraphType.GRAPH) {
+          this.graph.setNodeSize(this.graphSettings.nodeSize);
+        }
         break;
       case 'fontSize':
-        this.graph.setFontSize(this.graphSettings.fontSize);
+        if (this.graphSettings.type === GraphType.GRAPH) {
+          this.graph.setFontSize(this.graphSettings.fontSize);
+        }
         break;
       case 'mergeDeliveries':
-        this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
+        if (this.graphSettings.type === GraphType.GRAPH) {
+          this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
+        }
         break;
       case 'showLegend':
-        this.graph.setShowLegend(this.graphSettings.showLegend);
+        if (this.graphSettings.type === GraphType.GRAPH) {
+          this.graph.setShowLegend(this.graphSettings.showLegend);
+        }
+        break;
+      case 'showZoom':
+        if (this.graphSettings.type === GraphType.GRAPH) {
+          this.graph.setShowZoom(this.graphSettings.showZoom);
+        }
         break;
     }
   }
 
   onTableChange(property: string) {
     switch (property) {
-      case 'all':
-        document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
-        this.table.setMode(this.tableSettings.mode);
-        this.table.setStationColumns(this.tableSettings.stationColumns);
-        this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
-        this.table.setShowType(this.tableSettings.showType);
-        break;
       case 'width':
         document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
         break;
@@ -109,7 +117,8 @@ export class AppComponent implements OnInit {
     if (files.length === 1) {
       this.dataService.setDataSource(files[0]);
       this.dataService.getData().then(data => {
-        this.update(data);
+        this.data = data;
+        this.updateComponents();
       }).catch(error => {
         Utils.showErrorMessage(this.dialogService, error);
       });
@@ -121,13 +130,9 @@ export class AppComponent implements OnInit {
   }
 
   onSave() {
-    const data: FclData = {
-      elements: this.elements,
-      layout: this.graph.getLayout(),
-      graphSettings: this.graphSettings,
-      tableSettings: this.tableSettings
-    };
-    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    this.updateData();
+
+    const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
     const fileName = 'data.json';
 
     if (window.navigator.msSaveOrOpenBlob != null) {
@@ -182,14 +187,40 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private update(data: FclData) {
-    this.elements = data.elements;
-    this.graphSettings = data.graphSettings;
-    this.tableSettings = data.tableSettings;
-    this.onGraphChange('all');
-    this.onTableChange('all');
-    this.graph.init(data.elements, data.layout);
-    this.table.init(data.elements);
+  private updateData() {
+    this.data = {
+      elements: this.elements,
+      layout: this.graph.getLayout(),
+      graphSettings: this.graphSettings,
+      tableSettings: this.tableSettings
+    };
+  }
+
+  private updateComponents() {
+    this.elements = this.data.elements;
+    this.graphSettings = this.data.graphSettings;
+    this.tableSettings = this.data.tableSettings;
+
+    if (this.graphSettings.type === GraphType.GRAPH) {
+      this.graph.setNodeSize(this.graphSettings.nodeSize);
+      this.graph.setFontSize(this.graphSettings.fontSize);
+      this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
+      this.graph.setShowLegend(this.graphSettings.showLegend);
+      this.graph.onChange(() => this.table.update());
+      this.graph.init(this.data.elements, this.data.layout);
+    }
+
+    document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
+    this.table.setMode(this.tableSettings.mode);
+    this.table.setStationColumns(this.tableSettings.stationColumns);
+    this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
+    this.table.setShowType(this.tableSettings.showType);
+    this.table.onSelectionChange(() => {
+      if (this.graphSettings.type === GraphType.GRAPH) {
+        this.graph.updateSelection();
+      }
+    });
+    this.table.init(this.data.elements);
   }
 
 }

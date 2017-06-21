@@ -1,6 +1,6 @@
 <div id="graphContainer">
   <div id="cy"></div>
-  <div id="zoom">
+  <div id="zoom" *ngIf="showZoom">
     <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
       <md-icon>add</md-icon>
     </button>

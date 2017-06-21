@@ -1,4 +1,4 @@
-import {Color, DeliveryData, ShowType, Size, StationData, TableMode} from './datatypes';
+import {Color, DeliveryData, GraphType, ShowType, Size, StationData, TableMode} from './datatypes';
 import {List, Map} from 'immutable';
 
 export class Constants {
@@ -40,14 +40,17 @@ export class Constants {
   });
   static readonly PROPERTIES_WITH_COLORS = List(Constants.PROPERTIES.filter(p => p.color != null).keys());
 
+  static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
   static readonly TABLE_MODES = List.of(TableMode.STATIONS, TableMode.DELIVERIES);
   static readonly SHOW_TYPES = List.of(ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY);
   static readonly SIZES = List.of(Size.SMALL, Size.MEDIUM, Size.LARGE);
 
+  static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
   static readonly DEFAULT_GRAPH_NODE_SIZE = Size.MEDIUM;
   static readonly DEFAULT_GRAPH_FONT_SIZE = Size.MEDIUM;
   static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
   static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
+  static readonly DEFAULT_GRAPH_SHOW_ZOOM = true;
 
   static readonly DEFAULT_TABLE_MODE = TableMode.STATIONS;
   static readonly DEFAULT_TABLE_WIDTH = 0.25;

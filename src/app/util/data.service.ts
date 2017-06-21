@@ -14,10 +14,12 @@ export class DataService {
 
   static getDefaultGraphSettings(): GraphSettings {
     return {
+      type: Constants.DEFAULT_GRAPH_TYPE,
       nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
       fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
       mergeDeliveries: Constants.DEFAULT_GRAPH_MERGE_DELIVERIES,
-      showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND
+      showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
+      showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM
     };
   }
 
@@ -87,11 +89,13 @@ export class DataService {
 
   private static preprocessDataWithSettings(data: any): FclData {
     const graphSettings: GraphSettings = {
+      type: data.graphSettings.type != null ? data.graphSettings.type : Constants.DEFAULT_GRAPH_TYPE,
       nodeSize: data.graphSettings.nodeSize != null ? data.graphSettings.nodeSize : Constants.DEFAULT_GRAPH_NODE_SIZE,
       fontSize: data.graphSettings.fontSize != null ? data.graphSettings.fontSize : Constants.DEFAULT_GRAPH_FONT_SIZE,
       mergeDeliveries: data.graphSettings.mergeDeliveries != null
         ? data.graphSettings.mergeDeliveries : Constants.DEFAULT_GRAPH_MERGE_DELIVERIES,
-      showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : Constants.DEFAULT_GRAPH_SHOW_LEGEND
+      showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : Constants.DEFAULT_GRAPH_SHOW_LEGEND,
+      showZoom: data.graphSettings.showZoom != null ? data.graphSettings.showZoom : Constants.DEFAULT_GRAPH_SHOW_ZOOM
     };
     const tableSettings: TableSettings = {
       mode: data.tableSettings.mode != null ? data.tableSettings.mode : Constants.DEFAULT_TABLE_MODE,

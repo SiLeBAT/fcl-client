@@ -80,10 +80,12 @@ export interface DeliveryData {
 }
 
 export interface GraphSettings {
+  type: GraphType;
   nodeSize: Size;
   fontSize: Size;
   mergeDeliveries: boolean;
   showLegend: boolean;
+  showZoom: boolean;
 }
 
 export interface TableSettings {
@@ -92,6 +94,11 @@ export interface TableSettings {
   stationColumns: string[];
   deliveryColumns: string[];
   showType: ShowType;
+}
+
+export enum GraphType {
+  GRAPH = 'Graph' as any,
+  GIS = 'GIS' as any
 }
 
 export enum TableMode {

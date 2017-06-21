@@ -33,11 +33,13 @@ import {DeliveryPropertiesComponent} from './dialog/delivery-properties/delivery
 
 import {DataService} from './util/data.service';
 import {TracingService} from './graph/tracing.service';
+import {GisComponent} from './gis/gis.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GraphComponent,
+    GisComponent,
     TableComponent,
     DialogActionsComponent,
     DialogAlertComponent,
