@@ -188,9 +188,11 @@ export class AppComponent implements OnInit {
   }
 
   private updateData() {
+    const layout = this.graph.getLayout();
+
     this.data = {
       elements: this.elements,
-      layout: this.graph.getLayout(),
+      layout: layout != null ? layout : this.data.layout,
       graphSettings: this.graphSettings,
       tableSettings: this.tableSettings
     };

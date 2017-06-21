@@ -217,11 +217,15 @@ export class GraphComponent implements OnInit {
   }
 
   getLayout(): any {
-    return {
-      name: 'preset',
-      zoom: this.cy.zoom(),
-      pan: this.cy.pan()
-    };
+    if (this.cy != null) {
+      return {
+        name: 'preset',
+        zoom: this.cy.zoom(),
+        pan: this.cy.pan()
+      };
+    } else {
+      return null;
+    }
   }
 
   getCanvas(): Promise<HTMLCanvasElement> {
