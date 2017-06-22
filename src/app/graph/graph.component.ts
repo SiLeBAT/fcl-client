@@ -90,15 +90,6 @@ export class GraphComponent implements OnInit {
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
 
-  private static getCyCoordinates(event: MouseEvent): Position {
-    const cyRect = document.getElementById('cy').getBoundingClientRect();
-
-    return {
-      x: event.pageX - cyRect.left,
-      y: event.pageY - cyRect.top
-    };
-  }
-
   constructor(private tracingService: TracingService, private dialogService: MdDialog) {
     if (cytoscape != null) {
       cytoscape.use(cola);
@@ -585,7 +576,7 @@ export class GraphComponent implements OnInit {
         name: 'Apply Layout',
         enabled: true,
         action: event => {
-          Utils.setElementPosition(document.getElementById('layoutMenu'), GraphComponent.getCyCoordinates(event));
+          Utils.setElementPosition(document.getElementById('layoutMenu'), this.getCyCoordinates(event));
           this.layoutMenuTrigger.openMenu();
         }
       }, {
@@ -673,7 +664,7 @@ export class GraphComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: event => {
           this.traceMenuActions = this.createTraceActions(node);
-          Utils.setElementPosition(document.getElementById('traceMenu'), GraphComponent.getCyCoordinates(event));
+          Utils.setElementPosition(document.getElementById('traceMenu'), this.getCyCoordinates(event));
           this.traceMenuTrigger.openMenu();
         }
       }, {
@@ -764,7 +755,7 @@ export class GraphComponent implements OnInit {
               .subscribe(() => this.updateOverlay());
           } else {
             this.traceMenuActions = this.createTraceActions(edge);
-            Utils.setElementPosition(document.getElementById('traceMenu'), GraphComponent.getCyCoordinates(event));
+            Utils.setElementPosition(document.getElementById('traceMenu'), this.getCyCoordinates(event));
             this.traceMenuTrigger.openMenu();
           }
         }
@@ -905,7 +896,7 @@ export class GraphComponent implements OnInit {
     if (newZoom !== this.cy.zoom()) {
       this.cy.zoom({
         level: newZoom,
-        renderedPosition: {x: document.getElementById('cy').offsetWidth / 2, y: document.getElementById('cy').offsetHeight / 2}
+        renderedPosition: {x: this.cy.width() / 2, y: this.cy.height() / 2}
       });
     }
   }
@@ -913,5 +904,14 @@ export class GraphComponent implements OnInit {
   private updateSlider() {
     this.zoomSliderValue =
       Math.round(Math.log(this.cy.zoom() / this.cy.minZoom()) / Math.log(this.cy.maxZoom() / this.cy.minZoom()) * 100);
+  }
+
+  private getCyCoordinates(event: MouseEvent): Position {
+    const cyRect = this.cy.container().getBoundingClientRect();
+
+    return {
+      x: event.pageX - cyRect.left,
+      y: event.pageY - cyRect.top
+    };
   }
 }

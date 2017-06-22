@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import * as ol from 'openlayers';
 import cytoscape from 'cytoscape';
 import {ResizeSensor} from 'css-element-queries';
-import {Position} from '../util/datatypes';
+import {Utils} from '../util/utils';
+import {MdSlider} from '@angular/material';
 
 @Component({
   selector: 'app-gis',
@@ -12,10 +13,16 @@ import {Position} from '../util/datatypes';
 })
 export class GisComponent implements OnInit {
 
+  private static readonly ZOOM_FACTOR = 1.5;
+
+  @ViewChild('slider') slider: MdSlider;
+
+  zoomSliderValue: number;
+
   private cy: any;
   private map: ol.Map;
   private resizeTimer: any;
-  private positionsToSet = false;
+  private sliding = false;
 
   constructor() {
   }
@@ -28,10 +35,8 @@ export class GisComponent implements OnInit {
           source: new ol.source.OSM()
         })
       ],
-      view: new ol.View({
-        center: ol.proj.fromLonLat([37.41, 8.82]),
-        zoom: 4
-      }),
+      view: Utils.panZoomToView({x: 166.24836375741359, y: 232.80878034039395}, 2.2099363183270926,
+        document.getElementById('gisContainer').offsetWidth, document.getElementById('gisContainer').offsetHeight),
       controls: []
     });
 
@@ -56,23 +61,40 @@ export class GisComponent implements OnInit {
         });
       }
     });
-
-    this.map.on('postrender', () => {
-      if (this.positionsToSet) {
-        this.positionsToSet = false;
-
-        this.cy.batch(() => {
-          this.cy.nodes().forEach(node => {
-            node.position(this.latLonToPosition(node.data('lat'), node.data('lon')));
-          });
-        });
-      }
-    });
   }
 
   init() {
+    const nodes = [
+      {data: {id: 'n0', lat: -8, lon: 0}, position: null},
+      {data: {id: 'n1', lat: -8, lon: 10}, position: null},
+      {data: {id: 'n2', lat: -8, lon: 20}, position: null},
+      {data: {id: 'n3', lat: -8, lon: 30}, position: null},
+      {data: {id: 'n4', lat: -8, lon: 40}, position: null},
+      {data: {id: 'n5', lat: -8, lon: 50}, position: null},
+      {data: {id: 'n6', lat: 8, lon: 0}, position: null},
+      {data: {id: 'n7', lat: 8, lon: 10}, position: null},
+      {data: {id: 'n8', lat: 8, lon: 20}, position: null},
+      {data: {id: 'n9', lat: 8, lon: 30}, position: null},
+      {data: {id: 'n10', lat: 8, lon: 40}, position: null},
+      {data: {id: 'n11', lat: 8, lon: 50}, position: null},
+      {data: {id: 'n12', lat: 16, lon: 0}, position: null},
+      {data: {id: 'n13', lat: 16, lon: 10}, position: null},
+      {data: {id: 'n14', lat: 16, lon: 20}, position: null},
+      {data: {id: 'n15', lat: 16, lon: 30}, position: null},
+      {data: {id: 'n16', lat: 16, lon: 40}, position: null}
+    ];
+
+    for (const n of nodes) {
+      n.position = Utils.latLonToPosition(n.data.lat, n.data.lon);
+    }
+
     this.cy = cytoscape({
       container: document.getElementById('cyGis'),
+
+      minZoom: 0.1,
+      maxZoom: 100,
+      zoom: 2.2099363183270926,
+      pan: {x: 166.24836375741359, y: 232.80878034039395},
 
       layout: {
         name: 'preset'
@@ -102,25 +124,7 @@ export class GisComponent implements OnInit {
       ],
 
       elements: {
-        nodes: [
-          {data: {id: 'n0', lat: -8, lon: 0}},
-          {data: {id: 'n1', lat: -8, lon: 10}},
-          {data: {id: 'n2', lat: -8, lon: 20}},
-          {data: {id: 'n3', lat: -8, lon: 30}},
-          {data: {id: 'n4', lat: -8, lon: 40}},
-          {data: {id: 'n5', lat: -8, lon: 50}},
-          {data: {id: 'n6', lat: 8, lon: 0}},
-          {data: {id: 'n7', lat: 8, lon: 10}},
-          {data: {id: 'n8', lat: 8, lon: 20}},
-          {data: {id: 'n9', lat: 8, lon: 30}},
-          {data: {id: 'n10', lat: 8, lon: 40}},
-          {data: {id: 'n11', lat: 8, lon: 50}},
-          {data: {id: 'n12', lat: 16, lon: 0}},
-          {data: {id: 'n13', lat: 16, lon: 10}},
-          {data: {id: 'n14', lat: 16, lon: 20}},
-          {data: {id: 'n15', lat: 16, lon: 30}},
-          {data: {id: 'n16', lat: 16, lon: 40}}
-        ],
+        nodes: nodes,
         edges: [
           {data: {source: 'n0', target: 'n1'}},
           {data: {source: 'n1', target: 'n2'}},
@@ -139,15 +143,54 @@ export class GisComponent implements OnInit {
       },
     });
 
-    this.positionsToSet = true;
+    this.cy.on('zoom', () => {
+      this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height()));
+
+      if (!this.sliding) {
+        this.updateSlider();
+      }
+    });
+
+    this.updateSlider();
   }
 
-  private latLonToPosition(lat: number, lon: number): Position {
-    const pixel = this.map.getPixelFromCoordinate(ol.proj.fromLonLat([lon, lat]));
+  zoomInPressed() {
+    this.zoomTo(this.cy.zoom() * GisComponent.ZOOM_FACTOR);
+  }
 
-    return {
-      x: pixel[0],
-      y: pixel[1]
-    };
+  zoomOutPressed() {
+    this.zoomTo(this.cy.zoom() / GisComponent.ZOOM_FACTOR);
+  }
+
+  zoomResetPressed() {
+    if (this.cy.elements().size() === 0) {
+      this.cy.reset();
+    } else {
+      this.cy.fit();
+    }
+  }
+
+  sliderChanged() {
+    this.sliding = true;
+    this.zoomTo(Math.exp(this.slider.value / 100 * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
+    this.sliding = false;
+  }
+
+  private zoomTo(newZoom: number) {
+    newZoom = Math.min(Math.max(newZoom, this.cy.minZoom()), this.cy.maxZoom());
+
+    if (newZoom !== this.cy.zoom()) {
+      this.cy.zoom({
+        level: newZoom,
+        renderedPosition: {x: this.cy.width() / 2, y: this.cy.height() / 2}
+      });
+    }
+  }
+
+  private updateSlider() {
+    this.zoomSliderValue =
+      Math.round(Math.log(this.cy.zoom() / this.cy.minZoom()) / Math.log(this.cy.maxZoom() / this.cy.minZoom()) * 100);
+    console.log(this.cy.zoom());
+    console.log(this.zoomSliderValue);
   }
 }

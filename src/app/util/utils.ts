@@ -1,9 +1,28 @@
 import {Color, DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
 import {DialogPosition, MdDialog, MdDialogRef} from '@angular/material';
+import * as ol from 'openlayers';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
 
 export class Utils {
+
+  private static ZOOM_FACTOR = 10000;
+
+  static latLonToPosition(lat: number, lon: number): Position {
+    const p = ol.proj.fromLonLat([lon, lat]);
+
+    return {
+      x: p[0] / Utils.ZOOM_FACTOR,
+      y: p[1] / Utils.ZOOM_FACTOR
+    };
+  }
+
+  static panZoomToView(pan: Position, zoom: number, width: number, height: number): ol.View {
+    return new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      resolution: Utils.ZOOM_FACTOR / zoom
+    });
+  }
 
   static getDialogPosition(alignment: DialogAlignment): DialogPosition {
     switch (alignment) {

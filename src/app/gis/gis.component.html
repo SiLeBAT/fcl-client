@@ -1,4 +1,18 @@
 <div id="gisContainer">
   <div id="map"></div>
   <div id="cyGis"></div>
+  <div id="zoom">
+    <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
+      <md-icon>add</md-icon>
+    </button>
+    <button id="zoom-out" md-mini-fab (click)="zoomOutPressed()">
+      <md-icon>remove</md-icon>
+    </button>
+    <button id="zoom-reset" md-mini-fab (click)="zoomResetPressed()">
+      <md-icon>zoom_out_map</md-icon>
+    </button>
+    <md-slider #slider id="zoom-slider" [value]="zoomSliderValue" [vertical]="true"
+               (slide)="sliderChanged()" (change)="sliderChanged()">
+    </md-slider>
+  </div>
 </div>
