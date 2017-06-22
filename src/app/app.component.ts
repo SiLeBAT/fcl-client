@@ -8,6 +8,7 @@ import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/di
 import {Utils} from './util/utils';
 import {FclData, FclElements, GraphType, TableMode} from './util/datatypes';
 import {Constants} from './util/constants';
+import {GisComponent} from './gis/gis.component';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ import {Constants} from './util/constants';
 export class AppComponent implements OnInit {
 
   @ViewChild('graph') graph: GraphComponent;
-  @ViewChild('gis') gis: GraphComponent;
+  @ViewChild('gis') gis: GisComponent;
   @ViewChild('table') table: TableComponent;
   @ViewChild('rightSidenav') rightSidenav: MdSidenav;
 
@@ -203,13 +204,18 @@ export class AppComponent implements OnInit {
     this.graphSettings = this.data.graphSettings;
     this.tableSettings = this.data.tableSettings;
 
-    if (this.graphSettings.type === GraphType.GRAPH) {
-      this.graph.setNodeSize(this.graphSettings.nodeSize);
-      this.graph.setFontSize(this.graphSettings.fontSize);
-      this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
-      this.graph.setShowLegend(this.graphSettings.showLegend);
-      this.graph.onChange(() => this.table.update());
-      this.graph.init(this.data.elements, this.data.layout);
+    switch (this.graphSettings.type) {
+      case GraphType.GRAPH:
+        this.graph.setNodeSize(this.graphSettings.nodeSize);
+        this.graph.setFontSize(this.graphSettings.fontSize);
+        this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
+        this.graph.setShowLegend(this.graphSettings.showLegend);
+        this.graph.onChange(() => this.table.update());
+        this.graph.init(this.data.elements, this.data.layout);
+        break;
+      case GraphType.GIS:
+        this.gis.init();
+        break;
     }
 
     document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
