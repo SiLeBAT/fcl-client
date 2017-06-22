@@ -13,7 +13,7 @@ import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/d
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
-import {TracingService} from './tracing.service';
+import {TracingService} from '../tracing/tracing.service';
 import {Color, CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Constants} from '../util/constants';

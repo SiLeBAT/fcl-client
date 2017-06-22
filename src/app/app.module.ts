@@ -32,7 +32,7 @@ import {StationPropertiesComponent} from './dialog/station-properties/station-pr
 import {DeliveryPropertiesComponent} from './dialog/delivery-properties/delivery-properties.component';
 
 import {DataService} from './util/data.service';
-import {TracingService} from './graph/tracing.service';
+import {TracingService} from './tracing/tracing.service';
 import {GisComponent} from './gis/gis.component';
 
 @NgModule({

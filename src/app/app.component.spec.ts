@@ -17,9 +17,10 @@ import {HttpModule} from '@angular/http';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import {GraphComponent} from './graph/graph.component';
+import {GisComponent} from './gis/gis.component';
 import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
-import {TracingService} from './graph/tracing.service';
+import {TracingService} from './tracing/tracing.service';
 
 import {AppComponent} from './app.component';
 
@@ -48,6 +49,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         GraphComponent,
+        GisComponent,
         TableComponent
       ],
       providers: [

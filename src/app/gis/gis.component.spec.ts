@@ -1,4 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MdSliderModule} from '@angular/material';
 
 import {GisComponent} from './gis.component';
 
@@ -8,6 +9,7 @@ describe('GisComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [MdSliderModule],
       declarations: [GisComponent]
     }).compileComponents().then();
   }));
