@@ -13,13 +13,13 @@ export class Utils {
 
     return {
       x: p[0] / Utils.ZOOM_FACTOR,
-      y: p[1] / Utils.ZOOM_FACTOR
+      y: -p[1] / Utils.ZOOM_FACTOR
     };
   }
 
   static panZoomToView(pan: Position, zoom: number, width: number, height: number): ol.View {
     return new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
+      center: [(width / 2 - pan.x) / zoom * Utils.ZOOM_FACTOR, -(height / 2 - pan.y) / zoom * Utils.ZOOM_FACTOR],
       resolution: Utils.ZOOM_FACTOR / zoom
     });
   }

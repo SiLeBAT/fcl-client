@@ -43,21 +43,19 @@ export class GisComponent implements OnInit {
     window.onresize = () => {
       Observable.timer(500).subscribe(() => {
         if (this.cy != null) {
-          this.cy.resize();
+          this.resizeGraphAndMap();
         }
       });
     };
 
     new ResizeSensor(document.getElementById('gisContainer'), () => {
-      this.map.updateSize();
-
       if (this.resizeTimer != null) {
         this.resizeTimer.unsubscribe();
       }
 
       if (this.cy != null) {
         this.resizeTimer = Observable.timer(100).subscribe(() => {
-          this.cy.resize();
+          this.resizeGraphAndMap();
         });
       }
     });
@@ -65,11 +63,11 @@ export class GisComponent implements OnInit {
 
   init() {
     const nodes = [
-      {data: {id: 'n0', lat: -8, lon: 0}, position: null},
-      {data: {id: 'n1', lat: -8, lon: 10}, position: null},
-      {data: {id: 'n2', lat: -8, lon: 20}, position: null},
-      {data: {id: 'n3', lat: -8, lon: 30}, position: null},
-      {data: {id: 'n4', lat: -8, lon: 40}, position: null},
+      {data: {id: 'n0', lat: -1.2920659, lon: 36.82194619999996}, position: null},
+      {data: {id: 'n1', lat: -4.4419311, lon: 15.2662931}, position: null},
+      {data: {id: 'n2', lat: -26.2041028, lon: 28.0473051}, position: null},
+      {data: {id: 'n3', lat: -15.416667, lon: 28.28333299999997}, position: null},
+      {data: {id: 'n4', lat: -8.838333, lon: 13.23444399999994}, position: null},
       {data: {id: 'n5', lat: -8, lon: 50}, position: null},
       {data: {id: 'n6', lat: 8, lon: 0}, position: null},
       {data: {id: 'n7', lat: 8, lon: 10}, position: null},
@@ -150,6 +148,9 @@ export class GisComponent implements OnInit {
         this.updateSlider();
       }
     });
+    this.cy.on('pan', () => {
+      this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height()));
+    });
 
     this.updateSlider();
   }
@@ -190,7 +191,11 @@ export class GisComponent implements OnInit {
   private updateSlider() {
     this.zoomSliderValue =
       Math.round(Math.log(this.cy.zoom() / this.cy.minZoom()) / Math.log(this.cy.maxZoom() / this.cy.minZoom()) * 100);
-    console.log(this.cy.zoom());
-    console.log(this.zoomSliderValue);
+  }
+
+  private resizeGraphAndMap() {
+    this.cy.resize();
+    this.map.updateSize();
+    this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height()));
   }
 }
