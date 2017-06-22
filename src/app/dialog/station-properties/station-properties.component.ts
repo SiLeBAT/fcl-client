@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
-import {D3, D3Service, Selection} from 'd3-ng2-service';
+import * as d3 from 'd3';
 import {Subject} from 'rxjs/Rx';
 
 import {Connection, DeliveryData, DialogAlignment, StationData} from '../../util/datatypes';
@@ -126,7 +126,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   properties: { name: string, value: string }[];
 
   private dialogAlign = DialogAlignment.CENTER;
-  private d3: D3;
 
   private nodeInData: NodeDatum[];
   private nodeOutData: NodeDatum[];
@@ -136,18 +135,17 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private height: number;
   private selected: NodeDatum;
 
-  private svg: Selection<SVGGElement, any, any, any>;
-  private nodesInG: Selection<SVGElement, any, any, any>;
-  private nodesOutG: Selection<SVGElement, any, any, any>;
-  private edgesG: Selection<SVGElement, any, any, any>;
-  private connectLine: Selection<SVGElement, any, any, any>;
+  private svg: d3.Selection<SVGGElement, any, any, any>;
+  private nodesInG: d3.Selection<SVGElement, any, any, any>;
+  private nodesOutG: d3.Selection<SVGElement, any, any, any>;
+  private edgesG: d3.Selection<SVGElement, any, any, any>;
+  private connectLine: d3.Selection<SVGElement, any, any, any>;
 
   private static line(x1: number, y1: number, x2: number, y2: number) {
     return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
   }
 
-  constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData,
-              d3Service: D3Service) {
+  constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData) {
     this.title = data.station.name;
     this.properties = Object.keys(data.station)
       .filter(key => Constants.PROPERTIES.has(key) && key !== 'name' && key !== 'incoming' && key !== 'outgoing')
@@ -164,7 +162,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
           value: prop.value != null ? prop.value : ''
         };
       }));
-    this.d3 = d3Service.getD3();
 
     if (data.station.incoming.length > 0 || data.station.outgoing.length > 0) {
       const ingredientsByLot = this.getIngredientsByLot();
@@ -229,7 +226,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.height != null) {
-      this.svg = this.d3
+      this.svg = d3
         .select('#in-out-connector').append<SVGGElement>('svg')
         .attr('display', 'block')
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
@@ -261,14 +258,14 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
       this.addNodes();
       this.updateEdges();
 
-      this.d3.select('body').on('mousemove', () => this.updateConnectLine());
+      d3.select('body').on('mousemove', () => this.updateConnectLine());
     }
 
     this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
   }
 
   ngOnDestroy() {
-    this.d3.select('body').on('mousemove', null);
+    d3.select('body').on('mousemove', null);
     this.data.hoverDeliveries.next([]);
   }
 
@@ -410,12 +407,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private addNodes() {
-    const updateColor = (nodes: Selection<SVGElement, any, any, any>, hovered: boolean) => {
+    const updateColor = (nodes: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
       nodes.selectAll('rect')
         .attr('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
         .attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
     };
-    const initRectAndText = (nodes: Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
+    const initRectAndText = (nodes: d3.Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
       nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
       nodes.append('rect').attr('stroke-width', '2px')
         .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
@@ -442,25 +439,25 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     const self = this;
 
     newNodesIn.on('mouseover', function (d) {
-      updateColor(self.d3.select(this), true);
+      updateColor(d3.select(this), true);
       self.data.hoverDeliveries.next([d.id]);
     }).on('mouseout', function () {
-      updateColor(self.d3.select(this), false);
+      updateColor(d3.select(this), false);
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.selected = d;
         self.updateConnectLine();
         self.connectLine.attr('visibility', 'visible');
-        self.d3.event.stopPropagation();
+        d3.event.stopPropagation();
       }
     });
 
     newNodesOut.on('mouseover', function (d) {
-      updateColor(self.d3.select(this), true);
+      updateColor(d3.select(this), true);
       self.data.hoverDeliveries.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
     }).on('mouseout', function () {
-      updateColor(self.d3.select(this), false);
+      updateColor(d3.select(this), false);
       self.data.hoverDeliveries.next([]);
     }).on('click', function (d) {
       if (self.selected != null) {
@@ -476,7 +473,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private updateEdges() {
-    const updateColor = (edges: Selection<SVGElement, any, any, any>, hovered: boolean) => {
+    const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
       edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
     };
 
@@ -498,10 +495,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     newEdges.on('mouseover', function () {
       if (self.selected == null) {
-        updateColor(self.d3.select(this), true);
+        updateColor(d3.select(this), true);
       }
     }).on('mouseout', function () {
-      updateColor(self.d3.select(this), false);
+      updateColor(d3.select(this), false);
     }).on('click', function (d) {
       if (self.selected == null) {
         self.edgeData.splice(self.edgeData.indexOf(d), 1);
@@ -512,7 +509,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
   private updateConnectLine() {
     if (this.selected != null) {
-      const mousePos = this.d3.mouse(this.svg.node());
+      const mousePos = d3.mouse(this.svg.node());
 
       this.connectLine.attr('d', StationPropertiesComponent.line(
         this.selected.x + StationPropertiesComponent.NODE_WIDTH,

@@ -19,7 +19,6 @@ import {
 } from '@angular/material';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
-import {D3Service} from 'd3-ng2-service';
 
 import {AppComponent} from './app.component';
 import {GraphComponent} from './graph/graph.component';
@@ -70,8 +69,7 @@ import {GisComponent} from './gis/gis.component';
   providers: [
     DataService,
     TracingService,
-    ScrollbarHelper,
-    D3Service
+    ScrollbarHelper
   ],
   bootstrap: [AppComponent],
   entryComponents: [

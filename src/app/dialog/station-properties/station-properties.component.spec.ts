@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MD_DIALOG_DATA, MdDialogModule, MdDialogRef} from '@angular/material';
 
 import {StationPropertiesComponent, StationPropertiesData} from './station-properties.component';
-import {D3Service} from 'd3-ng2-service';
 
 describe('StationPropertiesComponent', () => {
   let component: StationPropertiesComponent;
@@ -25,8 +24,7 @@ describe('StationPropertiesComponent', () => {
       declarations: [StationPropertiesComponent],
       providers: [
         {provide: MdDialogRef, useValue: {updatePosition: () => void(0)}},
-        {provide: MD_DIALOG_DATA, useValue: data},
-        D3Service
+        {provide: MD_DIALOG_DATA, useValue: data}
       ]
     }).compileComponents().then();
   }));

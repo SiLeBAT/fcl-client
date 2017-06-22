@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MD_DIALOG_DATA, MdDialogModule, MdDialogRef} from '@angular/material';
 
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from './delivery-properties.component';
-import {D3Service} from 'd3-ng2-service';
 
 describe('DeliveryPropertiesComponent', () => {
   let component: DeliveryPropertiesComponent;
@@ -21,8 +20,7 @@ describe('DeliveryPropertiesComponent', () => {
       declarations: [DeliveryPropertiesComponent],
       providers: [
         {provide: MdDialogRef, useValue: {updatePosition: () => void(0)}},
-        {provide: MD_DIALOG_DATA, useValue: data},
-        D3Service
+        {provide: MD_DIALOG_DATA, useValue: data}
       ]
     }).compileComponents().then();
   }));
