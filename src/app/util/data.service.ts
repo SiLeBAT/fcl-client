@@ -36,7 +36,7 @@ export class DataService {
   private static preprocessData(data: any): FclData {
     const containsRawData = data.hasOwnProperty('stations') && data.hasOwnProperty('deliveries')
       && data.hasOwnProperty('deliveriesRelations');
-    const containsDataWithSettings = data.hasOwnProperty('elements') && data.hasOwnProperty('layout')
+    const containsDataWithSettings = data.hasOwnProperty('elements') && data.hasOwnProperty('layout') && data.hasOwnProperty('gisLayout')
       && data.hasOwnProperty('graphSettings') && data.hasOwnProperty('tableSettings');
 
     if (containsRawData) {
@@ -82,6 +82,11 @@ export class DataService {
       layout: {
         name: 'random'
       },
+      gisLayout: {
+        name: 'preset',
+        zoom: 1,
+        pan: {x: 0, y: 0}
+      },
       graphSettings: DataService.getDefaultGraphSettings(),
       tableSettings: DataService.getDefaultTableSettings()
     };
@@ -110,6 +115,7 @@ export class DataService {
     return {
       elements: DataService.createElements(data.elements.stations, data.elements.deliveries),
       layout: data.layout,
+      gisLayout: data.gisLayout,
       graphSettings: graphSettings,
       tableSettings: tableSettings
     };

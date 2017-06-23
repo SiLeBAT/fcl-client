@@ -1,6 +1,7 @@
 export interface FclData {
   elements: FclElements;
   layout: any;
+  gisLayout: any;
   graphSettings: GraphSettings;
   tableSettings: TableSettings;
 }

@@ -228,10 +228,12 @@ export class AppComponent implements OnInit {
 
   private updateData() {
     const layout = this.graph.getLayout();
+    const gisLayout = this.gis.getLayout();
 
     this.data = {
       elements: this.elements,
       layout: layout != null ? layout : this.data.layout,
+      gisLayout: gisLayout != null ? gisLayout : this.data.gisLayout,
       graphSettings: this.graphSettings,
       tableSettings: this.tableSettings
     };
@@ -257,7 +259,7 @@ export class AppComponent implements OnInit {
         this.gis.setMergeDeliveries(this.graphSettings.mergeDeliveries);
         this.gis.setShowLegend(this.graphSettings.showLegend);
         this.gis.onChange(() => this.table.update());
-        this.gis.init(this.data.elements);
+        this.gis.init(this.data.elements, this.data.gisLayout);
         break;
     }
 

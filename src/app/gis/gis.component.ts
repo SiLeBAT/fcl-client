@@ -124,7 +124,7 @@ export class GisComponent implements OnInit {
     this.traceMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
   }
 
-  init(data: FclElements) {
+  init(data: FclElements, layout: any) {
     this.data = data;
     this.tracingService.init(data);
 
@@ -136,7 +136,7 @@ export class GisComponent implements OnInit {
         edges: this.createEdges()
       },
 
-      layout: 'preset',
+      layout: layout,
       style: this.createStyle(),
       minZoom: 0.01,
       maxZoom: 10,
@@ -197,6 +197,18 @@ export class GisComponent implements OnInit {
 
   onChange(changeFunction: () => void) {
     this.changeFunction = changeFunction;
+  }
+
+  getLayout(): any {
+    if (this.cy != null) {
+      return {
+        name: 'preset',
+        zoom: this.cy.zoom(),
+        pan: this.cy.pan()
+      };
+    } else {
+      return null;
+    }
   }
 
   getCanvas(): Promise<HTMLCanvasElement> {
