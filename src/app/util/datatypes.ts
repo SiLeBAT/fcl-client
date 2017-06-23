@@ -42,6 +42,8 @@ export interface Connection {
 export interface StationData {
   id: string;
   name: string;
+  lat: number;
+  lon: number;
   incoming: string[];
   outgoing: string[];
   connections: Connection[];

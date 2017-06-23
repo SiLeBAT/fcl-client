@@ -6,21 +6,21 @@ import {Constants} from './constants';
 
 export class Utils {
 
-  private static ZOOM_FACTOR = 10000;
+  private static CY_TO_OL_FACTOR = 10000;
 
   static latLonToPosition(lat: number, lon: number): Position {
     const p = ol.proj.fromLonLat([lon, lat]);
 
     return {
-      x: p[0] / Utils.ZOOM_FACTOR,
-      y: -p[1] / Utils.ZOOM_FACTOR
+      x: p[0] / Utils.CY_TO_OL_FACTOR,
+      y: -p[1] / Utils.CY_TO_OL_FACTOR
     };
   }
 
   static panZoomToView(pan: Position, zoom: number, width: number, height: number): ol.View {
     return new ol.View({
-      center: [(width / 2 - pan.x) / zoom * Utils.ZOOM_FACTOR, -(height / 2 - pan.y) / zoom * Utils.ZOOM_FACTOR],
-      resolution: Utils.ZOOM_FACTOR / zoom
+      center: [(width / 2 - pan.x) / zoom * Utils.CY_TO_OL_FACTOR, -(height / 2 - pan.y) / zoom * Utils.CY_TO_OL_FACTOR],
+      resolution: Utils.CY_TO_OL_FACTOR / zoom
     });
   }
 

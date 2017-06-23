@@ -69,6 +69,8 @@ export class TracingService {
     const metaStation: StationData = {
       id: metaId,
       name: name,
+      lat: null,
+      lon: null,
       incoming: [],
       outgoing: [],
       connections: [],
