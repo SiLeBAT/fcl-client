@@ -96,8 +96,6 @@ export class GisComponent implements OnInit {
           source: new ol.source.OSM()
         })
       ],
-      view: Utils.panZoomToView({x: 166.24836375741359, y: 232.80878034039395}, 2.2099363183270926,
-        document.getElementById('gisContainer').offsetWidth, document.getElementById('gisContainer').offsetHeight),
       controls: []
     });
 
@@ -130,10 +128,6 @@ export class GisComponent implements OnInit {
     this.data = data;
     this.tracingService.init(data);
 
-    for (const s of data.stations) {
-      s.position = Utils.latLonToPosition(s.lat, s.lon);
-    }
-
     this.cy = cytoscape({
       container: document.getElementById('cyGis'),
 
@@ -160,7 +154,6 @@ export class GisComponent implements OnInit {
     this.cy.on('pan', () => this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height())));
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
-    this.cy.on('position', event => this.tracingService.getStationsById([event.target.id()])[0].position = event.target.position());
     this.cy.on('cxttap', event => {
       const element = event.target;
       const position: Position = {
@@ -200,14 +193,6 @@ export class GisComponent implements OnInit {
     this.setFontSize(this.fontSize);
     this.setShowLegend(this.showLegend);
     this.updateSlider();
-
-    for (const s of data.stations) {
-      const pos = this.cy.getElementById(s.id).position();
-
-      if (pos != null) {
-        s.position = pos;
-      }
-    }
   }
 
   onChange(changeFunction: () => void) {
@@ -314,7 +299,7 @@ export class GisComponent implements OnInit {
           group: 'nodes',
           data: s,
           selected: s.selected,
-          position: s.position
+          position: Utils.latLonToPosition(s.lat, s.lon)
         });
       }
     }
@@ -408,27 +393,6 @@ export class GisComponent implements OnInit {
   }
 
   private updateAll() {
-    for (const s of this.data.stations) {
-      if (!s.contained && s.positionRelativeTo != null) {
-        s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
-        s.positionRelativeTo = null;
-      } else if (s.position == null && s.contains != null) {
-        for (const contained of this.tracingService.getStationsById(s.contains)) {
-          if (contained.positionRelativeTo != null) {
-            contained.position = Utils.sum(this.cy.getElementById(contained.positionRelativeTo).position(), contained.position);
-            contained.positionRelativeTo = null;
-          }
-        }
-
-        s.position = Utils.getCenter(s.contains.map(id => this.tracingService.getStationsById([id])[0].position));
-
-        for (const contained of this.tracingService.getStationsById(s.contains)) {
-          contained.position = Utils.difference(contained.position, s.position);
-          contained.positionRelativeTo = s.id;
-        }
-      }
-    }
-
     this.cy.batch(() => {
       this.cy.elements().remove();
       this.cy.add(this.createNodes());

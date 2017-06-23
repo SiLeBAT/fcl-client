@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Connection, DeliveryData, FclElements, ObservedType, StationData} from '../util/datatypes';
+import {Connection, DeliveryData, FclElements, ObservedType, Position, StationData} from '../util/datatypes';
 import {Utils} from '../util/utils';
 
 @Injectable()
@@ -90,6 +90,8 @@ export class TracingService {
       properties: []
     };
 
+    let coordinates: Position[] = [];
+
     for (const id of allIds) {
       const station = this.stationsById.get(id);
 
@@ -102,6 +104,21 @@ export class TracingService {
 
       station.incoming.forEach(d => this.deliveriesById.get(d).target = metaId);
       station.outgoing.forEach(d => this.deliveriesById.get(d).source = metaId);
+
+      if (coordinates != null) {
+        if (station.lat != null && station.lon != null) {
+          coordinates.push({x: station.lon, y: station.lat});
+        } else {
+          coordinates = null;
+        }
+      }
+    }
+
+    if (coordinates != null) {
+      const c = Utils.getCenter(coordinates);
+
+      metaStation.lat = c.y;
+      metaStation.lon = c.x;
     }
 
     this.stationsById.set(metaId, metaStation);

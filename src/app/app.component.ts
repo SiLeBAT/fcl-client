@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.setDataSource('assets/data/bbk.json');
+    this.dataService.setDataSource('assets/data/small_network.json');
     this.dataService.getData().then(data => {
       this.data = data;
       this.updateComponents();
