@@ -5,149 +5,107 @@
     {
       "id": "1",
       "name": "Heckmair Andreas",
-      "type": "Kuchenesser",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Kuchenesser"
     },
     {
       "id": "3",
       "name": "Voggel Anton",
-      "type": "Kuchenesser",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Kuchenesser"
     },
     {
       "id": "4",
       "name": "Schaich Peter",
-      "type": "Kuchenesser",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Kuchenesser"
     },
     {
       "id": "6",
       "name": "Otte",
-      "type": "Kuchenesser",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Kuchenesser"
     },
     {
       "id": "8",
       "name": "Riedl-Leirer Monika",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "20",
       "name": "Bäcker Mees",
-      "type": "Bäcker",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Bäcker"
     },
     {
       "id": "22",
       "name": "JungMarkt",
-      "type": "Supermarkt",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Supermarkt"
     },
     {
       "id": "236",
       "name": "MarktSchleuse",
-      "type": "Supermarkt",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Supermarkt"
     },
     {
       "id": "261",
       "name": "Schmidt Fritz",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "346",
       "name": "Albert Benno",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "394",
       "name": "Adolf Roland",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "451",
       "name": "Prophete Hermann",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "598",
       "name": "Baak Helmut",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "640",
       "name": "Alex",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "642",
       "name": "Bio-Lager",
-      "type": "Bioladen",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Bioladen"
     },
     {
       "id": "679",
       "name": "Bäcker Haake",
-      "type": "Bäcker",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Bäcker"
     },
     {
       "id": "740",
       "name": "Mlady  Kurt",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "742",
       "name": "Wolf Bernhard",
-      "type": "Primärerzeuger",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Primärerzeuger"
     },
     {
       "id": "749",
       "name": "Gewürz Arno",
-      "type": "Gewürzhändler",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Gewürzhändler"
     },
     {
       "id": "750",
       "name": "MarktEber",
-      "type": "Supermarkt",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Supermarkt"
     },
     {
       "id": "754",
       "name": "Bio Geisler",
-      "type": "Bioladen",
-      "lat": 52.520645,
-      "lon": 13.409779
+      "type": "Bioladen"
     }
   ],
   "deliveries": [

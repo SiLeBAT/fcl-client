@@ -9,7 +9,9 @@
       "id": "S1",
       "name": "Heckmair Andreas",
       "street": "Nebelhornstrasse",
-      "zip": "87561"
+      "zip": "87561",
+      "lat": 47.40544,
+      "lon": 10.28451999999993
     },
     {
       "city": "Fischen",
@@ -18,7 +20,9 @@
       "id": "S3",
       "name": "Voggel Anton",
       "street": "Weiler Strasse",
-      "zip": "87527"
+      "zip": "87527",
+      "lat": 47.46134,
+      "lon": 10.27243999999996
     },
     {
       "city": "SONTHOFEN",
@@ -27,7 +31,9 @@
       "id": "S4",
       "name": "Schaich Peter",
       "street": "Bogenstrasse",
-      "zip": "87527"
+      "zip": "87527",
+      "lat": 47.51168,
+      "lon": 10.27976000000001
     },
     {
       "city": "Grenzach-Wyhlen",
@@ -36,7 +42,9 @@
       "id": "S6",
       "name": "Otte",
       "street": "Lettenweg",
-      "zip": "79639"
+      "zip": "79639",
+      "lat": 47.54895,
+      "lon": 7.683809999999994
     },
     {
       "city": "Bad Säckingen",
@@ -45,7 +53,9 @@
       "id": "S8",
       "name": "Riedl-Leirer Monika",
       "street": "Friedrichstrasse",
-      "zip": "79713"
+      "zip": "79713",
+      "lat": 47.55804,
+      "lon": 7.9512999999999465
     },
     {
       "city": "Radolfzell",
@@ -54,7 +64,9 @@
       "id": "S20",
       "name": "Bäcker Mees",
       "street": "Tegginger Strasse",
-      "zip": "78315"
+      "zip": "78315",
+      "lat": 47.73863759999999,
+      "lon": 8.971904999999992
     },
     {
       "city": "Eiterfeld",
@@ -63,7 +75,9 @@
       "id": "S22",
       "name": "JungMarkt",
       "street": "Am Ehrenmal",
-      "zip": "36132"
+      "zip": "36132",
+      "lat": 50.74601000000001,
+      "lon": 9.78692000000001
     },
     {
       "city": "Gammertingen",
@@ -72,7 +86,9 @@
       "id": "S102",
       "name": "Bäckerei Altdoerfer",
       "street": "KORNBUEHLWEG",
-      "zip": "72501"
+      "zip": "72501",
+      "lat": 48.24606,
+      "lon": 9.209730000000036
     },
     {
       "city": "Pappenheim",
@@ -81,7 +97,9 @@
       "id": "S236",
       "name": "MarktSchleuse",
       "street": "Bahnhofstrasse",
-      "zip": "91788"
+      "zip": "91788",
+      "lat": 48.93163,
+      "lon": 10.971599999999967
     },
     {
       "city": "Greding",
@@ -90,7 +108,9 @@
       "id": "S261",
       "name": "Schmidt Fritz",
       "street": "Am Kirchplatz",
-      "zip": "91171"
+      "zip": "91171",
+      "lat": 49.11357,
+      "lon": 11.305960000000027
     },
     {
       "city": "Reinheim",
@@ -99,7 +119,9 @@
       "id": "S346",
       "name": "Albert Benno",
       "street": "Darmstädter Strasse",
-      "zip": "64354"
+      "zip": "64354",
+      "lat": 49.82861070000001,
+      "lon": 8.833907100000033
     },
     {
       "city": "Gerolzhofen",
@@ -108,7 +130,9 @@
       "id": "S354",
       "name": "Bio-Haus",
       "street": "Bahnhofstrasse",
-      "zip": "97447"
+      "zip": "97447",
+      "lat": 49.90233,
+      "lon": 10.34662000000003
     },
     {
       "city": "Lichtenfels",
@@ -117,7 +141,9 @@
       "id": "S394",
       "name": "Adolf Roland",
       "street": "Konrad-Adenauer-Strasse",
-      "zip": "96215"
+      "zip": "96215",
+      "lat": 50.13883999999999,
+      "lon": 11.05795999999998
     },
     {
       "city": "Solms",
@@ -126,7 +152,9 @@
       "id": "S451",
       "name": "Prophete Hermann",
       "street": "Marienstrasse",
-      "zip": "35606"
+      "zip": "35606",
+      "lat": 50.54044,
+      "lon": 8.403610000000072
     },
     {
       "city": "Schmalkalden",
@@ -135,7 +163,9 @@
       "id": "S463",
       "name": "Anschütz Heinz",
       "street": "Stiller Gasse",
-      "zip": "98574"
+      "zip": "98574",
+      "lat": 50.7210702,
+      "lon": 10.454082599999992
     },
     {
       "city": "Schloß Holte-Stukenbrock",
@@ -144,7 +174,9 @@
       "id": "S598",
       "name": "Baak Helmut",
       "street": "Pollstrasse",
-      "zip": "33758"
+      "zip": "33758",
+      "lat": 51.90555999999999,
+      "lon": 8.60886000000005
     },
     {
       "city": "Hannover",
@@ -153,7 +185,9 @@
       "id": "S640",
       "name": "Alex",
       "street": "Alte Döhrener Strasse",
-      "zip": "30169"
+      "zip": "30169",
+      "lat": 52.35801,
+      "lon": 9.748659999999973
     },
     {
       "city": "Sachsenhagen",
@@ -162,7 +196,9 @@
       "id": "S642",
       "name": "Bio-Lager",
       "street": "Schaumburger Strasse",
-      "zip": "31714"
+      "zip": "31714",
+      "lat": 52.3825399,
+      "lon": 9.227168099999972
     },
     {
       "city": "Syke",
@@ -171,7 +207,9 @@
       "id": "S679",
       "name": "Bäcker Haake",
       "street": "Falldorf",
-      "zip": "28857"
+      "zip": "28857",
+      "lat": 52.8928912,
+      "lon": 8.888979999999947
     },
     {
       "city": "Nossen",
@@ -180,7 +218,9 @@
       "id": "S740",
       "name": "Mlady  Kurt",
       "street": "Waldheimer Strasse",
-      "zip": "01683"
+      "zip": "01683",
+      "lat": 51.05857959999999,
+      "lon": 13.290967899999941
     },
     {
       "city": "Bad Neustadt",
@@ -189,7 +229,9 @@
       "id": "S742",
       "name": "Wolf Bernhard",
       "street": "Saalestrasse",
-      "zip": "97616"
+      "zip": "97616",
+      "lat": 50.3174443,
+      "lon": 10.200835200000029
     },
     {
       "city": "Waldfischbach-Burgalben",
@@ -198,7 +240,9 @@
       "id": "S749",
       "name": "Gewürz Arno",
       "street": "Hauptstrasse",
-      "zip": "67714"
+      "zip": "67714",
+      "lat": 49.2808859,
+      "lon": 7.6399116999999706
     },
     {
       "city": "Hennigsdorf",
@@ -207,7 +251,9 @@
       "id": "S750",
       "name": "MarktEber",
       "street": "Berliner Strasse",
-      "zip": "16761"
+      "zip": "16761",
+      "lat": 52.63907,
+      "lon": 13.209150000000022
     },
     {
       "city": "Unsleben",
@@ -216,7 +262,9 @@
       "id": "S754",
       "name": "Bio Geisler",
       "street": "Hauptstrasse",
-      "zip": "97618"
+      "zip": "97618",
+      "lat": 50.37696,
+      "lon": 10.25574000000006
     }
   ],
   "deliveries": [
