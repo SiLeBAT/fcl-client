@@ -83,9 +83,7 @@ export class DataService {
         name: 'random'
       },
       gisLayout: {
-        name: 'preset',
-        zoom: 1,
-        pan: {x: 0, y: 0}
+        name: 'preset'
       },
       graphSettings: DataService.getDefaultGraphSettings(),
       tableSettings: DataService.getDefaultTableSettings()

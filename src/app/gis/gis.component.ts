@@ -125,6 +125,8 @@ export class GisComponent implements OnInit {
   }
 
   init(data: FclElements, layout: any) {
+    let fitted = false;
+
     this.data = data;
     this.tracingService.init(data);
 
@@ -141,6 +143,12 @@ export class GisComponent implements OnInit {
       minZoom: 0.01,
       maxZoom: 10,
       wheelSensitivity: 0.5,
+    });
+    this.cy.on('render', () => {
+      if (!fitted && this.cy.width() > 0 && (layout.zoom == null || layout.pan == null)) {
+        fitted = true;
+        this.zoomResetPressed();
+      }
     });
 
     this.cy.on('zoom', () => {
