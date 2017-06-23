@@ -1,6 +1,6 @@
-<div id="gisContainer">
-  <div id="map"></div>
-  <div id="cyGis"></div>
+<div id="container" #container>
+  <div id="map" #map></div>
+  <div id="graph" #graph></div>
   <div id="zoom">
     <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
       <md-icon>add</md-icon>
@@ -30,11 +30,10 @@
     </md-card>
   </div>
 </div>
-<div id="gisGraphMenu" class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
-<div id="gisStationMenu" class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
-<div id="gisDeliveryMenu" class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu"
-     #deliveryMenuTrigger="mdMenuTrigger"></div>
-<div id="gisTraceMenu" class="menuTrigger" [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
 <md-menu #graphMenu>
   <button md-menu-item *ngFor="let action of graphMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">

@@ -1,5 +1,5 @@
-<div id="graphContainer">
-  <div id="cy"></div>
+<div id="container" #container>
+  <div id="graph" #graph></div>
   <div id="zoom" *ngIf="showZoom">
     <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
       <md-icon>add</md-icon>
@@ -29,11 +29,11 @@
     </md-card>
   </div>
 </div>
-<div id="graphMenu" class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
-<div id="stationMenu" class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
-<div id="deliveryMenu" class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
-<div id="layoutMenu" class="menuTrigger" [mdMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="mdMenuTrigger"></div>
-<div id="traceMenu" class="menuTrigger" [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="mdMenuTrigger"></div>
+<div class="menuTrigger" [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
 <md-menu #graphMenu>
   <button md-menu-item *ngFor="let action of graphMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">

@@ -1,5 +1,5 @@
 import {Color, DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
-import {DialogPosition, MdDialog, MdDialogRef} from '@angular/material';
+import {DialogPosition, MdDialog, MdDialogRef, MdMenuTrigger} from '@angular/material';
 import * as ol from 'openlayers';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
@@ -98,9 +98,14 @@ export class Utils {
     return dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
-  static setElementPosition(element: HTMLElement, pos: Position) {
-    element.style.left = pos.x + 'px';
-    element.style.top = pos.y + 'px';
+  static openMenu(trigger: MdMenuTrigger, pos: Position) {
+    const triggerAny: any = trigger;
+
+    console.log(triggerAny);
+
+    triggerAny._element.nativeElement.style.left = pos.x + 'px';
+    triggerAny._element.nativeElement.style.top = pos.y + 'px';
+    trigger.openMenu();
   }
 
   static colorToCss(color: Color): string {

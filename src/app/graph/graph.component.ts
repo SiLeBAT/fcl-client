@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdMenuTrigger, MdSlider} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
 import cytoscape from 'cytoscape';
@@ -45,8 +45,10 @@ export class GraphComponent implements OnInit {
     [Size.LARGE, 18]
   ]);
 
-  @ViewChild('slider') slider: MdSlider;
+  @ViewChild('container') containerElement: ElementRef;
+  @ViewChild('graph') graphElement: ElementRef;
 
+  @ViewChild('slider') slider: MdSlider;
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
   @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
@@ -108,7 +110,7 @@ export class GraphComponent implements OnInit {
       });
     };
 
-    new ResizeSensor(document.getElementById('graphContainer'), () => {
+    new ResizeSensor(this.containerElement.nativeElement, () => {
       if (this.resizeTimer != null) {
         this.resizeTimer.unsubscribe();
       }
@@ -130,7 +132,7 @@ export class GraphComponent implements OnInit {
     this.tracingService.init(data);
 
     this.cy = cytoscape({
-      container: document.getElementById('cy'),
+      container: this.graphElement.nativeElement,
 
       elements: {
         nodes: this.createNodes(),
@@ -163,18 +165,15 @@ export class GraphComponent implements OnInit {
 
       if (element === this.cy) {
         this.contextMenuElement = null;
-        Utils.setElementPosition(document.getElementById('graphMenu'), position);
-        this.graphMenuTrigger.openMenu();
+        Utils.openMenu(this.graphMenuTrigger, position);
       } else if (element.isNode()) {
         this.contextMenuElement = element;
         this.stationMenuActions = this.createStationActions(element);
-        Utils.setElementPosition(document.getElementById('stationMenu'), position);
-        this.stationMenuTrigger.openMenu();
+        Utils.openMenu(this.stationMenuTrigger, position);
       } else if (element.isEdge()) {
         this.contextMenuElement = element;
         this.deliveryMenuActions = this.createDeliveryActions(element);
-        Utils.setElementPosition(document.getElementById('deliveryMenu'), position);
-        this.deliveryMenuTrigger.openMenu();
+        Utils.openMenu(this.deliveryMenuTrigger, position);
       }
     });
     this.hoverDeliveries.subscribe(ids => {
@@ -222,7 +221,7 @@ export class GraphComponent implements OnInit {
   getCanvas(): Promise<HTMLCanvasElement> {
     return new Promise(resolve => {
       //noinspection JSUnusedGlobalSymbols
-      html2canvas(document.getElementById('graphContainer'), {
+      html2canvas(this.containerElement.nativeElement, {
         onrendered: (canvas) => {
           resolve(canvas);
         }
@@ -575,10 +574,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Apply Layout',
         enabled: true,
-        action: event => {
-          Utils.setElementPosition(document.getElementById('layoutMenu'), this.getCyCoordinates(event));
-          this.layoutMenuTrigger.openMenu();
-        }
+        action: event => Utils.openMenu(this.layoutMenuTrigger, this.getCyCoordinates(event))
       }, {
         name: 'Clear Trace',
         enabled: true,
@@ -664,8 +660,7 @@ export class GraphComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: event => {
           this.traceMenuActions = this.createTraceActions(node);
-          Utils.setElementPosition(document.getElementById('traceMenu'), this.getCyCoordinates(event));
-          this.traceMenuTrigger.openMenu();
+          Utils.openMenu(this.traceMenuTrigger, this.getCyCoordinates(event));
         }
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
@@ -755,8 +750,7 @@ export class GraphComponent implements OnInit {
               .subscribe(() => this.updateOverlay());
           } else {
             this.traceMenuActions = this.createTraceActions(edge);
-            Utils.setElementPosition(document.getElementById('traceMenu'), this.getCyCoordinates(event));
-            this.traceMenuTrigger.openMenu();
+            Utils.openMenu(this.traceMenuTrigger, this.getCyCoordinates(event));
           }
         }
       }

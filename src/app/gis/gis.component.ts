@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdMenuTrigger, MdSlider} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
 import * as ol from 'openlayers';
@@ -41,8 +41,11 @@ export class GisComponent implements OnInit {
     [Size.LARGE, 18]
   ]);
 
-  @ViewChild('slider') slider: MdSlider;
+  @ViewChild('container') containerElement: ElementRef;
+  @ViewChild('map') mapElement: ElementRef;
+  @ViewChild('graph') graphElement: ElementRef;
 
+  @ViewChild('slider') slider: MdSlider;
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
   @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
@@ -90,7 +93,7 @@ export class GisComponent implements OnInit {
 
   ngOnInit() {
     this.map = new ol.Map({
-      target: 'map',
+      target: this.mapElement.nativeElement,
       layers: [
         new ol.layer.Tile({
           source: new ol.source.OSM()
@@ -107,7 +110,7 @@ export class GisComponent implements OnInit {
       });
     };
 
-    new ResizeSensor(document.getElementById('gisContainer'), () => {
+    new ResizeSensor(this.containerElement.nativeElement, () => {
       if (this.resizeTimer != null) {
         this.resizeTimer.unsubscribe();
       }
@@ -131,7 +134,7 @@ export class GisComponent implements OnInit {
     this.tracingService.init(data);
 
     this.cy = cytoscape({
-      container: document.getElementById('cyGis'),
+      container: this.graphElement.nativeElement,
 
       elements: {
         nodes: this.createNodes(),
@@ -172,18 +175,15 @@ export class GisComponent implements OnInit {
 
       if (element === this.cy) {
         this.contextMenuElement = null;
-        Utils.setElementPosition(document.getElementById('gisGraphMenu'), position);
-        this.graphMenuTrigger.openMenu();
+        Utils.openMenu(this.graphMenuTrigger, position);
       } else if (element.isNode()) {
         this.contextMenuElement = element;
         this.stationMenuActions = this.createStationActions(element);
-        Utils.setElementPosition(document.getElementById('gisStationMenu'), position);
-        this.stationMenuTrigger.openMenu();
+        Utils.openMenu(this.stationMenuTrigger, position);
       } else if (element.isEdge()) {
         this.contextMenuElement = element;
         this.deliveryMenuActions = this.createDeliveryActions(element);
-        Utils.setElementPosition(document.getElementById('gisDeliveryMenu'), position);
-        this.deliveryMenuTrigger.openMenu();
+        Utils.openMenu(this.deliveryMenuTrigger, position);
       }
     });
     this.hoverDeliveries.subscribe(ids => {
@@ -223,7 +223,7 @@ export class GisComponent implements OnInit {
   getCanvas(): Promise<HTMLCanvasElement> {
     return new Promise(resolve => {
       //noinspection JSUnusedGlobalSymbols
-      html2canvas(document.getElementById('gisContainer'), {
+      html2canvas(this.containerElement.nativeElement, {
         onrendered: (canvas) => {
           resolve(canvas);
         }
@@ -637,8 +637,7 @@ export class GisComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: event => {
           this.traceMenuActions = this.createTraceActions(node);
-          Utils.setElementPosition(document.getElementById('gisTraceMenu'), this.getCyCoordinates(event));
-          this.traceMenuTrigger.openMenu();
+          Utils.openMenu(this.traceMenuTrigger, this.getCyCoordinates(event));
         }
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
@@ -728,8 +727,7 @@ export class GisComponent implements OnInit {
               .subscribe(() => this.updateOverlay());
           } else {
             this.traceMenuActions = this.createTraceActions(edge);
-            Utils.setElementPosition(document.getElementById('gisTraceMenu'), this.getCyCoordinates(event));
-            this.traceMenuTrigger.openMenu();
+            Utils.openMenu(this.traceMenuTrigger, this.getCyCoordinates(event));
           }
         }
       }
