@@ -141,7 +141,7 @@ export class GraphComponent implements OnInit {
       style: this.createStyle(),
       minZoom: 0.01,
       maxZoom: 10,
-      wheelSensitivity: 0.5,
+      wheelSensitivity: 0.5
     });
 
     this.cy.on('zoom', () => {

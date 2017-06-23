@@ -143,6 +143,7 @@ export class GisComponent implements OnInit {
       minZoom: 0.01,
       maxZoom: 10,
       wheelSensitivity: 0.5,
+      autolock: true
     });
     this.cy.on('render', () => {
       if (!fitted && this.cy.width() > 0 && (layout.zoom == null || layout.pan == null)) {
