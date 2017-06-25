@@ -14,7 +14,7 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from '../tracing/tracing.service';
-import {Color, CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
+import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 import {Constants} from '../util/constants';
 
@@ -127,7 +127,7 @@ export class GraphComponent implements OnInit {
     this.traceMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
   }
 
-  init(data: FclElements, layout: any) {
+  init(data: FclElements, layout: Layout) {
     this.data = data;
     this.tracingService.init(data);
 
@@ -139,7 +139,7 @@ export class GraphComponent implements OnInit {
         edges: this.createEdges()
       },
 
-      layout: layout,
+      layout: layout != null ? {name: 'preset', zoom: layout.zoom, pan: layout.pan} : {name: 'random'},
       style: this.createStyle(),
       minZoom: 0.01,
       maxZoom: 10,
@@ -206,10 +206,9 @@ export class GraphComponent implements OnInit {
     this.changeFunction = changeFunction;
   }
 
-  getLayout(): any {
+  getLayout(): Layout {
     if (this.cy != null) {
       return {
-        name: 'preset',
         zoom: this.cy.zoom(),
         pan: this.cy.pan()
       };

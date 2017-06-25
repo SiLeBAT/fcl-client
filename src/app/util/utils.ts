@@ -8,12 +8,12 @@ export class Utils {
 
   private static CY_TO_OL_FACTOR = 10000;
 
-  static latLonToPosition(lat: number, lon: number): Position {
+  static latLonToPosition(lat: number, lon: number, zoom: number): Position {
     const p = ol.proj.fromLonLat([lon, lat]);
 
     return {
-      x: p[0] / Utils.CY_TO_OL_FACTOR,
-      y: -p[1] / Utils.CY_TO_OL_FACTOR
+      x: p[0] / Utils.CY_TO_OL_FACTOR * zoom,
+      y: -p[1] / Utils.CY_TO_OL_FACTOR * zoom
     };
   }
 

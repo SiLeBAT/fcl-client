@@ -79,12 +79,8 @@ export class DataService {
 
     return {
       elements: DataService.createElements(data.stations, data.deliveries),
-      layout: {
-        name: 'random'
-      },
-      gisLayout: {
-        name: 'preset'
-      },
+      layout: null,
+      gisLayout: null,
       graphSettings: DataService.getDefaultGraphSettings(),
       tableSettings: DataService.getDefaultTableSettings()
     };

@@ -11,7 +11,7 @@ import {StationPropertiesComponent, StationPropertiesData} from '../dialog/stati
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from '../tracing/tracing.service';
-import {Color, CyEdge, CyNode, DeliveryData, FclElements, ObservedType, Position, Size, StationData} from '../util/datatypes';
+import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {Constants} from '../util/constants';
 
 interface MenuAction {
@@ -27,6 +27,8 @@ interface MenuAction {
 })
 export class GisComponent implements OnInit {
 
+  private static readonly MIN_ZOOM = 0.1;
+  private static readonly MAX_ZOOM = 100.0;
   private static readonly ZOOM_FACTOR = 1.5;
 
   private static readonly NODE_SIZES: Map<Size, number> = new Map([
@@ -68,6 +70,7 @@ export class GisComponent implements OnInit {
   });
   zoomSliderValue: number;
 
+  private zoom = 5.0;
   private sliding = false;
 
   private cy: any;
@@ -127,43 +130,47 @@ export class GisComponent implements OnInit {
     this.traceMenuTrigger.onMenuClose.subscribe(() => this.updateOverlay());
   }
 
-  init(data: FclElements, layout: any) {
-    let fitted = false;
-
+  init(data: FclElements, layout: Layout) {
     this.data = data;
     this.tracingService.init(data);
+
+
+    let pan: Position;
+
+    if (layout != null) {
+      this.zoom = layout.zoom;
+      pan = layout.pan;
+    }
+
+    const nodes = this.createNodes();
+
+    if (pan == null) {
+      pan = {x: Infinity, y: Infinity};
+
+      for (const n of nodes) {
+        pan.x = Math.min(pan.x, n.position.x);
+        pan.y = Math.min(pan.y, n.position.y);
+      }
+
+      pan.x = -pan.x;
+      pan.y = -pan.y;
+    }
 
     this.cy = cytoscape({
       container: this.graphElement.nativeElement,
 
       elements: {
-        nodes: this.createNodes(),
+        nodes: nodes,
         edges: this.createEdges()
       },
 
-      layout: layout,
+      layout: {name: 'preset', zoom: 1, pan: pan},
       style: this.createStyle(),
-      minZoom: 0.01,
-      maxZoom: 10,
-      wheelSensitivity: 0.5,
+      zoomingEnabled: false,
       autolock: true
     });
-    this.cy.on('render', () => {
-      if (!fitted && this.cy.width() > 0 && (layout.zoom == null || layout.pan == null)) {
-        fitted = true;
-        this.zoomResetPressed();
-      }
-    });
 
-    this.cy.on('zoom', () => {
-      this.setFontSize(this.fontSize);
-      this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height()));
-
-      if (!this.sliding) {
-        this.updateSlider();
-      }
-    });
-    this.cy.on('pan', () => this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height())));
+    this.cy.on('pan', () => this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height())));
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
     this.cy.on('cxttap', event => {
@@ -208,11 +215,10 @@ export class GisComponent implements OnInit {
     this.changeFunction = changeFunction;
   }
 
-  getLayout(): any {
+  getLayout(): Layout {
     if (this.cy != null) {
       return {
-        name: 'preset',
-        zoom: this.cy.zoom(),
+        zoom: this.zoom,
         pan: this.cy.pan()
       };
     } else {
@@ -251,10 +257,8 @@ export class GisComponent implements OnInit {
     this.fontSize = fontSize;
 
     if (this.cy != null) {
-      const size = GisComponent.FONT_SIZES.get(fontSize);
-
       this.cy.nodes().style({
-        'font-size': Math.max(size / this.cy.zoom(), size)
+        'font-size': GisComponent.FONT_SIZES.get(fontSize)
       });
     }
   }
@@ -320,7 +324,7 @@ export class GisComponent implements OnInit {
           group: 'nodes',
           data: s,
           selected: s.selected,
-          position: Utils.latLonToPosition(s.lat, s.lon)
+          position: Utils.latLonToPosition(s.lat, s.lon, this.zoom)
         });
       }
     }
@@ -798,19 +802,16 @@ export class GisComponent implements OnInit {
   }
 
   private zoomTo(newZoom: number) {
-    newZoom = Math.min(Math.max(newZoom, this.cy.minZoom()), this.cy.maxZoom());
+    newZoom = Math.min(Math.max(newZoom, GisComponent.MIN_ZOOM), GisComponent.MAX_ZOOM);
 
-    if (newZoom !== this.cy.zoom()) {
-      this.cy.zoom({
-        level: newZoom,
-        renderedPosition: {x: this.cy.width() / 2, y: this.cy.height() / 2}
-      });
+    if (newZoom !== this.zoom) {
+      // TODO
     }
   }
 
   private updateSlider() {
     this.zoomSliderValue =
-      Math.round(Math.log(this.cy.zoom() / this.cy.minZoom()) / Math.log(this.cy.maxZoom() / this.cy.minZoom()) * 100);
+      Math.round(Math.log(this.zoom / GisComponent.MIN_ZOOM) / Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM) * 100);
   }
 
   private getCyCoordinates(event: MouseEvent): Position {
@@ -825,6 +826,6 @@ export class GisComponent implements OnInit {
   private resizeGraphAndMap() {
     this.cy.resize();
     this.map.updateSize();
-    this.map.setView(Utils.panZoomToView(this.cy.pan(), this.cy.zoom(), this.cy.width(), this.cy.height()));
+    this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
   }
 }

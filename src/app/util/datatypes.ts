@@ -1,7 +1,7 @@
 export interface FclData {
   elements: FclElements;
-  layout: any;
-  gisLayout: any;
+  layout: Layout;
+  gisLayout: Layout;
   graphSettings: GraphSettings;
   tableSettings: TableSettings;
 }
@@ -9,6 +9,11 @@ export interface FclData {
 export interface FclElements {
   stations: StationData[];
   deliveries: DeliveryData[];
+}
+
+export interface Layout {
+  zoom: number;
+  pan: Position;
 }
 
 export interface CyNode {
