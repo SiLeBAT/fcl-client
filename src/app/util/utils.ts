@@ -157,6 +157,13 @@ export class Utils {
     };
   }
 
+  static multiply(position: Position, factor: number) {
+    return {
+      x: factor * position.x,
+      y: factor * position.y
+    };
+  }
+
   static sum(position1: Position, position2: Position): Position {
     return {
       x: position1.x + position2.x,

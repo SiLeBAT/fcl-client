@@ -293,11 +293,11 @@ export class GisComponent implements OnInit {
   }
 
   zoomInPressed() {
-    this.zoomTo(this.cy.zoom() * GisComponent.ZOOM_FACTOR);
+    this.zoomTo(this.zoom * GisComponent.ZOOM_FACTOR);
   }
 
   zoomOutPressed() {
-    this.zoomTo(this.cy.zoom() / GisComponent.ZOOM_FACTOR);
+    this.zoomTo(this.zoom / GisComponent.ZOOM_FACTOR);
   }
 
   zoomResetPressed() {
@@ -311,7 +311,7 @@ export class GisComponent implements OnInit {
 
   sliderChanged() {
     this.sliding = true;
-    this.zoomTo(Math.exp(this.slider.value / 100 * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
+    this.zoomTo(Math.exp(this.slider.value / 100 * Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)) * GisComponent.MIN_ZOOM);
     this.sliding = false;
   }
 
@@ -399,6 +399,14 @@ export class GisComponent implements OnInit {
     }
 
     return edges;
+  }
+
+  private updateNodes() {
+    this.cy.batch(() => {
+      this.cy.nodes().remove();
+      this.cy.add(this.createNodes());
+      this.setFontSize(this.fontSize);
+    });
   }
 
   private updateEdges() {
@@ -805,7 +813,13 @@ export class GisComponent implements OnInit {
     newZoom = Math.min(Math.max(newZoom, GisComponent.MIN_ZOOM), GisComponent.MAX_ZOOM);
 
     if (newZoom !== this.zoom) {
-      // TODO
+      this.cy.batch(() => {
+        this.cy.pan(Utils.multiply(this.cy.pan(), newZoom / this.zoom));
+        this.zoom = newZoom;
+        this.updateNodes();
+      });
+
+      this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
     }
   }
 
