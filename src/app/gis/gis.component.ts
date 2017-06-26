@@ -301,12 +301,7 @@ export class GisComponent implements OnInit {
   }
 
   zoomResetPressed() {
-    if (this.cy.elements().size() === 0) {
-      this.cy.reset();
-    } else {
-      this.cy.nodes().style({'font-size': 0});
-      this.cy.fit();
-    }
+    // TODO
   }
 
   sliderChanged() {
@@ -813,6 +808,10 @@ export class GisComponent implements OnInit {
         this.cy.nodes().positions(node => Utils.latLonToPosition(node.data('lat'), node.data('lon'), newZoom));
       });
       this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
+
+      if (!this.sliding) {
+        this.updateSlider();
+      }
     }
   }
 
