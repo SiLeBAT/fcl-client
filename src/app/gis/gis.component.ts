@@ -167,7 +167,7 @@ export class GisComponent implements OnInit {
       layout: {name: 'preset', zoom: 1, pan: pan},
       style: this.createStyle(),
       zoomingEnabled: false,
-      autolock: true
+      autoungrabify: true
     });
 
     this.cy.on('pan', () => this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height())));
@@ -399,14 +399,6 @@ export class GisComponent implements OnInit {
     }
 
     return edges;
-  }
-
-  private updateNodes() {
-    this.cy.batch(() => {
-      this.cy.nodes().remove();
-      this.cy.add(this.createNodes());
-      this.setFontSize(this.fontSize);
-    });
   }
 
   private updateEdges() {
@@ -816,9 +808,8 @@ export class GisComponent implements OnInit {
       this.cy.batch(() => {
         this.cy.pan(Utils.multiply(this.cy.pan(), newZoom / this.zoom));
         this.zoom = newZoom;
-        this.updateNodes();
+        this.cy.nodes().positions(node => Utils.latLonToPosition(node.data('lat'), node.data('lon'), newZoom));
       });
-
       this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
     }
   }
