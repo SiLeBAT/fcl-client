@@ -170,6 +170,9 @@ export class GisComponent implements OnInit {
       autoungrabify: true
     });
 
+    this.cy.container().children.item(0).children.item(0).addEventListener('wheel', (e: WheelEvent) => {
+      this.zoomTo(this.zoom * Math.pow(10, e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250), e.offsetX, e.offsetY);
+    }, false);
     this.cy.on('pan', () => this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height())));
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
