@@ -65,54 +65,19 @@ export class AppComponent implements OnInit {
         this.updateComponents();
         break;
       case 'nodeSize':
-        switch (this.graphSettings.type) {
-          case GraphType.GRAPH:
-            this.graph.setNodeSize(this.graphSettings.nodeSize);
-            break;
-          case GraphType.GIS:
-            this.gis.setNodeSize(this.graphSettings.nodeSize);
-            break;
-        }
+        this.getCurrentGraph().setNodeSize(this.graphSettings.nodeSize);
         break;
       case 'fontSize':
-        switch (this.graphSettings.type) {
-          case GraphType.GRAPH:
-            this.graph.setFontSize(this.graphSettings.fontSize);
-            break;
-          case GraphType.GIS:
-            this.gis.setFontSize(this.graphSettings.fontSize);
-            break;
-        }
+        this.getCurrentGraph().setFontSize(this.graphSettings.fontSize);
         break;
       case 'mergeDeliveries':
-        switch (this.graphSettings.type) {
-          case GraphType.GRAPH:
-            this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
-            break;
-          case GraphType.GIS:
-            this.gis.setMergeDeliveries(this.graphSettings.mergeDeliveries);
-            break;
-        }
+        this.getCurrentGraph().setMergeDeliveries(this.graphSettings.mergeDeliveries);
         break;
       case 'showLegend':
-        switch (this.graphSettings.type) {
-          case GraphType.GRAPH:
-            this.graph.setShowLegend(this.graphSettings.showLegend);
-            break;
-          case GraphType.GIS:
-            this.gis.setShowLegend(this.graphSettings.showLegend);
-            break;
-        }
+        this.getCurrentGraph().setShowLegend(this.graphSettings.showLegend);
         break;
       case 'showZoom':
-        switch (this.graphSettings.type) {
-          case GraphType.GRAPH:
-            this.graph.setShowZoom(this.graphSettings.showZoom);
-            break;
-          case GraphType.GIS:
-            this.gis.setShowZoom(this.graphSettings.showZoom);
-            break;
-        }
+        this.getCurrentGraph().setShowZoom(this.graphSettings.showZoom);
         break;
     }
   }
@@ -172,28 +137,15 @@ export class AppComponent implements OnInit {
   }
 
   onSaveImage() {
-    let canvasPromise: Promise<HTMLCanvasElement>;
+    this.getCurrentGraph().getCanvas().then(canvas => {
+      const fileName = 'graph.png';
 
-    switch (this.graphSettings.type) {
-      case GraphType.GRAPH:
-        canvasPromise = this.graph.getCanvas();
-        break;
-      case GraphType.GIS:
-        canvasPromise = this.gis.getCanvas();
-        break;
-    }
-
-    if (canvasPromise != null) {
-      canvasPromise.then(canvas => {
-        const fileName = 'graph.png';
-
-        if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
-          window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
-        } else {
-          Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
-        }
-      });
-    }
+      if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
+        window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
+      } else {
+        Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+      }
+    });
   }
 
   changeColumns() {
@@ -243,42 +195,64 @@ export class AppComponent implements OnInit {
     this.elements = this.data.elements;
     this.graphSettings = this.data.graphSettings;
     this.tableSettings = this.data.tableSettings;
+    document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
 
     switch (this.graphSettings.type) {
       case GraphType.GRAPH:
-        this.graph.setNodeSize(this.graphSettings.nodeSize);
-        this.graph.setFontSize(this.graphSettings.fontSize);
-        this.graph.setMergeDeliveries(this.graphSettings.mergeDeliveries);
-        this.graph.setShowLegend(this.graphSettings.showLegend);
-        this.graph.onChange(() => this.table.update());
+        const waitForGraph = () => {
+          if ((<HTMLElement>document.getElementsByTagName('app-graph')[0]).offsetParent == null) {
+            setTimeout(waitForGraph, 50);
+          } else {
+            this.updateGraphAndTable();
+          }
+        };
+
+        waitForGraph();
+        break;
+      case GraphType.GIS:
+        const waitForGis = () => {
+          if ((<HTMLElement>document.getElementsByTagName('app-gis')[0]).offsetParent == null) {
+            setTimeout(waitForGis, 50);
+          } else {
+            this.updateGraphAndTable();
+          }
+        };
+
+        waitForGis();
+        break;
+    }
+  }
+
+  private updateGraphAndTable() {
+    this.getCurrentGraph().setNodeSize(this.graphSettings.nodeSize);
+    this.getCurrentGraph().setFontSize(this.graphSettings.fontSize);
+    this.getCurrentGraph().setMergeDeliveries(this.graphSettings.mergeDeliveries);
+    this.getCurrentGraph().setShowLegend(this.graphSettings.showLegend);
+    this.getCurrentGraph().onChange(() => this.table.update());
+
+    switch (this.graphSettings.type) {
+      case GraphType.GRAPH:
         this.graph.init(this.data.elements, this.data.layout);
         break;
       case GraphType.GIS:
-        this.gis.setNodeSize(this.graphSettings.nodeSize);
-        this.gis.setFontSize(this.graphSettings.fontSize);
-        this.gis.setMergeDeliveries(this.graphSettings.mergeDeliveries);
-        this.gis.setShowLegend(this.graphSettings.showLegend);
-        this.gis.onChange(() => this.table.update());
         this.gis.init(this.data.elements, this.data.gisLayout);
         break;
     }
 
-    document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
     this.table.setMode(this.tableSettings.mode);
     this.table.setStationColumns(this.tableSettings.stationColumns);
     this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
     this.table.setShowType(this.tableSettings.showType);
-    this.table.onSelectionChange(() => {
-      switch (this.graphSettings.type) {
-        case GraphType.GRAPH:
-          this.graph.updateSelection();
-          break;
-        case GraphType.GIS:
-          this.gis.updateSelection();
-          break;
-      }
-    });
+    this.table.onSelectionChange(() => this.getCurrentGraph().updateSelection());
     this.table.init(this.data.elements);
   }
 
+  private getCurrentGraph(): GraphComponent | GisComponent {
+    switch (this.graphSettings.type) {
+      case GraphType.GRAPH:
+        return this.graph;
+      case GraphType.GIS:
+        return this.gis;
+    }
+  }
 }

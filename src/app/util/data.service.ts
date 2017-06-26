@@ -162,8 +162,8 @@ export class DataService {
       stations.push({
         id: e.id,
         name: e.name,
-        lat: e.lat,
-        lon: e.lon,
+        lat: e.lat != null ? e.lat : 0.0,
+        lon: e.lon != null ? e.lon : 0.0,
         incoming: e.incoming,
         outgoing: e.outgoing,
         connections: e.connections,
