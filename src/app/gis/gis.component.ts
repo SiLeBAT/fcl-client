@@ -293,11 +293,11 @@ export class GisComponent implements OnInit {
   }
 
   zoomInPressed() {
-    this.zoomTo(this.zoom * GisComponent.ZOOM_FACTOR);
+    this.zoomTo(this.zoom * GisComponent.ZOOM_FACTOR, this.cy.width() / 2, this.cy.height() / 2);
   }
 
   zoomOutPressed() {
-    this.zoomTo(this.zoom / GisComponent.ZOOM_FACTOR);
+    this.zoomTo(this.zoom / GisComponent.ZOOM_FACTOR, this.cy.width() / 2, this.cy.height() / 2);
   }
 
   zoomResetPressed() {
@@ -310,8 +310,10 @@ export class GisComponent implements OnInit {
   }
 
   sliderChanged() {
+    const newZoom = Math.exp(this.slider.value / 100 * Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)) * GisComponent.MIN_ZOOM;
+
     this.sliding = true;
-    this.zoomTo(Math.exp(this.slider.value / 100 * Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)) * GisComponent.MIN_ZOOM);
+    this.zoomTo(newZoom, this.cy.width() / 2, this.cy.height() / 2);
     this.sliding = false;
   }
 
@@ -801,12 +803,12 @@ export class GisComponent implements OnInit {
     }
   }
 
-  private zoomTo(newZoom: number) {
+  private zoomTo(newZoom: number, zx: number, zy: number) {
     newZoom = Math.min(Math.max(newZoom, GisComponent.MIN_ZOOM), GisComponent.MAX_ZOOM);
 
     if (newZoom !== this.zoom) {
       this.cy.batch(() => {
-        this.cy.pan(Utils.multiply(this.cy.pan(), newZoom / this.zoom));
+        this.cy.pan({x: zx + (this.cy.pan().x - zx) * newZoom / this.zoom, y: zy + (this.cy.pan().y - zy) * newZoom / this.zoom});
         this.zoom = newZoom;
         this.cy.nodes().positions(node => Utils.latLonToPosition(node.data('lat'), node.data('lon'), newZoom));
       });
