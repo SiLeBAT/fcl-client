@@ -29,10 +29,13 @@ export class AppComponent implements OnInit {
   showTypes = Constants.SHOW_TYPES;
   sizes = Constants.SIZES;
 
-  data: FclData;
-  elements: FclElements;
-  graphSettings = DataService.getDefaultGraphSettings();
-  tableSettings = DataService.getDefaultTableSettings();
+  data: FclData = {
+    elements: null,
+    layout: null,
+    gisLayout: null,
+    graphSettings: DataService.getDefaultGraphSettings(),
+    tableSettings: DataService.getDefaultTableSettings()
+  };
 
   constructor(private dataService: DataService, private dialogService: MdDialog) {
     document.body.oncontextmenu = e => e.preventDefault();
@@ -52,7 +55,7 @@ export class AppComponent implements OnInit {
       const newWidth = 1 - event.center.x / document.getElementById('mainContainer').offsetWidth;
 
       if (newWidth > 0 && newWidth < 1) {
-        this.tableSettings.width = newWidth;
+        this.data.tableSettings.width = newWidth;
         this.onTableChange('width');
       }
     });
@@ -61,23 +64,31 @@ export class AppComponent implements OnInit {
   onGraphChange(property: string) {
     switch (property) {
       case 'type':
-        this.updateData();
+        switch (this.data.graphSettings.type) {
+          case GraphType.GRAPH:
+            this.data.gisLayout = this.gis.getLayout();
+            break;
+          case GraphType.GIS:
+            this.data.layout = this.graph.getLayout();
+            break;
+        }
+
         this.updateComponents();
         break;
       case 'nodeSize':
-        this.getCurrentGraph().setNodeSize(this.graphSettings.nodeSize);
+        this.getCurrentGraph().setNodeSize(this.data.graphSettings.nodeSize);
         break;
       case 'fontSize':
-        this.getCurrentGraph().setFontSize(this.graphSettings.fontSize);
+        this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
         break;
       case 'mergeDeliveries':
-        this.getCurrentGraph().setMergeDeliveries(this.graphSettings.mergeDeliveries);
+        this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
         break;
       case 'showLegend':
-        this.getCurrentGraph().setShowLegend(this.graphSettings.showLegend);
+        this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
         break;
       case 'showZoom':
-        this.getCurrentGraph().setShowZoom(this.graphSettings.showZoom);
+        this.getCurrentGraph().setShowZoom(this.data.graphSettings.showZoom);
         break;
     }
   }
@@ -85,19 +96,19 @@ export class AppComponent implements OnInit {
   onTableChange(property: string) {
     switch (property) {
       case 'width':
-        document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
+        document.getElementById('rightSidenav').style.width = (this.data.tableSettings.width * 100) + '%';
         break;
       case 'mode':
-        this.table.setMode(this.tableSettings.mode);
+        this.table.setMode(this.data.tableSettings.mode);
         break;
       case 'stationColumns':
-        this.table.setStationColumns(this.tableSettings.stationColumns);
+        this.table.setStationColumns(this.data.tableSettings.stationColumns);
         break;
       case 'deliveryColumns':
-        this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
+        this.table.setDeliveryColumns(this.data.tableSettings.deliveryColumns);
         break;
       case 'showType':
-        this.table.setShowType(this.tableSettings.showType);
+        this.table.setShowType(this.data.tableSettings.showType);
         break;
     }
   }
@@ -121,7 +132,14 @@ export class AppComponent implements OnInit {
   }
 
   onSave() {
-    this.updateData();
+    switch (this.data.graphSettings.type) {
+      case GraphType.GRAPH:
+        this.data.layout = this.graph.getLayout();
+        break;
+      case GraphType.GIS:
+        this.data.gisLayout = this.gis.getLayout();
+        break;
+    }
 
     const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
     const fileName = 'data.json';
@@ -151,12 +169,12 @@ export class AppComponent implements OnInit {
   changeColumns() {
     const options: { value: string, viewValue: string, selected: boolean }[] = [];
 
-    for (const column of Utils.getAllTableProperties(this.tableSettings.mode, this.elements)) {
+    for (const column of Utils.getAllTableProperties(this.data.tableSettings.mode, this.data.elements)) {
       options.push({
         value: column,
         viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : '"' + column + '"',
-        selected: Utils.getTableProperties(this.tableSettings.mode, this.tableSettings.stationColumns, this.tableSettings.deliveryColumns)
-          .includes(column)
+        selected: Utils.getTableProperties(this.data.tableSettings.mode, this.data.tableSettings.stationColumns,
+          this.data.tableSettings.deliveryColumns).includes(column)
       });
     }
 
@@ -167,37 +185,24 @@ export class AppComponent implements OnInit {
 
     this.dialogService.open(DialogSelectComponent, {data: dialogData}).afterClosed().subscribe(selections => {
       if (selections != null) {
-        if (this.tableSettings.mode === TableMode.STATIONS) {
-          this.tableSettings.stationColumns = selections;
-          this.onTableChange('stationColumns');
-        } else if (this.tableSettings.mode === TableMode.DELIVERIES) {
-          this.tableSettings.deliveryColumns = selections;
-          this.onTableChange('deliveryColumns');
+        switch (this.data.tableSettings.mode) {
+          case TableMode.STATIONS:
+            this.data.tableSettings.stationColumns = selections;
+            this.onTableChange('stationColumns');
+            break;
+          case TableMode.DELIVERIES:
+            this.data.tableSettings.deliveryColumns = selections;
+            this.onTableChange('deliveryColumns');
+            break;
         }
       }
     });
   }
 
-  private updateData() {
-    const layout = this.graph.getLayout();
-    const gisLayout = this.gis.getLayout();
-
-    this.data = {
-      elements: this.elements,
-      layout: layout != null ? layout : this.data.layout,
-      gisLayout: gisLayout != null ? gisLayout : this.data.gisLayout,
-      graphSettings: this.graphSettings,
-      tableSettings: this.tableSettings
-    };
-  }
-
   private updateComponents() {
-    this.elements = this.data.elements;
-    this.graphSettings = this.data.graphSettings;
-    this.tableSettings = this.data.tableSettings;
-    document.getElementById('rightSidenav').style.width = (this.tableSettings.width * 100) + '%';
+    document.getElementById('rightSidenav').style.width = (this.data.tableSettings.width * 100) + '%';
 
-    switch (this.graphSettings.type) {
+    switch (this.data.graphSettings.type) {
       case GraphType.GRAPH:
         const waitForGraph = () => {
           if ((<HTMLElement>document.getElementsByTagName('app-graph')[0]).offsetParent == null) {
@@ -224,13 +229,13 @@ export class AppComponent implements OnInit {
   }
 
   private updateGraphAndTable() {
-    this.getCurrentGraph().setNodeSize(this.graphSettings.nodeSize);
-    this.getCurrentGraph().setFontSize(this.graphSettings.fontSize);
-    this.getCurrentGraph().setMergeDeliveries(this.graphSettings.mergeDeliveries);
-    this.getCurrentGraph().setShowLegend(this.graphSettings.showLegend);
+    this.getCurrentGraph().setNodeSize(this.data.graphSettings.nodeSize);
+    this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
+    this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
+    this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
     this.getCurrentGraph().onChange(() => this.table.update());
 
-    switch (this.graphSettings.type) {
+    switch (this.data.graphSettings.type) {
       case GraphType.GRAPH:
         this.graph.init(this.data.elements, this.data.layout);
         break;
@@ -239,16 +244,16 @@ export class AppComponent implements OnInit {
         break;
     }
 
-    this.table.setMode(this.tableSettings.mode);
-    this.table.setStationColumns(this.tableSettings.stationColumns);
-    this.table.setDeliveryColumns(this.tableSettings.deliveryColumns);
-    this.table.setShowType(this.tableSettings.showType);
+    this.table.setMode(this.data.tableSettings.mode);
+    this.table.setStationColumns(this.data.tableSettings.stationColumns);
+    this.table.setDeliveryColumns(this.data.tableSettings.deliveryColumns);
+    this.table.setShowType(this.data.tableSettings.showType);
     this.table.onSelectionChange(() => this.getCurrentGraph().updateSelection());
     this.table.init(this.data.elements);
   }
 
   private getCurrentGraph(): GraphComponent | GisComponent {
-    switch (this.graphSettings.type) {
+    switch (this.data.graphSettings.type) {
       case GraphType.GRAPH:
         return this.graph;
       case GraphType.GIS:

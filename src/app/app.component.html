@@ -28,30 +28,30 @@
       <span>Graph Settings</span>
     </md-toolbar>
     <div class="sidenav-elements">
-      <md-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="onGraphChange('type')">
+      <md-radio-group [(ngModel)]="data.graphSettings.type" (ngModelChange)="onGraphChange('type')">
         <md-radio-button *ngFor="let type of graphTypes" [value]="type">
           {{type}}
         </md-radio-button>
       </md-radio-group>
-      <md-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize"
+      <md-select placeholder="Node Size" [(ngModel)]="data.graphSettings.nodeSize"
                  (ngModelChange)="onGraphChange('nodeSize')">
         <md-option *ngFor="let size of sizes" [value]="size">
           {{size}}
         </md-option>
       </md-select>
-      <md-select placeholder="Font Size" [(ngModel)]="graphSettings.fontSize"
+      <md-select placeholder="Font Size" [(ngModel)]="data.graphSettings.fontSize"
                  (ngModelChange)="onGraphChange('fontSize')">
         <md-option *ngFor="let size of sizes" [value]="size">
           {{size}}
         </md-option>
       </md-select>
-      <md-checkbox [(ngModel)]="graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
+      <md-checkbox [(ngModel)]="data.graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
         Merge Deliveries
       </md-checkbox>
-      <md-checkbox [(ngModel)]="graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
+      <md-checkbox [(ngModel)]="data.graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
         Show Legend
       </md-checkbox>
-      <md-checkbox [(ngModel)]="graphSettings.showZoom" (ngModelChange)="onGraphChange('showZoom')">
+      <md-checkbox [(ngModel)]="data.graphSettings.showZoom" (ngModelChange)="onGraphChange('showZoom')">
         Show Zoom Controls
       </md-checkbox>
     </div>
@@ -59,13 +59,13 @@
       <span>Table Settings</span>
     </md-toolbar>
     <div class="sidenav-elements">
-      <md-radio-group [(ngModel)]="tableSettings.mode" (ngModelChange)="onTableChange('mode')">
+      <md-radio-group [(ngModel)]="data.tableSettings.mode" (ngModelChange)="onTableChange('mode')">
         <md-radio-button *ngFor="let mode of tableModes" [value]="mode">
           {{mode}}
         </md-radio-button>
       </md-radio-group>
       <button md-raised-button (click)="changeColumns()">Change Columns</button>
-      <md-select placeholder="Show Type" [(ngModel)]="tableSettings.showType"
+      <md-select placeholder="Show Type" [(ngModel)]="data.tableSettings.showType"
                  (ngModelChange)="onTableChange('showType')">
         <md-option *ngFor="let showType of showTypes" [value]="showType">
           {{showType}}
@@ -75,8 +75,8 @@
   </md-sidenav>
 
   <div id="mainContent">
-    <app-graph #graph [hidden]="graphSettings.type != graphType"></app-graph>
-    <app-gis #gis [hidden]="graphSettings.type != gisType"></app-gis>
+    <app-graph #graph [hidden]="data.graphSettings.type != graphType"></app-graph>
+    <app-gis #gis [hidden]="data.graphSettings.type != gisType"></app-gis>
   </div>
 
   <md-sidenav id="rightSidenav" #rightSidenav align="end" mode="side">

@@ -212,6 +212,7 @@ export class GisComponent implements OnInit {
     this.setFontSize(this.fontSize);
     this.setShowLegend(this.showLegend);
     this.updateSlider();
+    this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
   }
 
   onChange(changeFunction: () => void) {
