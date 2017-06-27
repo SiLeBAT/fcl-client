@@ -179,7 +179,7 @@ export class GisComponent implements OnInit {
         pinchCenter = e.center;
       }
 
-      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.x);
+      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.y);
     });
     hammer.on('pinchend', () => pinchCenter = null);
     this.cy.container().children.item(0).children.item(0).addEventListener('wheel', (e: WheelEvent) => {
