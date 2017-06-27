@@ -175,6 +175,8 @@ export class GisComponent implements OnInit {
 
     hammer.add(new Hammer.Pinch());
     hammer.on('pinch', e => {
+      this.cy.userPanningEnabled(false);
+
       if (pinchCenter == null) {
         const cyRect = this.cy.container().getBoundingClientRect();
 
@@ -184,10 +186,12 @@ export class GisComponent implements OnInit {
         };
       }
 
-      document.getElementById('homeButton').innerText = pinchCenter.x + '/' + pinchCenter.y;
       this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.y);
     });
-    hammer.on('pinchend', () => pinchCenter = null);
+    hammer.on('pinchend', () => {
+      pinchCenter = null;
+      this.cy.userPanningEnabled(true);
+    });
     this.cy.container().children.item(0).children.item(0).addEventListener('wheel', (e: WheelEvent) => {
       this.zoomTo(this.zoom * Math.pow(10, e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250), e.offsetX, e.offsetY);
     }, false);
