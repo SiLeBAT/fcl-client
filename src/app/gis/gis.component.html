@@ -1,7 +1,7 @@
 <div id="container" #container>
   <div id="map" #map></div>
   <div id="graph" #graph></div>
-  <div id="zoom">
+  <div id="zoom" *ngIf="showZoom">
     <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
       <md-icon>add</md-icon>
     </button>

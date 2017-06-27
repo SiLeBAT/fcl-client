@@ -6,7 +6,7 @@ import {TableComponent} from './table/table.component';
 import {DataService} from './util/data.service';
 import {DialogSelectComponent, DialogSelectData} from './dialog/dialog-select/dialog-select.component';
 import {Utils} from './util/utils';
-import {FclData, FclElements, GraphType, TableMode} from './util/datatypes';
+import {FclData, GraphType, TableMode} from './util/datatypes';
 import {Constants} from './util/constants';
 import {GisComponent} from './gis/gis.component';
 

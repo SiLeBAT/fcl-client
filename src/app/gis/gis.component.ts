@@ -171,9 +171,17 @@ export class GisComponent implements OnInit {
     });
 
     const hammer = new Hammer.Manager(this.cy.container().children.item(0).children.item(0));
+    let pinchCenter: Position;
 
     hammer.add(new Hammer.Pinch());
-    hammer.on('pinch', e => this.zoomTo(this.zoom * e.scale, this.cy.width() / 2, this.cy.height() / 2));
+    hammer.on('pinch', e => {
+      if (pinchCenter == null) {
+        pinchCenter = e.center;
+      }
+
+      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.x);
+    });
+    hammer.on('pinchend', () => pinchCenter = null);
     this.cy.container().children.item(0).children.item(0).addEventListener('wheel', (e: WheelEvent) => {
       this.zoomTo(this.zoom * Math.pow(10, e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250), e.offsetX, e.offsetY);
     }, false);
@@ -220,6 +228,7 @@ export class GisComponent implements OnInit {
     this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
   }
 
+  //noinspection JSUnusedGlobalSymbols
   onChange(changeFunction: () => void) {
     this.changeFunction = changeFunction;
   }
@@ -235,6 +244,7 @@ export class GisComponent implements OnInit {
     }
   }
 
+  //noinspection JSUnusedGlobalSymbols
   getCanvas(): Promise<HTMLCanvasElement> {
     return new Promise(resolve => {
       //noinspection JSUnusedGlobalSymbols
@@ -246,6 +256,7 @@ export class GisComponent implements OnInit {
     });
   }
 
+  //noinspection JSUnusedGlobalSymbols
   setMergeDeliveries(mergeDeliveries: boolean) {
     this.mergeDeliveries = mergeDeliveries;
 
@@ -276,10 +287,12 @@ export class GisComponent implements OnInit {
     this.showLegend = showLegend;
   }
 
+  //noinspection JSUnusedGlobalSymbols
   setShowZoom(showZoom: boolean) {
     this.showZoom = showZoom;
   }
 
+  //noinspection JSUnusedGlobalSymbols
   updateSelection() {
     if (this.cy != null) {
       this.selectTimerActivated = false;
