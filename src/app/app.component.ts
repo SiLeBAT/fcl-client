@@ -233,6 +233,7 @@ export class AppComponent implements OnInit {
     this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
     this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
     this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
+    this.getCurrentGraph().setShowZoom(this.data.graphSettings.showZoom);
     this.getCurrentGraph().onChange(() => this.table.update());
 
     switch (this.data.graphSettings.type) {
