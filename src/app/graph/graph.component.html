@@ -29,11 +29,11 @@
     </md-card>
   </div>
 </div>
-<div class="menuTrigger" [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
-<div class="menuTrigger" [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
-<div class="menuTrigger" [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
-<div class="menuTrigger" [mdMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="mdMenuTrigger"></div>
-<div class="menuTrigger" [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
+<div [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
+<div [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
+<div [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
+<div [mdMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="mdMenuTrigger"></div>
+<div [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
 <md-menu #graphMenu>
   <button md-menu-item *ngFor="let action of graphMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">

@@ -101,8 +101,7 @@ export class Utils {
   static openMenu(trigger: MdMenuTrigger, pos: Position) {
     const triggerAny: any = trigger;
 
-    console.log(triggerAny);
-
+    triggerAny._element.nativeElement.style.position = 'fixed';
     triggerAny._element.nativeElement.style.left = pos.x + 'px';
     triggerAny._element.nativeElement.style.top = pos.y + 'px';
     trigger.openMenu();
