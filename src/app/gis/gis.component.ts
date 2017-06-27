@@ -1,6 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdMenuTrigger, MdSlider} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
+import * as Hammer from 'hammerjs';
 import * as ol from 'openlayers';
 import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
@@ -170,10 +171,9 @@ export class GisComponent implements OnInit {
       autoungrabify: true
     });
 
-    const hammer = new Hammer.Manager(this.cy.container().children.item(0).children.item(0));
+    const hammer = new Hammer.Manager(this.cy.container().children.item(0).children.item(0), {recognizers: [[Hammer.Pinch]]});
     let pinchCenter: Position;
 
-    hammer.add(new Hammer.Pinch());
     hammer.on('pinch', e => {
       this.cy.userPanningEnabled(false);
 
@@ -186,7 +186,7 @@ export class GisComponent implements OnInit {
         };
       }
 
-      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.y);
+      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 5), pinchCenter.x, pinchCenter.y);
     });
     hammer.on('pinchend', () => {
       pinchCenter = null;

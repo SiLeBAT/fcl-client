@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdSidenav} from '@angular/material';
+import * as Hammer from 'hammerjs';
 
 import {GraphComponent} from './graph/graph.component';
 import {TableComponent} from './table/table.component';
@@ -51,7 +52,7 @@ export class AppComponent implements OnInit {
     });
 
     this.rightSidenav.onOpenStart.subscribe(() => this.onTableChange('width'));
-    new Hammer(document.getElementById('sidenavSlider')).on('pan', event => {
+    new Hammer.Manager(document.getElementById('sidenavSlider'), {recognizers: [[Hammer.Pan]]}).on('pan', event => {
       const newWidth = 1 - event.center.x / document.getElementById('mainContainer').offsetWidth;
 
       if (newWidth > 0 && newWidth < 1) {
