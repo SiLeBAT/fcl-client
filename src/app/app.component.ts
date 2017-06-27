@@ -203,30 +203,15 @@ export class AppComponent implements OnInit {
   private updateComponents() {
     document.getElementById('rightSidenav').style.width = (this.data.tableSettings.width * 100) + '%';
 
-    switch (this.data.graphSettings.type) {
-      case GraphType.GRAPH:
-        const waitForGraph = () => {
-          if ((<HTMLElement>document.getElementsByTagName('app-graph')[0]).offsetParent == null) {
-            setTimeout(waitForGraph, 50);
-          } else {
-            this.updateGraphAndTable();
-          }
-        };
+    const waitForGraph = () => {
+      if (this.getCurrentGraph().elementRef.nativeElement.offsetParent == null) {
+        setTimeout(waitForGraph, 50);
+      } else {
+        this.updateGraphAndTable();
+      }
+    };
 
-        waitForGraph();
-        break;
-      case GraphType.GIS:
-        const waitForGis = () => {
-          if ((<HTMLElement>document.getElementsByTagName('app-gis')[0]).offsetParent == null) {
-            setTimeout(waitForGis, 50);
-          } else {
-            this.updateGraphAndTable();
-          }
-        };
-
-        waitForGis();
-        break;
-    }
+    waitForGraph();
   }
 
   private updateGraphAndTable() {

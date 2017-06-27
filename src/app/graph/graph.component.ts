@@ -92,7 +92,8 @@ export class GraphComponent implements OnInit {
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
 
-  constructor(private tracingService: TracingService, private dialogService: MdDialog) {
+  //noinspection JSUnusedGlobalSymbols
+  constructor(private tracingService: TracingService, private dialogService: MdDialog, public elementRef: ElementRef) {
     if (cytoscape != null) {
       cytoscape.use(cola);
       cytoscape.use(dagre);

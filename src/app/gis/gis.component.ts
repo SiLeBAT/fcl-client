@@ -92,7 +92,8 @@ export class GisComponent implements OnInit {
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
 
-  constructor(private tracingService: TracingService, private dialogService: MdDialog) {
+  //noinspection JSUnusedGlobalSymbols
+  constructor(private tracingService: TracingService, private dialogService: MdDialog, public elementRef: ElementRef) {
   }
 
   ngOnInit() {
@@ -879,7 +880,14 @@ export class GisComponent implements OnInit {
       }
     }
 
-    const zoom = Math.min((width - 2 * border) / (xMax - xMin), (height - 2 * border) / (yMax - yMin));
+    let zoom;
+
+    if (xMax > xMin && yMax > yMin) {
+      zoom = Math.min((width - 2 * border) / (xMax - xMin), (height - 2 * border) / (yMax - yMin));
+    } else {
+      zoom = 1.0;
+    }
+
     const panX1 = -xMin * zoom + border;
     const panY1 = -yMin * zoom + border;
     const panX2 = -xMax * zoom + width - border;
