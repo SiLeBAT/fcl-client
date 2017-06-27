@@ -176,7 +176,12 @@ export class GisComponent implements OnInit {
     hammer.add(new Hammer.Pinch());
     hammer.on('pinch', e => {
       if (pinchCenter == null) {
-        pinchCenter = e.center;
+        const cyRect = this.cy.container().getBoundingClientRect();
+
+        pinchCenter = {
+          x: e.center.x - cyRect.left,
+          y: e.center.y - cyRect.top
+        };
       }
 
       document.getElementById('homeButton').innerText = pinchCenter.x + '/' + pinchCenter.y;
