@@ -135,37 +135,20 @@ export class GisComponent implements OnInit {
     this.data = data;
     this.tracingService.init(data);
 
-
-    let pan: Position;
-
-    if (layout != null) {
-      this.zoom = layout.zoom;
-      pan = layout.pan;
+    if (layout == null) {
+      layout = this.fit();
     }
 
-    const nodes = this.createNodes();
-
-    if (pan == null) {
-      pan = {x: Infinity, y: Infinity};
-
-      for (const n of nodes) {
-        pan.x = Math.min(pan.x, n.position.x);
-        pan.y = Math.min(pan.y, n.position.y);
-      }
-
-      pan.x = -pan.x;
-      pan.y = -pan.y;
-    }
-
+    this.zoom = layout.zoom;
     this.cy = cytoscape({
       container: this.graphElement.nativeElement,
 
       elements: {
-        nodes: nodes,
+        nodes: this.createNodes(),
         edges: this.createEdges()
       },
 
-      layout: {name: 'preset', zoom: 1, pan: pan},
+      layout: {name: 'preset', zoom: 1, pan: layout.pan},
       style: this.createStyle(),
       zoomingEnabled: false,
       autoungrabify: true
@@ -334,7 +317,8 @@ export class GisComponent implements OnInit {
   }
 
   zoomResetPressed() {
-    // TODO
+    this.applyLayout(this.fit());
+    this.updateSlider();
   }
 
   sliderChanged() {
@@ -835,17 +819,24 @@ export class GisComponent implements OnInit {
     newZoom = Math.min(Math.max(newZoom, GisComponent.MIN_ZOOM), GisComponent.MAX_ZOOM);
 
     if (newZoom !== this.zoom) {
-      this.cy.batch(() => {
-        this.cy.pan({x: zx + (this.cy.pan().x - zx) * newZoom / this.zoom, y: zy + (this.cy.pan().y - zy) * newZoom / this.zoom});
-        this.zoom = newZoom;
-        this.cy.nodes().positions(node => Utils.latLonToPosition(node.data('lat'), node.data('lon'), newZoom));
+      this.applyLayout({
+        zoom: newZoom,
+        pan: {x: zx + (this.cy.pan().x - zx) * newZoom / this.zoom, y: zy + (this.cy.pan().y - zy) * newZoom / this.zoom}
       });
-      this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
 
       if (!this.sliding) {
         this.updateSlider();
       }
     }
+  }
+
+  private applyLayout(layout: Layout) {
+    this.zoom = layout.zoom;
+    this.cy.batch(() => {
+      this.cy.pan(layout.pan);
+      this.cy.nodes().positions(node => Utils.latLonToPosition(node.data('lat'), node.data('lon'), layout.zoom));
+    });
+    this.map.setView(Utils.panZoomToView(layout.pan, layout.zoom, this.cy.width(), this.cy.height()));
   }
 
   private updateSlider() {
@@ -866,5 +857,37 @@ export class GisComponent implements OnInit {
     this.cy.resize();
     this.map.updateSize();
     this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
+  }
+
+  private fit(): Layout {
+    const width = this.containerElement.nativeElement.offsetWidth;
+    const height = this.containerElement.nativeElement.offsetHeight;
+    const border = GisComponent.NODE_SIZES.get(this.nodeSize) / 2;
+    let xMin = Number.POSITIVE_INFINITY;
+    let yMin = Number.POSITIVE_INFINITY;
+    let xMax = Number.NEGATIVE_INFINITY;
+    let yMax = Number.NEGATIVE_INFINITY;
+
+    for (const s of this.data.stations) {
+      if (!s.contained && !s.invisible) {
+        const p = Utils.latLonToPosition(s.lat, s.lon, 1.0);
+
+        xMin = Math.min(xMin, p.x);
+        yMin = Math.min(yMin, p.y);
+        xMax = Math.max(xMax, p.x);
+        yMax = Math.max(yMax, p.y);
+      }
+    }
+
+    const zoom = Math.min((width - 2 * border) / (xMax - xMin), (height - 2 * border) / (yMax - yMin));
+    const panX1 = -xMin * zoom + border;
+    const panY1 = -yMin * zoom + border;
+    const panX2 = -xMax * zoom + width - border;
+    const panY2 = -yMax * zoom + height - border;
+
+    return {
+      zoom: zoom,
+      pan: {x: (panX1 + panX2) / 2, y: (panY1 + panY2) / 2}
+    };
   }
 }
