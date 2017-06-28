@@ -174,7 +174,8 @@ export class GisComponent implements OnInit {
         };
       }
 
-      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 5), pinchCenter.x, pinchCenter.y);
+      console.log(e);
+      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.y);
     });
     hammer.on('pinchend', () => {
       pinchCenter = null;
