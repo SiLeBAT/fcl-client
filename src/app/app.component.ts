@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MdDialog, MdSidenav} from '@angular/material';
 import * as Hammer from 'hammerjs';
 
@@ -18,10 +18,14 @@ import {GisComponent} from './gis/gis.component';
 })
 export class AppComponent implements OnInit {
 
+  @ViewChild('mainContainer', {read: ElementRef}) mainContainer: ElementRef;
   @ViewChild('graph') graph: GraphComponent;
   @ViewChild('gis') gis: GisComponent;
   @ViewChild('table') table: TableComponent;
   @ViewChild('rightSidenav') rightSidenav: MdSidenav;
+  @ViewChild('rightSidenav', {read: ElementRef}) rightSidenavElement: ElementRef;
+  @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
+  @ViewChild('fileInput') fileInput: ElementRef;
 
   graphTypes = Constants.GRAPH_TYPES;
   graphType = GraphType.GRAPH;
@@ -52,8 +56,8 @@ export class AppComponent implements OnInit {
     });
 
     this.rightSidenav.onOpenStart.subscribe(() => this.onTableChange('width'));
-    new Hammer.Manager(document.getElementById('sidenavSlider'), {recognizers: [[Hammer.Pan]]}).on('pan', event => {
-      const newWidth = 1 - event.center.x / document.getElementById('mainContainer').offsetWidth;
+    new Hammer.Manager(this.sidenavSlider.nativeElement, {recognizers: [[Hammer.Pan]]}).on('pan', event => {
+      const newWidth = 1 - event.center.x / (<HTMLElement>this.mainContainer.nativeElement).offsetWidth;
 
       if (newWidth > 0 && newWidth < 1) {
         this.data.tableSettings.width = newWidth;
@@ -97,7 +101,7 @@ export class AppComponent implements OnInit {
   onTableChange(property: string) {
     switch (property) {
       case 'width':
-        document.getElementById('rightSidenav').style.width = (this.data.tableSettings.width * 100) + '%';
+        (<HTMLElement>this.rightSidenavElement.nativeElement).style.width = (this.data.tableSettings.width * 100) + '%';
         break;
       case 'mode':
         this.table.setMode(this.data.tableSettings.mode);
@@ -129,7 +133,7 @@ export class AppComponent implements OnInit {
       Utils.showErrorMessage(this.dialogService, 'Please select one .json file!');
     }
 
-    (<HTMLInputElement>document.getElementById('fileInput')).value = '';
+    (<HTMLInputElement>this.fileInput.nativeElement).value = '';
   }
 
   onSave() {
@@ -201,42 +205,38 @@ export class AppComponent implements OnInit {
   }
 
   private updateComponents() {
-    document.getElementById('rightSidenav').style.width = (this.data.tableSettings.width * 100) + '%';
+    this.onTableChange('width');
 
     const waitForGraph = () => {
       if (this.getCurrentGraph().elementRef.nativeElement.offsetParent == null) {
         setTimeout(waitForGraph, 50);
       } else {
-        this.updateGraphAndTable();
+        this.getCurrentGraph().setNodeSize(this.data.graphSettings.nodeSize);
+        this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
+        this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
+        this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
+        this.getCurrentGraph().setShowZoom(this.data.graphSettings.showZoom);
+        this.getCurrentGraph().onChange(() => this.table.update());
+
+        switch (this.data.graphSettings.type) {
+          case GraphType.GRAPH:
+            this.graph.init(this.data.elements, this.data.layout);
+            break;
+          case GraphType.GIS:
+            this.gis.init(this.data.elements, this.data.gisLayout);
+            break;
+        }
+
+        this.table.setMode(this.data.tableSettings.mode);
+        this.table.setStationColumns(this.data.tableSettings.stationColumns);
+        this.table.setDeliveryColumns(this.data.tableSettings.deliveryColumns);
+        this.table.setShowType(this.data.tableSettings.showType);
+        this.table.onSelectionChange(() => this.getCurrentGraph().updateSelection());
+        this.table.init(this.data.elements);
       }
     };
 
     waitForGraph();
-  }
-
-  private updateGraphAndTable() {
-    this.getCurrentGraph().setNodeSize(this.data.graphSettings.nodeSize);
-    this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
-    this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
-    this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
-    this.getCurrentGraph().setShowZoom(this.data.graphSettings.showZoom);
-    this.getCurrentGraph().onChange(() => this.table.update());
-
-    switch (this.data.graphSettings.type) {
-      case GraphType.GRAPH:
-        this.graph.init(this.data.elements, this.data.layout);
-        break;
-      case GraphType.GIS:
-        this.gis.init(this.data.elements, this.data.gisLayout);
-        break;
-    }
-
-    this.table.setMode(this.data.tableSettings.mode);
-    this.table.setStationColumns(this.data.tableSettings.stationColumns);
-    this.table.setDeliveryColumns(this.data.tableSettings.deliveryColumns);
-    this.table.setShowType(this.data.tableSettings.showType);
-    this.table.onSelectionChange(() => this.getCurrentGraph().updateSelection());
-    this.table.init(this.data.elements);
   }
 
   private getCurrentGraph(): GraphComponent | GisComponent {

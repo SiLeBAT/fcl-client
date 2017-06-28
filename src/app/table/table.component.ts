@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
@@ -35,6 +35,7 @@ export class TableComponent implements OnInit {
 
   private changeFunction: () => void;
 
+  @ViewChild('container') container: ElementRef;
   @ViewChild('table') table: DatatableComponent;
   @ViewChild('selectTmpl') selectTmpl: TemplateRef<any>;
 
@@ -87,7 +88,7 @@ export class TableComponent implements OnInit {
       });
     };
 
-    new ResizeSensor(document.getElementById('tableContainer'), () => {
+    new ResizeSensor(this.container.nativeElement, () => {
       if (this.resizeTimer != null) {
         this.resizeTimer.unsubscribe();
       }
@@ -257,7 +258,7 @@ export class TableComponent implements OnInit {
 
   private getUpdatedColumns(columns: any[]): any[] {
     const selectColumnWidth = 40;
-    const width = document.getElementById('tableContainer').offsetWidth - this.scrollbarHelper.width;
+    const width = (<HTMLElement>this.container.nativeElement).offsetWidth - this.scrollbarHelper.width;
     const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
     let first = true;
 

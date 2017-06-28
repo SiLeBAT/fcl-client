@@ -3,6 +3,7 @@ import {DialogPosition, MdDialog, MdDialogRef, MdMenuTrigger} from '@angular/mat
 import * as ol from 'openlayers';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
+import {ElementRef} from '@angular/core';
 
 export class Utils {
 
@@ -98,12 +99,12 @@ export class Utils {
     return dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
-  static openMenu(trigger: MdMenuTrigger, pos: Position) {
-    const triggerAny: any = trigger;
+  static openMenu(trigger: MdMenuTrigger, triggerElement: ElementRef, pos: Position) {
+    const style = (<HTMLElement>triggerElement.nativeElement).style;
 
-    triggerAny._element.nativeElement.style.position = 'fixed';
-    triggerAny._element.nativeElement.style.left = pos.x + 'px';
-    triggerAny._element.nativeElement.style.top = pos.y + 'px';
+    style.position = 'fixed';
+    style.left = pos.x + 'px';
+    style.top = pos.y + 'px';
     trigger.openMenu();
   }
 

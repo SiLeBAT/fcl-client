@@ -50,10 +50,15 @@ export class GraphComponent implements OnInit {
 
   @ViewChild('slider') slider: MdSlider;
   @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
+  @ViewChild('graphMenuTrigger', {read: ElementRef}) graphMenuTriggerElement: ElementRef;
   @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
+  @ViewChild('stationMenuTrigger', {read: ElementRef}) stationMenuTriggerElement: ElementRef;
   @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
+  @ViewChild('deliveryMenuTrigger', {read: ElementRef}) deliveryMenuTriggerElement: ElementRef;
   @ViewChild('layoutMenuTrigger') layoutMenuTrigger: MdMenuTrigger;
+  @ViewChild('layoutMenuTrigger', {read: ElementRef}) layoutMenuTriggerElement: ElementRef;
   @ViewChild('traceMenuTrigger') traceMenuTrigger: MdMenuTrigger;
+  @ViewChild('traceMenuTrigger', {read: ElementRef}) traceMenuTriggerElement: ElementRef;
 
   graphMenuActions = this.createGraphActions();
   stationMenuActions = this.createStationActions(null);
@@ -166,15 +171,15 @@ export class GraphComponent implements OnInit {
 
       if (element === this.cy) {
         this.contextMenuElement = null;
-        Utils.openMenu(this.graphMenuTrigger, position);
+        Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, position);
       } else if (element.isNode()) {
         this.contextMenuElement = element;
         this.stationMenuActions = this.createStationActions(element);
-        Utils.openMenu(this.stationMenuTrigger, position);
+        Utils.openMenu(this.stationMenuTrigger, this.stationMenuTriggerElement, position);
       } else if (element.isEdge()) {
         this.contextMenuElement = element;
         this.deliveryMenuActions = this.createDeliveryActions(element);
-        Utils.openMenu(this.deliveryMenuTrigger, position);
+        Utils.openMenu(this.deliveryMenuTrigger, this.deliveryMenuTriggerElement, position);
       }
     });
     this.hoverDeliveries.subscribe(ids => {
@@ -574,7 +579,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Apply Layout',
         enabled: true,
-        action: event => Utils.openMenu(this.layoutMenuTrigger, this.getCyCoordinates(event))
+        action: event => Utils.openMenu(this.layoutMenuTrigger, this.layoutMenuTriggerElement, this.getCyCoordinates(event))
       }, {
         name: 'Clear Trace',
         enabled: true,
@@ -660,7 +665,7 @@ export class GraphComponent implements OnInit {
         enabled: !multipleStationsSelected,
         action: event => {
           this.traceMenuActions = this.createTraceActions(node);
-          Utils.openMenu(this.traceMenuTrigger, this.getCyCoordinates(event));
+          Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
         }
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
@@ -750,7 +755,7 @@ export class GraphComponent implements OnInit {
               .subscribe(() => this.updateOverlay());
           } else {
             this.traceMenuActions = this.createTraceActions(edge);
-            Utils.openMenu(this.traceMenuTrigger, this.getCyCoordinates(event));
+            Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
           }
         }
       }
