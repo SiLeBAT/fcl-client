@@ -1,5 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MdSliderModule} from '@angular/material';
+import {MdDialogModule, MdMenuModule, MdSliderModule} from '@angular/material';
+import {TracingService} from '../tracing/tracing.service';
 
 import {GisComponent} from './gis.component';
 
@@ -9,8 +10,9 @@ describe('GisComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MdSliderModule],
-      declarations: [GisComponent]
+      imports: [MdDialogModule, MdMenuModule, MdSliderModule],
+      declarations: [GisComponent],
+      providers: [TracingService]
     }).compileComponents().then();
   }));
 

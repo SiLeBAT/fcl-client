@@ -10,9 +10,9 @@ describe('StationPropertiesComponent', () => {
   beforeEach(async(() => {
     const data: StationPropertiesData = {
       station: {
-        id: null, name: null, incoming: [], outgoing: [], connections: [], invisible: null, contained: null, contains: null, selected: null,
-        observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null, commonLink: null,
-        position: null, positionRelativeTo: null, properties: []
+        id: null, name: null, lat: null, lon: null, incoming: [], outgoing: [], connections: [], invisible: null, contained: null,
+        contains: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null,
+        score: null, commonLink: null, position: null, positionRelativeTo: null, properties: []
       },
       deliveries: new Map(),
       connectedStations: new Map(),
