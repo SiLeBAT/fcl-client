@@ -161,8 +161,9 @@ export class GisComponent implements OnInit {
 
     const hammer = new Hammer.Manager(this.cy.container().children.item(0).children.item(0), {recognizers: [[Hammer.Pinch]]});
     let pinchCenter: Position;
+    let lastScale: number;
 
-    hammer.on('pinch', e => {
+    hammer.on('pinchin pinchout', e => {
       this.cy.userPanningEnabled(false);
 
       if (pinchCenter == null) {
@@ -174,10 +175,11 @@ export class GisComponent implements OnInit {
         };
       }
 
-      console.log(e);
+      console.log(e.type + ': ' + lastScale != null ? e.scale / lastScale : e.scale);
+      lastScale = e.scale;
       this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.y);
     });
-    hammer.on('pinchend', () => {
+    hammer.on('pinchend pinchcancel', () => {
       pinchCenter = null;
       this.cy.userPanningEnabled(true);
     });
@@ -189,6 +191,7 @@ export class GisComponent implements OnInit {
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
     this.cy.on('cxttap', event => {
+      console.log(event);
       const element = event.target;
       const position: Position = {
         x: event.originalEvent.offsetX,
