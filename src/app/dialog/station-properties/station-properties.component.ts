@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 import * as d3 from 'd3';
 import {Subject} from 'rxjs/Rx';
@@ -121,6 +121,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   private static readonly NODE_WIDTH = 200;
   private static readonly NODE_HEIGHT = 50;
 
+  @ViewChild('inOutConnector') inOutConnector: ElementRef;
+
   title: string;
   propertiesHidden = false;
   properties: { name: string, value: string }[];
@@ -227,7 +229,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.height != null) {
       this.svg = d3
-        .select('#in-out-connector').append<SVGGElement>('svg')
+        .select(this.inOutConnector.nativeElement).append<SVGGElement>('svg')
         .attr('display', 'block')
         .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
         .on('click', () => {
