@@ -161,26 +161,26 @@ export class GisComponent implements OnInit {
 
     const hammer = new Hammer.Manager(this.cy.container().children.item(0).children.item(0), {recognizers: [[Hammer.Pinch]]});
     let pinchCenter: Position;
-    let lastScale: number;
+    let pinchScale: number;
 
-    hammer.on('pinchin pinchout', e => {
+    hammer.on('pinchstart', e => {
       this.cy.userPanningEnabled(false);
 
-      if (pinchCenter == null) {
-        const cyRect = this.cy.container().getBoundingClientRect();
+      const cyRect = this.cy.container().getBoundingClientRect();
 
-        pinchCenter = {
-          x: e.center.x - cyRect.left,
-          y: e.center.y - cyRect.top
-        };
-      }
-
-      console.log(e.type + ': ' + lastScale != null ? e.scale / lastScale : e.scale);
-      lastScale = e.scale;
-      this.zoomTo(this.zoom * Math.pow(10, Math.log10(e.scale) / 10), pinchCenter.x, pinchCenter.y);
+      pinchCenter = {
+        x: e.center.x - cyRect.left,
+        y: e.center.y - cyRect.top
+      };
+      pinchScale = e.scale;
+    });
+    hammer.on('pinchin pinchout', e => {
+      this.zoomTo(this.zoom * e.scale / pinchScale, pinchCenter.x, pinchCenter.y);
+      pinchScale = e.scale;
     });
     hammer.on('pinchend pinchcancel', () => {
       pinchCenter = null;
+      pinchScale = null;
       this.cy.userPanningEnabled(true);
     });
     this.cy.container().children.item(0).children.item(0).addEventListener('wheel', (e: WheelEvent) => {
@@ -191,7 +191,6 @@ export class GisComponent implements OnInit {
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
     this.cy.on('cxttap', event => {
-      console.log(event);
       const element = event.target;
       const position: Position = {
         x: event.originalEvent.offsetX,
