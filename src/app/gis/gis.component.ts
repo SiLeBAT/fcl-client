@@ -887,22 +887,26 @@ export class GisComponent implements OnInit {
       }
     }
 
-    let zoom;
+    let zoom: number;
+    let pan: Position;
 
     if (xMax > xMin && yMax > yMin) {
       zoom = Math.min((width - 2 * border) / (xMax - xMin), (height - 2 * border) / (yMax - yMin));
     } else {
-      zoom = 1.0;
+      zoom = 1;
     }
 
-    const panX1 = -xMin * zoom + border;
-    const panY1 = -yMin * zoom + border;
-    const panX2 = -xMax * zoom + width - border;
-    const panY2 = -yMax * zoom + height - border;
+    if (Number.isFinite(xMin) && Number.isFinite(yMin) && Number.isFinite(xMax) && Number.isFinite(yMax)) {
+      const panX1 = -xMin * zoom + border;
+      const panY1 = -yMin * zoom + border;
+      const panX2 = -xMax * zoom + width - border;
+      const panY2 = -yMax * zoom + height - border;
 
-    return {
-      zoom: zoom,
-      pan: {x: (panX1 + panX2) / 2, y: (panY1 + panY2) / 2}
-    };
+      pan = {x: (panX1 + panX2) / 2, y: (panY1 + panY2) / 2};
+    } else {
+      pan = {x: 0, y: 0};
+    }
+
+    return {zoom: zoom, pan: pan};
   }
 }
