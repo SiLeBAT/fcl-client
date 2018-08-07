@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MdDialog, MdSidenav} from '@angular/material';
+import {MatDialog, MatSidenav} from '@angular/material';
 import * as Hammer from 'hammerjs';
 
 import {GraphComponent} from './graph/graph.component';
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   @ViewChild('graph') graph: GraphComponent;
   @ViewChild('gis') gis: GisComponent;
   @ViewChild('table') table: TableComponent;
-  @ViewChild('rightSidenav') rightSidenav: MdSidenav;
+  @ViewChild('rightSidenav') rightSidenav: MatSidenav;
   @ViewChild('rightSidenav', {read: ElementRef}) rightSidenavElement: ElementRef;
   @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
   @ViewChild('fileInput') fileInput: ElementRef;
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
     tableSettings: DataService.getDefaultTableSettings()
   };
 
-  constructor(private dataService: DataService, private dialogService: MdDialog) {
+  constructor(private dataService: DataService, private dialogService: MatDialog) {
     document.body.oncontextmenu = e => e.preventDefault();
   }
 
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
       Utils.showErrorMessage(this.dialogService, error);
     });
 
-    this.rightSidenav.onOpenStart.subscribe(() => this.onTableChange('width'));
+    this.rightSidenav.openedStart.subscribe(() => this.onTableChange('width'));
     new Hammer.Manager(this.sidenavSlider.nativeElement, {recognizers: [[Hammer.Pan]]}).on('pan', event => {
       const newWidth = 1 - event.center.x / (<HTMLElement>this.mainContainer.nativeElement).offsetWidth;
 

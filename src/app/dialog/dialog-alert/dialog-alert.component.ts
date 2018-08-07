@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MD_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 export interface DialogAlertData {
   title: string;
@@ -13,7 +13,7 @@ export interface DialogAlertData {
 })
 export class DialogAlertComponent {
 
-  constructor(@Inject(MD_DIALOG_DATA) public data: DialogAlertData) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogAlertData) {
   }
 
 }

@@ -16,11 +16,11 @@
   margin-left: 20px;
 }
 
-md-card {
+mat-card {
   margin: 10px 0;
 }
 
-md-card:not(:last-child) {
+mat-card:not(:last-child) {
   margin-bottom: 20px;
 }
 

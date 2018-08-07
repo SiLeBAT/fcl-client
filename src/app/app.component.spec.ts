@@ -70,8 +70,8 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render title in a md-toolbar', () => {
+  it('should render title in a mat-toolbar', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('md-toolbar').textContent).toContain('FoodChain-Lab');
+    expect(compiled.querySelector('mat-toolbar').textContent).toContain('FoodChain-Lab');
   });
 });

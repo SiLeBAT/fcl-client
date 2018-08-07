@@ -1,90 +1,149 @@
-<md-toolbar id="mainToolbar" class="mat-elevation-z5" color="primary">
-  <button md-icon-button (click)="leftSidenav.toggle()">
-    <md-icon>menu</md-icon>
+<mat-toolbar
+  id="mainToolbar"
+  class="mat-elevation-z5"
+  color="primary">
+  <button
+    mat-icon-button
+    (click)="leftSidenav.toggle()">
+    <mat-icon>menu</mat-icon>
   </button>
-  <button md-button id="homeButton">FoodChain-Lab</button>
+  <button
+    mat-button
+    id="homeButton">
+    FoodChain-Lab
+  </button>
   <span class="toolbarSpan"></span>
-  <button md-icon-button (click)="onSaveImage()">
-    <md-icon>image</md-icon>
+  <button
+    mat-icon-button
+    (click)="onSaveImage()">
+    <mat-icon>image</mat-icon>
   </button>
-  <input id="fileInput" #fileInput type="file" (change)="onLoad($event)">
-  <button md-icon-button onclick="document.getElementById('fileInput').click()">
-    <md-icon>file_upload</md-icon>
+  <input
+    id="fileInput"
+    #fileInput
+    type="file"
+    (change)="onLoad($event)">
+  <button
+    mat-icon-button
+    onclick="document.getElementById('fileInput').click()">
+    <mat-icon>file_upload</mat-icon>
   </button>
-  <button md-icon-button (click)="onSave()">
-    <md-icon>file_download</md-icon>
+  <button
+    mat-icon-button
+    (click)="onSave()">
+    <mat-icon>file_download</mat-icon>
   </button>
-  <button *ngIf="!rightSidenav.opened" md-icon-button (click)="rightSidenav.toggle()">
-    <md-icon>info</md-icon>
+  <button
+    *ngIf="!rightSidenav.opened"
+    mat-icon-button
+    (click)="rightSidenav.toggle()">
+    <mat-icon>info</mat-icon>
   </button>
-  <button *ngIf="rightSidenav.opened" md-mini-fab (click)="rightSidenav.toggle()">
-    <md-icon>info</md-icon>
+  <button
+    *ngIf="rightSidenav.opened"
+    mat-mini-fab
+    (click)="rightSidenav.toggle()">
+    <mat-icon>info</mat-icon>
   </button>
-</md-toolbar>
+</mat-toolbar>
 
-<md-sidenav-container id="mainContainer" #mainContainer>
-  <md-sidenav id="leftSidenav" #leftSidenav align="start" mode="side">
-    <md-toolbar color="primary">
-      <span>Graph Settings</span>
-    </md-toolbar>
-    <div class="sidenav-elements">
-      <md-radio-group [(ngModel)]="data.graphSettings.type" (ngModelChange)="onGraphChange('type')">
-        <md-radio-button *ngFor="let type of graphTypes" [value]="type">
-          {{type}}
-        </md-radio-button>
-      </md-radio-group>
-      <md-select placeholder="Node Size" [(ngModel)]="data.graphSettings.nodeSize"
-                 (ngModelChange)="onGraphChange('nodeSize')">
-        <md-option *ngFor="let size of sizes" [value]="size">
-          {{size}}
-        </md-option>
-      </md-select>
-      <md-select placeholder="Font Size" [(ngModel)]="data.graphSettings.fontSize"
-                 (ngModelChange)="onGraphChange('fontSize')">
-        <md-option *ngFor="let size of sizes" [value]="size">
-          {{size}}
-        </md-option>
-      </md-select>
-      <md-checkbox [(ngModel)]="data.graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
-        Merge Deliveries
-      </md-checkbox>
-      <md-checkbox [(ngModel)]="data.graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
-        Show Legend
-      </md-checkbox>
-      <md-checkbox [(ngModel)]="data.graphSettings.showZoom" (ngModelChange)="onGraphChange('showZoom')">
-        Show Zoom Controls
-      </md-checkbox>
-    </div>
-    <md-toolbar color="primary">
-      <span>Table Settings</span>
-    </md-toolbar>
-    <div class="sidenav-elements">
-      <md-radio-group [(ngModel)]="data.tableSettings.mode" (ngModelChange)="onTableChange('mode')">
-        <md-radio-button *ngFor="let mode of tableModes" [value]="mode">
-          {{mode}}
-        </md-radio-button>
-      </md-radio-group>
-      <button md-raised-button (click)="changeColumns()">Change Columns</button>
-      <md-select placeholder="Show Type" [(ngModel)]="data.tableSettings.showType"
-                 (ngModelChange)="onTableChange('showType')">
-        <md-option *ngFor="let showType of showTypes" [value]="showType">
-          {{showType}}
-        </md-option>
-      </md-select>
-    </div>
-  </md-sidenav>
+<mat-sidenav-container id="mainContainer" #mainContainer>
+    <mat-sidenav
+      id="leftSidenav"
+      #leftSidenav
+      position="start"
+      mode="side">
 
-  <div id="mainContent">
-    <app-graph #graph [hidden]="data.graphSettings.type != graphType"></app-graph>
-    <app-gis #gis [hidden]="data.graphSettings.type != gisType"></app-gis>
-  </div>
+      <mat-toolbar color="primary">
+        <span>Graph Settings</span>
+      </mat-toolbar>
 
-  <md-sidenav id="rightSidenav" #rightSidenav align="end" mode="side">
-    <div id="rightSidenavContent">
-      <div id="sidenavSlider" #sidenavSlider>
-        <div id="sidenavSliderCenter"></div>
+      <div class="sidenav-elements">
+        <mat-radio-group
+          [(ngModel)]="data.graphSettings.type"
+          (ngModelChange)="onGraphChange('type')">
+          <mat-radio-button *ngFor="let type of graphTypes" [value]="type">
+            {{type}}
+          </mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field>
+            <mat-select
+              placeholder="Node Size"
+              [(ngModel)]="data.graphSettings.nodeSize"
+              (ngModelChange)="onGraphChange('nodeSize')">
+              <mat-option *ngFor="let size of sizes" [value]="size">
+                {{size}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-select
+              placeholder="Font Size"
+              [(ngModel)]="data.graphSettings.fontSize"
+              (ngModelChange)="onGraphChange('fontSize')">
+              <mat-option *ngFor="let size of sizes" [value]="size">
+                {{size}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-checkbox
+          [(ngModel)]="data.graphSettings.mergeDeliveries"
+          (ngModelChange)="onGraphChange('mergeDeliveries')">
+          Merge Deliveries
+        </mat-checkbox>
+        <mat-checkbox
+          [(ngModel)]="data.graphSettings.showLegend"
+          (ngModelChange)="onGraphChange('showLegend')">
+          Show Legend
+        </mat-checkbox>
+        <mat-checkbox
+          [(ngModel)]="data.graphSettings.showZoom"
+          (ngModelChange)="onGraphChange('showZoom')">
+          Show Zoom Controls
+        </mat-checkbox>
       </div>
-      <app-table #table></app-table>
+
+      <mat-toolbar color="primary">
+        <span>Table Settings</span>
+      </mat-toolbar>
+
+      <div class="sidenav-elements">
+        <mat-radio-group
+          [(ngModel)]="data.tableSettings.mode"
+          (ngModelChange)="onTableChange('mode')">
+          <mat-radio-button *ngFor="let mode of tableModes" [value]="mode">
+            {{mode}}
+          </mat-radio-button>
+        </mat-radio-group>
+        <button
+          mat-raised-button
+          (click)="changeColumns()">
+          Change Columns
+        </button>
+        <mat-form-field>
+          <mat-select
+            placeholder="Show Type"
+            [(ngModel)]="data.tableSettings.showType"
+            (ngModelChange)="onTableChange('showType')">
+            <mat-option *ngFor="let showType of showTypes" [value]="showType">
+              {{showType}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-sidenav>
+
+    <div id="mainContent">
+      <app-graph #graph [hidden]="data.graphSettings.type != graphType"></app-graph>
+      <app-gis #gis [hidden]="data.graphSettings.type != gisType"></app-gis>
     </div>
-  </md-sidenav>
-</md-sidenav-container>
+
+    <mat-sidenav id="rightSidenav" #rightSidenav position="end" mode="side">
+      <div id="rightSidenavContent">
+        <div id="sidenavSlider" #sidenavSlider>
+          <div id="sidenavSliderCenter"></div>
+        </div>
+        <app-table #table></app-table>
+      </div>
+    </mat-sidenav>
+  </mat-sidenav-container>

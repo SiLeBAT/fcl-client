@@ -3,22 +3,11 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
-import {
-  MdButtonModule,
-  MdCardModule,
-  MdCheckboxModule,
-  MdDialogModule,
-  MdIconModule,
-  MdInputModule,
-  MdMenuModule,
-  MdRadioModule,
-  MdSelectModule,
-  MdSidenavModule,
-  MdSliderModule,
-  MdToolbarModule
-} from '@angular/material';
+
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
+
+import { MaterialModule } from './shared/material.module';
 
 import {AppComponent} from './app.component';
 import {GraphComponent} from './graph/graph.component';
@@ -52,18 +41,7 @@ import {GisComponent} from './gis/gis.component';
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
-    MdButtonModule,
-    MdCardModule,
-    MdCheckboxModule,
-    MdDialogModule,
-    MdIconModule,
-    MdInputModule,
-    MdMenuModule,
-    MdRadioModule,
-    MdSelectModule,
-    MdSidenavModule,
-    MdSliderModule,
-    MdToolbarModule,
+    MaterialModule,
     NgxDatatableModule
   ],
   providers: [

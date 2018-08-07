@@ -1,28 +1,28 @@
-<h1 class="title" md-dialog-title>
-  <button id="leftButton" md-icon-button (click)="moveLeft()">
-    <md-icon>keyboard_arrow_left</md-icon>
+<h1 class="title" matDialogTitle>
+  <button id="leftButton" mat-icon-button (click)="moveLeft()">
+    <mat-icon>keyboard_arrow_left</mat-icon>
   </button>
   <span>{{title}}</span>
   <span class="titleSpan"></span>
-  <button id="rightButton" md-icon-button (click)="moveRight()">
-    <md-icon>keyboard_arrow_right</md-icon>
+  <button id="rightButton" mat-icon-button (click)="moveRight()">
+    <mat-icon>keyboard_arrow_right</mat-icon>
   </button>
 </h1>
-<div md-dialog-content>
-  <md-card id="properties">
+<div mat-dialog-content>
+  <mat-card id="properties">
     <!--suppress HtmlUnknownTag -->
-    <md-card-title>Properties</md-card-title>
-    <md-card-content>
+    <mat-card-title>Properties</mat-card-title>
+    <mat-card-content>
       <table>
         <tr *ngFor="let prop of properties">
           <td>{{prop.name}}</td>
           <td>{{prop.value}}</td>
         </tr>
       </table>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 </div>
-<div md-dialog-actions>
-  <button md-button md-dialog-close>OK</button>
+<div mat-dialog-actions>
+  <button mat-button matDialogClose>OK</button>
 </div>
 

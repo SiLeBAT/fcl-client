@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 export interface DialogSelectData {
   title: string;
@@ -15,7 +15,7 @@ export class DialogSelectComponent {
 
   options: any[];
 
-  constructor(public dialogRef: MdDialogRef<DialogSelectComponent>, @Inject(MD_DIALOG_DATA) public data: DialogSelectData) {
+  constructor(public dialogRef: MatDialogRef<DialogSelectComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogSelectData) {
     this.options = JSON.parse(JSON.stringify(data.options));
   }
 

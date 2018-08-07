@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MdDialog, MdMenuTrigger, MdSlider} from '@angular/material';
+import {MatDialog, MatMenuTrigger, MatSlider} from '@angular/material';
 import {Observable, Subject} from 'rxjs/Rx';
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
@@ -48,16 +48,16 @@ export class GraphComponent implements OnInit {
   @ViewChild('container') containerElement: ElementRef;
   @ViewChild('graph') graphElement: ElementRef;
 
-  @ViewChild('slider') slider: MdSlider;
-  @ViewChild('graphMenuTrigger') graphMenuTrigger: MdMenuTrigger;
+  @ViewChild('slider') slider: MatSlider;
+  @ViewChild('graphMenuTrigger') graphMenuTrigger: MatMenuTrigger;
   @ViewChild('graphMenuTrigger', {read: ElementRef}) graphMenuTriggerElement: ElementRef;
-  @ViewChild('stationMenuTrigger') stationMenuTrigger: MdMenuTrigger;
+  @ViewChild('stationMenuTrigger') stationMenuTrigger: MatMenuTrigger;
   @ViewChild('stationMenuTrigger', {read: ElementRef}) stationMenuTriggerElement: ElementRef;
-  @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MdMenuTrigger;
+  @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MatMenuTrigger;
   @ViewChild('deliveryMenuTrigger', {read: ElementRef}) deliveryMenuTriggerElement: ElementRef;
-  @ViewChild('layoutMenuTrigger') layoutMenuTrigger: MdMenuTrigger;
+  @ViewChild('layoutMenuTrigger') layoutMenuTrigger: MatMenuTrigger;
   @ViewChild('layoutMenuTrigger', {read: ElementRef}) layoutMenuTriggerElement: ElementRef;
-  @ViewChild('traceMenuTrigger') traceMenuTrigger: MdMenuTrigger;
+  @ViewChild('traceMenuTrigger') traceMenuTrigger: MatMenuTrigger;
   @ViewChild('traceMenuTrigger', {read: ElementRef}) traceMenuTriggerElement: ElementRef;
 
   graphMenuActions = this.createGraphActions();
@@ -98,7 +98,7 @@ export class GraphComponent implements OnInit {
   private hoverableEdges: any;
 
   //noinspection JSUnusedGlobalSymbols
-  constructor(private tracingService: TracingService, private dialogService: MdDialog, public elementRef: ElementRef) {
+  constructor(private tracingService: TracingService, private dialogService: MatDialog, public elementRef: ElementRef) {
     if (cytoscape != null) {
       cytoscape.use(cola);
       cytoscape.use(dagre);
@@ -224,14 +224,7 @@ export class GraphComponent implements OnInit {
   }
 
   getCanvas(): Promise<HTMLCanvasElement> {
-    return new Promise(resolve => {
-      //noinspection JSUnusedGlobalSymbols
-      html2canvas(this.containerElement.nativeElement, {
-        onrendered: (canvas) => {
-          resolve(canvas);
-        }
-      });
-    });
+    return html2canvas(this.containerElement.nativeElement);
   }
 
   setMergeDeliveries(mergeDeliveries: boolean) {
@@ -883,7 +876,7 @@ export class GraphComponent implements OnInit {
         this.stationMenuTrigger.menuOpen ||
         this.deliveryMenuTrigger.menuOpen ||
         this.traceMenuTrigger.menuOpen ||
-        this.dialogService._openDialogs.length !== 0;
+        this.dialogService.openDialogs.length !== 0;
 
       this.contextMenuElement.scratch('_active', elementMenuOrDialogOpen);
     }

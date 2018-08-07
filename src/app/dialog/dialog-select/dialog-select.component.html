@@ -1,10 +1,10 @@
-<h1 md-dialog-title>{{data.title}}</h1>
-<div md-dialog-content>
+<h1 matDialogTitle>{{data.title}}</h1>
+<div mat-dialog-content>
   <div class="checkboxes">
-    <md-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.viewValue}}</md-checkbox>
+    <mat-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.viewValue}}</mat-checkbox>
   </div>
 </div>
-<div md-dialog-actions>
-  <button md-button (click)="close()">OK</button>
-  <button md-button (click)="dialogRef.close()">Cancel</button>
+<div mat-dialog-actions>
+  <button mat-button (click)="close()">OK</button>
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
 </div>

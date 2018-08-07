@@ -1,22 +1,22 @@
 <div id="container" #container>
   <div id="graph" #graph></div>
   <div id="zoom" *ngIf="showZoom">
-    <button id="zoom-in" md-mini-fab (click)="zoomInPressed()">
-      <md-icon>add</md-icon>
+    <button id="zoom-in" mat-mini-fab (click)="zoomInPressed()">
+      <mat-icon>add</mat-icon>
     </button>
-    <button id="zoom-out" md-mini-fab (click)="zoomOutPressed()">
-      <md-icon>remove</md-icon>
+    <button id="zoom-out" mat-mini-fab (click)="zoomOutPressed()">
+      <mat-icon>remove</mat-icon>
     </button>
-    <button id="zoom-reset" md-mini-fab (click)="zoomResetPressed()">
-      <md-icon>zoom_out_map</md-icon>
+    <button id="zoom-reset" mat-mini-fab (click)="zoomResetPressed()">
+      <mat-icon>zoom_out_map</mat-icon>
     </button>
-    <md-slider #slider id="zoom-slider" [value]="zoomSliderValue" [vertical]="true"
+    <mat-slider #slider id="zoom-slider" [value]="zoomSliderValue" [vertical]="true"
                (slide)="sliderChanged()" (change)="sliderChanged()">
-    </md-slider>
+    </mat-slider>
   </div>
   <div id="legend" *ngIf="showLegend">
-    <md-card>
-      <md-card-content>
+    <mat-card>
+      <mat-card-content>
         <table>
           <tr *ngFor="let item of legend">
             <td>{{item.name}}</td>
@@ -25,42 +25,42 @@
             </td>
           </tr>
         </table>
-      </md-card-content>
-    </md-card>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
-<div [mdMenuTriggerFor]="graphMenu" #graphMenuTrigger="mdMenuTrigger"></div>
-<div [mdMenuTriggerFor]="stationMenu" #stationMenuTrigger="mdMenuTrigger"></div>
-<div [mdMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="mdMenuTrigger"></div>
-<div [mdMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="mdMenuTrigger"></div>
-<div [mdMenuTriggerFor]="traceMenu" #traceMenuTrigger="mdMenuTrigger"></div>
-<md-menu #graphMenu>
-  <button md-menu-item *ngFor="let action of graphMenuActions"
+<div [matMenuTriggerFor]="graphMenu" #graphMenuTrigger="matMenuTrigger"></div>
+<div [matMenuTriggerFor]="stationMenu" #stationMenuTrigger="matMenuTrigger"></div>
+<div [matMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="matMenuTrigger"></div>
+<div [matMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="matMenuTrigger"></div>
+<div [matMenuTriggerFor]="traceMenu" #traceMenuTrigger="matMenuTrigger"></div>
+<mat-menu #graphMenu>
+  <button mat-menu-item *ngFor="let action of graphMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">
     {{action.name}}
   </button>
-</md-menu>
-<md-menu #stationMenu>
-  <button md-menu-item *ngFor="let action of stationMenuActions"
+</mat-menu>
+<mat-menu #stationMenu>
+  <button mat-menu-item *ngFor="let action of stationMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">
     {{action.name}}
   </button>
-</md-menu>
-<md-menu #deliveryMenu>
-  <button md-menu-item *ngFor="let action of deliveryMenuActions"
+</mat-menu>
+<mat-menu #deliveryMenu>
+  <button mat-menu-item *ngFor="let action of deliveryMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">
     {{action.name}}
   </button>
-</md-menu>
-<md-menu #layoutMenu>
-  <button md-menu-item *ngFor="let action of layoutMenuActions"
+</mat-menu>
+<mat-menu #layoutMenu>
+  <button mat-menu-item *ngFor="let action of layoutMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">
     {{action.name}}
   </button>
-</md-menu>
-<md-menu #traceMenu>
-  <button md-menu-item *ngFor="let action of traceMenuActions"
+</mat-menu>
+<mat-menu #traceMenu>
+  <button mat-menu-item *ngFor="let action of traceMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">
     {{action.name}}
   </button>
-</md-menu>
+</mat-menu>
