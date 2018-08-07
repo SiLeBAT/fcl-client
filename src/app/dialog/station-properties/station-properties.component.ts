@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import * as d3 from 'd3';
 import {Subject} from 'rxjs/Rx';
 
@@ -147,7 +147,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
   }
 
-  constructor(public dialogRef: MdDialogRef<StationPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: StationPropertiesData) {
+  constructor(public dialogRef: MatDialogRef<StationPropertiesComponent>, @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData) {
     this.title = data.station.name;
     this.properties = Object.keys(data.station)
       .filter(key => Constants.PROPERTIES.has(key) && key !== 'name' && key !== 'incoming' && key !== 'outgoing')

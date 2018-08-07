@@ -18,7 +18,7 @@
   margin: 8px 0;
 }
 
-.sidenav-elements > md-select {
+.sidenav-elements > mat-select {
   width: 100%;
   margin-top: 20px;
 }
@@ -27,13 +27,14 @@
   width: 100%;
 }
 
-.sidenav-elements > md-radio-group > md-radio-button:not(:last-child) {
+.sidenav-elements > mat-radio-group > mat-radio-button:not(:last-child) {
   margin-right: 8px;
 }
 
 .toolbarSpan {
   flex: 1 1 auto;
 }
+
 
 #mainToolbar {
   z-index: 3;

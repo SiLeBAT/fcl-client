@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
 import {DeliveryData, FclData, FclElements, GraphSettings, ObservedType, StationData, TableSettings} from './datatypes';
 
-import 'rxjs/add/operator/toPromise';
+
 import {Utils} from './utils';
 import {Constants} from './constants';
 

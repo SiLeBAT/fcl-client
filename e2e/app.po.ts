@@ -7,6 +7,6 @@ export class FclAppPage {
   }
 
   static getHomeButtonText() {
-    return element(by.css('app-root > md-toolbar > div > md-toolbar-row > button.mat-button > span')).getText();
+    return element(by.css('app-root > mat-toolbar > div > mat-toolbar-row > button.mat-button > span')).getText();
   }
 }
