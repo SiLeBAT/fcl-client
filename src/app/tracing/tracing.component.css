@@ -1,43 +1,4 @@
-.master-container {
-  height: 100vh;
-  /* border: 2px solid black; */
-}
-
-
-.header, .footer {
-  /* border: 2px solid green; */
-  z-index: 3;
-}
-
-.footer-toolbar {
-  /* color: darkslategrey; */
-  font-size: 0.8em;
-}
-
-.footer-element {
-  /* border: 1px solid red; */
-  text-align: center;
-}
-
-.main-content {
-  /* border: 2px solid magenta; */
-}
-
-#homeButton {
-  /* font-size: 1em; */
-}
-
-#leftSidenav {
-  background-color: rgb(245, 245, 245);
-  z-index: 2;
-}
-
-
-
-
-
-
-/* :host {
+:host {
   position: absolute;
   left: 0;
   top: 0;
@@ -145,4 +106,4 @@ app-gis {
 app-table {
   width: calc(100% - 10px);
   height: 100%;
-} */
+}

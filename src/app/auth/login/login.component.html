@@ -1,0 +1,165 @@
+<div
+  class="login-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
+
+  <mat-card
+    fxFlex="40%"
+    class="mat-elevation-z5">
+
+    <mat-card-header
+      class="blub"
+      fxLayout="column"
+      fxLayoutAlign="space-evenly">
+      <div
+        fxFlex
+        fxFlexOffset="20px"
+         class="blah">
+        <div class="mat-headline">Login</div>
+      </div>
+      <div fxFlex fxFlexOffset="20px" class="blah">
+          <mat-divider></mat-divider>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="login()">
+
+        <div
+          fxLayout="column">
+
+          <div
+            class="form-group"
+            fxFlex
+            fxFlexOffset="20px">
+              <mat-form-field appearance="standard">
+                <mat-label>Email</mat-label>
+                <input
+                  matInput
+                  formControlName="email"
+                  name="email"
+                  required>
+                <mat-icon matPrefix>mail</mat-icon>
+                <mat-error *ngIf="loginForm.controls.email.invalid">{{ getEmailErrorMessage() }}</mat-error>
+              </mat-form-field>
+          </div>
+          <div
+            class='form-group'
+            fxFlex>
+            <mat-form-field appearance="standard">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                formControlName="password"
+                type="password"
+                name="password"
+                required>
+              <mat-icon matPrefix>lock</mat-icon>
+              <mat-error *ngIf="loginForm.controls.password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div
+            fxFlex
+            fxFlexOffset="40px">
+
+            <div
+              fxLayout="row"
+              fxLayoutAlign="center stretch">
+
+              <div
+                class="form-group"
+                fxFlex>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="!loginForm.valid">
+                  Login
+                </button>
+              </div>
+              <div fxFlex>
+                <a
+                  mat-button
+                  [routerLink]="['/users/register']">
+                  Register
+                </a>
+              </div>
+              <div
+                class="form-group"
+                fxFlex>
+                <a
+                  mat-button
+                  [routerLink]="['/users/recovery']">
+                  Password forgotten?
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+
+<!-- <div
+  *ngIf="!isLoginSpinnerShowing()"
+  class="login-container">
+
+  <div class="jumbotron">
+    <div class="container-fluid">
+      <div class="col-md-6 col-md-offset-3">
+        <h2>Anmelden</h2>
+        <hr>
+
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="login()">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              formControlName="email"/>
+          </div>
+          <div class="form-group">
+            <label for="password">Passwort</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              formControlName="password"/>
+          </div>
+          <div class="form-group">
+            <button
+              class="btn btn-primary"
+              type="submit"
+              [disabled]="!loginForm.valid">
+                Anmelden
+            </button>
+            <a
+              [routerLink]="['/users/register']"
+              class="btn btn-link">
+                Registrierung
+            </a>
+            <a
+              [routerLink]="['/users/recovery']"
+              class="btn btn-link">
+                Passwort vergessen?
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<h1>Login works!</h1> -->

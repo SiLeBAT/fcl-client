@@ -1,0 +1,76 @@
+<!-- the register component template contains a simple registration form with fields for
+first name, last name, username and password. It displays validation messages for invalid fields
+when the submit button is clocked. On submit the register() method is called if the form is valid. -->
+<div class="jumbotron">
+  <div class="container-fluid">
+    <div class="col-md-6 col-md-offset-3">
+      <h2>Register</h2>
+      <hr>
+
+
+      <form [formGroup]="registerForm" (ngSubmit)="register()" novalidate>
+
+        <div class="form-group" [ngClass]="{'error' :  !validateField('institution')}">
+
+            <label for="institutionMenu">Wählen Sie Ihr Institut</label>
+            <input
+              type="text"
+              class="form-control"
+              list="institutions"
+              id="institutionMenu"
+              name="institutionMenu"
+              formControlName="institution"/>
+            <datalist id="institutions">
+              <option *ngFor="let institution of institutions" [value]="institution"></option>
+            </datalist>
+            <em *ngIf="!validateField('institution')">Pflichtfeld.</em>
+
+        </div>
+
+        <div class="form-group" [ngClass]="{'error' :  !validateField('firstName')}">
+          <label for="firstName">Vorname</label>
+          <input type="text" id="firstName" class="form-control" formControlName="firstName" placeholder="Vorname..." />
+          <em *ngIf="!validateField('firstName')">Pflichtfeld.</em>
+        </div>
+        <div class="form-group" [ngClass]="{'error' :  !validateField('lastName')}">
+          <label for="lastName">Nachname</label>
+          <input type="text" id="lastName" class="form-control" formControlName="lastName" placeholder="Nachname..." />
+          <em *ngIf="!validateField('lastName')">Pflichtfeld.</em>
+        </div>
+        <div class="form-group" [ngClass]="{'error' :  !validateField('email')}">
+          <label for="email">Email</label>
+          <input type="email" id="email" class="form-control" formControlName="email" placeholder="Email..." />
+          <em *ngIf="!validateField('email') && registerForm.controls.email.errors.email">Muss eine gültige Email sein.</em>
+          <em *ngIf="!validateField('email') && registerForm.controls.email.errors.required">Pflichtfeld.</em>
+        </div>
+        <div class="form-group pw-1" [ngClass]="{'error' :  !validateField('password1') || validatePwStrength()}">
+          <label for="password1">Passwort (mind. 8 Zeichen)</label>
+          <input type="password" id="password1" class="form-control" formControlName="password1" placeholder="Passwort..." />
+          <em *ngIf="validatePwStrength()">Zu schwaches oder zu kurzes Passwort.</em>
+          <em *ngIf="!validateField('password1')">Pflichtfeld.</em>
+        </div>
+        <div class="pw-strength">
+          <password-strength-meter
+            [password]="registerForm.value.password1"
+            (strengthChange)="doStrengthChange($event)">
+          </password-strength-meter>
+        </div>
+        <div class="form-group" [ngClass]="{'error' : !validateField('password2')}">
+          <label for="password2">Passwort bestätigen</label>
+          <input type="password" id="password2" class="form-control" formControlName="password2" placeholder="Password bestätigen..."
+          />
+          <em *ngIf="!validateField('password2')  && registerForm.controls.password2.errors.validatePasswordConfirm">Passwörter müssen übereinstimmen.</em>
+        </div>
+
+        <div class="form-group reset-btn">
+          <button class="btn btn-primary" type="submit" [disabled]="!registerForm.valid">Submit</button>
+          <!-- <button class="btn btn-primary" type="submit" >Submit</button> -->
+          <a [routerLink]="['/main']" class="btn btn-link">
+            Zurück
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

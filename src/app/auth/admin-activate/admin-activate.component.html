@@ -1,0 +1,24 @@
+<div class="jumbotron">
+  <div class="container-fluid">
+    <div class="col-md-6 col-md-offset-3">
+      <h2>Admin Kontoaktivierung</h2>
+      <hr>
+      <br>
+      <div *ngIf="adminTokenValid" class="help-block">
+        <p>Sie haben das {{ appName }} Konto für {{ name }} als Admin aktiviert</p>
+      </div>
+
+
+
+      <div *ngIf="!adminTokenValid" class="help-block">
+        <p>Ihre Admin Kontoaktivierung ist fehlgeschlagen.</p>
+        <p>Bitte erneut registrieren lassen.</p>
+        <br>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+

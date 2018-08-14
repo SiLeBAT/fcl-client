@@ -22,7 +22,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/fcl-app-theme.scss"
+              "src/fcl-app-theme.scss",
+              "src/material-style.css"
             ],
             "scripts": [
               "node_modules/hammerjs/hammer.min.js"

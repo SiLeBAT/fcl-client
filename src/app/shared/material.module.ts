@@ -13,7 +13,12 @@ import {
   MatSelectModule,
   MatSidenavModule,
   MatSliderModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatDividerModule,
+  MatProgressSpinnerModule,
+  MatGridListModule,
+  MatSnackBarModule,
+  MAT_LABEL_GLOBAL_OPTIONS
 } from '@angular/material';
 
 @NgModule({
@@ -30,7 +35,11 @@ import {
     MatSelectModule,
     MatSidenavModule,
     MatSliderModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatGridListModule,
+    MatSnackBarModule
   ],
   exports: [
     MatButtonModule,
@@ -44,7 +53,14 @@ import {
     MatSelectModule,
     MatSidenavModule,
     MatSliderModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatGridListModule,
+    MatSnackBarModule
+  ],
+  providers: [
+    {provide: MAT_LABEL_GLOBAL_OPTIONS, useValue: {float: 'auto'}}
   ]
 })
 export class MaterialModule { }

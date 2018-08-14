@@ -1,0 +1,39 @@
+<div class="jumbotron">
+  <div class="container-fluid">
+    <div class="col-md-6 col-md-offset-3">
+      <h2>Kontoaktivierung</h2>
+      <hr>
+      <br>
+      <div *ngIf="tokenValid" class="help-block">
+        <p>Sie haben Ihr {{ appName }} Konto aktiviert.</p>
+        <p>Sobald der {{ appName }} Administrator Ihr Konto freigeschaltet hat, können Sie sich einloggen.
+           Sie erhalten nach erfolgter Freischaltung eine Benachrichtigung.</p>
+        <br>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [routerLink]="['/users/login']">
+          Weiter zur Anmeldung
+        </button>
+      </div>
+
+
+
+      <div *ngIf="!tokenValid" class="help-block">
+        <p>Ihre Kontoaktivierung ist fehlgeschlagen.</p>
+        <p>Bitte erneut registrieren.</p>
+        <br>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [routerLink]="['/users/register']">
+          Weiter zur Registrierung
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+

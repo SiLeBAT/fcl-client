@@ -1,0 +1,13 @@
+<div class="container-fluid">
+  <h4>Angemeldet als:</h4>
+  <p> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+  <p>{{ currentUser.email }}</p>
+  <p>{{ getInstitutionName() }}</p>
+  <h4>
+    <a
+      [routerLink]="['/users/login']"
+      (click)="logout()">
+      Abmelden
+    </a>
+  </h4>
+</div>

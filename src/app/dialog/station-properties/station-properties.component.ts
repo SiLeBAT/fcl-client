@@ -475,6 +475,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
   }
 
   private updateEdges() {
+    // tslint:disable-next-line:no-shadowed-variable
     const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
       edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
     };
