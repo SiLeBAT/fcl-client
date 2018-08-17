@@ -8,16 +8,14 @@
     class="mat-elevation-z5">
 
     <mat-card-header
-      class="blub"
       fxLayout="column"
       fxLayoutAlign="space-evenly">
       <div
         fxFlex
-        fxFlexOffset="20px"
-         class="blah">
+        fxFlexOffset="20px">
         <div class="mat-headline">Login</div>
       </div>
-      <div fxFlex fxFlexOffset="20px" class="blah">
+      <div fxFlex fxFlexOffset="20px">
           <mat-divider></mat-divider>
       </div>
     </mat-card-header>
@@ -67,11 +65,10 @@
 
             <div
               fxLayout="row"
-              fxLayoutAlign="center stretch">
+              fxLayoutAlign="start center">
 
               <div
-                class="form-group"
-                fxFlex>
+                class="form-group">
                 <button
                   mat-raised-button
                   color="primary"
@@ -80,7 +77,7 @@
                   Login
                 </button>
               </div>
-              <div fxFlex>
+              <div fxFlexOffset="10px">
                 <a
                   mat-button
                   [routerLink]="['/users/register']">
@@ -89,7 +86,7 @@
               </div>
               <div
                 class="form-group"
-                fxFlex>
+                fxFlexOffset="10px">
                 <a
                   mat-button
                   [routerLink]="['/users/recovery']">
@@ -97,69 +94,9 @@
                 </a>
               </div>
             </div>
-
           </div>
         </div>
-
       </form>
     </mat-card-content>
   </mat-card>
 </div>
-
-
-
-<!-- <div
-  *ngIf="!isLoginSpinnerShowing()"
-  class="login-container">
-
-  <div class="jumbotron">
-    <div class="container-fluid">
-      <div class="col-md-6 col-md-offset-3">
-        <h2>Anmelden</h2>
-        <hr>
-
-        <form
-          [formGroup]="loginForm"
-          (ngSubmit)="login()">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              class="form-control"
-              formControlName="email"/>
-          </div>
-          <div class="form-group">
-            <label for="password">Passwort</label>
-            <input
-              type="password"
-              id="password"
-              class="form-control"
-              formControlName="password"/>
-          </div>
-          <div class="form-group">
-            <button
-              class="btn btn-primary"
-              type="submit"
-              [disabled]="!loginForm.valid">
-                Anmelden
-            </button>
-            <a
-              [routerLink]="['/users/register']"
-              class="btn btn-link">
-                Registrierung
-            </a>
-            <a
-              [routerLink]="['/users/recovery']"
-              class="btn btn-link">
-                Passwort vergessen?
-            </a>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<h1>Login works!</h1> -->

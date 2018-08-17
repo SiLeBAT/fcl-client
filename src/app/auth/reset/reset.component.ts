@@ -5,7 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
-import { User } from '../../models/user.model';
+import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
 
 @Component({
   selector: 'app-reset',
@@ -22,7 +22,8 @@ export class ResetComponent implements OnInit {
     private alertService: AlertService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private changeRef: ChangeDetectorRef) {
+    private changeRef: ChangeDetectorRef,
+    private spinnerService: SpinnerLoaderService) {
       this.pwStrength = -1;
     }
 
@@ -52,12 +53,15 @@ export class ResetComponent implements OnInit {
 
     const password = this.resetForm.value.password1;
     const token = this.activatedRoute.snapshot.params['id'];
+    this.spinnerService.show();
     this.userService.resetPassword(password, token)
       .subscribe((data) => {
+        this.spinnerService.hide();
         const message = data['title'];
         this.alertService.success(message);
         this.router.navigate(['users/login']);
       }, (err: HttpErrorResponse) => {
+        this.spinnerService.hide();
         const errMsg = err['error']['title'];
         this.alertService.error(errMsg);
         this.loading = false;

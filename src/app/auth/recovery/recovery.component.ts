@@ -5,7 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
-import { User } from '../../models/user.model';
+import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
+// import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-revovery',
@@ -19,7 +20,8 @@ export class RecoveryComponent implements OnInit {
   constructor(
     private userService: UserService,
     private alertService: AlertService,
-    private router: Router) {}
+    private router: Router,
+    private spinnerService: SpinnerLoaderService) {}
 
   ngOnInit() {
     this.recoveryForm = new FormGroup({
@@ -37,18 +39,26 @@ export class RecoveryComponent implements OnInit {
 
         const email = this.recoveryForm.value.email;
 
+        this.spinnerService.show();
         this.userService.recoveryPassword(email)
           .subscribe((data) => {
+            this.spinnerService.hide();
             const message = data['title'];
             this.alertService.success(message);
             this.router.navigate(['users/login']);
           }, (err: HttpErrorResponse) => {
+            this.spinnerService.hide();
             const errObj = JSON.parse(err.error);
             this.alertService.error(errObj.title);
             this.loading = false;
           });
 
         this.recoveryForm.reset();
+  }
+
+  validateField(fieldName: string) {
+    return this.recoveryForm.controls[fieldName].valid
+      || this.recoveryForm.controls[fieldName].untouched;
   }
 
 }

@@ -6,6 +6,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
 import { environment } from '../../../environments/environment';
+import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
 
 @Component({
   selector: 'app-activate',
@@ -20,19 +21,22 @@ export class ActivateComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute,
               private userService: UserService,
               private alertService: AlertService,
-            private router: Router) { }
+              private router: Router,
+              private spinnerService: SpinnerLoaderService) { }
 
   ngOnInit() {
     const token = this.activatedRoute.snapshot.params['id'];
 
+    this.spinnerService.show();
     this.userService.activateAccount(token)
       .subscribe((data) => {
+        this.spinnerService.hide();
         const message = data['title'];
         this.alertService.success(message);
         this.tokenValid = true;
       }, (err: HttpErrorResponse) => {
-        const errObj = JSON.parse(err.error);
-        this.alertService.error(errObj.title);
+        this.spinnerService.hide();
+        this.alertService.error(err.error.title);
         this.tokenValid = false;
       });
 

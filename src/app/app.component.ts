@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatSidenav, MatSnackBar, MatSnackBarConfig} from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as Hammer from 'hammerjs';
 
 import {GraphComponent} from './graph/graph.component';
@@ -12,6 +12,8 @@ import {FclData, GraphType, TableMode} from './util/datatypes';
 import {Constants} from './util/constants';
 import {GisComponent} from './gis/gis.component';
 import { environment } from '../environments/environment';
+import { AuthService } from './auth/services/auth.service';
+import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
@@ -29,9 +31,12 @@ export class AppComponent implements OnInit {
   // @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
   // @ViewChild('fileInput') fileInput: ElementRef;
 
+  @ViewChild('fileInput') fileInput: ElementRef;
+
   private isActive = false;
   appName: string = environment.appName;
   supportContact: string = environment.supportContact;
+  subscriptions = [];
 
   // graphTypes = Constants.GRAPH_TYPES;
   // graphType = GraphType.GRAPH;
@@ -52,11 +57,17 @@ export class AppComponent implements OnInit {
     // private dataService: DataService,
     // private dialogService: MatDialog,
     private router: Router,
-    private snackBar: MatSnackBar) {
-    document.body.oncontextmenu = e => e.preventDefault();
+    private authService: AuthService,
+    private appService: AppService,
+    private route: ActivatedRoute) {
+    // document.body.oncontextmenu = e => e.preventDefault();
+
   }
 
   ngOnInit() {
+    this.subscriptions.push(this.appService.doInputEmpty
+      .subscribe(notification => this.setInputEmpty()));
+
     // this.dataService.setDataSource('assets/data/bbk.json');
     // this.dataService.getData().then(data => {
     //   this.data = data;
@@ -76,9 +87,33 @@ export class AppComponent implements OnInit {
     // });
   }
 
-  onHome() {
-    this.router.navigate(['/']);
+  getCurrentUserEmail() {
+    if (this.authService.loggedIn()) {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      return currentUser.email;
+    }
   }
+
+  logout() {
+    this.authService.logout();
+  }
+
+  getCurrentComponent() {
+    console.log('AppComponent.getCurrentComponent: ', this.route);
+  }
+
+  isTracingActive() {
+    return this.appService.isTracingActive();
+  }
+
+  setInputEmpty() {
+    (<HTMLInputElement>this.fileInput.nativeElement).value = '';
+  }
+
+
+  // onHome() {
+  //   this.router.navigate(['/']);
+  // }
 
   getDisplayMode() {
     let displayMode;

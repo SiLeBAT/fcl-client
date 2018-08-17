@@ -29,6 +29,7 @@
     "@angular/router": "^6.1.1",
     "@auth0/angular-jwt": "^2.0.0",
     "@swimlane/ngx-datatable": "^13.1.0",
+    "angular-password-strength-meter": "0.0.4",
     "core-js": "^2.5.7",
     "css-element-queries": "^1.0.2",
     "cytoscape": "^3.2.15",
@@ -44,7 +45,8 @@
     "openlayers": "^4.6.5",
     "rxjs": "^6.2.2",
     "rxjs-compat": "^6.2.2",
-    "zone.js": "^0.8.26"
+    "zone.js": "^0.8.26",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.2",
@@ -55,6 +57,7 @@
     "@types/jasmine": "^2.8.8",
     "@types/node": "^10.5.6",
     "@types/openlayers": "^4.6.10",
+    "@types/zxcvbn": "^4.4.0",
     "codelyzer": "^4.4.3",
     "jasmine-core": "^3.1.0",
     "jasmine-spec-reporter": "^4.2.1",

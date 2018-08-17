@@ -5,6 +5,7 @@ import { User } from '../../models/user.model';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
 import { AuthService } from '../services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -18,52 +19,19 @@ export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService,
               private alertService: AlertService,
-              private authService: AuthService) {}
+              private authService: AuthService,
+              private route: ActivatedRoute) {
+
+              console.log('active component: ', this.route.routeConfig.component.name);
+  }
 
   ngOnInit() {
-    // this.loadAllUsers();
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
   }
 
   logout() {
     this.authService.logout();
   }
 
-  deleteUser(user: User) {
-    const _id = user._id;
-
-    this.userService.delete(_id)
-    .subscribe((data) => {
-      this.alertService.success('User ' + user.firstName + ' ' + user.lastName + ' deleted');
-      this.loadAllUsers();
-    }, (err: HttpErrorResponse) => {
-      try {
-        const errObj = JSON.parse(err.error);
-        if (err.error instanceof Error) {
-          console.error('deleteUser client-side or network error: ', errObj);
-        } else {
-          console.error(`deleteUser error status ${err.status}: `, errObj);
-        }
-
-        this.alertService.error(errObj.title);
-      } catch (e) {}
-
-      this.loadAllUsers();
-    });
-
-  }
-
-  private loadAllUsers() {
-    this.userService.getAll()
-    .subscribe((data) => {
-      this.alertService.success(data['title']);
-      this.users = data['obj'];
-    }, (err: HttpErrorResponse) => {
-      try {
-        const errObj = JSON.parse(err.error);
-        console.log('error loadAllUsers: ', errObj);
-        this.alertService.error(errObj.title);
-      } catch (e) {}
-    });
-  }
 }

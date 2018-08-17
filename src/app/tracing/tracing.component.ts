@@ -1,7 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import {MatDialog, MatSidenav} from '@angular/material';
 import { Router } from '@angular/router';
 import * as Hammer from 'hammerjs';
+import * as _ from 'lodash';
 
 import {GraphComponent} from '../graph/graph.component';
 import {TableComponent} from '../table/table.component';
@@ -12,24 +13,27 @@ import {FclData, GraphType, TableMode} from '../util/datatypes';
 import {Constants} from '../util/constants';
 import {GisComponent} from '../gis/gis.component';
 import { environment } from '../../environments/environment';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-tracing',
   templateUrl: './tracing.component.html',
   styleUrls: ['./tracing.component.css']
 })
-export class TracingComponent implements OnInit {
+export class TracingComponent implements OnInit, OnDestroy {
 
   @ViewChild('mainContainer', {read: ElementRef}) mainContainer: ElementRef;
   @ViewChild('graph') graph: GraphComponent;
   @ViewChild('gis') gis: GisComponent;
   @ViewChild('table') table: TableComponent;
+  @ViewChild('leftSidenav') leftSidenav: MatSidenav;
   @ViewChild('rightSidenav') rightSidenav: MatSidenav;
   @ViewChild('rightSidenav', {read: ElementRef}) rightSidenavElement: ElementRef;
   @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
   @ViewChild('fileInput') fileInput: ElementRef;
 
   appName: string = environment.appName;
+  subscriptions = [];
 
   graphTypes = Constants.GRAPH_TYPES;
   graphType = GraphType.GRAPH;
@@ -49,12 +53,25 @@ export class TracingComponent implements OnInit {
   constructor(
     private dataService: DataService,
     private dialogService: MatDialog,
-    private router: Router) {
+    private router: Router,
+    private appService: AppService) {
     document.body.oncontextmenu = e => e.preventDefault();
+    this.appService.setTracingActive(true);
   }
 
   ngOnInit() {
-    this.dataService.setDataSource('assets/data/bbk.json');
+    this.subscriptions.push(this.appService.doToggleLeftSidebar
+      .subscribe(notification => this.toggleLeftSidebar()));
+    this.subscriptions.push(this.appService.doToggleRightSidebar
+      .subscribe(notification => this.toggleRightSidebar()));
+    this.subscriptions.push(this.appService.doSaveImage
+      .subscribe(notification => this.onSaveImage()));
+    this.subscriptions.push(this.appService.doOnLoad
+      .subscribe(event => this.onLoad(event)));
+    this.subscriptions.push(this.appService.doOnSave
+      .subscribe(event => this.onSave()));
+
+    this.dataService.setDataSource('../../assets/data/bbk.json');
     this.dataService.getData().then(data => {
       this.data = data;
       this.updateComponents();
@@ -75,6 +92,14 @@ export class TracingComponent implements OnInit {
 
   onHome() {
     this.router.navigate(['/']);
+  }
+
+  toggleLeftSidebar() {
+    this.leftSidenav.toggle();
+  }
+
+  toggleRightSidebar() {
+    this.rightSidenav.toggle();
   }
 
   onGraphChange(property: string) {
@@ -130,6 +155,9 @@ export class TracingComponent implements OnInit {
   }
 
   onLoad(event) {
+
+    console.log('TracingComponent.onLoad, event: ', event);
+
     const files: FileList = event.target.files;
 
     if (files.length === 1) {
@@ -144,7 +172,7 @@ export class TracingComponent implements OnInit {
       Utils.showErrorMessage(this.dialogService, 'Please select one .json file!');
     }
 
-    (<HTMLInputElement>this.fileInput.nativeElement).value = '';
+    this.appService.setInputEmpty();
   }
 
   onSave() {
@@ -214,6 +242,14 @@ export class TracingComponent implements OnInit {
       }
     });
   }
+
+  ngOnDestroy() {
+    this.appService.setTracingActive(false);
+    _.forEach(this.subscriptions, (subscription) => {
+      subscription.unsubscribe();
+    });
+  }
+
 
   private updateComponents() {
     this.onTableChange('width');

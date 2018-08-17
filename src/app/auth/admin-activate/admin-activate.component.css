@@ -1,0 +1,11 @@
+.adminactivate-container {
+  height: 90vh;
+}
+
+mat-card {
+  border-radius: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+}

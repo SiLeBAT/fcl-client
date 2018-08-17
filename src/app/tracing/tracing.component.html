@@ -1,4 +1,21 @@
-<mat-toolbar
+<div
+  class="tracing-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
+<!-- <div
+  class="tracing-container"
+  > -->
+
+  <!-- <div fxFlex> -->
+
+
+
+  <!-- header -->
+  <!-- <div
+    class="header"
+    fxFlex> -->
+
+<!-- <mat-toolbar
   id="mainToolbar"
   class="mat-elevation-z5"
   color="primary">
@@ -54,7 +71,14 @@
     <mat-icon>exit_to_app</mat-icon>
     Login
   </a>
-</mat-toolbar>
+</mat-toolbar> -->
+
+<!-- </div> -->
+
+  <!-- main content -->
+  <!-- <div
+    class="main-content"
+    fxFlex="90vh"> -->
 
 <mat-sidenav-container id="mainContainer" #mainContainer>
     <mat-sidenav
@@ -143,7 +167,7 @@
     </mat-sidenav>
 
     <div id="mainContent">
-      <router-outlet></router-outlet>
+      <!-- <router-outlet></router-outlet> -->
       <app-graph #graph [hidden]="data.graphSettings.type != graphType"></app-graph>
       <app-gis #gis [hidden]="data.graphSettings.type != gisType"></app-gis>
     </div>
@@ -157,3 +181,8 @@
       </div>
     </mat-sidenav>
   </mat-sidenav-container>
+
+  <!-- </div> -->
+
+<!-- </div> -->
+</div>
