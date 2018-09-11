@@ -1,31 +1,20 @@
 .master-container {
   height: 100vh;
-  /* border: 2px solid black; */
 }
 
 
 .header, .footer {
-  /* border: 2px solid green; */
   z-index: 3;
 }
 
 .footer-toolbar {
-  /* color: darkslategrey; */
   font-size: 0.8em;
 }
 
 .footer-element {
-  /* border: 1px solid red; */
   text-align: center;
 }
 
-.main-content {
-  /* border: 2px solid magenta; */
-}
-
-#homeButton {
-  /* font-size: 1em; */
-}
 
 #leftSidenav {
   background-color: rgb(245, 245, 245);
@@ -36,116 +25,3 @@
   display: none;
 }
 
-
-
-
-
-/* :host {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidenav-elements {
-  padding: 8px 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidenav-elements > * {
-  margin: 8px 0;
-}
-
-.sidenav-elements > mat-select {
-  width: 100%;
-  margin-top: 20px;
-}
-
-.sidenav-elements > button {
-  width: 100%;
-}
-
-.sidenav-elements > mat-radio-group > mat-radio-button:not(:last-child) {
-  margin-right: 8px;
-}
-
-.toolbarSpan {
-  flex: 1 1 auto;
-}
-
-
-#mainToolbar {
-  z-index: 3;
-}
-
-#mainContainer {
-  width: 100%;
-  height: calc(100% - 56px);
-}
-
-#mainContent {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-#leftSidenav {
-  background-color: rgb(245, 245, 245);
-  z-index: 2;
-}
-
-#rightSidenav {
-  background-color: rgb(245, 245, 245);
-  min-width: 200px;
-  z-index: 1;
-}
-
-#rightSidenavContent {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-}
-
-#sidenavSlider {
-  width: 10px;
-  height: 100%;
-  cursor: ew-resize;
-  background-color: rgb(200, 200, 200);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-#sidenavSliderCenter {
-  width: 100%;
-  height: 50px;
-  background-color: rgb(100, 100, 100);
-}
-
-#homeButton {
-  font-size: 20px;
-}
-
-#fileInput {
-  display: none;
-}
-
-app-graph {
-  width: 100%;
-  height: 100%;
-}
-
-app-gis {
-  width: 100%;
-  height: 100%;
-}
-
-app-table {
-  width: calc(100% - 10px);
-  height: 100%;
-} */

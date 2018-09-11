@@ -1,5 +1,5 @@
 
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { LoginComponent } from './auth/login/login.component';
@@ -11,13 +11,13 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { ActivateComponent } from './auth/activate/activate.component';
 import { AdminActivateComponent } from './auth/admin-activate/admin-activate.component';
 import { TracingComponent } from './tracing/tracing.component';
+import { MainDashComponent } from './main-dash/main-dash.component';
 
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'users/login',
-    pathMatch: 'full'
+    component: MainDashComponent
   },
   {
     path: 'users/login',
@@ -49,10 +49,9 @@ const routes: Routes = [
   },
   {
     path: 'tracing',
-    component: TracingComponent
+    component: TracingComponent,
+    canActivate: [AuthGuard]
   },
-  // { path: '', component: AppComponent},
-
 
   // otherwise redirect to home
   { path: '**', redirectTo: '' }
@@ -60,7 +59,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  // imports: [RouterModule.forRoot(routes, {useHash: true})],
   exports: [RouterModule],
   providers: []
 })

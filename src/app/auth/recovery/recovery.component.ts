@@ -6,7 +6,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
 import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
-// import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-revovery',
@@ -33,8 +32,6 @@ export class RecoveryComponent implements OnInit {
   }
 
   recovery() {
-    console.log('Recovery clicked');
-
     this.loading = true;
 
         const email = this.recoveryForm.value.email;

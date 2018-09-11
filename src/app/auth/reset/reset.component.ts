@@ -69,13 +69,12 @@ export class ResetComponent implements OnInit {
   }
 
   private passwordConfirmationValidator(fg: FormGroup) {
-    let pw1 = fg.controls.password1;
-    let pw2 = fg.controls.password2;
+    const pw1 = fg.controls.password1;
+    const pw2 = fg.controls.password2;
 
     if (pw1.value !== pw2.value) {
       pw2.setErrors({ validatePasswordConfirm: true });
-    }
-    else {
+    } else {
       pw2.setErrors(null);
     }
     return null;

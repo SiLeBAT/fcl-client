@@ -6,6 +6,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
@@ -46,6 +47,7 @@ import { SpinnerLoaderComponent } from './shared/spinner-loader/spinner-loader.c
 import { AppService } from './app.service';
 
 import { AlertComponent } from './auth/alert/alert.component';
+import { MainDashComponent } from './main-dash/main-dash.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,8 @@ import { AlertComponent } from './auth/alert/alert.component';
     ResetComponent,
     HomeComponent,
     ActivateComponent,
-    AdminActivateComponent
+    AdminActivateComponent,
+    MainDashComponent
   ],
   imports: [
     BrowserModule,
@@ -100,6 +103,10 @@ import { AlertComponent } from './auth/alert/alert.component';
       useClass: JwtInterceptor,
       multi: true
     },
+    // {
+    //   provide: LocationStrategy,
+    //   useClass: HashLocationStrategy
+    // },
     SpinnerLoaderService,
     AuthGuard,
     AppService
