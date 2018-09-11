@@ -18,7 +18,8 @@ import {
   MatProgressSpinnerModule,
   MatGridListModule,
   MatSnackBarModule,
-  MAT_LABEL_GLOBAL_OPTIONS
+  MAT_LABEL_GLOBAL_OPTIONS,
+  MatTooltipModule
 } from '@angular/material';
 
 @NgModule({
@@ -39,7 +40,8 @@ import {
     MatDividerModule,
     MatProgressSpinnerModule,
     MatGridListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTooltipModule
   ],
   exports: [
     MatButtonModule,
@@ -57,7 +59,8 @@ import {
     MatDividerModule,
     MatProgressSpinnerModule,
     MatGridListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTooltipModule
   ],
   providers: [
     {provide: MAT_LABEL_GLOBAL_OPTIONS, useValue: {float: 'auto'}}

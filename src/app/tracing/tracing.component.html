@@ -1,60 +1,7 @@
-<mat-toolbar
-  id="mainToolbar"
-  class="mat-elevation-z5"
-  color="primary">
-  <button
-    mat-icon-button
-    (click)="leftSidenav.toggle()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <button
-    mat-button
-    (click)="onHome()"
-    id="homeButton">
-    {{ appName }}
-  </button>
-  <span class="toolbarSpan"></span>
-  <button
-    mat-icon-button
-    (click)="onSaveImage()">
-    <mat-icon>image</mat-icon>
-  </button>
-  <input
-    id="fileInput"
-    #fileInput
-    type="file"
-    (change)="onLoad($event)">
-  <button
-    mat-icon-button
-    onclick="document.getElementById('fileInput').click()">
-    <mat-icon>file_upload</mat-icon>
-  </button>
-  <button
-    mat-icon-button
-    (click)="onSave()">
-    <mat-icon>file_download</mat-icon>
-  </button>
-  <button
-    *ngIf="!rightSidenav.opened"
-    mat-icon-button
-    (click)="rightSidenav.toggle()">
-    <mat-icon>info</mat-icon>
-  </button>
-  <button
-    *ngIf="rightSidenav.opened"
-    mat-mini-fab
-    (click)="rightSidenav.toggle()">
-    <mat-icon>info</mat-icon>
-  </button>
-  <mat-divider [inset]="true" [vertical]="true"></mat-divider>
-
-  <a
-    mat-button
-    [routerLink]="['/users/login']">
-    <mat-icon>exit_to_app</mat-icon>
-    Login
-  </a>
-</mat-toolbar>
+<div
+  class="tracing-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
 
 <mat-sidenav-container id="mainContainer" #mainContainer>
     <mat-sidenav
@@ -143,7 +90,6 @@
     </mat-sidenav>
 
     <div id="mainContent">
-      <router-outlet></router-outlet>
       <app-graph #graph [hidden]="data.graphSettings.type != graphType"></app-graph>
       <app-gis #gis [hidden]="data.graphSettings.type != gisType"></app-gis>
     </div>
@@ -157,3 +103,4 @@
       </div>
     </mat-sidenav>
   </mat-sidenav-container>
+</div>

@@ -1,4 +1,65 @@
-<div class="jumbotron">
+<div
+  class="adminactivate-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
+
+  <mat-card
+    fxFlex="40%"
+    class="mat-elevation-z5">
+
+    <mat-card-header
+      fxLayout="column"
+      fxLayoutAlign="space-evenly">
+      <div
+        fxFlex
+        fxFlexOffset="20px">
+        <div class="mat-headline">Admin account activation</div>
+      </div>
+      <div fxFlex fxFlexOffset="20px">
+          <mat-divider></mat-divider>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+
+        <div
+        *ngIf="adminTokenValid"
+        fxLayout="column">
+
+        <div
+          fxFlex
+          fxFlexOffset="20px">
+          <p class="mat-subheading-1">
+              You have activated the {{ appName }} account for {{ name }}.
+          </p>
+        </div>
+      </div>
+
+      <div
+        *ngIf="!adminTokenValid"
+        fxLayout="column">
+
+        <div
+          fxFlex
+          fxFlexOffset="20px">
+          <p class="mat-subheading-1">
+              Your admin activation failed.
+          </p>
+          <p class="mat-subheading-1">
+              Please let the user register again.
+          </p>
+        </div>
+      </div>
+
+
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+
+<!-- <div class="jumbotron">
   <div class="container-fluid">
     <div class="col-md-6 col-md-offset-3">
       <h2>Admin Kontoaktivierung</h2>
@@ -19,6 +80,6 @@
 
     </div>
   </div>
-</div>
+</div> -->
 
 

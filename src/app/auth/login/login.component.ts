@@ -64,14 +64,12 @@ export class LoginComponent implements OnInit {
     this.authService.login(user)
       .subscribe((data) => {
         this.spinnerService.hide();
-        console.log('login subscribe, data: ', data);
         this.loginForm.reset();
         if (! data['obj']['token']) {
           this.alertService.error(data['title']);
         } else {
           this.alertService.success(data['title']);
           const currentUser = data['obj'];
-          console.log('currentUser: ', currentUser);
           if (currentUser && currentUser.token) {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(currentUser));

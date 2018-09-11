@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
 import { User } from '../../models/user.model';
+import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
 
 export interface IHash {
   [details: string]: string;
@@ -26,24 +27,26 @@ export class RegisterComponent implements OnInit {
     private userService: UserService,
     private alertService: AlertService,
     private router: Router,
-    private changeRef: ChangeDetectorRef) {
+    private changeRef: ChangeDetectorRef,
+    private spinnerService: SpinnerLoaderService) {
       this.pwStrength = -1;
     }
 
   ngOnInit() {
     this.registerForm = new FormGroup({
-      institution: new FormControl(null, Validators.required),
       firstName: new FormControl(null, Validators.required),
       lastName: new FormControl(null, Validators.required),
       email: new FormControl(null, [
         Validators.required,
         Validators.email
       ]),
-      password1: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+      password1: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(8)
+      ]),
       password2: new FormControl(null),
     }, this.passwordConfirmationValidator);
   }
-
 
   register() {
     if (this.registerForm.valid) {
@@ -54,14 +57,16 @@ export class RegisterComponent implements OnInit {
         this.registerForm.value.lastName,
       );
 
+      this.spinnerService.show();
       this.userService.create(user)
         .subscribe((data) => {
+          this.spinnerService.hide();
           this.alertService.success(data['title']);
           this.router.navigate(['users/login']);
         }, (err: HttpErrorResponse) => {
+          this.spinnerService.hide();
           this.alertService.error(err.error.title);
         });
-
     }
   }
 

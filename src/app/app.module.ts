@@ -1,16 +1,18 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { AppRoutingModule } from './app.routing.module';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
+import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 
 import { MaterialModule } from './shared/material.module';
-import { routing } from './route/app.routing';
 
 import {AppComponent} from './app.component';
 import { TracingComponent } from './tracing/tracing.component';
@@ -30,13 +32,22 @@ import {DataService} from './util/data.service';
 import {TracingService} from './tracing/tracing.service';
 import {GisComponent} from './gis/gis.component';
 import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { RecoveryComponent } from './auth/recovery/recovery.component';
+import { HomeComponent } from './auth/home/home.component';
+import { ResetComponent } from './auth/reset/reset.component';
+import { ActivateComponent } from './auth/activate/activate.component';
+import { AdminActivateComponent } from './auth/admin-activate/admin-activate.component';
+import { AuthGuard } from './auth/guards/auth.guard';
 import { AuthService } from './auth/services/auth.service';
 import { AlertService } from './auth/services/alert.service';
 import { UserService } from './auth/services/user.service';
 import { SpinnerLoaderService } from './shared/spinner-loader/spinner-loader.service';
 import { SpinnerLoaderComponent } from './shared/spinner-loader/spinner-loader.component';
+import { AppService } from './app.service';
 
 import { AlertComponent } from './auth/alert/alert.component';
+import { MainDashComponent } from './main-dash/main-dash.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +64,14 @@ import { AlertComponent } from './auth/alert/alert.component';
     DeliveryPropertiesComponent,
     LoginComponent,
     AlertComponent,
-    SpinnerLoaderComponent
+    SpinnerLoaderComponent,
+    RegisterComponent,
+    RecoveryComponent,
+    ResetComponent,
+    HomeComponent,
+    ActivateComponent,
+    AdminActivateComponent,
+    MainDashComponent
   ],
   imports: [
     BrowserModule,
@@ -64,8 +82,9 @@ import { AlertComponent } from './auth/alert/alert.component';
     HttpModule,
     MaterialModule,
     NgxDatatableModule,
-    routing,
-    FlexLayoutModule
+    AppRoutingModule,
+    FlexLayoutModule,
+    PasswordStrengthMeterModule
   ],
   providers: [
     DataService,
@@ -84,7 +103,13 @@ import { AlertComponent } from './auth/alert/alert.component';
       useClass: JwtInterceptor,
       multi: true
     },
-    SpinnerLoaderService
+    // {
+    //   provide: LocationStrategy,
+    //   useClass: HashLocationStrategy
+    // },
+    SpinnerLoaderService,
+    AuthGuard,
+    AppService
   ],
   bootstrap: [AppComponent],
   entryComponents: [

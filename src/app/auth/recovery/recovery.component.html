@@ -1,38 +1,91 @@
-<div class="jumbotron">
-  <div class="container-fluid">
-    <div class="col-md-6 col-md-offset-3">
-      <h2>Passwort zurücksetzen</h2>
-      <hr>
-      <br>
-      <p>Bitte geben Sie Ihre Email Adresse an, die Sie für die Registrierung verwendet haben</p>
-      <br>
+<div
+  class="recovery-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
 
+  <mat-card
+    fxFlex="40%"
+    class="mat-elevation-z5">
+
+    <mat-card-header
+      fxLayout="column"
+      fxLayoutAlign="space-evenly">
+      <div
+        fxFlex
+        fxFlexOffset="20px">
+        <div class="mat-headline">Recover password</div>
+      </div>
+      <div fxFlex fxFlexOffset="20px">
+          <mat-divider></mat-divider>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
       <form
         [formGroup]="recoveryForm"
         (ngSubmit)="recovery()">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            class="form-control"
-            formControlName="email"/>
-          <!-- <div *ngIf="f.submitted && !username.valid" class="help-block">Username is required</div> -->
-        </div>
-        <div class="form-group">
-          <button
-            class="btn btn-primary"
-            type="submit"
-            [disabled]="!recoveryForm.valid">Passwort zurücksetzen</button>
-          <a
-            [routerLink]="['/main']"
-            class="btn btn-link">
-              Zurück
-          </a>
+
+        <div
+          fxLayout="column">
+
+          <div
+            fxFlex
+            fxFlexOffset="20px">
+            <div class="mat-subheading-2">Please enter the email address you used to register.</div>
+          </div>
+          <div
+            class="form-group"
+            fxFlex>
+              <mat-form-field appearance="standard">
+                <mat-label>Email</mat-label>
+                <input
+                  matInput
+                  formControlName="email"
+                  name="email"
+                  required>
+                <mat-icon matPrefix>mail</mat-icon>
+                <mat-error
+                  *ngIf="!validateField('email') && recoveryForm.controls.email.errors.email">
+                  Not a valid email
+                </mat-error>
+                <mat-error
+                  *ngIf="!validateField('email') && recoveryForm.controls.email.errors.required">
+                  You must enter a valid email
+                </mat-error>
+              </mat-form-field>
+          </div>
+
+          <div
+            fxFlex
+            fxFlexOffset="40px">
+
+            <div
+              fxLayout="row"
+              fxLayoutAlign="start center">
+
+              <div
+                class="form-group">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="!recoveryForm.valid">
+                  Recover password
+                </button>
+              </div>
+              <div>
+                <a
+                  mat-button
+                  [routerLink]="['/']"
+                  fxFlexOffset="10px">
+                  Cancel
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </form>
-    </div>
-  </div>
+    </mat-card-content>
+  </mat-card>
 </div>
-
 
