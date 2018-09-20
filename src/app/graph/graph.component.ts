@@ -116,7 +116,7 @@ export class GraphComponent implements OnInit {
       });
     };
 
-    new ResizeSensor(this.containerElement.nativeElement, () => {
+    const resizeSensor = new ResizeSensor(this.containerElement.nativeElement, () => {
       if (this.resizeTimer != null) {
         this.resizeTimer.unsubscribe();
       }

@@ -19,8 +19,8 @@ export class AppComponent implements OnInit {
   subscriptions = [];
 
   constructor(
-    private authService: AuthService,
-    private appService: AppService) {}
+    public authService: AuthService,
+    public appService: AppService) {}
 
   ngOnInit() {
     this.subscriptions.push(this.appService.doInputEmpty

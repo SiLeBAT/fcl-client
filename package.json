@@ -2,16 +2,19 @@
   "name": "fcl-web-app",
   "version": "1.0.0",
   "license": "GPL v3",
-  "angular-cli": {},
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --watch --proxy-config proxy.config.json",
-    "build": "ng build",
+    "start": "ng serve --proxy-config proxy.config.json",
+    "serve": "ng serve --proxy-config proxy.config.json --watch",
+    "serve:local": "ng serve",
+    "build:qa": "npm run clean && npm run lint && ng build --configuration=qa --output-path \"public\"",
+    "build:prod": "npm run clean && npm run lint && ng build --configuration=production --output-path \"public\"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gh-pages": "ng build --prod --bh /fcl-client/",
-    "cloud9": "ng serve --host $IP --port $PORT"
+    "gh-pages": "ng build --configuration=production --bh /fcl-client/",
+    "cloud9": "ng serve --host $IP --port $PORT",
+    "clean": "rimraf public/*"
   },
   "private": true,
   "dependencies": {
@@ -20,7 +23,7 @@
     "@angular/common": "^6.1.1",
     "@angular/compiler": "^6.1.1",
     "@angular/core": "^6.1.1",
-    "@angular/flex-layout": "^6.0.0-beta.17",
+    "@angular/flex-layout": "^6.0.0-beta.18",
     "@angular/forms": "^6.1.1",
     "@angular/http": "^6.1.1",
     "@angular/material": "^6.4.2",
@@ -50,7 +53,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.2",
-    "@angular/cli": "^6.1.2",
+    "@angular/cli": "^6.0.8",
     "@angular/compiler-cli": "^6.1.1",
     "@types/d3": "^5.0.0",
     "@types/hammerjs": "^2.0.35",
@@ -68,8 +71,10 @@
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-html-reporter": "^1.2.0",
     "protractor": "^5.4.0",
+    "rimraf": "^2.6.2",
     "ts-node": "^7.0.0",
     "tslint": "^5.11.0",
-    "typescript": "2.7.2"
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^2.9.2"
   }
 }
