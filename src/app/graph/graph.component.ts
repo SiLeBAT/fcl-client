@@ -16,6 +16,7 @@ import {Utils} from '../util/utils';
 import {TracingService} from '../tracing/tracing.service';
 import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
+//import {FarmToFork2Layout} from './layoutmanager/farm_to_fork_2/farm_to_fork_2';
 import {Constants} from '../util/constants';
 
 interface MenuAction {
@@ -34,12 +35,14 @@ export class GraphComponent implements OnInit {
   private static readonly ZOOM_FACTOR = 1.5;
 
   private static readonly NODE_SIZES: Map<Size, number> = new Map([
+    [Size.TINY, 25],
     [Size.SMALL, 50],
     [Size.MEDIUM, 75],
     [Size.LARGE, 100]
   ]);
 
   private static readonly FONT_SIZES: Map<Size, number> = new Map([
+    [Size.TINY, 6],
     [Size.SMALL, 10],
     [Size.MEDIUM, 14],
     [Size.LARGE, 18]
@@ -88,6 +91,7 @@ export class GraphComponent implements OnInit {
 
   private mergeDeliveries = Constants.DEFAULT_GRAPH_MERGE_DELIVERIES;
   private nodeSize = Constants.DEFAULT_GRAPH_NODE_SIZE;
+  private maxNodeSize = this.nodeSize * 4;
   private fontSize = Constants.DEFAULT_GRAPH_FONT_SIZE;
 
   private contextMenuElement: any;
@@ -96,6 +100,8 @@ export class GraphComponent implements OnInit {
   private selectTimer: any;
   private hoverDeliveries: Subject<string[]> = new Subject();
   private hoverableEdges: any;
+
+  //private nodeSizeMap: Map<string, number>;  // for size caching
 
   //noinspection JSUnusedGlobalSymbols
   constructor(private tracingService: TracingService, private dialogService: MdDialog, public elementRef: ElementRef) {
@@ -145,6 +151,7 @@ export class GraphComponent implements OnInit {
         edges: this.createEdges()
       },
 
+      pixelRatio: 1, // for large graphs
       layout: layout != null ? {name: 'preset', zoom: layout.zoom, pan: layout.pan} : {name: 'random'},
       style: this.createStyle(),
       minZoom: 0.01,
@@ -153,12 +160,15 @@ export class GraphComponent implements OnInit {
     });
 
     this.cy.on('zoom', () => {
-      this.setFontSize(this.fontSize);
+      // Now the size is not updated with the zoom
+      //this.setFontSize(this.fontSize);
+      // ToDo: make font and node size dependent on zoom level with respect to an option (zoomLabels)
 
       if (!this.sliding) {
         this.updateSlider();
       }
     });
+    // performance reasons
     this.cy.on('select', event => this.setSelected(event.target.id(), true));
     this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
     this.cy.on('position', event => this.tracingService.getStationsById([event.target.id()])[0].position = event.target.position());
@@ -257,7 +267,7 @@ export class GraphComponent implements OnInit {
       const size = GraphComponent.FONT_SIZES.get(fontSize);
 
       this.cy.nodes().style({
-        'font-size': Math.max(size / this.cy.zoom(), size)
+        'font-size': Math.max(size / this.cy.zoom(), size), 
       });
     }
   }
@@ -446,9 +456,9 @@ export class GraphComponent implements OnInit {
     });
   }
 
-  private createStyle(): any {
+  private createSmallGraphStyle(): any {
     const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize)/2;
 
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
@@ -467,22 +477,23 @@ export class GraphComponent implements OnInit {
       .selector('node')
       .style({
         'content': 'data(name)',
-        'height': sizeFunction,
-        'width': sizeFunction,
+        'height': sizeFunction, // ToDO: replace by linear function (data or dataMap)
+        'width': sizeFunction,  // ToDo: replace by linear function (data or dataMap)
         'background-color': 'rgb(255, 255, 255)',
         'border-width': 3,
         'border-color': 'rgb(0, 0, 0)',
         'text-valign': 'bottom',
         'text-halign': 'right',
-        'color': 'rgb(0, 0, 0)'
+        'color': 'rgb(0, 0, 0)',
       })
       .selector('edge')
       .style({
-        'target-arrow-shape': 'triangle',
-        'width': 6,
+        'target-arrow-shape': 'triangle', 
+        'width': 2, //        'width': 6,
         'line-color': 'rgb(0, 0, 0)',
-        'target-arrow-color': 'rgb(255, 0, 0)',
-        'curve-style': 'bezier'
+        'target-arrow-color': 'rgb(0, 0, 0)', 
+        'arrow-scale': 1.4, 
+        'curve-style': 'bezier'   // performance reasons
       })
       .selector('node:selected')
       .style({
@@ -493,7 +504,7 @@ export class GraphComponent implements OnInit {
       })
       .selector('edge:selected')
       .style({
-        'width': 12
+        'width': 4
       })
       .selector('node[?contains]')
       .style({
@@ -554,6 +565,373 @@ export class GraphComponent implements OnInit {
     }
 
     return style;
+  }
+
+  private createLargeGraphStyle(): any {
+    const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+
+    let style = cytoscape.stylesheet()
+      .selector('*')
+      .style({
+        'overlay-color': 'rgb(0, 0, 255)',
+        'overlay-padding': 10,
+        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+      })
+      .selector('node')
+      .style({
+        //'content': 'data(name)',
+        'height': sizeFunction, // PF test
+        'width': sizeFunction,  // PF test
+        'background-color': 'rgb(255, 255, 255)',
+        //'border-width': 3,
+        'border-color': 'rgb(0, 0, 0)',
+        //'text-valign': 'bottom',
+        //'text-halign': 'right',
+        'color': 'rgb(0, 0, 0)',
+        //'min-zoomed-font-size':10   // performance reasons
+      })
+      .selector('edge')
+      .style({
+        //'target-arrow-shape': 'triangle', // test reason
+        // large graphs
+        'mid-target-arrow-shape': 'triangle', // test reason
+        //'mid-target-arrow-fill': 'hollow', // test reason
+        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+        'width': 2, //        'width': 6,
+        'line-color': 'rgb(0, 0, 0)',
+        // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+        'arrow-scale': 1.4, // test reason
+        //'curve-style': 'bezier'   // performance reasons
+      })
+      .selector('node:selected')
+      .style({
+        'background-color': 'rgb(128, 128, 255)',
+        //'border-width': 6,
+        'border-color': 'rgb(0, 0, 255)',
+        'color': 'rgb(0, 0, 255)'
+      })
+      .selector('edge:selected')
+      .style({
+        //'width': 12
+      })
+      .selector('node[?contains]')
+      .style({
+        'border-width': 6
+      })
+      .selector('node:selected[?contains]')
+      .style({
+        'border-width': 9
+      }).selector(':active')
+      .style({
+        //'overlay-opacity': 0.5
+      })
+      .selector(':selected')
+         .css({
+           'background-color': 'black',
+           'opacity': 1
+         });
+
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+
+      return background;
+    };
+
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+
+    return style;
+  }
+
+  private createHugeGraphStyle(): any {
+    const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    /*this.nodeSizeMap = new Map();
+    const cachedSizeFunction = (node)=>{
+      if(!this.nodeSizeMap.has(node.id)) this.nodeSizeMap.set(node.id, sizeFunction(node));
+      return this.nodeSizeMap.get(node.id);
+    };        //_.memoize(sizeFunction);
+    */
+    
+    let style = cytoscape.stylesheet()
+      .selector('*')
+      .style({
+        'overlay-color': 'rgb(0, 0, 255)',
+        'overlay-padding': 10,
+        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+      })
+      .selector('node')
+      .style({
+        'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+        'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
+        //'content': 'data(name)', // no label
+        'background-color': 'rgb(255, 255, 255)',
+        'border-width': 2,
+        'border-color': 'rgb(0, 0, 0)',
+        //'text-valign': 'bottom', // no label
+        //'text-halign': 'right', // no label
+        'color': 'rgb(0, 0, 0)',
+        //'min-zoomed-font-size':10   // performance reasons
+      })
+      .selector('edge')
+      .style({
+        'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
+        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+        'width': 1, //        'width': 6,
+        'line-color': 'rgb(0, 0, 0)',
+        'arrow-scale': 1.4, // test reason
+        //'curve-style': 'bezier'   // use haystack
+      })
+      .selector('node:selected')
+      .style({
+        'background-color': 'rgb(128, 128, 255)',
+        //'border-width': 6,
+        'border-color': 'rgb(0, 0, 255)',
+        'color': 'rgb(0, 0, 255)'
+      })
+      .selector('edge:selected')
+      .style({
+        'width': 2
+      })
+      .selector('node[?contains]')
+      .style({
+        'border-width': 3 //6 // ToDo: Clarify, what is this for
+      })
+      .selector('node:selected[?contains]')
+      .style({
+        'border-width': 3 //9 // ToDo: Clarify, what is this for
+      }).selector(':active')
+      .style({
+        'overlay-opacity': 0.5
+      });
+      /*.selector(':selected')
+         .css({
+           'background-color': 'black',
+           'opacity': 1
+         });*/
+
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+
+      return background;
+    };
+
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+
+    return style;
+  }
+
+
+  private createStyle(): any {
+    return this.createHugeGraphStyle();
+    /*const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+
+    let style = cytoscape.stylesheet()
+      .selector('*')
+      .style({
+        'overlay-color': 'rgb(0, 0, 255)',
+        'overlay-padding': 10,
+        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+      })
+      .selector('node')
+      .style({
+        //'content': 'data(name)',
+        'height': sizeFunction, // PF test
+        'width': sizeFunction,  // PF test
+        'background-color': 'rgb(255, 255, 255)',
+        //'border-width': 3,
+        'border-color': 'rgb(0, 0, 0)',
+        //'text-valign': 'bottom',
+        //'text-halign': 'right',
+        'color': 'rgb(0, 0, 0)',
+        //'min-zoomed-font-size':10   // performance reasons
+      })
+      .selector('edge')
+      .style({
+        //'target-arrow-shape': 'triangle', // test reason
+        // large graphs
+        'mid-target-arrow-shape': 'triangle', // test reason
+        //'mid-target-arrow-fill': 'hollow', // test reason
+        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+        'width': 2, //        'width': 6,
+        'line-color': 'rgb(0, 0, 0)',
+        // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+        'arrow-scale': 1.4, // test reason
+        //'curve-style': 'bezier'   // performance reasons
+      })
+      .selector('node:selected')
+      .style({
+        'background-color': 'rgb(128, 128, 255)',
+        //'border-width': 6,
+        'border-color': 'rgb(0, 0, 255)',
+        'color': 'rgb(0, 0, 255)'
+      })
+      .selector('edge:selected')
+      .style({
+        //'width': 12
+      })
+      .selector('node[?contains]')
+      .style({
+        'border-width': 6
+      })
+      .selector('node:selected[?contains]')
+      .style({
+        'border-width': 9
+      }).selector(':active')
+      .style({
+        //'overlay-opacity': 0.5
+      })
+      .selector(':selected')
+         .css({
+           'background-color': 'black',
+           'opacity': 1
+         });
+
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+
+      return background;
+    };
+
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+
+    return style;*/
   }
 
   private setSelected(id: string, selected: boolean) {
@@ -822,6 +1200,67 @@ export class GraphComponent implements OnInit {
         name: 'Directed acyclic graph',
         enabled: true,
         action: () => this.cy.layout({name: 'dagre'}).run()
+      }, {
+        name: 'ElkJS',
+        enabled: true,
+        action: () => this.cy.layout({name: 'elkjs'}).run()
+      },{
+        name: 'Farm-To-Fork-Test',
+        enabled: true,
+        action: () => {
+          let layout;
+          const layoutDialogData: DialogActionsData = {
+            title: 'Layout running',
+            actions: [{name: 'Stop', action: () => layout.stop()}]
+          };
+          const layoutDialog = this.dialogService.open(DialogActionsComponent, {
+            disableClose: true,
+            data: layoutDialogData
+          });
+
+          layout = this.cy.layout({
+            name: 'cola',
+            ungrabifyWhileSimulating: true,
+            avoidOverlap: false,
+            animate: false,
+            maxSimulationTime: 60000,
+            //fit: true, // on every layout reposition of nodes, fit the viewport
+            padding: 30, // padding around the simulation
+            //boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+            //nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
+          
+            // layout event callbacks
+            //ready: function(){}, // on layoutready
+            //stop: function(){}, // on layoutstop
+          
+            // positioning options
+            //randomize: false, // use random node positions at beginning of layout
+            //avoidOverlap: true, // if true, prevents overlap of node bounding boxes
+            handleDisconnected: true, // if true, avoids disconnected components from overlapping
+            //nodeSpacing: function( node ){ return 1; }, // extra spacing around nodes
+            flow: { axis: 'y', minSeparation: 30 }, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
+            alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
+            gapInequalities: undefined, // list of inequality constraints for the gap between the nodes, e.g. [{"axis":"y", "left":node1, "right":node2, "gap":25}]. The constraint in the example says that the center of node1 must be at least 25 pixels above the center of node2. In other words, it is an inequality constraint that requires "node1.y + gap <= node2.y". You can set the extra "equality" attribute as "true" to convert it into an equality constraint.
+          
+            // different methods of specifying edge length
+            // each can be a constant numerical value or a function like `function( edge ){ return 2; }`
+            edgeLength: undefined, // sets edge length directly in simulation
+            edgeSymDiffLength: undefined, // symmetric diff edge length in simulation
+            edgeJaccardLength: undefined, // jaccard edge length in simulation
+          
+            // iterations of cola algorithm; uses default values on undefined
+            unconstrIter: undefined, // unconstrained initial layout iterations
+            userConstIter: undefined, // initial layout iterations with user-specified constraints
+            allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
+          
+            // infinite layout options
+            infinite: false, // overrides all other options for a forces-all-the-time mode
+            stop: function () {
+              layoutDialog.close();
+            }
+          });
+          layout.run();
+        }
       }
     ];
   }

@@ -121,6 +121,7 @@ export enum ShowType {
 }
 
 export enum Size {
+  TINY = 'Tiny' as any,
   SMALL = 'Small' as any,
   MEDIUM = 'Medium' as any,
   LARGE = 'Large' as any
