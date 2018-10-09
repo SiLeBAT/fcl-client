@@ -4,13 +4,16 @@ export class Graph {
   vertexCount: number = 0;
   
   insertVertex(vertex: Vertex) {
-    vertex.index = ++this.vertexCount;
+    vertex.index = this.vertexCount++;
     this.vertices.push(vertex);
   }
   
   insertEdge(from: Vertex, to: Vertex) {
     from.outVertices.push(to.index);
     to.inVertices.push(from.index);
+    let edge: Edge = new Edge(from, to, false);
+    from.outEdges.push(edge);
+    to.inEdges.push(edge);
   }
 }
 
@@ -18,14 +21,28 @@ export class Vertex {
   index: number;
   x: number;
   y: number;
-  inVertices: number[];
-  outVertices: number[];
-  rank: number;
+  inVertices: number[] = [];
+  outVertices: number[] = [];
+  inEdges: Edge[] = [];
+  outEdges: Edge[] = [];
+  layerIndex: number;
   weight: number;
-  nextLayer: Vertex[];
-  previousLayer: Vertex[];
+  nextLayer: Edge[];
+  previousLayer: Edge[];
   indexInLayer: number;
+  typeCode: number;
+  isVirtual: boolean;
   constructor() {}
+}
+
+export class Edge {
+  /*source: Vertex;
+  target: Vertex;
+  isVirtual: boolean;*/
+
+  constructor(public source: Vertex, public target: Vertex, public isVirtual: boolean){
+    if(isVirtual==null) isVirtual = false;
+  }
 }
 
 export class VertexCounter {

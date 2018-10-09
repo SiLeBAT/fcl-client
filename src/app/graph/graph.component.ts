@@ -17,6 +17,7 @@ import {TracingService} from '../tracing/tracing.service';
 import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
 //import {FarmToFork2Layout} from './layoutmanager/farm_to_fork_2/farm_to_fork_2';
+import {FarmToForkLayout} from './layoutmanager/farm_to_fork/farm_to_fork';
 import {Constants} from '../util/constants';
 
 interface MenuAction {
@@ -110,6 +111,7 @@ export class GraphComponent implements OnInit {
       cytoscape.use(dagre);
       cytoscape.use(spread);
       cytoscape('layout', 'fruchterman', FruchtermanLayout);
+      cytoscape('layout', 'farm_to_fork', FarmToForkLayout);
     }
   }
 
@@ -1147,6 +1149,10 @@ export class GraphComponent implements OnInit {
         enabled: true,
         action: () => this.cy.layout({name: 'fruchterman'}).run()
       }, {
+        name: 'Farm-to-fork',
+        enabled: true,
+        action: () => this.cy.layout({name: 'farm_to_fork'}).run()
+      },{
         name: 'Constraint-Based',
         enabled: true,
         action: () => {

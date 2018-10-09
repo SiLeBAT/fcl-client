@@ -1,27 +1,25 @@
-import {Graph, Vertex, VertexCounter} from './data_structures';
+import {Graph, Vertex, Edge, VertexCounter} from './data_structures';
 
-export function sortVertices(dag: Graph, layers: Vertex[][]): number[][] {
+export function sortVertices(graph: Graph, layers: Vertex[][]) {
   let vertexSorter = new VertexSorter();
-  return vertexSorter.sortVertices(layers);
+  vertexSorter.sortVertices(graph, layers);
 } 
 
 class VertexSorter {
    
   constructor() { }
 
-  sortVertices(layers: Vertex[][]) {
-      this.createVirtualVertices(layers); 
+  sortVertices(graph: Graph, layers: Vertex[][]) {
+      this.createVirtualVertices(graph, layers); 
       
-      //const layers = virtualized[0]
-      //const edges = virtualized[1]
       const layerCopy = (arr: Vertex[][]) => { 
-          const layerBackup: number[][] = [];
+          const layerBackup: Vertex[][] = [];
           let i: number = arr.length;
-          while(i--) layerBackup[i] = arr[i].map(x => x.index);
+          while(i--) layerBackup[i] = arr[i].slice();
           return layerBackup;
       }
 
-      let bestSolution: number[][] = layerCopy(layers);
+      let bestSolution: Vertex[][] = layerCopy(layers);
       let bestCrossing: number = this.layerCrossing(layers);
       const ITERATION_LIMIT = 24;
       for (let iIteration = 0; iIteration < ITERATION_LIMIT; iIteration++) {
@@ -31,9 +29,17 @@ class VertexSorter {
               bestSolution = layerCopy(layers);
           }
       }
+      this.restoreSolution(bestSolution);
   }
 
-  transpose(layers: Vertex[][]) {
+  private restoreSolution(layers: Vertex[][]) {
+      for(let layer of layers) {
+          let i: number=-1;
+          for(let vertex of layer) vertex.indexInLayer = ++i;
+      }
+  }
+
+  private transpose(layers: Vertex[][]) {
     let improved: boolean = true;
     const maxRank: number = layers.length-1;
     while(improved) {
@@ -54,7 +60,7 @@ class VertexSorter {
     }
   }
 
-  pairCrossing(v: Vertex, w: Vertex): number {
+  private pairCrossing(v: Vertex, w: Vertex): number {
     let crossCount: number = 0;
     for(let f of [a => a.nextLayer, a=>a.previousLayer]) {
 
@@ -76,13 +82,13 @@ class VertexSorter {
     }
   }
 
-  layerCrossing(layers: Vertex[][]): number {
+  private layerCrossing(layers: Vertex[][]): number {
       let totalCrossing: number = 0;
       for(let iL: number = 0, nL = layers.length; iL<nL-1; iL++) {
           let vertexCounter = new VertexCounter();
           for(let vertex of layers[iL]) {
-              for(let neighbour of vertex.nextLayer) totalCrossing+= vertexCounter.getVertexCountAbovePosition(neighbour.indexInLayer);
-              for(let neighbour of vertex.nextLayer) vertexCounter.insertVertex(neighbour.indexInLayer);
+              for(let edge of vertex.nextLayer) totalCrossing+= vertexCounter.getVertexCountAbovePosition(edge.source.indexInLayer);
+              for(let edge of vertex.nextLayer) vertexCounter.insertVertex(edge.source.indexInLayer);
           }
       }
       return totalCrossing;
@@ -108,7 +114,7 @@ class VertexSorter {
   }
 
   getWeight(vertex: Vertex, rank: number): number {
-    const adjacentPositions: number[] = (rank < vertex.rank ? vertex.previousLayer.map(v => v.indexInLayer):vertex.nextLayer.map(v => v.indexInLayer));
+    const adjacentPositions: number[] = (rank < vertex.layerIndex ? vertex.previousLayer.map(e => e.target.indexInLayer):vertex.nextLayer.map(e => e.source.indexInLayer));
     const pCount = adjacentPositions.length;
     if(pCount==0) return -1.0;
     else if(pCount%2==1) return adjacentPositions[(pCount-1)/2];
@@ -122,7 +128,7 @@ class VertexSorter {
 
   }
 
-  private createVirtualVertices(graph: Graph, layers: number[][]) {
+  /*private createVirtualVertices(graph: Graph, layers: number[][]) {
     let virtualIndex = 0
     const vertexRank: number[] = [];
     vertexRank[graph.vertices.length-1] = -1;
@@ -161,6 +167,39 @@ class VertexSorter {
         }
     }
     //return [layers, edges]
-}
+}*/
+
+    private createVirtualVertices(graph: Graph, layers: Vertex[][]) {
+        for(let layer of layers) for(let vertex of layer) for(let edge of vertex.inEdges) if(Math.abs(edge.source.layerIndex-edge.target.layerIndex)>1) this.splitEdge(graph, layers, edge);
+    }
+
+    private splitEdge(graph: Graph, layers: Vertex[][], edge: Edge) {
+        const layerSpan = Math.abs(edge.source.index-edge.target.index);
+
+        // add new virtual nodes
+        for(let i: number = 1; i<layerSpan; ++i) {
+            let iL: number = edge.source.index + (edge.source.index<edge.target.index?i:-i);
+            let vertex: Vertex = new Vertex();
+            vertex.isVirtual = true;
+            graph.vertices.push(new Vertex()); 
+            //vertexRank[++maxVertexIndex] = iL; // 
+            layers[iL].push(vertex);
+            vertex.indexInLayer = layers[iL].length-1;
+        }
+        
+        // ToDO: Improve
+        const maxVertexIndex: number = graph.vertices.length-1;
+        let edgeOutIndex: number = edge.source.outEdges.findIndex(e => {return e.target.index===edge.target.index});
+        let edgeInIndex: number = edge.target.inEdges.findIndex(e => {return e.source.index===edge.source.index});
+        graph.vertices[edge.source.index].outEdges[edgeOutIndex] = new Edge(graph.vertices[edge.source.index], graph.vertices[maxVertexIndex + 1], true); // replacing old edge
+        graph.vertices[maxVertexIndex+1].inEdges = [graph.vertices[edge.source.index].outEdges[edgeOutIndex]];
+        graph.vertices[edge.target.index].inEdges[edgeInIndex] = new Edge(graph.vertices[maxVertexIndex + layerSpan - 1], graph.vertices[edge.target.index], true);
+        graph.vertices[maxVertexIndex+layerSpan-1].outEdges = [graph.vertices[edge.target.index].inEdges[edgeInIndex]];
+
+        for(let i: number = 1; i<layerSpan-1; ++i) { 
+            graph.vertices[maxVertexIndex+i].outEdges = [new Edge(graph.vertices[maxVertexIndex+i], graph.vertices[maxVertexIndex+i+1], true)];
+            graph.vertices[maxVertexIndex+i+1].inEdges = graph.vertices[maxVertexIndex+i].outEdges;
+        }
+    }
 }
 
