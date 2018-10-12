@@ -27,7 +27,9 @@ class LayerAssignment {
 
   getIncomingEdges(vertices: Vertex[]): Edge[] {
     let result: Edge[] = [];
-    for(let vertex of vertices) return result.concat(vertex.inEdges);
+    for(let vertex of vertices) {
+      result = result.concat(vertex.inEdges);
+    }
     return result;
   } 
   
@@ -61,7 +63,10 @@ class LayerAssignment {
       // _.remove(edges, e => _(start).includes(e.from))
       // _.remove(vertices, v => _(start).includes(v))
       // start = this.getVerticesWithoutIncomingEdges(edges, vertices)
+      sinks = Array.from(new Set(sinks));
     }
+    graph.layers = layers;
+    //graph.resetVertexIndicesInLayers();
     return layers;
   }
   

@@ -1,3 +1,5 @@
+import {Vertex} from './data_structures';
+
 export class BusinessTypeRanker {
   private indexMap: Map<String, number> = new Map();
   private isSink: boolean[] = [];
@@ -41,8 +43,8 @@ export class BusinessTypeRanker {
   }
 
   compareRankingByCode(typeA: number, typeB: number): number {
-    if(typeA>=0) {
-      if(typeB>=0) {
+    if(typeA!=null) {
+      if(typeB!=null) {
         if(this.rankMatrix[typeA][typeB]) return -1;
         if(this.rankMatrix[typeB][typeA]) return 1;
         return null;
@@ -52,7 +54,7 @@ export class BusinessTypeRanker {
         if(this.isSource[typeA]) return 1;
         return null;
       }
-    } else if(typeB>=0) {
+    } else if(typeB!=null) {
       // typeA is unkown
       if(this.isSink[typeB]) return 1;
       if(this.isSource[typeB]) return -1;
@@ -65,6 +67,10 @@ export class BusinessTypeRanker {
     let codeA: number = (this.indexMap.has(typeA)?this.indexMap.get(typeA):-1);
     let codeB: number = (this.indexMap.has(typeB)?this.indexMap.get(typeB):-1);
     return this.compareRankingByCode(codeA, codeB);
+  }
+
+  compareRanking(vertexA: Vertex, vertexB: Vertex): number {
+    return this.compareRankingByCode(vertexA.typeCode, vertexB.typeCode);
   }
 
   getBusinessTypeCode(type: String): number {

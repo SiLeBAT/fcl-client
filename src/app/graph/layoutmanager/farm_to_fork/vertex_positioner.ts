@@ -42,12 +42,14 @@ class VertexPositioner {
             this.nodeDist[currentVIndex] = VertexPositioner.MIN_NODE_TO_EDGE_DIST;
           }
         } else {
+          /*
           if((this.vertices[currentVIndex].inVertices.some(r=> this.vertices[oldVIndex].inVertices.indexOf(r) >= 0)) ||
             (this.vertices[currentVIndex].outVertices.some(r=> this.vertices[oldVIndex].outVertices.indexOf(r) >= 0))) { // do the neighbours share a source or a target
             this.nodeDist[currentVIndex] = VertexPositioner.MIN_SIBLING_DIST;
           } else {
             this.nodeDist[currentVIndex] = VertexPositioner.MIN_NONSIBLING_DIST;
           }
+          */
         }
         this.nodePos[currentVIndex] = this.nodePos[oldVIndex] + this.nodeDist[currentVIndex];
       }
@@ -64,7 +66,7 @@ class VertexPositioner {
           let posSum: number = 0;
           let weightSum: number = 0;
           // Todo: apply median concept because it is more robust
-          for(let iInV: number = 0, nInV: number = this.vertices[currentVIndex].inVertices.length; iInV<nInV; iInV++) {
+          /*for(let iInV: number = 0, nInV: number = this.vertices[currentVIndex].inVertices.length; iInV<nInV; iInV++) {
             let w: number = this.nodeWeight[this.vertices[currentVIndex].inVertices[iInV]];
             posSum+= this.nodePos[this.vertices[currentVIndex].inVertices[iInV]] * w; 
             weightSum+= w;
@@ -73,7 +75,7 @@ class VertexPositioner {
             let w: number = this.nodeWeight[this.vertices[currentVIndex].outVertices[iOutV]];
             posSum+= this.nodePos[this.vertices[currentVIndex].outVertices[iOutV]] * w; 
             weightSum+= w;
-          }
+          }*/
           let newPos: number = posSum/weightSum;
           if(iV>0) this.nodePos[currentVIndex] = Math.max(this.nodePos[this.layers[iL][iV-1]]+this.nodeDist[currentVIndex], newPos);
           else this.nodePos[currentVIndex] = newPos;

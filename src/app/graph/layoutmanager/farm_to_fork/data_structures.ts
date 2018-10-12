@@ -1,19 +1,45 @@
 export class Graph {
   
   vertices: Vertex[] = [];
-  vertexCount: number = 0;
+  //vertexCount: number = 0;
+  layers: Vertex[][];
   
   insertVertex(vertex: Vertex) {
-    vertex.index = this.vertexCount++;
+    vertex.index = this.vertices.length; //   this.vertexCount++;
     this.vertices.push(vertex);
   }
   
   insertEdge(from: Vertex, to: Vertex) {
-    from.outVertices.push(to.index);
-    to.inVertices.push(from.index);
+    //from.outVertices.push(to.index);
+    //to.inVertices.push(from.index);
     let edge: Edge = new Edge(from, to, false);
     from.outEdges.push(edge);
     to.inEdges.push(edge);
+  }
+
+  invertEdges(edgesToInvert: Edge[]) {
+    for(let edge of edgesToInvert) {
+      let index: number = edge.source.outEdges.indexOf(edge);
+      if (index >= 0) edge.source.outEdges.splice(index, 1);
+      index = edge.target.inEdges.indexOf(edge);
+
+      let vertex: Vertex = edge.source;
+      edge.source = edge.target;
+      edge.target = vertex;
+
+      edge.source.outEdges.push(edge);
+      edge.target.inEdges.push(edge);
+    }
+  }
+
+  resetVertexIndicesInLayers() {
+    let iL: number = -1;
+    for(let layer of this.layers) {
+      let i: number = -1;
+      iL++;
+      for(let vertex of layer) vertex.indexInLayer = ++i; // + iL*100;
+    }
+    //let tmp: number[][] = this.layers.map(l => l.map(v => v.indexInLayer));
   }
 }
 
@@ -21,14 +47,14 @@ export class Vertex {
   index: number;
   x: number;
   y: number;
-  inVertices: number[] = [];
-  outVertices: number[] = [];
+  //inVertices: number[] = [];
+  //outVertices: number[] = [];
   inEdges: Edge[] = [];
   outEdges: Edge[] = [];
   layerIndex: number;
   weight: number;
-  nextLayer: Edge[];
-  previousLayer: Edge[];
+  //nextLayer: Edge[];
+  //previousLayer: Edge[];
   indexInLayer: number;
   typeCode: number;
   isVirtual: boolean;
