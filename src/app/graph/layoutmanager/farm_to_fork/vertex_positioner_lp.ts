@@ -14,26 +14,8 @@ class VertexPositionerLP {
   
   positionVertices(layers: Vertex[][], width: number, height: number) {
     
-    /*const model = {
-      "optimize" : "objective",
-      "opType": "max"
-    }*/
     
     /*const model = {
-      "optimize": "profit",
-      "opType": "max",
-      "constraints": {
-        "wood": {"max": 300},
-        "labor": {"max": 110},
-        "storage": {"max": 400}
-      },
-      "variables": {
-        "table": {"wood": 30, "labor": 5, "profit": 1200, "table": 1, "storage": 30},
-        "dresser": {"wood": 20, "labor": 10, "profit": 1600, "dresser": 1, "storage": 50}
-      },
-      "ints": {"table": 1, "dresser": 1}
-    }*/
-    const model = {
       "optimize": "capacity",
       "opType": "max",
       "constraints": {
@@ -55,7 +37,7 @@ class VertexPositionerLP {
               "cost": 9000
           }
         }};
-
+*/
     //const solver = new Solver();
     //const result = solver.Solve(model);
     const lpModel: LPModel = new LPModel();
@@ -91,6 +73,55 @@ class VertexPositionerLP {
     const MIN_EDGE_TO_EDGE_DIST: number = 1;
 
     //const lpModel = new lpModel();
+    const lpModel = new LPModel();
 
+    const objective = {};
+    //const nonVirtualLink: number[] = 
+    for(let layer of layers) {
+      if(layer.length>0) {
+        
+        let constraint: Object = {};
+        constraint[layer[0].index.toString()] = -1; //pos>=0 // Min position boundary of layer
+        lpModel.addConstraint(0,constraint);
+
+        let nonVirtualVertexisBefore: boolean = !layer[0].isVirtual;
+        
+        for(let iV: number = 1, nV: number = layer.length; iV<nV; iV++) {
+          const vertex: Vertex = layer[iV];
+          const vertexPrecessor: Vertex = layer[iV-1];
+          const minDistance: number = this.getMinVertexDistance(vertexPrecessor, vertex, nonVirtualVertexisBefore);
+          constraint = {};
+          constraint[vertex.index.toString()] = -1;
+          constraint[vertexPrecessor.index.toString()] = 1;
+          lpModel.addConstraint(-minDistance, constraint);
+          
+          if(vertex.isVirtual) {
+          
+          } else {
+
+          }
+        }
+      }
+    }
   }
+    getMinVertexDistance(vertexA: Vertex, vertexB: Vertex, isNonVirtualNodeBeforeB: boolean): number {
+      const MIN_SIBLING_DIST: number = 1;
+      const MIN_NONSIBLING_DIST: number = 4;
+      const MIN_NODE_TO_EDGE_DIST: number = 2;
+      const MIN_EDGE_TO_EDGE_DIST: number = 1;
+
+      if(!isNonVirtualNodeBeforeB) return 0;
+      if(vertexB.isVirtual) {
+        if(vertexA.isVirtual) return MIN_EDGE_TO_EDGE_DIST;
+        else return MIN_NODE_TO_EDGE_DIST;
+      } else {
+        if(vertexA.isVirtual) return MIN_NODE_TO_EDGE_DIST;
+        if(this.shareVerticesAParent(vertexA, vertexB)) return MIN_SIBLING_DIST;
+        return MIN_NONSIBLING_DIST;
+      }
+    }
+
+    shareVerticesAParent(vertexA: Vertex, vertexB: Vertex): boolean {
+      return _.intersection(vertexA.inEdges.map(e => e.source.index), vertexB.inEdges.map(e => e.source.index)).length>0;
+    }
 }
