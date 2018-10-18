@@ -19,12 +19,12 @@ export class LPModel {
 
   constructor() {}
   
-  addConstraint(b: number, constraint: Object) {
-    const constId = (++this.constraintCount).toString();
-    this.model['constraints'][constId] = {'max': b};
+  addConstraint(constraintName: string, b: number, constraint: Object) {
+    //const constId = (++this.constraintCount).toString();
+    this.model['constraints'][constraintName] = {'max': b};
     for (const varName of Object.getOwnPropertyNames(constraint)) {
       if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
-      this.model['variables'][varName][constId] = constraint[varName];
+      this.model['variables'][varName][constraintName] = constraint[varName];
     }
   }
   setObjective(opType: String, objective: Object) {
@@ -35,6 +35,11 @@ export class LPModel {
       this.model['variables'][varName]['objective'] = objective[varName];
     }
   }
+  setObjectiveCoefficient(varName: string, coeff: number) {
+    if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
+    this.model['variables'][varName]['objective'] = coeff;
+  }
+  
   getModel(): any {
     return this.model;
   }
@@ -42,6 +47,37 @@ export class LPModel {
   getVariableNames(): String[] {
    return  Object.getOwnPropertyNames(this.model['variables']);
   }
+
+  printConstraints(lpResult: LPResult) {
+    //let text: string = '';
+    const varNames: string[] = Object.getOwnPropertyNames(this.model['variables']);
+    for(const conName of Object.getOwnPropertyNames(this.model['constraints'])) {
+      let text: string = conName + ': ';
+      let conValue: number = (lpResult?0.0:null);
+      for(const varName of varNames) {
+        if(this.model['variables'][varName].hasOwnProperty(conName)) {
+          if(this.model['variables'][varName][conName]<0) text+= ' ' + this.model['variables'][varName][conName].toString() + ' ' + varName;
+          else text+= ' +' + this.model['variables'][varName][conName].toString() + ' ' + varName; 
+          if(lpResult) conValue+= this.model['variables'][varName][conName] * lpResult.vars.get(varName);
+        }
+      }
+      text+= (lpResult?' = ' + conValue.toString():'') + ' <= ' + this.model['constraints'][conName]['max'].toString();
+      console.log(text);
+    }
+  }
+  printObjective() {
+    const objectiveName: string = this.model['optimize'];
+    const objectiveType: string = this.model['opType'];
+    let text: string = objectiveType + ': ';
+    for(const varName of Object.getOwnPropertyNames(this.model['variables'])) {
+      if(this.model['variables'][varName].hasOwnProperty(objectiveName)) {
+        if(this.model['variables'][varName][objectiveName]<0) text+= ' ' + this.model['variables'][varName][objectiveName] + ' ' + varName;
+        else text+= ' +' + this.model['variables'][varName][objectiveName] + ' ' + varName;
+      }
+    }
+  }
+
+
 }
 
 export class LPResult {

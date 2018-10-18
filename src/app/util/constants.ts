@@ -6,6 +6,7 @@ export class Constants {
   private static readonly STATION_DATA: StationData = {
     id: null, name: null, lat: null, lon: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null,
     contains: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null,
+    groupType: null,
     commonLink: null, position: null, positionRelativeTo: null, properties: null
   };
 

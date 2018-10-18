@@ -1,21 +1,23 @@
 import {Graph, Vertex, Edge, VertexCounter} from './data_structures';
 
-export function sortVertices(graph: Graph, layers: Vertex[][]) {
+export function sortVertices(graph: Graph) {
     let vertexSorter = new VertexSorter();
-    vertexSorter.sortVertices(graph, layers);
+    vertexSorter.sortVertices(graph);
 } 
 
 class VertexSorter {
     
     constructor() { }
     
-    sortVertices(graph: Graph, layers: Vertex[][]) {
-        this.createVirtualVertices(graph, layers); 
-        
+    sortVertices(graph: Graph) {
+        this.createVirtualVertices(graph); 
+
+        const layers: Vertex[][] = graph.layers;
+
         const layerCopy = (arr: Vertex[][]) => { 
             const layerBackup: Vertex[][] = [];
             let i: number = arr.length;
-            while(i--) layerBackup[i] = arr[i].slice();
+            while(i--) layerBackup[i] = arr[i].map(v => v); //  slice();
             return layerBackup;
         }
         
@@ -23,28 +25,37 @@ class VertexSorter {
         let bestCrossing: number = this.layerCrossing(layers);
         
         const ITERATION_LIMIT = 24;
-        const ITERATION_LIMIT_RANDOM = 10;
-        for(let iRandom: number = 0; iRandom < ITERATION_LIMIT_RANDOM; iRandom++ ) {
-            for (let iIteration = 0; iIteration < ITERATION_LIMIT; iIteration++) {
+        let temperatures: number[] = [0.1, 0.05, 0.02, 0.01];
+        //const ITERATION_LIMIT_RANDOM = 10;
+    
+            for (let iIteration = 0, maxIterationIndex = ITERATION_LIMIT + 2*temperatures.length; iIteration <= maxIterationIndex; iIteration++) {
+                let iIterationRound: number = Math.floor(iIteration/2);
+                let temperature: number = (iIterationRound>=temperatures.length?0:temperatures[iIterationRound]);
                 this.sortVerticesInLayers(layers, iIteration);
-                this.transpose(layers);
+                //graph.checkIndicesInLayers();
+                //graph.resetVertexIndicesInLayers();
+                this.transpose(layers, temperature);
+                //graph.checkIndicesInLayers();
                 const currentCrossing: number = this.layerCrossing(layers);
                 if (currentCrossing < bestCrossing) {
                     bestSolution = layerCopy(layers);
                     bestCrossing = currentCrossing;
                 }
             }
-            this.randomizeVertexOrderInLayers(graph);
-        }
-        this.restoreSolution(bestSolution);
+            //this.randomizeVertexOrderInLayers(graph);
+        
+        //this.restoreSolution(bestSolution);
+        graph.layers = bestSolution;
+        graph.resetVertexIndicesInLayers();
     }
     
-    private restoreSolution(layers: Vertex[][]) {
+    /*private restoreSolution(graph: Graph, bestSolution:Vertex[][]) {
+        graph.layers = bestSolution;
         for(let layer of layers) {
             let i: number=-1;
             for(let vertex of layer) vertex.indexInLayer = ++i;
         }
-    }
+    }*/
     
     private randomizeVertexOrderInLayers(graph: Graph) {
         for(let layer of graph.layers) {
@@ -60,7 +71,7 @@ class VertexSorter {
         graph.resetVertexIndicesInLayers();
     }
     
-    private transpose(layers: Vertex[][]) {
+    private transpose(layers: Vertex[][], temperature: number) {
         let improved: boolean = true;
         const maxRank: number = layers.length-1;
         while(improved) {
@@ -73,13 +84,13 @@ class VertexSorter {
                     let wvCrossing: number = this.pairCrossing(w,v);
                     
                     //                if(this.pairCrossing(v,w)>this.pairCrossing(w,v)) {
-                        if(vwCrossing>wvCrossing) {
-                            improved = true;
+                        if(vwCrossing>wvCrossing || (temperature>0 && Math.random()<temperature)) {
+                            improved = vwCrossing>wvCrossing;
                             layers[iL][iV] = w;
                             layers[iL][iV+1] = v;
-                            w.indexInLayer = iV;
-                            v.indexInLayer = iV + 1;
-                            console.log('Switch at ' + iV.toString() + ' in ' + iL.toString() + ' [' + v.index.toString() + ', ' + w.index.toString() + ', ' + wvCrossing.toString() + ']');
+                            w.setIndexInLayer(iV);
+                            v.setIndexInLayer(iV + 1);
+                            //console.log('Switch at ' + iV.toString() + ' in ' + iL.toString() + ' [' + v.index.toString() + ', ' + w.index.toString() + ', ' + wvCrossing.toString() + ']');
                         }
                     }
                 }
@@ -88,8 +99,8 @@ class VertexSorter {
         
         private pairCrossing(v: Vertex, w: Vertex): number {
             let crossCount: number = 0;
-            const tmpWUpNeighbours: number[] = w.inEdges.map(e => e.source.indexInLayer);
-            const tmpWDownNeighbours: number[] = w.outEdges.map(e => e.target.indexInLayer);
+            const tmpWUpNeighbours: number[] = w.inEdges.map(e => e.source.getIndexInLayer());
+            const tmpWDownNeighbours: number[] = w.outEdges.map(e => e.target.getIndexInLayer());
             for(let f of [a => a.inEdges.map(e => e.source.indexInLayer), a => a.outEdges.map(e => e.target.indexInLayer)]) {
                 
                 const vNeighbourIndices = f(v);
@@ -117,8 +128,8 @@ class VertexSorter {
             for(let iL: number = 0, nL = layers.length; iL<nL-1; iL++) {
                 let vertexCounter = new VertexCounter();
                 for(let vertex of layers[iL]) {
-                    for(let edge of vertex.inEdges) totalCrossing+= vertexCounter.getVertexCountAbovePosition(edge.source.indexInLayer);
-                    for(let edge of vertex.inEdges) vertexCounter.insertVertex(edge.source.indexInLayer);
+                    for(let edge of vertex.inEdges) totalCrossing+= vertexCounter.getVertexCountAbovePosition(edge.source.getIndexInLayer());
+                    for(let edge of vertex.inEdges) vertexCounter.insertVertex(edge.source.getIndexInLayer());
                 }
             }
             return totalCrossing;
@@ -126,26 +137,27 @@ class VertexSorter {
         
         
         sortVerticesInLayers(layers: Vertex[][], iIteration: number) {
+            const compareNumbers = (a: number, b: number) => (a<b?-1:(a==b?0:1));
             if(iIteration%2==0) {
                 for(let iL: number = 1, nL = layers.length; iL<nL; iL++) {
                     for(let vertex of layers[iL]) vertex.weight = this.getWeight(vertex, iL-1);
-                    layers[iL] = layers[iL].sort((a, b) => {return (a.weight<b.weight?-1:1)});
+                    layers[iL] = layers[iL].sort((a, b) => compareNumbers(a.weight,b.weight));
                 }
             } else {
                 for(let iL: number = layers.length-2; iL>=0; iL--) {
                     for(let vertex of layers[iL]) vertex.weight = this.getWeight(vertex, iL+1);
-                    layers[iL] = layers[iL].sort((a, b) => {return (a.weight<b.weight?-1:1)});
+                    layers[iL] = layers[iL].sort((a, b) => compareNumbers(a.weight,b.weight));
                 }
             }
             for(let layer of layers) {
                 let indexInLayer: number = -1;
-                for(let vertex of layer) vertex.indexInLayer = ++indexInLayer;
+                for(let vertex of layer) vertex.setIndexInLayer(++indexInLayer);
             }
-            let tmp: number[][] = layers.map(l => l.map(v => v.indexInLayer));
+            let tmp: number[][] = layers.map(l => l.map(v => v.getIndexInLayer()));
         }
         
         getWeight(vertex: Vertex, rank: number): number {
-            const adjacentPositions: number[] = (rank < vertex.layerIndex ? vertex.outEdges.map(e => e.target.indexInLayer):vertex.inEdges.map(e => e.source.indexInLayer));
+            const adjacentPositions: number[] = (rank < vertex.layerIndex ? vertex.outEdges.map(e => e.target.getIndexInLayer()):vertex.inEdges.map(e => e.source.getIndexInLayer()));
             const pCount = adjacentPositions.length;
             if(pCount==0) return -1.0;
             else if(pCount%2==1) return adjacentPositions[(pCount-1)/2];
@@ -200,14 +212,14 @@ class VertexSorter {
             //return [layers, edges]
         }*/
         
-        private createVirtualVertices(graph: Graph, layers: Vertex[][]) {
-            for(let layer of layers) for(let vertex of layer) for(let edge of vertex.inEdges) if(Math.abs(edge.source.layerIndex-edge.target.layerIndex)>1) this.splitEdge(graph, layers, edge);
+        private createVirtualVertices(graph: Graph) {
+            for(let layer of graph.layers) for(let vertex of layer) for(let edge of vertex.inEdges) if(Math.abs(edge.source.layerIndex-edge.target.layerIndex)>1) this.splitEdge(graph, edge);
         }
         
-        private splitEdge(graph: Graph, layers: Vertex[][], edge: Edge) {
+        private splitEdge(graph: Graph, edge: Edge) {
             const layerSpan = edge.source.layerIndex-edge.target.layerIndex;
             const maxVertexIndex: number = graph.vertices.length-1;
-            
+            const layers: Vertex[][] = graph.layers;
             // add new virtual nodes
             for(let i: number = 1; i<layerSpan; ++i) {
                 let iL: number = edge.source.layerIndex - i;
@@ -217,21 +229,27 @@ class VertexSorter {
                 //graph.vertices.push(new Vertex()); 
                 //vertexRank[++maxVertexIndex] = iL; // 
                 layers[iL].push(vertex);
-                vertex.indexInLayer = layers[iL].length-1;
+                vertex.setIndexInLayer(layers[iL].length-1);
                 vertex.layerIndex = iL;
             }
             
             // ToDO: Improve
             let edgeOutIndex: number = edge.source.outEdges.findIndex(e => {return e.target.index===edge.target.index});
             let edgeInIndex: number = edge.target.inEdges.findIndex(e => {return e.source.index===edge.source.index});
-            graph.vertices[edge.source.index].outEdges[edgeOutIndex] = new Edge(graph.vertices[edge.source.index], graph.vertices[maxVertexIndex + 1], true); // replacing old edge
-            graph.vertices[maxVertexIndex+1].inEdges = [graph.vertices[edge.source.index].outEdges[edgeOutIndex]];
-            graph.vertices[edge.target.index].inEdges[edgeInIndex] = new Edge(graph.vertices[maxVertexIndex + layerSpan - 1], graph.vertices[edge.target.index], true);
-            graph.vertices[maxVertexIndex+layerSpan-1].outEdges = [graph.vertices[edge.target.index].inEdges[edgeInIndex]];
+            const newSpanStartEdge: Edge = new Edge(graph.vertices[edge.source.index], graph.vertices[maxVertexIndex + 1], true);
+            newSpanStartEdge.weight = edge.weight;
+            graph.vertices[edge.source.index].outEdges[edgeOutIndex] = newSpanStartEdge; // replacing old edge
+            graph.vertices[maxVertexIndex+1].inEdges = [newSpanStartEdge];
+            const newSpanEndEdge: Edge = new Edge(graph.vertices[maxVertexIndex + layerSpan - 1], graph.vertices[edge.target.index], true);
+            newSpanEndEdge.weight = edge.weight;
+            graph.vertices[edge.target.index].inEdges[edgeInIndex] = newSpanEndEdge;
+            graph.vertices[maxVertexIndex+layerSpan-1].outEdges = [newSpanEndEdge];
             
             for(let i: number = 1; i<layerSpan-1; ++i) { 
-                graph.vertices[maxVertexIndex+i].outEdges = [new Edge(graph.vertices[maxVertexIndex+i], graph.vertices[maxVertexIndex+i+1], true)];
-                graph.vertices[maxVertexIndex+i+1].inEdges = graph.vertices[maxVertexIndex+i].outEdges;
+                const newSpanInBetweenEdge: Edge = new Edge(graph.vertices[maxVertexIndex+i], graph.vertices[maxVertexIndex+i+1], true);
+                newSpanInBetweenEdge.weight = edge.weight;
+                graph.vertices[maxVertexIndex+i].outEdges = [newSpanInBetweenEdge];
+                graph.vertices[maxVertexIndex+i+1].inEdges = [newSpanInBetweenEdge];
             }
         }
     }

@@ -708,7 +708,7 @@ export class GisComponent implements OnInit {
             this.updateOverlay();
 
             if (name != null) {
-              this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
+              this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name, null);
               this.updateAll();
               this.callChangeFunction();
             }

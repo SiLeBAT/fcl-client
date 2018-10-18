@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {Graph, Vertex, Edge} from './data_structures';
 import {BusinessTypeRanker} from './business_type_ranker';
 
@@ -14,33 +15,29 @@ class LayerAssignment {
   
   private getForkVertices(graph: Graph): Vertex[] {
     const result: Vertex[] = []; 
-    for(let i: number = 0, n: number = this.vertexOutEdgeCounts.length; i<n; ++i) if(this.vertexOutEdgeCounts[i]===0) result.push(graph.vertices[i]);
+    for(let i: number = 0, n: number = this.vertexOutEdgeCounts.length; i<n; ++i) if(this.vertexOutEdgeCounts[i]<1) result.push(graph.vertices[i]);
     return result;
   }
-  
-  /*getIncomingNodes(vertices: number[]): number[] {
-    let result: number[] = [];
-    for (let iV = 0, nV = vertices.length; iV < nV; iV++) 
-      for (let iE = 0, nE = this.graph.vertices[vertices[iV]].inVertices.length; iE<nE; iE++) result.push(this.graph.vertices[vertices[iV]].inEdges[iE]); 
-    return result;
-} */
 
   getIncomingEdges(vertices: Vertex[]): Edge[] {
-    let result: Edge[] = [];
+    /*let result: Edge[] = [];
     for(let vertex of vertices) {
       result = result.concat(vertex.inEdges);
-    }
-    return result;
+    }*/
+    return _.flatten(vertices.map(v => v.inEdges));
+    //return result;
   } 
   
   init(graph: Graph) {
     this.vertexOutEdgeCounts = [];
     for(let vertex of graph.vertices) {
-      this.vertexOutEdgeCounts[vertex.index] = graph.vertices[vertex.index].outEdges.length;
+      this.vertexOutEdgeCounts[vertex.index] = vertex.outEdges.length;
     }
   }
   
   assignLayers(graph: Graph, typeRanker: BusinessTypeRanker): Vertex[][] {
+    //graph.checkInEdgeOutEdgeSymmetry();
+    //graph.checkVertexIndices();
     this.init(graph);
 
     const layers: Vertex[][] = [];
@@ -52,20 +49,18 @@ class LayerAssignment {
       
       for(let i: number = sinks.length-1; i>=0; i--) {
         sinks[i].layerIndex = layers.length; 
-        sinks[i].indexInLayer = i;
+        sinks[i].setIndexInLayer(i);
       }
       layers.push(sinks);
       
       sinks = [];
       // get new sinks
-      for(let edge of sinkInEdges) if(this.vertexOutEdgeCounts[edge.source.index]===0) sinks.push(edge.source);      
-      //for(let i: number = 0, n = sinkEdges.length; i<n; ++i) this.vertexOutgoingCounts[sinkEdges]
-      // _.remove(edges, e => _(start).includes(e.from))
-      // _.remove(vertices, v => _(start).includes(v))
-      // start = this.getVerticesWithoutIncomingEdges(edges, vertices)
+      for(let edge of sinkInEdges) if(this.vertexOutEdgeCounts[edge.source.index]<1) sinks.push(edge.source);      
+      
       sinks = Array.from(new Set(sinks));
     }
     graph.layers = layers;
+    //graph.checkIndicesInLayers();
     //graph.resetVertexIndicesInLayers();
     return layers;
   }

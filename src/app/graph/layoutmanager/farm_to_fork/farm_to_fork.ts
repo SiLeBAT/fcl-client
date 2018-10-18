@@ -74,7 +74,7 @@ class FarmToForkLayoutClass {
     });
     
     if (this.options.fit) {
-      cy.fit();
+      //cy.fit();
     }
   }
 }
@@ -86,15 +86,28 @@ class FarmToForkLayouter {
     this.simplifyGraph();
     this.correctEdges();
     this.simplifyGraph();
+    let startTime: Date = new Date();
     removeCycles(this.graph, this.typeRanker);
-    let layers: Vertex[][] = assignLayers(this.graph, this.typeRanker);
+    let endTime: Date = new Date();
+    console.log('removeCycles: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
+    this.simplifyGraph();
+    startTime = new Date();
+    assignLayers(this.graph, this.typeRanker);
+    endTime = new Date();
+    console.log('assignLayers: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
     //removeEdgesWithinLayers(this.graph);
-    sortVertices(this.graph, layers)
-    positionVertices(layers, width, height);
+    startTime = new Date();
+    sortVertices(this.graph);
+    endTime = new Date();
+    console.log('sortVertices: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
+    startTime = new Date();
+    positionVertices(this.graph.layers, width, height);
+    endTime = new Date();
+    console.log('positionVertices: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
     //this.computePositions();
   }
   
-  simplifyGraph() {
+  /*simplifyGraph() {
     let edges: Edge[] = [];
     for(let vertex of this.graph.vertices) {
       edges = edges.concat(edges, vertex.outEdges);
@@ -106,10 +119,25 @@ class FarmToForkLayouter {
       edge.source.outEdges.push(edge); 
       edge.target.inEdges.push(edge);
     }
-    /*for(let i: number = 0, n: number = this.graph.vertexCount; i<n; ++i) {
-      this.graph.vertices[i].inVertices = Array.from(new Set(this.graph.vertices[i].inVertices)).filter(k => k!=i);
-      this.graph.vertices[i].outVertices = Array.from(new Set(this.graph.vertices[i].outVertices)).filter(k => k!=i);
-    }*/
+  }*/
+
+  simplifyGraph() {
+    let edges: Edge[] = [];
+    for(let vertex of this.graph.vertices) vertex.inEdges = [];
+    for(let vertex of this.graph.vertices) {
+       const targets = _.uniq(vertex.outEdges.map(e => e.target.index)).filter(i => i!=vertex.index);
+       const oldEdges: Edge[] = vertex.outEdges;
+       vertex.outEdges = [];
+       for(let iTarget of targets) {
+         const newEdge: Edge = new Edge(vertex, this.graph.vertices[iTarget], false);
+         newEdge.weight = 0;
+         for(let edge of oldEdges) if(edge.target.index===iTarget) {
+           newEdge.weight+= edge.weight;
+          }
+         vertex.outEdges.push(newEdge);
+         newEdge.target.inEdges.push(newEdge);
+       }
+    }
   }
 
   correctEdges() {

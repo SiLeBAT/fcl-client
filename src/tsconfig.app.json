@@ -8,6 +8,7 @@
   },
   "exclude": [
     "test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "app/graph/layoutmanager/farm_to_fork_2/*"
   ]
 }
