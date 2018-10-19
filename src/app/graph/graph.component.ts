@@ -1010,6 +1010,31 @@ export class GraphComponent implements OnInit {
             }
           });
         }
+      }, {
+        name: 'Collapse Targets',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.groupTargetStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
       }
     ];
   }
@@ -1116,7 +1141,7 @@ export class GraphComponent implements OnInit {
             this.updateOverlay();
             
             if (name != null) {
-              this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name, null);
+              this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
               this.updateAll();
               this.callChangeFunction();
             }

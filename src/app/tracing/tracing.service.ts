@@ -39,12 +39,15 @@ import * as _ from 'lodash';
     
   }
 }*/
-interface SourceTarget {
-  target: StationData,
-  sources: {
-    source: StationData,
-    targetKeys: string[]
+interface LinkGroup {
+  linkStation: StationData,
+  linkedStations: {
+    linkedStation: StationData,
+    linkKeys: string[]
   }[]
+}
+interface GroupNamingFun {
+  (linkGroup: LinkGroup, groupNumber: number ): string
 }
 
 @Injectable()
@@ -87,8 +90,15 @@ export class TracingService {
   getDeliveriesById(ids: string[]): DeliveryData[] {
     return ids.map(id => this.deliveriesById.get(id));
   }
+
+  mergeStations(ids: string[], name: string) {
+    this.mergeStationsInternal(ids, name, null, null);
+
+    this.updateTrace();
+    this.updateScores();
+  }
   
-  mergeStations(ids: string[], name: string, groupType: GroupType) {
+  mergeStationsInternal(ids: string[], name: string, groupType: GroupType, position: Position) {
     let allIds: string[] = [];
     
     for (const id of ids) {
@@ -169,61 +179,98 @@ export class TracingService {
     
     this.stationsById.set(metaId, metaStation);
     this.data.stations.push(metaStation);
+  }
+  
+  collapseSourceStations(groupMode: GroupMode) {
+    const oldGroups = this.getOldGroups(GroupType.SOURCE_GROUP);
+    const newGroups: Map<string, string[]> =  this.getNewSourceGroups(groupMode, oldGroups);
+    const newToOldGroupMap: Map<string, string> = this.mapNewGroupsToOldGroups(newGroups, oldGroups);
+    const oldPositions: Map<string, Position> = this.getPositionOfStations(Array.from(newToOldGroupMap.values()));
+    this.expandStationsInternal(Array.from(oldGroups.keys()));
     
+    for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.SOURCE_GROUP, oldPositions.get(newToOldGroupMap.get(groupId)));
+
     this.updateTrace();
     this.updateScores();
   }
-  
-  groupSourceStations(groupMode: GroupMode) {
-    const {groups: oldGroups, memberToGroupMap: oldMemberToGroupMap} = this.getOldSourceGroups();
-    const newGroups: Map<string, string[]> =  this.getNewSourceGroups(groupMode);
+
+  collapseTargetStations(groupMode: GroupMode) {
+    const oldGroups = this.getOldGroups(GroupType.TARGET_GROUP);
+    const newGroups: Map<string, string[]> =  this.getNewTargetGroups(groupMode, oldGroups);
     const newToOldGroupMap: Map<string, string> = this.mapNewGroupsToOldGroups(newGroups, oldGroups);
-    //const newMemberToGroupMap: Map<string, number> = new Map();
-    //const newGroupMemberIds: string[] = _.flatten(newGroups);
-
-
-
-    //const interSectionCounts: number[][] = [];
+    const oldPositions: Map<string, Position> = this.getPositionOfStations(Array.from(newToOldGroupMap.values()));
+    this.expandStationsInternal(Array.from(oldGroups.keys()));
     
-    //const reuseGroupIds: string[] = _.uniq(newGroupMemberIds.map(id=>oldMemberToGroupMap.get(id)).filter(gid=>gid!=null));
+    for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.TARGET_GROUP, oldPositions.get(newToOldGroupMap.get(groupId)));
 
-    /*for(let iOldG: number = reuseGroupIds.length-1; iOldG>=0; iOldG--) {
-      for(let iNewG: number = newGroups.length-1; iNewG>=0; iNewG--) {
-        interSectionCounts[iNewG][iOldG] = _.intersection(newGroups[iNewG], oldGroups.get(reuseGroupIds[iOldG])).length;
-      }
-    }
-    const maxNewGroupIntersectionCounts: number[] = interSectionCounts.map(counts => Math.max(...counts));
-    const maxIntersection: number = Math.max(..._.flatten(interSectionCounts));
-    */
+    this.updateTrace();
+    this.updateScores();
+  }
+
+  collapseIsolatedClouds() {
+    const oldGroups = this.getOldGroups(GroupType.ISOLATED_GROUP);
+    const newGroups: Map<string, string[]> =  this.getNewIsolatedGroups(oldGroups);
+    
+    this.expandStationsInternal(Array.from(oldGroups.keys()));
+    
+    for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.ISOLATED_GROUP, null);
+
+    this.updateTrace();
+    this.updateScores();
+  }
+
+  collapseSimpleChains() {
+    const oldGroups = this.getOldGroups(GroupType.SIMPLE_CHAIN);
+    //const newGroups: Map<string, string[]> =  this.getNewSimpleChainGroups();
+    
+    this.expandStationsInternal(Array.from(oldGroups.keys()));
+    
+    //for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.SIMPLE_CHAIN, null);
+
+    this.updateTrace();
+    this.updateScores();
+  }
+
+  private getPositionOfStations(groupIds: string[]): Map<string, Position> {
+    const result: Map<string, Position> = new Map();
+    for(const station of this.getStationsById(groupIds)) result.set(station.id, station.position);
+    return result;
   }
 
   private mapNewGroupsToOldGroups(newGroups: Map<string, string[]>, oldGroups: Map<string, string[]>): Map<string,string> {
     const result: Map<string,string> = new Map();
-    for(let [key, value] of newGroups) {
-      for(let [key2, value2] of oldGroups) {
-        result.set(key,key2);
-        break;
+    const availableOldGroupIds: Set<string> = new Set(oldGroups.keys());
+    for(let [newGroupId, newMemberIds] of newGroups) {
+      const idSet: Set<string> = new Set(newMemberIds);
+      for(let oldGroupId of availableOldGroupIds) {
+        if(oldGroups.get(oldGroupId).findIndex(id => idSet.has(id))>=0) {
+          result.set(newGroupId, oldGroupId);
+          availableOldGroupIds.delete(oldGroupId);
+          break;
+        }
       }
     }
+    return result;
   }
   
-  private getOldSourceGroups(): {groups: Map<string, string[]>, memberToGroupMap: Map<string,string>} {
-    const groups: Map<string, string[]> = new Map();
-    const memberToGroupMap: Map<string,string> = new Map();
-    
-    for(let station of this.data.stations) {
-      if(station.groupType==GroupType.SOURCE_GROUP) {
-        groups.set(station.id, station.contains.slice());
-        station.contains.forEach(id => memberToGroupMap.set(id, station.id));
-      }
-    }
-    return {groups: groups, memberToGroupMap: memberToGroupMap};
+  private getOldGroups(groupType: GroupType): Map<string, string[]> {
+    const result: Map<string, string[]> = new Map();
+    for(const station of this.data.stations.filter(station=>station.groupType==groupType)) result.set(station.id, station.contains);
+    return result;
   }
+
+  /*private foo(): Map<string, string> {
+    //const result: Map<string, string[]> = new Map();
+    const t: {a: string, b: string}[] = [];
+    return t.map(e => [e.a, e.b]);
+    //return result;
+  }*/
   
-  private getNewSourceGroups(groupMode: GroupMode): String[][] {
-    const sourceStations: StationData[] = this.data.stations.filter(s => !s.invisible && (s.contains==null || s.contains.length==0) && (s.incoming==null || s.incoming.length==0) && (s.outgoing!=null && s.outgoing.length>0));
+  private getNewSourceGroups(groupMode: GroupMode, oldGroups: Map<string, string[]>): Map<string,string[]> {
+    const oldSourceIdSet: Set<string> = new Set(_.flatten(Array.from(oldGroups.values())));
+    const sourceStations: StationData[] = this.data.stations.filter(s => !s.invisible && (s.contains==null || s.contains.length==0) && (s.incoming==null || s.incoming.length==0) && (s.outgoing!=null && s.outgoing.length>0) && (!s.contained || oldSourceIdSet.has(s.id)));
     
-    const map: Map<string, {target: StationData, sources: {source: StationData, targetKeys: string[]}[]}> = new Map();
+    const targetIdToLinkGroupMap: Map<string, LinkGroup> = new Map();
     for(let source of sourceStations) {
       
       const deliveries: DeliveryData[] = this.getDeliveriesById(source.outgoing).filter(d=>!d.invisible);
@@ -239,10 +286,10 @@ export class TracingService {
           else {
             switch(groupMode) {
               case GroupMode.PRODUCT_AND_WEIGHT: 
-              targetKeys = targetDeliveries.map(d=>'W>0:' + (source.outbreak?'1':'0') + '_P:' + d.name).sort();
+              targetKeys = _.uniq(targetDeliveries.map(d=>'W>0:' + (source.outbreak?'1':'0') + '_P:' + d.name)).sort();
               break;
               case GroupMode.LOT_AND_WEIGHT:
-              targetKeys = targetDeliveries.map(d=>'W>0:' + (source.outbreak?'1':'0') + '_L:' + d.lot).sort();
+              targetKeys = _.uniq(targetDeliveries.map(d=>'W>0:' + (source.outbreak?'1':'0') + '_L:' + d.lot)).sort();
               break;
               default:
               // unkown mode
@@ -251,83 +298,113 @@ export class TracingService {
           }
         }
         
-        if(!map.has(targetStations[0].id)) map.set(targetStations[0].id, {
-          target: targetStations[0],
-          sources: []
+        if(!targetIdToLinkGroupMap.has(targetStations[0].id)) targetIdToLinkGroupMap.set(targetStations[0].id, {
+          linkStation: targetStations[0],
+          linkedStations: []
         });
         
-        map.get(targetStations[0].id).sources.push({
-          source: source,
-          targetKeys: targetKeys
+        targetIdToLinkGroupMap.get(targetStations[0].id).linkedStations.push({
+          linkedStation: source,
+          linkKeys: targetKeys
         });
       }
     }
 
-    const compareNumbers = (a,b) => (a<b?-1:(a==b?0:1));
-    const newGroups: string[][] = [];
-    map.forEach(target => {
-      target.sources.sort((a,b) => compareNumbers(a.targetKeys.length, b.targetKeys.length));
-      let size: number = 0;
-      const sourceIndices: Set<number> = new Set();
-      for(let iSource: number = 0, nSources: number = target.sources.length; iSource<nSources; iSource++) {
-        if(target.sources[iSource].targetKeys.length!=size) {
-          this.addNewGroups(target, newGroups, sourceIndices);
-          size = target.sources[iSource].targetKeys.length;
+    return this.extractNewGroups(targetIdToLinkGroupMap, (linkGroup, newGroupNumber) => "SG:" + linkGroup.linkStation.id + (newGroupNumber==1?'':'_' + newGroupNumber.toString()));
+  }
+  private getNewTargetGroups(groupMode: GroupMode, oldGroups: Map<string, string[]>): Map<string,string[]> {
+    const oldTargetIdSet: Set<string> = new Set(_.flatten(Array.from(oldGroups.values())));
+    const targetStations: StationData[] = this.data.stations.filter(s => !s.invisible && (s.contains==null || s.contains.length==0) && (s.outgoing==null || s.outgoing.length==0) && (s.incoming!=null && s.incoming.length>0) && (!s.contained || oldTargetIdSet.has(s.id)));
+    
+    const sourceIdToLinkGroupMap: Map<string, {linkStation: StationData, linkedStations: {linkedStation: StationData, linkKeys: string[]}[]}> = new Map();
+    for(let target of targetStations) {
+      
+      let deliveries: DeliveryData[] = this.getDeliveriesById(target.incoming).filter(d=>!d.invisible);
+      const sourceStations: StationData[] = this.getStationsById(_.uniq(deliveries.map(d=>d.originalSource))).filter(s => !s.invisible);
+      if(sourceStations.length==1) {
+        let sourceKeys: string[];
+        if(groupMode==GroupMode.WEIGHT_ONLY) {
+          sourceKeys = ['W>0:' + (target.outbreak?'1':'0')];
+        } else {
+          
+          deliveries = deliveries.filter(d=>d.originalSource==sourceStations[0].id);
+          if(deliveries.length==0) sourceKeys = ['W>0:' + (target.outbreak?'1':'0')];
+          else {
+            switch(groupMode) {
+              case GroupMode.PRODUCT_AND_WEIGHT: 
+              sourceKeys = _.uniq(deliveries.map(d=>'W>0:' + (target.outbreak?'1':'0') + '_P:' + d.name)).sort();
+              break;
+              case GroupMode.LOT_AND_WEIGHT:
+              sourceKeys = _.uniq(deliveries.map(d=>'W>0:' + (target.outbreak?'1':'0') + '_L:' + d.lot)).sort();
+              break;
+              default:
+              // unkown mode
+              return;
+            }
+          }
         }
-        sourceIndices.add(iSource);
+        
+        if(!sourceIdToLinkGroupMap.has(sourceStations[0].id)) sourceIdToLinkGroupMap.set(sourceStations[0].id, {
+          linkStation: sourceStations[0],
+          linkedStations: []
+        });
+        
+        sourceIdToLinkGroupMap.get(sourceStations[0].id).linkedStations.push({
+          linkedStation: target,
+          linkKeys: sourceKeys
+        });
       }
-      this.addNewGroups(target, newGroups, sourceIndices);
+    }
+    return this.extractNewGroups(sourceIdToLinkGroupMap, (linkedGroup, newGroupNumber)=>"TG:" + linkedGroup.linkStation.id + (newGroupNumber==1?'':'_' + newGroupNumber.toString()));
+  }
+
+  private getNewIsolatedGroups(oldGroups: Map<string, string[]>): Map<string, string[]> {
+    const result: Map<string, string[]> = new Map();
+    //const notIsolatedStationIds: Set<string> = this.data.stations.filter(s=>s.outbreak && !s.invisible && (s.contains==null || s.contains.length==0 || !oldGroups.has(s.id))).concat(this.data.deliveries.filter(d=>!d.invisible && d.weight>0).map(d=>d.originalSource))
+    return result;
+  }
+
+  private extractNewGroups(map: Map<string, LinkGroup>, namingFun: GroupNamingFun): Map<string, string[]> {
+    const compareNumbers = (a,b) => (a<b?-1:(a==b?0:1));
+    const newGroups: Map<string,string[]> = new Map();
+    map.forEach(linkStation => {
+      linkStation.linkedStations.sort((a,b) => compareNumbers(a.linkKeys.length, b.linkKeys.length));
+      let size: number = 0;
+      const linkIndices: Set<number> = new Set();
+      for(let iLinkedStation: number = 0, nLinkedStations: number = linkStation.linkedStations.length; iLinkedStation<nLinkedStations; iLinkedStation++) {
+        if(linkStation.linkedStations[iLinkedStation].linkKeys.length!=size) {
+          this.addNewGroups(linkStation, newGroups, linkIndices, namingFun);
+          size = linkStation.linkedStations[iLinkedStation].linkKeys.length;
+        }
+        linkIndices.add(iLinkedStation);
+      }
+      this.addNewGroups(linkStation, newGroups, linkIndices, namingFun);
     });
     return newGroups;
   }
 
-  private addNewGroups(target: SourceTarget, newGroups: string[][], sourceIndices: Set<number> ) {
-    if(sourceIndices.size>1) {
+  private addNewGroups(linkGroup: LinkGroup, newGroups: Map<string, string[]>, linkIndices: Set<number>, namingFun: any ) {
+    if(linkIndices.size>1) {
       let newGroup: string[] = [];
-      while(sourceIndices.size>0) {
-        const compareIndex: number = sourceIndices.values().next().value;
-        sourceIndices.delete(compareIndex);
-        const compareKeys: string[] = target.sources[compareIndex].targetKeys;
-        newGroup.push(target.sources[compareIndex].source.id);
+      while(linkIndices.size>0) {
+        const compareIndex: number = linkIndices.values().next().value;
+        linkIndices.delete(compareIndex);
+        const compareKeys: string[] = linkGroup.linkedStations[compareIndex].linkKeys;
+        newGroup.push(linkGroup.linkedStations[compareIndex].linkedStation.id);
         const removeIndices: number[] = [];
-        sourceIndices.forEach(iS => {
-          if(_.isEqual(compareKeys, target.sources[iS].targetKeys)) removeIndices.push(iS);
+        linkIndices.forEach(i => {
+          if(_.isEqual(compareKeys, linkGroup.linkedStations[i].linkKeys)) removeIndices.push(i);
         });
-        removeIndices.forEach(iS => {
-          sourceIndices.delete(iS);
-          newGroup.push(target.sources[iS].source.id);
+        removeIndices.forEach(i => {
+          linkIndices.delete(i);
+          newGroup.push(linkGroup.linkedStations[i].linkedStation.id);
         });
-        if(newGroup.length>1) newGroups.push(newGroup);
+        if(newGroup.length>1) newGroups.set(namingFun(linkGroup,newGroups.size+1), newGroup);   //newGroups.set('SG:' + target.target.id + (newGroups.size==0?'':'_' + (newGroups.size+1).toString()),  newGroup);
         newGroup = [];
       }
     }
-    sourceIndices.clear();
+    linkIndices.clear();
   }
-
-  
-  /*private getTargetKeys(station: StationData, groupMode: GroupMode): string[] {
-    const result: string[] = [];
-    const deliveries: DeliveryData[] = this.getDeliveriesById(station.outgoing).filter(d => !d.invisible);
-    
-    switch(groupMode) {
-      case GroupMode.WEIGHT_ONLY:
-      return deliveries.map(d => d.originalTarget + (station.outbreak?'1':'0'));
-      case GroupMode.PRODUCT_AND_WEIGHT
-      return deliveries.map(d => d.originalTarget + this.getStationsById([d.originalTarget])[0].   (station.outbreak?'1':'0'));
-    }
-  }*/
-  
-  /*private getTargetProducts(delivery: DeliveryData): string[] {
-    const target: StationData = _.head(this.getStationsById(delivery.originalTarget));
-    if(target!=null && !target.invisible) {
-      const targetdeliveries: DeliveryData[] = this.getDeliveriesById(target.connections.filter(c => c.source==delivery.id).map(c=>c.target)).filter(d=>!d.invisible);
-      
-    } 
-  }
-  
-  getTrueTargets(deliveryIds: string[]): StationData[] {
-    const deliveries: DeliveryData[] = this.getDeliveriesById(deliveryIds);
-  }*/
   
   expandStations(ids: string[]) {
     this.expandStationsInternal(ids);
