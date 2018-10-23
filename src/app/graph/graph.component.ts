@@ -1004,7 +1004,7 @@ export class GraphComponent implements OnInit {
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
-              this.tracingService.groupSourceStations(groupMode);
+              this.tracingService.collapseSourceStations(groupMode);
               this.updateAll();
               this.callChangeFunction();
             }
@@ -1029,7 +1029,7 @@ export class GraphComponent implements OnInit {
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
-              this.tracingService.groupTargetStations(groupMode);
+              this.tracingService.collapseTargetStations(groupMode);
               this.updateAll();
               this.callChangeFunction();
             }

@@ -181,17 +181,33 @@ export class TracingService {
     this.data.stations.push(metaStation);
   }
   
+  getElapsedTime(dateStart: Date, dateEnd: Date): number {
+    return this.getDateNumber(dateEnd)-this.getDateNumber(dateStart);
+  }
+
+  getDateNumber(date: Date): number {
+    return date.getMilliseconds() + date.getSeconds()*1000 + date.getMinutes()*60000 + date.getHours()*3600000;
+  }
+
   collapseSourceStations(groupMode: GroupMode) {
+    let dateStart: Date = new Date();
     const oldGroups = this.getOldGroups(GroupType.SOURCE_GROUP);
     const newGroups: Map<string, string[]> =  this.getNewSourceGroups(groupMode, oldGroups);
     const newToOldGroupMap: Map<string, string> = this.mapNewGroupsToOldGroups(newGroups, oldGroups);
     const oldPositions: Map<string, Position> = this.getPositionOfStations(Array.from(newToOldGroupMap.values()));
+  
+    console.log('Datatcollecttime: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    dateStart = new Date();
     this.expandStationsInternal(Array.from(oldGroups.keys()));
     
     for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.SOURCE_GROUP, oldPositions.get(newToOldGroupMap.get(groupId)));
-
+    console.log('expand + merge: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    dateStart = new Date();
     this.updateTrace();
+    console.log('updateTrace: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    dateStart = new Date();
     this.updateScores();
+    console.log('updateScores: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
   }
 
   collapseTargetStations(groupMode: GroupMode) {
@@ -267,7 +283,7 @@ export class TracingService {
   }*/
   
   private getNewSourceGroups(groupMode: GroupMode, oldGroups: Map<string, string[]>): Map<string,string[]> {
-    const oldSourceIdSet: Set<string> = new Set(_.flatten(Array.from(oldGroups.values())));
+    const oldSourceIdSet: Set<string> = new Set([].concat(...Array.from(oldGroups.values())));
     const sourceStations: StationData[] = this.data.stations.filter(s => !s.invisible && (s.contains==null || s.contains.length==0) && (s.incoming==null || s.incoming.length==0) && (s.outgoing!=null && s.outgoing.length>0) && (!s.contained || oldSourceIdSet.has(s.id)));
     
     const targetIdToLinkGroupMap: Map<string, LinkGroup> = new Map();
@@ -313,7 +329,7 @@ export class TracingService {
     return this.extractNewGroups(targetIdToLinkGroupMap, (linkGroup, newGroupNumber) => "SG:" + linkGroup.linkStation.id + (newGroupNumber==1?'':'_' + newGroupNumber.toString()));
   }
   private getNewTargetGroups(groupMode: GroupMode, oldGroups: Map<string, string[]>): Map<string,string[]> {
-    const oldTargetIdSet: Set<string> = new Set(_.flatten(Array.from(oldGroups.values())));
+    const oldTargetIdSet: Set<string> = new Set([].concat(...Array.from(oldGroups.values())));
     const targetStations: StationData[] = this.data.stations.filter(s => !s.invisible && (s.contains==null || s.contains.length==0) && (s.outgoing==null || s.outgoing.length==0) && (s.incoming!=null && s.incoming.length>0) && (!s.contained || oldTargetIdSet.has(s.id)));
     
     const sourceIdToLinkGroupMap: Map<string, {linkStation: StationData, linkedStations: {linkedStation: StationData, linkKeys: string[]}[]}> = new Map();
@@ -360,6 +376,17 @@ export class TracingService {
 
   private getNewIsolatedGroups(oldGroups: Map<string, string[]>): Map<string, string[]> {
     const result: Map<string, string[]> = new Map();
+    const ignoredGroupTypes: Set<GroupType> = new Set([GroupType.SIMPLE_CHAIN, GroupType.SOURCE_GROUP, GroupType.TARGET_GROUP, GroupType.ISOLATED_GROUP]);
+    const ignoredGroupMembers: Set<string> = new Set([].concat(...this.data.stations.filter(s=>ignoredGroupTypes.has(s.groupType)).map(s=>s.contains)));
+
+    let startStations: StationData[] = this.data.stations.filter(s=>!s.invisible && s.outbreak);
+    const markedStations: Set<string> = new Set(startStations.map(s=>s.id));
+    //let startDeliveries: DeliveryData[] = this.data.deliveries.filter(d=>!d.invisible && d.weight>0);
+    //const markedDeliveries: Set<string> = new Set(startDeliveries.map(s=>s.id));  
+    //this.getDeliveriesById(_.uniq([].concat(...startStations.map(s=>s.incoming))));
+    
+    //startDeliveries.map(d=>d.source)
+    
     //const notIsolatedStationIds: Set<string> = this.data.stations.filter(s=>s.outbreak && !s.invisible && (s.contains==null || s.contains.length==0 || !oldGroups.has(s.id))).concat(this.data.deliveries.filter(d=>!d.invisible && d.weight>0).map(d=>d.originalSource))
     return result;
   }
