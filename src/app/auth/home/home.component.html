@@ -1,0 +1,57 @@
+<div
+  class="home-container"
+  fxLayout="row"
+  fxLayoutAlign="center start">
+
+  <mat-card
+    fxFlex="40%"
+    class="mat-elevation-z5">
+
+    <mat-card-header
+      fxLayout="column"
+      fxLayoutAlign="space-evenly">
+      <div
+        fxFlex
+        fxFlexOffset="20px">
+        <div class="mat-headline">Logged in as:</div>
+      </div>
+      <div fxFlex fxFlexOffset="20px">
+          <mat-divider></mat-divider>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div
+        fxLayout="column">
+
+        <div
+          fxFlex
+          fxFlexOffset="20px">
+          <div class="mat-body-2">{{ currentUser.firstName }} {{ currentUser.lastName }}</div>
+          <div class="mat-body-2">{{ currentUser.email }}</div>
+        </div>
+
+        <div
+          fxFlex
+          fxFlexOffset="40px">
+
+          <div
+            fxLayout="row"
+            fxLayoutAlign="start center">
+
+            <div>
+              <button
+                mat-raised-button
+                color="primary"
+                [routerLink]="['/users/login']"
+                (click)="logout()">
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

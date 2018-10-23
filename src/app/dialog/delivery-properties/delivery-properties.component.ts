@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {DeliveryData, DialogAlignment} from '../../util/datatypes';
 import {Constants} from '../../util/constants';
 import {Utils} from '../../util/utils';
@@ -20,7 +20,7 @@ export class DeliveryPropertiesComponent implements OnInit {
 
   private dialogAlign = DialogAlignment.CENTER;
 
-  constructor(public dialogRef: MdDialogRef<DeliveryPropertiesComponent>, @Inject(MD_DIALOG_DATA) public data: DeliveryPropertiesData) {
+  constructor(public dialogRef: MatDialogRef<DeliveryPropertiesComponent>, @Inject(MAT_DIALOG_DATA) public data: DeliveryPropertiesData) {
     this.title = data.delivery.name;
     this.properties = Object.keys(data.delivery)
       .filter(key => Constants.PROPERTIES.has(key) && key !== 'name')

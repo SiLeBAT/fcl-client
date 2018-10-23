@@ -1,90 +1,202 @@
-<md-toolbar id="mainToolbar" class="mat-elevation-z5" color="primary">
-  <button md-icon-button (click)="leftSidenav.toggle()">
-    <md-icon>menu</md-icon>
-  </button>
-  <button md-button id="homeButton">FoodChain-Lab</button>
-  <span class="toolbarSpan"></span>
-  <button md-icon-button (click)="onSaveImage()">
-    <md-icon>image</md-icon>
-  </button>
-  <input id="fileInput" #fileInput type="file" (change)="onLoad($event)">
-  <button md-icon-button onclick="document.getElementById('fileInput').click()">
-    <md-icon>file_upload</md-icon>
-  </button>
-  <button md-icon-button (click)="onSave()">
-    <md-icon>file_download</md-icon>
-  </button>
-  <button *ngIf="!rightSidenav.opened" md-icon-button (click)="rightSidenav.toggle()">
-    <md-icon>info</md-icon>
-  </button>
-  <button *ngIf="rightSidenav.opened" md-mini-fab (click)="rightSidenav.toggle()">
-    <md-icon>info</md-icon>
-  </button>
-</md-toolbar>
+<app-spinner-loader></app-spinner-loader>
+<app-alert></app-alert>
 
-<md-sidenav-container id="mainContainer" #mainContainer>
-  <md-sidenav id="leftSidenav" #leftSidenav align="start" mode="side">
-    <md-toolbar color="primary">
-      <span>Graph Settings</span>
-    </md-toolbar>
-    <div class="sidenav-elements">
-      <md-radio-group [(ngModel)]="data.graphSettings.type" (ngModelChange)="onGraphChange('type')">
-        <md-radio-button *ngFor="let type of graphTypes" [value]="type">
-          {{type}}
-        </md-radio-button>
-      </md-radio-group>
-      <md-select placeholder="Node Size" [(ngModel)]="data.graphSettings.nodeSize"
-                 (ngModelChange)="onGraphChange('nodeSize')">
-        <md-option *ngFor="let size of sizes" [value]="size">
-          {{size}}
-        </md-option>
-      </md-select>
-      <md-select placeholder="Font Size" [(ngModel)]="data.graphSettings.fontSize"
-                 (ngModelChange)="onGraphChange('fontSize')">
-        <md-option *ngFor="let size of sizes" [value]="size">
-          {{size}}
-        </md-option>
-      </md-select>
-      <md-checkbox [(ngModel)]="data.graphSettings.mergeDeliveries" (ngModelChange)="onGraphChange('mergeDeliveries')">
-        Merge Deliveries
-      </md-checkbox>
-      <md-checkbox [(ngModel)]="data.graphSettings.showLegend" (ngModelChange)="onGraphChange('showLegend')">
-        Show Legend
-      </md-checkbox>
-      <md-checkbox [(ngModel)]="data.graphSettings.showZoom" (ngModelChange)="onGraphChange('showZoom')">
-        Show Zoom Controls
-      </md-checkbox>
-    </div>
-    <md-toolbar color="primary">
-      <span>Table Settings</span>
-    </md-toolbar>
-    <div class="sidenav-elements">
-      <md-radio-group [(ngModel)]="data.tableSettings.mode" (ngModelChange)="onTableChange('mode')">
-        <md-radio-button *ngFor="let mode of tableModes" [value]="mode">
-          {{mode}}
-        </md-radio-button>
-      </md-radio-group>
-      <button md-raised-button (click)="changeColumns()">Change Columns</button>
-      <md-select placeholder="Show Type" [(ngModel)]="data.tableSettings.showType"
-                 (ngModelChange)="onTableChange('showType')">
-        <md-option *ngFor="let showType of showTypes" [value]="showType">
-          {{showType}}
-        </md-option>
-      </md-select>
-    </div>
-  </md-sidenav>
+<div
+  class="master-container"
+  fxLayout="column"
+  fxLayoutAlign="center stretch">
 
-  <div id="mainContent">
-    <app-graph #graph [hidden]="data.graphSettings.type != graphType"></app-graph>
-    <app-gis #gis [hidden]="data.graphSettings.type != gisType"></app-gis>
+  <!-- header -->
+  <div
+    class="header"
+    fxFlex>
+
+    <mat-toolbar
+      id="mainToolbar"
+      class="mat-elevation-z5"
+      color="primary">
+      <button
+        mat-icon-button
+        (click)="appService.onToggleLeftSidebar()"
+        [disabled]="!isTracingActive()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <button
+        mat-button
+        [routerLink]="authService.loggedIn() ? ['/main'] : ['/']"
+        id="homeButton">
+        <span class="mat-title">{{ appName }}</span>
+      </button>
+      <span
+        class="toolbarSpan"
+        fxFlex></span>
+
+      <button
+        *ngIf="authService.loggedIn() && !isTracingActive()"
+        mat-icon-button
+        [routerLink]="['/tracing']"
+        matTooltip="Tracing view">
+        <mat-icon>timeline</mat-icon>
+
+      </button>
+
+      <button
+        *ngIf="authService.loggedIn() && isTracingActive()"
+        mat-icon-button
+        (click)="appService.onSaveImage()"
+        matTooltip="Save image">
+        <mat-icon>image</mat-icon>
+      </button>
+      <input
+        *ngIf="authService.loggedIn() && isTracingActive()"
+        id="fileInput"
+        #fileInput
+        type="file"
+        (change)="appService.onLoad($event)">
+      <button
+        *ngIf="authService.loggedIn() && isTracingActive()"
+        mat-icon-button
+        onclick="document.getElementById('fileInput').click()"
+        matTooltip="Upload data">
+        <mat-icon>file_upload</mat-icon>
+      </button>
+      <button
+        *ngIf="authService.loggedIn() && isTracingActive()"
+        mat-icon-button
+        (click)="appService.onSave()"
+        matTooltip="Download data">
+        <mat-icon>file_download</mat-icon>
+      </button>
+      <button
+        *ngIf="!rightSidenav.opened && authService.loggedIn() && isTracingActive()"
+        mat-icon-button
+        (click)="appService.onToggleRightSidebar()"
+        matTooltip="Toggle right sidebar">
+        <mat-icon>info</mat-icon>
+      </button>
+      <button
+        *ngIf="rightSidenav.opened && authService.loggedIn() && isTracingActive()"
+        mat-mini-fab
+        (click)="appService.onToggleRightSidebar()"
+        matTooltip="Toggle right sidebar">
+        <mat-icon>info</mat-icon>
+      </button>
+      <mat-divider [inset]="true" [vertical]="true"></mat-divider>
+
+      <a
+        *ngIf="!authService.loggedIn()"
+        mat-button
+        [routerLink]="['/users/login']">
+        <mat-icon>exit_to_app</mat-icon>
+        Login/Register
+      </a>
+
+      <button
+        *ngIf="authService.loggedIn()"
+        mat-icon-button
+        [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu
+        #menu="matMenu"
+        [overlapTrigger]="false">
+        <div mat-menu-item disabled>
+          <mat-icon>account_circle</mat-icon>
+          <span>{{ getCurrentUserEmail() }}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <button
+          mat-menu-item
+          (click)="logout()">
+          <mat-icon>power_settings_new</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+
+
+    </mat-toolbar>
   </div>
 
-  <md-sidenav id="rightSidenav" #rightSidenav align="end" mode="side">
-    <div id="rightSidenavContent">
-      <div id="sidenavSlider" #sidenavSlider>
-        <div id="sidenavSliderCenter"></div>
+
+  <!-- main content -->
+  <div
+    class="main-content"
+    fxFlex="90vh">
+
+    <mat-sidenav-container
+      id="sidenavContainer"
+      #sidenavContainer>
+
+      <!-- left sidenav -->
+      <mat-sidenav
+        id="leftSidenav"
+        #leftSidenav
+        position="start"
+        mode="side">
+        <h1>mat-sidenav</h1>
+      </mat-sidenav>
+
+      <!-- main content -->
+      <mat-sidenav-content>
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+
+      <!-- right sidenav -->
+      <mat-sidenav
+        id="rightSidenav"
+        #rightSidenav
+        position="end"
+        mode="side">
+        <div id="rightSidenavContent">
+          <div id="sidenavSlider" #sidenavSlider>
+            <div id="sidenavSliderCenter"></div>
+          </div>
+          <app-table #table></app-table>
+        </div>
+      </mat-sidenav>
+
+    </mat-sidenav-container>
+  </div>
+
+
+  <!-- footer -->
+  <div
+    class="footer"
+    fxFlex>
+    <mat-toolbar
+      class="mat-elevation-z5"
+      color="accent"
+      fxLayout="row"
+      fxLayoutAlign="center center">
+      <div class="footer-element" fxFlex>
+        <a
+          mat-button
+          href="https://www.bfr.bund.de"
+          target="_blank">
+          <mat-icon>public</mat-icon>
+          <span class="mat-caption"> BfR - Bundesinstitut für Risikobewertung</span>
+          <!-- BfR - Bundesinstitut für Risikobewertung -->
+        </a>
       </div>
-      <app-table #table></app-table>
-    </div>
-  </md-sidenav>
-</md-sidenav-container>
+      <div class="footer-element" fxFlex>
+        <a
+          mat-button
+          href="https://foodrisklabs.bfr.bund.de"
+          target="_blank">
+          <mat-icon>public</mat-icon>
+          <span class="mat-caption"> FoodRisk - Labs</span>
+        </a>
+      </div>
+      <div class="footer-element" fxFlex>
+        <a
+          mat-button
+          href="mailto:{{ supportContact }}"
+          target="_top">
+          <mat-icon>mail</mat-icon>
+          <span class="mat-caption"> Report a Problem</span>
+        </a>
+      </div>
+    </mat-toolbar>
+  </div>
+
+</div>

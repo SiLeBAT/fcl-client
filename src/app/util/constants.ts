@@ -6,7 +6,6 @@ export class Constants {
   private static readonly STATION_DATA: StationData = {
     id: null, name: null, lat: null, lon: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null,
     contains: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null,
-    groupType: null,
     commonLink: null, position: null, positionRelativeTo: null, properties: null
   };
 
@@ -44,7 +43,7 @@ export class Constants {
   static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
   static readonly TABLE_MODES = List.of(TableMode.STATIONS, TableMode.DELIVERIES);
   static readonly SHOW_TYPES = List.of(ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY);
-  static readonly SIZES = List.of(Size.TINY, Size.SMALL, Size.MEDIUM, Size.LARGE);
+  static readonly SIZES = List.of(Size.SMALL, Size.MEDIUM, Size.LARGE);
 
   static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
   static readonly DEFAULT_GRAPH_NODE_SIZE = Size.MEDIUM;

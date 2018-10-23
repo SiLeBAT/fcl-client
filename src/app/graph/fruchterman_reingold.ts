@@ -2,79 +2,8 @@ export function FruchtermanLayout(options) {
   this.options = options;
 }
 
-FruchtermanLayout.prototype.run = function () {
-  new FruchtermanLayoutClass(this).run();
-};
 
-class FruchtermanLayoutClass {
 
-  private static DEFAULTS = {
-    fit: true
-  };
-
-  private layout: any;
-  private options: any;
-
-  constructor(layout: any) {
-    this.layout = layout;
-    this.options = {};
-
-    for (const key of Object.keys(layout.options)) {
-      this.options[key] = layout.options[key];
-    }
-
-    for (const key of Object.keys(FruchtermanLayoutClass.DEFAULTS)) {
-      if (!this.options.hasOwnProperty(key)) {
-        this.options[key] = FruchtermanLayoutClass.DEFAULTS[key];
-      }
-    }
-  }
-
-  run() {
-    const cy = this.options.cy;
-    const width: number = cy.width();
-    const height: number = cy.height();
-    const graph = new Graph();
-    const vertices: Map<string, Vertex> = new Map();
-    const elementIds: Set<string> = new Set();
-
-    this.options.eles.each(e => elementIds.add(e.id()));
-
-    cy.nodes().forEach(node => {
-      let v: Vertex;
-
-      if (elementIds.has(node.id())) {
-        v = new Vertex(Math.random() * width, Math.random() * height, false);
-      } else {
-        v = new Vertex(node.position().x, node.position().y, true);
-      }
-
-      vertices.set(node.id(), v);
-      graph.insertVertex(v);
-    });
-
-    cy.edges().forEach(edge => {
-      graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
-    });
-
-    const layoutManager = new ForceDirectedVertexLayout(graph);
-
-    layoutManager.layout(width, height, 100);
-
-    cy.nodes().layoutPositions(this.layout, this.options, node => {
-      const vertex = vertices.get(node.id());
-
-      return {
-        x: vertex.x,
-        y: vertex.y
-      };
-    });
-
-    if (this.options.fit) {
-      cy.fit();
-    }
-  }
-}
 
 class Graph {
 
@@ -259,3 +188,78 @@ class ForceDirectedVertexLayout {
     }
   }
 }
+
+
+class FruchtermanLayoutClass {
+
+  private static DEFAULTS = {
+    fit: true
+  };
+
+  private layout: any;
+  private options: any;
+
+  constructor(layout: any) {
+    this.layout = layout;
+    this.options = {};
+
+    for (const key of Object.keys(layout.options)) {
+      this.options[key] = layout.options[key];
+    }
+
+    for (const key of Object.keys(FruchtermanLayoutClass.DEFAULTS)) {
+      if (!this.options.hasOwnProperty(key)) {
+        this.options[key] = FruchtermanLayoutClass.DEFAULTS[key];
+      }
+    }
+  }
+
+  run() {
+    const cy = this.options.cy;
+    const width: number = cy.width();
+    const height: number = cy.height();
+    const graph = new Graph();
+    const vertices: Map<string, Vertex> = new Map();
+    const elementIds: Set<string> = new Set();
+
+    this.options.eles.each(e => elementIds.add(e.id()));
+
+    cy.nodes().forEach(node => {
+      let v: Vertex;
+
+      if (elementIds.has(node.id())) {
+        v = new Vertex(Math.random() * width, Math.random() * height, false);
+      } else {
+        v = new Vertex(node.position().x, node.position().y, true);
+      }
+
+      vertices.set(node.id(), v);
+      graph.insertVertex(v);
+    });
+
+    cy.edges().forEach(edge => {
+      graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+    });
+
+    const layoutManager = new ForceDirectedVertexLayout(graph);
+
+    layoutManager.layout(width, height, 100);
+
+    cy.nodes().layoutPositions(this.layout, this.options, node => {
+      const vertex = vertices.get(node.id());
+
+      return {
+        x: vertex.x,
+        y: vertex.y
+      };
+    });
+
+    if (this.options.fit) {
+      cy.fit();
+    }
+  }
+}
+
+FruchtermanLayout.prototype.run = function () {
+  new FruchtermanLayoutClass(this).run();
+};

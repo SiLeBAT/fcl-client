@@ -1,5 +1,5 @@
 import {Color, DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
-import {DialogPosition, MdDialog, MdDialogRef, MdMenuTrigger} from '@angular/material';
+import {DialogPosition, MatDialog, MatDialogRef, MatMenuTrigger} from '@angular/material';
 import * as ol from 'openlayers';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
@@ -90,7 +90,7 @@ export class Utils {
     a.remove();
   }
 
-  static showErrorMessage(dialogService: MdDialog, message: string): MdDialogRef<any> {
+  static showErrorMessage(dialogService: MatDialog, message: string): MatDialogRef<any> {
     const dialogData: DialogAlertData = {
       title: 'Error',
       message: message
@@ -99,7 +99,7 @@ export class Utils {
     return dialogService.open(DialogAlertComponent, {role: 'alertdialog', data: dialogData});
   }
 
-  static openMenu(trigger: MdMenuTrigger, triggerElement: ElementRef, pos: Position) {
+  static openMenu(trigger: MatMenuTrigger, triggerElement: ElementRef, pos: Position) {
     const style = (<HTMLElement>triggerElement.nativeElement).style;
 
     style.position = 'fixed';

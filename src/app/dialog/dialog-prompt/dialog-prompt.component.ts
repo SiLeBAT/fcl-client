@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 export interface DialogPromptData {
   title: string;
@@ -17,7 +17,7 @@ export class DialogPromptComponent {
   //noinspection JSUnusedGlobalSymbols
   value: string;
 
-  constructor(public dialogRef: MdDialogRef<DialogPromptComponent>, @Inject(MD_DIALOG_DATA) public data: DialogPromptData) {
+  constructor(public dialogRef: MatDialogRef<DialogPromptComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogPromptData) {
   }
 
 }

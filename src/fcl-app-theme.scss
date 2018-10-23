@@ -1,0 +1,163 @@
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// define a real custom palette (using http://mcg.mbitson.com)
+$fcl-blue: (
+    50 : #e1eaf4,
+    100 : #b3cae3,
+    200 : #81a7d1,
+    300 : #4f83be,
+    400 : #2969b0,
+    500 : #034ea2,
+    600 : #03479a,
+    700 : #023d90,
+    800 : #023586,
+    900 : #012575,
+    A100 : #a3b8ff,
+    A200 : #7090ff,
+    A400 : #3d69ff,
+    A700 : #2455ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #ffffff,
+        A700 : #ffffff,
+        )
+);
+
+$fcl-darkgrey: (
+    50 : #ededed,
+    100 : #d1d1d1,
+    200 : #b3b3b3,
+    300 : #949494,
+    400 : #7d7d7d,
+    500 : #666666,
+    600 : #5e5e5e,
+    700 : #535353,
+    800 : #494949,
+    900 : #383838,
+    A100 : #f49c9c,
+    A200 : #ef6e6e,
+    A400 : #ff2a2a,
+    A700 : #ff1111,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$fcl-lightblue: (
+    50 : #f1f7fb,
+    100 : #ddecf4,
+    200 : #c6dfed,
+    300 : #afd2e5,
+    400 : #9dc8e0,
+    500 : #8cbeda,
+    600 : #84b8d6,
+    700 : #79afd0,
+    800 : #6fa7cb,
+    900 : #5c99c2,
+    A100 : #ffffff,
+    A200 : #f8fcff,
+    A400 : #c5e7ff,
+    A700 : #acddff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+
+
+$fcl-red: (
+    50 : #ffe0e0,
+    100 : #ffb3b3,
+    200 : #ff8080,
+    300 : #fe4d4d,
+    400 : #fe2626,
+    500 : #fe0000,
+    600 : #fe0000,
+    700 : #fe0000,
+    800 : #fe0000,
+    900 : #fd0000,
+    A100 : #ffffff,
+    A200 : #fff1f1,
+    A400 : #ffbebe,
+    A700 : #ffa4a4,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+
+
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$fcl-app-primary: mat-palette($fcl-blue);
+$fcl-app-accent:  mat-palette($fcl-darkgrey);
+// $fcl-app-accent:  mat-palette($fcl-lightblue);
+
+// The warn palette is optional (defaults to red).
+$fcl-app-warn:    mat-palette($fcl-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$fcl-app-theme: mat-light-theme($fcl-app-primary, $fcl-app-accent, $fcl-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($fcl-app-theme);

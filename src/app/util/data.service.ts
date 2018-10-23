@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {DeliveryData, FclData, FclElements, GraphSettings, ObservedType, StationData, TableSettings, GroupType} from './datatypes';
+import {DeliveryData, FclData, FclElements, GraphSettings, ObservedType, StationData, TableSettings} from './datatypes';
 
-import 'rxjs/add/operator/toPromise';
+
 import {Utils} from './utils';
 import {Constants} from './constants';
 
@@ -177,7 +177,6 @@ export class DataService {
         outbreak: e.outbreak != null ? e.outbreak : false,
         crossContamination: e.crossContamination != null ? e.crossContamination : false,
         score: e.score != null ? e.score : 0,
-        groupType: (e.id!=null && e.id.toString().match('^SG_*')? GroupType.SOURCE_GROUP:null),
         commonLink: e.commonLink != null ? e.commonLink : false,
         position: e.position != null ? e.position : null,
         positionRelativeTo: e.positionRelativeTo != null ? e.positionRelativeTo : null,

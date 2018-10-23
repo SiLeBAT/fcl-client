@@ -1,14 +1,15 @@
 <div id="container" #container>
   <div id="optionsBar">
-    <button md-raised-button (click)="onSelectAll()">Select All</button>
-    <md-input-container>
-      <input mdInput [(ngModel)]="filter" (ngModelChange)="onFilterChange()" placeholder="Filter">
-    </md-input-container>
+    <button mat-raised-button (click)="onSelectAll()">Select All</button>
+    <mat-form-field>
+      <input matInput [(ngModel)]="filter" (ngModelChange)="onFilterChange()" placeholder="Filter">
+    </mat-form-field>
   </div>
   <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" scrollbarV="true">
   </ngx-datatable>
   <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
-    <md-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary">
-    </md-checkbox>
+    <mat-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary">
+    </mat-checkbox>
   </ng-template>
 </div>
+

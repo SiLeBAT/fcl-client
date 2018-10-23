@@ -88,7 +88,7 @@ export class TableComponent implements OnInit {
       });
     };
 
-    new ResizeSensor(this.container.nativeElement, () => {
+    const resizeSensor = new ResizeSensor(this.container.nativeElement, () => {
       if (this.resizeTimer != null) {
         this.resizeTimer.unsubscribe();
       }

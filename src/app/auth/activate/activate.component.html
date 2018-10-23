@@ -1,0 +1,101 @@
+<div
+  class="activate-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
+
+  <mat-card
+    fxFlex="40%"
+    class="mat-elevation-z5">
+
+    <mat-card-header
+      fxLayout="column"
+      fxLayoutAlign="space-evenly">
+      <div
+        fxFlex
+        fxFlexOffset="20px">
+        <div class="mat-headline">Account activation</div>
+      </div>
+      <div fxFlex fxFlexOffset="20px">
+          <mat-divider></mat-divider>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <div
+        *ngIf="tokenValid"
+        fxLayout="column">
+
+        <div
+          fxFlex
+          fxFlexOffset="20px">
+          <p class="mat-subheading-1">
+              You have activated your {{ appName }} account.
+          </p>
+          <p class="mat-subheading-1">
+            Once the {{ appName }} Administrator has unlocked your account, you can log in.
+            You will receive a notification after activation.
+          </p>
+        </div>
+
+        <div
+          fxFlex
+          fxFlexOffset="40px">
+
+          <div
+            fxLayout="row"
+            fxLayoutAlign="start center">
+
+            <div>
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [routerLink]="['/users/login']">
+                Continue to login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="!tokenValid"
+        fxLayout="column">
+
+        <div
+          fxFlex
+          fxFlexOffset="20px">
+          <p class="mat-subheading-1">
+              Your account activation failed.
+          </p>
+          <p class="mat-subheading-1">
+              Please login. In the case of a failure you will receive further instructions.
+          </p>
+        </div>
+
+        <div
+          fxFlex
+          fxFlexOffset="40px">
+
+          <div
+            fxLayout="row"
+            fxLayoutAlign="start center">
+
+            <div>
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [routerLink]="['/users/login']">
+                Continue to login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </mat-card-content>
+  </mat-card>
+</div>

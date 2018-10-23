@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MD_DIALOG_DATA} from '@angular/material';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 export interface DialogActionsData {
   title: string;
@@ -12,7 +12,7 @@ export interface DialogActionsData {
 })
 export class DialogActionsComponent {
 
-  constructor(@Inject(MD_DIALOG_DATA) public data: DialogActionsData) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogActionsData) {
   }
 
 }

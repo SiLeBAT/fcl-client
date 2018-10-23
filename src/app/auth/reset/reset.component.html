@@ -1,0 +1,187 @@
+<div
+  class="reset-container"
+  fxLayout="row"
+  fxLayoutAlign="center center">
+
+  <mat-card
+    fxFlex="40%"
+    class="mat-elevation-z5">
+
+    <mat-card-header
+      fxLayout="column"
+      fxLayoutAlign="space-evenly">
+      <div
+        fxFlex
+        fxFlexOffset="20px">
+        <div class="mat-headline">Reset password</div>
+      </div>
+      <div fxFlex fxFlexOffset="20px">
+          <mat-divider></mat-divider>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form
+        [formGroup]="resetForm"
+        (ngSubmit)="reset()">
+
+        <div
+          fxLayout="column">
+
+          <div
+            fxFlex
+            fxFlexOffset="20px">
+            <div class="mat-subheading-2">Please enter a new password.</div>
+          </div>
+
+          <div
+            class='form-group'
+            [ngClass]="{'error' :  !validateField('password1') || validatePwStrength()}"
+            fxFlex
+            fxFlexOffset="20px">
+            <mat-form-field appearance="standard">
+              <mat-label>New password</mat-label>
+              <input
+                matInput
+                #message
+                formControlName="password1"
+                type="password"
+                name="password1"
+                required>
+              <mat-icon matPrefix>lock</mat-icon>
+              <mat-hint
+                align="start">
+                At least 8 characters
+              </mat-hint>
+              <mat-hint
+                align="end">
+                {{message.value.length}} characters
+              </mat-hint>
+              <mat-error
+                *ngIf="!validateField('password1')">
+                Password is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div
+            class='form-group'
+            [ngClass]="{'error' : !validateField('password2')}"
+            fxFlex>
+            <password-strength-meter
+              [password]="resetForm.value.password1"
+              (strengthChange)="doStrengthChange($event)">
+            </password-strength-meter>
+            <em
+              *ngIf="validatePwStrength()">
+              Password to weak or to short
+            </em>
+          </div>
+          <div
+            class='form-group'
+            fxFlex>
+            <mat-form-field appearance="standard">
+              <mat-label>Confirm Password</mat-label>
+              <input
+                matInput
+                formControlName="password2"
+                type="password"
+                name="password2"
+                required>
+              <mat-icon matPrefix>lock</mat-icon>
+              <mat-error
+                *ngIf="!validateField('password2')  && resetForm.controls.password2.errors.validatePasswordConfirm">
+                Passwords must match
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div
+            fxFlex
+            fxFlexOffset="40px">
+
+            <div
+              fxLayout="row"
+              fxLayoutAlign="start center">
+
+              <div
+                class="form-group">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="!resetForm.valid">
+                  Recover password
+                </button>
+              </div>
+              <div>
+                <a
+                  mat-button
+                  [routerLink]="['/']"
+                  fxFlexOffset="10px">
+                  Cancel
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+
+<!-- <div class="jumbotron">
+  <div class="container-fluid">
+    <div class="col-md-6 col-md-offset-3">
+      <h2>Passwort zurücksetzen</h2>
+      <hr>
+      <br>
+      <p>Bitte geben Sie ein neues Passwort ein</p>
+      <br>
+
+      <form
+        [formGroup]="resetForm"
+        (ngSubmit)="reset()">
+        <div class="form-group" [ngClass]="{'error' :  !validateField('password1') || validatePwStrength()}">
+          <label for="password1">Neues Passwort (mind. 8 Zeichen)</label>
+          <input
+            type="password"
+            id="password1"
+            class="form-control"
+            formControlName="password1"/>
+          <em *ngIf="validatePwStrength()">Zu schwaches oder zu kurzes Passwort.</em>
+          <em *ngIf="!validateField('password1')">Pflichtfeld.</em>
+        </div>
+        <div class="pw-strength">
+          <password-strength-meter
+            [password]="resetForm.value.password1"
+            (strengthChange)="doStrengthChange($event)">
+          </password-strength-meter>
+        </div>
+        <div class="form-group">
+          <label for="password2">Passwort bestätigen</label>
+          <input
+            type="password"
+            id="password2"
+            class="form-control"
+            formControlName="password2"/>
+            <em *ngIf="!validateField('password2')  && resetForm.controls.password2.errors.validatePasswordConfirm">Passwörter müssen übereinstimmen.</em>
+        </div>
+        <div class="form-group reset-btn">
+          <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="!resetForm.valid">Passwort zurücksetzen</button>
+          <a
+            [routerLink]="['/main']"
+            class="btn btn-link">
+              Zurück
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+
