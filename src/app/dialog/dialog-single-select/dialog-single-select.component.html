@@ -1,0 +1,15 @@
+<h1 md-dialog-title>{{data.title}}</h1>
+<div md-dialog-content>
+    <mat-select [(ngModel)]="data.value" placeholder="Please choose" class="md-no-underline">
+        <mat-option *ngFor="let option of options" value="{{option.value}}">{{option.viewValue}}</mat-option>
+        
+    </mat-select>
+      
+  <!--<div class="checkboxes">
+    <md-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.viewValue}}</md-checkbox>
+  </div>-->
+</div>
+<div md-dialog-actions>
+  <button md-button (click)="close()">OK</button>
+  <button md-button (click)="dialogRef.close()">Cancel</button>
+</div>
