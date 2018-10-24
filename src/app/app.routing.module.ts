@@ -12,6 +12,7 @@ import { ActivateComponent } from './auth/activate/activate.component';
 import { AdminActivateComponent } from './auth/admin-activate/admin-activate.component';
 import { TracingComponent } from './tracing/tracing.component';
 import { MainDashComponent } from './main-dash/main-dash.component';
+import { environment } from './../environments/environment';
 
 
 const routes: Routes = [
@@ -37,7 +38,7 @@ const routes: Routes = [
   {
     path: 'main',
     component: HomeComponent,
-    canActivate: [AuthGuard]
+    canActivate: environment.serverless ? null : [AuthGuard]
   },
   {
     path: 'users/activate/:id',
@@ -50,7 +51,7 @@ const routes: Routes = [
   {
     path: 'tracing',
     component: TracingComponent,
-    canActivate: [AuthGuard]
+    canActivate:  environment.serverless ? null : [AuthGuard]
   },
 
   // otherwise redirect to home

@@ -10,13 +10,16 @@ import {ResizeSensor} from 'css-element-queries';
 
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
+import {DialogSingleSelectComponent, DialogSingleSelectData} from '../dialog/dialog-single-select/dialog-single-select.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from '../tracing/tracing.service';
-import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
+import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData, GroupMode} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
+import {FarmToForkLayout} from './layoutmanager/farm_to_fork/farm_to_fork';
 import {Constants} from '../util/constants';
+import * as _ from 'lodash';
 
 interface MenuAction {
   name: string;
@@ -104,6 +107,7 @@ export class GraphComponent implements OnInit {
       cytoscape.use(dagre);
       cytoscape.use(spread);
       cytoscape('layout', 'fruchterman', FruchtermanLayout);
+      cytoscape('layout', 'farm_to_fork', FarmToForkLayout);
     }
   }
 
@@ -372,6 +376,7 @@ export class GraphComponent implements OnInit {
               forward: value.find(d => d.forward) != null,
               backward: value.find(d => d.backward) != null,
               score: 0,
+              weight: _.sum(...value.map(d=>d.weight)),
               properties: []
             },
             selected: selected
@@ -439,67 +444,68 @@ export class GraphComponent implements OnInit {
     });
   }
 
-  private createStyle(): any {
+  private createSmallGraphStyle(): any {
     const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize)/2;
+      
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
         return size;
       }
     };
-
+    
     let style = cytoscape.stylesheet()
-      .selector('*')
-      .style({
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
-      })
-      .selector('node')
-      .style({
-        'content': 'data(name)',
-        'height': sizeFunction,
-        'width': sizeFunction,
-        'background-color': 'rgb(255, 255, 255)',
-        'border-width': 3,
-        'border-color': 'rgb(0, 0, 0)',
-        'text-valign': 'bottom',
-        'text-halign': 'right',
-        'color': 'rgb(0, 0, 0)'
-      })
-      .selector('edge')
-      .style({
-        'target-arrow-shape': 'triangle',
-        'width': 6,
-        'line-color': 'rgb(0, 0, 0)',
-        'target-arrow-color': 'rgb(255, 0, 0)',
-        'curve-style': 'bezier'
-      })
-      .selector('node:selected')
-      .style({
-        'background-color': 'rgb(128, 128, 255)',
-        'border-width': 6,
-        'border-color': 'rgb(0, 0, 255)',
-        'color': 'rgb(0, 0, 255)'
-      })
-      .selector('edge:selected')
-      .style({
-        'width': 12
-      })
-      .selector('node[?contains]')
-      .style({
-        'border-width': 6
-      })
-      .selector('node:selected[?contains]')
-      .style({
-        'border-width': 9
-      }).selector(':active')
-      .style({
-        'overlay-opacity': 0.5
-      });
-
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      'content': 'data(name)',
+      'height': sizeFunction, // ToDO: replace by linear function (data or dataMap)
+      'width': sizeFunction,  // ToDo: replace by linear function (data or dataMap)
+      'background-color': 'rgb(255, 255, 255)',
+      'border-width': 3,
+      'border-color': 'rgb(0, 0, 0)',
+      'text-valign': 'bottom',
+      'text-halign': 'right',
+      'color': 'rgb(0, 0, 0)',
+    })
+    .selector('edge')
+    .style({
+      'target-arrow-shape': 'triangle', 
+      'width': 2, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      'target-arrow-color': 'rgb(0, 0, 0)', 
+      'arrow-scale': 1.4, 
+      'curve-style': 'bezier'   // performance reasons
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      'width': 4
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 6
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 9
+    }).selector(':active')
+    .style({
+      'overlay-opacity': 0.5
+    });
+    
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -507,10 +513,10 @@ export class GraphComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-
+    
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-
+      
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -519,35 +525,403 @@ export class GraphComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-
+      
       return background;
     };
-
+    
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-
+      
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-
+        
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-
+      
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-
+    
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-
+    
     return style;
   }
+  
+  private createLargeGraphStyle(): any {
+    const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    
+    let style = cytoscape.stylesheet()
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      //'content': 'data(name)',
+      'height': sizeFunction, // PF test
+      'width': sizeFunction,  // PF test
+      'background-color': 'rgb(255, 255, 255)',
+      //'border-width': 3,
+      'border-color': 'rgb(0, 0, 0)',
+      //'text-valign': 'bottom',
+      //'text-halign': 'right',
+      'color': 'rgb(0, 0, 0)',
+      //'min-zoomed-font-size':10   // performance reasons
+    })
+    .selector('edge')
+    .style({
+      //'target-arrow-shape': 'triangle', // test reason
+      // large graphs
+      'mid-target-arrow-shape': 'triangle', // test reason
+      //'mid-target-arrow-fill': 'hollow', // test reason
+      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+      'width': 2, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+      'arrow-scale': 1.4, // test reason
+      //'curve-style': 'bezier'   // performance reasons
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      //'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      //'width': 12
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 6
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 9
+    }).selector(':active')
+    .style({
+      //'overlay-opacity': 0.5
+    })
+    .selector(':selected')
+    .css({
+      'background-color': 'black',
+      'opacity': 1
+    });
+    
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+    
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+      
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+      
+      return background;
+    };
+    
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+      
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+        
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+      
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+    
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+    
+    return style;
+  }
+  
+  private createHugeGraphStyle(): any {
+    const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    /*this.nodeSizeMap = new Map();
+    const cachedSizeFunction = (node)=>{
+      if(!this.nodeSizeMap.has(node.id)) this.nodeSizeMap.set(node.id, sizeFunction(node));
+      return this.nodeSizeMap.get(node.id);
+    };        //_.memoize(sizeFunction);
+    */
+    
+    let style = cytoscape.stylesheet()
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
+      //'content': 'data(name)', // no label
+      'background-color': 'rgb(255, 255, 255)',
+      'border-width': 2,
+      'border-color': 'rgb(0, 0, 0)',
+      //'text-valign': 'bottom', // no label
+      //'text-halign': 'right', // no label
+      'color': 'rgb(0, 0, 0)',
+      //'min-zoomed-font-size':10   // performance reasons
+    })
+    .selector('edge')
+    .style({
+      'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
+      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+      'width': 1, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      'arrow-scale': 1.4, // test reason
+      //'curve-style': 'bezier'   // use haystack
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      //'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      'width': 2
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 3 //6 // ToDo: Clarify, what is this for
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 3 //9 // ToDo: Clarify, what is this for
+    }).selector(':active')
+    .style({
+      'overlay-opacity': 0.5
+    });
+    /*.selector(':selected')
+    .css({
+      'background-color': 'black',
+      'opacity': 1
+    });*/
+    
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+    
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+      
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+      
+      return background;
+    };
+    
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+      
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+        
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+      
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+    
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+    
+    return style;
+  }
+  
+  
+  private createStyle(): any {
+    return this.createHugeGraphStyle();
+    /*const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    
+    let style = cytoscape.stylesheet()
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      //'content': 'data(name)',
+      'height': sizeFunction, // PF test
+      'width': sizeFunction,  // PF test
+      'background-color': 'rgb(255, 255, 255)',
+      //'border-width': 3,
+      'border-color': 'rgb(0, 0, 0)',
+      //'text-valign': 'bottom',
+      //'text-halign': 'right',
+      'color': 'rgb(0, 0, 0)',
+      //'min-zoomed-font-size':10   // performance reasons
+    })
+    .selector('edge')
+    .style({
+      //'target-arrow-shape': 'triangle', // test reason
+      // large graphs
+      'mid-target-arrow-shape': 'triangle', // test reason
+      //'mid-target-arrow-fill': 'hollow', // test reason
+      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+      'width': 2, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+      'arrow-scale': 1.4, // test reason
+      //'curve-style': 'bezier'   // performance reasons
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      //'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      //'width': 12
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 6
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 9
+    }).selector(':active')
+    .style({
+      //'overlay-opacity': 0.5
+    })
+    .selector(':selected')
+    .css({
+      'background-color': 'black',
+      'opacity': 1
+    });
+    
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+    
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+      
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+      
+      return background;
+    };
+    
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+      
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+        
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+      
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+    
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+    
+    return style;*/
+  }
+  
 
   private setSelected(id: string, selected: boolean) {
     if (this.mergeMap.has(id)) {
@@ -596,6 +970,66 @@ export class GraphComponent implements OnInit {
           this.tracingService.clearInvisibility();
           this.updateAll();
           this.callChangeFunction();
+        }
+      }, {
+        name: 'Collapse Sources',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseSourceStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Targets',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseTargetStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Simple Chains',
+        enabled: true,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseSimpleChains();
+          this.updateAll();
+          this.callChangeFunction();
+            
         }
       }
     ];
@@ -761,6 +1195,10 @@ export class GraphComponent implements OnInit {
         name: 'Fruchterman-Reingold',
         enabled: true,
         action: () => this.cy.layout({name: 'fruchterman'}).run()
+      }, {
+        name: 'Farm-to-fork',
+        enabled: true,
+        action: () => this.cy.layout({name: 'farm_to_fork'}).run()
       }, {
         name: 'Constraint-Based',
         enabled: true,

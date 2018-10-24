@@ -14,6 +14,7 @@ import {Utils} from '../util/utils';
 import {TracingService} from '../tracing/tracing.service';
 import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
 import {Constants} from '../util/constants';
+import * as _ from 'lodash';
 
 interface MenuAction {
   name: string;
@@ -395,6 +396,7 @@ export class GisComponent implements OnInit {
               forward: value.find(d => d.forward) != null,
               backward: value.find(d => d.backward) != null,
               score: 0,
+              weight: _.sum(value.map(d=>d.weight)),
               properties: []
             },
             selected: selected

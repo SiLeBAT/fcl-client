@@ -23,7 +23,7 @@
       </button>
       <button
         mat-button
-        [routerLink]="authService.loggedIn() ? ['/main'] : ['/']"
+        [routerLink]="(isServerLess() || authService.loggedIn()) ? ['/main'] : ['/']"
         id="homeButton">
         <span class="mat-title">{{ appName }}</span>
       </button>
@@ -32,7 +32,7 @@
         fxFlex></span>
 
       <button
-        *ngIf="authService.loggedIn() && !isTracingActive()"
+        *ngIf="(isServerLess() || authService.loggedIn()) && !isTracingActive()"
         mat-icon-button
         [routerLink]="['/tracing']"
         matTooltip="Tracing view">
@@ -41,41 +41,41 @@
       </button>
 
       <button
-        *ngIf="authService.loggedIn() && isTracingActive()"
+        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onSaveImage()"
         matTooltip="Save image">
         <mat-icon>image</mat-icon>
       </button>
       <input
-        *ngIf="authService.loggedIn() && isTracingActive()"
+        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
         id="fileInput"
         #fileInput
         type="file"
         (change)="appService.onLoad($event)">
       <button
-        *ngIf="authService.loggedIn() && isTracingActive()"
+        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
         mat-icon-button
         onclick="document.getElementById('fileInput').click()"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
       </button>
       <button
-        *ngIf="authService.loggedIn() && isTracingActive()"
+        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onSave()"
         matTooltip="Download data">
         <mat-icon>file_download</mat-icon>
       </button>
       <button
-        *ngIf="!rightSidenav.opened && authService.loggedIn() && isTracingActive()"
+        *ngIf="!rightSidenav.opened && (isServerLess() || authService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onToggleRightSidebar()"
         matTooltip="Toggle right sidebar">
         <mat-icon>info</mat-icon>
       </button>
       <button
-        *ngIf="rightSidenav.opened && authService.loggedIn() && isTracingActive()"
+        *ngIf="rightSidenav.opened && (isServerLess() || authService.loggedIn()) && isTracingActive()"
         mat-mini-fab
         (click)="appService.onToggleRightSidebar()"
         matTooltip="Toggle right sidebar">

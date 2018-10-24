@@ -34,6 +34,10 @@ export class AppComponent implements OnInit {
     }
   }
 
+  isServerLess(): boolean {
+    return environment.serverless;
+  }
+  
   logout() {
     this.authService.logout();
   }

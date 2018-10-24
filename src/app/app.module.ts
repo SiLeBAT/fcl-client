@@ -22,6 +22,7 @@ import {DialogActionsComponent} from './dialog/dialog-actions/dialog-actions.com
 import {DialogAlertComponent} from './dialog/dialog-alert/dialog-alert.component';
 import {DialogPromptComponent} from './dialog/dialog-prompt/dialog-prompt.component';
 import {DialogSelectComponent} from './dialog/dialog-select/dialog-select.component';
+import {DialogSingleSelectComponent} from './dialog/dialog-single-select/dialog-single-select.component';
 import {StationPropertiesComponent} from './dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent} from './dialog/delivery-properties/delivery-properties.component';
 
@@ -60,6 +61,7 @@ import { MainDashComponent } from './main-dash/main-dash.component';
     DialogAlertComponent,
     DialogPromptComponent,
     DialogSelectComponent,
+    DialogSingleSelectComponent,
     StationPropertiesComponent,
     DeliveryPropertiesComponent,
     LoginComponent,
@@ -117,6 +119,7 @@ import { MainDashComponent } from './main-dash/main-dash.component';
     DialogAlertComponent,
     DialogPromptComponent,
     DialogSelectComponent,
+    DialogSingleSelectComponent,
     StationPropertiesComponent,
     DeliveryPropertiesComponent
   ]
