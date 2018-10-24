@@ -1031,6 +1031,16 @@ export class GraphComponent implements OnInit {
           this.callChangeFunction();
             
         }
+      }, {
+        name: 'Collapse Isolated Clouds',
+        enabled: true,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseIsolatedClouds();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
       }
     ];
   }

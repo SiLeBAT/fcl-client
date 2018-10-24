@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Connection, DeliveryData, FclElements, ObservedType, Position, StationData, GroupMode, GroupType} from '../util/datatypes';
 import {Utils} from '../util/utils';
 import * as _ from 'lodash';
+import { initChangeDetectorIfExisting } from '@angular/core/src/render3/instructions';
 
 interface LinkGroup {
   linkStation: StationData,
@@ -12,6 +13,10 @@ interface LinkGroup {
 }
 interface GroupNamingFun {
   (linkGroup: LinkGroup, groupNumber: number ): string
+}
+interface IsolatedComponent {
+  ids: string[],
+  support: string[]
 }
 class SimpleGraph {
   private incomings: number[][];
@@ -224,7 +229,8 @@ export class TracingService {
     this.expandStationsInternal(Array.from(oldGroups.keys()));
     
     // for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.ISOLATED_GROUP, null);  // es6 target syntax
-    for(const groupId in newGroups) this.mergeStationsInternal(newGroups.get(groupId), groupId, GroupType.ISOLATED_GROUP, null);
+    newGroups.forEach((memberIds: string[], groupId: string) => this.mergeStationsInternal(memberIds, groupId, GroupType.ISOLATED_GROUP, null));
+    //for(const groupId in newGroups) this.mergeStationsInternal(newGroups.get(groupId), groupId, GroupType.ISOLATED_GROUP, null);
 
     this.updateTrace();
     this.updateScores();
@@ -446,20 +452,22 @@ export class TracingService {
     const nonBlockingGroupTypes: Set<GroupType> = new Set([GroupType.ISOLATED_GROUP, GroupType.SIMPLE_CHAIN, GroupType.SOURCE_GROUP, GroupType.TARGET_GROUP]);
     const invisibleStationIds: Set<string> = new Set(this.data.stations.filter(s=>s.invisible).map(s=>s.id));
     const blockedIds: Set<string> = new Set([...[].concat(...this.data.stations.filter(s=>(s.contains!=null && s.contains.length>0) && (s.groupType==null || !nonBlockingGroupTypes.has(s.groupType))).map(s=>s.contains)),
-                                             ...Array.from(invisibleStationIds),
+                                             //...Array.from(invisibleStationIds),
                                              ...this.data.stations.filter(s=>(s.contains!=null && s.contains.length>0) && (s.groupType==null || !nonBlockingGroupTypes.has(s.groupType))).map(s=>s.id)]);
 
     const inNodes: Map<string, string[]> = new Map();
 		const outNodes: Map<string, string[]> = new Map();
 		for(const delivery of this.data.deliveries.filter(d=>!d.invisible)) {
-      if(delivery.originalSource!=delivery.originalTarget && !invisibleStationIds.has(delivery.originalTarget) && !invisibleStationIds.has(delivery.originalSource)) { 
+      const target: string = blockedIds.has(delivery.originalTarget)?delivery.target:delivery.originalTarget;
+      const source: string = blockedIds.has(delivery.originalSource)?delivery.source:delivery.originalSource;
+      if(source!=target && !invisibleStationIds.has(target) && !invisibleStationIds.has(source)) { 
         //if(!blockedIds.has(delivery.originalTarget)) {
-          if(inNodes.has(delivery.originalTarget)) inNodes.get(delivery.originalTarget).push(delivery.originalSource); 
-          else inNodes.set(delivery.originalTarget, [delivery.originalSource]);
+          if(inNodes.has(target)) inNodes.get(target).push(source); 
+          else inNodes.set(target, [source]);
         //}
         //if(!blockedIds.has(delivery.originalSource)) {
-          if(outNodes.has(delivery.originalSource)) outNodes.get(delivery.originalSource).push(delivery.originalTarget); 
-          else outNodes.set(delivery.originalSource, [delivery.originalTarget]);
+          if(outNodes.has(source)) outNodes.get(source).push(target); 
+          else outNodes.set(source, [target]);
         //}
       }
     }
@@ -467,15 +475,53 @@ export class TracingService {
     inNodes.forEach((idSources: string[], idTarget: string) => inNodes.set(idTarget, _.uniq(idSources)));
     outNodes.forEach((idTargets: string[], idSource: string) => outNodes.set(idSource, _.uniq(idTargets)));
 
-    const stationsWithDownstreamWeight: Set<string> = new Set([...this.data.stations.filter(s=>!s.invisible && s.outbreak).map(s=>s.id),
-      _.uniq([].concat(this.data.deliveries.filter(d=>!d.invisible && d.weight>0).map(d=>[d.originalSource, d.source])).filter(id=>!invisibleStationIds.has(id)))]);
+    const notIsolatedStationIds1: Set<string> = new Set(this.data.stations.filter(s=>!s.invisible && s.outbreak).map(s=>s.id));
+    const notIsolatedStationIds2: Set<string> = new Set(_.uniq(this.data.deliveries.filter(d=>!d.invisible && d.weight>0).map(d=>blockedIds.has(d.originalSource)?d.source:d.originalSource).filter(id=>!invisibleStationIds.has(id))));
+    const notIsolatedStationIds: Set<string> = new Set([...this.data.stations.filter(s=>!s.invisible && s.outbreak).map(s=>s.id),
+      ..._.uniq(this.data.deliveries.filter(d=>!d.invisible && d.weight>0).map(d=>blockedIds.has(d.originalSource)?d.source:d.originalSource).filter(id=>!invisibleStationIds.has(id)))]);
 
-    let currentStations: string[] =  Array.from(stationsWithDownstreamWeight);
-    /*while(currentStations.length>0) {
-      currentStations = currentStations.map(id)
+    let currentStations: string[] =  Array.from(notIsolatedStationIds);
+    while(currentStations.length>0) {
+      currentStations = _.uniq([].concat(...currentStations.map(id=>inNodes.get(id))).filter(id=>id!=null)).filter(id=>!notIsolatedStationIds.has(id));
+      currentStations.forEach(id => notIsolatedStationIds.add(id));
     }
 
-    const ignoredGroupTypes: Set<GroupType> = new Set([GroupType.SIMPLE_CHAIN, GroupType.SOURCE_GROUP, GroupType.TARGET_GROUP, GroupType.ISOLATED_GROUP]);
+    let tmp: number = notIsolatedStationIds1.size + notIsolatedStationIds2.size;
+    tmp++;
+    const traverseStationIds: Set<string> = new Set(this.data.stations.filter(s=>!s.invisible && (s.contains==null || s.contains.length==0) && !blockedIds.has(s.id) && !notIsolatedStationIds.has(s.id)).map(s=>s.id));
+    const supportIds: Set<string> = new Set([...Array.from(blockedIds), ...Array.from(notIsolatedStationIds)]);
+    const isolatedComponents: IsolatedComponent[] = [];
+    for(const id of Array.from(traverseStationIds)) {
+      const isolatedComponentIds: string[] = [];
+      let componentSupportIds: string[] = [];
+      this.traverseIsolatedComponent(id, isolatedComponentIds, componentSupportIds, traverseStationIds, supportIds, inNodes, outNodes );
+      if(isolatedComponentIds.length>0) {
+        componentSupportIds = _.uniq(componentSupportIds);
+        componentSupportIds.sort();
+        isolatedComponents.push({ ids: isolatedComponentIds, support: componentSupportIds})
+      }
+    }
+    const compareIsolatedComponents = (a: IsolatedComponent,b: IsolatedComponent)=>{
+      if(a.support.length<b.support.length) return -1;
+      else if(a.support.length>b.support.length) return 1;
+      for(let i: number = a.support.length-1; i>=0; i--) {
+        if(a.support[i]<b.support[i]) return -1;
+        if(a.support[i]>b.support[i]) return -1;
+      }
+      return 0;
+    }; 
+    isolatedComponents.sort(compareIsolatedComponents);
+    if(isolatedComponents.length>0) {
+      let newGroupIds: string[] = isolatedComponents[isolatedComponents.length-1].ids;
+      for(let iC: number = isolatedComponents.length-2; iC>=0; iC--) {
+        if(compareIsolatedComponents(isolatedComponents[iC],isolatedComponents[iC+1])!=0) {
+          result.set('IG:' + (result.size+1).toString(), newGroupIds);
+          newGroupIds = isolatedComponents[iC].ids;
+        } else newGroupIds = newGroupIds.concat(isolatedComponents[iC].ids);
+      }
+      result.set('IG:' + (result.size+1).toString(), newGroupIds);
+    }
+    /*const ignoredGroupTypes: Set<GroupType> = new Set([GroupType.SIMPLE_CHAIN, GroupType.SOURCE_GROUP, GroupType.TARGET_GROUP, GroupType.ISOLATED_GROUP]);
     const ignoredGroupMembers: Set<string> = new Set([].concat(...this.data.stations.filter(s=>ignoredGroupTypes.has(s.groupType)).map(s=>s.contains)));
 
     let startStations: StationData[] = this.data.stations.filter(s=>!s.invisible && s.outbreak);
@@ -496,6 +542,17 @@ export class TracingService {
     //const notIsolatedStationIds: Set<string> = this.data.stations.filter(s=>s.outbreak && !s.invisible && (s.contains==null || s.contains.length==0 || !oldGroups.has(s.id))).concat(this.data.deliveries.filter(d=>!d.invisible && d.weight>0).map(d=>d.originalSource))
     */
     return result;
+  }
+  private traverseIsolatedComponent(id: string, componentIds: string[], componentSupportIds: string[], traverseIds: Set<string>, supportIds: Set<string>, inNodes: Map<string,string[]>, outNodes: Map<string,string[]>) {
+    if(traverseIds.has(id)) {
+      traverseIds.delete(id);
+      componentIds.push(id);
+      const f = (a: string[])=>a==null?[]:a;
+      for(const linkId of _.uniq(f(inNodes.get(id)).concat(f(outNodes.get(id))))) {
+        if(supportIds.has(linkId)) componentSupportIds.push(linkId);
+        else this.traverseIsolatedComponent(linkId, componentIds, componentSupportIds, traverseIds, supportIds, inNodes, outNodes);
+      }
+    }
   }
 
   private extractNewGroups(map: Map<string, LinkGroup>, namingFun: GroupNamingFun): Map<string, string[]> {
