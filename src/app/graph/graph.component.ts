@@ -60,6 +60,10 @@ export class GraphComponent implements OnInit {
   @ViewChild('deliveryMenuTrigger', {read: ElementRef}) deliveryMenuTriggerElement: ElementRef;
   @ViewChild('layoutMenuTrigger') layoutMenuTrigger: MatMenuTrigger;
   @ViewChild('layoutMenuTrigger', {read: ElementRef}) layoutMenuTriggerElement: ElementRef;
+  @ViewChild('collapseMenuTrigger') collapseMenuTrigger: MatMenuTrigger;
+  @ViewChild('collapseMenuTrigger', {read: ElementRef}) collapseMenuTriggerElement: ElementRef;
+  @ViewChild('uncollapseMenuTrigger') uncollapseMenuTrigger: MatMenuTrigger;
+  @ViewChild('uncollapseMenuTrigger', {read: ElementRef}) uncollapseMenuTriggerElement: ElementRef;
   @ViewChild('traceMenuTrigger') traceMenuTrigger: MatMenuTrigger;
   @ViewChild('traceMenuTrigger', {read: ElementRef}) traceMenuTriggerElement: ElementRef;
 
@@ -67,6 +71,8 @@ export class GraphComponent implements OnInit {
   stationMenuActions = this.createStationActions(null);
   deliveryMenuActions = this.createDeliveryActions(null);
   layoutMenuActions = this.createLayoutActions();
+  collapseMenuActions = this.createCollapseActions();
+  uncollapseMenuActions = this.createUncollapseActions();
   traceMenuActions = this.createTraceActions(null);
 
   showZoom = Constants.DEFAULT_GRAPH_SHOW_ZOOM;
@@ -971,7 +977,17 @@ export class GraphComponent implements OnInit {
           this.updateAll();
           this.callChangeFunction();
         }
-      }, {
+      },
+      {
+        name: 'Collapse ',
+        enabled: true,
+        action: event => Utils.openMenu(this.collapseMenuTrigger, this.collapseMenuTriggerElement, this.getCyCoordinates(event))
+      },
+      {
+        name: 'Uncollapse ',
+        enabled: true,
+        action: event => Utils.openMenu(this.uncollapseMenuTrigger, this.uncollapseMenuTriggerElement, this.getCyCoordinates(event))
+      }/*, {
         name: 'Collapse Sources',
         enabled: true,
         action: () => {
@@ -1041,7 +1057,7 @@ export class GraphComponent implements OnInit {
           this.callChangeFunction();
             
         }
-      }
+      }*/
     ];
   }
 
@@ -1194,6 +1210,122 @@ export class GraphComponent implements OnInit {
             this.traceMenuActions = this.createTraceActions(edge);
             Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
           }
+        }
+      }
+    ];
+  }
+
+  protected createCollapseActions(): MenuAction[] {
+    return [
+      {
+        name: 'Collapse Sources',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseSourceStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Targets',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseTargetStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Simple Chains',
+        enabled: true,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseSimpleChains();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
+      }, {
+        name: 'Collapse Isolated Clouds',
+        enabled: true,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseIsolatedClouds();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
+      }
+    ];
+  }
+
+  protected createUncollapseActions(): MenuAction[] {
+    return [
+      {
+        name: 'Uncollapse Sources',
+        enabled: true,
+        action: () => {
+          this.tracingService.uncollapseSourceStations();
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Uncollapse Targets',
+        enabled: true,
+        action: () => {
+          this.tracingService.uncollapseTargetStations();
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Uncollapse Simple Chains',
+        enabled: true,
+        action: () => {
+          //this.updateOverlay();
+          this.tracingService.uncollapseSimpleChains();
+          this.updateAll();
+          this.callChangeFunction(); 
+        }
+      }, {
+        name: 'Uncollapse Isolated Clouds',
+        enabled: true,
+        action: () => {
+          //this.updateOverlay();
+          this.tracingService.uncollapseIsolatedClouds();
+          this.updateAll();
+          this.callChangeFunction();
         }
       }
     ];
