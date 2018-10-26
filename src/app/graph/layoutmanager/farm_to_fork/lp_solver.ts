@@ -75,6 +75,7 @@ export class LPModel {
         else text+= ' +' + this.model['variables'][varName][objectiveName] + ' ' + varName;
       }
     }
+    console.log(text);
   }
 
 
@@ -92,6 +93,10 @@ export class LPResult {
     this.vars = new Map();
     for(const varName of lpModel.getVariableNames()) {
       this.vars.set(varName, result[varName.toString()]);
+      if(isNaN(result[varName.toString()])) {
+        const tmp = result[varName.toString()];
+        console.log('LP result yielded NaN for var ' + varName);
+      }
     }
   }
 }

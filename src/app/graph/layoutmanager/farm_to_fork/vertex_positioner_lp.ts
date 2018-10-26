@@ -50,20 +50,23 @@ class VertexPositionerLP {
       
       const lpResult: LPResult = lpSolve(lpModel);
       //console.clear();
-      //lpModel.printConstraints(lpResult);
+      lpModel.printObjective();
+      lpModel.printConstraints(lpResult);
       
       const nLayers: number = layers.length;
       const layerDistance: number = width/(1.0 + (nLayers-1));
       //const vertexDistance: number = height*0.9/Math.max(...(layers.map(layer => {return layer.length})));
       const bottomMargin = 0.0; //height*0.05;
       const rightMargin = 0.0; //layerDistance/2;
-      const scale: number = height/lpResult.vars.get('maxSize');
+      const maxSize: number = lpResult.vars.get('maxSize');
+      const scale: number = height/maxSize;
 
       let x: number = rightMargin;
       for(let layer of layers) {
         let y: number = bottomMargin;
         for(let vertex of layer) {
-          vertex.y = lpResult.vars.get('P' + vertex.index.toString())*scale;
+          const solverValue: number = lpResult.vars.get('P' + vertex.index.toString());
+          vertex.y = (isNaN(solverValue)?Math.random()*maxSize:solverValue*scale);
           vertex.x = x;
           //y+= vertexDistance;
         }

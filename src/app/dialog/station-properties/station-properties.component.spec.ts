@@ -1,5 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MD_DIALOG_DATA, MdDialogModule, MdDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material';
 
 import {StationPropertiesComponent, StationPropertiesData} from './station-properties.component';
 
@@ -11,7 +11,7 @@ describe('StationPropertiesComponent', () => {
     const data: StationPropertiesData = {
       station: {
         id: null, name: null, lat: null, lon: null, incoming: [], outgoing: [], connections: [], invisible: null, contained: null,
-        contains: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null,
+        contains: null, groupType: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null,
         score: null, commonLink: null, position: null, positionRelativeTo: null, properties: []
       },
       deliveries: new Map(),
@@ -20,11 +20,11 @@ describe('StationPropertiesComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [MdDialogModule],
+      imports: [MatDialogModule],
       declarations: [StationPropertiesComponent],
       providers: [
-        {provide: MdDialogRef, useValue: {updatePosition: () => void(0)}},
-        {provide: MD_DIALOG_DATA, useValue: data}
+        {provide: MatDialogRef, useValue: {updatePosition: () => void(0)}},
+        {provide: MAT_DIALOG_DATA, useValue: data}
       ]
     }).compileComponents().then();
   }));

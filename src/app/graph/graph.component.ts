@@ -319,8 +319,9 @@ export class GraphComponent implements OnInit {
 
   private createNodes(): CyNode[] {
     const nodes: CyNode[] = [];
-
+    console.log('createNodes:');
     for (const s of this.data.stations) {
+      console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
       if (!s.contained && !s.invisible) {
         nodes.push({
           group: 'nodes',
@@ -421,11 +422,20 @@ export class GraphComponent implements OnInit {
   }
 
   private updateAll() {
+    const containerMap: Map<string, string> = new Map();
+    for (const s of this.data.stations) if(s.contains!=null) for(const id of s.contains) containerMap.set(id, s.id);
+
+    console.log('updateAll:');
+    for (const s of this.data.stations) console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
+      
     for (const s of this.data.stations) {
       if (!s.contained && s.positionRelativeTo != null) {
         s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
         s.positionRelativeTo = null;
-      } else if (s.position == null && s.contains != null) {
+      } else if (s.contained && s.positionRelativeTo != null &&  s.positionRelativeTo != containerMap.get(s.id)) {
+        s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
+        s.positionRelativeTo = null;
+      } else  if (s.position == null && s.contains != null) {
         for (const contained of this.tracingService.getStationsById(s.contains)) {
           if (contained.positionRelativeTo != null) {
             contained.position = Utils.sum(this.cy.getElementById(contained.positionRelativeTo).position(), contained.position);

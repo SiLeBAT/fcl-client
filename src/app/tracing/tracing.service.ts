@@ -188,8 +188,8 @@ export class TracingService {
     const newToOldGroupMap: Map<string, string> = this.mapNewGroupsToOldGroups(newGroups, oldGroups);
     const oldPositions: Map<string, Position> = this.getPositionOfStations(Array.from(newToOldGroupMap.values()));
     
-    console.log('Datatcollecttime: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
-    dateStart = new Date();
+    //console.log('Datatcollecttime: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    //dateStart = new Date();
     this.expandStationsInternal(Array.from(oldGroups.keys()));
     
     //for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.SOURCE_GROUP, oldPositions.get(newToOldGroupMap.get(groupId))); //es6 syntax
@@ -197,13 +197,13 @@ export class TracingService {
     newGroups.forEach((memberIds: string[], groupId: string) => {
       this.mergeStationsInternal(newGroups.get(groupId), groupId, GroupType.SOURCE_GROUP, oldPositions.get(newToOldGroupMap.get(groupId)));
     });
-    console.log('expand + merge: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
-    dateStart = new Date();
+    //console.log('expand + merge: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    //dateStart = new Date();
     this.updateTrace();
-    console.log('updateTrace: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    //console.log('updateTrace: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
     dateStart = new Date();
     this.updateScores();
-    console.log('updateScores: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
+    //console.log('updateScores: ' + this.getElapsedTime(dateStart, new Date()).toString() + ' ms');
   }
 
   uncollapseSourceStations() {
@@ -524,7 +524,7 @@ export class TracingService {
       const traverseStationIds: Set<string> = new Set(this.data.stations.filter(s=>!s.invisible && (s.contains==null || s.contains.length==0) && !blockedIds.has(s.id) && !notIsolatedStationIds.has(s.id)).map(s=>s.id));
       const supportIds: Set<string> = new Set([...Array.from(blockedIds), ...Array.from(notIsolatedStationIds)]);
       const isolatedComponents: IsolatedComponent[] = [];
-      console.log('TraversingIds: ' + Array.from(traverseStationIds));
+      // console.log('TraversingIds: ' + Array.from(traverseStationIds));
       for(const id of Array.from(traverseStationIds)) {
         const isolatedComponentIds: string[] = [];
         let componentSupportIds: string[] = [];
@@ -545,8 +545,8 @@ export class TracingService {
         return 0;
       }; 
       isolatedComponents.sort(compareIsolatedComponents);
-      console.log('IsolatedComponents: ');
-      isolatedComponents.forEach(isoComp => console.log('ids: ' + isoComp.ids + ', support: ' + isoComp.support));
+      //console.log('IsolatedComponents: ');
+      //isolatedComponents.forEach(isoComp => console.log('ids: ' + isoComp.ids + ', support: ' + isoComp.support));
       if(isolatedComponents.length>0) {
         let groupMemberIds: string[] = isolatedComponents[isolatedComponents.length-1].ids;
         for(let iC: number = isolatedComponents.length-2; iC>=0; iC--) {
@@ -791,13 +791,13 @@ export class TracingService {
         this.stationsById.delete(id);
         this.data.stations.splice(this.data.stations.indexOf(station), 1);
         
-        for(const containedStation of this.getStationsById(station.contains)) {
+        /*for(const containedStation of this.getStationsById(station.contains)) {
           containedStation.contained = false;
           for(const delivery of this.getDeliveriesById(containedStation.incoming)) delivery.target=containedStation.id;
           for(const delivery of this.getDeliveriesById(containedStation.outgoing)) delivery.source=containedStation.id;
-        }
+        }*/
         
-        /*for (const containedId of station.contains) {
+        for (const containedId of station.contains) {
           this.stationsById.get(containedId).contained = false;
         }
         
@@ -809,7 +809,7 @@ export class TracingService {
           if (d.target === id) {
             d.target = d.originalTarget;
           }
-        });*/
+        });
       }
     }
     
