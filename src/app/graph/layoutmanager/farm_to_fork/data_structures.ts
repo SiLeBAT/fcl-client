@@ -84,6 +84,8 @@ export class Vertex {
   private indexInLayer: number;
   typeCode: number;
   isVirtual: boolean = false;
+  bottomMargin: number;
+  topMargin: number;
   constructor() {}
   setIndexInLayer(value: number) {
     if(value==null) {

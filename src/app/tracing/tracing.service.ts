@@ -246,7 +246,9 @@ export class TracingService {
     const newGroups: Map<string, string[]> =  this.getNewIsolatedGroups(oldGroups);
     
     //this.expandStationsInternal(Array.from(oldGroups.keys()));
-    this.expandStationsInternal(this.getContainingStationsIds([].concat(Array.from(newGroups.values()))));
+    //const tmp: string[] = this.getContainingStationsIds([].concat(...Array.from(newGroups.values())));
+    //const tmpn: string[] = this.getStationsById(tmp).map(s=>s.name);
+    this.expandStationsInternal(this.getContainingStationsIds([].concat(...Array.from(newGroups.values()))));
     
     // for(const [groupId, memberIds] of newGroups) this.mergeStationsInternal(memberIds, groupId, GroupType.ISOLATED_GROUP, null);  // es6 target syntax
     newGroups.forEach((memberIds: string[], groupId: string) => this.mergeStationsInternal(memberIds, groupId, GroupType.ISOLATED_GROUP, null));

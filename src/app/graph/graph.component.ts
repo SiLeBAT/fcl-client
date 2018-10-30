@@ -817,7 +817,7 @@ export class GraphComponent implements OnInit {
   
   
   private createStyle(): any {
-    return this.createHugeGraphStyle();
+    return this.createSmallGraphStyle();
     /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
       
@@ -1350,7 +1350,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Farm-to-fork',
         enabled: true,
-        action: () => this.cy.layout({name: 'farm_to_fork'}).run()
+        action: () => this.cy.layout({name: 'farm_to_fork', options: {nodeSize: this.nodeSize}}).run()
       }, {
         name: 'Constraint-Based',
         enabled: true,

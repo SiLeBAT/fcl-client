@@ -6,7 +6,7 @@ import {lpSolve, LPModel, LPResult} from './lp_solver';
 
 export function positionVertices(layers: Vertex[][], width: number, height: number) {
   let vertexPositioner: VertexPositionerLP = new VertexPositionerLP();
-  vertexPositioner.positionVertices(layers, height, width);
+  vertexPositioner.positionVertices(layers, width, height);
 }
 
 class VertexPositionerLP {
@@ -66,7 +66,8 @@ class VertexPositionerLP {
         let y: number = bottomMargin;
         for(let vertex of layer) {
           const solverValue: number = lpResult.vars.get('P' + vertex.index.toString());
-          vertex.y = (isNaN(solverValue)?Math.random()*maxSize:solverValue*scale);
+          vertex.y = solverValue*scale;
+          //vertex.y = (isNaN(solverValue)?Math.random()*maxSize:solverValue*scale);
           vertex.x = x;
           //y+= vertexDistance;
         }
@@ -220,11 +221,16 @@ class VertexPositionerLP {
       } else {
         if(vertexA.isVirtual) return MIN_NODE_TO_EDGE_DIST;
         if(this.shareVerticesAParent(vertexA, vertexB)) return MIN_SIBLING_DIST;
+        if(this.shareVerticesAChild(vertexA, vertexB)) return MIN_SIBLING_DIST;
         return MIN_NONSIBLING_DIST;
       }
     }
     
     shareVerticesAParent(vertexA: Vertex, vertexB: Vertex): boolean {
       return _.intersection(vertexA.inEdges.map(e => e.source.index), vertexB.inEdges.map(e => e.source.index)).length>0;
+    }
+
+    shareVerticesAChild(vertexA: Vertex, vertexB: Vertex): boolean {
+      return _.intersection(vertexA.outEdges.map(e => e.target.index), vertexB.outEdges.map(e => e.target.index)).length>0;
     }
   }

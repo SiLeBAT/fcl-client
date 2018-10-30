@@ -47,12 +47,17 @@ class FarmToForkLayoutClass {
     const graph = new Graph();
     const vertices: Map<string, Vertex> = new Map();
     const typeRanker: BusinessTypeRanker = new BusinessTypeRanker([],[],[]);
-    
+    let tmpH: [number, number] = [100000,-100000];
+    let tmpV: [number, number] = [100000,-100000];
     cy.nodes().forEach(node => {
       let v: Vertex = new Vertex;
       v.typeCode = typeRanker.getBusinessTypeCode(node['data']['typeOfBusiness']);
+      v.topMargin = node.height()/2;
+      v.bottomMargin = v.topMargin;
       vertices.set(node.id(), v);
       graph.insertVertex(v);
+      tmpH = [Math.min(node.data('position').x, tmpH[0]), Math.max(node.data('position').x, tmpH[1])];
+      tmpV = [Math.min(node.data('position').y, tmpV[0]), Math.max(node.data('position').y, tmpV[1])];
     });
     
     cy.edges().forEach(edge => {

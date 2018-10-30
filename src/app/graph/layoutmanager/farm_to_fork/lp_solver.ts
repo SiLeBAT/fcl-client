@@ -13,18 +13,23 @@ export function lpSolve(model: LPModel): LPResult {
 }
 
 export class LPModel {
-  private variables: String[];
+  private variables: string[] = [];
   private model: any = {'variables': {}, 'constraints': {}, 'optimize': 'objective'};
   private constraintCount: number = 0;
+  private constraintsLabelMap: Map<string,string> = new Map();
+  private constraintIds: string[] = [];
 
   constructor() {}
   
-  addConstraint(constraintName: string, b: number, constraint: Object) {
+  addConstraint(constraintLabel: string, b: number, constraint: Object) {
     //const constId = (++this.constraintCount).toString();
-    this.model['constraints'][constraintName] = {'max': b};
+    const constraintId: string = 'C' + (++this.constraintCount).toString();
+    this.constraintsLabelMap.set(constraintLabel, constraintId);
+    this.constraintIds.push(constraintId);
+    this.model['constraints'][constraintId] = {'max': b};
     for (const varName of Object.getOwnPropertyNames(constraint)) {
       if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
-      this.model['variables'][varName][constraintName] = constraint[varName];
+      this.model['variables'][varName][constraintId] = constraint[varName];
     }
   }
   setObjective(opType: String, objective: Object) {
@@ -95,7 +100,8 @@ export class LPResult {
       this.vars.set(varName, result[varName.toString()]);
       if(isNaN(result[varName.toString()])) {
         const tmp = result[varName.toString()];
-        console.log('LP result yielded NaN for var ' + varName);
+        console.log('LP result yielded NaN for var ' + varName + '. Reset to 0.');
+        this.vars.set(varName, 0);
       }
     }
   }
