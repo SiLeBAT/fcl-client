@@ -86,6 +86,7 @@ export class Vertex {
   isVirtual: boolean = false;
   bottomMargin: number;
   topMargin: number;
+  isCompressed: boolean = false;
   constructor() {}
   setIndexInLayer(value: number) {
     if(value==null) {
@@ -98,6 +99,14 @@ export class Vertex {
   }
 }
 
+export enum CompressionType {
+  SourceCompression = 0 as number,
+  TargetCompression = 1 as number
+}
+export class CompressedVertexGroup {
+  compressedVertices: Vertex[];
+  type: CompressionType;
+}
 export class Edge {
   /*source: Vertex;
   target: Vertex;
