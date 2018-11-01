@@ -100,13 +100,14 @@ export class Vertex {
 }
 
 export enum CompressionType {
-  SourceCompression = 0 as number,
-  TargetCompression = 1 as number
+  SOURCE_COMPRESSION = 0 as number,
+  TARGET_COMPRESSION = 1 as number,
+  SIMPLE_CONNECTED_COMPONENT = 2 as number
 }
-export class CompressedVertexGroup {
-  compressedVertices: Vertex[];
-  type: CompressionType;
+export class CompressedVertexGroup extends Vertex {
+  constructor(public compressedVertices: Vertex[], public compressionType: CompressionType) {super()}  
 }
+
 export class Edge {
   /*source: Vertex;
   target: Vertex;
