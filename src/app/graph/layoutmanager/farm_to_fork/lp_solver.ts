@@ -21,12 +21,14 @@ export class LPModel {
 
   constructor() {}
   
-  addConstraint(constraintLabel: string, b: number, constraint: Object) {
+  addConstraint(constraintLabel: string, min: number, max: number, constraint: Object) {
     //const constId = (++this.constraintCount).toString();
     const constraintId: string = 'C' + (++this.constraintCount).toString();
     this.constraintsLabelMap.set(constraintLabel, constraintId);
     this.constraintIds.push(constraintId);
-    this.model['constraints'][constraintId] = {'max': b};
+    this.model['constraints'][constraintId] = {}; //{'max': b};
+    if(min!=null) this.model['constraints'][constraintId]['min'] = min;
+    if(max!=null) this.model['constraints'][constraintId]['max'] = max;
     for (const varName of Object.getOwnPropertyNames(constraint)) {
       if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
       this.model['variables'][varName][constraintId] = constraint[varName];
@@ -40,11 +42,17 @@ export class LPModel {
       this.model['variables'][varName]['objective'] = objective[varName];
     }
   }
+  setBinaryVariables(vars: string[]) {
+    const binaries = {};
+    for(const varName of vars) binaries[varName] = 1;
+    this.model['binaries'] = binaries;
+  }
   setObjectiveCoefficient(varName: string, coeff: number) {
     if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
     this.model['variables'][varName]['objective'] = coeff;
   }
   
+
   getModel(): any {
     return this.model;
   }

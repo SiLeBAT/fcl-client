@@ -7,6 +7,8 @@ import {assignLayers} from './layer_assigner';
 import {sortVertices} from './vertex_sorter';
 import {positionVertices} from './vertex_positioner_lp';
 import {BusinessTypeRanker} from './business_type_ranker';
+import {scaleToSize } from './shared';
+import {sortAndPosition} from './vertex_sorter_and_positioner';
 
 export function FarmToForkLayout(options) {
   this.options = options;
@@ -52,21 +54,23 @@ class FarmToForkLayoutClass {
     cy.nodes().forEach(node => {
       let v: Vertex = new Vertex;
       v.typeCode = typeRanker.getBusinessTypeCode(node['data']['typeOfBusiness']);
-      v.topMargin = node.height()/2;
-      v.bottomMargin = v.topMargin;
+      v.size = node.height();
+      //v.topMargin = node.height()/2;
+      //v.bottomMargin = v.topMargin;
       vertices.set(node.id(), v);
       graph.insertVertex(v);
       tmpH = [Math.min(node.data('position').x, tmpH[0]), Math.max(node.data('position').x, tmpH[1])];
       tmpV = [Math.min(node.data('position').y, tmpV[0]), Math.max(node.data('position').y, tmpV[1])];
     });
     
+    const vertexDistance: number = Math.min(...graph.vertices.map(v=>v.size));
     cy.edges().forEach(edge => {
       graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
     
     const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker);
     
-    layoutManager.layout(width, height);
+    layoutManager.layout(width, height, vertexDistance);
     
     cy.nodes().layoutPositions(this.layout, this.options, node => {
       const vertex = vertices.get(node.id());
@@ -87,7 +91,7 @@ class FarmToForkLayoutClass {
 class FarmToForkLayouter {
   constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {};
   
-  layout(width: number, height: number) {
+  layout(width: number, height: number, vertexDistance: number) {
     this.simplifyGraph();
     this.correctEdges();
     this.simplifyGraph();
@@ -102,13 +106,15 @@ class FarmToForkLayouter {
     console.log('assignLayers: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
     //removeEdgesWithinLayers(this.graph);
     startTime = new Date();
-    sortVertices(this.graph);
+    sortAndPosition(this.graph, vertexDistance);
+    //sortVertices(this.graph);
     endTime = new Date();
     console.log('sortVertices: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
     startTime = new Date();
-    positionVertices(this.graph.layers, width, height);
+    //positionVertices(this.graph.layers, vertexDistance);
     endTime = new Date();
     console.log('positionVertices: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
+    scaleToSize(this.graph, width, height);
     //this.computePositions();
   }
   

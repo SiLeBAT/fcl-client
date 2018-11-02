@@ -4,106 +4,74 @@ import {BusinessTypeRanker} from './business_type_ranker';
 //import {Solver} from 'javascript-lp-solver';
 import {lpSolve, LPModel, LPResult} from './lp_solver';
 
-export function positionVertices(layers: Vertex[][], width: number, height: number) {
+export function positionVertices(layers: Vertex[][], vertexDistance: number) {
   let vertexPositioner: VertexPositionerLP = new VertexPositionerLP();
-  vertexPositioner.positionVertices(layers, width, height);
+  vertexPositioner.positionVertices(layers, vertexDistance);
 }
 
 class VertexPositionerLP {
   
   constructor() {}
   
-  positionVertices(layers: Vertex[][], width: number, height: number) {
-    
-    
-    /*const model = {
-      "optimize": "capacity",
-      "opType": "max",
-      "constraints": {
-        "plane": {"max": 44},
-        "person": {"max": 512},
-        "cost": {"max": 300000}
-      },
-      "variables": {
-        "brit": {
-          "capacity": 20000,
-          "plane": 1,
-          "person": 8,
-          "cost": 5000
-        },
-        "yank": {
-          "capacity": 30000,
-          "plane": 1,
-          "person": 16,
-          "cost": 9000
-        }
-      }};
-      */
-      //const solver = new Solver();
-      //const result = solver.Solve(model);
-      /*const lpModel: LPModel = new LPModel();
-      lpModel.setObjective('max', {'brit': 20000, 'yank': 30000});
-      lpModel.addConstraint(44, {'brit': 1, 'yank': 1});
-      lpModel.addConstraint(512, {'brit': 8, 'yank': 16});
-      lpModel.addConstraint(300000, {'brit': 5000, 'yank': 9000});*/
-      const lpModel: LPModel = this.constructLPModel(layers);
+  positionVertices(layers: Vertex[][], vertexDistance: number) {
+      const lpModel: LPModel = this.constructLPModel(layers, vertexDistance);
       
       const lpResult: LPResult = lpSolve(lpModel);
       //console.clear();
       lpModel.printObjective();
       lpModel.printConstraints(lpResult);
       
-      const nLayers: number = layers.length;
-      const layerDistance: number = width/(1.0 + (nLayers-1));
+      //const nLayers: number = layers.length;
+      //const layerDistance: number = width/(1.0 + (nLayers-1));
       //const vertexDistance: number = height*0.9/Math.max(...(layers.map(layer => {return layer.length})));
       const bottomMargin = 0.0; //height*0.05;
       const rightMargin = 0.0; //layerDistance/2;
-      const maxSize: number = lpResult.vars.get('maxSize');
-      const scale: number = height/maxSize;
+      //const maxSize: number = lpResult.vars.get('maxSize');
+      //const scale: number = height/maxSize;
 
-      let x: number = rightMargin;
+      //let x: number = rightMargin;
       for(let layer of layers) {
         let y: number = bottomMargin;
         for(let vertex of layer) {
           const solverValue: number = lpResult.vars.get('P' + vertex.index.toString());
-          vertex.y = solverValue*scale;
+          vertex.y = solverValue; //*scale;
           //vertex.y = (isNaN(solverValue)?Math.random()*maxSize:solverValue*scale);
-          vertex.x = x;
+          //vertex.x = x;
           //y+= vertexDistance;
         }
-        x-=layerDistance;
+        //x-=layerDistance;
       }
     }
     
-    constructLPModel(layers: Vertex[][]): LPModel {
+    constructLPModel(layers: Vertex[][], vertexDistance: number): LPModel {
       const lpModel = new LPModel();
       
       lpModel.setObjective('min', {});
       this.addNeighbourRankLinkConstraints(lpModel, layers);
-      this.addPositionConstraints(lpModel, layers);
+      this.addPositionConstraints(lpModel, layers, vertexDistance);
       this.addSlopeConstraints(lpModel, layers);
 
       return lpModel;
     }
     
-    addPositionConstraints(lpModel: LPModel, layers: Vertex[][]) {
+    addPositionConstraints(lpModel: LPModel, layers: Vertex[][], vertexDistance: number) {
       for(let layer of layers) if(layer.length>0) {
         let constraint: Object = {};
         constraint['P' + layer[0].index.toString()] = -1; //pos>=0 // Min position boundary of layer
-        lpModel.addConstraint('MinPosL' + layer[0].layerIndex.toString(), 0,constraint);
+        lpModel.addConstraint('MinPosL' + layer[0].layerIndex.toString(), null, -layer[0].size/2,constraint);
         
         // add miniDistances between neighbours
         for(let iV: number = 1, nV: number = layer.length; iV<nV; iV++) {
           const vertex: Vertex = layer[iV];
           const vertexPrecessor: Vertex = layer[iV-1];
-          const minDistance: number = this.getMinVertexDistance(vertexPrecessor, vertex);
+          const minDistance: number = this.getMinVertexDistance(vertexPrecessor, vertex, vertexDistance);
           constraint = {};
           constraint['P'+ vertex.index.toString()] = -1;
           constraint['P' + vertexPrecessor.index.toString()] = 1;
-          lpModel.addConstraint('VerDis' + vertexPrecessor.index.toString() + '_' + vertex.index.toString(), -minDistance, constraint);
+          lpModel.addConstraint('VerDis' + vertexPrecessor.index.toString() + '_' + vertex.index.toString(), null, -minDistance, constraint);
         }
         // link maxSize with position of last element 
-        lpModel.addConstraint('MaxPosL' + layer[0].layerIndex.toString(), 0, {"maxSize": -1, ['P' + layer[layer.length-1].index.toString()]: 1});
+        lpModel.addConstraint('MaxPosL' + layer[layer.length-1].layerIndex.toString(), null, -layer[layer.length-1].size/2, {"maxSize": -1, ['P' + layer[layer.length-1].index.toString()]: 1});
       }
       lpModel.setObjectiveCoefficient('maxSize',1);
     }
@@ -128,18 +96,18 @@ class VertexPositionerLP {
           if(edge.target===nonVirtualTarget)  constraint['P'+edge.target.index.toString()] = constraint['P'+edge.target.index.toString()] + 1;
           else constraint['P'+edge.target.index.toString()] = 1;
           constraint['DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString()] = -1;
-          lpModel.addConstraint('Slope' + edge.source.index.toString() + '>' + edge.target.index.toString() + '_DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + '>=local-global', 0, constraint);
+          lpModel.addConstraint('Slope' + edge.source.index.toString() + '>' + edge.target.index.toString() + '_DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + '>=local-global', null, 0, constraint);
           
           this.multiplyConstraintWithMinusOne(constraint);
           constraint['DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString()] = -1;
-          lpModel.addConstraint('Slope' + edge.source.index.toString() + '>' + edge.target.index.toString() + '_DS'+ nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + '>=global-local', 0, constraint);
+          lpModel.addConstraint('Slope' + edge.source.index.toString() + '>' + edge.target.index.toString() + '_DS'+ nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + '>=global-local', null, 0, constraint);
 
           if(!edge.target.isVirtual) edge = null;
           else edge = edge.target.outEdges[0];
         }
         let constraint: Object = {};
-        lpModel.addConstraint('DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + ' DS>=Source-target', 0, {['DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString()]: -1, ['P'+nonVirtualSource.index.toString()]: -1, ['P'+nonVirtualTarget.index.toString()]: 1});
-        lpModel.addConstraint('DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + ' DS>=Target-Source', 0, {['DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString()]: -1, ['P'+nonVirtualSource.index.toString()]: 1, ['P'+nonVirtualTarget.index.toString()]: -1});
+        lpModel.addConstraint('DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + ' DS>=Source-target', null, 0, {['DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString()]: -1, ['P'+nonVirtualSource.index.toString()]: -1, ['P'+nonVirtualTarget.index.toString()]: 1});
+        lpModel.addConstraint('DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString() + ' DS>=Target-Source', null, 0, {['DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString()]: -1, ['P'+nonVirtualSource.index.toString()]: 1, ['P'+nonVirtualTarget.index.toString()]: -1});
         lpModel.setObjectiveCoefficient('DS' + nonVirtualSource.index.toString() + '_' + nonVirtualTarget.index.toString(), DS_PENALTY);
       }
     }
@@ -180,10 +148,10 @@ class VertexPositionerLP {
         }
         constraint['P'+vertex.index.toString()] = 1;
         constraint['D'+vertex.index.toString()] = -1;
-        lpModel.addConstraint('InterLayPosLink' + vertex.index.toString() + 'D>=P-wSoN', 0, constraint);
+        lpModel.addConstraint('InterLayPosLink' + vertex.index.toString() + 'D>=P-wSoN', null, 0, constraint);
         for(let key of Object.getOwnPropertyNames(constraint)) constraint[key] = -constraint[key];
         constraint['D'+vertex.index.toString()] = -1;
-        lpModel.addConstraint('InterLayPosLink' + vertex.index.toString() + 'D>=wSoN-P', 0, constraint);
+        lpModel.addConstraint('InterLayPosLink' + vertex.index.toString() + 'D>=wSoN-P', null, 0, constraint);
         
         lpModel.setObjectiveCoefficient('D'+vertex.index.toString(), totalWeight);
       }
@@ -209,20 +177,20 @@ class VertexPositionerLP {
       return [result, span];
     }
     
-    getMinVertexDistance(vertexA: Vertex, vertexB: Vertex): number {
-      const MIN_SIBLING_DIST: number = 1;
-      const MIN_NONSIBLING_DIST: number = 4;
-      const MIN_NODE_TO_EDGE_DIST: number = 2;
-      const MIN_EDGE_TO_EDGE_DIST: number = 1;
+    getMinVertexDistance(vertexA: Vertex, vertexB: Vertex, vertexDistance: number): number {
+      const MIN_SIBLING_DIST: number = vertexDistance*1;
+      const MIN_NONSIBLING_DIST: number = vertexDistance*2;
+      const MIN_NODE_TO_EDGE_DIST: number = vertexDistance*1;
+      const MIN_EDGE_TO_EDGE_DIST: number = vertexDistance/2;
       
       if(vertexB.isVirtual) {
-        if(vertexA.isVirtual) return MIN_EDGE_TO_EDGE_DIST;
-        else return MIN_NODE_TO_EDGE_DIST;
+        if(vertexA.isVirtual) return vertexA.size/2 + MIN_EDGE_TO_EDGE_DIST + vertexB.size/2;
+        else return vertexA.size/2 + MIN_NODE_TO_EDGE_DIST + vertexB.size/2;
       } else {
-        if(vertexA.isVirtual) return MIN_NODE_TO_EDGE_DIST;
-        if(this.shareVerticesAParent(vertexA, vertexB)) return MIN_SIBLING_DIST;
-        if(this.shareVerticesAChild(vertexA, vertexB)) return MIN_SIBLING_DIST;
-        return MIN_NONSIBLING_DIST;
+        if(vertexA.isVirtual) return vertexA.size/2 + MIN_NODE_TO_EDGE_DIST + vertexB.size/2;
+        if(this.shareVerticesAParent(vertexA, vertexB)) return vertexA.size/2 + MIN_SIBLING_DIST + vertexB.size/2;
+        if(this.shareVerticesAChild(vertexA, vertexB)) return vertexA.size/2 + MIN_SIBLING_DIST + vertexB.size/2;
+        return vertexA.size/2 + MIN_NONSIBLING_DIST + vertexB.size/2;
       }
     }
     

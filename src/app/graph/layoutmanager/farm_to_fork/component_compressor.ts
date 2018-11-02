@@ -21,7 +21,7 @@ export function compressSimpleSources(graph: Graph, vertexDistance: number) {
         // the target is connected to at least 2 sources
         const target: Vertex = sources[0].outEdges[0].target;
         const vertexGroup: CompressedVertexGroup = new CompressedVertexGroup(sources, CompressionType.SOURCE_COMPRESSION);
-        
+        graph.insertVertex(vertexGroup);
         vertexGroup.size = - vertexDistance;
         const newEdge: Edge = new Edge(vertexGroup, target, false);
         vertexGroup.outEdges.push(newEdge);
@@ -54,7 +54,7 @@ export function compressSimpleTargets(graph: Graph, vertexDistance: number) {
       if(targets.length>=2) {
         const source: Vertex = targets[0].inEdges[0].source;
         const vertexGroup: CompressedVertexGroup = new CompressedVertexGroup(targets, CompressionType.TARGET_COMPRESSION);
-        
+        graph.insertVertex(vertexGroup);
         vertexGroup.size = - vertexDistance;
         const newEdge: Edge = new Edge(source,vertexGroup, false);
         vertexGroup.inEdges.push(newEdge);

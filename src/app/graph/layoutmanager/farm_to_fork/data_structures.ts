@@ -73,22 +73,19 @@ export class Vertex {
   index: number;
   x: number;
   y: number;
-  //inVertices: number[] = [];
-  //outVertices: number[] = [];
   inEdges: Edge[] = [];
   outEdges: Edge[] = [];
   layerIndex: number;
   weight: number;
-  //nextLayer: Edge[];
-  //previousLayer: Edge[];
-  private indexInLayer: number;
+  indexInLayer: number;
   typeCode: number;
   isVirtual: boolean = false;
   bottomMargin: number;
   topMargin: number;
-  isCompressed: boolean = false;
+  size: number = 0;
+  //isCompressed: boolean = false;
   constructor() {}
-  setIndexInLayer(value: number) {
+  /*setIndexInLayer(value: number) {
     if(value==null) {
       value = value;
     }
@@ -96,7 +93,7 @@ export class Vertex {
   }
   getIndexInLayer(): number {
     return this.indexInLayer;
-  }
+  }*/
 }
 
 export enum CompressionType {
