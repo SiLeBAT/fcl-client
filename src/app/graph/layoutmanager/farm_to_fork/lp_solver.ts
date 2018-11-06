@@ -2,6 +2,7 @@ import * as Solver from 'javascript-lp-solver';
 
 export function lpSolve(model: LPModel): LPResult {
   //var solver = require("javascript-lp-solver");
+  runTestModel();
   const tmp = Solver;
   /*for(let prop of Solver) {
     console.log(prop);
@@ -12,25 +13,44 @@ export function lpSolve(model: LPModel): LPResult {
   return new LPResult(result, model);
 }
 
+function runTestModel() {
+  let model = [
+    "max: 1200 table 1600 dresser",
+    "30 table 20 dresser <= 300",
+    "5 table 10 dresser <= 110",
+    "30 table 50 dresser <= 400",
+    "table <= 5",
+    "2 <= table",
+    "int table",
+    "int dresser",
+  ];
+  const solver = Solver;
+  // Reformat to JSON model              
+  model = solver.ReformatLP(model);
+  const result = solver.Solve(model);
+}
+
 export class LPModel {
   private variables: string[] = [];
   private model: any = {'variables': {}, 'constraints': {}, 'optimize': 'objective'};
   private constraintCount: number = 0;
-  private constraintsLabelMap: Map<string,string> = new Map();
+  private constraintsLabelToIdMap: Map<string,string> = new Map();
+  private constraintIdToLabelMap: Map<string, string> = new Map();
   private constraintIds: string[] = [];
-
+  
   constructor() {}
   
   addConstraint(constraintLabel: string, min: number, max: number, constraint: Object) {
     //const constId = (++this.constraintCount).toString();
     const constraintId: string = 'C' + (++this.constraintCount).toString();
-    this.constraintsLabelMap.set(constraintLabel, constraintId);
+    this.constraintsLabelToIdMap.set(constraintLabel, constraintId);
+    this.constraintIdToLabelMap.set(constraintId, constraintLabel);
     this.constraintIds.push(constraintId);
     this.model['constraints'][constraintId] = {}; //{'max': b};
     if(min!=null) this.model['constraints'][constraintId]['min'] = min;
     if(max!=null) this.model['constraints'][constraintId]['max'] = max;
     for (const varName of Object.getOwnPropertyNames(constraint)) {
-      if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
+      if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {}; //[varName]: 1};
       this.model['variables'][varName][constraintId] = constraint[varName];
     }
   }
@@ -38,43 +58,69 @@ export class LPModel {
     //this.model['optimize'] = 'objective';
     this.model['opType'] = opType;
     for (const varName of Object.getOwnPropertyNames(objective)) {
-      if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
+      if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {}; //[varName]: 1};
       this.model['variables'][varName]['objective'] = objective[varName];
     }
   }
   setBinaryVariables(vars: string[]) {
     const binaries = {};
     for(const varName of vars) binaries[varName] = 1;
-    this.model['binaries'] = binaries;
+    //this.model['binaries'] = binaries; // does not work lp_solver reconginizes binaries but ignores bounds and integer condition
+    // workaround use integers instead
+    
+    this.model['ints'] = binaries;
+
+    for(const varName of vars) {
+      if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {[varName]: 1}
+      else this.model['variables'][varName][varName] = 1;
+      this.addConstraint('BinCon' + varName + ':', 0, 1, {[varName]: 1});
+    }
   }
   setObjectiveCoefficient(varName: string, coeff: number) {
-    if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {};
+    if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {[varName]: 1};
     this.model['variables'][varName]['objective'] = coeff;
   }
   
-
+  
   getModel(): any {
     return this.model;
   }
-
+  
   getVariableNames(): String[] {
-   return  Object.getOwnPropertyNames(this.model['variables']);
+    return  Object.getOwnPropertyNames(this.model['variables']);
   }
-
+  
   printConstraints(lpResult: LPResult) {
     //let text: string = '';
     const varNames: string[] = Object.getOwnPropertyNames(this.model['variables']);
     for(const conName of Object.getOwnPropertyNames(this.model['constraints'])) {
-      let text: string = conName + ': ';
+      let conTerm: string = ''; //this.constraintIdToLabelMap.get(conName) + ': ';
       let conValue: number = (lpResult?0.0:null);
       for(const varName of varNames) {
         if(this.model['variables'][varName].hasOwnProperty(conName)) {
-          if(this.model['variables'][varName][conName]<0) text+= ' ' + this.model['variables'][varName][conName].toString() + ' ' + varName;
-          else text+= ' +' + this.model['variables'][varName][conName].toString() + ' ' + varName; 
-          if(lpResult) conValue+= this.model['variables'][varName][conName] * lpResult.vars.get(varName);
+          const conVarCoeff: number = this.model['variables'][varName][conName];
+          
+          if(Math.abs(conVarCoeff)!=1) {
+            if(conVarCoeff<0) conTerm+= ' ' + conVarCoeff.toString() + ' ' + varName;
+            else conTerm+= ' +' + conVarCoeff.toString() + ' ' + varName; 
+          } else conTerm+= ' ' + (conVarCoeff<0?'-':'+') + ' ' + varName; 
+          
+          
+          if(lpResult) {
+            const varValue: number = lpResult.vars.get(varName);
+            conTerm+= '['+ varValue.toString() + ']';
+            conValue+= conVarCoeff * varValue;
+          }
         }
       }
-      text+= (lpResult?' = ' + conValue.toString():'') + ' <= ' + this.model['constraints'][conName]['max'].toString();
+      const conLabel: string = this.constraintIdToLabelMap.get(conName) + ': ';
+      const text: string = conLabel + ' ' + 
+        (this.model['constraints'][conName]['min']!=null ? this.model['constraints'][conName]['min'].toString() + '<=' : '') + 
+        conTerm + 
+        (lpResult?' = ' + conValue.toString():'') +
+        (this.model['constraints'][conName]['max']!=null ? '<=' + this.model['constraints'][conName]['max'].toString() : '');
+
+      //text+= (lpResult?' = ' + conValue.toString():'') + ' <= ' + this.model['constraints'][conName]['max'].toString();
       console.log(text);
     }
   }
@@ -90,8 +136,8 @@ export class LPModel {
     }
     console.log(text);
   }
-
-
+  
+  
 }
 
 export class LPResult {

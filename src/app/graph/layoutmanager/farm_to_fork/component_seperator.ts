@@ -59,7 +59,7 @@ export function splitUnconnectedComponents(layers: Vertex[][]): LayeredComponent
 
 export function mergeUnconnectedComponents(layeredComponents: LayeredComponent[], componentDistance: number): Vertex[][] {
   const result: Vertex[][] = [];
-  const nLayers: number = Math.max(...layeredComponents.map(layeredComponent => layeredComponent.layerIndices[layeredComponent.layerIndices.length-1]));
+  const nLayers: number = Math.max(...layeredComponents.map(layeredComponent => layeredComponent.layerIndices[layeredComponent.layerIndices.length-1]))+1;
   for(let iLayer: number = nLayers-1; iLayer>=0; iLayer--) result[iLayer] = [];
 
   let offset: number = 0;
@@ -68,13 +68,22 @@ export function mergeUnconnectedComponents(layeredComponents: LayeredComponent[]
     let maxComponentSize: number = 0;
     for(let iLayer: number = layeredComponent.layers.length-1; iLayer>=0; iLayer--) {
       const layer: Vertex[] = result[layeredComponent.layerIndices[iLayer]];
-      maxComponentSize = Math.max(maxComponentSize, layer[layer.length-1].y + layer[layer.length-1].topMargin);
+      //const lastVertexInComponentLayer: Vertex =  layeredComponent.layers[iLayer][layer.length-1]
+      //maxComponentSize = Math.max(maxComponentSize, layeredComponent.layers[iLayer][layer.length-1].y + layer[layer.length-1].size/2);
       for(const vertex of layeredComponent.layers[iLayer]) {
         layer.push(vertex);
         vertex.y+= offset;
       }
+      maxComponentSize = Math.max(maxComponentSize, layer[layer.length-1].y - offset + layer[layer.length-1].size/2 );
     }
     offset+= componentDistance + maxComponentSize;
+  }
+  for(let iLayer: number = nLayers-1; iLayer>=0; iLayer--) {
+    const layer: Vertex[] = result[iLayer];
+    for(let iVertex: number = layer.length-1; iVertex>=0; iVertex--) {
+      layer[iVertex].layerIndex = iLayer;
+      layer[iVertex].indexInLayer = iVertex;
+    }
   }
   return result;
 }

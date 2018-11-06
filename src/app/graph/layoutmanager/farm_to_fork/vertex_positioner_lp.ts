@@ -18,8 +18,8 @@ class VertexPositionerLP {
       
       const lpResult: LPResult = lpSolve(lpModel);
       //console.clear();
-      lpModel.printObjective();
-      lpModel.printConstraints(lpResult);
+      //lpModel.printObjective();
+      //lpModel.printConstraints(lpResult);
       
       //const nLayers: number = layers.length;
       //const layerDistance: number = width/(1.0 + (nLayers-1));
@@ -58,7 +58,7 @@ class VertexPositionerLP {
       for(let layer of layers) if(layer.length>0) {
         let constraint: Object = {};
         constraint['P' + layer[0].index.toString()] = -1; //pos>=0 // Min position boundary of layer
-        lpModel.addConstraint('MinPosL' + layer[0].layerIndex.toString(), null, -layer[0].size/2,constraint);
+        lpModel.addConstraint('MinPosL' + layer[0].layerIndex.toString(), null, -layer[0].size/2, constraint);
         
         // add miniDistances between neighbours
         for(let iV: number = 1, nV: number = layer.length; iV<nV; iV++) {

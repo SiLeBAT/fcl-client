@@ -49,7 +49,7 @@ class LayerAssignment {
       
       for(let i: number = sinks.length-1; i>=0; i--) {
         sinks[i].layerIndex = layers.length; 
-        sinks[i].setIndexInLayer(i);
+        sinks[i].indexInLayer = i;
       }
       layers.push(sinks);
       

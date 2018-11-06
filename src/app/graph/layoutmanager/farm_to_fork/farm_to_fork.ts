@@ -55,6 +55,7 @@ class FarmToForkLayoutClass {
       let v: Vertex = new Vertex;
       v.typeCode = typeRanker.getBusinessTypeCode(node['data']['typeOfBusiness']);
       v.size = node.height();
+      v.name = node.data('name');
       //v.topMargin = node.height()/2;
       //v.bottomMargin = v.topMargin;
       vertices.set(node.id(), v);

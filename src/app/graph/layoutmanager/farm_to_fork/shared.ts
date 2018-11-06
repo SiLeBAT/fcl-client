@@ -34,14 +34,14 @@ function splitEdge(graph: Graph, edge: Edge) {
   for(let i: number = 1; i<layerSpan; ++i) {
     let iL: number = edge.source.layerIndex - i;
     let vertex: Vertex = new Vertex();
-    if(sourceIsCompressed) vertex.size = source.size/layerspan*i;
+    if(sourceIsCompressed) vertex.size = source.size/layerSpan*i;
     else if(targetIsCompressed) vertex.size = target.size/layerSpan*(layerSpan-i);
     graph.insertVertex(vertex);
     vertex.isVirtual = true;
     //graph.vertices.push(new Vertex()); 
     //vertexRank[++maxVertexIndex] = iL; // 
     layers[iL].push(vertex);
-    vertex.setIndexInLayer(layers[iL].length-1);
+    vertex.indexInLayer = layers[iL].length-1;
     vertex.layerIndex = iL;
   }
   

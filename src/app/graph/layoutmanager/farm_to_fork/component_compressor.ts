@@ -32,6 +32,8 @@ export function compressSimpleSources(graph: Graph, vertexDistance: number) {
           target.inEdges = target.inEdges.filter(e=>e!=oldEdge);
         }
         const newLayer: Vertex[] = layer.filter(v=>sources.indexOf(v)<0);
+        vertexGroup.indexInLayer = newLayer.length;
+        vertexGroup.layerIndex = sources[0].layerIndex;
         newLayer.push(vertexGroup);
         graph.layers[sources[0].layerIndex] = newLayer;
         target.inEdges.push(newEdge);
@@ -66,6 +68,7 @@ export function compressSimpleTargets(graph: Graph, vertexDistance: number) {
         }
         const newLayer: Vertex[] = layer.filter(v=>targets.indexOf(v)<0);
         vertexGroup.indexInLayer = newLayer.length;
+        vertexGroup.layerIndex = targets[0].layerIndex;
         newLayer.push(vertexGroup)
         graph.layers[targets[0].layerIndex] = newLayer;
         source.outEdges.push(newEdge);
@@ -78,7 +81,7 @@ export function compressSimpleTargets(graph: Graph, vertexDistance: number) {
   
 }*/
 
-function insertVertices(layer: Vertex[], index: number, vertices: []) {
+function insertVertices(layer: Vertex[], index: number, vertices: Vertex[]) {
   const delta: number = vertices.length - 1;
   for(let i: number = layer.length-1; i>index; i-- ) {
     layer[i].indexInLayer = i + delta;
@@ -102,7 +105,7 @@ export function decompressSimpleSources(graph: Graph, vertexDistance: number) {
         target.inEdges = target.inEdges.filter(e=>e!=vertexGroup.outEdges[0]);
         
         // remove compressed vertex from and add contained vertices to layer 
-        this.insertVertices(layer, vertexGroup.getIndexInLayer, vertexGroup.compressedVertices);
+        insertVertices(layer, vertexGroup.indexInLayer, vertexGroup.compressedVertices);
         
         let y: number = vertex.y-vertex.size/2;
         
@@ -129,7 +132,7 @@ export function decompressSimpleTargets(graph: Graph, vertexDistance: number) {
         source.outEdges = source.outEdges.filter(e=>e!=vertexGroup.inEdges[0]);
         
         // remove compressed vertex from and add contained vertices to layer 
-        this.insertVertices(layer, vertexGroup.getIndexInLayer, vertexGroup.compressedVertices);
+        insertVertices(layer, vertexGroup.indexInLayer, vertexGroup.compressedVertices);
         
         let y: number = vertex.y-vertex.size/2;
         

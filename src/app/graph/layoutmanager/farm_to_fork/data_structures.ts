@@ -39,13 +39,13 @@ export class Graph {
     for(let layer of this.layers) {
       let i: number = -1;
       iL++;
-      for(let vertex of layer) vertex.setIndexInLayer(++i); // + iL*100;
+      for(let vertex of layer) vertex.indexInLayer = ++i; // + iL*100;
     }
     //let tmp: number[][] = this.layers.map(l => l.map(v => v.indexInLayer));
   }
 
   checkIndicesInLayers() {
-    for(let vertex of this.vertices) if(vertex.getIndexInLayer()==null) {
+    for(let vertex of this.vertices) if(vertex.indexInLayer==null) {
       console.log('The indexInLayer of vertex ' + vertex.index.toString() + ' is not defined.' );
     }
   }
@@ -71,6 +71,7 @@ export class Graph {
 
 export class Vertex {
   index: number;
+  name: string;
   x: number;
   y: number;
   inEdges: Edge[] = [];
@@ -80,8 +81,8 @@ export class Vertex {
   indexInLayer: number;
   typeCode: number;
   isVirtual: boolean = false;
-  bottomMargin: number;
-  topMargin: number;
+  //bottomMargin: number;
+  //topMargin: number;
   size: number = 0;
   //isCompressed: boolean = false;
   constructor() {}
