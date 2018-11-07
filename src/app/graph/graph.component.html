@@ -33,6 +33,8 @@
 <div [matMenuTriggerFor]="stationMenu" #stationMenuTrigger="matMenuTrigger"></div>
 <div [matMenuTriggerFor]="deliveryMenu" #deliveryMenuTrigger="matMenuTrigger"></div>
 <div [matMenuTriggerFor]="layoutMenu" #layoutMenuTrigger="matMenuTrigger"></div>
+<div [matMenuTriggerFor]="collapseMenu" #collapseMenuTrigger="matMenuTrigger"></div>
+<div [matMenuTriggerFor]="uncollapseMenu" #uncollapseMenuTrigger="matMenuTrigger"></div>
 <div [matMenuTriggerFor]="traceMenu" #traceMenuTrigger="matMenuTrigger"></div>
 <mat-menu #graphMenu>
   <button mat-menu-item *ngFor="let action of graphMenuActions"
@@ -55,6 +57,18 @@
 <mat-menu #layoutMenu>
   <button mat-menu-item *ngFor="let action of layoutMenuActions"
           [disabled]="!action.enabled" (click)="action.action($event)">
+    {{action.name}}
+  </button>
+</mat-menu>
+<mat-menu #collapseMenu>
+  <button mat-menu-item *ngFor="let action of collapseMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)" matTooltip="{{action.toolTip}}" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">
+    {{action.name}}
+  </button>
+</mat-menu>
+<mat-menu #uncollapseMenu>
+  <button mat-menu-item *ngFor="let action of uncollapseMenuActions"
+          [disabled]="!action.enabled" (click)="action.action($event)" matTooltip="{{action.toolTip}}" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">
     {{action.name}}
   </button>
 </mat-menu>

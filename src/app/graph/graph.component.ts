@@ -10,17 +10,21 @@ import {ResizeSensor} from 'css-element-queries';
 
 import {DialogActionsComponent, DialogActionsData} from '../dialog/dialog-actions/dialog-actions.component';
 import {DialogPromptComponent, DialogPromptData} from '../dialog/dialog-prompt/dialog-prompt.component';
+import {DialogSingleSelectComponent, DialogSingleSelectData} from '../dialog/dialog-single-select/dialog-single-select.component';
 import {StationPropertiesComponent, StationPropertiesData} from '../dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent, DeliveryPropertiesData} from '../dialog/delivery-properties/delivery-properties.component';
 import {Utils} from '../util/utils';
 import {TracingService} from '../tracing/tracing.service';
-import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData} from '../util/datatypes';
+import {Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType, Position, Size, StationData, GroupMode} from '../util/datatypes';
 import {FruchtermanLayout} from './fruchterman_reingold';
+import {FarmToForkLayout} from './layoutmanager/farm_to_fork/farm_to_fork';
 import {Constants} from '../util/constants';
+import * as _ from 'lodash';
 
 interface MenuAction {
   name: string;
   enabled: boolean;
+  toolTip: string;
   action: (event: MouseEvent) => void;
 }
 
@@ -57,6 +61,10 @@ export class GraphComponent implements OnInit {
   @ViewChild('deliveryMenuTrigger', {read: ElementRef}) deliveryMenuTriggerElement: ElementRef;
   @ViewChild('layoutMenuTrigger') layoutMenuTrigger: MatMenuTrigger;
   @ViewChild('layoutMenuTrigger', {read: ElementRef}) layoutMenuTriggerElement: ElementRef;
+  @ViewChild('collapseMenuTrigger') collapseMenuTrigger: MatMenuTrigger;
+  @ViewChild('collapseMenuTrigger', {read: ElementRef}) collapseMenuTriggerElement: ElementRef;
+  @ViewChild('uncollapseMenuTrigger') uncollapseMenuTrigger: MatMenuTrigger;
+  @ViewChild('uncollapseMenuTrigger', {read: ElementRef}) uncollapseMenuTriggerElement: ElementRef;
   @ViewChild('traceMenuTrigger') traceMenuTrigger: MatMenuTrigger;
   @ViewChild('traceMenuTrigger', {read: ElementRef}) traceMenuTriggerElement: ElementRef;
 
@@ -64,6 +72,8 @@ export class GraphComponent implements OnInit {
   stationMenuActions = this.createStationActions(null);
   deliveryMenuActions = this.createDeliveryActions(null);
   layoutMenuActions = this.createLayoutActions();
+  collapseMenuActions = this.createCollapseActions();
+  uncollapseMenuActions = this.createUncollapseActions();
   traceMenuActions = this.createTraceActions(null);
 
   showZoom = Constants.DEFAULT_GRAPH_SHOW_ZOOM;
@@ -104,6 +114,7 @@ export class GraphComponent implements OnInit {
       cytoscape.use(dagre);
       cytoscape.use(spread);
       cytoscape('layout', 'fruchterman', FruchtermanLayout);
+      cytoscape('layout', 'farm_to_fork', FarmToForkLayout);
     }
   }
 
@@ -309,8 +320,9 @@ export class GraphComponent implements OnInit {
 
   private createNodes(): CyNode[] {
     const nodes: CyNode[] = [];
-
+    //console.log('createNodes:');
     for (const s of this.data.stations) {
+      //console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
       if (!s.contained && !s.invisible) {
         nodes.push({
           group: 'nodes',
@@ -372,6 +384,7 @@ export class GraphComponent implements OnInit {
               forward: value.find(d => d.forward) != null,
               backward: value.find(d => d.backward) != null,
               score: 0,
+              weight: _.sum(...value.map(d=>d.weight)),
               properties: []
             },
             selected: selected
@@ -410,11 +423,20 @@ export class GraphComponent implements OnInit {
   }
 
   private updateAll() {
+    const containerMap: Map<string, string> = new Map();
+    for (const s of this.data.stations) if(s.contains!=null) for(const id of s.contains) containerMap.set(id, s.id);
+
+    //console.log('updateAll:');
+    //for (const s of this.data.stations) console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
+      
     for (const s of this.data.stations) {
       if (!s.contained && s.positionRelativeTo != null) {
         s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
         s.positionRelativeTo = null;
-      } else if (s.position == null && s.contains != null) {
+      } else if (s.contained && s.positionRelativeTo != null &&  s.positionRelativeTo != containerMap.get(s.id)) {
+        s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
+        s.positionRelativeTo = null;
+      } else  if (s.position == null && s.contains != null) {
         for (const contained of this.tracingService.getStationsById(s.contains)) {
           if (contained.positionRelativeTo != null) {
             contained.position = Utils.sum(this.cy.getElementById(contained.positionRelativeTo).position(), contained.position);
@@ -439,67 +461,68 @@ export class GraphComponent implements OnInit {
     });
   }
 
-  private createStyle(): any {
+  private createSmallGraphStyle(): any {
     const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize)/2;
+      
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
         return size;
       }
     };
-
+    
     let style = cytoscape.stylesheet()
-      .selector('*')
-      .style({
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
-      })
-      .selector('node')
-      .style({
-        'content': 'data(name)',
-        'height': sizeFunction,
-        'width': sizeFunction,
-        'background-color': 'rgb(255, 255, 255)',
-        'border-width': 3,
-        'border-color': 'rgb(0, 0, 0)',
-        'text-valign': 'bottom',
-        'text-halign': 'right',
-        'color': 'rgb(0, 0, 0)'
-      })
-      .selector('edge')
-      .style({
-        'target-arrow-shape': 'triangle',
-        'width': 6,
-        'line-color': 'rgb(0, 0, 0)',
-        'target-arrow-color': 'rgb(255, 0, 0)',
-        'curve-style': 'bezier'
-      })
-      .selector('node:selected')
-      .style({
-        'background-color': 'rgb(128, 128, 255)',
-        'border-width': 6,
-        'border-color': 'rgb(0, 0, 255)',
-        'color': 'rgb(0, 0, 255)'
-      })
-      .selector('edge:selected')
-      .style({
-        'width': 12
-      })
-      .selector('node[?contains]')
-      .style({
-        'border-width': 6
-      })
-      .selector('node:selected[?contains]')
-      .style({
-        'border-width': 9
-      }).selector(':active')
-      .style({
-        'overlay-opacity': 0.5
-      });
-
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      'content': 'data(name)',
+      'height': sizeFunction, // ToDO: replace by linear function (data or dataMap)
+      'width': sizeFunction,  // ToDo: replace by linear function (data or dataMap)
+      'background-color': 'rgb(255, 255, 255)',
+      'border-width': 3,
+      'border-color': 'rgb(0, 0, 0)',
+      'text-valign': 'bottom',
+      'text-halign': 'right',
+      'color': 'rgb(0, 0, 0)',
+    })
+    .selector('edge')
+    .style({
+      'target-arrow-shape': 'triangle', 
+      'width': 2, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      'target-arrow-color': 'rgb(0, 0, 0)', 
+      'arrow-scale': 1.4, 
+      'curve-style': 'bezier'   // performance reasons
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      'width': 4
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 6
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 9
+    }).selector(':active')
+    .style({
+      'overlay-opacity': 0.5
+    });
+    
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -507,10 +530,10 @@ export class GraphComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-
+    
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-
+      
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -519,35 +542,409 @@ export class GraphComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-
+      
       return background;
     };
-
+    
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-
+      
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-
+        
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-
+      
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-
+    
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-
+    
     return style;
   }
+  
+  private createLargeGraphStyle(): any {
+    const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    
+    let style = cytoscape.stylesheet()
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      //'content': 'data(name)',
+      'height': sizeFunction, // PF test
+      'width': sizeFunction,  // PF test
+      'background-color': 'rgb(255, 255, 255)',
+      //'border-width': 3,
+      'border-color': 'rgb(0, 0, 0)',
+      //'text-valign': 'bottom',
+      //'text-halign': 'right',
+      'color': 'rgb(0, 0, 0)',
+      //'min-zoomed-font-size':10   // performance reasons
+    })
+    .selector('edge')
+    .style({
+      //'target-arrow-shape': 'triangle', // test reason
+      // large graphs
+      'mid-target-arrow-shape': 'triangle', // test reason
+      //'mid-target-arrow-fill': 'hollow', // test reason
+      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+      'width': 2, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+      'arrow-scale': 1.4, // test reason
+      //'curve-style': 'bezier'   // performance reasons
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      //'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      //'width': 12
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 6
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 9
+    }).selector(':active')
+    .style({
+      //'overlay-opacity': 0.5
+    })
+    .selector(':selected')
+    .css({
+      'background-color': 'black',
+      'opacity': 1
+    });
+    
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+    
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+      
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+      
+      return background;
+    };
+    
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+      
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+        
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+      
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+    
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+    
+    return style;
+  }
+  
+  private createHugeGraphStyle(): any {
+    const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    /*this.nodeSizeMap = new Map();
+    const cachedSizeFunction = (node)=>{
+      if(!this.nodeSizeMap.has(node.id)) this.nodeSizeMap.set(node.id, sizeFunction(node));
+      return this.nodeSizeMap.get(node.id);
+    };        //_.memoize(sizeFunction);
+    */
+    
+    let style = cytoscape.stylesheet()
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
+      //'content': 'data(name)', // no label
+      'background-color': 'rgb(255, 255, 255)',
+      'border-width': 2,
+      'border-color': 'rgb(0, 0, 0)',
+      //'text-valign': 'bottom', // no label
+      //'text-halign': 'right', // no label
+      'color': 'rgb(0, 0, 0)',
+      //'min-zoomed-font-size':10   // performance reasons
+    })
+    .selector('edge')
+    .style({
+      'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
+      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+      'width': 1, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      'arrow-scale': 1.4, // test reason
+      //'curve-style': 'bezier'   // use haystack
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      //'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      'width': 2
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 3 //6 // ToDo: Clarify, what is this for
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 3 //9 // ToDo: Clarify, what is this for
+    }).selector(':active')
+    .style({
+      'overlay-opacity': 0.5
+    });
+    /*.selector(':selected')
+    .css({
+      'background-color': 'black',
+      'opacity': 1
+    });*/
+    
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+    
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+      
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+      
+      return background;
+    };
+    
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+      
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+        
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+      
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+    
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+    
+    return style;
+  }
+  
+  
+  private createStyle(): any {
+    const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS: number = 50; 
+    const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS: number = 100;
+    
+    if(this.data.stations.length>MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) return this.createHugeGraphStyle();
+    else if(this.data.deliveries.length>MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) return this.createLargeGraphStyle();  
+    else return this.createSmallGraphStyle();
+
+    /*const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+      
+      if (this.tracingService.getMaxScore() > 0) {
+        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
+      } else {
+        return size;
+      }
+    };
+    
+    let style = cytoscape.stylesheet()
+    .selector('*')
+    .style({
+      'overlay-color': 'rgb(0, 0, 255)',
+      'overlay-padding': 10,
+      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
+    })
+    .selector('node')
+    .style({
+      //'content': 'data(name)',
+      'height': sizeFunction, // PF test
+      'width': sizeFunction,  // PF test
+      'background-color': 'rgb(255, 255, 255)',
+      //'border-width': 3,
+      'border-color': 'rgb(0, 0, 0)',
+      //'text-valign': 'bottom',
+      //'text-halign': 'right',
+      'color': 'rgb(0, 0, 0)',
+      //'min-zoomed-font-size':10   // performance reasons
+    })
+    .selector('edge')
+    .style({
+      //'target-arrow-shape': 'triangle', // test reason
+      // large graphs
+      'mid-target-arrow-shape': 'triangle', // test reason
+      //'mid-target-arrow-fill': 'hollow', // test reason
+      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+      'width': 2, //        'width': 6,
+      'line-color': 'rgb(0, 0, 0)',
+      // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+      'arrow-scale': 1.4, // test reason
+      //'curve-style': 'bezier'   // performance reasons
+    })
+    .selector('node:selected')
+    .style({
+      'background-color': 'rgb(128, 128, 255)',
+      //'border-width': 6,
+      'border-color': 'rgb(0, 0, 255)',
+      'color': 'rgb(0, 0, 255)'
+    })
+    .selector('edge:selected')
+    .style({
+      //'width': 12
+    })
+    .selector('node[?contains]')
+    .style({
+      'border-width': 6
+    })
+    .selector('node:selected[?contains]')
+    .style({
+      'border-width': 9
+    }).selector(':active')
+    .style({
+      //'overlay-opacity': 0.5
+    })
+    .selector(':selected')
+    .css({
+      'background-color': 'black',
+      'opacity': 1
+    });
+    
+    const createSelector = (prop: string) => {
+      if (prop === 'observed') {
+        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
+      } else {
+        return '[?' + prop + ']';
+      }
+    };
+    
+    const createNodeBackground = (colors: Color[]) => {
+      const background = {};
+      
+      if (colors.length === 1) {
+        background['background-color'] = Utils.colorToCss(colors[0]);
+      } else {
+        for (let i = 0; i < colors.length; i++) {
+          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
+        }
+      }
+      
+      return background;
+    };
+    
+    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
+      const s = [];
+      const c1 = [];
+      const c2 = [];
+      
+      for (const prop of combination) {
+        const color = Constants.PROPERTIES.get(prop).color;
+        
+        s.push(createSelector(prop));
+        c1.push(color);
+        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
+      }
+      
+      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+    }
+    
+    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
+      style = style.selector('edge' + createSelector(prop)).style({
+        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
+      });
+    }
+    
+    return style;*/
+  }
+  
 
   private setSelected(id: string, selected: boolean) {
     if (this.mergeMap.has(id)) {
@@ -572,10 +969,12 @@ export class GraphComponent implements OnInit {
       {
         name: 'Apply Layout',
         enabled: true,
+        toolTip: null,
         action: event => Utils.openMenu(this.layoutMenuTrigger, this.layoutMenuTriggerElement, this.getCyCoordinates(event))
       }, {
         name: 'Clear Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.clearTrace();
           this.updateProperties();
@@ -584,6 +983,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Clear Outbreak Stations',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.clearOutbreakStations();
           this.setNodeSize(this.nodeSize);
@@ -592,12 +992,95 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Clear Invisibility',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.clearInvisibility();
           this.updateAll();
           this.callChangeFunction();
         }
-      }
+      },
+      {
+        name: 'Collapse ',
+        enabled: true,
+        toolTip: null,
+        action: event => Utils.openMenu(this.collapseMenuTrigger, this.collapseMenuTriggerElement, this.getCyCoordinates(event))
+      },
+      {
+        name: 'Uncollapse ',
+        enabled: true,
+        toolTip: null,
+        action: event => Utils.openMenu(this.uncollapseMenuTrigger, this.uncollapseMenuTriggerElement, this.getCyCoordinates(event))
+      }/*, {
+        name: 'Collapse Sources',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseSourceStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Targets',
+        enabled: true,
+        action: () => {
+          const options: { value: string, viewValue: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Select collapse mode',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseTargetStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Simple Chains',
+        enabled: true,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseSimpleChains();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
+      }, {
+        name: 'Collapse Isolated Clouds',
+        enabled: true,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseIsolatedClouds();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
+      }*/
     ];
   }
 
@@ -621,6 +1104,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Show Properties',
         enabled: !multipleStationsSelected,
+        toolTip: null,
         action: () => {
           const station = this.tracingService.getStationsById([node.id()])[0];
           const deliveries: Map<string, DeliveryData> = new Map();
@@ -656,6 +1140,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Show Trace',
         enabled: !multipleStationsSelected,
+        toolTip: null,
         action: event => {
           this.traceMenuActions = this.createTraceActions(node);
           Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
@@ -663,6 +1148,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService
             .markStationsAsOutbreak(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()], !allOutbreakStations);
@@ -672,6 +1158,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: allCrossContaminationStations ? 'Unset Cross Contamination' : 'Set Cross Contamination',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.setCrossContaminationOfStations(
             multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()],
@@ -684,6 +1171,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Make Invisible',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.makeStationsInvisible(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()]);
           this.updateAll();
@@ -692,6 +1180,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Merge Stations',
         enabled: multipleStationsSelected,
+        toolTip: null,
         action: () => {
           const dialogData: DialogPromptData = {
             title: 'Input',
@@ -712,6 +1201,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Expand',
         enabled: allMetaStations,
+        toolTip: null,
         action: () => {
           this.tracingService.expandStations(multipleStationsSelected ? selectedNodes.map(s => s.id()) : node.id());
           this.updateAll();
@@ -726,6 +1216,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Show Properties',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (this.mergeMap.has(edge.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!').afterClosed()
@@ -742,6 +1233,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Show Trace',
         enabled: true,
+        toolTip: null,
         action: event => {
           if (this.mergeMap.has(edge.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!').afterClosed()
@@ -755,15 +1247,153 @@ export class GraphComponent implements OnInit {
     ];
   }
 
+  protected createCollapseActions(): MenuAction[] {
+    return [
+      {
+        name: 'Collapse Sources...',
+        enabled: true,
+        toolTip: 'Collapse stations without incoming edges which have deliveries to the same station.',
+        action: () => {
+          const options: { value: string, viewValue: string, toolTip: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif they send their delivieres to the same station and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the the same products of the same station and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the same lots of the same station and either their weights are all positive or all zero.' });
+          
+          
+          /*const dialogData: DialogPromptData = {
+            title: 'Input',
+            message: 'Please specify name of meta station:',
+            placeholder: 'Name'
+          };*/
+          const dialogData: DialogSingleSelectData = {
+            title: 'Choose source collapse mode',
+            message: '', //Choose collapse mode:',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseSourceStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Targets...',
+        enabled: true,
+        toolTip: 'Collapse stations without outgoing edges which receive their deliveries from the same station.',
+        action: () => {
+          const options: { value: string, viewValue: string, toolTip: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.' });
+          
+          
+          const dialogData: DialogSingleSelectData = {
+            title: 'Choose target collapse mode',
+            message: '', //Choose collapse mode:',
+            options: options,
+            value: GroupMode.WEIGHT_ONLY.toString()
+          };
+          
+          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
+            this.updateOverlay();
+            if (groupMode != null) {
+              this.tracingService.collapseTargetStations(groupMode);
+              this.updateAll();
+              this.callChangeFunction();
+            }
+          });
+        }
+      }, {
+        name: 'Collapse Simple Chains',
+        enabled: true,
+        toolTip: null,
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseSimpleChains();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
+      }, {
+        name: 'Collapse Isolated Clouds',
+        enabled: true,
+        toolTip: 'Collapse stations from which a weighted station or delivery cannot be reached.',
+        action: () => {
+          this.updateOverlay();
+          this.tracingService.collapseIsolatedClouds();
+          this.updateAll();
+          this.callChangeFunction();
+            
+        }
+      }
+    ];
+  }
+
+  protected createUncollapseActions(): MenuAction[] {
+    return [
+      {
+        name: 'Uncollapse Sources',
+        enabled: true,
+        toolTip: null,
+        action: () => {
+          this.tracingService.uncollapseSourceStations();
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Uncollapse Targets',
+        enabled: true,
+        toolTip: null,
+        action: () => {
+          this.tracingService.uncollapseTargetStations();
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }, {
+        name: 'Uncollapse Simple Chains',
+        enabled: true,
+        toolTip: null,
+        action: () => {
+          //this.updateOverlay();
+          this.tracingService.uncollapseSimpleChains();
+          this.updateAll();
+          this.callChangeFunction(); 
+        }
+      }, {
+        name: 'Uncollapse Isolated Clouds',
+        enabled: true,
+        toolTip: null,
+        action: () => {
+          //this.updateOverlay();
+          this.tracingService.uncollapseIsolatedClouds();
+          this.updateAll();
+          this.callChangeFunction();
+        }
+      }
+    ];
+  }
+
   private createLayoutActions(): MenuAction[] {
     return [
       {
         name: 'Fruchterman-Reingold',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'fruchterman'}).run()
+      }, {
+        name: 'Farm-to-fork',
+        enabled: true,
+        toolTip: null,
+        action: () => this.cy.layout({name: 'farm_to_fork', options: {nodeSize: this.nodeSize}}).run()
       }, {
         name: 'Constraint-Based',
         enabled: true,
+        toolTip: null,
         action: () => {
           let layout;
           const layoutDialogData: DialogActionsData = {
@@ -790,30 +1420,37 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Random',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'random'}).run()
       }, {
         name: 'Grid',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'grid'}).run()
       }, {
         name: 'Circle',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'circle'}).run()
       }, {
         name: 'Concentric',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'concentric'}).run()
       }, {
         name: 'Breadth-first',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'breadthfirst'}).run()
       }, {
         name: 'Spread',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'spread'}).run()
       }, {
         name: 'Directed acyclic graph',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'dagre'}).run()
       }
     ];
@@ -824,6 +1461,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Forward Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (element.isNode()) {
             this.tracingService.showStationForwardTrace(element.id());
@@ -837,6 +1475,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Backward Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (element.isNode()) {
             this.tracingService.showStationBackwardTrace(element.id());
@@ -850,6 +1489,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Full Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (element.isNode()) {
             this.tracingService.showStationTrace(element.id());

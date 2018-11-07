@@ -5,13 +5,13 @@ export class Constants {
 
   private static readonly STATION_DATA: StationData = {
     id: null, name: null, lat: null, lon: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null,
-    contains: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null,
+    contains: null, groupType: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null,
     commonLink: null, position: null, positionRelativeTo: null, properties: null
   };
 
   private static readonly DELIVERY_DATA: DeliveryData = {
     id: null, name: null, lot: null, date: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null,
-    selected: null, observed: null, forward: null, backward: null, score: null, properties: null
+    selected: null, observed: null, forward: null, backward: null, score: null, weight: null, properties: null
   };
 
   static readonly ARROW_STRING = '->';

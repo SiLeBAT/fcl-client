@@ -170,6 +170,7 @@ export class DataService {
         invisible: e.invisible != null ? e.invisible : false,
         contained: e.contained != null ? e.contained : false,
         contains: e.contains != null ? e.contains : null,
+        groupType: null,
         selected: e.selected != null ? e.selected : false,
         observed: e.observed != null ? e.observed : ObservedType.NONE,
         forward: e.forward != null ? e.forward : false,
@@ -215,6 +216,7 @@ export class DataService {
         forward: e.forward != null ? e.forward : false,
         backward: e.backward != null ? e.backward : false,
         score: e.score != null ? e.score : 0,
+        weight: e.weight != null ? e.weight : 0,
         properties: e.properties != null ? e.properties : properties
       })
       ;

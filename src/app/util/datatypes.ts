@@ -56,6 +56,7 @@ export interface StationData {
   invisible: boolean;
   contained: boolean;
   contains: string[];
+  groupType: GroupType;
   selected: boolean;
   observed: ObservedType;
   forward: boolean;
@@ -84,6 +85,7 @@ export interface DeliveryData {
   forward: boolean;
   backward: boolean;
   score: number;
+  weight: number;
   properties: { name: string, value: string }[];
 }
 
@@ -107,6 +109,19 @@ export interface TableSettings {
 export enum GraphType {
   GRAPH = 'Graph' as any,
   GIS = 'GIS' as any
+}
+
+export enum GroupMode {
+  WEIGHT_ONLY = 'Weight only' as any,
+  PRODUCT_AND_WEIGHT = 'Product name and weight' as any,
+  LOT_AND_WEIGHT = 'Lot and weight' as any 
+}
+
+export enum GroupType {
+  SOURCE_GROUP = 'Source group' as any,
+  TARGET_GROUP = 'Target group' as any,
+  ISOLATED_GROUP = 'Isolated subgraph' as any,
+  SIMPLE_CHAIN = 'Simple chain' as any
 }
 
 export enum TableMode {

@@ -2,20 +2,22 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatCheckboxModule, MatDialogRef} from '@angular/material';
 
-import {DialogSelectComponent, DialogSelectData} from './dialog-select.component';
+import {DialogSingleSelectComponent, DialogSingleSelectData} from './dialog-single-select.component';
 
-describe('DialogSelectComponent', () => {
-  let component: DialogSelectComponent;
-  let fixture: ComponentFixture<DialogSelectComponent>;
+describe('DialogSingleSelectComponent', () => {
+  let component: DialogSingleSelectComponent;
+  let fixture: ComponentFixture<DialogSingleSelectComponent>;
 
   beforeEach(async(() => {
-    const data: DialogSelectData = {
+    const data: DialogSingleSelectData = {
       title: 'Prompt',
+      message: '',
       options: [
-        {value: 'Eins', viewValue: 'Eins', selected: true},
-        {value: 'Zwei', viewValue: 'Zwei', selected: false},
-        {value: 'Drei', viewValue: 'Drei', selected: true}
-      ]
+        {value: 'Eins', viewValue: 'Eins', toolTip: null},
+        {value: 'Zwei', viewValue: 'Zwei', toolTip: null},
+        {value: 'Drei', viewValue: 'Drei', toolTip: null}
+      ],
+      value: 'Eins'
     };
 
     TestBed.configureTestingModule({
@@ -23,7 +25,7 @@ describe('DialogSelectComponent', () => {
         FormsModule,
         MatCheckboxModule
       ],
-      declarations: [DialogSelectComponent],
+      declarations: [DialogSingleSelectComponent],
       providers: [
         {provide: MatDialogRef, useValue: {}},
         {provide: MAT_DIALOG_DATA, useValue: data}
@@ -32,7 +34,7 @@ describe('DialogSelectComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DialogSelectComponent);
+    fixture = TestBed.createComponent(DialogSingleSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

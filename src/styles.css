@@ -13,3 +13,11 @@ html, body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   overflow: hidden;
 }
+
+.mat-tooltip.mytooltip {
+  font-size: 16px;
+}
+
+.mytooltip {
+  font-size: 16px;
+}
