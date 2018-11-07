@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
-import {MD_DIALOG_DATA, MdDialogRef, MdInputModule} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef, MatInputModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {DialogPromptComponent, DialogPromptData} from './dialog-prompt.component';
@@ -20,12 +20,12 @@ describe('DialogPromptComponent', () => {
       imports: [
         BrowserAnimationsModule,
         FormsModule,
-        MdInputModule
+        MatInputModule
       ],
       declarations: [DialogPromptComponent],
       providers: [
-        {provide: MdDialogRef, useValue: {}},
-        {provide: MD_DIALOG_DATA, useValue: data}
+        {provide: MatDialogRef, useValue: {}},
+        {provide: MAT_DIALOG_DATA, useValue: data}
       ]
     }).compileComponents().then();
   }));

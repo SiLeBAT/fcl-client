@@ -53,8 +53,8 @@ export function splitUnconnectedComponents(layers: Vertex[][]): LayeredComponent
       }
     }
   }
-  console.log('Graph was splitted to ' + result.length.toString() + ' components.');
-  console.log('MaxLayerSize (wo virtual vertices) was reduced from ' + maxLayerSize + ' to ' + Math.max(...result.map(lC=>Math.max(...lC.layers.map(l=>l.length)))).toString() + '.');
+  //console.log('Graph was splitted to ' + result.length.toString() + ' components.');
+  //console.log('MaxLayerSize (wo virtual vertices) was reduced from ' + maxLayerSize + ' to ' + Math.max(...result.map(lC=>Math.max(...lC.layers.map(l=>l.length)))).toString() + '.');
   return result;
 }
 

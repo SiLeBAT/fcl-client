@@ -11,6 +11,7 @@ class VertexSorter {
     
     sortVertices(graph: Graph) {
         this.createVirtualVertices(graph); 
+        if(Math.max(...graph.layers.map(l=>l.length))<=1) return;
 
         const layers: Vertex[][] = graph.layers;
 

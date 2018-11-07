@@ -2,13 +2,12 @@ import * as _ from 'lodash';
 import {Graph, Vertex, Edge} from './data_structures';
 import {lpSolve, LPModel, LPResult} from './lp_solver';
 import {createVirtualVertices} from './shared';
-import { listenOnPlayer } from '@angular/animations/browser/src/render/shared';
-import { SummaryResolver } from '@angular/compiler';
+//import { listenOnPlayer } from '@angular/animations/browser/src/render/shared';
+//import { SummaryResolver } from '@angular/compiler';
 
 function sortVerticesAccordingToResult(graph: Graph, lpResult: LPResult) {
   
-  for(let iLayer: number = graph.layers.length-1; iLayer>=0; iLayer--) {
-    const layer: Vertex[] = graph.layers[iLayer];
+  for(const layer of graph.layers) {
     layer.sort((a,b)=>(a.indexInLayer<b.indexInLayer?
       (lpResult.vars.get(buildXVarName(a, b))>0.5?-1:1):
       (lpResult.vars.get(buildXVarName(b, a))>0.5?1:-1)));
@@ -31,9 +30,8 @@ function constructModel(layers: Vertex[][]): LPModel {
 }
 
 function sort(graph: Graph) {
-  if(Math.max(...graph.layers.map(l=>l.length))>=8) {
-    graph = graph;
-  }
+  if(Math.max(...graph.layers.map(l=>l.length))<=1) return;
+    
   const lpModel: LPModel = constructModel(graph.layers);
   const lpResult: LPResult = lpSolve(lpModel);
   //lpModel.printObjective(lpResult);

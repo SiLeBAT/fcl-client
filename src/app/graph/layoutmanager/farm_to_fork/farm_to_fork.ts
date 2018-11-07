@@ -14,6 +14,14 @@ export function FarmToForkLayout(options) {
   this.options = options;
 }
 
+function getDateNumber(date: Date): number {
+  return date.getMilliseconds() + date.getSeconds()*1000 + date.getMinutes()*60000 + date.getHours()*3600000;
+}
+
+function getElapsedTime(dateStart: Date, dateEnd: Date): number {
+  return getDateNumber(dateEnd)-getDateNumber(dateStart);
+}
+
 FarmToForkLayout.prototype.run = function () {
   new FarmToForkLayoutClass(this).run();
 };
@@ -64,7 +72,7 @@ class FarmToForkLayoutClass {
       tmpV = [Math.min(node.data('position').y, tmpV[0]), Math.max(node.data('position').y, tmpV[1])];
     });
     
-    const vertexDistance: number = Math.min(...graph.vertices.map(v=>v.size));
+    const vertexDistance: number = Math.min(...graph.vertices.map(v=>v.size))/2;
     cy.edges().forEach(edge => {
       graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
     });
@@ -98,23 +106,20 @@ class FarmToForkLayouter {
     this.simplifyGraph();
     let startTime: Date = new Date();
     removeCycles(this.graph, this.typeRanker);
-    let endTime: Date = new Date();
-    console.log('removeCycles: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
+    
+    //console.log('removeCycles: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
     this.simplifyGraph();
     startTime = new Date();
     assignLayers(this.graph, this.typeRanker);
-    endTime = new Date();
-    console.log('assignLayers: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
+    //console.log('assignLayers: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
     //removeEdgesWithinLayers(this.graph);
     startTime = new Date();
     sortAndPosition(this.graph, vertexDistance);
     //sortVertices(this.graph);
-    endTime = new Date();
-    console.log('sortVertices: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
-    startTime = new Date();
+    //console.log('sortAndPositionVertices: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
+    //startTime = new Date();
     //positionVertices(this.graph.layers, vertexDistance);
-    endTime = new Date();
-    console.log('positionVertices: ' + (endTime.getMilliseconds() - startTime.getMilliseconds()).toString() + ' ms');
+    //console.log('positionVertices: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
     scaleToSize(this.graph, width, height);
     //this.computePositions();
   }

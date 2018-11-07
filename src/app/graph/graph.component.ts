@@ -24,6 +24,7 @@ import * as _ from 'lodash';
 interface MenuAction {
   name: string;
   enabled: boolean;
+  toolTip: string;
   action: (event: MouseEvent) => void;
 }
 
@@ -319,9 +320,9 @@ export class GraphComponent implements OnInit {
 
   private createNodes(): CyNode[] {
     const nodes: CyNode[] = [];
-    console.log('createNodes:');
+    //console.log('createNodes:');
     for (const s of this.data.stations) {
-      console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
+      //console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
       if (!s.contained && !s.invisible) {
         nodes.push({
           group: 'nodes',
@@ -425,8 +426,8 @@ export class GraphComponent implements OnInit {
     const containerMap: Map<string, string> = new Map();
     for (const s of this.data.stations) if(s.contains!=null) for(const id of s.contains) containerMap.set(id, s.id);
 
-    console.log('updateAll:');
-    for (const s of this.data.stations) console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
+    //console.log('updateAll:');
+    //for (const s of this.data.stations) console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
       
     for (const s of this.data.stations) {
       if (!s.contained && s.positionRelativeTo != null) {
@@ -817,7 +818,13 @@ export class GraphComponent implements OnInit {
   
   
   private createStyle(): any {
-    return this.createSmallGraphStyle();
+    const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS: number = 50; 
+    const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS: number = 100;
+    
+    if(this.data.stations.length>MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) return this.createHugeGraphStyle();
+    else if(this.data.deliveries.length>MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) return this.createLargeGraphStyle();  
+    else return this.createSmallGraphStyle();
+
     /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
       
@@ -962,10 +969,12 @@ export class GraphComponent implements OnInit {
       {
         name: 'Apply Layout',
         enabled: true,
+        toolTip: null,
         action: event => Utils.openMenu(this.layoutMenuTrigger, this.layoutMenuTriggerElement, this.getCyCoordinates(event))
       }, {
         name: 'Clear Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.clearTrace();
           this.updateProperties();
@@ -974,6 +983,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Clear Outbreak Stations',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.clearOutbreakStations();
           this.setNodeSize(this.nodeSize);
@@ -982,6 +992,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Clear Invisibility',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.clearInvisibility();
           this.updateAll();
@@ -991,11 +1002,13 @@ export class GraphComponent implements OnInit {
       {
         name: 'Collapse ',
         enabled: true,
+        toolTip: null,
         action: event => Utils.openMenu(this.collapseMenuTrigger, this.collapseMenuTriggerElement, this.getCyCoordinates(event))
       },
       {
         name: 'Uncollapse ',
         enabled: true,
+        toolTip: null,
         action: event => Utils.openMenu(this.uncollapseMenuTrigger, this.uncollapseMenuTriggerElement, this.getCyCoordinates(event))
       }/*, {
         name: 'Collapse Sources',
@@ -1091,6 +1104,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Show Properties',
         enabled: !multipleStationsSelected,
+        toolTip: null,
         action: () => {
           const station = this.tracingService.getStationsById([node.id()])[0];
           const deliveries: Map<string, DeliveryData> = new Map();
@@ -1126,6 +1140,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Show Trace',
         enabled: !multipleStationsSelected,
+        toolTip: null,
         action: event => {
           this.traceMenuActions = this.createTraceActions(node);
           Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
@@ -1133,6 +1148,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: allOutbreakStations ? 'Unmark as Outbreak' : 'Mark as Outbreak',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService
             .markStationsAsOutbreak(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()], !allOutbreakStations);
@@ -1142,6 +1158,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: allCrossContaminationStations ? 'Unset Cross Contamination' : 'Set Cross Contamination',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.setCrossContaminationOfStations(
             multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()],
@@ -1154,6 +1171,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Make Invisible',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.makeStationsInvisible(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()]);
           this.updateAll();
@@ -1162,6 +1180,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Merge Stations',
         enabled: multipleStationsSelected,
+        toolTip: null,
         action: () => {
           const dialogData: DialogPromptData = {
             title: 'Input',
@@ -1182,6 +1201,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Expand',
         enabled: allMetaStations,
+        toolTip: null,
         action: () => {
           this.tracingService.expandStations(multipleStationsSelected ? selectedNodes.map(s => s.id()) : node.id());
           this.updateAll();
@@ -1196,6 +1216,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Show Properties',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (this.mergeMap.has(edge.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!').afterClosed()
@@ -1212,6 +1233,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Show Trace',
         enabled: true,
+        toolTip: null,
         action: event => {
           if (this.mergeMap.has(edge.id())) {
             Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!').afterClosed()
@@ -1228,17 +1250,24 @@ export class GraphComponent implements OnInit {
   protected createCollapseActions(): MenuAction[] {
     return [
       {
-        name: 'Collapse Sources',
+        name: 'Collapse Sources...',
         enabled: true,
+        toolTip: 'Collapse stations without incoming edges which have deliveries to the same station.',
         action: () => {
-          const options: { value: string, viewValue: string }[] = [];
-          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
-          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
-          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          const options: { value: string, viewValue: string, toolTip: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif they send their delivieres to the same station and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the the same products of the same station and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the same lots of the same station and either their weights are all positive or all zero.' });
           
           
+          /*const dialogData: DialogPromptData = {
+            title: 'Input',
+            message: 'Please specify name of meta station:',
+            placeholder: 'Name'
+          };*/
           const dialogData: DialogSingleSelectData = {
-            title: 'Select collapse mode',
+            title: 'Choose source collapse mode',
+            message: '', //Choose collapse mode:',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
@@ -1253,17 +1282,19 @@ export class GraphComponent implements OnInit {
           });
         }
       }, {
-        name: 'Collapse Targets',
+        name: 'Collapse Targets...',
         enabled: true,
+        toolTip: 'Collapse stations without outgoing edges which receive their deliveries from the same station.',
         action: () => {
-          const options: { value: string, viewValue: string }[] = [];
-          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
-          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
-          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
+          const options: { value: string, viewValue: string, toolTip: string }[] = [];
+          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.' });
+          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.' });
           
           
           const dialogData: DialogSingleSelectData = {
-            title: 'Select collapse mode',
+            title: 'Choose target collapse mode',
+            message: '', //Choose collapse mode:',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
@@ -1280,6 +1311,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Collapse Simple Chains',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.updateOverlay();
           this.tracingService.collapseSimpleChains();
@@ -1290,6 +1322,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Collapse Isolated Clouds',
         enabled: true,
+        toolTip: 'Collapse stations from which a weighted station or delivery cannot be reached.',
         action: () => {
           this.updateOverlay();
           this.tracingService.collapseIsolatedClouds();
@@ -1306,6 +1339,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Uncollapse Sources',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.uncollapseSourceStations();
           this.updateAll();
@@ -1314,6 +1348,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Uncollapse Targets',
         enabled: true,
+        toolTip: null,
         action: () => {
           this.tracingService.uncollapseTargetStations();
           this.updateAll();
@@ -1322,6 +1357,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Uncollapse Simple Chains',
         enabled: true,
+        toolTip: null,
         action: () => {
           //this.updateOverlay();
           this.tracingService.uncollapseSimpleChains();
@@ -1331,6 +1367,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Uncollapse Isolated Clouds',
         enabled: true,
+        toolTip: null,
         action: () => {
           //this.updateOverlay();
           this.tracingService.uncollapseIsolatedClouds();
@@ -1346,14 +1383,17 @@ export class GraphComponent implements OnInit {
       {
         name: 'Fruchterman-Reingold',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'fruchterman'}).run()
       }, {
         name: 'Farm-to-fork',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'farm_to_fork', options: {nodeSize: this.nodeSize}}).run()
       }, {
         name: 'Constraint-Based',
         enabled: true,
+        toolTip: null,
         action: () => {
           let layout;
           const layoutDialogData: DialogActionsData = {
@@ -1380,30 +1420,37 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Random',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'random'}).run()
       }, {
         name: 'Grid',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'grid'}).run()
       }, {
         name: 'Circle',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'circle'}).run()
       }, {
         name: 'Concentric',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'concentric'}).run()
       }, {
         name: 'Breadth-first',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'breadthfirst'}).run()
       }, {
         name: 'Spread',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'spread'}).run()
       }, {
         name: 'Directed acyclic graph',
         enabled: true,
+        toolTip: null,
         action: () => this.cy.layout({name: 'dagre'}).run()
       }
     ];
@@ -1414,6 +1461,7 @@ export class GraphComponent implements OnInit {
       {
         name: 'Forward Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (element.isNode()) {
             this.tracingService.showStationForwardTrace(element.id());
@@ -1427,6 +1475,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Backward Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (element.isNode()) {
             this.tracingService.showStationBackwardTrace(element.id());
@@ -1440,6 +1489,7 @@ export class GraphComponent implements OnInit {
       }, {
         name: 'Full Trace',
         enabled: true,
+        toolTip: null,
         action: () => {
           if (element.isNode()) {
             this.tracingService.showStationTrace(element.id());
