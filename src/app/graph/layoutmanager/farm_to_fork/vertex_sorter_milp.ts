@@ -6,8 +6,19 @@ import { listenOnPlayer } from '@angular/animations/browser/src/render/shared';
 import { SummaryResolver } from '@angular/compiler';
 
 function sortVerticesAccordingToResult(graph: Graph, lpResult: LPResult) {
-  for(const layer of graph.layers) {
-    layer.sort((a,b)=>lpResult.vars.get('x' + a.index.toString() + '_' + b.index.toString())>0?-1:1);
+  
+  for(let iLayer: number = graph.layers.length-1; iLayer>=0; iLayer--) {
+    const layer: Vertex[] = graph.layers[iLayer];
+    layer.sort((a,b)=>(a.indexInLayer<b.indexInLayer?
+      (lpResult.vars.get(buildXVarName(a, b))>0.5?-1:1):
+      (lpResult.vars.get(buildXVarName(b, a))>0.5?1:-1)));
+    /*layer.sort(function(a,b) {
+      if(a.indexInLayer<b.indexInLayer) {
+        const varName: string = buildXVarName(a, b);
+        const varValue: number = lpResult.vars.get(varName);
+      if(varValue>0.5) return -1;
+      else return 1;
+    });*/
     for(let i: number = layer.length-1; i>=0; i--) layer[i].indexInLayer = i; 
   }
 }
@@ -20,15 +31,18 @@ function constructModel(layers: Vertex[][]): LPModel {
 }
 
 function sort(graph: Graph) {
+  if(Math.max(...graph.layers.map(l=>l.length))>=8) {
+    graph = graph;
+  }
   const lpModel: LPModel = constructModel(graph.layers);
   const lpResult: LPResult = lpSolve(lpModel);
-  lpModel.printObjective();
-  lpModel.printConstraints(lpResult);
+  //lpModel.printObjective(lpResult);
+  //lpModel.printConstraints(lpResult);
   sortVerticesAccordingToResult(graph, lpResult);
 }
 
 function vertexToString(vertex: Vertex): string {
-  return vertex.index.toString(); // + '_' + vertex.name;
+  return vertex.index.toString() + '_' + vertex.name;
 }
 
 function buildVarName(...vertices: Vertex[]): string {
@@ -41,8 +55,8 @@ function buildXVarName(fromVertex: Vertex, toVertex: Vertex): string {
 
 
 function buildCVarName(edgeATo: Vertex, edgeAFrom: Vertex, edgeBTo: Vertex, edgeBFrom: Vertex) {
-  //return 'c(' + vertexToString(edgeAFrom) + '->' + vertexToString(edgeATo) + '),(' + vertexToString(edgeBFrom) + '->' + vertexToString(edgeBTo) + ')';
-  return 'c' + vertexToString(edgeAFrom) + '_' + vertexToString(edgeATo) + '_' + vertexToString(edgeBFrom) + '_' + vertexToString(edgeBTo);
+  return 'c(' + vertexToString(edgeAFrom) + '->' + vertexToString(edgeATo) + '),(' + vertexToString(edgeBFrom) + '->' + vertexToString(edgeBTo) + ')';
+  //return 'c' + vertexToString(edgeAFrom) + '_' + vertexToString(edgeATo) + '_' + vertexToString(edgeBFrom) + '_' + vertexToString(edgeBTo);
 }
 
 
@@ -56,16 +70,20 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
   for(const layer of layers) {
     let pathVarsInLayer: string[] = [];
     // add Xij == 1 <==> i->j  constraints
-    for(let i1: number = layer.length-3; i1>=0; i1--)  {
-      for(let i2: number = layer.length-2; i2>i1; i2--) { 
-        const varXij: string = buildXVarName(layer[i1], layer[i2]); //     'x' + layer[i1].index.toString() + layer[i1].name + '_' + layer[i2].index.toString();
-        pathVarsInLayer.push(varXij);
-        for(let i3: number = layer.length-1; i3>2; i3--) {
-          const varXjk: string = buildXVarName(layer[i2], layer[i3]); //  'x' + layer[i2].index.toString() + layer[i2].name + '_' + layer[i3].index.toString();
+    for(let k: number = layer.length-1; k>=2; k--)  {
+      for(let j: number = 1; j<k; j++) { 
+        const varXjk: string = buildXVarName(layer[j], layer[k]); //  'x' + layer[i2].index.toString() + layer[i2].name + '_' + layer[i3].index.toString();
+        pathVarsInLayer.push(varXjk);
+        //const varXij: string = buildXVarName(layer[i1], layer[i2]); //     'x' + layer[i1].index.toString() + layer[i1].name + '_' + layer[i2].index.toString();
+        //pathVarsInLayer.push(varXij);
+        for(let i: number = 0; i<j; i++) {
+          const varXij: string = buildXVarName(layer[i], layer[j]); //     'x' + layer[i1].index.toString() + layer[i1].name + '_' + layer[i2].index.toString();
           pathVarsInLayer.push(varXij);
-          const varXik: string = buildXVarName(layer[i1], layer[i3]); //  'x' + layer[i1].index.toString() + '_' + layer[i3].index.toString();
+          //const varXjk: string = buildXVarName(layer[i2], layer[i3]); //  'x' + layer[i2].index.toString() + layer[i2].name + '_' + layer[i3].index.toString();
+          //pathVarsInLayer.push(varXij);
+          const varXik: string = buildXVarName(layer[i], layer[k]); //  'x' + layer[i1].index.toString() + '_' + layer[i3].index.toString();
           pathVarsInLayer.push(varXik);
-          const conName: string = 'C13.23(L:' + layer[i3].layerIndex.toString()+'):('+layer[i1].index.toString() + ',' + layer[i2].index.toString() + ',' + layer[i3].index.toString() + ')';
+          const conName: string = 'C13.23(L:' + layer[k].layerIndex.toString()+'):('+layer[i].index.toString() + ',' + layer[j].index.toString() + ',' + layer[k].index.toString() + ')';
           lpModel.addConstraint(conName,
             0, 1, {
               [varXij]: 1, 
@@ -77,11 +95,11 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
       }
       if(layer.length>1) {
         pathVarsInLayer = _.uniq(pathVarsInLayer);
-        const constraint = {};
+        /*const constraint = {};
         for(const pathVar of pathVarsInLayer) constraint[pathVar] = 1;
         const sumOfPathVarsInLayer: number = (layer.length-1)*(layer.length)/2;
         const conName: string = 'ConSumOfPathVars(L:' + layer[0].layerIndex.toString() + ') SumOfXij='  + sumOfPathVarsInLayer.toString();
-        lpModel.addConstraint(conName, sumOfPathVarsInLayer, sumOfPathVarsInLayer, constraint);
+        lpModel.addConstraint(conName, sumOfPathVarsInLayer, sumOfPathVarsInLayer, constraint);*/
       }
       pathVars = pathVars.concat(pathVarsInLayer);
       /*

@@ -2,6 +2,7 @@ import {Vertex, Graph, Edge, CompressedVertexGroup, CompressionType} from './dat
 import {compressSimpleSources, decompressSimpleSources, compressSimpleTargets, decompressSimpleTargets} from './component_compressor';
 import {LayeredComponent, splitUnconnectedComponents, mergeUnconnectedComponents} from './component_seperator';
 import {sortVerticesInLayers} from './vertex_sorter_milp';
+import {sortVertices} from './vertex_sorter';
 import {positionVertices} from './vertex_positioner_lp';
 import * as _ from 'lodash';
 
@@ -13,7 +14,8 @@ export function sortAndPosition(graph: Graph, vertexDistance: number) {
       graph.layers = layeredComponent.layers;
       compressSimpleSources(graph, vertexDistance);
       compressSimpleTargets(graph, vertexDistance);
-      sortVerticesInLayers(graph);
+      //sortVerticesInLayers(graph);
+      sortVertices(graph);
       positionVerticesInLayers(graph, vertexDistance);
       decompressSimpleSources(graph, vertexDistance);
       decompressSimpleTargets(graph, vertexDistance);

@@ -18,7 +18,7 @@ function traverseComponent(vertex: Vertex, marked: boolean[], members: Vertex[])
 export function splitUnconnectedComponents(layers: Vertex[][]): LayeredComponent[] {
   const result: LayeredComponent[] = [];
   const marked: boolean[] = [];
-
+  let maxLayerSize: number  = Math.max(...layers.map(layer=>layer.length));
   for(const layer of layers) for(const vertex of layer) marked[vertex.index] = false;
   for(const layer of layers) for(const vertex of layer) {
     if(!marked[vertex.index]) {
@@ -53,7 +53,8 @@ export function splitUnconnectedComponents(layers: Vertex[][]): LayeredComponent
       }
     }
   }
-
+  console.log('Graph was splitted to ' + result.length.toString() + ' components.');
+  console.log('MaxLayerSize (wo virtual vertices) was reduced from ' + maxLayerSize + ' to ' + Math.max(...result.map(lC=>Math.max(...lC.layers.map(l=>l.length)))).toString() + '.');
   return result;
 }
 

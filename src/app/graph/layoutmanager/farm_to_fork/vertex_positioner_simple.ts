@@ -1,20 +1,20 @@
 import {Graph, Vertex} from './data_structures';
 import {BusinessTypeRanker} from './business_type_ranker';
 
-export function positionVertices(layers: Vertex[][], width: number, height: number) {
+export function positionVertices(layers: Vertex[][], vertexDistance: number) {
   let vertexPositioner: VertexPositionerSimple = new VertexPositionerSimple();
-  vertexPositioner.positionVertices(layers, height, width);
+  vertexPositioner.positionVertices(layers, vertexDistance);
 }
 
 class VertexPositionerSimple {
    
   constructor() {}
   
-  positionVertices(layers: Vertex[][], width: number, height: number) {
+  positionVertices(layers: Vertex[][], vertexDistance: number) {
     const nLayers: number = layers.length;
-    const layerDistance: number = width/nLayers;
-    const vertexDistance: number = height*0.9/Math.max(...(layers.map(layer => {return layer.length})));
-    const bottomMargin = height*0.05;
+    const layerDistance: number = 1; //width/nLayers;
+    //const vertexDistance: number = height*0.9/Math.max(...(layers.map(layer => {return layer.length})));
+    const bottomMargin = vertexDistance; //height*0.05;
     const rightMargin = layerDistance/2;
     
     let x: number = rightMargin;

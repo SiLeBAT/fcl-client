@@ -2,7 +2,8 @@ import * as Solver from 'javascript-lp-solver';
 
 export function lpSolve(model: LPModel): LPResult {
   //var solver = require("javascript-lp-solver");
-  runTestModel();
+  //runTestModel();
+  //runTestModel2();
   const tmp = Solver;
   /*for(let prop of Solver) {
     console.log(prop);
@@ -20,7 +21,7 @@ function runTestModel() {
     "5 table 10 dresser <= 110",
     "30 table 50 dresser <= 400",
     "table <= 5",
-    "2 <= table",
+    "table >= 2",
     "int table",
     "int dresser",
   ];
@@ -28,6 +29,28 @@ function runTestModel() {
   // Reformat to JSON model              
   model = solver.ReformatLP(model);
   const result = solver.Solve(model);
+}
+
+function runTestModel2() {
+  let model = {
+    "optimize": "profit",
+    "opType": "max",
+    "constraints": {
+        "wood": {"max": 300, "min": 5},
+        "labor": {"max": 110},
+        "storage": {"max": 400}
+    },
+    "variables": {
+        "table": {"wood": 30,"labor": 5,"profit": 1200,"table": 1, "storage": 30},
+        "dresser": {"wood": 20,"labor": 10,"profit": 1600,"dresser": 1, "storage": 50}
+    },
+    "binaries": {"table": 1,"dresser": 1}
+   };
+   const solver = Solver;
+  // Reformat to JSON model              
+    const model_s: string = solver.ReformatLP(model);
+    //const result = solver.Solve(model);
+    const model_b = solver.ReformatLP(model_s.split(';'));
 }
 
 export class LPModel {
@@ -65,16 +88,20 @@ export class LPModel {
   setBinaryVariables(vars: string[]) {
     const binaries = {};
     for(const varName of vars) binaries[varName] = 1;
-    //this.model['binaries'] = binaries; // does not work lp_solver reconginizes binaries but ignores bounds and integer condition
+    this.model['binaries'] = binaries; // does not work lp_solver reconginizes binaries but ignores bounds and integer condition
+    for(const varName of vars) {
+      if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {[varName]: 1}
+      else this.model['variables'][varName][varName] = 1;
+    }
     // workaround use integers instead
     
-    this.model['ints'] = binaries;
+    /*this.model['ints'] = binaries;
 
     for(const varName of vars) {
       if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {[varName]: 1}
       else this.model['variables'][varName][varName] = 1;
       this.addConstraint('BinCon' + varName + ':', 0, 1, {[varName]: 1});
-    }
+    }*/
   }
   setObjectiveCoefficient(varName: string, coeff: number) {
     if(!this.model['variables'].hasOwnProperty(varName)) this.model['variables'][varName] = {[varName]: 1};
@@ -124,7 +151,7 @@ export class LPModel {
       console.log(text);
     }
   }
-  printObjective() {
+  printObjective(lpResult: LPResult) {
     const objectiveName: string = this.model['optimize'];
     const objectiveType: string = this.model['opType'];
     let text: string = objectiveType + ': ';
@@ -132,8 +159,10 @@ export class LPModel {
       if(this.model['variables'][varName].hasOwnProperty(objectiveName)) {
         if(this.model['variables'][varName][objectiveName]<0) text+= ' ' + this.model['variables'][varName][objectiveName] + ' ' + varName;
         else text+= ' +' + this.model['variables'][varName][objectiveName] + ' ' + varName;
+        if(lpResult) text+= '[' + lpResult.vars.get(varName).toString() + ']';
       }
     }
+    if(lpResult) text+= ' = ' + lpResult.objective.toString();
     console.log(text);
   }
   
