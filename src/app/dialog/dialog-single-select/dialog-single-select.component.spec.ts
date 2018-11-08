@@ -11,10 +11,11 @@ describe('DialogSingleSelectComponent', () => {
   beforeEach(async(() => {
     const data: DialogSingleSelectData = {
       title: 'Prompt',
+      message: '',
       options: [
-        {value: 'Eins', viewValue: 'Eins'},
-        {value: 'Zwei', viewValue: 'Zwei'},
-        {value: 'Drei', viewValue: 'Drei'}
+        {value: 'Eins', viewValue: 'Eins', toolTip: null},
+        {value: 'Zwei', viewValue: 'Zwei', toolTip: null},
+        {value: 'Drei', viewValue: 'Drei', toolTip: null}
       ],
       value: 'Eins'
     };

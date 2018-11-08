@@ -3,7 +3,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 export interface DialogSingleSelectData {
   title: string;
-  options: { value: string, viewValue: string }[];
+  message: string;
+  options: { value: string, viewValue: string, toolTip: string }[];
   value: string;
 }
 

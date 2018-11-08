@@ -39,13 +39,13 @@ export class Graph {
     for(let layer of this.layers) {
       let i: number = -1;
       iL++;
-      for(let vertex of layer) vertex.setIndexInLayer(++i); // + iL*100;
+      for(let vertex of layer) vertex.indexInLayer = ++i; // + iL*100;
     }
     //let tmp: number[][] = this.layers.map(l => l.map(v => v.indexInLayer));
   }
 
   checkIndicesInLayers() {
-    for(let vertex of this.vertices) if(vertex.getIndexInLayer()==null) {
+    for(let vertex of this.vertices) if(vertex.indexInLayer==null) {
       console.log('The indexInLayer of vertex ' + vertex.index.toString() + ' is not defined.' );
     }
   }
@@ -71,23 +71,22 @@ export class Graph {
 
 export class Vertex {
   index: number;
+  name: string;
   x: number;
   y: number;
-  //inVertices: number[] = [];
-  //outVertices: number[] = [];
   inEdges: Edge[] = [];
   outEdges: Edge[] = [];
   layerIndex: number;
   weight: number;
-  //nextLayer: Edge[];
-  //previousLayer: Edge[];
-  private indexInLayer: number;
+  indexInLayer: number;
   typeCode: number;
   isVirtual: boolean = false;
-  bottomMargin: number;
-  topMargin: number;
+  //bottomMargin: number;
+  //topMargin: number;
+  size: number = 0;
+  //isCompressed: boolean = false;
   constructor() {}
-  setIndexInLayer(value: number) {
+  /*setIndexInLayer(value: number) {
     if(value==null) {
       value = value;
     }
@@ -95,7 +94,16 @@ export class Vertex {
   }
   getIndexInLayer(): number {
     return this.indexInLayer;
-  }
+  }*/
+}
+
+export enum CompressionType {
+  SOURCE_COMPRESSION = 0 as number,
+  TARGET_COMPRESSION = 1 as number,
+  SIMPLE_CONNECTED_COMPONENT = 2 as number
+}
+export class CompressedVertexGroup extends Vertex {
+  constructor(public compressedVertices: Vertex[], public compressionType: CompressionType) {super()}  
 }
 
 export class Edge {

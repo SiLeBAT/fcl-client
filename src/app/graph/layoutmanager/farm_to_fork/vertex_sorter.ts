@@ -11,6 +11,7 @@ class VertexSorter {
     
     sortVertices(graph: Graph) {
         this.createVirtualVertices(graph); 
+        if(Math.max(...graph.layers.map(l=>l.length))<=1) return;
 
         const layers: Vertex[][] = graph.layers;
 
@@ -88,8 +89,8 @@ class VertexSorter {
                             improved = vwCrossing>wvCrossing;
                             layers[iL][iV] = w;
                             layers[iL][iV+1] = v;
-                            w.setIndexInLayer(iV);
-                            v.setIndexInLayer(iV + 1);
+                            w.indexInLayer = iV;
+                            v.indexInLayer = iV + 1;
                             //console.log('Switch at ' + iV.toString() + ' in ' + iL.toString() + ' [' + v.index.toString() + ', ' + w.index.toString() + ', ' + wvCrossing.toString() + ']');
                         }
                     }
@@ -99,8 +100,8 @@ class VertexSorter {
         
         private pairCrossing(v: Vertex, w: Vertex): number {
             let crossCount: number = 0;
-            const tmpWUpNeighbours: number[] = w.inEdges.map(e => e.source.getIndexInLayer());
-            const tmpWDownNeighbours: number[] = w.outEdges.map(e => e.target.getIndexInLayer());
+            const tmpWUpNeighbours: number[] = w.inEdges.map(e => e.source.indexInLayer);
+            const tmpWDownNeighbours: number[] = w.outEdges.map(e => e.target.indexInLayer);
             for(let f of [a => a.inEdges.map(e => e.source.indexInLayer), a => a.outEdges.map(e => e.target.indexInLayer)]) {
                 
                 const vNeighbourIndices = f(v);
@@ -128,8 +129,8 @@ class VertexSorter {
             for(let iL: number = 0, nL = layers.length; iL<nL-1; iL++) {
                 let vertexCounter = new VertexCounter();
                 for(let vertex of layers[iL]) {
-                    for(let edge of vertex.inEdges) totalCrossing+= vertexCounter.getVertexCountAbovePosition(edge.source.getIndexInLayer());
-                    for(let edge of vertex.inEdges) vertexCounter.insertVertex(edge.source.getIndexInLayer());
+                    for(let edge of vertex.inEdges) totalCrossing+= vertexCounter.getVertexCountAbovePosition(edge.source.indexInLayer);
+                    for(let edge of vertex.inEdges) vertexCounter.insertVertex(edge.source.indexInLayer);
                 }
             }
             return totalCrossing;
@@ -151,13 +152,13 @@ class VertexSorter {
             }
             for(let layer of layers) {
                 let indexInLayer: number = -1;
-                for(let vertex of layer) vertex.setIndexInLayer(++indexInLayer);
+                for(let vertex of layer) vertex.indexInLayer = ++indexInLayer;
             }
-            let tmp: number[][] = layers.map(l => l.map(v => v.getIndexInLayer()));
+            let tmp: number[][] = layers.map(l => l.map(v => v.indexInLayer));
         }
         
         getWeight(vertex: Vertex, rank: number): number {
-            const adjacentPositions: number[] = (rank < vertex.layerIndex ? vertex.outEdges.map(e => e.target.getIndexInLayer()):vertex.inEdges.map(e => e.source.getIndexInLayer()));
+            const adjacentPositions: number[] = (rank < vertex.layerIndex ? vertex.outEdges.map(e => e.target.indexInLayer):vertex.inEdges.map(e => e.source.indexInLayer));
             const pCount = adjacentPositions.length;
             if(pCount==0) return -1.0;
             else if(pCount%2==1) return adjacentPositions[(pCount-1)/2];
@@ -229,7 +230,7 @@ class VertexSorter {
                 //graph.vertices.push(new Vertex()); 
                 //vertexRank[++maxVertexIndex] = iL; // 
                 layers[iL].push(vertex);
-                vertex.setIndexInLayer(layers[iL].length-1);
+                vertex.indexInLayer = layers[iL].length-1;
                 vertex.layerIndex = iL;
             }
             

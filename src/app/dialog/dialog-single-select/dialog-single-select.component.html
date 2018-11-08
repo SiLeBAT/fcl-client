@@ -1,15 +1,12 @@
-<h1 md-dialog-title>{{data.title}}</h1>
-<div md-dialog-content>
-    <mat-select [(ngModel)]="data.value" placeholder="Please choose" class="md-no-underline">
-        <mat-option *ngFor="let option of options" value="{{option.value}}">{{option.viewValue}}</mat-option>
-        
+<h1 matDialogTitle>{{data.title}}</h1>
+<div mat-dialog-content>
+    <span>{{data.message}}</span>
+    <mat-select [(ngModel)]="data.value" placeholder=""> <!--class="md-no-underline">-->
+        <mat-option *ngFor="let option of options" value="{{option.value}}" matTooltip="{{option.toolTip}}" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">{{option.viewValue}}</mat-option>
     </mat-select>
       
-  <!--<div class="checkboxes">
-    <md-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.viewValue}}</md-checkbox>
-  </div>-->
 </div>
-<div md-dialog-actions>
+<div mat-dialog-actions>
   <button md-button (click)="close()">OK</button>
   <button md-button (click)="dialogRef.close()">Cancel</button>
 </div>

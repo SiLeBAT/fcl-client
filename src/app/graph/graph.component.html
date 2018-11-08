@@ -62,13 +62,13 @@
 </mat-menu>
 <mat-menu #collapseMenu>
   <button mat-menu-item *ngFor="let action of collapseMenuActions"
-          [disabled]="!action.enabled" (click)="action.action($event)">
+          [disabled]="!action.enabled" (click)="action.action($event)" matTooltip="{{action.toolTip}}" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">
     {{action.name}}
   </button>
 </mat-menu>
 <mat-menu #uncollapseMenu>
   <button mat-menu-item *ngFor="let action of uncollapseMenuActions"
-          [disabled]="!action.enabled" (click)="action.action($event)">
+          [disabled]="!action.enabled" (click)="action.action($event)" matTooltip="{{action.toolTip}}" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">
     {{action.name}}
   </button>
 </mat-menu>
