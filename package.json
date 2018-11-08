@@ -9,6 +9,7 @@
     "serve": "ng serve --proxy-config proxy.config.json --watch",
     "serve:local": "ng serve",
     "build:qa": "npm run clean && npm run lint && ng build --configuration=qa --output-path \"public\"",
+    "build:qa_wo_lint": "npm run clean && ng build --configuration=qa --output-path \"public\"",
     "build:prod": "npm run clean && npm run lint && ng build --configuration=production --output-path \"public\"",
     "test": "ng test",
     "lint": "ng lint",
