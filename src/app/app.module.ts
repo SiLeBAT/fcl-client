@@ -25,6 +25,7 @@ import {DialogSelectComponent} from './dialog/dialog-select/dialog-select.compon
 import {DialogSingleSelectComponent} from './dialog/dialog-single-select/dialog-single-select.component';
 import {StationPropertiesComponent} from './dialog/station-properties/station-properties.component';
 import {DeliveryPropertiesComponent} from './dialog/delivery-properties/delivery-properties.component';
+import {VisioLayoutComponent} from './visio/visio-dialog/visio-dialog.component';
 
 import { TokenInterceptor } from './auth/interceptors/token.interceptor';
 import { JwtInterceptor } from './auth/interceptors/jwt.interceptor';
@@ -64,6 +65,7 @@ import { MainDashComponent } from './main-dash/main-dash.component';
     DialogSingleSelectComponent,
     StationPropertiesComponent,
     DeliveryPropertiesComponent,
+    VisioLayoutComponent,
     LoginComponent,
     AlertComponent,
     SpinnerLoaderComponent,
@@ -121,6 +123,7 @@ import { MainDashComponent } from './main-dash/main-dash.component';
     DialogSelectComponent,
     DialogSingleSelectComponent,
     StationPropertiesComponent,
+    VisioLayoutComponent,
     DeliveryPropertiesComponent
   ]
 })

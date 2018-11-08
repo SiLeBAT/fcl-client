@@ -8,6 +8,7 @@ import {GraphComponent} from '../graph/graph.component';
 import {TableComponent} from '../table/table.component';
 import {DataService} from '../util/data.service';
 import {DialogSelectComponent, DialogSelectData} from '../dialog/dialog-select/dialog-select.component';
+import {showVisioGraph} from '../visio/visio.service';
 import {Utils} from '../util/utils';
 import {FclData, GraphType, TableMode} from '../util/datatypes';
 import {Constants} from '../util/constants';
@@ -66,6 +67,8 @@ export class TracingComponent implements OnInit, OnDestroy {
       .subscribe(notification => this.toggleRightSidebar()));
     this.subscriptions.push(this.appService.doSaveImage
       .subscribe(notification => this.onSaveImage()));
+    this.subscriptions.push(this.appService.doVisioLayout
+        .subscribe(notification => this.onVisioLayout()));
     this.subscriptions.push(this.appService.doOnLoad
       .subscribe(event => this.onLoad(event)));
     this.subscriptions.push(this.appService.doOnSave
@@ -208,6 +211,27 @@ export class TracingComponent implements OnInit, OnDestroy {
         Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
       }
     });
+  }
+
+  onVisioLayout() {
+    showVisioGraph(this.dialogService);
+    /*this.dialogService.open(VisioLayoutComponent, {data: dialogData}).afterClosed().subscribe(connections => {
+      this.updateOverlay();
+
+      if (connections) {
+        this.tracingService.setConnectionsOfStation(node.id(), connections);
+        this.updateProperties();
+      }
+    });*/
+    /*this.getCurrentGraph().getCanvas().then(canvas => {
+      const fileName = 'graph.png';
+
+      if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
+        window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
+      } else {
+        Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+      }
+    });*/
   }
 
   changeColumns() {

@@ -1,5 +1,7 @@
 import {StationData, DeliveryData, Connection} from '../util/datatypes';
 import {VisioGraph, Country, Company, Product, Lot, Delivery} from './datatypes';
+import {VisioLayoutComponent, VisioLayoutData} from './visio-dialog/visio-dialog.component';
+import {MatDialog, MatMenuTrigger, MatSlider} from '@angular/material';
 
 function convertToVisioGraph(stations: StationData[], deliveries: DeliveryData[], connections: Connection[]): VisioGraph {
   const visioGraph: VisioGraph = new VisioGraph;
@@ -83,6 +85,8 @@ function convertToVisioGraph(stations: StationData[], deliveries: DeliveryData[]
   return visioGraph;
 }
 
+
+
 function initSizes(visioGraph: VisioGraph) {
   for(const country of visioGraph.countries) 
     for(const company of country.companies)
@@ -94,4 +98,11 @@ function initSizes(visioGraph: VisioGraph) {
 
 export function createVisioGraph(stations: StationData[], deliveries: DeliveryData[]): string {
   return null;
+}
+
+export function showVisioGraph(dialogService: MatDialog) {
+  const data: VisioLayoutData = { data: [] };
+  dialogService.open(VisioLayoutComponent, {data: data}).afterClosed().subscribe(() => {
+    //this.updateOverlay();
+  });
 }
