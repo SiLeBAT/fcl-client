@@ -6,6 +6,7 @@ export class AppService {
   public doToggleLeftSidebar: EventEmitter<any>;
   public doToggleRightSidebar: EventEmitter<any>;
   public doSaveImage: EventEmitter<any>;
+  public doVisioLayout: EventEmitter<any>;
   public doOnLoad: EventEmitter<any>;
   public doInputEmpty: EventEmitter<any>;
   public doOnSave: EventEmitter<any>;
@@ -15,6 +16,7 @@ export class AppService {
     this.doToggleLeftSidebar = new EventEmitter<any>();
     this.doToggleRightSidebar = new EventEmitter<any>();
     this.doSaveImage = new EventEmitter<any>();
+    this.doVisioLayout = new EventEmitter<any>();
     this.doOnLoad = new EventEmitter<any>();
     this.doInputEmpty = new EventEmitter<any>();
     this.doOnSave = new EventEmitter<any>();
@@ -30,6 +32,10 @@ export class AppService {
 
   onSaveImage() {
     this.doSaveImage.emit();
+  }
+
+  onVisioLayout() {
+    this.doVisioLayout.emit();
   }
 
   onLoad(event) {

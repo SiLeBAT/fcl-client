@@ -68,6 +68,13 @@
         <mat-icon>file_download</mat-icon>
       </button>
       <button
+        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
+        mat-icon-button
+        (click)="appService.onVisioLayout()"
+        matTooltip="Generate Visio Layout">
+        <mat-icon>image</mat-icon>
+      </button>
+      <button
         *ngIf="!rightSidenav.opened && (isServerLess() || authService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onToggleRightSidebar()"
