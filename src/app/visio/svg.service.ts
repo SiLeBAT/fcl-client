@@ -17,7 +17,7 @@ export function convertVisioGraphToSvg(graph: VisioGraph): string {
   for (const country of graph.countries) {
     shapes.push(convertCountryToSvgShape(country));
     for (const company of country.companies) {
-      company.inPorts
+      //company.inPorts
       shapes.push(convertCompanyToSvgShape(company));
       for (const product of company.products) {
         for (const lot of product.lots) {
