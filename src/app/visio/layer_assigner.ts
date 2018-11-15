@@ -64,6 +64,7 @@ function convertCompanyLayersToNestedLayeredGraph(companyLayers: Company[][]): N
       }
     }
   }
+  // add all Links
   for (const companyLayer of companyLayers) {
     const inLayer: Vertex[] = [];
     const outLayer: Vertex[] = [];
