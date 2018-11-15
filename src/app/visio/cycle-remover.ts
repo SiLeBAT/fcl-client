@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {Graph, Vertex, Edge} from './data-structures';
+import {Graph, Vertex, Edge} from './general-data-structures';
 
 export function removeCycles<V extends Vertex>(graph: Graph<V, Edge<V>>) {
   _removeCycles(graph);

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {Graph, Vertex, Edge, WildCard} from './data-structures';
+import {Graph, Vertex, Edge, WildCard} from './general-data-structures';
 
 export function aggregateEdgesOfVertexPairs<T, V extends Vertex<T>>(graph: Graph<V, Edge<V>>) {
   _aggregateEdgesOfVertexPairs(graph);

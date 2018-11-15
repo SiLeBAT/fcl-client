@@ -109,7 +109,7 @@ export function createVisioGraph(stations: StationData[], deliveries: DeliveryDa
   aggregateGraph(visioGraph);
   // ToDo: split Countries
   const companyLayers: Company[][] = assignCompaniesToLayers(visioGraph.countries);
-  const portLayers: Port[][] = convertToPortLayers(companyLayers);
+  const portLayers: Port<Company|Lot>[][] = convertToPortLayers(companyLayers);
 
   return null;
 }

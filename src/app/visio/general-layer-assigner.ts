@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {Graph, Vertex, Edge, WildCard} from './data-structures';
+import {Graph, Vertex, Edge, WildCard} from './general-data-structures';
 
 // assumes a directed acyclic graph
 export function assignLayers<T extends WildCard, V extends Vertex<T>>(vertices: V[]): V[][] {
