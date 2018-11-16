@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import {Graph, Vertex, Edge, WildCard} from './general-data-structures';
+import {Graph, Vertex, Edge} from './general-data-structures';
 
 // assumes a directed acyclic graph
-export function assignLayers<T extends WildCard, V extends Vertex<T>>(vertices: V[]): V[][] {
+export function assignLayers<V extends Vertex>(vertices: V[]): V[][] {
   return _assignLayers(vertices);
 }
 
-function getForkVertices<T extends WildCard, V extends Vertex<T>>(vertices: V[], vertexOutEdgeCounts: number[]): V[] {
+function getForkVertices<V extends Vertex>(vertices: V[], vertexOutEdgeCounts: number[]): V[] {
   const result: V[] = [];
   for (let i = 0, n: number = this.vertexOutEdgeCounts.length; i < n; ++i) {
     if (vertexOutEdgeCounts[i] < 1) {
@@ -16,11 +16,11 @@ function getForkVertices<T extends WildCard, V extends Vertex<T>>(vertices: V[],
   return result;
 }
 
-function getIncomingEdges<T extends WildCard, V extends Vertex<T>>(vertices: V[]): Edge<V>[] {
+function getIncomingEdges<V extends Vertex>(vertices: V[]): Edge<V>[] {
   return [].concat(...vertices.map(v => v.inEdges));
 }
 
-function _assignLayers<T extends WildCard, V extends Vertex<T>>(vertices: V[]): V[][] {
+function _assignLayers<V extends Vertex>(vertices: V[]): V[][] {
   const vertexOutEdgeCounts: number[] = vertices.map(vertex => vertex.outEdges.length);
   
   const layers: V[][] = [];
