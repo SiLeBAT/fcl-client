@@ -34,21 +34,25 @@ function getCompanyOutportKey(delivery: Delivery): string {
   return 'CO:' + delivery.id;
 }
 
-function getLotInportKey(lot: Lot): string {
+/*function getLotInportKey(lot: Lot): string {
   return 'LI:' + lot.id;
 }
 
 function getLotOutportKey(lot: Lot): string {
   return 'LO:' + lot.id;
+}*/
+
+function getLotPortKey(lot: Lot): string {
+  return 'LP:' + lot.id;
 }
 
 function convertCompanyLayersToNestedLayeredGraph(companyLayers: Company[][]): NestedLayeredGraph {
   const graph: NestedLayeredGraph = new NestedLayeredGraph();
-  const outerLayers: Vertex[][] = _.fill(Array(companyLayers.length * 2), []);
+  const outerLayers: Vertex[][][] = _.fill(Array(companyLayers.length), []);
   const countryPortGroups: Map<Country, Vertex[]> = new Map();
   const companyPortGroups: Map<Company, Vertex[]> = new Map();
   const productPortGroups: Map<Product, Vertex[]> = new Map();
-  const lotPortGroups: Map<Lot, Vertex[]> = new Map();
+  //const lotPortGroups: Map<Lot, Vertex[]> = new Map();
   const companyToLayerIndex: Map<Company, number> = new Map();
   const companies: Company[] = [].concat(...companyLayers);
   const countries: Country[] = companies.map(company => company.country);
@@ -59,9 +63,6 @@ function convertCompanyLayersToNestedLayeredGraph(companyLayers: Company[][]): N
     companyPortGroups.set(company, []);
     for (const product of company.products) {
       productPortGroups.set(product, []);
-      for (const lot of product.lots) {
-        lotPortGroups.set(lot, []);
-      }
     }
   }
 
@@ -69,24 +70,26 @@ function convertCompanyLayersToNestedLayeredGraph(companyLayers: Company[][]): N
   for (const companyLayer of companyLayers) {
     const inLayer: Vertex[] = [];
     for (const company of companyLayer) {
+      const targetCompany: Company = company;
       const innerPorts: Vertex[] = [];
-      for (const delivery of company.incomings) {
-        if (delivery.lot.product.company !== company) {
+      for (const ingoing of company.incomings) {
+        const sourceCompany: Company = ingoing.lot.product.company;
+        if (sourceCompany !== targetCompany) {
           // no selfloop
-          const companyOutPort: Vertex = graph.insertPort(getCompanyOutportKey(delivery), delivery.lot.product.company);
-          companyPortGroups.get(delivery.lot.product.company).push(companyOutPort);
-          const companyInPort: Vertex = graph.insertPort(getCompanyInportKey(delivery), company);
+          const companyOutPort: Vertex = graph.insertPort(getCompanyOutportKey(ingoing), sourceCompany);
+          companyPortGroups.get(sourceCompany).push(companyOutPort);
+          const companyInPort: Vertex = graph.insertPort(getCompanyInportKey(ingoing), targetCompany);
         }
-        const lotOutPort: Vertex = graph.insertPort(getLotOutportKey(delivery.lot), delivery.lot.product.company);
-        innerPorts.push(lotOutPort);
-        lotPortGroups.get(delivery.lot).push(lotOutPort);
+        //const lotPort: Vertex = graph.insertPort(getLotPortKey(ingoing.lot), sourceCompany);
+        //innerPorts.push(lotPort);
+        //lotPortGroups.get(ingoing.lot).push(lotOutPort);
       }
       for (const product of company.products) {
         for (const lot of product.lots) {
-          if (lot.ingredients !== null && lot.ingredients.length > 0) {
-            const lotInPort: Vertex = graph.insertPort(getLotInportKey(lot), company);
-            innerPorts.push(lotInPort);
-          }
+          //if (lot.ingredients !== null && lot.ingredients.length > 0) {
+            const lotPort: Vertex = graph.insertPort(getLotPortKey(lot), company);
+            innerPorts.push(lotPort);
+          //}
         }
       }
     }
