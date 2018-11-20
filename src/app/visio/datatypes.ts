@@ -69,6 +69,12 @@ export enum PortType {
   OUTPORT = 1 as number,
 }
 
+export interface Port extends Vertex {
+  inEdges: Edge<Port>[];
+  outEdges: Edge<Port>[];
+  position: Position;
+
+}
 /*export interface Port<T extends Company | Lot> {
   position: Position;
   inLinke
