@@ -27,7 +27,8 @@ FarmToForkLayout.prototype.run = function () {
 class FarmToForkLayoutClass {
 
     private static DEFAULTS = {
-        fit: true
+        fit: true,
+        padding: 40
     };
 
     private layout: any;
@@ -76,8 +77,7 @@ class FarmToForkLayoutClass {
 
         cy.nodes().layoutPositions(this.layout, this.options, node => {
             const vertex = vertices.get(node.id());
-
-
+            
             return {
                 x: vertex.x,
                 y: vertex.y
@@ -94,6 +94,7 @@ class FarmToForkLayouter {
     constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {};
 
     layout(width: number, height: number, vertexDistance: number) {
+        const vertexCount: number = this.graph.vertices.length;
         this.simplifyGraph();
         this.correctEdges();
         this.simplifyGraph();
@@ -109,7 +110,7 @@ class FarmToForkLayouter {
         startTime = new Date();
         sortAndPosition(this.graph, vertexDistance);
         // console.log('sortAndPositionVertices: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
-        scaleToSize(this.graph, width, height);
+        scaleToSize(this.graph, width, height, vertexDistance);
     }
 
     simplifyGraph() {
