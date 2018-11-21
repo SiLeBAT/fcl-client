@@ -414,6 +414,7 @@ export class GraphComponent implements OnInit {
   }
 
   private updateProperties() {
+    this.updateStyle();
     if (this.mergeDeliveries) {
       this.updateEdges();
       this.cy.nodes().scratch('_update', true);
@@ -462,15 +463,16 @@ export class GraphComponent implements OnInit {
   }
 
   private createSmallGraphStyle(): any {
-    const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize)/2;
+    /*const sizeFunction = node => {
+      const size = GraphComponent.NODE_SIZES.get(this.nodeSize) / 2;
       
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
         return size;
       }
-    };
+    };*/
+    const nodeSizeMap: string = this.createNodeSizeMap();
     
     let style = cytoscape.stylesheet()
     .selector('*')
@@ -482,8 +484,12 @@ export class GraphComponent implements OnInit {
     .selector('node')
     .style({
       'content': 'data(name)',
-      'height': sizeFunction, // ToDO: replace by linear function (data or dataMap)
-      'width': sizeFunction,  // ToDo: replace by linear function (data or dataMap)
+      // 'height': sizeFunction, // ToDO: replace by linear function (data or dataMap)
+      // 'width': sizeFunction,  // ToDo: replace by linear function (data or dataMap)
+      // 'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      // 'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
+      'height': nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      'width': nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)',  // linear function
       'background-color': 'rgb(255, 255, 255)',
       'border-width': 3,
       'border-color': 'rgb(0, 0, 0)',
@@ -494,7 +500,7 @@ export class GraphComponent implements OnInit {
     .selector('edge')
     .style({
       'target-arrow-shape': 'triangle', 
-      'width': 2, //        'width': 6,
+      'width': 1, //, //        'width': 6,
       'line-color': 'rgb(0, 0, 0)',
       'target-arrow-color': 'rgb(0, 0, 0)', 
       'arrow-scale': 1.4, 
@@ -509,15 +515,15 @@ export class GraphComponent implements OnInit {
     })
     .selector('edge:selected')
     .style({
-      'width': 4
+      'width': 2 //4
     })
     .selector('node[?contains]')
     .style({
-      'border-width': 6
+      'border-width': 3 //6 // ToDo: Clarify, what is this for
     })
     .selector('node:selected[?contains]')
     .style({
-      'border-width': 9
+      'border-width': 3 //9 // ToDo: Clarify, what is this for
     }).selector(':active')
     .style({
       'overlay-opacity': 0.5
@@ -573,7 +579,7 @@ export class GraphComponent implements OnInit {
   }
   
   private createLargeGraphStyle(): any {
-    const sizeFunction = node => {
+    /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
       
       if (this.tracingService.getMaxScore() > 0) {
@@ -581,7 +587,8 @@ export class GraphComponent implements OnInit {
       } else {
         return size;
       }
-    };
+    };*/
+    const nodeSizeMap: string = this.createNodeSizeMap();
     
     let style = cytoscape.stylesheet()
     .selector('*')
@@ -592,9 +599,13 @@ export class GraphComponent implements OnInit {
     })
     .selector('node')
     .style({
-      //'content': 'data(name)',
-      'height': sizeFunction, // PF test
-      'width': sizeFunction,  // PF test
+      // 'content': 'data(name)',
+      // 'height': sizeFunction, // PF test
+      // 'width': sizeFunction,  // PF test
+      // 'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      // 'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
+      'height': nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      'width': nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)',  // linear function
       'background-color': 'rgb(255, 255, 255)',
       //'border-width': 3,
       'border-color': 'rgb(0, 0, 0)',
@@ -610,7 +621,7 @@ export class GraphComponent implements OnInit {
       'mid-target-arrow-shape': 'triangle', // test reason
       //'mid-target-arrow-fill': 'hollow', // test reason
       'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
-      'width': 2, //        'width': 6,
+      'width': 1, // , //        'width': 6,
       'line-color': 'rgb(0, 0, 0)',
       // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
       'arrow-scale': 1.4, // test reason
@@ -625,18 +636,18 @@ export class GraphComponent implements OnInit {
     })
     .selector('edge:selected')
     .style({
-      //'width': 12
+      'width': 2 //12
     })
     .selector('node[?contains]')
     .style({
-      'border-width': 6
+      'border-width': 3 //6 // ToDo: Clarify, what is this for
     })
     .selector('node:selected[?contains]')
     .style({
-      'border-width': 9
+      'border-width': 3 //9 // ToDo: Clarify, what is this for
     }).selector(':active')
     .style({
-      //'overlay-opacity': 0.5
+      'overlay-opacity': 0.5
     })
     .selector(':selected')
     .css({
@@ -694,7 +705,7 @@ export class GraphComponent implements OnInit {
   }
   
   private createHugeGraphStyle(): any {
-    const sizeFunction = node => {
+    /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
       
       if (this.tracingService.getMaxScore() > 0) {
@@ -702,13 +713,15 @@ export class GraphComponent implements OnInit {
       } else {
         return size;
       }
-    };
+    };*/
     /*this.nodeSizeMap = new Map();
     const cachedSizeFunction = (node)=>{
       if(!this.nodeSizeMap.has(node.id)) this.nodeSizeMap.set(node.id, sizeFunction(node));
       return this.nodeSizeMap.get(node.id);
     };        //_.memoize(sizeFunction);
     */
+    
+    const nodeSizeMap: string = this.createNodeSizeMap();
     
     let style = cytoscape.stylesheet()
     .selector('*')
@@ -719,8 +732,8 @@ export class GraphComponent implements OnInit {
     })
     .selector('node')
     .style({
-      'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-      'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
+      'height': nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+      'width': nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)',  // linear function
       //'content': 'data(name)', // no label
       'background-color': 'rgb(255, 255, 255)',
       'border-width': 2,
@@ -816,135 +829,35 @@ export class GraphComponent implements OnInit {
     return style;
   }
   
-  
-  private createStyle(): any {
-    const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS: number = 50; 
-    const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS: number = 100;
-    
-    if(this.data.stations.length>MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) return this.createHugeGraphStyle();
-    else if(this.data.deliveries.length>MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) return this.createLargeGraphStyle();  
-    else return this.createSmallGraphStyle();
-
-    /*const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-      
-      if (this.tracingService.getMaxScore() > 0) {
-        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
-      } else {
-        return size;
-      }
-    };
-    
-    let style = cytoscape.stylesheet()
-    .selector('*')
-    .style({
-      'overlay-color': 'rgb(0, 0, 255)',
-      'overlay-padding': 10,
-      'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
-    })
-    .selector('node')
-    .style({
-      //'content': 'data(name)',
-      'height': sizeFunction, // PF test
-      'width': sizeFunction,  // PF test
-      'background-color': 'rgb(255, 255, 255)',
-      //'border-width': 3,
-      'border-color': 'rgb(0, 0, 0)',
-      //'text-valign': 'bottom',
-      //'text-halign': 'right',
-      'color': 'rgb(0, 0, 0)',
-      //'min-zoomed-font-size':10   // performance reasons
-    })
-    .selector('edge')
-    .style({
-      //'target-arrow-shape': 'triangle', // test reason
-      // large graphs
-      'mid-target-arrow-shape': 'triangle', // test reason
-      //'mid-target-arrow-fill': 'hollow', // test reason
-      'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
-      'width': 2, //        'width': 6,
-      'line-color': 'rgb(0, 0, 0)',
-      // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
-      'arrow-scale': 1.4, // test reason
-      //'curve-style': 'bezier'   // performance reasons
-    })
-    .selector('node:selected')
-    .style({
-      'background-color': 'rgb(128, 128, 255)',
-      //'border-width': 6,
-      'border-color': 'rgb(0, 0, 255)',
-      'color': 'rgb(0, 0, 255)'
-    })
-    .selector('edge:selected')
-    .style({
-      //'width': 12
-    })
-    .selector('node[?contains]')
-    .style({
-      'border-width': 6
-    })
-    .selector('node:selected[?contains]')
-    .style({
-      'border-width': 9
-    }).selector(':active')
-    .style({
-      //'overlay-opacity': 0.5
-    })
-    .selector(':selected')
-    .css({
-      'background-color': 'black',
-      'opacity': 1
-    });
-    
-    const createSelector = (prop: string) => {
-      if (prop === 'observed') {
-        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
-      } else {
-        return '[?' + prop + ']';
-      }
-    };
-    
-    const createNodeBackground = (colors: Color[]) => {
-      const background = {};
-      
-      if (colors.length === 1) {
-        background['background-color'] = Utils.colorToCss(colors[0]);
-      } else {
-        for (let i = 0; i < colors.length; i++) {
-          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
-          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
-        }
-      }
-      
-      return background;
-    };
-    
-    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
-      const s = [];
-      const c1 = [];
-      const c2 = [];
-      
-      for (const prop of combination) {
-        const color = Constants.PROPERTIES.get(prop).color;
-        
-        s.push(createSelector(prop));
-        c1.push(color);
-        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
-      }
-      
-      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
-      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
+  private createNodeSizeMap(): string {
+    const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
+    const maxScore = this.tracingService.getMaxScore() > 0 ? this.tracingService.getMaxScore() : 0;
+    if (maxScore > 0) {
+        return 'mapData(score, 0, ' + maxScore.toString() + ', ' + (size / 1.5).toString() + ',' + (size * 1.5).toString() + ')';
+    } else {
+        return size.toString();
     }
-    
-    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
-      style = style.selector('edge' + createSelector(prop)).style({
-        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
-      });
-    }
-    
-    return style;*/
   }
   
+  private updateStyle() {
+      if (this.cy !== null && this.cy.style !== null) {
+          this.cy.setStyle(this.createStyle());
+      }
+  }
+  
+  private createStyle(): any {
+    const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 300; // 50
+    const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 500;  // 100
+    
+    // return this.createSmallGraphStyle();
+    if (this.data.stations.length > MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
+        return this.createHugeGraphStyle();
+    } else if (this.data.deliveries.length > MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) {
+        return this.createLargeGraphStyle();
+    } else {
+        return this.createSmallGraphStyle();
+    }
+  }
 
   private setSelected(id: string, selected: boolean) {
     if (this.mergeMap.has(id)) {
