@@ -123,13 +123,13 @@ export function decompressSimpleSources(graph: Graph, vertexDistance: number) {
 export function decompressSimpleTargets(graph: Graph, vertexDistance: number) {
   for(const layer of graph.layers) {
     
-    for(const vertex of layer.filter(v=>v instanceof CompressedVertexGroup)) {
+    for(const vertex of layer.filter(v => v instanceof CompressedVertexGroup)) {
       const vertexGroup: CompressedVertexGroup = (vertex as CompressedVertexGroup);
-      if(vertexGroup.compressionType==CompressionType.TARGET_COMPRESSION) {
+      if(vertexGroup.compressionType === CompressionType.TARGET_COMPRESSION) {
         
         const source: Vertex = vertexGroup.inEdges[0].source;
         // remove link to compressed vertex
-        source.outEdges = source.outEdges.filter(e=>e!=vertexGroup.inEdges[0]);
+        source.outEdges = source.outEdges.filter(e => e !== vertexGroup.inEdges[0]);
         
         // remove compressed vertex from and add contained vertices to layer 
         insertVertices(layer, vertexGroup.indexInLayer, vertexGroup.compressedVertices);

@@ -26,7 +26,7 @@ class VertexSorter {
         let bestCrossing: number = this.layerCrossing(layers);
         
         const ITERATION_LIMIT = 24;
-        let temperatures: number[] = [0.1, 0.05, 0.02, 0.01];
+        let temperatures: number[] = []; // [0.1, 0.05, 0.02, 0.01];
         //const ITERATION_LIMIT_RANDOM = 10;
     
             for (let iIteration = 0, maxIterationIndex = ITERATION_LIMIT + 2*temperatures.length; iIteration <= maxIterationIndex; iIteration++) {
