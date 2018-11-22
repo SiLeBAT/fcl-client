@@ -49,6 +49,7 @@
     "javascript-lp-solver": "^0.4.5",
     "lodash": "^4.17.10",
     "material-design-icons": "^3.0.1",
+    "mxgraph": "^3.9.8",
     "openlayers": "^4.6.5",
     "rxjs": "^6.2.2",
     "rxjs-compat": "^6.2.2",

@@ -49,6 +49,7 @@ import { AppService } from './app.service';
 
 import { AlertComponent } from './auth/alert/alert.component';
 import { MainDashComponent } from './main-dash/main-dash.component';
+import { GraphEditorModule } from './graph-editor/graph-editor.module';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { MainDashComponent } from './main-dash/main-dash.component';
     HttpModule,
     MaterialModule,
     NgxDatatableModule,
+    GraphEditorModule,
     AppRoutingModule,
     FlexLayoutModule,
     PasswordStrengthMeterModule
