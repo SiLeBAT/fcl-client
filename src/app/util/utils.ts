@@ -1,9 +1,11 @@
 import {Color, DeliveryData, DialogAlignment, FclElements, Position, StationData, TableMode} from './datatypes';
 import {DialogPosition, MatDialog, MatDialogRef, MatMenuTrigger} from '@angular/material';
+import {Http} from '@angular/http';
 import * as ol from 'openlayers';
 import {DialogAlertComponent, DialogAlertData} from '../dialog/dialog-alert/dialog-alert.component';
 import {Constants} from './constants';
 import {ElementRef} from '@angular/core';
+import {Map as ImmutableMap} from 'immutable';
 
 export class Utils {
 
@@ -194,4 +196,68 @@ export class Utils {
       return null;
     }
   }
+
+  static arrayToMap<VT, KT>(array: VT[], keyFun: (value: VT) => KT ) {
+    const result: Map<KT, VT> = new Map();
+    for (const value of array) {
+        result.set(keyFun(value), value);
+    }
+    return result;
+  }
+
+  static createReverseMap<X, Y, Z>(map: Map<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
+    const result: Map<Z, X> = new Map();
+    map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
+    return result;
+  }
+
+  /*static createReverseMapTest<X, Y, Z>(map: {  forEach(fn(a: any[]): void); } Map<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
+    const result: Map<Z, X> = new Map();
+    map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
+    return result;
+  }*/
+
+  static getReverseOfImmutableMap<X, Y, Z>(map: ImmutableMap<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
+    const result: Map<Z, X> = new Map();
+    map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
+    return result;
+  }
+
+  static async getJson(filePath: string, http: Http): Promise<any> {
+    return http.get(filePath)
+    .toPromise()
+    .then(response => {
+      return response.json();
+    }).catch(error => Promise.reject(error));
+  }
+
+  static getProperty(data: any, path: string): any {
+
+    if (data != null) {
+        for (const propName of path.split('.')) {
+            if (data.hasOwnProperty(propName)) {
+                data = data[propName];
+            } else {
+                return null;
+            }
+            if (data === null) {
+                return null;
+            }
+        }
+    }
+    return data;
+}
+
+static setProperty(rawData: any, propPath: string, value: any) {
+    let container: any = rawData;
+    const propNames: string[] = propPath.split('.');
+    for (let i = 0, iMax = propNames.length - 1; i < iMax; i++) {
+        if (!container.hasOwnProperty(propNames[i])) {
+            container[propNames[i]] = {};
+        }
+        container = container[propNames[i]];
+    }
+    container[propNames[propNames.length - 1]] = value;
+}
+
 }

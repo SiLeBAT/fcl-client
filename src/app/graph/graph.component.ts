@@ -380,11 +380,13 @@ export class GraphComponent implements OnInit {
               originalTarget: value[0].target,
               invisible: false,
               selected: selected,
+              crossContamination: value.find(d => d.crossContamination) != null,
+              killContamination: value.find(d => d.killContamination) != null,
               observed: observedElement != null ? observedElement.observed : ObservedType.NONE,
               forward: value.find(d => d.forward) != null,
               backward: value.find(d => d.backward) != null,
               score: 0,
-              weight: _.sum(...value.map(d=>d.weight)),
+              weight: _.sum(...value.map(d => d.weight)),
               properties: []
             },
             selected: selected
@@ -429,7 +431,7 @@ export class GraphComponent implements OnInit {
 
     //console.log('updateAll:');
     //for (const s of this.data.stations) console.log(s.id + ' is contained: ' + s.contained + ', is visible: ' + !s.invisible + ', pos: ' + (s.position==null?'null':'(' + s.position.x + ',' + s.position.y + ')') + ' , containsCount: ' + (s.contains==null?'0':s.contains.length.toString()));
-      
+
     for (const s of this.data.stations) {
       if (!s.contained && s.positionRelativeTo != null) {
         s.position = Utils.sum(this.cy.getElementById(s.positionRelativeTo).position(), s.position);
@@ -465,7 +467,7 @@ export class GraphComponent implements OnInit {
   private createSmallGraphStyle(): any {
     /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize) / 2;
-      
+
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
@@ -473,7 +475,7 @@ export class GraphComponent implements OnInit {
       }
     };*/
     const nodeSizeMap: string = this.createNodeSizeMap();
-    
+
     let style = cytoscape.stylesheet()
     .selector('*')
     .style({
@@ -499,11 +501,11 @@ export class GraphComponent implements OnInit {
     })
     .selector('edge')
     .style({
-      'target-arrow-shape': 'triangle', 
+      'target-arrow-shape': 'triangle',
       'width': 1, //, //        'width': 6,
       'line-color': 'rgb(0, 0, 0)',
-      'target-arrow-color': 'rgb(0, 0, 0)', 
-      'arrow-scale': 1.4, 
+      'target-arrow-color': 'rgb(0, 0, 0)',
+      'arrow-scale': 1.4,
       'curve-style': 'bezier'   // performance reasons
     })
     .selector('node:selected')
@@ -528,7 +530,7 @@ export class GraphComponent implements OnInit {
     .style({
       'overlay-opacity': 0.5
     });
-    
+
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -536,10 +538,10 @@ export class GraphComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-    
+
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-      
+
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -548,40 +550,40 @@ export class GraphComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-      
+
       return background;
     };
-    
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-      
+
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-        
+
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-      
+
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-    
+
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-    
+
     return style;
   }
-  
+
   private createLargeGraphStyle(): any {
     /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-      
+
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
@@ -589,7 +591,7 @@ export class GraphComponent implements OnInit {
       }
     };*/
     const nodeSizeMap: string = this.createNodeSizeMap();
-    
+
     let style = cytoscape.stylesheet()
     .selector('*')
     .style({
@@ -654,7 +656,7 @@ export class GraphComponent implements OnInit {
       'background-color': 'black',
       'opacity': 1
     });
-    
+
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -662,10 +664,10 @@ export class GraphComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-    
+
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-      
+
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -674,40 +676,40 @@ export class GraphComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-      
+
       return background;
     };
-    
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-      
+
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-        
+
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-      
+
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-    
+
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-    
+
     return style;
   }
-  
+
   private createHugeGraphStyle(): any {
     /*const sizeFunction = node => {
       const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-      
+
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
@@ -720,9 +722,9 @@ export class GraphComponent implements OnInit {
       return this.nodeSizeMap.get(node.id);
     };        //_.memoize(sizeFunction);
     */
-    
+
     const nodeSizeMap: string = this.createNodeSizeMap();
-    
+
     let style = cytoscape.stylesheet()
     .selector('*')
     .style({
@@ -779,7 +781,7 @@ export class GraphComponent implements OnInit {
       'background-color': 'black',
       'opacity': 1
     });*/
-    
+
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -787,10 +789,10 @@ export class GraphComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-    
+
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-      
+
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -799,36 +801,36 @@ export class GraphComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-      
+
       return background;
     };
-    
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-      
+
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-        
+
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-      
+
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-    
+
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-    
+
     return style;
   }
-  
+
   private createNodeSizeMap(): string {
     const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
     const maxScore = this.tracingService.getMaxScore() > 0 ? this.tracingService.getMaxScore() : 0;
@@ -838,17 +840,17 @@ export class GraphComponent implements OnInit {
         return size.toString();
     }
   }
-  
+
   private updateStyle() {
       if (this.cy !== null && this.cy.style !== null) {
           this.cy.setStyle(this.createStyle());
       }
   }
-  
+
   private createStyle(): any {
     const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 300; // 50
     const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 500;  // 100
-    
+
     // return this.createSmallGraphStyle();
     if (this.data.stations.length > MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
         return this.createHugeGraphStyle();
@@ -931,14 +933,14 @@ export class GraphComponent implements OnInit {
           options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
           options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
           options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
-          
-          
+
+
           const dialogData: DialogSingleSelectData = {
             title: 'Select collapse mode',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
-          
+
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
@@ -956,14 +958,14 @@ export class GraphComponent implements OnInit {
           options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
           options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
           options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
-          
-          
+
+
           const dialogData: DialogSingleSelectData = {
             title: 'Select collapse mode',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
-          
+
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
@@ -981,7 +983,7 @@ export class GraphComponent implements OnInit {
           this.tracingService.collapseSimpleChains();
           this.updateAll();
           this.callChangeFunction();
-            
+
         }
       }, {
         name: 'Collapse Isolated Clouds',
@@ -991,7 +993,7 @@ export class GraphComponent implements OnInit {
           this.tracingService.collapseIsolatedClouds();
           this.updateAll();
           this.callChangeFunction();
-            
+
         }
       }*/
     ];
@@ -1171,8 +1173,8 @@ export class GraphComponent implements OnInit {
           options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif they send their delivieres to the same station and either their weights are all positive or all zero.' });
           options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the the same products of the same station and either their weights are all positive or all zero.' });
           options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the same lots of the same station and either their weights are all positive or all zero.' });
-          
-          
+
+
           /*const dialogData: DialogPromptData = {
             title: 'Input',
             message: 'Please specify name of meta station:',
@@ -1184,7 +1186,7 @@ export class GraphComponent implements OnInit {
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
-          
+
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
@@ -1203,15 +1205,15 @@ export class GraphComponent implements OnInit {
           options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.' });
           options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.' });
           options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.' });
-          
-          
+
+
           const dialogData: DialogSingleSelectData = {
             title: 'Choose target collapse mode',
             message: '', //Choose collapse mode:',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
-          
+
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
@@ -1230,7 +1232,7 @@ export class GraphComponent implements OnInit {
           this.tracingService.collapseSimpleChains();
           this.updateAll();
           this.callChangeFunction();
-            
+
         }
       }, {
         name: 'Collapse Isolated Clouds',
@@ -1241,7 +1243,7 @@ export class GraphComponent implements OnInit {
           this.tracingService.collapseIsolatedClouds();
           this.updateAll();
           this.callChangeFunction();
-            
+
         }
       }
     ];
@@ -1275,7 +1277,7 @@ export class GraphComponent implements OnInit {
           //this.updateOverlay();
           this.tracingService.uncollapseSimpleChains();
           this.updateAll();
-          this.callChangeFunction(); 
+          this.callChangeFunction();
         }
       }, {
         name: 'Uncollapse Isolated Clouds',

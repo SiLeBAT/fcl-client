@@ -48,6 +48,11 @@
           Merge Deliveries
         </mat-checkbox>
         <mat-checkbox
+          [(ngModel)]="data.graphSettings.hideUnconnectedStations"
+          (ngModelChange)="onGraphChange('hideUnconnectedStations')">
+          Hide Unconnected Stations
+        </mat-checkbox>
+        <mat-checkbox
           [(ngModel)]="data.graphSettings.showLegend"
           (ngModelChange)="onGraphChange('showLegend')">
           Show Legend

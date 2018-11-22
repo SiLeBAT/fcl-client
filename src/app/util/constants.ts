@@ -5,13 +5,17 @@ export class Constants {
 
   private static readonly STATION_DATA: StationData = {
     id: null, name: null, lat: null, lon: null, incoming: null, outgoing: null, connections: null, invisible: null, contained: null,
-    contains: null, groupType: null, selected: null, observed: null, forward: null, backward: null, outbreak: null, crossContamination: null, score: null,
-    commonLink: null, position: null, positionRelativeTo: null, properties: null
+    contains: null, groupType: null, selected: null,
+    observed: null,  outbreak: null, crossContamination: null, killContamination: null, weight: null,
+    forward: null, backward: null, score: null, commonLink: null,
+    position: null, positionRelativeTo: null, properties: null
   };
 
   private static readonly DELIVERY_DATA: DeliveryData = {
     id: null, name: null, lot: null, date: null, source: null, target: null, originalSource: null, originalTarget: null, invisible: null,
-    selected: null, observed: null, forward: null, backward: null, score: null, weight: null, properties: null
+    selected: null,
+    crossContamination: null, killContamination: null, observed: null, weight: null,
+    forward: null, backward: null, score: null,  properties: null
   };
 
   static readonly ARROW_STRING = '->';
@@ -49,6 +53,7 @@ export class Constants {
   static readonly DEFAULT_GRAPH_NODE_SIZE = Size.MEDIUM;
   static readonly DEFAULT_GRAPH_FONT_SIZE = Size.MEDIUM;
   static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
+  static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;
   static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
   static readonly DEFAULT_GRAPH_SHOW_ZOOM = true;
 
