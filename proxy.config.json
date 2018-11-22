@@ -1,6 +1,6 @@
 {
-  "/": {
-    "target": "http://localhost:3000",
+  "/users": {
+    "target": "http://localhost:3000/users",
     "secure": false,
     "logLevel": "debug"
   }
