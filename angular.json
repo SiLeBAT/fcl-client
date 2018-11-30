@@ -35,7 +35,7 @@
               "src/assets/jscolor/jscolor.js",
               "src/assets/sanitizer/sanitizer.min.js",
               "node_modules/mxgraph/javascript/mxClient.js",
-              "src/assets/js/EditorUI.js",
+              "src/assets/js/EditorUi.js",
               "src/assets/js/Editor.js",
               "src/assets/js/Sidebar.js",
               "src/assets/js/Graph.js",
@@ -96,7 +96,7 @@
               "browserTarget": "fcl-web-app:build:qa"
             },
             "serverless": {
-              "browserTarget": "fcl-web-app:build:serverless"                
+              "browserTarget": "fcl-web-app:build:serverless"
             }
           }
         },
