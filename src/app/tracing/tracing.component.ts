@@ -73,6 +73,7 @@ export class TracingComponent implements OnInit, OnDestroy {
 
     this.dataService.setDataSource('../../assets/data/bbk.json');
     this.dataService.getData().then(data => {
+      console.log('Tracing.component::ngOnInit() got data');
       this.data = data;
       this.updateComponents();
     }).catch(error => {
@@ -185,7 +186,9 @@ export class TracingComponent implements OnInit, OnDestroy {
         break;
     }
 
-    const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
+    const data: any = this.dataService.getExportData();
+    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    // const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
     const fileName = 'data.json';
 
     if (window.navigator.msSaveOrOpenBlob != null) {

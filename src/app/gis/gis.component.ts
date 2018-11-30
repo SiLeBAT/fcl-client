@@ -401,10 +401,12 @@ export class GisComponent implements OnInit {
               invisible: false,
               selected: selected,
               observed: observedElement != null ? observedElement.observed : ObservedType.NONE,
+              crossContamination: value.find(d => d.crossContamination) != null,
+              killContamination: value.find(d => d.killContamination) != null,
               forward: value.find(d => d.forward) != null,
               backward: value.find(d => d.backward) != null,
               score: 0,
-              weight: _.sum(value.map(d=>d.weight)),
+              weight: _.sum(value.map(d => d.weight)),
               properties: []
             },
             selected: selected
@@ -454,14 +456,14 @@ export class GisComponent implements OnInit {
   private createSmallGraphStyle(): any {
     const sizeFunction = node => {
       const size = GisComponent.NODE_SIZES.get(this.nodeSize)/2;
-      
+
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
         return size;
       }
     };
-    
+
     let style = cytoscape.stylesheet()
     .selector('*')
     .style({
@@ -483,11 +485,11 @@ export class GisComponent implements OnInit {
     })
     .selector('edge')
     .style({
-      'target-arrow-shape': 'triangle', 
+      'target-arrow-shape': 'triangle',
       'width': 2, //        'width': 6,
       'line-color': 'rgb(0, 0, 0)',
-      'target-arrow-color': 'rgb(0, 0, 0)', 
-      'arrow-scale': 1.4, 
+      'target-arrow-color': 'rgb(0, 0, 0)',
+      'arrow-scale': 1.4,
       'curve-style': 'bezier'   // performance reasons
     })
     .selector('node:selected')
@@ -512,7 +514,7 @@ export class GisComponent implements OnInit {
     .style({
       'overlay-opacity': 0.5
     });
-    
+
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -520,10 +522,10 @@ export class GisComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-    
+
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-      
+
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -532,47 +534,47 @@ export class GisComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-      
+
       return background;
     };
-    
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-      
+
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-        
+
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-      
+
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-    
+
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-    
+
     return style;
   }
-  
+
   private createLargeGraphStyle(): any {
     const sizeFunction = node => {
       const size = GisComponent.NODE_SIZES.get(this.nodeSize);
-      
+
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
         return size;
       }
     };
-    
+
     let style = cytoscape.stylesheet()
     .selector('*')
     .style({
@@ -633,7 +635,7 @@ export class GisComponent implements OnInit {
       'background-color': 'black',
       'opacity': 1
     });
-    
+
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -641,10 +643,10 @@ export class GisComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-    
+
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-      
+
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -653,40 +655,40 @@ export class GisComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-      
+
       return background;
     };
-    
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-      
+
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-        
+
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-      
+
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-    
+
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-    
+
     return style;
   }
-  
+
   private createHugeGraphStyle(): any {
     const sizeFunction = node => {
       const size = GisComponent.NODE_SIZES.get(this.nodeSize);
-      
+
       if (this.tracingService.getMaxScore() > 0) {
         return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
       } else {
@@ -699,7 +701,7 @@ export class GisComponent implements OnInit {
       return this.nodeSizeMap.get(node.id);
     };        //_.memoize(sizeFunction);
     */
-    
+
     let style = cytoscape.stylesheet()
     .selector('*')
     .style({
@@ -756,7 +758,7 @@ export class GisComponent implements OnInit {
       'background-color': 'black',
       'opacity': 1
     });*/
-    
+
     const createSelector = (prop: string) => {
       if (prop === 'observed') {
         return '[' + prop + ' != "' + ObservedType.NONE + '"]';
@@ -764,10 +766,10 @@ export class GisComponent implements OnInit {
         return '[?' + prop + ']';
       }
     };
-    
+
     const createNodeBackground = (colors: Color[]) => {
       const background = {};
-      
+
       if (colors.length === 1) {
         background['background-color'] = Utils.colorToCss(colors[0]);
       } else {
@@ -776,42 +778,42 @@ export class GisComponent implements OnInit {
           background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
         }
       }
-      
+
       return background;
     };
-    
+
     for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
       const s = [];
       const c1 = [];
       const c2 = [];
-      
+
       for (const prop of combination) {
         const color = Constants.PROPERTIES.get(prop).color;
-        
+
         s.push(createSelector(prop));
         c1.push(color);
         c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
       }
-      
+
       style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
       style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
     }
-    
+
     for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
       style = style.selector('edge' + createSelector(prop)).style({
         'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
       });
     }
-    
+
     return style;
   }
-  
+
   private createStyle(): any {
-    const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS: number = 50; 
+    const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS: number = 50;
     const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS: number = 100;
 
     if(this.data.stations.length>MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) return this.createHugeGraphStyle();
-    else if(this.data.deliveries.length>MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) return this.createLargeGraphStyle();  
+    else if(this.data.deliveries.length>MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) return this.createLargeGraphStyle();
     else return this.createSmallGraphStyle();
     /*const sizeFunction = node => {
       const size = GisComponent.NODE_SIZES.get(this.nodeSize);
@@ -1159,15 +1161,15 @@ export class GisComponent implements OnInit {
           options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'H1' });
           options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'H2' });
           options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'H3' });
-          
-          
+
+
           const dialogData: DialogSingleSelectData = {
             title: 'Choose source collapse mode',
             message: '',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
-          
+
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
@@ -1186,15 +1188,15 @@ export class GisComponent implements OnInit {
           options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.' });
           options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.' });
           options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive', toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.' });
-          
-          
+
+
           const dialogData: DialogSingleSelectData = {
             title: 'Choose target collapse mode',
             message: '',
             options: options,
             value: GroupMode.WEIGHT_ONLY.toString()
           };
-          
+
           this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
             this.updateOverlay();
             if (groupMode != null) {
@@ -1213,7 +1215,7 @@ export class GisComponent implements OnInit {
           this.tracingService.collapseSimpleChains();
           this.updateAll();
           this.callChangeFunction();
-            
+
         }
       }, {
         name: 'Collapse Isolated Clouds',
@@ -1224,7 +1226,7 @@ export class GisComponent implements OnInit {
           this.tracingService.collapseIsolatedClouds();
           this.updateAll();
           this.callChangeFunction();
-            
+
         }
       }
     ];
@@ -1258,7 +1260,7 @@ export class GisComponent implements OnInit {
           //this.updateOverlay();
           this.tracingService.uncollapseSimpleChains();
           this.updateAll();
-          this.callChangeFunction(); 
+          this.callChangeFunction();
         }
       }, {
         name: 'Uncollapse Isolated Clouds',
