@@ -17,7 +17,7 @@
             ]
         },
         "tracing": {
-            "type": "object",
+            "type": ["object", "null"],
             "description": "tracing data",
             "properties": {
                 "nodes": { "$ref": "#/definitions/tracings" },
@@ -25,7 +25,7 @@
             }
         },
         "settings": {
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
                 "metaNodes": {
                     "type": "array",
@@ -161,7 +161,7 @@
             ]
         },
         "transformation": {
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
                 "scale":  { "$ref": "#/definitions/xyPair" },
                 "translation":  { "$ref": "#/definitions/xyPair" }
