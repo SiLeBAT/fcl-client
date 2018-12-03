@@ -915,13 +915,13 @@ export class GraphComponent implements OnInit {
         }
       },
       {
-        name: 'Collapse ',
+        name: 'Collapse Stations',
         enabled: true,
         toolTip: null,
         action: event => Utils.openMenu(this.collapseMenuTrigger, this.collapseMenuTriggerElement, this.getCyCoordinates(event))
       },
       {
-        name: 'Uncollapse ',
+        name: 'Uncollapse Stations',
         enabled: true,
         toolTip: null,
         action: event => Utils.openMenu(this.uncollapseMenuTrigger, this.uncollapseMenuTriggerElement, this.getCyCoordinates(event))
