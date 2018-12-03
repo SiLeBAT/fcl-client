@@ -187,6 +187,8 @@ export class DataImporterV1 implements IDataImporter {
                 properties: extDelivery.properties
             };
 
+            idToStationMap.get(intDelivery.source).outgoing.push(intDelivery.id);
+            idToStationMap.get(intDelivery.target).incoming.push(intDelivery.id);
             intDeliveries.push(intDelivery);
             idToDeliveryMap.set(intDelivery.id, intDelivery);
         }
@@ -203,7 +205,10 @@ export class DataImporterV1 implements IDataImporter {
         const rawData: any = data[JsonConstants.DATA];
         const delToDelTable: any = rawData[JsonConstants.DELIVERY_TO_DELIVERY_TABLE];
         const extDelToDels: any = delToDelTable[JsonConstants.TABLE_DATA];
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP);
+        const colsData: any = delToDelTable[JsonConstants.TABLE_COLUMNS];
+        const columnSet: Set<string> = new Set(colsData.map(col => col.id));
+        const extToIntPropMap: Map<string, string> = this.createReverseMap(  
+            columnSet.has('from') ? JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO : JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT);
 
         const idToConnectionMap: Map<string, Connection> = new Map();
 

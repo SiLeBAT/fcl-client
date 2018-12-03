@@ -68,6 +68,8 @@ export class TracingService {
     for (const d of data.deliveries) {
       this.deliveriesById.set(d.id, d);
     }
+    
+    this.updateScores();
   }
 
   getMaxScore() {
@@ -448,7 +450,13 @@ export class TracingService {
   }
   private getNewTargetGroups(groupMode: GroupMode, oldGroups: Map<string, string[]>): Map<string,string[]> {
     const oldTargetIdSet: Set<string> = new Set([].concat(...Array.from(oldGroups.values())));
-    const targetStations: StationData[] = this.data.stations.filter(s => !s.invisible && (s.contains==null || s.contains.length==0) && (s.outgoing==null || s.outgoing.length==0) && (s.incoming!=null && s.incoming.length>0) && (!s.contained || oldTargetIdSet.has(s.id)));
+    const targetStations: StationData[] = this.data.stations.filter(s => {
+      return !s.invisible 
+      && (s.contains === null || s.contains.length === 0) 
+      && (s.outgoing === null || s.outgoing.length === 0) 
+      && (s.incoming !== null && s.incoming.length > 0) 
+      && (!s.contained || oldTargetIdSet.has(s.id))
+    });
 
     const sourceIdToLinkGroupMap: Map<string, {linkStation: StationData, linkedStations: {linkedStation: StationData, linkKeys: string[]}[]}> = new Map();
     for(let target of targetStations) {

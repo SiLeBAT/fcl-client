@@ -83,9 +83,30 @@ export class Constants {
     score: {name: 'Score', color: null}*/
   });
 
-  static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<string, ColumnInfo> = ImmutableMap({
+  static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT: ImmutableMap<string, ColumnInfo> = ImmutableMap({
     source: {columnId: 'ID', type: 'string'},
     target: {columnId: 'Next', type: 'string'}/* ,
+    lot: {name: 'Lot', color: null},
+    date: {name: 'Date', color: null},
+    source: {name: 'Source', color: null},
+    target: {name: 'Target', color: null},
+    originalSource: {name: 'Original Source', color: null},
+    originalTarget: {name: 'Original Target', color: null},
+    incoming: {name: 'Incoming', color: null},
+    outgoing: {name: 'Outgoing', color: null},
+    contains: {name: 'Contains', color: null},
+    forward: {name: 'Forward Trace', color: {r: 150, g: 255, b: 75}},
+    backward: {name: 'Backward Trace', color: {r: 255, g: 150, b: 75}},
+    observed: {name: 'Observed', color: {r: 75, g: 150, b: 255}},
+    outbreak: {name: 'Outbreak', color: {r: 255, g: 50, b: 50}},
+    crossContamination: {name: 'Cross Contamination', color: {r: 150, g: 150, b: 150}},
+    commonLink: {name: 'Common Link', color: {r: 255, g: 255, b: 75}},
+    score: {name: 'Score', color: null}*/
+  });
+
+  static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO: ImmutableMap<string, ColumnInfo> = ImmutableMap({
+    source: {columnId: 'from', type: 'string'},
+    target: {columnId: 'to', type: 'string'}/* ,
     lot: {name: 'Lot', color: null},
     date: {name: 'Date', color: null},
     source: {name: 'Source', color: null},
