@@ -1,31 +1,41 @@
-import {DeliveryData, FclData, ObservedType, StationData, Connection, GroupType, Layout, GraphType} from '../datatypes';
-import {Http} from '@angular/http';
+import {
+  DeliveryData,
+  FclData,
+  ObservedType,
+  StationData,
+  Connection,
+  GroupType,
+  Layout,
+  GraphType
+} from '../datatypes';
+import { HttpClient } from '@angular/common/http';
 
-import {Utils} from '../utils';
-import {Constants} from '../constants';
-import {Constants as JsonConstants, ColumnInfo} from './../data-mappings/data-mappings-v1';
-import {List, Map as ImmutableMap} from 'immutable';
+import { Utils } from '../utils';
+import { Constants } from '../constants';
+import {
+  Constants as JsonConstants,
+  ColumnInfo
+} from './../data-mappings/data-mappings-v1';
+import { List, Map as ImmutableMap } from 'immutable';
 
-import {IDataImporter} from './datatypes';
+import { IDataImporter } from './datatypes';
 import * as Ajv from 'ajv';
-import {isValidJson} from './shared';
+import { isValidJson } from './shared';
 
 const JSON_SCHEMA_FILE = '../../assets/schema/schema-v1.json';
 
 export class DataImporterV1 implements IDataImporter {
-
-    constructor(private http: Http) {
-    }
+    constructor(private httpClient: HttpClient) {}
 
     async isDataFormatSupported(data: any): Promise<boolean> {
-        /*return data.hasOwnProperty(JsonConstants.DATA) && data[JsonConstants.DATA] !== null &&
+    /*return data.hasOwnProperty(JsonConstants.DATA) && data[JsonConstants.DATA] !== null &&
          data[JsonConstants.DATA].hasOwProperty(JsonConstants.STATION_TABLE) &&
          data[JsonConstants.DATA].hasOwProperty(JsonConstants.DELIVERY_TABLE) &&
          data[JsonConstants.DATA].hasOwProperty(JsonConstants.DELIVERY_TO_DELIVERY_TABLE);
 */
-         const schema = await this.loadSchema();
-         // const result = await isValidJson(schema, data);
-         return await isValidJson(schema, data);
+        const schema = await this.loadSchema();
+    // const result = await isValidJson(schema, data);
+        return isValidJson(schema, data);
     }
 
     async preprocessData(data: any, fclData: FclData): Promise<void> {
@@ -37,8 +47,8 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private async loadSchema(): Promise<any> {
-        return await Utils.getJson(JSON_SCHEMA_FILE, this.http);
-        /*return this.http.get(JSON_SCHEMA_FILE)
+        return Utils.getJson(JSON_SCHEMA_FILE, this.httpClient);
+    /*return this.http.get(JSON_SCHEMA_FILE)
         .toPromise()
         .then(response => {
           return response.json();
@@ -46,19 +56,35 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private convertExternalData(data: any, fclData: FclData) {
-        const idToStationMap: Map<string, StationData> = this.convertExternalStations(data, fclData);
-        const idToDeliveryMap: Map<string, DeliveryData> = this.convertExternalDeliveries(data, fclData, idToStationMap);
+        const idToStationMap: Map<
+      string,
+      StationData
+    > = this.convertExternalStations(data, fclData);
+        const idToDeliveryMap: Map<
+      string,
+      DeliveryData
+    > = this.convertExternalDeliveries(data, fclData, idToStationMap);
         this.convertExternalGroupData(data, fclData, idToStationMap);
-        this.convertExternalTracingData(data, fclData, idToStationMap, idToDeliveryMap);
+        this.convertExternalTracingData(
+      data,
+      fclData,
+      idToStationMap,
+      idToDeliveryMap
+    );
         this.convertExternalViewSettings(data, fclData, idToStationMap);
     }
 
-    private convertExternalStations(data: any, fclData: FclData): Map<string, StationData> {
+    private convertExternalStations(
+    data: any,
+    fclData: FclData
+  ): Map<string, StationData> {
         const rawData: any = data[JsonConstants.DATA];
         const stationTable: any = rawData[JsonConstants.STATION_TABLE];
         const extStations: any = stationTable[JsonConstants.TABLE_DATA];
         const intStations: StationData[] = [];
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(JsonConstants.STATION_PROP_INT_TO_EXT_MAP);
+        const extToIntPropMap: Map<string, string> = this.createReverseMap(
+      JsonConstants.STATION_PROP_INT_TO_EXT_MAP
+    );
 
         const idToStationMap: Map<string, StationData> = new Map();
 
@@ -118,15 +144,21 @@ export class DataImporterV1 implements IDataImporter {
         return idToStationMap;
     }
 
-    private convertExternalDeliveries(data: any, fclData: FclData, idToStationMap: Map<string, StationData>): Map<string, DeliveryData> {
+    private convertExternalDeliveries(
+    data: any,
+    fclData: FclData,
+    idToStationMap: Map<string, StationData>
+  ): Map<string, DeliveryData> {
         const rawData: any = data[JsonConstants.DATA];
         const deliveryTable: any = rawData[JsonConstants.DELIVERY_TABLE];
 
         const extDeliveries: any = deliveryTable[JsonConstants.TABLE_DATA];
         const intDeliveries: DeliveryData[] = [];
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP);
+        const extToIntPropMap: Map<string, string> = this.createReverseMap(
+      JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP
+    );
 
-        // const idToStationMap: Map<string, StationData> = Utils.arrayToMap(fclData.elements.stations, (s: StationData) => s.id);
+    // const idToStationMap: Map<string, StationData> = Utils.arrayToMap(fclData.elements.stations, (s: StationData) => s.id);
         const idToDeliveryMap: Map<string, DeliveryData> = new Map();
 
         for (const extDelivery of extDeliveries) {
@@ -151,19 +183,27 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             if (extDelivery.source === null) {
-                throw new SyntaxError('Delivery source is missing for id:' + extDelivery.id);
+                throw new SyntaxError(
+          'Delivery source is missing for id:' + extDelivery.id
+        );
             }
 
             if (!idToStationMap.has(extDelivery.source)) {
-                throw new SyntaxError('Delivery source with id \"' + extDelivery.source + '\" is unkown.');
+                throw new SyntaxError(
+          'Delivery source with id "' + extDelivery.source + '" is unkown.'
+        );
             }
 
             if (extDelivery.target === null) {
-                throw new SyntaxError('Delivery target is missing for id:' + extDelivery.id);
+                throw new SyntaxError(
+          'Delivery target is missing for id:' + extDelivery.id
+        );
             }
 
             if (!idToStationMap.has(extDelivery.target)) {
-                throw new SyntaxError('Delivery target with id \"' + extDelivery.target + '\" is unkown.');
+                throw new SyntaxError(
+          'Delivery target with id "' + extDelivery.target + '" is unkown.'
+        );
             }
 
             const intDelivery: DeliveryData = {
@@ -195,20 +235,30 @@ export class DataImporterV1 implements IDataImporter {
 
         fclData.elements.deliveries = intDeliveries;
 
-        this.convertExternalDeliveryToDelivery(data, idToStationMap, idToDeliveryMap);
+        this.convertExternalDeliveryToDelivery(
+      data,
+      idToStationMap,
+      idToDeliveryMap
+    );
         return idToDeliveryMap;
     }
 
-    private convertExternalDeliveryToDelivery(data: any,
-        idToStationMap: Map<string, StationData>, idToDeliveryMap: Map<string, DeliveryData>) {
-
+    private convertExternalDeliveryToDelivery(
+    data: any,
+    idToStationMap: Map<string, StationData>,
+    idToDeliveryMap: Map<string, DeliveryData>
+  ) {
         const rawData: any = data[JsonConstants.DATA];
-        const delToDelTable: any = rawData[JsonConstants.DELIVERY_TO_DELIVERY_TABLE];
+        const delToDelTable: any =
+      rawData[JsonConstants.DELIVERY_TO_DELIVERY_TABLE];
         const extDelToDels: any = delToDelTable[JsonConstants.TABLE_DATA];
         const colsData: any = delToDelTable[JsonConstants.TABLE_COLUMNS];
         const columnSet: Set<string> = new Set(colsData.map(col => col.id));
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(  
-            columnSet.has('from') ? JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO : JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT);
+        const extToIntPropMap: Map<string, string> = this.createReverseMap(
+      columnSet.has('from')
+        ? JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO
+        : JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT
+    );
 
         const idToConnectionMap: Map<string, Connection> = new Map();
 
@@ -224,7 +274,9 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             if (!idToDeliveryMap.has(extDelToDel.source)) {
-                throw new SyntaxError('Unkown delivery to delivery source \"' + extDelToDel.source + '\".');
+                throw new SyntaxError(
+          'Unkown delivery to delivery source "' + extDelToDel.source + '".'
+        );
             }
 
             if (extDelToDel.target === null) {
@@ -232,14 +284,22 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             if (!idToDeliveryMap.has(extDelToDel.target)) {
-                throw new SyntaxError('Unkown delivery to delivery target \"' + extDelToDel.target + '\".');
+                throw new SyntaxError(
+          'Unkown delivery to delivery target "' + extDelToDel.target + '".'
+        );
             }
 
-            const sourceDelivery: DeliveryData = idToDeliveryMap.get(extDelToDel.source);
-            const targetDelivery: DeliveryData = idToDeliveryMap.get(extDelToDel.target);
+            const sourceDelivery: DeliveryData = idToDeliveryMap.get(
+        extDelToDel.source
+      );
+            const targetDelivery: DeliveryData = idToDeliveryMap.get(
+        extDelToDel.target
+      );
 
             if (sourceDelivery.target !== targetDelivery.source) {
-                throw new SyntaxError('Invalid delivery relation: ' + JSON.stringify(extDelToDel));
+                throw new SyntaxError(
+          'Invalid delivery relation: ' + JSON.stringify(extDelToDel)
+        );
             }
 
             const connection: Connection = {
@@ -251,29 +311,39 @@ export class DataImporterV1 implements IDataImporter {
 
             if (!idToConnectionMap.has(conId)) {
                 idToConnectionMap.set(conId, connection);
-                idToStationMap.get(idToDeliveryMap.get(connection.source).target).connections.push(connection);
+                idToStationMap
+          .get(idToDeliveryMap.get(connection.source).target)
+          .connections.push(connection);
             }
         }
     }
 
-    private convertExternalGroupData(data: any, fclData: FclData, idToStationMap: Map<string, StationData>) {
+    private convertExternalGroupData(
+    data: any,
+    fclData: FclData,
+    idToStationMap: Map<string, StationData>
+  ) {
         const extGroups: any = this.getProperty(data, JsonConstants.GROUP_DATA);
-        if (extGroups === null) { return; }
+        if (extGroups === null) {
+            return;
+        }
 
         const stationIds: Set<string> = new Set(Array.from(idToStationMap.keys()));
 
-        // const extToIntGroupTypeMap: Map<string, string> = Utils.createReverseMap(Constants.GROUPTYPE_INT_TO_EXT_MAP, (v: string) => v);
+    // const extToIntGroupTypeMap: Map<string, string> = Utils.createReverseMap(Constants.GROUPTYPE_INT_TO_EXT_MAP, (v: string) => v);
 
         for (const extGroup of extGroups) {
-            /*if (extGroup.id === null) {
+      /*if (extGroup.id === null) {
                 throw new SyntaxError('Metanode id is missing.');
             }*/
 
             if (idToStationMap.has(extGroup.id)) {
-                throw new SyntaxError('Metanode id \"' + extGroup.id + '\" is not unique.');
+                throw new SyntaxError(
+          'Metanode id "' + extGroup.id + '" is not unique.'
+        );
             }
 
-            /*if (extGroup.members === null) {
+      /*if (extGroup.members === null) {
                 throw new SyntaxError('Missing members in group \"' + extGroup.id + '\".');
             }
 
@@ -283,13 +353,15 @@ export class DataImporterV1 implements IDataImporter {
 
             for (const member of extGroup.members) {
                 if (!stationIds.has(member)) {
-                    throw new SyntaxError('Unknown member \"' + member + '\" in group \"' + extGroup.id + '\".');
+                    throw new SyntaxError(
+            'Unknown member "' + member + '" in group "' + extGroup.id + '".'
+          );
                 }
             }
 
             const intGroup: StationData = {
                 id: extGroup.id,
-                name: (extGroup.name == null ? extGroup.id : extGroup.name),
+                name: extGroup.name == null ? extGroup.id : extGroup.name,
                 lat: null,
                 lon: null,
                 incoming: null,
@@ -315,14 +387,22 @@ export class DataImporterV1 implements IDataImporter {
             };
 
             if (extGroup.type !== null) {
-                if (!JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.has(extGroup.type)) { // }  extToIntGroupTypeMap.has(extGroup.type)) {
-                    throw new SyntaxError('Unknown metanode type \"' + extGroup.type + '\" of group \"' + extGroup.id + '\".');
+                if (!JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.has(extGroup.type)) {
+          // }  extToIntGroupTypeMap.has(extGroup.type)) {
+                    throw new SyntaxError(
+            'Unknown metanode type "' +
+              extGroup.type +
+              '" of group "' +
+              extGroup.id +
+              '".'
+          );
                 }
-                // intGroup.groupType = GroupType[extToIntGroupTypeMap.get(extGroup.type) as keyof typeof GroupType];
-                intGroup.groupType = JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.get(extGroup.type);
+        // intGroup.groupType = GroupType[extToIntGroupTypeMap.get(extGroup.type) as keyof typeof GroupType];
+                intGroup.groupType = JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.get(
+          extGroup.type
+        );
             } else {
-
-                // ToDo: temporary solution
+        // ToDo: temporary solution
                 if (intGroup.id.startsWith('SC')) {
                     intGroup.groupType = GroupType.SIMPLE_CHAIN;
                 } else if (intGroup.id.startsWith('SG:')) {
@@ -339,17 +419,32 @@ export class DataImporterV1 implements IDataImporter {
         }
     }
 
-    private convertExternalTracingData(data: any, fclData: FclData,
-        idToStationMap: Map<string, StationData>, idToDeliveryMap: Map<string, DeliveryData>) {
-
+    private convertExternalTracingData(
+    data: any,
+    fclData: FclData,
+    idToStationMap: Map<string, StationData>,
+    idToDeliveryMap: Map<string, DeliveryData>
+  ) {
         const tracingData: any = this.getProperty(data, JsonConstants.TRACING_DATA);
-        if (tracingData == null) { return; }
+        if (tracingData == null) {
+            return;
+        }
 
-        const stationTracings: any = this.getProperty(tracingData, JsonConstants.TRACING_DATA_STATIONS);
-        if (stationTracings == null) { throw new Error('Missing station tracing data.');  }
+        const stationTracings: any = this.getProperty(
+      tracingData,
+      JsonConstants.TRACING_DATA_STATIONS
+    );
+        if (stationTracings == null) {
+            throw new Error('Missing station tracing data.');
+        }
 
-        const deliveryTracings: any = this.getProperty(tracingData, JsonConstants.TRACING_DATA_DELIVERIES);
-        if (deliveryTracings == null) { throw new Error('Missing delivery tracing data.');  }
+        const deliveryTracings: any = this.getProperty(
+      tracingData,
+      JsonConstants.TRACING_DATA_DELIVERIES
+    );
+        if (deliveryTracings == null) {
+            throw new Error('Missing delivery tracing data.');
+        }
 
         for (const element of stationTracings) {
             if (element.id === null) {
@@ -357,19 +452,34 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             if (!idToStationMap.has(element.id)) {
-                throw new SyntaxError('Station/Metanode id \"' + element.id + '\" is unkown.');
+                throw new SyntaxError(
+          'Station/Metanode id "' + element.id + '" is unkown.'
+        );
             }
 
             const station: StationData = idToStationMap.get(element.id);
             if (station.contains === null) {
-                // this is not a group
-                this.checkTracingProps(element, ['crossContamination', 'observed', 'killContamination'], 'station ' + station.id);
+        // this is not a group
+                this.checkTracingProps(
+          element,
+          ['crossContamination', 'observed', 'killContamination'],
+          'station ' + station.id
+        );
             }
 
-            if (element.weight !== null) { station.weight = element.weight; }
-            if (element.crossContamination !== null) { station.crossContamination = element.crossContamination; }
-            if (element.killContamination !== null) { station.killContamination = element.killContamination; }
-            if (element.observed !== null) { station.observed = (element.observed === true ? ObservedType.FULL : ObservedType.NONE); }
+            if (element.weight !== null) {
+                station.weight = element.weight;
+            }
+            if (element.crossContamination !== null) {
+                station.crossContamination = element.crossContamination;
+            }
+            if (element.killContamination !== null) {
+                station.killContamination = element.killContamination;
+            }
+            if (element.observed !== null) {
+                station.observed =
+          element.observed === true ? ObservedType.FULL : ObservedType.NONE;
+            }
 
             station.outbreak = station.weight > 0;
         }
@@ -380,75 +490,124 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             if (!idToDeliveryMap.has(element.id)) {
-                // console.warn('Tracing-data-import: Delivery id \"' + element.id + '\" is unkown.');
-                // continue;
-                throw new SyntaxError('Tracing-data-import: Delivery id \"' + element.id + '\" is unkown.');
+        // console.warn('Tracing-data-import: Delivery id \"' + element.id + '\" is unkown.');
+        // continue;
+                throw new SyntaxError(
+          'Tracing-data-import: Delivery id "' + element.id + '" is unkown.'
+        );
             }
 
             const delivery: DeliveryData = idToDeliveryMap.get(element.id);
 
-            this.checkTracingProps(element, ['crossContamination', 'observed', 'killContamination'], 'delivery ' + delivery.id);
+            this.checkTracingProps(
+        element,
+        ['crossContamination', 'observed', 'killContamination'],
+        'delivery ' + delivery.id
+      );
 
             delivery.weight = element.weight;
             delivery.crossContamination = element.crossContamination;
             delivery.killContamination = element.killContamination;
-            delivery.observed = (element.observed === true ? ObservedType.FULL : ObservedType.NONE);
+            delivery.observed =
+        element.observed === true ? ObservedType.FULL : ObservedType.NONE;
         }
     }
 
-    private convertExternalViewSettings(data: any, fclData: FclData, idToStationMap: Map<string, StationData>) {
+    private convertExternalViewSettings(
+    data: any,
+    fclData: FclData,
+    idToStationMap: Map<string, StationData>
+  ) {
         const viewData: any = this.getProperty(data, JsonConstants.VIEW_SETTINGS);
 
-        if ( viewData === null) { return; }
+        if (viewData === null) {
+            return;
+        }
 
-        let nodeSize: any = this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_NODE_SIZE);
+        let nodeSize: any = this.getProperty(
+      viewData,
+      JsonConstants.SCHEMAGRAPH_NODE_SIZE
+    );
         if (nodeSize === null) {
             nodeSize = this.getProperty(viewData, JsonConstants.GISGRAPH_NODE_SIZE);
         }
-        if (nodeSize !== null && JsonConstants.NODE_SIZE_EXT_TO_INT_MAP.has(nodeSize)) {
-            fclData.graphSettings.nodeSize = JsonConstants.NODE_SIZE_EXT_TO_INT_MAP.get(nodeSize);
+        if (
+      nodeSize !== null &&
+      JsonConstants.NODE_SIZE_EXT_TO_INT_MAP.has(nodeSize)
+    ) {
+            fclData.graphSettings.nodeSize = JsonConstants.NODE_SIZE_EXT_TO_INT_MAP.get(
+        nodeSize
+      );
         }
 
-        let fontSize: any = this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_FONT_SIZE);
+        let fontSize: any = this.getProperty(
+      viewData,
+      JsonConstants.SCHEMAGRAPH_FONT_SIZE
+    );
         if (fontSize === null) {
             fontSize = this.getProperty(viewData, JsonConstants.GISGRAPH_FONT_SIZE);
         }
-        if (fontSize !== null && JsonConstants.FONT_SIZE_EXT_TO_INT_MAP.has(fontSize)) {
-            fclData.graphSettings.fontSize = JsonConstants.FONT_SIZE_EXT_TO_INT_MAP.get(fontSize);
+        if (
+      fontSize !== null &&
+      JsonConstants.FONT_SIZE_EXT_TO_INT_MAP.has(fontSize)
+    ) {
+            fclData.graphSettings.fontSize = JsonConstants.FONT_SIZE_EXT_TO_INT_MAP.get(
+        fontSize
+      );
         }
 
-        const mergeDeliveries: any = this.getProperty(viewData, JsonConstants.MERGE_DELIVERIES);
+        const mergeDeliveries: any = this.getProperty(
+      viewData,
+      JsonConstants.MERGE_DELIVERIES
+    );
         if (mergeDeliveries !== null) {
             fclData.graphSettings.mergeDeliveries = mergeDeliveries;
         }
 
-        const showLegend: any = this.getProperty(viewData, JsonConstants.SHOW_LEGEND);
+        const showLegend: any = this.getProperty(
+      viewData,
+      JsonConstants.SHOW_LEGEND
+    );
         if (showLegend !== null) {
             fclData.graphSettings.showLegend = showLegend;
         }
 
-        // fclData.graphSettings.showZoom =
-        const skipUnconnectedStations: any = this.getProperty(viewData, JsonConstants.SKIP_UNCONNECTED_STATIONS);
+    // fclData.graphSettings.showZoom =
+        const skipUnconnectedStations: any = this.getProperty(
+      viewData,
+      JsonConstants.SKIP_UNCONNECTED_STATIONS
+    );
         if (skipUnconnectedStations !== null) {
             fclData.graphSettings.skipUnconnectedStations = skipUnconnectedStations;
         }
 
         const showGis: any = this.getProperty(viewData, JsonConstants.SHOW_GIS);
         if (showGis !== null) {
-            fclData.graphSettings.type = (showGis === true ? GraphType.GIS : GraphType.GRAPH);
+            fclData.graphSettings.type =
+        showGis === true ? GraphType.GIS : GraphType.GRAPH;
         }
 
-        fclData.gisLayout = this.convertExternalTransformation(this.getProperty(viewData, JsonConstants.GISGRAPH_TRANSFORMATION));
-        fclData.layout = this.convertExternalTransformation(this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_TRANSFORMATION));
-        // fclData.tableSettings.
+        fclData.gisLayout = this.convertExternalTransformation(
+      this.getProperty(viewData, JsonConstants.GISGRAPH_TRANSFORMATION)
+    );
+        fclData.layout = this.convertExternalTransformation(
+      this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_TRANSFORMATION)
+    );
+    // fclData.tableSettings.
 
         this.convertExternalPositions(viewData, idToStationMap);
     }
 
     private convertExternalTransformation(extTransformation: any): Layout {
         const scale: any = this.getProperty(extTransformation, 'scale.x');
-        const translation_x: any = this.getProperty(extTransformation, 'translation.x');
-        const translation_y: any = this.getProperty(extTransformation, 'translation.y');
+        const translation_x: any = this.getProperty(
+      extTransformation,
+      'translation.x'
+    );
+        const translation_y: any = this.getProperty(
+      extTransformation,
+      'translation.y'
+    );
 
         if (scale !== null && translation_x !== null && translation_y !== null) {
             return {
@@ -463,32 +622,44 @@ export class DataImporterV1 implements IDataImporter {
         }
     }
 
-    private convertExternalPositions(viewData: any, idToStationMap: Map<string, StationData>) {
-        const nodePositions: any = this.getProperty(viewData, JsonConstants.NODE_POSITIONS);
-        if (nodePositions === null) { return; }
+    private convertExternalPositions(
+    viewData: any,
+    idToStationMap: Map<string, StationData>
+  ) {
+        const nodePositions: any = this.getProperty(
+      viewData,
+      JsonConstants.NODE_POSITIONS
+    );
+        if (nodePositions === null) {
+            return;
+        }
 
         for (const nodePosition of nodePositions) {
             if (nodePosition.id == null) {
                 throw new SyntaxError('Node position id is missing.');
             }
             if (!idToStationMap.has(nodePosition.id)) {
-                throw new SyntaxError('Station of node position \"' + nodePosition.id + '\" is unkown.');
+                throw new SyntaxError(
+          'Station of node position "' + nodePosition.id + '" is unkown.'
+        );
             }
 
             const station: StationData = idToStationMap.get(nodePosition.id);
             station.position = nodePosition.position;
         }
-
     }
 
-    private createReverseMap(map: ImmutableMap<string, ColumnInfo>): Map<string, string> {
+    private createReverseMap(
+    map: ImmutableMap<string, ColumnInfo>
+  ): Map<string, string> {
         const result: Map<string, string> = new Map();
-        map.forEach((value: ColumnInfo, key: string) => result.set(value.columnId, key));
+        map.forEach((value: ColumnInfo, key: string) =>
+      result.set(value.columnId, key)
+    );
         return result;
     }
 
     private getProperty(data: any, path: string): any {
-
         if (data != null) {
             for (const propName of path.split('.')) {
                 if (data.hasOwnProperty(propName)) {
@@ -507,14 +678,18 @@ export class DataImporterV1 implements IDataImporter {
     private checkTracingProps(data: any, propNames: string[], context: string) {
         for (const propName of propNames) {
             if (!data.hasOwnProperty(propName)) {
-                throw new SyntaxError('Property \"' + propName + '\" is missing in ' + context);
+                throw new SyntaxError(
+          'Property "' + propName + '" is missing in ' + context
+        );
             } else if (data[propName] === null) {
-                throw new SyntaxError('Property \"' + propName + '\" is null in ' + context);
+                throw new SyntaxError(
+          'Property "' + propName + '" is null in ' + context
+        );
             }
         }
     }
 
-    /*private preprocessRawData(data: any): FclData {
+  /*private preprocessRawData(data: any): FclData {
         const stationsById = {};
         const deliveriesById = {};
 

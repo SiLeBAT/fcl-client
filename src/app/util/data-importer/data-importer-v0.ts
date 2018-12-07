@@ -1,11 +1,10 @@
-import {DeliveryData, FclData, FclElements, GraphSettings, ObservedType, StationData, TableSettings} from './../datatypes';
+import { DeliveryData, FclData, FclElements, GraphSettings, ObservedType, StationData, TableSettings } from './../datatypes';
 
+import { Utils } from './../utils';
+import { Constants } from './../constants';
 
-import {Utils} from './../utils';
-import {Constants} from './../constants';
-
-import {DataService} from './../data.service';
-import {IDataImporter} from './datatypes';
+import { DataService } from './../data.service';
+import { IDataImporter } from './datatypes';
 
 export class DataImporterV0 implements IDataImporter {
 
@@ -140,7 +139,7 @@ export class DataImporterV0 implements IDataImporter {
 
             for (const key of Object.keys(e)) {
                 if (!defaultKeys.has(key)) {
-                    properties.push({name: key, value: e[key]});
+                    properties.push({ name: key, value: e[key] });
                 }
             }
 
@@ -184,7 +183,7 @@ export class DataImporterV0 implements IDataImporter {
 
             for (const key of Object.keys(e)) {
                 if (!defaultKeys.has(key)) {
-                    properties.push({name: key, value: e[key]});
+                    properties.push({ name: key, value: e[key] });
                 }
             }
 

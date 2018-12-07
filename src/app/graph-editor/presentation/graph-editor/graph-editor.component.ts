@@ -11,6 +11,7 @@ declare const mxLanguage: string;
 declare const OPEN_URL: string;
 
 @Component({
+    // tslint:disable-next-line:component-selector
     selector: 'app-graph-editor',
     templateUrl: './graph-editor.component.html'
 })

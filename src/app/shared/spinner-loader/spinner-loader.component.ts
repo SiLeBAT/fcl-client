@@ -4,30 +4,31 @@ import { Subscription } from 'rxjs';
 import { SpinnerLoaderService } from './spinner-loader.service';
 
 export interface LoaderState {
-  show: boolean;
+    show: boolean;
 }
 
 @Component({
-  selector: 'app-spinner-loader',
-  templateUrl: 'spinner-loader.component.html',
-  styleUrls: ['spinner-loader.component.css']
+    // tslint:disable-next-line:component-selector
+    selector: 'app-spinner-loader',
+    templateUrl: 'spinner-loader.component.html',
+    styleUrls: ['spinner-loader.component.css']
 })
 export class SpinnerLoaderComponent implements OnInit, OnDestroy {
-  show = false;
+    show = false;
 
-  private subscription: Subscription;
+    private subscription: Subscription;
 
-  constructor(private spinnerService: SpinnerLoaderService) {}
+    constructor(private spinnerService: SpinnerLoaderService) {}
 
-  ngOnInit() {
-    this.subscription = this.spinnerService.loaderState.subscribe(
+    ngOnInit() {
+        this.subscription = this.spinnerService.loaderState.subscribe(
       (state: LoaderState) => {
-        this.show = state.show;
+          this.show = state.show;
       }
     );
-  }
+    }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 }

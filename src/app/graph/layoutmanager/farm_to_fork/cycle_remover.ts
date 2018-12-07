@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import {Graph, Vertex, Edge} from './data_structures';
-import {BusinessTypeRanker} from './business_type_ranker';
+import { Graph, Vertex, Edge } from './data_structures';
+import { BusinessTypeRanker } from './business_type_ranker';
 
 export function removeCycles(graph: Graph, typeRanker: BusinessTypeRanker) {
+    // tslint:disable-next-line
     const cycleRemover: CycleRemover = new CycleRemover();
     cycleRemover.removeCycles(graph, typeRanker);
 }

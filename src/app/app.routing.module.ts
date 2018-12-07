@@ -14,56 +14,52 @@ import { TracingComponent } from './tracing/tracing.component';
 import { MainDashComponent } from './main-dash/main-dash.component';
 import { environment } from './../environments/environment';
 
-
 const routes: Routes = [
-  {
-    path: '',
-    component: MainDashComponent
-  },
-  {
-    path: 'users/login',
-    component: LoginComponent
-  },
-  {
-    path: 'users/register',
-    component: RegisterComponent
-  },
-  {
-    path: 'users/recovery',
-    component: RecoveryComponent
-  },
-  { path: 'users/reset/:id',
-    component: ResetComponent
-  },
-  {
-    path: 'main',
-    component: HomeComponent,
-    canActivate: environment.serverless ? null : [AuthGuard]
-  },
-  {
-    path: 'users/activate/:id',
-    component: ActivateComponent
-  },
-  {
-    path: 'users/adminactivate/:id',
-    component: AdminActivateComponent
-  },
-  {
-    path: 'tracing',
-    component: TracingComponent,
-    canActivate:  environment.serverless ? null : [AuthGuard]
-  },
+    {
+        path: '',
+        component: MainDashComponent
+    },
+    {
+        path: 'users/login',
+        component: LoginComponent
+    },
+    {
+        path: 'users/register',
+        component: RegisterComponent
+    },
+    {
+        path: 'users/recovery',
+        component: RecoveryComponent
+    },
+    { path: 'users/reset/:id',
+        component: ResetComponent
+    },
+    {
+        path: 'main',
+        component: HomeComponent,
+        canActivate: environment.serverless ? null : [AuthGuard]
+    },
+    {
+        path: 'users/activate/:id',
+        component: ActivateComponent
+    },
+    {
+        path: 'users/adminactivate/:id',
+        component: AdminActivateComponent
+    },
+    {
+        path: 'tracing',
+        component: TracingComponent,
+        canActivate:  environment.serverless ? null : [AuthGuard]
+    },
 
   // otherwise redirect to home
   { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-  providers: []
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
+    providers: []
 })
 export class AppRoutingModule {}
-
-
-
