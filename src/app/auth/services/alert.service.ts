@@ -3,45 +3,45 @@ import { MatSnackBarConfig, MatSnackBarVerticalPosition } from '@angular/materia
 import { Subject } from 'rxjs';
 
 export interface INotification {
-  text: string;
-  config: MatSnackBarConfig;
+    text: string;
+    config: MatSnackBarConfig;
 }
 
 @Injectable()
 export class AlertService {
-  public subjNotification = new Subject<INotification>();
-  private duration = 5000;
-  private verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+    subjNotification = new Subject<INotification>();
+    private duration = 5000;
+    private verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
-  success(message: string) {
-    this.publishNotification(message, ['snackbar-success']);
-  }
+    success(message: string) {
+        this.publishNotification(message, ['snackbar-success']);
+    }
 
-  error(message: string) {
-    this.publishNotification(message, ['snackbar-error']);
+    error(message: string) {
+        this.publishNotification(message, ['snackbar-error']);
 
-  }
+    }
 
-  warn(message: string) {
-    this.publishNotification(message, ['snackbar-warn']);
-  }
+    warn(message: string) {
+        this.publishNotification(message, ['snackbar-warn']);
+    }
 
-  info(message: string) {
-    this.publishNotification(message, ['snackbar-info']);
-  }
+    info(message: string) {
+        this.publishNotification(message, ['snackbar-info']);
+    }
 
-  private publishNotification(message: string, panelClass: string[]) {
-    const config = new MatSnackBarConfig();
-    config.duration = this.duration;
-    config.verticalPosition = this.verticalPosition;
-    config.panelClass = panelClass;
+    private publishNotification(message: string, panelClass: string[]) {
+        const config = new MatSnackBarConfig();
+        config.duration = this.duration;
+        config.verticalPosition = this.verticalPosition;
+        config.panelClass = panelClass;
 
-    const notification: INotification = {
-      text: message,
-      config: config
-    };
+        const notification: INotification = {
+            text: message,
+            config: config
+        };
 
-    this.subjNotification.next(notification);
-  }
+        this.subjNotification.next(notification);
+    }
 
 }

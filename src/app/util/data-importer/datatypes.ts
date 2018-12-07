@@ -1,4 +1,4 @@
-import {FclData} from './../datatypes';
+import { FclData } from './../datatypes';
 
 export interface IDataImporter {
     isDataFormatSupported(data: any): Promise<boolean>;

@@ -9,41 +9,44 @@ import { environment } from '../../../environments/environment';
 import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
 
 @Component({
-  selector: 'app-activate',
-  templateUrl: './activate.component.html',
-  styleUrls: ['./activate.component.css']
+  // tslint:disable-next-line:component-selector
+    selector: 'app-activate',
+    templateUrl: './activate.component.html',
+    styleUrls: ['./activate.component.css']
 })
 export class ActivateComponent implements OnInit {
-  private activateForm: FormGroup;
-  tokenValid: boolean;
-  appName: string = environment.appName;
+    private activateForm: FormGroup;
+    tokenValid: boolean;
+    appName: string = environment.appName;
 
-  constructor(private activatedRoute: ActivatedRoute,
+    constructor(private activatedRoute: ActivatedRoute,
               private userService: UserService,
               private alertService: AlertService,
               private router: Router,
               private spinnerService: SpinnerLoaderService) { }
 
-  ngOnInit() {
-    const token = this.activatedRoute.snapshot.params['id'];
+    ngOnInit() {
+        const token = this.activatedRoute.snapshot.params['id'];
 
-    this.spinnerService.show();
-    this.userService.activateAccount(token)
+        this.spinnerService.show();
+        this.userService.activateAccount(token)
       .subscribe((data) => {
-        this.spinnerService.hide();
-        const message = data['title'];
-        this.alertService.success(message);
-        this.tokenValid = true;
+          this.spinnerService.hide();
+          const message = data['title'];
+          this.alertService.success(message);
+          this.tokenValid = true;
       }, (err: HttpErrorResponse) => {
-        this.spinnerService.hide();
-        this.alertService.error(err.error.title);
-        this.tokenValid = false;
+          this.spinnerService.hide();
+          this.alertService.error(err.error.title);
+          this.tokenValid = false;
       });
 
-  }
+    }
 
-  continue() {
-    this.router.navigate(['users/login']);
-  }
+    continue() {
+        this.router.navigate(['users/login']).catch((err) => {
+            throw new Error(`Unable to navigate: ${err}`);
+        });
+    }
 
 }

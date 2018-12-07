@@ -4,38 +4,34 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { User } from '../../models/user.model';
 
-
 @Injectable()
 export class UserService {
 
-  constructor(private httpClient: HttpClient) { }
+    constructor(private httpClient: HttpClient) { }
 
-
-
-  create(user: User) {
-    return this.httpClient
+    create(user: User) {
+        return this.httpClient
       .post('/users/register', user);
-  }
+    }
 
-  recoveryPassword(email: String) {
-    return this.httpClient
-      .post('users/recovery', {email: email});
-  }
+    recoveryPassword(email: String) {
+        return this.httpClient
+      .post('users/recovery', { email: email });
+    }
 
-  resetPassword(newPw: String, token: String) {
-    return this.httpClient
-      .post('users/reset/' + token, {newPw: newPw});
-  }
+    resetPassword(newPw: String, token: String) {
+        return this.httpClient
+      .post('users/reset/' + token, { newPw: newPw });
+    }
 
-  activateAccount(token: String) {
-    return this.httpClient
+    activateAccount(token: String) {
+        return this.httpClient
       .post('users/activate/' + token, null);
-  }
+    }
 
-  adminActivateAccount(adminToken: String) {
-    return this.httpClient
+    adminActivateAccount(adminToken: String) {
+        return this.httpClient
       .post('users/adminactivate/' + adminToken, null);
-  }
-
+    }
 
 }

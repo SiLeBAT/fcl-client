@@ -1,19 +1,24 @@
 // implementation according to:
 // according to http://publications.lib.chalmers.se/records/fulltext/161388.pdf
 import * as _ from 'lodash';
-import {Graph, Vertex, Edge} from './data_structures';
-import {removeCycles} from './cycle_remover';
-import {assignLayers} from './layer_assigner';
-import {BusinessTypeRanker} from './business_type_ranker';
-import {scaleToSize } from './shared';
-import {sortAndPosition} from './vertex_sorter_and_positioner';
+import { Graph, Vertex, Edge } from './data_structures';
+import { removeCycles } from './cycle_remover';
+import { assignLayers } from './layer_assigner';
+import { BusinessTypeRanker } from './business_type_ranker';
+import { scaleToSize } from './shared';
+import { sortAndPosition } from './vertex_sorter_and_positioner';
 
 export function FarmToForkLayout(options) {
     this.options = options;
 }
 
 function getDateNumber(date: Date): number {
-    return date.getMilliseconds() + date.getSeconds() * 1000 + date.getMinutes() * 60000 + date.getHours() * 3600000;
+    return (
+    date.getMilliseconds() +
+    date.getSeconds() * 1000 +
+    date.getMinutes() * 60000 +
+    date.getHours() * 3600000
+    );
 }
 
 function getElapsedTime(dateStart: Date, dateEnd: Date): number {
@@ -21,11 +26,11 @@ function getElapsedTime(dateStart: Date, dateEnd: Date): number {
 }
 
 FarmToForkLayout.prototype.run = function () {
+    // tslint:disable-next-line
     new FarmToForkLayoutClass(this).run();
 };
 
 class FarmToForkLayoutClass {
-
     private static DEFAULTS = {
         fit: true,
         padding: 40
@@ -58,26 +63,35 @@ class FarmToForkLayoutClass {
         const typeRanker: BusinessTypeRanker = new BusinessTypeRanker([], [], []);
 
         cy.nodes().forEach(node => {
-            const v: Vertex = new Vertex;
-            v.typeCode = typeRanker.getBusinessTypeCode(node['data']['typeOfBusiness']);
+            const v: Vertex = new Vertex();
+            v.typeCode = typeRanker.getBusinessTypeCode(
+        node['data']['typeOfBusiness']
+      );
             v.size = node.height();
             v.name = node.data('name');
             vertices.set(node.id(), v);
             graph.insertVertex(v);
         });
 
-        const vertexDistance: number = Math.min(...graph.vertices.map(v => v.size)) / 2;
+        const vertexDistance: number =
+      Math.min(...graph.vertices.map(v => v.size)) / 2;
         cy.edges().forEach(edge => {
-            graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+            graph.insertEdge(
+        vertices.get(edge.source().id()),
+        vertices.get(edge.target().id())
+      );
         });
-
-        const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker);
+        // tslint:disable-next-line
+        const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
+      graph,
+      typeRanker
+    );
 
         layoutManager.layout(width, height, vertexDistance);
 
         cy.nodes().layoutPositions(this.layout, this.options, node => {
             const vertex = vertices.get(node.id());
-            
+
             return {
                 x: vertex.x,
                 y: vertex.y
@@ -85,13 +99,13 @@ class FarmToForkLayoutClass {
         });
 
         if (this.options.fit) {
-            //cy.fit();
+      // cy.fit();
         }
     }
 }
 
 class FarmToForkLayouter {
-    constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {};
+    constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {}
 
     layout(width: number, height: number, vertexDistance: number) {
         const vertexCount: number = this.graph.vertices.length;
@@ -101,26 +115,34 @@ class FarmToForkLayouter {
         let startTime: Date = new Date();
         removeCycles(this.graph, this.typeRanker);
 
-        // console.log('removeCycles: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
+    // console.log('removeCycles: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
         this.simplifyGraph();
         startTime = new Date();
         assignLayers(this.graph, this.typeRanker);
-        // console.log('assignLayers: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
-        // removeEdgesWithinLayers(this.graph);
+    // console.log('assignLayers: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
+    // removeEdgesWithinLayers(this.graph);
         startTime = new Date();
         sortAndPosition(this.graph, vertexDistance);
-        // console.log('sortAndPositionVertices: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
+    // console.log('sortAndPositionVertices: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
         scaleToSize(this.graph, width, height, vertexDistance);
     }
 
     simplifyGraph() {
-        for (const vertex of this.graph.vertices) { vertex.inEdges = []; }
         for (const vertex of this.graph.vertices) {
-            const targets = _.uniq(vertex.outEdges.map(e => e.target.index)).filter(i => i !== vertex.index);
+            vertex.inEdges = [];
+        }
+        for (const vertex of this.graph.vertices) {
+            const targets = _.uniq(vertex.outEdges.map(e => e.target.index)).filter(
+        i => i !== vertex.index
+      );
             const oldEdges: Edge[] = vertex.outEdges;
             vertex.outEdges = [];
             for (const iTarget of targets) {
-                const newEdge: Edge = new Edge(vertex, this.graph.vertices[iTarget], false);
+                const newEdge: Edge = new Edge(
+          vertex,
+          this.graph.vertices[iTarget],
+          false
+        );
                 newEdge.weight = 0;
                 for (const edge of oldEdges) {
                     if (edge.target.index === iTarget) {
@@ -137,7 +159,9 @@ class FarmToForkLayouter {
         const edgesToInvert: Edge[] = [];
         for (const vertex of this.graph.vertices) {
             for (const edge of vertex.outEdges) {
-                if (this.typeRanker.compareRanking(vertex, edge.target) > 0) { edgesToInvert.push(edge); }
+                if (this.typeRanker.compareRanking(vertex, edge.target) > 0) {
+                    edgesToInvert.push(edge);
+                }
             }
         }
         this.graph.invertEdges(edgesToInvert);

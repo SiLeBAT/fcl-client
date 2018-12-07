@@ -5,16 +5,16 @@ import { LoaderState } from './spinner-loader.component';
 
 @Injectable()
 export class SpinnerLoaderService {
-  private loaderSubject = new Subject<LoaderState>();
-  public loaderState = this.loaderSubject.asObservable();
+    private loaderSubject = new Subject<LoaderState>();
+    loaderState = this.loaderSubject.asObservable();
 
-  constructor() {}
+    constructor() {}
 
-  show() {
-    this.loaderSubject.next(<LoaderState>{ show: true });
-  }
+    show() {
+        this.loaderSubject.next({ show: true } as LoaderState);
+    }
 
-  hide() {
-    this.loaderSubject.next(<LoaderState>{ show: false });
-  }
+    hide() {
+        this.loaderSubject.next({ show: false } as LoaderState);
+    }
 }

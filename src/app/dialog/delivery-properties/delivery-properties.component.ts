@@ -1,28 +1,29 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {DeliveryData, DialogAlignment} from '../../util/datatypes';
-import {Constants} from '../../util/constants';
-import {Utils} from '../../util/utils';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { DeliveryData, DialogAlignment } from '../../util/datatypes';
+import { Constants } from '../../util/constants';
+import { Utils } from '../../util/utils';
 
 export interface DeliveryPropertiesData {
-  delivery: DeliveryData;
+    delivery: DeliveryData;
 }
 
 @Component({
-  selector: 'app-delivery-properties',
-  templateUrl: './delivery-properties.component.html',
-  styleUrls: ['./delivery-properties.component.css']
+  // tslint:disable-next-line:component-selector
+    selector: 'app-delivery-properties',
+    templateUrl: './delivery-properties.component.html',
+    styleUrls: ['./delivery-properties.component.css']
 })
 export class DeliveryPropertiesComponent implements OnInit {
 
-  title: string;
-  properties: { name: string, value: string }[];
+    title: string;
+    properties: { name: string, value: string }[];
 
-  private dialogAlign = DialogAlignment.CENTER;
+    private dialogAlign = DialogAlignment.CENTER;
 
-  constructor(public dialogRef: MatDialogRef<DeliveryPropertiesComponent>, @Inject(MAT_DIALOG_DATA) public data: DeliveryPropertiesData) {
-    this.title = data.delivery.name;
-    this.properties = Object.keys(data.delivery)
+    constructor(public dialogRef: MatDialogRef<DeliveryPropertiesComponent>, @Inject(MAT_DIALOG_DATA) public data: DeliveryPropertiesData) {
+        this.title = data.delivery.name;
+        this.properties = Object.keys(data.delivery)
       .filter(key => Constants.PROPERTIES.has(key) && key !== 'name')
       .map(key => {
         const value = data.delivery[key];
@@ -32,25 +33,25 @@ export class DeliveryPropertiesComponent implements OnInit {
           value: value != null ? String(value) : ''
         };
       }).concat(data.delivery.properties.map(prop => {
-        return {
-          name: '"' + prop.name + '"',
-          value: prop.value != null ? prop.value : ''
-        };
+          return {
+              name: '"' + prop.name + '"',
+              value: prop.value != null ? prop.value : ''
+          };
       }));
-  }
+    }
 
-  ngOnInit() {
-    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-  }
+    ngOnInit() {
+        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
+    }
 
-  moveLeft() {
-    this.dialogAlign = this.dialogAlign === DialogAlignment.RIGHT ? DialogAlignment.CENTER : DialogAlignment.LEFT;
-    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-  }
+    moveLeft() {
+        this.dialogAlign = this.dialogAlign === DialogAlignment.RIGHT ? DialogAlignment.CENTER : DialogAlignment.LEFT;
+        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
+    }
 
-  moveRight() {
-    this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
-    this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-  }
+    moveRight() {
+        this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
+        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
+    }
 
 }
