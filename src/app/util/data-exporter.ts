@@ -43,7 +43,7 @@ export class DataExporter {
                 fclData.elements.stations.filter(s => s.contains !== null && s.contains.length > 0).map(s => {
                     return {
                         id: s.id,
-                        type: intToExtGroupTypeMap.get(s.groupType),
+                        type: (intToExtGroupTypeMap.has(s.groupType) ? intToExtGroupTypeMap.get(s.groupType) : null),
                         members: s.contains
                     };
                 }));
