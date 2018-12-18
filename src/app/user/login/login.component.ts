@@ -5,8 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../services/auth.service';
 import { AlertService } from '../services/alert.service';
-import { User } from '../../models/user.model';
-import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
+import { User } from '../models/user.model';
+import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
         this.authService.logout();
 
     // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/main';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/users/main';
 
         this.loginForm = new FormGroup({
             email: new FormControl(null, [Validators.required, Validators.email]),

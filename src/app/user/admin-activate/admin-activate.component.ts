@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
 import { environment } from '../../../environments/environment';
-import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
+import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
 
 @Component({
   // tslint:disable-next-line:component-selector

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { SpinnerLoaderService } from './spinner-loader.service';
+import { SpinnerLoaderService } from '../services/spinner-loader.service';
 
 export interface LoaderState {
     show: boolean;
