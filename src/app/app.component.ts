@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { environment } from '../environments/environment';
-import { AuthService } from './auth/services/auth.service';
+import { AuthService } from './/user/services/auth.service';
 import { AppService } from './app.service';
 
 @Component({

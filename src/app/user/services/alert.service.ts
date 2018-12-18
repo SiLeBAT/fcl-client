@@ -7,7 +7,9 @@ export interface INotification {
     config: MatSnackBarConfig;
 }
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AlertService {
     subjNotification = new Subject<INotification>();
     private duration = 5000;

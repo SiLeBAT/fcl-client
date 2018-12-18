@@ -5,9 +5,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 // import { tokenNotExpired } from 'angular2-jwt';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
-import { User } from '../../models/user.model';
+import { User } from '../models/user.model';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AuthService {
     currentUser;
 

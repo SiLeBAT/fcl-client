@@ -15,7 +15,9 @@ import { Constants } from './constants';
 import { DataImporter } from './data-importer/data-importer';
 import { DataExporter } from './data-exporter';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class DataService {
     private dataSource: string | File;
     private data: FclData;

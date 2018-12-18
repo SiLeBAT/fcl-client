@@ -5,8 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
 import { AlertService } from '../services/alert.service';
-import { User } from '../../models/user.model';
-import { SpinnerLoaderService } from '../../shared/spinner-loader/spinner-loader.service';
+import { User } from '../models/user.model';
+import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
 
 export interface IHash {
     [details: string]: string;

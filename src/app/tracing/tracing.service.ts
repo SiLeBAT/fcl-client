@@ -60,7 +60,9 @@ class SimpleGraph {
         return result;
     }
 }
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class TracingService {
     private data: FclElements;
     private stationsById: Map<string, StationData> = new Map();
