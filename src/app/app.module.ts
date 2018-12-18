@@ -64,11 +64,11 @@ import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delive
 
     ],
     providers: [
-        ScrollbarHelper,
-        {
-            provide: LocationStrategy,
-            useClass: HashLocationStrategy
-        }
+        ScrollbarHelper
+        // {
+        //     provide: LocationStrategy,
+        //     useClass: HashLocationStrategy
+        // }
     ],
     bootstrap: [
         AppComponent
