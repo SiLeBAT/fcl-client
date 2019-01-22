@@ -5,7 +5,7 @@ import {DialogAlignment} from '../../util/datatypes';
 import {Utils} from '../../util/utils';
 
 export interface VisioLayoutData {
-  data: string[];
+  data: string;
 }
 
 @Component({
@@ -21,14 +21,18 @@ export class VisioLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   title: string;
   graphWidth: number;
   graphHeight: number;
+  svg: string;
+  escapedSvg: string;
 
   private dialogAlign = DialogAlignment.CENTER;
 
 
-  constructor(public dialogRef: MatDialogRef<VisioLayoutComponent>, @Inject(MAT_DIALOG_DATA) public data: VisioLayoutData) {
+  constructor(public dialogRef: MatDialogRef<VisioLayoutComponent>, @Inject(MAT_DIALOG_DATA) public data: string) {
     this.title = 'Visio layout';
     this.graphWidth = 600;
     this.graphHeight = 400;
+    this.svg = data; //data.data;
+    this.escapedSvg =  Utils.replaceAll(this.svg, '"', '\\"');
   }
 
   //noinspection JSUnusedGlobalSymbols

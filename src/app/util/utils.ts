@@ -194,4 +194,16 @@ export class Utils {
       return null;
     }
   }
+
+  static getMatrix<T>(rowCount: number, columnCount: number, value: T): T[][] {
+      const result: T[][] = [];
+      for (let r = rowCount - 1; r >= 0; r--) {
+          result[r] = new Array<T>(columnCount).fill(value);
+      }
+      return result;
+  }
+
+  static replaceAll(text: string, find: string, replace: string) {
+    return text.replace(new RegExp(find, 'g'), replace);
+  }
 }

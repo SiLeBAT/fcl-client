@@ -1,12 +1,18 @@
-import {StationData, DeliveryData, Connection} from '../util/datatypes';
-import {VisioGraph, Country, Company, Product, Lot, Delivery} from './datatypes';
+import {StationData, DeliveryData, Connection, FclElements} from '../util/datatypes';
+// import {VisioGraph, Country, Company, Product, Lot, Delivery} from './layout-engine/datatypes';
 import {VisioLayoutComponent, VisioLayoutData} from './visio-dialog/visio-dialog.component';
 import {MatDialog, MatMenuTrigger, MatSlider} from '@angular/material';
-import {aggregateGraph} from './data-aggregation';
-import {assignCompaniesToLayers, convertToPortLayers} from './layer_assigner';
-import {Port} from './datatypes';
+// import {aggregateGraph} from './data-aggregation';
+// import {layout} from './layout-engine-3/layout-engine';
+// import {assignCompaniesToLayers, convertToPortLayers} from './layer_assigner';
+// import {Port} from './layout-engine/datatypes';
+import { SvgRenderer } from './layout-engine-3/svg-renderer';
+import { VisioReport, ReportType } from './layout-engine-3/datatypes';
+// import { createReport } from './confidential-visio-reporter';
+import { VisioReporter } from './layout-engine-3/visio-reporter';
+import { StationByCountryGrouper } from './layout-engine-3/station-by-country-grouper';
 
-function convertToVisioGraph(stations: StationData[], deliveries: DeliveryData[], connections: Connection[]): VisioGraph {
+/*function convertToVisioGraph(stations: StationData[], deliveries: DeliveryData[], connections: Connection[]): VisioGraph {
   const visioGraph: VisioGraph = new VisioGraph;
   const nameToCountryMap: Map<string, Country> = new Map();
   const idToCompanyMap: Map<string, Company> = new Map();
@@ -88,9 +94,9 @@ function convertToVisioGraph(stations: StationData[], deliveries: DeliveryData[]
   }
   return visioGraph;
 }
+*/
 
-
-
+/*
 function initLotSizes(visioGraph: VisioGraph) {
   // computes space requirements for each lot
   for (const country of visioGraph.countries) {
@@ -102,21 +108,29 @@ function initLotSizes(visioGraph: VisioGraph) {
       }
     }
   }
-}
-
+}*/
+/*
 export function createVisioGraph(stations: StationData[], deliveries: DeliveryData[], connections: Connection[]): string {
   const visioGraph: VisioGraph = convertToVisioGraph(stations, deliveries, connections);
   aggregateGraph(visioGraph);
+  layout(visioGraph);
   // ToDo: split Countries
-  const companyLayers: Company[][] = assignCompaniesToLayers(visioGraph.countries);
-  const portLayers: Port<Company|Lot>[][] = convertToPortLayers(companyLayers);
+  // const companyLayers: Company[][] = assignCompaniesToLayers(visioGraph.countries);
+  // const portLayers: Port<Company|Lot>[][] = convertToPortLayers(companyLayers);
 
   return null;
 }
+*/
+function getFontMetricCanvas(): any {
 
-export function showVisioGraph(dialogService: MatDialog) {
-  const data: VisioLayoutData = { data: [] };
-  dialogService.open(VisioLayoutComponent, {data: data}).afterClosed().subscribe(() => {
-    
+}
+
+export function showVisioGraph(data: FclElements, dialogService: MatDialog) {
+  // const visioGraph: any = null;
+  const stationGrouper =  new StationByCountryGrouper();
+  const report: VisioReport = VisioReporter.createReport(data, getFontMetricCanvas, ReportType.Confidential, stationGrouper );
+  const layoutData: VisioLayoutData = { data: SvgRenderer.renderReport(report) };
+  dialogService.open(VisioLayoutComponent, layoutData).afterClosed().subscribe(() => {
+
   });
 }

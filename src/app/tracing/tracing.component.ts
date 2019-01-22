@@ -214,7 +214,7 @@ export class TracingComponent implements OnInit, OnDestroy {
   }
 
   onVisioLayout() {
-    showVisioGraph(this.dialogService);
+    showVisioGraph(this.data.elements, this.dialogService);
     /*this.dialogService.open(VisioLayoutComponent, {data: dialogData}).afterClosed().subscribe(connections => {
       this.updateOverlay();
 
