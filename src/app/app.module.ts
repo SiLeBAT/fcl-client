@@ -86,11 +86,11 @@ import { JwtInterceptor } from './core/services/jwt-interceptor.service';
             useClass: JwtInterceptor,
             multi: true
         },
-        ScrollbarHelper,
-        {
-            provide: LocationStrategy,
-            useClass: HashLocationStrategy
-        }
+        ScrollbarHelper
+        // {
+        //     provide: LocationStrategy,
+        //     useClass: HashLocationStrategy
+        // }
     ],
     bootstrap: [
         AppComponent
