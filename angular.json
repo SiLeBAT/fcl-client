@@ -18,15 +18,33 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" }
             ],
             "styles": [
               "src/styles.css",
               "src/fcl-app-theme.scss",
-              "src/material-style.css"
+              "src/material-style.css",
+              "src/assets/styles/grapheditor.css"
             ],
             "scripts": [
-              "node_modules/hammerjs/hammer.min.js"
+              "node_modules/hammerjs/hammer.min.js",
+              "src/assets/js/Init.js",
+              "src/assets/deflate/pako.min.js",
+              "src/assets/deflate/base64.js",
+              "src/assets/jscolor/jscolor.js",
+              "src/assets/sanitizer/sanitizer.min.js",
+              "node_modules/mxgraph/javascript/mxClient.js",
+              "src/assets/js/EditorUi.js",
+              "src/assets/js/Editor.js",
+              "src/assets/js/Sidebar.js",
+              "src/assets/js/Graph.js",
+              "src/assets/js/Format.js",
+              "src/assets/js/Shapes.js",
+              "src/assets/js/Actions.js",
+              "src/assets/js/Menus.js",
+              "src/assets/js/Toolbar.js",
+              "src/assets/js/Dialogs.js"
             ]
           },
           "configurations": {
@@ -78,7 +96,7 @@
               "browserTarget": "fcl-web-app:build:qa"
             },
             "serverless": {
-              "browserTarget": "fcl-web-app:build:serverless"                
+              "browserTarget": "fcl-web-app:build:serverless"
             }
           }
         },
@@ -96,7 +114,23 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
-              "node_modules/hammerjs/hammer.min.js"
+              "node_modules/hammerjs/hammer.min.js",
+              "src/assets/js/Init.js",
+              "src/assets/deflate/pako.min.js",
+              "src/assets/deflate/base64.js",
+              "src/assets/jscolor/jscolor.js",
+              "src/assets/sanitizer/sanitizer.min.js",
+              "node_modules/mxgraph/javascript/mxClient.js",
+              "src/assets/js/EditorUI.js",
+              "src/assets/js/Editor.js",
+              "src/assets/js/Sidebar.js",
+              "src/assets/js/Graph.js",
+              "src/assets/js/Format.js",
+              "src/assets/js/Shapes.js",
+              "src/assets/js/Actions.js",
+              "src/assets/js/Menus.js",
+              "src/assets/js/Toolbar.js",
+              "src/assets/js/Dialogs.js"
             ],
             "styles": [
               "src/styles.css",
@@ -105,7 +139,8 @@
             ],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" }
             ]
           }
         },
