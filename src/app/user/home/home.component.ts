@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { User } from '../models/user.model';
-import { AuthService } from '../services/auth.service';
+import { TokenizedUser } from '../models/user.model';
+import { Store, select } from '@ngrx/store';
+import * as fromUser from '../state/user.reducer';
+import * as userActions from '../state/user.actions';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -10,18 +12,20 @@ import { AuthService } from '../services/auth.service';
     styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-    currentUser: User;
-    users: User[] = [];
+    currentUser: TokenizedUser;
 
-    constructor(private authService: AuthService) {}
+    constructor(private store: Store<fromUser.State>) { }
 
     ngOnInit() {
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
+        this.store.pipe(
+          select(fromUser.getCurrentUser)
+        ).subscribe(
+          (currentUser: TokenizedUser) => this.currentUser = currentUser
+        );
     }
 
     logout() {
-        this.authService.logout();
+        this.store.dispatch(new userActions.LogoutUser());
     }
 
 }

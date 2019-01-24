@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../services/alert.service';
-import { User } from '../models/user.model';
+import { AlertService } from '../../core/services/alert.service';
+import { NewUser, TitleResponseDTO } from '../models/user.model';
 import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
 
 export interface IHash {
@@ -51,31 +51,30 @@ export class RegisterComponent implements OnInit {
 
     register() {
         if (this.registerForm.valid) {
-            const user = new User(
-        this.registerForm.value.email,
-        this.registerForm.value.password1,
-        this.registerForm.value.firstName,
-        this.registerForm.value.lastName
-      );
-
+            const newUser = new NewUser(
+                this.registerForm.value.email,
+                this.registerForm.value.password1,
+                this.registerForm.value.firstName,
+                this.registerForm.value.lastName
+            );
             this.spinnerService.show();
-            this.userService.create(user)
-        .subscribe((data) => {
-            this.spinnerService.hide();
-            this.alertService.success(data['title']);
-            this.router.navigate(['users/login']).catch((err) => {
-                throw new Error(`Unable to navigate: ${err}`);
+            this.userService.register(newUser)
+            .subscribe((registerResponse: TitleResponseDTO) => {
+                this.spinnerService.hide();
+                this.alertService.success(registerResponse.title);
+                this.router.navigate(['users/login']).catch((err) => {
+                    throw new Error(`Unable to navigate: ${err}`);
+                });
+            }, (err: HttpErrorResponse) => {
+                this.spinnerService.hide();
+                this.alertService.error(err.error.title);
             });
-        }, (err: HttpErrorResponse) => {
-            this.spinnerService.hide();
-            this.alertService.error(err.error.title);
-        });
         }
     }
 
     validateField(fieldName: string) {
         return this.registerForm.controls[fieldName].valid
-      || this.registerForm.controls[fieldName].untouched;
+               || this.registerForm.controls[fieldName].untouched;
     }
 
     validatePwStrength() {

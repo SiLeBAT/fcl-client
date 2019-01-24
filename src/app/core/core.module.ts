@@ -2,15 +2,22 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MaterialModule } from '../shared/material.module';
 
 import { SpinnerLoaderComponent } from './spinner-loader/spinner-loader.component';
 import { MainDashComponent } from './main-dash/main-dash.component';
+import { AlertComponent } from './alert/alert.component';
+
+const coreModules = [
+    HttpClientModule
+];
 
 const coreComponents = [
     SpinnerLoaderComponent,
-    MainDashComponent
+    MainDashComponent,
+    AlertComponent
 ];
 
 @NgModule({
@@ -18,10 +25,12 @@ const coreComponents = [
         CommonModule,
         MaterialModule,
         RouterModule.forChild([]),
-        FlexLayoutModule
+        FlexLayoutModule,
+        ...coreModules
     ],
     exports: [
-        ...coreComponents
+        ...coreComponents,
+        ...coreModules
     ],
     declarations: [
         ...coreComponents

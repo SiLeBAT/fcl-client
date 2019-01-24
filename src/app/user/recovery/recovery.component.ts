@@ -4,8 +4,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from '../../core/services/alert.service';
 import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { Email, TitleResponseDTO } from '../models/user.model';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -35,13 +36,15 @@ export class RecoveryComponent implements OnInit {
     recovery() {
         this.loading = true;
 
-        const email = this.recoveryForm.value.email;
+        const email: Email = {
+            email: this.recoveryForm.value.email
+        };
 
         this.spinnerService.show();
-        this.userService.recoveryPassword(email)
-          .subscribe((data) => {
+        this.userService.recoverPassword(email)
+          .subscribe((recoverResponse: TitleResponseDTO) => {
               this.spinnerService.hide();
-              const message = data['title'];
+              const message = recoverResponse.title;
               this.alertService.success(message);
               this.router.navigate(['users/login']).catch((err) => {
                   throw new Error(`Unable to navigate: ${err}`);

@@ -10,14 +10,12 @@ import { AlertService, INotification } from '../services/alert.service';
     styleUrls: ['./alert.component.css']
 })
 export class AlertComponent implements OnInit {
-    message: any;
 
     constructor(private alertService: AlertService,
-              private snackBar: MatSnackBar) {
-    }
+                private snackBar: MatSnackBar) { }
 
     ngOnInit() {
-        this.alertService.subjNotification.subscribe(notification => {
+        this.alertService.notification$.subscribe(notification => {
             this.showToaster(notification);
         });
     }

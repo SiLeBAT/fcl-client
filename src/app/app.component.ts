@@ -1,17 +1,19 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { environment } from '../environments/environment';
-import { AuthService } from './/user/services/auth.service';
+import { UserService } from './/user/services/user.service';
 import { AppService } from './app.service';
+import { Store } from '@ngrx/store';
+import * as fromUser from './user/state/user.reducer';
+import * as userActions from './user/state/user.actions';
 
 @Component({
-    // tslint:disable-next-line:component-selector
+  // tslint:disable-next-line:component-selector
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-
     @ViewChild('fileInput') fileInput: ElementRef;
 
     private isActive = false;
@@ -20,16 +22,21 @@ export class AppComponent implements OnInit {
     subscriptions = [];
 
     constructor(
-    public authService: AuthService,
-    public appService: AppService) {}
+    public userService: UserService,
+    public appService: AppService,
+    private store: Store<fromUser.State>
+  ) {}
 
     ngOnInit() {
-        this.subscriptions.push(this.appService.doInputEmpty
-      .subscribe(notification => this.setInputEmpty()));
+        this.subscriptions.push(
+            this.appService.doInputEmpty.subscribe(notification =>
+            this.setInputEmpty()
+          )
+        );
     }
 
     getCurrentUserEmail() {
-        if (this.authService.loggedIn()) {
+        if (this.userService.loggedIn()) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             return currentUser.email;
         }
@@ -40,7 +47,7 @@ export class AppComponent implements OnInit {
     }
 
     logout() {
-        this.authService.logout();
+        this.store.dispatch(new userActions.LogoutUser());
     }
 
     isTracingActive() {
@@ -61,5 +68,4 @@ export class AppComponent implements OnInit {
 
         return displayMode;
     }
-
 }

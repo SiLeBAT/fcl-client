@@ -4,9 +4,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from '../../core/services/alert.service';
 import { environment } from '../../../environments/environment';
 import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { TitleResponseDTO } from '../models/user.model';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -30,16 +31,16 @@ export class ActivateComponent implements OnInit {
 
         this.spinnerService.show();
         this.userService.activateAccount(token)
-      .subscribe((data) => {
-          this.spinnerService.hide();
-          const message = data['title'];
-          this.alertService.success(message);
-          this.tokenValid = true;
-      }, (err: HttpErrorResponse) => {
-          this.spinnerService.hide();
-          this.alertService.error(err.error.title);
-          this.tokenValid = false;
-      });
+        .subscribe((activationResponse: TitleResponseDTO) => {
+            this.spinnerService.hide();
+            const message = activationResponse.title;
+            this.alertService.success(message);
+            this.tokenValid = true;
+        }, (err: HttpErrorResponse) => {
+            this.spinnerService.hide();
+            this.alertService.error(err.error.title);
+            this.tokenValid = false;
+        });
 
     }
 
