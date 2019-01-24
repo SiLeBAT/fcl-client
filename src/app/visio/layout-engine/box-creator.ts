@@ -1,12 +1,15 @@
 import { VisioBox, StationInformation, LotInformation, CaseInformation, GraphLayer, GridCell, FontMetrics,
-    VisioContainer, NonConvexVisioContainer, SampleInformation, BoxType, VisioLabel, Size, SampleResultType } from './datatypes';
+    SampleInformation, BoxType, VisioLabel, Size, SampleResultType } from './datatypes';
 import { Position } from './../../util/datatypes';
 import { GraphSettings } from './graph-settings';
-// import { FontMetrics } from './font-metrics';
 import { LabelCreator } from './label-creator';
 import { GroupContainerCreator } from './group-container-creator';
 
 export class BoxCreator {
+
+    private stationIdToBoxMap: Map<string, VisioBox>;
+    private lotIdToBoxMap: Map<string, VisioBox>;
+    private portCounter: number = 0;
 
     private static getSampleType(sampleInfo: SampleInformation): BoxType {
         switch (sampleInfo.resultType) {
@@ -40,7 +43,7 @@ export class BoxCreator {
             }
 
             return {
-                width: Math.max( ...boxes.map(b => b.size.width)),
+                width: Math.max(...boxes.map(b => b.size.width)),
                 height: BoxCreator.getBottom(boxes[boxes.length - 1]) - start.y
             };
 
@@ -66,7 +69,7 @@ export class BoxCreator {
 
             return {
                 width: BoxCreator.getRight(boxes[boxes.length - 1]) - start.x,
-                height: Math.max( ...boxes.map(b => b.size.height))
+                height: Math.max(...boxes.map(b => b.size.height))
             };
 
         } else {
@@ -96,52 +99,75 @@ export class BoxCreator {
     }
 
     constructor(private labelCreator: LabelCreator) {
-
+        this.stationIdToBoxMap = new Map();
+        this.lotIdToBoxMap = new Map();
     }
 
-    getLotBox(lotInfo: LotInformation): VisioContainer {
-        const label: VisioLabel =  this.labelCreator.getLotLabel(lotInfo);
+    getLotBox(lotInfo: LotInformation): VisioBox {
+        if (!this.lotIdToBoxMap.has(lotInfo.id)) {
+            const label: VisioLabel = this.labelCreator.getLotLabel(lotInfo);
 
-        const sampleBoxes: VisioBox[] = lotInfo.samples.map(s => this.getLotSampleBox(s));
-        const sampleAreaStart: Position = {
-            x: GraphSettings.LOT_BOX_MARGIN,
-            y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
-        };
-        BoxCreator.vAlign(sampleBoxes, sampleAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
+            const sampleBoxes: VisioBox[] = lotInfo.samples.map(s => this.getLotSampleBox(s));
+            const sampleAreaStart: Position = {
+                x: GraphSettings.LOT_BOX_MARGIN,
+                y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
+            };
+            BoxCreator.vAlign(sampleBoxes, sampleAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
 
-        return {
-            type: BoxType.Lot,
-            label: label,
-            size: BoxCreator.getSize([].concat([label], sampleBoxes), GraphSettings.LOT_BOX_MARGIN),
-            position: null,
-            relPosition: null,
-            inPorts: [],
-            outPorts: [],
-            elements: sampleBoxes
-        };
+            const lotBox = {
+                type: BoxType.Lot,
+                label: label,
+                size: BoxCreator.getSize([].concat([label], sampleBoxes), GraphSettings.LOT_BOX_MARGIN),
+                position: null,
+                relPosition: null,
+                ports: [{
+                    id: 'p' + this.portCounter++,
+                    normalizedPosition: {
+                        x: 0.5,
+                        y: 1
+                    }
+                }],
+                elements: sampleBoxes,
+                shape: null
+            };
+            this.lotIdToBoxMap.set(lotInfo.id, lotBox);
+        }
+        return this.lotIdToBoxMap.get(lotInfo.id);
     }
 
-    getStationBox(stationInfo: StationInformation): VisioContainer {
-        const label: VisioLabel = this.labelCreator.getStationLabel(stationInfo);
+    getStationBox(stationInfo: StationInformation): VisioBox {
+        if (!this.stationIdToBoxMap.has(stationInfo.id)) {
+            const label: VisioLabel = this.labelCreator.getStationLabel(stationInfo);
 
-        const lotBoxes: VisioBox[] = [].concat(...stationInfo.products.map(p => p.lots.map(lot => this.getLotBox(lot))));
+            const lotBoxes: VisioBox[] = [].concat(...stationInfo.products.map(p => p.lots.map(lot => this.getLotBox(lot))));
 
-        const lotAreaStart: Position = {
-            x: GraphSettings.STATION_BOX_MARGIN,
-            y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
-        };
-        BoxCreator.hAlign(lotBoxes, lotAreaStart, GraphSettings.LOT_BOX_DISTANCE);
+            const lotAreaStart: Position = {
+                x: GraphSettings.STATION_BOX_MARGIN,
+                y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
+            };
+            BoxCreator.hAlign(lotBoxes, lotAreaStart, GraphSettings.LOT_BOX_DISTANCE);
 
-        return {
-            type: BoxType.Station,
-            label: label,
-            size: BoxCreator.getSize([].concat([label], lotBoxes), GraphSettings.STATION_BOX_MARGIN),
-            position: null,
-            relPosition: null,
-            inPorts: [],
-            outPorts: [],
-            elements: lotBoxes
-        };
+            const stationBox = {
+                type: BoxType.Station,
+                label: label,
+                size: BoxCreator.getSize([].concat([label], lotBoxes), GraphSettings.STATION_BOX_MARGIN),
+                position: null,
+                relPosition: null,
+                ports: [{
+                    id: 'p' + this.portCounter++,
+                    normalizedPosition: {
+                        x: 0.5,
+                        y: 0
+                    }
+                }],
+                elements: lotBoxes,
+                shape: null
+            };
+
+            this.stationIdToBoxMap.set(stationInfo.id, stationBox);
+        }
+
+        return this.stationIdToBoxMap.get(stationInfo.id);
     }
 
     getLotSampleBox(sampleInfo: SampleInformation): VisioBox {
@@ -152,13 +178,14 @@ export class BoxCreator {
             type: BoxCreator.getSampleType(sampleInfo),
             position: null,
             relPosition: null,
-            outPorts: [],
-            inPorts: [],
+            ports: [],
             size: {
                 width: label.size.width + 2 * GraphSettings.SAMPLE_BOX_MARGIN,
                 height: label.size.height + 2 * GraphSettings.SAMPLE_BOX_MARGIN
             },
-            label: label
+            label: label,
+            elements: [],
+            shape: null
         };
     }
 
@@ -166,16 +193,15 @@ export class BoxCreator {
         boxGrid: VisioBox[][],
         cellGroups: { label: string, cells: GridCell[] }[],
         graphLayers: GraphLayer[]
-        ): NonConvexVisioContainer[] {
+        ): VisioBox[] {
 
         const groupCreator = new GroupContainerCreator();
         return groupCreator.createGroupBoxes(
             boxGrid,
-            cellGroups.map(g => ({ label: this.labelCreator.getLabel([g.label], null), cells: g.cells})),
+            cellGroups.map(g => ({ label: this.labelCreator.getLabel([g.label], null), cells: g.cells })),
             graphLayers
             );
     }
-
 
     /*protected getCaseBox(caseInfo: CaseInformation): VisioContainer {
         const margin = GraphSettings.STATION_BOX_MARGIN;
@@ -220,6 +246,5 @@ export class BoxCreator {
             elements: lotBoxes
         };
     }*/
-
 
 }

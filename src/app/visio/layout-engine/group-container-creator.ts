@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
-import { VisioBox, GridCell, Polygon, GroupShape, VisioLabel, GraphLayer, NonConvexVisioContainer, BoxType } from './datatypes';
-import { Position} from './datatypes';
-import { GraphSettings} from './graph-settings';
+import { VisioBox, GridCell, Polygon, CustomBoxShape,
+    VisioLabel, GraphLayer, BoxType, Position, Size } from './datatypes';
+import { GraphSettings } from './graph-settings';
 import { Utils } from './../../util/utils';
-
 
 type CellPolygon = GridCell[];
 
@@ -21,28 +20,29 @@ export class GroupContainerCreator {
         boxGrid: VisioBox[][],
         cellGroups: {label: VisioLabel, cells: GridCell[]}[],
         graphLayers: GraphLayer[]
-        ): NonConvexVisioContainer[] {
+        ): VisioBox[] {
 
         this.boxGrid = boxGrid;
         this.setRowAndColumnHeights(cellGroups, graphLayers);
-        return cellGroups.map(group => this.createGroup(group.label, group.cells ) );
+        return cellGroups.map(group => this.createGroup(group.label, group.cells));
     }
 
-    private createGroup(label: VisioLabel, cells: GridCell[]): NonConvexVisioContainer {
+    private createGroup(label: VisioLabel, cells: GridCell[]): VisioBox {
         const elements: VisioBox[] = [];
         const minRow = Math.min(...cells.map(cell => cell.row));
         const minColumn = Math.min(...cells.map(cell => cell.column));
 
         const labelCell = this.getLabelCell(cells, minRow);
 
-        cells.filter(c => this.boxGrid[c.row][c.column] !== null).forEach( cell => {
+        cells.filter(c => this.boxGrid[c.row][c.column] !== null).forEach(cell => {
             const box = this.boxGrid[cell.row][cell.column];
             box.relPosition = {
                 x: this.columnLeft[cell.column] - this.columnLeft[minColumn] +
-                    GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN,
+                    GraphSettings.GROUP_MARGIN,
                 y: this.rowTop[cell.row] - this.rowTop[minRow] +
-                    GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT
+                    GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT
             };
+            elements.push(box);
         });
 
         label.relPosition = {
@@ -55,19 +55,28 @@ export class GroupContainerCreator {
             y: this.rowTop[minRow] + GraphSettings.GRID_MARGIN
         };
 
+        const shape = this.createGroupShape(cells, { row: minRow, column: minColumn });
+
         return {
             type: BoxType.StationGroup,
             relPosition: position,
             position: null,
             elements: elements,
-            size: null,
-            inPorts: [],
-            outPorts: [],
+            size: this.getSize(shape.outerBoundary),
+            ports: [],
             label: label,
-            shape: this.createGroupShape(cells, { row: minRow, column: minColumn })
+            shape: shape
         };
     }
 
+    private getSize(polygon: Polygon): Size {
+        const x = polygon.map(p => p.x);
+        const y = polygon.map(p => p.y);
+        return {
+            width: Math.max(...x) - Math.min(...x),
+            height: Math.max(...y) - Math.min(...y)
+        };
+    }
 
     private getLabelCell(cells: GridCell[], minRow: number): GridCell {
         cells = cells.filter(cell => cell.row === minRow);
@@ -80,7 +89,7 @@ export class GroupContainerCreator {
         this.groupHeaderHeight = Math.max(...cellGroups.map(g => g.label.size.height)) + GraphSettings.SECTION_DISTANCE;
         const rowHeight: number[] = this.boxGrid.map(r => Math.max(...r.map(c => (c === null ? 0 : c.size.height))));
         const columnWidth: number[] = this.boxGrid[0].map((r, i) =>
-            Math.max(...this.boxGrid.map(r2 => (r2[i] === null ? 0 : r2[i].size.height))));
+            Math.max(...this.boxGrid.map(r2 => (r2[i] === null ? 0 : r2[i].size.width))));
 
         this.bottomMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
         this.topMargin = this.bottomMargin + this.groupHeaderHeight;
@@ -97,7 +106,7 @@ export class GroupContainerCreator {
         );
     }
 
-    private createGroupShape(cells: GridCell[], refCell: GridCell): GroupShape {
+    private createGroupShape(cells: GridCell[], refCell: GridCell): CustomBoxShape {
         const rows: number[] = cells.map(c => c.row);
         const columns: number[] = cells.map(c => c.column);
         const rowOffset: number = Math.min(...rows) - 1;
@@ -106,10 +115,16 @@ export class GroupContainerCreator {
         const columnCount: number = Math.max(...columns) - columnOffset + 2;
 
         const matrix = Utils.getMatrix(rowCount, columnCount, false);
-        const transCells = cells.map(c => ({row: c.row - rowOffset, column: c.column - columnOffset }));
+        const transCells = cells.map(c => ({
+            row: c.row - rowOffset,
+            column: c.column - columnOffset
+        }));
         this.markCells(matrix, transCells);
 
-        const outerBoundary: CellPolygon = [{row:  transCells[0].row, column: transCells[0].column} ];
+        const outerBoundary: CellPolygon = [{
+            row:  transCells[0].row,
+            column: transCells[0].column
+        } ];
         this.parseOuterBoundary(matrix, outerBoundary);
         this.markOuterArea(matrix, 0, 0, rowCount - 1, columnCount - 1);
 
@@ -133,10 +148,10 @@ export class GroupContainerCreator {
         const rowCount = matrix.length;
         const columnCount = matrix[0].length;
 
-        for ( let r = 0; r < rowCount; r++) {
-            for ( let c = 0; c < columnCount; c++) {
+        for (let r = 0; r < rowCount; r++) {
+            for (let c = 0; c < columnCount; c++) {
                 if (!matrix[r][c]) {
-                    holes.push( [{row: r, column: c}] );
+                    holes.push([{ row: r, column: c }]);
                     this.parseOuterBoundary(matrix, _.last(holes));
                 }
             }
@@ -173,10 +188,10 @@ export class GroupContainerCreator {
 
         if (polygon.length === 1) {
             if (matrix[lastCell.row][lastCell.column + 1] === matrix[lastCell.row][lastCell.column]) {
-                polygon.push({row: lastCell.row, column: lastCell.column + 1, });
+                polygon.push({ row: lastCell.row, column: lastCell.column + 1 });
                 this.parseOuterBoundary(matrix, polygon);
             } else if (matrix[lastCell.row + 1][lastCell.column] === matrix[lastCell.row][lastCell.column]) {
-                polygon.push({row: lastCell.row + 1, column: lastCell.column});
+                polygon.push({ row: lastCell.row + 1, column: lastCell.column });
                 this.parseOuterBoundary(matrix, polygon);
             }
         } else if (lastCell.column !== polygon[0].column || lastCell.row !== polygon[0].row) {
@@ -196,7 +211,7 @@ export class GroupContainerCreator {
                 this.parseOuterBoundary(matrix, polygon);
             } else {
                 // check straight
-                const straightCell = { row: lastCell.row + lastMove.row, column: lastCell.column + lastMove.column};
+                const straightCell = { row: lastCell.row + lastMove.row, column: lastCell.column + lastMove.column };
                 if (matrix[lastCell.row][lastCell.column] === matrix[straightCell.row][straightCell.column]) {
                     polygon.pop();
                     polygon.push(straightCell);
@@ -256,8 +271,9 @@ export class GroupContainerCreator {
         } else {
             const result: Polygon = [];
             for (let i = 0, n = polygon.length; i < n; i++) {
+
                 const lastMove: GridCell = (i > 0 ?
-                    { row: polygon[i].row - polygon[i - 1].row, column: polygon[i].column - polygon[i - 1].column  } :
+                    { row: polygon[i].row - polygon[i - 1].row, column: polygon[i].column - polygon[i - 1].column } :
                     { row: -1, column: 0 }
                 );
                 const nextMove: GridCell = (i < n - 1 ?
@@ -267,7 +283,7 @@ export class GroupContainerCreator {
 
                 if (this.areMovesReverse(lastMove, nextMove)) {
                     // U-turn
-                    const tempMove: GridCell = { row: (lastMove.column - nextMove.column) / 2, column: (lastMove.row - nextMove.row) / 2 };
+                    const tempMove: GridCell = { row: (lastMove.column - nextMove.column) / 2, column: (nextMove.row - lastMove.row) / 2 };
 
                     result.push(this.convertCellToPoint(polygon[i], lastMove, tempMove, margin));
                     result.push(this.convertCellToPoint(polygon[i], tempMove, nextMove, margin));
@@ -289,7 +305,6 @@ export class GroupContainerCreator {
         const x: number = lastMove.row < 0 || nextMove.row < 0 ?
                           this.columnLeft[cell.column] + margin :
                           this.columnLeft[cell.column + 1] - margin;
-
 
         const y: number = lastMove.column > 0 || nextMove.column > 0 ?
                           this.rowTop[cell.row] + margin :

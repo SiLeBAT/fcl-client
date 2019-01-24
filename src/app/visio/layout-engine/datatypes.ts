@@ -1,4 +1,4 @@
-import {StationData} from './../../util/datatypes';
+import { StationData } from './../../util/datatypes';
 import { isType } from '@angular/core/src/type';
 
 export interface Position {
@@ -13,7 +13,7 @@ export interface Size {
 
 export interface VisioPort {
     id: string;
-    connections: string[]; // array of Connector ids
+    normalizedPosition: Position;
 }
 
 export interface GridCell {
@@ -23,7 +23,7 @@ export interface GridCell {
 
 export type Polygon = Position[];
 
-export interface GroupShape {
+export interface CustomBoxShape {
     outerBoundary: Polygon;
     holes: Polygon[];
 }
@@ -41,19 +41,10 @@ export interface VisioBox {
     position: Position;
     relPosition: Position;
     size: Size;
-    inPorts: VisioPort[];
-    outPorts: VisioPort[];
-    // memberOf: VisioBox;
-    // shape: Position[];
-    label: VisioLabel;
-}
-
-export interface VisioContainer extends VisioBox {
+    ports: VisioPort[];
     elements: VisioBox[];
-}
-
-export interface NonConvexVisioContainer extends VisioContainer {
-    shape: GroupShape;
+    shape: CustomBoxShape;
+    label: VisioLabel;
 }
 
 export enum ConnectorType {
@@ -63,13 +54,14 @@ export enum ConnectorType {
 export interface VisioConnector {
     id: string;
     type: ConnectorType;
-    fromPortId: string;
-    toPortId: string;
+    fromPort: string;
+    toPort: string;
 }
 
 export interface VisioGraph {
     elements: VisioBox[];
     connectors: VisioConnector[];
+    size: Size;
 }
 
 export interface GraphLayer {
@@ -90,7 +82,10 @@ export interface StationGrouper {
 }
 
 export interface DeliveryInformation {
+    forward: boolean;
+    backward: boolean;
     date: string;
+    target: string;
 }
 
 export interface InSampleInformation {
@@ -113,6 +108,7 @@ export interface ProductInformation {
 }
 
 export interface LotInformation {
+    id: string; // internal id
     commonProductName: string;
     brandName: string;
     product: string;
@@ -120,6 +116,7 @@ export interface LotInformation {
     productionOrDurabilityDate: string; // time / durability
     quantity: string; // Quantity
     samples: SampleInformation[];
+    deliveries: DeliveryInformation[];
 }
 
 export interface StationSampleInformation extends SampleInformation {
@@ -127,9 +124,10 @@ export interface StationSampleInformation extends SampleInformation {
 }
 
 export interface StationInformation {
+    id: string;
     data: StationData;
     ctno: string;
-    name: string; //FBO / establishment identifier
+    name: string; // FBO / establishment identifier
     registrationNumber: string; //  Registration number(s)
     sector: string; // - Food/feed sector
     activities: string; // - Activities / step in the food chain

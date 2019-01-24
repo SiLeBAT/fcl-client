@@ -260,6 +260,12 @@ export class Utils {
         return result;
     }
 
+  /*static createReverseMapTest<X, Y, Z>(map: {  forEach(fn(a: any[]): void); } Map<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
+    const result: Map<Z, X> = new Map();
+    map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
+    return result;
+  }*/
+
     static getReverseOfImmutableMap<X, Y, Z>(
     map: ImmutableMap<X, Y>,
     reverseFun: (y: Y) => Z
@@ -307,7 +313,6 @@ export class Utils {
         }
         container[propNames[propNames.length - 1]] = value;
     }
-
 
     static getMatrix<T>(rowCount: number, columnCount: number, value: T): T[][] {
         const result: T[][] = [];

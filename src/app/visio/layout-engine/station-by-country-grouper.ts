@@ -1,13 +1,12 @@
-import {StationGrouper} from './datatypes';
-import {StationData} from '../../util/datatypes';
+import { StationGrouper } from './datatypes';
+import { StationData } from '../../util/datatypes';
 
 interface StationGroup {
     label: string;
     stations: StationData[];
 }
 
-export class StationByCountryGrouper implements  StationGrouper {
-    // private stationGroups: StationGroup[];
+export class StationByCountryGrouper implements StationGrouper {
 
     areStationsInTheSameGroup(s1: StationData, s2: StationData): boolean {
         const countryPropertyS1 = this.getCountryProperty(s1);
@@ -33,7 +32,7 @@ export class StationByCountryGrouper implements  StationGrouper {
     groupStations(stations: StationData[]): StationGroup[] {
         const map: Map<string, StationData[]> = new Map();
 
-        stations.forEach( station => {
+        stations.forEach(station => {
             const label = this.getGroupLabel(station);
 
             if (map.has(label)) {
@@ -43,7 +42,7 @@ export class StationByCountryGrouper implements  StationGrouper {
             }
         });
 
-        return Array.from(map, ([key, value]) => ({
+        return Array.from(map.entries()).map(([key, value]) => ({
             label: key,
             stations: value
         }));

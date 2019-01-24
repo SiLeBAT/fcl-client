@@ -49,5 +49,5 @@ export function extractLayersFromView(data: FclElements): StationData[][] {
         layer.sort((station1, station2) => station1.position.y - station2.position.y);
     }
 
-    return layers.reverse();
+    return layers; // .reverse();
 }

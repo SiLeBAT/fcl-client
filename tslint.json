@@ -85,6 +85,7 @@
       "check-else",
       "check-whitespace"
     ],
+    "one-variable-per-declaration": [true, "ignore-for-loop"],
     "prefer-const": true,
     "quotemark": [
       true,

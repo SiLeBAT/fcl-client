@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
-import {VisioGraph, VisioContainer, VisioBox, VisioReporter, StationInformation, StationGrouper, GridCell} from './datatypes';
-import {LotInformation, Size, Position, SampleInformation} from './datatypes';
-import {FclElements, StationData, DeliveryData} from '../../util/datatypes';
-import {StationByCountryGrouper} from './station-by-country-grouper';
+import { StationGrouper, GridCell } from './datatypes';
+import { StationData } from '../../util/datatypes';
 import { Utils } from './../../util/utils';
 
 interface CellGroup {
@@ -10,24 +8,31 @@ interface CellGroup {
     cells: GridCell[];
 }
 
+interface StationGroup {
+    label: string;
+    stations: StationData[];
+}
+
 class CellGrouper {
     private stationGrid: StationData[][];
     private rowCount: number;
     private columnCount: number;
     // private groupStationTogether: (s1: StationData, s2: StationData) => boolean;
-    private stationGrouper: StationGrouper;
+    // private stationGrouper: StationGrouper;
     private groupAssignment: number[][];
-    private groupLabel: string[];
+    private stationGroups: StationGroup[];
+    private stationToLogicalGroupIndexMap: Map<StationData, number>;
+    // private groupLabel: string[];
+    private visGroupToLogicalGroupIndex: number[];
 
-    groupCells(stationGrid: StationData[][], stationGrouper: StationGrouper): CellGroup[] {
+    groupCells(stationGrid: StationData[][], stationGroups: StationGroup[]): CellGroup[] {
         this.stationGrid = stationGrid;
-        this.rowCount =  this.stationGrid.length;
+        this.stationGroups = stationGroups;
+        this.initStationToGroupMap();
+        this.rowCount = this.stationGrid.length;
         this.columnCount = this.stationGrid[0].length;
-        this.stationGrouper = stationGrouper;
-        // this.groupStationTogether = groupStationTogether;
 
         this.groupAssignment = Utils.getMatrix(this.rowCount, this.columnCount, -1);
-        this.groupLabel = [];
 
         let groupIndex = -1;
 
@@ -35,7 +40,7 @@ class CellGrouper {
             for (let c = 0; c < this.columnCount; c++) {
                 if (this.stationGrid[r][c] !== null && this.groupAssignment[r][c] < 0) {
                     this.groupAssignment[r][c] = ++groupIndex;
-                    this.groupLabel[groupIndex] = stationGrouper.getGroupLabel(this.stationGrid[r][c]);
+                    this.visGroupToLogicalGroupIndex[groupIndex] = this.stationToLogicalGroupIndexMap.get(this.stationGrid[r][c]);
                     this.extendGroup(r, c);
                 }
             }
@@ -44,25 +49,35 @@ class CellGrouper {
         return this.createGroups();
     }
 
+    private initStationToGroupMap() {
+        this.visGroupToLogicalGroupIndex = [];
+        this.stationToLogicalGroupIndexMap = new Map();
+        this.stationGroups.forEach((value, index) => value.stations.forEach(s => this.stationToLogicalGroupIndexMap.set(s, index)));
+    }
+
+    private areStationsInTheSameGroup(station1: StationData, station2: StationData): boolean {
+        return this.stationToLogicalGroupIndexMap.get(station1) === this.stationToLogicalGroupIndexMap.get(station2);
+    }
+
     private extendGroup(row: number, column: number) {
         if (row > 0 &&
             this.groupAssignment[row - 1][column] < 0 &&
             this.stationGrid[row - 1][column] != null &&
-            this.stationGrouper.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row - 1][column])) {
+            this.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row - 1][column])) {
             this.groupAssignment[row - 1][column] = this.groupAssignment[row][column];
             this.extendGroup(row - 1, column);
         }
         if (column < this.columnCount - 1 &&
             this.groupAssignment[row][column + 1] < 0 &&
             this.stationGrid[row][column + 1] != null &&
-            this.stationGrouper.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row][column + 1])) {
+            this.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row][column + 1])) {
             this.groupAssignment[row][column + 1] = this.groupAssignment[row][column];
             this.extendGroup(row, column + 1);
         }
         if (row < this.rowCount - 1 &&
             this.groupAssignment[row + 1][column] < 0 &&
             this.stationGrid[row + 1][column] != null &&
-            this.stationGrouper.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row + 1][column])) {
+            this.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row + 1][column])) {
             this.groupAssignment[row + 1][column] = this.groupAssignment[row][column];
             this.extendGroup(row + 1, column);
         }
@@ -70,9 +85,19 @@ class CellGrouper {
         if (column > 0 &&
             this.groupAssignment[row][column - 1] < 0 &&
             this.stationGrid[row][column - 1] != null &&
-            this.stationGrouper.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row][column - 1])) {
+            this.areStationsInTheSameGroup(this.stationGrid[row][column], this.stationGrid[row][column - 1])) {
             this.groupAssignment[row][column - 1] = this.groupAssignment[row][column];
             this.extendGroup(row, column - 1);
+        }
+    }
+
+    private simplifyGroups() {
+        for (let r = 0; r < this.rowCount; r++) {
+            for (let c = 0; c < this.columnCount; c++) {
+                if (this.groupAssignment[r][c] < 0) {
+
+                }
+            }
         }
     }
 
@@ -82,7 +107,7 @@ class CellGrouper {
 
         for (let i = maxGroupIndex; i >= 0; i--) {
             groups[i] = {
-                label: this.groupLabel[i],
+                label: this.stationGroups[this.visGroupToLogicalGroupIndex[i]].label,
                 cells: []
             };
         }
@@ -102,9 +127,9 @@ class CellGrouper {
 
 export function getCellGroups(
     stationGrid: StationData[][],
-    stationGrouper: StationGrouper
+    stationGroups: StationGroup[]
     ): {label: string, cells: GridCell[]}[] {
 
-        const cellGrouping = new CellGrouper();
-        return cellGrouping.groupCells(stationGrid, stationGrouper);
+    const cellGrouping = new CellGrouper();
+    return cellGrouping.groupCells(stationGrid, stationGroups);
 }
