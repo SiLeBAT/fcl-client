@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from '../../core/services/alert.service';
 import { environment } from '../../../environments/environment';
 import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { AdminActivateResponseDTO } from './../models/user.model';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -29,18 +30,17 @@ export class AdminActivateComponent implements OnInit {
 
         this.spinnerService.show();
         this.userService.adminActivateAccount(adminToken)
-      .subscribe((data) => {
-          this.spinnerService.hide();
-          const message = data['title'];
-          this.name = data['obj'];
-          this.alertService.success(message);
-          this.adminTokenValid = true;
-      }, (err: HttpErrorResponse) => {
-          this.spinnerService.hide();
-          this.alertService.error(err.error.title);
-          this.adminTokenValid = false;
-      });
-
+        .subscribe((adminActivateResponse: AdminActivateResponseDTO) => {
+            this.spinnerService.hide();
+            const message = adminActivateResponse.title;
+            this.name = adminActivateResponse.name;
+            this.alertService.success(message);
+            this.adminTokenValid = true;
+        }, (err: HttpErrorResponse) => {
+            this.spinnerService.hide();
+            this.alertService.error(err.error.title);
+            this.adminTokenValid = false;
+        });
     }
 
 }

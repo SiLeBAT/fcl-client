@@ -4,8 +4,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from '../../core/services/alert.service';
 import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { NewPassword, TitleResponseDTO } from '../models/user.model';
 
 @Component({
     // tslint:disable-next-line:component-selector
@@ -52,23 +53,25 @@ export class ResetComponent implements OnInit {
     reset() {
         this.loading = true;
 
-        const password = this.resetForm.value.password1;
+        const password: NewPassword = {
+            newPw: this.resetForm.value.password1
+        };
         const token = this.activatedRoute.snapshot.params['id'];
         this.spinnerService.show();
         this.userService.resetPassword(password, token)
-      .subscribe((data) => {
-          this.spinnerService.hide();
-          const message = data['title'];
-          this.alertService.success(message);
-          this.router.navigate(['users/login']).catch((err) => {
-              throw new Error(`Unable to navigate: ${err}`);
-          });
-      }, (err: HttpErrorResponse) => {
-          this.spinnerService.hide();
-          const errMsg = err['error']['title'];
-          this.alertService.error(errMsg);
-          this.loading = false;
-      });
+        .subscribe((resetResponse: TitleResponseDTO) => {
+            this.spinnerService.hide();
+            const message = resetResponse.title;
+            this.alertService.success(message);
+            this.router.navigate(['users/login']).catch((err) => {
+                throw new Error(`Unable to navigate: ${err}`);
+            });
+        }, (err: HttpErrorResponse) => {
+            this.spinnerService.hide();
+            const errMsg = err['error']['title'];
+            this.alertService.error(errMsg);
+            this.loading = false;
+        });
     }
 
     private passwordConfirmationValidator(fg: FormGroup) {

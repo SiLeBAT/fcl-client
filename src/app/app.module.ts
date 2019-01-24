@@ -3,9 +3,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ScrollbarHelper } from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
@@ -30,6 +33,9 @@ import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialo
 import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
 import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.component';
+import { environment } from '../environments/environment';
+import { TokenInterceptor } from './core/services/token-interceptor.service';
+import { JwtInterceptor } from './core/services/jwt-interceptor.service';
 
 @NgModule({
     declarations: [
@@ -52,7 +58,6 @@ import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.componen
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
         MaterialModule,
         NgxDatatableModule,
         GraphEditorModule,
@@ -62,10 +67,27 @@ import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.componen
         CoreModule,
         SharedModule,
         MaterialModule,
+        StoreModule.forRoot({}),
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({
+            name: 'FCL Devtools',
+            maxAge: 25,
+            logOnly: environment.production
+        }),
+        // AppRoutingModule needs to be at the end
         AppRoutingModule
-
     ],
     providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: JwtInterceptor,
+            multi: true
+        },
         ScrollbarHelper
         // {
         //     provide: LocationStrategy,

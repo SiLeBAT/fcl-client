@@ -23,7 +23,7 @@
       </button>
       <button
         mat-button
-        [routerLink]="(isServerLess() || authService.loggedIn()) ? ['/users/main'] : ['/']"
+        [routerLink]="(isServerLess() || userService.loggedIn()) ? ['/users/main'] : ['/']"
         id="homeButton">
         <span class="mat-title">{{ appName }}</span>
       </button>
@@ -32,7 +32,7 @@
         fxFlex></span>
 
       <button
-        *ngIf="(isServerLess() || authService.loggedIn()) && !isTracingActive()"
+        *ngIf="(isServerLess() || userService.loggedIn()) && !isTracingActive()"
         mat-icon-button
         [routerLink]="['/tracing']"
         matTooltip="Tracing view">
@@ -41,27 +41,27 @@
       </button>
 
       <button
-        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
+        *ngIf="(isServerLess() || userService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onSaveImage()"
         matTooltip="Save image">
         <mat-icon>image</mat-icon>
       </button>
       <input
-        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
+        *ngIf="(isServerLess() || userService.loggedIn()) && isTracingActive()"
         id="fileInput"
         #fileInput
         type="file"
         (change)="appService.onLoad($event)">
       <button
-        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
+        *ngIf="(isServerLess() || userService.loggedIn()) && isTracingActive()"
         mat-icon-button
         onclick="document.getElementById('fileInput').click()"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
       </button>
       <button
-        *ngIf="(isServerLess() || authService.loggedIn()) && isTracingActive()"
+        *ngIf="(isServerLess() || userService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onSave()"
         matTooltip="Download data">
@@ -82,7 +82,7 @@
         <mat-icon>info</mat-icon>
       </button>
       <button
-        *ngIf="rightSidenav.opened && (isServerLess() || authService.loggedIn()) && isTracingActive()"
+        *ngIf="rightSidenav.opened && (isServerLess() || userService.loggedIn()) && isTracingActive()"
         mat-mini-fab
         (click)="appService.onToggleRightSidebar()"
         matTooltip="Toggle right sidebar">
@@ -91,7 +91,7 @@
       <mat-divider [inset]="true" [vertical]="true"></mat-divider>
 
       <a
-        *ngIf="!authService.loggedIn()"
+        *ngIf="!userService.loggedIn()"
         mat-button
         [routerLink]="['/users/login']">
         <mat-icon>exit_to_app</mat-icon>
@@ -99,7 +99,7 @@
       </a>
 
       <button
-        *ngIf="authService.loggedIn()"
+        *ngIf="userService.loggedIn()"
         mat-icon-button
         [matMenuTriggerFor]="menu">
         <mat-icon>account_circle</mat-icon>
