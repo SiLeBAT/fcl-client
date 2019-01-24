@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
-import { AuthService } from '../services/auth.service';
-import { AlertService } from '../services/alert.service';
-import { User } from '../models/user.model';
-import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { Credentials, TokenizedUser } from '../models/user.model';
+import { Store, select } from '@ngrx/store';
+import * as fromUser from '../state/user.reducer';
+import * as userActions from '../state/user.actions';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -16,23 +15,26 @@ import { SpinnerLoaderService } from '../../core/services/spinner-loader.service
 })
 export class LoginComponent implements OnInit {
     loginForm: FormGroup;
-    loading = false;
     returnUrl: string;
 
     constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService,
-    private alertService: AlertService,
-    private spinnerService: SpinnerLoaderService
-  ) {}
+      private router: Router,
+      private store: Store<fromUser.State>
+    ) {}
 
     ngOnInit() {
-    // reset login status
-        this.authService.logout();
+        this.store.pipe(
+          select(fromUser.getCurrentUser)
+        ).subscribe(
+          (currentUser: TokenizedUser) => {
+              if (currentUser) {
+                  this.router.navigate(['/users/main']).catch((err) => {
+                      throw new Error(`Unable to navigate: ${err}`);
+                  });
 
-    // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/users/main';
+              }
+          }
+        );
 
         this.loginForm = new FormGroup({
             email: new FormControl(null, [Validators.required, Validators.email]),
@@ -42,10 +44,10 @@ export class LoginComponent implements OnInit {
 
     getEmailErrorMessage() {
         return this.loginForm.controls.email.hasError('required')
-      ? 'You must enter a valid email'
-      : this.loginForm.controls.email.hasError('email')
-      ? 'Not a valid email'
-      : '';
+          ? 'You must enter a valid email'
+          : this.loginForm.controls.email.hasError('email')
+          ? 'Not a valid email'
+          : '';
     }
 
     getPasswordErrorMessage() {
@@ -55,39 +57,11 @@ export class LoginComponent implements OnInit {
     }
 
     login() {
-        this.loading = true;
-
-        const user = new User(
-      this.loginForm.value.email,
-      this.loginForm.value.password
-    );
-
-        this.spinnerService.show();
-
-        this.authService.login(user).subscribe(
-      data => {
-          this.spinnerService.hide();
-          this.loginForm.reset();
-          if (!data['obj']['token']) {
-              this.alertService.error(data['title']);
-          } else {
-              this.alertService.success(data['title']);
-              const currentUser = data['obj'];
-              if (currentUser && currentUser.token) {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
-                  localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                  this.authService.setCurrentUser(currentUser);
-              }
-              this.router.navigate([this.returnUrl]).catch((err) => {
-                  throw new Error(`Unable to navigate: ${err}`);
-              });
-          }
-      },
-      () => {
-          this.spinnerService.hide();
-          this.loginForm.reset();
-          this.loading = false;
-      }
-    );
+        const credentials: Credentials = {
+            email: this.loginForm.value.email,
+            password: this.loginForm.value.password
+        };
+        this.store.dispatch(new userActions.LoginUser(credentials));
+        this.loginForm.reset();
     }
 }

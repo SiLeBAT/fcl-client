@@ -3,9 +3,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ScrollbarHelper } from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
@@ -29,6 +32,9 @@ import { DialogSelectComponent } from './dialog/dialog-select/dialog-select.comp
 import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialog-single-select.component';
 import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
+import { environment } from '../environments/environment';
+import { TokenInterceptor } from './core/services/token-interceptor.service';
+import { JwtInterceptor } from './core/services/jwt-interceptor.service';
 
 @NgModule({
     declarations: [
@@ -50,7 +56,6 @@ import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delive
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
         MaterialModule,
         NgxDatatableModule,
         GraphEditorModule,
@@ -60,15 +65,32 @@ import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delive
         CoreModule,
         SharedModule,
         MaterialModule,
+        StoreModule.forRoot({}),
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({
+            name: 'FCL Devtools',
+            maxAge: 25,
+            logOnly: environment.production
+        }),
+        // AppRoutingModule needs to be at the end
         AppRoutingModule
-
     ],
     providers: [
-        ScrollbarHelper
-        // {
-        //     provide: LocationStrategy,
-        //     useClass: HashLocationStrategy
-        // }
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: JwtInterceptor,
+            multi: true
+        },
+        ScrollbarHelper,
+        {
+            provide: LocationStrategy,
+            useClass: HashLocationStrategy
+        }
     ],
     bootstrap: [
         AppComponent

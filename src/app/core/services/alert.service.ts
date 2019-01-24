@@ -11,9 +11,10 @@ export interface INotification {
     providedIn: 'root'
 })
 export class AlertService {
-    subjNotification = new Subject<INotification>();
+    private subjNotification = new Subject<INotification>();
     private duration = 5000;
     private verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+    notification$ = this.subjNotification.asObservable();
 
     success(message: string) {
         this.publishNotification(message, ['snackbar-success']);
