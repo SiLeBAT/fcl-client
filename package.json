@@ -46,6 +46,7 @@
     "cytoscape-dagre": "^2.2.1",
     "cytoscape-spread": "^3.0.0",
     "d3": "^5.5.0",
+    "elkjs": "^0.4.1",
     "hammerjs": "^2.0.8",
     "html2canvas": "^1.0.0-alpha.12",
     "immutable": "^3.8.2",

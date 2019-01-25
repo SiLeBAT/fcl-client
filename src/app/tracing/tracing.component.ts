@@ -17,6 +17,7 @@ import {
   DialogSelectComponent,
   DialogSelectData
 } from '../dialog/dialog-select/dialog-select.component';
+import { showVisioGraph } from '../visio/visio.service';
 import { Utils } from '../util/utils';
 import { FclData, GraphType, TableMode } from '../util/datatypes';
 import { Constants } from '../util/constants';
@@ -84,6 +85,9 @@ export class TracingComponent implements OnInit, OnDestroy {
         this.subscriptions.push(
       this.appService.doSaveImage.subscribe(notification => this.onSaveImage())
     );
+        this.subscriptions.push(
+            this.appService.doVisioLayout.subscribe(notification => this.onVisioLayout())
+        );
         this.subscriptions.push(
       this.appService.doOnLoad.subscribe(event => this.onLoad(event))
     );
@@ -260,6 +264,10 @@ export class TracingComponent implements OnInit, OnDestroy {
       .catch(err => {
           throw new Error(`Unable to save image: ${err}`);
       });
+    }
+
+    onVisioLayout() {
+        showVisioGraph(this.data.elements, this.dialogService);
     }
 
     changeColumns() {

@@ -32,6 +32,7 @@ import { DialogSelectComponent } from './dialog/dialog-select/dialog-select.comp
 import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialog-single-select.component';
 import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
+import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.component';
 import { environment } from '../environments/environment';
 import { TokenInterceptor } from './core/services/token-interceptor.service';
 import { JwtInterceptor } from './core/services/jwt-interceptor.service';
@@ -49,7 +50,8 @@ import { JwtInterceptor } from './core/services/jwt-interceptor.service';
         DialogSelectComponent,
         DialogSingleSelectComponent,
         StationPropertiesComponent,
-        DeliveryPropertiesComponent
+        DeliveryPropertiesComponent,
+        VisioLayoutComponent
     ],
     imports: [
         BrowserModule,
@@ -102,7 +104,8 @@ import { JwtInterceptor } from './core/services/jwt-interceptor.service';
         DialogSelectComponent,
         DialogSingleSelectComponent,
         StationPropertiesComponent,
-        DeliveryPropertiesComponent
+        DeliveryPropertiesComponent,
+        VisioLayoutComponent
     ]
 })
 export class AppModule {
