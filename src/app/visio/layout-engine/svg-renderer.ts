@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { VisioBox, VisioReport, BoxType, Position, VisioConnector } from './datatypes';
+import { VisioBox, VisioReport, BoxType, Position, VisioConnector, Size } from './datatypes';
 import { GraphSettings } from './graph-settings';
 
 export class SvgRenderer {
@@ -14,13 +14,26 @@ export class SvgRenderer {
     ]);
 
     static renderReport(report: VisioReport): string {
-        let svg = '<svg ' +
-        'height="' + report.graph.size.height + '" width="' + report.graph.size.width + '">';
-        svg += this.renderDefs();
-        svg += this.renderElements(report.graph.elements);
-        svg += this.renderConnectors(report.graph.connectors, this.getPortPositions(report.graph.elements));
-        svg += '</svg>';
-        return svg;
+        return '' +
+        this.renderSvgHeader(report.graph.size) +
+        this.renderDefs() +
+        this.renderElements(this.getSortedBoxes(report.graph.elements)) +
+        this.renderConnectors(report.graph.connectors, this.getPortPositions(report.graph.elements)) +
+        '</svg>';
+    }
+
+    private static renderSvgHeader(size: Size): string {
+        return '' +
+        '<svg xmlns="http://www.w3.org/2000/svg" ' +
+        'height="' + size.height + '" width="' + size.width + '">\n';
+    }
+
+    private static getSortedBoxes(boxes: VisioBox[]): VisioBox[] {
+        // some groupes might be within other groups
+        // so bigger groups have to be rendered first
+        const result = boxes.slice();
+        result.sort((b1, b2) => Math.min(b2.size.width - b1.size.width, b2.size.height - b1.size.height));
+        return result;
     }
 
     private static getPortPositions(boxes: VisioBox[]): Map<string, Position> {
@@ -32,22 +45,17 @@ export class SvgRenderer {
                     y: box.position.y + box.size.height * port.normalizedPosition.y
                 });
             }
-            // result = new Map([...result, ...this.getPortPositions(box.elements)]); // ES6 notation
             this.getPortPositions(box.elements).forEach((value: Position, key: string) => {
                 result.set(key, value);
             });
-            // result = new Map([...Array.from(result.entries()), ...Array.from(this.getPortPositions(box.elements).entries())]);
         }
         return result;
     }
-    static renderDefs(): string {
-        return '  <style>\n' +
-        '    .normalText { font: 8px arial; }\n' +
-        // .heavy { font: bold 30px sans-serif; }
 
-        /* Note that the color of the text is set with the    *
-        * fill property, the color property is for HTML only */
-        // .Rrrrr { font: italic 40px serif; fill: red; }
+    private static renderDefs(): string {
+        return '' +
+        '  <style>\n' +
+        '    .normalText { font: 8px arial; }\n' +
         '  </style>\n' +
         '  <defs>\n' +
         '    <!-- arrowhead marker definition -->\n' +
@@ -59,20 +67,11 @@ export class SvgRenderer {
         '  </defs>\n';
     }
 
-    static renderElements(boxes: VisioBox[]): string {
-        let svg = '';
-        for (const box of boxes) {
-            /*if ((box as NonConvexVisioContainer).shape !== undefined) {
-                svg += this.renderNonConvexBox(box as NonConvexVisioContainer);
-            } else {
-                svg += this.renderSimpleBox(box);
-            }*/
-            svg += this.renderBox(box);
-        }
-        return svg;
+    private static renderElements(boxes: VisioBox[]): string {
+        return boxes.map(b => this.renderBox(b)).join('\n');
     }
 
-    static renderBox(box: VisioBox): string {
+    private static renderBox(box: VisioBox): string {
         let svg = '<g>';
         if (box.shape !== null) {
             svg += this.renderCustomBoxShape(box);
@@ -85,21 +84,37 @@ export class SvgRenderer {
         return svg;
     }
 
-    static renderCustomBoxShape(box: VisioBox): string {
-        const svg = '<polygon points="' +
-        _.tail(box.shape.outerBoundary).map(p => (box.position.x + p.x) + ', ' + (box.position.y + p.y)).join(' ') + '" ' +
-        'style="stroke:black; fill:' + this.BoxColors.get(box.type) + '; stroke-width: ' + GraphSettings.BORDER_WITH + ';opacity:0.5"/>';
-        return svg;
+    private static renderCustomBoxShape(box: VisioBox): string {
+        return this.renderPolygon(
+            box.shape.outerBoundary.map(p => ({
+                x: p.x + box.position.x,
+                y: p.y + box.position.y
+            })), this.BoxColors.get(box.type), '0.5'
+            ) + box.shape.holes.map(
+                h => this.renderPolygon(
+                    h.map(p => ({
+                        x: p.x + box.position.x,
+                        y: p.y + box.position.y
+                    })), 'white', '1'
+                    )
+                ).join('\n');
     }
 
-    static renderSimpleBoxShape(box: VisioBox): string {
-        return '<rect x="' + box.position.x + '" y="' + box.position.y + '" ' +
+    private static renderPolygon(polygon: Position[], color: string, opacity: string): string {
+        return '<polygon points="' +
+        _.tail(polygon).map(p => p.x + ', ' + p.y).join(' ') + '" ' +
+        'style="stroke:black; fill:' + color + '; stroke-width: ' + GraphSettings.BORDER_WITH + ';opacity:' + opacity + '"/>';
+    }
+
+    private static renderSimpleBoxShape(box: VisioBox): string {
+        return '' +
+        '<rect x="' + box.position.x + '" y="' + box.position.y + '" ' +
         'rx="' + GraphSettings.RADIUS + '" ry="' + GraphSettings.RADIUS + '" ' +
         'width="' + box.size.width + '" height="' + box.size.height + '" ' +
         'style="fill:' + this.BoxColors.get(box.type) + ';stroke:black;stroke-width:' + GraphSettings.BORDER_WITH + ';opacity:1" />';
     }
 
-    static renderLabel(box: VisioBox): string {
+    private static renderLabel(box: VisioBox): string {
         const label = box.label;
         const centerAlign = box.type !== BoxType.StationGroup;
         const pos: Position = {
@@ -113,13 +128,11 @@ export class SvgRenderer {
         const dy = 10;
         for (const text of label.text) {
             svg += '<tspan class="normalText" x="' + pos.x + '" dy="' + dy + '">' + text + '</tspan>';
-            // svg += '<tspan class="normalText">' + text + '</tspan>';
-            // dy += 10;
         }
         return svg + '</text>';
     }
 
-    static renderConnectors(connectors: VisioConnector[], portPositions: Map<string, Position>): string {
+    private static renderConnectors(connectors: VisioConnector[], portPositions: Map<string, Position>): string {
         let svg = '';
         for (const connector of connectors) {
             const fromPos = portPositions.get(connector.fromPort);
