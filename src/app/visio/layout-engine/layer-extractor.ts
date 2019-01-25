@@ -1,9 +1,9 @@
-import {FclElements, StationData} from '../../util/datatypes';
+import { FclElements, StationData } from '../../util/datatypes';
 
 function getNormalizedValues(x: number[]): number[] {
     const min_x: number = Math.min(...x);
     const max_x: number = Math.max(...x);
-    return x.map( v => (v - min_x) / (max_x - min_x));
+    return x.map(v => (v - min_x) / (max_x - min_x));
 }
 
 function getLayerIndices(x: number[]): number[] {
@@ -21,7 +21,7 @@ function getLayerIndices(x: number[]): number[] {
             }
         }
         if (noLayer) {
-            layers.push( {
+            layers.push({
                 x: x[i],
                 index: null
             });

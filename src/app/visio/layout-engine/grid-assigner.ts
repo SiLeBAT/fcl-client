@@ -16,7 +16,7 @@ function createGrid(layers: StationData[][], columns: StationData[][]): StationD
     const layerMap: Map<StationData, number> = createIndexMap(layers);
     const columnMap: Map<StationData, number> = createIndexMap(columns);
 
-    const result: StationData[][] = Utils.getMatrix(layers.length, columns.length, <StationData>null);
+    const result: StationData[][] = Utils.getMatrix(layers.length, columns.length, null as StationData);
     for (const station of [].concat(...layers)) {
         result[layerMap.get(station)][columnMap.get(station)] = station;
     }

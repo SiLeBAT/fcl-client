@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import {FclElements, StationData} from '../../util/datatypes';
-import { StationPropertiesComponent } from 'app/dialog/station-properties/station-properties.component';
+import { StationData } from '../../util/datatypes';
 
 class ColumnAssigner {
 
@@ -22,41 +21,13 @@ class ColumnAssigner {
         return result;
     }
 
-    public assignToColumns(layers: StationData[][]): StationData[][] {
+    assignToColumns(layers: StationData[][]): StationData[][] {
         this.stationToLayerIndexMap = ColumnAssigner.getStationToLayerIndexMap(layers);
         this.stations = [].concat(...layers);
         this.stations.sort(ColumnAssigner.stationComparer);
         this.setSwitches();
 
-
-
-
-        /*const stationToColumnMap: Map<StationData, StationData[]> = new Map();
-        const stations: StationData[] = [].concat(...layers);
-        stations.sort((station1, station2) => station1.position.y - station2.position.y);
-        if (stations !== null && stations.length > 0) {
-            let currentColumn: StationData[] = [stations.pop()];
-            stationToColumnMap.set(currentColumn[0], currentColumn);
-            columns.push(currentColumn);
-            while (stations.length > 0) {
-                const station = stations.pop();
-                const stationLayerIndex = stationToLayerIndexMap.get(station);
-                if (currentColumn.every(s => stationToLayerIndexMap.get(s) !== stationLayerIndex)) {
-                    // no station so far from the same layer in this column
-                    if (connections.has(station)) {}
-                    for (const neighbour of connections.get(station)) {
-                        if ()
-                    }
-                } else {
-                    // use old column
-                    currentColumn.push(station);
-                    stationToColumnMap.set(station, currentColumn)
-                }
-            }
-        }
-    }*/
         return this.createColumns();
-        // return this.createGrid();
     }
 
     private setSwitches() {
@@ -69,7 +40,7 @@ class ColumnAssigner {
         const layerIndexSet: Set<number> = new Set();
         layerIndexSet.add(this.stationToLayerIndexMap.get(this.stations[0]));
 
-        for (let i = 1, maxI = this.stations.length - 2;  i <= maxI ; i++) {
+        for (let i = 1, maxI = this.stations.length - 2; i <= maxI ; i++) {
             const layerIndex = this.stationToLayerIndexMap.get(this.stations[i]);
 
             this.columnSwitch[i] = layerIndexSet.has(layerIndex);
@@ -136,32 +107,16 @@ class ColumnAssigner {
         if (this.stations.length > 0) {
             result[0].push(this.stations[0]);
             let c = 0;
-            for (let i = 1, n = this.stations.length; i < n; i++ ) {
-              if (this.columnSwitch[i - 1]) {
-                  c++;
-              }
-              result[c].push(this.stations[i]);
+            for (let i = 1, n = this.stations.length; i < n; i++) {
+                if (this.columnSwitch[i - 1]) {
+                    c++;
+                }
+                result[c].push(this.stations[i]);
             }
         }
         return result;
     }
-
-    /*
-    private createGrid(): StationData[][] {
-        const stationGrid: StationData[][] = [];
-        const nColumnSwitches = _.sum(this.columnSwitch) + 1;
-        for (let i = this.layers.length - 1; i >= 0; i--) {
-            stationGrid
-        }
-    }*/
 }
-
-
-
-/*export assignToGrid(layers: StationData[][]): StationsData[][] {
-    const columnAssigner = new ColumnAssigner();
-
-}*/
 
 export function assignToColumns(layers: StationData[][]): StationData[][] {
     const columnAssigner = new ColumnAssigner();

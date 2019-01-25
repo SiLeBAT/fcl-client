@@ -7,7 +7,7 @@ export class AppService {
     doToggleLeftSidebar: EventEmitter<any>;
     doToggleRightSidebar: EventEmitter<any>;
     doSaveImage: EventEmitter<any>;
-    public doVisioLayout: EventEmitter<any>;
+    doVisioLayout: EventEmitter<any>;
     doOnLoad: EventEmitter<any>;
     doInputEmpty: EventEmitter<any>;
     doOnSave: EventEmitter<any>;

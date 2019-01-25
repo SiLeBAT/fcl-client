@@ -115,7 +115,7 @@ class CellGrouper {
         for (let r = 0; r < this.rowCount; r++) {
             for (let c = 0; c < this.columnCount; c++) {
                 if (this.groupAssignment[r][c] >= 0) {
-                    groups[this.groupAssignment[r][c]].cells.push({row: r, column: c});
+                    groups[this.groupAssignment[r][c]].cells.push({ row: r, column: c });
                 }
             }
         }

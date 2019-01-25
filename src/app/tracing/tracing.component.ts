@@ -85,9 +85,9 @@ export class TracingComponent implements OnInit, OnDestroy {
         this.subscriptions.push(
       this.appService.doSaveImage.subscribe(notification => this.onSaveImage())
     );
-    this.subscriptions.push(
-        this.appService.doVisioLayout.subscribe(notification => this.onVisioLayout())
-    );
+        this.subscriptions.push(
+            this.appService.doVisioLayout.subscribe(notification => this.onVisioLayout())
+        );
         this.subscriptions.push(
       this.appService.doOnLoad.subscribe(event => this.onLoad(event))
     );

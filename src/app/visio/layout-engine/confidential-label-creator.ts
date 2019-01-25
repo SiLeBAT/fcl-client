@@ -19,7 +19,7 @@ export class ConfidentialLabelCreator extends LabelCreator {
     }
 
     getStationLabel(stationInfo: StationInformation): VisioLabel {
-        const text: string[]  = [
+        const text: string[] = [
             (stationInfo.activities === null ? 'Unknown activity' : stationInfo.activities) +
             ' ' + stationInfo.ctno + ': ' + stationInfo.name
         ];

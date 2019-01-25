@@ -1,5 +1,4 @@
-import { StationInformation, LotInformation,
-    VisioLabel } from './datatypes';
+import { StationInformation, LotInformation, VisioLabel } from './datatypes';
 import { LabelCreator } from './label-creator';
 import { GraphSettings } from './graph-settings';
 
@@ -9,7 +8,7 @@ export class PublicLabelCreator extends LabelCreator {
     }
 
     getLotLabel(lotInfo: LotInformation): VisioLabel {
-        const text: string[]  = [
+        const text: string[] = [
             lotInfo.commonProductName,
             'Amount: ' + lotInfo.quantity
         ];
@@ -17,7 +16,7 @@ export class PublicLabelCreator extends LabelCreator {
     }
 
     getStationLabel(stationInfo: StationInformation): VisioLabel {
-        const text: string[]  = [stationInfo.activities + ' ' + stationInfo.ctno];
+        const text: string[] = [stationInfo.activities + ' ' + stationInfo.ctno];
         return this.getLabel(text, GraphSettings.STATION_BOX_MARGIN);
     }
 }

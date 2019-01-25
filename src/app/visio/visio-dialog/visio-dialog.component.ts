@@ -9,6 +9,7 @@ export interface VisioLayoutData {
 }
 
 @Component({
+    // tslint:disable-next-line:component-selector
     selector: 'app-visio-dialog-properties',
     templateUrl: './visio-dialog.component.html',
     styleUrls: ['./visio-dialog.component.css']
