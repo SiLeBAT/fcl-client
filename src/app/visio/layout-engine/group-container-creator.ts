@@ -194,41 +194,52 @@ export class GroupContainerCreator {
                 polygon.push({ row: lastCell.row + 1, column: lastCell.column });
                 this.parseOuterBoundary(matrix, polygon);
             }
-        } else if (lastCell.column !== polygon[0].column || lastCell.row !== polygon[0].row) {
+        } else {
 
             const secondLastCell: GridCell = polygon[polygon.length - 2];
             const lastMove: GridCell = {
                 row: Math.sign(lastCell.row - secondLastCell.row),
                 column: Math.sign(lastCell.column - secondLastCell.column)
             };
-            // check left
-            const leftCell: GridCell = {
-                row: lastCell.row - lastMove.column * (1 - Math.abs(lastMove.row)),
-                column: lastCell.column + lastMove.row * (1 - Math.abs(lastMove.column))
-            };
-            if (matrix[lastCell.row][lastCell.column] === matrix[leftCell.row][leftCell.column]) {
-                polygon.push(leftCell);
-                this.parseOuterBoundary(matrix, polygon);
-            } else {
-                // check straight
-                const straightCell = { row: lastCell.row + lastMove.row, column: lastCell.column + lastMove.column };
-                if (matrix[lastCell.row][lastCell.column] === matrix[straightCell.row][straightCell.column]) {
-                    polygon.pop();
-                    polygon.push(straightCell);
+
+            if (
+                lastCell.column !== polygon[0].column || lastCell.row !== polygon[0].row || // not the start cell
+                (
+                    Math.sign(lastMove.row) >= 0 && // start cell, but the last move is not going upwards
+                    matrix[lastCell.row + 1][lastCell.column] === matrix[lastCell.row][lastCell.column]
+                    // start cell, but going down is available
+                )
+             ) {
+
+                // check left
+                const leftCell: GridCell = {
+                    row: lastCell.row - lastMove.column * (1 - Math.abs(lastMove.row)),
+                    column: lastCell.column + lastMove.row * (1 - Math.abs(lastMove.column))
+                };
+                if (matrix[lastCell.row][lastCell.column] === matrix[leftCell.row][leftCell.column]) {
+                    polygon.push(leftCell);
                     this.parseOuterBoundary(matrix, polygon);
                 } else {
-                    // check right
-                    const rightCell = {
-                        row: lastCell.row + lastMove.column * (1 - Math.abs(lastMove.row)),
-                        column: lastCell.column - lastMove.row * (1 - Math.abs(lastMove.column))
-                    };
-                    if (matrix[lastCell.row][lastCell.column] === matrix[rightCell.row][rightCell.column]) {
-                        polygon.push(rightCell);
+                    // check straight
+                    const straightCell = { row: lastCell.row + lastMove.row, column: lastCell.column + lastMove.column };
+                    if (matrix[lastCell.row][lastCell.column] === matrix[straightCell.row][straightCell.column]) {
+                        polygon.pop();
+                        polygon.push(straightCell);
                         this.parseOuterBoundary(matrix, polygon);
                     } else {
-                        // check back
-                        polygon.push({ row: lastCell.row - lastMove.row, column: lastCell.column - lastMove.column });
-                        this.parseOuterBoundary(matrix, polygon);
+                        // check right
+                        const rightCell = {
+                            row: lastCell.row + lastMove.column * (1 - Math.abs(lastMove.row)),
+                            column: lastCell.column - lastMove.row * (1 - Math.abs(lastMove.column))
+                        };
+                        if (matrix[lastCell.row][lastCell.column] === matrix[rightCell.row][rightCell.column]) {
+                            polygon.push(rightCell);
+                            this.parseOuterBoundary(matrix, polygon);
+                        } else {
+                            // check back
+                            polygon.push({ row: lastCell.row - lastMove.row, column: lastCell.column - lastMove.column });
+                            this.parseOuterBoundary(matrix, polygon);
+                        }
                     }
                 }
             }
