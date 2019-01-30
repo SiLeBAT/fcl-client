@@ -17,8 +17,8 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
-              "src/assets",
-              "src/favicon.ico",
+              { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
+              { "glob": "favicon.ico", "input": "/src", "output": "/" },
               { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" }
             ],
             "styles": [
@@ -34,6 +34,7 @@
               "src/assets/deflate/base64.js",
               "src/assets/jscolor/jscolor.js",
               "src/assets/sanitizer/sanitizer.min.js",
+              "src/assets/js/mxgraph.conf.js",
               "node_modules/mxgraph/javascript/mxClient.js",
               "src/assets/js/EditorUi.js",
               "src/assets/js/Editor.js",
@@ -120,6 +121,7 @@
               "src/assets/deflate/base64.js",
               "src/assets/jscolor/jscolor.js",
               "src/assets/sanitizer/sanitizer.min.js",
+              "src/assets/js/mxgraph.conf.js",
               "node_modules/mxgraph/javascript/mxClient.js",
               "src/assets/js/EditorUI.js",
               "src/assets/js/Editor.js",
@@ -138,8 +140,8 @@
               "src/material-style.css"
             ],
             "assets": [
-              "src/assets",
-              "src/favicon.ico",
+              { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
+              { "glob": "favicon.ico", "input": "/src", "output": "/" },
               { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" }
             ]
           }

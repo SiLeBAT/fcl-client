@@ -19,3 +19,10 @@ export function showVisioGraph(data: FclElements, dialogService: MatDialog) {
 
     });
 }
+
+export function generateVisioReport(data: FclElements): VisioReport {
+    const stationGrouper = new StationByCountryGrouper();
+    const report: VisioReport = VisioReporter.createReport(data, getFontMetricCanvas, ReportType.Confidential, stationGrouper);
+
+    return report;
+}
