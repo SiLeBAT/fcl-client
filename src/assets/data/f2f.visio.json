@@ -1,0 +1,2220 @@
+{
+  "graph": {
+    "elements": [
+      {
+        "type": 2,
+        "relPosition": {
+          "x": 10,
+          "y": 10
+        },
+        "position": {
+          "x": 10,
+          "y": 10
+        },
+        "elements": [
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity A: Schmidt Fritz"
+              ],
+              "size": {
+                "width": 132,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 152,
+              "height": 100
+            },
+            "position": {
+              "x": 20,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 10,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p1",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Milch",
+                    "brand name: unkown",
+                    "Lot: M8",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 30,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p0",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity B: Prophete Hermann"
+              ],
+              "size": {
+                "width": 144,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 164,
+              "height": 100
+            },
+            "position": {
+              "x": 236,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 226,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p3",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Zucker",
+                    "brand name: unkown",
+                    "Lot: Zuk7",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 246,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p2",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity C: Baak Helmut"
+              ],
+              "size": {
+                "width": 124,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 144,
+              "height": 100
+            },
+            "position": {
+              "x": 485,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 475,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p5",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Zucker",
+                    "brand name: unkown",
+                    "Lot: Z6",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 495,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p4",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity D: Mlady  Kurt"
+              ],
+              "size": {
+                "width": 124,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 144,
+              "height": 100
+            },
+            "position": {
+              "x": 1025,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 1015,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p7",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Salz",
+                    "brand name: unkown",
+                    "Lot: S7",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1035,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p6",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity E: Alex"
+              ],
+              "size": {
+                "width": 96,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 116,
+              "height": 100
+            },
+            "position": {
+              "x": 1209,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 1199,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p9",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Schmlaz",
+                    "brand name: unkown",
+                    "Lot: Schm_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1219,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p8",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity F: Wolf Bernhard"
+              ],
+              "size": {
+                "width": 132,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 152,
+              "height": 100
+            },
+            "position": {
+              "x": 1401,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 1391,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p11",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Safran",
+                    "brand name: unkown",
+                    "Lot: S_2",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1411,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p10",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity G: Adolf Roland"
+              ],
+              "size": {
+                "width": 128,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 148,
+              "height": 100
+            },
+            "position": {
+              "x": 1593,
+              "y": 40
+            },
+            "relPosition": {
+              "x": 1583,
+              "y": 30
+            },
+            "ports": [
+              {
+                "id": "p13",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Eier",
+                    "brand name: unkown",
+                    "Lot: E_2",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1603,
+                  "y": 70
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p12",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity H: Riedl-Leirer Monika"
+              ],
+              "size": {
+                "width": 156,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 176,
+              "height": 100
+            },
+            "position": {
+              "x": 236,
+              "y": 200
+            },
+            "relPosition": {
+              "x": 226,
+              "y": 190
+            },
+            "ports": [
+              {
+                "id": "p15",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Kirschen",
+                    "brand name: unkown",
+                    "Lot: K_1221",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 246,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p14",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity I: MarktSchleuse"
+              ],
+              "size": {
+                "width": 132,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 500,
+              "height": 100
+            },
+            "position": {
+              "x": 485,
+              "y": 200
+            },
+            "relPosition": {
+              "x": 475,
+              "y": 190
+            },
+            "ports": [
+              {
+                "id": "p21",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Zucker",
+                    "brand name: unkown",
+                    "Lot: Zucker_3",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 495,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p16",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              },
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Zucker",
+                    "brand name: unkown",
+                    "Lot: Sugar_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 592,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 107,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p17",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              },
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Milch",
+                    "brand name: unkown",
+                    "Lot: Milk_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 689,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 204,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p18",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              },
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Salz",
+                    "brand name: unkown",
+                    "Lot: Salt_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 786,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 301,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p19",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              },
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Mehl",
+                    "brand name: unkown",
+                    "Lot: Mehl_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 883,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 398,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p20",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity J: Bio Geisler"
+              ],
+              "size": {
+                "width": 124,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 144,
+              "height": 100
+            },
+            "position": {
+              "x": 1209,
+              "y": 200
+            },
+            "relPosition": {
+              "x": 1199,
+              "y": 190
+            },
+            "ports": [
+              {
+                "id": "p23",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Schmalz",
+                    "brand name: unkown",
+                    "Lot: Schmalz_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1219,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p22",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity K: Gewürz Arno"
+              ],
+              "size": {
+                "width": 124,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 144,
+              "height": 100
+            },
+            "position": {
+              "x": 1401,
+              "y": 200
+            },
+            "relPosition": {
+              "x": 1391,
+              "y": 190
+            },
+            "ports": [
+              {
+                "id": "p25",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Safran",
+                    "brand name: unkown",
+                    "Lot: Safran_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1411,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p24",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity L: JungMarkt"
+              ],
+              "size": {
+                "width": 116,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 136,
+              "height": 100
+            },
+            "position": {
+              "x": 1593,
+              "y": 200
+            },
+            "relPosition": {
+              "x": 1583,
+              "y": 190
+            },
+            "ports": [
+              {
+                "id": "p27",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Eier",
+                    "brand name: unkown",
+                    "Lot: Egg_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1603,
+                  "y": 230
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p26",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity M: Bio-Haus"
+              ],
+              "size": {
+                "width": 112,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 132,
+              "height": 100
+            },
+            "position": {
+              "x": 20,
+              "y": 360
+            },
+            "relPosition": {
+              "x": 10,
+              "y": 350
+            },
+            "ports": [
+              {
+                "id": "p29",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Pflaumen",
+                    "brand name: unkown",
+                    "Lot: Pfl_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 30,
+                  "y": 390
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p28",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity N: MarktEber"
+              ],
+              "size": {
+                "width": 116,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 209,
+              "height": 100
+            },
+            "position": {
+              "x": 236,
+              "y": 360
+            },
+            "relPosition": {
+              "x": 226,
+              "y": 350
+            },
+            "ports": [
+              {
+                "id": "p32",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Zucker",
+                    "brand name: unkown",
+                    "Lot: Zucker_39",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 246,
+                  "y": 390
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p30",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              },
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Mehl",
+                    "brand name: unkown",
+                    "Lot: Mehl_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 343,
+                  "y": 390
+                },
+                "relPosition": {
+                  "x": 107,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p31",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity O: Bio-Lager"
+              ],
+              "size": {
+                "width": 116,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 136,
+              "height": 100
+            },
+            "position": {
+              "x": 485,
+              "y": 360
+            },
+            "relPosition": {
+              "x": 475,
+              "y": 350
+            },
+            "ports": [
+              {
+                "id": "p34",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Kirschen",
+                    "brand name: unkown",
+                    "Lot: Kirschen_2",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 495,
+                  "y": 390
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p33",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity P: Bäcker Mees"
+              ],
+              "size": {
+                "width": 124,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 144,
+              "height": 100
+            },
+            "position": {
+              "x": 1209,
+              "y": 360
+            },
+            "relPosition": {
+              "x": 1199,
+              "y": 350
+            },
+            "ports": [
+              {
+                "id": "p36",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Backekuchen",
+                    "brand name: unkown",
+                    "Lot: BK_150313",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1219,
+                  "y": 390
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p35",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity Q: Bäckerei Altdoerfer"
+              ],
+              "size": {
+                "width": 156,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 176,
+              "height": 100
+            },
+            "position": {
+              "x": 20,
+              "y": 520
+            },
+            "relPosition": {
+              "x": 10,
+              "y": 510
+            },
+            "ports": [
+              {
+                "id": "p38",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Butterkuchen",
+                    "brand name: unkown",
+                    "Lot: BK_150310",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 30,
+                  "y": 550
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p37",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity R: Bäcker Haake"
+              ],
+              "size": {
+                "width": 128,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 209,
+              "height": 100
+            },
+            "position": {
+              "x": 485,
+              "y": 520
+            },
+            "relPosition": {
+              "x": 475,
+              "y": 510
+            },
+            "ports": [
+              {
+                "id": "p41",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Kirschkuchen",
+                    "brand name: unkown",
+                    "Lot: KK_150312",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 495,
+                  "y": 550
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p39",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              },
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Kirschkuchen",
+                    "brand name: unkown",
+                    "Lot: KK_150311",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 592,
+                  "y": 550
+                },
+                "relPosition": {
+                  "x": 107,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p40",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity S: Voggel Anton"
+              ],
+              "size": {
+                "width": 128,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 148,
+              "height": 100
+            },
+            "position": {
+              "x": 1209,
+              "y": 520
+            },
+            "relPosition": {
+              "x": 1199,
+              "y": 510
+            },
+            "ports": [
+              {
+                "id": "p43",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [
+              {
+                "type": 1,
+                "label": {
+                  "text": [
+                    "Kuchenmitbringsel",
+                    "brand name: unkown",
+                    "Lot: Bäckerkauf_1",
+                    "Amount: unkown"
+                  ],
+                  "size": {
+                    "width": 72,
+                    "height": 40
+                  },
+                  "relPosition": {
+                    "x": 10,
+                    "y": 10
+                  }
+                },
+                "size": {
+                  "width": 92,
+                  "height": 60
+                },
+                "position": {
+                  "x": 1219,
+                  "y": 550
+                },
+                "relPosition": {
+                  "x": 10,
+                  "y": 30
+                },
+                "ports": [
+                  {
+                    "id": "p42",
+                    "normalizedPosition": {
+                      "x": 0.5,
+                      "y": 1
+                    }
+                  }
+                ],
+                "elements": [],
+                "shape": null
+              }
+            ],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity T: Anschütz Heinz"
+              ],
+              "size": {
+                "width": 136,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 156,
+              "height": 30
+            },
+            "position": {
+              "x": 20,
+              "y": 680
+            },
+            "relPosition": {
+              "x": 10,
+              "y": 670
+            },
+            "ports": [
+              {
+                "id": "p44",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity U: Heckmair Andreas"
+              ],
+              "size": {
+                "width": 144,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 164,
+              "height": 30
+            },
+            "position": {
+              "x": 485,
+              "y": 680
+            },
+            "relPosition": {
+              "x": 475,
+              "y": 670
+            },
+            "ports": [
+              {
+                "id": "p45",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity V: Schaich Peter"
+              ],
+              "size": {
+                "width": 132,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 152,
+              "height": 30
+            },
+            "position": {
+              "x": 1209,
+              "y": 680
+            },
+            "relPosition": {
+              "x": 1199,
+              "y": 670
+            },
+            "ports": [
+              {
+                "id": "p46",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [],
+            "shape": null
+          },
+          {
+            "type": 0,
+            "label": {
+              "text": [
+                "Unknown activity W: Otte"
+              ],
+              "size": {
+                "width": 96,
+                "height": 10
+              },
+              "relPosition": {
+                "x": 10,
+                "y": 10
+              }
+            },
+            "size": {
+              "width": 116,
+              "height": 30
+            },
+            "position": {
+              "x": 1401,
+              "y": 680
+            },
+            "relPosition": {
+              "x": 1391,
+              "y": 670
+            },
+            "ports": [
+              {
+                "id": "p47",
+                "normalizedPosition": {
+                  "x": 0.5,
+                  "y": 0
+                }
+              }
+            ],
+            "elements": [],
+            "shape": null
+          }
+        ],
+        "size": {
+          "width": 1741,
+          "height": 710
+        },
+        "ports": [],
+        "label": {
+          "text": [
+            "DE"
+          ],
+          "size": {
+            "width": 8,
+            "height": 10
+          },
+          "relPosition": {
+            "x": 10,
+            "y": 10
+          }
+        },
+        "shape": {
+          "outerBoundary": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 1741,
+              "y": 0
+            },
+            {
+              "x": 1741,
+              "y": 300
+            },
+            {
+              "x": 1553,
+              "y": 300
+            },
+            {
+              "x": 1553,
+              "y": 710
+            },
+            {
+              "x": 0,
+              "y": 710
+            },
+            {
+              "x": 0,
+              "y": 0
+            }
+          ],
+          "holes": []
+        }
+      }
+    ],
+    "connectors": [
+      {
+        "id": "c0",
+        "type": 0,
+        "fromPort": "p0",
+        "toPort": "p21"
+      },
+      {
+        "id": "c1",
+        "type": 0,
+        "fromPort": "p2",
+        "toPort": "p21"
+      },
+      {
+        "id": "c2",
+        "type": 0,
+        "fromPort": "p4",
+        "toPort": "p21"
+      },
+      {
+        "id": "c3",
+        "type": 0,
+        "fromPort": "p6",
+        "toPort": "p21"
+      },
+      {
+        "id": "c4",
+        "type": 0,
+        "fromPort": "p8",
+        "toPort": "p23"
+      },
+      {
+        "id": "c5",
+        "type": 0,
+        "fromPort": "p10",
+        "toPort": "p25"
+      },
+      {
+        "id": "c6",
+        "type": 0,
+        "fromPort": "p12",
+        "toPort": "p27"
+      },
+      {
+        "id": "c7",
+        "type": 0,
+        "fromPort": "p14",
+        "toPort": "p34"
+      },
+      {
+        "id": "c8",
+        "type": 0,
+        "fromPort": "p16",
+        "toPort": "p41"
+      },
+      {
+        "id": "c9",
+        "type": 0,
+        "fromPort": "p17",
+        "toPort": "p36"
+      },
+      {
+        "id": "c10",
+        "type": 0,
+        "fromPort": "p18",
+        "toPort": "p36"
+      },
+      {
+        "id": "c11",
+        "type": 0,
+        "fromPort": "p19",
+        "toPort": "p36"
+      },
+      {
+        "id": "c12",
+        "type": 0,
+        "fromPort": "p20",
+        "toPort": "p36"
+      },
+      {
+        "id": "c13",
+        "type": 0,
+        "fromPort": "p22",
+        "toPort": "p36"
+      },
+      {
+        "id": "c14",
+        "type": 0,
+        "fromPort": "p24",
+        "toPort": "p36"
+      },
+      {
+        "id": "c15",
+        "type": 0,
+        "fromPort": "p26",
+        "toPort": "p36"
+      },
+      {
+        "id": "c16",
+        "type": 0,
+        "fromPort": "p28",
+        "toPort": "p38"
+      },
+      {
+        "id": "c17",
+        "type": 0,
+        "fromPort": "p30",
+        "toPort": "p41"
+      },
+      {
+        "id": "c18",
+        "type": 0,
+        "fromPort": "p31",
+        "toPort": "p41"
+      },
+      {
+        "id": "c19",
+        "type": 0,
+        "fromPort": "p33",
+        "toPort": "p41"
+      },
+      {
+        "id": "c20",
+        "type": 0,
+        "fromPort": "p35",
+        "toPort": "p46"
+      },
+      {
+        "id": "c21",
+        "type": 0,
+        "fromPort": "p35",
+        "toPort": "p43"
+      },
+      {
+        "id": "c22",
+        "type": 0,
+        "fromPort": "p37",
+        "toPort": "p44"
+      },
+      {
+        "id": "c23",
+        "type": 0,
+        "fromPort": "p39",
+        "toPort": "p45"
+      },
+      {
+        "id": "c24",
+        "type": 0,
+        "fromPort": "p40",
+        "toPort": "p44"
+      },
+      {
+        "id": "c25",
+        "type": 0,
+        "fromPort": "p42",
+        "toPort": "p47"
+      }
+    ],
+    "size": {
+      "width": 1761,
+      "height": 730
+    }
+  },
+  "graphLayers": [
+    {
+      "activities": [],
+      "height": null
+    },
+    {
+      "activities": [],
+      "height": null
+    },
+    {
+      "activities": [],
+      "height": null
+    },
+    {
+      "activities": [],
+      "height": null
+    },
+    {
+      "activities": [],
+      "height": null
+    }
+  ]
+}

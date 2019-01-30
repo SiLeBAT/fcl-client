@@ -17,13 +17,17 @@ import {
   DialogSelectComponent,
   DialogSelectData
 } from '../dialog/dialog-select/dialog-select.component';
-import { showVisioGraph } from '../visio/visio.service';
+import { showVisioGraph, generateVisioReport } from '../visio/visio.service';
 import { Utils } from '../util/utils';
 import { FclData, GraphType, TableMode } from '../util/datatypes';
 import { Constants } from '../util/constants';
 import { GisComponent } from '../gis/gis.component';
 import { environment } from '../../environments/environment';
 import { AppService } from '../app.service';
+import { VisioReport } from '../visio/layout-engine/datatypes';
+import { Store } from '@ngrx/store';
+import * as fromTracing from '../state/tracing.reducers';
+import * as tracingActions from '../state/tracing.actions';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -62,11 +66,12 @@ export class TracingComponent implements OnInit, OnDestroy {
     };
 
     constructor(
-    private dataService: DataService,
-    private dialogService: MatDialog,
-    private router: Router,
-    private appService: AppService
-  ) {
+      private dataService: DataService,
+      private dialogService: MatDialog,
+      private router: Router,
+      private appService: AppService,
+      private store: Store<fromTracing.State>
+    ) {
         document.body.oncontextmenu = e => e.preventDefault();
         this.appService.setTracingActive(true);
     }
@@ -267,7 +272,9 @@ export class TracingComponent implements OnInit, OnDestroy {
     }
 
     onVisioLayout() {
-        showVisioGraph(this.data.elements, this.dialogService);
+      // showVisioGraph(this.data.elements, this.dialogService);
+        // const visioReport: VisioReport = generateVisioReport(this.data.elements);
+        this.store.dispatch(new tracingActions.GenerateVisioLayout(this.data.elements));
     }
 
     changeColumns() {

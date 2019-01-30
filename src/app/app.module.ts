@@ -3,7 +3,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
@@ -34,8 +33,8 @@ import { StationPropertiesComponent } from './dialog/station-properties/station-
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
 import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.component';
 import { environment } from '../environments/environment';
-import { TokenInterceptor } from './core/services/token-interceptor.service';
-import { JwtInterceptor } from './core/services/jwt-interceptor.service';
+import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
+import { TracingEffects } from './state/tracing.effects';
 
 @NgModule({
     declarations: [
@@ -67,8 +66,8 @@ import { JwtInterceptor } from './core/services/jwt-interceptor.service';
         CoreModule,
         SharedModule,
         MaterialModule,
-        StoreModule.forRoot({}),
-        EffectsModule.forRoot([]),
+        StoreModule.forRoot({ [STATE_SLICE_NAME]: reducer }),
+        EffectsModule.forRoot([TracingEffects]),
         StoreDevtoolsModule.instrument({
             name: 'FCL Devtools',
             maxAge: 25,
@@ -78,16 +77,6 @@ import { JwtInterceptor } from './core/services/jwt-interceptor.service';
         AppRoutingModule
     ],
     providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: TokenInterceptor,
-            multi: true
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: JwtInterceptor,
-            multi: true
-        },
         ScrollbarHelper
         // {
         //     provide: LocationStrategy,
