@@ -4,7 +4,6 @@ import { VisioReport } from '../../../visio/layout-engine/datatypes';
 import * as fromTracing from '../../../state/tracing.reducers';
 import { Store, select } from '@ngrx/store';
 
-
 @Component({
     // tslint:disable-next-line:component-selector
     selector: 'app-graph-editor-container',
@@ -13,7 +12,7 @@ import { Store, select } from '@ngrx/store';
 export class GraphEditorContainerComponent implements OnInit {
     visioReport: VisioReport;
 
-  constructor(private store: Store<fromTracing.State>) { }
+    constructor(private store: Store<fromTracing.State>) { }
 
     // input JSON or XML from webapp
     ngOnInit() {
@@ -35,6 +34,6 @@ export class GraphEditorContainerComponent implements OnInit {
     }
 
     private start() {
-        console.log('GraphEditorContainer, start() entered');
+        // console.log('GraphEditorContainer, start() entered');
     }
 }

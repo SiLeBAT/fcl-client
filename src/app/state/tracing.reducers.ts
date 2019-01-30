@@ -11,7 +11,7 @@ export interface State extends fromRoot.State {
 }
 
 export interface TracingState {
-    fclData: FclElements,
+    fclData: FclElements;
     visioReport: VisioReport | null;
 }
 
