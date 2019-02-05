@@ -1,39 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { VisioReport } from '../../../visio/layout-engine/datatypes';
 import * as fromTracing from '../../../state/tracing.reducers';
 import { Store, select } from '@ngrx/store';
+import { VisioToMxGraphService } from '../../services/visio-to-mxgraph.service';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
     // tslint:disable-next-line:component-selector
     selector: 'app-graph-editor-container',
-    template: '<app-graph-editor [visioReport]="visioReport"></app-graph-editor>'
+    template: '<app-graph-editor [graph]="graph"></app-graph-editor>'
 })
-export class GraphEditorContainerComponent implements OnInit {
-    visioReport: VisioReport;
+export class GraphEditorContainerComponent implements OnInit, OnDestroy {
+    graph: mxGraph;
+    private componentActive = true;
 
-    constructor(private store: Store<fromTracing.State>) { }
+    constructor(private store: Store<fromTracing.State>,
+                private converter: VisioToMxGraphService) { }
 
-    // input JSON or XML from webapp
     ngOnInit() {
         this.store.pipe(
-          select(fromTracing.getVisioReport)
+          select(fromTracing.getVisioReport),
+          takeWhile(() => this.componentActive)
         ).subscribe(
           (visioReport: VisioReport) => {
-              if (visioReport) {
-                  this.visioReport = visioReport;
-              }
+              this.graph = this.converter.createGraph(visioReport);
           }
         );
-
-        if (this.visioReport) {
-            this.start();
-        }
-
-      // console.log('GraphEditorContainerComponent, ngOnInit, this.visioReport: ', this.visioReport);
     }
 
-    private start() {
-        // console.log('GraphEditorContainer, start() entered');
+    ngOnDestroy() {
+      this.componentActive = false;
     }
 }
