@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c43d9b85_a42055f0",
+        "filename": "src/app/graph-editor/container/graph-editor-container/graph-editor-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-02-05T16:59:52Z",
+      "side": 1,
+      "message": "Possible memory leak. Please Unsubscribe.",
+      "range": {
+        "startLine": 21,
+        "startChar": 10,
+        "endLine": 21,
+        "endChar": 19
+      },
+      "revId": "056a0b1a5b89b5bad1666bc0c89482578f708fb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29223f53_ce8ba7bf",
+        "filename": "src/app/graph-editor/presentation/graph-editor/graph-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-02-05T16:59:52Z",
+      "side": 1,
+      "message": "Please remove",
+      "revId": "056a0b1a5b89b5bad1666bc0c89482578f708fb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1c7223e_047ce7d3",
+        "filename": "src/app/graph-editor/services/visio-to-mxgraph.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-02-05T16:59:52Z",
+      "side": 1,
+      "message": "Please remove",
+      "range": {
+        "startLine": 12,
+        "startChar": 52,
+        "endLine": 12,
+        "endChar": 57
+      },
+      "revId": "056a0b1a5b89b5bad1666bc0c89482578f708fb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26144649_75ec3dd1",
+        "filename": "src/app/graph-editor/services/visio-to-mxgraph.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-02-05T16:59:52Z",
+      "side": 1,
+      "message": "Please remove",
+      "range": {
+        "startLine": 96,
+        "startChar": 32,
+        "endLine": 96,
+        "endChar": 48
+      },
+      "revId": "056a0b1a5b89b5bad1666bc0c89482578f708fb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b69b4efe_b914d320",
+        "filename": "src/app/graph-editor/services/visio-to-mxgraph.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-02-05T16:59:52Z",
+      "side": 1,
+      "message": "remove try",
+      "range": {
+        "startLine": 114,
+        "startChar": 8,
+        "endLine": 114,
+        "endChar": 11
+      },
+      "revId": "056a0b1a5b89b5bad1666bc0c89482578f708fb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "576bd88d_ae764810",
+        "filename": "src/app/graph-editor/services/visio-to-mxgraph.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-02-05T16:59:52Z",
+      "side": 1,
+      "message": "Move to function",
+      "range": {
+        "startLine": 116,
+        "startChar": 14,
+        "endLine": 116,
+        "endChar": 19
+      },
+      "revId": "056a0b1a5b89b5bad1666bc0c89482578f708fb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
