@@ -77,11 +77,11 @@ import { TracingEffects } from './state/tracing.effects';
         AppRoutingModule
     ],
     providers: [
-        ScrollbarHelper
         // {
         //     provide: LocationStrategy,
         //     useClass: HashLocationStrategy
-        // }
+        // },
+        ScrollbarHelper
     ],
     bootstrap: [
         AppComponent
