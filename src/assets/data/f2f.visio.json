@@ -16,7 +16,8 @@
             "type": 0,
             "label": {
               "text": [
-                "Unknown activity A: Schmidt Fritz"
+                "Unknown activity A: Schmidt Fritz",
+                "blah"
               ],
               "size": {
                 "width": 132,
