@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -6,35 +6,34 @@ import { Credentials, TokenizedUser } from '../models/user.model';
 import { Store, select } from '@ngrx/store';
 import * as fromUser from '../state/user.reducer';
 import * as userActions from '../state/user.actions';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+    // tslint:disable-next-line:component-selector
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
     loginForm: FormGroup;
     returnUrl: string;
+    private componentActive = true;
 
-    constructor(
-      private router: Router,
-      private store: Store<fromUser.State>
-    ) {}
+    constructor(private router: Router, private store: Store<fromUser.State>) {}
 
     ngOnInit() {
-        this.store.pipe(
-          select(fromUser.getCurrentUser)
-        ).subscribe(
-          (currentUser: TokenizedUser) => {
-              if (currentUser) {
-                  this.router.navigate(['/users/main']).catch((err) => {
-                      throw new Error(`Unable to navigate: ${err}`);
-                  });
-
-              }
-          }
-        );
+        this.store
+            .pipe(
+                select(fromUser.getCurrentUser),
+                takeWhile(() => this.componentActive)
+            )
+            .subscribe((currentUser: TokenizedUser) => {
+                if (currentUser) {
+                    this.router.navigate(['/users/main']).catch(err => {
+                        throw new Error(`Unable to navigate: ${err}`);
+                    });
+                }
+            });
 
         this.loginForm = new FormGroup({
             email: new FormControl(null, [Validators.required, Validators.email]),
@@ -44,16 +43,14 @@ export class LoginComponent implements OnInit {
 
     getEmailErrorMessage() {
         return this.loginForm.controls.email.hasError('required')
-          ? 'You must enter a valid email'
-          : this.loginForm.controls.email.hasError('email')
-          ? 'Not a valid email'
-          : '';
+            ? 'You must enter a valid email'
+            : this.loginForm.controls.email.hasError('email')
+            ? 'Not a valid email'
+            : '';
     }
 
     getPasswordErrorMessage() {
-        return this.loginForm.controls.password.hasError('required')
-      ? 'Password is required'
-      : '';
+        return this.loginForm.controls.password.hasError('required') ? 'Password is required' : '';
     }
 
     login() {
@@ -63,5 +60,9 @@ export class LoginComponent implements OnInit {
         };
         this.store.dispatch(new userActions.LoginUser(credentials));
         this.loginForm.reset();
+    }
+
+    ngOnDestroy() {
+        this.componentActive = false;
     }
 }
