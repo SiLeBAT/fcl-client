@@ -29,6 +29,6 @@ export class GraphEditorContainerComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-      this.componentActive = false;
+        this.componentActive = false;
     }
 }
