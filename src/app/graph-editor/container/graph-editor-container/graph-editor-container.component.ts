@@ -22,9 +22,9 @@ export class GraphEditorContainerComponent implements OnInit, OnDestroy {
           select(fromTracing.getVisioReport),
           takeWhile(() => this.componentActive)
         ).subscribe(
-          (visioReport: VisioReport) => {
-              this.graph = this.converter.createGraph(visioReport);
-          }
+            (visioReport: VisioReport) => {
+                this.graph = visioReport ? this.converter.createGraph(visioReport) : null;
+            }
         );
     }
 

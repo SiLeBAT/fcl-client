@@ -254,6 +254,7 @@ reverse=Reverse
 right=Right
 rightAlign=Right Align
 rightToLeft=Right to Left
+roa=ROA Style
 rotate=Rotate
 rotateTooltip=Click and drag to rotate, click to turn shape only by 90 degrees
 rotation=Rotation
