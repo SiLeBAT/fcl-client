@@ -14,18 +14,17 @@ export class GraphEditorContainerComponent implements OnInit, OnDestroy {
     graph: mxGraph;
     private componentActive = true;
 
-    constructor(private store: Store<fromTracing.State>,
-                private converter: VisioToMxGraphService) { }
+    constructor(private store: Store<fromTracing.State>, private converter: VisioToMxGraphService) {}
 
     ngOnInit() {
-        this.store.pipe(
-          select(fromTracing.getVisioReport),
-          takeWhile(() => this.componentActive)
-        ).subscribe(
-            (visioReport: VisioReport) => {
+        this.store
+            .pipe(
+                select(fromTracing.getVisioReport),
+                takeWhile(() => this.componentActive)
+            )
+            .subscribe((visioReport: VisioReport) => {
                 this.graph = visioReport ? this.converter.createGraph(visioReport) : null;
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
