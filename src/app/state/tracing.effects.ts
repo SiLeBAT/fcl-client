@@ -13,16 +13,4 @@ export class TracingEffects {
     constructor(private actions$: Actions,
       private router: Router
     ) { }
-
-    @Effect()
-    generateVisioLayout$ = this.actions$.pipe(
-        ofType(tracingActions.TracingActionTypes.GenerateVisioLayout),
-      map((action: tracingActions.GenerateVisioLayout) => {
-          const visioReport: VisioReport = generateVisioReport(action.payload);
-          this.router.navigate(['/graph-editor']).catch(err => {
-              throw new Error(`Unable to navigate to graph editor: ${err}`);
-          });
-          return new tracingActions.GenerateVisioLayoutSuccess(visioReport);
-      })
-    );
 }
