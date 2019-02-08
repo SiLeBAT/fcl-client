@@ -16,7 +16,6 @@ declare const OPEN_URL: string;
     templateUrl: './graph-editor.component.html'
 })
 export class GraphEditorComponent implements AfterViewInit {
-
     @ViewChild('editorContainer') editorContainer: ElementRef;
     @Input() graph: mxGraph;
 
@@ -41,29 +40,30 @@ export class GraphEditorComponent implements AfterViewInit {
         // Adds required resources (disables loading of fallback properties, this can only
         // be used if we know that all keys are defined in the language specific file)
         mxResources.loadDefaultBundle = false;
-        const bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
-            mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
+        const bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) || mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
         // Fixes possible asynchronous requests
-        mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function (xhr: any) {
-            // Adds bundle text to resources
-            mxResources.parse(xhr[0].getText());
+        mxUtils.getAll(
+            [bundle, STYLE_PATH + '/default.xml'],
+            function (xhr: any) {
+                // Adds bundle text to resources
+                mxResources.parse(xhr[0].getText());
 
-            // Configures the default graph theme
-            const themes: any = new Object();
-            themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
+                // Configures the default graph theme
+                const themes: any = new Object();
+                themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
 
-            // Main
-            const editor = new Editor(false, themes, graphModel);
-            // tslint:disable-next-line
-            new EditorUi(editor, that.editorContainer.nativeElement);
-            if (graphModel) {
-                graphModel.endUpdate();
+                // Main
+                const editor = new Editor(false, themes, graphModel);
+                // tslint:disable-next-line
+                new EditorUi(editor, that.editorContainer.nativeElement);
+                if (graphModel) {
+                    graphModel.endUpdate();
+                }
+            },
+            function () {
+                document.body.innerHTML =
+                    '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
             }
-        }, function () {
-            document.body.innerHTML =
-                '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
-        });
-
+        );
     }
-
 }
