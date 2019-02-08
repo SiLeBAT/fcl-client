@@ -36,6 +36,7 @@ export class VisioReporter {
         const connectors = new ConnectorCreator(boxCreator, infoProvider).createConnectors();
 
         this.setAbsolutePositions(groupBoxes, { x: 0, y: 0 });
+        boxCreator.resortLotBoxes(connectors);
 
         const result: VisioReport = {
             graph: {
