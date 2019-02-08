@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4530cf58_4d359436",
+        "filename": "src/app/state/tracing.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-02-08T16:27:31Z",
+      "side": 1,
+      "message": "If TracingEffects is empty and not needed anymore please remove it completely from the project",
+      "revId": "a726b1d5acdc9a9e66dc081827f5e0ef78b50d12",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
