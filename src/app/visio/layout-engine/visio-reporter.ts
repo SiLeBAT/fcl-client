@@ -1,10 +1,8 @@
 import * as _ from 'lodash';
-import { VisioReport, VisioBox, StationInformation, LotInformation, GraphLayer, FontMetrics,
-    SampleInformation, BoxType, VisioLabel, Size, ReportType, StationGrouper } from './datatypes';
+import { VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
+    Size, ReportType, StationGrouper } from './datatypes';
 import { FclElements, Position } from './../../util/datatypes';
-import { Utils } from './../../util/utils';
 import { GraphSettings } from './graph-settings';
-// import { FontMetrics } from './font-metrics';
 import { BoxCreator } from './box-creator';
 import { assignToGrid } from './grid-assigner';
 import { LabelCreator } from './label-creator';
@@ -36,6 +34,7 @@ export class VisioReporter {
         const connectors = new ConnectorCreator(boxCreator, infoProvider).createConnectors();
 
         this.setAbsolutePositions(groupBoxes, { x: 0, y: 0 });
+        boxCreator.resortLotBoxes(connectors);
 
         const result: VisioReport = {
             graph: {
@@ -66,8 +65,6 @@ export class VisioReporter {
                 height: 10 * text.length
             })
         };
-
-        // return new FontMetrics(canvas);
     }
 
     private static getLabelCreator(type: ReportType, fontMetrics: FontMetrics): LabelCreator {
