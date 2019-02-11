@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cee70c10_4fb61f53",
+        "filename": "src/app/visio/layout-engine/lotbox_sorter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-02-11T15:03:24Z",
+      "side": 1,
+      "message": "please remove comments",
+      "revId": "1d33292b7d39beaf8ce6fdbe6f32c7f2eac81ae7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f933e65_9a668f72",
+        "filename": "src/app/visio/layout-engine/lotbox_sorter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-02-11T15:03:24Z",
+      "side": 1,
+      "message": "please remove comments",
+      "revId": "1d33292b7d39beaf8ce6fdbe6f32c7f2eac81ae7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7558bb83_26c77b62",
+        "filename": "src/app/visio/layout-engine/visio-reporter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-02-11T15:03:24Z",
+      "side": 1,
+      "message": "please remove",
+      "revId": "1d33292b7d39beaf8ce6fdbe6f32c7f2eac81ae7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f465f95_b08309d6",
+        "filename": "src/app/visio/layout-engine/visio-reporter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-02-11T15:03:24Z",
+      "side": 1,
+      "message": "please remove",
+      "revId": "1d33292b7d39beaf8ce6fdbe6f32c7f2eac81ae7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
