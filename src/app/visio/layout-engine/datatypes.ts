@@ -107,6 +107,14 @@ export interface ProductInformation {
     lots: LotInformation[];
 }
 
+export enum StationGroupType {
+    Country
+}
+
+export interface VisioEngineConfiguration {
+    reportType: ReportType;
+    groupType: StationGroupType;
+}
 export interface LotInformation {
     id: string; // internal id
     commonProductName: string;

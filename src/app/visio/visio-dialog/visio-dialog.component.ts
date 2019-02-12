@@ -3,7 +3,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { DialogAlignment } from '../../util/datatypes';
 import { Utils } from '../../util/utils';
+import { ReportType, VisioReport, VisioEngineConfiguration, StationGroupType } from '../layout-engine/datatypes';
 
+interface LabeledReportType {
+    label: string;
+    type: ReportType;
+}
 export interface VisioLayoutData {
     data: string;
 }
@@ -14,49 +19,27 @@ export interface VisioLayoutData {
     templateUrl: './visio-dialog.component.html',
     styleUrls: ['./visio-dialog.component.css']
 })
-export class VisioLayoutComponent implements OnInit, OnDestroy, AfterViewInit {
+export class VisioLayoutComponent {
 
-    @ViewChild('graphContainer') graphContainer: ElementRef;
-
-    title: string;
-    graphWidth: number;
-    graphHeight: number;
-    svg: string;
-    escapedSvg: string;
-
-    private dialogAlign = DialogAlignment.CENTER;
+    selectedReportType: LabeledReportType;
+    reportTypes: LabeledReportType[] = [{
+        type: ReportType.Confidential,
+        label: 'Confidential'
+    }, {
+        type: ReportType.Public,
+        label: 'Public'
+    }];
 
     constructor(public dialogRef: MatDialogRef<VisioLayoutComponent>, @Inject(MAT_DIALOG_DATA) public data: string) {
-        this.title = 'Visio layout';
-        this.graphWidth = 600;
-        this.graphHeight = 400;
-        this.svg = data;
-        this.escapedSvg = Utils.replaceAll(this.svg, '"', '\\"');
+        this.selectedReportType = this.reportTypes[1];
     }
 
-    //noinspection JSUnusedGlobalSymbols
-    close() {
-        this.dialogRef.close();
-    }
+    createReport() {
+        const engineConf: VisioEngineConfiguration = {
+            reportType: this.selectedReportType.type,
+            groupType: StationGroupType.Country
+        };
 
-    ngOnInit() {
-        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-    }
-
-    ngOnDestroy() {
-    }
-
-    moveLeft() {
-        this.dialogAlign = this.dialogAlign === DialogAlignment.RIGHT ? DialogAlignment.CENTER : DialogAlignment.LEFT;
-        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-    }
-
-    moveRight() {
-        this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
-        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-    }
-
-    ngAfterViewInit() {
-
+        this.dialogRef.close({ data: engineConf });
     }
 }

@@ -34,7 +34,6 @@ import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delive
 import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.component';
 import { environment } from '../environments/environment';
 import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
-import { TracingEffects } from './state/tracing.effects';
 
 @NgModule({
     declarations: [
@@ -67,7 +66,7 @@ import { TracingEffects } from './state/tracing.effects';
         SharedModule,
         MaterialModule,
         StoreModule.forRoot({ [STATE_SLICE_NAME]: reducer }),
-        EffectsModule.forRoot([TracingEffects]),
+        EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({
             name: 'FCL Devtools',
             maxAge: 25,

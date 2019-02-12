@@ -32,12 +32,6 @@ export const getVisioReport = createSelector(
 export function reducer(state: TracingState = initialState, action: TracingActions): TracingState {
     switch (action.type) {
 
-        case TracingActionTypes.GenerateVisioLayout:
-            return {
-                ...state,
-                fclData: action.payload
-            };
-
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,
