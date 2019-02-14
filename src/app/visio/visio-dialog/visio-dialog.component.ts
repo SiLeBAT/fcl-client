@@ -1,9 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-
-import { DialogAlignment } from '../../util/datatypes';
-import { Utils } from '../../util/utils';
-import { ReportType, VisioReport, VisioEngineConfiguration, StationGroupType } from '../layout-engine/datatypes';
+import { ReportType, VisioEngineConfiguration, StationGroupType } from '../layout-engine/datatypes';
 
 interface LabeledReportType {
     label: string;
@@ -40,6 +37,6 @@ export class VisioLayoutComponent {
             groupType: StationGroupType.Country
         };
 
-        this.dialogRef.close({ data: engineConf });
+        this.dialogRef.close(engineConf);
     }
 }

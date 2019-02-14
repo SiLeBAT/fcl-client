@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { StationData } from '../../util/datatypes';
+import { Position } from './datatypes';
 
 class ColumnAssigner {
 
@@ -7,9 +8,8 @@ class ColumnAssigner {
     private connections: Map<StationData, StationData[]>;
     private stationToLayerIndexMap: Map<StationData, number>;
     private stations: StationData[];
+    private positions: number[];
     private columnSwitch: boolean[];
-
-    private static stationComparer: (s1: StationData, s2: StationData) => number = (s1, s2) => s1.position.y - s2.position.y;
 
     private static getStationToLayerIndexMap(layers: StationData[][]): Map<StationData, number> {
         const result: Map<StationData, number> = new Map();
@@ -21,10 +21,15 @@ class ColumnAssigner {
         return result;
     }
 
-    assignToColumns(layers: StationData[][]): StationData[][] {
+    assignToColumns(
+        layers: StationData[][],
+        stationToPositionMap: Map<StationData, Position>
+        ): StationData[][] {
+
         this.stationToLayerIndexMap = ColumnAssigner.getStationToLayerIndexMap(layers);
         this.stations = [].concat(...layers);
-        this.stations.sort(ColumnAssigner.stationComparer);
+        this.stations.sort((s1, s2) => stationToPositionMap.get(s1).x - stationToPositionMap.get(s2).x);
+        this.positions = this.stations.map(s => stationToPositionMap.get(s).x);
         this.setSwitches();
 
         return this.createColumns();
@@ -33,7 +38,6 @@ class ColumnAssigner {
     private setSwitches() {
         this.columnSwitch = Array(this.stations.length - 1).fill(false);
         this.insertLevelNeighbourSwitch();
-        // this.insertStationCrossingSwitch();
     }
 
     private insertLevelNeighbourSwitch() {
@@ -43,8 +47,8 @@ class ColumnAssigner {
         for (let i = 1, maxI = this.stations.length - 2; i <= maxI ; i++) {
             const layerIndex = this.stationToLayerIndexMap.get(this.stations[i]);
 
-            this.columnSwitch[i] = layerIndexSet.has(layerIndex);
-            if (this.columnSwitch[i]) {
+            this.columnSwitch[i - 1] = layerIndexSet.has(layerIndex);
+            if (this.columnSwitch[i - 1]) {
                 layerIndexSet.clear();
             }
             layerIndexSet.add(layerIndex);
@@ -72,7 +76,7 @@ class ColumnAssigner {
             const distances: { distance: number, index: number}[] = [];
             for (let i = indexFrom; i < indexTo; i++) {
                 distances.push({
-                    distance: this.stations[i + 1].position.y - this.stations[i].position.y,
+                    distance: this.positions[i + 1] - this.positions[i],
                     index: i
                 });
             }
@@ -118,7 +122,19 @@ class ColumnAssigner {
     }
 }
 
-export function assignToColumns(layers: StationData[][]): StationData[][] {
+/**
+ * Partitions the layered stations into columns respecting the specified positions, which means
+ * col(station1) < col(station2) requires posX(station1) <= posX(station2)
+ *
+ * @param layers Layered stations (ragged array)
+ * @param stationToPositionMap station => position map
+ * @returns A column array (column = station array)
+ */
+export function assignToColumns(
+    layers: StationData[][],
+    stationToPositionMap: Map<StationData, Position>
+    ): StationData[][] {
+
     const columnAssigner = new ColumnAssigner();
-    return columnAssigner.assignToColumns(layers);
+    return columnAssigner.assignToColumns(layers, stationToPositionMap);
 }

@@ -1,7 +1,7 @@
 import { FclElements } from '../util/datatypes';
 import { VisioLayoutComponent, VisioLayoutData } from './visio-dialog/visio-dialog.component';
 import { MatDialog } from '@angular/material';
-import { VisioReport, VisioEngineConfiguration, StationGroupType } from './layout-engine/datatypes';
+import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo } from './layout-engine/datatypes';
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
 
@@ -11,7 +11,7 @@ function getFontMetricCanvas(): any {
 
 function requestVisioEngineConfiguration(dialogService: MatDialog): Promise<VisioEngineConfiguration> {
     const layoutData: VisioLayoutData = { data: null };
-    return dialogService.open(VisioLayoutComponent, layoutData).afterClosed().toPromise();
+    return dialogService.open(VisioLayoutComponent, layoutData).afterClosed().toPromise<VisioEngineConfiguration>();
 }
 
 function getStationGrouperFromType(groupType: StationGroupType) {
@@ -21,26 +21,24 @@ function getStationGrouperFromType(groupType: StationGroupType) {
     }
 }
 
-function createReport(data: FclElements, engineConf: VisioEngineConfiguration): VisioReport {
+function createReport(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>, engineConf: VisioEngineConfiguration): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
-    const report: VisioReport = VisioReporter.createReport(data, getFontMetricCanvas, engineConf.reportType, stationGrouper);
+    const report: VisioReport = VisioReporter.createReport(data, nodeInfoMap, getFontMetricCanvas, engineConf.reportType, stationGrouper);
 
     return report;
 }
 
-export function generateVisioReport(data: FclElements, dialogService: MatDialog): Promise<VisioReport> {
-    return new Promise((resolve, reject) => {
-        requestVisioEngineConfiguration(dialogService).then((engineConf) => {
-            if (engineConf !== undefined && engineConf !== null) {
-                resolve(createReport(data, engineConf));
-            } else {
-                // user cancel
-                reject();
-            }
-        }).catch(err => {
-            if (err !== undefined) {
-                throw err;
-            }
-        });
-    });
+export async function generateVisioReport(
+    data: FclElements,
+    nodeInfoMap: Map<string, NodeLayoutInfo>,
+    dialogService: MatDialog
+    ): Promise<VisioReport> {
+
+    const engineConf = await requestVisioEngineConfiguration(dialogService);
+    if (engineConf !== undefined && engineConf !== null) {
+        return createReport(data, nodeInfoMap, engineConf);
+    } else {
+        // user cancel
+        return null;
+    }
 }
