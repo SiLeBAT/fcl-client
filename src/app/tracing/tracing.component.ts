@@ -19,11 +19,12 @@ import {
 } from '../dialog/dialog-select/dialog-select.component';
 import { generateVisioReport } from '../visio/visio.service';
 import { Utils } from '../util/utils';
-import { FclData, GraphType, TableMode } from '../util/datatypes';
+import { FclData, GraphType, TableMode, StationData } from '../util/datatypes';
 import { Constants } from '../util/constants';
 import { GisComponent } from '../gis/gis.component';
 import { environment } from '../../environments/environment';
 import { AppService } from '../app.service';
+import { NodeLayoutInfo } from '../visio/layout-engine/datatypes';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
@@ -270,17 +271,52 @@ export class TracingComponent implements OnInit, OnDestroy {
       });
     }
 
-    onVisioLayout() {
-        generateVisioReport(this.data.elements, this.dialogService).then(visioReport => {
-            this.router.navigate(['/graph-editor']).catch(err => {
-                throw new Error(`Unable to navigate to graph editor: ${err}`);
-            });
-            this.store.dispatch(new tracingActions.GenerateVisioLayoutSuccess(visioReport));
-        }).catch(err => {
-            if (err !== undefined) {
-                throw new Error(`Visio layout creation failed: ${err}`);
+    getNodeLayoutInfo(): Map<string, NodeLayoutInfo> {
+        // refactor
+        const view = (this.graphType === GraphType.GRAPH ? this.graph : this.gis);
+
+        if (
+            view !== null &&
+            view.hasOwnProperty('cy') &&
+            (view as any).cy !== null
+        ) {
+            const result: Map<string, { size: number, position: { x: number, y: number } }> = new Map();
+
+            for (const node of (view as any).cy.nodes()) {
+                const position = node.data().position;
+                result.set(
+                    node.id(), {
+                        size: node.height(),
+                        position: {
+                            x: position.x,
+                            y: position.y
+                        }
+                    });
             }
-        });
+            return result;
+        } else {
+            return null;
+        }
+
+    }
+
+    onVisioLayout() {
+        const nodeLayoutInfo = this.getNodeLayoutInfo();
+
+        if (nodeLayoutInfo !== null) {
+            generateVisioReport(this.data.elements, nodeLayoutInfo, this.dialogService).then(visioReport => {
+                if (visioReport !== null) {
+                    this.router.navigate(['/graph-editor']).catch(err => {
+                        throw new Error(`Unable to navigate to graph editor: ${err}`);
+                    });
+                    this.store.dispatch(new tracingActions.GenerateVisioLayoutSuccess(visioReport));
+                }
+            }).catch(err => {
+                if (err !== undefined) {
+                    throw new Error(`Visio layout creation failed: ${err}`);
+                }
+            });
+        }
     }
 
     changeColumns() {

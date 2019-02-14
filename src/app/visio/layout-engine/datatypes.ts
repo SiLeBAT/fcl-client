@@ -11,6 +11,11 @@ export interface Size {
     height: number;
 }
 
+export interface NodeLayoutInfo {
+    size: number;
+    position: Position;
+}
+
 export interface VisioPort {
     id: string;
     normalizedPosition: Position;

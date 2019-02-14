@@ -12,19 +12,6 @@ export function FarmToForkLayout(options) {
     this.options = options;
 }
 
-function getDateNumber(date: Date): number {
-    return (
-    date.getMilliseconds() +
-    date.getSeconds() * 1000 +
-    date.getMinutes() * 60000 +
-    date.getHours() * 3600000
-    );
-}
-
-function getElapsedTime(dateStart: Date, dateEnd: Date): number {
-    return getDateNumber(dateEnd) - getDateNumber(dateStart);
-}
-
 FarmToForkLayout.prototype.run = function () {
     // tslint:disable-next-line
     new FarmToForkLayoutClass(this).run();
@@ -87,7 +74,8 @@ class FarmToForkLayoutClass {
       typeRanker
     );
 
-        layoutManager.layout(width, height, vertexDistance);
+        layoutManager.layout(vertexDistance);
+        scaleToSize(graph, width, height, vertexDistance);
 
         cy.nodes().layoutPositions(this.layout, this.options, node => {
             const vertex = vertices.get(node.id());
@@ -97,17 +85,13 @@ class FarmToForkLayoutClass {
                 y: vertex.y
             };
         });
-
-        if (this.options.fit) {
-      // cy.fit();
-        }
     }
 }
 
-class FarmToForkLayouter {
+export class FarmToForkLayouter {
     constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {}
 
-    layout(width: number, height: number, vertexDistance: number) {
+    layout(vertexDistance: number) {
         const vertexCount: number = this.graph.vertices.length;
         this.simplifyGraph();
         this.correctEdges();
@@ -115,16 +99,12 @@ class FarmToForkLayouter {
         let startTime: Date = new Date();
         removeCycles(this.graph, this.typeRanker);
 
-    // console.log('removeCycles: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
         this.simplifyGraph();
         startTime = new Date();
         assignLayers(this.graph, this.typeRanker);
-    // console.log('assignLayers: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
-    // removeEdgesWithinLayers(this.graph);
+
         startTime = new Date();
         sortAndPosition(this.graph, vertexDistance);
-    // console.log('sortAndPositionVertices: ' + getElapsedTime(startTime,new Date()).toString() + ' ms');
-        scaleToSize(this.graph, width, height, vertexDistance);
     }
 
     simplifyGraph() {

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
-    Size, ReportType, StationGrouper } from './datatypes';
+    Size, ReportType, StationGrouper, NodeLayoutInfo } from './datatypes';
 import { FclElements, Position } from './../../util/datatypes';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
@@ -15,8 +15,14 @@ import { ConnectorCreator } from './connector-creator';
 
 export class VisioReporter {
 
-    static createReport(data: FclElements, canvas: any, type: ReportType, stationGrouper: StationGrouper): VisioReport {
-        const stationGrid = assignToGrid(data);
+    static createReport(
+        data: FclElements,
+        nodeInfoMap: Map<string, NodeLayoutInfo>,
+        canvas: any, type: ReportType,
+        stationGrouper: StationGrouper
+        ): VisioReport {
+
+        const stationGrid = assignToGrid(data, nodeInfoMap);
         const stationGroups = stationGrouper.groupStations([].concat(...stationGrid).filter(s => s !== null));
         const infoProvider = new InformationProvider(data);
         const cellGroups = getCellGroups(stationGrid, stationGroups);
@@ -68,6 +74,9 @@ export class VisioReporter {
     }
 
     private static getLabelCreator(type: ReportType, fontMetrics: FontMetrics): LabelCreator {
+        if (type == null) {
+            throw new Error('Invalid ROA report type.');
+        }
         if (type === ReportType.Confidential) {
             return new ConfidentialLabelCreator(fontMetrics);
         } else {
