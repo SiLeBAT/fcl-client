@@ -1,4 +1,5 @@
-import { VisioBox, StationInformation, LotInformation, CaseInformation, GraphLayer, GridCell, FontMetrics,
+import * as _ from 'lodash';
+import { VisioBox, StationInformation, LotInformation, GraphLayer, GridCell,
     SampleInformation, BoxType, VisioLabel, Size, SampleResultType, VisioConnector, VisioPort } from './datatypes';
 import { Position } from './../../util/datatypes';
 import { GraphSettings } from './graph-settings';
@@ -179,6 +180,15 @@ export class BoxCreator {
                 shape: null
             };
 
+            // center align label
+            label.relPosition.x = (stationBox.size.width - label.size.width) / 2;
+            if (lotBoxes.length > 0) {
+                // center align lots
+                const deltaX = (stationBox.size.width - 2 * GraphSettings.STATION_BOX_MARGIN -
+                    (BoxCreator.getRight(_.last(lotBoxes)) - lotAreaStart.x)) / 2;
+                lotBoxes.forEach(box => box.relPosition.x += deltaX);
+            }
+
             this.stationIdToBoxMap.set(stationInfo.id, stationBox);
             stationBox.ports.forEach(p => {
                 this.portToBox.set(p, stationBox);
@@ -190,7 +200,6 @@ export class BoxCreator {
     }
 
     getLotSampleBox(sampleInfo: SampleInformation): VisioBox {
-        // const text: string[]  = [sampleInfo.amount, sampleInfo.result, 'Sampling: ' + sampleInfo.time];
         const label: VisioLabel = this.labelCreator.getLotSampleLabel(sampleInfo);
 
         return {
@@ -221,50 +230,6 @@ export class BoxCreator {
             graphLayers
             );
     }
-
-    /*protected getCaseBox(caseInfo: CaseInformation): VisioContainer {
-        const margin = GraphSettings.STATION_BOX_MARGIN;
-        const text = ['At least one human case'];
-        const label: VisioLabel = this.getLabel(text, margin);
-
-        let size: Size = {
-            width: BoxCreator.getRight(label) + margin,
-            height: BoxCreator.getBottom(label) + margin,
-        };
-
-        const lotBoxes: VisioBox[] = [].concat(...caseInfo.lots.map(p => p.lots.map(lot => this.getLotBox(lot))));
-
-        if (lotBoxes.length > 0) {
-            lotBoxes[0].relPosition = {
-                x: margin,
-                y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
-            };
-            for (let i = 1, n = lotBoxes.length; i < n; i++) {
-                lotBoxes[i].relPosition = {
-                    x: BoxCreator.getRight(lotBoxes[i - 1])  + GraphSettings.LOT_BOX_DISTANCE,
-                    y: lotBoxes[0].relPosition.y
-                };
-            }
-            size = {
-                width: Math.max(
-                    size.width,
-                    BoxCreator.getRight(lotBoxes[lotBoxes.length - 1]) + margin
-                    ),
-                height: Math.max( ...lotBoxes.map(b => BoxCreator.getBottom(b) + margin))
-            };
-        }
-
-        return {
-            type: BoxType.Case,
-            label: label,
-            size: size,
-            position: null,
-            relPosition: null,
-            inPorts: [],
-            outPorts: [],
-            elements: lotBoxes
-        };
-    }*/
 
     resortLotBoxes(connectors: VisioConnector[]) {
         const lotBoxSorter = new LotBoxSorter(this.portToBox, connectors);
