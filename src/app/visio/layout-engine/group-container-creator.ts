@@ -10,6 +10,7 @@ export class GroupContainerCreator {
 
     private rowTop: number[];
     private columnLeft: number[];
+    private columnWidth: number[];
     private groupHeaderHeight: number;
     private boxGrid: VisioBox[][];
     private xMargin: number;
@@ -38,7 +39,7 @@ export class GroupContainerCreator {
             const box = this.boxGrid[cell.row][cell.column];
             box.relPosition = {
                 x: this.columnLeft[cell.column] - this.columnLeft[minColumn] +
-                    GraphSettings.GROUP_MARGIN,
+                    (this.columnWidth[cell.column] - GraphSettings.GRID_MARGIN - box.size.width) / 2,
                 y: this.rowTop[cell.row] - this.rowTop[minRow] +
                     GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT
             };
@@ -88,13 +89,13 @@ export class GroupContainerCreator {
 
         this.groupHeaderHeight = Math.max(...cellGroups.map(g => g.label.size.height)) + GraphSettings.SECTION_DISTANCE;
         const rowHeight: number[] = this.boxGrid.map(r => Math.max(...r.map(c => (c === null ? 0 : c.size.height))));
-        const columnWidth: number[] = this.boxGrid[0].map((r, i) =>
-            Math.max(...this.boxGrid.map(r2 => (r2[i] === null ? 0 : r2[i].size.width))));
+        this.xMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
+
+        this.columnWidth = this.boxGrid[0].map((r, i) =>
+            Math.max(...this.boxGrid.map(r2 => (r2[i] === null ? 0 : r2[i].size.width))) + 2 * this.xMargin);
 
         this.bottomMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
         this.topMargin = this.bottomMargin + this.groupHeaderHeight;
-
-        this.xMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
 
         this.rowTop = [].concat(
             [0],
@@ -102,7 +103,7 @@ export class GroupContainerCreator {
         );
         this.columnLeft = [].concat(
             [0],
-            this.aggValues(columnWidth.map(x => x + 2 * this.xMargin))
+            this.aggValues(this.columnWidth)
         );
     }
 
