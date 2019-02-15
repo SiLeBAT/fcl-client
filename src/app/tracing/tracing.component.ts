@@ -17,14 +17,13 @@ import {
   DialogSelectComponent,
   DialogSelectData
 } from '../dialog/dialog-select/dialog-select.component';
-import { showVisioGraph, generateVisioReport } from '../visio/visio.service';
+import { generateVisioReport } from '../visio/visio.service';
 import { Utils } from '../util/utils';
 import { FclData, GraphType, TableMode } from '../util/datatypes';
 import { Constants } from '../util/constants';
 import { GisComponent } from '../gis/gis.component';
 import { environment } from '../../environments/environment';
 import { AppService } from '../app.service';
-import { VisioReport } from '../visio/layout-engine/datatypes';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
@@ -272,9 +271,16 @@ export class TracingComponent implements OnInit, OnDestroy {
     }
 
     onVisioLayout() {
-      // showVisioGraph(this.data.elements, this.dialogService);
-        // const visioReport: VisioReport = generateVisioReport(this.data.elements);
-        this.store.dispatch(new tracingActions.GenerateVisioLayout(this.data.elements));
+        generateVisioReport(this.data.elements, this.dialogService).then(visioReport => {
+            this.router.navigate(['/graph-editor']).catch(err => {
+                throw new Error(`Unable to navigate to graph editor: ${err}`);
+            });
+            this.store.dispatch(new tracingActions.GenerateVisioLayoutSuccess(visioReport));
+        }).catch(err => {
+            if (err !== undefined) {
+                throw new Error(`Visio layout creation failed: ${err}`);
+            }
+        });
     }
 
     changeColumns() {

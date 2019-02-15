@@ -1,14 +1,17 @@
 import { VisioBox, StationInformation, LotInformation, CaseInformation, GraphLayer, GridCell, FontMetrics,
-    SampleInformation, BoxType, VisioLabel, Size, SampleResultType } from './datatypes';
+    SampleInformation, BoxType, VisioLabel, Size, SampleResultType, VisioConnector, VisioPort } from './datatypes';
 import { Position } from './../../util/datatypes';
 import { GraphSettings } from './graph-settings';
 import { LabelCreator } from './label-creator';
 import { GroupContainerCreator } from './group-container-creator';
+import { LotBoxSorter } from './lotbox_sorter';
 
 export class BoxCreator {
 
     private stationIdToBoxMap: Map<string, VisioBox>;
     private lotIdToBoxMap: Map<string, VisioBox>;
+    private stationLots: Map<VisioBox, VisioBox[]>;
+    private portToBox: Map<VisioPort, VisioBox>;
     private portCounter: number = 0;
 
     private static getSampleType(sampleInfo: SampleInformation): BoxType {
@@ -98,9 +101,18 @@ export class BoxCreator {
         }
     }
 
+    private static move(boxes: VisioBox[], move: Position) {
+        boxes.forEach(b => {
+            b.relPosition.x += move.x;
+            b.relPosition.y += move.y;
+        });
+    }
+
     constructor(private labelCreator: LabelCreator) {
         this.stationIdToBoxMap = new Map();
         this.lotIdToBoxMap = new Map();
+        this.stationLots = new Map();
+        this.portToBox = new Map();
     }
 
     getLotBox(lotInfo: LotInformation): VisioBox {
@@ -131,6 +143,9 @@ export class BoxCreator {
                 shape: null
             };
             this.lotIdToBoxMap.set(lotInfo.id, lotBox);
+            lotBox.ports.forEach(p => {
+                this.portToBox.set(p, lotBox);
+            });
         }
         return this.lotIdToBoxMap.get(lotInfo.id);
     }
@@ -165,6 +180,10 @@ export class BoxCreator {
             };
 
             this.stationIdToBoxMap.set(stationInfo.id, stationBox);
+            stationBox.ports.forEach(p => {
+                this.portToBox.set(p, stationBox);
+            });
+            this.stationLots.set(stationBox, lotBoxes);
         }
 
         return this.stationIdToBoxMap.get(stationInfo.id);
@@ -247,4 +266,21 @@ export class BoxCreator {
         };
     }*/
 
+    resortLotBoxes(connectors: VisioConnector[]) {
+        const lotBoxSorter = new LotBoxSorter(this.portToBox, connectors);
+        this.stationLots.forEach((lots, station) => {
+            if (lots.length > 1) {
+                const startPosition = lots[0].relPosition;
+                lotBoxSorter.sortLotBoxes(lots);
+                BoxCreator.hAlign(lots, startPosition, GraphSettings.LOT_BOX_DISTANCE);
+                lots.forEach(
+                    lot => {
+                        lot.position = {
+                            x: station.position.x + lot.relPosition.x,
+                            y: station.position.y + lot.relPosition.y
+                        };
+                    });
+            }
+        });
+    }
 }
