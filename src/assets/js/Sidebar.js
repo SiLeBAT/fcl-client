@@ -932,6 +932,10 @@ Sidebar.prototype.addRoaStylePalette = function(expand)
             150, 100, 'Lot', 'Lot', null, null, 'rounded rect rectangle box lot'),
 
         this.createVertexTemplateEntry(
+            'rounded=1;whiteSpace=wrap;html=1;fillColor=white;strokeColor=red;dashed=1;arcSize=10;verticalAlign=top;align=center;spacingTop=2',
+            150, 100, 'Case', 'Human Case', null, null, 'rounded rect rectangle box case'),
+
+        this.createVertexTemplateEntry(
             'rounded=1;whiteSpace=wrap;html=1;fillColor=#ff6666;strokeColor=none;arcSize=10;verticalAlign=top;align=center;spacingTop=2',
             100, 50, 'confirmed', 'Confirmed Sample', null, null, 'rounded rect rectangle box confirmed sample'),
 
@@ -940,9 +944,8 @@ Sidebar.prototype.addRoaStylePalette = function(expand)
             100, 50, 'negative', 'Negative Sample', null, null, 'rounded rect rectangle box negative sample'),
 
         this.createVertexTemplateEntry(
-            'rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffcc;strokeColor=none;arcSize=10;verticalAlign=top;align=center;spacingTop=2',
+            'rounded=1;whiteSpace=wrap;html=1;fillColor=orange;strokeColor=none;arcSize=10;verticalAlign=top;align=center;spacingTop=2',
             100, 50, 'probable', 'Probable Sample', null, null, 'rounded rect rectangle box probable sample'),
-
 
         this.createVertexTemplateEntry('rounded=1;whiteSpace=wrap;html=1;fillColor=yellow;strokeColor=black;dashed=1', 120, 60, 'Info', 'Additional Information', null, null, 'rounded rect rectangle box info'),
         this.createEdgeTemplateEntry('endArrow=open;html=1;strokeColor=black', 50, 50, '', 'Directional Connector', null, lineTags + 'directional directed')
