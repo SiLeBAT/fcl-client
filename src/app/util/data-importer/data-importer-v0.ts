@@ -4,6 +4,7 @@ import { Utils } from './../utils';
 import { Constants } from './../constants';
 
 import { IDataImporter } from './datatypes';
+import { importSamples } from './sample-importer-v1';
 
 export class DataImporterV0 implements IDataImporter {
 
@@ -30,7 +31,7 @@ export class DataImporterV0 implements IDataImporter {
             } else {
                 this.preprocessDataWithSettings(data, fclData);
             }
-
+            importSamples(data, fclData);
         } else {
             throw new SyntaxError('Invalid data format');
         }
