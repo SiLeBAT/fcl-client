@@ -28,6 +28,7 @@ import { NodeLayoutInfo } from '../visio/layout-engine/datatypes';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
+import { Graph } from 'app/graph/layoutmanager/farm_to_fork/data_structures';
 
 @Component({
   // tslint:disable-next-line:component-selector
