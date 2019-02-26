@@ -71,8 +71,8 @@
         *ngIf="(isServerLess() || userService.loggedIn()) && isTracingActive()"
         mat-icon-button
         (click)="appService.onVisioLayout()"
-        matTooltip="Generate Visio Layout">
-        <mat-icon>image</mat-icon>
+        matTooltip="Generate ROA Layout">
+        <mat-icon>grid_on</mat-icon>
       </button>
       <button
         *ngIf="!rightSidenav.opened && (isServerLess() || userService.loggedIn()) && isTracingActive()"
