@@ -1,16 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  DeliveryData,
-  FclData,
-  FclElements,
-  GraphSettings,
-  ObservedType,
-  StationData,
-  TableSettings
-} from './datatypes';
-
-import { Utils } from './utils';
+import { FclData, GraphSettings, TableSettings } from './datatypes';
 import { Constants } from './constants';
 import { DataImporter } from './data-importer/data-importer';
 import { DataExporter } from './data-exporter';
@@ -49,7 +39,8 @@ export class DataService {
         return {
             elements: {
                 stations: null,
-                deliveries: null
+                deliveries: null,
+                samples: null
             },
             layout: null,
             gisLayout: null,
@@ -79,16 +70,6 @@ export class DataService {
             let rawData: any;
             return this.httpClient.get(this.dataSource)
               .toPromise()
-              // .then(response => {
-              //     rawData = response.json();
-              //   // this.rawData = response.json();
-              //     return this.preprocessData(rawData);
-              // })
-              // .then(data => {
-              //     this.rawData = rawData;
-              //     this.data = data;
-              //     return this.data;
-              // });
               .then(response => {
                   rawData = response;
                   return this.preprocessData(response);

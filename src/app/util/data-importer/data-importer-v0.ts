@@ -3,7 +3,6 @@ import { DeliveryData, FclData, FclElements, GraphSettings, ObservedType, Statio
 import { Utils } from './../utils';
 import { Constants } from './../constants';
 
-import { DataService } from './../data.service';
 import { IDataImporter } from './datatypes';
 
 export class DataImporterV0 implements IDataImporter {
@@ -126,7 +125,8 @@ export class DataImporterV0 implements IDataImporter {
 
         return {
             stations: this.createStations(stationElements),
-            deliveries: this.createDeliveries(deliveryElements)
+            deliveries: this.createDeliveries(deliveryElements),
+            samples: null
         };
     }
 

@@ -9,6 +9,7 @@ export interface FclData {
 export interface FclElements {
     stations: StationData[];
     deliveries: DeliveryData[];
+    samples: SampleData[];
 }
 
 export interface Layout {
@@ -91,6 +92,21 @@ export interface DeliveryData {
     score: number;
     weight: number;
     properties: { name: string, value: string }[];
+}
+
+export enum SampleResultType {
+    Confirmed, Negative, Probable
+}
+
+export interface SampleData {
+    station: string;
+    lot: string;
+    type: string;
+    material: string;
+    time: string;
+    amount: string;
+    result: string;
+    resultType: SampleResultType;
 }
 
 export interface GraphSettings {
