@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93a66083_1054055e",
+        "filename": "src/app/visio/layout-engine/ctno-assigner.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1014959
+      },
+      "writtenOn": "2019-03-01T13:48:51Z",
+      "side": 1,
+      "message": "space?",
+      "range": {
+        "startLine": 20,
+        "startChar": 62,
+        "endLine": 20,
+        "endChar": 63
+      },
+      "revId": "7c423f8dac0361bb377d2473efd779365960ca0e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
