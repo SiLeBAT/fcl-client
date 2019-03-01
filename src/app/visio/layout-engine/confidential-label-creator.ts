@@ -10,18 +10,18 @@ export class ConfidentialLabelCreator extends LabelCreator {
 
     getLotLabel(lotInfo: LotInformation): VisioLabel {
         const text: string[] = [
-            lotInfo.commonProductName,
-            'brand name: ' + (lotInfo.brandName === null ? 'unknown' : lotInfo.brandName),
-            'Lot: ' + (lotInfo.lotIdentifier === null ? 'unknown' : lotInfo.lotIdentifier),
-            'Amount: ' + (lotInfo.quantity === null ? 'unknown' : lotInfo.quantity)
+            LabelCreator.getText(lotInfo.commonProductName, 'unknown product name'),
+            'brand name: ' + LabelCreator.getText(lotInfo.brandName, 'unknown'),
+            'Lot: ' + LabelCreator.getText(lotInfo.lotIdentifier, 'unknown'),
+            'Amount: ' + LabelCreator.getText(lotInfo.quantity, 'unknown')
         ];
         return this.getLabel(text, GraphSettings.LOT_BOX_MARGIN);
     }
 
     getStationLabel(stationInfo: StationInformation): VisioLabel {
         const text: string[] = [
-            (stationInfo.activities === null ? 'Unknown activity' : stationInfo.activities) +
-            ' ' + stationInfo.ctno + ': ' + stationInfo.name
+            LabelCreator.getText(stationInfo.activities, 'Unknown activity') +
+            ' ' + stationInfo.ctno + ': ' + LabelCreator.getText(stationInfo.name, 'Unkown station name')
         ];
         return this.getLabel(text, GraphSettings.STATION_BOX_MARGIN);
     }

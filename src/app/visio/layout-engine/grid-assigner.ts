@@ -21,6 +21,11 @@ function createGrid(layers: StationData[][], columns: StationData[][]): StationD
 
     const result: StationData[][] = Utils.getMatrix(layers.length, columns.length, null as StationData);
     for (const station of [].concat(...layers)) {
+        const layerIndex = layerMap.get(station);
+        const columnIndex = columnMap.get(station);
+        if (result[layerIndex][columnIndex] !== null) {
+            throw new Error('Non unique grid mapping detected.');
+        }
         result[layerMap.get(station)][columnMap.get(station)] = station;
     }
     return result;

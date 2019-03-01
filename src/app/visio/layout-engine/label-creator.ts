@@ -3,17 +3,23 @@ import { StationInformation, LotInformation, FontMetrics,
 import { GraphSettings } from './graph-settings';
 
 export abstract class LabelCreator {
-    // protected fontMetrics: FontMetrics;
 
     protected constructor(protected fontMetrics: FontMetrics) {
-        // this.fontMetrics = new FontMetrics(canvas);
+    }
+
+    static getText(text: string, alternativeText: string): string {
+        if (text === undefined || text === null) {
+            return alternativeText;
+        } else {
+            return text;
+        }
     }
 
     getLotSampleLabel(sampleInfo: SampleInformation): VisioLabel {
         const text: string[] = [
-            sampleInfo.amount,
-            sampleInfo.result,
-            sampleInfo.time
+            LabelCreator.getText(sampleInfo.amount, 'unkown amount'),
+            LabelCreator.getText(sampleInfo.result, 'unkown result'),
+            LabelCreator.getText(sampleInfo.time, 'unkown time')
         ];
         return this.getLabel(text, GraphSettings.SAMPLE_BOX_MARGIN);
     }

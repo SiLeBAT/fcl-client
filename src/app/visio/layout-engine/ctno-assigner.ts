@@ -17,8 +17,8 @@ export class CtNoAssigner {
 
     private static codeToNo(code: number): string {
         if (code >= this.charCount) {
-            const quotient = Math.floor(code / this.charCount);
-            return this.codeToNo(quotient) + this.codeToNo(code - quotient);
+            const quotient = Math.floor(code / this.charCount) ;
+            return this.codeToNo(quotient - 1) + this.codeToNo(code - quotient * this.charCount);
         } else {
             return String.fromCharCode(this.minCharCode + code);
         }

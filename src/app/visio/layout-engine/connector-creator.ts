@@ -19,6 +19,7 @@ export class ConnectorCreator {
         const lotBox = this.boxCreator.getLotBox(lotInfo);
         const stationInfo = this.infoProvider.getDeliveryTarget(delivery);
         const stationBox = this.boxCreator.getStationBox(stationInfo);
+
         return {
             id: 'c' + this.connectorCounter++,
             type: this.getConnectorType(delivery),
