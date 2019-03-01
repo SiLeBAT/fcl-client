@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import { VisioGraph, VisioBox, VisioReporter, StationInformation, LotInformation,
-    StationGrouper, InformationGraph, ProductInformation, DeliveryInformation } from './datatypes';
+import { StationInformation, LotInformation, ProductInformation, DeliveryInformation } from './datatypes';
 import { FclElements, StationData, DeliveryData } from './../../util/datatypes';
 
 export class InformationProvider {

@@ -44,7 +44,7 @@ class ColumnAssigner {
         const layerIndexSet: Set<number> = new Set();
         layerIndexSet.add(this.stationToLayerIndexMap.get(this.stations[0]));
 
-        for (let i = 1, maxI = this.stations.length - 2; i <= maxI ; i++) {
+        for (let i = 1, n = this.stations.length; i < n ; i++) {
             const layerIndex = this.stationToLayerIndexMap.get(this.stations[i]);
 
             this.columnSwitch[i - 1] = layerIndexSet.has(layerIndex);
