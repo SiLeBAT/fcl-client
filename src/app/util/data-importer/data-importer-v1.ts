@@ -171,6 +171,8 @@ export class DataImporterV1 implements IDataImporter {
                 id: extDelivery.id,
                 name: extDelivery.name,
                 lot: extDelivery.lot,
+                lotKey: extDelivery.lotKey ||
+                    (extDelivery.source + '|' + (extDelivery.name || extDelivery.id) + '|' + (extDelivery.lot || extDelivery.id)),
                 date: extDelivery.date,
                 source: extDelivery.source,
                 target: extDelivery.target,

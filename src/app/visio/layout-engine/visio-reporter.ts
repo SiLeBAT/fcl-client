@@ -28,15 +28,15 @@ export class VisioReporter {
         const cellGroups = getCellGroups(stationGrid, stationGroups);
 
         const labelCreator = this.getLabelCreator(type, this.getFontMetrics(canvas));
-        const boxCreator = new BoxCreator(labelCreator);
+        const boxCreator = new BoxCreator(labelCreator, infoProvider);
 
         const infoGrid = this.mapMatrix(stationGrid, (s) => s !== null ? infoProvider.getStationInfo(s) : null);
         CtNoAssigner.assingCtNos(infoGrid);
-        const boxGrid = this.mapMatrix(infoGrid, (info) => info !== null ? boxCreator.getStationBox(info) : null);
+        const boxGrid = this.mapMatrix(infoGrid, (info) => info !== null ? boxCreator.createStationBox(info) : null);
 
         const layerInfo: GraphLayer[] = this.getLayerInformation(infoGrid);
 
-        const groupBoxes = boxCreator.getGroupBoxes(boxGrid, cellGroups, layerInfo);
+        const groupBoxes = boxCreator.createGroupBoxes(boxGrid, cellGroups, layerInfo);
         const connectors = new ConnectorCreator(boxCreator, infoProvider).createConnectors();
 
         this.setAbsolutePositions(groupBoxes, { x: 0, y: 0 });
@@ -64,10 +64,11 @@ export class VisioReporter {
     }
 
     private static getFontMetrics(canvas: any): FontMetrics {
+        const measureTextWidth = (text: string[]) => Math.max(1, ...text.map(t => t.length)) * 4.4;
         return {
-            measureTextWidth: (text: string[]) => 80,
+            measureTextWidth: measureTextWidth,
             measureText: (text: string[]) => ({
-                width: Math.max(...text.map(t => t.length)) * 4,
+                width: measureTextWidth(text),
                 height: 10 * text.length
             })
         };

@@ -1,6 +1,9 @@
 import * as _ from 'lodash';
-import { StationInformation, LotInformation, ProductInformation, DeliveryInformation } from './datatypes';
+import { StationInformation, LotInformation,
+     ProductInformation, DeliveryInformation } from './datatypes';
 import { FclElements, StationData, DeliveryData } from './../../util/datatypes';
+import { Utils } from './../../util/utils';
+import { addSampleInformation } from './sample-information-provider';
 
 export class InformationProvider {
     private static readonly UNKNOWN = 'unkown';
@@ -8,6 +11,7 @@ export class InformationProvider {
 
     private idToDeliveryMap: Map<string, DeliveryData>;
     private stationIdToInfoMap: Map<string, StationInformation>;
+    private idToLotMap: Map<string, LotInformation>;
     private deliveryToSourceMap: Map<DeliveryInformation, LotInformation>;
     private deliveries: DeliveryInformation[];
 
@@ -15,8 +19,81 @@ export class InformationProvider {
         this.idToDeliveryMap = new Map();
         data.deliveries.forEach((d) => this.idToDeliveryMap.set(d.id, d));
         this.stationIdToInfoMap = new Map();
+        this.idToLotMap = new Map();
         this.deliveryToSourceMap = new Map();
         this.deliveries = [];
+        this.init();
+    }
+
+    private init() {
+        const stations = this.data.stations.filter(station => !station.invisible);
+
+        this.stationIdToInfoMap = new Map();
+        stations.forEach(station => {
+            const stationInfo = this.createStationInfo(station);
+            this.stationIdToInfoMap.set(stationInfo.id, stationInfo);
+            stationInfo.products.forEach(
+                product => product.lots.forEach(
+                    lot => {
+                        lot.deliveries.forEach(
+                            delivery => {
+                                this.deliveryToSourceMap.set(delivery, lot);
+                            }
+                        );
+                        this.idToLotMap.set(lot.id, lot);
+                    }
+                )
+            );
+        });
+
+        addSampleInformation(Array.from(this.stationIdToInfoMap.values()), this.data.samples);
+    }
+
+    private createStationInfo(station: StationData): StationInformation {
+        const stationInfo = {
+            id: station.id,
+            data: station,
+            ctno: null,
+            name: station.name,
+            registrationNumber: null,
+            sector: null,
+            activities: null,
+            samples: [],
+            inSamples: [],
+            products: this.createProductInformation(this.getStationOutDeliveries(station))
+        };
+        return stationInfo;
+    }
+
+    private createProductInformation(deliveries: DeliveryData[]): ProductInformation[] {
+        const productToDeliveriesMap = Utils.getGroups(deliveries, (d) => d.name);
+        return Array.from(productToDeliveriesMap).map(([, productDeliveries]) => ({
+            id: null,
+            name: productDeliveries[0].name,
+            lots: this.createLotInformation(productDeliveries)
+        }));
+    }
+
+    private createLotInformation(deliveries: DeliveryData[]): LotInformation[] {
+        const lotToDeliveriesMap = Utils.getGroups(deliveries, (d) => d.lot);
+        return Array.from(lotToDeliveriesMap).map(([, lotDeliveries]) => ({
+            id: 'L' + this.lotCounter++,
+            lot: lotDeliveries[0].lot,
+            key: lotDeliveries[0].lotKey,
+            lotIdentifier: lotDeliveries[0].lot,
+            productionOrDurabilityDate: InformationProvider.UNKNOWN,
+            product: lotDeliveries[0].name,
+            commonProductName: lotDeliveries[0].name,
+            brandName: InformationProvider.UNKNOWN,
+            production: null,
+            quantity: InformationProvider.UNKNOWN,
+            samples: [],
+            deliveries: lotDeliveries.map(d => this.createDeliveryInformation(d))
+        }));
+    }
+
+    private getStationOutDeliveries(station: StationData): DeliveryData[] {
+        return station.outgoing.map(delId => this.idToDeliveryMap.get(delId)).filter(d => !d.invisible);
     }
 
     getStationInfo(station: StationData): StationInformation {
@@ -38,52 +115,22 @@ export class InformationProvider {
             this.stationIdToInfoMap.set(station.id, stationInfo);
             stationInfo.products.forEach(
                 product => product.lots.forEach(
-                    lot => lot.deliveries.forEach(
-                        delivery => {
-                            this.deliveryToSourceMap.set(delivery, lot);
-                        }
-                    )
+                    lot => {
+                        lot.deliveries.forEach(
+                            delivery => {
+                                this.deliveryToSourceMap.set(delivery, lot);
+                            }
+                        );
+                        this.idToLotMap.set(lot.id, lot);
+                    }
                 )
             );
         }
         return this.stationIdToInfoMap.get(station.id);
     }
 
-    groupDeliveries(deliveries: DeliveryData[], keyFn: (d: DeliveryData) => string): Map<string, DeliveryData[]> {
-        const result: Map<string, DeliveryData[]> = new Map();
-        deliveries.forEach(d => {
-            const key: string = keyFn(d);
-            if (result.has(key)) {
-                result.get(key).push(d);
-            } else {
-                result.set(key, [d]);
-            }
-        });
-        return result;
-    }
-
-    private createProductInformation(deliveries: DeliveryData[]): ProductInformation[] {
-        return Array.from(this.groupDeliveries(deliveries, d => d.name)).map(([productKey, productDeliveries]) => ({
-            id: null,
-            name: productKey,
-            lots: this.createLotInformation(productDeliveries)
-        }));
-    }
-
-    private createLotInformation(deliveries: DeliveryData[]): LotInformation[] {
-        return Array.from(this.groupDeliveries(deliveries, d => d.lot)).map(([lotKey, lotDeliveries]) => ({
-            id: 'L' + this.lotCounter++,
-            lot: lotKey,
-            lotIdentifier: lotKey,
-            productionOrDurabilityDate: InformationProvider.UNKNOWN,
-            product: lotDeliveries[0].name,
-            commonProductName: lotDeliveries[0].name,
-            brandName: InformationProvider.UNKNOWN,
-            production: null,
-            quantity: InformationProvider.UNKNOWN,
-            samples: [],
-            deliveries: lotDeliveries.map(d => this.createDeliveryInformation(d))
-        }));
+    getLotInfo(id: string): LotInformation {
+        return this.idToLotMap.get(id);
     }
 
     createDeliveryInformation(delivery: DeliveryData): DeliveryInformation {

@@ -77,6 +77,7 @@ export interface DeliveryData {
     id: string;
     name: string;
     lot: string;
+    lotKey: string;
     date: string;
     source: string;
     target: string;
@@ -95,7 +96,7 @@ export interface DeliveryData {
 }
 
 export enum SampleResultType {
-    Confirmed, Negative, Probable
+    Confirmed, Negative, Probable, Unkown
 }
 
 export interface SampleData {

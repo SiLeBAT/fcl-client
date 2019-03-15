@@ -23,6 +23,7 @@ export interface ColumnInfo {
 
 export class Constants {
     static readonly DATA: string = 'data';
+    static readonly SAMPLEDATA: string = 'samples';
     static readonly STATION_TABLE: string = 'stations';
     static readonly DELIVERY_TABLE: string = 'deliveries';
     static readonly DELIVERY_TO_DELIVERY_TABLE: string = 'deliveryRelations';
@@ -66,7 +67,8 @@ export class Constants {
       name: { columnId: 'Name', type: 'string' },
       source: { columnId: 'from', type: 'string' },
       target: { columnId: 'to', type: 'string' },
-      lot: { columnId: 'Lot ID', type: 'string' }
+      lot: { columnId: 'Lot ID', type: 'string' },
+      lotKey: { columnId: 'Product_k', type: 'string' }
   });
 
     static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT: ImmutableMap<

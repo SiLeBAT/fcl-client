@@ -1,11 +1,19 @@
 import * as _ from 'lodash';
 import { VisioBox, StationInformation, LotInformation, GraphLayer, GridCell,
-    SampleInformation, BoxType, VisioLabel, Size, SampleResultType, VisioConnector, VisioPort } from './datatypes';
-import { Position } from './../../util/datatypes';
+    StationSampleInformation, SampleInformation, BoxType, VisioLabel, Size,
+    VisioConnector, VisioPort, InSampleInformation } from './datatypes';
+import { Position, SampleResultType } from './../../util/datatypes';
 import { GraphSettings } from './graph-settings';
 import { LabelCreator } from './label-creator';
 import { GroupContainerCreator } from './group-container-creator';
 import { LotBoxSorter } from './lotbox_sorter';
+import { InformationProvider } from './information-provider';
+
+interface VirtualBox {
+    size: Size;
+    position: Position;
+    elements: VirtualBox[];
+}
 
 export class BoxCreator {
 
@@ -84,6 +92,22 @@ export class BoxCreator {
         }
     }
 
+    private static hcAlign(boxes: { size: Size, relPosition: Position }[][], margin: number) {
+        if (boxes.length > 0) {
+
+            const widths = boxes.map(row => this.getSize(row, 0).width);
+            const maxWidth = Math.max(0, ...widths);
+
+            boxes.forEach((row, index) => {
+                if (row.length > 0) {
+                    const startPos = row[0].relPosition.x;
+                    const delta = (maxWidth - widths[index]) / 2 + margin - startPos;
+                    row.forEach(box => box.relPosition.x += delta);
+                }
+            });
+        }
+    }
+
     private static getSize(boxes: {relPosition: Position; size: Size}[], margin: number): Size {
         margin *= 2;
 
@@ -109,97 +133,131 @@ export class BoxCreator {
         });
     }
 
-    constructor(private labelCreator: LabelCreator) {
+    constructor(private labelCreator: LabelCreator, private infoProvider: InformationProvider) {
         this.stationIdToBoxMap = new Map();
         this.lotIdToBoxMap = new Map();
         this.stationLots = new Map();
         this.portToBox = new Map();
     }
 
+    createInLotBox(inSample: InSampleInformation) {
+        const lotInfo: LotInformation = this.infoProvider.getLotInfo(inSample.lotId);
+        const lotBox: VisioBox = this.createLotBox(lotInfo, inSample.samples);
+        lotBox.ports = [];
+        return lotBox;
+    }
+
     getLotBox(lotInfo: LotInformation): VisioBox {
-        if (!this.lotIdToBoxMap.has(lotInfo.id)) {
-            const label: VisioLabel = this.labelCreator.getLotLabel(lotInfo);
-
-            const sampleBoxes: VisioBox[] = lotInfo.samples.map(s => this.getLotSampleBox(s));
-            const sampleAreaStart: Position = {
-                x: GraphSettings.LOT_BOX_MARGIN,
-                y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
-            };
-            BoxCreator.vAlign(sampleBoxes, sampleAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
-
-            const lotBox = {
-                type: BoxType.Lot,
-                label: label,
-                size: BoxCreator.getSize([].concat([label], sampleBoxes), GraphSettings.LOT_BOX_MARGIN),
-                position: null,
-                relPosition: null,
-                ports: [{
-                    id: 'p' + this.portCounter++,
-                    normalizedPosition: {
-                        x: 0.5,
-                        y: 1
-                    }
-                }],
-                elements: sampleBoxes,
-                shape: null
-            };
-            this.lotIdToBoxMap.set(lotInfo.id, lotBox);
-            lotBox.ports.forEach(p => {
-                this.portToBox.set(p, lotBox);
-            });
-        }
         return this.lotIdToBoxMap.get(lotInfo.id);
     }
 
-    getStationBox(stationInfo: StationInformation): VisioBox {
-        if (!this.stationIdToBoxMap.has(stationInfo.id)) {
-            const label: VisioLabel = this.labelCreator.getStationLabel(stationInfo);
+    createProdLotBox(lotInfo: LotInformation): VisioBox {
+        const lotBox: VisioBox = this.createLotBox(lotInfo, lotInfo.samples);
 
-            const lotBoxes: VisioBox[] = [].concat(...stationInfo.products.map(p => p.lots.map(lot => this.getLotBox(lot))));
+        this.lotIdToBoxMap.set(lotInfo.id, lotBox);
+        lotBox.ports.forEach(p => {
+            this.portToBox.set(p, lotBox);
+        });
+        this.lotIdToBoxMap.get(lotInfo.id);
+        return lotBox;
+    }
 
-            const lotAreaStart: Position = {
-                x: GraphSettings.STATION_BOX_MARGIN,
-                y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
-            };
-            BoxCreator.hAlign(lotBoxes, lotAreaStart, GraphSettings.LOT_BOX_DISTANCE);
+    createLotBox(lotInfo: LotInformation, samples: SampleInformation[]): VisioBox {
+        const label: VisioLabel = this.labelCreator.getLotLabel(lotInfo);
 
-            const stationBox = {
-                type: BoxType.Station,
-                label: label,
-                size: BoxCreator.getSize([].concat([label], lotBoxes), GraphSettings.STATION_BOX_MARGIN),
-                position: null,
-                relPosition: null,
-                ports: [{
-                    id: 'p' + this.portCounter++,
-                    normalizedPosition: {
-                        x: 0.5,
-                        y: 0
-                    }
-                }],
-                elements: lotBoxes,
-                shape: null
-            };
+        const sampleBoxes: VisioBox[] = samples.map(s => this.createLotSampleBox(s));
+        const sampleAreaStart: Position = {
+            x: GraphSettings.LOT_BOX_MARGIN,
+            y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
+        };
+        BoxCreator.vAlign(sampleBoxes, sampleAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
 
-            // center align label
-            label.relPosition.x = (stationBox.size.width - label.size.width) / 2;
-            if (lotBoxes.length > 0) {
-                // center align lots
-                const deltaX = (stationBox.size.width - 2 * GraphSettings.STATION_BOX_MARGIN -
-                    (BoxCreator.getRight(_.last(lotBoxes)) - lotAreaStart.x)) / 2;
-                lotBoxes.forEach(box => box.relPosition.x += deltaX);
-            }
+        const lotBox = {
+            type: BoxType.Lot,
+            label: label,
+            size: BoxCreator.getSize([].concat([label], sampleBoxes), GraphSettings.LOT_BOX_MARGIN),
+            position: null,
+            relPosition: null,
+            ports: [{
+                id: 'p' + this.portCounter++,
+                normalizedPosition: {
+                    x: 0.5,
+                    y: 1
+                }
+            }],
+            elements: sampleBoxes,
+            shape: null
+        };
 
-            this.stationIdToBoxMap.set(stationInfo.id, stationBox);
-            stationBox.ports.forEach(p => {
-                this.portToBox.set(p, stationBox);
+        // center align label
+        label.relPosition.x = (lotBox.size.width - label.size.width) / 2;
+        if (sampleBoxes.length > 0) {
+            // center align samples
+            sampleBoxes.forEach(box => {
+                box.relPosition.x = (lotBox.size.width - box.size.width) / 2;
             });
-            this.stationLots.set(stationBox, lotBoxes);
         }
+        return lotBox;
+    }
 
+    getStationBox(stationInfo: StationInformation): VisioBox {
         return this.stationIdToBoxMap.get(stationInfo.id);
     }
 
-    getLotSampleBox(sampleInfo: SampleInformation): VisioBox {
+    createStationBox(stationInfo: StationInformation): VisioBox {
+        const label: VisioLabel = this.labelCreator.getStationLabel(stationInfo);
+
+        const boxAreaStart: Position = {
+            x: GraphSettings.STATION_BOX_MARGIN,
+            y: BoxCreator.getBottom(label) + GraphSettings.SECTION_DISTANCE
+        };
+
+        const inLotBoxes: VisioBox[] = [].concat(...stationInfo.inSamples.map(is => this.createInLotBox(is)));
+        if (inLotBoxes.length > 0) {
+            BoxCreator.hAlign(inLotBoxes, boxAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
+            boxAreaStart.y = Math.max(...inLotBoxes.map(b => BoxCreator.getBottom(b))) + GraphSettings.SECTION_DISTANCE;
+        }
+
+        const sampleBoxes: VisioBox[] = stationInfo.samples.map(sample => this.createStationSampleBox(sample));
+        if (sampleBoxes.length > 0) {
+            BoxCreator.hAlign(sampleBoxes, boxAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
+            boxAreaStart.y = Math.max(...sampleBoxes.map(b => BoxCreator.getBottom(b))) + GraphSettings.SECTION_DISTANCE;
+        }
+
+        const lotBoxes: VisioBox[] = [].concat(...stationInfo.products.map(p => p.lots.map(lot => this.createProdLotBox(lot))));
+        if (lotBoxes.length > 0) {
+            BoxCreator.hAlign(lotBoxes, boxAreaStart, GraphSettings.LOT_BOX_DISTANCE);
+        }
+
+        const stationBox = {
+            type: BoxType.Station,
+            label: label,
+            size: BoxCreator.getSize([].concat([label], inLotBoxes, sampleBoxes, lotBoxes), GraphSettings.STATION_BOX_MARGIN),
+            position: null,
+            relPosition: null,
+            ports: [{
+                id: 'p' + this.portCounter++,
+                normalizedPosition: {
+                    x: 0.5,
+                    y: 0
+                }
+            }],
+            elements: [].concat(inLotBoxes, sampleBoxes, lotBoxes),
+            shape: null
+        };
+
+        BoxCreator.hcAlign([[label], inLotBoxes, sampleBoxes, lotBoxes], GraphSettings.STATION_BOX_MARGIN);
+
+        this.stationIdToBoxMap.set(stationInfo.id, stationBox);
+        stationBox.ports.forEach(p => {
+            this.portToBox.set(p, stationBox);
+        });
+        this.stationLots.set(stationBox, lotBoxes);
+
+        return stationBox;
+    }
+
+    createLotSampleBox(sampleInfo: SampleInformation): VisioBox {
         const label: VisioLabel = this.labelCreator.getLotSampleLabel(sampleInfo);
 
         return {
@@ -217,7 +275,25 @@ export class BoxCreator {
         };
     }
 
-    getGroupBoxes(
+    createStationSampleBox(sampleInfo: StationSampleInformation): VisioBox {
+        const label: VisioLabel = this.labelCreator.getStationSampleLabel(sampleInfo);
+
+        return {
+            type: BoxCreator.getSampleType(sampleInfo),
+            position: null,
+            relPosition: null,
+            ports: [],
+            size: {
+                width: label.size.width + 2 * GraphSettings.SAMPLE_BOX_MARGIN,
+                height: label.size.height + 2 * GraphSettings.SAMPLE_BOX_MARGIN
+            },
+            label: label,
+            elements: [],
+            shape: null
+        };
+    }
+
+    createGroupBoxes(
         boxGrid: VisioBox[][],
         cellGroups: { label: string, cells: GridCell[] }[],
         graphLayers: GraphLayer[]
@@ -244,8 +320,18 @@ export class BoxCreator {
                             x: station.position.x + lot.relPosition.x,
                             y: station.position.y + lot.relPosition.y
                         };
+                        this.resetSubElementAbsPositions(lot);
                     });
             }
         });
+    }
+
+    private resetSubElementAbsPositions(box: VisioBox) {
+        for (const element of box.elements) {
+            element.position = {
+                x: box.position.x + element.relPosition.x,
+                y: box.position.y + element.relPosition.y
+            };
+        }
     }
 }

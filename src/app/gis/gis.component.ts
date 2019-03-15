@@ -506,6 +506,7 @@ export class GisComponent implements OnInit {
                             id: key,
                             name: key,
                             lot: null,
+                            lotKey: null,
                             date: null,
                             source: value[0].source,
                             target: value[0].target,
@@ -832,33 +833,13 @@ export class GisComponent implements OnInit {
     }
 
     private createHugeGraphStyle(): any {
-        const sizeFunction = node => {
-            const size = GisComponent.NODE_SIZES.get(this.nodeSize);
-
-            if (this.tracingService.getMaxScore() > 0) {
-                return (
-          (0.5 +
-            (0.5 * node.data('score')) / this.tracingService.getMaxScore()) *
-          size
-                );
-            } else {
-                return size;
-            }
-        };
-    /*this.nodeSizeMap = new Map();
-    const cachedSizeFunction = (node)=>{
-      if(!this.nodeSizeMap.has(node.id)) this.nodeSizeMap.set(node.id, sizeFunction(node));
-      return this.nodeSizeMap.get(node.id);
-    };        //_.memoize(sizeFunction);
-    */
-
         let style = cytoscape
-      .stylesheet()
-      .selector('*')
-      .style({
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
+        .stylesheet()
+        .selector('*')
+        .style({
+          'overlay-color': 'rgb(0, 0, 255)',
+          'overlay-padding': 10,
+          'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
       })
       .selector('node')
       .style({
@@ -905,11 +886,6 @@ export class GisComponent implements OnInit {
       .style({
           'overlay-opacity': 0.5
       });
-    /*.selector(':selected')
-    .css({
-      'background-color': 'black',
-      'opacity': 1
-    });*/
 
         const createSelector = (prop: string) => {
             if (prop === 'observed') {
@@ -982,113 +958,6 @@ export class GisComponent implements OnInit {
         } else {
             return this.createSmallGraphStyle();
         }
-    /*const sizeFunction = node => {
-      const size = GisComponent.NODE_SIZES.get(this.nodeSize);
-
-      if (this.tracingService.getMaxScore() > 0) {
-        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
-      } else {
-        return size;
-      }
-    };
-
-    let style = cytoscape.stylesheet()
-      .selector('*')
-      .style({
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': e => e.scratch('_active') ? 0.5 : 0.0
-      })
-      .selector('node')
-      .style({
-        'content': 'data(name)',
-        'height': sizeFunction,
-        'width': sizeFunction,
-        'background-color': 'rgb(255, 255, 255)',
-        'border-width': 3,
-        'border-color': 'rgb(0, 0, 0)',
-        'text-valign': 'bottom',
-        'text-halign': 'right',
-        'color': 'rgb(0, 0, 0)'
-      })
-      .selector('edge')
-      .style({
-        'target-arrow-shape': 'triangle',
-        'width': 6,
-        'line-color': 'rgb(0, 0, 0)',
-        'target-arrow-color': 'rgb(255, 0, 0)',
-        'curve-style': 'bezier'
-      })
-      .selector('node:selected')
-      .style({
-        'background-color': 'rgb(128, 128, 255)',
-        'border-width': 6,
-        'border-color': 'rgb(0, 0, 255)',
-        'color': 'rgb(0, 0, 255)'
-      })
-      .selector('edge:selected')
-      .style({
-        'width': 12
-      })
-      .selector('node[?contains]')
-      .style({
-        'border-width': 6
-      })
-      .selector('node:selected[?contains]')
-      .style({
-        'border-width': 9
-      }).selector(':active')
-      .style({
-        'overlay-opacity': 0.5
-      });
-
-    const createSelector = (prop: string) => {
-      if (prop === 'observed') {
-        return '[' + prop + ' != "' + ObservedType.NONE + '"]';
-      } else {
-        return '[?' + prop + ']';
-      }
-    };
-
-    const createNodeBackground = (colors: Color[]) => {
-      const background = {};
-
-      if (colors.length === 1) {
-        background['background-color'] = Utils.colorToCss(colors[0]);
-      } else {
-        for (let i = 0; i < colors.length; i++) {
-          background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
-          background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
-        }
-      }
-
-      return background;
-    };
-
-    for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
-      const s = [];
-      const c1 = [];
-      const c2 = [];
-
-      for (const prop of combination) {
-        const color = Constants.PROPERTIES.get(prop).color;
-
-        s.push(createSelector(prop));
-        c1.push(color);
-        c2.push(Utils.mixColors(color, {r: 0, g: 0, b: 255}));
-      }
-
-      style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
-      style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
-    }
-
-    for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
-      style = style.selector('edge' + createSelector(prop)).style({
-        'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
-      });
-    }
-
-    return style;*/
     }
 
     private setSelected(id: string, selected: boolean) {
@@ -1554,7 +1423,6 @@ export class GisComponent implements OnInit {
                 enabled: true,
                 toolTip: null,
                 action: () => {
-          // this.updateOverlay();
                     this.tracingService.uncollapseSimpleChains();
                     this.updateAll();
                     this.callChangeFunction();
@@ -1565,7 +1433,6 @@ export class GisComponent implements OnInit {
                 enabled: true,
                 toolTip: null,
                 action: () => {
-          // this.updateOverlay();
                     this.tracingService.uncollapseIsolatedClouds();
                     this.updateAll();
                     this.callChangeFunction();

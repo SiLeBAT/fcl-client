@@ -8,41 +8,15 @@ import spread from 'cytoscape-spread';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 
-import {
-  DialogActionsComponent,
-  DialogActionsData
-} from '../dialog/dialog-actions/dialog-actions.component';
-import {
-  DialogPromptComponent,
-  DialogPromptData
-} from '../dialog/dialog-prompt/dialog-prompt.component';
-import {
-  DialogSingleSelectComponent,
-  DialogSingleSelectData
-} from '../dialog/dialog-single-select/dialog-single-select.component';
-import {
-  StationPropertiesComponent,
-  StationPropertiesData
-} from '../dialog/station-properties/station-properties.component';
-import {
-  DeliveryPropertiesComponent,
-  DeliveryPropertiesData
-} from '../dialog/delivery-properties/delivery-properties.component';
+import { DialogActionsComponent, DialogActionsData } from '../dialog/dialog-actions/dialog-actions.component';
+import { DialogPromptComponent, DialogPromptData } from '../dialog/dialog-prompt/dialog-prompt.component';
+import { DialogSingleSelectComponent, DialogSingleSelectData } from '../dialog/dialog-single-select/dialog-single-select.component';
+import { StationPropertiesComponent, StationPropertiesData } from '../dialog/station-properties/station-properties.component';
+import { DeliveryPropertiesComponent, DeliveryPropertiesData } from '../dialog/delivery-properties/delivery-properties.component';
 import { Utils } from '../util/utils';
 import { TracingService } from '../tracing/tracing.service';
-import {
-  Color,
-  CyEdge,
-  CyNode,
-  DeliveryData,
-  FclElements,
-  Layout,
-  ObservedType,
-  Position,
-  Size,
-  StationData,
-  GroupMode
-} from '../util/datatypes';
+import { Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType,
+  Position, Size, StationData, GroupMode } from '../util/datatypes';
 import { FruchtermanLayout } from './fruchterman_reingold';
 import { FarmToForkLayout } from './layoutmanager/farm_to_fork/farm_to_fork';
 import { Constants } from '../util/constants';
@@ -169,19 +143,17 @@ export class GraphComponent implements OnInit {
         };
 
         const resizeSensor = new ResizeSensor(
-      this.containerElement.nativeElement,
-      () => {
-          if (this.resizeTimer != null) {
-              this.resizeTimer.unsubscribe();
-          }
+            this.containerElement.nativeElement,
+            () => {
+                if (this.resizeTimer != null) {
+                    this.resizeTimer.unsubscribe();
+                }
 
-          if (this.cy != null) {
-              this.resizeTimer = Observable.timer(100).subscribe(() =>
-            this.cy.resize()
-          );
-          }
-      }
-    );
+                if (this.cy != null) {
+                    this.resizeTimer = Observable.timer(100).subscribe(() => this.cy.resize());
+                }
+            }
+        );
 
         this.stationMenuTrigger.menuOpened.subscribe(() => this.updateOverlay());
         this.stationMenuTrigger.menuClosed.subscribe(() => this.updateOverlay());
@@ -196,16 +168,14 @@ export class GraphComponent implements OnInit {
 
         this.cy = cytoscape({
             container: this.graphElement.nativeElement,
-
             elements: {
                 nodes: this.createNodes(),
                 edges: this.createEdges()
             },
-
             layout:
-        layout != null
-          ? { name: 'preset', zoom: layout.zoom, pan: layout.pan }
-          : { name: 'random' },
+                layout != null
+                ? { name: 'preset', zoom: layout.zoom, pan: layout.pan }
+                : { name: 'random' },
             style: this.createStyle(),
             minZoom: 0.01,
             maxZoom: 10,
@@ -221,13 +191,9 @@ export class GraphComponent implements OnInit {
         });
         this.cy.on('select', event => this.setSelected(event.target.id(), true));
         this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
-        this.cy.on(
-      'position',
-      event =>
-        (this.tracingService.getStationsById(
-          [event.target.id()]
-        )[0].position = event.target.position())
-    );
+        this.cy.on('position', event =>
+            (this.tracingService.getStationsById([event.target.id()])[0].position = event.target.position())
+        );
         this.cy.on('cxttap', event => {
             const element = event.target;
             const position: Position = {
@@ -237,27 +203,15 @@ export class GraphComponent implements OnInit {
 
             if (element === this.cy) {
                 this.contextMenuElement = null;
-                Utils.openMenu(
-          this.graphMenuTrigger,
-          this.graphMenuTriggerElement,
-          position
-        );
+                Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, position);
             } else if (element.isNode()) {
                 this.contextMenuElement = element;
                 this.stationMenuActions = this.createStationActions(element);
-                Utils.openMenu(
-          this.stationMenuTrigger,
-          this.stationMenuTriggerElement,
-          position
-        );
+                Utils.openMenu(this.stationMenuTrigger, this.stationMenuTriggerElement, position);
             } else if (element.isEdge()) {
                 this.contextMenuElement = element;
                 this.deliveryMenuActions = this.createDeliveryActions(element);
-                Utils.openMenu(
-          this.deliveryMenuTrigger,
-          this.deliveryMenuTriggerElement,
-          position
-        );
+                Utils.openMenu(this.deliveryMenuTrigger, this.deliveryMenuTriggerElement, position);
             }
         });
         this.hoverDeliveries.subscribe(ids => {
@@ -268,12 +222,8 @@ export class GraphComponent implements OnInit {
             }
 
             this.cy.batch(() => {
-                this.hoverableEdges
-          .filter(e => !idSet.has(e.id()))
-          .scratch('_active', false);
-                this.hoverableEdges
-          .filter(e => idSet.has(e.id()))
-          .scratch('_active', true);
+                this.hoverableEdges.filter(e => !idSet.has(e.id())).scratch('_active', false);
+                this.hoverableEdges.filter(e => idSet.has(e.id())).scratch('_active', true);
             });
         });
 
@@ -386,11 +336,8 @@ export class GraphComponent implements OnInit {
     sliderChanged() {
         this.sliding = true;
         this.zoomTo(
-      Math.exp(
-        (this.slider.value / 100) *
-          Math.log(this.cy.maxZoom() / this.cy.minZoom())
-      ) * this.cy.minZoom()
-    );
+            Math.exp((this.slider.value / 100) * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom()
+        );
         this.sliding = false;
     }
 
@@ -436,9 +383,7 @@ export class GraphComponent implements OnInit {
                         selected: value[0].selected
                     });
                 } else {
-                    const observedElement = value.find(
-            d => d.observed !== ObservedType.NONE
-          );
+                    const observedElement = value.find(d => d.observed !== ObservedType.NONE);
                     const selected = value.find(d => d.selected) != null;
 
                     value.forEach(d => this.mergeToMap.set(d.id, key));
@@ -449,6 +394,7 @@ export class GraphComponent implements OnInit {
                             id: key,
                             name: key,
                             lot: null,
+                            lotKey: null,
                             date: null,
                             source: value[0].source,
                             target: value[0].target,
@@ -458,10 +404,11 @@ export class GraphComponent implements OnInit {
                             selected: selected,
                             crossContamination: value.find(d => d.crossContamination) != null,
                             killContamination: value.find(d => d.killContamination) != null,
-                            observed:
-                observedElement != null
-                  ? observedElement.observed
-                  : ObservedType.NONE,
+                            observed: (
+                                observedElement != null
+                                ? observedElement.observed
+                                : ObservedType.NONE
+                            ),
                             forward: value.find(d => d.forward) != null,
                             backward: value.find(d => d.backward) != null,
                             score: 0,
@@ -568,15 +515,6 @@ export class GraphComponent implements OnInit {
     }
 
     private createSmallGraphStyle(): any {
-    /*const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize) / 2;
-
-      if (this.tracingService.getMaxScore() > 0) {
-        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
-      } else {
-        return size;
-      }
-    };*/
         const nodeSizeMap: string = this.createNodeSizeMap();
 
         let style = cytoscape
@@ -590,12 +528,8 @@ export class GraphComponent implements OnInit {
       .selector('node')
       .style({
         content: 'data(name)',
-        // 'height': sizeFunction, // ToDO: replace by linear function (data or dataMap)
-        // 'width': sizeFunction,  // ToDo: replace by linear function (data or dataMap)
-        // 'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-        // 'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
-        height: nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-        width: nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)',  // linear function
+        height: nodeSizeMap,
+        width: nodeSizeMap,
         'background-color': 'rgb(255, 255, 255)',
         'border-width': 3,
         'border-color': 'rgb(0, 0, 0)',
@@ -606,7 +540,7 @@ export class GraphComponent implements OnInit {
       .selector('edge')
       .style({
         'target-arrow-shape': 'triangle',
-        width: 1, // , //        'width': 6,
+        width: 1,
         'line-color': 'rgb(0, 0, 0)',
         'target-arrow-color': 'rgb(0, 0, 0)',
         'arrow-scale': 1.4,
@@ -621,15 +555,15 @@ export class GraphComponent implements OnInit {
       })
       .selector('edge:selected')
       .style({
-        width: 2 // 4
+        width: 2
       })
       .selector('node[?contains]')
       .style({
-        'border-width': 3 // 6 // ToDo: Clarify, what is this for
+        'border-width': 3
       })
       .selector('node:selected[?contains]')
       .style({
-        'border-width': 3 // 9 // ToDo: Clarify, what is this for
+        'border-width': 3
       })
       .selector(':active')
       .style({
@@ -695,15 +629,6 @@ export class GraphComponent implements OnInit {
     }
 
     private createLargeGraphStyle(): any {
-    /*const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-
-      if (this.tracingService.getMaxScore() > 0) {
-        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
-      } else {
-        return size;
-      }
-    };*/
         const nodeSizeMap: string = this.createNodeSizeMap();
 
         let style = cytoscape
@@ -716,52 +641,39 @@ export class GraphComponent implements OnInit {
       })
       .selector('node')
       .style({
-        // 'content': 'data(name)',
-        // 'height': sizeFunction, // PF test
-        // 'width': sizeFunction,  // PF test
-        // 'height': 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-        // 'width': 'mapData(score, 0, 1, 20, 40)',  // linear function
-        height: nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-        width: nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)',  // linear function
+        height: nodeSizeMap,
+        width: nodeSizeMap,
         'background-color': 'rgb(255, 255, 255)',
-        // 'border-width': 3,
         'border-color': 'rgb(0, 0, 0)',
-        // 'text-valign': 'bottom',
-        // 'text-halign': 'right',
         color: 'rgb(0, 0, 0)'
         // 'min-zoomed-font-size':10   // performance reasons
       })
       .selector('edge')
       .style({
-        // 'target-arrow-shape': 'triangle', // test reason
-        // large graphs
-        'mid-target-arrow-shape': 'triangle', // test reason
-        // 'mid-target-arrow-fill': 'hollow', // test reason
-        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
-        width: 1, // , //        'width': 6,
+        'mid-target-arrow-shape': 'triangle',
+        'mid-target-arrow-color': 'rgb(0, 0, 0)',
+        width: 1,
         'line-color': 'rgb(0, 0, 0)',
-        // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
-        'arrow-scale': 1.4 // test reason
+        'arrow-scale': 1.4
         // 'curve-style': 'bezier'   // performance reasons
       })
       .selector('node:selected')
       .style({
         'background-color': 'rgb(128, 128, 255)',
-        // 'border-width': 6,
         'border-color': 'rgb(0, 0, 255)',
         color: 'rgb(0, 0, 255)'
       })
       .selector('edge:selected')
       .style({
-        width: 2 // 12
+        width: 2
       })
       .selector('node[?contains]')
       .style({
-        'border-width': 3 // 6 // ToDo: Clarify, what is this for
+        'border-width': 3
       })
       .selector('node:selected[?contains]')
       .style({
-        'border-width': 3 // 9 // ToDo: Clarify, what is this for
+        'border-width': 3
       })
       .selector(':active')
       .style({
@@ -832,22 +744,6 @@ export class GraphComponent implements OnInit {
     }
 
     private createHugeGraphStyle(): any {
-    /*const sizeFunction = node => {
-      const size = GraphComponent.NODE_SIZES.get(this.nodeSize);
-
-      if (this.tracingService.getMaxScore() > 0) {
-        return (0.5 + 0.5 * node.data('score') / this.tracingService.getMaxScore()) * size;
-      } else {
-        return size;
-      }
-    };*/
-    /*this.nodeSizeMap = new Map();
-    const cachedSizeFunction = (node)=>{
-      if(!this.nodeSizeMap.has(node.id)) this.nodeSizeMap.set(node.id, sizeFunction(node));
-      return this.nodeSizeMap.get(node.id);
-    };        //_.memoize(sizeFunction);
-    */
-
         const nodeSizeMap: string = this.createNodeSizeMap();
 
         let style = cytoscape
@@ -860,30 +756,26 @@ export class GraphComponent implements OnInit {
       })
       .selector('node')
       .style({
-        height: nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-        width: nodeSizeMap, // 'mapData(score, 0, 1, 20, 40)',  // linear function
-        // 'content': 'data(name)', // no label
+        height: nodeSizeMap,
+        width: nodeSizeMap,
         'background-color': 'rgb(255, 255, 255)',
         'border-width': 2,
         'border-color': 'rgb(0, 0, 0)',
-        // 'text-valign': 'bottom', // no label
-        // 'text-halign': 'right', // no label
         color: 'rgb(0, 0, 0)'
         // 'min-zoomed-font-size':10   // performance reasons
       })
       .selector('edge')
       .style({
         'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
-        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
-        width: 1, //        'width': 6,
+        'mid-target-arrow-color': 'rgb(0, 0, 0)',
+        width: 1,
         'line-color': 'rgb(0, 0, 0)',
-        'arrow-scale': 1.4 // test reason
+        'arrow-scale': 1.4
         // 'curve-style': 'bezier'   // use haystack
       })
       .selector('node:selected')
       .style({
         'background-color': 'rgb(128, 128, 255)',
-        // 'border-width': 6,
         'border-color': 'rgb(0, 0, 255)',
         color: 'rgb(0, 0, 255)'
       })
@@ -893,21 +785,16 @@ export class GraphComponent implements OnInit {
       })
       .selector('node[?contains]')
       .style({
-        'border-width': 3 // 6 // ToDo: Clarify, what is this for
+        'border-width': 3
       })
       .selector('node:selected[?contains]')
       .style({
-        'border-width': 3 // 9 // ToDo: Clarify, what is this for
+        'border-width': 3
       })
       .selector(':active')
       .style({
           'overlay-opacity': 0.5
       });
-    /*.selector(':selected')
-    .css({
-      'background-color': 'black',
-      'opacity': 1
-    });*/
 
         const createSelector = (prop: string) => {
             if (prop === 'observed') {
@@ -995,10 +882,9 @@ export class GraphComponent implements OnInit {
     }
 
     private createStyle(): any {
-        const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 300; // 50
-        const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 500; // 100
+        const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 300;
+        const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 500;
 
-    // return this.createSmallGraphStyle();
         if (this.data.stations.length > MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
             return this.createHugeGraphStyle();
         } else if (
@@ -1094,75 +980,7 @@ export class GraphComponent implements OnInit {
             this.uncollapseMenuTriggerElement,
             this.getCyCoordinates(event)
           )
-            } /*, {
-        name: 'Collapse Sources',
-        enabled: true,
-        action: () => {
-          const options: { value: string, viewValue: string }[] = [];
-          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
-          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
-          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
-
-          const dialogData: DialogSingleSelectData = {
-            title: 'Select collapse mode',
-            options: options,
-            value: GroupMode.WEIGHT_ONLY.toString()
-          };
-
-          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
-            this.updateOverlay();
-            if (groupMode != null) {
-              this.tracingService.collapseSourceStations(groupMode);
-              this.updateAll();
-              this.callChangeFunction();
             }
-          });
-        }
-      }, {
-        name: 'Collapse Targets',
-        enabled: true,
-        action: () => {
-          const options: { value: string, viewValue: string }[] = [];
-          options.push({ value: GroupMode.WEIGHT_ONLY.toString(), viewValue: 'weight sensitive' });
-          options.push({ value: GroupMode.PRODUCT_AND_WEIGHT.toString(), viewValue: 'product name and weight sensitive' });
-          options.push({ value: GroupMode.LOT_AND_WEIGHT.toString(), viewValue: 'lot and weight sensitive' });
-
-          const dialogData: DialogSingleSelectData = {
-            title: 'Select collapse mode',
-            options: options,
-            value: GroupMode.WEIGHT_ONLY.toString()
-          };
-
-          this.dialogService.open(DialogSingleSelectComponent, {data: dialogData}).afterClosed().subscribe(groupMode => {
-            this.updateOverlay();
-            if (groupMode != null) {
-              this.tracingService.collapseTargetStations(groupMode);
-              this.updateAll();
-              this.callChangeFunction();
-            }
-          });
-        }
-      }, {
-        name: 'Collapse Simple Chains',
-        enabled: true,
-        action: () => {
-          this.updateOverlay();
-          this.tracingService.collapseSimpleChains();
-          this.updateAll();
-          this.callChangeFunction();
-
-        }
-      }, {
-        name: 'Collapse Isolated Clouds',
-        enabled: true,
-        action: () => {
-          this.updateOverlay();
-          this.tracingService.collapseIsolatedClouds();
-          this.updateAll();
-          this.callChangeFunction();
-
-        }
-      }*/
         ];
     }
 
@@ -1432,14 +1250,9 @@ export class GraphComponent implements OnInit {
               'Stations without incoming edges are collapsed iif their outgoing delivieres go into the same lots of the same station and either their weights are all positive or all zero.'
                     });
 
-          /*const dialogData: DialogPromptData = {
-            title: 'Input',
-            message: 'Please specify name of meta station:',
-            placeholder: 'Name'
-          };*/
                     const dialogData: DialogSingleSelectData = {
                         title: 'Choose source collapse mode',
-                        message: '', // Choose collapse mode:',
+                        message: '',
                         options: options,
                         value: GroupMode.WEIGHT_ONLY.toString()
                     };
@@ -1492,7 +1305,7 @@ export class GraphComponent implements OnInit {
 
                     const dialogData: DialogSingleSelectData = {
                         title: 'Choose target collapse mode',
-                        message: '', // Choose collapse mode:',
+                        message: '',
                         options: options,
                         value: GroupMode.WEIGHT_ONLY.toString()
                     };
@@ -1563,7 +1376,6 @@ export class GraphComponent implements OnInit {
                 enabled: true,
                 toolTip: null,
                 action: () => {
-          // this.updateOverlay();
                     this.tracingService.uncollapseSimpleChains();
                     this.updateAll();
                     this.callChangeFunction();
@@ -1574,7 +1386,6 @@ export class GraphComponent implements OnInit {
                 enabled: true,
                 toolTip: null,
                 action: () => {
-          // this.updateOverlay();
                     this.tracingService.uncollapseIsolatedClouds();
                     this.updateAll();
                     this.callChangeFunction();

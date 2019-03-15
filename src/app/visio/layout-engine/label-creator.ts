@@ -1,5 +1,5 @@
 import { StationInformation, LotInformation, FontMetrics,
-    SampleInformation, VisioLabel } from './datatypes';
+    StationSampleInformation, SampleInformation, VisioLabel } from './datatypes';
 import { GraphSettings } from './graph-settings';
 
 export abstract class LabelCreator {
@@ -17,9 +17,21 @@ export abstract class LabelCreator {
 
     getLotSampleLabel(sampleInfo: SampleInformation): VisioLabel {
         const text: string[] = [
-            LabelCreator.getText(sampleInfo.amount, 'unkown amount'),
-            LabelCreator.getText(sampleInfo.result, 'unkown result'),
-            LabelCreator.getText(sampleInfo.time, 'unkown time')
+            sampleInfo.type || 'Unknown type',
+            sampleInfo.amount || 'Unknown amount',
+            sampleInfo.result || 'Unknown result',
+            sampleInfo.time || 'Unknown time'
+        ];
+        return this.getLabel(text, GraphSettings.SAMPLE_BOX_MARGIN);
+    }
+
+    getStationSampleLabel(sampleInfo: StationSampleInformation): VisioLabel {
+        const text: string[] = [
+            sampleInfo.type || 'Unknown type',
+            sampleInfo.material || 'Unknown material',
+            sampleInfo.amount || 'Unknown amount',
+            sampleInfo.result || 'Unknown result',
+            sampleInfo.time || 'Unknown time'
         ];
         return this.getLabel(text, GraphSettings.SAMPLE_BOX_MARGIN);
     }
