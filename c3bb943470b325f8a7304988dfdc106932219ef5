@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "466680b9_0d66cb12",
+        "filename": "src/app/gis/gis.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comments",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca15b5c9_34674996",
+        "filename": "src/app/gis/gis.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 985,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comments",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d349226d_1941de22",
+        "filename": "src/app/graph/graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77cc5e37_cc4fff7a",
+        "filename": "src/app/graph/graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 593,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b065426b_d5e160ca",
+        "filename": "src/app/graph/graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comment here and at below lines",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf4b04f4_dc062293",
+        "filename": "src/app/graph/graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comments here and below",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20635c0b_ef3e107e",
+        "filename": "src/app/graph/graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 1098,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8992108_8e67d2eb",
+        "filename": "src/app/graph/graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 1435,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-03-15T22:53:48Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "c3bb943470b325f8a7304988dfdc106932219ef5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
