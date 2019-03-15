@@ -506,6 +506,7 @@ export class GisComponent implements OnInit {
                             id: key,
                             name: key,
                             lot: null,
+                            lotKey: null,
                             date: null,
                             source: value[0].source,
                             target: value[0].target,

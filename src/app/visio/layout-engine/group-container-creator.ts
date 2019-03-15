@@ -88,23 +88,27 @@ export class GroupContainerCreator {
     private setRowAndColumnHeights(cellGroups: {label: VisioLabel, cells: GridCell[]}[], graphLayers: GraphLayer[]) {
 
         this.groupHeaderHeight = Math.max(...cellGroups.map(g => g.label.size.height)) + GraphSettings.SECTION_DISTANCE;
-        const rowHeight: number[] = this.boxGrid.map(r => Math.max(...r.map(c => (c === null ? 0 : c.size.height))));
+        this.bottomMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
+        this.topMargin = this.bottomMargin + this.groupHeaderHeight;
         this.xMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
+
+        const rowHeight: number[] = this.boxGrid.map(r =>
+            Math.max(...r.map(c => (c === null ? 0 : c.size.height))) + this.topMargin + this.bottomMargin
+        );
 
         this.columnWidth = this.boxGrid[0].map((r, i) =>
             Math.max(...this.boxGrid.map(r2 => (r2[i] === null ? 0 : r2[i].size.width))) + 2 * this.xMargin);
 
-        this.bottomMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
-        this.topMargin = this.bottomMargin + this.groupHeaderHeight;
-
         this.rowTop = [].concat(
             [0],
-            this.aggValues(rowHeight.map(x => x + this.topMargin + this.bottomMargin))
+            this.aggValues(rowHeight)
         );
         this.columnLeft = [].concat(
             [0],
             this.aggValues(this.columnWidth)
         );
+
+        graphLayers.forEach((gL, index) => gL.height = rowHeight[index]);
     }
 
     private createGroupShape(cells: GridCell[], refCell: GridCell): CustomBoxShape {

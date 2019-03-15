@@ -9,15 +9,15 @@ export class PublicLabelCreator extends LabelCreator {
 
     getLotLabel(lotInfo: LotInformation): VisioLabel {
         const text: string[] = [
-            LabelCreator.getText(lotInfo.commonProductName, 'unkown product name'),
-            'Amount: ' + LabelCreator.getText(lotInfo.quantity, 'unkown')
+            lotInfo.commonProductName || 'Unknown product name',
+            'Amount: ' + lotInfo.quantity || 'unknown'
         ];
         return this.getLabel(text, GraphSettings.LOT_BOX_MARGIN);
     }
 
     getStationLabel(stationInfo: StationInformation): VisioLabel {
         const text: string[] = [
-            LabelCreator.getText(stationInfo.activities, 'unkown activity') + ' ' + stationInfo.ctno
+            (stationInfo.activities || 'Unknown activity') + ' ' + stationInfo.ctno
         ];
         return this.getLabel(text, GraphSettings.STATION_BOX_MARGIN);
     }

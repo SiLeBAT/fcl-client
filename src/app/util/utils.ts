@@ -323,4 +323,23 @@ export class Utils {
     static getTranspose<T>(matrix: T[][]): T[][] {
         return matrix[0].map((col, i) => matrix.map(row => row[i]));
     }
+
+    /**
+     * Partitions elements into groups according to the element key mapping.
+     *
+     * @param elements array of elements which shall be grouped
+     * @param keyFn element to element key mapping
+     */
+    static getGroups<T>(elements: T[], keyFn: (t: T) => string): Map<string, T[]> {
+        const result: Map<string, T[]> = new Map();
+        elements.forEach(e => {
+            const key: string = keyFn(e);
+            if (result.has(key)) {
+                result.get(key).push(e);
+            } else {
+                result.set(key, [e]);
+            }
+        });
+        return result;
+    }
 }

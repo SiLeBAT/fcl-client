@@ -41,6 +41,7 @@ export class Constants {
         id: null,
         name: null,
         lot: null,
+        lotKey: null,
         date: null,
         source: null,
         target: null,
@@ -129,4 +130,6 @@ export class Constants {
     'score'
   );
     static readonly DEFAULT_TABLE_SHOW_TYPE = ShowType.ALL;
+
+    static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';
 }

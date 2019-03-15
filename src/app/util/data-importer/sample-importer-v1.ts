@@ -1,8 +1,46 @@
 import { SampleData, FclData, StationData, SampleResultType, DeliveryData } from './../datatypes';
 import { Utils } from './../utils';
+import { Constants } from './../data-mappings/data-mappings-v1';
 
 export function importSamples(rawData: any, fclData: FclData) {
-    fclData.elements.samples = generateMockSampleData(fclData.elements.stations, fclData.elements.deliveries);
+    fclData.elements.samples = convertRawSamples(rawData);
+    if (fclData.elements.samples == null) {
+        fclData.elements.samples = generateMockSampleData(fclData.elements.stations, fclData.elements.deliveries);
+    }
+}
+
+function convertRawSamples(rawData: any): SampleData[] {
+    if (rawData != null && rawData[Constants.SAMPLEDATA] !== undefined) {
+        const result: SampleData[] = [];
+        for (const rawSample of rawData[Constants.SAMPLEDATA]) {
+            result.push({
+                station: rawSample.sampleStation || null,
+                lot: rawSample.sampledLot || null,
+                result: rawSample.result || null,
+                resultType: convertRawSampleResultType(rawSample.resultType),
+                time: rawSample.time || null,
+                amount: rawSample.amount || null,
+                type: rawSample.type || null,
+                material: rawSample.material || null
+            });
+        }
+        return result;
+    }
+    return null;
+}
+
+function convertRawSampleResultType(type: string): SampleResultType {
+    if (type == null) {
+        return SampleResultType.Unkown;
+    } else if (type === 'C') {
+        return SampleResultType.Confirmed;
+    } else if (type === 'N') {
+        return SampleResultType.Negative;
+    } else if (type === 'P') {
+        return SampleResultType.Probable;
+    } else {
+        return SampleResultType.Unkown;
+    }
 }
 
 function generateMockSampleData(stations: StationData[], deliveries: DeliveryData[]): SampleData[] {
@@ -41,7 +79,7 @@ function generateMockLotOutSamples(deliveries: DeliveryData[]): SampleData[] {
     // Mock lot samples will be generated from deliveries, so
     // get a reference delivery for each lot
     deliveries.forEach(d => {
-        const uniqueLotIdentifier = 'S' + d.originalSource + 'P' + d.name + 'L' + d.lot;
+        const uniqueLotIdentifier = 'S' + d.originalSource + '|' + (d.name || d.id) + '|' + (d.lot || d.id);
         lotIdToDeliveryRef.set(uniqueLotIdentifier, d);
     });
     lotIdToDeliveryRef.forEach(delivery => {
@@ -50,7 +88,7 @@ function generateMockLotOutSamples(deliveries: DeliveryData[]): SampleData[] {
             for (let k = 1; k <= nSamples; k++) {
                 result.push({
                     station: delivery.originalSource,
-                    lot: delivery.lot,
+                    lot: delivery.lotKey || generateMockLotKey(delivery),
                     type: 'fake lot out sample',
                     material: null,
                     time: 'fake time',
@@ -64,6 +102,10 @@ function generateMockLotOutSamples(deliveries: DeliveryData[]): SampleData[] {
     return result;
 }
 
+function generateMockLotKey(delivery: DeliveryData): string {
+    return delivery.originalSource + '|' + delivery.name || delivery.id + '|' + delivery.lot || delivery.id;
+}
+
 function generateMockIncomingSamples(stations: StationData[], deliveries: DeliveryData[]): SampleData[] {
     const result: SampleData[] = [];
     const idToDeliveryMap: Map<string, DeliveryData> = Utils.arrayToMap(deliveries, (d) => d.id);
@@ -74,7 +116,7 @@ function generateMockIncomingSamples(stations: StationData[], deliveries: Delive
                 if (delivery !== null) {
                     result.push({
                         station: station.id,
-                        lot: delivery.lot,
+                        lot: delivery.lotKey || generateMockLotKey(delivery),
                         type: 'fake incoming sample',
                         material: null,
                         time: 'fake time',

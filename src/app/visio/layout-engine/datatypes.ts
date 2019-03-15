@@ -1,5 +1,4 @@
-import { StationData } from './../../util/datatypes';
-import { isType } from '@angular/core/src/type';
+import { StationData, SampleResultType } from './../../util/datatypes';
 
 export interface Position {
     x: number;
@@ -34,11 +33,7 @@ export interface CustomBoxShape {
 }
 
 export enum BoxType {
-    Station, Lot, StationGroup, SampleNegative, SampleConfirmed, SampleProbable
-}
-
-export enum SampleResultType {
-    Confirmed, Negative, Probable
+    Station, Lot, StationGroup, SampleNegative, SampleConfirmed, SampleProbable, SampleUnknown
 }
 
 export interface VisioBox {
@@ -94,8 +89,8 @@ export interface DeliveryInformation {
 }
 
 export interface InSampleInformation {
-    deliveryId: number;
-    sample: SampleInformation[];
+    lotId: string;
+    samples: SampleInformation[];
 }
 
 export interface SampleInformation {
@@ -122,6 +117,7 @@ export interface VisioEngineConfiguration {
 }
 export interface LotInformation {
     id: string; // internal id
+    key: string; // this key is for sample assignment only
     commonProductName: string;
     brandName: string;
     product: string;

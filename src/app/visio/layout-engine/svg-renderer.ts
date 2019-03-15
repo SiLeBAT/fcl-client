@@ -10,7 +10,8 @@ export class SvgRenderer {
         [BoxType.Lot, 'DeepSkyBlue'],
         [BoxType.SampleNegative, 'DarkSeaGreen'],
         [BoxType.SampleConfirmed, 'IndianRed'],
-        [BoxType.SampleProbable, 'Yellow']
+        [BoxType.SampleProbable, 'Yellow'],
+        [BoxType.SampleUnknown, 'Purple']
     ]);
 
     static renderReport(report: VisioReport): string {
@@ -61,7 +62,7 @@ export class SvgRenderer {
         '    <!-- arrowhead marker definition -->\n' +
         '    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" \n' +
         '      markerWidth="6" markerHeight="6" \n' +
-        '      orient="auto-start-reverse">\n' +
+        '      orient="auto">\n' +
         '      <path d="M 0 0 L 10 5 L 0 10 z" />\n' +
         '    </marker>\n' +
         '  </defs>\n';
