@@ -18,8 +18,8 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
-              { "glob": "favicon.ico", "input": "/src", "output": "/" },
-              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" }
+              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" },
+              "src/favicon.png"
             ],
             "styles": [
               "src/styles.css",
@@ -141,8 +141,8 @@
             ],
             "assets": [
               { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
-              { "glob": "favicon.ico", "input": "/src", "output": "/" },
-              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" }
+              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" },
+              "src/favicon.png",
             ]
           }
         },

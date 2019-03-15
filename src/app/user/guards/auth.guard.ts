@@ -3,6 +3,7 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 import { AlertService } from '../../core/services/alert.service';
 import { Store, select } from '@ngrx/store';
 import * as fromUser from '../state/user.reducer';
+import * as userActions from '../state/user.actions';
 import { TokenizedUser } from '../models/user.model';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { map } from 'rxjs/operators';
@@ -26,9 +27,7 @@ export class AuthGuard implements CanActivate {
 
                       if (isExpired) {
                           this.alertService.error('Not authorized, please login.');
-                          this.router.navigate(['/users/login']).catch((err) => {
-                              throw new Error(`Unable to navigate: ${err}`);
-                          });
+                          this.store.dispatch(new userActions.LogoutUser());
                       }
                       return !isExpired;
                   }
