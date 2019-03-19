@@ -944,7 +944,7 @@ Sidebar.prototype.addRoaStylePalette = function(expand)
             100, 50, 'negative', 'Negative Sample', null, null, 'rounded rect rectangle box negative sample'),
 
         this.createVertexTemplateEntry(
-            'rounded=1;whiteSpace=wrap;html=1;fillColor=orange;strokeColor=none;arcSize=10;verticalAlign=top;align=center;spacingTop=2',
+            'rounded=1;whiteSpace=wrap;html=1;fillColor=#ffb74d;strokeColor=none;arcSize=10;verticalAlign=top;align=center;spacingTop=2',
             100, 50, 'probable', 'Probable Sample', null, null, 'rounded rect rectangle box probable sample'),
 
         this.createVertexTemplateEntry('rounded=1;whiteSpace=wrap;html=1;fillColor=yellow;strokeColor=black;dashed=1', 120, 60, 'Info', 'Additional Information', null, null, 'rounded rect rectangle box info'),

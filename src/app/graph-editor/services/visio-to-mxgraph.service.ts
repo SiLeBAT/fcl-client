@@ -25,7 +25,9 @@ const enum ElementColor {
   REGION_COLOR = 'lightgrey',
   STATION_COLOR = 'white',
   LOT_COLOR = '#bbdefb',
-  SAMPLE_COLOR = '#ff6666',
+  SAMPLE_NEGATIVE_COLOR = '#b3ffb3',
+  SAMPLE_CONFIRMED_COLOR = '#ff6666',
+  SAMPLE_PROBABLE_COLOR = '#ffb74d',
   LABEL_COLOR = 'black',
   CONNECTOR_COLOR = 'black'
 }
@@ -39,7 +41,9 @@ interface Constants {
     StationColor: string;
     LotColor: string;
     LabelColor: string;
-    SampleColor: string;
+    SampleNegativeColor: string;
+    SampleConfirmedColor: string;
+    SampleProbableColor: string;
     Rounded: string;
     FillColor: ConstantValue;
     StrokeOpacity: ConstantSize;
@@ -60,7 +64,9 @@ const BoxStyles: Constants = {
     RegionColor: ElementColor.REGION_COLOR,
     StationColor: ElementColor.STATION_COLOR,
     LotColor: ElementColor.LOT_COLOR,
-    SampleColor: ElementColor.SAMPLE_COLOR,
+    SampleNegativeColor: ElementColor.SAMPLE_NEGATIVE_COLOR,
+    SampleConfirmedColor: ElementColor.SAMPLE_CONFIRMED_COLOR,
+    SampleProbableColor: ElementColor.SAMPLE_PROBABLE_COLOR,
     LabelColor: ElementColor.LABEL_COLOR,
     Rounded: 'rounded=1',
     FillColor: (color: string) => `${mxConstants.STYLE_FILLCOLOR}=${color}`,
@@ -111,7 +117,7 @@ export class VisioToMxGraphService {
         _.forIn(rootElements, (stationGroup: VisioBox) => {
             const stationGroupCell = this.drawVisioElement(parent, stationGroup);
 
-            // draw station elements
+            // draw station and environmental smaple elements
             const stationElements: VisioBox[] = stationGroup.elements;
             _.forIn(stationElements, (station: VisioBox) => {
                 const stationCell = this.drawVisioElement(stationGroupCell, station);
@@ -120,6 +126,12 @@ export class VisioToMxGraphService {
                 const lotElements: VisioBox[] = station.elements;
                 _.forIn(lotElements, (lot: VisioBox) => {
                     const lotCell = this.drawVisioElement(stationCell, lot);
+
+                    // draw sample element
+                    const sampleElements: VisioBox[] = lot.elements;
+                    _.forIn(sampleElements, (sample: VisioBox) => {
+                        const sampleCell = this.drawVisioElement(lotCell, sample);
+                    });
                 });
             });
         });
@@ -155,6 +167,15 @@ export class VisioToMxGraphService {
                 break;
             case BoxType.Lot:
                 labelStyle = this.lotStyle();
+                break;
+            case BoxType.SampleNegative:
+                labelStyle = this.sampleNegativeStyle();
+                break;
+            case BoxType.SampleConfirmed:
+                labelStyle = this.sampleConfirmedStyle();
+                break;
+            case BoxType.SampleProbable:
+                labelStyle = this.sampleProbableStyle();
                 break;
             default:
                 labelStyle = '';
@@ -268,10 +289,26 @@ export class VisioToMxGraphService {
         );
     }
 
-    private sampleStyle() {
+    private sampleNegativeStyle() {
         return this.getStyle(
           BoxStyles.Rounded,
-          BoxStyles.FillColor(BoxStyles.SampleColor),
+          BoxStyles.FillColor(BoxStyles.SampleNegativeColor),
+          BoxStyles.StrokeOpacity(0)
+        );
+    }
+
+    private sampleConfirmedStyle() {
+        return this.getStyle(
+          BoxStyles.Rounded,
+          BoxStyles.FillColor(BoxStyles.SampleConfirmedColor),
+          BoxStyles.StrokeOpacity(0)
+        );
+    }
+
+    private sampleProbableStyle() {
+        return this.getStyle(
+          BoxStyles.Rounded,
+          BoxStyles.FillColor(BoxStyles.SampleProbableColor),
           BoxStyles.StrokeOpacity(0)
         );
     }
