@@ -16,7 +16,6 @@ import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 import { UserModule } from './user/user.module';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
-import { MaterialModule } from './shared/material.module';
 import { GraphEditorModule } from './graph-editor/graph-editor.module';
 
 import { AppComponent } from './app.component';
@@ -56,7 +55,6 @@ import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
-        MaterialModule,
         NgxDatatableModule,
         GraphEditorModule,
         FlexLayoutModule,
@@ -64,7 +62,6 @@ import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
         UserModule,
         CoreModule,
         SharedModule,
-        MaterialModule,
         StoreModule.forRoot({ [STATE_SLICE_NAME]: reducer }),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({

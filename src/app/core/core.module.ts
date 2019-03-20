@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { MaterialModule } from '../shared/material.module';
+import { SharedModule } from '../shared/shared.module';
 
 import { SpinnerLoaderComponent } from './spinner-loader/spinner-loader.component';
 import { MainDashComponent } from './main-dash/main-dash.component';
@@ -25,7 +25,7 @@ const coreComponents = [
 @NgModule({
     imports: [
         CommonModule,
-        MaterialModule,
+        SharedModule,
         RouterModule.forChild([]),
         FlexLayoutModule,
         ...coreModules
