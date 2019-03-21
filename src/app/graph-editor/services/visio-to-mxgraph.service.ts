@@ -8,7 +8,7 @@ import {
   VisioLabel,
   BoxType,
   VisioPort
-} from '../../visio/layout-engine/datatypes';
+} from '../../tracing/visio/layout-engine/datatypes';
 import * as _ from 'lodash';
 import { _MatFormFieldMixinBase } from '@angular/material';
 

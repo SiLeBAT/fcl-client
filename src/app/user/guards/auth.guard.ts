@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { AlertService } from '../../core/services/alert.service';
+import { AlertService } from '../../shared/services/alert.service';
 import { Store, select } from '@ngrx/store';
 import * as fromUser from '../state/user.reducer';
 import * as userActions from '../state/user.actions';

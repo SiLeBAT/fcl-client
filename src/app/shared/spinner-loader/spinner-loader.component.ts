@@ -21,11 +21,9 @@ export class SpinnerLoaderComponent implements OnInit, OnDestroy {
     constructor(private spinnerService: SpinnerLoaderService) {}
 
     ngOnInit() {
-        this.subscription = this.spinnerService.loaderState.subscribe(
-      (state: LoaderState) => {
-          this.show = state.show;
-      }
-    );
+        this.subscription = this.spinnerService.loaderState.subscribe((state: LoaderState) => {
+            this.show = state.show;
+        });
     }
 
     ngOnDestroy() {

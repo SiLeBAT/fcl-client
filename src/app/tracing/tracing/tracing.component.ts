@@ -22,13 +22,13 @@ import { Utils } from '../util/utils';
 import { FclData, GraphType, TableMode, StationData } from '../util/datatypes';
 import { Constants } from '../util/constants';
 import { GisComponent } from '../gis/gis.component';
-import { environment } from '../../environments/environment';
-import { AppService } from '../app.service';
+import { environment } from '../../../environments/environment';
+import { AppService } from '../../app.service';
 import { NodeLayoutInfo } from '../visio/layout-engine/datatypes';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
-import { Graph } from 'app/graph/layoutmanager/farm_to_fork/data_structures';
+// import { Graph } from 'app/graph/layoutmanager/farm_to_fork/data_structures';
 
 @Component({
   // tslint:disable-next-line:component-selector

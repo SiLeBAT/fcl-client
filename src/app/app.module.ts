@@ -2,67 +2,39 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routing.module';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
 
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ScrollbarHelper } from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
-import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 
 import { UserModule } from './user/user.module';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { GraphEditorModule } from './graph-editor/graph-editor.module';
+import { TracingModule } from './tracing/tracing.module';
 
 import { AppComponent } from './app.component';
-import { TracingComponent } from './tracing/tracing.component';
-import { GraphComponent } from './graph/graph.component';
-import { GisComponent } from './gis/gis.component';
-import { TableComponent } from './table/table.component';
-import { DialogActionsComponent } from './dialog/dialog-actions/dialog-actions.component';
-import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
-import { DialogPromptComponent } from './dialog/dialog-prompt/dialog-prompt.component';
-import { DialogSelectComponent } from './dialog/dialog-select/dialog-select.component';
-import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialog-single-select.component';
-import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
-import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
-import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.component';
 import { environment } from '../environments/environment';
-import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
+import { MainPageModule } from './main-page/main-page.module';
 
 @NgModule({
     declarations: [
-        AppComponent,
-        TracingComponent,
-        GraphComponent,
-        GisComponent,
-        TableComponent,
-        DialogActionsComponent,
-        DialogAlertComponent,
-        DialogPromptComponent,
-        DialogSelectComponent,
-        DialogSingleSelectComponent,
-        StationPropertiesComponent,
-        DeliveryPropertiesComponent,
-        VisioLayoutComponent
+        AppComponent
     ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgxDatatableModule,
         GraphEditorModule,
+        TracingModule,
         FlexLayoutModule,
-        PasswordStrengthMeterModule,
+        MainPageModule,
         UserModule,
         CoreModule,
         SharedModule,
-        StoreModule.forRoot({ [STATE_SLICE_NAME]: reducer }),
+        StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({
             name: 'FCL Devtools',
@@ -73,24 +45,14 @@ import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
         AppRoutingModule
     ],
     providers: [
-        // {
-        //     provide: LocationStrategy,
-        //     useClass: HashLocationStrategy
-        // },
+        {
+            provide: LocationStrategy,
+            useClass: HashLocationStrategy
+        },
         ScrollbarHelper
     ],
     bootstrap: [
         AppComponent
-    ],
-    entryComponents: [
-        DialogActionsComponent,
-        DialogAlertComponent,
-        DialogPromptComponent,
-        DialogSelectComponent,
-        DialogSingleSelectComponent,
-        StationPropertiesComponent,
-        DeliveryPropertiesComponent,
-        VisioLayoutComponent
     ]
 })
 export class AppModule {

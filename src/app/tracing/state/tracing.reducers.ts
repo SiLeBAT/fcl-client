@@ -1,4 +1,4 @@
-import * as fromRoot from './app.state';
+import * as fromRoot from '../../state/app.state';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { TracingActions, TracingActionTypes } from './tracing.actions';
 import { VisioReport } from '../visio/layout-engine/datatypes';

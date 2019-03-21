@@ -14,7 +14,7 @@ import { DialogSingleSelectComponent, DialogSingleSelectData } from '../dialog/d
 import { StationPropertiesComponent, StationPropertiesData } from '../dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from '../dialog/delivery-properties/delivery-properties.component';
 import { Utils } from '../util/utils';
-import { TracingService } from '../tracing/tracing.service';
+import { TracingService } from '../services/tracing.service';
 import { Color, CyEdge, CyNode, DeliveryData, FclElements, Layout, ObservedType,
   Position, Size, StationData, GroupMode } from '../util/datatypes';
 import { FruchtermanLayout } from './fruchterman_reingold';

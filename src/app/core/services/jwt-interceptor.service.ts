@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
-import { AlertService } from './alert.service';
+import { AlertService } from '../../shared/services/alert.service';
 import * as fromUser from './../../user/state/user.reducer';
 import * as userActions from './../../user/state/user.actions';
 

@@ -8,7 +8,6 @@ import { EffectsModule } from '@ngrx/effects';
 
 import { SharedModule } from './../shared/shared.module';
 import { CoreModule } from '../core/core.module';
-import { MaterialModule } from './../shared/material.module';
 import { UserRoutingModule } from './user.routing.module';
 import { ActivateComponent } from './activate/activate.component';
 import { AdminActivateComponent } from './admin-activate/admin-activate.component';
@@ -33,7 +32,6 @@ const userModules = [
         PasswordStrengthMeterModule,
         SharedModule,
         CoreModule,
-        MaterialModule,
         UserRoutingModule,
         StoreModule.forFeature(STATE_SLICE_NAME, reducer),
         EffectsModule.forFeature([UserEffects]),

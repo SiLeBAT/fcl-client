@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { VisioReport } from '../../../visio/layout-engine/datatypes';
-import * as fromTracing from '../../../state/tracing.reducers';
+import { VisioReport } from '../../../tracing/visio/layout-engine/datatypes';
+import * as fromTracing from '../../../tracing/state/tracing.reducers';
 import { Store, select } from '@ngrx/store';
 import { VisioToMxGraphService } from '../../services/visio-to-mxgraph.service';
 import { takeWhile } from 'rxjs/operators';

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 import { UserService } from '../services/user.service';
-import { AlertService } from '../../core/services/alert.service';
+import { AlertService } from '../../shared/services/alert.service';
 
 import * as userActions from './user.actions';
 import { map, catchError, exhaustMap, mergeMap, withLatestFrom, tap } from 'rxjs/operators';

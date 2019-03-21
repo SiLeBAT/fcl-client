@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatMenuModule, MatSliderModule } from '@angular/material';
 import { FormsModule } from '@angular/forms';
-import { TracingService } from '../tracing/tracing.service';
+import { TracingService } from '../tracing/services/tracing.service';
 
 import { GraphComponent } from './graph.component';
 

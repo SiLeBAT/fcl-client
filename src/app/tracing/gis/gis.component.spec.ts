@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatMenuModule, MatSliderModule } from '@angular/material';
-import { TracingService } from '../tracing/tracing.service';
+import { TracingService } from '../tracing/services/tracing.service';
 
 import { GisComponent } from './gis.component';
 

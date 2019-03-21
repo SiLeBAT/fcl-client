@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { StationData, FclElements } from 'app/util/datatypes';
-import { Graph, Vertex } from 'app/graph/layoutmanager/farm_to_fork/data_structures';
-import { FarmToForkLayouter } from 'app/graph/layoutmanager/farm_to_fork/farm_to_fork';
-import { BusinessTypeRanker } from 'app/graph/layoutmanager/farm_to_fork/business_type_ranker';
+import { StationData, FclElements } from '../../util/datatypes';
+import { Graph, Vertex } from '../../graph/layoutmanager/farm_to_fork/data_structures';
+import { FarmToForkLayouter } from '../../graph/layoutmanager/farm_to_fork/farm_to_fork';
+import { BusinessTypeRanker } from '../../graph/layoutmanager/farm_to_fork/business_type_ranker';
 import { Position, NodeLayoutInfo } from './datatypes';
-import { Utils } from 'app/util/utils';
+import { Utils } from '../../util/utils';
 
 export enum FoodChainOrientation {
     TopDown, LeftRight, BottomUp, RightLeft

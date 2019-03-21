@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../../core/services/alert.service';
+import { AlertService } from '../../shared/services/alert.service';
 import { NewUser, TitleResponseDTO } from '../models/user.model';
-import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 
 export interface IHash {
     [details: string]: string;

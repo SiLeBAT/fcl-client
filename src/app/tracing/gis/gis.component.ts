@@ -24,7 +24,7 @@ import {
   DeliveryPropertiesData
 } from '../dialog/delivery-properties/delivery-properties.component';
 import { Utils } from '../util/utils';
-import { TracingService } from '../tracing/tracing.service';
+import { TracingService } from '../services/tracing.service';
 import {
   Color,
   CyEdge,

@@ -4,9 +4,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../../core/services/alert.service';
+import { AlertService } from '../../shared/services/alert.service';
 import { environment } from '../../../environments/environment';
-import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 import { TitleResponseDTO } from '../models/user.model';
 
 @Component({

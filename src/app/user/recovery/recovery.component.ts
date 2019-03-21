@@ -4,8 +4,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../../core/services/alert.service';
-import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { AlertService } from '../../shared/services/alert.service';
+import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 import { Email, TitleResponseDTO } from '../models/user.model';
 
 @Component({

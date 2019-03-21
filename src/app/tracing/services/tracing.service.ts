@@ -11,7 +11,6 @@ import {
 } from '../util/datatypes';
 import { Utils } from '../util/utils';
 import * as _ from 'lodash';
-import { initChangeDetectorIfExisting } from '@angular/core/src/render3/instructions';
 
 interface LinkGroup {
     linkStation: StationData;

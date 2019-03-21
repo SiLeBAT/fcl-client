@@ -3,9 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../services/user.service';
-import { AlertService } from '../../core/services/alert.service';
+import { AlertService } from '../../shared/services/alert.service';
 import { environment } from '../../../environments/environment';
-import { SpinnerLoaderService } from '../../core/services/spinner-loader.service';
+import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 import { AdminActivateResponseDTO } from './../models/user.model';
 
 @Component({
