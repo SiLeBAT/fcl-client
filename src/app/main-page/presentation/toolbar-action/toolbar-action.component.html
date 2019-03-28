@@ -1,0 +1,54 @@
+<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || userService.loggedIn()) && !isTracingActive()">
+    <button
+        class="fcl-menu-item"
+        mat-button
+        [routerLink]="['/tracing']"
+        matTooltip="Tracing view">
+        <mat-icon>track_changes</mat-icon>
+        Tracing View
+    </button>
+</div>
+
+<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || userService.loggedIn()) && isTracingActive()">
+    <button
+        mat-button
+        (click)="mainPageService.onSaveImage()"
+        matTooltip="Save image">
+        <mat-icon>image</mat-icon>
+        Save Image
+    </button>
+    <input
+        id="fileInput"
+        #fileInput
+        type="file"
+        (change)="mainPageService.onLoad($event)"
+    />
+    <button
+        mat-button
+        onclick="document.getElementById('fileInput').click()"
+        matTooltip="Upload data">
+        <mat-icon>file_upload</mat-icon>
+        Upload
+    </button>
+    <button
+        mat-button
+        (click)="mainPageService.onSave()"
+        matTooltip="Download data">
+        <mat-icon>file_download</mat-icon>
+        Download
+    </button>
+    <button
+        mat-button
+        (click)="onToggleRightSidebar()"
+        matTooltip="Toggle right sidebar">
+        <mat-icon>filter_list</mat-icon>
+        Open/Close Filter
+    </button>
+    <button
+        mat-button
+        (click)="mainPageService.onVisioLayout()"
+        matTooltip="Generate ROA Layout">
+        <mat-icon>grid_on</mat-icon>
+        ROA Style
+    </button>
+</div>

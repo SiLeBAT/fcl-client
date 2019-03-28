@@ -1,0 +1,58 @@
+@import "../../../assets/sass/base";
+
+:host {
+    flex: 1;
+    display: flex;
+}
+
+.fcl-profile-item {
+    flex: 1;
+}
+
+.fcl-profile-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.fcl-mat-card {
+    border-radius: $fcl-card-border-radius;
+    margin-top: 5rem;
+    max-width: 800px;
+    min-width: 400px;
+}
+
+.fcl-mat-card-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.fcl-mat-card-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.fcl-mat-card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.fcl-activate-text {
+    margin-top: 2rem;
+}
+
+.fcl-card-action {
+    margin-top: 3rem;
+}
+
+.fcl-card-action-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fcl-form-field {
+  width: 100%;
+}
+

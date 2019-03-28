@@ -13,11 +13,21 @@ export interface State extends fromRoot.State {
 export interface TracingState {
     fclData: FclElements;
     visioReport: VisioReport | null;
+    sideBars: SideBarState;
+}
+
+export interface SideBarState {
+    leftSideBarOpen: boolean;
+    rightSideBarOpen: boolean;
 }
 
 const initialState: TracingState = {
     fclData: null,
-    visioReport: null
+    visioReport: null,
+    sideBars: {
+        leftSideBarOpen: false,
+        rightSideBarOpen: false
+    }
 };
 
 // SELECTORS
@@ -28,6 +38,11 @@ export const getVisioReport = createSelector(
   state => state.visioReport
 );
 
+export const getSideBarStates = createSelector(
+    getTracingFeatureState,
+    (state: TracingState) => state.sideBars
+);
+
 // REDUCER
 export function reducer(state: TracingState = initialState, action: TracingActions): TracingState {
     switch (action.type) {
@@ -36,6 +51,24 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 visioReport: action.payload
+            };
+
+        case TracingActionTypes.ToggleLeftSideBar:
+            return {
+                ...state,
+                sideBars: {
+                    ...state.sideBars,
+                    leftSideBarOpen: action.payload
+                }
+            };
+
+        case TracingActionTypes.ToggleRightSideBar:
+            return {
+                ...state,
+                sideBars: {
+                    ...state.sideBars,
+                    rightSideBarOpen: action.payload
+                }
             };
 
         default:

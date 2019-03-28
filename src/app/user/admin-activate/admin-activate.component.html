@@ -1,85 +1,27 @@
-<div
-  class="adminactivate-container"
-  fxLayout="row"
-  fxLayoutAlign="center center">
+<div class="fcl-adminactivate-item fcl-adminactivate-container">
+    <mat-card class="fcl-mat-card fcl-mat-card-container">
+        <mat-card-header class="fcl-mat-card-header">
+            <div class="mat-headline">Admin account activation</div>
+            <mat-divider></mat-divider>
+        </mat-card-header>
 
-  <mat-card
-    fxFlex="40%"
-    class="mat-elevation-z5">
+        <mat-card-content>
+            <div class="fcl-mat-card-content" *ngIf="adminTokenValid">
+                <div class="fcl-adminactivate-text">
+                    <p class="mat-subheading-1">You have activated the {{ appName }} account for {{ name }}.</p>
+                </div>
+            </div>
 
-    <mat-card-header
-      fxLayout="column"
-      fxLayoutAlign="space-evenly">
-      <div
-        fxFlex
-        fxFlexOffset="20px">
-        <div class="mat-headline">Admin account activation</div>
-      </div>
-      <div fxFlex fxFlexOffset="20px">
-          <mat-divider></mat-divider>
-      </div>
-    </mat-card-header>
-
-    <mat-card-content>
-
-        <div
-        *ngIf="adminTokenValid"
-        fxLayout="column">
-
-        <div
-          fxFlex
-          fxFlexOffset="20px">
-          <p class="mat-subheading-1">
-              You have activated the {{ appName }} account for {{ name }}.
-          </p>
-        </div>
-      </div>
-
-      <div
-        *ngIf="!adminTokenValid"
-        fxLayout="column">
-
-        <div
-          fxFlex
-          fxFlexOffset="20px">
-          <p class="mat-subheading-1">
-              Your admin activation failed.
-          </p>
-          <p class="mat-subheading-1">
-              Please let the user register again.
-          </p>
-        </div>
-      </div>
-
-
-
-    </mat-card-content>
-  </mat-card>
+            <div class="fcl-mat-card-content" *ngIf="!adminTokenValid">
+                <div class="fcl-adminactivate-text">
+                    <p class="mat-subheading-1">
+                        Your admin activation failed.
+                    </p>
+                    <p class="mat-subheading-1">
+                        Please let the user register again.
+                    </p>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
 </div>
-
-
-
-<!-- <div class="jumbotron">
-  <div class="container-fluid">
-    <div class="col-md-6 col-md-offset-3">
-      <h2>Admin Kontoaktivierung</h2>
-      <hr>
-      <br>
-      <div *ngIf="adminTokenValid" class="help-block">
-        <p>Sie haben das {{ appName }} Konto für {{ name }} als Admin aktiviert</p>
-      </div>
-
-
-
-      <div *ngIf="!adminTokenValid" class="help-block">
-        <p>Ihre Admin Kontoaktivierung ist fehlgeschlagen.</p>
-        <p>Bitte erneut registrieren lassen.</p>
-        <br>
-      </div>
-
-
-    </div>
-  </div>
-</div> -->
-
-

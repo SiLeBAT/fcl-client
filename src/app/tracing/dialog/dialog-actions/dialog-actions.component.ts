@@ -8,7 +8,7 @@ export interface DialogActionsData {
 
 @Component({
     templateUrl: './dialog-actions.component.html',
-    styleUrls: ['./dialog-actions.component.css']
+    styleUrls: ['./dialog-actions.component.scss']
 })
 export class DialogActionsComponent {
 

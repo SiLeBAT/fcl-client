@@ -30,10 +30,9 @@ interface MenuAction {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-graph',
+    selector: 'fcl-graph',
     templateUrl: './graph.component.html',
-    styleUrls: ['./graph.component.css']
+    styleUrls: ['./graph.component.scss']
 })
 export class GraphComponent implements OnInit {
     private static readonly ZOOM_FACTOR = 1.5;

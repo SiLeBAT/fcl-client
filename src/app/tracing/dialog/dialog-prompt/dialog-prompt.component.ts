@@ -8,10 +8,9 @@ export interface DialogPromptData {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-dialog-prompt',
+    selector: 'fcl-dialog-prompt',
     templateUrl: './dialog-prompt.component.html',
-    styleUrls: ['./dialog-prompt.component.css']
+    styleUrls: ['./dialog-prompt.component.scss']
 })
 export class DialogPromptComponent {
 

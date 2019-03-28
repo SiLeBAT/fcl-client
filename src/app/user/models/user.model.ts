@@ -47,10 +47,6 @@ export interface TitleResponseDTO {
     title: string;
 }
 
-// export interface ActivationResponseDTO {
-//     activation: boolean;
-// }
-
 export interface AdminActivateResponseDTO extends TitleResponseDTO {
     name: string;
 }

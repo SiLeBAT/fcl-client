@@ -10,10 +10,9 @@ import { SpinnerLoaderService } from '../../shared/services/spinner-loader.servi
 import { TitleResponseDTO } from '../models/user.model';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-activate',
+    selector: 'fcl-activate',
     templateUrl: './activate.component.html',
-    styleUrls: ['./activate.component.css']
+    styleUrls: ['./activate.component.scss']
 })
 export class ActivateComponent implements OnInit {
     private activateForm: FormGroup;

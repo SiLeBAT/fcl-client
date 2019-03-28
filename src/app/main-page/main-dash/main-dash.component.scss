@@ -1,0 +1,15 @@
+:host {
+    flex: 1;
+    display: flex;
+}
+
+.fcl-maindash-item {
+    flex: 1;
+}
+
+.fcl-maindash-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

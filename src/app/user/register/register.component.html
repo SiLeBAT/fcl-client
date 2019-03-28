@@ -1,180 +1,97 @@
-<div
-  class="register-container"
-  fxLayout="row"
-  fxLayoutAlign="center center">
+<div class="fcl-register-item fcl-register-container">
+    <mat-card class="fcl-mat-card fcl-mat-card-container">
+        <mat-card-header class="fcl-mat-card-header">
+            <div class="mat-headline">Register</div>
+            <mat-divider></mat-divider>
+        </mat-card-header>
 
-  <mat-card
-    fxFlex="40%"
-    class="mat-elevation-z5">
+        <mat-card-content>
+            <form [formGroup]="registerForm" (ngSubmit)="register()">
+                <div class="fcl-mat-card-content">
+                    <div class="form-group fcl-form-firstname">
+                        <mat-form-field class="fcl-form-field" appearance="standard">
+                            <mat-label>First Name</mat-label>
+                            <input matInput formControlName="firstName" name="firstName" required />
+                            <mat-icon matPrefix>account_circle</mat-icon>
+                            <mat-error *ngIf="!validateField('firstName')">
+                                Required Field
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-    <mat-card-header
-      fxLayout="column"
-      fxLayoutAlign="space-evenly">
-      <div
-        fxFlex
-        fxFlexOffset="20px">
-        <div class="mat-headline">Register</div>
-      </div>
-      <div fxFlex fxFlexOffset="20px">
-          <mat-divider></mat-divider>
-      </div>
-    </mat-card-header>
+                    <div class="form-group">
+                        <mat-form-field class="fcl-form-field" appearance="standard">
+                            <mat-label>Last Name</mat-label>
+                            <input matInput formControlName="lastName" name="lastName" required />
+                            <mat-icon matPrefix>account_circle</mat-icon>
+                            <mat-error *ngIf="!validateField('lastName')">
+                                Required Field
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-    <mat-card-content>
-      <form
-        [formGroup]="registerForm"
-        (ngSubmit)="register()">
+                    <div class="form-group">
+                        <mat-form-field class="fcl-form-field" appearance="standard">
+                            <mat-label>Email</mat-label>
+                            <input matInput formControlName="email" name="email" required />
+                            <mat-icon matPrefix>mail</mat-icon>
+                            <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.email">
+                                Not a valid email
+                            </mat-error>
+                            <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.required">
+                                You must enter a valid email
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-        <div
-          fxLayout="column">
+                    <div class="form-group fcl-form-password" [ngClass]="{ error: !validateField('password1') || validatePwStrength() }">
+                        <mat-form-field class="fcl-form-field" appearance="standard">
+                            <mat-label>Password</mat-label>
+                            <input matInput #message formControlName="password1" type="password" name="password1" required />
+                            <mat-icon matPrefix>lock</mat-icon>
+                            <mat-hint align="start">
+                                At least 8 characters
+                            </mat-hint>
+                            <mat-hint align="end"> {{ message.value.length }} characters </mat-hint>
+                            <mat-error *ngIf="!validateField('password1')">
+                                Password is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-group" [ngClass]="{ error: !validateField('password2') }">
+                        <password-strength-meter [password]="registerForm.value.password1" (strengthChange)="doStrengthChange($event)">
+                        </password-strength-meter>
+                        <em *ngIf="validatePwStrength()">
+                            Password to weak or to short
+                        </em>
+                    </div>
+                    <div class="form-group">
+                        <mat-form-field class="fcl-form-field" appearance="standard">
+                            <mat-label>Confirm Password</mat-label>
+                            <input matInput formControlName="password2" type="password" name="password2" required />
+                            <mat-icon matPrefix>lock</mat-icon>
+                            <mat-error
+                                *ngIf="!validateField('password2') && registerForm.controls.password2.errors.validatePasswordConfirm"
+                            >
+                                Passwords must match
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-          <div
-            class="form-group"
-            fxFlex
-            fxFlexOffset="20px">
-              <mat-form-field appearance="standard">
-                <mat-label>First Name</mat-label>
-                <input
-                  matInput
-                  formControlName="firstName"
-                  name="firstName"
-                  required>
-                <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error
-                  *ngIf="!validateField('firstName')">
-                  Required Field
-                </mat-error>
-              </mat-form-field>
-          </div>
-          <div
-            class='form-group'
-            fxFlex>
-            <mat-form-field appearance="standard">
-              <mat-label>Last Name</mat-label>
-              <input
-                matInput
-                formControlName="lastName"
-                name="lastName"
-                required>
-              <mat-icon matPrefix>account_circle</mat-icon>
-              <mat-error
-                *ngIf="!validateField('lastName')">
-                Required Field
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div
-            class="form-group"
-            fxFlex>
-              <mat-form-field appearance="standard">
-                <mat-label>Email</mat-label>
-                <input
-                  matInput
-                  formControlName="email"
-                  name="email"
-                  required>
-                <mat-icon matPrefix>mail</mat-icon>
-                <mat-error
-                  *ngIf="!validateField('email') && registerForm.controls.email.errors.email">
-                  Not a valid email
-                </mat-error>
-                <mat-error
-                  *ngIf="!validateField('email') && registerForm.controls.email.errors.required">
-                  You must enter a valid email
-                </mat-error>
-              </mat-form-field>
-          </div>
-          <div
-            class='form-group'
-            [ngClass]="{'error' :  !validateField('password1') || validatePwStrength()}"
-            fxFlex
-            fxFlexOffset="20px">
-            <mat-form-field appearance="standard">
-              <mat-label>Password</mat-label>
-              <input
-                matInput
-                #message
-                formControlName="password1"
-                type="password"
-                name="password1"
-                required>
-              <mat-icon matPrefix>lock</mat-icon>
-              <mat-hint
-                align="start">
-                At least 8 characters
-              </mat-hint>
-              <mat-hint
-                align="end">
-                {{message.value.length}} characters
-              </mat-hint>
-              <mat-error
-                *ngIf="!validateField('password1')">
-                Password is required
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div
-            class='form-group'
-            [ngClass]="{'error' : !validateField('password2')}"
-            fxFlex>
-            <password-strength-meter
-              [password]="registerForm.value.password1"
-              (strengthChange)="doStrengthChange($event)">
-            </password-strength-meter>
-            <em
-              *ngIf="validatePwStrength()">
-              Password to weak or to short
-            </em>
-          </div>
-          <div
-            class='form-group'
-            fxFlex>
-            <mat-form-field appearance="standard">
-              <mat-label>Confirm Password</mat-label>
-              <input
-                matInput
-                formControlName="password2"
-                type="password"
-                name="password2"
-                required>
-              <mat-icon matPrefix>lock</mat-icon>
-              <mat-error
-                *ngIf="!validateField('password2')  && registerForm.controls.password2.errors.validatePasswordConfirm">
-                Passwords must match
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <div
-            fxFlex
-            fxFlexOffset="40px">
-
-            <div
-              fxLayout="row"
-              fxLayoutAlign="start center">
-
-              <div
-                class="form-group">
-                <button
-                  mat-raised-button
-                  color="primary"
-                  type="submit"
-                  [disabled]="!registerForm.valid">
-                  Submit
-                </button>
-              </div>
-              <div>
-                <a
-                  mat-button
-                  [routerLink]="['/users/login']"
-                  fxFlexOffset="10px">
-                  Cancel
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+                    <div class="fcl-card-action fcl-card-action-container">
+                        <div class="form-group fcl-submit-button">
+                            <button mat-raised-button color="primary" type="submit" [disabled]="!registerForm.valid">
+                                Submit
+                            </button>
+                        </div>
+                        <div>
+                            <a mat-button [routerLink]="['/users/login']">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
 </div>

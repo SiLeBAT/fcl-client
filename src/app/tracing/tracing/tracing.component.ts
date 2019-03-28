@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-  OnDestroy
-} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy, Input } from '@angular/core';
 import { MatDialog, MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 import * as Hammer from 'hammerjs';
@@ -13,28 +7,24 @@ import * as _ from 'lodash';
 import { GraphComponent } from '../graph/graph.component';
 import { TableComponent } from '../table/table.component';
 import { DataService } from '../util/data.service';
-import {
-  DialogSelectComponent,
-  DialogSelectData
-} from '../dialog/dialog-select/dialog-select.component';
+import { DialogSelectComponent, DialogSelectData } from '../dialog/dialog-select/dialog-select.component';
 import { generateVisioReport } from '../visio/visio.service';
 import { Utils } from '../util/utils';
 import { FclData, GraphType, TableMode, StationData } from '../util/datatypes';
 import { Constants } from '../util/constants';
 import { GisComponent } from '../gis/gis.component';
 import { environment } from '../../../environments/environment';
-import { AppService } from '../../app.service';
+import { MainPageService } from '../../main-page/services/main-page.service';
 import { NodeLayoutInfo } from '../visio/layout-engine/datatypes';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
-// import { Graph } from 'app/graph/layoutmanager/farm_to_fork/data_structures';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-tracing',
+    selector: 'fcl-tracing',
     templateUrl: './tracing.component.html',
-    styleUrls: ['./tracing.component.css']
+    styleUrls: ['./tracing.component.scss']
 })
 export class TracingComponent implements OnInit, OnDestroy {
     @ViewChild('mainContainer', { read: ElementRef }) mainContainer: ElementRef;
@@ -44,7 +34,7 @@ export class TracingComponent implements OnInit, OnDestroy {
     @ViewChild('leftSidenav') leftSidenav: MatSidenav;
     @ViewChild('rightSidenav') rightSidenav: MatSidenav;
     @ViewChild('rightSidenav', { read: ElementRef })
-  rightSidenavElement: ElementRef;
+    rightSidenavElement: ElementRef;
     @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
     @ViewChild('fileInput') fileInput: ElementRef;
 
@@ -58,6 +48,10 @@ export class TracingComponent implements OnInit, OnDestroy {
     showTypes = Constants.SHOW_TYPES;
     sizes = Constants.SIZES;
 
+    leftOpened: boolean = false;
+    rightOpened: boolean = false;
+    private componentActive = true;
+
     data: FclData = {
         elements: null,
         layout: null,
@@ -67,65 +61,57 @@ export class TracingComponent implements OnInit, OnDestroy {
     };
 
     constructor(
-      private dataService: DataService,
-      private dialogService: MatDialog,
-      private router: Router,
-      private appService: AppService,
-      private store: Store<fromTracing.State>
+        private dataService: DataService,
+        private dialogService: MatDialog,
+        private router: Router,
+        private mainPageService: MainPageService,
+        private store: Store<fromTracing.State>
     ) {
         document.body.oncontextmenu = e => e.preventDefault();
-        this.appService.setTracingActive(true);
+        this.mainPageService.setTracingActive(true);
     }
 
     ngOnInit() {
-        this.subscriptions.push(
-      this.appService.doToggleLeftSidebar.subscribe(notification =>
-        this.toggleLeftSidebar()
-      )
-    );
-        this.subscriptions.push(
-      this.appService.doToggleRightSidebar.subscribe(notification =>
-        this.toggleRightSidebar()
-      )
-    );
-        this.subscriptions.push(
-      this.appService.doSaveImage.subscribe(notification => this.onSaveImage())
-    );
-        this.subscriptions.push(
-            this.appService.doVisioLayout.subscribe(notification => this.onVisioLayout())
-        );
-        this.subscriptions.push(
-      this.appService.doOnLoad.subscribe(event => this.onLoad(event))
-    );
-        this.subscriptions.push(
-      this.appService.doOnSave.subscribe(event => this.onSave())
-    );
+        this.subscriptions.push(this.mainPageService.doToggleLeftSidebar.subscribe(notification => this.toggleLeftSidebar()));
+        this.subscriptions.push(this.mainPageService.doToggleRightSidebar.subscribe(notification => this.toggleRightSidebar()));
+        this.subscriptions.push(this.mainPageService.doSaveImage.subscribe(notification => this.onSaveImage()));
+        this.subscriptions.push(this.mainPageService.doVisioLayout.subscribe(notification => this.onVisioLayout()));
+        this.subscriptions.push(this.mainPageService.doOnLoad.subscribe(event => this.onLoad(event)));
+        this.subscriptions.push(this.mainPageService.doOnSave.subscribe(event => this.onSave()));
 
         this.dataService.setDataSource('../../assets/data/bbk.json');
         this.dataService
-      .getData()
-      .then(data => {
-          this.data = data;
-          this.updateComponents();
-      })
-      .catch(error => {
-          Utils.showErrorMessage(this.dialogService, error);
-      });
+            .getData()
+            .then(data => {
+                this.data = data;
+                this.updateComponents();
+            })
+            .catch(error => {
+                Utils.showErrorMessage(this.dialogService, error);
+            });
 
         this.rightSidenav.openedStart.subscribe(() => this.onTableChange('width'));
         new Hammer.Manager(this.sidenavSlider.nativeElement, {
             recognizers: [[Hammer.Pan]]
         }).on('pan', event => {
-            const newWidth =
-        1 -
-        event.center.x /
-          (this.mainContainer.nativeElement as HTMLElement).offsetWidth;
+            const newWidth = 1 - event.center.x / (this.mainContainer.nativeElement as HTMLElement).offsetWidth;
 
             if (newWidth > 0 && newWidth < 1) {
                 this.data.tableSettings.width = newWidth;
                 this.onTableChange('width');
             }
         });
+
+        this.store.pipe(
+            select(fromTracing.getSideBarStates),
+            takeWhile(() => this.componentActive)
+          ).subscribe(
+              (sideBarStates: fromTracing.SideBarState) => {
+                  this.leftOpened = sideBarStates.leftSideBarOpen;
+                  this.rightOpened = sideBarStates.rightSideBarOpen;
+              }
+          );
+
     }
 
     onHome() {
@@ -167,14 +153,10 @@ export class TracingComponent implements OnInit, OnDestroy {
                 this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
                 break;
             case 'mergeDeliveries':
-                this.getCurrentGraph().setMergeDeliveries(
-          this.data.graphSettings.mergeDeliveries
-        );
+                this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
                 break;
             case 'showLegend':
-                this.getCurrentGraph().setShowLegend(
-          this.data.graphSettings.showLegend
-        );
+                this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
                 break;
             case 'showZoom':
                 this.getCurrentGraph().setShowZoom(this.data.graphSettings.showZoom);
@@ -185,8 +167,7 @@ export class TracingComponent implements OnInit, OnDestroy {
     onTableChange(property: string) {
         switch (property) {
             case 'width':
-                (this.rightSidenavElement.nativeElement as HTMLElement).style.width =
-          this.data.tableSettings.width * 100 + '%';
+                (this.rightSidenavElement.nativeElement as HTMLElement).style.width = this.data.tableSettings.width * 100 + '%';
                 break;
             case 'mode':
                 this.table.setMode(this.data.tableSettings.mode);
@@ -209,22 +190,19 @@ export class TracingComponent implements OnInit, OnDestroy {
         if (files.length === 1) {
             this.dataService.setDataSource(files[0]);
             this.dataService
-        .getData()
-        .then(data => {
-            this.data = data;
-            this.updateComponents();
-        })
-        .catch(error => {
-            Utils.showErrorMessage(this.dialogService, error);
-        });
+                .getData()
+                .then(data => {
+                    this.data = data;
+                    this.updateComponents();
+                })
+                .catch(error => {
+                    Utils.showErrorMessage(this.dialogService, error);
+                });
         } else {
-            Utils.showErrorMessage(
-        this.dialogService,
-        'Please select one .json file!'
-      );
+            Utils.showErrorMessage(this.dialogService, 'Please select one .json file!');
         }
 
-        this.appService.setInputEmpty();
+        this.mainPageService.setInputEmpty();
     }
 
     onSave() {
@@ -239,7 +217,7 @@ export class TracingComponent implements OnInit, OnDestroy {
 
         const data: any = this.dataService.getExportData();
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-    // const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
+        // const blob = new Blob([JSON.stringify(this.data)], {type: 'application/json'});
         const fileName = 'data.json';
 
         if (window.navigator.msSaveOrOpenBlob != null) {
@@ -254,69 +232,62 @@ export class TracingComponent implements OnInit, OnDestroy {
 
     onSaveImage() {
         this.getCurrentGraph()
-      .getCanvas()
-      .then(canvas => {
-          const fileName = 'graph.png';
+            .getCanvas()
+            .then(canvas => {
+                const fileName = 'graph.png';
 
-          if (
-          window.navigator.msSaveOrOpenBlob != null &&
-          canvas.msToBlob != null
-        ) {
-              window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
-          } else {
-              Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
-          }
-      })
-      .catch(err => {
-          throw new Error(`Unable to save image: ${err}`);
-      });
+                if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
+                    window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
+                } else {
+                    Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+                }
+            })
+            .catch(err => {
+                throw new Error(`Unable to save image: ${err}`);
+            });
     }
 
     getNodeLayoutInfo(): Map<string, NodeLayoutInfo> {
         // refactor
-        const view = (this.graphType === GraphType.GRAPH ? this.graph : this.gis);
+        const view = this.graphType === GraphType.GRAPH ? this.graph : this.gis;
 
-        if (
-            view !== null &&
-            view.hasOwnProperty('cy') &&
-            (view as any).cy !== null
-        ) {
-            const result: Map<string, { size: number, position: { x: number, y: number } }> = new Map();
+        if (view !== null && view.hasOwnProperty('cy') && (view as any).cy !== null) {
+            const result: Map<string, { size: number; position: { x: number; y: number } }> = new Map();
 
             for (const node of (view as any).cy.nodes()) {
                 const position = node.data().position;
-                result.set(
-                    node.id(), {
-                        size: node.height(),
-                        position: {
-                            x: position.x,
-                            y: position.y
-                        }
-                    });
+                result.set(node.id(), {
+                    size: node.height(),
+                    position: {
+                        x: position.x,
+                        y: position.y
+                    }
+                });
             }
             return result;
         } else {
             return null;
         }
-
     }
 
     onVisioLayout() {
         const nodeLayoutInfo = this.getNodeLayoutInfo();
 
         if (nodeLayoutInfo !== null) {
-            generateVisioReport(this.data.elements, nodeLayoutInfo, this.dialogService).then(visioReport => {
-                if (visioReport !== null) {
-                    this.router.navigate(['/graph-editor']).catch(err => {
-                        throw new Error(`Unable to navigate to graph editor: ${err}`);
-                    });
-                    this.store.dispatch(new tracingActions.GenerateVisioLayoutSuccess(visioReport));
-                }
-            }).catch(err => {
-                if (err !== undefined) {
-                    throw new Error(`Visio layout creation failed: ${err}`);
-                }
-            });
+            generateVisioReport(this.data.elements, nodeLayoutInfo, this.dialogService)
+                .then(visioReport => {
+                    if (visioReport !== null) {
+                        this.router.navigate(['/graph-editor']).catch(err => {
+                            throw new Error(`Unable to navigate to graph editor: ${err}`);
+                        });
+                        this.store.dispatch(new tracingActions.GenerateVisioLayoutSuccess(visioReport));
+                    }
+                })
+                .catch(err => {
+                    if (err !== undefined) {
+                        throw new Error(`Visio layout creation failed: ${err}`);
+                    }
+                });
         }
     }
 
@@ -327,20 +298,15 @@ export class TracingComponent implements OnInit, OnDestroy {
             selected: boolean;
         }[] = [];
 
-        for (const column of Utils.getAllTableProperties(
-      this.data.tableSettings.mode,
-      this.data.elements
-    )) {
+        for (const column of Utils.getAllTableProperties(this.data.tableSettings.mode, this.data.elements)) {
             options.push({
                 value: column,
-                viewValue: Constants.PROPERTIES.has(column)
-          ? Constants.PROPERTIES.get(column).name
-          : '"' + column + '"',
+                viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : '"' + column + '"',
                 selected: Utils.getTableProperties(
-          this.data.tableSettings.mode,
-          this.data.tableSettings.stationColumns,
-          this.data.tableSettings.deliveryColumns
-        ).includes(column)
+                    this.data.tableSettings.mode,
+                    this.data.tableSettings.stationColumns,
+                    this.data.tableSettings.deliveryColumns
+                ).includes(column)
             });
         }
 
@@ -350,48 +316,44 @@ export class TracingComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService
-      .open(DialogSelectComponent, { data: dialogData })
-      .afterClosed()
-      .subscribe(selections => {
-          if (selections != null) {
-              switch (this.data.tableSettings.mode) {
-                  case TableMode.STATIONS:
-                      this.data.tableSettings.stationColumns = selections;
-                      this.onTableChange('stationColumns');
-                      break;
-                  case TableMode.DELIVERIES:
-                      this.data.tableSettings.deliveryColumns = selections;
-                      this.onTableChange('deliveryColumns');
-                      break;
-              }
-          }
-      });
+            .open(DialogSelectComponent, { data: dialogData })
+            .afterClosed()
+            .subscribe(selections => {
+                if (selections != null) {
+                    switch (this.data.tableSettings.mode) {
+                        case TableMode.STATIONS:
+                            this.data.tableSettings.stationColumns = selections;
+                            this.onTableChange('stationColumns');
+                            break;
+                        case TableMode.DELIVERIES:
+                            this.data.tableSettings.deliveryColumns = selections;
+                            this.onTableChange('deliveryColumns');
+                            break;
+                    }
+                }
+            });
     }
 
     ngOnDestroy() {
-        this.appService.setTracingActive(false);
+        this.mainPageService.setTracingActive(false);
         _.forEach(this.subscriptions, subscription => {
             subscription.unsubscribe();
         });
+
+        this.componentActive = false;
     }
 
     private updateComponents() {
         this.onTableChange('width');
 
         const waitForGraph = () => {
-            if (
-        this.getCurrentGraph().elementRef.nativeElement.offsetParent == null
-      ) {
+            if (this.getCurrentGraph().elementRef.nativeElement.offsetParent == null) {
                 setTimeout(waitForGraph, 50);
             } else {
                 this.getCurrentGraph().setNodeSize(this.data.graphSettings.nodeSize);
                 this.getCurrentGraph().setFontSize(this.data.graphSettings.fontSize);
-                this.getCurrentGraph().setMergeDeliveries(
-          this.data.graphSettings.mergeDeliveries
-        );
-                this.getCurrentGraph().setShowLegend(
-          this.data.graphSettings.showLegend
-        );
+                this.getCurrentGraph().setMergeDeliveries(this.data.graphSettings.mergeDeliveries);
+                this.getCurrentGraph().setShowLegend(this.data.graphSettings.showLegend);
                 this.getCurrentGraph().setShowZoom(this.data.graphSettings.showZoom);
                 this.getCurrentGraph().onChange(() => this.table.update());
 
@@ -408,9 +370,7 @@ export class TracingComponent implements OnInit, OnDestroy {
                 this.table.setStationColumns(this.data.tableSettings.stationColumns);
                 this.table.setDeliveryColumns(this.data.tableSettings.deliveryColumns);
                 this.table.setShowType(this.data.tableSettings.showType);
-                this.table.onSelectionChange(() =>
-          this.getCurrentGraph().updateSelection()
-        );
+                this.table.onSelectionChange(() => this.getCurrentGraph().updateSelection());
                 this.table.init(this.data.elements);
             }
         };

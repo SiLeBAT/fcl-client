@@ -8,10 +8,9 @@ export interface LoaderState {
 }
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-spinner-loader',
+    selector: 'fcl-spinner-loader',
     templateUrl: 'spinner-loader.component.html',
-    styleUrls: ['spinner-loader.component.css']
+    styleUrls: ['spinner-loader.component.scss']
 })
 export class SpinnerLoaderComponent implements OnInit, OnDestroy {
     show = false;

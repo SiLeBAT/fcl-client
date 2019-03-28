@@ -54,6 +54,7 @@
     "lodash": "^4.17.10",
     "material-design-icons": "^3.0.1",
     "mxgraph": "^3.9.8",
+    "normalize.css": "^8.0.1",
     "openlayers": "^4.6.5",
     "rxjs": "^6.2.2",
     "rxjs-compat": "^6.2.2",

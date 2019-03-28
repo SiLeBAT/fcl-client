@@ -9,10 +9,9 @@ import * as userActions from '../state/user.actions';
 import { takeWhile } from 'rxjs/operators';
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-login',
+    selector: 'fcl-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.css']
+    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
     loginForm: FormGroup;
@@ -29,7 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             )
             .subscribe((currentUser: TokenizedUser) => {
                 if (currentUser) {
-                    this.router.navigate(['/users/main']).catch(err => {
+                    this.router.navigate(['/users/profile']).catch(err => {
                         throw new Error(`Unable to navigate: ${err}`);
                     });
                 }

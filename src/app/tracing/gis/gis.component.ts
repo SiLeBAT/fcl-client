@@ -49,10 +49,9 @@ interface MenuAction {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-gis',
+    selector: 'fcl-gis',
     templateUrl: './gis.component.html',
-    styleUrls: ['./gis.component.css']
+    styleUrls: ['./gis.component.scss']
 })
 export class GisComponent implements OnInit {
     private static readonly MIN_ZOOM = 0.1;

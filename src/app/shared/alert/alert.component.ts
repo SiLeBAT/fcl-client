@@ -4,10 +4,9 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 import { AlertService, INotification } from '../services/alert.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-alert',
+    selector: 'fcl-alert',
     templateUrl: './alert.component.html',
-    styleUrls: ['./alert.component.css']
+    styleUrls: ['./alert.component.scss']
 })
 export class AlertComponent implements OnInit {
 

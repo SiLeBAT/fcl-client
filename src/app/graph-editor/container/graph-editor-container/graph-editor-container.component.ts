@@ -6,9 +6,10 @@ import { VisioToMxGraphService } from '../../services/visio-to-mxgraph.service';
 import { takeWhile } from 'rxjs/operators';
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-graph-editor-container',
-    template: '<app-graph-editor [graph]="graph"></app-graph-editor>'
+    selector: 'fcl-graph-editor-container',
+    templateUrl: './graph-editor-container.component.html',
+    styleUrls: ['./graph-editor-container.component.scss']
+
 })
 export class GraphEditorContainerComponent implements OnInit, OnDestroy {
     graph: mxGraph;

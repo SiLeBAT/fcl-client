@@ -1,0 +1,15 @@
+@import '../../../../assets/sass/base';
+
+.fcl-action-item {
+    flex: 1;
+}
+
+.fcl-action-container {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: $fcl-toolbar-padding * 4;
+}
+
+#fileInput {
+    display: none;
+}

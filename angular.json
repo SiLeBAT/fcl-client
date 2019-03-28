@@ -22,9 +22,7 @@
               "src/favicon.png"
             ],
             "styles": [
-              "src/styles.css",
-              "src/fcl-app-theme.scss",
-              "src/material-style.css",
+              "src/styles.scss",
               "src/assets/styles/grapheditor.css"
             ],
             "scripts": [
@@ -135,9 +133,7 @@
               "src/assets/js/Dialogs.js"
             ],
             "styles": [
-              "src/styles.css",
-              "src/fcl-app-theme.scss",
-              "src/material-style.css"
+              "src/styles.scss"
             ],
             "assets": [
               { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
@@ -189,11 +185,11 @@
   "defaultProject": "fcl-web-app",
   "schematics": {
     "@schematics/angular:component": {
-      "prefix": "app",
+      "prefix": "fcl",
       "styleext": "scss"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "fcl"
     }
   }
 }

@@ -110,10 +110,9 @@ class DataOptimizer {
 }
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-station-properties',
+    selector: 'fcl-station-properties',
     templateUrl: './station-properties.component.html',
-    styleUrls: ['./station-properties.component.css']
+    styleUrls: ['./station-properties.component.scss']
 })
 export class StationPropertiesComponent implements OnInit, OnDestroy {
 

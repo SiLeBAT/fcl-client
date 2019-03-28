@@ -11,8 +11,7 @@ declare const mxLanguage: string;
 declare const OPEN_URL: string;
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-graph-editor',
+    selector: 'fcl-graph-editor',
     templateUrl: './graph-editor.component.html'
 })
 export class GraphEditorComponent implements AfterViewInit {

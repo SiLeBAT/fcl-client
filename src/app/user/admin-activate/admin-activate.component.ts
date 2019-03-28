@@ -9,10 +9,9 @@ import { SpinnerLoaderService } from '../../shared/services/spinner-loader.servi
 import { AdminActivateResponseDTO } from './../models/user.model';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-admin-activate',
+    selector: 'fcl-admin-activate',
     templateUrl: './admin-activate.component.html',
-    styleUrls: ['./admin-activate.component.css']
+    styleUrls: ['./admin-activate.component.scss']
 })
 export class AdminActivateComponent implements OnInit {
 

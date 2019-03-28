@@ -14,10 +14,9 @@ interface FilterableRow {
 }
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-table',
+    selector: 'fcl-table',
     templateUrl: './table.component.html',
-    styleUrls: ['./table.component.css']
+    styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
 

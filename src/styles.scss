@@ -1,0 +1,46 @@
+@import '~normalize.css/normalize.css';
+
+
+// @import "~material-design-icons/iconfont/material-icons.css";
+// @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@swimlane/ngx-datatable/release/index.css";
+@import "~@swimlane/ngx-datatable/release/assets/icons.css";
+@import "~openlayers/css/ol.css";
+@import 'assets/sass/base';
+@import "material-style";
+@import "ngx-datatable-style";
+
+// html, body {
+//   height: 100vh;
+//   margin: 0;
+//   font-family: Roboto, "Helvetica Neue", sans-serif;
+//   overflow: hidden;
+// }
+
+
+
+@include mat-core($fcl-typography);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($fcl-theme);
+
+body {
+    font-family: $fcl-font-family;
+}
+
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+.mat-tooltip.mytooltip {
+  font-size: 16px;
+}
+
+.mytooltip {
+  font-size: 16px;
+}
+

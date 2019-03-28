@@ -8,7 +8,7 @@ import { RecoveryComponent } from './recovery/recovery.component';
 import { ResetComponent } from './reset/reset.component';
 import { ActivateComponent } from './activate/activate.component';
 import { AdminActivateComponent } from './admin-activate/admin-activate.component';
-import { HomeComponent } from './home/home.component';
+import { ProfileComponent } from './profile/profile.component';
 import { environment } from './../../environments/environment';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -17,8 +17,8 @@ const userRoutes: Routes =
         path: 'users',
         children: [
             {
-                path: 'main',
-                component: HomeComponent,
+                path: 'profile',
+                component: ProfileComponent,
                 canActivate: environment.serverless ? null : [AuthGuard]
             },
             {

@@ -31,7 +31,7 @@ export class UserEffects {
                 this.alertService.success(loginResponse.title);
                 this.spinnerService.hide();
                 this.userService.setCurrentUser(loginResponse.user);
-                this.router.navigate(['/users/main']).catch((err) => {
+                this.router.navigate(['/users/profile']).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);
                 });
                 return new userActions.LoginUserSuccess(loginResponse.user);

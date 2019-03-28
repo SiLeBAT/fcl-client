@@ -9,10 +9,9 @@ import { SpinnerLoaderService } from '../../shared/services/spinner-loader.servi
 import { Email, TitleResponseDTO } from '../models/user.model';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-revovery',
+    selector: 'fcl-revovery',
     templateUrl: './recovery.component.html',
-    styleUrls: ['./recovery.component.css']
+    styleUrls: ['./recovery.component.scss']
 })
 export class RecoveryComponent implements OnInit {
     recoveryForm: FormGroup;

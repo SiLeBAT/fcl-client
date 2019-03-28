@@ -9,10 +9,9 @@ export interface DialogSingleSelectData {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-dialog-single-select',
+    selector: 'fcl-dialog-single-select',
     templateUrl: './dialog-single-select.component.html',
-    styleUrls: ['./dialog-single-select.component.css']
+    styleUrls: ['./dialog-single-select.component.scss']
 })
 export class DialogSingleSelectComponent {
 

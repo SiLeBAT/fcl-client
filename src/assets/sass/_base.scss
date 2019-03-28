@@ -1,0 +1,18 @@
+@import "~@angular/material/theming";
+@import "./themes";
+
+$fcl-typography: mat-typography-config(
+    $font-family: $fcl-font-family
+);
+
+$fcl-toolbar-padding: 5px;
+$fcl-toolbar-elevation: 4;
+$fcl-card-border-radius: 8px;
+
+@mixin em-errors {
+    float: right;
+    color: #FE0000;
+    padding-left: 10px;
+
+  }
+

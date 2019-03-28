@@ -13,10 +13,9 @@ export interface IHash {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-register',
+    selector: 'fcl-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.css']
+    styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
     registerForm: FormGroup;

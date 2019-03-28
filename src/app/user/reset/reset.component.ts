@@ -9,10 +9,9 @@ import { SpinnerLoaderService } from '../../shared/services/spinner-loader.servi
 import { NewPassword, TitleResponseDTO } from '../models/user.model';
 
 @Component({
-    // tslint:disable-next-line:component-selector
-    selector: 'app-reset',
+    selector: 'fcl-reset',
     templateUrl: './reset.component.html',
-    styleUrls: ['./reset.component.css']
+    styleUrls: ['./reset.component.scss']
 })
 export class ResetComponent implements OnInit {
     resetForm: FormGroup;

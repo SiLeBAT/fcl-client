@@ -9,10 +9,9 @@ export interface DeliveryPropertiesData {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-delivery-properties',
+    selector: 'fcl-delivery-properties',
     templateUrl: './delivery-properties.component.html',
-    styleUrls: ['./delivery-properties.component.css']
+    styleUrls: ['./delivery-properties.component.scss']
 })
 export class DeliveryPropertiesComponent implements OnInit {
 

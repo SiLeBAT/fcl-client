@@ -7,10 +7,9 @@ export interface DialogSelectData {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-dialog-select',
+    selector: 'fcl-dialog-select',
     templateUrl: './dialog-select.component.html',
-    styleUrls: ['./dialog-select.component.css']
+    styleUrls: ['./dialog-select.component.scss']
 })
 export class DialogSelectComponent {
 

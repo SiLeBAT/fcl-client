@@ -7,10 +7,9 @@ export interface DialogAlertData {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
-    selector: 'app-dialog-alert',
+    selector: 'fcl-dialog-alert',
     templateUrl: './dialog-alert.component.html',
-    styleUrls: ['./dialog-alert.component.css']
+    styleUrls: ['./dialog-alert.component.scss']
 })
 export class DialogAlertComponent {
 

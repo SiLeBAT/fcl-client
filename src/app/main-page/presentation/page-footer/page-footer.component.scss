@@ -1,0 +1,12 @@
+@import '../../../../assets/sass/base';
+
+.fcl-toolbar-item {
+    flex: 1;
+
+    @include mat-elevation($fcl-toolbar-elevation);
+}
+
+.fcl-toolbar-container {
+    display: flex;
+    justify-content: space-between;
+}
