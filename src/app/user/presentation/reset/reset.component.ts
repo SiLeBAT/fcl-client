@@ -12,7 +12,7 @@ export class ResetComponent implements OnInit {
     resetForm: FormGroup;
     private pwStrength: number;
 
-    constructor(private changeRef: ChangeDetectorRef,) {
+    constructor(private changeRef: ChangeDetectorRef) {
         this.pwStrength = -1;
     }
 

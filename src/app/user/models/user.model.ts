@@ -12,7 +12,7 @@ export interface NewPassword {
     newPw: string;
 }
 export interface Email {
-    email: string
+    email: string;
 }
 export interface LoginCredentials extends Email {
     password: string;
