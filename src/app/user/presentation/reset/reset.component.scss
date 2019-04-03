@@ -1,0 +1,27 @@
+@import "../../../../assets/sass/base";
+
+.fcl-card-action-container {
+    display: flex;
+}
+
+.fcl-mat-card-content {
+    width: 500px;
+}
+
+.fcl-reset-button {
+    margin-right: $fcl-toolbar-padding * 4;
+}
+
+.fcl-reset-text,
+.fcl-card-action {
+    margin-top: 3rem;
+}
+
+.fcl-form-field {
+    width: 100%;
+}
+
+em {
+    @include em-errors;
+}
+

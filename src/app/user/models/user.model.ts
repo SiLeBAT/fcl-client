@@ -8,43 +8,27 @@ export interface TokenizedUser extends User {
     token: string;
 }
 
-export interface Email {
-    email: string;
-}
-
 export interface NewPassword {
     newPw: string;
 }
-export interface Credentials extends Email {
+export interface Email {
+    email: string
+}
+export interface LoginCredentials extends Email {
     password: string;
 }
 
-export class NewUser implements Credentials {
-    constructor(
-      public email: string,
-      public password: string,
-      public firstName: string,
-      public lastName: string
-    ) { }
-}
-
-export class DefaultUser implements User {
-    _id: any;
-
-    constructor(
-      public email: string,
-      public firstName: string = '',
-      public lastName: string = ''
-  ) { }
-}
-
-export interface LoginResponseDTO {
-    user: TokenizedUser;
-    title: string;
+export interface RegistrationCredentials extends LoginCredentials {
+    firstName: string;
+    lastName: string;
 }
 
 export interface TitleResponseDTO {
     title: string;
+}
+
+export interface LoginResponseDTO extends TitleResponseDTO {
+    user: TokenizedUser;
 }
 
 export interface AdminActivateResponseDTO extends TitleResponseDTO {

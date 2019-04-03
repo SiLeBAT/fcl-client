@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import {
-  Credentials, LoginResponseDTO, TokenizedUser, NewUser,
-  Email, NewPassword, TitleResponseDTO, AdminActivateResponseDTO
+  LoginCredentials, LoginResponseDTO, TokenizedUser, RegistrationCredentials,
+  Email, TitleResponseDTO, AdminActivateResponseDTO, NewPassword
 } from '../models/user.model';
 import { DataRequestService } from '../../core/services/data-request.service';
 
@@ -25,8 +25,8 @@ export class UserService {
 
     constructor(private dataService: DataRequestService) { }
 
-    register(newUser: NewUser): Observable<TitleResponseDTO> {
-        return this.dataService.post<TitleResponseDTO, NewUser>(this.URL.register, newUser);
+    register(credentials: RegistrationCredentials): Observable<TitleResponseDTO> {
+        return this.dataService.post<TitleResponseDTO, RegistrationCredentials>(this.URL.register, credentials);
     }
 
     recoverPassword(email: Email): Observable<TitleResponseDTO> {
@@ -45,8 +45,8 @@ export class UserService {
         return this.dataService.post<AdminActivateResponseDTO, string>([this.URL.adminactivate, adminToken].join('/'), null);
     }
 
-    login(credentials: Credentials): Observable<LoginResponseDTO> {
-        return this.dataService.post<LoginResponseDTO, Credentials>(this.URL.login, credentials);
+    login(credentials: LoginCredentials): Observable<LoginResponseDTO> {
+        return this.dataService.post<LoginResponseDTO, LoginCredentials>(this.URL.login, credentials);
     }
 
     logout() {

@@ -1,0 +1,33 @@
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Email } from '../../models/user.model';
+
+@Component({
+    selector: 'fcl-recovery',
+    templateUrl: './recovery.component.html',
+    styleUrls: ['./recovery.component.scss']
+})
+export class RecoveryComponent implements OnInit {
+    @Output() recovery = new EventEmitter();
+    recoveryForm: FormGroup;
+
+    constructor() {}
+
+    ngOnInit() {
+        this.recoveryForm = new FormGroup({
+            email: new FormControl(null, [Validators.required, Validators.email])
+        });
+    }
+
+    onRecovery() {
+        const email: Email = {
+            email: this.recoveryForm.value.email
+        };
+        this.recovery.emit(email);
+        this.recoveryForm.reset();
+    }
+
+    validateField(fieldName: string) {
+        return this.recoveryForm.controls[fieldName].valid || this.recoveryForm.controls[fieldName].untouched;
+    }
+}

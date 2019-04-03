@@ -2,13 +2,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { RecoveryComponent } from './recovery/recovery.component';
-import { ResetComponent } from './reset/reset.component';
-import { ActivateComponent } from './activate/activate.component';
-import { AdminActivateComponent } from './admin-activate/admin-activate.component';
-import { ProfileComponent } from './profile/profile.component';
+import { LoginViewComponent } from './presentation/login-view/login-view.component';
+import { RegisterViewComponent } from './presentation/register-view/register-view.component';
+import { RecoveryViewComponent } from './presentation/recovery-view/recovery-view.component';
+import { ResetViewComponent } from './presentation/reset-view/reset-view.component';
+import { ActivateViewComponent } from './presentation/activate-view/activate-view.component';
+import { AdminActivateViewComponent } from './presentation/admin-activate-view/admin-activate-view.component';
+import { ProfileContainerComponent } from './container/profile-container/profile-container.component';
 import { environment } from './../../environments/environment';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -18,32 +18,32 @@ const userRoutes: Routes =
         children: [
             {
                 path: 'profile',
-                component: ProfileComponent,
+                component: ProfileContainerComponent,
                 canActivate: environment.serverless ? null : [AuthGuard]
             },
             {
                 path: 'login',
-                component: LoginComponent
+                component: LoginViewComponent
             },
             {
                 path: 'register',
-                component: RegisterComponent
+                component: RegisterViewComponent
             },
             {
                 path: 'recovery',
-                component: RecoveryComponent
+                component: RecoveryViewComponent
             },
             {
                 path: 'reset/:id',
-                component: ResetComponent
+                component: ResetViewComponent
             },
             {
                 path: 'activate/:id',
-                component: ActivateComponent
+                component: ActivateViewComponent
             },
             {
                 path: 'adminactivate/:id',
-                component: AdminActivateComponent
+                component: AdminActivateViewComponent
             }
         ]
     }];

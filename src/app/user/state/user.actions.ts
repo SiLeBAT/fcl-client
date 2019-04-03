@@ -1,4 +1,4 @@
-import { Credentials, TokenizedUser } from '../models/user.model';
+import { LoginCredentials, TokenizedUser } from '../models/user.model';
 import { Action } from '@ngrx/store';
 
 export enum UserActionTypes {
@@ -11,7 +11,7 @@ export enum UserActionTypes {
 export class LoginUser implements Action {
     readonly type = UserActionTypes.LoginUser;
 
-    constructor(public payload: Credentials) { }
+    constructor(public payload: LoginCredentials) { }
 }
 
 export class LoginUserSuccess implements Action {

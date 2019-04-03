@@ -1,0 +1,38 @@
+@import "../../../../assets/sass/base";
+
+.fcl-card-action-container {
+    display: flex;
+}
+
+ .fcl-mat-card-content {
+     width: 500px;
+ }
+
+.fcl-form-firstname {
+    margin-top: 2rem;
+}
+
+.fcl-form-password {
+    margin-top: 1.5rem;
+}
+
+.fcl-card-action {
+    margin-top: 3rem;
+}
+
+.fcl-card-action-container {
+    display: flex;
+}
+
+.fcl-submit-button {
+    margin-right: $fcl-toolbar-padding * 4;
+}
+
+.fcl-form-field {
+    width: 100%;
+}
+
+em {
+    @include em-errors;
+}
+

@@ -1,0 +1,19 @@
+@import "../../../../assets/sass/base";
+
+.fcl-card-action-container {
+    display: flex;
+}
+
+.fcl-recover-button {
+    margin-right: $fcl-toolbar-padding * 4;
+}
+
+.fcl-recover-text,
+.fcl-card-action {
+    margin-top: 3rem;
+}
+
+.fcl-form-field {
+    width: 100%;
+}
+

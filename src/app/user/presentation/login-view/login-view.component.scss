@@ -1,0 +1,11 @@
+:host {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.fcl-mat-card__actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
