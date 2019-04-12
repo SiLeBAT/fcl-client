@@ -7,36 +7,24 @@ import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 
-import {
-  DialogPromptComponent,
-  DialogPromptData
-} from '../dialog/dialog-prompt/dialog-prompt.component';
-import {
-  DialogSingleSelectComponent,
-  DialogSingleSelectData
-} from '../dialog/dialog-single-select/dialog-single-select.component';
-import {
-  StationPropertiesComponent,
-  StationPropertiesData
-} from '../dialog/station-properties/station-properties.component';
-import {
-  DeliveryPropertiesComponent,
-  DeliveryPropertiesData
-} from '../dialog/delivery-properties/delivery-properties.component';
+import { DialogPromptComponent, DialogPromptData } from '../dialog/dialog-prompt/dialog-prompt.component';
+import { DialogSingleSelectComponent, DialogSingleSelectData } from '../dialog/dialog-single-select/dialog-single-select.component';
+import { StationPropertiesComponent, StationPropertiesData } from '../dialog/station-properties/station-properties.component';
+import { DeliveryPropertiesComponent, DeliveryPropertiesData } from '../dialog/delivery-properties/delivery-properties.component';
 import { Utils } from '../util/utils';
 import { TracingService } from '../services/tracing.service';
 import {
-  Color,
-  CyEdge,
-  CyNode,
-  DeliveryData,
-  FclElements,
-  Layout,
-  ObservedType,
-  Position,
-  Size,
-  StationData,
-  GroupMode
+    Color,
+    CyEdge,
+    CyNode,
+    DeliveryData,
+    FclElements,
+    Layout,
+    ObservedType,
+    Position,
+    Size,
+    StationData,
+    GroupMode
 } from '../util/datatypes';
 import { Constants } from '../util/constants';
 import * as _ from 'lodash';
@@ -58,17 +46,9 @@ export class GisComponent implements OnInit {
     private static readonly MAX_ZOOM = 100.0;
     private static readonly ZOOM_FACTOR = 1.5;
 
-    private static readonly NODE_SIZES: Map<Size, number> = new Map([
-    [Size.SMALL, 50],
-    [Size.MEDIUM, 75],
-    [Size.LARGE, 100]
-    ]);
+    private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 50], [Size.MEDIUM, 75], [Size.LARGE, 100]]);
 
-    private static readonly FONT_SIZES: Map<Size, number> = new Map([
-    [Size.SMALL, 10],
-    [Size.MEDIUM, 14],
-    [Size.LARGE, 18]
-    ]);
+    private static readonly FONT_SIZES: Map<Size, number> = new Map([[Size.SMALL, 10], [Size.MEDIUM, 14], [Size.LARGE, 18]]);
 
     @ViewChild('container') containerElement: ElementRef;
     @ViewChild('map') mapElement: ElementRef;
@@ -77,22 +57,22 @@ export class GisComponent implements OnInit {
     @ViewChild('slider') slider: MatSlider;
     @ViewChild('graphMenuTrigger') graphMenuTrigger: MatMenuTrigger;
     @ViewChild('graphMenuTrigger', { read: ElementRef })
-  graphMenuTriggerElement: ElementRef;
+    graphMenuTriggerElement: ElementRef;
     @ViewChild('stationMenuTrigger') stationMenuTrigger: MatMenuTrigger;
     @ViewChild('stationMenuTrigger', { read: ElementRef })
-  stationMenuTriggerElement: ElementRef;
+    stationMenuTriggerElement: ElementRef;
     @ViewChild('deliveryMenuTrigger') deliveryMenuTrigger: MatMenuTrigger;
     @ViewChild('deliveryMenuTrigger', { read: ElementRef })
-  deliveryMenuTriggerElement: ElementRef;
+    deliveryMenuTriggerElement: ElementRef;
     @ViewChild('collapseMenuTrigger') collapseMenuTrigger: MatMenuTrigger;
     @ViewChild('collapseMenuTrigger', { read: ElementRef })
-  collapseMenuTriggerElement: ElementRef;
+    collapseMenuTriggerElement: ElementRef;
     @ViewChild('uncollapseMenuTrigger') uncollapseMenuTrigger: MatMenuTrigger;
     @ViewChild('uncollapseMenuTrigger', { read: ElementRef })
-  uncollapseMenuTriggerElement: ElementRef;
+    uncollapseMenuTriggerElement: ElementRef;
     @ViewChild('traceMenuTrigger') traceMenuTrigger: MatMenuTrigger;
     @ViewChild('traceMenuTrigger', { read: ElementRef })
-  traceMenuTriggerElement: ElementRef;
+    traceMenuTriggerElement: ElementRef;
 
     graphMenuActions = this.createGraphActions();
     stationMenuActions = this.createStationActions(null);
@@ -137,12 +117,8 @@ export class GisComponent implements OnInit {
     private hoverDeliveries: Subject<string[]> = new Subject();
     private hoverableEdges: any;
 
-  //noinspection JSUnusedGlobalSymbols
-    constructor(
-    private tracingService: TracingService,
-    private dialogService: MatDialog,
-    public elementRef: ElementRef
-  ) {}
+    //noinspection JSUnusedGlobalSymbols
+    constructor(private tracingService: TracingService, private dialogService: MatDialog, public elementRef: ElementRef) {}
 
     ngOnInit() {
         this.map = new ol.Map({
@@ -156,33 +132,57 @@ export class GisComponent implements OnInit {
         });
 
         window.onresize = () => {
-            Observable.timer(500).subscribe(() => {
-                if (this.cy != null) {
-                    this.resizeGraphAndMap();
+            Observable.timer(500).subscribe(
+                () => {
+                    if (this.cy != null) {
+                        this.resizeGraphAndMap();
+                    }
+                },
+                error => {
+                    throw new Error(`error initializing gis component: ${error}`);
                 }
-            });
+            );
         };
 
-        const resizeSensor = new ResizeSensor(
-      this.containerElement.nativeElement,
-      () => {
-          if (this.resizeTimer != null) {
-              this.resizeTimer.unsubscribe();
-          }
+        const resizeSensor = new ResizeSensor(this.containerElement.nativeElement, () => {
+            if (this.resizeTimer != null) {
+                this.resizeTimer.unsubscribe();
+            }
 
-          if (this.cy != null) {
-              this.resizeTimer = Observable.timer(100).subscribe(() =>
-            this.resizeGraphAndMap()
-          );
-          }
-      }
-    );
+            if (this.cy != null) {
+                this.resizeTimer = Observable.timer(100).subscribe(() => {
+                    this.resizeGraphAndMap();
+                }, (error => {
+                    throw new Error(`error resizing: ${error}`);
+                }));
+            }
+        });
 
-        this.stationMenuTrigger.menuOpened.subscribe(() => this.updateOverlay());
-        this.stationMenuTrigger.menuClosed.subscribe(() => this.updateOverlay());
-        this.deliveryMenuTrigger.menuOpened.subscribe(() => this.updateOverlay());
-        this.deliveryMenuTrigger.menuClosed.subscribe(() => this.updateOverlay());
-        this.traceMenuTrigger.menuClosed.subscribe(() => this.updateOverlay());
+        this.stationMenuTrigger.menuOpened.subscribe(() => {
+            this.updateOverlay();
+        }, (error => {
+            throw new Error(`${error}`);
+        }));
+        this.stationMenuTrigger.menuClosed.subscribe(() => {
+            this.updateOverlay();
+        }, (error => {
+            throw new Error(`${error}`);
+        }));
+        this.deliveryMenuTrigger.menuOpened.subscribe(() => {
+            this.updateOverlay();
+        }, (error => {
+            throw new Error(`${error}`);
+        }));
+        this.deliveryMenuTrigger.menuClosed.subscribe(() => {
+            this.updateOverlay();
+        }, (error => {
+            throw new Error(`${error}`);
+        }));
+        this.traceMenuTrigger.menuClosed.subscribe(() => {
+            this.updateOverlay();
+        }, (error => {
+            throw new Error(`${error}`);
+        }));
     }
 
     init(data: FclElements, layout: Layout) {
@@ -209,12 +209,12 @@ export class GisComponent implements OnInit {
         });
 
         const hammer = new Hammer.Manager(
-      this.cy
-        .container()
-        .children.item(0)
-        .children.item(0),
-      { recognizers: [[Hammer.Pinch]] }
-    );
+            this.cy
+                .container()
+                .children.item(0)
+                .children.item(0),
+            { recognizers: [[Hammer.Pinch]] }
+        );
         let pinchCenter: Position;
         let pinchScale: number;
 
@@ -230,11 +230,7 @@ export class GisComponent implements OnInit {
             pinchScale = e.scale;
         });
         hammer.on('pinchin pinchout', e => {
-            this.zoomTo(
-        (this.zoom * e.scale) / pinchScale,
-        pinchCenter.x,
-        pinchCenter.y
-      );
+            this.zoomTo((this.zoom * e.scale) / pinchScale, pinchCenter.x, pinchCenter.y);
             pinchScale = e.scale;
         });
         hammer.on('pinchend pinchcancel', () => {
@@ -243,35 +239,18 @@ export class GisComponent implements OnInit {
             this.cy.userPanningEnabled(true);
         });
         this.cy
-      .container()
-      .children.item(0)
-      .children.item(0)
-      .addEventListener(
-        'wheel',
-        (e: WheelEvent) => {
-            this.zoomTo(
-            this.zoom *
-              Math.pow(
-                10,
-                e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250
-              ),
-            e.offsetX,
-            e.offsetY
-          );
-        },
-        false
-      );
+            .container()
+            .children.item(0)
+            .children.item(0)
+            .addEventListener(
+                'wheel',
+                (e: WheelEvent) => {
+                    this.zoomTo(this.zoom * Math.pow(10, e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250), e.offsetX, e.offsetY);
+                },
+                false
+            );
 
-        this.cy.on('pan', () =>
-      this.map.setView(
-        Utils.panZoomToView(
-          this.cy.pan(),
-          this.zoom,
-          this.cy.width(),
-          this.cy.height()
-        )
-      )
-    );
+        this.cy.on('pan', () => this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height())));
         this.cy.on('select', event => this.setSelected(event.target.id(), true));
         this.cy.on('unselect', event => this.setSelected(event.target.id(), false));
         this.cy.on('cxttap', event => {
@@ -283,27 +262,15 @@ export class GisComponent implements OnInit {
 
             if (element === this.cy) {
                 this.contextMenuElement = null;
-                Utils.openMenu(
-          this.graphMenuTrigger,
-          this.graphMenuTriggerElement,
-          position
-        );
+                Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, position);
             } else if (element.isNode()) {
                 this.contextMenuElement = element;
                 this.stationMenuActions = this.createStationActions(element);
-                Utils.openMenu(
-          this.stationMenuTrigger,
-          this.stationMenuTriggerElement,
-          position
-        );
+                Utils.openMenu(this.stationMenuTrigger, this.stationMenuTriggerElement, position);
             } else if (element.isEdge()) {
                 this.contextMenuElement = element;
                 this.deliveryMenuActions = this.createDeliveryActions(element);
-                Utils.openMenu(
-          this.deliveryMenuTrigger,
-          this.deliveryMenuTriggerElement,
-          position
-        );
+                Utils.openMenu(this.deliveryMenuTrigger, this.deliveryMenuTriggerElement, position);
             }
         });
         this.hoverDeliveries.subscribe(ids => {
@@ -314,30 +281,21 @@ export class GisComponent implements OnInit {
             }
 
             this.cy.batch(() => {
-                this.hoverableEdges
-          .filter(e => !idSet.has(e.id()))
-          .scratch('_active', false);
-                this.hoverableEdges
-          .filter(e => idSet.has(e.id()))
-          .scratch('_active', true);
+                this.hoverableEdges.filter(e => !idSet.has(e.id())).scratch('_active', false);
+                this.hoverableEdges.filter(e => idSet.has(e.id())).scratch('_active', true);
             });
-        });
+        }, (error => {
+            throw new Error(`${error}`);
+        }));
 
         this.setFontSize(this.fontSize);
         this.setShowLegend(this.showLegend);
         this.updateSlider();
         this.resizeGraphAndMap();
-        this.map.setView(
-      Utils.panZoomToView(
-        this.cy.pan(),
-        this.zoom,
-        this.cy.width(),
-        this.cy.height()
-      )
-    );
+        this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     onChange(changeFunction: () => void) {
         this.changeFunction = changeFunction;
     }
@@ -353,12 +311,12 @@ export class GisComponent implements OnInit {
         }
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     getCanvas(): Promise<HTMLCanvasElement> {
         return html2canvas(this.containerElement.nativeElement);
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     setMergeDeliveries(mergeDeliveries: boolean) {
         this.mergeDeliveries = mergeDeliveries;
 
@@ -389,12 +347,12 @@ export class GisComponent implements OnInit {
         this.showLegend = showLegend;
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     setShowZoom(showZoom: boolean) {
         this.showZoom = showZoom;
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     updateSelection() {
         if (this.cy != null) {
             this.selectTimerActivated = false;
@@ -417,19 +375,11 @@ export class GisComponent implements OnInit {
     }
 
     zoomInPressed() {
-        this.zoomTo(
-      this.zoom * GisComponent.ZOOM_FACTOR,
-      this.cy.width() / 2,
-      this.cy.height() / 2
-    );
+        this.zoomTo(this.zoom * GisComponent.ZOOM_FACTOR, this.cy.width() / 2, this.cy.height() / 2);
     }
 
     zoomOutPressed() {
-        this.zoomTo(
-      this.zoom / GisComponent.ZOOM_FACTOR,
-      this.cy.width() / 2,
-      this.cy.height() / 2
-    );
+        this.zoomTo(this.zoom / GisComponent.ZOOM_FACTOR, this.cy.width() / 2, this.cy.height() / 2);
     }
 
     zoomResetPressed() {
@@ -439,10 +389,7 @@ export class GisComponent implements OnInit {
 
     sliderChanged() {
         const newZoom =
-      Math.exp(
-        (this.slider.value / 100) *
-          Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)
-      ) * GisComponent.MIN_ZOOM;
+            Math.exp((this.slider.value / 100) * Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)) * GisComponent.MIN_ZOOM;
 
         this.sliding = true;
         this.zoomTo(newZoom, this.cy.width() / 2, this.cy.height() / 2);
@@ -492,9 +439,7 @@ export class GisComponent implements OnInit {
                         selected: value[0].selected
                     });
                 } else {
-                    const observedElement = value.find(
-            d => d.observed !== ObservedType.NONE
-          );
+                    const observedElement = value.find(d => d.observed !== ObservedType.NONE);
                     const selected = value.find(d => d.selected) != null;
 
                     value.forEach(d => this.mergeToMap.set(d.id, key));
@@ -513,10 +458,7 @@ export class GisComponent implements OnInit {
                             originalTarget: value[0].target,
                             invisible: false,
                             selected: selected,
-                            observed:
-                observedElement != null
-                  ? observedElement.observed
-                  : ObservedType.NONE,
+                            observed: observedElement != null ? observedElement.observed : ObservedType.NONE,
                             crossContamination: value.find(d => d.crossContamination) != null,
                             killContamination: value.find(d => d.killContamination) != null,
                             forward: value.find(d => d.forward) != null,
@@ -574,68 +516,64 @@ export class GisComponent implements OnInit {
             const size = GisComponent.NODE_SIZES.get(this.nodeSize) / 2;
 
             if (this.tracingService.getMaxScore() > 0) {
-                return (
-          (0.5 +
-            (0.5 * node.data('score')) / this.tracingService.getMaxScore()) *
-          size
-                );
+                return (0.5 + (0.5 * node.data('score')) / this.tracingService.getMaxScore()) * size;
             } else {
                 return size;
             }
         };
 
         let style = cytoscape
-      .stylesheet()
-      .selector('*')
-      .style({
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
-      })
-      .selector('node')
-      .style({
-        content: 'data(name)',
-        height: sizeFunction, // ToDO: replace by linear function (data or dataMap)
-        width: sizeFunction, // ToDo: replace by linear function (data or dataMap)
-        'background-color': 'rgb(255, 255, 255)',
-        'border-width': 3,
-        'border-color': 'rgb(0, 0, 0)',
-        'text-valign': 'bottom',
-        'text-halign': 'right',
-        color: 'rgb(0, 0, 0)'
-      })
-      .selector('edge')
-      .style({
-        'target-arrow-shape': 'triangle',
-        width: 2, //        'width': 6,
-        'line-color': 'rgb(0, 0, 0)',
-        'target-arrow-color': 'rgb(0, 0, 0)',
-        'arrow-scale': 1.4,
-        'curve-style': 'bezier' // performance reasons
-      })
-      .selector('node:selected')
-      .style({
-        'background-color': 'rgb(128, 128, 255)',
-        'border-width': 6,
-        'border-color': 'rgb(0, 0, 255)',
-        color: 'rgb(0, 0, 255)'
-      })
-      .selector('edge:selected')
-      .style({
-        width: 4
-      })
-      .selector('node[?contains]')
-      .style({
-        'border-width': 6
-      })
-      .selector('node:selected[?contains]')
-      .style({
-        'border-width': 9
-      })
-      .selector(':active')
-      .style({
-          'overlay-opacity': 0.5
-      });
+            .stylesheet()
+            .selector('*')
+            .style({
+                'overlay-color': 'rgb(0, 0, 255)',
+                'overlay-padding': 10,
+                'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
+            })
+            .selector('node')
+            .style({
+                content: 'data(name)',
+                height: sizeFunction, // ToDO: replace by linear function (data or dataMap)
+                width: sizeFunction, // ToDo: replace by linear function (data or dataMap)
+                'background-color': 'rgb(255, 255, 255)',
+                'border-width': 3,
+                'border-color': 'rgb(0, 0, 0)',
+                'text-valign': 'bottom',
+                'text-halign': 'right',
+                color: 'rgb(0, 0, 0)'
+            })
+            .selector('edge')
+            .style({
+                'target-arrow-shape': 'triangle',
+                width: 2, //        'width': 6,
+                'line-color': 'rgb(0, 0, 0)',
+                'target-arrow-color': 'rgb(0, 0, 0)',
+                'arrow-scale': 1.4,
+                'curve-style': 'bezier' // performance reasons
+            })
+            .selector('node:selected')
+            .style({
+                'background-color': 'rgb(128, 128, 255)',
+                'border-width': 6,
+                'border-color': 'rgb(0, 0, 255)',
+                color: 'rgb(0, 0, 255)'
+            })
+            .selector('edge:selected')
+            .style({
+                width: 4
+            })
+            .selector('node[?contains]')
+            .style({
+                'border-width': 6
+            })
+            .selector('node:selected[?contains]')
+            .style({
+                'border-width': 9
+            })
+            .selector(':active')
+            .style({
+                'overlay-opacity': 0.5
+            });
 
         const createSelector = (prop: string) => {
             if (prop === 'observed') {
@@ -652,20 +590,15 @@ export class GisComponent implements OnInit {
                 background['background-color'] = Utils.colorToCss(colors[0]);
             } else {
                 for (let i = 0; i < colors.length; i++) {
-                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(
-            colors[i]
-          );
-                    background['pie-' + (i + 1) + '-background-size'] =
-            100 / colors.length;
+                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+                    background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
                 }
             }
 
             return background;
         };
 
-        for (const combination of Utils.getAllCombinations(
-      Constants.PROPERTIES_WITH_COLORS.toArray()
-    )) {
+        for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
             const s = [];
             const c1 = [];
             const c2 = [];
@@ -678,12 +611,8 @@ export class GisComponent implements OnInit {
                 c2.push(Utils.mixColors(color, { r: 0, g: 0, b: 255 }));
             }
 
-            style = style
-        .selector('node' + s.join(''))
-        .style(createNodeBackground(c1));
-            style = style
-        .selector('node:selected' + s.join(''))
-        .style(createNodeBackground(c2));
+            style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+            style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
         }
 
         for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
@@ -700,78 +629,74 @@ export class GisComponent implements OnInit {
             const size = GisComponent.NODE_SIZES.get(this.nodeSize);
 
             if (this.tracingService.getMaxScore() > 0) {
-                return (
-          (0.5 +
-            (0.5 * node.data('score')) / this.tracingService.getMaxScore()) *
-          size
-                );
+                return (0.5 + (0.5 * node.data('score')) / this.tracingService.getMaxScore()) * size;
             } else {
                 return size;
             }
         };
 
         let style = cytoscape
-      .stylesheet()
-      .selector('*')
-      .style({
-        'overlay-color': 'rgb(0, 0, 255)',
-        'overlay-padding': 10,
-        'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
-      })
-      .selector('node')
-      .style({
-        // 'content': 'data(name)',
-        height: sizeFunction, // PF test
-        width: sizeFunction, // PF test
-        'background-color': 'rgb(255, 255, 255)',
-        // 'border-width': 3,
-        'border-color': 'rgb(0, 0, 0)',
-        // 'text-valign': 'bottom',
-        // 'text-halign': 'right',
-        color: 'rgb(0, 0, 0)'
-        // 'min-zoomed-font-size':10   // performance reasons
-      })
-      .selector('edge')
-      .style({
-        // 'target-arrow-shape': 'triangle', // test reason
-        // large graphs
-        'mid-target-arrow-shape': 'triangle', // test reason
-        // 'mid-target-arrow-fill': 'hollow', // test reason
-        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
-        width: 2, //        'width': 6,
-        'line-color': 'rgb(0, 0, 0)',
-        // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
-        'arrow-scale': 1.4 // test reason
-        // 'curve-style': 'bezier'   // performance reasons
-      })
-      .selector('node:selected')
-      .style({
-        'background-color': 'rgb(128, 128, 255)',
-        // 'border-width': 6,
-        'border-color': 'rgb(0, 0, 255)',
-        color: 'rgb(0, 0, 255)'
-      })
-      .selector('edge:selected')
-      .style({
-        // 'width': 12
-      })
-      .selector('node[?contains]')
-      .style({
-        'border-width': 6
-      })
-      .selector('node:selected[?contains]')
-      .style({
-        'border-width': 9
-      })
-      .selector(':active')
-      .style({
-        // 'overlay-opacity': 0.5
-      })
-      .selector(':selected')
-      .css({
-          'background-color': 'black',
-          opacity: 1
-      });
+            .stylesheet()
+            .selector('*')
+            .style({
+                'overlay-color': 'rgb(0, 0, 255)',
+                'overlay-padding': 10,
+                'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
+            })
+            .selector('node')
+            .style({
+                // 'content': 'data(name)',
+                height: sizeFunction, // PF test
+                width: sizeFunction, // PF test
+                'background-color': 'rgb(255, 255, 255)',
+                // 'border-width': 3,
+                'border-color': 'rgb(0, 0, 0)',
+                // 'text-valign': 'bottom',
+                // 'text-halign': 'right',
+                color: 'rgb(0, 0, 0)'
+                // 'min-zoomed-font-size':10   // performance reasons
+            })
+            .selector('edge')
+            .style({
+                // 'target-arrow-shape': 'triangle', // test reason
+                // large graphs
+                'mid-target-arrow-shape': 'triangle', // test reason
+                // 'mid-target-arrow-fill': 'hollow', // test reason
+                'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+                width: 2, //        'width': 6,
+                'line-color': 'rgb(0, 0, 0)',
+                // 'target-arrow-color': 'rgb(255, 0, 0)', // test reason
+                'arrow-scale': 1.4 // test reason
+                // 'curve-style': 'bezier'   // performance reasons
+            })
+            .selector('node:selected')
+            .style({
+                'background-color': 'rgb(128, 128, 255)',
+                // 'border-width': 6,
+                'border-color': 'rgb(0, 0, 255)',
+                color: 'rgb(0, 0, 255)'
+            })
+            .selector('edge:selected')
+            .style({
+                // 'width': 12
+            })
+            .selector('node[?contains]')
+            .style({
+                'border-width': 6
+            })
+            .selector('node:selected[?contains]')
+            .style({
+                'border-width': 9
+            })
+            .selector(':active')
+            .style({
+                // 'overlay-opacity': 0.5
+            })
+            .selector(':selected')
+            .css({
+                'background-color': 'black',
+                opacity: 1
+            });
 
         const createSelector = (prop: string) => {
             if (prop === 'observed') {
@@ -788,20 +713,15 @@ export class GisComponent implements OnInit {
                 background['background-color'] = Utils.colorToCss(colors[0]);
             } else {
                 for (let i = 0; i < colors.length; i++) {
-                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(
-            colors[i]
-          );
-                    background['pie-' + (i + 1) + '-background-size'] =
-            100 / colors.length;
+                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+                    background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
                 }
             }
 
             return background;
         };
 
-        for (const combination of Utils.getAllCombinations(
-      Constants.PROPERTIES_WITH_COLORS.toArray()
-    )) {
+        for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
             const s = [];
             const c1 = [];
             const c2 = [];
@@ -814,12 +734,8 @@ export class GisComponent implements OnInit {
                 c2.push(Utils.mixColors(color, { r: 0, g: 0, b: 255 }));
             }
 
-            style = style
-        .selector('node' + s.join(''))
-        .style(createNodeBackground(c1));
-            style = style
-        .selector('node:selected' + s.join(''))
-        .style(createNodeBackground(c2));
+            style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+            style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
         }
 
         for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
@@ -833,58 +749,58 @@ export class GisComponent implements OnInit {
 
     private createHugeGraphStyle(): any {
         let style = cytoscape
-        .stylesheet()
-        .selector('*')
-        .style({
-          'overlay-color': 'rgb(0, 0, 255)',
-          'overlay-padding': 10,
-          'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
-      })
-      .selector('node')
-      .style({
-        height: 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
-        width: 'mapData(score, 0, 1, 20, 40)', // linear function
-        // 'content': 'data(name)', // no label
-        'background-color': 'rgb(255, 255, 255)',
-        'border-width': 2,
-        'border-color': 'rgb(0, 0, 0)',
-        // 'text-valign': 'bottom', // no label
-        // 'text-halign': 'right', // no label
-        color: 'rgb(0, 0, 0)'
-        // 'min-zoomed-font-size':10   // performance reasons
-      })
-      .selector('edge')
-      .style({
-        'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
-        'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
-        width: 1, //        'width': 6,
-        'line-color': 'rgb(0, 0, 0)',
-        'arrow-scale': 1.4 // test reason
-        // 'curve-style': 'bezier'   // use haystack
-      })
-      .selector('node:selected')
-      .style({
-        'background-color': 'rgb(128, 128, 255)',
-        // 'border-width': 6,
-        'border-color': 'rgb(0, 0, 255)',
-        color: 'rgb(0, 0, 255)'
-      })
-      .selector('edge:selected')
-      .style({
-        width: 2
-      })
-      .selector('node[?contains]')
-      .style({
-        'border-width': 3 // 6 // ToDo: Clarify, what is this for
-      })
-      .selector('node:selected[?contains]')
-      .style({
-        'border-width': 3 // 9 // ToDo: Clarify, what is this for
-      })
-      .selector(':active')
-      .style({
-          'overlay-opacity': 0.5
-      });
+            .stylesheet()
+            .selector('*')
+            .style({
+                'overlay-color': 'rgb(0, 0, 255)',
+                'overlay-padding': 10,
+                'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
+            })
+            .selector('node')
+            .style({
+                height: 'mapData(score, 0, 1, 20, 40)', // linear function ToDo: add size attr to node
+                width: 'mapData(score, 0, 1, 20, 40)', // linear function
+                // 'content': 'data(name)', // no label
+                'background-color': 'rgb(255, 255, 255)',
+                'border-width': 2,
+                'border-color': 'rgb(0, 0, 0)',
+                // 'text-valign': 'bottom', // no label
+                // 'text-halign': 'right', // no label
+                color: 'rgb(0, 0, 0)'
+                // 'min-zoomed-font-size':10   // performance reasons
+            })
+            .selector('edge')
+            .style({
+                'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
+                'mid-target-arrow-color': 'rgb(0, 0, 0)', // test reason
+                width: 1, //        'width': 6,
+                'line-color': 'rgb(0, 0, 0)',
+                'arrow-scale': 1.4 // test reason
+                // 'curve-style': 'bezier'   // use haystack
+            })
+            .selector('node:selected')
+            .style({
+                'background-color': 'rgb(128, 128, 255)',
+                // 'border-width': 6,
+                'border-color': 'rgb(0, 0, 255)',
+                color: 'rgb(0, 0, 255)'
+            })
+            .selector('edge:selected')
+            .style({
+                width: 2
+            })
+            .selector('node[?contains]')
+            .style({
+                'border-width': 3 // 6 // ToDo: Clarify, what is this for
+            })
+            .selector('node:selected[?contains]')
+            .style({
+                'border-width': 3 // 9 // ToDo: Clarify, what is this for
+            })
+            .selector(':active')
+            .style({
+                'overlay-opacity': 0.5
+            });
 
         const createSelector = (prop: string) => {
             if (prop === 'observed') {
@@ -901,20 +817,15 @@ export class GisComponent implements OnInit {
                 background['background-color'] = Utils.colorToCss(colors[0]);
             } else {
                 for (let i = 0; i < colors.length; i++) {
-                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(
-            colors[i]
-          );
-                    background['pie-' + (i + 1) + '-background-size'] =
-            100 / colors.length;
+                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
+                    background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
                 }
             }
 
             return background;
         };
 
-        for (const combination of Utils.getAllCombinations(
-      Constants.PROPERTIES_WITH_COLORS.toArray()
-    )) {
+        for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
             const s = [];
             const c1 = [];
             const c2 = [];
@@ -927,12 +838,8 @@ export class GisComponent implements OnInit {
                 c2.push(Utils.mixColors(color, { r: 0, g: 0, b: 255 }));
             }
 
-            style = style
-        .selector('node' + s.join(''))
-        .style(createNodeBackground(c1));
-            style = style
-        .selector('node:selected' + s.join(''))
-        .style(createNodeBackground(c2));
+            style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
+            style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
         }
 
         for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
@@ -950,9 +857,7 @@ export class GisComponent implements OnInit {
 
         if (this.data.stations.length > MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
             return this.createHugeGraphStyle();
-        } else if (
-      this.data.deliveries.length > MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS
-    ) {
+        } else if (this.data.deliveries.length > MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) {
             return this.createLargeGraphStyle();
         } else {
             return this.createSmallGraphStyle();
@@ -973,9 +878,11 @@ export class GisComponent implements OnInit {
                 this.selectTimer.unsubscribe();
             }
 
-            this.selectTimer = Observable.timer(50).subscribe(() =>
-        this.callChangeFunction()
-      );
+            this.selectTimer = Observable.timer(50).subscribe(() => {
+                this.callChangeFunction();
+            }, (error => {
+                throw new Error(`${error}`);
+            }));
         }
     }
 
@@ -1015,23 +922,13 @@ export class GisComponent implements OnInit {
                 name: 'Collapse Stations',
                 enabled: true,
                 toolTip: null,
-                action: event =>
-          Utils.openMenu(
-            this.collapseMenuTrigger,
-            this.collapseMenuTriggerElement,
-            this.getCyCoordinates(event)
-          )
+                action: event => Utils.openMenu(this.collapseMenuTrigger, this.collapseMenuTriggerElement, this.getCyCoordinates(event))
             },
             {
                 name: 'Uncollapse Stations',
                 enabled: true,
                 toolTip: null,
-                action: event =>
-          Utils.openMenu(
-            this.uncollapseMenuTrigger,
-            this.uncollapseMenuTriggerElement,
-            this.getCyCoordinates(event)
-          )
+                action: event => Utils.openMenu(this.uncollapseMenuTrigger, this.uncollapseMenuTriggerElement, this.getCyCoordinates(event))
             }
         ];
     }
@@ -1046,15 +943,11 @@ export class GisComponent implements OnInit {
         if (this.cy != null && node != null) {
             selectedNodes = this.cy.nodes(':selected');
             multipleStationsSelected = node.selected() && selectedNodes.size() > 1;
-            allOutbreakStations = multipleStationsSelected
-        ? selectedNodes.allAre('[?outbreak]')
-        : node.data('outbreak');
+            allOutbreakStations = multipleStationsSelected ? selectedNodes.allAre('[?outbreak]') : node.data('outbreak');
             allCrossContaminationStations = multipleStationsSelected
-        ? selectedNodes.allAre('[?crossContamination]')
-        : node.data('crossContamination');
-            allMetaStations = multipleStationsSelected
-        ? selectedNodes.allAre('[?contains]')
-        : node.data('contains');
+                ? selectedNodes.allAre('[?crossContamination]')
+                : node.data('crossContamination');
+            allMetaStations = multipleStationsSelected ? selectedNodes.allAre('[?contains]') : node.data('contains');
         }
 
         return [
@@ -1067,24 +960,14 @@ export class GisComponent implements OnInit {
                     const deliveries: Map<string, DeliveryData> = new Map();
                     const connectedStations: Map<string, StationData> = new Map();
 
-                    for (const d of this.tracingService.getDeliveriesById(
-            station.incoming
-          )) {
+                    for (const d of this.tracingService.getDeliveriesById(station.incoming)) {
                         deliveries.set(d.id, d);
-                        connectedStations.set(
-              d.source,
-              this.tracingService.getStationsById([d.source])[0]
-            );
+                        connectedStations.set(d.source, this.tracingService.getStationsById([d.source])[0]);
                     }
 
-                    for (const d of this.tracingService.getDeliveriesById(
-            station.outgoing
-          )) {
+                    for (const d of this.tracingService.getDeliveriesById(station.outgoing)) {
                         deliveries.set(d.id, d);
-                        connectedStations.set(
-              d.target,
-              this.tracingService.getStationsById([d.target])[0]
-            );
+                        connectedStations.set(d.target, this.tracingService.getStationsById([d.target])[0]);
                     }
 
                     const dialogData: StationPropertiesData = {
@@ -1096,19 +979,18 @@ export class GisComponent implements OnInit {
 
                     this.hoverableEdges = node.connectedEdges();
                     this.dialogService
-            .open(StationPropertiesComponent, { data: dialogData })
-            .afterClosed()
-            .subscribe(connections => {
-                this.updateOverlay();
+                        .open(StationPropertiesComponent, { data: dialogData })
+                        .afterClosed()
+                        .subscribe(connections => {
+                            this.updateOverlay();
 
-                if (connections) {
-                    this.tracingService.setConnectionsOfStation(
-                  node.id(),
-                  connections
-                );
-                    this.updateProperties();
-                }
-            });
+                            if (connections) {
+                                this.tracingService.setConnectionsOfStation(node.id(), connections);
+                                this.updateProperties();
+                            }
+                        }, (error => {
+                            throw new Error(`${error}`);
+                        }));
                 }
             },
             {
@@ -1117,11 +999,7 @@ export class GisComponent implements OnInit {
                 toolTip: null,
                 action: event => {
                     this.traceMenuActions = this.createTraceActions(node);
-                    Utils.openMenu(
-            this.traceMenuTrigger,
-            this.traceMenuTriggerElement,
-            this.getCyCoordinates(event)
-          );
+                    Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
                 }
             },
             {
@@ -1130,28 +1008,22 @@ export class GisComponent implements OnInit {
                 toolTip: null,
                 action: () => {
                     this.tracingService.markStationsAsOutbreak(
-            multipleStationsSelected
-              ? selectedNodes.map(s => s.id())
-              : [node.id()],
-            !allOutbreakStations
-          );
+                        multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()],
+                        !allOutbreakStations
+                    );
                     this.setNodeSize(this.nodeSize);
                     this.callChangeFunction();
                 }
             },
             {
-                name: allCrossContaminationStations
-          ? 'Unset Cross Contamination'
-          : 'Set Cross Contamination',
+                name: allCrossContaminationStations ? 'Unset Cross Contamination' : 'Set Cross Contamination',
                 enabled: true,
                 toolTip: null,
                 action: () => {
                     this.tracingService.setCrossContaminationOfStations(
-            multipleStationsSelected
-              ? selectedNodes.map(s => s.id())
-              : [node.id()],
-            !allCrossContaminationStations
-          );
+                        multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()],
+                        !allCrossContaminationStations
+                    );
                     this.updateProperties();
                     this.setNodeSize(this.nodeSize);
                     this.callChangeFunction();
@@ -1162,11 +1034,7 @@ export class GisComponent implements OnInit {
                 enabled: true,
                 toolTip: null,
                 action: () => {
-                    this.tracingService.makeStationsInvisible(
-            multipleStationsSelected
-              ? selectedNodes.map(s => s.id())
-              : [node.id()]
-          );
+                    this.tracingService.makeStationsInvisible(multipleStationsSelected ? selectedNodes.map(s => s.id()) : [node.id()]);
                     this.updateAll();
                     this.callChangeFunction();
                 }
@@ -1183,20 +1051,19 @@ export class GisComponent implements OnInit {
                     };
 
                     this.dialogService
-            .open(DialogPromptComponent, { data: dialogData })
-            .afterClosed()
-            .subscribe(name => {
-                this.updateOverlay();
+                        .open(DialogPromptComponent, { data: dialogData })
+                        .afterClosed()
+                        .subscribe(name => {
+                            this.updateOverlay();
 
-                if (name != null) {
-                    this.tracingService.mergeStations(
-                  selectedNodes.map(s => s.id()),
-                  name
-                );
-                    this.updateAll();
-                    this.callChangeFunction();
-                }
-            });
+                            if (name != null) {
+                                this.tracingService.mergeStations(selectedNodes.map(s => s.id()), name);
+                                this.updateAll();
+                                this.callChangeFunction();
+                            }
+                        }, (error => {
+                            throw new Error(`${error}`);
+                        }));
                 }
             },
             {
@@ -1204,11 +1071,7 @@ export class GisComponent implements OnInit {
                 enabled: allMetaStations,
                 toolTip: null,
                 action: () => {
-                    this.tracingService.expandStations(
-            multipleStationsSelected
-              ? selectedNodes.map(s => s.id())
-              : node.id()
-          );
+                    this.tracingService.expandStations(multipleStationsSelected ? selectedNodes.map(s => s.id()) : node.id());
                     this.updateAll();
                     this.callChangeFunction();
                 }
@@ -1224,21 +1087,26 @@ export class GisComponent implements OnInit {
                 toolTip: null,
                 action: () => {
                     if (this.mergeMap.has(edge.id())) {
-                        Utils.showErrorMessage(
-              this.dialogService,
-              'Showing Properties of merged delivery is not supported!'
-            )
-              .afterClosed()
-              .subscribe(() => this.updateOverlay());
+                        Utils.showErrorMessage(this.dialogService, 'Showing Properties of merged delivery is not supported!')
+                            .afterClosed()
+                            .subscribe(() => {
+                                this.updateOverlay();
+                            }, (error => {
+                                throw new Error(`${error}`);
+                            }));
                     } else {
                         const dialogData: DeliveryPropertiesData = {
                             delivery: this.tracingService.getDeliveriesById([edge.id()])[0]
                         };
 
                         this.dialogService
-              .open(DeliveryPropertiesComponent, { data: dialogData })
-              .afterClosed()
-              .subscribe(() => this.updateOverlay());
+                            .open(DeliveryPropertiesComponent, { data: dialogData })
+                            .afterClosed()
+                            .subscribe(() => {
+                                this.updateOverlay();
+                            }, (error => {
+                                throw new Error(`${error}`);
+                            }));
                     }
                 }
             },
@@ -1248,19 +1116,16 @@ export class GisComponent implements OnInit {
                 toolTip: null,
                 action: event => {
                     if (this.mergeMap.has(edge.id())) {
-                        Utils.showErrorMessage(
-              this.dialogService,
-              'Showing Trace of merged delivery is not supported!'
-            )
-              .afterClosed()
-              .subscribe(() => this.updateOverlay());
+                        Utils.showErrorMessage(this.dialogService, 'Showing Trace of merged delivery is not supported!')
+                            .afterClosed()
+                            .subscribe(() => {
+                                this.updateOverlay();
+                            }, (error => {
+                                throw new Error(`${error}`);
+                            }));
                     } else {
                         this.traceMenuActions = this.createTraceActions(edge);
-                        Utils.openMenu(
-              this.traceMenuTrigger,
-              this.traceMenuTriggerElement,
-              this.getCyCoordinates(event)
-            );
+                        Utils.openMenu(this.traceMenuTrigger, this.traceMenuTriggerElement, this.getCyCoordinates(event));
                     }
                 }
             }
@@ -1272,8 +1137,7 @@ export class GisComponent implements OnInit {
             {
                 name: 'Collapse Sources...',
                 enabled: true,
-                toolTip:
-          'Collapse stations without incoming edges which have deliveries to the same station.',
+                toolTip: 'Collapse stations without incoming edges which have deliveries to the same station.',
                 action: () => {
                     const options: {
                         value: string;
@@ -1304,23 +1168,24 @@ export class GisComponent implements OnInit {
                     };
 
                     this.dialogService
-            .open(DialogSingleSelectComponent, { data: dialogData })
-            .afterClosed()
-            .subscribe(groupMode => {
-                this.updateOverlay();
-                if (groupMode != null) {
-                    this.tracingService.collapseSourceStations(groupMode);
-                    this.updateAll();
-                    this.callChangeFunction();
-                }
-            });
+                        .open(DialogSingleSelectComponent, { data: dialogData })
+                        .afterClosed()
+                        .subscribe(groupMode => {
+                            this.updateOverlay();
+                            if (groupMode != null) {
+                                this.tracingService.collapseSourceStations(groupMode);
+                                this.updateAll();
+                                this.callChangeFunction();
+                            }
+                        }, (error => {
+                            throw new Error(`${error}`);
+                        }));
                 }
             },
             {
                 name: 'Collapse Targets...',
                 enabled: true,
-                toolTip:
-          'Collapse stations without outgoing edges which receive their deliveries from the same station.',
+                toolTip: 'Collapse stations without outgoing edges which receive their deliveries from the same station.',
                 action: () => {
                     const options: {
                         value: string;
@@ -1331,22 +1196,22 @@ export class GisComponent implements OnInit {
                         value: GroupMode.WEIGHT_ONLY.toString(),
                         viewValue: 'weight sensitive',
                         toolTip:
-              // tslint:disable-next-line:max-line-length
-              'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.'
+                            // tslint:disable-next-line:max-line-length
+                            'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.'
                     });
                     options.push({
                         value: GroupMode.PRODUCT_AND_WEIGHT.toString(),
                         viewValue: 'product name and weight sensitive',
                         toolTip:
-              // tslint:disable-next-line:max-line-length
-              'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.'
+                            // tslint:disable-next-line:max-line-length
+                            'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.'
                     });
                     options.push({
                         value: GroupMode.LOT_AND_WEIGHT.toString(),
                         viewValue: 'lot and weight sensitive',
                         toolTip:
-              // tslint:disable-next-line:max-line-length
-              'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.'
+                            // tslint:disable-next-line:max-line-length
+                            'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.'
                     });
 
                     const dialogData: DialogSingleSelectData = {
@@ -1357,16 +1222,18 @@ export class GisComponent implements OnInit {
                     };
 
                     this.dialogService
-            .open(DialogSingleSelectComponent, { data: dialogData })
-            .afterClosed()
-            .subscribe(groupMode => {
-                this.updateOverlay();
-                if (groupMode != null) {
-                    this.tracingService.collapseTargetStations(groupMode);
-                    this.updateAll();
-                    this.callChangeFunction();
-                }
-            });
+                        .open(DialogSingleSelectComponent, { data: dialogData })
+                        .afterClosed()
+                        .subscribe(groupMode => {
+                            this.updateOverlay();
+                            if (groupMode != null) {
+                                this.tracingService.collapseTargetStations(groupMode);
+                                this.updateAll();
+                                this.callChangeFunction();
+                            }
+                        }, (error => {
+                            throw new Error(`${error}`);
+                        }));
                 }
             },
             {
@@ -1383,8 +1250,7 @@ export class GisComponent implements OnInit {
             {
                 name: 'Collapse Isolated Clouds',
                 enabled: true,
-                toolTip:
-          'Collapse stations from which a weighted station or delivery cannot be reached.',
+                toolTip: 'Collapse stations from which a weighted station or delivery cannot be reached.',
                 action: () => {
                     this.updateOverlay();
                     this.tracingService.collapseIsolatedClouds();
@@ -1499,20 +1365,17 @@ export class GisComponent implements OnInit {
     private updateOverlay() {
         if (this.contextMenuElement != null) {
             const elementMenuOrDialogOpen =
-        this.stationMenuTrigger.menuOpen ||
-        this.deliveryMenuTrigger.menuOpen ||
-        this.traceMenuTrigger.menuOpen ||
-        this.dialogService.openDialogs.length !== 0;
+                this.stationMenuTrigger.menuOpen ||
+                this.deliveryMenuTrigger.menuOpen ||
+                this.traceMenuTrigger.menuOpen ||
+                this.dialogService.openDialogs.length !== 0;
 
             this.contextMenuElement.scratch('_active', elementMenuOrDialogOpen);
         }
     }
 
     private zoomTo(newZoom: number, zx: number, zy: number) {
-        newZoom = Math.min(
-      Math.max(newZoom, GisComponent.MIN_ZOOM),
-      GisComponent.MAX_ZOOM
-    );
+        newZoom = Math.min(Math.max(newZoom, GisComponent.MIN_ZOOM), GisComponent.MAX_ZOOM);
 
         if (newZoom !== this.zoom) {
             this.applyLayout({
@@ -1533,32 +1396,15 @@ export class GisComponent implements OnInit {
         this.zoom = layout.zoom;
         this.cy.batch(() => {
             this.cy.pan(layout.pan);
-            this.cy
-        .nodes()
-        .positions(node =>
-          Utils.latLonToPosition(
-            node.data('lat'),
-            node.data('lon'),
-            layout.zoom
-          )
-        );
+            this.cy.nodes().positions(node => Utils.latLonToPosition(node.data('lat'), node.data('lon'), layout.zoom));
         });
-        this.map.setView(
-      Utils.panZoomToView(
-        layout.pan,
-        layout.zoom,
-        this.cy.width(),
-        this.cy.height()
-      )
-    );
+        this.map.setView(Utils.panZoomToView(layout.pan, layout.zoom, this.cy.width(), this.cy.height()));
     }
 
     private updateSlider() {
         this.zoomSliderValue = Math.round(
-      (Math.log(this.zoom / GisComponent.MIN_ZOOM) /
-        Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)) *
-        100
-    );
+            (Math.log(this.zoom / GisComponent.MIN_ZOOM) / Math.log(GisComponent.MAX_ZOOM / GisComponent.MIN_ZOOM)) * 100
+        );
     }
 
     private getCyCoordinates(event: MouseEvent): Position {
@@ -1573,14 +1419,7 @@ export class GisComponent implements OnInit {
     private resizeGraphAndMap() {
         this.cy.resize();
         this.map.updateSize();
-        this.map.setView(
-      Utils.panZoomToView(
-        this.cy.pan(),
-        this.zoom,
-        this.cy.width(),
-        this.cy.height()
-      )
-    );
+        this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
     }
 
     private fit(): Layout {
@@ -1607,20 +1446,12 @@ export class GisComponent implements OnInit {
         let pan: Position;
 
         if (xMax > xMin && yMax > yMin) {
-            zoom = Math.min(
-        (width - 2 * border) / (xMax - xMin),
-        (height - 2 * border) / (yMax - yMin)
-      );
+            zoom = Math.min((width - 2 * border) / (xMax - xMin), (height - 2 * border) / (yMax - yMin));
         } else {
             zoom = 1;
         }
 
-        if (
-      Number.isFinite(xMin) &&
-      Number.isFinite(yMin) &&
-      Number.isFinite(xMax) &&
-      Number.isFinite(yMax)
-    ) {
+        if (Number.isFinite(xMin) && Number.isFinite(yMin) && Number.isFinite(xMax) && Number.isFinite(yMax)) {
             const panX1 = -xMin * zoom + border;
             const panY1 = -yMin * zoom + border;
             const panX2 = -xMax * zoom + width - border;

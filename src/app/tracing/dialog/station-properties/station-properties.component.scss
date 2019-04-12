@@ -1,29 +1,29 @@
 .title {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .titleSpan {
-  flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 
 .leftButton {
-  margin-right: 20px;
+    margin-right: 20px;
 }
 
 .rightButton {
-  margin-left: 20px;
+    margin-left: 20px;
 }
 
 mat-card {
-  margin: 10px 0;
+    margin: 10px 0;
 }
 
 mat-card:not(:last-child) {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 td:first-child {
-  padding-right: 40px;
+    padding-right: 40px;
 }

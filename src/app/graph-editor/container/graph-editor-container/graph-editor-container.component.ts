@@ -25,6 +25,9 @@ export class GraphEditorContainerComponent implements OnInit, OnDestroy {
         ).subscribe(
             (visioReport: VisioReport) => {
                 this.graph = visioReport ? this.converter.createGraph(visioReport) : null;
+            },
+            (error) => {
+                throw new Error(`error loading ROA style report: ${error}`);
             }
         );
     }

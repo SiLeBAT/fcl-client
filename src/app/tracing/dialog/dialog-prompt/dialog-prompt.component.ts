@@ -9,8 +9,7 @@ export interface DialogPromptData {
 
 @Component({
     selector: 'fcl-dialog-prompt',
-    templateUrl: './dialog-prompt.component.html',
-    styleUrls: ['./dialog-prompt.component.scss']
+    templateUrl: './dialog-prompt.component.html'
 })
 export class DialogPromptComponent {
 

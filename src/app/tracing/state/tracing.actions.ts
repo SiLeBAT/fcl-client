@@ -1,10 +1,34 @@
 import { Action } from '@ngrx/store';
 import { VisioReport } from '../visio/layout-engine/datatypes';
+import { GraphType, Size, TableMode, FclData, ShowType } from '../util/datatypes';
 
 export enum TracingActionTypes {
+    LoadFclData = '[Tracing] Load Fcl Data',
+    LoadFclDataSuccess = '[Tracing] Load Fcl Data Success',
     GenerateVisioLayoutSuccess = '[Tracing] Generate Visio Layout Success',
     ToggleLeftSideBar = '[Tracing] Toggle Left SideBar',
-    ToggleRightSideBar = '[Tracing] Toggle Right SideBar'
+    ToggleRightSideBar = '[Tracing] Toggle Right SideBar',
+    SetGraphType = '[Tracing] Set Graph Type',
+    SetNodeSize = '[Tracing] Set Node Size',
+    SetFontSize = '[Tracing] Set Font Size',
+    MergeDeliveries = '[Tracing] Merge Deliveries',
+    ShowLegend = '[Tracing] Show Legend',
+    ShowZoom = '[Tracing] Show Zoom',
+    SetTableMode = '[Tracing] Set Table Mode',
+    SetTableColumns = '[Tracing] Set Table Columns',
+    SetTableShowType = '[Tracing] Set Table Show Type'
+}
+
+export class LoadFclData implements Action {
+    readonly type = TracingActionTypes.LoadFclData;
+
+    constructor(public payload: File | null) { }
+}
+
+export class LoadFclDataSuccess implements Action {
+    readonly type = TracingActionTypes.LoadFclDataSuccess;
+
+    constructor(public payload: FclData) { }
 }
 
 export class GenerateVisioLayoutSuccess implements Action {
@@ -25,7 +49,72 @@ export class ToggleRightSideBar implements Action {
     constructor(public payload: boolean) { }
 }
 
+export class SetGraphType implements Action {
+    readonly type = TracingActionTypes.SetGraphType;
+
+    constructor(public payload: GraphType) { }
+}
+
+export class SetNodeSize implements Action {
+    readonly type = TracingActionTypes.SetNodeSize;
+
+    constructor(public payload: Size) { }
+}
+
+export class SetFontSize implements Action {
+    readonly type = TracingActionTypes.SetFontSize;
+
+    constructor(public payload: Size) { }
+}
+
+export class MergeDeliveries implements Action {
+    readonly type = TracingActionTypes.MergeDeliveries;
+
+    constructor(public payload: boolean) { }
+}
+
+export class ShowLegend implements Action {
+    readonly type = TracingActionTypes.ShowLegend;
+
+    constructor(public payload: boolean) { }
+}
+
+export class ShowZoom implements Action {
+    readonly type = TracingActionTypes.ShowZoom;
+
+    constructor(public payload: boolean) { }
+}
+
+export class SetTableMode implements Action {
+    readonly type = TracingActionTypes.SetTableMode;
+
+    constructor(public payload: TableMode) { }
+}
+
+export class SetTableColumns implements Action {
+    readonly type = TracingActionTypes.SetTableColumns;
+
+    constructor(public payload: [TableMode, string[]]) { }
+}
+
+export class SetTableShowType implements Action {
+    readonly type = TracingActionTypes.SetTableShowType;
+
+    constructor(public payload: ShowType) { }
+}
+
 export type TracingActions =
-      GenerateVisioLayoutSuccess
+      LoadFclData
+    | LoadFclDataSuccess
+    | GenerateVisioLayoutSuccess
     | ToggleLeftSideBar
-    | ToggleRightSideBar;
+    | ToggleRightSideBar
+    | SetGraphType
+    | SetNodeSize
+    | SetFontSize
+    | MergeDeliveries
+    | ShowLegend
+    | ShowZoom
+    | SetTableMode
+    | SetTableColumns
+    | SetTableShowType;
