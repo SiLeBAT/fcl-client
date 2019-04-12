@@ -44,6 +44,7 @@ class ColumnAssigner {
         const layerIndexSet: Set<number> = new Set();
         layerIndexSet.add(this.stationToLayerIndexMap.get(this.stations[0]));
 
+        // tslint:disable-next-line:one-variable-per-declaration
         for (let i = 1, n = this.stations.length; i < n ; i++) {
             const layerIndex = this.stationToLayerIndexMap.get(this.stations[i]);
 
@@ -111,6 +112,7 @@ class ColumnAssigner {
         if (this.stations.length > 0) {
             result[0].push(this.stations[0]);
             let c = 0;
+            // tslint:disable-next-line:one-variable-per-declaration
             for (let i = 1, n = this.stations.length; i < n; i++) {
                 if (this.columnSwitch[i - 1]) {
                     c++;

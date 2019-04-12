@@ -6,7 +6,9 @@ export class CtNoAssigner {
 
     static assingCtNos(infoGrid: StationInformation[][]) {
         let code = -1;
+        // tslint:disable-next-line:one-variable-per-declaration
         for (let r = 0, rowCount = infoGrid.length; r < rowCount; r++) {
+            // tslint:disable-next-line:one-variable-per-declaration
             for (let c = 0, columnCount = infoGrid[r].length; c < columnCount; c++) {
                 if (infoGrid[r][c] !== null) {
                     infoGrid[r][c].ctno = this.codeToNo(++code);

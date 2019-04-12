@@ -1,52 +1,45 @@
-import { Component, ElementRef, OnInit, ViewChild, OnDestroy, Input } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import * as Hammer from 'hammerjs';
 import * as _ from 'lodash';
 
-import { GraphComponent } from '../graph/graph.component';
-import { TableComponent } from '../table/table.component';
-import { DataService } from '../util/data.service';
-import { DialogSelectComponent, DialogSelectData } from '../dialog/dialog-select/dialog-select.component';
-import { generateVisioReport } from '../visio/visio.service';
-import { Utils } from '../util/utils';
-import { FclData, GraphType, TableMode, StationData } from '../util/datatypes';
-import { Constants } from '../util/constants';
-import { GisComponent } from '../gis/gis.component';
-import { environment } from '../../../environments/environment';
-import { MainPageService } from '../../main-page/services/main-page.service';
-import { NodeLayoutInfo } from '../visio/layout-engine/datatypes';
+import { GraphComponent } from '../../graph/graph.component';
+import { TableComponent } from '../../table/table.component';
+import { DataService } from '../../services/data.service';
+import { generateVisioReport } from '../../visio/visio.service';
+import { Utils } from '../../util/utils';
+import { FclData, GraphType } from '../../util/datatypes';
+import { Constants } from '../../util/constants';
+import { GisComponent } from '../../gis/gis.component';
+import { environment } from '../../../../environments/environment';
+import { MainPageService } from '../../../main-page/services/main-page.service';
+import { NodeLayoutInfo } from '../../visio/layout-engine/datatypes';
 import { Store, select } from '@ngrx/store';
-import * as fromTracing from '../state/tracing.reducers';
-import * as tracingActions from '../state/tracing.actions';
-import { takeWhile } from 'rxjs/operators';
+import * as fromTracing from '../../state/tracing.reducers';
+import * as tracingActions from '../../state/tracing.actions';
+import { takeWhile, tap, catchError } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 
 @Component({
-    selector: 'fcl-tracing',
-    templateUrl: './tracing.component.html',
-    styleUrls: ['./tracing.component.scss']
+    selector: 'fcl-main-tracing',
+    templateUrl: './main-tracing.component.html',
+    styleUrls: ['./main-tracing.component.scss']
 })
-export class TracingComponent implements OnInit, OnDestroy {
-    @ViewChild('mainContainer', { read: ElementRef }) mainContainer: ElementRef;
+export class MainTracingComponent implements OnInit, OnDestroy {
     @ViewChild('graph') graph: GraphComponent;
     @ViewChild('gis') gis: GisComponent;
     @ViewChild('table') table: TableComponent;
-    @ViewChild('leftSidenav') leftSidenav: MatSidenav;
     @ViewChild('rightSidenav') rightSidenav: MatSidenav;
     @ViewChild('rightSidenav', { read: ElementRef })
     rightSidenavElement: ElementRef;
-    @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
-    @ViewChild('fileInput') fileInput: ElementRef;
 
     appName: string = environment.appName;
     subscriptions = [];
 
-    graphTypes = Constants.GRAPH_TYPES;
     graphType = GraphType.GRAPH;
     gisType = GraphType.GIS;
     tableModes = Constants.TABLE_MODES;
     showTypes = Constants.SHOW_TYPES;
-    sizes = Constants.SIZES;
 
     leftOpened: boolean = false;
     rightOpened: boolean = false;
@@ -72,63 +65,69 @@ export class TracingComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscriptions.push(this.mainPageService.doToggleLeftSidebar.subscribe(notification => this.toggleLeftSidebar()));
-        this.subscriptions.push(this.mainPageService.doToggleRightSidebar.subscribe(notification => this.toggleRightSidebar()));
-        this.subscriptions.push(this.mainPageService.doSaveImage.subscribe(notification => this.onSaveImage()));
-        this.subscriptions.push(this.mainPageService.doVisioLayout.subscribe(notification => this.onVisioLayout()));
-        this.subscriptions.push(this.mainPageService.doOnLoad.subscribe(event => this.onLoad(event)));
-        this.subscriptions.push(this.mainPageService.doOnSave.subscribe(event => this.onSave()));
+
+        this.subscriptions.push(this.mainPageService.doSaveImage.subscribe(() => {
+            this.onSaveImage();
+        }, (error => {
+            throw new Error(`error saving image: ${error}`);
+        })));
+        this.subscriptions.push(this.mainPageService.doVisioLayout.subscribe(() => {
+            this.onVisioLayout();
+        }, (error => {
+            throw new Error(`error creating ROA style: ${error}`);
+        })));
+        this.subscriptions.push(this.mainPageService.doOnLoad.subscribe(event => {
+            this.onLoad(event);
+        }, (error => {
+            throw new Error(`error loading file: ${error}`);
+        })));
+        this.subscriptions.push(this.mainPageService.doOnSave.subscribe(() => {
+            this.onSave();
+        }, (error => {
+            throw new Error(`error saving: ${error}`);
+        })));
 
         this.dataService.setDataSource('../../assets/data/bbk.json');
         this.dataService
             .getData()
-            .then(data => {
+            .then((data: FclData) => {
+                this.store.dispatch(new tracingActions.LoadFclDataSuccess(data));
                 this.data = data;
                 this.updateComponents();
+            })
+            .then(() => {
+                combineLatest(
+                    this.store.pipe(select(fromTracing.getFclData)),
+                    this.store.pipe(select(fromTracing.getGraphSettingsOption)),
+                    this.store.pipe(select(fromTracing.getTableSettingsOption)),
+                    this.store.pipe(select(fromTracing.getSideBarStates))
+                )
+                    .pipe(
+                        tap(
+                            ([data, graphSettingsOption, tableSettingsOption, sideBarStates]) => {
+                                this.data = data;
+                                this.onGraphChange(graphSettingsOption);
+                                this.onTableChange(tableSettingsOption);
+                                this.leftOpened = sideBarStates.leftSideBarOpen;
+                                this.rightOpened = sideBarStates.rightSideBarOpen;
+                            },
+                            catchError(error => {
+                                throw new Error(`error with tracing options: ${error}`);
+                            })
+                        ),
+                        takeWhile(() => this.componentActive)
+                    )
+                    .subscribe();
             })
             .catch(error => {
                 Utils.showErrorMessage(this.dialogService, error);
             });
-
-        this.rightSidenav.openedStart.subscribe(() => this.onTableChange('width'));
-        new Hammer.Manager(this.sidenavSlider.nativeElement, {
-            recognizers: [[Hammer.Pan]]
-        }).on('pan', event => {
-            const newWidth = 1 - event.center.x / (this.mainContainer.nativeElement as HTMLElement).offsetWidth;
-
-            if (newWidth > 0 && newWidth < 1) {
-                this.data.tableSettings.width = newWidth;
-                this.onTableChange('width');
-            }
-        });
-
-        this.store.pipe(
-            select(fromTracing.getSideBarStates),
-            takeWhile(() => this.componentActive)
-          ).subscribe(
-              (sideBarStates: fromTracing.SideBarState) => {
-                  this.leftOpened = sideBarStates.leftSideBarOpen;
-                  this.rightOpened = sideBarStates.rightSideBarOpen;
-              }
-          );
 
     }
 
     onHome() {
         this.router.navigate(['/']).catch(err => {
             throw new Error(`Unable to navigate: ${err}`);
-        });
-    }
-
-    toggleLeftSidebar() {
-        this.leftSidenav.toggle().catch(err => {
-            throw new Error(`Unable to toggle: ${err}`);
-        });
-    }
-
-    toggleRightSidebar() {
-        this.rightSidenav.toggle().catch(err => {
-            throw new Error(`Unable to toggle: ${err}`);
         });
     }
 
@@ -189,15 +188,7 @@ export class TracingComponent implements OnInit, OnDestroy {
 
         if (files.length === 1) {
             this.dataService.setDataSource(files[0]);
-            this.dataService
-                .getData()
-                .then(data => {
-                    this.data = data;
-                    this.updateComponents();
-                })
-                .catch(error => {
-                    Utils.showErrorMessage(this.dialogService, error);
-                });
+            this.store.dispatch(new tracingActions.LoadFclData(files[0]));
         } else {
             Utils.showErrorMessage(this.dialogService, 'Please select one .json file!');
         }
@@ -289,49 +280,6 @@ export class TracingComponent implements OnInit, OnDestroy {
                     }
                 });
         }
-    }
-
-    changeColumns() {
-        const options: {
-            value: string;
-            viewValue: string;
-            selected: boolean;
-        }[] = [];
-
-        for (const column of Utils.getAllTableProperties(this.data.tableSettings.mode, this.data.elements)) {
-            options.push({
-                value: column,
-                viewValue: Constants.PROPERTIES.has(column) ? Constants.PROPERTIES.get(column).name : '"' + column + '"',
-                selected: Utils.getTableProperties(
-                    this.data.tableSettings.mode,
-                    this.data.tableSettings.stationColumns,
-                    this.data.tableSettings.deliveryColumns
-                ).includes(column)
-            });
-        }
-
-        const dialogData: DialogSelectData = {
-            title: 'Input',
-            options: options
-        };
-
-        this.dialogService
-            .open(DialogSelectComponent, { data: dialogData })
-            .afterClosed()
-            .subscribe(selections => {
-                if (selections != null) {
-                    switch (this.data.tableSettings.mode) {
-                        case TableMode.STATIONS:
-                            this.data.tableSettings.stationColumns = selections;
-                            this.onTableChange('stationColumns');
-                            break;
-                        case TableMode.DELIVERIES:
-                            this.data.tableSettings.deliveryColumns = selections;
-                            this.onTableChange('deliveryColumns');
-                            break;
-                    }
-                }
-            });
     }
 
     ngOnDestroy() {

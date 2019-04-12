@@ -31,15 +31,15 @@
     padding-right: $fcl-toolbar-padding * 2;
 }
 
+.fcl-toolbar-title {
+    padding: $fcl-toolbar-padding;
+}
+
 .fcl-toolbar-menu-bottom:hover,
 .fcl-toolbar-menu-bottom:active,
 .fcl-toolbar-title:hover,
 .fcl-toolbar-title:active {
     color: $fcl-primary-hover;
-}
-
-.fcl-toolbar-title {
-    padding: $fcl-toolbar-padding;
 }
 
 .fcl-toolbar-action-item {

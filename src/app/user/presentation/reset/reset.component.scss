@@ -1,4 +1,4 @@
-@import "../../../../assets/sass/base";
+@import '../../../../assets/sass/base';
 
 .fcl-card-action-container {
     display: flex;
@@ -24,4 +24,3 @@
 em {
     @include em-errors;
 }
-

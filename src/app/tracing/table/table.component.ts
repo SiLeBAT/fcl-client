@@ -85,7 +85,9 @@ export class TableComponent implements OnInit {
         window.onresize = () => {
             Observable.timer(500).subscribe(() => {
                 this.update();
-            });
+            }, (error => {
+                throw new Error(`${error}`);
+            }));
         };
 
         const resizeSensor = new ResizeSensor(this.container.nativeElement, () => {
@@ -98,7 +100,9 @@ export class TableComponent implements OnInit {
                     this.columns = this.getUpdatedColumns(this.columns);
                     this.table.recalculate();
                 }
-            });
+            }, (error => {
+                throw new Error(`${error}`);
+            }));
         });
 
         this.table.onColumnReorder = () => void(0);

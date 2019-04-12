@@ -47,6 +47,7 @@ export class BoxCreator {
 
             boxes[0].relPosition = Object.assign({}, start);
 
+            // tslint:disable-next-line:one-variable-per-declaration
             for (let i = 1, n = boxes.length; i < n; i++) {
                 boxes[i].relPosition = {
                     x: boxes[0].relPosition.x,
@@ -72,6 +73,7 @@ export class BoxCreator {
 
             boxes[0].relPosition = Object.assign({}, start);
 
+            // tslint:disable-next-line:one-variable-per-declaration
             for (let i = 1, n = boxes.length; i < n; i++) {
                 boxes[i].relPosition = {
                     x: BoxCreator.getRight(boxes[i - 1]) + distance,

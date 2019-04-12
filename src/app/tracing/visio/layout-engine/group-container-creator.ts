@@ -286,6 +286,7 @@ export class GroupContainerCreator {
             ];
         } else {
             const result: Polygon = [];
+            // tslint:disable-next-line:one-variable-per-declaration
             for (let i = 0, n = polygon.length; i < n; i++) {
 
                 const lastMove: GridCell = (i > 0 ?
@@ -331,6 +332,7 @@ export class GroupContainerCreator {
 
     private aggValues(arr: number[]): number[] {
         const result: number[] = arr.slice();
+        // tslint:disable-next-line:one-variable-per-declaration
         for (let i = 1, n = arr.length; i < n; i++) {
             result[i] += result[i - 1];
         }

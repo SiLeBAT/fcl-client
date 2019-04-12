@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { environment } from '../../../../environments/environment';
 import { UserService } from '../../../user/services/user.service';
@@ -13,12 +13,9 @@ import * as userActions from '../../../user/state/user.actions';
     styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-    @ViewChild('fileInput') fileInput: ElementRef;
-
     private isActive = false;
     appName: string = environment.appName;
     supportContact: string = environment.supportContact;
-    subscriptions = [];
 
     constructor(
     public userService: UserService,
@@ -27,19 +24,10 @@ export class MainPageComponent implements OnInit {
   ) {}
 
     ngOnInit() {
-        this.subscriptions.push(
-            this.mainPageService.doInputEmpty.subscribe(notification =>
-            this.setInputEmpty()
-          )
-        );
     }
 
     logout() {
         this.store.dispatch(new userActions.LogoutUser());
-    }
-
-    setInputEmpty() {
-        (this.fileInput.nativeElement as HTMLInputElement).value = '';
     }
 
     getDisplayMode() {

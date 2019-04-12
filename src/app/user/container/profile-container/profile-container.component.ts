@@ -22,7 +22,11 @@ export class ProfileContainerComponent implements OnInit, OnDestroy {
             select(fromUser.getCurrentUser),
             takeWhile(() => this.componentActive)
         ).subscribe(
-            (currentUser: TokenizedUser) => this.currentUser = currentUser
+            (currentUser: TokenizedUser) => {
+                this.currentUser = currentUser;
+            }, (error => {
+                throw new Error(`error getting current user: ${error}`);
+            })
         );
     }
 
