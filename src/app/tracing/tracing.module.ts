@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { TracingComponent } from './tracing/tracing.component';
+import { MainTracingComponent } from './tracing/main-tracing/main-tracing.component';
 import { SharedModule } from '../shared/shared.module';
 import { TracingRoutingModule } from './tracing.routing.module';
 import { GraphComponent } from './graph/graph.component';
@@ -19,6 +19,10 @@ import { VisioLayoutComponent } from './visio/visio-dialog/visio-dialog.componen
 
 import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
 import { StoreModule } from '@ngrx/store';
+import { GraphSettingsComponent } from './tracing/graph-settings/graph-settings.component';
+import { TableSettingsComponent } from './tracing/table-settings/table-settings.component';
+import { TracingEffects } from './state/tracing.effects';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
     imports: [
@@ -27,11 +31,11 @@ import { StoreModule } from '@ngrx/store';
         SharedModule,
         NgxDatatableModule,
         TracingRoutingModule,
-        StoreModule.forFeature(STATE_SLICE_NAME, reducer)
-
+        StoreModule.forFeature(STATE_SLICE_NAME, reducer),
+        EffectsModule.forFeature([TracingEffects])
     ],
     declarations: [
-        TracingComponent,
+        MainTracingComponent,
         GraphComponent,
         GisComponent,
         TableComponent,
@@ -42,7 +46,9 @@ import { StoreModule } from '@ngrx/store';
         DialogSingleSelectComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
-        VisioLayoutComponent
+        VisioLayoutComponent,
+        GraphSettingsComponent,
+        TableSettingsComponent
     ],
     exports: [
         TableComponent

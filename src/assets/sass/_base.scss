@@ -16,3 +16,27 @@ $fcl-card-border-radius: 8px;
 
   }
 
+  @mixin sidenav-elements {
+    .sidenav-elements {
+        padding: 8px 16px;
+        display: flex;
+        flex-direction: column;
+
+        > * {
+          margin: 8px 0;
+        }
+
+        > mat-select {
+          width: 100%;
+          margin-top: 20px;
+        }
+
+        > button {
+          width: 100%;
+        }
+
+        > mat-radio-group > mat-radio-button:not(:last-child) {
+          margin-right: 8px;
+        }
+      }
+ }

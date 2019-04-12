@@ -2,29 +2,6 @@
   flex: 1;
 }
 
-.sidenav-elements {
-  padding: 8px 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidenav-elements > * {
-  margin: 8px 0;
-}
-
-.sidenav-elements > mat-select {
-  width: 100%;
-  margin-top: 20px;
-}
-
-.sidenav-elements > button {
-  width: 100%;
-}
-
-.sidenav-elements > mat-radio-group > mat-radio-button:not(:last-child) {
-  margin-right: 8px;
-}
-
 .toolbarSpan {
   flex: 1 1 auto;
 }

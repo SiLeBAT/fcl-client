@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FclData, GraphSettings, TableSettings } from './datatypes';
-import { Constants } from './constants';
-import { DataImporter } from './data-importer/data-importer';
-import { DataExporter } from './data-exporter';
+import { FclData, GraphSettings, TableSettings } from '../util/datatypes';
+import { Constants } from '../util/constants';
+import { DataImporter } from '../util/data-importer/data-importer';
+import { DataExporter } from '../util/data-exporter';
 
 @Injectable({
     providedIn: 'root'

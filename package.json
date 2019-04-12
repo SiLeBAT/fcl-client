@@ -43,7 +43,7 @@
     "css-element-queries": "^1.0.2",
     "cytoscape": "^3.2.15",
     "cytoscape-cola": "^2.2.3",
-    "cytoscape-dagre": "^2.2.1",
+    "cytoscape-dagre": "^2.2.2",
     "cytoscape-spread": "^3.0.0",
     "d3": "^5.5.0",
     "elkjs": "^0.4.1",
@@ -62,7 +62,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.7.2",
+    "@angular-devkit/build-angular": "^0.13.8",
     "@angular/cli": "^6.0.8",
     "@angular/compiler-cli": "^6.1.1",
     "@types/d3": "^5.0.0",
