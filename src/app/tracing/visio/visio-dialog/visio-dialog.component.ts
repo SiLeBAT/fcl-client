@@ -12,8 +12,7 @@ export interface VisioLayoutData {
 
 @Component({
     selector: 'fcl-visio-dialog-properties',
-    templateUrl: './visio-dialog.component.html',
-    styleUrls: ['./visio-dialog.component.scss']
+    templateUrl: './visio-dialog.component.html'
 })
 export class VisioLayoutComponent {
 

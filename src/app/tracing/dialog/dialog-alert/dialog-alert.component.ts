@@ -8,8 +8,7 @@ export interface DialogAlertData {
 
 @Component({
     selector: 'fcl-dialog-alert',
-    templateUrl: './dialog-alert.component.html',
-    styleUrls: ['./dialog-alert.component.scss']
+    templateUrl: './dialog-alert.component.html'
 })
 export class DialogAlertComponent {
 

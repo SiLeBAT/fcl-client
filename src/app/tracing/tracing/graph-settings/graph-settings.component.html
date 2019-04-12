@@ -1,0 +1,45 @@
+<mat-toolbar color="primary">
+    <span>Graph Settings</span>
+</mat-toolbar>
+
+<div class="sidenav-elements">
+    <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
+        <mat-radio-button *ngFor="let type of graphTypes" [value]="type">
+            {{ type }}
+        </mat-radio-button>
+    </mat-radio-group>
+
+    <mat-form-field>
+        <mat-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize" (ngModelChange)="setNodeSize()">
+            <mat-option *ngFor="let size of sizes" [value]="size">
+                {{ size }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+        <mat-form-field>
+            <mat-select
+              placeholder="Font Size"
+              [(ngModel)]="graphSettings.fontSize"
+              (ngModelChange)="setFontSize()">
+              <mat-option *ngFor="let size of sizes" [value]="size">
+                {{size}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-checkbox
+          [(ngModel)]="graphSettings.mergeDeliveries"
+          (ngModelChange)="mergeDeliveries()">
+          Merge Deliveries
+        </mat-checkbox>
+
+    <mat-checkbox
+          [(ngModel)]="graphSettings.showLegend"
+          (ngModelChange)="showLegend()">
+          Show Legend
+        </mat-checkbox>
+        <mat-checkbox
+          [(ngModel)]="graphSettings.showZoom"
+          (ngModelChange)="showZoom()">
+          Show Zoom Controls
+        </mat-checkbox>
+</div>

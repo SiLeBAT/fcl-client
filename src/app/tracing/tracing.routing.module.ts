@@ -3,13 +3,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from './../user/guards/auth.guard';
-import { TracingComponent } from './tracing/tracing.component';
+import { MainTracingComponent } from './tracing/main-tracing/main-tracing.component';
 import { environment } from './../../environments/environment';
 
 const tracingRoutes: Routes = [
     {
         path: 'tracing',
-        component: TracingComponent,
+        component: MainTracingComponent,
         canActivate:  environment.serverless ? null : [AuthGuard]
     }
 ];

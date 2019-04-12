@@ -28,7 +28,9 @@ export class LoginContainerComponent implements OnInit, OnDestroy {
                         throw new Error(`Unable to navigate: ${err}`);
                     });
                 }
-            });
+            }, (error => {
+                throw new Error(`error getting current user: ${error}`);
+            }));
     }
 
     login(credentials: LoginCredentials) {

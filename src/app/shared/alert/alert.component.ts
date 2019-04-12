@@ -5,8 +5,7 @@ import { AlertService, INotification } from '../services/alert.service';
 
 @Component({
     selector: 'fcl-alert',
-    templateUrl: './alert.component.html',
-    styleUrls: ['./alert.component.scss']
+    templateUrl: './alert.component.html'
 })
 export class AlertComponent implements OnInit {
 
@@ -16,7 +15,10 @@ export class AlertComponent implements OnInit {
     ngOnInit() {
         this.alertService.notification$.subscribe(notification => {
             this.showToaster(notification);
-        });
+        },
+            (error => {
+                throw new Error(`error showing toaster: ${error}`);
+            }));
     }
 
     showToaster(notification: INotification) {

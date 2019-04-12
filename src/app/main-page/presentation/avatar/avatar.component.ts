@@ -5,8 +5,7 @@ import { UserService } from '../../../user/services/user.service';
 
 @Component({
     selector: 'fcl-avatar',
-    templateUrl: './avatar.component.html',
-    styleUrls: ['./avatar.component.scss']
+    templateUrl: './avatar.component.html'
 })
 export class AvatarComponent {
     @Input() currentUser$: Observable<User | null>;

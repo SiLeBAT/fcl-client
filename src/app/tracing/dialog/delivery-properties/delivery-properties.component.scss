@@ -1,18 +1,18 @@
 .title {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .titleSpan {
-  flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 
 #properties {
-  margin-top: 10px;
-  margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 td:first-child {
-  padding-right: 40px;
+    padding-right: 40px;
 }
