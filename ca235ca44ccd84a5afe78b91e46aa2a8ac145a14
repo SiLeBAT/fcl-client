@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "180e2f4d_cdb00825",
+        "filename": "src/app/tracing/tracing/main-tracing/main-tracing.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-15T09:01:23Z",
+      "side": 1,
+      "message": "takeWhile should be last operator.\nAdd rxjs-tslint-rules: see mibi-portal client tslint.json",
+      "range": {
+        "startLine": 90,
+        "startChar": 24,
+        "endLine": 90,
+        "endChar": 62
+      },
+      "revId": "ca235ca44ccd84a5afe78b91e46aa2a8ac145a14",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f02a062_1fca8bec",
+        "filename": "src/app/tracing/tracing/table-settings/table-settings.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-15T09:01:23Z",
+      "side": 1,
+      "message": "Do we need to unsubscribe?",
+      "revId": "ca235ca44ccd84a5afe78b91e46aa2a8ac145a14",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
