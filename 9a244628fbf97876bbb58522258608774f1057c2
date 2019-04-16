@@ -1,0 +1,175 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6eb2d151_48b61c6d",
+        "filename": "src/app/tracing/visio/layout-engine/box-creator.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "Please re-enable the linter \u0026 move n out of the for",
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aeb6279e_20c42148",
+        "filename": "src/app/tracing/visio/layout-engine/box-creator.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "see above",
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f66431a6_4aef0493",
+        "filename": "src/app/tracing/visio/layout-engine/column-assigner.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "see previous",
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0de05c4a_c4f47a1a",
+        "filename": "src/app/tracing/visio/layout-engine/column-assigner.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "see previous",
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cda82a6e_78d98e33",
+        "filename": "src/app/tracing/visio/layout-engine/ctno-assigner.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "see previous",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 64
+      },
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c787775_17b41f3d",
+        "filename": "src/app/tracing/visio/layout-engine/group-container-creator.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "see previous",
+      "range": {
+        "startLine": 289,
+        "startChar": 44,
+        "endLine": 289,
+        "endChar": 52
+      },
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef491c81_67507aee",
+        "filename": "src/app/tracing/visio/layout-engine/group-container-creator.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "see previous",
+      "range": {
+        "startLine": 335,
+        "startChar": 31,
+        "endLine": 335,
+        "endChar": 39
+      },
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29f8599d_9c1bc9ae",
+        "filename": "src/mxtypes/Handlers.d.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "Where does this file come from?  Did we write this?",
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc1b542d_d9dd6058",
+        "filename": "src/mxtypes/View.d.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-04-16T08:48:17Z",
+      "side": 1,
+      "message": "Where does this file come from?  Did we write this?",
+      "revId": "9a244628fbf97876bbb58522258608774f1057c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
