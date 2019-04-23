@@ -6,6 +6,9 @@ import { Utils } from './../../util/utils';
 import { addSampleInformation } from './sample-information-provider';
 
 export class InformationProvider {
+    private static readonly STATION_PROPERTY_ACTIVITY = 'focusStationChain';
+    private static readonly DELIVERY_PROPERTY_BRANDNAME = 'brandName';
+    private static readonly DELIVERY_PROPERTY_LOTQUANTITY = 'lotQuantity';
     private static readonly UNKNOWN = 'unkown';
     private lotCounter: number = 0;
 
@@ -57,12 +60,21 @@ export class InformationProvider {
             name: station.name,
             registrationNumber: null,
             sector: null,
-            activities: null,
+            activities: this.getProperty(station.properties, InformationProvider.STATION_PROPERTY_ACTIVITY),
             samples: [],
             inSamples: [],
             products: this.createProductInformation(this.getStationOutDeliveries(station))
         };
         return stationInfo;
+    }
+
+    private getProperty(propList: {name: string, value: string}[], propName: string): string {
+        const index: number = propList.findIndex((p) => p.name.localeCompare(propName) === 0);
+        if (index >= 0) {
+            return propList[index].value;
+        } else {
+            return null;
+        }
     }
 
     private createProductInformation(deliveries: DeliveryData[]): ProductInformation[] {
@@ -84,9 +96,9 @@ export class InformationProvider {
             productionOrDurabilityDate: InformationProvider.UNKNOWN,
             product: lotDeliveries[0].name,
             commonProductName: lotDeliveries[0].name,
-            brandName: InformationProvider.UNKNOWN,
+            brandName: this.getProperty(lotDeliveries[0].properties, InformationProvider.DELIVERY_PROPERTY_BRANDNAME),
             production: null,
-            quantity: InformationProvider.UNKNOWN,
+            quantity: this.getProperty(lotDeliveries[0].properties, InformationProvider.DELIVERY_PROPERTY_LOTQUANTITY),
             samples: [],
             deliveries: lotDeliveries.map(d => this.createDeliveryInformation(d))
         }));

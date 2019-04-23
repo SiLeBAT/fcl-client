@@ -13,7 +13,7 @@ export class ConfidentialLabelCreator extends LabelCreator {
             lotInfo.commonProductName || 'Unknown product name',
             'brand name: ' + (lotInfo.brandName || 'unknown'),
             'Lot: ' + (lotInfo.lotIdentifier || 'unknown'),
-            'Amount: ' + (lotInfo.quantity || lotInfo.quantity)
+            'Amount: ' + (lotInfo.quantity || 'unknown')
         ];
         return this.getLabel(text, GraphSettings.LOT_BOX_MARGIN);
     }
