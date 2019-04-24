@@ -13,7 +13,7 @@
     "build:prod": "npm run clean && npm run lint && ng build --configuration=production --output-path \"public\"",
     "test": "ng test",
     "lint": "npm run lint:code && npm run lint:styles",
-    "lint:code": "tslint --project tsconfig.json --fix -c tslint.json 'src/**/*.ts'",
+    "lint:code": "tslint --project tsconfig.json --fix -c tslint.json \"src/**/*.ts\"",
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "e2e": "ng e2e",
     "gh-pages": "ng build --configuration=production --bh /fcl-client/",
