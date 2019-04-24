@@ -29,7 +29,7 @@ export class InformationProvider {
     }
 
     private init() {
-        const stations = this.data.stations.filter(station => !station.invisible);
+        const stations = this.data.stations.filter(station => !station.invisible && !station.contained);
 
         this.stationIdToInfoMap = new Map();
         stations.forEach(station => {
