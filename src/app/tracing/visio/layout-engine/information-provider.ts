@@ -6,7 +6,7 @@ import { Utils } from './../../util/utils';
 import { addSampleInformation } from './sample-information-provider';
 
 export class InformationProvider {
-    private static readonly STATION_PROPERTY_ACTIVITY = 'focusStationChain';
+    private static readonly STATION_PROPERTY_ACTIVITY = 'typeOfBusiness';
     private static readonly DELIVERY_PROPERTY_BRANDNAME = 'brandName';
     private static readonly DELIVERY_PROPERTY_LOTQUANTITY = 'lotQuantity';
     private static readonly UNKNOWN = 'unkown';
