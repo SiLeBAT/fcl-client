@@ -1,53 +1,33 @@
 import * as Solver from 'javascript-lp-solver';
 
+export class LPResult {
+    feasible: boolean;
+    bounded: boolean;
+    objective: number;
+    vars: Map<String, number>;
+
+    constructor(result: any, lpModel: LPModel) {
+        this.feasible = result['feasible'];
+        this.bounded = result['bounded'];
+        this.objective = result['result'];
+        this.vars = new Map();
+
+        for (const varName of lpModel.getVariableNames()) {
+            this.vars.set(varName, result[varName.toString()]);
+            if (isNaN(result[varName.toString()])) {
+                this.vars.set(varName, 0);
+            }
+        }
+    }
+}
+
 export function lpSolve(model: LPModel): LPResult {
-  // runTestModel();
-  // runTestModel2();
     const solver = Solver;
 
     const result: any = solver.Solve(model.getModel());
-    // tslint:disable-next-line
+
     return new LPResult(result, model);
 }
-
-/*function runTestModel() {
-  let model = [
-    "max: 1200 table 1600 dresser",
-    "30 table 20 dresser <= 300",
-    "5 table 10 dresser <= 110",
-    "30 table 50 dresser <= 400",
-    "table <= 5",
-    "table >= 2",
-    "int table",
-    "int dresser",
-  ];
-  const solver = Solver;
-  // Reformat to JSON model
-  model = solver.ReformatLP(model);
-  const result = solver.Solve(model);
-}*/
-
-/*function runTestModel2() {
-  let model = {
-    "optimize": "profit",
-    "opType": "max",
-    "constraints": {
-        "wood": {"max": 300, "min": 5},
-        "labor": {"max": 110},
-        "storage": {"max": 400}
-    },
-    "variables": {
-        "table": {"wood": 30,"labor": 5,"profit": 1200,"table": 1, "storage": 30},
-        "dresser": {"wood": 20,"labor": 10,"profit": 1600,"dresser": 1, "storage": 50}
-    },
-    "binaries": {"table": 1,"dresser": 1}
-   };
-   const solver = Solver;
-  // Reformat to JSON model
-    const model_s: string = solver.ReformatLP(model);
-    //const result = solver.Solve(model);
-    const model_b = solver.ReformatLP(model_s.split(';'));
-}*/
 
 export class LPModel {
     private model: any = {
@@ -63,16 +43,16 @@ export class LPModel {
     constructor() {}
 
     addConstraint(
-    constraintLabel: string,
-    min: number,
-    max: number,
-    constraint: Object
-  ) {
+        constraintLabel: string,
+        min: number,
+        max: number,
+        constraint: Object
+    ) {
         const constraintId: string = 'C' + (++this.constraintCount).toString();
         this.constraintsLabelToIdMap.set(constraintLabel, constraintId);
         this.constraintIdToLabelMap.set(constraintId, constraintLabel);
         this.constraintIds.push(constraintId);
-        this.model['constraints'][constraintId] = {}; // {'max': b};
+        this.model['constraints'][constraintId] = {};
         if (min != null) {
             this.model['constraints'][constraintId]['min'] = min;
         }
@@ -86,6 +66,7 @@ export class LPModel {
             this.model['variables'][varName][constraintId] = constraint[varName];
         }
     }
+
     setObjective(opType: String, objective: Object) {
         this.model['opType'] = opType;
         for (const varName of Object.getOwnPropertyNames(objective)) {
@@ -109,6 +90,7 @@ export class LPModel {
             }
         }
     }
+
     setObjectiveCoefficient(varName: string, coeff: number) {
         if (!this.model['variables'].hasOwnProperty(varName)) {
             this.model['variables'][varName] = { [varName]: 1 };
@@ -125,12 +107,8 @@ export class LPModel {
     }
 
     printConstraints(lpResult: LPResult) {
-        const varNames: string[] = Object.getOwnPropertyNames(
-      this.model['variables']
-    );
-        for (const conName of Object.getOwnPropertyNames(
-      this.model['constraints']
-    )) {
+        const varNames: string[] = Object.getOwnPropertyNames(this.model['variables']);
+        for (const conName of Object.getOwnPropertyNames(this.model['constraints'])) {
             let conTerm: string = '';
             let conValue: number = lpResult ? 0.0 : null;
             for (const varName of varNames) {
@@ -156,19 +134,21 @@ export class LPModel {
             }
             const conLabel: string = this.constraintIdToLabelMap.get(conName) + ': ';
             const text: string =
-        conLabel +
-        ' ' +
-        (this.model['constraints'][conName]['min'] != null
-          ? this.model['constraints'][conName]['min'].toString() + '<='
-          : '') +
-        conTerm +
-        (lpResult ? ' = ' + conValue.toString() : '') +
-        (this.model['constraints'][conName]['max'] != null
-          ? '<=' + this.model['constraints'][conName]['max'].toString()
-          : '');
+                conLabel +
+                ' ' +
+                (this.model['constraints'][conName]['min'] != null
+                ? this.model['constraints'][conName]['min'].toString() + '<='
+                : '') +
+                conTerm +
+                (lpResult ? ' = ' + conValue.toString() : '') +
+                (this.model['constraints'][conName]['max'] != null
+                ? '<=' + this.model['constraints'][conName]['max'].toString()
+                : '');
 
+            // console.log(text);
         }
     }
+
     printObjective(lpResult: LPResult) {
         const objectiveName: string = this.model['optimize'];
         const objectiveType: string = this.model['opType'];
@@ -195,26 +175,6 @@ export class LPModel {
         }
         if (lpResult) {
             text += ' = ' + lpResult.objective.toString();
-        }
-    }
-}
-
-export class LPResult {
-    feasible: boolean;
-    bounded: boolean;
-    objective: number;
-    vars: Map<String, number>;
-    constructor(result: any, lpModel: LPModel) {
-        this.feasible = result['feasible'];
-        this.bounded = result['bounded'];
-        this.objective = result['result'];
-        this.vars = new Map();
-        for (const varName of lpModel.getVariableNames()) {
-            this.vars.set(varName, result[varName.toString()]);
-            if (isNaN(result[varName.toString()])) {
-                const tmp = result[varName.toString()];
-                this.vars.set(varName, 0);
-            }
         }
     }
 }

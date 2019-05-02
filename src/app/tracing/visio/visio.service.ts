@@ -1,7 +1,7 @@
-import { FclElements } from '../util/datatypes';
+import { FclElements, GroupType } from '../util/datatypes';
 import { VisioLayoutComponent, VisioLayoutData } from './visio-dialog/visio-dialog.component';
 import { MatDialog } from '@angular/material';
-import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo } from './layout-engine/datatypes';
+import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo, ReportType } from './layout-engine/datatypes';
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
 
@@ -34,11 +34,10 @@ export async function generateVisioReport(
     dialogService: MatDialog
     ): Promise<VisioReport> {
 
-    const engineConf = await requestVisioEngineConfiguration(dialogService);
-    if (engineConf !== undefined && engineConf !== null) {
-        return createReport(data, nodeInfoMap, engineConf);
-    } else {
-        // user cancel
-        return null;
-    }
+    const engineConf: VisioEngineConfiguration = {
+        reportType: ReportType.Confidential,
+        groupType: StationGroupType.Country
+    };
+
+    return createReport(data, nodeInfoMap, engineConf);
 }

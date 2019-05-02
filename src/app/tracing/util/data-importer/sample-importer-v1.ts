@@ -26,7 +26,7 @@ function convertRawSamples(rawData: any): SampleData[] {
         }
         return result;
     }
-    return null;
+    return [];
 }
 
 function convertRawSampleResultType(type: string): SampleResultType {
