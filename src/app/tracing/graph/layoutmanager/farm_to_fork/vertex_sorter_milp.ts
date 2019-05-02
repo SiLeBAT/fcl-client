@@ -1,23 +1,17 @@
 import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './data_structures';
-import { lpSolve, LPModel, LPResult } from './lp_solver';
+import { Graph, Vertex } from './data_structures';
+import { lpSolve, LPModel, LPResult } from './../../../../shared/lp_solver';
 import { createVirtualVertices } from './shared';
-// import { listenOnPlayer } from '@angular/animations/browser/src/render/shared';
-// import { SummaryResolver } from '@angular/compiler';
 
 function sortVerticesAccordingToResult(graph: Graph, lpResult: LPResult) {
 
     for (const layer of graph.layers) {
-        layer.sort((a, b) => (a.indexInLayer < b.indexInLayer ?
-      (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
-      (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)));
-    /*layer.sort(function(a,b) {
-      if(a.indexInLayer<b.indexInLayer) {
-        const varName: string = buildXVarName(a, b);
-        const varValue: number = lpResult.vars.get(varName);
-      if(varValue>0.5) return -1;
-      else return 1;
-    });*/
+        layer.sort((a, b) => (
+            a.indexInLayer < b.indexInLayer ?
+            (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
+            (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)
+        ));
+
         for (let i: number = layer.length - 1; i >= 0; i--) { layer[i].indexInLayer = i; }
     }
 }
@@ -33,8 +27,7 @@ function sort(graph: Graph) {
 
     const lpModel: LPModel = constructModel(graph.layers);
     const lpResult: LPResult = lpSolve(lpModel);
-  // lpModel.printObjective(lpResult);
-  // lpModel.printConstraints(lpResult);
+
     sortVerticesAccordingToResult(graph, lpResult);
 }
 
@@ -64,7 +57,7 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
 
     for (const layer of layers) {
         let pathVarsInLayer: string[] = [];
-    // add Xij == 1 <==> i->j  constraints
+        // add Xij == 1 <==> i->j  constraints
         for (let k: number = layer.length - 1; k >= 2; k--) {
             for (let j: number = 1; j < k; j++) {
                 const varXjk: string = buildXVarName(layer[j], layer[k]);
@@ -77,70 +70,20 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
                     const conName: string =
                       'C13.23(L:' + layer[k].layerIndex.toString() + '):(' + layer[i].index.toString() +
                       ',' + layer[j].index.toString() + ',' + layer[k].index.toString() + ')';
-                    lpModel.addConstraint(conName,
-            0, 1, {
-                [varXij]: 1,
-                [varXjk]: 1,
-                [varXik]: -1
-            });
+                    lpModel.addConstraint(conName, 0, 1, {
+                        [varXij]: 1,
+                        [varXjk]: 1,
+                        [varXik]: -1
+                    });
                 }
             }
         }
         if (layer.length > 1) {
             pathVarsInLayer = _.uniq(pathVarsInLayer);
-        /*const constraint = {};
-        for(const pathVar of pathVarsInLayer) constraint[pathVar] = 1;
-        const sumOfPathVarsInLayer: number = (layer.length-1)*(layer.length)/2;
-        const conName: string = 'ConSumOfPathVars(L:' + layer[0].layerIndex.toString() + ') SumOfXij='  + sumOfPathVarsInLayer.toString();
-        lpModel.addConstraint(conName, sumOfPathVarsInLayer, sumOfPathVarsInLayer, constraint);*/
         }
         pathVars = pathVars.concat(pathVarsInLayer);
-      /*
-      // add Nij == 1  i is neighbour of j
-      let pairs: Vertex[][] = [];
-      const siblingsWithRespectToUpLayer: Vertex[][] =
-        .uniq([].concat(...layer.map(v=>v.inEdges.map(e=>e.source)))).map(v=>v.outEdges.map(e=>e.target));
-      const siblingsWithRespectToDownLayer: Vertex[][] =
-        .uniq([].concat(...layer.map(v=>v.outEdges.map(e=>e.target)))).map(v=>v.inEdges.map(e=>e.source));
-      const siblingsArray: Vertex[][] = [].concat(siblingsWithRespectToUpLayer,siblingsWithRespectToDownLayer).filter(l=>l.length>1);
 
-      for(const siblings of siblingsArray) {
-        siblings.sort((a,b)=>a.indexInLayer<b.indexInLayer?-1:1);
-        for(let iS2: number = siblings.length-1; iS2>0; iS2--) {
-          for(let iS1: number = 0; iS1<iS2; iS1++) {
-            pairs.push([siblings[iS1],siblings[iS2]]);
-          }
-        }
-      }
-
-      pairs = _.uniqWith(pairs,(a,b)=>a[0]==b[0] && a[1]==b[1]);
-      for(const pair of pairs) {
-        const varNik: string = 'n' + pair[0].index.toString() + '_' + pair[1].index.toString();
-        neighbourVars.push(varNik);
-        for(const vertex of layer) {
-          if(vertex!=pair[0] && vertex!=pair[1]) {
-            // add nik<=2-(xjk+xij)
-            const varXjk: string = 'x' + vertex.index.toString() + '_' + pair[1].index.toString();
-            const varXij: string = 'x' + pair[0].index.toString() + '_' + vertex.index.toString();
-            const conName1: string = 'Con:' + varNik + '<=2-' + varXjk + '-' + varXij;
-            lpModel.addConstraint(conName1, null, 2, {
-              [varNik]: 1,
-              [varXjk]: 1,
-              [varXij]: 1
-            });
-            // add nki=nik <= Xij  + Xjk
-            const conName2: string = 'Con:' + varNik + '<=' + varXij + '+' + varXjk;
-            lpModel.addConstraint(conName2, null, 0, {
-              [varNik]: -1,
-              [varXjk]: -1,
-              [varXij]: -1
-            });
-          }
-        }
-      }
-      //allPairs = allPairs.concat(pairs);
-      */
-      // add Crossings
+        // add Crossings
         const targets: Vertex[] = layer.filter(v => v.inEdges.length > 0);
         for (let iT2: number = targets.length - 1; iT2 > 0; iT2--) {
             for (let iT1: number = 0; iT1 < iT2; iT1++) {
@@ -149,7 +92,7 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
                 const sourcesFromTargetI: Vertex[] = targetI.inEdges.map(e => e.source);
                 const sourcesFromTargetK: Vertex[] = targetK.inEdges.map(e => e.source);
 
-                const varXik = buildXVarName(targetI, targetK); //  'x' + targetI.index.toString() + '_' + targetK.index.toString();
+                const varXik = buildXVarName(targetI, targetK); //
 
                 for (const sourceJ of sourcesFromTargetI) {
                     for (const sourceL of sourcesFromTargetK) {
@@ -204,52 +147,6 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
     lpModel.setBinaryVariables([].concat(crossingVars, pathVars));
 }
 
-  /*function createVirtualVertices(graph: Graph) {
-    for(let layer of graph.layers)
-    for(let vertex of layer)
-    for(let edge of vertex.inEdges) if(Math.abs(edge.source.layerIndex-edge.target.layerIndex)>1) splitEdge(graph, edge);
-  }
-
-  function splitEdge(graph: Graph, edge: Edge) {
-    const layerSpan = edge.source.layerIndex-edge.target.layerIndex;
-    const maxVertexIndex: number = graph.vertices.length-1;
-    const layers: Vertex[][] = graph.layers;
-    // add new virtual nodes
-    for(let i: number = 1; i<layerSpan; ++i) {
-      let iL: number = edge.source.layerIndex - i;
-      let vertex: Vertex = new Vertex();
-      graph.insertVertex(vertex);
-      vertex.isVirtual = true;
-      //graph.vertices.push(new Vertex());
-      //vertexRank[++maxVertexIndex] = iL; //
-      layers[iL].push(vertex);
-      vertex.setIndexInLayer(layers[iL].length-1);
-      vertex.layerIndex = iL;
-    }
-
-    // ToDO: Improve
-    let edgeOutIndex: number = edge.source.outEdges.findIndex(e => {return e.target.index===edge.target.index});
-    let edgeInIndex: number = edge.target.inEdges.findIndex(e => {return e.source.index===edge.source.index});
-    const newSpanStartEdge: Edge = new Edge(graph.vertices[edge.source.index], graph.vertices[maxVertexIndex + 1], true);
-    newSpanStartEdge.weight = edge.weight;
-    graph.vertices[edge.source.index].outEdges[edgeOutIndex] = newSpanStartEdge; // replacing old edge
-    graph.vertices[maxVertexIndex+1].inEdges = [newSpanStartEdge];
-    const newSpanEndEdge: Edge = new Edge(graph.vertices[maxVertexIndex + layerSpan - 1], graph.vertices[edge.target.index], true);
-    newSpanEndEdge.weight = edge.weight;
-    graph.vertices[edge.target.index].inEdges[edgeInIndex] = newSpanEndEdge;
-    graph.vertices[maxVertexIndex+layerSpan-1].outEdges = [newSpanEndEdge];
-
-    for(let i: number = 1; i<layerSpan-1; ++i) {
-      const newSpanInBetweenEdge: Edge = new Edge(graph.vertices[maxVertexIndex+i], graph.vertices[maxVertexIndex+i+1], true);
-      newSpanInBetweenEdge.weight = edge.weight;
-      graph.vertices[maxVertexIndex+i].outEdges = [newSpanInBetweenEdge];
-      graph.vertices[maxVertexIndex+i+1].inEdges = [newSpanInBetweenEdge];
-    }
-
-    // ToDo:
-    // set size to virtual nodes
-  }
-  */
 export function sortVerticesInLayers(graph: Graph) {
     createVirtualVertices(graph);
     sort(graph);

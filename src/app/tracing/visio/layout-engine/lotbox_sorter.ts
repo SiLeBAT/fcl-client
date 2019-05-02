@@ -2,11 +2,6 @@ import * as _ from 'lodash';
 import { VisioBox, VisioConnector, VisioPort, Position } from './datatypes';
 import { Utils } from '../../util/utils';
 
-interface WeightedBox {
-    weight: number;
-    box: VisioBox;
-}
-
 export class LotBoxSorter {
     private portToConnectedPositionsMap: Map<string, Position[]>;
     private portToPositionMap: Map<string, Position>;
@@ -17,16 +12,8 @@ export class LotBoxSorter {
         this.portToConnectedPositionsMap = this.createPortToConnectedPositionsMap(portToConnectedPortsMap);
     }
 
-    private getMinPosition(lotBoxes: VisioBox[]): Position {
-        return {
-            x: Math.min(...lotBoxes.map(b => b.position.x)),
-            y: Math.min(...lotBoxes.map(b => b.position.y))
-        };
-    }
-
     sortLotBoxes(lotBoxes: VisioBox[]) {
         const boxes = this.getInitialSorting(lotBoxes);
-        // this.improveSorting(boxes);
         this.applySorting(boxes, lotBoxes);
     }
 
@@ -46,14 +33,25 @@ export class LotBoxSorter {
     }
 
     private getInitialSorting(boxes: VisioBox[]): VisioBox[] {
+        const refPosition: Position = this.getReferencePosition(boxes);
         const weightedBoxes = boxes.map(
             b => ({
-                weight: this.getWeight(b, this.portToPositionMap.get(b.ports[0].id)),
+                weight: this.getWeight(b, refPosition),
                 box: b
             })
         );
         weightedBoxes.sort((wB1, wB2) => wB1.weight - wB2.weight);
+
         return weightedBoxes.map(wb => wb.box);
+    }
+
+    private getReferencePosition(boxes: VisioBox[]): Position {
+        const minX = Math.min(...boxes.map(b => b.position.x));
+        const maxX = Math.max(...boxes.map(b => b.position.x + b.size.width));
+        return {
+            x: minX + (maxX - minX) / 2,
+            y: boxes[0].position.y + boxes[0].size.height
+        };
     }
 
     private getWeight(box: VisioBox, fromPortPosition: Position): number {

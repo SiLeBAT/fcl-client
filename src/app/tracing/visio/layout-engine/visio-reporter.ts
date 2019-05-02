@@ -12,6 +12,8 @@ import { InformationProvider } from './information-provider';
 import { getCellGroups } from './cell-grouper';
 import { CtNoAssigner } from './ctno-assigner';
 import { ConnectorCreator } from './connector-creator';
+import { improvePositions } from './station_positioner_lp';
+import { groupStationBoxes } from './stationbox-simple-grouper';
 
 export class VisioReporter {
 
@@ -36,11 +38,26 @@ export class VisioReporter {
 
         const layerInfo: GraphLayer[] = this.getLayerInformation(infoGrid);
 
-        const groupBoxes = boxCreator.createGroupBoxes(boxGrid, cellGroups, layerInfo);
+        let groupBoxes = boxCreator.createGroupBoxes(boxGrid, cellGroups, layerInfo);
         const connectors = new ConnectorCreator(boxCreator, infoProvider).createConnectors();
 
         this.setAbsolutePositions(groupBoxes, { x: 0, y: 0 });
         boxCreator.resortLotBoxes(connectors);
+
+        const stationBoxGroups = stationGroups.map(sg => ({
+            'label': sg.label,
+            'boxes': sg.stations.map(s => boxCreator.getStationBox(infoProvider.getStationInfo(s)))
+        }));
+        improvePositions(
+            boxGrid.map(row => row.filter(b => b != null)),
+            stationBoxGroups,
+            connectors,
+            2 * GraphSettings.GRID_MARGIN,
+            2 * (GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN)
+        );
+
+        groupBoxes = groupStationBoxes(stationBoxGroups, labelCreator);
+        this.setAbsolutePositions(groupBoxes, { x: 0, y: 0 });
 
         const result: VisioReport = {
             graph: {
