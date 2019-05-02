@@ -61,68 +61,77 @@ export class MainTracingComponent implements OnInit, OnDestroy {
         private store: Store<fromTracing.State>
     ) {
         document.body.oncontextmenu = e => e.preventDefault();
-        this.mainPageService.setTracingActive(true);
+        this.store.dispatch(new tracingActions.SetTracingActive(true));
     }
 
     ngOnInit() {
+        this.subscriptions.push(
+            this.mainPageService.doSaveImage.subscribe(
+                () => {
+                    this.onSaveImage();
+                },
+                error => {
+                    throw new Error(`error saving image: ${error}`);
+                }
+            )
+        );
+        this.subscriptions.push(
+            this.mainPageService.doVisioLayout.subscribe(
+                () => {
+                    this.onVisioLayout();
+                },
+                error => {
+                    throw new Error(`error creating ROA style: ${error}`);
+                }
+            )
+        );
+        this.subscriptions.push(
+            this.mainPageService.doOnSave.subscribe(
+                () => {
+                    this.onSave();
+                },
+                error => {
+                    throw new Error(`error saving: ${error}`);
+                }
+            )
+        );
 
-        this.subscriptions.push(this.mainPageService.doSaveImage.subscribe(() => {
-            this.onSaveImage();
-        }, (error => {
-            throw new Error(`error saving image: ${error}`);
-        })));
-        this.subscriptions.push(this.mainPageService.doVisioLayout.subscribe(() => {
-            this.onVisioLayout();
-        }, (error => {
-            throw new Error(`error creating ROA style: ${error}`);
-        })));
-        this.subscriptions.push(this.mainPageService.doOnLoad.subscribe(event => {
-            this.onLoad(event);
-        }, (error => {
-            throw new Error(`error loading file: ${error}`);
-        })));
-        this.subscriptions.push(this.mainPageService.doOnSave.subscribe(() => {
-            this.onSave();
-        }, (error => {
-            throw new Error(`error saving: ${error}`);
-        })));
+        this.store.pipe(
+            select(fromTracing.getFclData),
+            takeWhile(() => this.componentActive)
+        ).subscribe(
+            (data: FclData) => {
+                if (data) {
+                    this.data = data;
+                    this.updateComponents();
+                }
+            },
+            (error) => {
+                throw new Error(`error loading fcl data: ${error}`);
+            }
+        );
 
-        this.dataService.setDataSource('../../assets/data/bbk.json');
-        this.dataService
-            .getData()
-            .then((data: FclData) => {
-                this.store.dispatch(new tracingActions.LoadFclDataSuccess(data));
-                this.data = data;
-                this.updateComponents();
-            })
-            .then(() => {
-                combineLatest(
-                    this.store.pipe(select(fromTracing.getFclData)),
-                    this.store.pipe(select(fromTracing.getGraphSettingsOption)),
-                    this.store.pipe(select(fromTracing.getTableSettingsOption)),
-                    this.store.pipe(select(fromTracing.getSideBarStates))
-                )
-                    .pipe(
-                        tap(
-                            ([data, graphSettingsOption, tableSettingsOption, sideBarStates]) => {
-                                this.data = data;
-                                this.onGraphChange(graphSettingsOption);
-                                this.onTableChange(tableSettingsOption);
-                                this.leftOpened = sideBarStates.leftSideBarOpen;
-                                this.rightOpened = sideBarStates.rightSideBarOpen;
-                            },
-                            catchError(error => {
-                                throw new Error(`error with tracing options: ${error}`);
-                            })
-                        ),
-                        takeWhile(() => this.componentActive)
-                    )
-                    .subscribe();
-            })
-            .catch(error => {
-                Utils.showErrorMessage(this.dialogService, error);
-            });
-
+        combineLatest(
+            this.store.pipe(select(fromTracing.getGraphSettingsOption)),
+            this.store.pipe(select(fromTracing.getTableSettingsOption)),
+            this.store.pipe(select(fromTracing.getSideBarStates))
+        )
+            .pipe(
+                tap(
+                    ([graphSettingsOption, tableSettingsOption, sideBarStates]) => {
+                        this.updateLayoutInfo();
+                        this.onGraphChange(graphSettingsOption);
+                        this.onTableChange(tableSettingsOption);
+                        this.leftOpened = sideBarStates.leftSideBarOpen;
+                        this.rightOpened = sideBarStates.rightSideBarOpen;
+                    },
+                    catchError(error => {
+                        throw new Error(`error with tracing options: ${error}`);
+                    })
+                ),
+                takeWhile(() => this.componentActive)
+            )
+            .subscribe();
     }
 
     onHome() {
@@ -181,19 +190,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
                 this.table.setShowType(this.data.tableSettings.showType);
                 break;
         }
-    }
-
-    onLoad(event) {
-        const files: FileList = event.target.files;
-
-        if (files.length === 1) {
-            this.dataService.setDataSource(files[0]);
-            this.store.dispatch(new tracingActions.LoadFclData(files[0]));
-        } else {
-            Utils.showErrorMessage(this.dialogService, 'Please select one .json file!');
-        }
-
-        this.mainPageService.setInputEmpty();
     }
 
     onSave() {
@@ -283,12 +279,25 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.mainPageService.setTracingActive(false);
+        this.updateLayoutInfo();
+        this.store.dispatch(new tracingActions.LoadFclDataSuccess(this.data));
+        this.store.dispatch(new tracingActions.SetTracingActive(false));
         _.forEach(this.subscriptions, subscription => {
             subscription.unsubscribe();
         });
 
         this.componentActive = false;
+    }
+
+    private updateLayoutInfo() {
+        switch (this.data.graphSettings.type) {
+            case GraphType.GRAPH:
+                this.data.layout = this.graph.getLayout();
+                break;
+            case GraphType.GIS:
+                this.data.gisLayout = this.gis.getLayout();
+                break;
+        }
     }
 
     private updateComponents() {

@@ -2,7 +2,6 @@ import { Constants } from './../../util/constants';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { TableSettings, FclData } from './../../util/datatypes';
-import { DataService } from '../../services/data.service';
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingActions from '../../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
@@ -19,7 +18,7 @@ import { MatDialog } from '@angular/material';
 export class TableSettingsComponent implements OnInit, OnDestroy {
     tableModes = Constants.TABLE_MODES;
     showTypes = Constants.SHOW_TYPES;
-    tableSettings: TableSettings = DataService.getDefaultTableSettings();
+    tableSettings: TableSettings;
     private componentActive: boolean = true;
     private data: FclData;
 
@@ -33,6 +32,7 @@ export class TableSettingsComponent implements OnInit, OnDestroy {
         ).subscribe(
             (data: FclData) => {
                 this.data = data;
+                this.tableSettings = data.tableSettings;
             }, (error => {
                 throw new Error(`error loading data: ${error}`);
             })
