@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2b4dc76_3a87695d",
+        "filename": "src/app/tracing/visio/layout-engine/stationbox-repositioner.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-02T19:54:08Z",
+      "side": 1,
+      "message": "please remove this comment",
+      "revId": "ade66295468294f85625482bc0f1131f8d63953c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dde8a901_b42f0ca1",
+        "filename": "src/app/tracing/visio/layout-engine/stationbox_grouper.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-02T19:54:08Z",
+      "side": 1,
+      "message": "Do we need this function?\nIt does not do anything except returning null",
+      "revId": "ade66295468294f85625482bc0f1131f8d63953c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b9dd652_8424629b",
+        "filename": "src/app/tracing/visio/layout-engine/visio-reporter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-02T19:54:08Z",
+      "side": 1,
+      "message": "please remove the comment",
+      "revId": "ade66295468294f85625482bc0f1131f8d63953c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef79bb4c_b86d51fb",
+        "filename": "src/app/tracing/visio/layout-engine/visio-reporter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-02T19:54:08Z",
+      "side": 1,
+      "message": "please remove the comment",
+      "revId": "ade66295468294f85625482bc0f1131f8d63953c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2a59f56_a8c70243",
+        "filename": "src/app/tracing/visio/layout-engine/visio-reporter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-02T19:54:08Z",
+      "side": 1,
+      "message": "please remove the comment",
+      "revId": "ade66295468294f85625482bc0f1131f8d63953c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2f5be3e_8c7fbf7a",
+        "filename": "src/app/tracing/visio/visio.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-02T19:54:08Z",
+      "side": 1,
+      "message": "please remove the comment",
+      "revId": "ade66295468294f85625482bc0f1131f8d63953c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
