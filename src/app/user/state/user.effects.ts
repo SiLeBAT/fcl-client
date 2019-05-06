@@ -43,6 +43,7 @@ export class UserEffects {
         }),
         catchError(() => {
             this.spinnerService.hide();
+            // tslint:disable-next-line:deprecation
             return of(new userActions.LoginUserFailure());
         })
       ))

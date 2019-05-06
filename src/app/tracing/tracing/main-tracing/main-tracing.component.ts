@@ -111,11 +111,11 @@ export class MainTracingComponent implements OnInit, OnDestroy {
             }
         );
 
-        combineLatest(
+        combineLatest([
             this.store.pipe(select(fromTracing.getGraphSettingsOption)),
             this.store.pipe(select(fromTracing.getTableSettingsOption)),
             this.store.pipe(select(fromTracing.getSideBarStates))
-        )
+        ])
             .pipe(
                 tap(
                     ([graphSettingsOption, tableSettingsOption, sideBarStates]) => {

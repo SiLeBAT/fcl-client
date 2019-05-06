@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
@@ -6,11 +5,11 @@ import { AlertService } from '../../shared/services/alert.service';
 import * as tracingActions from './tracing.actions';
 import * as fromTracing from './tracing.reducers';
 import { map, catchError, mergeMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { DataService } from '../services/data.service';
 import { FclData } from '../util/datatypes';
 import { Store } from '@ngrx/store';
-import { MainPageService } from '../../main-page/services/main-page.service';
+// import { MainPageService } from '../../main-page/services/main-page.service';
 
 @Injectable()
 export class TracingEffects {
@@ -34,6 +33,7 @@ export class TracingEffects {
                     // tslint:disable-next-line: rxjs-no-unsafe-catch
                     catchError((error) => {
                         this.alertService.error(`Please select a .json file with the correct format!, error: ${error}`);
+                        // tslint:disable-next-line:deprecation
                         return of(new tracingActions.LoadFclDataFailure());
                     })
                 );
@@ -45,6 +45,7 @@ export class TracingEffects {
         // tslint:disable-next-line: rxjs-no-unsafe-catch
         catchError((error) => {
             this.alertService.error(`Please select a .json file with the correct format!, error: ${error}`);
+            // tslint:disable-next-line:deprecation
             return of(new tracingActions.LoadFclDataFailure());
         })
     );
