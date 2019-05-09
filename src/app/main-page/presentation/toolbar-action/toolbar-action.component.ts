@@ -46,9 +46,14 @@ export class ToolbarActionComponent implements OnInit {
         this.toggleRightSidebar.emit(this.rightOpen);
     }
 
-    onLoad(event$) {
+    onFileUpload(event$) {
         const fileList: FileList = event$.target.files;
         this.uploadFile.emit(fileList);
+    }
+
+    onSelectUploadFile(event$) {
+        this.setInputEmpty();
+        (this.fileInput.nativeElement as HTMLInputElement).click();
     }
 
     loadExample() {

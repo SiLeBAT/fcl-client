@@ -29,11 +29,11 @@
         id="fileInput"
         #fileInput
         type="file"
-        (change)="onLoad($event)"
+        (change)="onFileUpload($event)"
     />
     <button
         mat-button
-        onclick="document.getElementById('fileInput').click()"
+        onclick="onSelectUploadFile($event)"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
         Upload Data
