@@ -13,7 +13,7 @@
     <button
         class="fcl-example"
         mat-button
-        (click)="loadExample()"
+        (click)="onLoadExampleData()"
         matTooltip="Load Example Data">
         <mat-icon>wb_sunny</mat-icon>
         Load Example Data
@@ -29,11 +29,11 @@
         id="fileInput"
         #fileInput
         type="file"
-        (change)="onLoad($event)"
+        (change)="onLoadData($event)"
     />
     <button
         mat-button
-        onclick="document.getElementById('fileInput').click()"
+        (click)="onSelectFile($event)"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
         Upload Data

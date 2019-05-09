@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy, ViewChild, ElementRef, Input } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { UserService } from '../../../user/services/user.service';
-import { MainPageService } from '../../services/main-page.service';
+import { environment } from '@env/environment';
+import { UserService } from '@app/user/services/user.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -14,27 +13,16 @@ export class ToolbarActionComponent implements OnInit {
 
     @Input() tracingActive: boolean;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
-    @Output() uploadFile = new EventEmitter<FileList>();
-    @Output() exampleData = new EventEmitter();
-    subscriptions = [];
+    @Output() loadData = new EventEmitter<FileList>();
+    @Output() loadExampleData = new EventEmitter();
+
     private rightOpen: boolean = false;
 
     constructor(
-        private userService: UserService,
-        private mainPageService: MainPageService
+        private userService: UserService
     ) { }
 
     ngOnInit() {
-        this.subscriptions.push(
-            this.mainPageService.doInputEmpty.subscribe(
-                () => {
-                    this.setInputEmpty();
-                },
-                error => {
-                    throw new Error(`error making input element empty: ${error}`);
-                }
-            )
-        );
     }
 
     isServerLess(): boolean {
@@ -46,16 +34,18 @@ export class ToolbarActionComponent implements OnInit {
         this.toggleRightSidebar.emit(this.rightOpen);
     }
 
-    onLoad(event$) {
+    onLoadData(event$) {
         const fileList: FileList = event$.target.files;
-        this.uploadFile.emit(fileList);
+        this.loadData.emit(fileList);
     }
 
-    loadExample() {
-        this.exampleData.emit();
+    onSelectFile(event$) {
+        const nativeFileInput: HTMLInputElement = this.fileInput.nativeElement;
+        nativeFileInput.value = '';
+        nativeFileInput.click();
     }
 
-    setInputEmpty() {
-        (this.fileInput.nativeElement as HTMLInputElement).value = '';
+    onLoadExampleData() {
+        this.loadExampleData.emit();
     }
 }
