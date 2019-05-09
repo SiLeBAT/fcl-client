@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import * as fromTracing from '../../../tracing/state/tracing.reducers';
-import * as tracingActions from '../../../tracing/state/tracing.actions';
+import * as fromTracing from '@app/tracing/state/tracing.reducers';
+import * as tracingActions from '@app/tracing/state/tracing.actions';
 import { takeWhile } from 'rxjs/operators';
-import { DataService } from '../../../tracing/services/data.service';
-import { FclData } from './../../../tracing/util/datatypes';
-import { AlertService } from '../../../shared/services/alert.service';
+import { DataService } from '@app/tracing/services/data.service';
+import { FclData } from '@app/tracing/util/datatypes';
+import { AlertService } from '@app/shared/services/alert.service';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
