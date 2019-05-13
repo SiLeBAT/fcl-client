@@ -8,6 +8,8 @@ $fcl-typography: mat-typography-config(
 $fcl-toolbar-padding: 5px;
 $fcl-toolbar-elevation: 4;
 $fcl-card-border-radius: 8px;
+$fcl-bg-color: rgba(255, 255, 255, 0.7);
+$fcl-bg-color-entry: rgba(125, 138, 153, 0.5);
 
 @mixin em-errors {
     float: right;

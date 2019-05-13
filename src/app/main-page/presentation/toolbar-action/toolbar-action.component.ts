@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, OnDestroy, ViewChild, ElementR
 import { environment } from '@env/environment';
 import { UserService } from '@app/user/services/user.service';
 import * as _ from 'lodash';
+import { MainPageService } from '../../services/main-page.service';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -19,7 +20,8 @@ export class ToolbarActionComponent implements OnInit {
     private rightOpen: boolean = false;
 
     constructor(
-        private userService: UserService
+        private userService: UserService,
+        private mainPageService: MainPageService
     ) { }
 
     ngOnInit() {
