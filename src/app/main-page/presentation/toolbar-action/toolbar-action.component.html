@@ -1,4 +1,4 @@
-<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || userService.loggedIn()) && !tracingActive">
+<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && graphEditorActive">
     <button
         class="fcl-menu-item"
         mat-button
@@ -9,7 +9,7 @@
     </button>
 </div>
 
-<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || userService.loggedIn()) && tracingActive">
+<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
     <button
         class="fcl-example"
         mat-button

@@ -61,7 +61,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
         private store: Store<fromTracing.State>
     ) {
         document.body.oncontextmenu = e => e.preventDefault();
-        this.store.dispatch(new tracingActions.SetTracingActive(true));
+        this.store.dispatch(new tracingActions.TracingActivated({ isActivated: true }));
     }
 
     ngOnInit() {
@@ -281,7 +281,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.updateLayoutInfo();
         this.store.dispatch(new tracingActions.LoadFclDataSuccess(this.data));
-        this.store.dispatch(new tracingActions.SetTracingActive(false));
+        this.store.dispatch(new tracingActions.TracingActivated({ isActivated: false }));
         _.forEach(this.subscriptions, subscription => {
             subscription.unsubscribe();
         });

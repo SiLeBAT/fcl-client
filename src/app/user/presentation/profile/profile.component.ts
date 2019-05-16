@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { TokenizedUser } from '../../models/user.model';
 
 @Component({
@@ -6,20 +6,11 @@ import { TokenizedUser } from '../../models/user.model';
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit {
     @Input() currentUser: TokenizedUser;
-    @Output() logout = new EventEmitter();
-    private componentActive = true;
 
     constructor() { }
 
     ngOnInit() {}
 
-    onLogout() {
-        this.logout.emit();
-    }
-
-    ngOnDestroy(): void {
-        this.componentActive = false;
-    }
 }

@@ -1,9 +1,10 @@
 import { Action } from '@ngrx/store';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 import { GraphType, Size, TableMode, FclData, ShowType } from '../util/datatypes';
+import { ActivationStatus } from '../../shared/model/types';
 
 export enum TracingActionTypes {
-    SetTracingActive = '[Tracing] Set Tracing Active',
+    TracingActivated = '[Tracing] Tracing active',
     LoadFclData = '[Tracing] Load Fcl Data',
     LoadFclDataSuccess = '[Tracing] Load Fcl Data Success',
     LoadFclDataFailure = '[Tracing] Load Fcl Data Failure',
@@ -21,10 +22,10 @@ export enum TracingActionTypes {
     SetTableShowType = '[Tracing] Set Table Show Type'
 }
 
-export class SetTracingActive implements Action {
-    readonly type = TracingActionTypes.SetTracingActive;
+export class TracingActivated implements Action {
+    readonly type = TracingActionTypes.TracingActivated;
 
-    constructor(public payload: boolean) {}
+    constructor(public payload: ActivationStatus) {}
 }
 
 export class LoadFclData implements Action {
@@ -116,7 +117,7 @@ export class SetTableShowType implements Action {
 }
 
 export type TracingActions =
-      SetTracingActive
+      TracingActivated
     | LoadFclData
     | LoadFclDataSuccess
     | LoadFclDataFailure

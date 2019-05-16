@@ -1,6 +1,6 @@
 <fcl-avatar
     class="fcl-avatar-item"
-    [currentUser$]="currentUser$"
+    [currentUser]="currentUser$ | async"
     (onProfile)="onProfile()"
     (onLogout)="onLogout()">
 </fcl-avatar>

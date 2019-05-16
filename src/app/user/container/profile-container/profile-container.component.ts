@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TokenizedUser } from '../../models/user.model';
-import * as userActions from '../../../user/state/user.actions';
 import * as fromUser from '../../../user/state/user.reducer';
 import { Store, select } from '@ngrx/store';
-import { takeWhile } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import * as _ from 'lodash';
 
 @Component({
@@ -11,31 +10,13 @@ import * as _ from 'lodash';
     templateUrl: './profile-container.component.html',
     styleUrls: ['./profile-container.component.scss']
 })
-export class ProfileContainerComponent implements OnInit, OnDestroy {
-    currentUser: TokenizedUser | null;
-    private componentActive = true;
+export class ProfileContainerComponent implements OnInit {
+    currentUser$ = this.store.pipe(
+        select(fromUser.getCurrentUser)
+    );
 
     constructor(private store: Store<fromUser.State>) { }
 
     ngOnInit() {
-        this.store.pipe(
-            select(fromUser.getCurrentUser),
-            takeWhile(() => this.componentActive)
-        ).subscribe(
-            (currentUser: TokenizedUser) => {
-                this.currentUser = currentUser;
-            }, (error => {
-                throw new Error(`error getting current user: ${error}`);
-            })
-        );
     }
-
-    logout() {
-        this.store.dispatch(new userActions.LogoutUser());
-    }
-
-    ngOnDestroy() {
-        this.componentActive = false;
-    }
-
 }

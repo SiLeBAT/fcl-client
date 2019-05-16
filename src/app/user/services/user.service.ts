@@ -54,18 +54,6 @@ export class UserService {
         return new Observable<void>();
     }
 
-    loggedIn() {
-        if (localStorage.getItem('currentUser')) {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const helper = new JwtHelperService();
-            const isExpired = helper.isTokenExpired(currentUser.token);
-
-            return !isExpired;
-        }
-
-        return false;
-    }
-
     setCurrentUser(user: TokenizedUser) {
         this.currentUser = user;
         localStorage.setItem('currentUser', JSON.stringify(user));

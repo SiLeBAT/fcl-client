@@ -7,7 +7,7 @@ import { VisioReport } from '../visio/layout-engine/datatypes';
 
 export const STATE_SLICE_NAME = 'tracing';
 
-export interface State extends fromRoot.State {
+export interface State {
     tracing: TracingState;
 }
 
@@ -91,10 +91,10 @@ export const getTableSettingsOption = createSelector(
 // REDUCER
 export function reducer(state: TracingState = initialState, action: TracingActions): TracingState {
     switch (action.type) {
-        case TracingActionTypes.SetTracingActive:
+        case TracingActionTypes.TracingActivated:
             return {
                 ...state,
-                tracingActive: action.payload
+                tracingActive: action.payload.isActivated
             };
 
         case TracingActionTypes.LoadFclDataSuccess:

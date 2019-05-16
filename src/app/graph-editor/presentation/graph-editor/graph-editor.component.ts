@@ -1,4 +1,7 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, Input, OnDestroy } from '@angular/core';
+import { Store } from '@ngrx/store';
+import * as fromEditor from '../../state/graph-editor.reducers';
+import * as editorActions from '../../state/graph-editor.actions';
 
 declare const EditorUi: any;
 declare const Editor: any;
@@ -14,10 +17,14 @@ declare const OPEN_URL: string;
     selector: 'fcl-graph-editor',
     templateUrl: './graph-editor.component.html'
 })
-export class GraphEditorComponent implements AfterViewInit {
+export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('editorContainer') editorContainer: ElementRef;
     @Input() graph: mxGraph;
+
+    constructor(private store: Store<fromEditor.GraphEditorState>) {
+        this.store.dispatch(new editorActions.GraphEditorActivated({ isActivated: true }));
+    }
 
     ngAfterViewInit() {
         const that = this;
@@ -65,4 +72,7 @@ export class GraphEditorComponent implements AfterViewInit {
 
     }
 
+    ngOnDestroy() {
+        this.store.dispatch(new editorActions.GraphEditorActivated({ isActivated: false }));
+    }
 }
