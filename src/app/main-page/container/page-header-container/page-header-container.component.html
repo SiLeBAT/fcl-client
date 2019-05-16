@@ -1,6 +1,7 @@
 <fcl-page-header
     class="fcl-toolbar-top-item fcl-toolbar-top-container"
     [appName]="appName"
-    [tracingActive]="tracingActive"
+    [tracingActive]="tracingActive$ | async"
+    [currentUser$]="currentUser | async"
     (toggleLeftSideBar)="toggleLeftSideBar($event)">
 </fcl-page-header>

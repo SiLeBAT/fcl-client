@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy, ViewChild, ElementRef, Input } from '@angular/core';
 import { environment } from '@env/environment';
-import { UserService } from '@app/user/services/user.service';
 import * as _ from 'lodash';
 import { MainPageService } from '../../services/main-page.service';
+import { User } from '@app/user/models/user.model';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -11,18 +11,16 @@ import { MainPageService } from '../../services/main-page.service';
 })
 export class ToolbarActionComponent implements OnInit {
     @ViewChild('fileInput') fileInput: ElementRef;
-
     @Input() tracingActive: boolean;
+    @Input() graphEditorActive: boolean;
+    @Input() currentUser: User;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadData = new EventEmitter<FileList>();
     @Output() loadExampleData = new EventEmitter();
 
     private rightOpen: boolean = false;
 
-    constructor(
-        private userService: UserService,
-        private mainPageService: MainPageService
-    ) { }
+    constructor(private mainPageService: MainPageService) { }
 
     ngOnInit() {
     }

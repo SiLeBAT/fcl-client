@@ -5,7 +5,7 @@ import { UserService } from '../services/user.service';
 import { AlertService } from '../../shared/services/alert.service';
 
 import * as userActions from './user.actions';
-import { map, catchError, exhaustMap, mergeMap, withLatestFrom, tap } from 'rxjs/operators';
+import { map, catchError, exhaustMap, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginResponseDTO } from '../models/user.model';
@@ -31,7 +31,7 @@ export class UserEffects {
                 this.alertService.success(loginResponse.title);
                 this.spinnerService.hide();
                 this.userService.setCurrentUser(loginResponse.user);
-                this.router.navigate(['/users/profile']).catch((err) => {
+                this.router.navigate(['/dashboard']).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);
                 });
                 return new userActions.LoginUserSuccess(loginResponse.user);

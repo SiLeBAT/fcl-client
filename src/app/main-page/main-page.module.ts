@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScrollbarHelper } from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 
@@ -18,6 +18,8 @@ import { AvatarComponent } from './presentation/avatar/avatar.component';
 import { ToolbarActionContainerComponent } from './container/toolbar-action-container/toolbar-action-container.component';
 import { ToolbarActionComponent } from './presentation/toolbar-action/toolbar-action.component';
 import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-entry-header.component';
+import { DashboardContainerComponent } from './container/dashboard-container/dashboard-container.component';
+import { DashboardComponent } from './presentation/dashboard/dashboard.component';
 
 @NgModule({
     imports: [
@@ -39,7 +41,9 @@ import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-
         AvatarComponent,
         ToolbarActionContainerComponent,
         ToolbarActionComponent,
-        MainEntryHeaderComponent
+        MainEntryHeaderComponent,
+        DashboardContainerComponent,
+        DashboardComponent
     ],
     providers: [
         ScrollbarHelper
@@ -47,6 +51,6 @@ import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-
     exports: [
         MainPageComponent,
         MainEntryHeaderComponent
-    ]
-})
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]})
 export class MainPageModule { }

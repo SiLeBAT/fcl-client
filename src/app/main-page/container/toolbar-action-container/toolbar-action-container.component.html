@@ -1,6 +1,8 @@
 <fcl-toolbar-action
     class="fcl-toolbar-action-item fcl-toolbar-action-container"
-    [tracingActive]="tracingActive"
+    [tracingActive]="tracingActive$ | async"
+    [graphEditorActive]="graphEditorActive$ | async"
+    [currentUser]="currentUser$ | async"
     (toggleRightSidebar)="toggleRightSidebar($event)"
     (loadData)="loadData($event)"
     (loadExampleData)="loadExampleData()">

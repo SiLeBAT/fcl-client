@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { UserService } from '../../../user/services/user.service';
+import { User } from '../../../user/models/user.model';
 
 @Component({
     selector: 'fcl-page-header',
@@ -10,10 +10,11 @@ import { UserService } from '../../../user/services/user.service';
 export class PageHeaderComponent implements OnInit {
     @Input() appName: string;
     @Input() tracingActive: boolean;
+    @Input() currentUser: User | null;
     @Output() toggleLeftSideBar = new EventEmitter<boolean>();
     private leftOpen: boolean = false;
 
-    constructor(private userService: UserService) { }
+    constructor() { }
 
     ngOnInit() {
     }

@@ -1,20 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as tracingActions from '@app/tracing/state/tracing.actions';
-import { takeWhile } from 'rxjs/operators';
+import * as fromEditor from '../../../graph-editor/state/graph-editor.reducers';
+import * as fromUser from '../../../user/state/user.reducer';
 import { DataService } from '@app/tracing/services/data.service';
 import { FclData } from '@app/tracing/util/datatypes';
 import { AlertService } from '@app/shared/services/alert.service';
+import { User } from '../../../user/models/user.model';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
     templateUrl: './toolbar-action-container.component.html',
     styleUrls: ['./toolbar-action-container.component.scss']
 })
-export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
-    tracingActive: boolean;
-    private componentActive: boolean = true;
+export class ToolbarActionContainerComponent implements OnInit {
+    tracingActive$: Observable<boolean | null>;
+    graphEditorActive$: Observable<boolean | null>;
+    currentUser$: Observable<User | null>;
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -23,17 +27,16 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
-        this.store.pipe(
-            select(fromTracing.getTracingActive),
-            takeWhile(() => this.componentActive)
-          ).subscribe(
-              (tracingActive: boolean) => {
-                  this.tracingActive = tracingActive;
-              },
-              (error) => {
-                  throw new Error(`error loading tracing state: ${error}`);
-              }
-          );
+        this.tracingActive$ = this.store.pipe(
+            select(fromTracing.getTracingActive)
+        );
+        this.graphEditorActive$ = this.store.pipe(
+            select(fromEditor.isActive)
+        );
+        this.currentUser$ = this.store.pipe(
+            select(fromUser.getCurrentUser)
+        );
+
     }
 
     toggleRightSidebar(open: boolean) {
@@ -57,7 +60,4 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             });
     }
 
-    ngOnDestroy() {
-        this.componentActive = false;
-    }
 }

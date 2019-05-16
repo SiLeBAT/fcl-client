@@ -1,0 +1,23 @@
+@import '../../../../assets/sass/base';
+
+.fcl-dashboard-container {
+    margin-top: 5rem;
+}
+
+.mat-flat-button {
+    background-color: transparent;
+}
+
+.fcl-card-content {
+    margin-top: 2rem;
+    color: $fcl-primary-color;
+}
+
+.fcl-mat-card:hover {
+    box-shadow: -1px 5px 15px 0 rgba(0, 0, 0, 0.8);
+}
+
+.fcl-logo {
+    max-width: 70%;
+    height: 70%;
+}

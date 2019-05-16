@@ -10,7 +10,7 @@
         <button
             class="fcl-toolbar-title"
             mat-button
-            [routerLink]="isServerLess() || userService.loggedIn() ? ['/users/profile'] : ['/']"
+            [routerLink]="isServerLess() || currentUser ? ['/dashboard'] : ['/']"
             id="homeButton">
             <span class="mat-title">{{ appName }}</span>
         </button>
