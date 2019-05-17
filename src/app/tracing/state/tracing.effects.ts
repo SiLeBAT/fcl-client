@@ -5,7 +5,7 @@ import { AlertService } from '../../shared/services/alert.service';
 import * as tracingActions from './tracing.actions';
 import * as fromTracing from './tracing.reducers';
 import { map, catchError, mergeMap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { of, from } from 'rxjs';
 import { DataService } from '../services/data.service';
 import { FclData } from '../util/datatypes';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ export class TracingEffects {
             const fileList: FileList = action.payload;
             if (fileList.length === 1) {
                 this.dataService.setDataSource(fileList[0]);
-                return Observable.fromPromise(this.dataService.getData()).pipe(
+                return from(this.dataService.getData()).pipe(
                     map((data: FclData) => new tracingActions.LoadFclDataSuccess(data)),
                     catchError((error) => {
                         this.alertService.error(`Please select a .json file with the correct format!, error: ${error}`);

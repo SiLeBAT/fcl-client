@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable, timer } from 'rxjs';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { ScrollbarHelper } from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
 import { ResizeSensor } from 'css-element-queries';
@@ -48,6 +48,7 @@ export class TableComponent implements OnInit {
     constructor(private scrollbarHelper: ScrollbarHelper) {
         const style = document.createElement('style');
 
+        // tslint:disable-next-line: deprecation
         style.type = 'text/css';
         style.innerHTML = '';
         style.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
@@ -83,7 +84,7 @@ export class TableComponent implements OnInit {
 
     ngOnInit() {
         window.onresize = () => {
-            Observable.timer(500).subscribe(() => {
+            timer(500).subscribe(() => {
                 this.update();
             }, (error => {
                 throw new Error(`${error}`);
@@ -95,7 +96,7 @@ export class TableComponent implements OnInit {
                 this.resizeTimer.unsubscribe();
             }
 
-            this.resizeTimer = Observable.timer(100).subscribe(() => {
+            this.resizeTimer = timer(100).subscribe(() => {
                 if (this.columns != null) {
                     this.columns = this.getUpdatedColumns(this.columns);
                     this.table.recalculate();
