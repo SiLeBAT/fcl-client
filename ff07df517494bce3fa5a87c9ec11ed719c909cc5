@@ -1,0 +1,567 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f60796b_b01e5f68",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "what is the improvement?\nrewrite like: dashboard added after user log in",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b20292d_e857a681",
+        "filename": "src/app/graph-editor/state/graph-editor.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "rename",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 49
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "954e40ed_c3d356a3",
+        "filename": "src/app/graph-editor/state/graph-editor.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "pack into object",
+      "range": {
+        "startLine": 10,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 39
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5a4ef9a_602e510a",
+        "filename": "src/app/graph-editor/state/graph-editor.reducers.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 1
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfcebf3f_1fabcfd9",
+        "filename": "src/app/main-page/container/dashboard-container/dashboard-container.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "move to .ts",
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3337755b_aa7cb0f7",
+        "filename": "src/app/main-page/container/dashboard-container/dashboard-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 5
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3450dacc_4b0b11e4",
+        "filename": "src/app/main-page/container/page-header-container/page-header-container.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "bug?",
+      "range": {
+        "startLine": 5,
+        "startChar": 3,
+        "endLine": 5,
+        "endChar": 40
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81073728_73974c36",
+        "filename": "src/app/main-page/container/page-header-container/page-header-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "move to declaration",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 10
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc0a1878_f075fe6b",
+        "filename": "src/app/main-page/container/toolbar-action-container/toolbar-action-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "move to declaration",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 10
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27440023_580e0460",
+        "filename": "src/app/main-page/main-page.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a2edfb9_fe55ae8c",
+        "filename": "src/app/main-page/main-page.routing.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 17,
+        "startChar": 50,
+        "endLine": 17,
+        "endChar": 55
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "218b5da1_c935bbc2",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "!",
+      "range": {
+        "startLine": 1,
+        "startChar": 60,
+        "endLine": 1,
+        "endChar": 68
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df9d2390_e9dfe5e1",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 1,
+        "startChar": 8,
+        "endLine": 1,
+        "endChar": 10
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52cbb697_e52626b6",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "mat-",
+      "range": {
+        "startLine": 6,
+        "startChar": 9,
+        "endLine": 6,
+        "endChar": 13
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08242d0e_42cbc1f3",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "mat-",
+      "range": {
+        "startLine": 16,
+        "startChar": 13,
+        "endLine": 16,
+        "endChar": 14
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14a40600_685fa91b",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "mat-",
+      "range": {
+        "startLine": 21,
+        "startChar": 13,
+        "endLine": 21,
+        "endChar": 14
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5c0da79_7d1dcf97",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "button?",
+      "range": {
+        "startLine": 30,
+        "startChar": 5,
+        "endLine": 30,
+        "endChar": 6
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0cf1c793_b0960c9d",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "this is not used, remove?",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 1
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f01edaa9_2a70c517",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "should be not an observable, use js object instead",
+      "range": {
+        "startLine": 11,
+        "startChar": 13,
+        "endLine": 11,
+        "endChar": 51
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6c4eb76_872021aa",
+        "filename": "src/app/main-page/presentation/page-header/page-header.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 5
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60f8ad16_e9d4b9c9",
+        "filename": "src/app/main-page/presentation/toolbar-action/toolbar-action.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "this is not used? remove?",
+      "range": {
+        "startLine": 23,
+        "startChar": 15,
+        "endLine": 23,
+        "endChar": 56
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f30036b9_4aa594f5",
+        "filename": "src/app/user/container/profile-container/profile-container.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "move to .ts",
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e9e954a_fc5ae262",
+        "filename": "src/app/user/container/profile-container/profile-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "move to declaration",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 43
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bcd400d_9bdb34b5",
+        "filename": "src/app/user/presentation/profile/profile.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 14,
+        "startChar": 3,
+        "endLine": 14,
+        "endChar": 17
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa50a356_7d9539a5",
+        "filename": "src/app/user/state/user.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 24,
+        "startChar": 14,
+        "endLine": 24,
+        "endChar": 15
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}

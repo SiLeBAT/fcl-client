@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a725a081_25175aa0",
+        "filename": "src/app/user/services/user.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-05-17T10:06:43Z",
+      "side": 0,
+      "message": "?",
+      "revId": "720cc1f60ef00007c22461d5e1fbfebee511382e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
