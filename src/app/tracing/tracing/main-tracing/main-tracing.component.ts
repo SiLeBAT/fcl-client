@@ -218,20 +218,22 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     }
 
     onSaveImage() {
-        this.getCurrentGraph()
-            .getCanvas()
-            .then(canvas => {
-                const fileName = 'graph.png';
+        // this.getCurrentGraph()
+        //     .getCanvas()
+        //     .then(canvas => {
+        //         const fileName = 'graph.png';
 
-                if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
-                    window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
-                } else {
-                    Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
-                }
-            })
-            .catch(err => {
-                throw new Error(`Unable to save image: ${err}`);
-            });
+        //         // if (window.navigator.msSaveOrOpenBlob != null && canvas.msToBlob != null) {
+        //         //     window.navigator.msSaveOrOpenBlob(canvas.msToBlob(), fileName);
+        //         if (window.navigator.msSaveOrOpenBlob != null && canvas.toBlob != null) {
+        //             window.navigator.msSaveOrOpenBlob(canvas.toBlob(), fileName);
+        //         } else {
+        //             Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+        //         }
+        //     })
+        //     .catch(err => {
+        //         throw new Error(`Unable to save image: ${err}`);
+        //     });
     }
 
     getNodeLayoutInfo(): Map<string, NodeLayoutInfo> {

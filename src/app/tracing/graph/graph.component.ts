@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatMenuTrigger, MatSlider } from '@angular/material';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable, Subject, timer } from 'rxjs';
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
@@ -133,7 +133,7 @@ export class GraphComponent implements OnInit {
 
     ngOnInit() {
         window.onresize = () => {
-            Observable.timer(500).subscribe(
+            timer(500).subscribe(
                 () => {
                     if (this.cy != null) {
                         this.cy.resize();
@@ -151,7 +151,7 @@ export class GraphComponent implements OnInit {
             }
 
             if (this.cy != null) {
-                this.resizeTimer = Observable.timer(100).subscribe(
+                this.resizeTimer = timer(100).subscribe(
                     () => {
                         this.cy.resize();
                     },
@@ -885,7 +885,7 @@ export class GraphComponent implements OnInit {
                 this.selectTimer.unsubscribe();
             }
 
-            this.selectTimer = Observable.timer(50).subscribe(
+            this.selectTimer = timer(50).subscribe(
                 () => {
                     this.callChangeFunction();
                 },

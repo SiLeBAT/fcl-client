@@ -5,7 +5,7 @@ import { TableSettings, FclData } from './../../util/datatypes';
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingActions from '../../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
-import { takeWhile } from 'rxjs/operators';
+import { takeWhile, take } from 'rxjs/operators';
 import { Utils } from '../../util/utils';
 import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-select/dialog-select.component';
 import { MatDialog } from '@angular/material';
@@ -74,8 +74,9 @@ export class TableSettingsComponent implements OnInit, OnDestroy {
         this.dialogService
             .open(DialogSelectComponent, { data: dialogData })
             .afterClosed()
-            .take(1)
-            .subscribe((selections: string[]) => {
+            .pipe(
+                take(1)
+            ).subscribe((selections: string[]) => {
                 if (selections != null) {
                     this.store.dispatch(new tracingActions.SetTableColumns([this.data.tableSettings.mode, selections]));
                 }

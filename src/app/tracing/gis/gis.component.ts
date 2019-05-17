@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatMenuTrigger, MatSlider } from '@angular/material';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable, Subject, timer } from 'rxjs';
 import * as Hammer from 'hammerjs';
 import * as ol from 'openlayers';
 import cytoscape from 'cytoscape';
@@ -132,7 +132,7 @@ export class GisComponent implements OnInit {
         });
 
         window.onresize = () => {
-            Observable.timer(500).subscribe(
+            timer(500).subscribe(
                 () => {
                     if (this.cy != null) {
                         this.resizeGraphAndMap();
@@ -150,7 +150,7 @@ export class GisComponent implements OnInit {
             }
 
             if (this.cy != null) {
-                this.resizeTimer = Observable.timer(100).subscribe(() => {
+                this.resizeTimer = timer(100).subscribe(() => {
                     this.resizeGraphAndMap();
                 }, (error => {
                     throw new Error(`error resizing: ${error}`);
@@ -878,7 +878,7 @@ export class GisComponent implements OnInit {
                 this.selectTimer.unsubscribe();
             }
 
-            this.selectTimer = Observable.timer(50).subscribe(() => {
+            this.selectTimer = timer(50).subscribe(() => {
                 this.callChangeFunction();
             }, (error => {
                 throw new Error(`${error}`);

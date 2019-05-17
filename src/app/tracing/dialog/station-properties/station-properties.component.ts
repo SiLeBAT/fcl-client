@@ -1,7 +1,7 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import * as d3 from 'd3';
-import { Subject } from 'rxjs/Rx';
+import { Subject } from 'rxjs';
 
 import { Connection, DeliveryData, DialogAlignment, StationData } from '../../util/datatypes';
 import { Constants } from '../../util/constants';

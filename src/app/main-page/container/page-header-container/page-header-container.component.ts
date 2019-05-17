@@ -4,8 +4,6 @@ import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../../../tracing/state/tracing.reducers';
 import * as fromUser from '../../../user/state/user.reducer';
 import * as tracingActions from '../../../tracing/state/tracing.actions';
-import { Observable } from 'rxjs/Rx';
-import { User } from '../../../user/models/user.model';
 
 @Component({
     selector: 'fcl-page-header-container',
