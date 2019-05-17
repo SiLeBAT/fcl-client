@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "3e9dac64_2f2a1c4d",
+        "filename": "src/app/graph-editor/state/graph-editor.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "107d7bc8_1e50c237",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 49
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "954e40ed_c3d356a3",
         "filename": "src/app/graph-editor/state/graph-editor.actions.ts",
         "patchSetId": 1
@@ -119,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "e3b4dfce_80377e1e",
+        "filename": "src/app/graph-editor/state/graph-editor.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22b3defb_e28d329c",
+      "range": {
+        "startLine": 10,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 39
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5a4ef9a_602e510a",
         "filename": "src/app/graph-editor/state/graph-editor.reducers.ts",
         "patchSetId": 1
@@ -139,6 +187,30 @@
       "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d0da06e_43cbd798",
+        "filename": "src/app/graph-editor/state/graph-editor.reducers.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5a4ef9a_602e510a",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 1
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -247,6 +319,30 @@
     },
     {
       "key": {
+        "uuid": "a678a6ab_786c3dc5",
+        "filename": "src/app/main-page/container/page-header-container/page-header-container.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3450dacc_4b0b11e4",
+      "range": {
+        "startLine": 5,
+        "startChar": 3,
+        "endLine": 5,
+        "endChar": 40
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81073728_73974c36",
         "filename": "src/app/main-page/container/page-header-container/page-header-container.component.ts",
         "patchSetId": 1
@@ -267,6 +363,30 @@
       "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e36ded8_4502138b",
+        "filename": "src/app/main-page/container/page-header-container/page-header-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81073728_73974c36",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 10
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -293,6 +413,30 @@
     },
     {
       "key": {
+        "uuid": "1ce7f9c1_f87d6452",
+        "filename": "src/app/main-page/container/toolbar-action-container/toolbar-action-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bc0a1878_f075fe6b",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 10
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27440023_580e0460",
         "filename": "src/app/main-page/main-page.module.ts",
         "patchSetId": 1
@@ -313,6 +457,30 @@
       "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad4697fe_d953b673",
+        "filename": "src/app/main-page/main-page.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "27440023_580e0460",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -426,6 +594,30 @@
         "startChar": 60,
         "endLine": 1,
         "endChar": 68
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "40ba3670_26f8c77b",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df9d2390_e9dfe5e1",
+      "range": {
+        "startLine": 1,
+        "startChar": 8,
+        "endLine": 1,
+        "endChar": 10
       },
       "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
@@ -644,6 +836,30 @@
     },
     {
       "key": {
+        "uuid": "da4e5187_341816ea",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0cf1c793_b0960c9d",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 1
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f01edaa9_2a70c517",
         "filename": "src/app/main-page/presentation/avatar/avatar.component.ts",
         "patchSetId": 1
@@ -664,6 +880,30 @@
       "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51a0157c_33ce4725",
+        "filename": "src/app/main-page/presentation/avatar/avatar.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f01edaa9_2a70c517",
+      "range": {
+        "startLine": 11,
+        "startChar": 13,
+        "endLine": 11,
+        "endChar": 51
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -819,6 +1059,30 @@
     },
     {
       "key": {
+        "uuid": "8cf87796_3346e8e9",
+        "filename": "src/app/user/container/profile-container/profile-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e9e954a_fc5ae262",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 43
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8bcd400d_9bdb34b5",
         "filename": "src/app/user/presentation/profile/profile.component.ts",
         "patchSetId": 1
@@ -830,6 +1094,30 @@
       "writtenOn": "2019-05-17T10:06:43Z",
       "side": 1,
       "message": "remove",
+      "range": {
+        "startLine": 14,
+        "startChar": 3,
+        "endLine": 14,
+        "endChar": 17
+      },
+      "revId": "ff07df517494bce3fa5a87c9ec11ed719c909cc5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5b7e306_b26b7c05",
+        "filename": "src/app/user/presentation/profile/profile.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-05-17T13:33:35Z",
+      "side": 1,
+      "message": "we let it in as it\u0027s generated",
+      "parentUuid": "8bcd400d_9bdb34b5",
       "range": {
         "startLine": 14,
         "startChar": 3,
