@@ -4,7 +4,7 @@ export class GraphSettings {
     static GROUP_HEADER_HEIGHT = 20;
     static BORDER_WITH = 1;
     static RADIUS = 2;
-    static SAMPLE_BOX_MARGIN = 2;
+    static SAMPLE_BOX_MARGIN = 10;
     static LOT_BOX_MARGIN = 10;
     static STATION_BOX_MARGIN = 10;
     static FONT_SIZE = '8pt';
