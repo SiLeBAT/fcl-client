@@ -15,12 +15,12 @@ export class UserService {
     private currentUser: TokenizedUser;
 
     private URL = {
-        login: '/users/login',
-        register: '/users/register',
-        recovery: '/users/recovery',
-        reset: '/users/reset',
-        activate: '/users/activate',
-        adminactivate: '/users/adminactivate'
+        login: '/api/v1/users/login',
+        register: '/api/v1/users/register',
+        recovery: '/api/v1/users/recovery',
+        reset: '/api/v1/users/reset',
+        activate: '/api/v1/users/activate',
+        adminactivate: '/api/v1/users/adminactivate'
     };
 
     constructor(private dataService: DataRequestService) { }
