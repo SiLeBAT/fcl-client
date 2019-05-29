@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { SpinnerLoaderService } from '../../../shared/services/spinner-loader.service';
-import { TitleResponseDTO } from '../../models/user.model';
+import { ActivationResponseDTO } from '@app/user/models/user.model';
 
 @Component({
     selector: 'fcl-activate-container',
@@ -26,14 +26,14 @@ export class ActivateContainerComponent implements OnInit {
 
         this.spinnerService.show();
         this.userService.activateAccount(token)
-        .subscribe((activationResponse: TitleResponseDTO) => {
+        .subscribe((activationResponse: ActivationResponseDTO) => {
             this.spinnerService.hide();
-            const message = activationResponse.title;
+            const message = 'Account activation successful!';
             this.alertService.success(message);
             this.tokenValid = true;
         }, (err: HttpErrorResponse) => {
             this.spinnerService.hide();
-            this.alertService.error(err.error.title);
+            this.alertService.error('Your account activation failed!');
             this.tokenValid = false;
         });
     }

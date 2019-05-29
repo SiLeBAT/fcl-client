@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { NewPassword } from '../../models/user.model';
+import { NewPasswordRequestDTO } from '@app/user/models/user.model';
 
 @Component({
     selector: 'fcl-reset',
@@ -38,8 +38,8 @@ export class ResetComponent implements OnInit {
     }
 
     onReset() {
-        const password: NewPassword = {
-            newPw: this.resetForm.value.password1
+        const password: NewPasswordRequestDTO = {
+            password: this.resetForm.value.password1
         };
         this.reset.emit(password);
 

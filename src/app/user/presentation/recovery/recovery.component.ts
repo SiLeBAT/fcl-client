@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Email } from '../../models/user.model';
+import { ResetRequestDTO } from '@app/user/models/user.model';
 
 @Component({
     selector: 'fcl-recovery',
@@ -20,7 +20,7 @@ export class RecoveryComponent implements OnInit {
     }
 
     onRecovery() {
-        const email: Email = {
+        const email: ResetRequestDTO = {
             email: this.recoveryForm.value.email
         };
         this.recovery.emit(email);

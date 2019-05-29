@@ -12,5 +12,11 @@ export class DataRequestService {
     post<T, S>(url: string, body: S): Observable<T> {
         return this.httpClient.post<T>(url, body);
     }
+    patch<T, S>(url: string, body: S): Observable<T> {
+        return this.httpClient.patch<T>(url, body);
+    }
+    put<T, S>(url: string, body: S): Observable<T> {
+        return this.httpClient.put<T>(url, body);
+    }
 
 }

@@ -6,7 +6,7 @@ import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { environment } from '../../../../environments/environment';
 import { SpinnerLoaderService } from '../../../shared/services/spinner-loader.service';
-import { AdminActivateResponseDTO } from './../../models/user.model';
+import { ActivationResponseDTO } from './../../models/user.model';
 
 @Component({
     selector: 'fcl-admin-activate-container',
@@ -27,15 +27,15 @@ export class AdminActivateContainerComponent implements OnInit {
 
         this.spinnerService.show();
         this.userService.adminActivateAccount(adminToken)
-        .subscribe((adminActivateResponse: AdminActivateResponseDTO) => {
+        .subscribe((adminActivateResponse: ActivationResponseDTO) => {
             this.spinnerService.hide();
-            const message = adminActivateResponse.title;
-            this.name = adminActivateResponse.name;
+            const message = `Admin account activation! A confirmation is sent to ${adminActivateResponse.username}`;
+            this.name = adminActivateResponse.username;
             this.alertService.success(message);
             this.adminTokenValid = true;
         }, (err: HttpErrorResponse) => {
             this.spinnerService.hide();
-            this.alertService.error(err.error.title);
+            this.alertService.error('Your admin account activation failed!');
             this.adminTokenValid = false;
         });
     }

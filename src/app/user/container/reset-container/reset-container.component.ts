@@ -5,7 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { SpinnerLoaderService } from '../../../shared/services/spinner-loader.service';
-import { TitleResponseDTO, NewPassword } from '../../models/user.model';
+import { NewPasswordRequestDTO, PasswordResetResponseDTO } from '@app/user/models/user.model';
 
 @Component({
     selector: 'fcl-reset-container',
@@ -23,21 +23,20 @@ export class ResetContainerComponent implements OnInit {
     ngOnInit() {
     }
 
-    reset(password: NewPassword) {
+    reset(password: NewPasswordRequestDTO) {
         const token = this.activatedRoute.snapshot.params['id'];
         this.spinnerService.show();
         this.userService.resetPassword(password, token)
-        .subscribe((resetResponse: TitleResponseDTO) => {
+        .subscribe((resetResponse: PasswordResetResponseDTO) => {
             this.spinnerService.hide();
-            const message = resetResponse.title;
-            this.alertService.success(message);
+            this.alertService.success('Please login with your new password');
             this.router.navigate(['users/login']).catch((err) => {
                 throw new Error(`Unable to navigate: ${err}`);
             });
         }, (err: HttpErrorResponse) => {
             this.spinnerService.hide();
-            const errMsg = err['error']['title'];
-            this.alertService.error(errMsg);
+            this.alertService.error(`Error during password reset, the token is not valid.
+            Please receive a new 'Password-Reset' link with the option 'Password forgotten?'.`);
         });
     }
 }

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { RegistrationCredentials, TitleResponseDTO } from '../../models/user.model';
+import { RegistrationDetailsDTO, RegistrationRequestResponseDTO } from '../../models/user.model';
 import { SpinnerLoaderService } from '../../../shared/services/spinner-loader.service';
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'fcl-register-container',
@@ -12,26 +13,31 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class RegisterContainerComponent implements OnInit {
 
+    private supportContact: string;
+
     constructor(private spinnerService: SpinnerLoaderService,
                 private alertService: AlertService,
                 private userService: UserService,
                 private router: Router) { }
 
     ngOnInit() {
+        this.supportContact = environment.supportContact;
     }
 
-    register(credentails: RegistrationCredentials) {
+    register(credentials: RegistrationDetailsDTO) {
         this.spinnerService.show();
-        this.userService.register(credentails)
-        .subscribe((registerResponse: TitleResponseDTO) => {
+        this.userService.register(credentials)
+        .subscribe((registerResponse: RegistrationRequestResponseDTO) => {
             this.spinnerService.hide();
-            this.alertService.success(registerResponse.title);
+            this.alertService.success(`Please activate your account: An email has been sent to an ${registerResponse.email} with further instructions.`);
             this.router.navigate(['users/login']).catch((err) => {
                 throw new Error(`Unable to navigate: ${err}`);
             });
         }, (err: HttpErrorResponse) => {
             this.spinnerService.hide();
-            this.alertService.error(err.error.title);
+            this.alertService.error(`Error during registration.
+            An email has been sent to an ${credentials.email} with further instructions.
+            If you don't receive an email please contact us directly per email to: ${this.supportContact}.`);
         });
 
     }

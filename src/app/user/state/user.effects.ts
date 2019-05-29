@@ -8,7 +8,7 @@ import * as userActions from './user.actions';
 import { map, catchError, exhaustMap, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginResponseDTO } from '../models/user.model';
+import { TokenizedUserDTO } from '../models/user.model';
 
 @Injectable()
 export class UserEffects {
@@ -25,18 +25,18 @@ export class UserEffects {
       ofType(userActions.UserActionTypes.LoginUser),
       tap(item => this.spinnerService.show()),
       exhaustMap((action: userActions.LoginUser) => this.userService.login(action.payload).pipe(
-        map((loginResponse: LoginResponseDTO) => {
+        map((loginResponse: TokenizedUserDTO) => {
             this.spinnerService.hide();
-            if (loginResponse.user && loginResponse.user.token) {
-                this.alertService.success(loginResponse.title);
+            if (loginResponse && loginResponse.token) {
+                this.alertService.success('Login successful');
                 this.spinnerService.hide();
-                this.userService.setCurrentUser(loginResponse.user);
+                this.userService.setCurrentUser(loginResponse);
                 this.router.navigate(['/dashboard']).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);
                 });
-                return new userActions.LoginUserSuccess(loginResponse.user);
+                return new userActions.LoginUserSuccess(loginResponse);
             } else {
-                this.alertService.error(loginResponse.title);
+                this.alertService.error('Login unsuccessful');
                 return new userActions.LoginUserFailure();
             }
 

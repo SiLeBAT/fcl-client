@@ -2,19 +2,13 @@ export interface User {
     email: string;
     firstName?: string;
     lastName?: string;
-    _id: any;
 }
 export interface TokenizedUser extends User {
     token: string;
 }
 
-export interface NewPassword {
-    newPw: string;
-}
-export interface Email {
+export interface LoginCredentials{
     email: string;
-}
-export interface LoginCredentials extends Email {
     password: string;
 }
 
@@ -23,14 +17,46 @@ export interface RegistrationCredentials extends LoginCredentials {
     lastName: string;
 }
 
-export interface TitleResponseDTO {
-    title: string;
+
+export interface ResetRequestDTO {
+    readonly email: string;
 }
 
-export interface LoginResponseDTO extends TitleResponseDTO {
-    user: TokenizedUser;
+export interface NewPasswordRequestDTO {
+    readonly password: string;
 }
 
-export interface AdminActivateResponseDTO extends TitleResponseDTO {
-    name: string;
+export interface RegistrationDetailsDTO {
+    readonly email: string;
+    readonly password: string;
+    readonly firstName: string;
+    readonly lastName: string;
+    readonly instituteId: string;
+}
+
+export interface RegistrationRequestResponseDTO {
+    readonly registerRequest: boolean;
+    readonly email: string;
+}
+
+export interface PasswordResetRequestResponseDTO {
+    readonly passwordResetRequest: boolean;
+    readonly email: string;
+}
+
+export interface PasswordResetResponseDTO {
+    readonly passwordReset: boolean;
+}
+
+export interface ActivationResponseDTO {
+    readonly activation: boolean;
+    readonly username: string;
+}
+
+export interface TokenizedUserDTO {
+    readonly email: string;
+    readonly firstName: string;
+    readonly lastName: string;
+    readonly instituteId: string;
+    readonly token: string;
 }
