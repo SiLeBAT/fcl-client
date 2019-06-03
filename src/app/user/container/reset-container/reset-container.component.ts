@@ -33,7 +33,7 @@ export class ResetContainerComponent implements OnInit {
             this.router.navigate(['users/login']).catch((err) => {
                 throw new Error(`Unable to navigate: ${err}`);
             });
-        }, (err: HttpErrorResponse) => {
+        }, () => {
             this.spinnerService.hide();
             this.alertService.error(`Error during password reset, the token is not valid.
             Please receive a new 'Password-Reset' link with the option 'Password forgotten?'.`);

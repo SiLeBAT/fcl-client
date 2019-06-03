@@ -34,7 +34,7 @@ export class RecoveryContainerComponent implements OnInit {
               this.router.navigate(['users/login']).catch((err) => {
                   throw new Error(`Unable to navigate: ${err}`);
               });
-          }, (err: HttpErrorResponse) => {
+          }, () => {
               this.spinnerService.hide();
               this.alertService.error('Unable to recover password.');
           });

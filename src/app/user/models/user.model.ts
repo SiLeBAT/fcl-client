@@ -7,7 +7,7 @@ export interface TokenizedUser extends User {
     token: string;
 }
 
-export interface LoginCredentials{
+export interface LoginCredentials {
     email: string;
     password: string;
 }
@@ -16,7 +16,6 @@ export interface RegistrationCredentials extends LoginCredentials {
     firstName: string;
     lastName: string;
 }
-
 
 export interface ResetRequestDTO {
     readonly email: string;

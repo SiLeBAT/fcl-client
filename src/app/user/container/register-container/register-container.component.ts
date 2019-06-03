@@ -29,11 +29,12 @@ export class RegisterContainerComponent implements OnInit {
         this.userService.register(credentials)
         .subscribe((registerResponse: RegistrationRequestResponseDTO) => {
             this.spinnerService.hide();
-            this.alertService.success(`Please activate your account: An email has been sent to an ${registerResponse.email} with further instructions.`);
+            this.alertService.success(
+                `Please activate your account: An email has been sent to an ${registerResponse.email} with further instructions.`);
             this.router.navigate(['users/login']).catch((err) => {
                 throw new Error(`Unable to navigate: ${err}`);
             });
-        }, (err: HttpErrorResponse) => {
+        }, () => {
             this.spinnerService.hide();
             this.alertService.error(`Error during registration.
             An email has been sent to an ${credentials.email} with further instructions.

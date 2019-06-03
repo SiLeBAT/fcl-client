@@ -2,8 +2,16 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 import {
-  LoginCredentials, TokenizedUser,
-  RegistrationRequestResponseDTO, RegistrationDetailsDTO, PasswordResetRequestResponseDTO, ResetRequestDTO, NewPasswordRequestDTO, PasswordResetResponseDTO, ActivationResponseDTO, TokenizedUserDTO
+    LoginCredentials,
+    TokenizedUser,
+    RegistrationRequestResponseDTO,
+    RegistrationDetailsDTO,
+    PasswordResetRequestResponseDTO,
+    ResetRequestDTO,
+    NewPasswordRequestDTO,
+    PasswordResetResponseDTO,
+    ActivationResponseDTO,
+    TokenizedUserDTO
 } from '../models/user.model';
 import { DataRequestService } from '../../core/services/data-request.service';
 

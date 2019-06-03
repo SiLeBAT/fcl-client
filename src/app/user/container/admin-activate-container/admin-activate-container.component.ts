@@ -33,7 +33,7 @@ export class AdminActivateContainerComponent implements OnInit {
             this.name = adminActivateResponse.username;
             this.alertService.success(message);
             this.adminTokenValid = true;
-        }, (err: HttpErrorResponse) => {
+        }, () => {
             this.spinnerService.hide();
             this.alertService.error('Your admin account activation failed!');
             this.adminTokenValid = false;

@@ -31,7 +31,7 @@ export class ActivateContainerComponent implements OnInit {
             const message = 'Account activation successful!';
             this.alertService.success(message);
             this.tokenValid = true;
-        }, (err: HttpErrorResponse) => {
+        }, () => {
             this.spinnerService.hide();
             this.alertService.error('Your account activation failed!');
             this.tokenValid = false;
