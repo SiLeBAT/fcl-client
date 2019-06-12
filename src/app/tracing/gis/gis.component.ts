@@ -2,7 +2,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatMenuTrigger, MatSlider } from '@angular/material';
 import { Observable, Subject, timer } from 'rxjs';
 import * as Hammer from 'hammerjs';
-import * as ol from 'openlayers';
+import * as ol from 'ol';
+import { Tile } from 'ol/layer';
+import { OSM } from 'ol/source';
 import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
@@ -124,8 +126,8 @@ export class GisComponent implements OnInit {
         this.map = new ol.Map({
             target: this.mapElement.nativeElement,
             layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
+                new Tile({
+                    source: new OSM()
                 })
             ],
             controls: []

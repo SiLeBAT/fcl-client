@@ -14,7 +14,8 @@ import {
   MatMenuTrigger
 } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
-import * as ol from 'openlayers';
+import * as ol from 'ol';
+import { fromLonLat } from 'ol/proj';
 import {
   DialogAlertComponent,
   DialogAlertData
@@ -27,7 +28,7 @@ export class Utils {
     private static CY_TO_OL_FACTOR = 10000;
 
     static latLonToPosition(lat: number, lon: number, zoom: number): Position {
-        const p = ol.proj.fromLonLat([lon, lat]);
+        const p = fromLonLat([lon, lat]);
 
         return {
             x: (p[0] / Utils.CY_TO_OL_FACTOR) * zoom,

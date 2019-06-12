@@ -11,6 +11,8 @@
     "build:qa": "npm run clean && npm run lint && ng build --configuration=qa --output-path \"public\"",
     "build:qa_wo_lint": "npm run clean && ng build --configuration=qa --output-path \"public\"",
     "build:prod": "npm run clean && npm run lint && ng build --configuration=production --output-path \"public\"",
+    "dependency-check:prod": "node_modules/.bin/npm-audit-ci-wrapper -t low -p",
+    "dependency-check:qa": "node_modules/.bin/npm-audit-ci-wrapper -t low",
     "test": "ng test",
     "lint": "npm run lint:code && npm run lint:styles",
     "lint:code": "tslint --project tsconfig.json --fix -c tslint.json \"src/**/*.ts\"",
@@ -49,14 +51,14 @@
     "d3": "^5.9.2",
     "elkjs": "^0.4.1",
     "hammerjs": "^2.0.8",
-    "html2canvas": "^1.0.0-rc.1",
+    "html2canvas": "^1.0.0-rc.3",
     "immutable": "^3.8.2",
     "javascript-lp-solver": "^0.4.5",
     "lodash": "^4.17.11",
     "material-design-icons": "^3.0.1",
     "mxgraph": "^3.9.12",
     "normalize.css": "^8.0.1",
-    "openlayers": "^4.6.5",
+    "ol": "^5.3.3",
     "rxjs": "^6.5.2",
     "tslib": "^1.9.3",
     "zone.js": "^0.8.29",
@@ -70,7 +72,7 @@
     "@types/hammerjs": "^2.0.36",
     "@types/jasmine": "^3.3.12",
     "@types/node": "^10.5.6",
-    "@types/openlayers": "^4.6.17",
+    "@types/ol": "^5.3.0",
     "@types/zxcvbn": "^4.4.0",
     "codelyzer": "^5.0.1",
     "jasmine-core": "^3.4.0",
@@ -81,6 +83,7 @@
     "karma-coverage-istanbul-reporter": "^2.0.1",
     "karma-jasmine": "^2.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
+    "npm-audit-ci-wrapper": "^2.2.1",
     "protractor": "^5.4.2",
     "rimraf": "^2.6.3",
     "rxjs-tslint": "^0.1.7",
@@ -91,5 +94,8 @@
     "tslint": "^5.16.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "3.2.4"
+  },
+  "fclConfig": {
+    "lastChange": "2019-06-12 11:25:17 +0200"
   }
 }
