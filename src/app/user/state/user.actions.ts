@@ -1,11 +1,13 @@
 import { LoginCredentials, TokenizedUser } from '../models/user.model';
 import { Action } from '@ngrx/store';
+import { ActivationStatus } from '../../shared/model/types';
 
 export enum UserActionTypes {
     LoginUser = '[User] Login User',
     LoginUserSuccess = '[User] Login User Success',
     LoginUserFailure = '[User] Login User Failure',
-    LogoutUser = '[User] Logout User'
+    LogoutUser = '[User] Logout User',
+    LoginActivated = '[User] Login active',
 }
 
 export class LoginUser implements Action {
@@ -32,8 +34,15 @@ export class LogoutUser implements Action {
     constructor() { }
 }
 
+export class LoginActivated implements Action {
+    readonly type = UserActionTypes.LoginActivated;
+
+    constructor(public payload: ActivationStatus) {}
+}
+
 export type UserActions =
       LoginUser
     | LoginUserSuccess
     | LoginUserFailure
-    | LogoutUser;
+    | LogoutUser
+    | LoginActivated;

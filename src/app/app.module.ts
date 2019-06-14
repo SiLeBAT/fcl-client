@@ -32,12 +32,6 @@ import { MainPageModule } from './main-page/main-page.module';
         // AppRoutingModule needs to be at the end
         AppRoutingModule
     ],
-    providers: [
-        // {
-        //     provide: LocationStrategy,
-        //     useClass: HashLocationStrategy
-        // }
-    ],
     bootstrap: [
         AppComponent
     ]

@@ -10,6 +10,8 @@ import { User } from '../../../user/models/user.model';
 export class PageHeaderComponent implements OnInit {
     @Input() appName: string;
     @Input() tracingActive: boolean;
+    @Input() dashboardActive: boolean;
+    @Input() loginActive: boolean;
     @Input() currentUser: User | null;
     @Output() toggleLeftSideBar = new EventEmitter<boolean>();
     private leftOpen: boolean = false;

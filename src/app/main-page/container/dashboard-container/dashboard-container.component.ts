@@ -1,14 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import * as fromMainPage from '../../state/main-page.reducers';
+import * as mainPageActions from '../../state/main-page.actions';
+import { Store } from '@ngrx/store';
+
 
 @Component({
     selector: 'fcl-dashboard-container',
     templateUrl: './dashboard-container.component.html',
     styleUrls: ['./dashboard-container.component.scss']
 })
-export class DashboardContainerComponent implements OnInit {
+export class DashboardContainerComponent implements OnInit, OnDestroy {
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private store: Store<fromMainPage.MainPageState>
+    ) {
+        this.store.dispatch(new mainPageActions.DashboardActivated({ isActivated: true }));
+    }
 
     ngOnInit() {
     }
@@ -18,5 +27,9 @@ export class DashboardContainerComponent implements OnInit {
             throw new Error(`Unable to navigate: ${err}`);
         });
 
+    }
+
+    ngOnDestroy() {
+        this.store.dispatch(new mainPageActions.DashboardActivated({ isActivated: false }));
     }
 }

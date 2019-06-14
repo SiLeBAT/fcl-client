@@ -42,6 +42,10 @@
     color: $fcl-primary-hover;
 }
 
+.no-hover {
+    pointer-events: none;
+}
+
 .fcl-toolbar-action-item {
     flex: 1;
 }

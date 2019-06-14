@@ -20,6 +20,8 @@ import { ToolbarActionComponent } from './presentation/toolbar-action/toolbar-ac
 import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-entry-header.component';
 import { DashboardContainerComponent } from './container/dashboard-container/dashboard-container.component';
 import { DashboardComponent } from './presentation/dashboard/dashboard.component';
+import { StoreModule } from '@ngrx/store';
+import { STATE_SLICE_NAME, reducer } from './state/main-page.reducers';
 
 @NgModule({
     imports: [
@@ -27,7 +29,8 @@ import { DashboardComponent } from './presentation/dashboard/dashboard.component
         MainPageRoutingModule,
         SharedModule,
         TracingModule,
-        GraphEditorModule
+        GraphEditorModule,
+        StoreModule.forFeature(STATE_SLICE_NAME, reducer),
     ],
     declarations: [
         MainPageComponent,
