@@ -11,10 +11,12 @@ export interface State extends fromRoot.State {
 
 export interface UserState {
     currentUser: TokenizedUser | null;
+    loginActive: boolean;
 }
 
 const initialState: UserState = {
-    currentUser: retrieveUserFromLocalStorage()
+    currentUser: retrieveUserFromLocalStorage(),
+    loginActive: false
 };
 
 // SELECTORS
@@ -23,6 +25,11 @@ export const getUserFeatureState = createFeatureSelector<UserState>(STATE_SLICE_
 export const getCurrentUser = createSelector(
   getUserFeatureState,
   state => state.currentUser
+);
+
+export const getLoginActive = createSelector(
+    getUserFeatureState,
+    state => state.loginActive
 );
 
 // REDUCER
@@ -46,6 +53,13 @@ export function reducer(state: UserState = initialState, action: UserActions): U
                 ...state,
                 currentUser: null
             };
+
+        case UserActionTypes.LoginActivated:
+            return {
+                ...state,
+                loginActive: action.payload.isActivated
+            };
+
         default:
             return state;
     }

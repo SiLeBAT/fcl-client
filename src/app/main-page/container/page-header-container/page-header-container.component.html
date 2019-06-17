@@ -2,6 +2,8 @@
     class="fcl-toolbar-top-item fcl-toolbar-top-container"
     [appName]="appName"
     [tracingActive]="tracingActive$ | async"
+    [dashboardActive]="dashboardActive$ | async"
+    [loginActive]="loginActive$ | async"
     [currentUser]="currentUser$ | async"
     (toggleLeftSideBar)="toggleLeftSideBar($event)">
 </fcl-page-header>
