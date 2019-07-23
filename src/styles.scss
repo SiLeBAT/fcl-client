@@ -1,7 +1,4 @@
 @import '~normalize.css/normalize.css';
-
-// @import "~material-design-icons/iconfont/material-icons.css";
-// @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import '~@swimlane/ngx-datatable/release/index.css';
 @import '~@swimlane/ngx-datatable/release/assets/icons.css';
 @import '~ol/ol.css';
@@ -9,18 +6,7 @@
 @import 'material-style';
 @import 'ngx-datatable-style';
 
-// html, body {
-//   height: 100vh;
-//   margin: 0;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-//   overflow: hidden;
-// }
-
 @include mat-core($fcl-typography);
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
 @include angular-material-theme($fcl-theme);
 
 body {
@@ -39,4 +25,24 @@ body {
 
 .mytooltip {
     font-size: 16px;
+}
+
+.snackbar-error {
+    background-color: #c62828;
+    font-weight: 500;
+}
+
+.snackbar-success {
+    background-color: #c8e6c9;
+    color: black;
+}
+
+.snackbar-warn {
+    background-color: #fff9c4;
+    color: black;
+}
+
+.snackbar-info {
+    background-color: #bbdefb;
+    color: black;
 }

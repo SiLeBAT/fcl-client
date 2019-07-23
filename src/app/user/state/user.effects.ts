@@ -28,7 +28,6 @@ export class UserEffects {
         map((loginResponse: TokenizedUserDTO) => {
             this.spinnerService.hide();
             if (loginResponse && loginResponse.token) {
-                this.alertService.success('Login successful');
                 this.spinnerService.hide();
                 this.userService.setCurrentUser(loginResponse);
                 this.router.navigate(['/dashboard']).catch((err) => {
