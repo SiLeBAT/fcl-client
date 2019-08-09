@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActivateViewComponent should render the component correctly 1`] = `
+<fcl-activate-view>
+  <div
+    class="fcl-image-container"
+  >
+    <fcl-main-entry-header />
+    <fcl-single-center-card-layout
+      class="fcl-activate-card"
+      title="Account activation"
+    >
+      <div
+        class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
+      >
+        <mat-card
+          class="fcl-mat-card mat-card"
+        >
+          <mat-card-header
+            class="fcl-mat-card__header mat-card-header"
+          >
+            <div
+              class="mat-card-header-text"
+            >
+              <mat-card-title
+                class="mat-card-title"
+              >
+                <div
+                  class="mat-headline"
+                >
+                  
+                </div>
+                <mat-divider
+                  class="mat-divider"
+                  role="separator"
+                />
+              </mat-card-title>
+            </div>
+          </mat-card-header>
+          <mat-card-content
+            class="mat-card-content"
+          >
+            <fcl-mat-card-body>
+              <fcl-activate-container />
+            </fcl-mat-card-body>
+          </mat-card-content>
+          <mat-card-actions
+            class="fcl-mat-card-actions mat-card-actions"
+          >
+            <fcl-mat-card-actions />
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </fcl-single-center-card-layout>
+  </div>
+</fcl-activate-view>
+`;

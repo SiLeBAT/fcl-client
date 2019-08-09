@@ -3,7 +3,7 @@ import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as tracingActions from '@app/tracing/state/tracing.actions';
-import * as fromEditor from '../../../graph-editor/state/graph-editor.reducers';
+import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
 import { DataService } from '@app/tracing/services/data.service';
 import { FclData } from '@app/tracing/util/datatypes';

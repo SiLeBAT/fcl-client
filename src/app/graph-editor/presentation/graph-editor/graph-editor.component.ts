@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import * as fromEditor from '../../state/graph-editor.reducers';
+import * as fromEditor from '../../state/graph-editor.reducer';
 import * as editorActions from '../../state/graph-editor.actions';
 
 declare const EditorUi: any;

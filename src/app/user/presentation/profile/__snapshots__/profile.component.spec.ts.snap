@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProfileComponent should display the current user 1`] = `
+<fcl-profile
+  currentUser={[Function Object]}
+>
+  <fcl-single-center-card-layout
+    ng-reflect-title="User Profile"
+    title="User Profile"
+  >
+    <div
+      class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
+    >
+      <mat-card
+        class="fcl-mat-card mat-card"
+      >
+        <mat-card-header
+          class="fcl-mat-card__header mat-card-header"
+        >
+          <div
+            class="mat-card-header-text"
+          >
+            <mat-card-title
+              class="mat-card-title"
+            >
+              <div
+                class="mat-headline"
+              >
+                User Profile
+              </div>
+              <mat-divider
+                aria-orientation="horizontal"
+                class="mat-divider mat-divider-horizontal"
+                role="separator"
+              />
+            </mat-card-title>
+          </div>
+        </mat-card-header>
+        <mat-card-content
+          class="mat-card-content"
+        >
+          <fcl-mat-card-body>
+            <div
+              class="fcl-mat-card-text"
+            >
+              <p>
+                first last
+              </p>
+              <p>
+                email
+              </p>
+            </div>
+          </fcl-mat-card-body>
+        </mat-card-content>
+        <mat-card-actions
+          class="fcl-mat-card-actions mat-card-actions"
+        />
+      </mat-card>
+    </div>
+  </fcl-single-center-card-layout>
+</fcl-profile>
+`;
+
+exports[`ProfileComponent should render the component correctly 1`] = `
+<fcl-profile>
+  <fcl-single-center-card-layout
+    title="User Profile"
+  >
+    <div
+      class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
+    >
+      <mat-card
+        class="fcl-mat-card mat-card"
+      >
+        <mat-card-header
+          class="fcl-mat-card__header mat-card-header"
+        >
+          <div
+            class="mat-card-header-text"
+          >
+            <mat-card-title
+              class="mat-card-title"
+            >
+              <div
+                class="mat-headline"
+              >
+                
+              </div>
+              <mat-divider
+                class="mat-divider"
+                role="separator"
+              />
+            </mat-card-title>
+          </div>
+        </mat-card-header>
+        <mat-card-content
+          class="mat-card-content"
+        >
+          <fcl-mat-card-body>
+            <div
+              class="fcl-mat-card-text"
+            >
+              <p>
+                
+              </p>
+              <p>
+                
+              </p>
+            </div>
+          </fcl-mat-card-body>
+        </mat-card-content>
+        <mat-card-actions
+          class="fcl-mat-card-actions mat-card-actions"
+        />
+      </mat-card>
+    </div>
+  </fcl-single-center-card-layout>
+</fcl-profile>
+`;

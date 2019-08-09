@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import * as fromMainPage from '../../state/main-page.reducers';
+import * as fromMainPage from '../../state/main-page.reducer';
 import * as mainPageActions from '../../state/main-page.actions';
 import { Store } from '@ngrx/store';
 

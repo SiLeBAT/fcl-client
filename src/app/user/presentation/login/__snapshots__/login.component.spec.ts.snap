@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginComponent should render the component correctly 1`] = `
+<fcl-login
+  login={[Function EventEmitter]}
+  loginForm={[Function FormGroup]}
+>
+  <form
+    novalidate=""
+  >
+    <div
+      class="fcl-mat-card-content"
+    >
+      <div
+        class="form-group fcl-form-email"
+      >
+        <mat-form-field
+          appearance="standard"
+          class="fcl-form-field mat-form-field mat-primary"
+        >
+          <div
+            class="mat-form-field-wrapper"
+          >
+            <div
+              class="mat-form-field-flex"
+            >
+              
+              
+              <div
+                class="mat-form-field-infix"
+              >
+                <input
+                  class="mat-input-element mat-form-field-autofill-control"
+                  formcontrolname="email"
+                  matinput=""
+                  name="email"
+                  required=""
+                />
+                <span
+                  class="mat-form-field-label-wrapper"
+                >
+                  
+                </span>
+              </div>
+              
+            </div>
+            
+            <div
+              class="mat-form-field-subscript-wrapper"
+            >
+              
+              
+            </div>
+          </div>
+        </mat-form-field>
+      </div>
+      <div
+        class="form-group"
+      >
+        <mat-form-field
+          appearance="standard"
+          class="fcl-form-field mat-form-field mat-primary"
+        >
+          <div
+            class="mat-form-field-wrapper"
+          >
+            <div
+              class="mat-form-field-flex"
+            >
+              
+              
+              <div
+                class="mat-form-field-infix"
+              >
+                <input
+                  class="mat-input-element mat-form-field-autofill-control"
+                  formcontrolname="password"
+                  matinput=""
+                  name="password"
+                  required=""
+                  type="password"
+                />
+                <span
+                  class="mat-form-field-label-wrapper"
+                >
+                  
+                </span>
+              </div>
+              
+            </div>
+            
+            <div
+              class="mat-form-field-subscript-wrapper"
+            >
+              
+              
+            </div>
+          </div>
+        </mat-form-field>
+      </div>
+      <div
+        class="fcl-card-action fcl-card-action-container"
+      >
+        <div
+          class="form-group"
+        >
+          <button
+            class="fcl-login-form__submit-button mat-raised-button"
+            color="primary"
+            mat-raised-button=""
+            type="submit"
+          >
+            <span
+              class="mat-button-wrapper"
+            >
+               Login 
+            </span>
+            <div
+              class="mat-button-ripple mat-ripple"
+              matripple=""
+            />
+            <div
+              class="mat-button-focus-overlay"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</fcl-login>
+`;

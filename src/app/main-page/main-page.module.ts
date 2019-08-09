@@ -21,7 +21,7 @@ import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-
 import { DashboardContainerComponent } from './container/dashboard-container/dashboard-container.component';
 import { DashboardComponent } from './presentation/dashboard/dashboard.component';
 import { StoreModule } from '@ngrx/store';
-import { STATE_SLICE_NAME, reducer } from './state/main-page.reducers';
+import { STATE_SLICE_NAME, reducer } from './state/main-page.reducer';
 
 @NgModule({
     imports: [

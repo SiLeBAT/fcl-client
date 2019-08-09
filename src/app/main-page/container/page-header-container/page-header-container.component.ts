@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../../../tracing/state/tracing.reducers';
-import * as fromMainPage from '../../state/main-page.reducers';
+import * as fromMainPage from '../../state/main-page.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
 import * as tracingActions from '../../../tracing/state/tracing.actions';
 
