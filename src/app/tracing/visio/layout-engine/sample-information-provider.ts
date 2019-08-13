@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { SampleData } from '../../util/datatypes';
+import { SampleData } from '../../data.model';
 import { StationInformation, LotInformation,
     SampleInformation, InSampleInformation, StationSampleInformation } from './datatypes';
 import { Utils } from './../../util/utils';

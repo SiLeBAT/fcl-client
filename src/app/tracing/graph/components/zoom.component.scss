@@ -1,0 +1,31 @@
+#zoom {
+    color: rgb(102, 102, 102);
+}
+
+#zoom-in,
+#zoom-out,
+#zoom-reset {
+    position: absolute;
+    z-index: 1;
+    left: 4px;
+}
+
+#zoom-in {
+    top: 49px;
+}
+
+#zoom-out {
+    top: 219px;
+}
+
+#zoom-reset {
+    top: 0;
+}
+
+#zoom-slider {
+    position: absolute;
+    z-index: 1;
+    top: 90px;
+    left: 0;
+    height: 90px;
+}

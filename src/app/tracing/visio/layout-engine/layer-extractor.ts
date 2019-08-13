@@ -1,5 +1,10 @@
-import { FclElements, StationData } from '../../util/datatypes';
+import { StationData, DeliveryData } from '../../data.model';
 import { Position } from './datatypes';
+
+interface FclElements {
+    stations: StationData[];
+    deliveries: DeliveryData[];
+}
 
 function getNormalizedValues(values: number[]): number[] {
     const minValue: number = Math.min(...values);

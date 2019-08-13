@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
+import * as TracingSelectors from '@app/tracing/state/tracing.selectors';
 import * as tracingActions from '@app/tracing/state/tracing.actions';
+import * as tracingIOActions from '@app/tracing/io/io.actions';
 import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
-import { DataService } from '@app/tracing/services/data.service';
-import { FclData } from '@app/tracing/util/datatypes';
+import { FclData } from '@app/tracing/data.model';
 import { AlertService } from '@app/shared/services/alert.service';
-import { User } from '../../../user/models/user.model';
+import { IOService } from '@app/tracing/io/io.service';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
@@ -17,7 +17,7 @@ import { User } from '../../../user/models/user.model';
 })
 export class ToolbarActionContainerComponent implements OnInit {
     tracingActive$ = this.store.pipe(
-        select(fromTracing.getTracingActive)
+        select(TracingSelectors.getTracingActive)
     );
     graphEditorActive$ = this.store.pipe(
         select(fromEditor.isActive)
@@ -28,27 +28,25 @@ export class ToolbarActionContainerComponent implements OnInit {
 
     constructor(
         private store: Store<fromTracing.State>,
-        private dataService: DataService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private ioService: IOService
     ) { }
 
     ngOnInit() {
     }
 
     toggleRightSidebar(open: boolean) {
-        this.store.dispatch(new tracingActions.ToggleRightSideBar(open));
+        this.store.dispatch(new tracingActions.ShowDataTableSOA({ showDataTable: open }));
     }
 
     loadData(fileList: FileList) {
-        this.store.dispatch(new tracingActions.LoadFclData(fileList));
+        this.store.dispatch(new tracingIOActions.LoadFclDataMSA({ dataSource: fileList }));
     }
 
     loadExampleData() {
-        this.dataService.setDataSource('../../../../assets/data/bbk.json');
-        this.dataService
-            .getData()
+        this.ioService.getData('../../../../assets/data/bbk.json')
             .then((data: FclData) => {
-                this.store.dispatch(new tracingActions.LoadFclDataSuccess(data));
+                this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
 
             })
             .catch(error => {

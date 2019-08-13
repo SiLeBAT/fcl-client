@@ -10,8 +10,8 @@
                     "ngx-datatable",
                     "/^datatable./",
                     "/^mat-./",
-                    "fcl-graph",
-                    "fcl-gis",
+                    "fcl-schema-graph",
+                    "fcl-gis-graph",
                     "fcl-table"
                 ]
             }

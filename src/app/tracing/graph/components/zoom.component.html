@@ -1,0 +1,14 @@
+<div id="zoom">
+    <button id="zoom-in" mat-mini-fab (click)="zoomIn.emit(null)">
+        <mat-icon>add</mat-icon>
+    </button>
+    <button id="zoom-out" mat-mini-fab (click)="zoomOut.emit(null)">
+        <mat-icon>remove</mat-icon>
+    </button>
+    <button id="zoom-reset" mat-mini-fab (click)="zoomReset.emit(null)">
+        <mat-icon>zoom_out_map</mat-icon>
+    </button>
+    <mat-slider #slider [value]="zoomValue" id="zoom-slider" [vertical]="true"
+    (slide)="slide()" (change)="sliderChanged()">
+</mat-slider>
+</div>

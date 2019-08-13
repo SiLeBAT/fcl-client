@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { VisioReport } from '../../../tracing/visio/layout-engine/datatypes';
 import * as fromTracing from '../../../tracing/state/tracing.reducers';
+import * as TracingSelectors from '../../../tracing/state/tracing.selectors';
 import { Store, select } from '@ngrx/store';
 import { VisioToMxGraphService } from '../../services/visio-to-mxgraph.service';
 import { takeWhile } from 'rxjs/operators';
@@ -20,7 +21,7 @@ export class GraphEditorContainerComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.store.pipe(
-          select(fromTracing.getVisioReport),
+          select(TracingSelectors.getVisioReport),
           takeWhile(() => this.componentActive)
         ).subscribe(
             (visioReport: VisioReport) => {

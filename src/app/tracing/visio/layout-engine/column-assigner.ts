@@ -1,14 +1,11 @@
 import * as _ from 'lodash';
-import { StationData } from '../../util/datatypes';
+import { StationData } from '../../data.model';
 import { Position } from './datatypes';
 
 class ColumnAssigner {
 
-    private layers: StationData[][];
-    private connections: Map<StationData, StationData[]>;
     private stationToLayerIndexMap: Map<StationData, number>;
     private stations: StationData[];
-    private positions: number[];
     private columnSwitch: boolean[];
 
     private static getStationToLayerIndexMap(layers: StationData[][]): Map<StationData, number> {
@@ -29,7 +26,6 @@ class ColumnAssigner {
         this.stationToLayerIndexMap = ColumnAssigner.getStationToLayerIndexMap(layers);
         this.stations = [].concat(...layers);
         this.stations.sort((s1, s2) => stationToPositionMap.get(s1).x - stationToPositionMap.get(s2).x);
-        this.positions = this.stations.map(s => stationToPositionMap.get(s).x);
         this.setSwitches();
 
         return this.createColumns();
@@ -52,53 +48,6 @@ class ColumnAssigner {
                 layerIndexSet.clear();
             }
             layerIndexSet.add(layerIndex);
-        }
-    }
-
-    private areStationsOnSameLayer(station1: StationData, station2: StationData): boolean {
-        return this.stationToLayerIndexMap.get(station1) === this.stationToLayerIndexMap.get(station2);
-    }
-
-    private insertStationCrossingSwitch() {
-        let indexTo = this.stations.length - 1;
-        while (indexTo > 0) {
-            let indexBeforeFrom = indexTo - 1;
-            while (indexBeforeFrom && !this.columnSwitch[indexBeforeFrom]) {
-                indexBeforeFrom--;
-            }
-            this.insertSegmentSwitches(indexBeforeFrom + 1, indexTo);
-            indexTo = indexBeforeFrom;
-        }
-    }
-
-    private insertSegmentSwitches(indexFrom: number, indexTo: number) {
-        if ((indexTo - indexFrom) > 1) {
-            const distances: { distance: number, index: number}[] = [];
-            for (let i = indexFrom; i < indexTo; i++) {
-                distances.push({
-                    distance: this.positions[i + 1] - this.positions[i],
-                    index: i
-                });
-            }
-            distances.sort((d1, d2) => d2.distance - d1.distance); // decreasing sort, because we are going to pop the smallest element
-
-            const layerOcc: boolean[] = Array(this.layers.length).fill(false);
-            while (distances.length > 0) {
-                const distance = distances.pop();
-                const layerIndices: number[] = [
-                    this.stationToLayerIndexMap.get(this.stations[distance.index]),
-                    this.stationToLayerIndexMap.get(this.stations[distance.index + 1])
-                ];
-                layerIndices.sort();
-                for (let i = layerIndices[0]; i <= layerIndices[1]; i++) {
-                    if (layerOcc[i]) {
-                        this.columnSwitch[distance.index] = true;
-                        this.insertSegmentSwitches(indexFrom, distance.index);
-                        this.insertSegmentSwitches(distance.index + 1, indexTo);
-                        return;
-                    }
-                }
-            }
         }
     }
 

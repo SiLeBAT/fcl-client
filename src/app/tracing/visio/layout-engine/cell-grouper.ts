@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { GridCell } from './datatypes';
-import { StationData } from '../../util/datatypes';
+import { StationData } from '../../data.model';
 import { Utils } from './../../util/utils';
 import { CellGapCloser } from './cellgap-closer';
 
@@ -90,20 +90,9 @@ class CellGrouper {
         }
     }
 
-    private simplifyGroups() {
-        for (let r = 0; r < this.rowCount; r++) {
-            for (let c = 0; c < this.columnCount; c++) {
-                /*if (this.groupAssignment[r][c] < 0) {
-
-                }*/
-            }
-        }
-    }
-
     private createGroups(): CellGroup[] {
         const groups: CellGroup[] = [];
         const maxGroupIndex = Math.max(...this.visGroupAssignment.map(r => Math.max(...r)));
-        // const visGroupIndices = _.uniq([].concat(...this.visGroupAssignment).filter(i => i >= 0));
 
         for (let i = maxGroupIndex; i >= 0; i--) {
             groups[i] = {

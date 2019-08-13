@@ -1,25 +1,11 @@
 import {
-  Color,
-  DeliveryData,
-  DialogAlignment,
-  FclElements,
-  Position,
-  StationData,
-  TableMode
-} from './datatypes';
-import {
-  DialogPosition,
-  MatDialog,
-  MatDialogRef,
-  MatMenuTrigger
-} from '@angular/material';
+    DeliveryData, DialogAlignment, StationData, TableMode, DataServiceData, Color, Position
+} from '../data.model';
+import { DialogPosition, MatDialog, MatDialogRef, MatMenuTrigger } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 import * as ol from 'ol';
 import { fromLonLat } from 'ol/proj';
-import {
-  DialogAlertComponent,
-  DialogAlertData
-} from '../dialog/dialog-alert/dialog-alert.component';
+import { DialogAlertComponent, DialogAlertData } from '../dialog/dialog-alert/dialog-alert.component';
 import { Constants } from './constants';
 import { ElementRef } from '@angular/core';
 import { Map as ImmutableMap } from 'immutable';
@@ -36,12 +22,7 @@ export class Utils {
         };
     }
 
-    static panZoomToView(
-    pan: Position,
-    zoom: number,
-    width: number,
-    height: number
-  ): ol.View {
+    static panZoomToView(pan: Position, zoom: number, width: number, height: number): ol.View {
         return new ol.View({
             center: [
                 ((width / 2 - pan.x) / zoom) * Utils.CY_TO_OL_FACTOR,
@@ -64,10 +45,7 @@ export class Utils {
         return null;
     }
 
-    static getTableElements(
-    mode: TableMode,
-    data: FclElements
-  ): (StationData | DeliveryData)[] {
+    static getTableElements(mode: TableMode, data: DataServiceData): (StationData | DeliveryData)[] {
         if (mode === TableMode.STATIONS) {
             return data.stations;
         } else if (mode === TableMode.DELIVERIES) {
@@ -77,11 +55,7 @@ export class Utils {
         return null;
     }
 
-    static getTableProperties(
-    mode: TableMode,
-    stationColumns: string[],
-    deliveryColumns: string[]
-  ): string[] {
+    static getTableProperties(mode: TableMode, stationColumns: string[], deliveryColumns: string[]): string[] {
         if (mode === TableMode.STATIONS) {
             return stationColumns;
         } else if (mode === TableMode.DELIVERIES) {
@@ -91,7 +65,7 @@ export class Utils {
         return null;
     }
 
-    static getAllTableProperties(mode: TableMode, data: FclElements): string[] {
+    static getAllTableProperties(mode: TableMode, data: DataServiceData): string[] {
         let properties: string[];
 
         if (mode === TableMode.STATIONS) {
@@ -108,9 +82,7 @@ export class Utils {
             }
         }
 
-        return properties
-      .filter(prop => Constants.PROPERTIES.has(prop))
-      .concat(Array.from(additionalProps));
+        return properties.filter(prop => Constants.PROPERTIES.has(prop)).concat(Array.from(additionalProps));
     }
 
     static openSaveDialog(url: string, fileName: string) {
@@ -125,10 +97,7 @@ export class Utils {
         a.remove();
     }
 
-    static showErrorMessage(
-    dialogService: MatDialog,
-    message: string
-  ): MatDialogRef<any> {
+    static showErrorMessage(dialogService: MatDialog, message: string): MatDialogRef<any> {
         const dialogData: DialogAlertData = {
             title: 'Error',
             message: message
@@ -140,11 +109,7 @@ export class Utils {
         });
     }
 
-    static openMenu(
-    trigger: MatMenuTrigger,
-    triggerElement: ElementRef,
-    pos: Position
-  ) {
+    static openMenu(trigger: MatMenuTrigger, triggerElement: ElementRef, pos: Position) {
         const style = (triggerElement.nativeElement as HTMLElement).style;
 
         style.position = 'fixed';
@@ -170,11 +135,7 @@ export class Utils {
         const combinations = [];
 
         for (let i = 1; i < n; i++) {
-            const bits = i
-        .toString(2)
-        .split('')
-        .reverse()
-        .join('');
+            const bits = i.toString(2).split('').reverse().join('');
             const combination = [];
 
             for (let j = 0; j < values.length; j++) {
@@ -252,32 +213,22 @@ export class Utils {
         return result;
     }
 
-    static createReverseMap<X, Y, Z>(
-    map: Map<X, Y>,
-    reverseFun: (y: Y) => Z
-  ): Map<Z, X> {
+    static createReverseMap<X, Y, Z>(map: Map<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
         const result: Map<Z, X> = new Map();
         map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
         return result;
     }
 
-    static getReverseOfImmutableMap<X, Y, Z>(
-    map: ImmutableMap<X, Y>,
-    reverseFun: (y: Y) => Z
-  ): Map<Z, X> {
+    static getReverseOfImmutableMap<X, Y, Z>(map: ImmutableMap<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
         const result: Map<Z, X> = new Map();
         map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
         return result;
     }
 
     static async getJson(filePath: string, httpClient: HttpClient): Promise<any> {
-        return httpClient
-      .get(filePath)
-      .toPromise()
-      .then(response => {
-          return response;
-      })
-      .catch(error => Promise.reject(error));
+        return httpClient.get(filePath).toPromise()
+            .then(response => response)
+            .catch(error => Promise.reject(error));
     }
 
     static getProperty(data: any, path: string): any {
@@ -342,5 +293,53 @@ export class Utils {
             }
         });
         return result;
+    }
+
+    static createObjectMap<T>(arr: T[], keyMap: (e: T) => string): {[key: string]: T} {
+        const result: {[key: string]: T} = {};
+        for (const value of arr) {
+            result[keyMap(value)] = value;
+        }
+        return result;
+    }
+
+    static createMap<T>(arr: T[], keyMap: (T) => string): {[key: string]: T} {
+        const result: {[key: string]: T} = {};
+        for (const value of arr) {
+            result[keyMap(value)] = value;
+        }
+        return result;
+    }
+
+    static createStringSet(arr: string[]): {[key: string]: boolean} {
+        const result: {[key: string]: boolean} = {};
+        for (const value of arr) {
+            result[value] = true;
+        }
+        return result;
+    }
+
+    static createObjectStringSet(arr: string[]): {[key: string]: boolean} {
+        const result: {[key: string]: boolean} = {};
+        for (const value of arr) {
+            result[value] = true;
+        }
+        return result;
+    }
+
+    static compareStrings(a: string, b: string): number {
+        if (a === null) {
+            if (b === null) {
+                return 0;
+            } else {
+                return -b.localeCompare(a);
+            }
+        } else {
+            return a.localeCompare(b);
+        }
+    }
+
+    static compareNumbers(a: number, b: number): number {
+        return (a === b ? 0 : (a < b ? -1 : 1));
     }
 }

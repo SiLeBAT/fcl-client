@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 
-import { Connection, DeliveryData, DialogAlignment, StationData } from '../../util/datatypes';
+import { DeliveryData, DialogAlignment, StationData, Connection } from '../../data.model';
 import { Constants } from '../../util/constants';
 import { Utils } from '../../util/utils';
 
@@ -11,7 +11,7 @@ export interface StationPropertiesData {
     station: StationData;
     deliveries: Map<string, DeliveryData>;
     connectedStations: Map<string, StationData>;
-    hoverDeliveries: Subject<string[]>;
+    hoverDeliveriesSubject: Subject<string[]>;
 }
 
 interface NodeDatum {
@@ -231,11 +231,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             this.svg = d3
         .select(this.inOutConnector.nativeElement).append<SVGGElement>('svg')
         .attr('display', 'block')
-        .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height)
-        .on('click', () => {
-            this.selected = null;
-            this.connectLine.attr('visibility', 'hidden');
-        });
+        .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height);
 
             const defs = this.svg.append<SVGElement>('defs');
             const g = this.svg.append<SVGElement>('g');
@@ -268,7 +264,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         d3.select('body').on('mousemove', null);
-        this.data.hoverDeliveries.next([]);
+        this.data.hoverDeliveriesSubject.next([]);
     }
 
     moveLeft() {
@@ -442,35 +438,18 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         newNodesIn.on('mouseover', function (d) {
             updateColor(d3.select(this), true);
-            self.data.hoverDeliveries.next([d.id]);
+            self.data.hoverDeliveriesSubject.next([d.id]);
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
-            self.data.hoverDeliveries.next([]);
-        }).on('click', function (d) {
-            if (self.selected == null) {
-                self.selected = d;
-                self.updateConnectLine();
-                self.connectLine.attr('visibility', 'visible');
-                d3.event.stopPropagation();
-            }
+            self.data.hoverDeliveriesSubject.next([]);
         });
 
         newNodesOut.on('mouseover', function (d) {
             updateColor(d3.select(this), true);
-            self.data.hoverDeliveries.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
+            self.data.hoverDeliveriesSubject.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
-            self.data.hoverDeliveries.next([]);
-        }).on('click', function (d) {
-            if (self.selected != null) {
-                if (self.edgeData.find(e => e.source === self.selected && e.target === d) == null) {
-                    self.edgeData.push({
-                        source: self.selected,
-                        target: d
-                    });
-                    self.updateEdges();
-                }
-            }
+            self.data.hoverDeliveriesSubject.next([]);
         });
     }
 
@@ -496,17 +475,17 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         const self = this;
 
-        newEdges.on('mouseover', function () {
+        newEdges.on('mouseover', function (e) {
             if (self.selected == null) {
                 updateColor(d3.select(this), true);
+                self.data.hoverDeliveriesSubject.next([].concat(
+                    [e.source.id],
+                    self.lotBased ? self.deliveriesByLot.get(e.target.id) : [e.target.id]
+                ));
             }
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
-        }).on('click', function (d) {
-            if (self.selected == null) {
-                self.edgeData.splice(self.edgeData.indexOf(d), 1);
-                self.updateEdges();
-            }
+            self.data.hoverDeliveriesSubject.next([]);
         });
     }
 

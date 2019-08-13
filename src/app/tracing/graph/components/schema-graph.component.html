@@ -1,0 +1,6 @@
+<div id="container" #container>
+  <div id="graph" #graph></div>
+  <fcl-zoom id="zoom" *ngIf="showZoom$ | async" [zoomValue] = "zoomPercentage" (zoomIn)="zoomInPressed()" (zoomOut)="zoomOutPressed()" (zoomReset)="zoomResetPressed()" (zoomSlided)="zoomSlided($event)"></fcl-zoom>
+  <fcl-graph-legend id="legend" *ngIf="showLegend$ | async"></fcl-graph-legend>
+</div>
+<fcl-graph-context-menu #contextMenu (layoutAction)="performLayoutAction($event)"></fcl-graph-context-menu>

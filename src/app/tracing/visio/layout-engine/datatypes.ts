@@ -1,4 +1,4 @@
-import { StationData, SampleResultType } from './../../util/datatypes';
+import { StationData, SampleResultType } from '../../data.model';
 
 export interface Position {
     x: number;
@@ -143,7 +143,6 @@ export interface StationInformation {
     samples: StationSampleInformation[];
     inSamples: InSampleInformation[];
     products: ProductInformation[];
-    // lots: LotInformation[];
 }
 
 export interface CaseInformation {

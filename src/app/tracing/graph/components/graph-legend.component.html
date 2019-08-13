@@ -1,0 +1,14 @@
+<div id="legend">
+    <mat-card>
+        <mat-card-content>
+            <table>
+                <tr *ngFor="let item of legend">
+                    <td>{{item.name}}</td>
+                    <td>
+                        <div [style.background-color]="item.color"></div>
+                    </td>
+                </tr>
+            </table>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../../../tracing/state/tracing.reducers';
+import * as TracingSelectors from '../../../tracing/state/tracing.selectors';
 import * as fromMainPage from '../../state/main-page.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
 import * as tracingActions from '../../../tracing/state/tracing.actions';
@@ -14,7 +15,7 @@ import * as tracingActions from '../../../tracing/state/tracing.actions';
 export class PageHeaderContainerComponent implements OnInit {
     appName = environment.appName;
     tracingActive$ = this.store.pipe(
-        select(fromTracing.getTracingActive)
+        select(TracingSelectors.getTracingActive)
     );
     dashboardActive$ = this.store.pipe(
         select(fromMainPage.getDashboardActive)
@@ -32,6 +33,6 @@ export class PageHeaderContainerComponent implements OnInit {
     }
 
     toggleLeftSideBar(open: boolean) {
-        this.store.dispatch(new tracingActions.ToggleLeftSideBar(open));
+        this.store.dispatch(new tracingActions.ShowGraphSettingsSOA({ showGraphSettings: open }));
     }
 }

@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
-import { VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
-    Size, ReportType, StationGrouper, NodeLayoutInfo } from './datatypes';
-import { FclElements, Position } from './../../util/datatypes';
+import {
+    VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
+    Size, ReportType, StationGrouper, NodeLayoutInfo
+} from './datatypes';
+import { Position, StationData, DeliveryData, SampleData } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
 import { assignToGrid } from './grid-assigner';
@@ -14,6 +16,13 @@ import { CtNoAssigner } from './ctno-assigner';
 import { ConnectorCreator } from './connector-creator';
 import { improvePositions } from './station_positioner_lp';
 import { groupStationBoxes } from './stationbox-simple-grouper';
+import { Utils } from '@app/tracing/util/utils';
+
+interface FclElements {
+    stations: StationData[];
+    deliveries: DeliveryData[];
+    samples: SampleData[];
+}
 
 export class VisioReporter {
 

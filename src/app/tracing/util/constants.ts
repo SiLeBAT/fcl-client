@@ -1,12 +1,6 @@
 import {
-  Color,
-  DeliveryData,
-  GraphType,
-  ShowType,
-  Size,
-  StationData,
-  TableMode
-} from './datatypes';
+    Color, GraphType, ShowType, Size, TableMode, DeliveryData, StationData
+  } from '../data.model';
 import { List, Map } from 'immutable';
 
 export class Constants {
@@ -32,8 +26,6 @@ export class Constants {
         backward: null,
         score: null,
         commonLink: null,
-        position: null,
-        positionRelativeTo: null,
         properties: null
     };
 
@@ -62,11 +54,11 @@ export class Constants {
     static readonly ARROW_STRING = '->';
 
     static readonly STATION_PROPERTIES = List(
-    Object.keys(Constants.STATION_DATA)
-  );
+        Object.keys(Constants.STATION_DATA)
+    );
     static readonly DELIVERY_PROPERTIES = List(
-    Object.keys(Constants.DELIVERY_DATA)
-  );
+        Object.keys(Constants.DELIVERY_DATA)
+    );
     static readonly PROPERTIES: Map<string, { name: string; color: Color }> = Map(
         {
             id: { name: 'ID', color: null },
@@ -91,21 +83,21 @@ export class Constants {
             commonLink: { name: 'Common Link', color: { r: 255, g: 255, b: 75 } },
             score: { name: 'Score', color: null }
         }
-  );
+    );
     static readonly PROPERTIES_WITH_COLORS = List(
-    Constants.PROPERTIES.filter(p => p.color != null).keys()
-  );
+        Constants.PROPERTIES.filter(p => p.color != null).keys()
+    );
 
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
     static readonly TABLE_MODES = List.of(
-    TableMode.STATIONS,
-    TableMode.DELIVERIES
-  );
+        TableMode.STATIONS,
+        TableMode.DELIVERIES
+    );
     static readonly SHOW_TYPES = List.of(
-    ShowType.ALL,
-    ShowType.SELECTED_ONLY,
-    ShowType.TRACE_ONLY
-  );
+        ShowType.ALL,
+        ShowType.SELECTED_ONLY,
+        ShowType.TRACE_ONLY
+    );
     static readonly SIZES = List.of(Size.SMALL, Size.MEDIUM, Size.LARGE);
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
@@ -119,16 +111,16 @@ export class Constants {
     static readonly DEFAULT_TABLE_MODE = TableMode.STATIONS;
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
-    'id',
-    'name',
-    'score'
-  );
+        'id',
+        'name',
+        'score'
+    );
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
-    'id',
-    'source',
-    'target',
-    'score'
-  );
+        'id',
+        'source',
+        'target',
+        'score'
+    );
     static readonly DEFAULT_TABLE_SHOW_TYPE = ShowType.ALL;
 
     static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';

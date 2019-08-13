@@ -1,13 +1,18 @@
 import * as _ from 'lodash';
-import { StationData, FclElements } from '../../util/datatypes';
-import { Graph, Vertex } from '../../graph/layoutmanager/farm_to_fork/data_structures';
-import { FarmToForkLayouter } from '../../graph/layoutmanager/farm_to_fork/farm_to_fork';
-import { BusinessTypeRanker } from '../../graph/layoutmanager/farm_to_fork/business_type_ranker';
+import { StationData, DeliveryData } from '../../data.model';
+import { Graph, Vertex } from '../../layout/farm-to-fork/data-structures';
+import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';
+import { BusinessTypeRanker } from '../../layout/farm-to-fork/business-type-ranker';
 import { Position, NodeLayoutInfo } from './datatypes';
 import { Utils } from '../../util/utils';
 
 export enum FoodChainOrientation {
     TopDown, LeftRight, BottomUp, RightLeft
+}
+
+interface FclElements {
+    stations: StationData[];
+    deliveries: DeliveryData[];
 }
 
 function getNormalizedDelta(delta: Position): Position {
@@ -97,10 +102,9 @@ export function setFarmToForkPositions(data: FclElements, nodeInfoMap: Map<strin
     });
 
     // tslint:disable-next-line
-    const tmp = 1;
     const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
-      graph,
-      typeRanker
+        graph,
+        typeRanker
     );
 
     layoutManager.layout(vertexDistance);

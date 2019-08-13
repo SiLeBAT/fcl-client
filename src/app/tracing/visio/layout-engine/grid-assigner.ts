@@ -1,9 +1,14 @@
-import { FclElements, StationData } from './../../util/datatypes';
+import { StationData, DeliveryData } from '../../data.model';
 import { extractLayersFromPositions } from './layer-extractor';
 import { assignToColumns } from './column-assigner';
 import { Utils } from './../../util/utils';
 import { NodeLayoutInfo, Position } from './datatypes';
 import { setFarmToForkPositions, FoodChainOrientation, getFoodChainOrientation } from './farm-to-fork';
+
+interface FclElements {
+    stations: StationData[];
+    deliveries: DeliveryData[];
+}
 
 function createIndexMap<T>(arrays: T[][]): Map<T, number> {
     const result: Map<T, number> = new Map();

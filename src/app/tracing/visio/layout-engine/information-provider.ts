@@ -1,9 +1,16 @@
 import * as _ from 'lodash';
-import { StationInformation, LotInformation,
-     ProductInformation, DeliveryInformation } from './datatypes';
-import { FclElements, StationData, DeliveryData } from './../../util/datatypes';
+import {
+    StationInformation, LotInformation, ProductInformation, DeliveryInformation
+} from './datatypes';
+import { StationData, DeliveryData, SampleData } from '../../data.model';
 import { Utils } from './../../util/utils';
 import { addSampleInformation } from './sample-information-provider';
+
+interface FclElements {
+    stations: StationData[];
+    deliveries: DeliveryData[];
+    samples: SampleData[];
+}
 
 export class InformationProvider {
     private static readonly STATION_PROPERTY_ACTIVITY = 'typeOfBusiness';
@@ -16,7 +23,6 @@ export class InformationProvider {
     private stationIdToInfoMap: Map<string, StationInformation>;
     private idToLotMap: Map<string, LotInformation>;
     private deliveryToSourceMap: Map<DeliveryInformation, LotInformation>;
-    private deliveries: DeliveryInformation[];
 
     constructor(private data: FclElements) {
         this.idToDeliveryMap = new Map();
@@ -24,7 +30,6 @@ export class InformationProvider {
         this.stationIdToInfoMap = new Map();
         this.idToLotMap = new Map();
         this.deliveryToSourceMap = new Map();
-        this.deliveries = [];
         this.init();
     }
 

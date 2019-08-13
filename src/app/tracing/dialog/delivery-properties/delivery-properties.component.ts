@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { DeliveryData, DialogAlignment } from '../../util/datatypes';
+import { DialogAlignment, DeliveryData } from '../../data.model';
 import { Constants } from '../../util/constants';
 import { Utils } from '../../util/utils';
 

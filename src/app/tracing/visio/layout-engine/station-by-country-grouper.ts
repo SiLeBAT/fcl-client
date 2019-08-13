@@ -1,5 +1,5 @@
 import { StationGrouper } from './datatypes';
-import { StationData } from '../../util/datatypes';
+import { StationData } from '../../data.model';
 
 interface StationGroup {
     label: string;

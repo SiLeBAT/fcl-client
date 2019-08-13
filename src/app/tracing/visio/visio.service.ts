@@ -1,17 +1,16 @@
-import { FclElements } from '../util/datatypes';
-import { VisioLayoutComponent, VisioLayoutData } from './visio-dialog/visio-dialog.component';
-import { MatDialog } from '@angular/material';
+import { StationData, DeliveryData, SampleData } from '../data.model';
 import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo, ReportType } from './layout-engine/datatypes';
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
 
-function getFontMetricCanvas(): any {
-
+interface FclElements {
+    stations: StationData[];
+    deliveries: DeliveryData[];
+    samples: SampleData[];
 }
 
-function requestVisioEngineConfiguration(dialogService: MatDialog): Promise<VisioEngineConfiguration> {
-    const layoutData: VisioLayoutData = { data: null };
-    return dialogService.open(VisioLayoutComponent, layoutData).afterClosed().toPromise<VisioEngineConfiguration>();
+function getFontMetricCanvas(): any {
+
 }
 
 function getStationGrouperFromType(groupType: StationGroupType) {
@@ -30,8 +29,7 @@ function createReport(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo
 
 export async function generateVisioReport(
     data: FclElements,
-    nodeInfoMap: Map<string, NodeLayoutInfo>,
-    dialogService: MatDialog
+    nodeInfoMap: Map<string, NodeLayoutInfo>
     ): Promise<VisioReport> {
 
     const engineConf: VisioEngineConfiguration = {

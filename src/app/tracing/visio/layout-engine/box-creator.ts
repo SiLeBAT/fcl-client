@@ -2,18 +2,12 @@ import * as _ from 'lodash';
 import { VisioBox, StationInformation, LotInformation, GraphLayer, GridCell,
     StationSampleInformation, SampleInformation, BoxType, VisioLabel, Size,
     VisioConnector, VisioPort, InSampleInformation } from './datatypes';
-import { Position, SampleResultType } from './../../util/datatypes';
+import { Position, SampleResultType } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { LabelCreator } from './label-creator';
 import { GroupContainerCreator } from './group-container-creator';
 import { LotBoxSorter } from './lotbox_sorter';
 import { InformationProvider } from './information-provider';
-
-interface VirtualBox {
-    size: Size;
-    position: Position;
-    elements: VirtualBox[];
-}
 
 export class BoxCreator {
 
