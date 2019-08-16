@@ -6,7 +6,7 @@ import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 
 import { GraphState, Layout, Position, Size, GraphType } from '../../data.model';
 

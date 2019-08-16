@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
 import { Color, ObservedType } from '../data.model';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 import { Constants } from '../util/constants';
 import { GraphServiceData, Cy } from './graph.model';
 

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { VisioBox, GridCell, Polygon, CustomBoxShape,
     VisioLabel, GraphLayer, BoxType, Position, Size } from './datatypes';
 import { GraphSettings } from './graph-settings';
-import { Utils } from './../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 
 type CellPolygon = GridCell[];
 

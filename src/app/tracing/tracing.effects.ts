@@ -8,7 +8,7 @@ import * as tracingEffectActions from './tracing.actions';
 import * as fromTracing from './state/tracing.reducers';
 import * as tracingSelectors from './state/tracing.selectors';
 import { map, catchError, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { DeliveryData, StationData } from './data.model';
 import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
@@ -33,7 +33,7 @@ export class TracingEffects {
     showStationProperties$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowStationPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowStationPropertiesMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const stationId = action.payload.stationId;
             // tslint:disable-next-line rxjs-finnish
             const hoverDeliveriesSubject = action.payload.hoverDeliveriesSubject;
@@ -71,7 +71,7 @@ export class TracingEffects {
     showDeliveryProperties$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowDeliveryPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryPropertiesMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const deliveryId = action.payload.deliveryId;
             const data = this.dataService.getData(state);
             const delivery = data.delMap[deliveryId];
@@ -91,13 +91,13 @@ export class TracingEffects {
     showStationTrace$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowStationTraceMSA>(tracingEffectActions.TracingActionTypes.ShowStationTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const stationId = action.payload.stationId;
             const observedType = action.payload.observedType;
             try {
                 const payload = this.tracingService.getShowStationTracePayload(state, stationId, observedType);
                 if (payload) {
-                    return new tracingStateActions.SetTracingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Station trace could not be set!, error: ${error}`);
@@ -110,13 +110,13 @@ export class TracingEffects {
     showDeliveryTrace$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowDeliveryTraceMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const deliveryId = action.payload.deliveryId;
             const observedType = action.payload.observedType;
             try {
                 const payload = this.tracingService.getShowDeliveryTracePayload(state, deliveryId, observedType);
                 if (payload) {
-                    return new tracingStateActions.SetTracingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Delivery trace could not be set!, error: ${error}`);
@@ -129,11 +129,11 @@ export class TracingEffects {
     clearTrace$ = this.actions$.pipe(
         ofType<tracingEffectActions.ClearTraceMSA>(tracingEffectActions.TracingActionTypes.ClearTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             try {
                 const payload = this.tracingService.getClearTracePayload(state);
                 if (payload) {
-                    return new tracingStateActions.SetTracingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Trace could not be cleared!, error: ${error}`);
@@ -148,13 +148,13 @@ export class TracingEffects {
             tracingEffectActions.TracingActionTypes.SetStationCrossContaminationMSA
         ),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const stationIds = action.payload.stationIds;
             const crossContamination = action.payload.crossContamination;
             try {
                 const payload = this.tracingService.getSetStationCrossContPayload(state, stationIds, crossContamination);
                 if (payload) {
-                    return new tracingStateActions.SetTracingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Station cross contamination could not be set!, error: ${error}`);
@@ -167,13 +167,13 @@ export class TracingEffects {
     markStationsAsOutbreak$ = this.actions$.pipe(
         ofType<tracingEffectActions.MarkStationsAsOutbreakMSA>(tracingEffectActions.TracingActionTypes.MarkStationsAsOutbreakMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const stationIds = action.payload.stationIds;
             const outbreak = action.payload.outbreak;
             try {
                 const payload = this.tracingService.getMarkStationsAsOutbreakPayload(state, stationIds, outbreak);
                 if (payload) {
-                    return new tracingStateActions.SetTracingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Outbreak stations could not be set!, error: ${error}`);
@@ -186,11 +186,11 @@ export class TracingEffects {
     makeStationsInvisible$ = this.actions$.pipe(
         ofType<tracingEffectActions.MakeStationsInvisibleMSA>(tracingEffectActions.TracingActionTypes.MakeStationsInvisibleMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             try {
                 const payload = this.highlightingService.getMarkStationsInvisiblePayload(state, action.payload.stationIds, true);
                 if (payload) {
-                    return new tracingStateActions.SetHighlightingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Stations could not be made invisible!, error: ${error}`);
@@ -203,11 +203,11 @@ export class TracingEffects {
     clearInvisiblities$ = this.actions$.pipe(
         ofType<tracingEffectActions.ClearInvisibilitiesMSA>(tracingEffectActions.TracingActionTypes.ClearInvisibilitiesMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             try {
                 const payload = this.highlightingService.getClearInvisiblitiesPayload(state);
                 if (payload) {
-                    return new tracingStateActions.SetHighlightingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Invisibilities could not be cleared!, error: ${error}`);
@@ -220,11 +220,11 @@ export class TracingEffects {
     clearOutbreakStations$ = this.actions$.pipe(
         ofType<tracingEffectActions.ClearOutbreakStationsMSA>(tracingEffectActions.TracingActionTypes.ClearOutbreakStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             try {
                 const payload = this.tracingService.getClearOutbreakStationsPayload(state);
                 if (payload) {
-                    return new tracingStateActions.SetTracingSettingsSOA(payload);
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Outbreak stations could not be set!, error: ${error}`);

@@ -18,7 +18,7 @@ describe('LoginComponent', () => {
             ],
             imports: [
                 MaterialModule,
-                SharedModule,
+                SharedModule
             ]
         }).compileComponents()
             .then(() => {

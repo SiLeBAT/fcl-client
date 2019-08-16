@@ -56,13 +56,55 @@
                         "edge": {
                             "type": "object",
                             "properties": {
-                                "joinEdges": { "type": "boolean" }
+                                "joinEdges": { "type": "boolean" },
+                                "highlightConditions": {
+                                    "type": ["array", "null"],
+                                    "description": "delivery highlighting definitions",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": { "type": ["string", "null"] },
+                                            "showInLegend": { "type": "boolean" },
+                                            "color": { "$ref": "#/definitions/color" },
+                                            "invisible": { "type": "boolean" },
+                                            "adjustThickness": { "type": "boolean" },
+                                            "labelProperty": { "type": ["string", "null"] },
+                                            "valueCondition": { "$ref": "#/definitions/valueCondition" },
+                                            "logicalConditions": { "$ref": "#/definitions/logicalConditions" },
+                                            "linePattern": { "type": ["string", "null" ] }
+                                        },
+                                        "required": [
+                                            "name", "showInLegend", "color", "invisible", "adjustThickness", "labelProperty", "valueCondition", "logicalConditions", "linePattern"
+                                        ]
+                                    }
+                                }
                             }
                         },
                         "node": {
                             "type": "object",
                             "properties": {
-                                "skipEdgelessNodes": { "type": "boolean" }
+                                "skipEdgelessNodes": { "type": "boolean" },
+                                "highlightConditions": {
+                                    "type": ["array", "null"],
+                                    "description": "station highlighting definitions",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": { "type": ["string", "null"] },
+                                            "showInLegend": { "type": "boolean" },
+                                            "color": { "$ref": "#/definitions/color" },
+                                            "invisible": { "type": "boolean" },
+                                            "adjustThickness": { "type": "boolean" },
+                                            "labelProperty": { "type": ["string", "null"] },
+                                            "valueCondition": { "$ref": "#/definitions/valueCondition" },
+                                            "logicalConditions": { "$ref": "#/definitions/logicalConditions" },
+                                            "shape": { "type": ["string", "null" ] }
+                                        },
+                                        "required": [
+                                            "name", "showInLegend", "color", "invisible", "adjustThickness", "labelProperty", "valueCondition", "logicalConditions", "shape"
+                                        ]
+                                    }
+                                }
                             }
                         },
                         "graph": {
@@ -170,6 +212,44 @@
                 "scale", "translation"
 
             ]
+        },
+        "valueCondition": {
+            "type": ["object", "null"],
+            "properties": {
+                "propertyName": { "type": "string" },
+                "valueType": { "type": "string" },
+                "useZeroAsMinimum": { "type": "boolean" }
+            },
+            "required": [
+                "propertyName", "valueType", "useZeroAsMinimum"
+            ]
+        },
+        "logicalConditions": {
+            "type": ["array", "null"],
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "propertyName": { "type": "string" },
+                        "operationType": { "type": "string" },
+                        "value": { "type": ["number", "boolean", "string" ] }
+                    },
+                    "required": [
+                        "propertyName", "operationType", "value"
+                    ]
+                }
+            }
+        },
+        "color": {
+            "type": ["array", "null"],
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 255
+            }
         }
     }
 }

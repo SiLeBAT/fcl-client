@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 
 import { DeliveryData, DialogAlignment, StationData, Connection } from '../../data.model';
 import { Constants } from '../../util/constants';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/ui-utils';
 
 export interface StationPropertiesData {
     station: StationData;

@@ -8,7 +8,7 @@ import * as fromTracing from './../state/tracing.reducers';
 import * as tracingSelectors from './../state/tracing.selectors';
 
 import { map, catchError, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { from, EMPTY } from 'rxjs';
+import { from, EMPTY, of } from 'rxjs';
 import { DataService } from '../services/data.service';
 import { Store, select } from '@ngrx/store';
 import { generateVisioReport } from './visio.service';
@@ -38,23 +38,23 @@ export class VisioEffects {
                 },
                 nodeLayoutInfo
             )).pipe(
+                mergeMap(
+                    visioReport => {
+                        if (visioReport !== null) {
+                            this.router.navigate(['/graph-editor']).catch(err => {
+                                this.alertService.error(`Unable to navigate to graph editor: ${err}`);
+                            });
+                            return of(new tracingStoreActions.GenerateVisioLayoutSuccess(visioReport));
+                        } else {
+                            return EMPTY;
+                        }
+                    }
+                ),
                 catchError((error) => {
                     this.alertService.error(`Visio layout creation failed!, error: ${error}`);
                     return EMPTY;
                 })
             );
-        }),
-        map(
-            visioReport => {
-                if (visioReport !== null) {
-                    this.router.navigate(['/graph-editor']).catch(err => {
-                        this.alertService.error(`Unable to navigate to graph editor: ${err}`);
-                    });
-                    return new tracingStoreActions.GenerateVisioLayoutSuccess(visioReport);
-                } else {
-                    return EMPTY;
-                }
-            }
-        )
+        })
     );
 }

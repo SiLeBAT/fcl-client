@@ -5,7 +5,7 @@ import {
 import * as _ from 'lodash';
 import { TracingService } from './tracing.service';
 import { HighlightingService } from './highlighting.service';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 
 @Injectable({
     providedIn: 'root'

@@ -24,5 +24,5 @@ describe('AppComponent', () => {
 
     it('should render correctlu', () => {
         expect(fixture).toMatchSnapshot();
-    })
+    });
 });

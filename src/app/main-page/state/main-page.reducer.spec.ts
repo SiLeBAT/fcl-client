@@ -27,4 +27,4 @@ describe('main-page reducer', () => {
 
         expect(result).toMatchObject(expectedState);
     });
-})
+});

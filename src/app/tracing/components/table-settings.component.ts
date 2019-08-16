@@ -7,7 +7,7 @@ import * as TracingSelectors from '../state/tracing.selectors';
 import * as tracingActions from '../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
 import { takeWhile, take } from 'rxjs/operators';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
 import { MatDialog } from '@angular/material';
 import { DataService } from '../services/data.service';

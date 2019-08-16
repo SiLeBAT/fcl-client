@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
     DataServiceData, BasicGraphState, SetHighlightingSettingsPayload, HighlightingSettings
 } from '../data.model';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 
 @Injectable({
     providedIn: 'root'

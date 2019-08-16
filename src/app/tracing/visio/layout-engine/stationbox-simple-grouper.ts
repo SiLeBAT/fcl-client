@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { VisioBox, Position, Size, BoxType } from './datatypes';
 import { LabelCreator } from './label-creator';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 import { GraphSettings } from './graph-settings';
 
 interface BoxGroup {

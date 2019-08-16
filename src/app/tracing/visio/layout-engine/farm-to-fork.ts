@@ -4,7 +4,7 @@ import { Graph, Vertex } from '../../layout/farm-to-fork/data-structures';
 import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';
 import { BusinessTypeRanker } from '../../layout/farm-to-fork/business-type-ranker';
 import { Position, NodeLayoutInfo } from './datatypes';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 
 export enum FoodChainOrientation {
     TopDown, LeftRight, BottomUp, RightLeft

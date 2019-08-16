@@ -39,17 +39,19 @@ export class GroupingEffects {
 
             return this.dialogService.open(DialogPromptComponent, { data: dialogData })
                 .afterClosed().pipe(
-                    map(metaStationName => {
+                    mergeMap(metaStationName => {
                         if (metaStationName != null) {
                             const payload = this.groupingService.getMergeStationsPayload(state, metaStationName, memberIds);
                             if (payload) {
-                                return new storeActions.SetStationGroupsSOA(payload);
+                                return of(new storeActions.SetStationGroupsSOA(payload));
                             }
                         }
                         return EMPTY;
                     }),
                     catchError((error) => {
-                        this.alertService.error(`Stations could not be merged!, error: ${error}`);
+                        if (error) {
+                            this.alertService.error(`Stations could not be merged!, error: ${error}`);
+                        }
                         return EMPTY;
                     }
                 )
@@ -83,13 +85,13 @@ export class GroupingEffects {
     uncollapseStations$ = this.actions$.pipe(
         ofType<groupingActions.UncollapseStationsMSA>(groupingActions.GroupingActionTypes.UncollapseStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const groupType = action.payload.groupType;
             try {
                 const payload = this.groupingService.getUncollapseStationsPayload(state, groupType);
 
                 if (payload) {
-                    return new storeActions.SetStationGroupsSOA(payload);
+                    return of(new storeActions.SetStationGroupsSOA(payload));
                 } else {
                     return EMPTY;
                 }
@@ -104,13 +106,13 @@ export class GroupingEffects {
     expandStations$ = this.actions$.pipe(
         ofType<groupingActions.ExpandStationsMSA>(groupingActions.GroupingActionTypes.ExpandStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
-        map(([action, state]) => {
+        mergeMap(([action, state]) => {
             const stationIds = action.payload.stationIds;
             try {
                 const payload = this.groupingService.getExpandStationsPayload(state, stationIds);
 
                 if (payload) {
-                    return new storeActions.SetStationGroupsSOA(payload);
+                    return of(new storeActions.SetStationGroupsSOA(payload));
                 } else {
                     return EMPTY;
                 }
