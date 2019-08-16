@@ -3,7 +3,7 @@ import {
     StationInformation, LotInformation, ProductInformation, DeliveryInformation
 } from './datatypes';
 import { StationData, DeliveryData, SampleData } from '../../data.model';
-import { Utils } from './../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 import { addSampleInformation } from './sample-information-provider';
 
 interface FclElements {

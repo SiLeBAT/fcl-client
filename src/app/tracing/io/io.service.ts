@@ -4,6 +4,8 @@ import { FclData } from '../data.model';
 import { createInitialFclDataState } from '../state/tracing.reducers';
 import { DataImporter } from './data-importer/data-importer';
 import { DataExporter } from './data-exporter';
+import { DataImporterV1 } from './data-importer/data-importer-v1';
+import { createEmptyJson } from './json-data-creator';
 
 @Injectable({
     providedIn: 'root'
@@ -63,9 +65,22 @@ export class IOService {
         }
     }
 
-    getExportData(data: FclData): any {
-        const exportData: any = this.rawData !== null ? this.rawData : {};
-        DataExporter.exportData(data, exportData);
-        return exportData;
+    getExportData(data: FclData): Promise<any> {
+        if (this.rawData) {
+            const dataImporter = new DataImporterV1(this.httpClient);
+            return dataImporter.isDataFormatSupported(this.rawData).then(
+                isSupported => {
+                    const exportData: any = isSupported ? this.rawData : createEmptyJson();
+                    DataExporter.exportData(data, exportData);
+                    return exportData;
+                }
+            );
+        } else {
+            return new Promise(resolve => {
+                const exportData = createEmptyJson() ;
+                DataExporter.exportData(data, exportData);
+                resolve(exportData);
+            });
+        }
     }
 }

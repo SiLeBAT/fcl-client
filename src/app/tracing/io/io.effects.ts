@@ -13,7 +13,7 @@ import { FclData } from '../data.model';
 import { Store, select } from '@ngrx/store';
 
 import * as ioActions from './io.actions';
-import { Utils } from './../util/utils';
+import { Utils } from './../util/ui-utils';
 
 @Injectable()
 export class IOEffects {
@@ -40,7 +40,7 @@ export class IOEffects {
                 );
             } else {
                 this.alertService.error('Please select a .json file with the correct format!');
-                this.store.dispatch(new tracingStateActions.LoadFclDataFailure());
+                return of(new tracingStateActions.LoadFclDataFailure());
             }
         })
     );
@@ -49,24 +49,31 @@ export class IOEffects {
     saveFclData$ = this.actions$.pipe(
         ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
-        map(([action, fclData]) => {
-            const data = this.ioService.getExportData(fclData);
-            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-            const fileName = 'data.json';
+        mergeMap(([action, fclData]) => {
+            return from(this.ioService.getExportData(fclData)).pipe(
+                mergeMap(exportData => {
+                    if (exportData) {
+                        const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
+                        const fileName = 'data.json';
 
-            try {
-                if (window.navigator.msSaveOrOpenBlob != null) {
-                    window.navigator.msSaveOrOpenBlob(blob, fileName);
-                } else {
-                    const url = window.URL.createObjectURL(blob);
+                        if (window.navigator.msSaveOrOpenBlob != null) {
+                            window.navigator.msSaveOrOpenBlob(blob, fileName);
+                        } else {
+                            const url = window.URL.createObjectURL(blob);
 
-                    Utils.openSaveDialog(url, fileName);
-                    window.URL.revokeObjectURL(url);
-                }
-            } catch (error) {
-                this.alertService.error(`File could not be saved!, error: ${error}`);
-            }
-            return EMPTY;
+                            Utils.openSaveDialog(url, fileName);
+                            window.URL.revokeObjectURL(url);
+                        }
+                    }
+                    return EMPTY;
+                }),
+                catchError(error => {
+                    if (error) {
+                        this.alertService.error(`File could not be saved!, error: ${error}`);
+                    }
+                    return EMPTY;
+                })
+            );
         })
     );
 

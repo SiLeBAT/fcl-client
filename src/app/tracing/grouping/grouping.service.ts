@@ -3,7 +3,7 @@ import { DataService } from '../services/data.service';
 import {
     GroupType, GroupData, StationTracingSettings, ObservedType, GroupMode, Position
 } from '../data.model';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 import { GroupingState, GroupingChange, SetStationGroupsPayload } from './model';
 import { SourceCollapser } from './source-collapser';

@@ -1,7 +1,7 @@
 import { StationData, DeliveryData } from '../../data.model';
 import { extractLayersFromPositions } from './layer-extractor';
 import { assignToColumns } from './column-assigner';
-import { Utils } from './../../util/utils';
+import { Utils } from './../../util/non-ui-utils';
 import { NodeLayoutInfo, Position } from './datatypes';
 import { setFarmToForkPositions, FoodChainOrientation, getFoodChainOrientation } from './farm-to-fork';
 

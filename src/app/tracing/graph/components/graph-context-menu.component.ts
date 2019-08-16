@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
 import { LayoutService, LayoutActionTypes } from '@app/tracing/layout/layout.service';
 import { MenuItemData } from '../menu-item-data.model';
 import { MenuItemStrings } from '../menu.constants';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/ui-utils';
 
 @Component({
     selector: 'fcl-graph-context-menu',

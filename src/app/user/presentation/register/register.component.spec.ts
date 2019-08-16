@@ -97,12 +97,11 @@ describe('RegisterComponent', () => {
         expect(errors['validatePasswordConfirm']).toBeTruthy();
     });
 
-
     it('should emit the registratin credentials when submitting the registration form', () => {
         const email = 'test@test';
         const password = 'testtest';
         const firstName = 'test';
-        const lastName = 'test;'
+        const lastName = 'test;';
 
         expect(component.registerForm.valid).toBeFalsy();
 

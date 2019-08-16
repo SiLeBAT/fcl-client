@@ -16,7 +16,7 @@ import { CtNoAssigner } from './ctno-assigner';
 import { ConnectorCreator } from './connector-creator';
 import { improvePositions } from './station_positioner_lp';
 import { groupStationBoxes } from './stationbox-simple-grouper';
-import { Utils } from '@app/tracing/util/utils';
+import { Utils } from '@app/tracing/util/non-ui-utils';
 
 interface FclElements {
     stations: StationData[];

@@ -71,7 +71,6 @@ describe('ResetComponent', () => {
         expect(errors['validatePasswordConfirm']).toBeTruthy();
     });
 
-
     it('should emit the email when submitting the recovery form', () => {
         const password = 'testtest';
 

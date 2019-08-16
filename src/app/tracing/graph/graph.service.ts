@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BasicGraphState, DeliveryData, DataServiceData, ObservedType } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 
 interface CyDataNodes {

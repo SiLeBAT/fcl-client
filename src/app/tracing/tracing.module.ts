@@ -30,13 +30,8 @@ import { ZoomComponent } from './graph/components/zoom.component';
 import { GisGraphComponent } from './graph/components/gis-graph.component';
 import { GraphContextMenuComponent } from './graph/components/graph-context-menu.component';
 
-import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
-
 @NgModule({
     imports: [
-        MatDividerModule,
-        MatExpansionModule,
         CommonModule,
         FormsModule,
         SharedModule,

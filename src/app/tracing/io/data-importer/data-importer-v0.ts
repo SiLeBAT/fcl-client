@@ -1,6 +1,6 @@
 import { FclData, GraphSettings, ObservedType, TableSettings } from '../../data.model';
 
-import { Utils } from './../../util/utils';
+import { Utils } from './../../util/non-ui-utils';
 import { Constants } from './../../util/constants';
 
 import { IDataImporter } from './datatypes';

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Constants } from '../../util/constants';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 
 @Component({
     selector: 'fcl-graph-legend',

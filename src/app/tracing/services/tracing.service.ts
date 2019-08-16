@@ -3,7 +3,7 @@ import {
     DataServiceData, StationData, DeliveryData, SetTracingSettingsPayload,
     TracingSettings, ObservedType
 } from '../data.model';
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 
 interface TracingPayload {
     tracingSettings: TracingSettings;

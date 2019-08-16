@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { DialogAlignment, DeliveryData } from '../../data.model';
 import { Constants } from '../../util/constants';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/ui-utils';
 
 export interface DeliveryPropertiesData {
     delivery: DeliveryData;

@@ -1,4 +1,4 @@
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 
 export class CellGapCloser {
 

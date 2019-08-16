@@ -7,7 +7,8 @@ import { OSM } from 'ol/source';
 import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
-import { Utils } from '../../util/utils';
+import { Utils as UIUtils } from '../../util/ui-utils';
+import { Utils as NonUIUtils } from '../../util/non-ui-utils';
 import { Layout, Position, Size, GraphState, GraphType } from '../../data.model';
 import * as _ from 'lodash';
 import { StyleService } from '../style.service';
@@ -145,7 +146,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
         this.hoverDeliveriesSubjectSubscription = this.hoverDeliveriesSubject.subscribe(
             ids => {
-                const edgeIds = Utils.createStringSet(
+                const edgeIds = NonUIUtils.createStringSet(
                     ids.map(id => this.cachedData.delIdToEdgeDataMap[id]).filter(data => !!data).map(data => data.id)
                 );
 
@@ -287,7 +288,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     private updateMap() {
-        this.map.setView(Utils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
+        this.map.setView(UIUtils.panZoomToView(this.cy.pan(), this.zoom, this.cy.width(), this.cy.height()));
     }
 
     private processGraphElementSelectionChange() {
@@ -350,7 +351,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             group: 'nodes',
             data: nodeData,
             selected: nodeData.selected,
-            position:  Utils.latLonToPosition(nodeData.station.lat, nodeData.station.lon, this.zoom)
+            position:  UIUtils.latLonToPosition(nodeData.station.lat, nodeData.station.lon, this.zoom)
         }));
     }
 
@@ -426,9 +427,9 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         this.zoom = layout.zoom;
         this.cy.batch(() => {
             this.cy.pan(layout.pan);
-            this.cy.nodes().positions(node => Utils.latLonToPosition(node.data().station.lat, node.data().station.lon, this.zoom));
+            this.cy.nodes().positions(node => UIUtils.latLonToPosition(node.data().station.lat, node.data().station.lon, this.zoom));
         });
-        this.map.setView(Utils.panZoomToView(layout.pan, this.zoom, this.cy.width(), this.cy.height()));
+        this.map.setView(UIUtils.panZoomToView(layout.pan, this.zoom, this.cy.width(), this.cy.height()));
         this.applyLayoutToStateIfNecessary();
         this.updateZoomPercentage();
         this.updateFontSize(this.cachedState);
@@ -475,7 +476,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         let yMax = Number.NEGATIVE_INFINITY;
 
         for (const station of graphData.nodeData.map(data => data.station)) {
-            const p = Utils.latLonToPosition(station.lat, station.lon, 1.0);
+            const p = UIUtils.latLonToPosition(station.lat, station.lon, 1.0);
 
             xMin = Math.min(xMin, p.x);
             yMin = Math.min(yMin, p.y);

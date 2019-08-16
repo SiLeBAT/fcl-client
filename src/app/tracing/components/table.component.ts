@@ -7,7 +7,7 @@ import { ResizeSensor } from 'css-element-queries';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingSelectors from '../state/tracing.selectors';
 
-import { Utils } from '../util/utils';
+import { Utils } from '../util/non-ui-utils';
 import { Constants } from '../util/constants';
 import {
     BasicGraphState, DataServiceData, DeliveryData, StationData,

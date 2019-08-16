@@ -2,7 +2,7 @@ import { DeliveryStoreData as DeliveryData, FclData, ObservedType, StationStoreD
     Connection, GroupType, Layout, GraphType, GroupData } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 import { Constants as JsonConstants, ColumnInfo } from './../data-mappings/data-mappings-v1';
 import { Map as ImmutableMap } from 'immutable';
 
@@ -16,8 +16,12 @@ export class DataImporterV1 implements IDataImporter {
     constructor(private httpClient: HttpClient) {}
 
     async isDataFormatSupported(data: any): Promise<boolean> {
-        const schema = await this.loadSchema();
-        return isValidJson(schema, data);
+        if (data.version && typeof data.version === 'string' && data.version === '1.0.0') {
+            const schema = await this.loadSchema();
+            return isValidJson(schema, data, true);
+        } else {
+            return false;
+        }
     }
 
     async preprocessData(data: any, fclData: FclData): Promise<void> {

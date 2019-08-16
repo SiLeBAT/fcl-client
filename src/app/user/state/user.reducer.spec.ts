@@ -25,7 +25,7 @@ describe('user reducer', () => {
             lastName: 'test',
             token: 'test'
         };
-    })
+    });
 
     it('should have valid state after LoginUserSuccess action', () => {
         const currentAction: LoginUserSuccess = new LoginUserSuccess(mockUser);
@@ -83,5 +83,4 @@ describe('user reducer', () => {
         expect(result).toMatchObject(expectedState);
     });
 
-
-})
+});

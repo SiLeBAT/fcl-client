@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { GridCell } from './datatypes';
 import { StationData } from '../../data.model';
-import { Utils } from './../../util/utils';
+import { Utils } from './../../util/non-ui-utils';
 import { CellGapCloser } from './cellgap-closer';
 
 interface CellGroup {

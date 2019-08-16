@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { VisioBox, VisioConnector, VisioPort, Position } from './datatypes';
-import { Utils } from '../../util/utils';
+import { Utils } from '../../util/non-ui-utils';
 
 export class LotBoxSorter {
     private portToConnectedPositionsMap: Map<string, Position[]>;
