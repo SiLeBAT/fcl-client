@@ -8,6 +8,7 @@ import { GraphServiceData, Cy } from './graph.model';
 interface Settings {
     nodeSize: number;
     fontSize: number;
+    zoom: number;
 }
 
 enum GraphSize {
@@ -18,12 +19,14 @@ enum GraphSize {
     providedIn: 'root'
 })
 export class StyleService {
+    private static readonly RENDERED_MIN_NODE_SIZE = 10;
+    private static readonly RENDERED_MIN_EDGE_WIDTH = 0.5;
 
     constructor() { }
 
     createCyStyle(settings: Settings, graphData: GraphServiceData): any {
         const graphSize = this.getProperGraphSize(graphData);
-        return this.createXGraphStyle(graphSize, settings.nodeSize, graphData.tracingResult.maxScore);
+        return this.createXGraphStyle(graphSize, settings.zoom, settings.nodeSize, graphData.tracingResult.maxScore);
     }
 
     private getProperGraphSize(graphData: GraphServiceData): GraphSize {
@@ -38,9 +41,16 @@ export class StyleService {
         }
     }
 
-    updateCyNodeSize(cy: Cy, nodeSize: number, maxScore: number) {
+    updateCyNodeSize(cy: Cy, zoom: number, nodeSize: number, maxScore: number) {
         cy.nodes().style({
-            ...this.createNodeSizeStyle(nodeSize, maxScore)
+            ...this.createNodeSizeStyle(zoom, nodeSize, maxScore),
+            ...this.createBorderStyle(zoom, nodeSize)
+        });
+    }
+
+    updateCyEdgeSize(cy: Cy, zoom: number, nodeSize: number) {
+        cy.edges().style({
+            'width': this.getVisibleEdgeWidth(zoom, nodeSize / 20)
         });
     }
 
@@ -52,15 +62,21 @@ export class StyleService {
         }
     }
 
-    private createNodeSizeStyle(defaultNodeSize: number, maxScore: number): any {
-        const nodeSizeMap: string = this.createNodeSizeMap(defaultNodeSize, maxScore);
+    private createNodeSizeStyle(zoom: number, defaultNodeSize: number, maxScore: number): { height: string, width: string } {
+        const nodeSizeMap: string = this.createNodeSizeMap(zoom, defaultNodeSize, maxScore);
         return {
             height: nodeSizeMap,
             width: nodeSizeMap
         };
     }
 
-    private createXGraphStyle(graphSize: GraphSize, nodeSize: number, maxScore: number): any {
+    private createBorderStyle(zoom: number, defaultNodeSize: number): { 'border-width': number } {
+        return {
+            'border-width': this.getVisibleNodeSize(zoom, defaultNodeSize) / 20
+        };
+    }
+
+    private createXGraphStyle(graphSize: GraphSize, zoom: number, nodeSize: number, maxScore: number): any {
         let style = cytoscape
             .stylesheet()
             .selector('*')
@@ -81,7 +97,7 @@ export class StyleService {
                     :
                     {}
                 ),
-                ...this.createNodeSizeStyle(nodeSize, maxScore),
+                ...this.createNodeSizeStyle(zoom, nodeSize, maxScore),
                 'background-color': 'rgb(255, 255, 255)',
                 'border-width': 3,
                 'border-color': 'rgb(0, 0, 0)',
@@ -169,13 +185,21 @@ export class StyleService {
         return style;
     }
 
-    private createNodeSizeMap(defaultNodeSize: number, maxScore: number): string {
+    private createNodeSizeMap(zoom: number, defaultNodeSize: number, maxScore: number): string {
         if (maxScore > 0) {
-            const minNodeSize = defaultNodeSize / 1.5;
-            const maxNodeSize = defaultNodeSize * 1.5;
+            const minNodeSize = this.getVisibleNodeSize(zoom, defaultNodeSize / 1.2);
+            const maxNodeSize = minNodeSize * 1.2 * 1.2;
             return 'mapData(score, 0, ' + maxScore + ', ' + minNodeSize + ',' + maxNodeSize + ')';
         } else {
-            return defaultNodeSize.toString();
+            return this.getVisibleNodeSize(zoom, defaultNodeSize).toString();
         }
+    }
+
+    private getVisibleNodeSize(zoom: number, defaultNodeSize: number): number {
+        return Math.max(defaultNodeSize, StyleService.RENDERED_MIN_NODE_SIZE / zoom);
+    }
+
+    private getVisibleEdgeWidth(zoom: number, defaultEdgeWidth: number): number {
+        return Math.max(defaultEdgeWidth, StyleService.RENDERED_MIN_EDGE_WIDTH / zoom);
     }
 }

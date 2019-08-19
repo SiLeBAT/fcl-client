@@ -200,7 +200,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                     style: this.styleService.createCyStyle(
                         {
                             fontSize: GisGraphComponent.FONT_SIZES.get(graphState.fontSize),
-                            nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize)
+                            nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+                            zoom: 1
                         },
                         graphData
                     ),
@@ -383,13 +384,14 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     private updateGraphStyle(graphState: GisGraphState, graphData: GraphServiceData) {
         if (this.cy && this.cy.style) {
-            this.cy.setStyle(this.styleService.createCyStyle(graphState, graphData));
+            this.cy.setStyle(this.styleService.createCyStyle({ ...graphState, zoom: 1 }, graphData));
         }
     }
 
     private updateNodeSize(state: GisGraphState, data: GraphServiceData) {
         this.styleService.updateCyNodeSize(
             this.cy,
+            1,
             GisGraphComponent.NODE_SIZES.get(state.nodeSize),
             data.tracingResult.maxScore
         );
