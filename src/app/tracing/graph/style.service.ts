@@ -71,30 +71,27 @@ export class StyleService {
             })
             .selector('node')
             .style({
-                ...(graphSize !== GraphSize.HUGE ? { content: 'data(label)' } : {}),
+                ...(
+                    graphSize !== GraphSize.HUGE ?
+                    {
+                        content: 'data(label)',
+                        'text-valign': 'bottom',
+                        'text-halign': 'right'
+                    }
+                    :
+                    {}
+                ),
                 ...this.createNodeSizeStyle(nodeSize, maxScore),
                 'background-color': 'rgb(255, 255, 255)',
                 'border-width': 3,
                 'border-color': 'rgb(0, 0, 0)',
-                'text-valign': 'bottom',
-                'text-halign': 'right',
                 color: 'rgb(0, 0, 0)'
             })
             .selector('edge')
             .style({
-                ...(
-                    graphSize === GraphSize.SMALL ?
-                    {
-                        'target-arrow-shape': 'triangle',
-                        'target-arrow-color': 'rgb(0, 0, 0)',
-                        'curve-style': 'bezier'
-                    } :
-                    {
-                        'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
-                        'mid-target-arrow-color': 'rgb(0, 0, 0)',
-                        'curve-style': 'haystack'
-                    }
-                ),
+                'target-arrow-shape': 'triangle-cross',
+                'target-arrow-color': 'rgb(0, 0, 0)',
+                'curve-style': graphSize === GraphSize.SMALL ? 'bezier' : 'straight',
                 width: 1,
                 'line-color': 'rgb(0, 0, 0)',
                 'arrow-scale': 1.4
