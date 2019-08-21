@@ -76,7 +76,6 @@ export class DataImporterV0 implements IDataImporter {
 
             stationsById[sourceD.target].connections.push(r);
         }
-        // fclData.elements = this.createElements(data.stations, data.deliveries);
         this.applyElements(data.stations, data.deliveries, fclData);
         return true;
     }

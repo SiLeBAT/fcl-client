@@ -219,6 +219,9 @@ export class DataService {
         if (trace) {
             this.tracingService.updateTrace(this.cachedData);
         }
+        if (visibilities || score || trace) {
+            this.higlightingService.applyHighlightingProps(state, this.cachedData);
+        }
         if (selection) {
             this.applySelection(state, this.cachedData);
         }

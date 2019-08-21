@@ -7,6 +7,7 @@
     "serverlessstart": "ng serve --configuration=serverless",
     "start": "ng serve --proxy-config proxy.config.json",
     "serve": "ng serve --proxy-config proxy.config.json --watch",
+    "serve:fcldev": "ng serve --proxy-config proxy.config.fcldev.json --watch",
     "serve:local": "ng serve",
     "build:qa": "npm run clean && npm run lint && ng build --configuration=qa --output-path \"public\"",
     "build:qa_wo_lint": "npm run clean && ng build --configuration=qa --output-path \"public\"",

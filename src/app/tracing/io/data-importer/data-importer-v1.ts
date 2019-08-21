@@ -1,5 +1,10 @@
-import { DeliveryStoreData as DeliveryData, FclData, ObservedType, StationStoreData as StationData,
-    Connection, GroupType, Layout, GraphType, GroupData } from '../../data.model';
+import {
+    DeliveryStoreData as DeliveryData, FclData, ObservedType, StationStoreData as StationData,
+    Connection, GroupType, Layout, GraphType, GroupData,
+    ValueCondition as IntValueCondition,
+    LogicalCondition as IntLogicalCondition,
+    ValueType, OperationType, NodeShapeType, LinePatternType
+} from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
 import { Utils } from '../../util/non-ui-utils';
@@ -9,6 +14,14 @@ import { Map as ImmutableMap } from 'immutable';
 import { IDataImporter } from './datatypes';
 import { isValidJson } from './shared';
 import { importSamples } from './sample-importer-v1';
+import {
+    ViewData,
+    StationHighlightingData as ExtStationHighlightingData,
+    DeliveryHighlightingData as ExtDeliveryHighlightingData,
+    ValueCondition as ExtValueCondition,
+    LogicalCondition as ExtLogicalCondition
+
+} from '../ext-data-model.v1';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -293,7 +306,7 @@ export class DataImporterV1 implements IDataImporter {
 
                 intGroup.groupType = JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.get(extGroup.type);
             } else {
-                // ToDo: temporary solution
+                // TODO: temporary solution
                 if (intGroup.id.startsWith('SC')) {
                     intGroup.groupType = GroupType.SIMPLE_CHAIN;
                 } else if (intGroup.id.startsWith('SG:')) {
@@ -395,6 +408,7 @@ export class DataImporterV1 implements IDataImporter {
         idToStationMap: Map<string, StationData>,
         idToGroupMap: Map<string, GroupData>
     ) {
+
         const viewData: any = this.getProperty(data, JsonConstants.VIEW_SETTINGS);
 
         if (viewData === null) {
@@ -451,6 +465,166 @@ export class DataImporterV1 implements IDataImporter {
         );
 
         this.convertExternalPositions(viewData, fclData, idToStationMap, idToGroupMap);
+        this.convertExternalHighlightingSettings(viewData, fclData);
+    }
+
+    private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
+        if (viewData && viewData.node && viewData.node.highlightConditions) {
+            const extHighlightingCons: ExtStationHighlightingData[] = viewData.node.highlightConditions;
+            const extToIntPropMap: Map<string, string> = this.createReverseMap(
+                JsonConstants.STATION_PROP_INT_TO_EXT_MAP
+            );
+
+            fclData.graphSettings.highlightingSettings.stations = extHighlightingCons.map(extCon => (
+                {
+                    name: extCon.name,
+                    showInLegend: extCon.showInLegend,
+                    color: extCon.color,
+                    invisible: extCon.invisible,
+                    adjustThickness: extCon.adjustThickness,
+                    labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
+                    valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
+                    logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
+                    shape: this.mapShapeType(extCon.shape)
+                }
+            ));
+        }
+
+        if (viewData && viewData.edge && viewData.edge.highlightConditions) {
+            const extHighlightingCons: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
+            const extToIntPropMap: Map<string, string> = this.createReverseMap(
+                JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP
+            );
+
+            fclData.graphSettings.highlightingSettings.deliveries = extHighlightingCons.map(extCon => (
+                {
+                    name: extCon.name,
+                    showInLegend: extCon.showInLegend,
+                    color: extCon.color,
+                    invisible: extCon.invisible,
+                    adjustThickness: extCon.adjustThickness,
+                    labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
+                    valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
+                    logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
+                    linePattern: LinePatternType.SOLID
+                }
+            ));
+        }
+    }
+
+    private mapLogicalConditions(
+        extLogicalConditions: ExtLogicalCondition[][],
+        extToIntPropMap: Map<string, string>
+    ): IntLogicalCondition[][] {
+        let intLogicalConditions: IntLogicalCondition[][] = null;
+
+        if (extLogicalConditions) {
+            intLogicalConditions = extLogicalConditions.map((andConditionList: ExtLogicalCondition[]) =>
+                andConditionList.map((extCondition: ExtLogicalCondition) => {
+                    const propertyName = this.mapLabelProperty(extCondition.propertyName, extToIntPropMap);
+                    let operationType = this.mapOperationType(extCondition.operationType);
+                    let value = extCondition.value;
+
+                    if (propertyName === 'observed') {
+
+                        if (
+                            ([
+                                OperationType.REGEX_EQUAL,
+                                OperationType.REGEX_EQUAL_IGNORE_CASE,
+                                OperationType.REGEX_NOT_EQUAL,
+                                OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+                            ].indexOf(operationType) >= 0) ||
+                            (operationType === OperationType.LESS && !value) ||
+                            (operationType === OperationType.GREATER && value)) {
+                            // tslint:disable-next-line:max-line-length
+                            throw Error(`Could not convert logical condition (propertyName: ${propertyName}, operationType: ${operationType}, value: ${value})`);
+                        }
+
+                        if ((!value && operationType === OperationType.EQUAL) ||
+                            (value && (operationType === OperationType.NOT_EQUAL || operationType === OperationType.LESS))) {
+                            operationType = OperationType.EQUAL;
+                        } else {
+                            operationType = OperationType.NOT_EQUAL;
+                        }
+
+                        value = (ObservedType.NONE as any) as string;
+
+                    }
+                    return {
+                        propertyName: propertyName,
+                        operationType: operationType,
+                        value: value
+                    };
+                }));
+        }
+
+        return intLogicalConditions;
+    }
+
+    private mapLabelProperty(labelProperty: string, extToIntPropMap: Map<string, string>): string {
+        let newLabelProperty: string = null;
+
+        if (labelProperty) {
+            if (extToIntPropMap.has(labelProperty)) {
+                newLabelProperty = extToIntPropMap.get(labelProperty);
+            } else {
+                newLabelProperty = labelProperty;
+            }
+        }
+
+        return newLabelProperty;
+    }
+
+    private mapValueCondition(extValueCondition: ExtValueCondition, extToIntPropMap: Map<string, string>): IntValueCondition {
+        let intValueCondition: IntValueCondition = null;
+
+        if (extValueCondition) {
+            intValueCondition = {
+                propertyName: this.mapLabelProperty(extValueCondition.propertyName, extToIntPropMap),
+                valueType: this.mapValueType(extValueCondition.valueType),
+                useZeroAsMinimum: extValueCondition.useZeroAsMinimum
+            };
+        }
+
+        return intValueCondition;
+    }
+
+    private mapValueType(extValueType: string): ValueType {
+        let intValueType: ValueType = null;
+
+        if (JsonConstants.VALUE_TYPE_EXT_TO_INT_MAP.has(extValueType)) {
+            intValueType = JsonConstants.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
+        } else {
+            throw new Error(`Invalid ValueCondition.valueType: ${extValueType}`);
+        }
+
+        return intValueType;
+    }
+
+    private mapOperationType(extOperationType: string): OperationType {
+        let intOperationType: OperationType = null;
+
+        if (JsonConstants.OPERATION_TYPE_EXT_TO_INT_MAP.has(extOperationType)) {
+            intOperationType = JsonConstants.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
+        } else {
+            throw new Error(`Invalid LogicalCondition.operationType: ${extOperationType}`);
+        }
+
+        return intOperationType;
+    }
+
+    private mapShapeType(extShapeType: string): NodeShapeType {
+        let intShapeType: NodeShapeType = null;
+
+        if (extShapeType) {
+            if (JsonConstants.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.has(extShapeType)) {
+                intShapeType = JsonConstants.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.get(extShapeType);
+            } else {
+                throw new Error(`Invalid shape: ${extShapeType}`);
+            }
+        }
+
+        return intShapeType;
     }
 
     private convertExternalTransformation(extTransformation: any): Layout {

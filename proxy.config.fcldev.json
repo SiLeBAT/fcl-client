@@ -1,0 +1,12 @@
+{
+  "/v1/*": {
+    "target": "https://fcllab-dev-001.bfr.berlin",
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api-docs/*": {
+    "target": "https://fcllab-dev-001.bfr.berlin",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

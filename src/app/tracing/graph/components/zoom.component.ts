@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, Input, ViewChild, EventEmitter } from '@angular/core';
-// import { EventEmitter } from 'events';
 import { MatSlider } from '@angular/material';
 
 @Component({

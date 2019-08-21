@@ -43,7 +43,7 @@ export class GraphService {
         let iNode = 0;
         const nodeData: CyNodeData[] = data.stations.filter(s => !s.invisible && !s.contained).map(s => ({
             id: 'N' + iNode++,
-            label: s.name || '',
+            label: s.highlightingInfo.label.length > 0 ? s.highlightingInfo.label.join(' / ') : '',
             station: s,
             score: s.score,
             forward: s.forward,
@@ -103,7 +103,7 @@ export class GraphService {
                         const selected = !!selDel[delivery.id];
                         edgeData.push({
                             id: 'E' + iEdge++,
-                            label: delivery.name,
+                            label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
                             source: sourceDataId,
                             target: targetDataId,
                             deliveries: [delivery],
@@ -137,10 +137,12 @@ export class GraphService {
                             )
                         ;
 
-                        const labels: string[] = _.uniq(deliveries.map(d => d.name));
+                        const labels: string[] = _.uniq(
+                            deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
+                        );
                         edgeData.push({
                             id: 'E' + iEdge++,
-                            label: labels.length === 1 ? labels[0] : undefined,
+                            label: labels.length === 1 ? labels[0] : '',
                             source: sourceDataId,
                             target: targetDataId,
                             deliveries: deliveries,
@@ -167,7 +169,7 @@ export class GraphService {
                 if (sourceData && targetData) {
                     edgeData.push({
                         id: 'E' + iEdge++,
-                        label: delivery.name,
+                        label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
                         source: sourceData.id,
                         target: targetData.id,
                         deliveries: [delivery],
