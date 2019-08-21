@@ -13,19 +13,5 @@ export function createDefaultSettings(): SettingsData {
     return {
         version: VERSION,
         metaNodes: []
-        // view: null
     };
 }
-
-// export function createDefaultViewSettings(): ViewData {
-//     return {
-//         edge:
-//     };
-// }
-
-// export function createDefaultEdgeViewSettings(): EdgeViewData {
-//     return {
-//         joinEdges: false,
-//         selectedEdges: []
-//     };
-// }

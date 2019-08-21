@@ -1,4 +1,4 @@
-import { Size, GroupType } from '../../data.model';
+import { Size, GroupType, OperationType, ValueType, NodeShapeType } from '../../data.model';
 import { Map as ImmutableMap } from 'immutable';
 
 export interface ColumnInfo {
@@ -41,7 +41,15 @@ export class Constants {
       lon: {
           columnId: 'GeocodingLongitude',
           type: 'double'
-      }
+      },
+      weight: { columnId: 'Weight', type: 'double' },
+      crossContamination: { columnId: 'CrossContamination', type: 'boolean' },
+      killContamination: { columnId: 'KillContamination', type: 'boolean' },
+      forward: { columnId: 'Forward', type: 'boolean' },
+      backward: { columnId: 'Backward', type: 'boolean' },
+      score: { columnId: 'Score', type: 'boolean' },
+      isMeta: { columnId: 'IsMeta', type: 'boolean' },
+      observed: { columnId: 'Observed', type: 'boolean' }
   });
 
     static readonly DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
@@ -53,7 +61,14 @@ export class Constants {
       source: { columnId: 'from', type: 'string' },
       target: { columnId: 'to', type: 'string' },
       lot: { columnId: 'Lot ID', type: 'string' },
-      lotKey: { columnId: 'Product_k', type: 'string' }
+      lotKey: { columnId: 'Product_k', type: 'string' },
+      weight: { columnId: 'Weight', type: 'double' },
+      crossContamination: { columnId: 'CrossContamination', type: 'boolean' },
+      killContamination: { columnId: 'KillContamination', type: 'boolean' },
+      forward: { columnId: 'Forward', type: 'boolean' },
+      backward: { columnId: 'Backward', type: 'boolean' },
+      score: { columnId: 'Score', type: 'boolean' },
+      observed: { columnId: 'Observed', type: 'boolean' }
   });
 
     static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT: ImmutableMap<
@@ -110,4 +125,32 @@ export class Constants {
       '18': Size.MEDIUM,
       '24': Size.LARGE
   });
+
+    static readonly OPERATION_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, OperationType> = ImmutableMap({
+        'EQUAL': OperationType.EQUAL,
+        'GREATER': OperationType.GREATER,
+        'NOT_EQUAL': OperationType.NOT_EQUAL,
+        'LESS': OperationType.LESS,
+        'REGEX_EQUAL': OperationType.REGEX_EQUAL,
+        'REGEX_NOT_EQUAL': OperationType.REGEX_NOT_EQUAL,
+        'REGEX_EQUAL_IGNORE_CASE': OperationType.REGEX_EQUAL_IGNORE_CASE,
+        'REGEX_NOT_EQUAL_IGNORE_CASE': OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+    });
+
+    static readonly VALUE_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, ValueType> = ImmutableMap({
+        'VALUE': ValueType.VALUE,
+        'LOG_VALUE': ValueType.LOG_VALUE
+    });
+
+    static readonly NODE_SHAPE_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, NodeShapeType> = ImmutableMap({
+        'CIRCLE': NodeShapeType.CIRCLE,
+        'SQUARE': NodeShapeType.SQUARE,
+        'TRIANGLE': NodeShapeType.TRIANGLE,
+        'TRIANGLEREV': NodeShapeType.PENTAGON,
+        'TRIANGLERIGHT': NodeShapeType.HEXAGON,
+        'TRIANGLELEFT': NodeShapeType.OCTAGON,
+        'STAR': NodeShapeType.STAR,
+        'DIAMOND': NodeShapeType.DIAMOND
+    });
+
 }

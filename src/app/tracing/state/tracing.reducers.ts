@@ -60,7 +60,9 @@ export function createInitialFclDataState(): FclData {
             },
             stationPositions: {},
             highlightingSettings: {
-                invisibleStations: []
+                invisibleStations: [],
+                stations: [],
+                deliveries: []
             },
             schemaLayout: null,
             gisLayout: null

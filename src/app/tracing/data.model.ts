@@ -102,6 +102,65 @@ export interface GraphSettings {
 
 export interface HighlightingSettings {
     invisibleStations: string[];
+    stations?: StationHighlightingData[];
+    deliveries?: DeliveryHighlightingData[];
+}
+
+interface ElementHighlightingData {
+    name: string;
+    showInLegend: boolean;
+    color: number[];
+    invisible: boolean;
+    adjustThickness: boolean;
+    labelProperty: string;
+    valueCondition: ValueCondition;
+    logicalConditions: LogicalCondition[][];
+}
+
+export interface DeliveryHighlightingData extends ElementHighlightingData {
+    linePattern: LinePatternType;
+}
+
+export interface StationHighlightingData extends ElementHighlightingData {
+    shape: NodeShapeType;
+}
+
+export enum NodeShapeType {
+    CIRCLE = 'ellipse',
+    SQUARE = 'rectangle',
+    TRIANGLE = 'triangle',
+    PENTAGON = 'pentagon',
+    HEXAGON = 'hexagon',
+    OCTAGON = 'octagon',
+    STAR = 'star',
+    DIAMOND = 'diamond'
+}
+export interface LogicalCondition {
+    propertyName: string;
+    operationType: OperationType;
+    value: string;
+}
+
+export enum OperationType {
+    EQUAL = '==',
+    GREATER = '>',
+    NOT_EQUAL = '!=',
+    LESS = '<',
+    REGEX_EQUAL = ' == (Regex)',
+    REGEX_NOT_EQUAL = '!= (Regex)',
+    REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
+    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case'
+}
+
+export interface ValueCondition {
+    propertyName: string;
+    valueType: ValueType;
+    useZeroAsMinimum: boolean;
+}
+
+export enum ValueType {
+    VALUE = 'Value',
+    LOG_VALUE = 'Log Value'
 }
 
 export interface TableSettings {
@@ -209,19 +268,31 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
 }
 
 export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
-    id: string;
-    name: string;
-    lat: number;
-    lon: number;
-    incoming: string[];
-    outgoing: string[];
-    connections: Connection[];
     contained: boolean;
+    highlightingInfo?: HighlightingInfo;
+}
+
+export interface HighlightingInfo {
+    label?: string[];
+    color?: number[][];
+}
+
+export interface StationHighlightingInfo extends HighlightingInfo {
+    shape?: NodeShapeType;
+}
+
+export interface DeliveryHighlightingInfo extends HighlightingInfo {
+    linePattern?: LinePatternType;
+}
+
+export enum LinePatternType {
+    SOLID
 }
 
 export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, ViewData {
     originalSource: string;
     originalTarget: string;
+    highlightingInfo?: HighlightingInfo;
 }
 
 export interface SampleData {
@@ -259,18 +330,6 @@ export interface NodeData extends ElementData {
 export interface SelectedElements {
     stations: string[];
     deliveries: string[];
-}
-
-export interface GraphSettings {
-    type: GraphType;
-    nodeSize: Size;
-    fontSize: Size;
-    mergeDeliveries: boolean;
-    showLegend: boolean;
-    showZoom: boolean;
-    skipUnconnectedStations: boolean;
-    selectedElements: SelectedElements;
-    stationPositions: {[key: string]: Position};
 }
 
 export interface TableSettings {

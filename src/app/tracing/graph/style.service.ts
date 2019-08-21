@@ -49,6 +49,9 @@ export class StyleService {
             cy.nodes().style({
                 'font-size': Math.max(fontSize / cy.zoom(), fontSize)
             });
+            cy.edges().style({
+                'font-size': Math.max(fontSize / cy.zoom(), fontSize)
+            });
         }
     }
 
@@ -80,21 +83,13 @@ export class StyleService {
                 'text-halign': 'right',
                 color: 'rgb(0, 0, 0)'
             })
+
             .selector('edge')
             .style({
-                ...(
-                    graphSize === GraphSize.SMALL ?
-                    {
-                        'target-arrow-shape': 'triangle',
-                        'target-arrow-color': 'rgb(0, 0, 0)',
-                        'curve-style': 'bezier'
-                    } :
-                    {
-                        'mid-target-arrow-shape': 'triangle', // haystack only works with mid-arrows
-                        'mid-target-arrow-color': 'rgb(0, 0, 0)',
-                        'curve-style': 'haystack'
-                    }
-                ),
+                ...(graphSize !== GraphSize.HUGE ? { content: 'data(label)' } : {}),
+                'target-arrow-shape': 'triangle-cross',
+                'target-arrow-color': 'rgb(0, 0, 0)',
+                'curve-style': graphSize === GraphSize.SMALL ? 'bezier' : 'straight',
                 width: 1,
                 'line-color': 'rgb(0, 0, 0)',
                 'arrow-scale': 1.4

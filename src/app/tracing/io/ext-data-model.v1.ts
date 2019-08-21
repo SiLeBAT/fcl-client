@@ -143,21 +143,21 @@ interface ElementHighlightingData {
     logicalConditions: LogicalCondition[][];
 }
 
-interface DeliveryHighlightingData extends ElementHighlightingData {
+export interface DeliveryHighlightingData extends ElementHighlightingData {
     linePattern: string;
 }
 
-interface StationHighlightingData extends ElementHighlightingData {
+export interface StationHighlightingData extends ElementHighlightingData {
     shape: string;
 }
 
-interface LogicalCondition {
+export interface LogicalCondition {
     propertyName: string;
     operationType: string;
-    value: number | boolean | string;
+    value: string;
 }
 
-interface ValueCondition {
+export interface ValueCondition {
     propertyName: string;
     valueType: string;
     useZeroAsMinimum: boolean;
