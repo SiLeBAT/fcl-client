@@ -336,7 +336,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     zoomResetPressed() {
-        this.applyLayout(this.getFitLayout(this.cachedState, this.cachedData));
+        this.applyGraphLayout(this.getFitLayout(this.cachedState, this.cachedData));
     }
 
     zoomSlided(value: string) {
@@ -376,7 +376,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.cy.elements().remove();
             this.cy.add(this.createNodes(graphState.layout, graphData));
             this.cy.add(this.createEdges(graphData));
-            this.updateFontSize(graphState);
             this.updateGraphStyle(graphState, graphData);
         });
         this.updateMap();
@@ -386,15 +385,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         if (this.cy && this.cy.style) {
             this.cy.setStyle(this.styleService.createCyStyle({ ...graphState, zoom: 1 }, graphData));
         }
-    }
-
-    private updateNodeSize(state: GisGraphState, data: GraphServiceData) {
-        this.styleService.updateCyNodeSize(
-            this.cy,
-            1,
-            GisGraphComponent.NODE_SIZES.get(state.nodeSize),
-            data.tracingResult.maxScore
-        );
     }
 
     private updateFontSize(state: GisGraphState) {
@@ -418,14 +408,14 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         };
         const oldPan = this.cy.pan();
         if (newZoom !== this.zoom || newPan.x !== oldPan.x || newPan.y !== oldPan.y) {
-            this.applyLayout({
+            this.applyGraphLayout({
                 zoom: newZoom,
                 pan: newPan
             });
         }
     }
 
-    private applyLayout(layout: Layout) {
+    private applyGraphLayout(layout: Layout) {
         this.zoom = layout.zoom;
         this.cy.batch(() => {
             this.cy.pan(layout.pan);
@@ -434,8 +424,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         this.map.setView(UIUtils.panZoomToView(layout.pan, this.zoom, this.cy.width(), this.cy.height()));
         this.applyLayoutToStateIfNecessary();
         this.updateZoomPercentage();
-        this.updateFontSize(this.cachedState);
-        this.updateNodeSize(this.cachedState, this.cachedData);
     }
 
     private updateZoomPercentage() {
@@ -522,7 +510,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         } else if (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel) {
             this.updateGraphSelection(newData);
         } else if (this.cachedState.nodeSize !== newState.nodeSize) {
-            this.updateNodeSize(newState, newData);
+            this.updateGraphStyle(newState, newData);
         } else if (this.cachedState.fontSize !== newState.fontSize) {
             this.updateFontSize(newState);
         }

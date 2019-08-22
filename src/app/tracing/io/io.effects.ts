@@ -34,7 +34,6 @@ export class IOEffects {
                     map((data: FclData) => new tracingStateActions.LoadFclDataSuccess({ fclData: data })),
                     catchError((error) => {
                         this.alertService.error(`Please select a .json file with the correct format!, error: ${error}`);
-                        // tslint:disable-next-line:deprecation
                         return of(new tracingStateActions.LoadFclDataFailure());
                     })
                 );
@@ -80,7 +79,7 @@ export class IOEffects {
     @Effect()
     saveGraphImage$ = this.actions$.pipe(
         ofType<ioActions.SaveGraphImageMSA>(ioActions.IOActionTypes.SaveGraphImageMSA),
-        map((action) => {
+        mergeMap((action) => {
             const canvas = action.payload.canvas;
             const fileName = 'graph.png';
             try {

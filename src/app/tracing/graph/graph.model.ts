@@ -91,12 +91,17 @@ export interface CyNodeData extends StationTracingData {
     id: string;
     station: StationData;
     label: string;
+    isMeta: boolean;
     selected: boolean;
+    stopColors: string;
+    stopPositions: string;
 }
 
 export interface CyEdgeData extends DeliveryTracingData {
     id: string;
     deliveries: DeliveryData[];
+    stopColors: string;
+    stopPositions: string;
     label: string;
     selected: boolean;
     source: string;

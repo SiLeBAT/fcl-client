@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
-import { Color, ObservedType } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
-import { Constants } from '../util/constants';
 import { GraphServiceData, Cy } from './graph.model';
 
 interface Settings {
@@ -21,6 +18,11 @@ enum GraphSize {
 export class StyleService {
     private static readonly RENDERED_MIN_NODE_SIZE = 10;
     private static readonly RENDERED_MIN_EDGE_WIDTH = 0.5;
+    private static readonly NODE_SIZE_TO_BORDER_WIDTH_FACTOR = 1 / 20;
+    private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 1 / 75;
+    private static readonly SELECTED_EDGE_WIDTH_FACTOR = 2;
+    private static readonly META_NODE_BORDER_WIDTH_FACTOR = 2;
+    private static readonly SELECTED_NODE_BORDER_WIDTH_FACTOR = 2;
 
     constructor() { }
 
@@ -39,19 +41,6 @@ export class StyleService {
         } else {
             return GraphSize.SMALL;
         }
-    }
-
-    updateCyNodeSize(cy: Cy, zoom: number, nodeSize: number, maxScore: number) {
-        cy.nodes().style({
-            ...this.createNodeSizeStyle(zoom, nodeSize, maxScore),
-            ...this.createBorderStyle(zoom, nodeSize)
-        });
-    }
-
-    updateCyEdgeSize(cy: Cy, zoom: number, nodeSize: number) {
-        cy.edges().style({
-            'width': this.getVisibleEdgeWidth(zoom, nodeSize / 20)
-        });
     }
 
     updateCyFontSize(cy: Cy, fontSize: number) {
@@ -73,14 +62,12 @@ export class StyleService {
         };
     }
 
-    private createBorderStyle(zoom: number, defaultNodeSize: number): { 'border-width': number } {
-        return {
-            'border-width': this.getVisibleNodeSize(zoom, defaultNodeSize) / 20
-        };
-    }
-
     private createXGraphStyle(graphSize: GraphSize, zoom: number, nodeSize: number, maxScore: number): any {
-        let style = cytoscape
+
+        const visibleNodeSize = this.getVisibleNodeSize(zoom, nodeSize);
+        const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR);
+
+        const style = cytoscape
             .stylesheet()
             .selector('*')
             .style({
@@ -101,8 +88,11 @@ export class StyleService {
                     {}
                 ),
                 ...this.createNodeSizeStyle(zoom, nodeSize, maxScore),
-                'background-color': 'rgb(255, 255, 255)',
-                'border-width': 3,
+                'background-fill' : 'linear-gradient',
+                'background-gradient-stop-colors' : 'data(stopColors)',
+                'background-gradient-stop-positions' : 'data(stopPositions)',
+                'background-gradient-direction': 'to-right',
+                'border-width': visibleNodeSize * StyleService.NODE_SIZE_TO_BORDER_WIDTH_FACTOR,
                 'border-color': 'rgb(0, 0, 0)',
                 color: 'rgb(0, 0, 0)'
             })
@@ -113,79 +103,51 @@ export class StyleService {
                 'target-arrow-shape': 'triangle-cross',
                 'target-arrow-color': 'rgb(0, 0, 0)',
                 'curve-style': graphSize === GraphSize.SMALL ? 'bezier' : 'straight',
-                width: 1,
-                'line-color': 'rgb(0, 0, 0)',
+                'line-fill': 'linear-gradient',
+                'line-gradient-stop-colors': 'data(stopColors)',
+                'line-gradient-stop-positions': 'data(stopPositions)',
+                width: visibleEdgeWidth,
                 'arrow-scale': 1.4
             })
             .selector('node:selected')
             .style({
                 'background-color': 'rgb(128, 128, 255)',
-                'border-width': 6,
+                'border-width': (
+                    visibleNodeSize *
+                    StyleService.NODE_SIZE_TO_BORDER_WIDTH_FACTOR *
+                    StyleService.SELECTED_NODE_BORDER_WIDTH_FACTOR
+                ),
                 'border-color': 'rgb(0, 0, 255)',
                 color: 'rgb(0, 0, 255)'
             })
             .selector('edge:selected')
             .style({
-                width: 2
+                width: (
+                    visibleEdgeWidth *
+                    StyleService.SELECTED_EDGE_WIDTH_FACTOR
+                )
             })
-            .selector('node[?contains]')
+            .selector('node[?isMeta]')
             .style({
-                'border-width': 3
+                'border-width': (
+                    visibleNodeSize *
+                    StyleService.NODE_SIZE_TO_BORDER_WIDTH_FACTOR *
+                    StyleService.META_NODE_BORDER_WIDTH_FACTOR
+                )
             })
-            .selector('node:selected[?contains]')
+            .selector('node:selected[?isMeta]')
             .style({
-                'border-width': 3
+                'border-width': (
+                    visibleNodeSize *
+                    StyleService.NODE_SIZE_TO_BORDER_WIDTH_FACTOR *
+                    StyleService.META_NODE_BORDER_WIDTH_FACTOR *
+                    StyleService.SELECTED_NODE_BORDER_WIDTH_FACTOR
+                )
             })
             .selector(':active')
             .style({
                 'overlay-opacity': 0.5
             });
-
-        const createSelector = (prop: string) => {
-            if (prop === 'observed') {
-                return '[' + prop + ' != "' + ObservedType.NONE + '"]';
-            } else {
-                return '[?' + prop + ']';
-            }
-        };
-
-        const createNodeBackground = (colors: Color[]) => {
-            const background = {};
-
-            if (colors.length === 1) {
-                background['background-color'] = Utils.colorToCss(colors[0]);
-            } else {
-                for (let i = 0; i < colors.length; i++) {
-                    background['pie-' + (i + 1) + '-background-color'] = Utils.colorToCss(colors[i]);
-                    background['pie-' + (i + 1) + '-background-size'] = 100 / colors.length;
-                }
-            }
-
-            return background;
-        };
-
-        for (const combination of Utils.getAllCombinations(Constants.PROPERTIES_WITH_COLORS.toArray())) {
-            const s = [];
-            const c1 = [];
-            const c2 = [];
-
-            for (const prop of combination) {
-                const color = Constants.PROPERTIES.get(prop).color;
-
-                s.push(createSelector(prop));
-                c1.push(color);
-                c2.push(Utils.mixColors(color, { r: 0, g: 0, b: 255 }));
-            }
-
-            style = style.selector('node' + s.join('')).style(createNodeBackground(c1));
-            style = style.selector('node:selected' + s.join('')).style(createNodeBackground(c2));
-        }
-
-        for (const prop of Constants.PROPERTIES_WITH_COLORS.toArray()) {
-            style = style.selector('edge' + createSelector(prop)).style({
-                'line-color': Utils.colorToCss(Constants.PROPERTIES.get(prop).color)
-            });
-        }
 
         return style;
     }

@@ -214,16 +214,12 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.SetTableColumnsSOA:
             const tableMode = action.payload[0];
             const selections: string[] = action.payload[1];
-            const tableSettings = state.fclData.tableSettings;
-            let options: string;
-
+            const tableSettings = { ...state.fclData.tableSettings };
             if (tableMode === TableMode.STATIONS) {
                 tableSettings.stationColumns = selections;
-                options = 'stationColumns';
             }
             if (tableMode === TableMode.DELIVERIES) {
                 tableSettings.deliveryColumns = selections;
-                options = 'deliveryColumns';
             }
 
             return {

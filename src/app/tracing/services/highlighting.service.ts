@@ -203,8 +203,13 @@ export class HighlightingService {
             )
             .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
 
+        const color = deliveryActiveHighlightingData
+            .filter((highData: DeliveryHighlightingData) => !!highData.color)
+            .map((highData: DeliveryHighlightingData) => highData.color);
+
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = {
-            label: label
+            label: label,
+            color: color
         };
 
         return deliveryHighlightingInfo;
@@ -232,8 +237,13 @@ export class HighlightingService {
             .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(station, highData.labelProperty)))
             .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
 
+        const color = stationActiveHightlightingData
+            .filter((highData: StationHighlightingData) => !!highData.color)
+            .map((highData: StationHighlightingData) => highData.color);
+
         const stationHighInfo: StationHighlightingInfo = {
-            label: label
+            label: label,
+            color: color
         };
 
         return stationHighInfo;

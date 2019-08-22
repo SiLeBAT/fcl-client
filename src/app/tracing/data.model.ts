@@ -306,27 +306,6 @@ export interface SampleData {
     resultType: SampleResultType;
 }
 
-export interface ElementData {
-    id: string;
-    selected: boolean;
-    label?: string;
-}
-
-export interface EdgeData extends ElementData {
-    source: string;
-    target: string;
-    deliveryIds: string[];
-    colors: Color[];
-    width: number;
-}
-
-export interface NodeData extends ElementData {
-    stationId: string;
-    colors: Color[];
-    size: number;
-    position: Position;
-}
-
 export interface SelectedElements {
     stations: string[];
     deliveries: string[];

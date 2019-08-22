@@ -26,6 +26,9 @@ interface GraphState extends BasicGraphState {
 })
 export class GraphService {
 
+    private static readonly DEFAULT_EDGE_COLOR = [0, 0, 0];
+    private static readonly DEFAULT_NODE_COLOR = [255, 255, 255];
+
     private cachedState: GraphState;
 
     private cachedData: GraphServiceData;
@@ -44,6 +47,8 @@ export class GraphService {
         const nodeData: CyNodeData[] = data.stations.filter(s => !s.invisible && !s.contained).map(s => ({
             id: 'N' + iNode++,
             label: s.highlightingInfo.label.length > 0 ? s.highlightingInfo.label.join(' / ') : '',
+            ...this.getColorInfo(s.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR),
+            isMeta: s.contains && s.contains.length > 0,
             station: s,
             score: s.score,
             forward: s.forward,
@@ -104,6 +109,7 @@ export class GraphService {
                         edgeData.push({
                             id: 'E' + iEdge++,
                             label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
+                            ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                             source: sourceDataId,
                             target: targetDataId,
                             deliveries: [delivery],
@@ -143,6 +149,10 @@ export class GraphService {
                         edgeData.push({
                             id: 'E' + iEdge++,
                             label: labels.length === 1 ? labels[0] : '',
+                            ...this.getColorInfo(
+                                this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
+                                GraphService.DEFAULT_EDGE_COLOR
+                            ),
                             source: sourceDataId,
                             target: targetDataId,
                             deliveries: deliveries,
@@ -170,6 +180,7 @@ export class GraphService {
                     edgeData.push({
                         id: 'E' + iEdge++,
                         label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
+                        ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                         source: sourceData.id,
                         target: targetData.id,
                         deliveries: [delivery],
@@ -199,9 +210,40 @@ export class GraphService {
         };
     }
 
+    private mergeColors(colors: number[][][]): number[][] {
+        return _.uniqWith([].concat(...colors),
+            (c1: number[], c2: number[]) => c1[0] === c2[0] && c1[1] === c2[1] && c1[2] === c2[2]
+        );
+    }
+
+    private getColorInfo(colors: number[][], defaultColor: number[]): {
+        stopColors: string,
+        stopPositions: string
+    } {
+        if (colors.length === 0) {
+            colors = [defaultColor];
+        }
+        const repeat = (s: string) => s + ' ' + s;
+        const stopColors = colors.map(c => repeat(this.mapColor(c))).join(' ');
+        const n = colors.length;
+        const stopPositions = colors.map((c, i) => `${100 * i / n}% ${100 * (i + 1) / n}%`).join(' ');
+
+        return {
+            stopColors: stopColors,
+            stopPositions: stopPositions
+        };
+    }
+
+    private mapColor(color: number[]): string {
+        return `rgb(${color[0]},${color[1]},${color[2]})`;
+    }
+
     private applyStationProps(data: GraphServiceData) {
         for (const node of data.nodeData) {
             const station = node.station;
+            const colorInfo = this.getColorInfo(station.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR);
+            node.stopColors = colorInfo.stopColors;
+            node.stopPositions = colorInfo.stopPositions;
             node.backward = station.backward;
             node.commonLink = station.commonLink;
             node.crossContamination = station.crossContamination;
@@ -216,6 +258,16 @@ export class GraphService {
     private applyDeliveryProps(data: GraphServiceData) {
         for (const edge of data.edgeData) {
             const aggregatedProps = this.aggregateDelProps(edge.deliveries);
+            const colorInfo = this.getColorInfo(
+                (
+                    edge.deliveries.length > 0 ?
+                    this.mergeColors(edge.deliveries.map(d => d.highlightingInfo.color)) :
+                    edge.deliveries[0].highlightingInfo.color
+                ),
+                GraphService.DEFAULT_EDGE_COLOR
+            );
+            edge.stopColors = colorInfo.stopColors;
+            edge.stopPositions = colorInfo.stopPositions;
             edge.backward = aggregatedProps.backward;
             edge.crossContamination = aggregatedProps.crossContamination;
             edge.forward = aggregatedProps.forward;
