@@ -95,6 +95,7 @@ export interface CyNodeData extends StationTracingData {
     selected: boolean;
     stopColors: string;
     stopPositions: string;
+    shape: string;
 }
 
 export interface CyEdgeData extends DeliveryTracingData {

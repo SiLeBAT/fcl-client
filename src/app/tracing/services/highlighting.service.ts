@@ -29,8 +29,97 @@ export class HighlightingService {
         [OperationType.EQUAL]: this.areValuesEqual,
         [OperationType.NOT_EQUAL]: this.areValuesNotEqual,
         [OperationType.LESS]: this.isPropertyValueLessThanConditionValue,
-        [OperationType.GREATER]: this.isPropertyValueGreaterThanConditionValue
+        [OperationType.GREATER]: this.isPropertyValueGreaterThanConditionValue,
+        [OperationType.REGEX_EQUAL]: this.isPropertyValueEqualToRegex,
+        [OperationType.REGEX_EQUAL_IGNORE_CASE]: this.isPropertyValueEqualToIgnoreCaseRegex,
+        [OperationType.REGEX_NOT_EQUAL]: this.isPropertyValueUnequalToRegex,
+        [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: this.isPropertyValueUnequalToIgnoreCaseRegex
+
     };
+
+    private isPropertyValueUnequalToIgnoreCaseRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
+        let result: boolean = false;
+
+        if (propertyValue === undefined) {
+            result = false;
+        } else if (propertyValue === null) {
+            result = (conditionValue !== '');
+        } else {
+            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
+            if (conditionValue === '') {
+                result = (strValue !== '');
+            } else {
+                const regExp = new RegExp(conditionValue, 'i');
+                result = !regExp.exec(strValue);
+            }
+
+        }
+
+        return result;
+    }
+
+    private isPropertyValueUnequalToRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
+        let result: boolean = false;
+
+        if (propertyValue === undefined) {
+            result = false;
+        } else if (propertyValue === null) {
+            result = (conditionValue !== '');
+        } else {
+            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
+            if (conditionValue === '') {
+                result = (strValue !== '');
+            } else {
+                const regExp = new RegExp(conditionValue);
+                result = !regExp.exec(strValue);
+            }
+
+        }
+
+        return result;
+    }
+
+    private isPropertyValueEqualToIgnoreCaseRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
+        let result: boolean = false;
+
+        if (propertyValue === undefined) {
+            result = false;
+        } else if (propertyValue === null) {
+            result = (conditionValue === '');
+        } else {
+            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
+            if (conditionValue === '') {
+                result = (strValue === '');
+            } else {
+                const regExp = new RegExp(conditionValue, 'i');
+                result = !!regExp.exec(strValue);
+            }
+
+        }
+
+        return result;
+    }
+
+    private isPropertyValueEqualToRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
+        let result: boolean = false;
+
+        if (propertyValue === undefined) {
+            result = false;
+        } else if (propertyValue === null) {
+            result = (conditionValue === '');
+        } else {
+            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
+            if (conditionValue === '') {
+                result = (strValue === '');
+            } else {
+                const regExp = new RegExp(conditionValue);
+                result = !!regExp.exec(strValue);
+            }
+
+        }
+
+        return result;
+    }
 
     private areValuesEqual(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
         let result: boolean = false;
@@ -233,9 +322,13 @@ export class HighlightingService {
             })));
 
         const label = stationActiveHightlightingData
-            .filter(highData => !!highData.labelProperty)
-            .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(station, highData.labelProperty)))
-            .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
+                .filter(highData => !!highData.labelProperty)
+                .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(station, highData.labelProperty)))
+                .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
+
+        const shape = stationActiveHightlightingData
+                .filter(highData => !!highData.shape)
+                .map(highData => highData.shape);
 
         const color = stationActiveHightlightingData
             .filter((highData: StationHighlightingData) => !!highData.color)
@@ -243,7 +336,8 @@ export class HighlightingService {
 
         const stationHighInfo: StationHighlightingInfo = {
             label: label,
-            color: color
+            color: color,
+            shape: shape.length > 0 ? shape[0] : null
         };
 
         return stationHighInfo;

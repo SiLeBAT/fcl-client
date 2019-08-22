@@ -149,7 +149,7 @@ export enum OperationType {
     REGEX_EQUAL = ' == (Regex)',
     REGEX_NOT_EQUAL = '!= (Regex)',
     REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
-    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case'
+    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
 }
 
 export interface ValueCondition {
@@ -269,16 +269,16 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
 
 export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
     contained: boolean;
-    highlightingInfo?: HighlightingInfo;
+    highlightingInfo?: StationHighlightingInfo;
 }
 
 export interface HighlightingInfo {
-    label?: string[];
-    color?: number[][];
+    label: string[];
+    color: number[][];
 }
 
 export interface StationHighlightingInfo extends HighlightingInfo {
-    shape?: NodeShapeType;
+    shape: NodeShapeType;
 }
 
 export interface DeliveryHighlightingInfo extends HighlightingInfo {
@@ -292,7 +292,7 @@ export enum LinePatternType {
 export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, ViewData {
     originalSource: string;
     originalTarget: string;
-    highlightingInfo?: HighlightingInfo;
+    highlightingInfo?: DeliveryHighlightingInfo;
 }
 
 export interface SampleData {

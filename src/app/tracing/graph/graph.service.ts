@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BasicGraphState, DeliveryData, DataServiceData, ObservedType } from '../data.model';
+import { BasicGraphState, DeliveryData, DataServiceData, ObservedType, NodeShapeType } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
@@ -49,6 +49,7 @@ export class GraphService {
             label: s.highlightingInfo.label.length > 0 ? s.highlightingInfo.label.join(' / ') : '',
             ...this.getColorInfo(s.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR),
             isMeta: s.contains && s.contains.length > 0,
+            shape: s.highlightingInfo.shape ? s.highlightingInfo.shape : NodeShapeType.CIRCLE,
             station: s,
             score: s.score,
             forward: s.forward,
