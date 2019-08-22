@@ -87,6 +87,7 @@ export class StyleService {
                     :
                     {}
                 ),
+                'shape': 'data(shape)',
                 ...this.createNodeSizeStyle(zoom, nodeSize, maxScore),
                 'background-fill' : 'linear-gradient',
                 'background-gradient-stop-colors' : 'data(stopColors)',
