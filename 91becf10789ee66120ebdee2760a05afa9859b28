@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d432ab23_13182a5c",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2019-08-23T07:00:29Z",
+      "side": 1,
+      "message": "please make the label and color obligate",
+      "revId": "91becf10789ee66120ebdee2760a05afa9859b28",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30626cc2_6f9a1c4c",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2019-08-23T07:00:29Z",
+      "side": 1,
+      "message": "please make the shape obligate",
+      "revId": "91becf10789ee66120ebdee2760a05afa9859b28",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
