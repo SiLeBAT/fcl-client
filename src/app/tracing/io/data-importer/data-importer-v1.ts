@@ -12,7 +12,7 @@ import { Constants as JsonConstants, ColumnInfo } from './../data-mappings/data-
 import { Map as ImmutableMap } from 'immutable';
 
 import { IDataImporter } from './datatypes';
-import { isValidJson } from './shared';
+import { isValidJson, createDefaultHighlights } from './shared';
 import { importSamples } from './sample-importer-v1';
 import {
     ViewData,
@@ -470,45 +470,57 @@ export class DataImporterV1 implements IDataImporter {
 
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
         if (viewData && viewData.node && viewData.node.highlightConditions) {
-            const extHighlightingCons: ExtStationHighlightingData[] = viewData.node.highlightConditions;
-            const extToIntPropMap: Map<string, string> = this.createReverseMap(
-                JsonConstants.STATION_PROP_INT_TO_EXT_MAP
-            );
 
-            fclData.graphSettings.highlightingSettings.stations = extHighlightingCons.map(extCon => (
-                {
-                    name: extCon.name,
-                    showInLegend: extCon.showInLegend,
-                    color: extCon.color,
-                    invisible: extCon.invisible,
-                    adjustThickness: extCon.adjustThickness,
-                    labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
-                    valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
-                    logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
-                    shape: this.mapShapeType(extCon.shape)
-                }
-            ));
+            const extHighlightingCons: ExtStationHighlightingData[] = viewData.node.highlightConditions;
+
+            if (extHighlightingCons.length > 0) {
+                const extToIntPropMap: Map<string, string> = this.createReverseMap(
+                    JsonConstants.STATION_PROP_INT_TO_EXT_MAP
+                );
+
+                fclData.graphSettings.highlightingSettings.stations = extHighlightingCons.map(extCon => (
+                    {
+                        name: extCon.name,
+                        showInLegend: extCon.showInLegend,
+                        color: extCon.color,
+                        invisible: extCon.invisible,
+                        adjustThickness: extCon.adjustThickness,
+                        labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
+                        valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
+                        logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
+                        shape: this.mapShapeType(extCon.shape)
+                    }
+                ));
+            }
+        } else {
+            fclData.graphSettings.highlightingSettings.stations = createDefaultHighlights().stations;
         }
 
         if (viewData && viewData.edge && viewData.edge.highlightConditions) {
-            const extHighlightingCons: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
-            const extToIntPropMap: Map<string, string> = this.createReverseMap(
-                JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP
-            );
 
-            fclData.graphSettings.highlightingSettings.deliveries = extHighlightingCons.map(extCon => (
-                {
-                    name: extCon.name,
-                    showInLegend: extCon.showInLegend,
-                    color: extCon.color,
-                    invisible: extCon.invisible,
-                    adjustThickness: extCon.adjustThickness,
-                    labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
-                    valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
-                    logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
-                    linePattern: LinePatternType.SOLID
-                }
-            ));
+            const extHighlightingCons: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
+
+            if (extHighlightingCons.length > 0) {
+                const extToIntPropMap: Map<string, string> = this.createReverseMap(
+                    JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP
+                );
+
+                fclData.graphSettings.highlightingSettings.deliveries = extHighlightingCons.map(extCon => (
+                    {
+                        name: extCon.name,
+                        showInLegend: extCon.showInLegend,
+                        color: extCon.color,
+                        invisible: extCon.invisible,
+                        adjustThickness: extCon.adjustThickness,
+                        labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
+                        valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
+                        logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
+                        linePattern: LinePatternType.SOLID
+                    }
+                ));
+            }
+        } else {
+            fclData.graphSettings.highlightingSettings.deliveries = createDefaultHighlights().deliveries;
         }
     }
 

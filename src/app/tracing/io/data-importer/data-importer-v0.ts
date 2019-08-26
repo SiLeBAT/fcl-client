@@ -5,6 +5,7 @@ import { Constants } from './../../util/constants';
 
 import { IDataImporter } from './datatypes';
 import { importSamples } from './sample-importer-v1';
+import { createDefaultHighlights } from './shared';
 
 export class DataImporterV0 implements IDataImporter {
 
@@ -42,6 +43,7 @@ export class DataImporterV0 implements IDataImporter {
                 this.preprocessDataWithSettings(data, fclData);
             }
             importSamples(data, fclData);
+            fclData.graphSettings.highlightingSettings = createDefaultHighlights();
         } else {
             throw new SyntaxError('Invalid data format');
         }
