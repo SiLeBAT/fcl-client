@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91c98c40_46f98da8",
+        "filename": "src/app/tracing/graph/components/graph-legend.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2019-08-28T16:25:23Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 19,
+        "endChar": 44
+      },
+      "revId": "0ca2dd1677e380396d649613efecc92d6f6899f8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
