@@ -26,9 +26,12 @@ import { EffectsModule } from '@ngrx/effects';
 import { NestedMatMenuComponent } from './graph/components/nested-mat-menu.component';
 import { SchemaGraphComponent } from './graph/components/schema-graph.component';
 import { GraphLegendComponent } from './graph/components/graph-legend.component';
+import { NodeSymbolComponent } from './graph/components/node-symbol.component';
 import { ZoomComponent } from './graph/components/zoom.component';
 import { GisGraphComponent } from './graph/components/gis-graph.component';
 import { GraphContextMenuComponent } from './graph/components/graph-context-menu.component';
+import { EdgeSymbolComponent } from './graph/components/edge-symbol.component';
+import { KlecksSymbolComponent } from './graph/components/klecks-symbol.component';
 
 @NgModule({
     imports: [
@@ -57,6 +60,9 @@ import { GraphContextMenuComponent } from './graph/components/graph-context-menu
         GisGraphComponent,
         GraphContextMenuComponent,
         GraphLegendComponent,
+        NodeSymbolComponent,
+        EdgeSymbolComponent,
+        KlecksSymbolComponent,
         ZoomComponent
     ],
     exports: [

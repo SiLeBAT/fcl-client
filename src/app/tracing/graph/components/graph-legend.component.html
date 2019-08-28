@@ -1,11 +1,15 @@
-<div id="legend">
+<div id="legend" [hidden]="isEmpty()">
     <mat-card>
         <mat-card-content>
             <table>
                 <tr *ngFor="let item of legend">
                     <td>{{item.name}}</td>
-                    <td>
-                        <div [style.background-color]="item.color"></div>
+                    <td *ngIf="showStationColumn">
+                        <fcl-node-symbol *ngIf="item.shape || item.stationColor" [shapeType]="item.shape" [fillColor]="item.stationColor"></fcl-node-symbol>
+                        <!-- <fcl-klecks-symbol *ngIf="!item.shape && item.stationColor" [color]="item.stationColor"></fcl-klecks-symbol> -->
+                    </td>
+                    <td *ngIf="showDeliveryColumn">
+                        <fcl-edge-symbol *ngIf="item.deliveryColor" [edgeColor]="item.deliveryColor"></fcl-edge-symbol>
                     </td>
                 </tr>
             </table>

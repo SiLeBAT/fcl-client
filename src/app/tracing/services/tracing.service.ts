@@ -61,6 +61,10 @@ export class TracingService {
                 stations: tracingSettings.stations.map(s => ({
                     ...s,
                     observed: ObservedType.NONE
+                })),
+                deliveries: tracingSettings.deliveries.map(d => ({
+                    ...d,
+                    observed: ObservedType.NONE
                 }))
             }
         };
@@ -118,7 +122,6 @@ export class TracingService {
                 nOutbreaks++;
                 this.visitedStats = {};
                 this.visitedDels = {};
-                // this.visited.clear();
                 this.updateStationScore(data, s.id, s.id);
             }
         });
@@ -142,12 +145,10 @@ export class TracingService {
 
         if (
             !this.visitedStats[station.id] &&
-            // !this.visited.has(station.id) &&
             !station.contained &&
             !station.invisible
         ) {
             this.visitedStats[station.id] = true;
-            // this.visited.add(station.id);
             station.score++;
 
             for (const d of station.incoming) {
@@ -163,15 +164,11 @@ export class TracingService {
             !this.visitedDels[delivery.id] &&
             !delivery.invisible
         ) {
-            // !this.visited.has(delivery.id) && !delivery.invisible) {
             this.visitedDels[delivery.id] = true;
-            // this.visited.add(delivery.id);
             delivery.score++;
 
             const source = data.statMap[delivery.source];
 
-            // if (!this.visited.has(source.id)) {
-            //     this.visited.add(source.id);
             if (!this.visitedStats[source.id]) {
                 this.visitedStats[source.id] = true;
                 source.score++;

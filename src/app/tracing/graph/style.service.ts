@@ -28,7 +28,7 @@ export class StyleService {
 
     createCyStyle(settings: Settings, graphData: GraphServiceData): any {
         const graphSize = this.getProperGraphSize(graphData);
-        return this.createXGraphStyle(graphSize, settings.zoom, settings.nodeSize, graphData.tracingResult.maxScore);
+        return this.createXGraphStyle(graphSize, settings.zoom, settings.nodeSize, settings.fontSize, graphData.tracingResult.maxScore);
     }
 
     private getProperGraphSize(graphData: GraphServiceData): GraphSize {
@@ -62,7 +62,7 @@ export class StyleService {
         };
     }
 
-    private createXGraphStyle(graphSize: GraphSize, zoom: number, nodeSize: number, maxScore: number): any {
+    private createXGraphStyle(graphSize: GraphSize, zoom: number, nodeSize: number, fontSize: number, maxScore: number): any {
 
         const visibleNodeSize = this.getVisibleNodeSize(zoom, nodeSize);
         const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR);
@@ -82,7 +82,8 @@ export class StyleService {
                     {
                         content: 'data(label)',
                         'text-valign': 'bottom',
-                        'text-halign': 'right'
+                        'text-halign': 'right',
+                        'font-size': Math.max(fontSize / zoom, fontSize)
                     }
                     :
                     {}
@@ -100,7 +101,14 @@ export class StyleService {
 
             .selector('edge')
             .style({
-                ...(graphSize !== GraphSize.HUGE ? { content: 'data(label)' } : {}),
+                ...(
+                    graphSize !== GraphSize.HUGE ?
+                    {
+                        content: 'data(label)',
+                        'font-size': Math.max(fontSize / zoom, fontSize)
+                    } :
+                    {}
+                ),
                 'target-arrow-shape': 'triangle-cross',
                 'target-arrow-color': 'rgb(0, 0, 0)',
                 'curve-style': graphSize === GraphSize.SMALL ? 'bezier' : 'straight',

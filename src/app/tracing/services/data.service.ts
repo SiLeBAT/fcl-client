@@ -200,7 +200,8 @@ export class DataService {
                 statSel: undefined,
                 delSel: undefined,
                 statVis: undefined,
-                tracingResult: undefined
+                tracingResult: undefined,
+                legendInfo: undefined
             };
         }
         if (groups) {

@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 import { Utils as UIUtils } from '../../util/ui-utils';
 import { Utils as NonUIUtils } from '../../util/non-ui-utils';
-import { Layout, Position, Size, GraphState, GraphType } from '../../data.model';
+import { Layout, Position, Size, GraphState, GraphType, LegendInfo } from '../../data.model';
 import * as _ from 'lodash';
 import { StyleService } from '../style.service';
 import { Store } from '@ngrx/store';
@@ -42,7 +42,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private static readonly MAX_ZOOM = 100.0;
     private static readonly ZOOM_FACTOR = 1.5;
 
-    private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 50], [Size.MEDIUM, 75], [Size.LARGE, 100]]);
+    private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 12], [Size.MEDIUM, 25], [Size.LARGE, 50]]);
 
     private static readonly FONT_SIZES: Map<Size, number> = new Map([[Size.SMALL, 10], [Size.MEDIUM, 14], [Size.LARGE, 18]]);
 
@@ -62,6 +62,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private graphTypeSubscription: Subscription;
 
     zoomPercentage = 50;
+    legendInfo: LegendInfo;
 
     private zoom: number;
 
@@ -383,7 +384,15 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     private updateGraphStyle(graphState: GisGraphState, graphData: GraphServiceData) {
         if (this.cy && this.cy.style) {
-            this.cy.setStyle(this.styleService.createCyStyle({ ...graphState, zoom: 1 }, graphData));
+            this.cy.setStyle(this.styleService.createCyStyle(
+                {
+                    fontSize: GisGraphComponent.FONT_SIZES.get(graphState.fontSize),
+                    nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+                    zoom: 1
+                },
+                graphData
+            ));
+            this.cy.elements().scratch('_update', true);
         }
     }
 
@@ -466,12 +475,17 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         let yMax = Number.NEGATIVE_INFINITY;
 
         for (const station of graphData.nodeData.map(data => data.station)) {
-            const p = UIUtils.latLonToPosition(station.lat, station.lon, 1.0);
+            if (
+                station.lat !== undefined && station.lat !== null &&
+                station.lon !== undefined && station.lon !== null
+                ) {
+                const p = UIUtils.latLonToPosition(station.lat, station.lon, 1.0);
 
-            xMin = Math.min(xMin, p.x);
-            yMin = Math.min(yMin, p.y);
-            xMax = Math.max(xMax, p.x);
-            yMax = Math.max(yMax, p.y);
+                xMin = Math.min(xMin, p.x);
+                yMin = Math.min(yMin, p.y);
+                xMax = Math.max(xMax, p.x);
+                yMax = Math.max(yMax, p.y);
+            }
         }
 
         let zoom: number;
@@ -522,5 +536,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             ...this.cachedState,
             ...newState
         };
+        this.legendInfo = newData.legendInfo;
     }
 }

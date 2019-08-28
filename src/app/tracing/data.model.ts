@@ -249,6 +249,7 @@ export interface DataServiceData {
     delSel: { [key: string]: boolean };
     statVis: { [key: string]: boolean };
     tracingResult: { maxScore: number };
+    legendInfo: LegendInfo;
 
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
@@ -341,4 +342,22 @@ export interface SetTracingSettingsPayload {
 
 export interface SetHighlightingSettingsPayload {
     highlightingSettings: HighlightingSettings;
+}
+
+interface LegendEntry {
+    label: string;
+    color: Color;
+}
+
+interface StationLegendEntry extends LegendEntry {
+    shape: NodeShapeType;
+}
+
+export interface DeliveryLegendEntry extends LegendEntry {
+    linePattern: LinePatternType;
+}
+
+export interface LegendInfo {
+    stations: StationLegendEntry[];
+    deliveries: DeliveryLegendEntry[];
 }

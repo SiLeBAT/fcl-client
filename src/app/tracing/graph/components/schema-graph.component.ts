@@ -8,7 +8,7 @@ import { ResizeSensor } from 'css-element-queries';
 
 import { Utils } from '../../util/non-ui-utils';
 
-import { GraphState, Layout, Position, Size, GraphType } from '../../data.model';
+import { GraphState, Layout, Position, Size, GraphType, LegendInfo } from '../../data.model';
 
 import * as _ from 'lodash';
 import { LayoutService, LayoutAction } from '../../layout/layout.service';
@@ -61,6 +61,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private graphTypeSubscription: Subscription;
 
     zoomPercentage: number = 50;
+    legendInfo: LegendInfo;
 
     private cy: Cy;
 
@@ -229,7 +230,11 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 // box selection
                 this.cy.on('boxselect', () => this.processGraphElementSelectionChange());
 
-                this.cy.on('layoutstop', () => this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData));
+                this.cy.on('layoutstop', () => {
+                    this.updateZoomPercentage();
+                    this.updateGraphStyle(this.cachedState, this.cachedData);
+                    this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
+                });
 
                 this.contextMenu.connect(this.cy, this.hoverDeliveriesSubject);
 
@@ -472,5 +477,6 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             ...this.cachedState,
             ...newState
         };
+        this.legendInfo = newData.legendInfo;
     }
 }

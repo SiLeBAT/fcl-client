@@ -11,7 +11,9 @@ import {
     DeliveryHighlightingData,
     LogicalCondition,
     OperationType,
-    DeliveryData
+    DeliveryData,
+    LegendInfo,
+    Color
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -215,6 +217,7 @@ export class HighlightingService {
         }
         return {
             highlightingSettings: {
+                ...state,
                 invisibleStations: invisibleStations
             }
         };
@@ -243,74 +246,83 @@ export class HighlightingService {
     }
 
     applyHighlightingProps(state: BasicGraphState, data: DataServiceData): void {
+        const activeStationHighlightings: {[key: string]: boolean} = {};
         data.stations
             .filter((station: StationData) => !station.invisible)
             .forEach((station: StationData) => {
 
-                station.highlightingInfo = this.createStationHighlightingInfo(station, state);
+                station.highlightingInfo = this.createStationHighlightingInfo(station, state, activeStationHighlightings);
 
             });
 
+        const activeDeliveryHighlightings: {[key: string]: boolean} = {};
         data.deliveries
             .filter((delivery: DeliveryData) => !delivery.invisible)
             .forEach((delivery: DeliveryData) => {
-                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state);
+                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, activeDeliveryHighlightings);
             });
+
+        data.legendInfo = this.getLegendInfo(state, { stations: activeStationHighlightings, deliveries: activeDeliveryHighlightings });
     }
 
-    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState) {
-        const deliveryHighlightingData: DeliveryHighlightingData[] = state.highlightingSettings.deliveries;
+    private getLegendInfo(
+        state: BasicGraphState,
+        activeHighlightings: { stations: {[key: string]: boolean}, deliveries: {[key: string]: boolean}}
+    ): LegendInfo {
 
-        const deliveryActiveHighlightingData: DeliveryHighlightingData[] = deliveryHighlightingData
-            .filter(
-                (highData: DeliveryHighlightingData) =>
-                    !highData.invisible && (
-                        !highData.logicalConditions ||
-                        highData.logicalConditions.some(
-                            (andConList: LogicalCondition[]) => {
-                                return andConList.every(
-                                    (condition: LogicalCondition) => {
-                                        const propertyValue = this.getPropertyValueFromElement(delivery, condition.propertyName);
-                                        const func = this.OPERATION_TYPE_TO_FUNCTION_MAP[condition.operationType];
-                                        if (!func) {
-                                            throw new Error(`Operation type ${condition.operationType} not supported`);
-                                        }
-                                        const result = func(condition.value, propertyValue);
+        const isCommonLinkHighlighting: {[key: string]: boolean} = {};
+        this.getCommonLinkEntries(state).forEach(
+            commonLinkHighData => isCommonLinkHighlighting[commonLinkHighData.name] = true
+        );
 
-                                        return result;
-                                    }
-                                );
-                            }
-                        )
-                    )
-            );
-
-        const label = deliveryActiveHighlightingData
-            .filter((highData: DeliveryHighlightingData) => !!highData.labelProperty)
-            .map((highData: DeliveryHighlightingData) =>
-                this.mapPropertyValueToString(this.getPropertyValueFromElement(delivery, highData.labelProperty))
+        return {
+            stations: state.highlightingSettings.stations.filter(
+                hData => hData.showInLegend && (activeHighlightings.stations[hData.name] || isCommonLinkHighlighting[hData.name])
+            ).map(
+                hData => ({ label: hData.name, color: this.mapToColor(hData.color), shape: hData.shape })
+            ),
+            deliveries: state.highlightingSettings.deliveries.filter(
+                hData => hData.showInLegend && (activeHighlightings.deliveries[hData.name])
+            ).map(
+                hData => ({ label: hData.name, color: this.mapToColor(hData.color), linePattern: hData.linePattern })
             )
-            .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
-
-        const color = deliveryActiveHighlightingData
-            .filter((highData: DeliveryHighlightingData) => !!highData.color)
-            .map((highData: DeliveryHighlightingData) => highData.color);
-
-        const deliveryHighlightingInfo: DeliveryHighlightingInfo = {
-            label: label,
-            color: color
         };
-
-        return deliveryHighlightingInfo;
     }
 
-    private createStationHighlightingInfo(station: StationData, state: BasicGraphState): StationHighlightingInfo {
-        const stationHighlightingData: StationHighlightingData[] = state.highlightingSettings.stations;
+    private mapToColor(color: number[]): Color {
+        return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
+    }
 
-        const stationActiveHightlightingData: StationHighlightingData[] = stationHighlightingData.filter(
+    private getCommonLinkEntries(state: BasicGraphState): StationHighlightingData[] {
+        return state.highlightingSettings.stations.filter(hSettings => this.isHighlightingSettingCommonLink(hSettings));
+    }
+
+    private isHighlightingSettingCommonLink(highlightingSetting: StationHighlightingData | DeliveryHighlightingData): boolean {
+        if (
+            !highlightingSetting.invisible &&
+            highlightingSetting.showInLegend &&
+            highlightingSetting.logicalConditions &&
+            highlightingSetting.logicalConditions.length === 1 &&
+            highlightingSetting.logicalConditions[0].length === 1
+        ) {
+            const logicalCondition = highlightingSetting.logicalConditions[0][0];
+            return (
+                logicalCondition.propertyName === 'score' &&
+                logicalCondition.operationType === OperationType.EQUAL &&
+                logicalCondition.value === '1'
+            );
+        }
+        return false;
+    }
+
+    private getActiveHighlightingData<
+        T extends StationData | DeliveryData,
+        K extends (T extends StationData ? StationHighlightingData : DeliveryHighlightingData)
+    >(fclElement: T, highlightingData: K[]): K[] {
+        return highlightingData.filter(
             highData => !highData.invisible && (!highData.logicalConditions || highData.logicalConditions.some(andConList => {
                 return andConList.every((condition: LogicalCondition) => {
-                    const propertyValue = this.getPropertyValueFromElement(station, condition.propertyName);
+                    const propertyValue = this.getPropertyValueFromElement(fclElement, condition.propertyName);
                     const func = this.OPERATION_TYPE_TO_FUNCTION_MAP[condition.operationType];
                     if (!func) {
                         throw new Error(`Operation type ${condition.operationType} not supported`);
@@ -320,27 +332,59 @@ export class HighlightingService {
                     return result;
                 });
             })));
+    }
+    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, activeList: { [key: string]: boolean }) {
+        const activeHighlightingData = this.getActiveHighlightingData(delivery, state.highlightingSettings.deliveries);
 
-        const label = stationActiveHightlightingData
-                .filter(highData => !!highData.labelProperty)
-                .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(station, highData.labelProperty)))
-                .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
+        const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingData);
 
-        const shape = stationActiveHightlightingData
+        activeHighlightingData.forEach(hData => activeList[hData.name] = true);
+
+        return deliveryHighlightingInfo;
+    }
+
+    private createStationHighlightingInfo(
+        station: StationData,
+        state: BasicGraphState,
+        activeList: { [key: string]: boolean }
+    ): StationHighlightingInfo {
+
+        const activeHighlightingData = this.getActiveHighlightingData(station, state.highlightingSettings.stations);
+
+        const shape = activeHighlightingData
                 .filter(highData => !!highData.shape)
                 .map(highData => highData.shape);
 
-        const color = stationActiveHightlightingData
-            .filter((highData: StationHighlightingData) => !!highData.color)
-            .map((highData: StationHighlightingData) => highData.color);
+        activeHighlightingData.forEach(hData => activeList[hData.name] = true);
 
         const stationHighInfo: StationHighlightingInfo = {
-            label: label,
-            color: color,
+            ...this.getCommonHighlightingInfo(station, activeHighlightingData),
             shape: shape.length > 0 ? shape[0] : null
         };
 
         return stationHighInfo;
+    }
+
+    private getCommonHighlightingInfo<
+        T extends StationData | DeliveryData,
+        K extends (T extends StationData ? StationHighlightingData : DeliveryHighlightingData)
+    >(
+        fclElement: T,
+        highlightingData: K[]
+    ): { label: string[], color: number[][] } {
+        const label = highlightingData
+            .filter(highData => !!highData.labelProperty)
+            .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, highData.labelProperty)))
+            .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
+
+        const color = highlightingData
+            .filter(highData => !!highData.color)
+            .map(highData => highData.color);
+
+        return {
+            label: label,
+            color: color
+        };
     }
 
     private getPropertyValueFromElement(element: StationData | DeliveryData, propertyName: string): PropertyValueType {
