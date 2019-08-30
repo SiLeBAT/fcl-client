@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2b85a11c_1e470725",
+        "filename": "src/app/graph-editor/container/graph-editor-container/graph-editor-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-08-30T10:01:38Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b1952d4b_3d871670",
+      "range": {
+        "startLine": 22,
+        "startChar": 12,
+        "endLine": 22,
+        "endChar": 21
+      },
+      "revId": "0257dbc2be7f27de7117201f33771f68e36fcdbd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81ae44d4_d4fc8654",
         "filename": "src/app/graph-editor/container/graph-editor-container/graph-editor-container.component.ts",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "4376c279_29c9bf35",
+        "filename": "src/app/graph-editor/container/graph-editor-container/graph-editor-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-08-30T10:01:38Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "81ae44d4_d4fc8654",
+      "range": {
+        "startLine": 40,
+        "startChar": 17,
+        "endLine": 40,
+        "endChar": 22
+      },
+      "revId": "0257dbc2be7f27de7117201f33771f68e36fcdbd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2682a917_4371e92c",
         "filename": "src/app/graph-editor/services/can-deactivate.guard.ts",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "0257dbc2be7f27de7117201f33771f68e36fcdbd",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3bf2e45_74c18427",
+        "filename": "src/app/graph-editor/services/can-deactivate.guard.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-08-30T10:01:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2682a917_4371e92c",
+      "range": {
+        "startLine": 6,
+        "startChar": 17,
+        "endLine": 6,
+        "endChar": 39
+      },
+      "revId": "0257dbc2be7f27de7117201f33771f68e36fcdbd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
