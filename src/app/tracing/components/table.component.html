@@ -1,13 +1,11 @@
-<div id="container" #container>
-    <mat-expansion-panel>
+<div id="container">
+    <mat-expansion-panel id="tableSettings">
         <mat-expansion-panel-header>
             <mat-panel-title>
             Table Settings
             </mat-panel-title>
         </mat-expansion-panel-header>
-
-        <fcl-table-settings></fcl-table-settings><br>
-
+        <fcl-table-settings></fcl-table-settings>
     </mat-expansion-panel>
     <div id="optionsBar">
         <button mat-raised-button (click)="onSelectAll()">Select All</button>
@@ -15,10 +13,12 @@
             <input matInput [(ngModel)]="filter" (ngModelChange)="onFilterChange()" placeholder="Filter">
         </mat-form-field>
     </div>
-    <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" scrollbarV="true">
-    </ngx-datatable>
-    <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
-        <mat-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary">
-        </mat-checkbox>
-    </ng-template>
+    <div id="dataTableContainer">
+        <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" scrollbarV="true" [ngStyle]="style">
+        </ngx-datatable>
+        <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
+            <mat-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary">
+            </mat-checkbox>
+        </ng-template>
+    </div>
 </div>
