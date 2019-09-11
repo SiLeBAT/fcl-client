@@ -4,6 +4,7 @@ import {
     TracingSettings, ObservedType
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
+import { DeliveryPropertiesComponent } from '../dialog/delivery-properties/delivery-properties.component';
 
 interface TracingPayload {
     tracingSettings: TracingSettings;
@@ -49,6 +50,20 @@ export class TracingService {
                 stations: tracingSettings.stations.map(s => ({
                     ...s,
                     crossContamination: (idSet[s.id] ? crossContamination : s.crossContamination)
+                }))
+            }
+        };
+    }
+
+    getSetStationKillContPayload(tracingSettings: TracingSettings, ids: string[], killContamination: boolean): SetTracingSettingsPayload {
+        const idSet = Utils.createStringSet(ids);
+        return {
+            tracingSettings: {
+                ...tracingSettings,
+                stations: tracingSettings.stations.map(s => ({
+                    ...s,
+                    crossContamination: (idSet[s.id] && killContamination ? false : s.crossContamination),
+                    killContamination: (idSet[s.id] ? killContamination : s.crossContamination)
                 }))
             }
         };
@@ -162,28 +177,31 @@ export class TracingService {
 
         if (
             !this.visitedDels[delivery.id] &&
-            !delivery.invisible
+            !delivery.invisible &&
+            !delivery.killContamination
         ) {
             this.visitedDels[delivery.id] = true;
             delivery.score++;
 
             const source = data.statMap[delivery.source];
 
-            if (!this.visitedStats[source.id]) {
-                this.visitedStats[source.id] = true;
-                source.score++;
-            }
+            if (!source.killContamination) {
+                if (!this.visitedStats[source.id]) {
+                    this.visitedStats[source.id] = true;
+                    source.score++;
+                }
 
-            this.getBackwardDeliveries(data, source, delivery).forEach(d =>
-                this.updateDeliveryScore(data, d, outbreakId)
-            );
+                this.getBackwardDeliveries(data, source, delivery).forEach(d =>
+                    this.updateDeliveryScore(data, d, outbreakId)
+                );
+            }
         }
     }
 
     private showDeliveryForwardTraceInternal(data: DataServiceData, id: string) {
         const delivery = data.delMap[id];
 
-        if (!delivery.forward && !delivery.invisible) {
+        if (!delivery.forward && !delivery.invisible && !delivery.killContamination) {
             delivery.forward = true;
 
             const targetStation = data.statMap[delivery.target];
@@ -242,7 +260,9 @@ export class TracingService {
     }
 
     private getBackwardDeliveries(data: DataServiceData, station: StationData, delivery: DeliveryData): string[] {
-        if (station.crossContamination) {
+        if (station.killContamination) {
+            return [];
+        } else if (station.crossContamination) {
             if (delivery.date != null) {
                 const date = Utils.stringToDate(delivery.date);
                 const backward: Set<string> = new Set(station.connections.filter(c => c.target === delivery.id).map(c => c.source));
@@ -303,14 +323,14 @@ export class TracingService {
     }
 
     traceStation(data: DataServiceData, station: StationData, forward = true, backward = true) {
-        if (forward) {
-            data.getDelById(station.outgoing).filter(d => !d.invisible && !d.forward).forEach(delivery => {
+        if (forward && !station.killContamination) {
+            data.getDelById(station.outgoing).filter(d => !d.invisible && !d.forward && !d.killContamination).forEach(delivery => {
                 delivery.forward = true;
                 this.traceDelivery(data, delivery, true, false);
             });
         }
         if (backward) {
-            data.getDelById(station.incoming).filter(d => !d.invisible && !d.backward).forEach(delivery => {
+            data.getDelById(station.incoming).filter(d => !d.invisible && !d.backward && !d.killContamination).forEach(delivery => {
                 delivery.backward = true;
                 this.traceDelivery(data, delivery, false, true);
             });
@@ -318,25 +338,29 @@ export class TracingService {
     }
 
     traceDelivery(data: DataServiceData, delivery: DeliveryData, forward = true, backward = true) {
-        if (forward) {
+        if (forward && !delivery.killContamination) {
             const targetStation = data.statMap[delivery.target];
             targetStation.forward = true;
-            data.getDelById(
-                this.getForwardDeliveries(data, targetStation, delivery)
-            ).filter(forDel => !forDel.invisible && !forDel.forward).forEach(forDel => {
-                forDel.forward = true;
-                this.traceDelivery(data, forDel, true, false);
-            });
+            if (!targetStation.killContamination) {
+                data.getDelById(
+                    this.getForwardDeliveries(data, targetStation, delivery)
+                ).filter(forDel => !forDel.invisible && !forDel.forward).forEach(forDel => {
+                    forDel.forward = true;
+                    this.traceDelivery(data, forDel, true, false);
+                });
+            }
         }
         if (backward) {
             const sourceStation = data.statMap[delivery.source];
-            sourceStation.backward = true;
-            data.getDelById(
-                this.getBackwardDeliveries(data, sourceStation, delivery)
-            ).filter(backDel => !backDel.invisible && !backDel.backward).forEach(backDel => {
-                backDel.backward = true;
-                this.traceDelivery(data, backDel, false, true);
-            });
+            if (!sourceStation.killContamination) {
+                sourceStation.backward = true;
+                data.getDelById(
+                    this.getBackwardDeliveries(data, sourceStation, delivery)
+                ).filter(backDel => !backDel.invisible && !backDel.backward).forEach(backDel => {
+                    backDel.backward = true;
+                    this.traceDelivery(data, backDel, false, true);
+                });
+            }
         }
     }
 

@@ -226,6 +226,7 @@ export class HighlightingService {
     getClearInvisiblitiesPayload(state: HighlightingSettings): SetHighlightingSettingsPayload {
         return {
             highlightingSettings: {
+                ...state,
                 invisibleStations: []
             }
         };

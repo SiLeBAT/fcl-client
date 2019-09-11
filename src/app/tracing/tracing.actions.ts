@@ -9,6 +9,7 @@ export enum TracingActionTypes {
     ShowStationPropertiesMSA = '[Tracing] Show Station Properties',
     MarkStationsAsOutbreakMSA = '[Tracing] Mark Stations as Outbreak',
     SetStationCrossContaminationMSA = '[Tracing] Set Station Cross Contamination',
+    SetStationKillContaminationMSA = '[Tracing] Set Station Kill Contamination',
     MakeStationsInvisibleMSA = '[Tracing] Make Stations Invisible',
     ShowDeliveryPropertiesMSA = '[Tracing] Show Delivery Properties',
     ShowStationTraceMSA = '[Tracing] Show Station Trace',
@@ -58,6 +59,12 @@ export class SetStationCrossContaminationMSA implements Action {
     readonly type = TracingActionTypes.SetStationCrossContaminationMSA;
 
     constructor(public payload: { stationIds: string[], crossContamination: boolean }) {}
+}
+
+export class SetStationKillContaminationMSA implements Action {
+    readonly type = TracingActionTypes.SetStationKillContaminationMSA;
+
+    constructor(public payload: { stationIds: string[], killContamination: boolean }) {}
 }
 
 export class MakeStationsInvisibleMSA implements Action {

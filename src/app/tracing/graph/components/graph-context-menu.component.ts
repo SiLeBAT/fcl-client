@@ -4,7 +4,7 @@ import { Store, Action } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as tracingActions from '../../tracing.actions';
 import * as groupingActions from '../../grouping/grouping.actions';
-import { Position, GroupType, GroupMode, ObservedType } from '../../data.model';
+import { Position, GroupType, GroupMode, ObservedType, StationData } from '../../data.model';
 import { Cy, CyNode, CyEdge } from '../graph.model';
 import { Subject } from 'rxjs';
 import { LayoutService, LayoutActionTypes } from '@app/tracing/layout/layout.service';
@@ -200,24 +200,25 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
         if (cy == null || node == null) {
             return [];
         }
-        const selectedNodes = cy.nodes(':selected');
-        const multipleStationsSelected = node.selected() && selectedNodes.size() > 1;
-        const selectedIds = multipleStationsSelected ? selectedNodes.map(s => s.data().station.id) : [node.data().station.id];
-        const allOutbreakStations = multipleStationsSelected ? selectedNodes.allAre('[?outbreak]') : node.data('outbreak');
-        const allCrossContaminationStations = multipleStationsSelected
-            ? selectedNodes.allAre('[?crossContamination]')
-            : node.data('crossContamination');
-        const allMetaStations =
-            multipleStationsSelected ?
-            selectedNodes.map(n => n.data().station.contains.length > 0).every(v => v) :
-            node.data().station.contains.length > 0;
+        const selectedStations: StationData[] = (
+            node.selected ?
+            cy.nodes(':selected').map(e => e.data().station) :
+            [node.data().station]
+        );
+
+        const multipleStationsSelected = selectedStations.length > 1;
+        const selectedIds = selectedStations.map(s => s.id);
+        const allOutbreakStations = selectedStations.every(s => s.outbreak);
+        const allCrossContaminationStations = selectedStations.every(s => s.crossContamination);
+        const allKillContaminationStations = selectedStations.every(s => s.killContamination);
+        const allMetaStations = selectedStations.every(s => s.contains && s.contains.length > 0);
 
         return [
             {
                 ...MenuItemStrings.showProperties,
                 disabled: multipleStationsSelected,
                 action: new tracingActions.ShowStationPropertiesMSA({
-                    stationId: node.data().station.id,
+                    stationId: selectedIds[0],
                     hoverDeliveriesSubject: hoverDeliveriesSubject
                 })
             },
@@ -233,6 +234,15 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
                 action: new tracingActions.SetStationCrossContaminationMSA({
                     stationIds: selectedIds,
                     crossContamination: !allCrossContaminationStations
+                })
+            },
+            {
+                ...(allKillContaminationStations ?
+                    MenuItemStrings.unsetStationKillContamination :
+                    MenuItemStrings.setStationKillContamination),
+                action: new tracingActions.SetStationKillContaminationMSA({
+                    stationIds: selectedIds,
+                    killContamination: !allKillContaminationStations
                 })
             },
             {

@@ -164,6 +164,27 @@ export class TracingEffects {
     );
 
     @Effect()
+    setStationKillCantamination$ = this.actions$.pipe(
+        ofType<tracingEffectActions.SetStationKillContaminationMSA>(
+            tracingEffectActions.TracingActionTypes.SetStationKillContaminationMSA
+        ),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
+        mergeMap(([action, state]) => {
+            const stationIds = action.payload.stationIds;
+            const killContamination = action.payload.killContamination;
+            try {
+                const payload = this.tracingService.getSetStationKillContPayload(state, stationIds, killContamination);
+                if (payload) {
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
+                }
+            } catch (error) {
+                this.alertService.error(`Station kill contamination could not be set!, error: ${error}`);
+            }
+            return EMPTY;
+        })
+    );
+
+    @Effect()
     markStationsAsOutbreak$ = this.actions$.pipe(
         ofType<tracingEffectActions.MarkStationsAsOutbreakMSA>(tracingEffectActions.TracingActionTypes.MarkStationsAsOutbreakMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
