@@ -179,8 +179,26 @@ export function createDefaultHighlights(): HighlightingSettings {
                     []
                 ],
                 shape: null
+            },
+            {
+                name: 'Kill Contamination',
+                showInLegend: true,
+                color: [ 153, 153, 153 ],
+                invisible: false,
+                adjustThickness: false,
+                labelProperty: null,
+                valueCondition: null,
+                logicalConditions: [
+                    [
+                        {
+                            propertyName: 'killContamination',
+                            operationType: OperationType.EQUAL,
+                            value: '1'
+                        }
+                    ]
+                ],
+                shape: null
             }
-
         ],
 
         deliveries: [
@@ -269,6 +287,25 @@ export function createDefaultHighlights(): HighlightingSettings {
                     [
                         {
                             propertyName: 'backward',
+                            operationType: OperationType.EQUAL,
+                            value: '1'
+                        }
+                    ]
+                ],
+                linePattern: LinePatternType.SOLID
+            },
+            {
+                name: 'Kill Contamination',
+                showInLegend: true,
+                color: [ 153, 153, 153 ],
+                invisible: false,
+                adjustThickness: false,
+                labelProperty: null,
+                valueCondition: null,
+                logicalConditions: [
+                    [
+                        {
+                            propertyName: 'killContamination',
                             operationType: OperationType.EQUAL,
                             value: '1'
                         }
