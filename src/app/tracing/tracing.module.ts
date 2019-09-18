@@ -13,6 +13,7 @@ import { DialogSelectComponent } from './dialog/dialog-select/dialog-select.comp
 import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialog-single-select.component';
 import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
+import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/deliveries-properties.component';
 
 import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
 import { StoreModule } from '@ngrx/store';
@@ -53,6 +54,7 @@ import { KlecksSymbolComponent } from './graph/components/klecks-symbol.componen
         DialogSingleSelectComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
+        DeliveriesPropertiesComponent,
         GraphSettingsComponent,
         TableSettingsComponent,
         NestedMatMenuComponent,
@@ -75,7 +77,8 @@ import { KlecksSymbolComponent } from './graph/components/klecks-symbol.componen
         DialogSelectComponent,
         DialogSingleSelectComponent,
         StationPropertiesComponent,
-        DeliveryPropertiesComponent
+        DeliveryPropertiesComponent,
+        DeliveriesPropertiesComponent
     ]
 })
 export class TracingModule { }

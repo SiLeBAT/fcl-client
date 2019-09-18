@@ -1,47 +1,7 @@
+@import '~@swimlane/ngx-datatable/src/themes/material.scss';
+
 ngx-datatable {
     background: rgb(255, 255, 255);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
-    user-select: none !important;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
-}
-
-/* noinspection CssUnusedSymbol */
-ngx-datatable .empty-row {
-    height: 50px;
-    text-align: center;
-    color: rgb(32, 32, 32);
-    padding: 10px;
-}
-
-ngx-datatable datatable-header {
-    border-bottom: 1px solid rgb(150, 150, 150);
-}
-
-ngx-datatable datatable-header-cell {
-    text-align: left;
-    padding-top: 10px;
-    padding-left: 10px;
-    color: rgb(64, 64, 64);
-    transition: width 0.3s ease;
-    line-height: 1 !important;
-    font-weight: bold;
-}
-
-ngx-datatable datatable-body-cell {
-    text-align: left;
-    padding-left: 10px;
-    color: rgb(32, 32, 32);
-    transition: width 0.3s ease;
-    line-height: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-}
-
-ngx-datatable datatable-scroller {
-    width: 100% !important;
-}
-
-ngx-datatable datatable-body {
-    overflow-x: hidden !important;
 }

@@ -25,6 +25,8 @@ type ConditionValueType = string;
 })
 export class HighlightingService {
 
+    static readonly DEFAULT_DELIVERY_COLOR: Color = { r: 0, g: 0, b: 0 };
+
     private readonly OPERATION_TYPE_TO_FUNCTION_MAP: {
         [key: string]: (conditionValue: ConditionValueType, propertyValue: PropertyValueType) => boolean
     } = {

@@ -21,10 +21,12 @@ import {
     MAT_LABEL_GLOBAL_OPTIONS,
     MatTooltipModule
 } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
     imports: [],
     exports: [
+        MatAutocompleteModule,
         MatButtonModule,
         MatCardModule,
         MatCheckboxModule,

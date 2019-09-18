@@ -63,7 +63,7 @@ interface CyElementCollection<E> {
     remove(): void;
     forEach(a: (b: E) => void): void;
     scratch(a: string, b: boolean): void;
-    filter(a: (b: E) => boolean): CyElementCollection<E>;
+    filter(a: ((b: E) => boolean) | string): CyElementCollection<E>;
     positions(a: (b: CyNode) => Position): void;
 }
 

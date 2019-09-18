@@ -81,7 +81,7 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
         } else if (contextGraphElement.isNode()) {
             return this.createStationActions(cy, contextGraphElement as CyNode, hoverDeliveriesSubject);
         } else if (contextGraphElement.isEdge()) {
-            return this.createDeliveryActions(contextGraphElement as CyEdge);
+            return this.createDeliveryActions(cy, contextGraphElement as CyEdge);
         } else {
             return [];
         }
@@ -262,13 +262,18 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
         ];
     }
 
-    private createDeliveryActions(edge: CyEdge): MenuItemData[] {
+    private createDeliveryActions(cy: Cy, edge: CyEdge): MenuItemData[] {
+        const selectedIds: string[] = (
+            edge.selected() ?
+            [].concat(...cy.edges(':selected').map(e => e.data().deliveries.filter(d => d.selected).map(d => d.id))) :
+            edge.data().deliveries.map(d => d.id)
+        );
+
         const isMerged = edge.data().deliveries.length > 1;
         return [
             {
                 ...MenuItemStrings.showProperties,
-                disabled: isMerged,
-                action: new tracingActions.ShowDeliveryPropertiesMSA({ deliveryId: edge.data().deliveries[0].id })
+                action: new tracingActions.ShowDeliveryPropertiesMSA({ deliveryIds: selectedIds })
             },
             {
                 ...this.createTraceMenuItemData(edge),

@@ -46,7 +46,7 @@ export class ShowStationPropertiesMSA implements Action {
 export class ShowDeliveryPropertiesMSA implements Action {
     readonly type = TracingActionTypes.ShowDeliveryPropertiesMSA;
 
-    constructor(public payload: { deliveryId: string }) {}
+    constructor(public payload: { deliveryIds: string[] }) {}
 }
 
 export class MarkStationsAsOutbreakMSA implements Action {

@@ -7,12 +7,13 @@ import * as tracingStateActions from './state/tracing.actions';
 import * as tracingEffectActions from './tracing.actions';
 import * as fromTracing from './state/tracing.reducers';
 import * as tracingSelectors from './state/tracing.selectors';
-import { map, catchError, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { mergeMap, withLatestFrom } from 'rxjs/operators';
 import { EMPTY, of } from 'rxjs';
 import { DeliveryData, StationData } from './data.model';
 import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
+import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/deliveries-properties.component';
 import { MatDialog } from '@angular/material';
 import { TracingService } from './services/tracing.service';
 import { HighlightingService } from './services/highlighting.service';
@@ -72,16 +73,22 @@ export class TracingEffects {
         ofType<tracingEffectActions.ShowDeliveryPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryPropertiesMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
         mergeMap(([action, state]) => {
-            const deliveryId = action.payload.deliveryId;
+            const deliveryIds = action.payload.deliveryIds;
             const data = this.dataService.getData(state);
-            const delivery = data.delMap[deliveryId];
+            if (deliveryIds.length === 1) {
+                const delivery = data.delMap[deliveryIds[0]];
 
-            if (delivery) {
-                const dialogData: DeliveryPropertiesData = {
-                    delivery: delivery
-                };
+                if (delivery) {
+                    const dialogData: DeliveryPropertiesData = {
+                        delivery: delivery
+                    };
 
-                this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });
+                    this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });
+                }
+            } else {
+                this.dialogService.open(DeliveriesPropertiesComponent, {
+                    data: { deliveryIds: deliveryIds }
+                });
             }
             return EMPTY;
         })
