@@ -20,7 +20,7 @@ export class StyleService {
     private static readonly RENDERED_MIN_EDGE_WIDTH = 0.5;
     private static readonly NODE_SIZE_TO_BORDER_WIDTH_FACTOR = 1 / 20;
     private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 1 / 75;
-    private static readonly SELECTED_EDGE_WIDTH_FACTOR = 2;
+    private static readonly SELECTED_EDGE_WIDTH_FACTOR = 5;
     private static readonly META_NODE_BORDER_WIDTH_FACTOR = 2;
     private static readonly SELECTED_NODE_BORDER_WIDTH_FACTOR = 2;
 
