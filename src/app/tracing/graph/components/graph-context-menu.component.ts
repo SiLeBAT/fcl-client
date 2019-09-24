@@ -201,7 +201,7 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
             return [];
         }
         const selectedStations: StationData[] = (
-            node.selected ?
+            node.selected() ?
             cy.nodes(':selected').map(e => e.data().station) :
             [node.data().station]
         );
