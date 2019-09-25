@@ -363,7 +363,6 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         if (this.cy.elements().size() === 0) {
             this.cy.reset();
         } else {
-            this.cy.nodes().style({ 'font-size': 0 });
             this.cy.fit();
         }
         this.applyLayoutToStateIfNecessary();
