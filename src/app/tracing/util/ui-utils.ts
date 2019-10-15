@@ -1,3 +1,4 @@
+import { StationData } from './../data.model';
 import {
     DialogAlignment, Position
 } from '../data.model';
@@ -61,4 +62,15 @@ export class Utils {
         style.top = pos.y + 'px';
         trigger.openMenu();
     }
+
+    static hasVisibleStationsWithGisInfo(stations: StationData[]): boolean {
+        const stationsWithGis = stations
+            .filter((station: StationData) => !station.invisible)
+            .filter((station: StationData) =>
+                station.lat !== undefined && station.lat !== null &&
+                station.lon !== undefined && station.lon !== null)
+
+        return stationsWithGis.length > 0;
+    }
+
 }

@@ -4,7 +4,7 @@
 
 <div class="sidenav-elements">
     <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
-        <mat-radio-button *ngFor="let type of graphTypes" [value]="type">
+        <mat-radio-button *ngFor="let type of graphTypes" [value]="type" #graphtypeRadioButton [disabled]="type === 'GIS' ? !hasGisInfo : false">
             {{ type }}
         </mat-radio-button>
     </mat-radio-group>
