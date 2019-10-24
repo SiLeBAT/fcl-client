@@ -1,4 +1,4 @@
-import { FclData, GraphSettings, ObservedType, TableSettings } from '../../data.model';
+import { FclData, GraphSettings, ObservedType, TableSettings, MergeDeliveriesType } from '../../data.model';
 
 import { Utils } from './../../util/non-ui-utils';
 import { Constants } from './../../util/constants';
@@ -88,8 +88,11 @@ export class DataImporterV0 implements IDataImporter {
             type:  data.graphSettings.type || fclData.graphSettings.type,
             nodeSize: data.graphSettings.nodeSize || fclData.graphSettings.type,
             fontSize: data.graphSettings.fontSize || fclData.graphSettings.fontSize,
-            mergeDeliveries:
-                data.graphSettings.mergeDeliveries != null ? data.graphSettings.mergeDeliveries : fclData.graphSettings.mergeDeliveries,
+            mergeDeliveriesType: (
+                data.graphSettings.mergeDeliveries !== null && data.graphSettings.mergeDeliveries !== undefined ?
+                (data.graphSettings.mergeDeliveries ? MergeDeliveriesType.MERGE_ALL : MergeDeliveriesType.NO_MERGE) :
+                fclData.graphSettings.mergeDeliveriesType
+            ),
             skipUnconnectedStations:
                 data.graphSettings.skipUnconnectedStations != null ?
                 data.graphSettings.skipUnconnectedStations :

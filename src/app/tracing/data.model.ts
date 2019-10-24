@@ -19,9 +19,9 @@ export interface FclElements {
 
 export interface StationStoreData {
     id: string;
-    name: string;
-    lat: number;
-    lon: number;
+    name?: string;
+    lat?: number;
+    lon?: number;
     incoming: string[];
     outgoing: string[];
     connections: Connection[];
@@ -30,10 +30,10 @@ export interface StationStoreData {
 
 export interface DeliveryStoreData {
     id: string;
-    name: string;
-    lot: string;
-    lotKey: string;
-    date: string;
+    name?: string;
+    lot?: string;
+    lotKey?: string;
+    date?: string;
     source: string;
     target: string;
     properties: { name: string, value: string }[];
@@ -89,7 +89,7 @@ export interface GraphSettings {
     type: GraphType;
     nodeSize: Size;
     fontSize: Size;
-    mergeDeliveries: boolean;
+    mergeDeliveriesType: MergeDeliveriesType;
     showLegend: boolean;
     showZoom: boolean;
     skipUnconnectedStations: boolean;
@@ -135,6 +135,15 @@ export enum NodeShapeType {
     STAR = 'star',
     DIAMOND = 'diamond'
 }
+
+export enum MergeDeliveriesType {
+    MERGE_ALL,
+    MERGE_LOT_WISE,
+    MERGE_PRODUCT_WISE,
+    MERGE_LABEL_WISE,
+    NO_MERGE
+}
+
 export interface LogicalCondition {
     propertyName: string;
     operationType: OperationType;
@@ -193,7 +202,7 @@ export interface TracingSettings {
 
 export interface GroupData {
     id: string;
-    name: string;
+    name?: string;
     contains: string[];
     groupType: GroupType;
 }

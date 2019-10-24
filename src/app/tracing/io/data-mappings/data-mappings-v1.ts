@@ -1,4 +1,4 @@
-import { Size, GroupType, OperationType, ValueType, NodeShapeType } from '../../data.model';
+import { Size, GroupType, OperationType, ValueType, NodeShapeType, MergeDeliveriesType } from '../../data.model';
 import { Map as ImmutableMap } from 'immutable';
 
 export interface ColumnInfo {
@@ -32,99 +32,110 @@ export class Constants {
     static readonly NODE_POSITIONS = 'graph.node.positions';
 
     static readonly STATION_PROP_INT_TO_EXT_MAP: ImmutableMap<
-    string,
-    ColumnInfo
-  > = ImmutableMap({
-      id: { columnId: 'ID', type: 'string' },
-      name: { columnId: 'Name', type: 'string' },
-      lat: { columnId: 'GeocodingLatitude', type: 'double' },
-      lon: {
-          columnId: 'GeocodingLongitude',
-          type: 'double'
-      },
-      weight: { columnId: 'Weight', type: 'double' },
-      crossContamination: { columnId: 'CrossContamination', type: 'boolean' },
-      killContamination: { columnId: 'KillContamination', type: 'boolean' },
-      forward: { columnId: 'Forward', type: 'boolean' },
-      backward: { columnId: 'Backward', type: 'boolean' },
-      score: { columnId: 'Score', type: 'boolean' },
-      isMeta: { columnId: 'IsMeta', type: 'boolean' },
-      observed: { columnId: 'Observed', type: 'boolean' }
-  });
+        string,
+        ColumnInfo
+    > = ImmutableMap({
+        id: { columnId: 'ID', type: 'string' },
+        name: { columnId: 'Name', type: 'string' },
+        lat: { columnId: 'GeocodingLatitude', type: 'double' },
+        lon: {
+            columnId: 'GeocodingLongitude',
+            type: 'double'
+        },
+        weight: { columnId: 'Weight', type: 'double' },
+        crossContamination: { columnId: 'CrossContamination', type: 'boolean' },
+        killContamination: { columnId: 'KillContamination', type: 'boolean' },
+        forward: { columnId: 'Forward', type: 'boolean' },
+        backward: { columnId: 'Backward', type: 'boolean' },
+        score: { columnId: 'Score', type: 'boolean' },
+        isMeta: { columnId: 'IsMeta', type: 'boolean' },
+        observed: { columnId: 'Observed', type: 'boolean' }
+    });
 
     static readonly DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
-    string,
-    ColumnInfo
-  > = ImmutableMap({
-      id: { columnId: 'ID', type: 'string' },
-      name: { columnId: 'Name', type: 'string' },
-      source: { columnId: 'from', type: 'string' },
-      target: { columnId: 'to', type: 'string' },
-      lot: { columnId: 'Lot ID', type: 'string' },
-      lotKey: { columnId: 'Product_k', type: 'string' },
-      weight: { columnId: 'Weight', type: 'double' },
-      crossContamination: { columnId: 'CrossContamination', type: 'boolean' },
-      killContamination: { columnId: 'KillContamination', type: 'boolean' },
-      forward: { columnId: 'Forward', type: 'boolean' },
-      backward: { columnId: 'Backward', type: 'boolean' },
-      score: { columnId: 'Score', type: 'boolean' },
-      observed: { columnId: 'Observed', type: 'boolean' }
-  });
+        string,
+        ColumnInfo
+    > = ImmutableMap({
+        id: { columnId: 'ID', type: 'string' },
+        name: { columnId: 'Name', type: 'string' },
+        source: { columnId: 'from', type: 'string' },
+        target: { columnId: 'to', type: 'string' },
+        lot: { columnId: 'Lot ID', type: 'string' },
+        lotKey: { columnId: 'Product_k', type: 'string' },
+        weight: { columnId: 'Weight', type: 'double' },
+        crossContamination: { columnId: 'CrossContamination', type: 'boolean' },
+        killContamination: { columnId: 'KillContamination', type: 'boolean' },
+        forward: { columnId: 'Forward', type: 'boolean' },
+        backward: { columnId: 'Backward', type: 'boolean' },
+        score: { columnId: 'Score', type: 'boolean' },
+        observed: { columnId: 'Observed', type: 'boolean' }
+    });
 
     static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT: ImmutableMap<
-    string,
-    ColumnInfo
-  > = ImmutableMap({
-      source: { columnId: 'ID', type: 'string' },
-      target: {
-          columnId: 'Next',
-          type: 'string'
-      }
-  });
+        string,
+        ColumnInfo
+    > = ImmutableMap({
+        source: { columnId: 'ID', type: 'string' },
+        target: {
+            columnId: 'Next',
+            type: 'string'
+        }
+    });
 
     static readonly DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO: ImmutableMap<
-    string,
-    ColumnInfo
-  > = ImmutableMap({
-      source: { columnId: 'from', type: 'string' },
-      target: {
-          columnId: 'to',
-          type: 'string'
-      }
-  });
+        string,
+        ColumnInfo
+    > = ImmutableMap({
+        source: { columnId: 'from', type: 'string' },
+        target: {
+            columnId: 'to',
+            type: 'string'
+        }
+    });
 
     static readonly GROUPTYPE_EXT_TO_INT_MAP: ImmutableMap<
-    string,
-    GroupType
-  > = ImmutableMap({
-      SimpleChain: GroupType.SIMPLE_CHAIN,
-      SourceGroup: GroupType.TARGET_GROUP,
-      TargetGroup: GroupType.TARGET_GROUP,
-      IsolatedGroup: GroupType.ISOLATED_GROUP
-  });
+        string,
+        GroupType
+    > = ImmutableMap({
+        SimpleChain: GroupType.SIMPLE_CHAIN,
+        SourceGroup: GroupType.TARGET_GROUP,
+        TargetGroup: GroupType.TARGET_GROUP,
+        IsolatedGroup: GroupType.ISOLATED_GROUP
+    });
+
+    static readonly MERGE_DEL_TYPE_EXT_TO_INT_MAP: ImmutableMap<
+        string,
+        MergeDeliveriesType
+    > = ImmutableMap({
+        NO_MERGE: MergeDeliveriesType.NO_MERGE,
+        MERGE_ALL: MergeDeliveriesType.MERGE_ALL,
+        MERGE_LOT_WISE: MergeDeliveriesType.MERGE_LOT_WISE,
+        MERGE_PRODUCT_WISE: MergeDeliveriesType.MERGE_PRODUCT_WISE,
+        MERGE_LABEL_WISE: MergeDeliveriesType.MERGE_LABEL_WISE
+    });
 
     static readonly NODE_SIZE_EXT_TO_INT_MAP: ImmutableMap<
-    string,
-    Size
-  > = ImmutableMap({
-      '4': Size.SMALL,
-      '6': Size.SMALL,
-      '10': Size.SMALL,
-      '14': Size.MEDIUM,
-      '20': Size.MEDIUM,
-      '30': Size.LARGE
-  });
+        string,
+        Size
+    > = ImmutableMap({
+        '4': Size.SMALL,
+        '6': Size.SMALL,
+        '10': Size.SMALL,
+        '14': Size.MEDIUM,
+        '20': Size.MEDIUM,
+        '30': Size.LARGE
+    });
 
     static readonly FONT_SIZE_EXT_TO_INT_MAP: ImmutableMap<
-    string,
-    Size
-  > = ImmutableMap({
-      '10': Size.SMALL,
-      '12': Size.SMALL,
-      '14': Size.MEDIUM,
-      '18': Size.MEDIUM,
-      '24': Size.LARGE
-  });
+        string,
+        Size
+    > = ImmutableMap({
+        '10': Size.SMALL,
+        '12': Size.SMALL,
+        '14': Size.MEDIUM,
+        '18': Size.MEDIUM,
+        '24': Size.LARGE
+    });
 
     static readonly OPERATION_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, OperationType> = ImmutableMap({
         'EQUAL': OperationType.EQUAL,
@@ -152,5 +163,4 @@ export class Constants {
         'STAR': NodeShapeType.STAR,
         'DIAMOND': NodeShapeType.DIAMOND
     });
-
 }

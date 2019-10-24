@@ -10,6 +10,22 @@ export async function isValidJson(schema: any, data: any, throwError?: boolean):
     return valid;
 }
 
+export function compareVersions(version1: string, version2: string): number {
+    const versionNumbers1: Number[] = version1.split('.').map(s => Number(s));
+    const versionNumbers2: Number[] = version2.split('.').map(s => Number(s));
+
+    for (let i = 0; i < 3; i++) {
+        if (versionNumbers1[i] !== versionNumbers2[i]) {
+            return versionNumbers1[i] < versionNumbers2[i] ? -1 : 1;
+        }
+    }
+    return 0;
+}
+
+export function checkVersionFormat(version: String): boolean {
+    return version && version.trim().match('^\\d+\\.\\d+\\.\\d+$').length > 0;
+}
+
 export function createDefaultHighlights(): HighlightingSettings {
     const defaultHighlights: HighlightingSettings = {
         invisibleStations: [],

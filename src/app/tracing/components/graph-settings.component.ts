@@ -1,15 +1,15 @@
 import { BasicGraphState, DataServiceData } from './../data.model';
 import { DataService } from './../services/data.service';
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Constants } from '../util/constants';
 import * as TracingSelectors from '../state/tracing.selectors';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
 import { takeWhile } from 'rxjs/operators';
-import { FclData, GraphSettings } from '../data.model';
 import { Utils as UIUtils } from '../util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';
+import { FclData, GraphSettings, MergeDeliveriesType } from '../data.model';
 
 @Component({
     selector: 'fcl-graph-settings',
@@ -21,6 +21,35 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
     sizes = Constants.SIZES;
     hasGisInfo = false;
+
+    readonly mergeDeliveriesOptions: { value: MergeDeliveriesType, label: string, toolTip: string }[] = [
+        {
+            value: MergeDeliveriesType.NO_MERGE,
+            label: 'No',
+            toolTip: 'Deliveries are not merged.'
+        },
+        {
+            value: MergeDeliveriesType.MERGE_ALL,
+            label: 'All',
+            toolTip: 'All deliveries between a pair of nodes are merged.'
+        },
+        {
+            value: MergeDeliveriesType.MERGE_PRODUCT_WISE,
+            label: 'Product-wise',
+            toolTip: 'Deliveries from an identical product are merged.'
+        },
+        {
+            value: MergeDeliveriesType.MERGE_LABEL_WISE,
+            label: 'Label-wise',
+            toolTip: 'Deliveries with an identical label are merged.'
+        },
+        {
+            value: MergeDeliveriesType.MERGE_LOT_WISE,
+            label: 'Lot-wise',
+            toolTip: 'Deliveries from an identical lot are merged.'
+        }
+    ];
+
     private componentActive: boolean = true;
 
     constructor(private store: Store<fromTracing.State>, private dataService: DataService) {}
@@ -67,8 +96,8 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.SetFontSizeSOA(this.graphSettings.fontSize));
     }
 
-    mergeDeliveries() {
-        this.store.dispatch(new tracingActions.MergeDeliveriesSOA(this.graphSettings.mergeDeliveries));
+    setMergeDeliveriesType() {
+        this.store.dispatch(new tracingActions.SetMergeDeliveriesTypeSOA({ mergeDeliveriesType: this.graphSettings.mergeDeliveriesType }));
     }
 
     showLegend() {

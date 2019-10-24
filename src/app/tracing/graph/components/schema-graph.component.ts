@@ -8,7 +8,7 @@ import { ResizeSensor } from 'css-element-queries';
 
 import { Utils } from '../../util/non-ui-utils';
 
-import { GraphState, Layout, Position, Size, GraphType, LegendInfo } from '../../data.model';
+import { GraphState, Layout, Position, Size, GraphType, LegendInfo, MergeDeliveriesType } from '../../data.model';
 
 import * as _ from 'lodash';
 import { LayoutService, LayoutAction } from '../../layout/layout.service';
@@ -24,7 +24,7 @@ import { GraphContextMenuComponent } from './graph-context-menu.component';
 interface GraphSettingsState {
     fontSize: Size;
     nodeSize: Size;
-    mergeDeliveries: boolean;
+    mergeDeliveriesType: MergeDeliveriesType;
 }
 
 interface SchemaGraphState extends GraphState, GraphSettingsState {

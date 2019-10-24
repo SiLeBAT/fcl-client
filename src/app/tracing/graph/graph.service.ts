@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BasicGraphState, DeliveryData, DataServiceData, ObservedType, NodeShapeType } from '../data.model';
+import { BasicGraphState, DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
@@ -18,7 +18,11 @@ interface CyDataEdges {
 }
 
 interface GraphState extends BasicGraphState {
-    mergeDeliveries: boolean;
+    mergeDeliveriesType: MergeDeliveriesType;
+}
+
+interface DeliveryGroup {
+    deliveries: DeliveryData[];
 }
 
 @Injectable({
@@ -78,7 +82,7 @@ export class GraphService {
         const statMap = cyDataNodes.statIdToNodeDataMap;
         const selDel = Utils.createStringSet(state.selectedElements.deliveries);
 
-        if (state.mergeDeliveries) {
+        if (state.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE) {
 
             for (const delivery of data.deliveries.filter(d => !d.invisible)) {
                 const sourceData = statMap[delivery.source];
@@ -102,70 +106,73 @@ export class GraphService {
             for (const sourceDataId of Object.keys(sourceTargetDelMap)) {
                 const targetMap = sourceTargetDelMap[sourceDataId];
                 for (const targetDataId of Object.keys(targetMap)) {
-                    const deliveries = targetMap[targetDataId];
+                    const deliveriesForNodePair = targetMap[targetDataId];
 
-                    if (deliveries.length === 1) {
-                        const delivery = deliveries[0];
-                        const selected = !!selDel[delivery.id];
-                        edgeData.push({
-                            id: 'E' + iEdge++,
-                            label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
-                            ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
-                            source: sourceDataId,
-                            target: targetDataId,
-                            deliveries: [delivery],
-                            selected: selected,
-                            backward: delivery.backward,
-                            forward: delivery.forward,
-                            observed: delivery.observed,
-                            crossContamination: delivery.crossContamination,
-                            killContamination: delivery.killContamination,
-                            score: delivery.score,
-                            weight: delivery.weight
-                        });
-                    } else {
-                        const observedTypes = _.uniq(deliveries.filter(d => d.observed !== ObservedType.NONE).map(d => d.observed));
+                    const deliveryGroups = this.groupDeliveries(deliveriesForNodePair, state.mergeDeliveriesType);
+                    for (const deliveries of deliveryGroups) {
+                        if (deliveries.length === 1) {
+                            const delivery = deliveries[0];
+                            const selected = !!selDel[delivery.id];
+                            edgeData.push({
+                                id: 'E' + iEdge++,
+                                label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
+                                ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
+                                source: sourceDataId,
+                                target: targetDataId,
+                                deliveries: [delivery],
+                                selected: selected,
+                                backward: delivery.backward,
+                                forward: delivery.forward,
+                                observed: delivery.observed,
+                                crossContamination: delivery.crossContamination,
+                                killContamination: delivery.killContamination,
+                                score: delivery.score,
+                                weight: delivery.weight
+                            });
+                        } else {
+                            const observedTypes = _.uniq(deliveries.filter(d => d.observed !== ObservedType.NONE).map(d => d.observed));
 
-                        const observedType =
-                            observedTypes.some(t => ObservedType.FULL) ?
-                            ObservedType.FULL :
-                            (
-                                observedTypes.some(t => ObservedType.BACKWARD) ?
+                            const observedType =
+                                observedTypes.some(t => ObservedType.FULL) ?
+                                ObservedType.FULL :
                                 (
-                                    observedTypes.some(t => ObservedType.FORWARD) ?
-                                    ObservedType.FULL :
-                                    ObservedType.BACKWARD
-                                ) :
-                                (
-                                    observedTypes.some(t => ObservedType.FORWARD) ?
-                                    ObservedType.FORWARD :
-                                    ObservedType.NONE
+                                    observedTypes.some(t => ObservedType.BACKWARD) ?
+                                    (
+                                        observedTypes.some(t => ObservedType.FORWARD) ?
+                                        ObservedType.FULL :
+                                        ObservedType.BACKWARD
+                                    ) :
+                                    (
+                                        observedTypes.some(t => ObservedType.FORWARD) ?
+                                        ObservedType.FORWARD :
+                                        ObservedType.NONE
+                                    )
                                 )
-                            )
-                        ;
+                            ;
 
-                        const labels: string[] = _.uniq(
-                            deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
-                        );
-                        edgeData.push({
-                            id: 'E' + iEdge++,
-                            label: labels.length === 1 ? labels[0] : '',
-                            ...this.getColorInfo(
-                                this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
-                                GraphService.DEFAULT_EDGE_COLOR
-                            ),
-                            source: sourceDataId,
-                            target: targetDataId,
-                            deliveries: deliveries,
-                            selected: deliveries.some(d => !!selDel[d.id]),
-                            backward: deliveries.some(d => d.backward),
-                            forward: deliveries.some(d => d.forward),
-                            observed: observedType,
-                            crossContamination: deliveries.some(d => d.crossContamination),
-                            killContamination: deliveries.some(d => d.killContamination),
-                            score: _.max(deliveries.map(d => d.score)),
-                            weight: _.sum(deliveries.map(d => d.weight))
-                        });
+                            const labels: string[] = _.uniq(
+                                deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
+                            );
+                            edgeData.push({
+                                id: 'E' + iEdge++,
+                                label: labels.length === 1 ? labels[0] : '',
+                                ...this.getColorInfo(
+                                    this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
+                                    GraphService.DEFAULT_EDGE_COLOR
+                                ),
+                                source: sourceDataId,
+                                target: targetDataId,
+                                deliveries: deliveries,
+                                selected: deliveries.some(d => !!selDel[d.id]),
+                                backward: deliveries.some(d => d.backward),
+                                forward: deliveries.some(d => d.forward),
+                                observed: observedType,
+                                crossContamination: deliveries.some(d => d.crossContamination),
+                                killContamination: deliveries.some(d => d.killContamination),
+                                score: _.max(deliveries.map(d => d.score)),
+                                weight: _.sum(deliveries.map(d => d.weight))
+                            });
+                        }
                     }
                 }
 
@@ -209,6 +216,20 @@ export class GraphService {
             delIdToEdgeDataMap: map,
             edgeSel: Utils.createStringSet(edgeData.filter(n => n.selected).map(n => n.id))
         };
+    }
+
+    private groupDeliveries(deliveries: DeliveryData[], mergeDeliveriesType: MergeDeliveriesType): DeliveryData[][] {
+        if (mergeDeliveriesType === MergeDeliveriesType.MERGE_PRODUCT_WISE) {
+            return Utils.groupDeliveryByProduct(deliveries);
+        } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_LOT_WISE) {
+            return Utils.groupDeliveryByLot(deliveries);
+        } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE) {
+            return Utils.groupRows(deliveries, [(d: DeliveryData) => d.highlightingInfo.label.join('/')]);
+        } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL) {
+            return [deliveries];
+        } else if (mergeDeliveriesType === MergeDeliveriesType.NO_MERGE) {
+            return deliveries.map(d => [d]);
+        }
     }
 
     private mergeColors(colors: number[][][]): number[][] {
@@ -366,7 +387,7 @@ export class GraphService {
         const edgesChanged =
             nodesChanged ||
             data.deliveries !== this.cachedData.deliveries ||
-            this.cachedState.mergeDeliveries !== state.mergeDeliveries;
+            this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType;
 
         const nodePropsChanged =
             !nodesChanged &&
@@ -392,7 +413,7 @@ export class GraphService {
                 ...this.createEdgeData(state, data, nodeData),
                 propsChangedFlag: {}
             };
-        } else if (edgesChanged) {
+        } else if (edgesChanged || (edgePropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE)) {
             newData = {
                 ...newData,
                 ...this.createEdgeData(state, data, newData),
@@ -404,7 +425,7 @@ export class GraphService {
             newData.propsChangedFlag = {};
             this.applyStationProps(newData);
         }
-        if (edgePropsChanged) {
+        if (edgePropsChanged && state.mergeDeliveriesType !== MergeDeliveriesType.MERGE_LABEL_WISE) {
             newData.propsChangedFlag = {};
             this.applyDeliveryProps(newData);
         }

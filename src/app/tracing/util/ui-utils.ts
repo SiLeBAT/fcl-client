@@ -68,7 +68,7 @@ export class Utils {
             .filter((station: StationData) => !station.invisible)
             .filter((station: StationData) =>
                 station.lat !== undefined && station.lat !== null &&
-                station.lon !== undefined && station.lon !== null)
+                station.lon !== undefined && station.lon !== null);
 
         return stationsWithGis.length > 0;
     }
