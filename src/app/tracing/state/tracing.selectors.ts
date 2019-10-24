@@ -34,9 +34,9 @@ export const getShowLegend = createSelector(
     (graphSettings) => graphSettings.showLegend
 );
 
-export const getMergeDeliveries = createSelector(
+export const getMergeDeliveriesType = createSelector(
     getGraphSettings,
-    (graphSettings) => graphSettings.mergeDeliveries
+    (graphSettings) => graphSettings.mergeDeliveriesType
 );
 
 export const getFclElements = createSelector(
@@ -111,10 +111,10 @@ export const getBasicGraphData = createSelector(
 
 export const getGraphData = createSelector(
     getBasicGraphData,
-    getMergeDeliveries,
-    (basicGraphData, mergeDeliveries) => ({
+    getMergeDeliveriesType,
+    (basicGraphData, mergeDeliveriesType) => ({
         ...basicGraphData,
-        mergeDeliveries: mergeDeliveries
+        mergeDeliveriesType: mergeDeliveriesType
     })
 );
 
@@ -134,7 +134,7 @@ export const getSchemaGraphData = createSelector(
         ...basicGraphData,
         stationPositions: graphSettings.stationPositions,
         selectedElements: graphSettings.selectedElements,
-        mergeDeliveries: graphSettings.mergeDeliveries,
+        mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.schemaLayout
@@ -147,7 +147,7 @@ export const getGisGraphData = createSelector(
     (basicGraphData, graphSettings) => ({
         ...basicGraphData,
         selectedElements: graphSettings.selectedElements,
-        mergeDeliveries: graphSettings.mergeDeliveries,
+        mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.gisLayout

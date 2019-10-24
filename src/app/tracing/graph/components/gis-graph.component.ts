@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 import { Utils as UIUtils } from '../../util/ui-utils';
 import { Utils as NonUIUtils } from '../../util/non-ui-utils';
-import { Layout, Position, Size, GraphState, GraphType, LegendInfo } from '../../data.model';
+import { Layout, Position, Size, GraphState, GraphType, LegendInfo, MergeDeliveriesType } from '../../data.model';
 import * as _ from 'lodash';
 import { StyleService } from '../style.service';
 import { Store } from '@ngrx/store';
@@ -25,7 +25,7 @@ import { GraphContextMenuComponent } from './graph-context-menu.component';
 interface GraphSettingsState {
     fontSize: Size;
     nodeSize: Size;
-    mergeDeliveries: boolean;
+    mergeDeliveriesType: MergeDeliveriesType;
 }
 
 interface GisGraphState extends GraphState, GraphSettingsState {
@@ -405,6 +405,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.cy.batch(() => {
                 this.cy.elements(':selected[!selected]').unselect();
                 this.cy.elements(':unselected[?selected]').select();
+                this.cy.elements().scratch('_update', true);
             });
         }
     }

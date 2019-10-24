@@ -26,11 +26,18 @@
               </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-checkbox
-          [(ngModel)]="graphSettings.mergeDeliveries"
-          (ngModelChange)="mergeDeliveries()">
-          Merge Deliveries
-        </mat-checkbox>
+        <mat-form-field>
+            <mat-select
+              placeholder="Merge Deliveries"
+              [(ngModel)]="graphSettings.mergeDeliveriesType"
+              (ngModelChange)="setMergeDeliveriesType()">
+              <mat-option *ngFor="let mergeDeliveriesOption of mergeDeliveriesOptions"
+              [value]="mergeDeliveriesOption.value"
+              [matTooltip]="mergeDeliveriesOption.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">
+                {{mergeDeliveriesOption.label}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
 
     <mat-checkbox
           [(ngModel)]="graphSettings.showLegend"

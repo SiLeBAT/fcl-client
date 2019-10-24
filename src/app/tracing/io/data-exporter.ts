@@ -1,4 +1,4 @@
-import { FclData, GroupType, ObservedType, GraphType, Layout, StationTracingSettings } from '../data.model';
+import { FclData, GroupType, ObservedType, GraphType, Layout, StationTracingSettings, MergeDeliveriesType } from '../data.model';
 import { Constants } from './data-mappings/data-mappings-v1';
 import { Utils } from './../util/non-ui-utils';
 import { createFclElements } from './fcl-elements-creator';
@@ -73,12 +73,31 @@ export class DataExporter {
         };
     }
 
-    private static setViewData(fclData: FclData, rawData: JsonData) {
-        const viewData: ViewData = Utils.getProperty(rawData, Constants.VIEW_SETTINGS) || {};
+    private static setViewData(fclData: FclData, jsonData: JsonData) {
+        const viewData: ViewData = jsonData.settings && jsonData.settings.view ? jsonData.settings.view : {
+            edge: undefined,
+            node: undefined
+        };
+        if (!viewData.edge) {
+            viewData.edge = {
+                joinEdges: undefined,
+                mergeDeliveriesType: undefined,
+                selectedEdges: []
+            };
+        }
+        if (!viewData.node) {
+            viewData.node = {};
+        }
 
         Utils.setProperty(viewData, Constants.SHOW_LEGEND, fclData.graphSettings.showLegend);
         Utils.setProperty(viewData, Constants.SKIP_UNCONNECTED_STATIONS, fclData.graphSettings.skipUnconnectedStations);
-        Utils.setProperty(viewData, Constants.MERGE_DELIVERIES, fclData.graphSettings.mergeDeliveries);
+
+        viewData.edge.joinEdges = fclData.graphSettings.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE;
+        viewData.edge.mergeDeliveriesType = Utils.getReverseOfImmutableMap(
+            Constants.MERGE_DEL_TYPE_EXT_TO_INT_MAP,
+            mergeDeliveriesType => mergeDeliveriesType
+        ).get(fclData.graphSettings.mergeDeliveriesType);
+
         Utils.setProperty(viewData, Constants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
 
         Utils.setProperty(viewData, Constants.GISGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.gisLayout));
@@ -91,7 +110,7 @@ export class DataExporter {
 
         viewData.edge.selectedEdges = fclData.graphSettings.selectedElements.deliveries.slice();
         viewData.node.selectedNodes = fclData.graphSettings.selectedElements.stations.slice();
-        rawData.settings.view = viewData;
+        jsonData.settings.view = viewData;
     }
 
     private static convertLayout(intLayout: Layout): any {

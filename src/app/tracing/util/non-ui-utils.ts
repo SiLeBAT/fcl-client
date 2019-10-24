@@ -271,4 +271,50 @@ export class Utils {
     static compareNumbers(a: number, b: number): number {
         return (a === b ? 0 : (a < b ? -1 : 1));
     }
+
+    static groupRows<T>(rows: T[], keyFuns: ((t: T) => string | boolean | number)[]): T[][] {
+        const keyToIndicesMap: { [key: string]: number[] } = {};
+        const nRows = rows.length;
+        const nKeys = keyFuns.length;
+        for (let iRow = 0; iRow < nRows; iRow++) {
+            const keys: (string | boolean | number)[] = [];
+            for (const keyFun of keyFuns) {
+                keys.push(keyFun(rows[iRow]));
+            }
+            const key = JSON.stringify(keys);
+            const indices = keyToIndicesMap[key];
+            if (!indices) {
+                keyToIndicesMap[key] = [iRow];
+            } else {
+                indices.push(iRow);
+            }
+        }
+        const sortedKeys = Object.keys(keyToIndicesMap);
+        const result: T[][] = [];
+        for (const key of sortedKeys.sort()) {
+            result.push(keyToIndicesMap[key].map(i => rows[i]));
+        }
+        return result;
+    }
+
+    static groupDeliveryByProduct(deliveries: DeliveryData[]): DeliveryData[][] {
+        return this.groupRows(deliveries, [
+            (d) => d.originalSource,
+            (d) => d.originalTarget,
+            (d) => d.name || d.id
+        ]);
+    }
+
+    static groupDeliveryByLot(deliveries: DeliveryData[]): DeliveryData[][] {
+        const deliveryPGroups = Utils.groupDeliveryByProduct(deliveries);
+        const result: DeliveryData[][] = [];
+        for (const deliveryPGroup of deliveryPGroups) {
+            if (deliveryPGroup.length === 1) {
+                result.push(deliveryPGroup);
+            } else {
+                result.push(...this.groupRows(deliveryPGroup, [ (d) => d.lot || d.id ]));
+            }
+        }
+        return result;
+    }
 }

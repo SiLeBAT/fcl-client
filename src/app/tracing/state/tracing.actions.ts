@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, Size, TableMode, FclData, ShowType, SelectedElements, Position,
-    SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout
+    SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -20,7 +20,7 @@ export enum TracingActionTypes {
     SetGisGraphLayoutSOA = '[Tracing] Set Gis Graph Layout',
     SetNodeSizeSOA = '[Tracing] Set Node Size',
     SetFontSizeSOA = '[Tracing] Set Font Size',
-    MergeDeliveriesSOA = '[Tracing] Merge Deliveries',
+    SetMergeDeliveriesTypeSOA = '[Tracing] Set Merge Deliveries Type',
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
     SetTableModeSOA = '[Tracing] Set Table Mode',
@@ -92,10 +92,10 @@ export class SetFontSizeSOA implements Action {
     constructor(public payload: Size) {}
 }
 
-export class MergeDeliveriesSOA implements Action {
-    readonly type = TracingActionTypes.MergeDeliveriesSOA;
+export class SetMergeDeliveriesTypeSOA implements Action {
+    readonly type = TracingActionTypes.SetMergeDeliveriesTypeSOA;
 
-    constructor(public payload: boolean) {}
+    constructor(public payload: { mergeDeliveriesType: MergeDeliveriesType }) {}
 }
 
 export class ShowLegendSOA implements Action {
@@ -189,7 +189,7 @@ export type TracingActions =
     | SetGraphTypeSOA
     | SetNodeSizeSOA
     | SetFontSizeSOA
-    | MergeDeliveriesSOA
+    | SetMergeDeliveriesTypeSOA
     | ShowLegendSOA
     | ShowZoomSOA
     | SetTableModeSOA

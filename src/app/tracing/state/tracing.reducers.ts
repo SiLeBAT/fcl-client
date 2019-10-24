@@ -1,6 +1,6 @@
 import { TracingActions, TracingActionTypes } from './tracing.actions';
 import { Constants } from '../util/constants';
-import { FclData, TableMode } from '../data.model';
+import { FclData, TableMode, MergeDeliveriesType } from '../data.model';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 
 export const STATE_SLICE_NAME = 'tracing';
@@ -50,7 +50,7 @@ export function createInitialFclDataState(): FclData {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
             fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
-            mergeDeliveries: Constants.DEFAULT_GRAPH_MERGE_DELIVERIES,
+            mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
             skipUnconnectedStations: Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
@@ -163,14 +163,14 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.MergeDeliveriesSOA:
+        case TracingActionTypes.SetMergeDeliveriesTypeSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        mergeDeliveries: action.payload
+                        mergeDeliveriesType: action.payload.mergeDeliveriesType
                     }
                 }
             };
