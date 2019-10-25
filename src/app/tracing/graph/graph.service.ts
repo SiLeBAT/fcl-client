@@ -9,6 +9,7 @@ interface CyDataNodes {
     statIdToNodeDataMap: {[key: string]: CyNodeData };
     nodeData: CyNodeData[];
     nodeSel: { [key: string]: boolean };
+    idToNodeMap?: { [key: string]: CyNodeData };
 }
 
 interface CyDataEdges {
@@ -19,10 +20,6 @@ interface CyDataEdges {
 
 interface GraphState extends BasicGraphState {
     mergeDeliveriesType: MergeDeliveriesType;
-}
-
-interface DeliveryGroup {
-    deliveries: DeliveryData[];
 }
 
 @Injectable({
@@ -36,6 +33,24 @@ export class GraphService {
     private cachedState: GraphState;
 
     private cachedData: GraphServiceData;
+
+    static updateRelZindex(nodeData: CyNodeData[]) {
+        nodeData = nodeData.slice();
+        nodeData.sort((n1, n2) => (
+            n1.station.score !== n2.station.score ?
+            (n1.station.score < n2.station.score ? -1 : 1) :
+            (n1.degree !== n2.degree ? (n1.degree < n2.degree ? -1 : 1) : 0)
+        ));
+        nodeData.forEach((n, i) => {
+            n.relZindex = i;
+        });
+        this.updateAbsZindex(nodeData);
+    }
+
+    static updateAbsZindex(nodeData: CyNodeData[]) {
+        const nNodes = nodeData.length;
+        nodeData.forEach(n => n.zindex = n.relZindex + (n.selected ? nNodes : 0));
+    }
 
     constructor(
         private dataService: DataService
@@ -66,10 +81,12 @@ export class GraphService {
             observed: s.observed,
             weight: s.weight
         }));
+
         return {
             nodeData: nodeData,
             statIdToNodeDataMap: Utils.createObjectMap(nodeData, (n) => n.station.id),
-            nodeSel: Utils.createStringSet(nodeData.filter(n => n.selected).map(n => n.id))
+            nodeSel: Utils.createStringSet(nodeData.filter(n => n.selected).map(n => n.id)),
+            idToNodeMap: Utils.createObjectMap(nodeData, (n) => n.id)
         };
     }
 
@@ -206,11 +223,19 @@ export class GraphService {
         }
 
         const map: {[key: string]: CyEdgeData } = {};
+
+        cyDataNodes.nodeData.forEach(node => node.degree = 0);
         for (const eData of edgeData) {
             eData.deliveries.forEach(d => {
                 map[d.id] = eData;
             });
+            if (eData.source !== eData.target) {
+                cyDataNodes.idToNodeMap[eData.source].degree += eData.deliveries.length;
+                cyDataNodes.idToNodeMap[eData.target].degree += eData.deliveries.length;
+            }
         }
+        GraphService.updateRelZindex(cyDataNodes.nodeData);
+
         return {
             edgeData: edgeData,
             delIdToEdgeDataMap: map,
@@ -424,6 +449,7 @@ export class GraphService {
         if (nodePropsChanged) {
             newData.propsChangedFlag = {};
             this.applyStationProps(newData);
+            GraphService.updateRelZindex(newData.nodeData);
         }
         if (edgePropsChanged && state.mergeDeliveriesType !== MergeDeliveriesType.MERGE_LABEL_WISE) {
             newData.propsChangedFlag = {};
@@ -432,6 +458,7 @@ export class GraphService {
 
         if (nodeSelChanged) {
             this.applyStatSelection(newData);
+            GraphService.updateAbsZindex(newData.nodeData);
         }
 
         if (edgeSelChanged) {

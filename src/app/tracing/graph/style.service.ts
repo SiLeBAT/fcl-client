@@ -96,6 +96,7 @@ export class StyleService {
                 'background-gradient-direction': 'to-right',
                 'border-width': visibleNodeSize * StyleService.NODE_SIZE_TO_BORDER_WIDTH_FACTOR,
                 'border-color': 'rgb(0, 0, 0)',
+                'z-index': 'data(zindex)',
                 color: 'rgb(0, 0, 0)'
             })
 

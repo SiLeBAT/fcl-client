@@ -347,6 +347,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.cy.batch(() => {
                 this.cy.elements(':selected[!selected]').unselect();
                 this.cy.elements(':unselected[?selected]').select();
+                this.cy.elements().scratch('_update', true);
             });
         }
     }

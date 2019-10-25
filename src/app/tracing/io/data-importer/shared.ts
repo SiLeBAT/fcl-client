@@ -1,5 +1,6 @@
 import * as Ajv from 'ajv';
 import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
+import { longStackSupport } from 'q';
 
 export async function isValidJson(schema: any, data: any, throwError?: boolean): Promise<boolean> {
     const ajv = new Ajv();

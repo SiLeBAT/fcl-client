@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TestBed, async } from '@angular/core/testing';
 import { IOService } from './io.service';
-import { FclData, GraphType, Size, ObservedType } from '../data.model';
+import { FclData, GraphType, Size, ObservedType, MergeDeliveriesType } from '../data.model';
 import { JsonData, VERSION } from './ext-data-model.v1';
 
 describe('IOService', () => {
@@ -44,7 +44,7 @@ describe('IOService', () => {
                 fontSize: Size.MEDIUM,
                 showLegend: true,
                 showZoom: true,
-                mergeDeliveries: false,
+                mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
                 skipUnconnectedStations: false,
                 selectedElements: {
                     stations: [],
@@ -169,7 +169,8 @@ describe('IOService', () => {
                     showGis: fclData.graphSettings.type === GraphType.GIS,
                     showLegend: fclData.graphSettings.showLegend,
                     edge: {
-                        joinEdges: fclData.graphSettings.mergeDeliveries,
+                        joinEdges: fclData.graphSettings.mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL,
+                        mergeDeliveriesType: 'NO_MERGE',
                         selectedEdges: fclData.graphSettings.selectedElements.deliveries
                     },
                     node: {

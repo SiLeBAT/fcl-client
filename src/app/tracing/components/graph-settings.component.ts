@@ -5,7 +5,7 @@ import { Constants } from '../util/constants';
 import * as TracingSelectors from '../state/tracing.selectors';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
-import { Store, select } from '@ngrx/store';
+import { Store, select, resultMemoize } from '@ngrx/store';
 import { takeWhile } from 'rxjs/operators';
 import { Utils as UIUtils } from '../util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';

@@ -96,6 +96,9 @@ export interface CyNodeData extends StationTracingData {
     stopColors: string;
     stopPositions: string;
     shape: string;
+    zindex?: number;
+    relZindex?: number;
+    degree?: number;
 }
 
 export interface CyEdgeData extends DeliveryTracingData {
@@ -112,6 +115,7 @@ export interface CyEdgeData extends DeliveryTracingData {
 export interface GraphServiceData extends DataServiceData {
     statIdToNodeDataMap: {[key: string]: CyNodeData };
     nodeData: CyNodeData[];
+    idToNodeMap?: { [key: string]: CyNodeData };
     delIdToEdgeDataMap: {[key: string]: CyEdgeData };
     edgeData: CyEdgeData[];
     nodeSel: {[key: string]: boolean };
