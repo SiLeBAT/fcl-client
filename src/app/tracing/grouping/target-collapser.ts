@@ -80,11 +80,17 @@ export class TargetCollapser {
         return {
             addGroups: extractNewGroups(
                 sourceIdToLinkGroupMap,
-                (linkedGroup, newGroupNumber) => ({
-                    id: 'TG:' + linkedGroup.linkStation.id + (newGroupNumber === 1 ? '' : '_' + newGroupNumber),
-                    name: linkedGroup.linkStation.name + ' targets',
-                    groupType: GroupType.TARGET_GROUP
-                })
+                (linkedGroup, newGroupNumber) => {
+                    const idAndName = 'TG:' + linkedGroup.linkStation.name + ' targets';
+                    return {
+                        // preferred variants, but delayed until desktop can handle it
+                        // id: 'TG:' + linkedGroup.linkStation.id + (newGroupNumber === 1 ? '' : '_' + newGroupNumber),
+                        // name: linkedGroup.linkStation.name + ' targets',
+                        id: idAndName,
+                        name: idAndName,
+                        groupType: GroupType.TARGET_GROUP
+                    };
+                }
             ),
             removeGroups: oldGroups
         };

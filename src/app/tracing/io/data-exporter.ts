@@ -34,6 +34,7 @@ export class DataExporter {
         rawData.settings.metaNodes = fclData.groupSettings.map(
             s => ({
                 id: s.id,
+                name: s.name,
                 type: (intToExtGroupTypeMap.has(s.groupType) ? intToExtGroupTypeMap.get(s.groupType) : null),
                 members: s.contains
             })

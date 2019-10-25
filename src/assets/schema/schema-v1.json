@@ -34,6 +34,7 @@
                         "type": "object",
                         "properties": {
                             "id": { "type": "string" },
+                            "name": { "type": "string" },
                             "type": { "type": ["string", "null"] },
                             "members": {
                                 "type": "array",
@@ -57,6 +58,7 @@
                             "type": "object",
                             "properties": {
                                 "joinEdges": { "type": "boolean" },
+                                "mergeDeliveriesType": { "type": "string" },
                                 "highlightConditions": {
                                     "type": ["array", "null"],
                                     "description": "delivery highlighting definitions",

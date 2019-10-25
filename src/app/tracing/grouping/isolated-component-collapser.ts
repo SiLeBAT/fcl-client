@@ -165,9 +165,13 @@ export class IsolatedComponentCollapser {
                 }
             }
             if (groupMemberIds.length > 1) {
+                const idAndName = 'IG:' + 'Isolated cloud ' + (newGroups.length + 1);
                 newGroups.push({
-                    id: 'IG:' + (newGroups.length + 1),
-                    name: 'Isolated cloud ' + (newGroups.length + 1),
+                    // preferred variants, but delayed until desktop can handle it
+                    // id: 'IG:' + (newGroups.length + 1),
+                    // name: 'Isolated cloud ' + (newGroups.length + 1),
+                    id: idAndName,
+                    name: idAndName,
                     groupType: GroupType.ISOLATED_GROUP,
                     contains: groupMemberIds
                 });

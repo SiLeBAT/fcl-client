@@ -1,4 +1,4 @@
-export const VERSION = '1.0.1';
+export const VERSION = '1.0.2';
 export const MIN_VERSION = '1.0.0';
 
 export interface JsonData {
@@ -47,8 +47,9 @@ interface TracingData {
     deliveries: TracingElementSettings[];
 }
 
-interface MetaNodeData {
+export interface MetaNodeData {
     id: string;
+    name?: string;
     type: string;
     members: string[];
 }

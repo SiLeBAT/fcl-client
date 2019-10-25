@@ -22,7 +22,8 @@ import {
     LogicalCondition as ExtLogicalCondition,
     JsonData,
     VERSION as MAX_VERSION,
-    MIN_VERSION
+    MIN_VERSION,
+    MetaNodeData
 } from '../ext-data-model.v1';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
@@ -259,15 +260,15 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private applyExternalGroupData(
-        data: any,
+        jsonData: JsonData,
         fclData: FclData,
         idToStationMap: Map<string, StationData>
     ): Map<string, GroupData> {
 
-        const extGroups: any = this.getProperty(data, JsonConstants.GROUP_DATA);
-        if (extGroups === null) {
+        if (!jsonData.settings || !jsonData.settings.metaNodes) {
             return new Map();
         }
+        const extGroups: MetaNodeData[] = jsonData.settings.metaNodes;
 
         const idToGroupMap: Map<string, GroupData> = new Map();
 
@@ -287,7 +288,7 @@ export class DataImporterV1 implements IDataImporter {
 
             const intGroup: GroupData = {
                 id: extGroup.id,
-                name: extGroup.name,
+                name: extGroup.name || extGroup.id,
                 contains: extGroup.members,
                 groupType: null
             };

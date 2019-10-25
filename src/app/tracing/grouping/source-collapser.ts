@@ -83,11 +83,17 @@ export class SourceCollapser {
         return {
             addGroups: extractNewGroups(
                 targetIdToLinkGroupMap,
-                (linkGroup, newGroupNumber) => ({
-                    id: 'SG:' + linkGroup.linkStation.id + (newGroupNumber === 1 ? '' : '_' + newGroupNumber),
-                    name: linkGroup.linkStation.name + ' sources',
-                    groupType: GroupType.SOURCE_GROUP
-                })
+                (linkGroup, newGroupNumber) => {
+                    const idAndName = 'SG:' + linkGroup.linkStation.name + ' sources';
+                    return {
+                        // preferred variants, but delayed until desktop can handle it
+                        // id: 'SG:' + linkGroup.linkStation.id + (newGroupNumber === 1 ? '' : '_' + newGroupNumber),
+                        // name: linkGroup.linkStation.name + ' sources',
+                        id: idAndName,
+                        name: idAndName,
+                        groupType: GroupType.SOURCE_GROUP
+                    };
+                }
             ),
             removeGroups: oldGroups
         };

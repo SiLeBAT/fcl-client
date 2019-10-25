@@ -101,9 +101,13 @@ export class SimpleChainCollapser {
             if (newChain.length > 1) {
                 const firstId = newChain[0];
                 const lastId = newChain[newChain.length - 1];
+                const idAndName = 'SC:' + data.statMap[firstId].name + ' -> ' + data.statMap[lastId].name;
                 newChains.push({
-                    id: 'SC:' + firstId + '->' + lastId,
-                    name: data.statMap[firstId].name + ' -> ' + data.statMap[lastId].name,
+                    // preferred variants, but delayed until desktop can handle it
+                    // id: 'SC:' + firstId + '->' + lastId,
+                    // name: data.statMap[firstId].name + ' -> ' + data.statMap[lastId].name,
+                    id: idAndName,
+                    name: idAndName,
                     contains: newChain,
                     groupType: GroupType.SIMPLE_CHAIN
                 });
