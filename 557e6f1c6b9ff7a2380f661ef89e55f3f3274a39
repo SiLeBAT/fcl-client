@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6854f2f_190070f8",
+        "filename": "src/app/tracing/components/graph-settings.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-10-29T14:24:11Z",
+      "side": 1,
+      "message": "css classes should not be in camel case,\nchange to less-bottom-padding",
+      "revId": "557e6f1c6b9ff7a2380f661ef89e55f3f3274a39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a86edf31_4c323ae3",
+        "filename": "src/styles.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-10-29T14:24:11Z",
+      "side": 1,
+      "message": ".mat-form-field this does not work, this class does not exist.\nplease remove camel case",
+      "revId": "557e6f1c6b9ff7a2380f661ef89e55f3f3274a39",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
