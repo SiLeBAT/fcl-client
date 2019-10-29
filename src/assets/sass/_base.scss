@@ -41,3 +41,16 @@ $fcl-bg-color-entry: rgba(125, 138, 153, 0.5);
         }
     }
 }
+
+@mixin sidenav-elements-group {
+    .sidenav-elements-group {
+        display: flex;
+        flex-direction: column;
+
+        > mat-select {
+            width: 100%;
+        }
+
+        padding-bottom: 1em;
+    }
+}

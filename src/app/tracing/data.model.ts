@@ -90,6 +90,7 @@ export interface GraphSettings {
     nodeSize: Size;
     fontSize: Size;
     mergeDeliveriesType: MergeDeliveriesType;
+    showMergedDeliveriesCounts: boolean;
     showLegend: boolean;
     showZoom: boolean;
     skipUnconnectedStations: boolean;

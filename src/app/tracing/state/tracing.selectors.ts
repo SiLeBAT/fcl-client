@@ -135,6 +135,7 @@ export const getSchemaGraphData = createSelector(
         stationPositions: graphSettings.stationPositions,
         selectedElements: graphSettings.selectedElements,
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
+        showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.schemaLayout
@@ -148,6 +149,7 @@ export const getGisGraphData = createSelector(
         ...basicGraphData,
         selectedElements: graphSettings.selectedElements,
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
+        showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.gisLayout

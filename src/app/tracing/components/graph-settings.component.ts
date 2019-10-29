@@ -104,6 +104,12 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.ShowLegendSOA(this.graphSettings.showLegend));
     }
 
+    showMergedDeliveriesCounts() {
+        this.store.dispatch(new tracingActions.ShowMergedDeliveriesCountsSOA({
+            showMergedDeliveriesCounts: this.graphSettings.showMergedDeliveriesCounts
+        }));
+    }
+
     showZoom() {
         this.store.dispatch(new tracingActions.ShowZoomSOA(this.graphSettings.showZoom));
     }

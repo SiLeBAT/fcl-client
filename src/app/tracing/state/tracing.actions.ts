@@ -21,6 +21,7 @@ export enum TracingActionTypes {
     SetNodeSizeSOA = '[Tracing] Set Node Size',
     SetFontSizeSOA = '[Tracing] Set Font Size',
     SetMergeDeliveriesTypeSOA = '[Tracing] Set Merge Deliveries Type',
+    ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
     SetTableModeSOA = '[Tracing] Set Table Mode',
@@ -96,6 +97,12 @@ export class SetMergeDeliveriesTypeSOA implements Action {
     readonly type = TracingActionTypes.SetMergeDeliveriesTypeSOA;
 
     constructor(public payload: { mergeDeliveriesType: MergeDeliveriesType }) {}
+}
+
+export class ShowMergedDeliveriesCountsSOA implements Action {
+    readonly type = TracingActionTypes.ShowMergedDeliveriesCountsSOA;
+
+    constructor(public payload: { showMergedDeliveriesCounts: boolean }) {}
 }
 
 export class ShowLegendSOA implements Action {
@@ -190,6 +197,7 @@ export type TracingActions =
     | SetNodeSizeSOA
     | SetFontSizeSOA
     | SetMergeDeliveriesTypeSOA
+    | ShowMergedDeliveriesCountsSOA
     | ShowLegendSOA
     | ShowZoomSOA
     | SetTableModeSOA

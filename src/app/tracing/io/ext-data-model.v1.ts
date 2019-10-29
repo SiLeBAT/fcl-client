@@ -1,4 +1,4 @@
-export const VERSION = '1.0.2';
+export const VERSION = '1.0.3';
 export const MIN_VERSION = '1.0.0';
 
 export interface JsonData {
@@ -82,8 +82,9 @@ export interface NodeViewData {
 }
 
 export interface EdgeViewData {
-    joinEdges: boolean;
-    mergeDeliveriesType: string;
+    joinEdges?: boolean;
+    mergeDeliveriesType?: string;
+    showMergedDeliveriesCounts?: boolean;
     // showEdgesInMetanode: boolean;
     // hideArrowHead: boolean;
     // arrowHeadInMiddle: boolean;

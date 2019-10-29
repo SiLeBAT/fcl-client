@@ -26,6 +26,7 @@ interface GraphSettingsState {
     fontSize: Size;
     nodeSize: Size;
     mergeDeliveriesType: MergeDeliveriesType;
+    showMergedDeliveriesCounts: boolean;
 }
 
 interface GisGraphState extends GraphState, GraphSettingsState {
@@ -512,6 +513,12 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return { zoom: zoom, pan: pan };
     }
 
+    private updateEdgeLabels() {
+        if (this.cy && this.cy.style) {
+            this.cy.edges().scratch('_update', true);
+        }
+    }
+
     private applyState(newState: GisGraphState) {
         const newData: GraphServiceData = this.graphService.getData(newState);
         if (!this.cachedData || this.cachedState.fclElements !== newState.fclElements) {
@@ -528,6 +535,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.updateGraphStyle(newState, newData);
         } else if (this.cachedState.fontSize !== newState.fontSize) {
             this.updateFontSize(newState);
+        } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
+            this.updateEdgeLabels();
         }
         this.cachedData = {
             ...this.cachedData,

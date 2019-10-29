@@ -106,7 +106,8 @@ export interface CyEdgeData extends DeliveryTracingData {
     deliveries: DeliveryData[];
     stopColors: string;
     stopPositions: string;
-    label: string;
+    label?: string;
+    labelWoPrefix: string;
     selected: boolean;
     source: string;
     target: string;
@@ -121,4 +122,5 @@ export interface GraphServiceData extends DataServiceData {
     nodeSel: {[key: string]: boolean };
     edgeSel: {[key: string]: boolean };
     propsChangedFlag: {};
+    edgeLabelChangedFlag: {};
 }

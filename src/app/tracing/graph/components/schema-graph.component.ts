@@ -25,6 +25,7 @@ interface GraphSettingsState {
     fontSize: Size;
     nodeSize: Size;
     mergeDeliveriesType: MergeDeliveriesType;
+    showMergedDeliveriesCounts: boolean;
 }
 
 interface SchemaGraphState extends GraphState, GraphSettingsState {
@@ -421,6 +422,12 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         }
     }
 
+    private updateEdgeLabels() {
+        if (this.cy && this.cy.style) {
+            this.cy.edges().scratch('_update', true);
+        }
+    }
+
     private zoomTo(newZoom: number) {
         newZoom = Math.min(Math.max(newZoom, this.cy.minZoom()), this.cy.maxZoom());
 
@@ -466,6 +473,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.updateGraphStyle(newState, newData);
         } else if (this.cachedState.fontSize !== newState.fontSize) {
             this.updateFontSize(newState);
+        } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
+            this.updateEdgeLabels();
         } else if (!_.isEqual(this.cachedState.layout, newState.layout)) {
             this.updateGraphLayout(newState, newData);
         }
