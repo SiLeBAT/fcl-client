@@ -20,6 +20,7 @@ interface CyDataEdges {
 
 interface GraphState extends BasicGraphState {
     mergeDeliveriesType: MergeDeliveriesType;
+    showMergedDeliveriesCounts: boolean;
 }
 
 @Injectable({
@@ -65,7 +66,7 @@ export class GraphService {
         let iNode = 0;
         const nodeData: CyNodeData[] = data.stations.filter(s => !s.invisible && !s.contained).map(s => ({
             id: 'N' + iNode++,
-            label: s.highlightingInfo.label.length > 0 ? s.highlightingInfo.label.join(' / ') : '',
+            label: s.highlightingInfo.label.join(' / '),
             ...this.getColorInfo(s.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR),
             isMeta: s.contains && s.contains.length > 0,
             shape: s.highlightingInfo.shape ? s.highlightingInfo.shape : NodeShapeType.CIRCLE,
@@ -132,7 +133,7 @@ export class GraphService {
                             const selected = !!selDel[delivery.id];
                             edgeData.push({
                                 id: 'E' + iEdge++,
-                                label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
+                                labelWoPrefix: delivery.highlightingInfo.label.join(' / '),
                                 ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                                 source: sourceDataId,
                                 target: targetDataId,
@@ -172,7 +173,7 @@ export class GraphService {
                             );
                             edgeData.push({
                                 id: 'E' + iEdge++,
-                                label: labels.length === 1 ? labels[0] : '',
+                                labelWoPrefix: labels.length === 1 ? labels[0] : '',
                                 ...this.getColorInfo(
                                     this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
                                     GraphService.DEFAULT_EDGE_COLOR
@@ -204,7 +205,7 @@ export class GraphService {
                 if (sourceData && targetData) {
                     edgeData.push({
                         id: 'E' + iEdge++,
-                        label: delivery.highlightingInfo.label.length > 0 ? delivery.highlightingInfo.label.join(' / ') : '',
+                        labelWoPrefix: delivery.highlightingInfo.label.join(' / '),
                         ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                         source: sourceData.id,
                         target: targetData.id,
@@ -235,12 +236,29 @@ export class GraphService {
             }
         }
         GraphService.updateRelZindex(cyDataNodes.nodeData);
+        this.updateEdgeLabels(state, edgeData);
 
         return {
             edgeData: edgeData,
             delIdToEdgeDataMap: map,
             edgeSel: Utils.createStringSet(edgeData.filter(n => n.selected).map(n => n.id))
         };
+    }
+
+    updateEdgeLabels(state: GraphState, edges: CyEdgeData[]) {
+        if (state.showMergedDeliveriesCounts) {
+            edges.forEach(edge => {
+                const nDel = edge.deliveries.length;
+                if (nDel > 1) {
+                    const nSel = edge.deliveries.filter(d => d.selected).length;
+                    edge.label = '[' + ((nSel > 0 && nSel < nDel) ? nSel + '/' : '') + nDel + ']';
+                } else {
+                    edge.label = edge.labelWoPrefix;
+                }
+            });
+        } else {
+            edges.forEach(edge => edge.label = edge.labelWoPrefix);
+        }
     }
 
     private groupDeliveries(deliveries: DeliveryData[], mergeDeliveriesType: MergeDeliveriesType): DeliveryData[][] {
@@ -401,68 +419,90 @@ export class GraphService {
             nodeSel: undefined,
             edgeSel: undefined,
             propsChangedFlag: undefined,
+            edgeLabelChangedFlag: undefined,
             ...(this.cachedData ? this.cachedData : {}),
             ...data
         };
-        const nodesChanged =
+
+        const nodeCreationRequired =
             !this.cachedState ||
             data.stations !== this.cachedData.stations ||
             this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations;
 
-        const edgesChanged =
-            nodesChanged ||
-            data.deliveries !== this.cachedData.deliveries ||
-            this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType;
-
-        const nodePropsChanged =
-            !nodesChanged &&
+        const tracPropsChanged =
+            !this.cachedState ||
             this.cachedState.tracingSettings !== state.tracingSettings;
 
-        const nodeSelChanged =
-            !nodesChanged &&
+        const edgeCreationRequired =
+            nodeCreationRequired ||
+            data.deliveries !== this.cachedData.deliveries ||
+            this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType ||
+            tracPropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE;
+
+        const nodePropsUpdateRequired =
+            !nodeCreationRequired &&
+            tracPropsChanged;
+
+        const nodeSelUpdateRequired =
+            !nodeCreationRequired &&
             this.cachedState.selectedElements.stations !== state.selectedElements.stations;
 
-        const edgePropsChanged =
-            !edgesChanged &&
-            this.cachedState.tracingSettings !== state.tracingSettings;
+        const edgePropsUpdateRequired =
+            !edgeCreationRequired &&
+            tracPropsChanged;
 
-        const edgeSelChanged =
-            !edgesChanged &&
+        const edgeSelUpdateRequired =
+            !edgeCreationRequired &&
             this.cachedState.selectedElements.deliveries !== state.selectedElements.deliveries;
 
-        if (nodesChanged) {
+        const edgeLabelUpdateRequired =
+            !edgeCreationRequired && (
+                edgePropsUpdateRequired ||
+                this.cachedState.showMergedDeliveriesCounts !== state.showMergedDeliveriesCounts ||
+                edgeSelUpdateRequired && state.showMergedDeliveriesCounts
+            );
+
+        if (nodeCreationRequired) {
             const nodeData = this.createNodeData(state, data);
             newData = {
                 ...newData,
                 ...nodeData,
                 ...this.createEdgeData(state, data, nodeData),
-                propsChangedFlag: {}
+                propsChangedFlag: {},
+                edgeLabelChangedFlag: {}
             };
-        } else if (edgesChanged || (edgePropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE)) {
+        } else if (edgeCreationRequired) {
             newData = {
                 ...newData,
                 ...this.createEdgeData(state, data, newData),
-                propsChangedFlag: {}
+                propsChangedFlag: {},
+                edgeLabelChangedFlag: {}
             };
         }
 
-        if (nodePropsChanged) {
+        if (nodePropsUpdateRequired) {
             newData.propsChangedFlag = {};
             this.applyStationProps(newData);
             GraphService.updateRelZindex(newData.nodeData);
         }
-        if (edgePropsChanged && state.mergeDeliveriesType !== MergeDeliveriesType.MERGE_LABEL_WISE) {
+
+        if (edgePropsUpdateRequired) {
             newData.propsChangedFlag = {};
             this.applyDeliveryProps(newData);
         }
 
-        if (nodeSelChanged) {
+        if (nodeSelUpdateRequired) {
             this.applyStatSelection(newData);
             GraphService.updateAbsZindex(newData.nodeData);
         }
 
-        if (edgeSelChanged) {
+        if (edgeSelUpdateRequired) {
             this.applyDelSelection(newData);
+        }
+
+        if (edgeLabelUpdateRequired) {
+            newData.edgeLabelChangedFlag = {};
+            this.updateEdgeLabels(state, newData.edgeData);
         }
 
         this.cachedState = { ...state };

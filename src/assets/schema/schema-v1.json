@@ -1,7 +1,7 @@
 {
     "$id": "http://fcl.bfr.bund.de/schemas/schema.json",
     "type": "object",
-    "title": "FCL-JSON-Exchange-Format Version 1.0.0",
+    "title": "FCL-JSON-Exchange-Format Version 1.0.3",
     "description": "JSON exchange format of FoodChain-Lab app",
     "properties": {
         "data": {
@@ -59,6 +59,7 @@
                             "properties": {
                                 "joinEdges": { "type": "boolean" },
                                 "mergeDeliveriesType": { "type": "string" },
+                                "showMergedDeliveriesCounts": { "type": "boolean" },
                                 "highlightConditions": {
                                     "type": ["array", "null"],
                                     "description": "delivery highlighting definitions",

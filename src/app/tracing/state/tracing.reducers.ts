@@ -51,6 +51,7 @@ export function createInitialFclDataState(): FclData {
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
             fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
             mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
+            showMergedDeliveriesCounts: false,
             skipUnconnectedStations: Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
@@ -171,6 +172,18 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         mergeDeliveriesType: action.payload.mergeDeliveriesType
+                    }
+                }
+            };
+
+        case TracingActionTypes.ShowMergedDeliveriesCountsSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        showMergedDeliveriesCounts: action.payload.showMergedDeliveriesCounts
                     }
                 }
             };

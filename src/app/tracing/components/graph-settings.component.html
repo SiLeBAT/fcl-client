@@ -26,7 +26,9 @@
               </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field>
+
+    <div class="sidenav-elements-group">
+        <mat-form-field class="less-bottom-padding">
             <mat-select
               placeholder="Merge Deliveries"
               [(ngModel)]="graphSettings.mergeDeliveriesType"
@@ -40,10 +42,18 @@
         </mat-form-field>
 
     <mat-checkbox
+        [(ngModel)]="graphSettings.showMergedDeliveriesCounts"
+        (ngModelChange)="showMergedDeliveriesCounts()">
+        Show Merged Deliveries Counts
+    </mat-checkbox>
+</div>
+
+    <mat-checkbox
           [(ngModel)]="graphSettings.showLegend"
           (ngModelChange)="showLegend()">
           Show Legend
         </mat-checkbox>
+
         <mat-checkbox
           [(ngModel)]="graphSettings.showZoom"
           (ngModelChange)="showZoom()">

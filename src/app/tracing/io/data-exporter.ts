@@ -81,8 +81,6 @@ export class DataExporter {
         };
         if (!viewData.edge) {
             viewData.edge = {
-                joinEdges: undefined,
-                mergeDeliveriesType: undefined,
                 selectedEdges: []
             };
         }
@@ -98,6 +96,7 @@ export class DataExporter {
             Constants.MERGE_DEL_TYPE_EXT_TO_INT_MAP,
             mergeDeliveriesType => mergeDeliveriesType
         ).get(fclData.graphSettings.mergeDeliveriesType);
+        viewData.edge.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
 
         Utils.setProperty(viewData, Constants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
 

@@ -46,3 +46,13 @@ body {
     background-color: #bbdefb;
     color: black;
 }
+
+mat-form-field.less-bottom-padding {
+    .mat-form-field-wrapper {
+        padding-bottom: 0.5em;
+    }
+
+    .mat-form-field-underline {
+        bottom: 0.5em;
+    }
+}

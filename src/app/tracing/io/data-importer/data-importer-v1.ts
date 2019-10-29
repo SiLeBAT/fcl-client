@@ -457,6 +457,9 @@ export class DataImporterV1 implements IDataImporter {
                 !viewData.edge.joinEdges ? MergeDeliveriesType.NO_MERGE : MergeDeliveriesType.MERGE_ALL
             );
         }
+        if (viewData.edge.showMergedDeliveriesCounts !== null && viewData.edge.showMergedDeliveriesCounts !== undefined) {
+            fclData.graphSettings.showMergedDeliveriesCounts = viewData.edge.showMergedDeliveriesCounts;
+        }
 
         const showLegend: any = this.getProperty(viewData, JsonConstants.SHOW_LEGEND);
         if (showLegend !== null) {
