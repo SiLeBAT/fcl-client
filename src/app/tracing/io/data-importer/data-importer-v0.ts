@@ -163,8 +163,8 @@ export class DataImporterV0 implements IDataImporter {
                 fclData.fclElements.stations.push({
                     id: e.id,
                     name: e.name,
-                    lat: e.lat != null ? e.lat : 0.0,
-                    lon: e.lon != null ? e.lon : 0.0,
+                    lat: e.lat,
+                    lon: e.lon,
                     incoming: e.incoming,
                     outgoing: e.outgoing,
                     connections: e.connections,

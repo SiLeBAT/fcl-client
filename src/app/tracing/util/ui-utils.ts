@@ -4,19 +4,32 @@ import {
 } from '../data.model';
 import { DialogPosition, MatMenuTrigger } from '@angular/material';
 import * as ol from 'ol';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { ElementRef } from '@angular/core';
 
 export class Utils {
     private static CY_TO_OL_FACTOR = 10000;
 
-    static latLonToPosition(lat: number, lon: number, zoom: number): Position {
-        const p = fromLonLat([lon, lat]);
+    static olCoordsTolatLon(lat: number, lon: number) {
+        return toLonLat([lon, lat]);
+    }
 
+    static latLonToOlCoords(lat: number, lon: number) {
+        return fromLonLat([lon, lat]);
+    }
+
+    static olCoordsToPosition(x: number, y: number, zoom: number): Position {
         return {
-            x: (p[0] / Utils.CY_TO_OL_FACTOR) * zoom,
-            y: (-p[1] / Utils.CY_TO_OL_FACTOR) * zoom
+            x: (x / Utils.CY_TO_OL_FACTOR) * zoom,
+            y: (-y / Utils.CY_TO_OL_FACTOR) * zoom
         };
+    }
+
+    static latLonToPosition(lat: number, lon: number, zoom: number): Position {
+        const p = Utils.latLonToOlCoords(lat, lon);
+
+        return Utils.olCoordsToPosition(p[0], p[1], zoom);
+
     }
 
     static panZoomToView(pan: Position, zoom: number, width: number, height: number): ol.View {
@@ -66,11 +79,16 @@ export class Utils {
     static hasVisibleStationsWithGisInfo(stations: StationData[]): boolean {
         const stationsWithGis = stations
             .filter((station: StationData) => !station.invisible)
-            .filter((station: StationData) =>
-                station.lat !== undefined && station.lat !== null &&
-                station.lon !== undefined && station.lon !== null);
+            .filter((station: StationData) => Utils.hasGisInfo(station));
 
         return stationsWithGis.length > 0;
+    }
+
+    static hasGisInfo(station: StationData): boolean {
+        return (
+            station.lat !== undefined && station.lat !== null &&
+            station.lon !== undefined && station.lon !== null
+        );
     }
 
 }

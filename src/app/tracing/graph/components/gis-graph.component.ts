@@ -9,7 +9,17 @@ import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 import { Utils as UIUtils } from '../../util/ui-utils';
 import { Utils as NonUIUtils } from '../../util/non-ui-utils';
-import { Layout, Position, Size, GraphState, GraphType, LegendInfo, MergeDeliveriesType } from '../../data.model';
+import {
+    Layout,
+    Position,
+    Size,
+    GraphState,
+    GraphType,
+    LegendInfo,
+    StationData,
+    DeliveryData,
+    MergeDeliveriesType
+} from '../../data.model';
 import * as _ from 'lodash';
 import { StyleService } from '../style.service';
 import { Store } from '@ngrx/store';
@@ -18,9 +28,15 @@ import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData } from '../graph.model';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { GraphService } from '../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
+
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import { GeoJSON } from 'ol/format';
+import { Stroke, Style } from 'ol/style';
+import BaseLayer from 'ol/layer/Base';
 
 interface GraphSettingsState {
     fontSize: Size;
@@ -33,6 +49,25 @@ interface GisGraphState extends GraphState, GraphSettingsState {
     layout: Layout;
 }
 
+interface GeoCoord {
+    lat: number;
+    lon: number;
+}
+interface NoGeoData {
+    withoutGeoData: boolean;
+    stationsWithGeo?: StationData[];
+    stationsWithoutGeo?: StationData[];
+    statCoordMap?: { [key: string]: GeoCoord };
+    statGeoMap?: { [key: string]: StationData[] };
+}
+
+interface FrameData {
+    xMin: number;
+    yMin: number;
+    xMax: number;
+    yMax: number;
+}
+
 @Component({
     selector: 'fcl-gis-graph',
     templateUrl: './gis-graph.component.html',
@@ -42,6 +77,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private static readonly MIN_ZOOM = 0.1;
     private static readonly MAX_ZOOM = 100.0;
     private static readonly ZOOM_FACTOR = 1.5;
+    private static readonly ZOOM_PADDING = 4;
+    private static readonly FRAME_PADDING = GisGraphComponent.ZOOM_PADDING * 10000;
 
     private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 12], [Size.MEDIUM, 25], [Size.LARGE, 50]]);
 
@@ -70,8 +107,12 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private cy: Cy;
     private map: ol.Map;
 
+    private vectorLayer: VectorLayer;
+
     private cachedState: GisGraphState;
     private cachedData: GraphServiceData;
+    private noGeoData: NoGeoData;
+    private frameData: FrameData;
 
     private resizeTimerSubscription: Subscription;
     private hoverDeliveriesSubject: Subject<string[]> = new Subject();
@@ -85,7 +126,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         public elementRef: ElementRef,
         private styleService: StyleService,
         private graphService: GraphService,
-        private alertService: AlertService) {}
+        private alertService: AlertService
+    ) {}
 
     ngOnInit() {
         this.map = new ol.Map({
@@ -113,13 +155,16 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
         const resizeSensor = new ResizeSensor(this.containerElement.nativeElement, () => {
             if (!this.resizeTimerSubscription && this.cy) {
-                this.resizeTimerSubscription = timer(100).subscribe(() => {
-                    this.resizeTimerSubscription.unsubscribe();
-                    this.resizeTimerSubscription = null;
-                    this.resizeGraphAndMap();
-                }, (error => {
-                    throw new Error(`error resizing: ${error}`);
-                }));
+                this.resizeTimerSubscription = timer(100).subscribe(
+                    () => {
+                        this.resizeTimerSubscription.unsubscribe();
+                        this.resizeTimerSubscription = null;
+                        this.resizeGraphAndMap();
+                    },
+                    error => {
+                        throw new Error(`error resizing: ${error}`);
+                    }
+                );
             }
         });
 
@@ -134,12 +179,13 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                     }
                 } else {
                     if (!this.graphStateSubscription) {
-                        this.graphStateSubscription = this.store.select(tracingSelectors.getGisGraphData).pipe(
-                            filter(() => this.componentIsActive)
-                        ).subscribe(
-                            graphState => this.applyState(graphState),
-                            err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
-                        );
+                        this.graphStateSubscription = this.store
+                            .select(tracingSelectors.getGisGraphData)
+                            .pipe(filter(() => this.componentIsActive))
+                            .subscribe(
+                                graphState => this.applyState(graphState),
+                                err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
+                            );
                     }
                 }
             },
@@ -149,12 +195,21 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         this.hoverDeliveriesSubjectSubscription = this.hoverDeliveriesSubject.subscribe(
             ids => {
                 const edgeIds = NonUIUtils.createStringSet(
-                    ids.map(id => this.cachedData.delIdToEdgeDataMap[id]).filter(data => !!data).map(data => data.id)
+                    ids
+                        .map(id => this.cachedData.delIdToEdgeDataMap[id])
+                        .filter(data => !!data)
+                        .map(data => data.id)
                 );
 
                 this.cy.batch(() => {
-                    this.cy.edges().filter(e => !edgeIds[e.id()]).scratch('_active', false);
-                    this.cy.edges().filter(e => !!edgeIds[e.id()]).scratch('_active', true);
+                    this.cy
+                        .edges()
+                        .filter(e => !edgeIds[e.id()])
+                        .scratch('_active', false);
+                    this.cy
+                        .edges()
+                        .filter(e => !!edgeIds[e.id()])
+                        .scratch('_active', true);
                 });
             },
             error => {
@@ -190,7 +245,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private initCy(graphState: GisGraphState, graphData: GraphServiceData) {
         const sub = timer(0).subscribe(
             () => {
-                const layout = (graphState.layout ? graphState.layout : this.getFitLayout(graphState, graphData));
+                this.removeFrameLayer();
+
+                const layout = this.getFitLayout(graphState, graphData);
+
                 this.zoom = layout.zoom;
                 this.cy = cytoscape({
                     container: this.graphElement.nativeElement,
@@ -242,24 +300,28 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                     pinchScale = null;
                     this.cy.userPanningEnabled(true);
                 });
-                this.cy.container().children.item(0).children.item(0).addEventListener(
-                    'wheel',
-                    (e: WheelEvent) => {
-                        this.zoomTo(
-                            this.zoom * Math.pow(10, e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250),
-                            e.offsetX,
-                            e.offsetY
-                        );
-                    },
-                    false
-                );
+                this.cy
+                    .container()
+                    .children.item(0)
+                    .children.item(0)
+                    .addEventListener(
+                        'wheel',
+                        (e: WheelEvent) => {
+                            this.zoomTo(
+                                this.zoom * Math.pow(10, e.deltaMode === 1 ? e.deltaY / -25 : e.deltaY / -250),
+                                e.offsetX,
+                                e.offsetY
+                            );
+                        },
+                        false
+                    );
 
                 this.cy.on('pan', () => {
                     this.updateMap();
                     this.isPanning = true;
                 });
 
-                this.cy.on('tapstart', () => this.isPanning = false);
+                this.cy.on('tapstart', () => (this.isPanning = false));
 
                 this.cy.on('tapend', () => {
                     if (this.isPanning) {
@@ -313,16 +375,23 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         const selectedNodes = this.cy.nodes(':selected');
         const selectedEdges = this.cy.edges(':selected');
 
-        this.store.dispatch(new tracingStoreActions.SetSelectedElementsSOA({
-            selectedElements: {
-                stations: selectedNodes.map(node => node.data().station.id),
-                deliveries: [].concat(...selectedEdges.map(edge => (
-                    edge.data().selected ?
-                    edge.data().deliveries.filter(d => d.selected).map(d => d.id) :
-                    edge.data().deliveries.map(d => d.id))
-                ))
-            }
-        }));
+        this.store.dispatch(
+            new tracingStoreActions.SetSelectedElementsSOA({
+                selectedElements: {
+                    stations: selectedNodes.map(node => node.data().station.id),
+                    deliveries: [].concat(
+                        ...selectedEdges.map(edge =>
+                            edge.data().selected
+                                ? edge
+                                      .data()
+                                      .deliveries.filter(d => d.selected)
+                                      .map(d => d.id)
+                                : edge.data().deliveries.map(d => d.id)
+                        )
+                    )
+                }
+            })
+        );
     }
 
     getCanvas(): Promise<HTMLCanvasElement> {
@@ -350,12 +419,27 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     private createNodes(layout: Layout, graphData: GraphServiceData): CyNodeDef[] {
-        return graphData.nodeData.map(nodeData => ({
+        const result = graphData.nodeData.map(nodeData => ({
             group: 'nodes',
             data: nodeData,
             selected: nodeData.selected,
-            position:  UIUtils.latLonToPosition(nodeData.station.lat, nodeData.station.lon, this.zoom)
+            position: this.calculateNodePosition(nodeData.station)
         }));
+
+        return result;
+    }
+
+    private calculateNodePosition(station: StationData): Position {
+        let position: Position;
+
+        if (UIUtils.hasGisInfo(station)) {
+            position = UIUtils.latLonToPosition(station.lat, station.lon, this.zoom);
+        } else {
+            const stationCoords: GeoCoord = this.noGeoData.statCoordMap[station.id];
+            position = UIUtils.latLonToPosition(stationCoords.lat, stationCoords.lon, this.zoom);
+        }
+
+        return position;
     }
 
     private createEdges(graphData: GraphServiceData): CyEdgeDef[] {
@@ -385,14 +469,16 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     private updateGraphStyle(graphState: GisGraphState, graphData: GraphServiceData) {
         if (this.cy && this.cy.style) {
-            this.cy.setStyle(this.styleService.createCyStyle(
-                {
-                    fontSize: GisGraphComponent.FONT_SIZES.get(graphState.fontSize),
-                    nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize),
-                    zoom: 1
-                },
-                graphData
-            ));
+            this.cy.setStyle(
+                this.styleService.createCyStyle(
+                    {
+                        fontSize: GisGraphComponent.FONT_SIZES.get(graphState.fontSize),
+                        nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+                        zoom: 1
+                    },
+                    graphData
+                )
+            );
             this.cy.elements().scratch('_update', true);
         }
     }
@@ -430,7 +516,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         this.zoom = layout.zoom;
         this.cy.batch(() => {
             this.cy.pan(layout.pan);
-            this.cy.nodes().positions(node => UIUtils.latLonToPosition(node.data().station.lat, node.data().station.lon, this.zoom));
+            // this.cy.nodes().positions(node => UIUtils.latLonToPosition(node.data().station.lat, node.data().station.lon, this.zoom));
+            this.cy.nodes().positions(node => this.calculateNodePosition(node.data().station));
         });
         this.map.setView(UIUtils.panZoomToView(layout.pan, this.zoom, this.cy.width(), this.cy.height()));
         this.applyLayoutToStateIfNecessary();
@@ -451,12 +538,14 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.cachedState.layout.pan.x !== this.cy.pan().x ||
             this.cachedState.layout.pan.y !== this.cy.pan().y
         ) {
-            this.store.dispatch(new tracingStoreActions.SetGisGraphLayoutSOA({
-                layout: {
-                    zoom: this.zoom,
-                    pan: { ...this.cy.pan() }
-                }
-            }));
+            this.store.dispatch(
+                new tracingStoreActions.SetGisGraphLayoutSOA({
+                    layout: {
+                        zoom: this.zoom,
+                        pan: { ...this.cy.pan() }
+                    }
+                })
+            );
         }
     }
 
@@ -467,6 +556,13 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     private getFitLayout(graphState: GisGraphState, graphData: GraphServiceData): Layout {
+
+        this.noGeoData = {
+            withoutGeoData: false
+        };
+
+        this.removeFrameLayer();
+
         const width = this.containerElement.nativeElement.offsetWidth;
         const height = this.containerElement.nativeElement.offsetHeight;
         const border = GisGraphComponent.NODE_SIZES.get(graphState.nodeSize);
@@ -476,38 +572,113 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         let xMax = Number.NEGATIVE_INFINITY;
         let yMax = Number.NEGATIVE_INFINITY;
 
-        for (const station of graphData.nodeData.map(data => data.station)) {
-            if (
-                station.lat !== undefined && station.lat !== null &&
-                station.lon !== undefined && station.lon !== null
-                ) {
-                const p = UIUtils.latLonToPosition(station.lat, station.lon, 1.0);
+        let xMinFrame = Number.POSITIVE_INFINITY;
+        let yMinFrame = Number.POSITIVE_INFINITY;
+        let xMaxFrame = Number.NEGATIVE_INFINITY;
+        let yMaxFrame = Number.NEGATIVE_INFINITY;
 
-                xMin = Math.min(xMin, p.x);
-                yMin = Math.min(yMin, p.y);
-                xMax = Math.max(xMax, p.x);
-                yMax = Math.max(yMax, p.y);
-            }
-        }
+        let xMinFramePos;
+        let yMinFramePos;
+        let xMaxFramePos;
+        let yMaxFramePos;
 
         let zoom: number;
         let pan: Position;
 
-        if (xMax > xMin && yMax > yMin) {
-            zoom = Math.min((width - 2 * border) / (xMax - xMin), (height - 2 * border) / (yMax - yMin));
-        } else {
-            zoom = 1;
+        const stationsWithGeo: StationData[] = graphData.nodeData
+            .map(data => data.station)
+            .filter(station => UIUtils.hasGisInfo(station));
+
+        const stationsWithoutGeo: StationData[] = graphData.nodeData
+            .map(data => data.station)
+            .filter(station => !UIUtils.hasGisInfo(station));
+
+        this.noGeoData.withoutGeoData = stationsWithoutGeo.length > 0;
+
+        for (const station of stationsWithGeo) {
+            const p = UIUtils.latLonToPosition(station.lat, station.lon, 1.0);
+
+            xMin = Math.min(xMin, p.x);
+            yMin = Math.min(yMin, p.y);
+            xMax = Math.max(xMax, p.x);
+            yMax = Math.max(yMax, p.y);
+
+            if (this.noGeoData.withoutGeoData) {
+                const frameOlCoords = UIUtils.latLonToOlCoords(station.lat, station.lon);
+
+                xMinFrame = Math.min(xMinFrame, frameOlCoords[0]);
+                yMinFrame = Math.min(yMinFrame, frameOlCoords[1]);
+                xMaxFrame = Math.max(xMaxFrame, frameOlCoords[0]);
+                yMaxFrame = Math.max(yMaxFrame, frameOlCoords[1]);
+            }
         }
 
-        if (Number.isFinite(xMin) && Number.isFinite(yMin) && Number.isFinite(xMax) && Number.isFinite(yMax)) {
-            const panX1 = -xMin * zoom + border;
-            const panY1 = -yMin * zoom + border;
-            const panX2 = -xMax * zoom + width - border;
-            const panY2 = -yMax * zoom + height - border;
+        if (!this.noGeoData.withoutGeoData) {
+            if (xMax > xMin && yMax > yMin) {
+                zoom = Math.min(
+                    (width - 2 * border) / (xMax - xMin),
+                    (height - 2 * border) / (yMax - yMin)
+                ) * 0.8;
+            } else {
+                zoom = 1;
+            }
 
-            pan = { x: (panX1 + panX2) / 2, y: (panY1 + panY2) / 2 };
+            if (Number.isFinite(xMin) && Number.isFinite(yMin) && Number.isFinite(xMax) && Number.isFinite(yMax)) {
+                const panX1 = -xMin * zoom + border;
+                const panY1 = -yMin * zoom + border;
+                const panX2 = -xMax * zoom + width - border;
+                const panY2 = -yMax * zoom + height - border;
+
+                pan = { x: (panX1 + panX2) / 2, y: (panY1 + panY2) / 2 };
+            } else {
+                pan = { x: 0, y: 0 };
+            }
+
         } else {
-            pan = { x: 0, y: 0 };
+            if (xMax > xMin && yMax > yMin) {
+                xMinFramePos = xMin - GisGraphComponent.ZOOM_PADDING;
+                yMinFramePos = yMin - GisGraphComponent.ZOOM_PADDING;
+                xMaxFramePos = xMax + GisGraphComponent.ZOOM_PADDING;
+                yMaxFramePos = yMax + GisGraphComponent.ZOOM_PADDING;
+
+                zoom = Math.min(
+                    (width - 2 * border) / (xMaxFramePos - xMinFramePos),
+                    (height - 2 * border) / (yMaxFramePos - yMinFramePos)
+                ) * 0.8;
+            } else {
+                zoom = 1;
+            }
+
+            if (Number.isFinite(xMin) && Number.isFinite(yMin) && Number.isFinite(xMax) && Number.isFinite(yMax)) {
+                const panX1 = -xMinFramePos * zoom + border;
+                const panY1 = -yMinFramePos * zoom + border;
+                const panX2 = -xMaxFramePos * zoom + width - border;
+                const panY2 = -yMaxFramePos * zoom + height - border;
+
+                pan = { x: (panX1 + panX2) / 2, y: (panY1 + panY2) / 2 };
+            } else {
+                pan = { x: 0, y: 0 };
+            }
+
+            xMinFrame -= GisGraphComponent.FRAME_PADDING;
+            xMaxFrame += GisGraphComponent.FRAME_PADDING;
+            yMinFrame -= GisGraphComponent.FRAME_PADDING;
+            yMaxFrame += GisGraphComponent.FRAME_PADDING;
+
+            this.frameData = {
+                xMin: xMinFrame,
+                xMax: xMaxFrame,
+                yMin: yMinFrame,
+                yMax: yMaxFrame
+            };
+
+            this.addFrameLayer();
+
+            this.noGeoData.stationsWithGeo = stationsWithGeo;
+            this.noGeoData.stationsWithoutGeo = stationsWithoutGeo;
+            const neighbors = this.getNeighborsWithoutGeo(stationsWithGeo, graphData);
+            this.determineNextGeoNeighbor(neighbors, graphData);
+            this.calculateCoords(stationsWithGeo, neighbors, graphData);
         }
 
         return { zoom: zoom, pan: pan };
@@ -517,6 +688,200 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         if (this.cy && this.cy.style) {
             this.cy.edges().scratch('_update', true);
         }
+    }
+
+    private calculateCoords(stationsWithGeo: StationData[], neighbors: StationData[], graphData: GraphServiceData) {
+        if (neighbors.length === 0) {
+            return;
+        } else {
+            neighbors.map((station: StationData) => {
+                const coords = _.has(this.noGeoData, 'statCoordMap') ? this.noGeoData.statCoordMap : {};
+
+                if (_.has(this.noGeoData.statGeoMap, station.id)) {
+                    const stationsGeo: StationData[] = this.noGeoData.statGeoMap[station.id];
+
+                    const stationLatLon = stationsGeo.reduce((acc, stationGeo) => {
+                        acc.lat += stationGeo.lat;
+                        acc.lon += stationGeo.lon;
+                        return acc;
+                    }, { lat: 0, lon: 0 });
+
+                    const [x, y] = UIUtils.latLonToOlCoords(
+                        (stationLatLon.lat / stationsGeo.length),
+                        (stationLatLon.lon / stationsGeo.length)
+                    );
+
+                    const xMinDiff = Math.abs(x - this.frameData.xMin);
+                    const xMaxDiff = Math.abs(x - this.frameData.xMax);
+                    const yMinDiff = Math.abs(y - this.frameData.yMin);
+                    const yMaxDiff = Math.abs(y - this.frameData.yMax);
+
+                    const min = Math.min(xMinDiff, xMaxDiff, yMinDiff, yMaxDiff);
+
+                    let stationX: number;
+                    let stationY: number;
+
+                    if (xMinDiff === min) {
+                        stationX = this.frameData.xMin;
+                        stationY = this.frameData.yMax - yMaxDiff;
+                    } else if (xMaxDiff === min) {
+                        stationX = this.frameData.xMax;
+                        stationY = this.frameData.yMax - yMaxDiff;
+                    } else if (yMinDiff === min) {
+                        stationX = this.frameData.xMin + xMinDiff;
+                        stationY = this.frameData.yMin;
+                    } else if (yMaxDiff === min) {
+                        stationX = this.frameData.xMin + xMinDiff;
+                        stationY = this.frameData.yMax;
+                    }
+
+                    const [stationLon, stationLat] = UIUtils.olCoordsTolatLon(stationY, stationX);
+
+                    coords[station.id] = {
+                        lat: stationLat,
+                        lon: stationLon
+                    };
+                } else {
+
+                    const stationNeighbors: StationData[] = this.getStationNeighbors(station, graphData);
+                    let found: boolean = false;
+                    const stationWithCoord: StationData[] = stationNeighbors.map((neighbor: StationData) => {
+                        if (_.has(this.noGeoData.statCoordMap, neighbor.id) && !found) {
+                            found = true;
+                            return neighbor;
+                        }
+                    });
+
+                    let stationLon: number;
+                    let stationLat: number;
+
+                    if (stationWithCoord.length > 0) {
+                        const geoCoord: GeoCoord = this.noGeoData.statCoordMap[stationWithCoord[0].id];
+                        stationLon = geoCoord.lon;
+                        stationLat = geoCoord.lat;
+                    } else {
+                        [stationLon, stationLat] = UIUtils.olCoordsTolatLon(this.frameData.yMax, this.frameData.xMin);
+                    }
+
+                    coords[station.id] = {
+                        lon: stationLon,
+                        lat: stationLat
+                    };
+                }
+
+                this.noGeoData.statCoordMap = coords;
+            });
+            const newStationsWithGeo = [...stationsWithGeo, ...neighbors];
+            this.calculateCoords(newStationsWithGeo, this.getNeighborsWithoutGeo(newStationsWithGeo, graphData), graphData);
+        }
+    }
+
+    private getNeighborsWithoutGeo(stationsWithGeo: StationData[], graphData: GraphServiceData): StationData[] {
+
+        const neighborsWithoutGeo: StationData[] = _.uniq(_.flattenDeep(stationsWithGeo
+            .map((station: StationData) => [station.incoming, station.outgoing])
+
+            .map(([delIdsIn, delIdsOut]) => {
+                const delsIn: DeliveryData[] = delIdsIn.map((delIdIn: string) => graphData.delMap[delIdIn]);
+                const delsOut: DeliveryData[] = delIdsOut.map((delIdOut: string) => graphData.delMap[delIdOut]);
+                return [delsIn, delsOut];
+            })
+            .map(([delsIn, delsOut]) => {
+                const statIdsSource: string[] = delsIn.map((del: DeliveryData) => del.source);
+                const statIdsTarget: string[] = delsOut.map((del: DeliveryData) => del.target);
+                return [statIdsSource, statIdsTarget];
+            })
+            .map(([statIdsSource, statIdsTarget]) => {
+                const statsSource: StationData[] = statIdsSource.map((statIdSource: string) => graphData.statMap[statIdSource]);
+                const statsTarget: StationData[] = statIdsTarget.map((statIdTarget: string) => graphData.statMap[statIdTarget]);
+                return [statsSource, statsTarget];
+            })))
+            .filter((station: StationData) => !UIUtils.hasGisInfo(station) && !_.has(this.noGeoData.statCoordMap, station.id));
+
+        return neighborsWithoutGeo;
+    }
+
+    private determineNextGeoNeighbor(neighbors: StationData[], graphData: GraphServiceData) {
+        const geoMap = _.has(this.noGeoData, 'statGeoMap') ? this.noGeoData.statGeoMap : {};
+
+        neighbors
+            .map((station: StationData) => {
+
+                const stationNeighbors: StationData[] = this.getStationNeighbors(station, graphData);
+                stationNeighbors.forEach((neighbor: StationData) => {
+                    if (_.indexOf(this.noGeoData.stationsWithGeo, neighbor) >= 0) {
+                        const mappedStation = geoMap[station.id] ? geoMap[station.id] : [];
+                        mappedStation.push(neighbor);
+                        geoMap[station.id] = mappedStation;
+                    }
+                });
+
+            });
+
+        this.noGeoData.statGeoMap = geoMap;
+    }
+
+    private getStationNeighbors(station: StationData, graphData: GraphServiceData): StationData[] {
+        const outStations: StationData[] = station.outgoing
+            .map((delIdOut: string) => graphData.delMap[delIdOut])
+            .map((delOut: DeliveryData) => delOut.target)
+            .map((statIdOut: string) => graphData.statMap[statIdOut])
+            .map((statOut: StationData) => statOut);
+
+        const inStations: StationData[] = station.incoming
+            .map((delIdIn: string) => graphData.delMap[delIdIn])
+            .map((delIn: DeliveryData) => delIn.source)
+            .map((statIdIn: string) => graphData.statMap[statIdIn])
+            .map((statIn: StationData) => statIn);
+
+        return [..._.uniq(outStations), ..._.uniq(inStations)];
+    }
+
+    private addFrameLayer() {
+        const polygon = new Style({
+            stroke: new Stroke({
+                color: 'rgba(255, 0, 0, 0.3)',
+                width: 20
+            })
+        });
+
+        const geojsonObject = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'polygon',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [[
+                            [this.frameData.xMin, this.frameData.yMax],
+                            [this.frameData.xMin, this.frameData.yMin],
+                            [this.frameData.xMax, this.frameData.yMin],
+                            [this.frameData.xMax, this.frameData.yMax]
+                        ]]
+                    }
+                }
+            ]
+        };
+
+        const vectorSource = new VectorSource({
+            features: new GeoJSON().readFeatures(geojsonObject)
+        });
+
+        this.vectorLayer = new VectorLayer({
+            source: vectorSource,
+            style: polygon
+        });
+
+        this.map.addLayer(this.vectorLayer);
+    }
+
+    private removeFrameLayer() {
+        this.map.getLayers().forEach((layer: BaseLayer) => {
+            if (layer.getType() === 'VECTOR') {
+                this.map.removeLayer(layer);
+            }
+        });
     }
 
     private applyState(newState: GisGraphState) {
