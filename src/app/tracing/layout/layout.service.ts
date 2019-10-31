@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MenuItemData } from '../graph/menu-item-data.model';
 import { LayoutManagerInfo, LayoutStrings } from './layout.constants';
-import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
 import spread from 'cytoscape-spread';
@@ -10,23 +9,16 @@ import { FarmToForkLayout } from './farm-to-fork/farm-to-fork';
 import { DialogActionsComponent, DialogActionsData } from '../dialog/dialog-actions/dialog-actions.component';
 import { MatDialog } from '@angular/material';
 import { Action } from '@ngrx/store';
+import { Cy, CyNodeCollection, CyNode } from '../graph/graph.model';
 
 export enum LayoutActionTypes {
     LayoutAction = '[Tracing] Layout'
 }
 
-interface Cy {
-    layout(options: { name: string, [key: string]: any }): CyLayout;
-}
-
-interface CyLayout {
-    run(): void;
-}
-
 export class LayoutAction implements Action {
     readonly type = LayoutActionTypes.LayoutAction;
 
-    constructor(public payload: { layoutName: string }) {}
+    constructor(public payload: { layoutName: string, nodeIds: string[] }) {}
 }
 
 @Injectable({
@@ -36,12 +28,13 @@ export class LayoutService {
 
     constructor(private dialogService: MatDialog) { }
 
-    runLayout(layoutName: string, cy: Cy, nodeSize: number) {
+    runLayout(layoutName: string, cyContext: Cy | CyNodeCollection, nodeSize: number, stopCallBack: () => void) {
         switch (layoutName) {
             case LayoutManagerInfo.farmToFork.name:
-                cy.layout({
+                cyContext.layout({
                     name: LayoutManagerInfo.farmToFork.name,
-                    options: { nodeSize: nodeSize }
+                    options: { nodeSize: nodeSize },
+                    stop: stopCallBack
                 })
                 .run();
                 break;
@@ -56,7 +49,7 @@ export class LayoutService {
                     data: layoutDialogData
                 });
 
-                layout = cy.layout({
+                layout = cyContext.layout({
                     name: LayoutManagerInfo.constraintBased.name,
                     ungrabifyWhileSimulating: true,
                     avoidOverlap: false,
@@ -64,56 +57,72 @@ export class LayoutService {
                     maxSimulationTime: 60000,
                     stop: function () {
                         layoutDialog.close();
+                        stopCallBack();
                     }
                 });
                 layout.run();
                 break;
             default:
-                cy.layout({ name: layoutName }).run();
+                cyContext.layout({ name: layoutName, stop: stopCallBack }).run();
         }
     }
 
-    getLayoutMenuData(): MenuItemData[] {
+    getLayoutMenuData(cy: Cy,
+        contextGraphElement: CyNode): MenuItemData[] {
+
+        const nodeIds: string[] = (
+            contextGraphElement ?
+            (
+                contextGraphElement.selected() ?
+                cy.nodes(':selected').map(n => n.id()) :
+                [contextGraphElement.id()]
+            ) :
+            cy.nodes().map(n => n.id())
+        );
+
+        const areAllNodesToBeLayouted = nodeIds.length === 0 || nodeIds.length === cy.nodes().size();
+
         return [
             {
                 ...LayoutManagerInfo.fruchtermanReingold,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.fruchtermanReingold.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.fruchtermanReingold.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.farmToFork,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.farmToFork.name })
+                disabled: !areAllNodesToBeLayouted,
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.farmToFork.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.constraintBased,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.constraintBased.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.constraintBased.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.random,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.random.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.random.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.grid,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.grid.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.grid.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.circle,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.circle.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.circle.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.concentric,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.concentric.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.concentric.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.breadthFirst,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.breadthFirst.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.breadthFirst.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.spread,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.spread.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.spread.name, nodeIds: nodeIds })
             },
             {
                 ...LayoutManagerInfo.directedAcyclicGraph,
-                action: new LayoutAction({ layoutName: LayoutManagerInfo.directedAcyclicGraph.name })
+                action: new LayoutAction({ layoutName: LayoutManagerInfo.directedAcyclicGraph.name, nodeIds: nodeIds })
             }
         ];
     }

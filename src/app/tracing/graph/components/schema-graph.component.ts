@@ -16,7 +16,7 @@ import { StyleService } from '../style.service';
 import { GraphService } from '../graph.service';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { filter } from 'rxjs/operators';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData } from '../graph.model';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection, CyExtent } from '../graph.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
@@ -31,6 +31,13 @@ interface GraphSettingsState {
 interface SchemaGraphState extends GraphState, GraphSettingsState {
     stationPositions: { [key: number]: Position };
     layout: Layout;
+}
+
+interface Rectangle {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
 }
 
 @Component({
@@ -231,12 +238,6 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 // box selection
                 this.cy.on('boxselect', () => this.processGraphElementSelectionChange());
 
-                this.cy.on('layoutstop', () => {
-                    this.updateZoomPercentage();
-                    this.updateGraphStyle(this.cachedState, this.cachedData);
-                    this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
-                });
-
                 this.contextMenu.connect(this.cy, this.hoverDeliveriesSubject);
 
                 this.updateZoomPercentage();
@@ -252,7 +253,142 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     performLayoutAction(action: LayoutAction) {
-        this.layoutService.runLayout(action.payload.layoutName, this.cy, SchemaGraphComponent.NODE_SIZES.get(this.cachedState.nodeSize));
+        const nodeSet = Utils.createObjectStringSet(action.payload.nodeIds);
+        const isTrueSubSet = action.payload.nodeIds.length > 0 && action.payload.nodeIds.length < this.cy.nodes().size();
+        const nodes = isTrueSubSet ? this.cy.nodes().filter(n => nodeSet[n.id()]) : this.cy.nodes();
+        const oldCenter = Utils.getCenter(nodes.map(n => n.position()));
+        const cyContext = !isTrueSubSet ? this.cy : nodes;
+
+        const oldLayout = {
+            zoom: this.cy.zoom(),
+            pan: { ...this.cy.pan() }
+        };
+        const oldExtent = this.cy.extent();
+
+        this.layoutService.runLayout(
+            action.payload.layoutName,
+            cyContext,
+            SchemaGraphComponent.NODE_SIZES.get(this.cachedState.nodeSize),
+            () => {
+                if (isTrueSubSet) {
+                    this.recenterNodes(nodes, oldCenter);
+
+                    const newNodesRect = this.getEnclosingRect(nodes);
+                    const newLayout: Layout = (
+                        this.isRectInclosingRect(oldExtent, newNodesRect) ?
+                        oldLayout :
+                        this.getLayoutFromRect(this.getMergedRect(oldExtent, newNodesRect))
+                    );
+
+                    this.cy.batch(() => {
+                        this.cy.zoom(newLayout.zoom);
+                        this.cy.pan({ ...newLayout.pan });
+                    });
+
+                    if (newLayout !== oldLayout) {
+                        this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
+                    } else {
+                        this.applyNodePositionsToState();
+                    }
+
+                    this.updateZoomPercentage();
+                    this.updateGraphStyle(this.cachedState, this.cachedData);
+                } else {
+                    this.updateZoomPercentage();
+                    this.updateGraphStyle(this.cachedState, this.cachedData);
+                    this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
+                }
+            }
+        );
+    }
+
+    private recenterNodes(nodes: CyNodeCollection, oldCenter: Position) {
+        const newCenter = Utils.getCenter(nodes.map(n => n.position()));
+        const delta = Utils.difference(oldCenter, newCenter);
+        nodes.positions(n => Utils.sum(n.position(), delta));
+    }
+
+    private getLayoutFromRect(rect: Rectangle): Layout {
+        const fitRect = this.getAspectRatioPreservingRect(rect);
+        const zoom = this.cy.width() / (fitRect.x2 - fitRect.x1);
+        return {
+            zoom: zoom,
+            pan: {
+                x: - fitRect.x1 * zoom,
+                y: - fitRect.y1 * zoom
+            }
+        };
+    }
+
+    private getAspectRatioPreservingRect(rect: Rectangle): Rectangle {
+        rect = { ...rect };
+        const cyWidth = this.cy.width();
+        const cyHeight = this.cy.height();
+        const cyWHRatio = cyWidth / cyHeight;
+        const rectWidth = rect.x2 - rect.x1;
+        const rectHeight = rect.y2 - rect.y1;
+        const rectWHRatio = rectWidth / rectHeight;
+        if (cyWHRatio >= rectWHRatio) {
+            const delta = cyWidth * rectHeight / cyHeight - rectWidth;
+            rect.x1 -= delta / 2;
+            rect.x2 += delta / 2;
+        } else {
+            const delta = cyHeight * rectWidth / cyWidth - rectHeight;
+            rect.y1 -= delta / 2;
+            rect.y2 += delta / 2;
+        }
+        return rect;
+    }
+
+    private isRectInclosingRect(enclosingRect: Rectangle, enclosedRect: Rectangle): boolean {
+        return (
+            enclosingRect.x1 <= enclosedRect.x1 &&
+            enclosingRect.y1 <= enclosedRect.y1 &&
+            enclosingRect.x2 >= enclosedRect.x2 &&
+            enclosingRect.y2 >= enclosedRect.y2
+        );
+    }
+
+    private getMergedRect(...rects: Rectangle[]): Rectangle {
+        if (!rects || rects.length === 0) {
+            return null;
+        } else {
+            const mergedRect: Rectangle = {
+                x1: rects[0].x1,
+                y1: rects[0].y1,
+                x2: rects[0].x2,
+                y2: rects[0].y2
+            };
+            for (let i = rects.length - 1; i >= 1; i--) {
+                mergedRect.x1 = Math.min(mergedRect.x1, rects[i].x1);
+                mergedRect.y1 = Math.min(mergedRect.y1, rects[i].y1);
+                mergedRect.x2 = Math.max(mergedRect.x2, rects[i].x2);
+                mergedRect.y2 = Math.max(mergedRect.y2, rects[i].y2);
+            }
+            return mergedRect;
+        }
+    }
+
+    private getEnclosingRect(nodes: CyNodeCollection): Rectangle {
+        if (nodes.size() === 0) {
+            return null;
+        } else {
+            const rect: Rectangle = {
+                x1: Number.POSITIVE_INFINITY,
+                y1: Number.POSITIVE_INFINITY,
+                x2: Number.NEGATIVE_INFINITY,
+                y2: Number.NEGATIVE_INFINITY
+            };
+            nodes.forEach(node => {
+                const pos = node.position();
+                const size = node.height();
+                rect.x1 = Math.min(rect.x1, pos.x - size);
+                rect.y1 = Math.min(rect.y1, pos.y - size);
+                rect.x2 = Math.max(rect.x2, pos.x + size);
+                rect.y2 = Math.max(rect.y2, pos.y + size);
+            });
+            return rect;
+        }
     }
 
     private applyLayoutToStateIfNecessary() {
@@ -450,6 +586,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.cy.zoom() !== state.layout.zoom ||
             !_.isEqual(this.cy.pan(), state.layout.pan)
             ) {
+
             this.cy.zoom(state.layout.zoom);
             this.cy.pan({ ...state.layout.pan });
             this.updateZoomPercentage();

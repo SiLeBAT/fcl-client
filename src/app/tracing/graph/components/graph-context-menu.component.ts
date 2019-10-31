@@ -55,11 +55,11 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
                     y: event.originalEvent.offsetY
                 };
 
-                const layoutMenuData = !cy.autoungrabify() ? this.layoutService.getLayoutMenuData() : [];
+                const contextElement: CyNode | CyEdge = element === cy ? null : element;
+
                 const menuData = this.getMenuData(
-                    layoutMenuData,
                     cy,
-                    element === cy ? null : element,
+                    contextElement,
                     hoverDeliveriesSubject
                 );
 
@@ -70,14 +70,13 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
     }
 
     private getMenuData(
-        layoutMenuData: MenuItemData[],
         cy: Cy,
         contextGraphElement: CyNode | CyEdge,
         hoverDeliveriesSubject: Subject<string[]>
     ): MenuItemData[] {
 
         if (!contextGraphElement) {
-            return this.createGraphMenuData(layoutMenuData);
+            return this.createGraphMenuData(cy);
         } else if (contextGraphElement.isNode()) {
             return this.createStationActions(cy, contextGraphElement as CyNode, hoverDeliveriesSubject);
         } else if (contextGraphElement.isEdge()) {
@@ -87,12 +86,38 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
         }
     }
 
-    private createGraphMenuData(layoutMenuData: MenuItemData[]): MenuItemData[] {
+    private createLayoutMenuData(cy: Cy, contextGraphElement: CyNode): MenuItemData[] {
+        const layoutIsVisible = !cy.autoungrabify() && (!contextGraphElement || contextGraphElement.isNode());
+
+        if (layoutIsVisible) {
+
+            const layoutIsEnabled = (
+                !contextGraphElement ?
+                cy.nodes().size() : (
+                    contextGraphElement.selected() ?
+                    cy.nodes(':selected').size() :
+                    1
+                )
+            ) >= 2;
+
+            const layoutMenuData: MenuItemData[] = this.layoutService.getLayoutMenuData(cy, contextGraphElement);
+
+            return (
+                layoutMenuData && layoutMenuData.length > 0 ?
+                    [{
+                        ...MenuItemStrings.applyLayout,
+                        disabled: !layoutIsEnabled,
+                        children: layoutMenuData.slice()
+                    }] :
+                    []
+            );
+        }
+        return [];
+    }
+
+    private createGraphMenuData(cy: Cy): MenuItemData[] {
         return [].concat(
-            (layoutMenuData && layoutMenuData.length > 0 ? [{
-                ...MenuItemStrings.applyLayout,
-                children: layoutMenuData.slice()
-            }] : []),
+            this.createLayoutMenuData(cy, null),
             [
                 {
                     ...MenuItemStrings.clearTrace,
@@ -213,53 +238,56 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
         const allKillContaminationStations = selectedStations.every(s => s.killContamination);
         const allMetaStations = selectedStations.every(s => s.contains && s.contains.length > 0);
 
-        return [
-            {
-                ...MenuItemStrings.showProperties,
-                disabled: multipleStationsSelected,
-                action: new tracingActions.ShowStationPropertiesMSA({
-                    stationId: selectedIds[0],
-                    hoverDeliveriesSubject: hoverDeliveriesSubject
-                })
-            },
-            this.createTraceMenuItemData(node),
-            {
-                ...(allOutbreakStations ? MenuItemStrings.unmarkOutbreakStations : MenuItemStrings.markOutbreakStations),
-                action: new tracingActions.MarkStationsAsOutbreakMSA({ stationIds: selectedIds, outbreak: !allOutbreakStations })
-            },
-            {
-                ...(allCrossContaminationStations ?
-                    MenuItemStrings.unsetStationCrossContamination :
-                    MenuItemStrings.setStationCrossContamination),
-                action: new tracingActions.SetStationCrossContaminationMSA({
-                    stationIds: selectedIds,
-                    crossContamination: !allCrossContaminationStations
-                })
-            },
-            {
-                ...(allKillContaminationStations ?
-                    MenuItemStrings.unsetStationKillContamination :
-                    MenuItemStrings.setStationKillContamination),
-                action: new tracingActions.SetStationKillContaminationMSA({
-                    stationIds: selectedIds,
-                    killContamination: !allKillContaminationStations
-                })
-            },
-            {
-                ...MenuItemStrings.makeStationsInvisible,
-                action: new tracingActions.MakeStationsInvisibleMSA({ stationIds: selectedIds })
-            },
-            {
-                ...MenuItemStrings.mergeStations,
-                disabled: !multipleStationsSelected,
-                action: new groupingActions.MergeStationsMSA({ memberIds: selectedIds })
-            },
-            {
-                ...MenuItemStrings.expandStations,
-                disabled: !allMetaStations,
-                action: new groupingActions.ExpandStationsMSA({ stationIds: selectedIds })
-            }
-        ];
+        return [].concat(
+            this.createLayoutMenuData(cy, node),
+            [
+                {
+                    ...MenuItemStrings.showProperties,
+                    disabled: multipleStationsSelected,
+                    action: new tracingActions.ShowStationPropertiesMSA({
+                        stationId: selectedIds[0],
+                        hoverDeliveriesSubject: hoverDeliveriesSubject
+                    })
+                },
+                this.createTraceMenuItemData(node),
+                {
+                    ...(allOutbreakStations ? MenuItemStrings.unmarkOutbreakStations : MenuItemStrings.markOutbreakStations),
+                    action: new tracingActions.MarkStationsAsOutbreakMSA({ stationIds: selectedIds, outbreak: !allOutbreakStations })
+                },
+                {
+                    ...(allCrossContaminationStations ?
+                        MenuItemStrings.unsetStationCrossContamination :
+                        MenuItemStrings.setStationCrossContamination),
+                    action: new tracingActions.SetStationCrossContaminationMSA({
+                        stationIds: selectedIds,
+                        crossContamination: !allCrossContaminationStations
+                    })
+                },
+                {
+                    ...(allKillContaminationStations ?
+                        MenuItemStrings.unsetStationKillContamination :
+                        MenuItemStrings.setStationKillContamination),
+                    action: new tracingActions.SetStationKillContaminationMSA({
+                        stationIds: selectedIds,
+                        killContamination: !allKillContaminationStations
+                    })
+                },
+                {
+                    ...MenuItemStrings.makeStationsInvisible,
+                    action: new tracingActions.MakeStationsInvisibleMSA({ stationIds: selectedIds })
+                },
+                {
+                    ...MenuItemStrings.mergeStations,
+                    disabled: !multipleStationsSelected,
+                    action: new groupingActions.MergeStationsMSA({ memberIds: selectedIds })
+                },
+                {
+                    ...MenuItemStrings.expandStations,
+                    disabled: !allMetaStations,
+                    action: new groupingActions.ExpandStationsMSA({ stationIds: selectedIds })
+                }
+            ]
+        );
     }
 
     private createDeliveryActions(cy: Cy, edge: CyEdge): MenuItemData[] {
