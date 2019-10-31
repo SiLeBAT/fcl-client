@@ -20,7 +20,7 @@ export interface CyEdgeDef {
 type CyCallBackFun = (a?: any) => void;
 
 export interface Cy {
-    nodes(a?: string): CyElementCollection<CyNode>;
+    nodes(a?: string): CyNodeCollection;
     edges(a?: string): CyElementCollection<CyEdge>;
     elements(a?: string): CyElementCollection<CyNode | CyEdge>;
     container(): any;
@@ -47,6 +47,17 @@ export interface Cy {
     autoungrabify<T extends boolean | None>(a?: T): None extends T ? boolean : void;
     layout(options: { name: string, [key: string]: any }): CyLayout;
     zoomingEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
+    viewport(zoom: number, pan: Position): void;
+    extent(): CyExtent;
+}
+
+export interface CyExtent {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    w: number;
+    h: number;
 }
 
 interface CyLayout {
@@ -64,7 +75,12 @@ interface CyElementCollection<E> {
     forEach(a: (b: E) => void): void;
     scratch(a: string, b: boolean): void;
     filter(a: ((b: E) => boolean) | string): CyElementCollection<E>;
+}
+
+export interface CyNodeCollection extends CyElementCollection<CyNode> {
+    layout(options: { name: string, [key: string]: any }): CyLayout;
     positions(a: (b: CyNode) => Position): void;
+    filter(a: ((b: CyNode) => boolean) | string): CyNodeCollection;
 }
 
 interface CyElement {
