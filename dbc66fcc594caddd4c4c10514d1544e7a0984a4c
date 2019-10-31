@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1c20c48_db49ccb8",
+        "filename": "src/app/tracing/graph/components/schema-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-10-31T13:09:09Z",
+      "side": 1,
+      "message": "please delete comment",
+      "revId": "dbc66fcc594caddd4c4c10514d1544e7a0984a4c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc0cd140_2a034bef",
+        "filename": "src/app/tracing/layout/layout.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-10-31T13:09:09Z",
+      "side": 1,
+      "message": "please delete comment",
+      "revId": "dbc66fcc594caddd4c4c10514d1544e7a0984a4c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6a91e76_2f9fe0f7",
+        "filename": "src/app/tracing/layout/layout.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2019-10-31T13:09:09Z",
+      "side": 1,
+      "message": "please delete comment",
+      "revId": "dbc66fcc594caddd4c4c10514d1544e7a0984a4c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
