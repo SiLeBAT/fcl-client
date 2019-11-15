@@ -100,45 +100,8 @@ export class TableComponent implements OnDestroy, AfterViewInit {
         private scrollbarHelper: ScrollbarHelper
     ) { }
 
-    private updateStyle(colorsList: {colors: number[][], key: string }[]) {
-        if (this.styleElement) {
-            document.head.removeChild(this.styleElement);
-        }
-        const styleElement = document.createElement('style');
-
-        styleElement.innerHTML = '';
-
-        colorsList.forEach(colorsEntry => {
-            const colors = colorsEntry.colors;
-            const key = colorsEntry.key;
-            if (colors.length === 0) {
-                styleElement.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
-            } else if (colors.length === 1) {
-                styleElement.innerHTML += `datatable-body-row.${key} { background-color: ${this.colorToCss(colors[0])} !important; }`;
-            } else {
-                styleElement.innerHTML += `datatable-body-row.${key} { background: repeating-linear-gradient(90deg`;
-
-                for (let i = 0; i < colors.length; i++) {
-                    const color = this.colorToCss(colors[i]);
-                    const from = i === 0 ? i / colors.length * 100 + '%' : (i + 0.2) / colors.length * 100 + '%';
-                    const to = i === colors.length - 1 ? (i + 1) / colors.length * 100 + '%' : (i + 0.8) / colors.length * 100 + '%';
-
-                    styleElement.innerHTML += ', ' + color + ' ' + from + ', ' + color + ' ' + to;
-                }
-
-                styleElement.innerHTML += ') !important; }';
-            }
-        });
-
-        document.head.appendChild(styleElement);
-        this.styleElement = styleElement;
-    }
-
-    private colorToCss(color: number[]): string {
-        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-    }
-
     ngAfterViewInit() {
+
         window.onresize = () => timer(100).subscribe(
             () => this.updateTable(this.cachedState, this.cachedData),
             err => this.alertService.error(`onresize timer subscription failed: ${err}`)
@@ -184,15 +147,55 @@ export class TableComponent implements OnDestroy, AfterViewInit {
         );
     }
 
+    private updateStyle(colorsList: {colors: number[][], key: string }[]) {
+        if (this.styleElement) {
+            document.head.removeChild(this.styleElement);
+        }
+        const styleElement = document.createElement('style');
+
+        styleElement.innerHTML = '';
+
+        colorsList.forEach(colorsEntry => {
+            const colors = colorsEntry.colors;
+            const key = colorsEntry.key;
+            if (colors.length === 0) {
+                styleElement.innerHTML += 'datatable-body-row { background-color: rgb(255, 255, 255) !important; }';
+            } else if (colors.length === 1) {
+                styleElement.innerHTML += `datatable-body-row.${key} { background-color: ${this.colorToCss(colors[0])} !important; }`;
+            } else {
+                styleElement.innerHTML += `datatable-body-row.${key} { background: repeating-linear-gradient(90deg`;
+
+                for (let i = 0; i < colors.length; i++) {
+                    const color = this.colorToCss(colors[i]);
+                    const from = i === 0 ? i / colors.length * 100 + '%' : (i + 0.2) / colors.length * 100 + '%';
+                    const to = i === colors.length - 1 ? (i + 1) / colors.length * 100 + '%' : (i + 0.8) / colors.length * 100 + '%';
+
+                    styleElement.innerHTML += ', ' + color + ' ' + from + ', ' + color + ' ' + to;
+                }
+
+                styleElement.innerHTML += ') !important; }';
+            }
+        });
+
+        document.head.appendChild(styleElement);
+        this.styleElement = styleElement;
+    }
+
+    private colorToCss(color: number[]): string {
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+    }
+
     private updateTable(state: State, data: DataServiceData) {
+
         if (state) {
             const tableSettings = state.tableSettings;
             const properties = Utils.getTableProperties(tableSettings.mode, tableSettings.stationColumns, tableSettings.deliveryColumns);
             const selectColumn: any = {
                 name: ' ',
                 prop: 'selected',
-                resizable: false,
+                resizeable: false,
                 draggable: false,
+                width: 40,
                 cellTemplate: this.selectTmpl
             };
 
@@ -200,8 +203,8 @@ export class TableComponent implements OnDestroy, AfterViewInit {
                 return {
                     name: Constants.PROPERTIES.has(prop) ? Constants.PROPERTIES.get(prop).name : '"' + prop + '"',
                     prop: prop,
-                    resizeable: false,
-                    draggable: false
+                    resizeable: true,
+                    draggable: true
                 };
             })));
 
@@ -324,20 +327,6 @@ export class TableComponent implements OnDestroy, AfterViewInit {
     }
 
     private getUpdatedColumns(columns: any[]): any[] {
-        const selectColumnWidth = 40;
-        const width = (this.tableRef.nativeElement as HTMLElement).parentElement.offsetWidth - this.scrollbarHelper.width;
-        const columnWidth = (width - selectColumnWidth) / (columns.length - 1);
-        let first = true;
-
-        for (const column of columns) {
-            const w = first ? selectColumnWidth : columnWidth;
-
-            column.width = w;
-            column.minWidth = w;
-            column.maxWidth = w;
-            first = false;
-        }
-
         return columns;
     }
 
