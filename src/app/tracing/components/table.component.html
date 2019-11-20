@@ -14,20 +14,8 @@
         </mat-form-field>
     </div>
     <div id="dataTableContainer">
-
-        <ngx-datatable
-            #table
-            [columns]="columns"
-            [rows]="rows"
-            [rowClass]="getRowClass"
-            scrollbarV="true"
-            scrollbarH="true"
-            [ngStyle]="style"
-            headerHeight="50"
-            class="graph-table material"
-        >
+        <ngx-datatable #table [columns]="columns" [rows]="rows" [rowClass]="getRowClass" scrollbarV="true" [ngStyle]="style" class="graphTable">
         </ngx-datatable>
-
         <ng-template #selectTmpl let-row="row" let-value="value" let-i="index">
             <mat-checkbox [(ngModel)]="row.selected" (ngModelChange)="onSelect(row)" color="primary">
             </mat-checkbox>

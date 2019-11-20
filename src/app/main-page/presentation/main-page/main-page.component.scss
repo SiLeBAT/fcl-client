@@ -5,14 +5,14 @@
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 18fr 1fr;
     grid-template-areas:
-        'head'
+        'header'
         'body'
         'footer';
     height: 100vh;
 }
 
 .fcl-page-header-item {
-    grid-area: head;
+    grid-area: header;
 }
 
 .fcl-page-footer-item {

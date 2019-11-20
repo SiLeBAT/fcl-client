@@ -1,6 +1,7 @@
 
 #container {
-    flex: 1;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -12,8 +13,15 @@
     flex-grow: 0;
 }
 
+#dataTableContainer {
+    width: 100%;
+    flex-grow: 1;
+    min-height: 80px;
+}
+
 #optionsBar {
     width: 100%;
+    height: 70px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: row;
@@ -22,14 +30,6 @@
     flex-shrink: 0;
     flex-grow: 0;
 }
-
-#dataTableContainer {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
 
 mat-form-field {
     margin: 0 10px;
@@ -40,14 +40,55 @@ button {
     margin: 0 10px;
 }
 
-:host ::ng-deep ngx-datatable.graph-table {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+ngx-datatable {
+    width: 100%;
+    height: 80px;
 }
 
-:host ::ng-deep ngx-datatable.graph-table .datatable-body-cell {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+/deep/ ngx-datatable.graphTable {
+    background: rgb(255, 255, 255);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+    user-select: none !important;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/deep/ ngx-datatable.graphTable .empty-row {
+    height: 50px;
+    text-align: center;
+    color: rgb(32, 32, 32);
+    padding: 10px;
+}
+
+/deep/ ngx-datatable.graphTable datatable-header {
+    border-bottom: 1px solid rgb(150, 150, 150);
+}
+
+/deep/ ngx-datatable.graphTable datatable-header-cell {
+    text-align: left;
+    padding-top: 10px;
+    padding-left: 10px;
+    color: rgb(64, 64, 64);
+    transition: width 0.3s ease;
+    line-height: 1 !important;
+    font-weight: bold;
+}
+
+:host /deep/ ngx-datatable.graphTable datatable-body-cell {
+    text-align: left;
+    padding-top: 5px;
+    padding-left: 10px;
+    color: rgb(32, 32, 32);
+    transition: width 0.3s ease;
+    line-height: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+:host /deep/ ngx-datatable.graphTable datatable-scroller {
+    width: 100% !important;
+}
+
+:host /deep/ ngx-datatable.graphTable datatable-body {
+    overflow-x: hidden !important;
 }
