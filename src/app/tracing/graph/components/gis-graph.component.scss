@@ -56,3 +56,16 @@
     height: 100%;
     border: 1px solid rgb(153, 153, 153);
 }
+
+.fcl-osm-reference {
+    z-index: 20;
+    position: absolute;
+    // width: 180px;
+    height: 20px;
+    top: 0;
+    right: 0;
+    border: 1px solid rgb(211, 211, 211);
+    font-size: 0.75em;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0 0.5em;
+}
