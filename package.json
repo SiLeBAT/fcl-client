@@ -56,7 +56,7 @@
     "d3": "^5.9.2",
     "elkjs": "^0.4.1",
     "hammerjs": "^2.0.8",
-    "html2canvas": "1.0.0-rc.1",
+    "html2canvas": "^1.0.0-rc.5",
     "immutable": "^3.8.2",
     "javascript-lp-solver": "0.4.5",
     "lodash": "^4.17.15",
