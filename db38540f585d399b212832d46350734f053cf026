@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84994fee_7c85dec5",
+        "filename": "src/app/tracing/graph/components/gis-graph.component.scss",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1013694
+      },
+      "writtenOn": "2019-11-21T09:50:02Z",
+      "side": 1,
+      "message": "please change font-size to rem.\nPadding can stay em.",
+      "range": {
+        "startLine": 67,
+        "startChar": 15,
+        "endLine": 67,
+        "endChar": 21
+      },
+      "revId": "db38540f585d399b212832d46350734f053cf026",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
