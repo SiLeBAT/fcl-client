@@ -33,6 +33,7 @@ import { GisGraphComponent } from './graph/components/gis-graph.component';
 import { GraphContextMenuComponent } from './graph/components/graph-context-menu.component';
 import { EdgeSymbolComponent } from './graph/components/edge-symbol.component';
 import { KlecksSymbolComponent } from './graph/components/klecks-symbol.component';
+import { CreatedImageComponent } from './shared/created-image/created-image.component';
 
 @NgModule({
     imports: [
@@ -65,7 +66,8 @@ import { KlecksSymbolComponent } from './graph/components/klecks-symbol.componen
         NodeSymbolComponent,
         EdgeSymbolComponent,
         KlecksSymbolComponent,
-        ZoomComponent
+        ZoomComponent,
+        CreatedImageComponent
     ],
     exports: [
         TableComponent
