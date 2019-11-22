@@ -22,6 +22,7 @@ import { DashboardContainerComponent } from './container/dashboard-container/das
 import { DashboardComponent } from './presentation/dashboard/dashboard.component';
 import { StoreModule } from '@ngrx/store';
 import { STATE_SLICE_NAME, reducer } from './state/main-page.reducer';
+import { LastChangeDisplayComponent } from './presentation/last-change-display/last-change-display.component';
 
 @NgModule({
     imports: [
@@ -46,7 +47,8 @@ import { STATE_SLICE_NAME, reducer } from './state/main-page.reducer';
         ToolbarActionComponent,
         MainEntryHeaderComponent,
         DashboardContainerComponent,
-        DashboardComponent
+        DashboardComponent,
+        LastChangeDisplayComponent
     ],
     providers: [
         ScrollbarHelper
