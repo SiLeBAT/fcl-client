@@ -4,7 +4,7 @@
     <fcl-zoom id="zoom" *ngIf="showZoom$ | async" [zoomValue] = "zoomPercentage" (zoomIn)="zoomInPressed()" (zoomOut)="zoomOutPressed()" (zoomReset)="zoomResetPressed()" (zoomSlided)="zoomSlided($event)"></fcl-zoom>
     <fcl-graph-legend id="legend" *ngIf="showLegend$ | async" [legendInfo]="legendInfo"></fcl-graph-legend>
     <div class="fcl-osm-reference">
-        &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors
+        &copy;&nbsp;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>&nbsp;&nbsp;contributors
     </div>
     <fcl-created-image></fcl-created-image>
 </div>
