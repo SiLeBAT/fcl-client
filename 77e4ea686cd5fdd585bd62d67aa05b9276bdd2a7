@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03a5be39_659de1f3",
+        "filename": "src/app/tracing/shared/created-image/created-image.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2019-12-04T10:12:34Z",
+      "side": 1,
+      "message": "Please remove comment.",
+      "revId": "77e4ea686cd5fdd585bd62d67aa05b9276bdd2a7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
