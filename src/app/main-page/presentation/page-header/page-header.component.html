@@ -4,6 +4,7 @@
             class="fcl-toolbar-menu-bottom"
             mat-icon-button
             (click)="onToggleLeftSidebar()"
+            matTooltip="Show/Hide Graph Settings"
             [ngStyle]="{'visibility': tracingActive ? 'visible' : 'hidden'}">
             <mat-icon>menu</mat-icon>
         </button>
@@ -12,6 +13,7 @@
             mat-button
             [ngClass]="{'no-hover': (dashboardActive || loginActive)}"
             [routerLink]="isServerLess() || currentUser ? ['/dashboard'] : ['/']"
+            matTooltip="{{isServerLess() || currentUser ? 'Go To Dashboard' : 'Go To Login'}}"
             id="homeButton">
             <span class="mat-title">{{ appName }}</span>
         </button>
