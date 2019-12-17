@@ -35,6 +35,7 @@ class VertexPositionerLP {
     constructor() {}
 
     positionVertices(layers: Vertex[][], vertexDistance: number) {
+
         if (
             Math.max(...layers.map(l => l.length)) <= 1 &&
             _.sum(layers.map(layer => (layer.length > 0 ? 1 : 0))) <= 1
@@ -45,9 +46,7 @@ class VertexPositionerLP {
         }
 
         const lpModel: LPModel = this.constructLPModel(layers, vertexDistance);
-
         const lpResult: LPResult = lpSolve(lpModel);
-
         const bottomMargin = 0.0;
 
         for (const layer of layers) {

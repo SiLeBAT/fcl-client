@@ -22,11 +22,11 @@ function constructModel(layers: Vertex[][]): LPModel {
     return lpModel;
 }
 
-function sort(graph: Graph) {
+function sort(graph: Graph, timeLimit: number) {
     if (Math.max(...graph.layers.map(l => l.length)) <= 1) { return; }
 
     const lpModel: LPModel = constructModel(graph.layers);
-    const lpResult: LPResult = lpSolve(lpModel);
+    const lpResult: LPResult = lpSolve(lpModel, timeLimit);
 
     sortVerticesAccordingToResult(graph, lpResult);
 }
@@ -147,7 +147,12 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
     lpModel.setBinaryVariables([].concat(crossingVars, pathVars));
 }
 
-export function sortVerticesInLayers(graph: Graph) {
+export function sortVerticesInLayers(graph: Graph, timeLimit?: number) {
+    if (timeLimit === undefined) {
+        timeLimit = Number.POSITIVE_INFINITY;
+    } else {
+        timeLimit = Math.max(timeLimit, 1000);
+    }
     createVirtualVertices(graph);
-    sort(graph);
+    sort(graph, timeLimit);
 }
