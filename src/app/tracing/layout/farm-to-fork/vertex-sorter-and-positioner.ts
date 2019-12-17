@@ -7,8 +7,13 @@ import { positionVertices } from './vertex-positioner-lp';
 import { createVirtualVertices } from './shared';
 import * as _ from 'lodash';
 
-export function sortAndPosition(graph: Graph, vertexDistance: number) {
-
+export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit: number) {
+    if (timeLimit === undefined) {
+        timeLimit = Number.POSITIVE_INFINITY;
+    } else {
+        timeLimit = Math.max(timeLimit, 1000);
+    }
+    const startTime = new Date().getTime();
     const layeredComponents: LayeredComponent[] = splitUnconnectedComponents(graph.layers);
     for (const layeredComponent of layeredComponents) {
 
@@ -17,7 +22,7 @@ export function sortAndPosition(graph: Graph, vertexDistance: number) {
         compressSimpleTargets(graph, vertexDistance);
         createVirtualVertices(graph);
 
-        sortVertices(graph);
+        sortVertices(graph, timeLimit - (new Date().getTime() - startTime));
         positionVerticesInLayers(graph, vertexDistance);
         decompressSimpleSources(graph, vertexDistance);
         decompressSimpleTargets(graph, vertexDistance);
@@ -30,7 +35,7 @@ function positionVerticesInLayers(graph: Graph, vertexDistance: number) {
     positionVertices(graph.layers, vertexDistance);
 }
 
-function sortVertices(graph: Graph) {
+function sortVertices(graph: Graph, timeLimit: number) {
     const maxLayerSize: number = Math.max(...graph.layers.map(layer => layer.length));
     const graphSize: number = _.sum(graph.layers.map(layer => layer.length));
     const splitCount: number = _.sum(graph.layers.map(layer => _.sum(layer.map(
@@ -40,8 +45,8 @@ function sortVertices(graph: Graph) {
     ))));
 
     if (maxLayerSize > 8 || graphSize > 30 || splitCount > 12) {
-        sortVerticesWithHeuristic(graph);
+        sortVerticesWithHeuristic(graph, timeLimit);
     } else {
-        sortVerticesToOptimality(graph);
+        sortVerticesToOptimality(graph, timeLimit);
     }
 }

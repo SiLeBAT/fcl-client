@@ -20,7 +20,11 @@ FarmToForkLayout.prototype.run = function () {
 export class FarmToForkLayouter {
     constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {}
 
-    layout(vertexDistance: number) {
+    layout(vertexDistance: number, timeLimit?: number) {
+        if (timeLimit === undefined) {
+            timeLimit = Number.POSITIVE_INFINITY;
+        }
+        const startTime = new Date().getTime();
         const vertexCount: number = this.graph.vertices.length;
         this.simplifyGraph();
         this.correctEdges();
@@ -29,7 +33,7 @@ export class FarmToForkLayouter {
         removeCycles(this.graph, this.typeRanker);
         this.simplifyGraph();
         assignLayers(this.graph, this.typeRanker);
-        sortAndPosition(this.graph, vertexDistance);
+        sortAndPosition(this.graph, vertexDistance, timeLimit - (new Date().getTime() - startTime));
     }
 
     simplifyGraph() {
@@ -99,6 +103,7 @@ class FarmToForkLayoutClass {
 
     run() {
         const cy = this.options.cy;
+        const timelimit: number = this.options.timelimit || Number.POSITIVE_INFINITY;
         const width: number = cy.width();
         const height: number = cy.height();
         const graph = new Graph();
@@ -122,7 +127,7 @@ class FarmToForkLayoutClass {
 
         const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker);
 
-        layoutManager.layout(vertexDistance);
+        layoutManager.layout(vertexDistance, timelimit);
         scaleToSize(graph, width, height, vertexDistance);
 
         cy.nodes().layoutPositions(this.layout, this.options, node => {

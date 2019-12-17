@@ -10,6 +10,7 @@ import { DialogActionsComponent, DialogActionsData } from '../dialog/dialog-acti
 import { MatDialog } from '@angular/material';
 import { Action } from '@ngrx/store';
 import { Cy, CyNodeCollection, CyNode } from '../graph/graph.model';
+import { RunLayoutWithFallbackLayout } from './fallback-layout';
 
 export enum LayoutActionTypes {
     LayoutAction = '[Tracing] Layout'
