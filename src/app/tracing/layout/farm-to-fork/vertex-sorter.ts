@@ -3,7 +3,11 @@ import { Graph, Vertex, Edge, VertexCounter } from './farm-to-fork.model';
 class VertexSorter {
     constructor() {}
 
-    sortVertices(graph: Graph) {
+    sortVertices(graph: Graph, timeLimit: number) {
+        if (timeLimit === undefined) {
+            timeLimit = Number.POSITIVE_INFINITY;
+        }
+        const startTime = new Date().getTime();
         this.createVirtualVertices(graph);
         if (Math.max(...graph.layers.map(l => l.length)) <= 1) {
             return;
@@ -46,6 +50,9 @@ class VertexSorter {
             if (currentCrossing < bestCrossing) {
                 bestSolution = layerCopy(layers);
                 bestCrossing = currentCrossing;
+            }
+            if ((timeLimit - (new Date().getTime() - startTime)) < 0) {
+                break;
             }
         }
 
@@ -255,7 +262,12 @@ class VertexSorter {
     }
 }
 
-export function sortVertices(graph: Graph) {
+export function sortVertices(graph: Graph, timeLimit?: number) {
+    if (timeLimit === undefined) {
+        timeLimit = Number.POSITIVE_INFINITY;
+    } else {
+        timeLimit = Math.max(timeLimit, 1000);
+    }
     const vertexSorter = new VertexSorter();
-    vertexSorter.sortVertices(graph);
+    vertexSorter.sortVertices(graph, timeLimit);
 }

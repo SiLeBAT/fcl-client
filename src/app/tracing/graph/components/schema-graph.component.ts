@@ -20,6 +20,7 @@ import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection, CyExtent 
 import { AlertService } from '@app/shared/services/alert.service';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
+import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
 
 interface GraphSettingsState {
     fontSize: Size;
@@ -183,19 +184,30 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         }
     }
 
+    private getDefaultLayoutOption(nodeCount: number): any {
+        return nodeCount > 100 ?
+            {
+                name: LayoutManagerInfo.fruchtermanReingold.name
+            } :
+            {
+                name: LayoutManagerInfo.farmToFork.name, timelimit: 10000
+            };
+    }
+
     private initCy(graphState: SchemaGraphState, graphData: GraphServiceData) {
         const sub = timer(0).subscribe(
             () => {
+                const nodesDefs = this.createNodes(graphState, graphData);
                 this.cy = cytoscape({
                     container: this.graphElement.nativeElement,
                     elements: {
-                        nodes: this.createNodes(graphState, graphData),
+                        nodes: nodesDefs,
                         edges: this.createEdges(graphData)
                     },
                     layout: (
                         graphState.layout ?
                         { name: 'preset', zoom: graphState.layout.zoom, pan: graphState.layout.pan } :
-                        { name: 'random' }
+                        this.getDefaultLayoutOption(nodesDefs.length)
                     ),
                     style: this.styleService.createCyStyle(
                         {

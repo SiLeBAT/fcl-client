@@ -21,10 +21,21 @@ export class LPResult {
     }
 }
 
-export function lpSolve(model: LPModel): LPResult {
+export function lpSolve(model: LPModel, timeLimit?: number): LPResult {
     const solver = Solver;
 
-    const result: any = solver.Solve(model.getModel());
+    let rawModel: any;
+    if (timeLimit !== undefined && Number.isFinite(timeLimit)) {
+        rawModel = {};
+        Object.assign(rawModel, model.getModel());
+
+        rawModel.options = {
+            timeout: timeLimit
+        };
+    } else {
+        rawModel = model.getModel();
+    }
+    const result: any = solver.Solve(rawModel);
 
     return new LPResult(result, model);
 }
