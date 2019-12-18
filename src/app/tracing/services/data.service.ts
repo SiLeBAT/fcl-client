@@ -93,7 +93,8 @@ export class DataService {
     }
 
     private applyGroupSettings(state: BasicGraphState, data: DataServiceData) {
-        if (this.cachedState) {
+
+        if (this.cachedState && this.cachedState.fclElements === state.fclElements) {
             // remove old groups
             for (const group of this.cachedState.groupSettings) {
                 const members = data.getStatById(group.contains);
@@ -104,10 +105,10 @@ export class DataService {
                 });
                 delete data.statMap[group.id];
             }
-        }
 
-        const simpleStationCount = state.fclElements.stations.length;
-        data.stations = data.stations.slice(0, simpleStationCount);
+            const simpleStationCount = state.fclElements.stations.length;
+            data.stations = data.stations.slice(0, simpleStationCount);
+        }
 
         // new groups
         for (const groupSet of state.groupSettings) {
