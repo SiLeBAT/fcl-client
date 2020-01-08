@@ -45,6 +45,7 @@ describe('IOService', () => {
                 showLegend: true,
                 showZoom: true,
                 mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
+                showMergedDeliveriesCounts: false,
                 skipUnconnectedStations: false,
                 selectedElements: {
                     stations: [],
@@ -171,6 +172,7 @@ describe('IOService', () => {
                     edge: {
                         joinEdges: fclData.graphSettings.mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL,
                         mergeDeliveriesType: 'NO_MERGE',
+                        showMergedDeliveriesCounts: false,
                         selectedEdges: fclData.graphSettings.selectedElements.deliveries
                     },
                     node: {

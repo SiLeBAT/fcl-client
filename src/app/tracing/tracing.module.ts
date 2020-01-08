@@ -34,6 +34,7 @@ import { GraphContextMenuComponent } from './graph/components/graph-context-menu
 import { EdgeSymbolComponent } from './graph/components/edge-symbol.component';
 import { KlecksSymbolComponent } from './graph/components/klecks-symbol.component';
 import { CreatedImageComponent } from './shared/created-image/created-image.component';
+import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/merge-stations-dialog.component';
 
 @NgModule({
     imports: [
@@ -67,7 +68,8 @@ import { CreatedImageComponent } from './shared/created-image/created-image.comp
         EdgeSymbolComponent,
         KlecksSymbolComponent,
         ZoomComponent,
-        CreatedImageComponent
+        CreatedImageComponent,
+        MergeStationsDialogComponent
     ],
     exports: [
         TableComponent
@@ -80,7 +82,8 @@ import { CreatedImageComponent } from './shared/created-image/created-image.comp
         DialogSingleSelectComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
-        DeliveriesPropertiesComponent
+        DeliveriesPropertiesComponent,
+        MergeStationsDialogComponent
     ]
 })
 export class TracingModule { }

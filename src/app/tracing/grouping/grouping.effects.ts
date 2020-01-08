@@ -7,12 +7,12 @@ import * as storeActions from './../state/tracing.actions';
 import * as fromTracing from './../state/tracing.reducers';
 import * as tracingSelectors from './../state/tracing.selectors';
 
-import { map, catchError, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { mergeMap, withLatestFrom } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { of, EMPTY } from 'rxjs';
 import { GroupingService } from './grouping.service';
 import { Store, select } from '@ngrx/store';
-import { DialogPromptComponent, DialogPromptData } from '../dialog/dialog-prompt/dialog-prompt.component';
+import { MergeStationsDialogData, MergeStationsDialogComponent } from './merge-stations-dialog/merge-stations-dialog.component';
 
 @Injectable()
 export class GroupingEffects {
@@ -31,31 +31,13 @@ export class GroupingEffects {
         mergeMap(([action, state]) => {
             const memberIds = action.payload.memberIds;
 
-            const dialogData: DialogPromptData = {
-                title: 'Input',
-                message: 'Please specify name of meta station:',
-                placeholder: 'Name'
+            const dialogData: MergeStationsDialogData = {
+                memberIds: memberIds,
+                state: state
             };
 
-            return this.dialogService.open(DialogPromptComponent, { data: dialogData })
-                .afterClosed().pipe(
-                    mergeMap(metaStationName => {
-                        if (metaStationName != null) {
-                            const payload = this.groupingService.getMergeStationsPayload(state, metaStationName, memberIds);
-                            if (payload) {
-                                return of(new storeActions.SetStationGroupsSOA(payload));
-                            }
-                        }
-                        return EMPTY;
-                    }),
-                    catchError((error) => {
-                        if (error) {
-                            this.alertService.error(`Stations could not be merged!, error: ${error}`);
-                        }
-                        return EMPTY;
-                    }
-                )
-            );
+            this.dialogService.open(MergeStationsDialogComponent, { data: dialogData });
+            return EMPTY;
         })
     );
 

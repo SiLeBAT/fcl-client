@@ -10,6 +10,7 @@ import { SourceCollapser } from './source-collapser';
 import { TargetCollapser } from './target-collapser';
 import { SimpleChainCollapser } from './simple-chain-collapser';
 import { IsolatedComponentCollapser } from './isolated-component-collapser';
+import { MergeStationsValidationCode } from './validation-codes';
 
 interface EffectiveGroupingChange extends GroupingChange {
     unchangedGroups: GroupData[];
@@ -24,15 +25,60 @@ export class GroupingService {
     }
 
     getMergeStationsPayload(state: GroupingState, groupName: string, memberIds: string[]): SetStationGroupsPayload {
+        if (this.validateMergeStationsCmd(state, groupName, memberIds) !== MergeStationsValidationCode.OK) {
+            return null;
+        }
         return this.getNewGroupingState(state, this.getEffectiveGroupingChange(state, {
             addGroups: [{
-                id: null,
+                id: groupName,
                 name: groupName,
-                contains: memberIds,
+                contains: this.explodeIds(state, memberIds),
                 groupType: null
             }],
             removeGroups: []
         }));
+    }
+
+    validateMergeStationsCmd(state: GroupingState, groupName: string, memberIds: string[]): MergeStationsValidationCode {
+        if (!groupName || groupName.length === 0) {
+            return MergeStationsValidationCode.NAME_OR_ID_MAY_NOT_BE_EMPTY;
+        } else {
+            const effChange = this.getEffectiveGroupingChange(state, {
+                addGroups: [{
+                    id: groupName,
+                    name: groupName,
+                    contains: this.explodeIds(state, memberIds),
+                    groupType: null
+                }],
+                removeGroups: []
+            });
+
+            const removeGrpMap = Utils.createObjectMap(effChange.removeGroups, g => g.id);
+            const remainingGrps = state.groupSettings.filter(g => !removeGrpMap[g.id]);
+            const reservedIds = Utils.createStringSet([].concat(
+                ...state.fclElements.stations.map(s => s.id),
+                ...remainingGrps.map(g => g.id)
+            ));
+            const reservedNames = Utils.createStringSet([].concat(
+                ...state.fclElements.stations.map(s => s.name),
+                ...remainingGrps.map(g => g.name)
+            ).filter(name => name !== undefined && name !== null));
+
+            if (reservedIds[groupName]) {
+                return MergeStationsValidationCode.ID_IS_NOT_UNIQUE;
+            } else if (reservedNames[groupName]) {
+                return MergeStationsValidationCode.NAME_IS_NOT_UNIQUE;
+            } else {
+                return MergeStationsValidationCode.OK;
+            }
+        }
+    }
+
+    private explodeIds(state: GroupingState, memberIds: string[]): string[] {
+        const grpMap = Utils.createMap(state.groupSettings, g => g.id);
+        return [].concat(
+            ...memberIds.map(id => grpMap[id] ? grpMap[id].contains : [id])
+        );
     }
 
     getCollapseStationsPayload(state: GroupingState, groupType: GroupType, groupMode: GroupMode): SetStationGroupsPayload {
@@ -187,10 +233,11 @@ export class GroupingService {
 
     private getEffectiveGroupingChange(state: GroupingState, groupChange: GroupingChange): EffectiveGroupingChange {
 
-        const addGroupMap = Utils.createMap(groupChange.addGroups, g => g.id);
+        const addGroupMap = Utils.createObjectMap(groupChange.addGroups, g => g.id);
         let effRemoveGroups: GroupData[] = [];
         const unchangedGroups: GroupData[] = [];
 
+        // check whether removeGroups are truely remove Groups
         for (const removeGroup of groupChange.removeGroups) {
             const addGroup = addGroupMap[removeGroup.id];
             if (
@@ -199,6 +246,7 @@ export class GroupingService {
                 addGroup.groupType === removeGroup.groupType &&
                 addGroup.contains.every(id => removeGroup.contains.indexOf(id) !== -1)
             ) {
+                // no effective change here (addGroup is identical to removeGroup)
                 unchangedGroups.push(addGroup);
                 delete addGroupMap[addGroup.id];
             } else {
