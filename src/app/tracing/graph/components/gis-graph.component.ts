@@ -393,6 +393,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         );
     }
 
+    showMissingGISInfoEntry(): boolean {
+        return !!this.noGeoData && this.noGeoData.withoutGeoData;
+    }
+
     getCanvas(): Promise<HTMLCanvasElement> {
         return html2canvas(this.containerElement.nativeElement);
     }

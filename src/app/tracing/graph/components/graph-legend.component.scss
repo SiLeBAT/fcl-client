@@ -8,12 +8,21 @@
     padding-right: 20px;
 }
 
+#legend td:nth-child(2) {
+    width: 30px;
+    min-width: 30px;
+}
+
 #legend td:last-child {
     width: 30px;
     min-width: 30px;
 }
 
-#legend td:last-child div {
-    width: 100%;
-    height: 100%;
+#legend tr {
+    vertical-align: middle;
+}
+
+#legend svg {
+    display: inline-block;
+    vertical-align: middle;
 }
