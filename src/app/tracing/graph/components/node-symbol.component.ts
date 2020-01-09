@@ -5,7 +5,8 @@ import { Utils } from '@app/tracing/util/non-ui-utils';
 
 @Component({
     selector: 'fcl-node-symbol',
-    templateUrl: './node-symbol.component.html'
+    templateUrl: './node-symbol.component.html',
+    styleUrls: ['./node-symbol.component.scss']
 })
 export class NodeSymbolComponent implements OnInit {
 

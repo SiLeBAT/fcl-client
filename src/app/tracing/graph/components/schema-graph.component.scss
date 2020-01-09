@@ -1,46 +1,25 @@
-#container {
+.fcl-graph-container {
     width: 100%;
     height: 100%;
     background-color: rgb(245, 245, 245);
 }
 
-#graph {
+.fcl-graph {
     width: 100%;
     height: 100%;
 }
 
-#zoom {
+.fcl-graph-zoom {
     position: absolute;
     top: 20px;
     left: 12px;
     user-select: none;
 }
 
-#legend {
+.fcl-graph-legend {
     z-index: 20;
     position: absolute;
     left: 16px;
     bottom: 20px;
     user-select: none;
-}
-
-#legend td {
-    height: 30px;
-    line-height: 30px;
-    white-space: nowrap;
-}
-
-#legend td:first-child {
-    padding-right: 20px;
-}
-
-#legend td:last-child {
-    width: 30px;
-    min-width: 30px;
-}
-
-#legend td:last-child div {
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgb(153, 153, 153);
 }

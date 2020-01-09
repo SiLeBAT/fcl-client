@@ -1,19 +1,28 @@
-#legend td {
+.fcl-legend td {
     height: 30px;
     line-height: 30px;
     white-space: nowrap;
 }
 
-#legend td:first-child {
+.fcl-legend td:first-child {
     padding-right: 20px;
 }
 
-#legend td:last-child {
+.fcl-legend td:nth-child(2) {
     width: 30px;
     min-width: 30px;
 }
 
-#legend td:last-child div {
-    width: 100%;
-    height: 100%;
+.fcl-legend td:last-child {
+    width: 30px;
+    min-width: 30px;
+}
+
+.fcl-legend tr {
+    vertical-align: middle;
+}
+
+.fcl-legend svg {
+    display: inline-block;
+    vertical-align: middle;
 }
