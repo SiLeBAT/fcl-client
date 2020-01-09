@@ -23,6 +23,8 @@ export class GraphLegendComponent implements OnInit {
     private _showStationColumn: boolean;
     private _showDeliveryColumn: boolean;
 
+    @Input() showMissingGisInfoEntry: boolean;
+
     @Input() set legendInfo(legendInfo: LegendInfo) {
         if (this._legendInfo !== legendInfo) {
             this.updateLegend(legendInfo);

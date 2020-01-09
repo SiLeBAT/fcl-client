@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NodeShapeType, Color } from '@app/tracing/data.model';
-import { Map as ImmutableMap } from 'immutable';
+import { Color } from '@app/tracing/data.model';
 import { Utils } from '@app/tracing/util/non-ui-utils';
 
 @Component({
     selector: 'fcl-edge-symbol',
-    templateUrl: './edge-symbol.component.html'
+    templateUrl: './edge-symbol.component.html',
+    styleUrls: ['./edge-symbol.component.scss']
 })
 export class EdgeSymbolComponent implements OnInit {
 
