@@ -9,10 +9,10 @@
     "serve": "ng serve --proxy-config proxy.config.json --watch",
     "serve:fcldev": "ng serve --proxy-config proxy.config.fcldev.json --watch",
     "serve:local": "ng serve",
-    "build:qa": "npm run clean && npm run lint && ng build --configuration=qa --output-path \"public\"",
+    "build:qa": "npm run clean && ng build --configuration=qa --output-path \"public\"",
     "build:qa_wo_lint": "npm run clean && ng build --configuration=qa --output-path \"public\"",
-    "build:prod": "npm run clean && npm run lint && ng build --configuration=production --output-path \"public\"",
-    "dependency-check:prod": "npx npm-auditor-ci --threshold low --ignoreDev",
+    "build:production": "npm run clean && ng build --configuration=production --output-path \"public\"",
+    "dependency-check:production": "npx npm-auditor-ci --threshold low --ignoreDev",
     "dependency-check:qa": "npx npm-auditor-ci --threshold low",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -25,7 +25,7 @@
     "e2e": "ng e2e",
     "gh-pages": "ng build --configuration=production --bh /fcl-client/",
     "cloud9": "ng serve --host $IP --port $PORT",
-    "clean": "rimraf public/*"
+    "clean": "npx rimraf public/*"
   },
   "private": true,
   "dependencies": {
