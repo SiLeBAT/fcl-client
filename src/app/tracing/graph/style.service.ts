@@ -32,8 +32,8 @@ export class StyleService {
     }
 
     private getProperGraphSize(graphData: GraphServiceData): GraphSize {
-        const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000; // 300
-        const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000; // 500
+        const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
+        const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
         if (graphData.nodeData.length > MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
             return GraphSize.HUGE;
         } else if (graphData.edgeData.length > MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) {
@@ -51,6 +51,7 @@ export class StyleService {
             cy.edges().style({
                 'font-size': Math.max(fontSize / cy.zoom(), fontSize)
             });
+            cy.elements().scratch('_update', true);
         }
     }
 
@@ -65,7 +66,8 @@ export class StyleService {
     private createXGraphStyle(graphSize: GraphSize, zoom: number, nodeSize: number, fontSize: number, maxScore: number): any {
 
         const visibleNodeSize = this.getVisibleNodeSize(zoom, nodeSize);
-        const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR);
+        const edgeSize = nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
+        const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, edgeSize);
 
         const style = cytoscape
             .stylesheet()
@@ -83,6 +85,8 @@ export class StyleService {
                         content: 'data(label)',
                         'text-valign': 'bottom',
                         'text-halign': 'right',
+                        'text-wrap': 'ellipse',
+                        'text-max-width': '50vw',
                         'font-size': Math.max(fontSize / zoom, fontSize)
                     }
                     :
@@ -106,6 +110,8 @@ export class StyleService {
                     graphSize !== GraphSize.HUGE ?
                     {
                         content: 'data(label)',
+                        'text-wrap': 'ellipse',
+                        'text-max-width': '50vw',
                         'font-size': Math.max(fontSize / zoom, fontSize)
                     } :
                     {}
