@@ -66,7 +66,7 @@ export class GraphService {
         let iNode = 0;
         const nodeData: CyNodeData[] = data.stations.filter(s => !s.invisible && !s.contained).map(s => ({
             id: 'N' + iNode++,
-            label: s.highlightingInfo.label.join(' / '),
+            label: s.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
             ...this.getColorInfo(s.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR),
             isMeta: s.contains && s.contains.length > 0,
             shape: s.highlightingInfo.shape ? s.highlightingInfo.shape : NodeShapeType.CIRCLE,
@@ -133,7 +133,7 @@ export class GraphService {
                             const selected = !!selDel[delivery.id];
                             edgeData.push({
                                 id: 'E' + iEdge++,
-                                labelWoPrefix: delivery.highlightingInfo.label.join(' / '),
+                                labelWoPrefix: delivery.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
                                 ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                                 source: sourceDataId,
                                 target: targetDataId,
@@ -173,7 +173,7 @@ export class GraphService {
                             );
                             edgeData.push({
                                 id: 'E' + iEdge++,
-                                labelWoPrefix: labels.length === 1 ? labels[0] : '',
+                                labelWoPrefix: labels.length === 1 ? labels[0].replace(/\s+/, ' ') : '',
                                 ...this.getColorInfo(
                                     this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
                                     GraphService.DEFAULT_EDGE_COLOR
@@ -205,7 +205,7 @@ export class GraphService {
                 if (sourceData && targetData) {
                     edgeData.push({
                         id: 'E' + iEdge++,
-                        labelWoPrefix: delivery.highlightingInfo.label.join(' / '),
+                        labelWoPrefix: delivery.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
                         ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                         source: sourceData.id,
                         target: targetData.id,
