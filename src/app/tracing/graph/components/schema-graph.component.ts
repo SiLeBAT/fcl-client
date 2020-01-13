@@ -41,6 +41,12 @@ interface Rectangle {
     y2: number;
 }
 
+interface StyleInfo {
+    fontSize: number;
+    nodeSize: number;
+    zoom: number;
+}
+
 @Component({
     selector: 'fcl-schema-graph',
     templateUrl: './schema-graph.component.html',
@@ -83,6 +89,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private selectionTimerSubscription: Subscription;
 
     private isPanning = false;
+    private isZoomHandlerActive = false;
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -223,10 +230,11 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 });
 
                 this.cy.on('zoom', () => {
-                    this.updateZoomPercentage();
-                    this.updateGraphStyle(this.cachedState, this.cachedData);
-                    this.applyLayoutToStateIfNecessary();
+                    if (this.isZoomHandlerActive) {
+                        this.applyLayoutToStateIfNecessary();
+                    }
                 });
+                this.setZoomHandlerActive(true);
 
                 this.cy.on('pan', () => {
                     this.isPanning = true;
@@ -257,7 +265,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 if (!graphState.layout) {
                     this.applyNodePositionsAndLayoutToState(graphState, graphData);
                 } else {
-                    this.updateGraphStyle(graphState, graphData);
+                    if (this.cy.elements().size() > 0) {
+                        this.fitCy();
+                    }
                 }
             },
             err => this.alertService.error(`Cy graph could not be initialized: ${err}`)
@@ -276,7 +286,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             pan: { ...this.cy.pan() }
         };
         const oldExtent = this.cy.extent();
-
+        this.setZoomHandlerActive(false);
         this.layoutService.runLayout(
             action.payload.layoutName,
             cyContext,
@@ -302,14 +312,10 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                     } else {
                         this.applyNodePositionsToState();
                     }
-
-                    this.updateZoomPercentage();
-                    this.updateGraphStyle(this.cachedState, this.cachedData);
                 } else {
-                    this.updateZoomPercentage();
-                    this.updateGraphStyle(this.cachedState, this.cachedData);
                     this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
                 }
+                this.setZoomHandlerActive(true);
             }
         );
     }
@@ -401,6 +407,10 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             });
             return rect;
         }
+    }
+
+    private setZoomHandlerActive(active: boolean) {
+        this.isZoomHandlerActive = active;
     }
 
     private applyLayoutToStateIfNecessary() {
@@ -513,13 +523,29 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         if (this.cy.elements().size() === 0) {
             this.cy.reset();
         } else {
-            this.cy.fit();
+            this.fitCy();
         }
-        this.applyLayoutToStateIfNecessary();
     }
 
     zoomSlided(value: string) {
         this.zoomTo(Math.exp((Number(value) / 100) * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
+    }
+
+    private fitCy() {
+        this.setZoomHandlerActive(false);
+        const MAX_ITERATION = 3;
+        let zoom = this.cy.zoom();
+        for (let iIteration = 1; iIteration <= MAX_ITERATION; iIteration++) {
+            this.cy.fit();
+            const newZoom = this.cy.zoom();
+            if (!(newZoom < zoom || newZoom > 1.01 * zoom)) {
+                break;
+            }
+            zoom = newZoom;
+            this.updateGraphStyle({ ...this.getStyleInfoFromState(this.cachedState), zoom: newZoom }, this.cachedData);
+        }
+        this.setZoomHandlerActive(true);
+        this.applyLayoutToStateIfNecessary();
     }
 
     private createNodes(graphState: SchemaGraphState, graphData: GraphServiceData): CyNodeDef[] {
@@ -552,18 +578,22 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.cy.add(this.createNodes(graphState, graphData));
             this.cy.add(this.createEdges(graphData));
 
-            this.updateGraphLayout(graphState, graphData);
+            this.applyLayoutStateToGraph(graphState, graphData);
         });
     }
 
-    private updateGraphStyle(graphState: SchemaGraphState, graphData: GraphServiceData) {
+    private getStyleInfoFromState(graphState: SchemaGraphState): { fontSize: number, nodeSize: number, zoom: number } {
+        return {
+            fontSize: SchemaGraphComponent.FONT_SIZES.get(graphState.fontSize),
+            nodeSize: SchemaGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+            zoom: graphState.layout.zoom
+        };
+    }
+
+    private updateGraphStyle(styleInfo: StyleInfo, graphData: GraphServiceData) {
         if (this.cy && this.cy.style) {
             this.cy.setStyle(this.styleService.createCyStyle(
-                {
-                    fontSize: SchemaGraphComponent.FONT_SIZES.get(graphState.fontSize),
-                    nodeSize: SchemaGraphComponent.NODE_SIZES.get(graphState.nodeSize),
-                    zoom: graphState.layout.zoom
-                },
+                styleInfo,
                 graphData
             ));
             this.cy.elements().scratch('_update', true);
@@ -593,17 +623,17 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         );
     }
 
-    private updateGraphLayout(state: SchemaGraphState, data: GraphServiceData) {
-        if (
-            this.cy.zoom() !== state.layout.zoom ||
-            !_.isEqual(this.cy.pan(), state.layout.pan)
-            ) {
-
+    private applyLayoutStateToGraph(state: SchemaGraphState, data: GraphServiceData) {
+        this.setZoomHandlerActive(false);
+        if (this.cy.zoom() !== state.layout.zoom) {
             this.cy.zoom(state.layout.zoom);
-            this.cy.pan({ ...state.layout.pan });
-            this.updateZoomPercentage();
-            this.updateGraphStyle(state, data);
         }
+        if (!_.isEqual(this.cy.pan(), state.layout.pan)) {
+            this.cy.pan({ ...state.layout.pan });
+        }
+        this.updateZoomPercentage();
+        this.updateGraphStyle(this.getStyleInfoFromState(state), data);
+        this.setZoomHandlerActive(true);
     }
 
     private applyState(newState: SchemaGraphState) {
@@ -615,17 +645,17 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         } else if (this.cachedData.edgeData !== newData.edgeData) {
             this.updateGraphEdges(newData);
         } else if (this.cachedData.propsChangedFlag !== newData.propsChangedFlag) {
-            this.updateGraphStyle(newState, newData);
+            this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
         } else if (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel) {
             this.updateGraphSelection(newData);
         } else if (this.cachedState.nodeSize !== newState.nodeSize) {
-            this.updateGraphStyle(newState, newData);
+            this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
         } else if (this.cachedState.fontSize !== newState.fontSize) {
             this.updateFontSize(newState);
         } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
             this.updateEdgeLabels();
         } else if (!_.isEqual(this.cachedState.layout, newState.layout)) {
-            this.updateGraphLayout(newState, newData);
+            this.applyLayoutStateToGraph(newState, newData);
         }
         this.cachedData = {
             ...this.cachedData,
