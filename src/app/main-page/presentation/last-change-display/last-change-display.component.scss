@@ -1,17 +1,10 @@
-@import '../../../../assets/sass/themes';
-
 .fcl-item-change {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.fcl-tooltip-change {
-    background: $fcl-primary-color;
-    font-size: 0.75rem;
-    font-weight: bolder;
-}
-
 .fcl-change-text {
     padding-left: 0.4em;
+    line-height: 1.3;
 }

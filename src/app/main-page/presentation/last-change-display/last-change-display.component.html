@@ -1,11 +1,8 @@
-<div
-    class="fcl-item-change"
-    matTooltip="{{ tooltipInfo }}"
-    [matTooltipPosition]="tooltipPosition"
-    matTooltipClass="fcl-tooltip-change"
->
+<div class="fcl-item-change">
     <mat-icon>update</mat-icon>
-    <span class="mat-caption fcl-change-text">
+    <div class="mat-caption fcl-change-text">
         Last Change: {{ clientLastChange }}
-    </span>
+        <br>
+        {{ tooltipInfo }}
+    </div>
 </div>
