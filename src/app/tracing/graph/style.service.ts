@@ -85,8 +85,7 @@ export class StyleService {
                         content: 'data(label)',
                         'text-valign': 'bottom',
                         'text-halign': 'right',
-                        'text-wrap': 'ellipse',
-                        'text-max-width': '50vw',
+                        'text-wrap': 'none',
                         'font-size': Math.max(fontSize / zoom, fontSize)
                     }
                     :
@@ -110,8 +109,7 @@ export class StyleService {
                     graphSize !== GraphSize.HUGE ?
                     {
                         content: 'data(label)',
-                        'text-wrap': 'ellipse',
-                        'text-max-width': '50vw',
+                        'text-wrap': 'none',
                         'font-size': Math.max(fontSize / zoom, fontSize)
                     } :
                     {}

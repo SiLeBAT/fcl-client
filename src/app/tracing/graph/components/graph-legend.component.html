@@ -1,4 +1,4 @@
-<mat-card class="fcl-legend" [hidden]="legend.length === 0 && !showMissingGisInfoEntry">
+<mat-card class="fcl-legend" *ngIf="legend.length > 0 || showMissingGisInfoEntry">
     <mat-card-content>
         <table>
             <tr *ngIf="showMissingGisInfoEntry">

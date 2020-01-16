@@ -16,7 +16,7 @@ import { StyleService } from '../style.service';
 import { GraphService } from '../graph.service';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { filter } from 'rxjs/operators';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection, CyExtent } from '../graph.model';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection } from '../graph.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
@@ -494,7 +494,18 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     getCanvas(): Promise<HTMLCanvasElement> {
-        return html2canvas(this.containerElement.nativeElement);
+        return html2canvas(this.containerElement.nativeElement, {
+            onclone: function (document) {
+                let element = document.querySelector('.fcl-graph-container');
+                if (element) {
+                    element['style']['backgroundColor'] = 'transparent';
+                }
+                element = document.querySelector('.fcl-legend');
+                if (element) {
+                    element['style']['border'] = '3px solid rgb(211,211,211)';
+                }
+            }
+        });
     }
 
     private updateFontSize(state: SchemaGraphState) {

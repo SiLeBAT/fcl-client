@@ -83,9 +83,9 @@ export class IOEffects {
             const canvas = action.payload.canvas;
             const fileName = 'graph.png';
             try {
-                if (window.navigator.msSaveOrOpenBlob != null && canvas.toBlob != null) {
+                if (canvas.toBlob) {
                     canvas.toBlob((blob: any) => {
-                        window.navigator.msSaveOrOpenBlob(blob, fileName);
+                        Utils.openSaveBlobDialog(blob, fileName);
                     });
                 } else {
                     Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);

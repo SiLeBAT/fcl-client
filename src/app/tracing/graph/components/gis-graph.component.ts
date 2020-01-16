@@ -28,7 +28,7 @@ import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData } from '../graph.model';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { GraphService } from '../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
 
@@ -138,7 +138,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             ],
             controls: []
         });
-
         window.onresize = () => {
             timer(500).subscribe(
                 () => {

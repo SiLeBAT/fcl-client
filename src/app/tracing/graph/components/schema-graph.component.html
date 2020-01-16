@@ -1,6 +1,6 @@
 <div class="fcl-graph-container" #container>
     <div class="fcl-graph" #graph></div>
-    <fcl-zoom class="fcl-graph-zoom"
+    <fcl-zoom class="fcl-graph-zoom" data-html2canvas-ignore="true"
         *ngIf="showZoom$ | async"
         [zoomValue]="zoomPercentage"
         (zoomIn)="zoomInPressed()"

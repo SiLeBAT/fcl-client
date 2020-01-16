@@ -67,6 +67,20 @@ export class Utils {
         a.remove();
     }
 
+    static openSaveBlobDialog(blob: any, fileName: string) {
+        const a = document.createElement('a');
+
+        const url = window.URL.createObjectURL(blob);
+        a.style.display = 'none';
+        a.target = '_blank';
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    }
+
     static openMenu(trigger: MatMenuTrigger, triggerElement: ElementRef, pos: Position) {
         const style = (triggerElement.nativeElement as HTMLElement).style;
 
