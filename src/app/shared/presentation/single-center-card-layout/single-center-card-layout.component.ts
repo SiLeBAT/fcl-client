@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
     styleUrls: ['./single-center-card-layout.component.scss']
 })
 export class SingleCenterCardLayoutComponent {
-    @Input() title: string;
+    @Input() cardtitle: string;
 
     constructor() { }
 
