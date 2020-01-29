@@ -68,6 +68,7 @@ export class StyleService {
         const visibleNodeSize = this.getVisibleNodeSize(zoom, nodeSize);
         const edgeSize = nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
         const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, edgeSize);
+        const correctedFontSize = Math.max(fontSize / zoom, fontSize);
 
         const style = cytoscape
             .stylesheet()
@@ -86,7 +87,7 @@ export class StyleService {
                         'text-valign': 'bottom',
                         'text-halign': 'right',
                         'text-wrap': 'none',
-                        'font-size': Math.max(fontSize / zoom, fontSize)
+                        'font-size': correctedFontSize
                     }
                     :
                     {}
@@ -110,7 +111,9 @@ export class StyleService {
                     {
                         content: 'data(label)',
                         'text-wrap': 'none',
-                        'font-size': Math.max(fontSize / zoom, fontSize)
+                        'text-rotation': 'autorotate',
+                        'text-margin-y': '-' + correctedFontSize / 2.0,
+                        'font-size': correctedFontSize
                     } :
                     {}
                 ),
