@@ -1,14 +1,13 @@
-import { DialogService } from './../../services/dialog.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { VisioReport } from '../../../tracing/visio/layout-engine/datatypes';
 import * as fromTracing from '../../../tracing/state/tracing.reducers';
 import * as TracingSelectors from '../../../tracing/state/tracing.selectors';
 import { Store, select } from '@ngrx/store';
 import { VisioToMxGraphService } from '../../services/visio-to-mxgraph.service';
-import { takeWhile, filter } from 'rxjs/operators';
+import { takeWhile } from 'rxjs/operators';
 import { GuardedUnloadComponent } from '../../../shared/container/guarded-unload.component';
-import { Router, Event as NavigationEvent, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs';
+import { GraphEditorComponent } from '@app/graph-editor/presentation/graph-editor/graph-editor.component';
 
 @Component({
     selector: 'fcl-graph-editor-container',
@@ -17,31 +16,17 @@ import { Observable } from 'rxjs';
 
 })
 export class GraphEditorContainerComponent extends GuardedUnloadComponent implements OnInit, OnDestroy {
+
+    @ViewChild(GraphEditorComponent) graphEditorComponent;
+
     graph: mxGraph;
     private componentActive = true;
-    private isPopstate: boolean = false;
 
     constructor(
         private store: Store<fromTracing.State>,
-        private converter: VisioToMxGraphService,
-        private router: Router,
-        private dialogService: DialogService
+        private converter: VisioToMxGraphService
     ) {
         super();
-
-        router.events
-            .pipe(
-                filter((event: NavigationEvent) => {
-                    return (event instanceof NavigationStart);
-                }),
-                takeWhile(() => this.componentActive)
-            )
-            .subscribe(
-                (event: NavigationStart) => this.isPopstate = (event.navigationTrigger === 'popstate'),
-                (error) => {
-                    throw new Error(`cannot catch router event: ${error}`);
-                }
-            );
     }
 
     ngOnInit() {
@@ -63,12 +48,7 @@ export class GraphEditorContainerComponent extends GuardedUnloadComponent implem
     }
 
     canDeactivate(): Observable<boolean> {
-        const message = 'Leave Site? \nChanges you made may not be saved.';
-        return this.dialogService.confirm(message);
-    }
-
-    routerEventIsPopstate() {
-        return this.isPopstate;
+        return this.graphEditorComponent.canDeactivate();
     }
 
     ngOnDestroy() {

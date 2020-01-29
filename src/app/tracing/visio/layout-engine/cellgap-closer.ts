@@ -3,6 +3,9 @@ import { Utils } from '../../util/non-ui-utils';
 export class CellGapCloser {
 
     static closeGaps(matrix: number[][]): number[][] {
+        if (matrix.length === 0 || matrix[0].length === 0) {
+            return matrix;
+        }
         return this.fillUGaps(matrix);
     }
 

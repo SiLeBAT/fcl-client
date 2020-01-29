@@ -9,6 +9,6 @@ import { GraphEditorContainerComponent } from '../container/graph-editor-contain
 export class CanDeactivateGraphEditorGuard implements CanDeactivate<GraphEditorContainerComponent> {
 
     canDeactivate(component: GraphEditorContainerComponent): Observable<boolean> | boolean {
-        return (component.routerEventIsPopstate() ? component.canDeactivate() : true);
+        return component.canDeactivate();
     }
 }

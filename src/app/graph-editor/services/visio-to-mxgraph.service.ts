@@ -415,6 +415,9 @@ export class VisioToMxGraphService {
         const showDeliveries = report.graph.connectors.length > 0;
 
         const nEntries = Object.keys(legendEntries).filter(key => legendEntries[key]).length + (showDeliveries ? 1 : 0);
+        if (!nEntries) {
+            return;
+        }
         const legendCell: mxCell = this.drawLegendCell(parent, { x: position.x + 1, y: position.y + 0 });
 
         const titleCell: mxCell = this.drawLegendTitleCell(legendCell, { x: 5, y: 10 });

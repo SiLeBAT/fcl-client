@@ -26,7 +26,7 @@ class CellGrouper {
     groupCells(stationGrid: StationData[][], stationGroups: StationGroup[]): CellGroup[] {
 
         this.rowCount = stationGrid.length;
-        this.columnCount = stationGrid[0].length;
+        this.columnCount = stationGrid.length === 0 ? 0 : stationGrid[0].length;
         this.stationGroups = stationGroups;
         this.initStationToGroupMap(stationGrid);
 

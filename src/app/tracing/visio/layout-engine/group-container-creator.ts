@@ -23,6 +23,9 @@ export class GroupContainerCreator {
         graphLayers: GraphLayer[]
         ): VisioBox[] {
 
+        if (boxGrid.length === 0) {
+            return [];
+        }
         this.boxGrid = boxGrid;
         this.setRowAndColumnHeights(cellGroups, graphLayers);
         return cellGroups.map(group => this.createGroup(group.label, group.cells));

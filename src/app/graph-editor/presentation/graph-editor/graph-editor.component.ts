@@ -2,6 +2,8 @@ import { AfterViewInit, Component, ElementRef, ViewChild, Input, OnDestroy } fro
 import { Store } from '@ngrx/store';
 import * as fromEditor from '../../state/graph-editor.reducer';
 import * as editorActions from '../../state/graph-editor.actions';
+import { Observable, of } from 'rxjs';
+import { DialogService } from '@app/graph-editor/services/dialog.service';
 
 declare const EditorUi: any;
 declare const Editor: any;
@@ -21,8 +23,12 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('editorContainer') editorContainer: ElementRef;
     @Input() graph: mxGraph;
+    private editorUi: any;
 
-    constructor(private store: Store<fromEditor.GraphEditorState>) {
+    constructor(
+        private store: Store<fromEditor.GraphEditorState>,
+        private dialogService: DialogService
+    ) {
         this.store.dispatch(new editorActions.GraphEditorActivated({ isActivated: true }));
     }
 
@@ -50,7 +56,7 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
         const bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
             mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
         // Fixes possible asynchronous requests
-        mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function (xhr: any) {
+        mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], (xhr: any) => {
             // Adds bundle text to resources
             mxResources.parse(xhr[0].getText());
 
@@ -60,8 +66,9 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
             // Main
             const editor = new Editor(false, themes, graphModel);
+
             // tslint:disable-next-line
-            new EditorUi(editor, that.editorContainer.nativeElement);
+            this.editorUi = new EditorUi(editor, that.editorContainer.nativeElement);
             if (graphModel) {
                 graphModel.endUpdate();
             }
@@ -74,5 +81,15 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         this.store.dispatch(new editorActions.GraphEditorActivated({ isActivated: false }));
+    }
+
+    canDeactivate(): Observable<boolean> {
+        const diagramIsEmpty = this.editorUi ? this.editorUi.isDiagramEmpty() : true;
+        if (!diagramIsEmpty) {
+            const message = 'Leave Site? \nChanges you made may not be saved.';
+            return this.dialogService.confirm(message);
+        } else {
+            return of(true);
+        }
     }
 }

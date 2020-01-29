@@ -25,6 +25,9 @@ class ColumnAssigner {
 
         this.stationToLayerIndexMap = ColumnAssigner.getStationToLayerIndexMap(layers);
         this.stations = [].concat(...layers);
+        if (this.stations.length === 0) {
+            return [];
+        }
         this.stations.sort((s1, s2) => stationToPositionMap.get(s1).x - stationToPositionMap.get(s2).x);
         this.setSwitches();
 
