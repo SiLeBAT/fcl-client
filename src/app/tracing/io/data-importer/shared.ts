@@ -1,6 +1,5 @@
 import * as Ajv from 'ajv';
 import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
-import { longStackSupport } from 'q';
 
 export async function isValidJson(schema: any, data: any, throwError?: boolean): Promise<boolean> {
     const ajv = new Ajv();
@@ -327,6 +326,19 @@ export function createDefaultHighlights(): HighlightingSettings {
                             value: '1'
                         }
                     ]
+                ],
+                linePattern: LinePatternType.SOLID
+            },
+            {
+                name: 'DeliveryLabel',
+                showInLegend: false,
+                color: null,
+                invisible: false,
+                adjustThickness: false,
+                labelProperty: 'name',
+                valueCondition: null,
+                logicalConditions: [
+                    []
                 ],
                 linePattern: LinePatternType.SOLID
             }
