@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "96efa53d_148a52a7",
+        "filename": "src/app/tracing/graph/components/gis-graph.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-03T15:11:39Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "06b1689af9fb9433a59ed35035152140f1964e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b712fa9_11514d4a",
+        "filename": "src/app/tracing/graph/components/gis-graph.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-03T15:11:39Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "06b1689af9fb9433a59ed35035152140f1964e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90f50c41_96cb427c",
+        "filename": "src/app/tracing/graph/components/gis-graph.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 929,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-03T15:11:39Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "06b1689af9fb9433a59ed35035152140f1964e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbd57349_606359f8",
+        "filename": "src/app/tracing/graph/components/schema-graph.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-03T15:11:39Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "06b1689af9fb9433a59ed35035152140f1964e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b54a1c09_f9eb4984",
+        "filename": "src/app/tracing/graph/components/schema-graph.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-03T15:11:39Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "06b1689af9fb9433a59ed35035152140f1964e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
