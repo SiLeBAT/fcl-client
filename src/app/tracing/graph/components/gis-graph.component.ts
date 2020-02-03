@@ -37,6 +37,7 @@ import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
 import { Stroke, Style } from 'ol/style';
 import BaseLayer from 'ol/layer/Base';
+import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 
 interface GraphSettingsState {
     fontSize: Size;
@@ -119,6 +120,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private selectionTimerSubscription: Subscription;
 
     private isPanning = false;
+
+    private edgeLabelOffsetUpdater = new EdgeLabelOffsetUpdater();
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -245,9 +248,11 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             () => {
                 this.removeFrameLayer();
 
+                this.edgeLabelOffsetUpdater.disconnect();
                 const layout = this.getFitLayout(graphState, graphData);
 
                 this.zoom = layout.zoom;
+
                 this.cy = cytoscape({
                     container: this.graphElement.nativeElement,
                     elements: {
@@ -336,15 +341,13 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
                 this.contextMenu.connect(this.cy, this.hoverDeliveriesSubject);
 
-                this.updateFontSize(graphState);
-
                 this.updateZoomPercentage();
 
                 this.resizeGraphAndMap();
 
-                if (!graphState.layout) {
-                    this.applyLayoutToStateIfNecessary();
-                }
+                this.applyLayoutToStateIfNecessary();
+
+                this.edgeLabelOffsetUpdater.connectTo(this.cy);
             },
             err => this.alertService.error(`Cy graph could not be initialized: ${err}`)
         );
@@ -359,8 +362,9 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.selectionTimerSubscription = timer(0).subscribe(
                 () => {
                     this.selectionTimerSubscription.unsubscribe();
-                    this.selectionTimerSubscription = null;
                     this.applyElementSelectionToState();
+                    this.edgeLabelOffsetUpdater.update(true);
+                    this.selectionTimerSubscription = null;
                 },
                 error => {
                     throw new Error(`${error}`);
@@ -457,6 +461,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.cy.edges().remove();
             this.cy.add(this.createEdges(graphData));
         });
+        this.edgeLabelOffsetUpdater.update(true);
     }
 
     private updateGraph(graphState: GisGraphState, graphData: GraphServiceData) {
@@ -467,6 +472,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.updateGraphStyle(graphState, graphData);
         });
         this.updateMap();
+        this.edgeLabelOffsetUpdater.update(true);
     }
 
     private updateGraphStyle(graphState: GisGraphState, graphData: GraphServiceData) {
@@ -482,11 +488,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                 )
             );
             this.cy.elements().scratch('_update', true);
+            this.edgeLabelOffsetUpdater.update(true);
         }
-    }
-
-    private updateFontSize(state: GisGraphState) {
-        this.styleService.updateCyFontSize(this.cy, GisGraphComponent.FONT_SIZES.get(state.fontSize));
     }
 
     private updateGraphSelection(graphData: GraphServiceData) {
@@ -910,12 +913,14 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.updateGraphEdges(newData);
         } else if (this.cachedData.propsChangedFlag !== newData.propsChangedFlag) {
             this.updateGraphStyle(newState, newData);
-        } else if (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel) {
+        } else if (
+            !this.selectionTimerSubscription &&
+            (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel)) {
             this.updateGraphSelection(newData);
         } else if (this.cachedState.nodeSize !== newState.nodeSize) {
             this.updateGraphStyle(newState, newData);
         } else if (this.cachedState.fontSize !== newState.fontSize) {
-            this.updateFontSize(newState);
+            this.updateGraphStyle(newState, newData);
         } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
             this.updateEdgeLabels();
         }

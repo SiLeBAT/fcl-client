@@ -16,11 +16,12 @@ import { StyleService } from '../style.service';
 import { GraphService } from '../graph.service';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { filter } from 'rxjs/operators';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection } from '../graph.model';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection, CyElementCollection, CyEdge } from '../graph.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
 import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
+import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 
 interface GraphSettingsState {
     fontSize: Size;
@@ -90,6 +91,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     private isPanning = false;
     private isZoomHandlerActive = false;
+
+    private edgeLabelOffsetUpdater = new EdgeLabelOffsetUpdater();
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -169,6 +172,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.componentIsActive = false;
+        this.edgeLabelOffsetUpdater.disconnect();
         if (this.resizeTimerSubscription) {
             this.resizeTimerSubscription.unsubscribe();
             this.resizeTimerSubscription = null;
@@ -205,6 +209,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         const sub = timer(0).subscribe(
             () => {
                 const nodesDefs = this.createNodes(graphState, graphData);
+                this.edgeLabelOffsetUpdater.disconnect();
                 this.cy = cytoscape({
                     container: this.graphElement.nativeElement,
                     elements: {
@@ -249,7 +254,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 });
 
                 // nodes move
-                this.cy.on('dragfreeon', () => this.applyNodePositionsToState());
+                this.cy.on('dragfreeon', () => {
+                    this.applyNodePositionsToState();
+                });
 
                 // click un/selection
                 this.cy.on('tapselect', () => this.processGraphElementSelectionChange());
@@ -269,6 +276,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                         this.fitCy();
                     }
                 }
+
+                this.edgeLabelOffsetUpdater.connectTo(this.cy);
             },
             err => this.alertService.error(`Cy graph could not be initialized: ${err}`)
         );
@@ -434,8 +443,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.selectionTimerSubscription = timer(0).subscribe(
                 () => {
                     this.selectionTimerSubscription.unsubscribe();
-                    this.selectionTimerSubscription = null;
+                    this.edgeLabelOffsetUpdater.update(true);
                     this.applyElementSelectionToState();
+                    this.selectionTimerSubscription = null;
                 },
                 error => {
                     throw new Error(`${error}`);
@@ -508,10 +518,6 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         });
     }
 
-    private updateFontSize(state: SchemaGraphState) {
-        this.styleService.updateCyFontSize(this.cy, SchemaGraphComponent.FONT_SIZES.get(state.fontSize));
-    }
-
     private updateGraphSelection(graphData: GraphServiceData) {
         if (this.cy != null) {
             this.cy.batch(() => {
@@ -572,6 +578,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         return graphData.edgeData.map(edgeData => ({
             group: 'edges',
             data: edgeData,
+            classes: 'top-center',
             selected: edgeData.selected
         }));
     }
@@ -581,6 +588,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.cy.edges().remove();
             this.cy.add(this.createEdges(graphData));
         });
+        this.edgeLabelOffsetUpdater.update(true);
     }
 
     private updateGraph(graphState: SchemaGraphState, graphData: GraphServiceData) {
@@ -591,6 +599,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
             this.applyLayoutStateToGraph(graphState, graphData);
         });
+        this.edgeLabelOffsetUpdater.update(true);
     }
 
     private getStyleInfoFromState(graphState: SchemaGraphState): { fontSize: number, nodeSize: number, zoom: number } {
@@ -608,6 +617,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 graphData
             ));
             this.cy.elements().scratch('_update', true);
+            this.edgeLabelOffsetUpdater.update(true);
         }
     }
 
@@ -657,12 +667,14 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.updateGraphEdges(newData);
         } else if (this.cachedData.propsChangedFlag !== newData.propsChangedFlag) {
             this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
-        } else if (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel) {
+        } else if (
+            !this.selectionTimerSubscription &&
+            (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel)) {
             this.updateGraphSelection(newData);
         } else if (this.cachedState.nodeSize !== newState.nodeSize) {
             this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
         } else if (this.cachedState.fontSize !== newState.fontSize) {
-            this.updateFontSize(newState);
+            this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
         } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
             this.updateEdgeLabels();
         } else if (!_.isEqual(this.cachedState.layout, newState.layout)) {

@@ -37,6 +37,11 @@ export interface Cy {
         T extends string | CyCallBackFun,
         K extends (T extends string ? CyCallBackFun : None)
     >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
+    one<
+        T extends string | CyCallBackFun,
+        K extends (T extends string ? CyCallBackFun : None)
+    >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
+    removeListener(events: string, handler: (event?: any) => void): void;
     getElementById(id: string): CyNode | CyEdge;
     ready(callBack: () => void): void;
     style(): {};
@@ -64,7 +69,7 @@ interface CyLayout {
     run(): void;
 }
 
-interface CyElementCollection<E> {
+export interface CyElementCollection<E> {
     size(): number;
     allAre(a: string): number;
     map<T>(a: (b: E) => T): T[];
@@ -75,12 +80,15 @@ interface CyElementCollection<E> {
     forEach(a: (b: E) => void): void;
     scratch(a: string, b: boolean): void;
     filter(a: ((b: E) => boolean) | string): CyElementCollection<E>;
+    first(): E;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
     layout(options: { name: string, [key: string]: any }): CyLayout;
     positions(a: (b: CyNode) => Position): void;
     filter(a: ((b: CyNode) => boolean) | string): CyNodeCollection;
+    edgesWith(a: string | CyNodeCollection): CyElementCollection<CyEdge>;
+    connectedEdges(a?: string): CyElementCollection<CyEdge>;
 }
 
 interface CyElement {
@@ -89,6 +97,15 @@ interface CyElement {
     id(): string;
     data(a?: string): any;
     selected(): boolean;
+    style<
+        T extends string | {[key: string]: any} | None,
+        K extends (None extends T ? None : T extends string ? number | string | boolean | None : None)
+    >(a?: T, b?: K): None extends T ? {} : (T extends string ? (None extends K ? number | string | boolean : void) : void);
+    on<
+        T extends string | CyCallBackFun,
+        K extends (T extends string ? CyCallBackFun : None)
+    >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
+    removeListener(events: string, handler: (event?: any) => void): void;
 }
 
 export interface CyNode extends CyElement {
@@ -96,6 +113,7 @@ export interface CyNode extends CyElement {
     selected(): boolean;
     position(): Position;
     height(): number;
+    connectedEdges(a?: string): CyElementCollection<CyEdge>;
 }
 
 export interface CyEdge extends CyElement {
