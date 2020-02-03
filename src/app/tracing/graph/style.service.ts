@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
-import { GraphServiceData, Cy } from './graph.model';
+import { GraphServiceData, Cy, CyEdge, CyElementCollection } from './graph.model';
+import { Position } from '../data.model';
 
 interface Settings {
     nodeSize: number;
@@ -68,6 +69,7 @@ export class StyleService {
         const visibleNodeSize = this.getVisibleNodeSize(zoom, nodeSize);
         const edgeSize = nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
         const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, edgeSize);
+        const correctedFontSize = Math.max(fontSize / zoom, fontSize);
 
         const style = cytoscape
             .stylesheet()
@@ -86,7 +88,7 @@ export class StyleService {
                         'text-valign': 'bottom',
                         'text-halign': 'right',
                         'text-wrap': 'none',
-                        'font-size': Math.max(fontSize / zoom, fontSize)
+                        'font-size': correctedFontSize
                     }
                     :
                     {}
@@ -110,7 +112,8 @@ export class StyleService {
                     {
                         content: 'data(label)',
                         'text-wrap': 'none',
-                        'font-size': Math.max(fontSize / zoom, fontSize)
+                        'text-rotation': 'autorotate',
+                        'font-size': correctedFontSize
                     } :
                     {}
                 ),
@@ -123,6 +126,7 @@ export class StyleService {
                 width: visibleEdgeWidth,
                 'arrow-scale': 1.4
             })
+
             .selector('node:selected')
             .style({
                 'background-color': 'rgb(128, 128, 255)',
