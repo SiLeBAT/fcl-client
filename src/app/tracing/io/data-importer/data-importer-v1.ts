@@ -415,6 +415,9 @@ export class DataImporterV1 implements IDataImporter {
             jsonData.settings.view === undefined ||
             jsonData.settings.view === null
         ) {
+            const defaultHS = createDefaultHighlights();
+            fclData.graphSettings.highlightingSettings.stations = defaultHS.stations;
+            fclData.graphSettings.highlightingSettings.deliveries = defaultHS.deliveries;
             return;
         }
 
