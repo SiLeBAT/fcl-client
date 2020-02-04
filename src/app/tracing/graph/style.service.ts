@@ -143,7 +143,12 @@ export class StyleService {
                 width: (
                     visibleEdgeWidth *
                     StyleService.SELECTED_EDGE_WIDTH_FACTOR
-                )
+                ),
+                color: 'rgb(0, 0, 255)',
+                'overlay-color': 'rgb(0, 0, 255)',
+                'overlay-padding': visibleEdgeWidth * StyleService.SELECTED_EDGE_WIDTH_FACTOR / 6.0,
+                'overlay-opacity': 1,
+                'target-arrow-color': 'rgb(0, 0, 255)'
             })
             .selector('node[?isMeta]')
             .style({
