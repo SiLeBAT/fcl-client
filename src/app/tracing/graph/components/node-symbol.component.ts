@@ -23,6 +23,7 @@ export class NodeSymbolComponent implements OnInit {
 
     private _svgShapeType: string;
     private _fillColor: string;
+    private _isFillColorNonWhite: boolean;
 
     @Input() set shapeType(shape: NodeShapeType) {
         this._svgShapeType = shape ? this.ShapeMap.get(shape) : null;
@@ -30,6 +31,7 @@ export class NodeSymbolComponent implements OnInit {
 
     @Input() set fillColor(color: Color) {
         this._fillColor = color ? Utils.colorToCss(color) : 'none';
+        this._isFillColorNonWhite = color ? color.r !== 255 || color.b !== 255 || color.g !== 255 : false;
     }
 
     getShapeType(): string {
@@ -38,6 +40,10 @@ export class NodeSymbolComponent implements OnInit {
 
     getFillColor(): string {
         return this._fillColor;
+    }
+
+    getIsFillColorNonWhite(): boolean {
+        return this._isFillColorNonWhite;
     }
 
     constructor() { }
