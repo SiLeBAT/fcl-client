@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
-import { GraphServiceData, Cy, CyEdge, CyElementCollection } from './graph.model';
-import { Position } from '../data.model';
+import { GraphServiceData } from './graph.model';
 
 interface Settings {
     nodeSize: number;
@@ -44,18 +43,6 @@ export class StyleService {
         }
     }
 
-    updateCyFontSize(cy: Cy, fontSize: number) {
-        if (cy) {
-            cy.nodes().style({
-                'font-size': Math.max(fontSize / cy.zoom(), fontSize)
-            });
-            cy.edges().style({
-                'font-size': Math.max(fontSize / cy.zoom(), fontSize)
-            });
-            cy.elements().scratch('_update', true);
-        }
-    }
-
     private createNodeSizeStyle(zoom: number, defaultNodeSize: number, maxScore: number): { height: string, width: string } {
         const nodeSizeMap: string = this.createNodeSizeMap(zoom, defaultNodeSize, maxScore);
         return {
@@ -69,6 +56,7 @@ export class StyleService {
         const visibleNodeSize = this.getVisibleNodeSize(zoom, nodeSize);
         const edgeSize = nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
         const visibleEdgeWidth = this.getVisibleEdgeWidth(zoom, edgeSize);
+        const visibleSelectedEdgeWidth = visibleEdgeWidth * StyleService.SELECTED_EDGE_WIDTH_FACTOR;
         const correctedFontSize = Math.max(fontSize / zoom, fontSize);
 
         const style = cytoscape
@@ -117,6 +105,7 @@ export class StyleService {
                     } :
                     {}
                 ),
+                'control-point-step-size': visibleSelectedEdgeWidth * 4,
                 'target-arrow-shape': 'triangle-cross',
                 'target-arrow-color': 'rgb(0, 0, 0)',
                 'curve-style': graphSize === GraphSize.SMALL ? 'bezier' : 'straight',
@@ -140,15 +129,22 @@ export class StyleService {
             })
             .selector('edge:selected')
             .style({
-                width: (
-                    visibleEdgeWidth *
-                    StyleService.SELECTED_EDGE_WIDTH_FACTOR
-                ),
+                width: visibleSelectedEdgeWidth,
                 color: 'rgb(0, 0, 255)',
                 'overlay-color': 'rgb(0, 0, 255)',
-                'overlay-padding': visibleEdgeWidth * StyleService.SELECTED_EDGE_WIDTH_FACTOR / 6.0,
+                'overlay-padding': visibleSelectedEdgeWidth / 6.0,
                 'overlay-opacity': 1,
                 'target-arrow-color': 'rgb(0, 0, 255)'
+            })
+            .selector('edge[?wLabelSpace]')
+            .style({
+                ...(
+                    graphSize !== GraphSize.HUGE ?
+                    {
+                        'control-point-step-size': correctedFontSize * 2.5
+                    } :
+                    {}
+                )
             })
             .selector('node[?isMeta]')
             .style({

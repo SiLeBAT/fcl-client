@@ -4,6 +4,7 @@ import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
+import { EdgeLabelOffsetUpdater } from './edge-label-offset-updater';
 
 interface CyDataNodes {
     statIdToNodeDataMap: {[key: string]: CyNodeData };
@@ -145,7 +146,8 @@ export class GraphService {
                                 crossContamination: delivery.crossContamination,
                                 killContamination: delivery.killContamination,
                                 score: delivery.score,
-                                weight: delivery.weight
+                                weight: delivery.weight,
+                                wLabelSpace: false
                             });
                         } else {
                             const observedTypes = _.uniq(deliveries.filter(d => d.observed !== ObservedType.NONE).map(d => d.observed));
@@ -188,7 +190,8 @@ export class GraphService {
                                 crossContamination: deliveries.some(d => d.crossContamination),
                                 killContamination: deliveries.some(d => d.killContamination),
                                 score: _.max(deliveries.map(d => d.score)),
-                                weight: _.sum(deliveries.map(d => d.weight))
+                                weight: _.sum(deliveries.map(d => d.weight)),
+                                wLabelSpace: false
                             });
                         }
                     }
@@ -217,7 +220,8 @@ export class GraphService {
                         crossContamination: delivery.crossContamination,
                         killContamination: delivery.killContamination,
                         score: delivery.score,
-                        weight: delivery.weight
+                        weight: delivery.weight,
+                        wLabelSpace: false
                     });
                 }
             }
@@ -245,13 +249,38 @@ export class GraphService {
         };
     }
 
-    updateEdgeLabels(state: GraphState, edges: CyEdgeData[]) {
+    private updateLabelSpaceFlags(edges: CyEdgeData[]): void {
+        const edgeGroups = this.getNodePairEdgeGroups(edges);
+        for (const edgeGroup of edgeGroups) {
+            const oneLabelExists = edgeGroup.some(edge => edge.label !== '');
+            edgeGroup.forEach(edge => edge.wLabelSpace = oneLabelExists);
+        }
+    }
+
+    private getNodePairEdgeGroups(edges: CyEdgeData[]): CyEdgeData[][] {
+        const edgeGroups: { [key: string]: CyEdgeData[] } = {};
+
+        for (const edge of edges) {
+            const nodePairKey = edge.source < edge.target ? edge.source + edge.target : edge.target + edge.source;
+            if (!edgeGroups[nodePairKey]) {
+                edgeGroups[nodePairKey] = [edge];
+            } else {
+                edgeGroups[nodePairKey].push(edge);
+            }
+        }
+
+        return Object.values(edgeGroups);
+    }
+
+    updateEdgeLabels(state: GraphState, edges: CyEdgeData[]): void {
         if (state.showMergedDeliveriesCounts) {
             edges.forEach(edge => {
                 const nDel = edge.deliveries.length;
                 if (nDel > 1) {
                     const nSel = edge.deliveries.filter(d => d.selected).length;
-                    edge.label = '[' + ((nSel > 0 && nSel < nDel) ? nSel + '/' : '') + nDel + ']';
+                    edge.label =
+                        '[' + ((nSel > 0 && nSel < nDel) ? nSel + '/' : '') + nDel + ']' +
+                        (edge.labelWoPrefix !== '' ? ' ' + edge.labelWoPrefix : '');
                 } else {
                     edge.label = edge.labelWoPrefix;
                 }
@@ -259,6 +288,7 @@ export class GraphService {
         } else {
             edges.forEach(edge => edge.label = edge.labelWoPrefix);
         }
+        this.updateLabelSpaceFlags(edges);
     }
 
     private groupDeliveries(deliveries: DeliveryData[], mergeDeliveriesType: MergeDeliveriesType): DeliveryData[][] {
