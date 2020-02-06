@@ -1,22 +1,18 @@
-ngx-datatable {
+.ngx-filter-table {
     width: 800px;
+    height: 455px;
+}
+
+.overall-column-filter {
+    width: 80%;
+}
+
+.datatable-footer-inner {
+    height: 50px;
 }
 
 .header-sort-span {
     color: black;
-}
-
-/deep/ ngx-datatable.dialogTable .datatable-header-cell .mat-form-field {
-    width: 100% !important;
-}
-
-/deep/ ngx-datatable.dialogTable .datatable-header-cell .mat-form-field-label-wrapper {
-    box-sizing: content-box;
-}
-
-/deep/ ngx-datatable.dialogTable .datatable-body-row .datatable-body-cell {
-    padding-top: 0.3rem !important;
-    padding-bottom: 0.3rem !important;
 }
 
 .mat-option {
@@ -24,27 +20,11 @@ ngx-datatable {
     font-size: 12px !important;
 }
 
-.highlightingDiv {
+.highlighting-div {
     width: 30px;
     height: 20px;
 }
 
-.highlightingColumn {
+.highlighting-column {
     text-align: center;
-}
-
-/deep/ ngx-datatable.dialogTable .filterHeader .datatable-icon-up::before {
-    content: "";
-}
-
-/deep/ ngx-datatable.dialogTable .filterHeader .datatable-icon-down::before {
-    content: "";
-}
-
-/deep/ ngx-datatable.dialogTable .filterHeader .enforceIcon.datatable-icon-up::before {
-    content: "\65";
-}
-
-/deep/ ngx-datatable.dialogTable .filterHeader .enforceIcon.datatable-icon-down::before {
-    content: "\66";
 }
