@@ -7,7 +7,7 @@ import { TableService } from '@app/tracing/services/table.service';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
-import { BasicGraphState } from '@app/tracing/data.model';
+import { BasicGraphState, Size } from '@app/tracing/data.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import { SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
 
@@ -38,9 +38,10 @@ interface FilterColumn extends Column, Filter {}
 })
 export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
-    private static readonly MAX_COUNT_SORT_OPTIONS = 100;
-    private static readonly MAX_TABLE_HEIGHT = 455;
-    private static readonly TABLE_HEIGHT_WO_ROWS = 155;
+    private readonly MAX_COUNT_SORT_OPTIONS = 100;
+    private readonly MAX_TABLE_HEIGHT = 455;
+    private readonly TABLE_HEIGHT_WO_ROWS = 155;
+    readonly ROW_HEIGHT = 30;
 
     private styleElement: HTMLStyleElement;
 
@@ -63,6 +64,8 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
     reorderable: boolean = true;
 
+    private readonly columnOrdering = ['id', 'name', 'lot', 'score', 'source.name', 'target.name', 'source', 'target', 'weight', 'crossContamination', 'killContamination', 'observed', 'forward', 'backward', 'selected'];
+
     @ViewChild(DatatableComponent) table: DatatableComponent;
 
     constructor(
@@ -74,10 +77,21 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     ) {
         this.deliveryIds = data.deliveryIds;
 
-        this.tableHeight = Math.min(
-            DeliveriesPropertiesComponent.MAX_TABLE_HEIGHT,
-            DeliveriesPropertiesComponent.TABLE_HEIGHT_WO_ROWS + 30 * this.deliveryIds.length
-        );
+        // // this.tableHeight = Math.min(
+        // //     this.MAX_TABLE_HEIGHT,
+        // //     this.TABLE_HEIGHT_WO_ROWS + this.ROW_HEIGHT * (this.deliveryIds.length + 0.5)
+        // // );
+        // // this.asyncTableHeight$ = of(this.tableHeight);
+        // // this.tableStyle$ = of({ height: this.tableHeight + 'px', width: '800px' });
+        // this.tableStyle = {
+        //     height: Math.min(
+        //         this.MAX_TABLE_HEIGHT,
+        //         this.TABLE_HEIGHT_WO_ROWS + this.ROW_HEIGHT * (this.deliveryIds.length + 0.5)
+        //     ) + 'px !important',
+        //     width: '800px !important'
+        // };
+        // console.log('Suggested height: ' + this.tableStyle.height);
+        // console.log('TableHeight: ' + this.tableHeight);
         this.stateSubscription = this.store.select(tracingSelectors.getTableData).subscribe(
             (state) => this.applyState(state.graphState),
             err => this.alertService.error(`getTableData store subscription failed: ${err}`)
@@ -85,6 +99,17 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        // this.tableHeight = Math.min(
+        //     this.MAX_TABLE_HEIGHT,
+        //     this.TABLE_HEIGHT_WO_ROWS + this.ROW_HEIGHT * (this.deliveryIds.length + 0.5)
+        // );
+
+        // console.log('TableHeight: ' + this.tableHeight);
+        // this.stateSubscription = this.store.select(tracingSelectors.getTableData).subscribe(
+        //     (state) => this.applyState(state.graphState),
+        //     err => this.alertService.error(`getTableData store subscription failed: ${err}`)
+        // );
+        // this.dialogRef.updateSize();
     }
 
     ngOnDestroy() {
@@ -116,6 +141,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
                     filterText: null as string,
                     filterProps: [c.id]
                 }));
+                this.orderColumns(columns);
                 const propToColumnMap: { [key: string]: FilterColumn } = columns.reduce((prevValue, currValue) => {
                     prevValue[currValue.prop] = currValue;
                     return prevValue;
@@ -132,9 +158,27 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
                 this.propToColumnMap = propToColumnMap;
                 this.columns = columns;
                 this.filteredRows = filteredRows;
+                // this.table.recalculate();
+                const tmpTable = this.table;
+                const element = tmpTable.element;
+                const parent = element.parentElement;
+                // const tmpTableRef = this.tableRef;
+                const tmp3 = 4;
+                // this.table.ngDoCheck();
+                // this.dialogRef.updateSize();
             },
             () => this.alertService.error('Could not load properties.')
         );
+    }
+
+    private orderColumns(columns: FilterColumn[]): void {
+        const propPrios = {};
+        this.columnOrdering.forEach((prop, i) => propPrios[prop] = i + 1);
+        columns.sort((colA, colB) => {
+            const prioColAProp = propPrios[colA.prop] || Number.MAX_VALUE;
+            const prioColBProp = propPrios[colB.prop] || Number.MAX_VALUE;
+            return Utils.compareNumbers(prioColAProp, prioColBProp);
+        });
     }
 
     private setRowColors() {
@@ -223,7 +267,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
                 const filteredOptions = this.getSortedUniqueValues(values);
 
                 column.filteredOptions = (
-                    filteredOptions.length > DeliveriesPropertiesComponent.MAX_COUNT_SORT_OPTIONS ?
+                    filteredOptions.length > this.MAX_COUNT_SORT_OPTIONS ?
                     [] :
                     filteredOptions
                 );

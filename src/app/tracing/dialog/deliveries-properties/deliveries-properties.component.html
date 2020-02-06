@@ -2,19 +2,19 @@
     <span>Delivery Properties</span>
 </h1>
 
-<mat-form-field style="width: 80%" floatLabel="never">
+<mat-form-field floatLabel="never" class="overall-column-filter">
 
     <input type="search" placeholder="Filter" aria-label="Number" matInput [(ngModel)]="rootFilter.filterText" name="rootFilter" (keyup)="updateRowsAndOptions()" (reset)="resetFilter()">
 
 </mat-form-field>
 
-<ngx-datatable id="table" #table
-    class="material dialogTable"
+<ngx-datatable
+    class="material ngx-filter-table"
     [rows]='filteredRows'
     [columns]='columns'
     [columnMode]="'standard'"
     [headerHeight]="80"
-    [rowHeight]="30"
+    [rowHeight]="ROW_HEIGHT"
     [footerHeight]="50"
     [scrollbarV]="true"
     [scrollbarH]="true"
@@ -23,10 +23,10 @@
     [selectionType]="'multi'"
     (activate)="onActivate($event)"
     (select)='onSelect($event)'
-    [ngStyle]="{ 'height': tableHeight + 'px' }">
+>
 
     <ngx-datatable-column name="'H'" prop="hColor" [minWidth]="40" [maxWidth]="40" [width]="40" [sortable]="true" [canAutoResize]="false" [draggable]="false" [resizeable]="false"
-    headerClass="highlightingColumn"
+    headerClass="highlighting-column"
     >
         <ng-template let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
             <span class="header-sort-span" (click)="sort()">
@@ -35,7 +35,7 @@
         </ng-template>
 
         <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
-            <div [ngStyle]="{ 'background': row.hColor }" class="highlightingDiv"></div>
+            <div [ngStyle]="{ 'background': row.hColor }" class="highlighting-div"></div>
         </ng-template>
 
     </ngx-datatable-column>
@@ -44,20 +44,20 @@
         [sortable]="true"
         [canAutoResize]="false"
         [draggable]="true"
-        [resizeable]="true" headerClass="filterHeader"
+        [resizeable]="true" headerClass="filter-header"
     >
 
         <ng-template let-column="column" let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
 
             <span class="header-sort-span" (click)="sort()">
                 {{column.name}}
-                <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforceIcon"></span>
-                <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforceIcon"></span>
+                <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
+                <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
             </span><br>
 
-            <mat-form-field class="columnFilterField" floatLabel="never">
+            <mat-form-field floatLabel="never">
 
-                <input type="search" placeholder="Filter" aria-label="Number" matInput class="myInput"
+                <input type="search" placeholder="Filter" aria-label="Number" matInput
                     [(ngModel)]="propToColumnMap[column.prop].filterText" id="{{column.prop}}"
                     [matAutocomplete]="auto"
                     (keyup)="updateRowsAndOptions()"
@@ -86,7 +86,7 @@
             let-offset="offset"
             let-isVisible="isVisible"
         >
-            <div class="datatable-footer-inner selected-count" style="height: 50px;">
+            <div class="datatable-footer-inner selected-count">
                 <div class="page-count">
                     <span> {{selectedCount.toLocaleString()}} selected / </span> {{rowCount.toLocaleString()}} total
                 </div>
