@@ -38,9 +38,10 @@ interface FilterColumn extends Column, Filter {}
 })
 export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
-    private static readonly MAX_COUNT_SORT_OPTIONS = 100;
-    private static readonly MAX_TABLE_HEIGHT = 455;
-    private static readonly TABLE_HEIGHT_WO_ROWS = 155;
+    private readonly MAX_COUNT_SORT_OPTIONS = 100;
+    private readonly MAX_TABLE_HEIGHT = 455;
+    private readonly TABLE_HEIGHT_WO_ROWS = 155;
+    readonly ROW_HEIGHT = 30;
 
     private styleElement: HTMLStyleElement;
 
@@ -57,11 +58,11 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
     private deliveryIds: string[];
 
-    tableHeight: number;
-
     stateSubscription: Subscription;
 
     reorderable: boolean = true;
+
+    private readonly columnOrdering = ['id', 'name', 'lot', 'score', 'source.name', 'target.name', 'source', 'target', 'weight', 'crossContamination', 'killContamination', 'observed', 'forward', 'backward', 'selected'];
 
     @ViewChild(DatatableComponent) table: DatatableComponent;
 
@@ -74,10 +75,6 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     ) {
         this.deliveryIds = data.deliveryIds;
 
-        this.tableHeight = Math.min(
-            DeliveriesPropertiesComponent.MAX_TABLE_HEIGHT,
-            DeliveriesPropertiesComponent.TABLE_HEIGHT_WO_ROWS + 30 * this.deliveryIds.length
-        );
         this.stateSubscription = this.store.select(tracingSelectors.getTableData).subscribe(
             (state) => this.applyState(state.graphState),
             err => this.alertService.error(`getTableData store subscription failed: ${err}`)
@@ -116,6 +113,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
                     filterText: null as string,
                     filterProps: [c.id]
                 }));
+                this.orderColumns(columns);
                 const propToColumnMap: { [key: string]: FilterColumn } = columns.reduce((prevValue, currValue) => {
                     prevValue[currValue.prop] = currValue;
                     return prevValue;
@@ -135,6 +133,16 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
             },
             () => this.alertService.error('Could not load properties.')
         );
+    }
+
+    private orderColumns(columns: FilterColumn[]): void {
+        const propPrios = {};
+        this.columnOrdering.forEach((prop, i) => propPrios[prop] = i + 1);
+        columns.sort((colA, colB) => {
+            const prioColAProp = propPrios[colA.prop] || Number.MAX_VALUE;
+            const prioColBProp = propPrios[colB.prop] || Number.MAX_VALUE;
+            return Utils.compareNumbers(prioColAProp, prioColBProp);
+        });
     }
 
     private setRowColors() {
@@ -223,7 +231,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
                 const filteredOptions = this.getSortedUniqueValues(values);
 
                 column.filteredOptions = (
-                    filteredOptions.length > DeliveriesPropertiesComponent.MAX_COUNT_SORT_OPTIONS ?
+                    filteredOptions.length > this.MAX_COUNT_SORT_OPTIONS ?
                     [] :
                     filteredOptions
                 );
