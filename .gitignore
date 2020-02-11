@@ -31,8 +31,10 @@ testem.log
 /typings
 
 # e2e
-/e2e/*.js
-/e2e/*.map
+/e2e
+/cypress/videos
+/cypress/screenshots
+/cypress/reports
 
 #System Files
 .DS_Store

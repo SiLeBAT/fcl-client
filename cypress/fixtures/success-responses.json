@@ -1,0 +1,16 @@
+[
+  {
+    "status": 200,
+    "body": {
+      "email": "user1@test.com",
+      "passwordResetRequest": true
+    }
+  },
+  {
+    "status": 200,
+    "body": {
+      "email": "newUser@test.com",
+      "registerRequest": true
+    }
+  }
+]
