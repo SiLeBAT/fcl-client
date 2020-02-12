@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aa51d30_818cc7d1",
+        "filename": ".gitignore",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-02-12T11:40:53Z",
+      "side": 1,
+      "message": "/e2e/ is still present",
+      "revId": "ffe799c563c62bebe64c82693a02a7e759a0193e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
