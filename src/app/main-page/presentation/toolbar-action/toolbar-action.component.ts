@@ -10,7 +10,7 @@ import { User } from '@app/user/models/user.model';
     styleUrls: ['./toolbar-action.component.scss']
 })
 export class ToolbarActionComponent implements OnInit {
-    @ViewChild('fileInput') fileInput: ElementRef;
+    @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
     @Input() tracingActive: boolean;
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;

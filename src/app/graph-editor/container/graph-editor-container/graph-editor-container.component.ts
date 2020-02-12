@@ -17,7 +17,7 @@ import { GraphEditorComponent } from '@app/graph-editor/presentation/graph-edito
 })
 export class GraphEditorContainerComponent extends GuardedUnloadComponent implements OnInit, OnDestroy {
 
-    @ViewChild(GraphEditorComponent) graphEditorComponent;
+    @ViewChild(GraphEditorComponent, { static: true }) graphEditorComponent;
 
     graph: mxGraph;
     private componentActive = true;

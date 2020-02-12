@@ -7,8 +7,8 @@ exports[`ResetViewComponent should render the component correctly 1`] = `
   >
     <fcl-main-entry-header />
     <fcl-single-center-card-layout
+      cardtitle="Reset Password"
       class="fcl-register-card"
-      title="Reset Password"
     >
       <div
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"

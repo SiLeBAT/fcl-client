@@ -9,7 +9,7 @@ import { Store, select } from '@ngrx/store';
 import { takeWhile, take } from 'rxjs/operators';
 import { Utils } from '../util/non-ui-utils';
 import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DataService } from '../services/data.service';
 
 @Component({

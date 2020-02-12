@@ -7,8 +7,8 @@ exports[`RecoveryViewComponent should render the component correctly 1`] = `
   >
     <fcl-main-entry-header />
     <fcl-single-center-card-layout
+      cardtitle="Recover Password"
       class="fcl-register-card"
-      title="Recover Password"
     >
       <div
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"

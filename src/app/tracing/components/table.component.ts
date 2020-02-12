@@ -16,7 +16,7 @@ import * as tracingActions from '../state/tracing.actions';
 import { DataService } from '../services/data.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { TableSettingsComponent } from './table-settings.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 interface FilterableRow {
     content: any;
@@ -70,9 +70,9 @@ export class TableComponent implements OnDestroy, AfterViewInit {
 
     private resizeTimerSubscription: Subscription;
 
-    @ViewChild('table') table: DatatableComponent;
-    @ViewChild('table', { read: ElementRef }) tableRef: ElementRef;
-    @ViewChild('selectTmpl') selectTmpl: TemplateRef<any>;
+    @ViewChild('table', { static: true }) table: DatatableComponent;
+    @ViewChild('table', { read: ElementRef, static: true }) tableRef: ElementRef;
+    @ViewChild('selectTmpl', { static: true }) selectTmpl: TemplateRef<any>;
 
     showDataTable$ = this.store.select(tracingSelectors.getShowDataTable);
 

@@ -29,11 +29,9 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
         class="form-group fcl-recover-button"
       >
         <button
-          class="mat-raised-button mat-primary"
+          class="mat-raised-button mat-button-base mat-primary"
           color="primary"
           mat-raised-button=""
-          ng-reflect-color="primary"
-          ng-reflect-router-link="/users/login"
           tabindex="0"
           type="submit"
         >
@@ -45,9 +43,6 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
           <div
             class="mat-button-ripple mat-ripple"
             matripple=""
-            ng-reflect-centered="false"
-            ng-reflect-disabled="false"
-            ng-reflect-trigger="[object HTMLButtonElement]"
           />
           <div
             class="mat-button-focus-overlay"
@@ -88,11 +83,9 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
         class="form-group fcl-recover-button"
       >
         <button
-          class="mat-raised-button mat-primary"
+          class="mat-raised-button mat-button-base mat-primary"
           color="primary"
           mat-raised-button=""
-          ng-reflect-color="primary"
-          ng-reflect-router-link="/users/login"
           tabindex="0"
           type="submit"
         >
@@ -104,9 +97,6 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
           <div
             class="mat-button-ripple mat-ripple"
             matripple=""
-            ng-reflect-centered="false"
-            ng-reflect-disabled="false"
-            ng-reflect-trigger="[object HTMLButtonElement]"
           />
           <div
             class="mat-button-focus-overlay"

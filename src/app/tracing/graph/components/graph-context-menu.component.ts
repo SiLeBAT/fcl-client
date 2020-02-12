@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { Store, Action } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as tracingActions from '../../tracing.actions';
@@ -18,8 +18,8 @@ import { Utils } from '../../util/ui-utils';
 })
 export class GraphContextMenuComponent implements OnInit, OnDestroy {
 
-    @ViewChild('graphMenuTrigger') graphMenuTrigger: MatMenuTrigger;
-    @ViewChild('graphMenuTrigger', { read: ElementRef }) graphMenuTriggerElement: ElementRef;
+    @ViewChild('graphMenuTrigger', { static: true }) graphMenuTrigger: MatMenuTrigger;
+    @ViewChild('graphMenuTrigger', { read: ElementRef, static: true }) graphMenuTriggerElement: ElementRef;
 
     @Output() layoutAction = new EventEmitter<Action>();
 

@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GroupData } from '@app/tracing/data.model';
 import { FormControl, FormGroupDirective, NgForm, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
