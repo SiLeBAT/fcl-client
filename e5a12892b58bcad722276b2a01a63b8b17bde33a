@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bd7b226_065571b8",
+        "filename": "src/app/graph-editor/services/visio-to-mxgraph.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-02-12T16:41:21Z",
+      "side": 1,
+      "message": "remove comment",
+      "revId": "e5a12892b58bcad722276b2a01a63b8b17bde33a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c1ce47c_7f51fb73",
+        "filename": "src/app/tracing/components/main-tracing.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-02-12T16:41:21Z",
+      "side": 1,
+      "message": "remove comment",
+      "revId": "e5a12892b58bcad722276b2a01a63b8b17bde33a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5768fe6_19b9701c",
+        "filename": "tsconfig.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-02-12T16:41:21Z",
+      "side": 1,
+      "message": "einzug beachten",
+      "revId": "e5a12892b58bcad722276b2a01a63b8b17bde33a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
