@@ -63,9 +63,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     private static readonly FONT_SIZES: Map<Size, number> = new Map([[Size.SMALL, 10], [Size.MEDIUM, 14], [Size.LARGE, 18]]);
 
-    @ViewChild('container') containerElement: ElementRef;
-    @ViewChild('graph') graphElement: ElementRef;
-    @ViewChild('contextMenu') contextMenu: GraphContextMenuComponent;
+    @ViewChild('container', { static: true }) containerElement: ElementRef;
+    @ViewChild('graph', { static: true }) graphElement: ElementRef;
+    @ViewChild('contextMenu', { static: true }) contextMenu: GraphContextMenuComponent;
 
     private componentIsActive = false;
 

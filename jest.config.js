@@ -15,7 +15,6 @@ module.exports = {
         'ts-jest': {
             tsConfig: './src/tsconfig.spec.json',
             stringifyContentPathRegex: '\\.html$',
-            astTransformers: ['./node_modules/jest-preset-angular/InlineHtmlStripStylesTransformer'],
             diagnostics: {
                 pathRegex: /\.(spec|test)\.ts$/,
                 ignoreCodes: ['TS2349', 'TS2351', 'TS2304']

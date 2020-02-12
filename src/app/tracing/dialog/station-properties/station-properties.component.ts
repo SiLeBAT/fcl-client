@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 
@@ -121,7 +121,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private static readonly NODE_WIDTH = 200;
     private static readonly NODE_HEIGHT = 50;
 
-    @ViewChild('inOutConnector') inOutConnector: ElementRef;
+    @ViewChild('inOutConnector', { static: true }) inOutConnector: ElementRef;
 
     title: string;
     propertiesHidden = false;

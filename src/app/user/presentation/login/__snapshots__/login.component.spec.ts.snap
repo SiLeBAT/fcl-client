@@ -105,7 +105,7 @@ exports[`LoginComponent should render the component correctly 1`] = `
           class="form-group"
         >
           <button
-            class="fcl-login-form__submit-button mat-raised-button"
+            class="fcl-login-form__submit-button mat-raised-button mat-button-base"
             color="primary"
             mat-raised-button=""
             type="submit"

@@ -7,7 +7,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
   >
     <fcl-main-entry-header />
     <fcl-single-center-card-layout
-      title="Login"
+      cardtitle="Login"
     >
       <div
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
@@ -50,7 +50,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
               class="fcl-mat-card__actions"
             >
               <button
-                class="mat-button"
+                class="mat-button mat-button-base"
                 color="primary"
                 mat-button=""
                 tabindex="0"
@@ -69,7 +69,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 />
               </button>
               <button
-                class="mat-button"
+                class="mat-button mat-button-base"
                 color="primary"
                 mat-button=""
                 tabindex="0"

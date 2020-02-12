@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
-import { MatMenu } from '@angular/material';
+import { MatMenu } from '@angular/material/menu';
 import { MenuItemData } from '../menu-item-data.model';
 import { Action } from '@ngrx/store';
 
@@ -9,7 +9,7 @@ import { Action } from '@ngrx/store';
 })
 export class NestedMatMenuComponent implements OnInit {
 
-    @ViewChild('menu') matMenu: MatMenu;
+    @ViewChild('menu', { static: true }) matMenu: MatMenu;
     @Output() actionSelected = new EventEmitter<Action>();
 
     constructor() { }

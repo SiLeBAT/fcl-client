@@ -2,7 +2,8 @@ import { StationData } from './../data.model';
 import {
     DialogAlignment, Position
 } from '../data.model';
-import { DialogPosition, MatMenuTrigger } from '@angular/material';
+import { DialogPosition } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
 import * as ol from 'ol';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { ElementRef } from '@angular/core';

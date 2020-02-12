@@ -70,7 +70,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
           class="form-group fcl-recover-button"
         >
           <button
-            class="mat-raised-button"
+            class="mat-raised-button mat-button-base"
             color="primary"
             mat-raised-button=""
             type="submit"
@@ -91,7 +91,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
         </div>
         <div>
           <a
-            class="mat-button"
+            class="mat-button mat-button-base"
             mat-button=""
           >
             <span

@@ -7,7 +7,7 @@ import spread from 'cytoscape-spread';
 import { FruchtermanLayout } from './fruchterman-reingold';
 import { FarmToForkLayout } from './farm-to-fork/farm-to-fork';
 import { DialogActionsComponent, DialogActionsData } from '../dialog/dialog-actions/dialog-actions.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Action } from '@ngrx/store';
 import { Cy, CyNodeCollection, CyNode } from '../graph/graph.model';
 

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy, QueryList, ViewChildren, ContentChild } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
@@ -29,16 +29,16 @@ import { Cy } from '../graph/graph.model';
 export class MainTracingComponent implements OnInit, OnDestroy {
     @ViewChildren(SchemaGraphComponent) schemaGraphChildren: QueryList<SchemaGraphComponent>;
     @ViewChildren(GisGraphComponent) gisGraphChildren: QueryList<GisGraphComponent>;
-    @ContentChild(SchemaGraphComponent) schemaGraphContentChild: SchemaGraphComponent;
-    @ContentChild(GisGraphComponent) gisGraphContentChild: GisGraphComponent;
+    @ContentChild(SchemaGraphComponent, { static: true }) schemaGraphContentChild: SchemaGraphComponent;
+    @ContentChild(GisGraphComponent, { static: true }) gisGraphContentChild: GisGraphComponent;
 
-    @ViewChild('mainContainer', { read: ElementRef }) mainContainer: ElementRef;
-    @ViewChild('schemaGraph') schemaGraph: SchemaGraphComponent;
-    @ViewChild('gisGraph') gisGraph: GisGraphComponent;
-    @ViewChild('table') table: TableComponent;
-    @ViewChild('rightSidenav') rightSidenav: MatSidenav;
-    @ViewChild('rightSidenav', { read: ElementRef }) rightSidenavElement: ElementRef;
-    @ViewChild('sidenavSlider') sidenavSlider: ElementRef;
+    @ViewChild('mainContainer', { read: ElementRef, static: true }) mainContainer: ElementRef;
+    @ViewChild('schemaGraph', { static: true }) schemaGraph: SchemaGraphComponent;
+    @ViewChild('gisGraph', { static: true }) gisGraph: GisGraphComponent;
+    @ViewChild('table', { static: true }) table: TableComponent;
+    @ViewChild('rightSidenav', { static: true }) rightSidenav: MatSidenav;
+    @ViewChild('rightSidenav', { read: ElementRef, static: true }) rightSidenavElement: ElementRef;
+    @ViewChild('sidenavSlider', { static: true }) sidenavSlider: ElementRef;
 
     appName: string = environment.appName;
     private subscriptions: Subscription[] = [];

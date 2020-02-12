@@ -5,8 +5,7 @@ exports[`ProfileComponent should display the current user 1`] = `
   currentUser={[Function Object]}
 >
   <fcl-single-center-card-layout
-    ng-reflect-title="User Profile"
-    title="User Profile"
+    cardtitle="User Profile"
   >
     <div
       class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
@@ -64,7 +63,7 @@ exports[`ProfileComponent should display the current user 1`] = `
 exports[`ProfileComponent should render the component correctly 1`] = `
 <fcl-profile>
   <fcl-single-center-card-layout
-    title="User Profile"
+    cardtitle="User Profile"
   >
     <div
       class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"

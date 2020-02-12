@@ -189,18 +189,12 @@ exports[`RegisterComponent should render the component correctly 1`] = `
       <div
         class="form-group"
       >
-        <password-strength-meter
-          _nghost-a-c7=""
-        >
-          <div
-            _ngcontent-a-c7=""
-          >
+        <password-strength-meter>
+          <div>
             <div
-              _ngcontent-a-c7=""
               class="strength-meter"
             >
               <div
-                _ngcontent-a-c7=""
                 class="strength-meter-fill"
               />
             </div>
@@ -260,7 +254,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
           class="form-group fcl-submit-button"
         >
           <button
-            class="mat-raised-button"
+            class="mat-raised-button mat-button-base"
             color="primary"
             mat-raised-button=""
             type="submit"
@@ -281,7 +275,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
         </div>
         <div>
           <a
-            class="mat-button"
+            class="mat-button mat-button-base"
             mat-button=""
           >
             <span

@@ -2,10 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "esModuleInterop": true,
-    "module": "commonjs",
     "allowJs": true,
     "outDir": "../out-tsc/spec",
-    "target": "es5",
     "baseUrl": "",
     "types": [
       "jest",

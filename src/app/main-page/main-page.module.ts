@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScrollbarHelper } from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
+import { ScrollbarHelper } from '@swimlane/ngx-datatable';
 
 import { SharedModule } from './../shared/shared.module';
 import { MainPageRoutingModule } from './main-page.routing.module';

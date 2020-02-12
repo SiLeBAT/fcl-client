@@ -12,7 +12,6 @@ import {
   GraphLayer
 } from '../../tracing/visio/layout-engine/datatypes';
 import * as _ from 'lodash';
-import { _MatFormFieldMixinBase } from '@angular/material';
 
 declare const mxConstants: any;
 

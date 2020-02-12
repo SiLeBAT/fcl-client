@@ -21,7 +21,7 @@ declare const OPEN_URL: string;
 })
 export class GraphEditorComponent implements AfterViewInit, OnDestroy {
 
-    @ViewChild('editorContainer') editorContainer: ElementRef;
+    @ViewChild('editorContainer', { static: true }) editorContainer: ElementRef;
     @Input() graph: mxGraph;
     private editorUi: any;
 

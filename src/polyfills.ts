@@ -43,7 +43,7 @@
 
 // tslint:disable-next-line:jsdoc-format
 /** Evergreen browsers require these. **/
-import 'core-js/es6/reflect';
+// import 'core-js/es6/reflect';
 
 // tslint:disable-next-line:jsdoc-format
 /** ALL Firefox browsers require the following to support `@angular/animation`. **/

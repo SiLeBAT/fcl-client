@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { Subscription, timer } from 'rxjs';
 import { Utils } from '@app/tracing/util/non-ui-utils';
@@ -64,7 +64,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
     private readonly columnOrdering = ['id', 'name', 'lot', 'score', 'source.name', 'target.name', 'source', 'target', 'weight', 'crossContamination', 'killContamination', 'observed', 'forward', 'backward', 'selected'];
 
-    @ViewChild(DatatableComponent) table: DatatableComponent;
+    @ViewChild(DatatableComponent, { static: true }) table: DatatableComponent;
 
     constructor(
         private tableService: TableService,

@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, Input, ViewChild, EventEmitter } from '@angular/core';
-import { MatSlider } from '@angular/material';
+import { MatSlider } from '@angular/material/slider';
 
 @Component({
     selector: 'fcl-zoom',
@@ -16,7 +16,7 @@ export class ZoomComponent implements OnInit {
     @Output() zoomSlide = new EventEmitter();
     @Output() zoomSlided = new EventEmitter();
 
-    @ViewChild('slider') slider: MatSlider;
+    @ViewChild('slider', { static: true }) slider: MatSlider;
 
     constructor() { }
 
