@@ -55,8 +55,6 @@ interface StyleInfo {
 })
 export class SchemaGraphComponent implements OnInit, OnDestroy {
 
-    private static readonly RENDERED_MIN_NODE_SIZE = 10;
-
     private static readonly ZOOM_FACTOR = 1.5;
 
     private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 50], [Size.MEDIUM, 75], [Size.LARGE, 100]]);
@@ -172,7 +170,6 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.componentIsActive = false;
-        this.edgeLabelOffsetUpdater.disconnect();
         if (this.resizeTimerSubscription) {
             this.resizeTimerSubscription.unsubscribe();
             this.resizeTimerSubscription = null;
@@ -193,6 +190,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.selectionTimerSubscription.unsubscribe();
             this.selectionTimerSubscription = null;
         }
+        this.cleanCy();
     }
 
     private getDefaultLayoutOption(nodeCount: number): any {
@@ -205,11 +203,19 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             };
     }
 
+    private cleanCy(): void {
+        if (this.cy) {
+            this.edgeLabelOffsetUpdater.disconnect();
+            this.cy.destroy();
+            this.cy = null;
+        }
+    }
+
     private initCy(graphState: SchemaGraphState, graphData: GraphServiceData) {
         const sub = timer(0).subscribe(
             () => {
                 const nodesDefs = this.createNodes(graphState, graphData);
-                this.edgeLabelOffsetUpdater.disconnect();
+                this.cleanCy();
                 this.cy = cytoscape({
                     container: this.graphElement.nativeElement,
                     elements: {

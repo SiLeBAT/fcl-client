@@ -25,6 +25,8 @@ export interface Cy {
     elements(a?: string): CyElementCollection<CyNode | CyEdge>;
     container(): any;
     resize(): void;
+    destroy(): void;
+    destroyed(): boolean;
     batch(a: () => void): void;
     reset(): void;
     fit(): void;

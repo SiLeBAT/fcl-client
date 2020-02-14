@@ -241,6 +241,15 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.selectionTimerSubscription.unsubscribe();
             this.selectionTimerSubscription = null;
         }
+        this.cleanCy();
+    }
+
+    private cleanCy(): void {
+        if (this.cy) {
+            this.edgeLabelOffsetUpdater.disconnect();
+            this.cy.destroy();
+            this.cy = null;
+        }
     }
 
     private initCy(graphState: GisGraphState, graphData: GraphServiceData) {
@@ -248,11 +257,11 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             () => {
                 this.removeFrameLayer();
 
-                this.edgeLabelOffsetUpdater.disconnect();
                 const layout = this.getFitLayout(graphState, graphData);
 
                 this.zoom = layout.zoom;
 
+                this.cleanCy();
                 this.cy = cytoscape({
                     container: this.graphElement.nativeElement,
                     elements: {
