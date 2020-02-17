@@ -23,7 +23,7 @@
 
 .fcl-graph-zoom {
     position: absolute;
-    top: 20px;
+    top: 40px;
     left: 12px;
     user-select: none;
 }
@@ -32,7 +32,7 @@
     z-index: 20;
     position: absolute;
     left: 16px;
-    bottom: 20px;
+    bottom: 40px;
     user-select: none;
 }
 
@@ -40,7 +40,7 @@
     z-index: 20;
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
     border: 1px solid rgb(211, 211, 211);
     background-color: rgba(255, 255, 255, 0.75);
     padding: 0.25em 1em;
