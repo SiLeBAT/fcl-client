@@ -1,9 +1,12 @@
 <fcl-toolbar-action
     class="fcl-toolbar-action-item fcl-toolbar-action-container"
     [tracingActive]="tracingActive$ | async"
+    [graphSettings]="graphSettings"
+    [hasGisInfo]="hasGisInfo"
     [graphEditorActive]="graphEditorActive$ | async"
     [currentUser]="currentUser$ | async"
     (toggleRightSidebar)="toggleRightSidebar($event)"
     (loadData)="loadData($event)"
-    (loadExampleData)="loadExampleData()">
+    (loadExampleData)="loadExampleData()"
+    (graphType)="setGraphType($event)">
 </fcl-toolbar-action>

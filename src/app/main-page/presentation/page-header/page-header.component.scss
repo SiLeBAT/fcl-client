@@ -28,7 +28,9 @@
 }
 
 .fcl-toolbar-menu-bottom {
-    padding-right: $fcl-toolbar-padding * 2;
+    padding: 0 1rem 0 1rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0;
 }
 
 .fcl-toolbar-title {
@@ -48,8 +50,4 @@
 
 .fcl-toolbar-action-item {
     flex: 1;
-}
-
-.fcl-toolbar-avatar-item {
-    padding-left: $fcl-toolbar-padding;
 }

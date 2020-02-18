@@ -3,12 +3,6 @@
 </mat-toolbar>
 
 <div class="sidenav-elements">
-    <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
-        <mat-radio-button *ngFor="let type of graphTypes" [value]="type" #graphtypeRadioButton [disabled]="type === 'GIS' ? !hasGisInfo : false">
-            {{ type }}
-        </mat-radio-button>
-    </mat-radio-group>
-
     <mat-form-field>
         <mat-select placeholder="Node Size" [(ngModel)]="graphSettings.nodeSize" (ngModelChange)="setNodeSize()">
             <mat-option *ngFor="let size of sizes" [value]="size">

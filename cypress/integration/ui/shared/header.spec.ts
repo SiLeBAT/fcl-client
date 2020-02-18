@@ -80,7 +80,7 @@ describe('Testing the Header of the app', function () {
             it('should have a link to load the example data', function () {
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-action-container').within(function () {
-                        cy.get('.fcl-example').as('exampleButton');
+                        cy.get('[data-cy=fcl-example]').as('exampleButton');
                         cy.get('@exampleButton').should('contain', 'Load Example Data');
                         cy.get('@exampleButton').should('have.attr', 'mattooltip', 'Load Example Data');
                         cy.get('@exampleButton').find('mat-icon').should('contain', 'wb_sunny');
@@ -120,22 +120,10 @@ describe('Testing the Header of the app', function () {
                 });
             });
 
-            it('should have a link to open/close the stations/properties table', function () {
-                cy.get('@fclHeader').within(function () {
-                    cy.get('.fcl-action-container').within(function () {
-                        cy.get('[mattooltip="Toggle right sidebar"]').as('dataTableButton');
-                        cy.get('@dataTableButton').should('contain', 'Open/Close Filter');
-                        cy.get('@dataTableButton').find('mat-icon').should('contain', 'filter_list');
-                        cy.get('@dataTableButton').click();
-                    });
-                });
-                cy.get('mat-sidenav-content').should('have.css', 'margin-right', '520px');
-            });
-
             it('should have a link to generate the ROA layout', function () {
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-action-container').within(function () {
-                        cy.get('.fcl-example').click();
+                        cy.get('[data-cy=fcl-example]').click();
 
                         cy.get('[mattooltip="Generate ROA Layout"]').as('roaButton');
                         cy.get('@roaButton').should('contain', 'ROA Style');
