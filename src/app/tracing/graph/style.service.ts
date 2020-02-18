@@ -127,7 +127,7 @@ export class StyleService {
                 'border-color': 'rgb(0, 0, 255)',
                 color: 'rgb(0, 0, 255)'
             })
-            .selector('edge:selected')
+            .selector('edge:selected:inactive')
             .style({
                 width: visibleSelectedEdgeWidth,
                 color: 'rgb(0, 0, 255)',

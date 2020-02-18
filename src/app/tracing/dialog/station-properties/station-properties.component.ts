@@ -3,15 +3,24 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 
-import { DeliveryData, DialogAlignment, StationData, Connection } from '../../data.model';
+import { DeliveryData, StationData, Connection } from '../../data.model';
 import { Constants } from '../../util/constants';
-import { Utils } from '../../util/ui-utils';
+import { Utils } from '../../util/non-ui-utils';
 
 export interface StationPropertiesData {
     station: StationData;
     deliveries: Map<string, DeliveryData>;
     connectedStations: Map<string, StationData>;
     hoverDeliveriesSubject: Subject<string[]>;
+}
+
+interface Property {
+    label: string;
+    value: string;
+}
+
+interface Properties {
+    [key: string]: Property;
 }
 
 interface NodeDatum {
@@ -120,14 +129,19 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private static readonly NODE_PADDING = 15;
     private static readonly NODE_WIDTH = 200;
     private static readonly NODE_HEIGHT = 50;
+    private static readonly TEXT_X_PADDING = 5;
+    private static readonly INCOMING_HEADER = 'Incoming Deliveries:';
+    private static readonly OUTGOING_HEADER = 'Outgoing Deliveries:';
+    private static readonly DELIVERIES_HEADER_HEIGHT = 14;
 
     @ViewChild('inOutConnector', { static: true }) inOutConnector: ElementRef;
 
-    title: string;
-    propertiesHidden = false;
-    properties: { name: string, value: string }[];
+    otherPropertiesHidden = true;
+    properties: Properties = {};
 
-    private dialogAlign = DialogAlignment.CENTER;
+    vipProperties: string[] = ['id', 'address', 'country', 'typeOfBusiness', 'score', 'outbreak', 'forward'];
+    notListedProps: string[] = ['name', 'incoming', 'outgoing'];
+    otherProperties: string[] = [];
 
     private nodeInData: NodeDatum[];
     private nodeOutData: NodeDatum[];
@@ -148,22 +162,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     constructor(public dialogRef: MatDialogRef<StationPropertiesComponent>, @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData) {
-        this.title = data.station.name;
-        this.properties = Object.keys(data.station)
-      .filter(key => Constants.PROPERTIES.has(key) && key !== 'name' && key !== 'incoming' && key !== 'outgoing')
-      .map(key => {
-        const value = data.station[key];
-
-        return {
-          name: Constants.PROPERTIES.get(key).name,
-          value: value != null ? String(value) : ''
-        };
-      }).concat(data.station.properties.map(prop => {
-          return {
-              name: '"' + prop.name + '"',
-              value: prop.value != null ? prop.value : ''
-          };
-      }));
+        this.initProperties(this.data.station);
 
         if (data.station.incoming.length > 0 || data.station.outgoing.length > 0) {
             const ingredientsByLot = this.getIngredientsByLot();
@@ -180,8 +179,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
             optimizer.optimize();
 
-            let yIn = 1;
-            let yOut = 1;
+            let yIn = 1 + StationPropertiesComponent.DELIVERIES_HEADER_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+            let yOut = yIn;
 
             for (const n of this.nodeInData) {
                 n.x = 1;
@@ -197,6 +196,54 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
             this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_PADDING + 1;
         }
+    }
+
+    private initProperties(station: StationData): void {
+        const properties: Properties = {};
+        const hiddenProps = Utils.createStringSet(this.notListedProps);
+        Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
+        .forEach(key => {
+            const value = station[key];
+            properties[key] = {
+                label: Constants.PROPERTIES.get(key).name,
+                value: value != null ? value + '' : ''
+            };
+        });
+
+        station.properties.forEach(prop => {
+            properties[prop.name] = {
+                label: this.convertPropNameToLabel(prop.name),
+                value: prop.value != null ? prop.value : ''
+            };
+        });
+
+        const vipProps = Utils.createStringSet(this.vipProperties);
+        this.otherProperties = Object.keys(properties).filter(key => !vipProps[key]).slice();
+        this.otherProperties.sort();
+        // add default for missing props
+        this.vipProperties.filter(key => !properties[key]).forEach(key => {
+            const tmp = Constants.PROPERTIES.get(key);
+            properties[key] = {
+                label: tmp ? tmp.name : this.convertPropNameToLabel(key),
+                value: ''
+            };
+        });
+        this.properties = properties;
+    }
+
+    private capitelizeFirstLetter(str: string): string {
+        return str && str.length > 0 ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+    }
+
+    private decamelize(str: string): string {
+        const separator = ' ';
+        return str
+            .replace(/([a-z\d])([A-Z])/g, '$1' + separator + '$2')
+            .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1' + separator + '$2');
+    }
+
+    private convertPropNameToLabel(str: string): string {
+        return this.capitelizeFirstLetter(this.decamelize(str));
     }
 
   //noinspection JSUnusedGlobalSymbols
@@ -253,13 +300,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             this.nodesInG = g.append<SVGElement>('g');
             this.nodesOutG = g.append<SVGElement>('g');
 
+            this.addNodesHeader();
             this.addNodes();
             this.updateEdges();
 
             d3.select('body').on('mousemove', () => this.updateConnectLine());
         }
-
-        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
     }
 
     ngOnDestroy() {
@@ -267,18 +313,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         this.data.hoverDeliveriesSubject.next([]);
     }
 
-    moveLeft() {
-        this.dialogAlign = this.dialogAlign === DialogAlignment.RIGHT ? DialogAlignment.CENTER : DialogAlignment.LEFT;
-        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-    }
-
-    moveRight() {
-        this.dialogAlign = this.dialogAlign === DialogAlignment.LEFT ? DialogAlignment.CENTER : DialogAlignment.RIGHT;
-        this.dialogRef.updatePosition(Utils.getDialogPosition(this.dialogAlign));
-    }
-
-    toggleProperties() {
-        this.propertiesHidden = !this.propertiesHidden;
+    toggleOtherProperties() {
+        this.otherPropertiesHidden = !this.otherPropertiesHidden;
     }
 
     private createNode(id: string): NodeDatum {
@@ -404,26 +440,51 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         this.nodeOutData = Array.from(nodeOutMap.values());
     }
 
+    private addNodesHeader(): void {
+
+        const headers = [
+            {
+                x: StationPropertiesComponent.TEXT_X_PADDING,
+                label: StationPropertiesComponent.INCOMING_HEADER
+            },
+            {
+                x: StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH - 1 +
+                    StationPropertiesComponent.TEXT_X_PADDING,
+                label: StationPropertiesComponent.OUTGOING_HEADER
+            }
+        ];
+
+        const nodesHeaderG = this.svg.append<SVGElement>('g');
+
+        headers.forEach(header => {
+            const text = nodesHeaderG.append('text').attr('text-anchor', 'left');
+            text.append('tspan').attr('x', header.x).attr('dy', 15).attr('font-size', '14px').attr('font-weight', 'bold')
+                .text(header.label);
+        });
+    }
+
     private addNodes() {
         const updateColor = (nodes: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
             nodes.selectAll('rect')
-        .attr('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
-        .attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
+                .attr('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
+                .attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
         };
         const initRectAndText = (nodes: d3.Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
             nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
             nodes.append('rect').attr('stroke-width', '2px')
-        .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
+                .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
 
             updateColor(nodes, false);
 
             const text = nodes.append('text').attr('text-anchor', 'left');
 
-            text.append('tspan').attr('x', 5).attr('dy', 15).attr('font-size', '14px')
-        .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name);
-            text.filter(d => d.station != null).append('tspan').attr('x', 5).attr('dy', 15).attr('font-size', '14px')
-        .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
-            text.filter(d => d.date != null).append('tspan').attr('x', 5).attr('dy', 15).attr('font-size', '12px').text(d => d.date);
+            text.append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING).attr('dy', 15).attr('font-size', '14px')
+                .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name);
+            text.filter(d => d.station != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
+                .attr('dy', 15).attr('font-size', '14px')
+                .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
+            text.filter(d => d.date != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
+            .attr('dy', 15).attr('font-size', '12px').text(d => d.date);
         };
 
         const newNodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter()
