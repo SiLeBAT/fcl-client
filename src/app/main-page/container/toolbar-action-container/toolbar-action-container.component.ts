@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as TracingSelectors from '@app/tracing/state/tracing.selectors';
@@ -6,16 +6,20 @@ import * as tracingActions from '@app/tracing/state/tracing.actions';
 import * as tracingIOActions from '@app/tracing/io/io.actions';
 import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
-import { FclData } from '@app/tracing/data.model';
+import { FclData, GraphSettings, BasicGraphState, DataServiceData, GraphType } from '@app/tracing/data.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import { IOService } from '@app/tracing/io/io.service';
+import { DataService } from './../../../tracing/services/data.service';
+import { Utils as UIUtils } from './../../../tracing/util/ui-utils';
+import { Observable, combineLatest } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
     templateUrl: './toolbar-action-container.component.html',
     styleUrls: ['./toolbar-action-container.component.scss']
 })
-export class ToolbarActionContainerComponent implements OnInit {
+export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     tracingActive$ = this.store.pipe(
         select(TracingSelectors.getTracingActive)
     );
@@ -26,13 +30,47 @@ export class ToolbarActionContainerComponent implements OnInit {
         select(fromUser.getCurrentUser)
     );
 
+    graphSettings: GraphSettings;
+    hasGisInfo = false;
+
+    private componentActive: boolean = true;
+
     constructor(
         private store: Store<fromTracing.State>,
         private alertService: AlertService,
-        private ioService: IOService
+        private ioService: IOService,
+        private dataService: DataService
     ) { }
 
     ngOnInit() {
+
+        const graphSettings$: Observable<GraphSettings> = this.store
+            .pipe(
+                select(TracingSelectors.getGraphSettings)
+        );
+
+        const basicGraphData$: Observable<BasicGraphState> = this.store
+            .pipe(
+                select(TracingSelectors.getBasicGraphData)
+        );
+
+        combineLatest([
+            graphSettings$,
+            basicGraphData$
+        ]).pipe(
+            takeWhile(() => this.componentActive)
+        ).subscribe(
+            ([graphSettings, basicGraphData]) => {
+                this.graphSettings = graphSettings;
+
+                const dataServiceData: DataServiceData = this.dataService.getData(basicGraphData);
+                this.hasGisInfo = UIUtils.hasVisibleStationsWithGisInfo(dataServiceData.stations);
+            },
+            error => {
+                throw new Error(`error loading data: ${error}`);
+            }
+        );
+
     }
 
     toggleRightSidebar(open: boolean) {
@@ -54,4 +92,11 @@ export class ToolbarActionContainerComponent implements OnInit {
             });
     }
 
+    setGraphType(graphType: GraphType) {
+        this.store.dispatch(new tracingActions.SetGraphTypeSOA(graphType));
+    }
+
+    ngOnDestroy() {
+        this.componentActive = false;
+    }
 }

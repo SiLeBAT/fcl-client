@@ -10,20 +10,21 @@
 </div>
 
 <div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
+    <div class="fcl-graph-type fcl-separator mat-body">
+        <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
+            <mat-radio-button class="fcl-graph-type-button" *ngFor="let type of graphTypes" [value]="type" #graphtypeRadioButton [disabled]="type === 'GIS' ? !hasGisInfo : false">
+                {{ type }}
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
+
     <button
-        class="fcl-example"
         mat-button
         (click)="onLoadExampleData()"
-        matTooltip="Load Example Data">
+        matTooltip="Load Example Data"
+        data-cy="fcl-example">
         <mat-icon>wb_sunny</mat-icon>
         Load Example Data
-    </button>
-    <button
-        mat-button
-        (click)="mainPageService.onSaveImage()"
-        matTooltip="Save image">
-        <mat-icon>image</mat-icon>
-        Save Image
     </button>
     <input
         id="fileInput"
@@ -39,6 +40,7 @@
         Upload Data
     </button>
     <button
+        class="fcl-separator"
         mat-button
         (click)="mainPageService.onSave()"
         matTooltip="Download data">
@@ -46,14 +48,15 @@
         Download Data
     </button>
     <button
+        class="fcl-separator"
         mat-button
-        (click)="onToggleRightSidebar()"
-        matTooltip="Toggle right sidebar">
-        <mat-icon>filter_list</mat-icon>
-        Open/Close Filter
+        (click)="mainPageService.onSaveImage()"
+        matTooltip="Save image">
+        <mat-icon>image</mat-icon>
+        Save Image
     </button>
     <button
-        class="fcl-roa"
+        class="fcl-separator"
         mat-button
         (click)="mainPageService.onVisioLayout()"
         matTooltip="Generate ROA Layout">

@@ -1,8 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input } from '@angular/core';
 import { environment } from '@env/environment';
 import * as _ from 'lodash';
 import { MainPageService } from '../../services/main-page.service';
 import { User } from '@app/user/models/user.model';
+import { GraphSettings, GraphType } from './../../../tracing/data.model';
+import { Constants } from './../../../tracing/util/constants';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -12,18 +14,22 @@ import { User } from '@app/user/models/user.model';
 export class ToolbarActionComponent implements OnInit {
     @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
     @Input() tracingActive: boolean;
+    @Input() graphSettings: GraphSettings;
+    @Input() hasGisInfo: boolean;
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadData = new EventEmitter<FileList>();
     @Output() loadExampleData = new EventEmitter();
+    @Output() graphType = new EventEmitter<GraphType>();
+
+    graphTypes = Constants.GRAPH_TYPES;
 
     private rightOpen: boolean = false;
 
     constructor(private mainPageService: MainPageService) { }
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     isServerLess(): boolean {
         return environment.serverless;
@@ -47,5 +53,9 @@ export class ToolbarActionComponent implements OnInit {
 
     onLoadExampleData() {
         this.loadExampleData.emit();
+    }
+
+    setGraphType() {
+        this.graphType.emit(this.graphSettings.type);
     }
 }
