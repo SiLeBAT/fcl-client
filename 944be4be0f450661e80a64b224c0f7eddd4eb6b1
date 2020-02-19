@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22f82041_282f267f",
+        "filename": "src/app/tracing/dialog/delivery-properties/delivery-properties.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-19T14:14:37Z",
+      "side": 1,
+      "message": "please use css classes instead of html tags",
+      "revId": "944be4be0f450661e80a64b224c0f7eddd4eb6b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8285b237_6443673f",
+        "filename": "src/app/tracing/dialog/delivery-properties/delivery-properties.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-02-19T14:14:37Z",
+      "side": 1,
+      "message": "please use css classes instead of html tags",
+      "revId": "944be4be0f450661e80a64b224c0f7eddd4eb6b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
