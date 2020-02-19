@@ -80,7 +80,11 @@ export class TracingEffects {
 
                 if (delivery) {
                     const dialogData: DeliveryPropertiesData = {
-                        delivery: delivery
+                        delivery: delivery,
+                        source: data.statMap[delivery.source],
+                        target: data.statMap[delivery.target],
+                        originalSource: data.statMap[delivery.originalSource],
+                        originalTarget: data.statMap[delivery.originalTarget]
                     };
 
                     this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });
