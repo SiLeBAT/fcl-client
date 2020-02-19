@@ -246,33 +246,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         return this.capitelizeFirstLetter(this.decamelize(str));
     }
 
-  //noinspection JSUnusedGlobalSymbols
-    close() {
-        let connections: Connection[];
-
-        if (this.lotBased) {
-            connections = [];
-
-            for (const e of this.edgeData) {
-                for (const d of this.deliveriesByLot.get(e.target.id)) {
-                    connections.push({
-                        source: e.source.id,
-                        target: d
-                    });
-                }
-            }
-        } else {
-            connections = this.edgeData.map(edge => {
-                return {
-                    source: edge.source.id,
-                    target: edge.target.id
-                };
-            });
-        }
-
-        this.dialogRef.close(connections);
-    }
-
     ngOnInit() {
         if (this.height != null) {
             this.svg = d3
