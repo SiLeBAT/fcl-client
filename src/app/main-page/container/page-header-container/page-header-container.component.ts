@@ -32,7 +32,7 @@ export class PageHeaderContainerComponent implements OnInit {
     ngOnInit() {
     }
 
-    toggleLeftSideBar(open: boolean) {
-        this.store.dispatch(new tracingActions.ShowGraphSettingsSOA({ showGraphSettings: open }));
+    toggleRightSideBar(open: boolean) {
+        this.store.dispatch(new tracingActions.ShowConfigurationSideBarSOA({ showConfigurationSideBar: open }));
     }
 }

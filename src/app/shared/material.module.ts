@@ -20,6 +20,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
     imports: [],
@@ -42,7 +43,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         MatProgressSpinnerModule,
         MatGridListModule,
         MatSnackBarModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatTabsModule
     ],
     providers: [{
         provide: MAT_LABEL_GLOBAL_OPTIONS,

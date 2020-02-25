@@ -25,19 +25,12 @@ export class ToolbarActionComponent implements OnInit {
 
     graphTypes = Constants.GRAPH_TYPES;
 
-    private rightOpen: boolean = false;
-
     constructor(private mainPageService: MainPageService) { }
 
     ngOnInit() {}
 
     isServerLess(): boolean {
         return environment.serverless;
-    }
-
-    onToggleRightSidebar() {
-        this.rightOpen = !this.rightOpen;
-        this.toggleRightSidebar.emit(this.rightOpen);
     }
 
     onLoadData(event$) {

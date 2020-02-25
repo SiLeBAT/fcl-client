@@ -73,10 +73,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     }
 
-    toggleRightSidebar(open: boolean) {
-        this.store.dispatch(new tracingActions.ShowDataTableSOA({ showDataTable: open }));
-    }
-
     loadData(fileList: FileList) {
         this.store.dispatch(new tracingIOActions.LoadFclDataMSA({ dataSource: fileList }));
     }

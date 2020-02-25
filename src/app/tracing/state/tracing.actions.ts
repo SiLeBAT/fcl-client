@@ -13,7 +13,7 @@ export enum TracingActionTypes {
     LoadFclDataFailure = '[Tracing] Load Fcl Data Failure',
     GenerateVisioLayoutSuccess = '[Tracing] Generate Visio Layout Success',
     ShowGraphSettingsSOA = '[Tracing] Show Graph Settings',
-    ShowDataTableSOA = '[Tracing] Show Data Table',
+    ShowConfigurationSideBarSOA = '[Tracing] Show Configuration Settings',
     ShowTableSettingsSOA = '[Tracing] Show Table Settings',
     SetGraphTypeSOA = '[Tracing] Set Graph Type',
     SetSchemaGraphLayoutSOA = '[Tracing] Set Schema Graph Layout',
@@ -32,7 +32,10 @@ export enum TracingActionTypes {
     SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
     SetStationGroupsSOA = '[Tracing] Set Station Groups',
     SetTracingSettingsSOA = '[Tracing] Set Tracing Settings',
-    SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings'
+    SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
+    SetActiveMainTabIndexSSA = '[Configuration Layout] Set Active Main Tab Index',
+    SetActiveFilterTabIndexSSA = '[Configuration Layout] Set Active Filter Tab Index',
+    SetActiveHighlightingTabIndexSSA = '[Configuration Layout] Set Active Highlighting Tab Index'
 }
 
 export class TracingActivated implements Action {
@@ -63,10 +66,10 @@ export class ShowGraphSettingsSOA implements Action {
     constructor(public payload: { showGraphSettings: boolean }) {}
 }
 
-export class ShowDataTableSOA implements Action {
-    readonly type = TracingActionTypes.ShowDataTableSOA;
+export class ShowConfigurationSideBarSOA implements Action {
+    readonly type = TracingActionTypes.ShowConfigurationSideBarSOA;
 
-    constructor(public payload: { showDataTable: boolean }) {}
+    constructor(public payload: { showConfigurationSideBar: boolean }) {}
 }
 
 export class ShowTableSettingsSOA implements Action {
@@ -183,13 +186,31 @@ export class SetHighlightingSettingsSOA implements Action {
     constructor(public payload: SetHighlightingSettingsPayload) {}
 }
 
+export class SetActiveMainTabIndexSSA implements Action {
+    readonly type = TracingActionTypes.SetActiveMainTabIndexSSA;
+
+    constructor(public payload: { activeMainTabIndex: number }) {}
+}
+
+export class SetActiveFilterTabIndexSSA implements Action {
+    readonly type = TracingActionTypes.SetActiveFilterTabIndexSSA;
+
+    constructor(public payload: { activeFilterTabIndex: number }) {}
+}
+
+export class SetActiveHighlightingTabIndexSSA implements Action {
+    readonly type = TracingActionTypes.SetActiveHighlightingTabIndexSSA;
+
+    constructor(public payload: { activeHighlightingTabIndex: number }) {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
     | LoadFclDataFailure
     | GenerateVisioLayoutSuccess
     | ShowGraphSettingsSOA
-    | ShowDataTableSOA
+    | ShowConfigurationSideBarSOA
     | ShowTableSettingsSOA
     | SetSchemaGraphLayoutSOA
     | SetGisGraphLayoutSOA
@@ -208,4 +229,7 @@ export type TracingActions =
     | SetStationPositionsAndLayoutSOA
     | SetStationGroupsSOA
     | SetTracingSettingsSOA
-    | SetHighlightingSettingsSOA;
+    | SetHighlightingSettingsSOA
+    | SetActiveMainTabIndexSSA
+    | SetActiveFilterTabIndexSSA
+    | SetActiveHighlightingTabIndexSSA;

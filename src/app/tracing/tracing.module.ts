@@ -1,5 +1,5 @@
 import { TableComponent } from './components/table.component';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -35,6 +35,10 @@ import { EdgeSymbolComponent } from './graph/components/edge-symbol.component';
 import { KlecksSymbolComponent } from './graph/components/klecks-symbol.component';
 import { CreatedImageComponent } from './shared/created-image/created-image.component';
 import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/merge-stations-dialog.component';
+import { TabLayoutComponent } from './configuration/tab-layout/tab-layout.component';
+import { ConfigurationComponent } from './configuration/configuration/configuration.component';
+import { FilterComponent } from './configuration/filter/filter.component';
+import { HighlightingComponent } from './configuration/highlighting/highlighting.component';
 
 @NgModule({
     imports: [
@@ -69,7 +73,11 @@ import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/m
         KlecksSymbolComponent,
         ZoomComponent,
         CreatedImageComponent,
-        MergeStationsDialogComponent
+        MergeStationsDialogComponent,
+        TabLayoutComponent,
+        ConfigurationComponent,
+        FilterComponent,
+        HighlightingComponent
     ],
     exports: [
         TableComponent
@@ -84,6 +92,7 @@ import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/m
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,
         MergeStationsDialogComponent
-    ]
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TracingModule { }

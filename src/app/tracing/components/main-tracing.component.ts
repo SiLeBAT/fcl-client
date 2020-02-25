@@ -48,7 +48,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     showSchemaGraph$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GRAPH));
 
     showGraphSettings$ = this.store.select(tracingSelectors.getShowGraphSettings);
-    showDataTable$ = this.store.select(tracingSelectors.getShowDataTable);
+    showConfigurationSideBar$ = this.store.select(tracingSelectors.getShowConfigurationSideBar);
 
     private componentActive = true;
 
@@ -88,14 +88,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
             )
         );
 
-        const hammer = new Hammer.Manager(this.sidenavSlider.nativeElement, { recognizers: [[Hammer.Pan]] });
-        hammer.on('pan', event => {
-            const newWidth = 1 - event.center.x / (this.mainContainer.nativeElement as HTMLElement).offsetWidth;
-
-            if (newWidth > 0 && newWidth < 1) {
-                this.changeDataTableWidth(newWidth);
-            }
-        });
     }
 
     private changeDataTableWidth(newWidth: number) {
