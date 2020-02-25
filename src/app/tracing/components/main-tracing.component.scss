@@ -21,38 +21,11 @@
     height: 100%;
 }
 
-.fcl-left-sidenav {
-    background-color: rgb(245, 245, 245);
-    z-index: 2;
-}
-
-#rightSidenav {
-    background-color: rgb(245, 245, 245);
-    min-width: 520px;
-    height: 100%;
-    z-index: 2;
-}
-
-#rightSidenavContent {
-    width: 100%;
-    height: 100%;
+.fcl-right-sidenav {
     display: flex;
-    align-items: stretch;
-}
-
-#sidenavSlider {
-    width: 10px;
-    height: 100%;
-    cursor: ew-resize;
-    background-color: rgb(200, 200, 200);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-#sidenavSliderCenter {
-    height: 50px;
-    background-color: rgb(100, 100, 100);
+    background-color: rgb(245, 245, 245);
+    min-width: 25vw;
+    max-width: 50vw;
 }
 
 #homeButton {

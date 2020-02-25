@@ -13,17 +13,17 @@ export class PageHeaderComponent implements OnInit {
     @Input() dashboardActive: boolean;
     @Input() loginActive: boolean;
     @Input() currentUser: User | null;
-    @Output() toggleLeftSideBar = new EventEmitter<boolean>();
-    private leftOpen: boolean = false;
+    @Output() toggleRightSideBar = new EventEmitter<boolean>();
+    private rightOpen: boolean = false;
 
     constructor() { }
 
     ngOnInit() {
     }
 
-    onToggleLeftSidebar() {
-        this.leftOpen = !this.leftOpen;
-        this.toggleLeftSideBar.emit(this.leftOpen);
+    onToggleRightSideBar() {
+        this.rightOpen = !this.rightOpen;
+        this.toggleRightSideBar.emit(this.rightOpen);
     }
 
     isServerLess(): boolean {

@@ -67,7 +67,7 @@ describe('Testing the Header of the app', function () {
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-toolbar-menu-container > .fcl-toolbar-menu-bottom').click();
                 });
-                cy.get('.fcl-left-sidenav').should('contain', 'Graph Settings');
+                cy.get('.fcl-right-sidenav').should('contain', 'Graph Settings');
             });
 
             it('should have a link to the dashboard', function () {

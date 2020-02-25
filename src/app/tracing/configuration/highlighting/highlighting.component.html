@@ -1,0 +1,15 @@
+<ng-template #stationTemplate>
+    <p>Highlighting Component: Stations</p>
+</ng-template>
+
+<ng-template #deliveryTemplate>
+    <p>Highlighting Component: Deliveries</p>
+</ng-template>
+
+<fcl-tab-layout
+    [activeTabIndex$]="activeTabIndex$"
+    [tabGroupId]="tabGroupId"
+    [tabConfigs]="tabConfigs"
+    (tabGroupIndex)="dispatchHighlightingTabIndex($event)">
+
+</fcl-tab-layout>

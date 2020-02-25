@@ -10,6 +10,10 @@ $fcl-toolbar-elevation: 4;
 $fcl-card-border-radius: 8px;
 $fcl-bg-color: rgba(255, 255, 255, 0.7);
 $fcl-bg-color-entry: rgba(125, 138, 153, 0.5);
+$fcl-accent-500: map-get($fcl-darkgrey, 500);
+$fcl-accent-300: map-get($fcl-darkgrey, 300);
+$fcl-accent-200: map-get($fcl-darkgrey, 200);
+$fcl-accent-100: map-get($fcl-darkgrey, 100);
 
 @mixin em-errors {
     float: right;
