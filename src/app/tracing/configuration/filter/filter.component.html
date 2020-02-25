@@ -1,0 +1,15 @@
+<ng-template #stationTemplate>
+    <p>Filter Component: Stations</p>
+</ng-template>
+
+<ng-template #deliveryTemplate>
+    <p>Filter Component: Deliveries</p>
+</ng-template>
+
+<fcl-tab-layout
+    [activeTabIndex$]="activeTabIndex$"
+    [tabGroupId]="tabGroupId"
+    [tabConfigs]="tabConfigs"
+    (tabGroupIndex)="dispatchFilterTabIndex($event)">
+
+</fcl-tab-layout>

@@ -13,14 +13,16 @@ export interface TracingState {
     fclData: FclData;
     visioReport: VisioReport | null;
     showGraphSettings: boolean;
-    showDataTable: boolean;
+    showConfigurationSideBar: boolean;
+    configurationTabIndices: ConfigurationTabIndex;
     showTableSettings: boolean;
     tracingActive: boolean;
 }
 
-export interface SideBarState {
-    leftSideBarOpen: boolean;
-    rightSideBarOpen: boolean;
+export interface ConfigurationTabIndex {
+    activeMainTabIndex: number;
+    activeFilterTabIndex: number;
+    activeHighlightingTabIndex: number;
 }
 
 export interface SettingOptions {
@@ -30,11 +32,18 @@ export interface SettingOptions {
 
 const initialData: FclData = createInitialFclDataState();
 
+const initialTabIndices: ConfigurationTabIndex = {
+    activeMainTabIndex: 0,
+    activeFilterTabIndex: 0,
+    activeHighlightingTabIndex: 0
+};
+
 const initialState: TracingState = {
     fclData: initialData,
     visioReport: null,
     tracingActive: false,
-    showDataTable: false,
+    showConfigurationSideBar: false,
+    configurationTabIndices: initialTabIndices,
     showTableSettings: false,
     showGraphSettings: false
 };
@@ -116,10 +125,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 showGraphSettings: action.payload.showGraphSettings
             };
 
-        case TracingActionTypes.ShowDataTableSOA:
+        case TracingActionTypes.ShowConfigurationSideBarSOA:
             return {
                 ...state,
-                showDataTable: action.payload.showDataTable
+                showConfigurationSideBar: action.payload.showConfigurationSideBar
             };
 
         case TracingActionTypes.ShowTableSettingsSOA:
@@ -355,6 +364,33 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         highlightingSettings: action.payload.highlightingSettings
                     }
+                }
+            };
+
+        case TracingActionTypes.SetActiveMainTabIndexSSA:
+            return {
+                ...state,
+                configurationTabIndices: {
+                    ...state.configurationTabIndices,
+                    activeMainTabIndex: action.payload.activeMainTabIndex
+                }
+            };
+
+        case TracingActionTypes.SetActiveFilterTabIndexSSA:
+            return {
+                ...state,
+                configurationTabIndices: {
+                    ...state.configurationTabIndices,
+                    activeFilterTabIndex: action.payload.activeFilterTabIndex
+                }
+            };
+
+        case TracingActionTypes.SetActiveHighlightingTabIndexSSA:
+            return {
+                ...state,
+                configurationTabIndices: {
+                    ...state.configurationTabIndices,
+                    activeHighlightingTabIndex: action.payload.activeHighlightingTabIndex
                 }
             };
 

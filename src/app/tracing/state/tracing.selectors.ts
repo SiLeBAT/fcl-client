@@ -84,9 +84,9 @@ export const getShowGraphSettings = createSelector(
     (state) => state.showGraphSettings
 );
 
-export const getShowDataTable = createSelector(
+export const getShowConfigurationSideBar = createSelector(
     getTracingFeatureState,
-    (state) => state.showDataTable
+    (state) => state.showConfigurationSideBar
 );
 
 export const getShowTableSettings = createSelector(
@@ -168,4 +168,9 @@ export const getGroupingData = createSelector(
         ...basicGraphData,
         stationPositions: graphSettings.stationPositions
     })
+);
+
+export const getConfigurationTabIndices = createSelector(
+    getTracingFeatureState,
+    state => state.configurationTabIndices
 );

@@ -1,0 +1,17 @@
+
+<mat-tab-group
+    [id]="tabGroupId"
+    mat-stretch-tabs
+    [selectedIndex]="activeTabIndex$ | async"
+    (selectedTabChange)="onTabGroupClick($event)">
+
+    <ng-container *ngFor="let tab of tabConfigs">
+
+        <mat-tab [label]="tab.tabLabel">
+            <ng-container [ngTemplateOutlet]="tab.tabTemplate">
+            </ng-container>
+        </mat-tab>
+
+    </ng-container>
+
+</mat-tab-group>

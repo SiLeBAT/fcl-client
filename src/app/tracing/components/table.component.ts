@@ -74,11 +74,11 @@ export class TableComponent implements OnDestroy, AfterViewInit {
     @ViewChild('table', { read: ElementRef, static: true }) tableRef: ElementRef;
     @ViewChild('selectTmpl', { static: true }) selectTmpl: TemplateRef<any>;
 
-    showDataTable$ = this.store.select(tracingSelectors.getShowDataTable);
+    showConfigurationSideBar$ = this.store.select(tracingSelectors.getShowConfigurationSideBar);
 
     style: { height?: string } = {};
     private stateSubscription: Subscription;
-    private showDataTableSubscription: Subscription;
+    private showConfigurationSideBarSubscription: Subscription;
 
     private cachedState: State;
     private cachedData: DataServiceData;
@@ -125,9 +125,9 @@ export class TableComponent implements OnDestroy, AfterViewInit {
         });
 
         this.table.onColumnReorder = () => void(0);
-        this.showDataTableSubscription = this.showDataTable$.subscribe(
-            showDataTable => {
-                if (!showDataTable) {
+        this.showConfigurationSideBarSubscription = this.showConfigurationSideBar$.subscribe(
+            showConfigurationSideBar => {
+                if (!showConfigurationSideBar) {
                     if (this.stateSubscription) {
                         this.stateSubscription.unsubscribe();
                         this.stateSubscription = null;
@@ -380,9 +380,9 @@ export class TableComponent implements OnDestroy, AfterViewInit {
     }
 
     ngOnDestroy() {
-        if (this.showDataTableSubscription) {
-            this.showDataTableSubscription.unsubscribe();
-            this.showDataTableSubscription = null;
+        if (this.showConfigurationSideBarSubscription) {
+            this.showConfigurationSideBarSubscription.unsubscribe();
+            this.showConfigurationSideBarSubscription = null;
         }
         if (this.stateSubscription) {
             this.stateSubscription.unsubscribe();

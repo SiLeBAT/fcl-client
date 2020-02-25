@@ -1,8 +1,5 @@
 <div class="fcl-tracing-container">
-    <mat-sidenav-container id="mainContainer" #mainContainer>
-        <mat-sidenav class="fcl-left-sidenav" id="leftSidenav" #leftSidenav position="start" mode="side" [opened]="showGraphSettings$ | async">
-            <fcl-graph-settings></fcl-graph-settings>
-        </mat-sidenav>
+    <mat-sidenav-container id="mainContainer" #mainContainer hasBackdrop="false">
 
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
@@ -11,13 +8,8 @@
             </div>
         </mat-sidenav-content>
 
-        <mat-sidenav id="rightSidenav" #rightSidenav position="end" mode="side" [opened]="showDataTable$ | async">
-            <div id="rightSidenavContent">
-                <div id="sidenavSlider" #sidenavSlider>
-                    <div id="sidenavSliderCenter"></div>
-                </div>
-                <fcl-table #table></fcl-table>
-            </div>
+        <mat-sidenav class="fcl-right-sidenav" #rightSidenav position="end" mode="over" [opened]="showConfigurationSideBar$ | async">
+            <fcl-configuration></fcl-configuration>
         </mat-sidenav>
     </mat-sidenav-container>
 </div>
