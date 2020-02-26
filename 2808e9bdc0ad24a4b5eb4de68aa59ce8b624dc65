@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d1c4e97d_a22dae23",
+        "filename": "src/app/tracing/components/main-tracing.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-02-26T12:03:08Z",
+      "side": 1,
+      "message": "Please remove",
+      "revId": "2808e9bdc0ad24a4b5eb4de68aa59ce8b624dc65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36edd0ad_82697638",
+        "filename": "src/app/tracing/components/table.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-02-26T12:03:08Z",
+      "side": 1,
+      "message": "Please refine here. \nSo far, only with visible data table state changes are processed here.\nThe requirements introduced by this change are more relaxed. An open site bar with an active highlighting tab would be sufficient to process the state change here. \n\nI suggest to undo the change and only modify the selector.",
+      "revId": "2808e9bdc0ad24a4b5eb4de68aa59ce8b624dc65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
