@@ -1,0 +1,13 @@
+<mat-form-field class="fcl-predefined-filter-view-field" appearance="outline" color="primary">
+
+    <mat-label>Pre-defined Filters</mat-label>
+
+    <mat-select>
+        <ng-container *ngFor="let labelConfig of predefinedLabelConfig">
+            <mat-option [value]="labelConfig.value">
+                {{ labelConfig.label }}
+            </mat-option>
+        </ng-container>
+    </mat-select>
+
+</mat-form-field>

@@ -1,0 +1,27 @@
+.fcl-filter-station-layout-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "morefilter"
+        "standardfilter"
+        "stationtable";
+    grid-gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.fcl-border-radius-zero {
+    border-radius: 0;
+}
+
+.fcl-more-filter {
+    grid-area: morefilter;
+}
+
+.fcl-standard-filter {
+    grid-area: standardfilter;
+}
+
+.fcl-station-table {
+    grid-area: stationtable;
+}

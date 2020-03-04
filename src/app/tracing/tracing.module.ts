@@ -39,6 +39,14 @@ import { TabLayoutComponent } from './configuration/tab-layout/tab-layout.compon
 import { ConfigurationComponent } from './configuration/configuration/configuration.component';
 import { FilterComponent } from './configuration/filter/filter.component';
 import { HighlightingComponent } from './configuration/highlighting/highlighting.component';
+import { FilterStationComponent } from './configuration/filter-station/filter-station.component';
+import { FilterStationLayoutComponent } from './configuration/filter-station-layout/filter-station-layout.component';
+import { StandardFilterComponent } from './configuration/standard-filter/standard-filter.component';
+import { StandardFilterViewComponent } from './configuration/standard-filter-view/standard-filter-view.component';
+import { PredefinedFilterComponent } from './configuration/predefined-filter/predefined-filter.component';
+import { PredefinedFilterViewComponent } from './configuration/predefined-filter-view/predefined-filter-view.component';
+import { StationTableComponent } from './configuration/station-table/station-table.component';
+import { StationTableViewComponent } from './configuration/station-table-view/station-table-view.component';
 
 @NgModule({
     imports: [
@@ -77,7 +85,15 @@ import { HighlightingComponent } from './configuration/highlighting/highlighting
         TabLayoutComponent,
         ConfigurationComponent,
         FilterComponent,
-        HighlightingComponent
+        HighlightingComponent,
+        FilterStationComponent,
+        FilterStationLayoutComponent,
+        StandardFilterComponent,
+        StandardFilterViewComponent,
+        PredefinedFilterComponent,
+        PredefinedFilterViewComponent,
+        StationTableComponent,
+        StationTableViewComponent
     ],
     exports: [
         TableComponent

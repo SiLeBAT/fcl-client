@@ -1,0 +1,21 @@
+<ng-template #standardFilterTemplate>
+    <fcl-standard-filter
+        filterLabel="Filter in all station data">
+    </fcl-standard-filter>
+</ng-template>
+
+<ng-template #predefinedFilterTemplate>
+    <fcl-predefined-filter
+        [predefinedLabelConfig]="predefinedLabelConfig">
+    </fcl-predefined-filter>
+</ng-template>
+
+<ng-template #stationTableTemplate>
+    <fcl-station-table-view></fcl-station-table-view>
+</ng-template>
+
+<fcl-filter-station-layout
+    [standardFilterTemplate]="standardFilterTemplate"
+    [predefinedFilterTemplate]="predefinedFilterTemplate"
+    [stationTableTemplate]="stationTableTemplate">
+</fcl-filter-station-layout>
