@@ -2,7 +2,7 @@
 
     <mat-label>Pre-defined Filters</mat-label>
 
-    <mat-select>
+    <mat-select [(value)]="selected">
         <ng-container *ngFor="let labelConfig of predefinedLabelConfig">
             <mat-option [value]="labelConfig.value">
                 {{ labelConfig.label }}

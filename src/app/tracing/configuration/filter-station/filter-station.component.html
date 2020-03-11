@@ -6,15 +6,17 @@
 
 <ng-template #predefinedFilterTemplate>
     <fcl-predefined-filter
-        [predefinedLabelConfig]="predefinedLabelConfig">
+        [predefinedLabelConfig]="predefinedLabelConfig"
+        [selected]="selected">
     </fcl-predefined-filter>
 </ng-template>
 
 <ng-template #stationTableTemplate>
-    <fcl-station-table-view></fcl-station-table-view>
+    <fcl-station-table></fcl-station-table>
 </ng-template>
 
 <fcl-filter-station-layout
+    class="fcl-filter-station-container"
     [standardFilterTemplate]="standardFilterTemplate"
     [predefinedFilterTemplate]="predefinedFilterTemplate"
     [stationTableTemplate]="stationTableTemplate">

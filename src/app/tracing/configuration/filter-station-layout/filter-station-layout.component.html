@@ -1,5 +1,11 @@
 <div class="fcl-filter-station-layout-container">
 
+    <div class="fcl-standard-filter">
+        <ng-template
+            [ngTemplateOutlet]="standardFilterTemplate">
+        </ng-template>
+    </div>
+
     <mat-expansion-panel
         class="fcl-more-filter fcl-border-radius-zero"
         color="primary"
@@ -7,7 +13,7 @@
         (closed)="moreFilterOpenState = false">
 
         <mat-expansion-panel-header>
-          <mat-panel-title>
+          <mat-panel-title class="fcl-font-size-08">
             More Filters... click  to {{ moreFilterOpenState ?  'close' : 'open' }}
           </mat-panel-title>
         </mat-expansion-panel-header>
@@ -24,7 +30,7 @@
             (closed)="complexFilterOpenState = false">
 
             <mat-expansion-panel-header>
-                <mat-panel-title>
+                <mat-panel-title class="fcl-font-size-08">
                     Complex Filters... click  to {{ complexFilterOpenState ?  'close' : 'open' }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
@@ -33,13 +39,7 @@
 
     </mat-expansion-panel>
 
-    <div class="fcl-standard-filter">
-        <ng-template
-            [ngTemplateOutlet]="standardFilterTemplate">
-        </ng-template>
-    </div>
-
-    <div class="fcl-station-table">
+    <div class="fcl-station-table-container">
         <ng-template
             [ngTemplateOutlet]="stationTableTemplate">
         </ng-template>

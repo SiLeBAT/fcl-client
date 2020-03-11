@@ -1,4 +1,34 @@
+.fcl-datatable-container {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.fcl-datatable {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
 .datatable-header-cell-label {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    color: rgb(0, 0, 0);
     font-weight: 800;
+}
+
+.fcl-datatable .datatable-body-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.datatable-body-cell-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgb(0, 0, 0);
 }

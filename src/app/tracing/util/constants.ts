@@ -111,9 +111,9 @@ export class Constants {
     static readonly DEFAULT_TABLE_MODE = TableMode.STATIONS;
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
-        'id',
         'name',
-        'score'
+        'country',
+        'typeOfBusiness'
     );
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
         'id',

@@ -1,9 +1,17 @@
-<ngx-datatable
-    class="material ngx-filter-table"
-    [rows]="rows"
-    [columns]="columns"
-    [headerHeight]="50"
-    [rowHeight]="25"
-    [footerHeight]="50"
-    headerClass="fcl-station-table-header">
-</ngx-datatable>
+<div class="fcl-datatable-container">
+    <ngx-datatable
+        #table
+        class="material fcl-datatable"
+        [columns]="columns"
+        [rows]="rows"
+        [rowHeight]="rowHeight"
+        scrollbarV="true"
+        scrollbarH="true"
+        headerHeight="50"
+        footerHeight="50"
+    >
+    </ngx-datatable>
+
+
+
+</div>

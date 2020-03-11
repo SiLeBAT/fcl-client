@@ -13,6 +13,7 @@ export interface PredefinedLabelConfig {
 })
 export class PredefinedFilterViewComponent implements OnInit {
     @Input() predefinedLabelConfig: PredefinedLabelConfig[];
+    @Input() selected: string;
 
     constructor() { }
 

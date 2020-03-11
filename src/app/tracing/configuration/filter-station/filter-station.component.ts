@@ -3,10 +3,12 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
     selector: 'fcl-filter-station',
-    templateUrl: './filter-station.component.html'
+    templateUrl: './filter-station.component.html',
+    styleUrls: ['./filter-station.component.scss']
 })
 export class FilterStationComponent implements OnInit {
     predefinedLabelConfig: PredefinedLabelConfig[];
+    selected: string;
 
     constructor() { }
 
@@ -25,6 +27,8 @@ export class FilterStationComponent implements OnInit {
                 label: 'Show only traced'
             }
         ];
+
+        this.selected = 'all';
     }
 
 }

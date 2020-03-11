@@ -1,27 +1,34 @@
 .fcl-filter-station-layout-container {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto min-content 1fr;
     grid-template-areas:
-        "morefilter"
         "standardfilter"
+        "morefilter"
         "stationtable";
     grid-gap: 0.5rem;
     padding: 0.5rem;
+    height: 100%;
+}
+
+.fcl-font-size-08 {
+    font-size: 0.8rem;
+    color: rgb(0, 0, 0);
 }
 
 .fcl-border-radius-zero {
     border-radius: 0;
 }
 
-.fcl-more-filter {
-    grid-area: morefilter;
-}
-
 .fcl-standard-filter {
     grid-area: standardfilter;
 }
 
-.fcl-station-table {
+.fcl-more-filter {
+    grid-area: morefilter;
+}
+
+.fcl-station-table-container {
     grid-area: stationtable;
+    display: flex;
 }

@@ -8,6 +8,7 @@ import { PredefinedLabelConfig } from '../predefined-filter-view/predefined-filt
 export class PredefinedFilterComponent implements OnInit {
 
     @Input() predefinedLabelConfig: PredefinedLabelConfig[];
+    @Input() selected: string;
 
     constructor() { }
 

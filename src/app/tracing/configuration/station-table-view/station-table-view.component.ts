@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input, AfterViewInit, ViewChild } from '@angular/core';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
     selector: 'fcl-station-table-view',
@@ -8,20 +9,18 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 export class StationTableViewComponent implements OnInit {
 
-    rows = [
-        { ID: 'S1', name: 'Heckmair Andreas', score: '0' },
-        { ID: 'S3', name: 'Voggel Anton', score: '0' },
-        { ID: 'S4', name: 'Schaich Peter', score: '0' },
-        { ID: '...', name: '...', score: '...' }
-    ];
-    columns = [
-        { prop: 'ID' },
-        { name: 'Name' },
-        { name: 'Score' }
-    ];
+    @Input() rows: any[];
+    @Input() columns: any[];
+    @ViewChild('table', { static: true }) table: DatatableComponent;
+
+    rowHeight: number = 18;
 
     constructor() { }
 
     ngOnInit() {
+    }
+
+    recalculateTable() {
+        this.table.recalculate();
     }
 }
