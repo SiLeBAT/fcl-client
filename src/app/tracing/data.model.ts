@@ -232,9 +232,9 @@ export enum TableMode {
 }
 
 export enum ShowType {
-    ALL = 'All' as any,
-    SELECTED_ONLY = 'Selected Only' as any,
-    TRACE_ONLY = 'Trace Only' as any
+    ALL = 'Show all' as any,
+    SELECTED_ONLY = 'Show only selected' as any,
+    TRACE_ONLY = 'Show only traced' as any
 }
 
 export enum Size {

@@ -1,4 +1,6 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, EventEmitter, Output } from '@angular/core';
+import { MatSelectChange } from '@angular/material/select';
+import { TableSettings, ShowType } from '../../data.model';
 
 export interface PredefinedLabelConfig {
     value: string;
@@ -12,12 +14,16 @@ export interface PredefinedLabelConfig {
     encapsulation: ViewEncapsulation.None
 })
 export class PredefinedFilterViewComponent implements OnInit {
-    @Input() predefinedLabelConfig: PredefinedLabelConfig[];
-    @Input() selected: string;
+    @Input() showTypes: string[];
+    @Input() tableSettings: TableSettings;
+    @Output() newShowType = new EventEmitter<ShowType>();
 
     constructor() { }
 
-    ngOnInit() {
+    ngOnInit() { }
+
+    setTableShowType(event: MatSelectChange) {
+        this.newShowType.emit(event.value);
     }
 
 }

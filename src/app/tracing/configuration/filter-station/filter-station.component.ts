@@ -7,28 +7,10 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./filter-station.component.scss']
 })
 export class FilterStationComponent implements OnInit {
-    predefinedLabelConfig: PredefinedLabelConfig[];
-    selected: string;
 
     constructor() { }
 
     ngOnInit() {
-        this.predefinedLabelConfig = [
-            {
-                value: 'all',
-                label: 'Show all'
-            },
-            {
-                value: 'selected',
-                label: 'Show only selected'
-            },
-            {
-                value: 'traced',
-                label: 'Show only traced'
-            }
-        ];
-
-        this.selected = 'all';
     }
 
 }

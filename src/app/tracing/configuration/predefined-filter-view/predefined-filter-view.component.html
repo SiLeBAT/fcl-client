@@ -2,10 +2,12 @@
 
     <mat-label>Pre-defined Filters</mat-label>
 
-    <mat-select [(value)]="selected">
-        <ng-container *ngFor="let labelConfig of predefinedLabelConfig">
-            <mat-option [value]="labelConfig.value">
-                {{ labelConfig.label }}
+    <mat-select
+        [(value)]="tableSettings.showType"
+        (selectionChange)="setTableShowType($event)">
+        <ng-container *ngFor="let showType of showTypes">
+            <mat-option [value]="showType">
+                {{ showType }}
             </mat-option>
         </ng-container>
     </mat-select>

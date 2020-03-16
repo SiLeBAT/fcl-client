@@ -1,5 +1,6 @@
 <fcl-predefined-filter-view
     class="fcl-predefined-filter-view"
-    [predefinedLabelConfig]="predefinedLabelConfig"
-    [selected]="selected">
+    [tableSettings]="tableSettings"
+    [showTypes]="showTypes"
+    (newShowType)="setTableShowType($event)">
 </fcl-predefined-filter-view>
