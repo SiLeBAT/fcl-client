@@ -34,3 +34,33 @@
     font-weight: 500;
     color: rgb(0, 0, 0);
 }
+
+.fcl-more-columns-button {
+    border: none;
+    height: 100%;
+    padding: 0;
+    width: 20px;
+}
+
+.fcl-more-columns-button .fcl-more-columns-icon {
+    width: 100%;
+}
+
+.fcl-more-columns-button:hover {
+    background-color: $fcl-accent-300 !important;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.fcl-more-columns-button:focus {
+    outline: 0;
+}
+
+.fcl-more-column-row-cell {
+    padding: 0 !important;
+}
+
+.datatable-header-cell.fcl-more-columns-header-cell {
+    padding: 0 !important;
+    display: flex !important;
+    color: blue !important;
+}

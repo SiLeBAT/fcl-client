@@ -1,3 +1,13 @@
+<ng-template #customCol let-column="column">
+    <button
+        matTooltip="Select more columns"
+        matTooltipPosition="above"
+        class="fcl-more-columns-button"
+        (click)="selectMoreStationColumns()">
+        <mat-icon class="fcl-more-columns-icon">more_vert</mat-icon>
+    </button>
+</ng-template>
+
 <fcl-station-table-view
     #tableView
     class="fcl-station-table-view-container"

@@ -1,13 +1,13 @@
-import { Constants } from './../../util/constants';
-import { takeWhile } from 'rxjs/operators';
+import { takeWhile, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
+import * as tracingActions from '../../state/tracing.actions';
 import { AlertService } from '../../../shared/services/alert.service';
 import { StationTableViewComponent } from '../station-table-view/station-table-view.component';
-import { TableService, StationTable, StationTableRow } from '../../services/table.service';
+import { TableService, StationTable, StationTableRow, ColumnOption } from '../../services/table.service';
 import {
     BasicGraphState,
     TableSettings,
@@ -16,8 +16,11 @@ import {
     ShowType,
     TableMode
 } from '../../data.model';
+import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-select/dialog-select.component';
+import { MatDialog } from '@angular/material/dialog';
 
-interface State {
+
+interface StoreDataState {
     graphState: BasicGraphState;
     tableSettings: TableSettings;
 }
@@ -32,6 +35,8 @@ export class StationTableComponent implements OnInit, OnDestroy {
     @ViewChild(StationTableViewComponent, { static: false })
     private tableViewComponent: StationTableViewComponent;
 
+    @ViewChild('customCol', { static: true }) customCol: TemplateRef<any>;
+
     stationRows: any[];
     stationColumns: any[];
     deliveryRows: any[];
@@ -45,11 +50,12 @@ export class StationTableComponent implements OnInit, OnDestroy {
     );
     private stateSubscription: Subscription;
 
-    private cachedState: State;
+    private cachedState: StoreDataState;
     private cachedData: DataServiceData;
 
     constructor(
         private tableService: TableService,
+        private dialogService: MatDialog,
         private store: Store<fromTracing.State>,
         private alertService: AlertService
     ) { }
@@ -76,7 +82,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
         );
     }
 
-    private applyState(state: State) {
+    private applyState(state: StoreDataState) {
         const newData: StationTable = this.tableService.getStationData(state.graphState);
         const dataServiceData: DataServiceData = newData.dataServiceData;
         if (
@@ -118,16 +124,31 @@ export class StationTableComponent implements OnInit, OnDestroy {
             const stationColumns = newData.columns;
             const stationRows = newData.rows;
 
-            this.stationColumns = stationColumns
+
+            const buttonColumn: any = {
+                name: ' ',
+                prop: 'moreCol',
+                resizeable: false,
+                draggable: false,
+                width: 20,
+                headerTemplate: this.customCol,
+                headerClass: 'fcl-more-columns-header-cell',
+                cellClass: 'fcl-more-column-row-cell'
+            };
+
+            const dataColumns = stationColumns
                 .filter(stationColumn => initialStationColumns.indexOf(stationColumn.id) >= 0)
                 .map(stationColumn => {
                     return {
                         name: stationColumn.name,
                         prop: stationColumn.id,
-                        resizable: true,
+                        resizable: false,
                         draggable: true
+
                     };
                 });
+
+            this.stationColumns = [buttonColumn].concat(dataColumns);
 
             if (stationRows) {
                 let stationElements: StationTableRow[] = [];
@@ -149,6 +170,31 @@ export class StationTableComponent implements OnInit, OnDestroy {
             this.tableViewComponent.recalculateTable();
         }
     }
+
+    selectMoreStationColumns() {
+        const columnOptions: ColumnOption[] = this.tableService.getStationColumnOptions(
+            this.cachedState.graphState,
+            this.cachedState.tableSettings
+        );
+
+        const dialogData: DialogSelectData = {
+            title: 'Input',
+            options: columnOptions
+        };
+
+        this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
+            .pipe(
+                take(1)
+            ).subscribe((selections: string[]) => {
+                if (selections != null) {
+                    this.store.dispatch(new tracingActions.SetTableColumnsSOA([this.cachedState.tableSettings.mode, selections]));
+                }
+            },
+            error => {
+                throw new Error(`error loading dialog or selecting columns: ${error}`);
+            });
+    }
+
 
     private applySelection(state) {
 

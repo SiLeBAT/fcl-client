@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
-    BasicGraphState, DataServiceData, DeliveryData, StationData, Color
+    BasicGraphState,
+    DataServiceData,
+    DeliveryData,
+    StationData,
+    TableSettings,
+    NodeShapeType
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
-import { NodeShapeType } from './../data.model';
 
 interface TableColumn {
     id: string;
@@ -42,6 +46,12 @@ export interface StationTable {
     dataServiceData: DataServiceData;
 }
 
+export interface ColumnOption {
+    value: string;
+    viewValue: string;
+    selected: boolean;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -64,6 +74,30 @@ export class TableService {
             rows: this.getStationRows(data),
             dataServiceData: data
         };
+    }
+
+    getStationColumnOptions(graphState: BasicGraphState, tableSettings: TableSettings): ColumnOption[] {
+        const options: ColumnOption[] = [];
+
+        const dataServiceData: DataServiceData = this.dataService.getData({
+            fclElements: graphState.fclElements,
+            groupSettings: graphState.groupSettings,
+            tracingSettings: graphState.tracingSettings,
+            highlightingSettings: graphState.highlightingSettings,
+            selectedElements: graphState.selectedElements
+        });
+
+        const stationColumns = this.getStationColumns(dataServiceData);
+
+        stationColumns.forEach(column => {
+            options.push({
+                value: column.id,
+                viewValue: column.name,
+                selected: tableSettings.stationColumns.includes(column.id)
+            });
+        });
+
+        return options;
     }
 
     private getDeliveryColumns(data: DataServiceData): TableColumn[] {
@@ -181,6 +215,10 @@ export class TableService {
                 typeOfBusiness: this.findTypeOfBusiness(station.properties),
                 highlightingInfo: station.highlightingInfo
             };
+
+            station.properties.forEach(
+                prop => row['ext' + prop.name] = prop.value
+            );
 
             return row;
         });
