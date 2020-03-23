@@ -133,7 +133,8 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 width: 20,
                 headerTemplate: this.customCol,
                 headerClass: 'fcl-more-columns-header-cell',
-                cellClass: 'fcl-more-column-row-cell'
+                cellClass: 'fcl-more-column-row-cell',
+                frozenLeft: true
             };
 
             const dataColumns = stationColumns
