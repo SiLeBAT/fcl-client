@@ -7,7 +7,7 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
 import { AlertService } from '../../../shared/services/alert.service';
 import { StationTableViewComponent } from '../station-table-view/station-table-view.component';
-import { TableService, StationTable, StationTableRow, ColumnOption } from '../../services/table.service';
+import { TableService, StationTable, StationTableRow, ColumnOption, TableColumn } from '../../services/table.service';
 import {
     BasicGraphState,
     TableSettings,
@@ -18,7 +18,7 @@ import {
 } from '../../data.model';
 import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-select/dialog-select.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { FilterService } from './../services/filter.service';
 
 interface StoreDataState {
     graphState: BasicGraphState;
@@ -41,6 +41,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
     stationColumns: any[];
     deliveryRows: any[];
     deliveryColumns: any[];
+    filterTerm: string;
 
     componentActive: boolean = true;
 
@@ -48,6 +49,10 @@ export class StationTableComponent implements OnInit, OnDestroy {
         select(tracingSelectors.getShowConfigurationSideBar),
         takeWhile(() => this.componentActive)
     );
+
+    private currentStationColumnHeaders: string[];
+    private filteredRows: any[] = [];
+    private unfilteredRows: any[] = [];
     private stateSubscription: Subscription;
 
     private cachedState: StoreDataState;
@@ -56,6 +61,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
     constructor(
         private tableService: TableService,
         private dialogService: MatDialog,
+        private filterService: FilterService,
         private store: Store<fromTracing.State>,
         private alertService: AlertService
     ) { }
@@ -80,6 +86,19 @@ export class StationTableComponent implements OnInit, OnDestroy {
             },
             err => this.alertService.error(`showConfigurationSideBar store subscription failed: ${err}`)
         );
+
+        this.filterService.standardFilterTerm$
+            .pipe(
+                takeWhile(() => this.componentActive)
+            )
+            .subscribe((filterTerm: string) => {
+                this.filterTerm = filterTerm;
+                this.onFilterChange();
+            },
+                (error => {
+                    throw new Error(`error receiving standard filter term: ${error}`);
+                })
+            );
     }
 
     private applyState(state: StoreDataState) {
@@ -117,61 +136,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
         };
     }
 
-    private updateTable(newData: StationTable, tableSettings: TableSettings) {
-
-        if (newData) {
-            const initialStationColumns = tableSettings.stationColumns;
-            const stationColumns = newData.columns;
-            const stationRows = newData.rows;
-
-
-            const buttonColumn: any = {
-                name: ' ',
-                prop: 'moreCol',
-                resizeable: false,
-                draggable: false,
-                width: 20,
-                headerTemplate: this.customCol,
-                headerClass: 'fcl-more-columns-header-cell',
-                cellClass: 'fcl-more-column-row-cell',
-                frozenLeft: true
-            };
-
-            const dataColumns = stationColumns
-                .filter(stationColumn => initialStationColumns.indexOf(stationColumn.id) >= 0)
-                .map(stationColumn => {
-                    return {
-                        name: stationColumn.name,
-                        prop: stationColumn.id,
-                        resizable: false,
-                        draggable: true
-
-                    };
-                });
-
-            this.stationColumns = [buttonColumn].concat(dataColumns);
-
-            if (stationRows) {
-                let stationElements: StationTableRow[] = [];
-                stationElements = stationRows.filter(stationRow => !stationRow.invisible && !stationRow.contained);
-
-                if (tableSettings.showType === ShowType.SELECTED_ONLY) {
-                    stationElements = stationElements
-                        .filter(stationRow => stationRow.selected);
-                } else if (tableSettings.showType === ShowType.TRACE_ONLY) {
-                    stationElements = stationElements
-                        .filter(stationRow => stationRow.forward || stationRow.backward || stationRow.observed !== ObservedType.NONE);
-                }
-                this.stationRows = stationElements;
-
-            } else {
-                this.stationRows = [];
-            }
-
-            this.tableViewComponent.recalculateTable();
-        }
-    }
-
     selectMoreStationColumns() {
         const columnOptions: ColumnOption[] = this.tableService.getStationColumnOptions(
             this.cachedState.graphState,
@@ -196,6 +160,92 @@ export class StationTableComponent implements OnInit, OnDestroy {
             });
     }
 
+    private updateTable(newData: StationTable, tableSettings: TableSettings) {
+        if (newData) {
+            this.currentStationColumnHeaders = tableSettings.stationColumns;
+            const stationColumns: TableColumn[] = newData.columns;
+            const stationRows: StationTableRow[] = newData.rows;
+
+            const buttonColumn: any = {
+                name: ' ',
+                prop: 'moreCol',
+                resizeable: false,
+                draggable: false,
+                width: 20,
+                headerTemplate: this.customCol,
+                headerClass: 'fcl-more-columns-header-cell',
+                cellClass: 'fcl-more-column-row-cell',
+                frozenLeft: true
+            };
+
+            const dataColumns = stationColumns
+                .filter(stationColumn => this.currentStationColumnHeaders.indexOf(stationColumn.id) >= 0)
+                .map(stationColumn => {
+                    return {
+                        name: stationColumn.name,
+                        prop: stationColumn.id,
+                        resizable: false,
+                        draggable: true
+
+                    };
+                });
+
+            this.stationColumns = [buttonColumn].concat(dataColumns);
+
+            if (stationRows) {
+                let stationElements: StationTableRow[] = [];
+                stationElements = stationRows.filter(stationRow => !stationRow.invisible && !stationRow.contained);
+
+                if (tableSettings.showType === ShowType.SELECTED_ONLY) {
+                    stationElements = stationElements
+                        .filter(stationRow => stationRow.selected);
+                } else if (tableSettings.showType === ShowType.TRACE_ONLY) {
+                    stationElements = stationElements
+                        .filter(stationRow => stationRow.forward || stationRow.backward || stationRow.observed !== ObservedType.NONE);
+                }
+
+                this.unfilteredRows = stationElements;
+                this.filteredRows = this.filterRows();
+                this.stationRows = this.filteredRows;
+            } else {
+                this.unfilteredRows = [];
+                this.filteredRows = [];
+                this.stationRows = [];
+            }
+
+            this.tableViewComponent.recalculateTable();
+        }
+    }
+
+    private onFilterChange() {
+        this.filteredRows = this.filterRows();
+        this.stationRows = this.filteredRows;
+        if (this.tableViewComponent) {
+            this.tableViewComponent.recalculatePages();
+        }
+    }
+
+    private filterRows(): any[] {
+        const filteredRows = this.unfilteredRows.filter(
+            row => {
+                if (this.filterTerm === null || this.filterTerm === '') {
+                    return true;
+                } else {
+                    return this.currentStationColumnHeaders.some(columnHeader => {
+                        const rowValue = row[columnHeader];
+                        if (rowValue === undefined || rowValue === null) {
+                            return false;
+                        } else {
+                            const strRowValue: string = typeof rowValue === 'string' ? rowValue.toLowerCase() : rowValue.toString();
+                            return strRowValue.includes(this.filterTerm);
+                        }
+                    });
+                }
+            }
+        );
+
+        return filteredRows;
+    }
 
     private applySelection(state) {
 

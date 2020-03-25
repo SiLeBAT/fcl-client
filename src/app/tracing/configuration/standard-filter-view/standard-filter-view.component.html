@@ -1,5 +1,5 @@
 <mat-form-field class="fcl-standard-filter-field fcl-font-size-08" appearance="outline" color="primary">
     <mat-label>{{ filterLabel }}</mat-label>
-    <input matInput type="text" />
+    <input matInput #filterInput (keyup)="onKeyup($event)"/>
     <mat-icon matSuffix>search</mat-icon>
 </mat-form-field>
