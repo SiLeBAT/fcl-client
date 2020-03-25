@@ -10,7 +10,7 @@ import {
 import * as _ from 'lodash';
 import { DataService } from './data.service';
 
-interface TableColumn {
+export interface TableColumn {
     id: string;
     name: string;
 }

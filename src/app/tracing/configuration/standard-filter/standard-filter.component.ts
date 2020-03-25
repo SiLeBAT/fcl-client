@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FilterService } from '../services/filter.service';
 
 @Component({
     selector: 'fcl-standard-filter',
@@ -8,9 +9,14 @@ export class StandardFilterComponent implements OnInit {
 
     @Input() filterLabel: string;
 
-    constructor() { }
+    constructor(
+        private filterService: FilterService
+    ) { }
 
     ngOnInit() {
     }
 
+    processStandardFilterTerm(standardFilterTerm) {
+        this.filterService.processStandardFilterTerm(standardFilterTerm);
+    }
 }

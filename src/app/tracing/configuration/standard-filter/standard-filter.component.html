@@ -1,4 +1,5 @@
 <fcl-standard-filter-view
     class="fcl-standard-filter-view"
-    [filterLabel]="filterLabel">
+    [filterLabel]="filterLabel"
+    (standardFilterTerm)="processStandardFilterTerm($event)">
 </fcl-standard-filter-view>

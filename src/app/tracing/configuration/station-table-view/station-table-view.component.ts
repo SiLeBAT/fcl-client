@@ -23,4 +23,8 @@ export class StationTableViewComponent implements OnInit {
     recalculateTable() {
         this.table.recalculate();
     }
+
+    recalculatePages() {
+        this.table.recalculatePages();
+    }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'fcl-standard-filter-view',
@@ -8,10 +8,15 @@ import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 })
 export class StandardFilterViewComponent implements OnInit {
     @Input() filterLabel: string;
+    @ViewChild('filterInput', { static: false }) filterInput: ElementRef;
+    @Output() standardFilterTerm = new EventEmitter<string>();
 
     constructor() { }
 
     ngOnInit() {
     }
 
+    onKeyup(event) {
+        this.standardFilterTerm.emit(this.filterInput.nativeElement.value);
+    }
 }
