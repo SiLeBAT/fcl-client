@@ -15,7 +15,8 @@
     box-shadow: $fcl-box-shadow;
 }
 
-.datatable-header-cell-label {
+.datatable-header-cell-label,
+.datatable-header-cell-template-wrap {
     font-size: 0.9rem;
     color: rgb(0, 0, 0);
     font-weight: 800;
@@ -37,7 +38,7 @@
 
 .fcl-more-columns-button {
     border: none;
-    height: 100%;
+    height: 80px; // should correspond to the ngx datatable headerHeight
     padding: 0;
     width: 20px;
     background-color: $fcl-accent-100 !important;

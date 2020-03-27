@@ -25,6 +25,21 @@ interface StoreDataState {
     tableSettings: TableSettings;
 }
 
+interface Column {
+    id: string;
+    prop: string;
+    name: string;
+
+    comparator?: <T>(a: T, b: T) => number;
+}
+
+interface Filter {
+    filterText: string;
+    filterProps: string[];
+}
+
+interface FilterColumn extends Column, Filter { }
+
 @Component({
     selector: 'fcl-station-table',
     templateUrl: './station-table.component.html',
@@ -35,13 +50,17 @@ export class StationTableComponent implements OnInit, OnDestroy {
     @ViewChild(StationTableViewComponent, { static: false })
     private tableViewComponent: StationTableViewComponent;
 
-    @ViewChild('customCol', { static: true }) customCol: TemplateRef<any>;
+    @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
+    @ViewChild('filterColTpl', { static: true }) filterColTpl: TemplateRef<any>;
 
     stationRows: any[];
     stationColumns: any[];
     deliveryRows: any[];
     deliveryColumns: any[];
-    filterTerm: string;
+
+    currentFilterColumns: FilterColumn[] = [];
+    propToColumnMap: { [key: string]: FilterColumn } = {};
+    rootFilter: Filter = { filterText: null, filterProps: [] };
 
     componentActive: boolean = true;
 
@@ -92,7 +111,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 takeWhile(() => this.componentActive)
             )
             .subscribe((filterTerm: string) => {
-                this.filterTerm = filterTerm;
+                this.rootFilter.filterText = filterTerm;
                 this.onFilterChange();
             },
                 (error => {
@@ -101,9 +120,46 @@ export class StationTableComponent implements OnInit, OnDestroy {
             );
     }
 
+    selectMoreStationColumns() {
+        const columnOptions: ColumnOption[] = this.tableService.getStationColumnOptions(
+            this.cachedState.graphState,
+            this.cachedState.tableSettings
+        );
+
+        const dialogData: DialogSelectData = {
+            title: 'Input',
+            options: columnOptions
+        };
+
+        this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
+            .pipe(
+                take(1)
+            ).subscribe((selections: string[]) => {
+                if (selections != null) {
+                    this.store.dispatch(new tracingActions.SetTableColumnsSOA([this.cachedState.tableSettings.mode, selections]));
+                }
+            },
+            error => {
+                throw new Error(`error loading dialog or selecting columns: ${error}`);
+            });
+    }
+
+    onFilterChange() {
+        this.filteredRows = this.filterRows([].concat(this.currentFilterColumns, this.rootFilter));
+        this.stationRows = this.filteredRows;
+        if (this.tableViewComponent) {
+            this.tableViewComponent.recalculatePages();
+        }
+    }
+
+    ngOnDestroy() {
+        this.componentActive = false;
+    }
+
     private applyState(state: StoreDataState) {
         const newData: StationTable = this.tableService.getStationData(state.graphState);
         const dataServiceData: DataServiceData = newData.dataServiceData;
+
         if (
             !this.cachedState ||
             this.cachedState.tableSettings !== state.tableSettings ||
@@ -136,30 +192,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
         };
     }
 
-    selectMoreStationColumns() {
-        const columnOptions: ColumnOption[] = this.tableService.getStationColumnOptions(
-            this.cachedState.graphState,
-            this.cachedState.tableSettings
-        );
-
-        const dialogData: DialogSelectData = {
-            title: 'Input',
-            options: columnOptions
-        };
-
-        this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
-            .pipe(
-                take(1)
-            ).subscribe((selections: string[]) => {
-                if (selections != null) {
-                    this.store.dispatch(new tracingActions.SetTableColumnsSOA([this.cachedState.tableSettings.mode, selections]));
-                }
-            },
-            error => {
-                throw new Error(`error loading dialog or selecting columns: ${error}`);
-            });
-    }
-
     private updateTable(newData: StationTable, tableSettings: TableSettings) {
         if (newData) {
             this.currentStationColumnHeaders = tableSettings.stationColumns;
@@ -172,7 +204,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 resizeable: false,
                 draggable: false,
                 width: 20,
-                headerTemplate: this.customCol,
+                headerTemplate: this.buttonColTpl,
                 headerClass: 'fcl-more-columns-header-cell',
                 cellClass: 'fcl-more-column-row-cell',
                 frozenLeft: true
@@ -185,12 +217,34 @@ export class StationTableComponent implements OnInit, OnDestroy {
                         name: stationColumn.name,
                         prop: stationColumn.id,
                         resizable: false,
-                        draggable: true
-
+                        draggable: true,
+                        headerTemplate: this.filterColTpl
                     };
                 });
 
             this.stationColumns = [buttonColumn].concat(dataColumns);
+
+            const currentFilterColumns = newData.columns
+                .filter(column => {
+                    const columnProp = column.id;
+                    return this.currentStationColumnHeaders.includes(columnProp);
+
+                })
+                .map((column, index) => ({
+                    id: 'c' + index,
+                    prop: column.id,
+                    name: column.name,
+                    filterText: null as string,
+                    filterProps: [column.id]
+                }));
+
+            const propToColumnMap: { [key: string]: FilterColumn } = currentFilterColumns.reduce((prevValue, currValue) => {
+                prevValue[currValue.prop] = currValue;
+                return prevValue;
+            }, {} as { [key: string]: FilterColumn });
+
+            this.rootFilter.filterProps = currentFilterColumns.map(filterColumn => filterColumn.prop);
+            const filters: Filter[] = [].concat(currentFilterColumns, this.rootFilter);
 
             if (stationRows) {
                 let stationElements: StationTableRow[] = [];
@@ -204,8 +258,10 @@ export class StationTableComponent implements OnInit, OnDestroy {
                         .filter(stationRow => stationRow.forward || stationRow.backward || stationRow.observed !== ObservedType.NONE);
                 }
 
+                this.propToColumnMap = propToColumnMap;
+                this.currentFilterColumns = currentFilterColumns;
                 this.unfilteredRows = stationElements;
-                this.filteredRows = this.filterRows();
+                this.filteredRows = this.filterRows(filters);
                 this.stationRows = this.filteredRows;
             } else {
                 this.unfilteredRows = [];
@@ -217,31 +273,29 @@ export class StationTableComponent implements OnInit, OnDestroy {
         }
     }
 
-    private onFilterChange() {
-        this.filteredRows = this.filterRows();
-        this.stationRows = this.filteredRows;
-        if (this.tableViewComponent) {
-            this.tableViewComponent.recalculatePages();
-        }
-    }
+    private filterRows(filters: Filter[]): any[] {
 
-    private filterRows(): any[] {
         const filteredRows = this.unfilteredRows.filter(
-            row => {
-                if (this.filterTerm === null || this.filterTerm === '') {
+            row => filters.every((filterElem: Filter) => {
+                if (filterElem.filterText === null || filterElem.filterText === '') {
                     return true;
                 } else {
-                    return this.currentStationColumnHeaders.some(columnHeader => {
-                        const rowValue = row[columnHeader];
-                        if (rowValue === undefined || rowValue === null) {
+                    const filterText: string = filterElem.filterText.toLowerCase();
+
+                    return filterElem.filterProps.some(p => {
+                        const propValue = row[p];
+                        if (propValue === undefined || propValue === null) {
                             return false;
                         } else {
-                            const strRowValue: string = typeof rowValue === 'string' ? rowValue.toLowerCase() : rowValue.toString();
-                            return strRowValue.includes(this.filterTerm);
+                            const strValue: string = typeof propValue === 'string' ?
+                                propValue.toLowerCase() :
+                                propValue.toString();
+
+                            return strValue.includes(filterText);
                         }
                     });
                 }
-            }
+            })
         );
 
         return filteredRows;
@@ -250,9 +304,4 @@ export class StationTableComponent implements OnInit, OnDestroy {
     private applySelection(state) {
 
     }
-
-    ngOnDestroy() {
-        this.componentActive = false;
-    }
-
 }

@@ -1,4 +1,4 @@
-<ng-template #customCol let-column="column">
+<ng-template #buttonColTpl let-column="column">
     <button
         matTooltip="Select more columns"
         matTooltipPosition="above"
@@ -6,6 +6,25 @@
         (click)="selectMoreStationColumns()">
         <mat-icon class="fcl-more-columns-icon">more_vert</mat-icon>
     </button>
+</ng-template>
+
+<ng-template #filterColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+     <span class="header-sort-span" (click)="sort()">
+        {{column.name}}
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
+    </span>
+    <br>
+
+    <mat-form-field class="fcl-column-filter-field" floatLabel="never">
+        <input
+            matInput
+            type="search"
+            placeholder="Filter"
+            [(ngModel)]="propToColumnMap[column.prop].filterText"
+            (keyup)="onFilterChange()"
+        >
+    </mat-form-field>
 </ng-template>
 
 <fcl-station-table-view
