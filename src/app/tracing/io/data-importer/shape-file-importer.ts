@@ -1,12 +1,17 @@
 
 import { MapType } from '../../data.model';
 import { createOpenLayerMap } from '../../util/map-utils';
-import { HttpClient } from '@angular/common/http';
-import { geojsonhint } from '../geojsonhint/geojsonhint';
+const geojsonHintObject = require('../../../../assets/geojsonhint/object');
 
 interface ValidationResult {
     isValid: boolean;
     messages: string[];
+}
+
+interface Issue {
+    line?: number;
+    level?: string;
+    message: string;
 }
 
 export async function validateShapeFileData(data: any): Promise<ValidationResult> {
@@ -38,4 +43,9 @@ async function validateGeoJSON(data: any): Promise<ValidationResult> {
         isValid: issues.length === 0,
         messages: issues.length > 0 ? [`No valid GeoJSON format (${issues[0].message}).`] : []
     };
+}
+
+function geojsonhint(jsonObject: any): Issue[] {
+    const errors = geojsonHintObject.hint(jsonObject, { precisionWarning: false, noDuplicateMembers: false });
+    return errors;
 }
