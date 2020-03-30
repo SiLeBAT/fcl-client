@@ -20,11 +20,14 @@ export class InformationProvider {
     private lotCounter: number = 0;
 
     private idToDeliveryMap: Map<string, DeliveryData>;
+    private idToStationMap: Map<string, StationData>;
     private stationIdToInfoMap: Map<string, StationInformation>;
     private idToLotMap: Map<string, LotInformation>;
     private deliveryToSourceMap: Map<DeliveryInformation, LotInformation>;
 
     constructor(private data: FclElements) {
+        this.idToStationMap = new Map();
+        data.stations.forEach((s) => this.idToStationMap.set(s.id, s));
         this.idToDeliveryMap = new Map();
         data.deliveries.forEach((d) => this.idToDeliveryMap.set(d.id, d));
         this.stationIdToInfoMap = new Map();
@@ -110,39 +113,17 @@ export class InformationProvider {
     }
 
     private getStationOutDeliveries(station: StationData): DeliveryData[] {
-        return station.outgoing.map(delId => this.idToDeliveryMap.get(delId)).filter(d => !d.invisible);
+        return station.outgoing.map(
+            delId => this.idToDeliveryMap.get(delId)
+        ).filter(
+            d =>
+            !d.invisible &&
+            !this.idToStationMap.get(d.source).invisible &&
+            !this.idToStationMap.get(d.target).invisible
+        );
     }
 
     getStationInfo(station: StationData): StationInformation {
-        if (!this.stationIdToInfoMap.has(station.id)) {
-            const stationInfo = {
-                id: station.id,
-                data: station,
-                ctno: null,
-                name: station.name,
-                registrationNumber: null,
-                sector: null,
-                activities: null,
-                samples: [],
-                inSamples: [],
-                products: this.createProductInformation(
-                    station.outgoing.map(delId => this.idToDeliveryMap.get(delId)).filter(d => !d.invisible)
-                )
-            };
-            this.stationIdToInfoMap.set(station.id, stationInfo);
-            stationInfo.products.forEach(
-                product => product.lots.forEach(
-                    lot => {
-                        lot.deliveries.forEach(
-                            delivery => {
-                                this.deliveryToSourceMap.set(delivery, lot);
-                            }
-                        );
-                        this.idToLotMap.set(lot.id, lot);
-                    }
-                )
-            );
-        }
         return this.stationIdToInfoMap.get(station.id);
     }
 
