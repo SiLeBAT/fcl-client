@@ -1,15 +1,11 @@
 import { Cy, CyElementCollection, CyEdge, CyNode } from './graph.model';
 import { Position } from '../data.model';
 
-interface EdgeInfo {
-    edge: CyEdge;
-    offset: number;
-}
-
 export class EdgeLabelOffsetUpdater {
 
-    private draggedEdges: EdgeInfo[] = null;
+    private draggedEdges: CyElementCollection<CyEdge>;
     private grabbedNode: CyNode;
+
     private cy: Cy;
     private dragListener: () => void;
     private freeOnListener: () => void;
@@ -44,9 +40,6 @@ export class EdgeLabelOffsetUpdater {
                     this.grabbedNode.connectedEdges(':simple')
                 );
             }
-            this.cy.batch(() => {
-                this.updateGrabbedEdges();
-            });
         }).bind(this);
 
         this.grabbedNode.on('drag', this.dragListener);
@@ -62,12 +55,23 @@ export class EdgeLabelOffsetUpdater {
 
     private addFreeOnListener(): void {
         this.freeOnListener = (() => {
+            const draggedEdges = this.draggedEdges;
             this.removeDragListener();
             this.removeFreeOnListener();
             this.grabbedNode = null;
+            this.switchOnEdgeLabels(draggedEdges);
             this.draggedEdges = null;
         }).bind(this);
         this.grabbedNode.on('freeon', this.freeOnListener);
+    }
+
+    private switchOffEdgeLabels(edges: CyElementCollection<CyEdge>): void {
+        edges.toggleClass('edge-label-disabled');
+    }
+
+    private switchOnEdgeLabels(edges: CyElementCollection<CyEdge>): void {
+        edges.toggleClass('edge-label-disabled');
+        this.updateEdgeLabelOffsets(edges);
     }
 
     private removeFreeOnListener(): void {
@@ -125,25 +129,8 @@ export class EdgeLabelOffsetUpdater {
     }
 
     private initDraggedEdges(edges: CyElementCollection<CyEdge>): void {
-        if (edges.size() === 0) {
-            this.draggedEdges = [];
-            return;
-        }
-
-        const strFontSize: string = edges.first().style('font-size') as string;
-        const fontSize = +strFontSize.substr(0, strFontSize.length - 2);
-
-        this.draggedEdges = edges.map((edge) => {
-            const strWidth: string = edge.style('width') as string;
-            const offset = fontSize / 2.0 + (+strWidth.substr(0, strWidth.length - 2)) / 2.0;
-            return { edge: edge, offset: offset };
-        });
-    }
-
-    private updateGrabbedEdges(): void {
-        for (const draggedEdge of this.draggedEdges) {
-            this.updateEdgeLabelOffset(draggedEdge.edge, draggedEdge.offset);
-        }
+        this.draggedEdges = edges;
+        this.switchOffEdgeLabels(edges);
     }
 
     private updateEdgeLabelOffset(edge: CyEdge, offset: number): void {

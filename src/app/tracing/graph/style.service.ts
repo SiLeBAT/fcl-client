@@ -146,6 +146,10 @@ export class StyleService {
                     {}
                 )
             })
+            .selector('edge.edge-label-disabled')
+            .style({
+                content: ''
+            })
             .selector('node[?isMeta]')
             .style({
                 'border-width': (
