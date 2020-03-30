@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d671941_300f41cd",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-03-30T07:57:33Z",
+      "side": 1,
+      "message": "why empty interface?",
+      "revId": "54127a1c3d1e9dce2c32038cd4cd656e84f0903e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
