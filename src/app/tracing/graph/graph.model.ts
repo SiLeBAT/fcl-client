@@ -83,6 +83,7 @@ export interface CyElementCollection<E> {
     scratch(a: string, b: boolean): void;
     filter(a: ((b: E) => boolean) | string): CyElementCollection<E>;
     first(): E;
+    toggleClass(a: string, b?: boolean): void;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
