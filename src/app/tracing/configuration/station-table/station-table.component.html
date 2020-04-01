@@ -14,16 +14,20 @@
         <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
         <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
     </span>
-    <br>
 
-    <mat-form-field class="fcl-column-filter-field" floatLabel="never">
+    <mat-form-field
+        class="fcl-column-filter-field"
+        floatLabel="never"
+        appearance="outline"
+        color="accent">
         <input
             matInput
             type="search"
-            placeholder="Filter"
+
             [(ngModel)]="propToColumnMap[column.prop].filterText"
             (keyup)="onFilterChange()"
         >
+        <mat-icon class="fcl-column-filter-field-icon" matSuffix>search</mat-icon>
     </mat-form-field>
 </ng-template>
 

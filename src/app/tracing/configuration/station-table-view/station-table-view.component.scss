@@ -15,11 +15,55 @@
     box-shadow: $fcl-box-shadow;
 }
 
+.fcl-datatable .datatable-header .datatable-header-inner {
+    height: 100%;
+}
+
+.fcl-datatable .datatable-row-center .datatable-header-cell {
+    padding-top: 0.4rem !important;
+    padding-bottom: 0.4rem !important;
+}
+
 .datatable-header-cell-label,
 .datatable-header-cell-template-wrap {
     font-size: 0.9rem;
     color: rgb(0, 0, 0);
-    font-weight: 800;
+    display: flex;
+    flex-direction: column;
+}
+
+.fcl-datatable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap {
+    height: 100% !important;
+}
+
+.fcl-column-filter-field .mat-form-field-wrapper {
+    padding: 0;
+    margin: 0;
+}
+
+.fcl-column-filter-field .mat-form-field-wrapper .mat-form-field-infix {
+    border: none;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+
+.fcl-column-filter-field .mat-form-field-wrapper .mat-form-field-flex {
+    padding-right: 0;
+}
+
+.fcl-column-filter-field .mat-form-field-outline-start,
+.fcl-column-filter-field .mat-form-field-outline-end {
+    border-radius: 0;
+    border-color: $fcl-accent-100;
+}
+
+.fcl-column-filter-field-icon {
+    color: $fcl-accent-200;
+    transform: scale(0.8);
+}
+
+.fcl-datatable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap .fcl-column-filter-field {
+    font-size: 0.8rem;
 }
 
 .fcl-datatable .datatable-body-cell {
@@ -38,7 +82,7 @@
 
 .fcl-more-columns-button {
     border: none;
-    height: 80px; // should correspond to the ngx datatable headerHeight
+    height: 100%;
     padding: 0;
     width: 20px;
     background-color: $fcl-accent-100 !important;
