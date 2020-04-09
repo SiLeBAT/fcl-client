@@ -8,7 +8,7 @@ import { ResizeSensor } from 'css-element-queries';
 
 import { Utils } from '../../util/non-ui-utils';
 
-import { GraphState, Layout, Position, Size, GraphType, LegendInfo, MergeDeliveriesType } from '../../data.model';
+import { GraphState, Layout, Position, GraphType, LegendInfo, MergeDeliveriesType } from '../../data.model';
 
 import * as _ from 'lodash';
 import { LayoutService, LayoutAction } from '../../layout/layout.service';
@@ -16,7 +16,7 @@ import { StyleService } from '../style.service';
 import { GraphService } from '../graph.service';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { filter } from 'rxjs/operators';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection, CyElementCollection, CyEdge } from '../graph.model';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection } from '../graph.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import * as tracingStoreActions from '../../state/tracing.actions';
 import { GraphContextMenuComponent } from './graph-context-menu.component';
@@ -24,8 +24,8 @@ import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
 import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 
 interface GraphSettingsState {
-    fontSize: Size;
-    nodeSize: Size;
+    fontSize: number;
+    nodeSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
 }
@@ -56,10 +56,6 @@ interface StyleInfo {
 export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     private static readonly ZOOM_FACTOR = 1.5;
-
-    private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 50], [Size.MEDIUM, 75], [Size.LARGE, 100]]);
-
-    private static readonly FONT_SIZES: Map<Size, number> = new Map([[Size.SMALL, 10], [Size.MEDIUM, 14], [Size.LARGE, 18]]);
 
     @ViewChild('container', { static: true }) containerElement: ElementRef;
     @ViewChild('graph', { static: true }) graphElement: ElementRef;
@@ -229,8 +225,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                     ),
                     style: this.styleService.createCyStyle(
                         {
-                            fontSize: SchemaGraphComponent.FONT_SIZES.get(graphState.fontSize),
-                            nodeSize: SchemaGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+                            fontSize: graphState.fontSize,
+                            nodeSize: graphState.nodeSize,
                             zoom: graphState.layout ? graphState.layout.zoom : 1
                         },
                         graphData
@@ -305,7 +301,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         this.layoutService.runLayout(
             action.payload.layoutName,
             cyContext,
-            SchemaGraphComponent.NODE_SIZES.get(this.cachedState.nodeSize),
+            this.cachedState.nodeSize,
             () => {
                 if (isTrueSubSet) {
                     this.recenterNodes(nodes, oldCenter);
@@ -610,8 +606,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     private getStyleInfoFromState(graphState: SchemaGraphState): { fontSize: number, nodeSize: number, zoom: number } {
         return {
-            fontSize: SchemaGraphComponent.FONT_SIZES.get(graphState.fontSize),
-            nodeSize: SchemaGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+            fontSize: graphState.fontSize,
+            nodeSize: graphState.nodeSize,
             zoom: graphState.layout.zoom
         };
     }

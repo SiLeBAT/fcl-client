@@ -428,10 +428,9 @@ export class DataImporterV1 implements IDataImporter {
             nodeSize = this.getProperty(viewData, JsonConstants.GISGRAPH_NODE_SIZE);
         }
         if (
-            nodeSize !== null &&
-            JsonConstants.NODE_SIZE_EXT_TO_INT_MAP.has(nodeSize)
+            nodeSize !== null
         ) {
-            fclData.graphSettings.nodeSize = JsonConstants.NODE_SIZE_EXT_TO_INT_MAP.get(nodeSize);
+            fclData.graphSettings.nodeSize = JsonConstants.NODE_SIZE_EXT_TO_INT_FUN(nodeSize);
         }
 
         let fontSize: any = this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_FONT_SIZE);
@@ -439,10 +438,9 @@ export class DataImporterV1 implements IDataImporter {
             fontSize = this.getProperty(viewData, JsonConstants.GISGRAPH_FONT_SIZE);
         }
         if (
-            fontSize !== null &&
-            JsonConstants.FONT_SIZE_EXT_TO_INT_MAP.has(fontSize)
+            fontSize !== null
         ) {
-            fclData.graphSettings.fontSize = JsonConstants.FONT_SIZE_EXT_TO_INT_MAP.get(fontSize);
+            fclData.graphSettings.fontSize = JsonConstants.FONT_SIZE_EXT_TO_INT_FUN(fontSize);
         }
 
         if (

@@ -1,5 +1,6 @@
-import { Size, GroupType, OperationType, ValueType, NodeShapeType, MergeDeliveriesType } from '../../data.model';
+import { GroupType, OperationType, ValueType, NodeShapeType, MergeDeliveriesType } from '../../data.model';
 import { Map as ImmutableMap } from 'immutable';
+import { Constants as OtherConstants } from '../../../tracing/util/constants';
 
 export interface ColumnInfo {
     columnId: string;
@@ -114,29 +115,6 @@ export class Constants {
         MERGE_LABEL_WISE: MergeDeliveriesType.MERGE_LABEL_WISE
     });
 
-    static readonly NODE_SIZE_EXT_TO_INT_MAP: ImmutableMap<
-        string,
-        Size
-    > = ImmutableMap({
-        '4': Size.SMALL,
-        '6': Size.SMALL,
-        '10': Size.SMALL,
-        '14': Size.MEDIUM,
-        '20': Size.MEDIUM,
-        '30': Size.LARGE
-    });
-
-    static readonly FONT_SIZE_EXT_TO_INT_MAP: ImmutableMap<
-        string,
-        Size
-    > = ImmutableMap({
-        '10': Size.SMALL,
-        '12': Size.SMALL,
-        '14': Size.MEDIUM,
-        '18': Size.MEDIUM,
-        '24': Size.LARGE
-    });
-
     static readonly OPERATION_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, OperationType> = ImmutableMap({
         'EQUAL': OperationType.EQUAL,
         'GREATER': OperationType.GREATER,
@@ -163,4 +141,29 @@ export class Constants {
         'STAR': NodeShapeType.STAR,
         'DIAMOND': NodeShapeType.DIAMOND
     });
+
+    static NODE_SIZE_EXT_TO_INT_FUN(ext: string): number {
+        const extV: number = +ext;
+        if (isNaN(extV)) {
+            return OtherConstants.DEFAULT_GRAPH_NODE_SIZE;
+        } else {
+            return OtherConstants.NODE_SIZES.toArray().reduce(
+                (prevV, curV) => Math.abs(prevV - extV) > Math.abs(curV - extV) ? curV : prevV,
+                OtherConstants.DEFAULT_GRAPH_NODE_SIZE
+            );
+        }
+    }
+
+    static FONT_SIZE_EXT_TO_INT_FUN(ext: string): number {
+        const extV: number = +ext;
+        if (isNaN(extV)) {
+            return OtherConstants.DEFAULT_GRAPH_FONT_SIZE;
+        } else {
+            return OtherConstants.FONT_SIZES.toArray().reduce(
+                (prevV, curV) => Math.abs(prevV - extV) > Math.abs(curV - extV) ? curV : prevV,
+                OtherConstants.DEFAULT_GRAPH_FONT_SIZE
+            );
+        }
+    }
+
 }

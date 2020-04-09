@@ -1,5 +1,5 @@
 import {
-    Color, GraphType, MapType, ShowType, Size, TableMode, DeliveryData, StationData
+    Color, GraphType, MapType, ShowType, TableMode, DeliveryData, StationData
   } from '../data.model';
 import { List, Map } from 'immutable';
 
@@ -98,12 +98,13 @@ export class Constants {
         ShowType.SELECTED_ONLY,
         ShowType.TRACE_ONLY
     );
-    static readonly SIZES = List.of(Size.SMALL, Size.MEDIUM, Size.LARGE);
+    static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24);
+    static readonly NODE_SIZES = List.of(4, 6, 10, 14, 20, 30, 50);
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
     static readonly DEFAULT_MAP_TYPE = MapType.MAPNIK;
-    static readonly DEFAULT_GRAPH_NODE_SIZE = Size.MEDIUM;
-    static readonly DEFAULT_GRAPH_FONT_SIZE = Size.MEDIUM;
+    static readonly DEFAULT_GRAPH_NODE_SIZE = 20;
+    static readonly DEFAULT_GRAPH_FONT_SIZE = 10;
     static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;
     static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;

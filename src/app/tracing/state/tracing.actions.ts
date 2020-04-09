@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
-    GraphType, Size, TableMode, FclData, ShowType, SelectedElements, Position,
+    GraphType, TableMode, FclData, ShowType, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
@@ -106,13 +106,13 @@ export class SetMapTypeSOA implements Action {
 export class SetNodeSizeSOA implements Action {
     readonly type = TracingActionTypes.SetNodeSizeSOA;
 
-    constructor(public payload: Size) {}
+    constructor(public payload: { nodeSize: number }) {}
 }
 
 export class SetFontSizeSOA implements Action {
     readonly type = TracingActionTypes.SetFontSizeSOA;
 
-    constructor(public payload: Size) {}
+    constructor(public payload: { fontSize: number }) {}
 }
 
 export class SetMergeDeliveriesTypeSOA implements Action {

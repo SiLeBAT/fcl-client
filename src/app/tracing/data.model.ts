@@ -89,8 +89,8 @@ export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
     shapeFileData: ShapeFileData;
-    nodeSize: Size;
-    fontSize: Size;
+    nodeSize: number;
+    fontSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
     showLegend: boolean;
@@ -243,12 +243,6 @@ export enum ShowType {
     ALL = 'Show all' as any,
     SELECTED_ONLY = 'Show only selected' as any,
     TRACE_ONLY = 'Show only traced' as any
-}
-
-export enum Size {
-    SMALL = 'Small' as any,
-    MEDIUM = 'Medium' as any,
-    LARGE = 'Large' as any
 }
 
 export enum ObservedType {

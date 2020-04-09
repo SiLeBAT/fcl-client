@@ -188,7 +188,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        nodeSize: action.payload
+                        nodeSize: action.payload.nodeSize
                     }
                 }
             };
@@ -200,7 +200,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        fontSize: action.payload
+                        fontSize: action.payload.fontSize
                     }
                 }
             };

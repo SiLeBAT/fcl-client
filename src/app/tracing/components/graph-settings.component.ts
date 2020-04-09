@@ -14,7 +14,8 @@ import { GraphSettings, MergeDeliveriesType } from '../data.model';
 })
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
-    sizes = Constants.SIZES;
+    fontSizes = Constants.FONT_SIZES;
+    nodeSizes = Constants.NODE_SIZES;
 
     readonly mergeDeliveriesOptions: {
         value: MergeDeliveriesType;
@@ -70,13 +71,13 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
 
     setNodeSize() {
         this.store.dispatch(
-            new tracingActions.SetNodeSizeSOA(this.graphSettings.nodeSize)
+            new tracingActions.SetNodeSizeSOA({ nodeSize: this.graphSettings.nodeSize })
         );
     }
 
     setFontSize() {
         this.store.dispatch(
-            new tracingActions.SetFontSizeSOA(this.graphSettings.fontSize)
+            new tracingActions.SetFontSizeSOA({ fontSize: this.graphSettings.fontSize })
         );
     }
 

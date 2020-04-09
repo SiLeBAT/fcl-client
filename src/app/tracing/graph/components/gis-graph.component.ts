@@ -10,7 +10,6 @@ import { Utils as NonUIUtils } from '../../util/non-ui-utils';
 import {
     Layout,
     Position,
-    Size,
     GraphState,
     GraphType,
     LegendInfo,
@@ -36,8 +35,8 @@ import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 import { removeFrameLayer, setFrameLayer, createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
 
 interface GraphSettingsState {
-    fontSize: Size;
-    nodeSize: Size;
+    fontSize: number;
+    nodeSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
 }
@@ -77,10 +76,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private static readonly MAX_ZOOM = 100.0;
     private static readonly ZOOM_FACTOR = 1.5;
     private static readonly ZOOM_PADDING = 4;
-
-    private static readonly NODE_SIZES: Map<Size, number> = new Map([[Size.SMALL, 12], [Size.MEDIUM, 25], [Size.LARGE, 50]]);
-
-    private static readonly FONT_SIZES: Map<Size, number> = new Map([[Size.SMALL, 10], [Size.MEDIUM, 14], [Size.LARGE, 18]]);
 
     @ViewChild('container', { static: true }) containerElement: ElementRef;
 
@@ -269,8 +264,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                     layout: { name: 'preset', zoom: 1, pan: layout.pan },
                     style: this.styleService.createCyStyle(
                         {
-                            fontSize: GisGraphComponent.FONT_SIZES.get(graphState.fontSize),
-                            nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+                            fontSize: graphState.fontSize,
+                            nodeSize: graphState.nodeSize,
                             zoom: 1
                         },
                         graphData
@@ -487,8 +482,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             this.cy.setStyle(
                 this.styleService.createCyStyle(
                     {
-                        fontSize: GisGraphComponent.FONT_SIZES.get(graphState.fontSize),
-                        nodeSize: GisGraphComponent.NODE_SIZES.get(graphState.nodeSize),
+                        fontSize: graphState.fontSize,
+                        nodeSize: graphState.nodeSize,
                         zoom: 1
                     },
                     graphData
@@ -576,7 +571,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
         const width = this.containerElement.nativeElement.offsetWidth;
         const height = this.containerElement.nativeElement.offsetHeight;
-        const border = GisGraphComponent.NODE_SIZES.get(graphState.nodeSize);
+        const border = graphState.nodeSize; // GisGraphComponent.NODE_SIZES.get(graphState.nodeSize);
 
         let xMin = Number.POSITIVE_INFINITY;
         let yMin = Number.POSITIVE_INFINITY;

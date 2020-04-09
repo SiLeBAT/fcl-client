@@ -2,8 +2,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TestBed, async } from '@angular/core/testing';
 import { IOService } from './io.service';
-import { FclData, GraphType, Size, ObservedType, MergeDeliveriesType, MapType } from '../data.model';
+import { FclData, GraphType, ObservedType, MergeDeliveriesType, MapType } from '../data.model';
 import { JsonData, VERSION } from './ext-data-model.v1';
+import { Constants } from '../util/constants';
 
 describe('IOService', () => {
 
@@ -43,8 +44,8 @@ describe('IOService', () => {
                 type: GraphType.GRAPH,
                 mapType: MapType.MAPNIK,
                 shapeFileData: null,
-                nodeSize: Size.MEDIUM,
-                fontSize: Size.MEDIUM,
+                nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
+                fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
                 showLegend: true,
                 showZoom: true,
                 mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
