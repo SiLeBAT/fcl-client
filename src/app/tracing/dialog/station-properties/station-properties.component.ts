@@ -139,7 +139,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     otherPropertiesHidden = true;
     properties: Properties = {};
 
-    vipProperties: string[] = ['id', 'address', 'country', 'typeOfBusiness', 'score', 'outbreak', 'forward'];
+    vipProperties: string[] = ['id', 'Address', 'Country', 'typeOfBusiness', 'score', 'outbreak', 'forward'];
     notListedProps: string[] = ['name', 'incoming', 'outgoing'];
     otherProperties: string[] = [];
 
