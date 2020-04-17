@@ -47,6 +47,8 @@ import { PredefinedFilterComponent } from './configuration/predefined-filter/pre
 import { PredefinedFilterViewComponent } from './configuration/predefined-filter-view/predefined-filter-view.component';
 import { StationTableComponent } from './configuration/station-table/station-table.component';
 import { StationTableViewComponent } from './configuration/station-table-view/station-table-view.component';
+import { ComplexFilterComponent } from './configuration/complex-filter/complex-filter.component';
+import { ComplexFilterViewComponent } from './configuration/complex-filter-view/complex-filter-view.component';
 
 @NgModule({
     imports: [
@@ -93,7 +95,9 @@ import { StationTableViewComponent } from './configuration/station-table-view/st
         PredefinedFilterComponent,
         PredefinedFilterViewComponent,
         StationTableComponent,
-        StationTableViewComponent
+        StationTableViewComponent,
+        ComplexFilterComponent,
+        ComplexFilterViewComponent
     ],
     exports: [
         TableComponent

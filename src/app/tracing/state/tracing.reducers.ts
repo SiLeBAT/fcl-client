@@ -1,6 +1,6 @@
 import { TracingActions, TracingActionTypes } from './tracing.actions';
 import { Constants } from '../util/constants';
-import { FclData, TableMode, MergeDeliveriesType, MapType, GraphType } from '../data.model';
+import { FclData, TableMode, MergeDeliveriesType, MapType, GraphType, FilterSettings, ComplexFilterSettings } from '../data.model';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 
 export const STATE_SLICE_NAME = 'tracing';
@@ -29,6 +29,16 @@ export interface SettingOptions {
     graphSettingsOption: string;
     tableSettingsOption: string;
 }
+
+const complexFilterSettings: ComplexFilterSettings = {
+    stationColumns: [],
+    stationRows: [],
+    stationFilterConditions: []
+};
+
+const filterSettings: FilterSettings = {
+    complexFilterSettings: complexFilterSettings
+};
 
 const initialData: FclData = createInitialFclDataState();
 
@@ -90,7 +100,9 @@ export function createInitialFclDataState(): FclData {
             deliveryColumns: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray(),
             showType: Constants.DEFAULT_TABLE_SHOW_TYPE
         },
-        groupSettings: []
+        groupSettings: [],
+        filterSettings: filterSettings
+
     };
 }
 
@@ -423,6 +435,51 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
                     activeHighlightingTabIndex: action.payload.activeHighlightingTabIndex
+                }
+            };
+
+        case TracingActionTypes.SetStationColumnsForComplexFilterSSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    filterSettings: {
+                        ...state.fclData.filterSettings,
+                        complexFilterSettings: {
+                            ...state.fclData.filterSettings.complexFilterSettings,
+                            stationColumns: action.payload.stationColumns
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetStationRowsForComplexFilterSSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    filterSettings: {
+                        ...state.fclData.filterSettings,
+                        complexFilterSettings: {
+                            ...state.fclData.filterSettings.complexFilterSettings,
+                            stationRows: action.payload.stationRows
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetStationComplexFilterConditionsSSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    filterSettings: {
+                        ...state.fclData.filterSettings,
+                        complexFilterSettings: {
+                            ...state.fclData.filterSettings.complexFilterSettings,
+                            stationFilterConditions: action.payload.stationFilterConditions
+                        }
+                    }
                 }
             };
 

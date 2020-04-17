@@ -6,7 +6,7 @@
         [(value)]="tableSettings.showType"
         (selectionChange)="setTableShowType($event)">
         <ng-container *ngFor="let showType of showTypes">
-            <mat-option [value]="showType">
+            <mat-option class="fcl-filter-select-option" [value]="showType">
                 {{ showType }}
             </mat-option>
         </ng-container>

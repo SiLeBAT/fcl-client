@@ -8,6 +8,12 @@
     <fcl-predefined-filter></fcl-predefined-filter>
 </ng-template>
 
+<ng-template #complexFilterTemplate>
+    <fcl-complex-filter
+        class="fcl-complex-filter">
+    </fcl-complex-filter>
+</ng-template>
+
 <ng-template #stationTableTemplate>
     <fcl-station-table></fcl-station-table>
 </ng-template>
@@ -16,5 +22,6 @@
     class="fcl-filter-station-container"
     [standardFilterTemplate]="standardFilterTemplate"
     [predefinedFilterTemplate]="predefinedFilterTemplate"
+    [complexFilterTemplate]="complexFilterTemplate"
     [stationTableTemplate]="stationTableTemplate">
 </fcl-filter-station-layout>

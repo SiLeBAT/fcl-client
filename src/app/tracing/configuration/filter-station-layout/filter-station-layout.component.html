@@ -29,11 +29,18 @@
             (opened)="complexFilterOpenState = true"
             (closed)="complexFilterOpenState = false">
 
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header
+                class="fcl-expansion-panel-header">
                 <mat-panel-title class="fcl-font-size-08">
                     Complex Filters... click  to {{ complexFilterOpenState ?  'close' : 'open' }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
+
+            <div class="fcl-complex-filter-div">
+                <ng-template
+                    [ngTemplateOutlet]="complexFilterTemplate">
+                </ng-template>
+            </div>
 
         </mat-expansion-panel>
 

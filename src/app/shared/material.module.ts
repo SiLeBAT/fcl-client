@@ -21,6 +21,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
     imports: [],
@@ -44,7 +45,8 @@ import { MatTabsModule } from '@angular/material/tabs';
         MatGridListModule,
         MatSnackBarModule,
         MatTooltipModule,
-        MatTabsModule
+        MatTabsModule,
+        MatButtonToggleModule
     ],
     providers: [{
         provide: MAT_LABEL_GLOBAL_OPTIONS,

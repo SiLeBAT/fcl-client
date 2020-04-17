@@ -5,46 +5,45 @@ import {
     DeliveryData,
     StationData,
     TableSettings,
-    NodeShapeType
+    NodeShapeType,
+    TableColumn,
+    TableRow,
+    StationTable,
+    StationTableRow
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
 
-export interface TableColumn {
-    id: string;
-    name: string;
-}
-
-interface TableRow<H> {
-    id: string;
-    highlightingInfo: H;
-    [key: string]: string | number | boolean | H;
-}
+// interface TableRow<H> {
+//     id: string;
+//     highlightingInfo: H;
+//     [key: string]: string | number | boolean | H;
+// }
 
 interface DeliveryHighlightingInfo {
     color: number[][];
 }
 
-interface StationHighlightingInfo {
-    label: string[];
-    color: number[][];
-    shape: NodeShapeType;
-}
+// interface StationHighlightingInfo {
+//     label: string[];
+//     color: number[][];
+//     shape: NodeShapeType;
+// }
 
 interface DeliveryTableRow extends TableRow<DeliveryHighlightingInfo> {}
 
-export interface StationTableRow extends TableRow<StationHighlightingInfo> {}
+// export interface StationTableRow extends TableRow<StationHighlightingInfo> {}
 
 interface DeliveryTable {
     columns: TableColumn[];
     rows: DeliveryTableRow[];
 }
 
-export interface StationTable {
-    columns: TableColumn[];
-    rows: StationTableRow[];
-    dataServiceData: DataServiceData;
-}
+// export interface StationTable {
+//     columns: TableColumn[];
+//     rows: StationTableRow[];
+//     dataServiceData: DataServiceData;
+// }
 
 export interface ColumnOption {
     value: string;

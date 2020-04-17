@@ -9,7 +9,49 @@ export interface FclData {
     tableSettings: TableSettings;
     tracingSettings: TracingSettings;
     groupSettings: GroupData[];
+    filterSettings: FilterSettings;
 }
+
+export interface FilterSettings {
+    complexFilterSettings: ComplexFilterSettings;
+}
+export interface ComplexFilterSettings {
+    stationColumns: TableColumn[];
+    stationRows: StationTableRow[];
+    stationFilterConditions: ComplexFilterCondition[];
+}
+
+export interface ComplexFilterCondition {
+    property: string;
+    operation: ExtendedOperationType;
+    value: string | number | boolean;
+    junktor: JunktorType;
+}
+
+export interface TableColumn {
+    id: string;
+    name: string;
+}
+
+export interface TableRow<H> {
+    id: string;
+    highlightingInfo: H;
+    [key: string]: string | number | boolean | H;
+}
+
+export interface StationHighlightingInfo {
+    label: string[];
+    color: number[][];
+    shape: NodeShapeType;
+}
+
+export interface StationTable {
+    columns: TableColumn[];
+    rows: StationTableRow[];
+    dataServiceData: DataServiceData;
+}
+
+export interface StationTableRow extends TableRow<StationHighlightingInfo> {}
 
 export interface FclElements {
     stations: StationStoreData[];
@@ -158,10 +200,27 @@ export enum OperationType {
     GREATER = '>',
     NOT_EQUAL = '!=',
     LESS = '<',
-    REGEX_EQUAL = ' == (Regex)',
+    REGEX_EQUAL = '== (Regex)',
     REGEX_NOT_EQUAL = '!= (Regex)',
     REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
     REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
+}
+
+export enum ExtendedOperationType {
+    EQUAL = '==',
+    CONTAINS = 'contains',
+    GREATER = '>',
+    NOT_EQUAL = '!=',
+    LESS = '<',
+    REGEX_EQUAL = '== (Regex)',
+    REGEX_NOT_EQUAL = '!= (Regex)',
+    REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
+    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
+}
+
+export enum JunktorType {
+    AND = 'And',
+    OR = 'Or'
 }
 
 export interface ValueCondition {
