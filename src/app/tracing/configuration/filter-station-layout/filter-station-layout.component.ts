@@ -9,6 +9,7 @@ export class FilterStationLayoutComponent implements OnInit {
 
     @Input() standardFilterTemplate: TemplateRef<any>;
     @Input() predefinedFilterTemplate: TemplateRef<any>;
+    @Input() complexFilterTemplate: TemplateRef<any>;
     @Input() stationTableTemplate: TemplateRef<any>;
 
     moreFilterOpenState: boolean = false;

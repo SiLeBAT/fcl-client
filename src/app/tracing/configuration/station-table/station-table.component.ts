@@ -1,5 +1,5 @@
-import { takeWhile, take } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { takeWhile, take, tap, map } from 'rxjs/operators';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../../state/tracing.reducers';
@@ -7,38 +7,27 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
 import { AlertService } from '../../../shared/services/alert.service';
 import { StationTableViewComponent } from '../station-table-view/station-table-view.component';
-import { TableService, StationTable, StationTableRow, ColumnOption, TableColumn } from '../../services/table.service';
+import { TableService, ColumnOption } from '../../services/table.service';
 import {
     BasicGraphState,
     TableSettings,
     DataServiceData,
     ObservedType,
     ShowType,
-    TableMode
+    TableMode,
+    TableColumn,
+    StationTable,
+    StationTableRow,
+    ComplexFilterCondition
 } from '../../data.model';
 import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-select/dialog-select.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FilterService } from './../services/filter.service';
+import { FilterService, FilterColumn, Filter, ComplexFilter } from './../services/filter.service';
 
 interface StoreDataState {
     graphState: BasicGraphState;
     tableSettings: TableSettings;
 }
-
-interface Column {
-    id: string;
-    prop: string;
-    name: string;
-
-    comparator?: <T>(a: T, b: T) => number;
-}
-
-interface Filter {
-    filterText: string;
-    filterProps: string[];
-}
-
-interface FilterColumn extends Column, Filter { }
 
 @Component({
     selector: 'fcl-station-table',
@@ -58,16 +47,24 @@ export class StationTableComponent implements OnInit, OnDestroy {
     deliveryRows: any[];
     deliveryColumns: any[];
 
-    currentFilterColumns: FilterColumn[] = [];
     propToColumnMap: { [key: string]: FilterColumn } = {};
-    rootFilter: Filter = { filterText: null, filterProps: [] };
-
-    componentActive: boolean = true;
 
     showConfigurationSideBar$: Observable<boolean> = this.store.pipe(
         select(tracingSelectors.getShowConfigurationSideBar),
         takeWhile(() => this.componentActive)
     );
+
+    private currentFilterColumns: FilterColumn[] = [];
+    private rootFilter: Filter = {
+        filterText: null,
+        filterProps: []
+    };
+    private complexFilter: ComplexFilter = {
+        filterText: FilterService.COMPLEX_FILTER_NAME,
+        filterConditions: []
+    };
+
+    private componentActive: boolean = true;
 
     private currentStationColumnHeaders: string[];
     private filteredRows: any[] = [];
@@ -106,18 +103,22 @@ export class StationTableComponent implements OnInit, OnDestroy {
             err => this.alertService.error(`showConfigurationSideBar store subscription failed: ${err}`)
         );
 
-        this.filterService.standardFilterTerm$
+        const complexFilterConditions$: Observable<ComplexFilterCondition[]> = this.store
             .pipe(
-                takeWhile(() => this.componentActive)
-            )
-            .subscribe((filterTerm: string) => {
-                this.rootFilter.filterText = filterTerm;
-                this.onFilterChange();
-            },
-                (error => {
-                    throw new Error(`error receiving standard filter term: ${error}`);
-                })
-            );
+                select(tracingSelectors.getStationComplexFilterConditions)
+        );
+
+        combineLatest([
+            complexFilterConditions$,
+            this.filterService.standardFilterTerm$
+        ]).pipe(
+            tap(([complexConditions, standardFilterTerm]) => {
+                this.rootFilter.filterText = standardFilterTerm;
+                this.complexFilter.filterConditions = complexConditions;
+            }),
+            tap(() => this.onFilterChange()),
+            takeWhile(() => this.componentActive)
+        ).subscribe();
     }
 
     selectMoreStationColumns() {
@@ -145,7 +146,10 @@ export class StationTableComponent implements OnInit, OnDestroy {
     }
 
     onFilterChange() {
-        this.filteredRows = this.filterRows([].concat(this.currentFilterColumns, this.rootFilter));
+        this.filteredRows = this.filterService.filterRows(
+            [].concat(this.currentFilterColumns, this.rootFilter, this.complexFilter),
+            this.unfilteredRows
+        );
         this.stationRows = this.filteredRows;
         if (this.tableViewComponent) {
             this.tableViewComponent.recalculatePages();
@@ -194,9 +198,13 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
     private updateTable(newData: StationTable, tableSettings: TableSettings) {
         if (newData) {
+
             this.currentStationColumnHeaders = tableSettings.stationColumns;
             const stationColumns: TableColumn[] = newData.columns;
             const stationRows: StationTableRow[] = newData.rows;
+
+            this.store.dispatch(new tracingActions.SetStationColumnsForComplexFilterSSA({ stationColumns: stationColumns }));
+            this.store.dispatch(new tracingActions.SetStationRowsForComplexFilterSSA({ stationRows: stationRows }));
 
             const buttonColumn: any = {
                 name: ' ',
@@ -244,7 +252,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
             }, {} as { [key: string]: FilterColumn });
 
             this.rootFilter.filterProps = currentFilterColumns.map(filterColumn => filterColumn.prop);
-            const filters: Filter[] = [].concat(currentFilterColumns, this.rootFilter);
+            const filters: Filter[] = [].concat(currentFilterColumns, this.rootFilter, this.complexFilter);
 
             if (stationRows) {
                 let stationElements: StationTableRow[] = [];
@@ -261,7 +269,11 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 this.propToColumnMap = propToColumnMap;
                 this.currentFilterColumns = currentFilterColumns;
                 this.unfilteredRows = stationElements;
-                this.filteredRows = this.filterRows(filters);
+                this.filteredRows = this.filterService.filterRows(
+                    filters,
+                    this.unfilteredRows
+                );
+
                 this.stationRows = this.filteredRows;
             } else {
                 this.unfilteredRows = [];
@@ -271,34 +283,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
             this.tableViewComponent.recalculateTable();
         }
-    }
-
-    private filterRows(filters: Filter[]): any[] {
-
-        const filteredRows = this.unfilteredRows.filter(
-            row => filters.every((filterElem: Filter) => {
-                if (filterElem.filterText === null || filterElem.filterText === '') {
-                    return true;
-                } else {
-                    const filterText: string = filterElem.filterText.toLowerCase();
-
-                    return filterElem.filterProps.some(p => {
-                        const propValue = row[p];
-                        if (propValue === undefined || propValue === null) {
-                            return false;
-                        } else {
-                            const strValue: string = typeof propValue === 'string' ?
-                                propValue.toLowerCase() :
-                                propValue.toString();
-
-                            return strValue.includes(filterText);
-                        }
-                    });
-                }
-            })
-        );
-
-        return filteredRows;
     }
 
     private applySelection(state) {

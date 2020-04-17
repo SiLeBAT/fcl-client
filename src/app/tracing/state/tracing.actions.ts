@@ -2,7 +2,8 @@ import { Action } from '@ngrx/store';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, TableMode, FclData, ShowType, SelectedElements, Position,
-    SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData
+    SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
+    TableColumn, StationTableRow, ComplexFilterCondition
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -38,7 +39,10 @@ export enum TracingActionTypes {
     SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
     SetActiveMainTabIndexSSA = '[Configuration Layout] Set Active Main Tab Index',
     SetActiveFilterTabIndexSSA = '[Configuration Layout] Set Active Filter Tab Index',
-    SetActiveHighlightingTabIndexSSA = '[Configuration Layout] Set Active Highlighting Tab Index'
+    SetActiveHighlightingTabIndexSSA = '[Configuration Layout] Set Active Highlighting Tab Index',
+    SetStationColumnsForComplexFilterSSA = '[Station Table] Set Station Columns For Complex Filter',
+    SetStationRowsForComplexFilterSSA = '[Station Table] Set Station Rows For Complex Filter',
+    SetStationComplexFilterConditionsSSA = '[Complex Filter Component] Set Station Complex Filter Conditions'
 }
 
 export class TracingActivated implements Action {
@@ -223,6 +227,24 @@ export class SetActiveHighlightingTabIndexSSA implements Action {
     constructor(public payload: { activeHighlightingTabIndex: number }) {}
 }
 
+export class SetStationColumnsForComplexFilterSSA implements Action {
+    readonly type = TracingActionTypes.SetStationColumnsForComplexFilterSSA;
+
+    constructor(public payload: { stationColumns: TableColumn[] }) {}
+}
+
+export class SetStationRowsForComplexFilterSSA implements Action {
+    readonly type = TracingActionTypes.SetStationRowsForComplexFilterSSA;
+
+    constructor(public payload: { stationRows: StationTableRow[] }) {}
+}
+
+export class SetStationComplexFilterConditionsSSA implements Action {
+    readonly type = TracingActionTypes.SetStationComplexFilterConditionsSSA;
+
+    constructor(public payload: { stationFilterConditions: ComplexFilterCondition[] }) {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -254,4 +276,7 @@ export type TracingActions =
     | SetHighlightingSettingsSOA
     | SetActiveMainTabIndexSSA
     | SetActiveFilterTabIndexSSA
-    | SetActiveHighlightingTabIndexSSA;
+    | SetActiveHighlightingTabIndexSSA
+    | SetStationColumnsForComplexFilterSSA
+    | SetStationRowsForComplexFilterSSA
+    | SetStationComplexFilterConditionsSSA;

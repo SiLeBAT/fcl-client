@@ -176,3 +176,28 @@ export const getConfigurationTabIndices = createSelector(
     getTracingFeatureState,
     state => state.configurationTabIndices
 );
+
+export const getFilterSettings = createSelector(
+    getFclData,
+    fclData => fclData.filterSettings
+);
+
+export const getComplexFilterSettings = createSelector(
+    getFilterSettings,
+    filterSettings => filterSettings.complexFilterSettings
+);
+
+export const getStationColumnsForComplexFilter = createSelector(
+    getComplexFilterSettings,
+    complexFilterSettings => complexFilterSettings.stationColumns
+);
+
+export const getStationRowsForComplexFilter = createSelector(
+    getComplexFilterSettings,
+    complexFilterSettings => complexFilterSettings.stationRows
+);
+
+export const getStationComplexFilterConditions = createSelector(
+    getComplexFilterSettings,
+    complexFilterSettings => complexFilterSettings.stationFilterConditions
+);

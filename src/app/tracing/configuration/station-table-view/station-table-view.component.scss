@@ -24,8 +24,8 @@
     padding-bottom: 0.4rem !important;
 }
 
-.datatable-header-cell-label,
-.datatable-header-cell-template-wrap {
+.fcl-datatable .datatable-header-cell-label,
+.fcl-datatable .datatable-header-cell-template-wrap {
     font-size: 0.9rem;
     color: rgb(0, 0, 0);
     display: flex;
@@ -74,7 +74,7 @@
     padding-bottom: 0 !important;
 }
 
-.datatable-body-cell-label {
+.fcl-datatable .datatable-body-cell-label {
     font-size: 0.8rem;
     font-weight: 500;
     color: rgb(0, 0, 0);
@@ -106,7 +106,7 @@
     background-color: rgb(255, 255, 255);
 }
 
-.datatable-header-cell.fcl-more-columns-header-cell {
+.fcl-datatable .datatable-header-cell.fcl-more-columns-header-cell {
     padding: 0 !important;
     display: flex !important;
     height: 100%;

@@ -95,7 +95,8 @@ describe('IOService', () => {
                     }
                 ]
             },
-            tableSettings: null
+            tableSettings: null,
+            filterSettings: null
         };
 
         const expectedExportData: JsonData = {

@@ -1,0 +1,119 @@
+<div>
+
+    <form
+        class="fcl-complex-filter-form"
+        [formGroup]="filterConditionForm">
+
+        <div
+            formArrayName="filterConditionGroups"
+            *ngFor="let filterConditionElement of filterConditionGroups.controls; let i=index">
+
+            <div
+                class="fcl-complex-filter-container"
+                [formGroupName]="i">
+
+                <mat-form-field
+                    class="fcl-complex-filter-form-field-select"
+                    appearance="outline"
+                    color="primary">
+                    <mat-select
+                        formControlName="propertyControl"
+                        placeholder="property"
+                        (selectionChange)="onPropertyChange($event, i)">
+                        <ng-container *ngFor="let property of stationColumns">
+                            <mat-option
+                            class="fcl-filter-select-option"
+                            [value]="property.id">
+                            {{ property.name }}
+                        </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+
+                <mat-form-field
+                    class="fcl-complex-filter-form-field-select"
+                    appearance="outline"
+                    color="primary">
+                    <mat-select
+                        formControlName="operationControl"
+                        placeholder="op">
+                        <ng-container *ngFor="let operationKey of extendedOperationTypeKeys">
+                            <mat-option
+                                class="fcl-filter-select-option"
+                                [value]="ExtendedOperationType[operationKey]">
+                                {{ ExtendedOperationType[operationKey] }}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="fcl-complex-filter-form-field-select" appearance="outline" color="primary">
+                    <input
+                        type="text"
+                        matInput
+                        placeholder="value"
+                        formControlName="valueControl"
+                        autocomplete="off"
+                        (keyup)="onValueKeyup($event, i)"
+                        [matAutocomplete]="filterValues"
+                    />
+                    <mat-autocomplete #filterValues="matAutocomplete">
+                        <ng-container *ngFor="let item of valueList[i]">
+                            <mat-option
+                                class="fcl-filter-select-option"
+                                [value]="item">
+                                {{ item }}
+                            </mat-option>
+                        </ng-container>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-form-field
+                    *ngIf="i < (filterConditionGroups.length - 1)"
+                    class="fcl-complex-filter-form-field-select"
+                    appearance="outline"
+                    color="primary">
+                    <mat-label>junktor</mat-label>
+                    <mat-select
+                        formControlName="junktorControl">
+                        <ng-container *ngFor="let junktorKey of junktorTypeKeys">
+                            <mat-option
+                                class="fcl-filter-select-option"
+                                [value]="JunktorType[junktorKey]">
+                                {{ JunktorType[junktorKey] }}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+                <button
+                    *ngIf="i == (filterConditionGroups.length - 1)"
+                    mat-stroked-button
+                    class="fcl-filter-condition-button"
+                    matTooltip="Add filter condition"
+                    matTooltipPosition="above"
+                    color="accent"
+                    (click)="addFilterConditionElement()">
+                    <mat-icon class="fcl-add-filter-condition-icon">add</mat-icon>
+                </button>
+
+                <button
+                    mat-stroked-button
+                    class="fcl-filter-condition-button"
+                    matTooltip="Remove filter condition"
+                    matTooltipPosition="above"
+                    color="accent"
+                    [disabled]="filterConditionGroups.length == 1"
+                    (click)="removeFilterConditionElement(i)">
+                    <mat-icon class="fcl-add-filter-condition-icon">remove</mat-icon>
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+
