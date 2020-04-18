@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bed8dba_c60429ba",
+        "filename": "src/app/tracing/configuration/complex-filter/complex-filter.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-04-18T00:16:14Z",
+      "side": 1,
+      "message": "Is this filter component only for stations? Or is this only a temporary solution? \nI guess it will be adapted in one of the next tickets, so it can be used for deliveries to.",
+      "revId": "b5a23f1ed4abc9d3eb2278589cbc01d5f3f9190b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
