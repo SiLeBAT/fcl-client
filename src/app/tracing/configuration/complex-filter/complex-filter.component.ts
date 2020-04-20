@@ -17,8 +17,10 @@ export class ComplexFilterComponent implements OnInit, OnDestroy {
     stationColumns: TableColumn[];
     ExtendedOperationType = ExtendedOperationType;
     extendedOperationTypeKeys: string[];
+    extendedOperationTypeValues: string[];
     JunktorType = JunktorType;
     junktorTypeKeys: string[];
+    junktorTypeValues: string[];
     propToValues: Map<string, string[]>;
     componentActive: boolean = true;
 
@@ -30,6 +32,8 @@ export class ComplexFilterComponent implements OnInit, OnDestroy {
 
         this.extendedOperationTypeKeys = Object.keys(ExtendedOperationType);
         this.junktorTypeKeys = Object.keys(JunktorType);
+        this.extendedOperationTypeValues = this.extendedOperationTypeKeys.map(key => ExtendedOperationType[key]);
+        this.junktorTypeValues = this.junktorTypeKeys.map(key => JunktorType[key]);
 
         this.propToValues = new Map();
 

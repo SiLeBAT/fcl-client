@@ -16,8 +16,10 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
     @Input() propToValues: Map<string, string[]>;
     @Input() ExtendedOperationType: ExtendedOperationType;
     @Input() extendedOperationTypeKeys: string[];
+    @Input() extendedOperationTypeValues: string[];
     @Input() JunktorType: JunktorType;
     @Input() junktorTypeKeys: string[];
+    @Input() junktorTypeValues: string[];
     @Output() complexFilterConditions = new EventEmitter<ComplexFilterCondition[]>();
 
     filterConditionForm: FormGroup;
@@ -50,12 +52,12 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
         ).subscribe();
     }
 
-    buildFilterConditionGroup(): FormGroup {
+    buildFilterConditionGroup(property: string, operation: string, value: string, junktor: string): FormGroup {
         return this.formBuilder.group({
-            propertyControl: ['', Validators.required],
-            operationControl: '',
-            valueControl: '',
-            junktorControl: JunktorType[this.junktorTypeKeys[0]]
+            propertyControl: [property, Validators.required],
+            operationControl: operation,
+            valueControl: value,
+            junktorControl: junktor
         });
     }
 
@@ -63,10 +65,37 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
         return this.filterConditionForm.get('filterConditionGroups') as FormArray;
     }
 
-    addFilterConditionElement() {
-        this.filterConditionGroups.push(this.buildFilterConditionGroup());
+    addFilterConditionElement(index: number) {
+        const filterGroupToCopy: FormGroup = this.filterConditionGroups.controls[index] as FormGroup;
+        const propertyValue = filterGroupToCopy.controls['propertyControl'].value;
+        const operationValue = filterGroupToCopy.controls['operationControl'].value;
+
+        let junktorValue;
+        if (index > 0) {
+            junktorValue = (this.filterConditionGroups.controls[index - 1] as FormGroup)
+                            .controls['junktorControl'].value;
+        } else {
+            junktorValue = filterGroupToCopy.controls['junktorControl'].value;
+        }
+
+        const operationIndex = this.extendedOperationTypeValues.indexOf(operationValue);
+        const newOperationValue = (operationIndex > -1) ? this.extendedOperationTypeKeys[operationIndex] : '';
+        const junktorIndex = this.junktorTypeValues.indexOf(junktorValue);
+        const newJunktorValue = (junktorIndex > -1) ? this.junktorTypeKeys[junktorIndex] : this.junktorTypeKeys[0];
+
+        filterGroupToCopy.controls['junktorControl'].setValue(JunktorType[newJunktorValue]);
+
+        this.filterConditionGroups.push(this.buildFilterConditionGroup(
+            propertyValue,
+            ExtendedOperationType[newOperationValue],
+            '',
+            JunktorType[newJunktorValue])
+        );
+
         this.valueList.push([]);
         this.unfilteredValueList.push([]);
+
+        this.onPropertyChange(propertyValue, index + 1);
     }
 
     removeFilterConditionElement(index: number) {
@@ -80,8 +109,7 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
         }
     }
 
-    onPropertyChange(event: MatSelectChange, index: number) {
-        const selectedProperty: string = event.value;
+    onPropertyChange(selectedProperty: string, index: number) {
         this.valueList[index] = this.propToValues.get(selectedProperty);
         this.unfilteredValueList[index] = this.propToValues.get(selectedProperty);
     }
@@ -105,7 +133,12 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
 
     private initializeFilter() {
         this.filterConditionForm = this.formBuilder.group({
-            filterConditionGroups: this.formBuilder.array([this.buildFilterConditionGroup()])
+            filterConditionGroups: this.formBuilder.array([this.buildFilterConditionGroup(
+                '',
+                '',
+                '',
+                JunktorType[this.junktorTypeKeys[0]])]
+            )
         });
     }
 

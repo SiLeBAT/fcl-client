@@ -19,7 +19,7 @@
                     <mat-select
                         formControlName="propertyControl"
                         placeholder="property"
-                        (selectionChange)="onPropertyChange($event, i)">
+                        (selectionChange)="onPropertyChange($event.value, i)">
                         <ng-container *ngFor="let property of stationColumns">
                             <mat-option
                             class="fcl-filter-select-option"
@@ -94,7 +94,7 @@
                     matTooltip="Add filter condition"
                     matTooltipPosition="above"
                     color="accent"
-                    (click)="addFilterConditionElement()">
+                    (click)="addFilterConditionElement(i)">
                     <mat-icon class="fcl-add-filter-condition-icon">add</mat-icon>
                 </button>
 
