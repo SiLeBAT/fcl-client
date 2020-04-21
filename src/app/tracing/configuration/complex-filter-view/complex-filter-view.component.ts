@@ -1,8 +1,7 @@
 import { TableColumn, ExtendedOperationType, JunktorType, ComplexFilterCondition } from './../../data.model';
 import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { map, tap, filter } from 'rxjs/operators';
+import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
     selector: 'fcl-complex-filter-view',
@@ -43,8 +42,11 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
                     return filterGroups.filter((filterGroup: FormGroup) => {
                         return (
                             filterGroup['propertyControl'] !== '' &&
+                            filterGroup['propertyControl'] !== null &&
                             filterGroup['operationControl'] !== '' &&
-                            filterGroup['valueControl'] !== ''
+                            filterGroup['operationControl'] !== null &&
+                            filterGroup['valueControl'] !== '' &&
+                            filterGroup['valueControl'] !== null
                         );
                     });
                 }),
