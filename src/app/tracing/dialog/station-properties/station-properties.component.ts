@@ -139,7 +139,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     otherPropertiesHidden = true;
     properties: Properties = {};
 
-    vipProperties: string[] = ['id', 'Address', 'Country', 'typeOfBusiness', 'score', 'outbreak', 'forward'];
+    vipProperties: string[] = ['id', 'address', 'country', 'typeOfBusiness', 'score', 'outbreak', 'forward'];
     notListedProps: string[] = ['name', 'incoming', 'outgoing'];
     otherProperties: string[] = [];
 
@@ -200,7 +200,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     private initProperties(station: StationData): void {
         const properties: Properties = {};
-        const hiddenProps = Utils.createStringSet(this.notListedProps);
+        const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
         .forEach(key => {
             const value = station[key];
@@ -217,7 +217,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             };
         });
 
-        const vipProps = Utils.createStringSet(this.vipProperties);
+        const vipProps = Utils.createSimpleStringSet(this.vipProperties);
         this.otherProperties = Object.keys(properties).filter(key => !vipProps[key]).slice();
         this.otherProperties.sort();
         // add default for missing props

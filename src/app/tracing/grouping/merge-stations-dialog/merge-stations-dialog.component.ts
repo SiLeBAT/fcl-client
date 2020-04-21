@@ -45,7 +45,7 @@ export class MergeStationsDialogComponent {
         public dialogRef: MatDialogRef<MergeStationsDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: MergeStationsDialogData
     ) {
-        const memberSet = Utils.createStringSet(data.memberIds);
+        const memberSet = Utils.createSimpleStringSet(data.memberIds);
         this.containedGroups = data.state.groupSettings.filter(g => memberSet[g.id]);
         if (this.containedGroups.length === 1) {
             this.inputFormControl.setValue(this.containedGroups[0].id);

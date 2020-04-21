@@ -3,7 +3,20 @@ interface ViewData {
     invisible: boolean;
 }
 
+interface PropMap {
+    [key: string]: string;
+}
+
+interface FclDataSourceInfo {
+    name?: string;
+    data?: any;
+    propMaps?: {
+        stationPropMap?: PropMap;
+        deliveryPropMap?: PropMap;
+    };
+}
 export interface FclData {
+    source: FclDataSourceInfo;
     fclElements: FclElements;
     graphSettings: GraphSettings;
     tableSettings: TableSettings;

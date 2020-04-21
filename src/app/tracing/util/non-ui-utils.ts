@@ -4,6 +4,9 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Constants } from './constants';
 import { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+
+type USwitch<A, B> = (A | unknown extends A ? B : A) & A;
 
 export class Utils {
 
@@ -134,7 +137,7 @@ export class Utils {
         }
     }
 
-    static arrayToMap<VT, KT>(array: VT[], keyFun: (value: VT) => KT) {
+    static arrayToMap<VT, KT>(array: VT[], keyFun: (value: VT) => KT): Map<KT, VT> {
         const result: Map<KT, VT> = new Map();
         for (const value of array) {
             result.set(keyFun(value), value);
@@ -142,15 +145,23 @@ export class Utils {
         return result;
     }
 
-    static createReverseMap<X, Y, Z>(map: Map<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
-        const result: Map<Z, X> = new Map();
-        map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
-        return result;
+    static createReverseMap<X, Y>(map: Map<X, Y> | ImmutableMap<X, Y>): Map<Y, X> {
+        return (
+            map['asImmutable'] ?
+            Utils.getReverseMapOfImmutableMap(map as ImmutableMap<X, Y>) :
+            Utils.getReverseMapOfMap(map as Map<X, Y>)
+        );
     }
 
-    static getReverseOfImmutableMap<X, Y, Z>(map: ImmutableMap<X, Y>, reverseFun: (y: Y) => Z): Map<Z, X> {
-        const result: Map<Z, X> = new Map();
-        map.forEach((value: Y, key: X) => result.set(reverseFun(value), key));
+    private static getReverseMapOfMap<X, Y>(map: Map<X, Y>): Map<Y, X> {
+        return new Map(
+            Array.from(map.entries()).map(([fromProp, toProp]) => [toProp, fromProp])
+        );
+    }
+
+    private static getReverseMapOfImmutableMap<X, Y>(map: ImmutableMap<X, Y>): Map<Y, X> {
+        const result: Map<Y, X> = new Map();
+        map.forEach((value: Y, key: X) => result.set(value, key));
         return result;
     }
 
@@ -224,31 +235,41 @@ export class Utils {
         return result;
     }
 
-    static createObjectMap<T>(arr: T[], keyMap: (e: T) => string): {[key: string]: T} {
-        const result: {[key: string]: T} = {};
-        for (const value of arr) {
-            result[keyMap(value)] = value;
+    static createObjectFromMap<T>(map: Map<string, T>): { [key: string]: T } {
+        return _.fromPairs(Array.from(map.entries()));
+    }
+
+    static createObjectFromArray<
+        V,
+        X extends USwitch<W, V>,
+        W
+    >(
+        arr: V[],
+        keyMap: (v: V) => string,
+        valueMap?: (v: V) => W
+    ): { [key: string]: X } {
+        const result: { [key: string]: X } = {};
+        if (valueMap) {
+            for (const value of arr) {
+                result[keyMap(value)] = valueMap(value) as X;
+            }
+        } else {
+            for (const value of arr) {
+                result[keyMap(value)] = value as X;
+            }
         }
         return result;
     }
 
-    static createMap<T>(arr: T[], keyMap: (T) => string): {[key: string]: T} {
-        const result: {[key: string]: T} = {};
-        for (const value of arr) {
-            result[keyMap(value)] = value;
-        }
-        return result;
+    static transformMap<K, V, TK, TV>(
+        map: Map<K, V>,
+        keyMapper: (k: K, v: V) => TK,
+        valueMapper: (k: K, v: V) => TV
+    ): Map<TK, TV> {
+        return new Map(Array.from(map.entries()).map(([k, v]) => [keyMapper(k, v), valueMapper(k, v)]));
     }
 
-    static createStringSet(arr: string[]): {[key: string]: boolean} {
-        const result: {[key: string]: boolean} = {};
-        for (const value of arr) {
-            result[value] = true;
-        }
-        return result;
-    }
-
-    static createObjectStringSet(arr: string[]): {[key: string]: boolean} {
+    static createSimpleStringSet(arr: string[]): {[key: string]: boolean} {
         const result: {[key: string]: boolean} = {};
         for (const value of arr) {
             result[value] = true;

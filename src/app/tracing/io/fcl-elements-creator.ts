@@ -1,5 +1,5 @@
 import { FclData } from '../data.model';
-import { Constants } from './data-mappings/data-mappings-v1';
+import * as DataMapper from './data-mappings/data-mappings-v1';
 
 enum ValueType {
     STRING = 'string' as any,
@@ -54,22 +54,27 @@ export function createFclElements(fclData: FclData): {
 }
 
 function createStationTable(fclData: FclData): DataTable {
+    const propMap = (
+        fclData.source.propMaps && fclData.source.propMaps.stationPropMap ?
+        fclData.source.propMaps.stationPropMap :
+        DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject()
+    );
     return {
-        columnProperties: collectStationProperties(fclData),
+        columnProperties: collectStationProperties(fclData, propMap),
         data: fclData.fclElements.stations.map(station => {
             const dataRow: DataRow = [];
-            dataRow.push({ id: Constants.STATION_PROP_INT_TO_EXT_MAP.get('id').columnId, value: station.id });
+            dataRow.push({ id: propMap['id'], value: station.id });
             if (station.name !== undefined) {
-                dataRow.push({ id: Constants.STATION_PROP_INT_TO_EXT_MAP.get('name').columnId, value: station.name });
+                dataRow.push({ id: propMap['name'], value: station.name });
             }
             if (station.lat !== undefined) {
-                dataRow.push({ id: Constants.STATION_PROP_INT_TO_EXT_MAP.get('lat').columnId, value: station.lat });
+                dataRow.push({ id: propMap['lat'], value: station.lat });
             }
             if (station.lon !== undefined) {
-                dataRow.push({ id: Constants.STATION_PROP_INT_TO_EXT_MAP.get('lon').columnId, value: station.lon });
+                dataRow.push({ id: propMap['lon'], value: station.lon });
             }
             station.properties.forEach(prop => {
-                dataRow.push({ id: prop.name, value: prop.value });
+                dataRow.push({ id: propMap[prop.name] || prop.name, value: prop.value });
             });
             return dataRow;
         })
@@ -77,21 +82,26 @@ function createStationTable(fclData: FclData): DataTable {
 }
 
 function createDeliveryTable(fclData: FclData): DataTable {
+    const propMap = (
+        fclData.source.propMaps && fclData.source.propMaps.deliveryPropMap ?
+        fclData.source.propMaps.deliveryPropMap :
+        DataMapper.DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+    );
     return {
-        columnProperties: collectDeliveryProperties(fclData),
+        columnProperties: collectDeliveryProperties(fclData, propMap),
         data: fclData.fclElements.deliveries.map(delivery => {
             const dataRow: DataRow = [];
-            dataRow.push({ id: Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('id').columnId, value: delivery.id });
-            dataRow.push({ id: Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('source').columnId, value: delivery.source });
-            dataRow.push({ id: Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('target').columnId, value: delivery.target });
+            dataRow.push({ id: propMap['id'], value: delivery.id });
+            dataRow.push({ id: propMap['source'], value: delivery.source });
+            dataRow.push({ id: propMap['target'], value: delivery.target });
             if (delivery.name !== undefined) {
-                dataRow.push({ id: Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('name').columnId, value: delivery.name });
+                dataRow.push({ id: propMap['name'], value: delivery.name });
             }
             if (delivery.lot !== undefined) {
-                dataRow.push({ id: Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('lot').columnId, value: delivery.lot });
+                dataRow.push({ id: propMap['lot'], value: delivery.lot });
             }
             delivery.properties.forEach(prop => {
-                dataRow.push({ id: prop.name, value: prop.value });
+                dataRow.push({ id: propMap[prop.name] || prop.name, value: prop.value });
             });
             return dataRow;
         })
@@ -99,8 +109,8 @@ function createDeliveryTable(fclData: FclData): DataTable {
 }
 
 function createDeliveryRelationTable(fclData: FclData): DataTable {
-    const columnSourceId = Constants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO.get('source').columnId;
-    const columnTargetId = Constants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO.get('target').columnId;
+    const columnSourceId = DataMapper.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO.get('source').columnId;
+    const columnTargetId = DataMapper.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO.get('target').columnId;
     return {
         columnProperties: [
             { id: columnSourceId, type: ValueType.STRING.toString() },
@@ -117,39 +127,43 @@ function createDeliveryRelationTable(fclData: FclData): DataTable {
     };
 }
 
-function collectDeliveryProperties(fclData: FclData): ColumnProperty[] {
+function collectDeliveryProperties(fclData: FclData, propMap: { [key: string]: string }): ColumnProperty[] {
     const propCollector = new PropCollector();
-    propCollector.push(Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('id').columnId, ValueType.STRING);
-    propCollector.push(Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('source').columnId, ValueType.STRING);
-    propCollector.push(Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('target').columnId, ValueType.STRING);
+    propCollector.push(propMap['id'], ValueType.STRING);
+    propCollector.push(propMap['source'], ValueType.STRING);
+    propCollector.push(propMap['target'], ValueType.STRING);
     if (fclData.fclElements.deliveries.some(d => d.name !== undefined)) {
-        propCollector.push(Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('name').columnId, ValueType.STRING);
+        propCollector.push(propMap['name'], ValueType.STRING);
     }
     if (fclData.fclElements.deliveries.some(d => d.lot !== undefined)) {
-        propCollector.push(Constants.DELIVERY_PROP_INT_TO_EXT_MAP.get('lot').columnId, ValueType.STRING);
+        propCollector.push(propMap['lot'], ValueType.STRING);
     }
     fclData.fclElements.deliveries.forEach(
-        delivery => delivery.properties.forEach(stringProp => propCollector.push(stringProp.name, ValueType.STRING))
+        delivery => delivery.properties.forEach(
+            stringProp => propCollector.push(propMap[stringProp.name] || stringProp.name, ValueType.STRING)
+        )
     );
 
     return propCollector.getList();
 }
 
-function collectStationProperties(fclData: FclData): ColumnProperty[] {
+function collectStationProperties(fclData: FclData, propMap: { [key: string]: string }): ColumnProperty[] {
     const propCollector = new PropCollector();
 
-    propCollector.push(Constants.STATION_PROP_INT_TO_EXT_MAP.get('id').columnId, ValueType.STRING);
+    propCollector.push(propMap['id'], ValueType.STRING);
     if (fclData.fclElements.stations.some(s => s.name !== undefined)) {
-        propCollector.push(Constants.STATION_PROP_INT_TO_EXT_MAP.get('name').columnId, ValueType.STRING);
+        propCollector.push(propMap['name'], ValueType.STRING);
     }
     if (fclData.fclElements.stations.some(s => s.lat !== undefined)) {
-        propCollector.push(Constants.STATION_PROP_INT_TO_EXT_MAP.get('lat').columnId, ValueType.DOUBLE);
+        propCollector.push(propMap['lat'], ValueType.DOUBLE);
     }
     if (fclData.fclElements.stations.some(s => s.lon !== undefined)) {
-        propCollector.push(Constants.STATION_PROP_INT_TO_EXT_MAP.get('lon').columnId, ValueType.DOUBLE);
+        propCollector.push(propMap['lon'], ValueType.DOUBLE);
     }
     fclData.fclElements.stations.forEach(
-        station => station.properties.forEach(stringProp => propCollector.push(stringProp.name, ValueType.STRING))
+        station => station.properties.forEach(
+            stringProp => propCollector.push(propMap[stringProp.name] || stringProp.name, ValueType.STRING)
+        )
     );
 
     return propCollector.getList();

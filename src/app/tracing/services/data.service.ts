@@ -177,11 +177,11 @@ export class DataService {
     private applySelection(state: BasicGraphState, data: DataServiceData) {
         data.stations.forEach(s => s.selected = false);
         data.getStatById(state.selectedElements.stations).forEach(s => s.selected = true);
-        data.statSel = Utils.createStringSet(state.selectedElements.stations);
+        data.statSel = Utils.createSimpleStringSet(state.selectedElements.stations);
 
         data.deliveries.forEach(d => d.selected = false);
         data.getDelById(state.selectedElements.deliveries).forEach(d => d.selected = true);
-        data.delSel = Utils.createStringSet(state.selectedElements.deliveries);
+        data.delSel = Utils.createSimpleStringSet(state.selectedElements.deliveries);
     }
 
     private updateCache(state: BasicGraphState,

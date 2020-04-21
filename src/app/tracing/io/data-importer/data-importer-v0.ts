@@ -30,12 +30,6 @@ export class DataImporterV0 implements IDataImporter {
                 data.hasOwnProperty('stations') &&
                 data.hasOwnProperty('deliveries') &&
                 data.hasOwnProperty('deliveriesRelations');
-            const containsDataWithSettings =
-                data.hasOwnProperty('elements') &&
-                data.hasOwnProperty('layout') &&
-                data.hasOwnProperty('gisLayout') &&
-                data.hasOwnProperty('graphSettings') &&
-                data.hasOwnProperty('tableSettings');
 
             if (containsRawData) {
                 this.preprocessRawData(data, fclData);
@@ -86,7 +80,7 @@ export class DataImporterV0 implements IDataImporter {
         const graphSettings: GraphSettings = {
             ...fclData.graphSettings,
             type:  data.graphSettings.type || fclData.graphSettings.type,
-            nodeSize: data.graphSettings.nodeSize || fclData.graphSettings.type,
+            nodeSize: data.graphSettings.nodeSize || fclData.graphSettings.nodeSize,
             fontSize: data.graphSettings.fontSize || fclData.graphSettings.fontSize,
             mergeDeliveriesType: (
                 data.graphSettings.mergeDeliveries !== null && data.graphSettings.mergeDeliveries !== undefined ?

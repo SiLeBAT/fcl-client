@@ -59,6 +59,7 @@ export class Constants {
     static readonly DELIVERY_PROPERTIES = List(
         Object.keys(Constants.DELIVERY_DATA)
     );
+
     static readonly PROPERTIES: Map<string, { name: string; color: Color }> = Map(
         {
             id: { name: 'ID', color: null },

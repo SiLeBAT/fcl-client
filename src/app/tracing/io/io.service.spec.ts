@@ -5,6 +5,7 @@ import { IOService } from './io.service';
 import { FclData, GraphType, ObservedType, MergeDeliveriesType, MapType } from '../data.model';
 import { JsonData, VERSION } from './ext-data-model.v1';
 import { Constants } from '../util/constants';
+import { DEFAULT_STATION_PROP_INT_TO_EXT_MAP, DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP } from './data-mappings/data-mappings-v1';
 
 describe('IOService', () => {
 
@@ -28,8 +29,13 @@ describe('IOService', () => {
     });
 
     it('should generate export data correctly', async(() => {
-
         const fclData: FclData = {
+            source: {
+                propMaps: {
+                    stationPropMap: DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+                    deliveryPropMap: DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+                }
+            },
             fclElements: {
                 stations: [
                     { id: 'S1', name: 'Station 1', lat: null, lon: null, incoming: [], outgoing: ['D1'], connections: [], properties: [] },
@@ -107,21 +113,21 @@ describe('IOService', () => {
                     columnProperties: [
                         { id: 'ID', type: 'string' },
                         { id: 'Name', type: 'string' },
-                        { id: 'GeocodingLatitude', type: 'double' },
-                        { id: 'GeocodingLongitude', type: 'double' }
+                        { id: 'Latitude', type: 'double' },
+                        { id: 'Longitude', type: 'double' }
                     ],
                     data: [
                         [
                             { id: 'ID', value: 'S1' },
                             { id: 'Name', value: 'Station 1' },
-                            { id: 'GeocodingLatitude', value: null },
-                            { id: 'GeocodingLongitude', value: null }
+                            { id: 'Latitude', value: null },
+                            { id: 'Longitude', value: null }
                         ],
                         [
                             { id: 'ID', value: 'S2' },
                             { id: 'Name', value: 'Station 2' },
-                            { id: 'GeocodingLatitude', value: null },
-                            { id: 'GeocodingLongitude', value: null }
+                            { id: 'Latitude', value: null },
+                            { id: 'Longitude', value: null }
                         ]
                     ]
                 },
