@@ -1,5 +1,6 @@
 import { FclData, GroupType, ObservedType, GraphType, Layout, StationTracingSettings, MergeDeliveriesType } from '../data.model';
-import { Constants } from './data-mappings/data-mappings-v1';
+import * as DataMapper from './data-mappings/data-mappings-v1';
+import * as ExtDataConstants from './ext-data-constants.v1';
 import { Utils } from './../util/non-ui-utils';
 import { createFclElements } from './fcl-elements-creator';
 import { VERSION, JsonData, ViewData } from './ext-data-model.v1';
@@ -25,8 +26,9 @@ export class DataExporter {
     }
 
     private static setGroupData(fclData: FclData, rawData: JsonData) {
-        const intToExtGroupTypeMap: Map<GroupType, string> = Utils.getReverseOfImmutableMap(
-            Constants.GROUPTYPE_EXT_TO_INT_MAP, groupType => groupType);
+        const intToExtGroupTypeMap: Map<GroupType, string> = Utils.createReverseMap(
+            DataMapper.GROUPTYPE_EXT_TO_INT_MAP
+        );
 
         if (!rawData.settings) {
             rawData.settings = createDefaultSettings();
@@ -88,22 +90,21 @@ export class DataExporter {
             viewData.node = {};
         }
 
-        Utils.setProperty(viewData, Constants.SHOW_LEGEND, fclData.graphSettings.showLegend);
-        Utils.setProperty(viewData, Constants.SKIP_UNCONNECTED_STATIONS, fclData.graphSettings.skipUnconnectedStations);
+        Utils.setProperty(viewData, ExtDataConstants.SHOW_LEGEND, fclData.graphSettings.showLegend);
+        Utils.setProperty(viewData, ExtDataConstants.SKIP_UNCONNECTED_STATIONS, fclData.graphSettings.skipUnconnectedStations);
 
         viewData.edge.joinEdges = fclData.graphSettings.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE;
-        viewData.edge.mergeDeliveriesType = Utils.getReverseOfImmutableMap(
-            Constants.MERGE_DEL_TYPE_EXT_TO_INT_MAP,
-            mergeDeliveriesType => mergeDeliveriesType
+        viewData.edge.mergeDeliveriesType = Utils.createReverseMap(
+            DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP
         ).get(fclData.graphSettings.mergeDeliveriesType);
         viewData.edge.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
 
-        Utils.setProperty(viewData, Constants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
+        Utils.setProperty(viewData, ExtDataConstants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
 
-        Utils.setProperty(viewData, Constants.GISGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.gisLayout));
-        Utils.setProperty(viewData, Constants.SCHEMAGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.schemaLayout));
+        Utils.setProperty(viewData, ExtDataConstants.GISGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.gisLayout));
+        Utils.setProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.schemaLayout));
 
-        Utils.setProperty(viewData, Constants.NODE_POSITIONS, Object.keys(fclData.graphSettings.stationPositions).map(key => ({
+        Utils.setProperty(viewData, ExtDataConstants.NODE_POSITIONS, Object.keys(fclData.graphSettings.stationPositions).map(key => ({
             id: key,
             position: fclData.graphSettings.stationPositions[key]
         })));
