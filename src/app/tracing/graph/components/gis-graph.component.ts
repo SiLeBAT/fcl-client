@@ -177,7 +177,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
         this.hoverDeliveriesSubjectSubscription = this.hoverDeliveriesSubject.subscribe(
             ids => {
-                const edgeIds = NonUIUtils.createStringSet(
+                const edgeIds = NonUIUtils.createSimpleStringSet(
                     ids
                         .map(id => this.cachedData.delIdToEdgeDataMap[id])
                         .filter(data => !!data)

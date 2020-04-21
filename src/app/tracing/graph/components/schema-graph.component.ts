@@ -151,7 +151,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
         this.hoverDeliveriesSubjectSubscription = this.hoverDeliveriesSubject.subscribe(
             ids => {
-                const edgeIds = Utils.createStringSet(
+                const edgeIds = Utils.createSimpleStringSet(
                     ids.map(id => this.cachedData.delIdToEdgeDataMap[id]).filter(data => !!data).map(data => data.id)
                 );
 
@@ -286,7 +286,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     performLayoutAction(action: LayoutAction) {
-        const nodeSet = Utils.createObjectStringSet(action.payload.nodeIds);
+        const nodeSet = Utils.createSimpleStringSet(action.payload.nodeIds);
         const isTrueSubSet = action.payload.nodeIds.length > 0 && action.payload.nodeIds.length < this.cy.nodes().size();
         const nodes = isTrueSubSet ? this.cy.nodes().filter(n => nodeSet[n.id()]) : this.cy.nodes();
         const oldCenter = Utils.getCenter(nodes.map(n => n.position()));

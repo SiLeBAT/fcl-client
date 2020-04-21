@@ -14,10 +14,11 @@ import { getJsonFromFile } from './io-utils';
 })
 export class IOService {
 
-    private rawData: any;
+    // private rawData: any;
 
     private async preprocessData(data: any): Promise<FclData> {
         const fclData: FclData = createInitialFclDataState();
+        fclData.source = {};
         await DataImporter.preprocessData(data, fclData, this.httpClient);
         return fclData;
     }
@@ -26,15 +27,12 @@ export class IOService {
 
     getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === 'string') {
-            let rawData: any;
             return this.httpClient.get(dataSource)
               .toPromise()
               .then(response => {
-                  rawData = response;
                   return this.preprocessData(response);
               })
               .then(data => {
-                  this.rawData = rawData;
                   return data;
               });
         } else if (dataSource instanceof File) {
@@ -49,8 +47,8 @@ export class IOService {
                         const rawData = JSON.parse(contents.result);
                         this.preprocessData(rawData)
                         .then(data => {
-                          this.rawData = rawData;
-                          resolve(data);
+                            data.source.name = file.name;
+                            resolve(data);
                         })
                         .catch(e => {
                             reject(e);
@@ -103,11 +101,15 @@ export class IOService {
     }
 
     getExportData(data: FclData): Promise<any> {
-        if (this.rawData) {
+        if (data.source && data.source.data) {
             const dataImporter = new DataImporterV1(this.httpClient);
-            return dataImporter.isDataFormatSupported(this.rawData).then(
+            return dataImporter.isDataFormatSupported(data.source.data).then(
                 isSupported => {
-                    const exportData: any = isSupported ? this.rawData : createEmptyJson();
+                    const exportData: any = (
+                        isSupported ?
+                        JSON.parse(JSON.stringify(data.source.data)) :
+                        createEmptyJson()
+                    );
                     DataExporter.exportData(data, exportData);
                     return exportData;
                 }

@@ -4,11 +4,6 @@ import {
     TracingSettings, ObservedType
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
-import { DeliveryPropertiesComponent } from '../dialog/delivery-properties/delivery-properties.component';
-
-interface TracingPayload {
-    tracingSettings: TracingSettings;
-}
 
 @Injectable({
     providedIn: 'root'
@@ -30,7 +25,7 @@ export class TracingService {
 
     getMarkStationsAsOutbreakPayload(tracingSettings: TracingSettings, ids: string[], outbreak: boolean): SetTracingSettingsPayload {
         const weight = (outbreak ? 1 : 0);
-        const idSet = Utils.createStringSet(ids);
+        const idSet = Utils.createSimpleStringSet(ids);
         return {
             tracingSettings: {
                 ...tracingSettings,
@@ -43,7 +38,7 @@ export class TracingService {
     }
 
     getSetStationCrossContPayload(tracingSettings: TracingSettings, ids: string[], crossContamination: boolean): SetTracingSettingsPayload {
-        const idSet = Utils.createStringSet(ids);
+        const idSet = Utils.createSimpleStringSet(ids);
         return {
             tracingSettings: {
                 ...tracingSettings,
@@ -56,7 +51,7 @@ export class TracingService {
     }
 
     getSetStationKillContPayload(tracingSettings: TracingSettings, ids: string[], killContamination: boolean): SetTracingSettingsPayload {
-        const idSet = Utils.createStringSet(ids);
+        const idSet = Utils.createSimpleStringSet(ids);
         return {
             tracingSettings: {
                 ...tracingSettings,

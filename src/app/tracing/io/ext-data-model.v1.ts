@@ -8,7 +8,7 @@ export interface JsonData {
     settings?: SettingsData;
 }
 
-interface ColumnProperty {
+export interface ColumnProperty {
     id: string;
     type: string;
 }
@@ -18,9 +18,9 @@ interface ItemProperty {
     value: string | number | boolean;
 }
 
-type DataRow = ItemProperty[];
+export type DataRow = ItemProperty[];
 
-interface DataTable {
+export interface DataTable {
     columnProperties: ColumnProperty[];
     data: DataRow[];
 }

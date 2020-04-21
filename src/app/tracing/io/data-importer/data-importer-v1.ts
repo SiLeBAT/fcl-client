@@ -8,8 +8,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 
 import { Utils } from '../../util/non-ui-utils';
-import { Constants as JsonConstants, ColumnInfo } from './../data-mappings/data-mappings-v1';
-import { Map as ImmutableMap } from 'immutable';
+import * as ExtDataConstants from '../ext-data-constants.v1';
 
 import { IDataImporter } from './datatypes';
 import { isValidJson, createDefaultHighlights, checkVersionFormat, compareVersions } from './shared';
@@ -25,6 +24,7 @@ import {
     MIN_VERSION,
     MetaNodeData
 } from '../ext-data-model.v1';
+import * as DataMapper from './../data-mappings/data-mappings-v1';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -75,15 +75,13 @@ export class DataImporterV1 implements IDataImporter {
     private applyExternalStations(jsonData: JsonData, fclData: FclData): Map<string, StationData> {
         const extData = jsonData.data;
         const stationTable = extData.stations;
-        const extStations = stationTable.data;
+        const stationRows = stationTable.data;
         const intStations: StationData[] = [];
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(
-            JsonConstants.STATION_PROP_INT_TO_EXT_MAP
-        );
-
         const idToStationMap: Map<string, StationData> = new Map();
 
-        for (const extStation of extStations) {
+        const propMapper = DataMapper.getStationPropMapper(jsonData);
+
+        for (const stationRow of stationRows) {
             const intStation: StationData = {
                 id: undefined,
                 incoming: [],
@@ -92,16 +90,7 @@ export class DataImporterV1 implements IDataImporter {
                 properties: []
             };
 
-            for (const property of extStation) {
-                if (extToIntPropMap.has(property.id)) {
-                    intStation[extToIntPropMap.get(property.id)] = property.value;
-                } else {
-                    intStation.properties.push({
-                        name: property.id,
-                        value: property.value.toString()
-                    });
-                }
-            }
+            propMapper.applyValuesFromTableRow(stationRow, intStation);
 
             if (intStation.id === undefined || intStation.id === null) {
                 throw new SyntaxError('Missing station id.');
@@ -116,6 +105,9 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         fclData.fclElements.stations = intStations;
+        fclData.source.propMaps = {
+            stationPropMap: Utils.createObjectFromMap(propMapper.getPropMap())
+        };
         return idToStationMap;
     }
 
@@ -125,15 +117,13 @@ export class DataImporterV1 implements IDataImporter {
         idToStationMap: Map<string, StationData>
     ): Map<string, DeliveryData> {
 
-        const extDeliveries = jsonData.data.deliveries.data;
+        const deliveryRows = jsonData.data.deliveries.data;
         const intDeliveries: DeliveryData[] = [];
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(
-            JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP
-        );
-
         const idToDeliveryMap: Map<string, DeliveryData> = new Map();
 
-        for (const extDelivery of extDeliveries) {
+        const propMapper = DataMapper.getDeliveryPropMapper(jsonData);
+
+        for (const deliveryRow of deliveryRows) {
 
             const intDelivery: DeliveryData = {
                 id: undefined,
@@ -142,20 +132,7 @@ export class DataImporterV1 implements IDataImporter {
                 properties: []
             };
 
-            for (const property of extDelivery) {
-                if (extToIntPropMap.has(property.id)) {
-                    intDelivery[extToIntPropMap.get(property.id)] = property.value;
-                } else {
-                    intDelivery.properties.push({
-                        name: property.id,
-                        value: (
-                            property.value !== null && property.value !== undefined && typeof(property.value) !== 'string' ?
-                            property.value.toString() :
-                            property.value
-                        ) as string
-                    });
-                }
-            }
+            propMapper.applyValuesFromTableRow(deliveryRow, intDelivery);
 
             if (intDelivery.id === undefined || intDelivery.id === null) {
                 throw new SyntaxError('Missing delivery id.');
@@ -191,7 +168,7 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         fclData.fclElements.deliveries = intDeliveries;
-
+        fclData.source.propMaps.deliveryPropMap = Utils.createObjectFromMap(propMapper.getPropMap());
         this.applyExternalDeliveryToDelivery(
             jsonData,
             idToStationMap,
@@ -205,27 +182,19 @@ export class DataImporterV1 implements IDataImporter {
         idToStationMap: Map<string, StationData>,
         idToDeliveryMap: Map<string, DeliveryData>
     ) {
-        const extDelToDels = jsonData.data.deliveryRelations.data;
-        const colsData = jsonData.data.deliveryRelations.columnProperties;
-        const columnSet: Set<string> = new Set(colsData.map(col => col.id));
-        const extToIntPropMap: Map<string, string> = this.createReverseMap(
-            columnSet.has('from')
-            ? JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_FROM_TO
-            : JsonConstants.DELIVERY_TO_DELIVERY_PROP_INT_TO_EXT_MAP_V_ID_NEXT
-        );
-
+        const del2DelRows = jsonData.data.deliveryRelations.data;
         const idToConnectionMap: Map<string, Connection> = new Map();
 
-        for (const extDelToDel of extDelToDels) {
+        const propMapper = DataMapper.getDel2DelPropMapper(jsonData);
+
+        for (const del2DelRow of del2DelRows) {
+
             const connection: Connection = {
                 source: undefined,
                 target: undefined
             };
-            for (const property of extDelToDel) {
-                if (extToIntPropMap.has(property.id)) {
-                    connection[extToIntPropMap.get(property.id)] = property.value;
-                }
-            }
+
+            propMapper.applyValuesFromTableRow(del2DelRow, connection);
 
             if (connection.source === undefined || connection.source === null) {
                 throw new SyntaxError('Missing delivery to delivery source.');
@@ -247,7 +216,7 @@ export class DataImporterV1 implements IDataImporter {
             const targetDelivery: DeliveryData = idToDeliveryMap.get(connection.target);
 
             if (sourceDelivery.target !== targetDelivery.source) {
-                throw new SyntaxError('Invalid delivery relation: ' + JSON.stringify(extDelToDel));
+                throw new SyntaxError('Invalid delivery relation: ' + JSON.stringify(del2DelRow));
             }
 
             const conId: string = connection.source + '->' + connection.target;
@@ -294,7 +263,7 @@ export class DataImporterV1 implements IDataImporter {
             };
 
             if (extGroup.type !== null) {
-                if (!JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.has(extGroup.type)) {
+                if (!DataMapper.GROUPTYPE_EXT_TO_INT_MAP.has(extGroup.type)) {
                     throw new SyntaxError(
                         'Unknown metanode type "' +
                         extGroup.type +
@@ -304,7 +273,7 @@ export class DataImporterV1 implements IDataImporter {
                     );
                 }
 
-                intGroup.groupType = JsonConstants.GROUPTYPE_EXT_TO_INT_MAP.get(extGroup.type);
+                intGroup.groupType = DataMapper.GROUPTYPE_EXT_TO_INT_MAP.get(extGroup.type);
             } else {
                 // TODO: temporary solution
                 if (intGroup.id.startsWith('SC')) {
@@ -331,17 +300,17 @@ export class DataImporterV1 implements IDataImporter {
         idToGroupMap: Map<string, GroupData>,
         idToDeliveryMap: Map<string, DeliveryData>
     ) {
-        const tracingData: any = this.getProperty(data, JsonConstants.TRACING_DATA);
+        const tracingData: any = this.getProperty(data, ExtDataConstants.TRACING_DATA);
         if (tracingData == null) {
             return;
         }
 
-        const stationTracings: any = this.getProperty(tracingData, JsonConstants.TRACING_DATA_STATIONS);
+        const stationTracings: any = this.getProperty(tracingData, ExtDataConstants.TRACING_DATA_STATIONS);
         if (stationTracings == null) {
             throw new Error('Missing station tracing data.');
         }
 
-        const deliveryTracings: any = this.getProperty(tracingData, JsonConstants.TRACING_DATA_DELIVERIES);
+        const deliveryTracings: any = this.getProperty(tracingData, ExtDataConstants.TRACING_DATA_DELIVERIES);
         if (deliveryTracings == null) {
             throw new Error('Missing delivery tracing data.');
         }
@@ -423,36 +392,36 @@ export class DataImporterV1 implements IDataImporter {
 
         const viewData = jsonData.settings.view;
 
-        let nodeSize: any = this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_NODE_SIZE);
+        let nodeSize: any = this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_NODE_SIZE);
         if (nodeSize === null) {
-            nodeSize = this.getProperty(viewData, JsonConstants.GISGRAPH_NODE_SIZE);
+            nodeSize = this.getProperty(viewData, ExtDataConstants.GISGRAPH_NODE_SIZE);
         }
         if (
             nodeSize !== null
         ) {
-            fclData.graphSettings.nodeSize = JsonConstants.NODE_SIZE_EXT_TO_INT_FUN(nodeSize);
+            fclData.graphSettings.nodeSize = DataMapper.NODE_SIZE_EXT_TO_INT_FUN(nodeSize);
         }
 
-        let fontSize: any = this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_FONT_SIZE);
+        let fontSize: any = this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_FONT_SIZE);
         if (fontSize === null) {
-            fontSize = this.getProperty(viewData, JsonConstants.GISGRAPH_FONT_SIZE);
+            fontSize = this.getProperty(viewData, ExtDataConstants.GISGRAPH_FONT_SIZE);
         }
         if (
             fontSize !== null
         ) {
-            fclData.graphSettings.fontSize = JsonConstants.FONT_SIZE_EXT_TO_INT_FUN(fontSize);
+            fclData.graphSettings.fontSize = DataMapper.FONT_SIZE_EXT_TO_INT_FUN(fontSize);
         }
 
         if (
             viewData.edge.mergeDeliveriesType !== undefined &&
             viewData.edge.mergeDeliveriesType !== null
         ) {
-            if (!JsonConstants.MERGE_DEL_TYPE_EXT_TO_INT_MAP.has(viewData.edge.mergeDeliveriesType)) {
+            if (!DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP.has(viewData.edge.mergeDeliveriesType)) {
                 throw new SyntaxError(
                     `Unknown delivery merge type: ${viewData.edge.mergeDeliveriesType}`
                 );
             }
-            fclData.graphSettings.mergeDeliveriesType = JsonConstants.MERGE_DEL_TYPE_EXT_TO_INT_MAP.get(viewData.edge.mergeDeliveriesType);
+            fclData.graphSettings.mergeDeliveriesType = DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP.get(viewData.edge.mergeDeliveriesType);
         } else {
             fclData.graphSettings.mergeDeliveriesType = (
                 !viewData.edge.joinEdges ? MergeDeliveriesType.NO_MERGE : MergeDeliveriesType.MERGE_ALL
@@ -462,26 +431,26 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.showMergedDeliveriesCounts = viewData.edge.showMergedDeliveriesCounts;
         }
 
-        const showLegend: any = this.getProperty(viewData, JsonConstants.SHOW_LEGEND);
+        const showLegend: any = this.getProperty(viewData, ExtDataConstants.SHOW_LEGEND);
         if (showLegend !== null) {
             fclData.graphSettings.showLegend = showLegend;
         }
 
-        const skipUnconnectedStations: any = this.getProperty(viewData, JsonConstants.SKIP_UNCONNECTED_STATIONS);
+        const skipUnconnectedStations: any = this.getProperty(viewData, ExtDataConstants.SKIP_UNCONNECTED_STATIONS);
         if (skipUnconnectedStations !== null) {
             fclData.graphSettings.skipUnconnectedStations = skipUnconnectedStations;
         }
 
-        const showGis: any = this.getProperty(viewData, JsonConstants.SHOW_GIS);
+        const showGis: any = this.getProperty(viewData, ExtDataConstants.SHOW_GIS);
         if (showGis !== null) {
             fclData.graphSettings.type = showGis === true ? GraphType.GIS : GraphType.GRAPH;
         }
 
         fclData.graphSettings.gisLayout = this.convertExternalTransformation(
-            this.getProperty(viewData, JsonConstants.GISGRAPH_TRANSFORMATION)
+            this.getProperty(viewData, ExtDataConstants.GISGRAPH_TRANSFORMATION)
         );
         fclData.graphSettings.schemaLayout = this.convertExternalTransformation(
-            this.getProperty(viewData, JsonConstants.SCHEMAGRAPH_TRANSFORMATION)
+            this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION)
         );
 
         this.convertExternalPositions(viewData, fclData, idToStationMap, idToGroupMap);
@@ -494,9 +463,7 @@ export class DataImporterV1 implements IDataImporter {
             const extHighlightingCons: ExtStationHighlightingData[] = viewData.node.highlightConditions;
 
             if (extHighlightingCons.length > 0) {
-                const extToIntPropMap: Map<string, string> = this.createReverseMap(
-                    JsonConstants.STATION_PROP_INT_TO_EXT_MAP
-                );
+                const extToIntPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
 
                 fclData.graphSettings.highlightingSettings.stations = extHighlightingCons.map(extCon => (
                     {
@@ -521,9 +488,7 @@ export class DataImporterV1 implements IDataImporter {
             const extHighlightingCons: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
 
             if (extHighlightingCons.length > 0) {
-                const extToIntPropMap: Map<string, string> = this.createReverseMap(
-                    JsonConstants.DELIVERY_PROP_INT_TO_EXT_MAP
-                );
+                const extToIntPropMap: Map<string, string> = this.createReverseMapFromSimpleMap(fclData.source.propMaps.deliveryPropMap);
 
                 fclData.graphSettings.highlightingSettings.deliveries = extHighlightingCons.map(extCon => (
                     {
@@ -624,8 +589,8 @@ export class DataImporterV1 implements IDataImporter {
     private mapValueType(extValueType: string): ValueType {
         let intValueType: ValueType = null;
 
-        if (JsonConstants.VALUE_TYPE_EXT_TO_INT_MAP.has(extValueType)) {
-            intValueType = JsonConstants.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
+        if (DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.has(extValueType)) {
+            intValueType = DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
         } else {
             throw new Error(`Invalid ValueCondition.valueType: ${extValueType}`);
         }
@@ -636,8 +601,8 @@ export class DataImporterV1 implements IDataImporter {
     private mapOperationType(extOperationType: string): OperationType {
         let intOperationType: OperationType = null;
 
-        if (JsonConstants.OPERATION_TYPE_EXT_TO_INT_MAP.has(extOperationType)) {
-            intOperationType = JsonConstants.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
+        if (DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.has(extOperationType)) {
+            intOperationType = DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
         } else {
             throw new Error(`Invalid LogicalCondition.operationType: ${extOperationType}`);
         }
@@ -649,8 +614,8 @@ export class DataImporterV1 implements IDataImporter {
         let intShapeType: NodeShapeType = null;
 
         if (extShapeType) {
-            if (JsonConstants.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.has(extShapeType)) {
-                intShapeType = JsonConstants.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.get(extShapeType);
+            if (DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.has(extShapeType)) {
+                intShapeType = DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.get(extShapeType);
             } else {
                 throw new Error(`Invalid shape: ${extShapeType}`);
             }
@@ -683,7 +648,7 @@ export class DataImporterV1 implements IDataImporter {
         idToStationMap: Map<string, StationData>,
         idToGroupMap: Map<string, GroupData>
     ) {
-        const nodePositions: any = this.getProperty(viewData, JsonConstants.NODE_POSITIONS);
+        const nodePositions: any = this.getProperty(viewData, ExtDataConstants.NODE_POSITIONS);
         if (nodePositions === null) {
             return;
         }
@@ -698,12 +663,6 @@ export class DataImporterV1 implements IDataImporter {
 
             fclData.graphSettings.stationPositions[nodePosition.id] = nodePosition.position;
         }
-    }
-
-    private createReverseMap(map: ImmutableMap<string, ColumnInfo>): Map<string, string> {
-        const result: Map<string, string> = new Map();
-        map.forEach((value: ColumnInfo, key: string) => result.set(value.columnId, key));
-        return result;
     }
 
     private getProperty(data: any, path: string): any {
@@ -730,5 +689,9 @@ export class DataImporterV1 implements IDataImporter {
                 throw new SyntaxError('Property "' + propName + '" is null in ' + context);
             }
         }
+    }
+
+    private createReverseMapFromSimpleMap<T>(map: { [key: string]: T }): Map<T, string> {
+        return new Map(Object.entries(map).map(([key, value]) => [value, key]));
     }
 }

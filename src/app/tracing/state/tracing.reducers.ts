@@ -60,6 +60,7 @@ const initialState: TracingState = {
 
 export function createInitialFclDataState(): FclData {
     return {
+        source: null,
         fclElements: {
             stations: [],
             deliveries: [],
