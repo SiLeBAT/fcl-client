@@ -11,6 +11,7 @@ export class DataImporter {
             const formatIsValid: boolean = await importer.isDataFormatSupported(data);
             if (formatIsValid) {
                 await importer.preprocessData(data, fclData);
+                fclData.source.data = data;
                 return;
             }
         }

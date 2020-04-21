@@ -86,9 +86,9 @@ export class GraphService {
 
         return {
             nodeData: nodeData,
-            statIdToNodeDataMap: Utils.createObjectMap(nodeData, (n) => n.station.id),
-            nodeSel: Utils.createStringSet(nodeData.filter(n => n.selected).map(n => n.id)),
-            idToNodeMap: Utils.createObjectMap(nodeData, (n) => n.id)
+            statIdToNodeDataMap: Utils.createObjectFromArray(nodeData, (n) => n.station.id),
+            nodeSel: Utils.createSimpleStringSet(nodeData.filter(n => n.selected).map(n => n.id)),
+            idToNodeMap: Utils.createObjectFromArray(nodeData, (n) => n.id)
         };
     }
 
@@ -99,7 +99,7 @@ export class GraphService {
         const sourceTargetDelMap: { [key: string]: { [key: string]: DeliveryData[] }} = {};
 
         const statMap = cyDataNodes.statIdToNodeDataMap;
-        const selDel = Utils.createStringSet(state.selectedElements.deliveries);
+        const selDel = Utils.createSimpleStringSet(state.selectedElements.deliveries);
 
         if (state.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE) {
 
@@ -245,7 +245,7 @@ export class GraphService {
         return {
             edgeData: edgeData,
             delIdToEdgeDataMap: map,
-            edgeSel: Utils.createStringSet(edgeData.filter(n => n.selected).map(n => n.id))
+            edgeSel: Utils.createSimpleStringSet(edgeData.filter(n => n.selected).map(n => n.id))
         };
     }
 
@@ -429,14 +429,14 @@ export class GraphService {
         data.nodeData.forEach(nodeData => {
             nodeData.selected = nodeData.station.selected;
         });
-        data.nodeSel = Utils.createStringSet(data.nodeData.filter(n => n.selected).map(n => n.id));
+        data.nodeSel = Utils.createSimpleStringSet(data.nodeData.filter(n => n.selected).map(n => n.id));
     }
 
     private applyDelSelection(data: GraphServiceData) {
         data.edgeData.forEach(edgeData => {
             edgeData.selected = edgeData.deliveries.some(d => d.selected);
         });
-        data.edgeSel = Utils.createStringSet(data.edgeData.filter(e => e.selected).map(e => e.id));
+        data.edgeSel = Utils.createSimpleStringSet(data.edgeData.filter(e => e.selected).map(e => e.id));
     }
 
     private applyState(state: GraphState) {

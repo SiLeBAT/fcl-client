@@ -1,5 +1,5 @@
 import { SampleData, FclData, SampleResultType } from '../../data.model';
-import { Constants } from './../data-mappings/data-mappings-v1';
+import * as Constants from './../ext-data-constants.v1';
 
 export function importSamples(rawData: any, fclData: FclData) {
     fclData.fclElements.samples = convertRawSamples(rawData);

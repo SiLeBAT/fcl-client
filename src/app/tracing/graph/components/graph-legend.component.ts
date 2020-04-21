@@ -124,7 +124,7 @@ export class GraphLegendComponent implements OnInit {
                     shape: stationLegendInfo.shape
                 });
             });
-            const entryMap = Utils.createObjectMap(newLegend, (e) => e.name);
+            const entryMap = Utils.createObjectFromArray(newLegend, (e) => e.name);
             legendInfo.deliveries.forEach((deliveryLegendInfo, index) => {
                 const entry = entryMap[deliveryLegendInfo.label];
                 if (entry) {

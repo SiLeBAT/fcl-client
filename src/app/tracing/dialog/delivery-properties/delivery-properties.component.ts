@@ -41,7 +41,7 @@ export class DeliveryPropertiesComponent implements OnInit {
 
     private initProperties(): void {
         const properties: Properties = {};
-        const hiddenProps = Utils.createStringSet(this.notListedProps);
+        const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(this.data.delivery).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
         .forEach(key => {
             const value = this.data.delivery[key];
@@ -60,7 +60,7 @@ export class DeliveryPropertiesComponent implements OnInit {
 
         this.addCustomProps(properties);
 
-        const vipProps = Utils.createStringSet(this.vipProperties);
+        const vipProps = Utils.createSimpleStringSet(this.vipProperties);
         this.otherProperties = Object.keys(properties).filter(key => !vipProps[key]).slice();
         this.otherProperties.sort();
         // add default for missing props

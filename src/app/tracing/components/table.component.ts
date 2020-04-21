@@ -276,7 +276,7 @@ export class TableComponent implements OnDestroy, AfterViewInit {
         if (isSelected) {
             return oldSelection.concat(ids);
         } else {
-            const isUnSel = Utils.createStringSet(ids);
+            const isUnSel = Utils.createSimpleStringSet(ids);
             return oldSelection.filter(id => !isUnSel[id]);
         }
     }
@@ -329,7 +329,7 @@ export class TableComponent implements OnDestroy, AfterViewInit {
     }
 
     private applySelection(state: State) {
-        const isSel = Utils.createStringSet(
+        const isSel = Utils.createSimpleStringSet(
             state.tableSettings.mode === TableMode.STATIONS ?
             state.graphState.selectedElements.stations :
             (
