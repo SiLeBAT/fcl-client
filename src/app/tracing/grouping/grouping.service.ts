@@ -53,13 +53,13 @@ export class GroupingService {
                 removeGroups: []
             });
 
-            const removeGrpMap = Utils.createObjectMap(effChange.removeGroups, g => g.id);
+            const removeGrpMap = Utils.createObjectFromArray(effChange.removeGroups, g => g.id);
             const remainingGrps = state.groupSettings.filter(g => !removeGrpMap[g.id]);
-            const reservedIds = Utils.createStringSet([].concat(
+            const reservedIds = Utils.createSimpleStringSet([].concat(
                 ...state.fclElements.stations.map(s => s.id),
                 ...remainingGrps.map(g => g.id)
             ));
-            const reservedNames = Utils.createStringSet([].concat(
+            const reservedNames = Utils.createSimpleStringSet([].concat(
                 ...state.fclElements.stations.map(s => s.name),
                 ...remainingGrps.map(g => g.name)
             ).filter(name => name !== undefined && name !== null));
@@ -75,7 +75,7 @@ export class GroupingService {
     }
 
     private explodeIds(state: GroupingState, memberIds: string[]): string[] {
-        const grpMap = Utils.createMap(state.groupSettings, g => g.id);
+        const grpMap = Utils.createObjectFromArray(state.groupSettings, g => g.id);
         return [].concat(
             ...memberIds.map(id => grpMap[id] ? grpMap[id].contains : [id])
         );
@@ -113,7 +113,7 @@ export class GroupingService {
     }
 
     getExpandStationsPayload(state: GroupingState, stationIds: string[]): SetStationGroupsPayload {
-        const idSet = Utils.createStringSet(stationIds);
+        const idSet = Utils.createSimpleStringSet(stationIds);
         const removeGroups = state.groupSettings.filter(g => !!idSet[g.id]);
 
         if (removeGroups.length > 0) {
@@ -144,8 +144,8 @@ export class GroupingService {
     }
 
     private getUpdatedTracingSettings(state: GroupingState, groupingChange: GroupingChange): StationTracingSettings[] {
-        const removeIds = Utils.createObjectStringSet(groupingChange.removeGroups.map(g => g.id));
-        const idToSettingMap = Utils.createObjectMap(state.tracingSettings.stations, (s) => s.id);
+        const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
+        const idToSettingMap = Utils.createObjectFromArray(state.tracingSettings.stations, (s) => s.id);
         return [].concat(
             state.tracingSettings.stations.filter(s => !removeIds[s.id]),
             groupingChange.addGroups.map(group => {
@@ -173,9 +173,9 @@ export class GroupingService {
     }
 
     private getUpdatedGroupSettings(state: GroupingState, groupingChange: GroupingChange): GroupData[] {
-        const removeIds = Utils.createObjectStringSet(groupingChange.removeGroups.map(g => g.id));
+        const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
         const remainingGroups = state.groupSettings.filter(g => !removeIds[g.id]);
-        const reservedIds = Utils.createObjectStringSet([].concat(
+        const reservedIds = Utils.createSimpleStringSet([].concat(
             state.fclElements.stations.map(s => s.id),
             remainingGroups.map(g => g.id)
         ));
@@ -196,7 +196,7 @@ export class GroupingService {
     }
 
     private getUpdatedSelection(state: GroupingState, groupingChange: GroupingChange): string[] {
-        const selectedStationIds = Utils.createObjectStringSet(state.selectedElements.stations);
+        const selectedStationIds = Utils.createSimpleStringSet(state.selectedElements.stations);
         for (const group of groupingChange.removeGroups) {
             if (selectedStationIds[group.id]) {
                 for (const stationId of group.contains) {
@@ -217,7 +217,7 @@ export class GroupingService {
     }
 
     private getUpdatedInvisibilities(state: GroupingState, groupingChange: GroupingChange): string[] {
-        const removeIds = Utils.createObjectStringSet(groupingChange.removeGroups.map(g => g.id));
+        const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
         return state.highlightingSettings.invisibleStations.filter(id => !removeIds[id]);
     }
 
@@ -233,7 +233,7 @@ export class GroupingService {
 
     private getEffectiveGroupingChange(state: GroupingState, groupChange: GroupingChange): EffectiveGroupingChange {
 
-        const addGroupMap = Utils.createObjectMap(groupChange.addGroups, g => g.id);
+        const addGroupMap = Utils.createObjectFromArray(groupChange.addGroups, g => g.id);
         let effRemoveGroups: GroupData[] = [];
         const unchangedGroups: GroupData[] = [];
 
@@ -255,8 +255,8 @@ export class GroupingService {
         }
 
         const effAddGroups = groupChange.addGroups.filter(g => addGroupMap[g.id]);
-        const effRemoveGroupsMap = Utils.createMap(effRemoveGroups, g => g.id);
-        const newMembersMap = Utils.createStringSet([].concat(...effAddGroups.map(g => g.contains)));
+        const effRemoveGroupsMap = Utils.createObjectFromArray(effRemoveGroups, g => g.id);
+        const newMembersMap = Utils.createSimpleStringSet([].concat(...effAddGroups.map(g => g.contains)));
 
         effRemoveGroups = [].concat(
             effRemoveGroups,

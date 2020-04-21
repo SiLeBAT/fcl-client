@@ -193,7 +193,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         if (rows.length !== this.filteredRows.length) {
             return true;
         }
-        const oldRowIds = Utils.createStringSet(this.filteredRows.map(r => r.id));
+        const oldRowIds = Utils.createSimpleStringSet(this.filteredRows.map(r => r.id));
         return rows.some(r => oldRowIds[r.id] === undefined);
     }
 
@@ -243,8 +243,8 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         if (values.length > 0) {
             const map: { [key: string]: T } = (
                 typeof values[0] === 'string' ?
-                Utils.createMap(values, (x: string) => x.toLocaleLowerCase()) :
-                Utils.createMap(values, (x: string) => x.toString())
+                Utils.createObjectFromArray(values, (x) => (x as string).toLocaleLowerCase()) :
+                Utils.createObjectFromArray(values, (x) => x.toString())
             );
             values = Object.keys(map).map(x => map[x]);
             if (comparator) {

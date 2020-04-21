@@ -214,7 +214,7 @@ export class HighlightingService {
         if (invisible) {
             invisibleStations = [].concat(state.invisibleStations, stationIds);
         } else {
-            const visibleMap = Utils.createStringSet(stationIds);
+            const visibleMap = Utils.createSimpleStringSet(stationIds);
             invisibleStations = state.invisibleStations.filter(id => !visibleMap[id]);
         }
         return {
@@ -237,7 +237,7 @@ export class HighlightingService {
     applyVisibilities(state: BasicGraphState, data: DataServiceData) {
         data.stations.forEach(s => s.invisible = false);
         data.getStatById(state.highlightingSettings.invisibleStations).filter(s => s !== null).forEach(s => s.invisible = true);
-        data.statVis = Utils.createStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
+        data.statVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
     }
 
     hasStationVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
