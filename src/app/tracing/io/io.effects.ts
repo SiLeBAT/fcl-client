@@ -14,6 +14,7 @@ import { Store, select } from '@ngrx/store';
 
 import * as ioActions from './io.actions';
 import { Utils } from './../util/ui-utils';
+import { FilterService } from '../configuration/services/filter.service';
 
 @Injectable()
 export class IOEffects {
@@ -21,13 +22,15 @@ export class IOEffects {
         private actions$: Actions,
         private ioService: IOService,
         private alertService: AlertService,
-        private store: Store<fromTracing.State>
+        private store: Store<fromTracing.State>,
+        private filterService: FilterService
     ) {}
 
     @Effect()
     loadFclDataMSA$ = this.actions$.pipe(
         ofType<ioActions.LoadFclDataMSA>(ioActions.IOActionTypes.LoadFclDataMSA),
         mergeMap(action => {
+            this.filterService.clearAllFilters();
             const fileList: FileList = action.payload.dataSource;
             if (fileList.length === 1) {
                 return from(this.ioService.getFclData(fileList[0])).pipe(

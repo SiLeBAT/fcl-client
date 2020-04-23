@@ -8,6 +8,7 @@ import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 export class FilterStationLayoutComponent implements OnInit {
 
     @Input() standardFilterTemplate: TemplateRef<any>;
+    @Input() clearAllFilterTemplate: TemplateRef<any>;
     @Input() predefinedFilterTemplate: TemplateRef<any>;
     @Input() complexFilterTemplate: TemplateRef<any>;
     @Input() stationTableTemplate: TemplateRef<any>;
@@ -19,5 +20,4 @@ export class FilterStationLayoutComponent implements OnInit {
 
     ngOnInit() {
     }
-
 }

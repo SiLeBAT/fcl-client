@@ -13,6 +13,7 @@ import { DataService } from './../../../tracing/services/data.service';
 import { Utils as UIUtils } from './../../../tracing/util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
+import { FilterService } from '../../../tracing/configuration/services/filter.service';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
@@ -42,7 +43,8 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         private store: Store<fromTracing.State>,
         private alertService: AlertService,
         private ioService: IOService,
-        private dataService: DataService
+        private dataService: DataService,
+        private filterService: FilterService
     ) { }
 
     ngOnInit() {
@@ -85,6 +87,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     loadExampleData() {
         this.ioService.getFclData('../../../../assets/data/bbk.json')
             .then((data: FclData) => {
+                this.filterService.clearAllFilters();
                 this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
 
             })

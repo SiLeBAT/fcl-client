@@ -1,6 +1,15 @@
 import { TracingActions, TracingActionTypes } from './tracing.actions';
 import { Constants } from '../util/constants';
-import { FclData, TableMode, MergeDeliveriesType, MapType, GraphType, FilterSettings, ComplexFilterSettings } from '../data.model';
+import {
+    FclData,
+    TableMode,
+    MergeDeliveriesType,
+    MapType,
+    GraphType,
+    FilterSettings,
+    ComplexFilterSettings,
+    StandardFilterSettings
+} from '../data.model';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 
 export const STATE_SLICE_NAME = 'tracing';
@@ -30,13 +39,19 @@ export interface SettingOptions {
     tableSettingsOption: string;
 }
 
+const standardFilterSettings: StandardFilterSettings = {
+    filterTerm: ''
+};
+
 const complexFilterSettings: ComplexFilterSettings = {
     stationColumns: [],
     stationRows: [],
-    stationFilterConditions: []
+    stationFilterConditions: [],
+    reset: false
 };
 
 const filterSettings: FilterSettings = {
+    standardFilterSettings: standardFilterSettings,
     complexFilterSettings: complexFilterSettings
 };
 
@@ -478,7 +493,53 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.filterSettings,
                         complexFilterSettings: {
                             ...state.fclData.filterSettings.complexFilterSettings,
-                            stationFilterConditions: action.payload.stationFilterConditions
+                            stationFilterConditions: action.payload.stationFilterConditions,
+                            reset: action.payload.reset
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.ResetStationComplexFilterSSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    filterSettings: {
+                        ...state.fclData.filterSettings,
+                        complexFilterSettings: {
+                            ...state.fclData.filterSettings.complexFilterSettings,
+                            reset: true
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetStationStandardFilterTermSSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    filterSettings: {
+                        ...state.fclData.filterSettings,
+                        standardFilterSettings: {
+                            ...state.fclData.filterSettings.standardFilterSettings,
+                            filterTerm: action.payload.filterTerm
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.ResetStationStandardFilterSSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    filterSettings: {
+                        ...state.fclData.filterSettings,
+                        standardFilterSettings: {
+                            ...state.fclData.filterSettings.standardFilterSettings,
+                            filterTerm: ''
                         }
                     }
                 }
