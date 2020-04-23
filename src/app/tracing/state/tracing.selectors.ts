@@ -201,3 +201,18 @@ export const getStationComplexFilterConditions = createSelector(
     getComplexFilterSettings,
     complexFilterSettings => complexFilterSettings.stationFilterConditions
 );
+
+export const getResetStationComplexFilter = createSelector(
+    getComplexFilterSettings,
+    complexFilterSettings => complexFilterSettings.reset
+);
+
+export const getStandarFilterSettings = createSelector(
+    getFilterSettings,
+    filterSettings => filterSettings.standardFilterSettings
+);
+
+export const getStandardFilterTerm = createSelector(
+    getStandarFilterSettings,
+    standardFilterSettings => standardFilterSettings.filterTerm
+);

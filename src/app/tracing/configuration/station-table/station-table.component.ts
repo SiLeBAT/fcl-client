@@ -103,6 +103,11 @@ export class StationTableComponent implements OnInit, OnDestroy {
             err => this.alertService.error(`showConfigurationSideBar store subscription failed: ${err}`)
         );
 
+        const standardFilterTerm$: Observable<string> = this.store
+            .pipe(
+                select(tracingSelectors.getStandardFilterTerm)
+        );
+
         const complexFilterConditions$: Observable<ComplexFilterCondition[]> = this.store
             .pipe(
                 select(tracingSelectors.getStationComplexFilterConditions)
@@ -110,7 +115,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
         combineLatest([
             complexFilterConditions$,
-            this.filterService.standardFilterTerm$
+            standardFilterTerm$
         ]).pipe(
             tap(([complexConditions, standardFilterTerm]) => {
                 this.rootFilter.filterText = standardFilterTerm;

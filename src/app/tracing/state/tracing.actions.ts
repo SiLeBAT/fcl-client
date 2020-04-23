@@ -42,7 +42,10 @@ export enum TracingActionTypes {
     SetActiveHighlightingTabIndexSSA = '[Configuration Layout] Set Active Highlighting Tab Index',
     SetStationColumnsForComplexFilterSSA = '[Station Table] Set Station Columns For Complex Filter',
     SetStationRowsForComplexFilterSSA = '[Station Table] Set Station Rows For Complex Filter',
-    SetStationComplexFilterConditionsSSA = '[Complex Filter Component] Set Station Complex Filter Conditions'
+    SetStationComplexFilterConditionsSSA = '[Complex Filter Component] Set Station Complex Filter Conditions',
+    ResetStationComplexFilterSSA = '[Filter Service] Reset Station Complex Filter',
+    SetStationStandardFilterTermSSA = '[Standard Filter Component] Set Station Standard Filter Term',
+    ResetStationStandardFilterSSA = '[Filter Service] Reset Station Standard Filter'
 }
 
 export class TracingActivated implements Action {
@@ -242,7 +245,21 @@ export class SetStationRowsForComplexFilterSSA implements Action {
 export class SetStationComplexFilterConditionsSSA implements Action {
     readonly type = TracingActionTypes.SetStationComplexFilterConditionsSSA;
 
-    constructor(public payload: { stationFilterConditions: ComplexFilterCondition[] }) {}
+    constructor(public payload: { stationFilterConditions: ComplexFilterCondition[], reset: boolean }) {}
+}
+
+export class ResetStationComplexFilterSSA implements Action {
+    readonly type = TracingActionTypes.ResetStationComplexFilterSSA;
+}
+
+export class SetStationStandardFilterTermSSA implements Action {
+    readonly type = TracingActionTypes.SetStationStandardFilterTermSSA;
+
+    constructor(public payload: { filterTerm: string }) {}
+}
+
+export class ResetStationStandardFilterSSA implements Action {
+    readonly type = TracingActionTypes.ResetStationStandardFilterSSA;
 }
 
 export type TracingActions =
@@ -279,4 +296,7 @@ export type TracingActions =
     | SetActiveHighlightingTabIndexSSA
     | SetStationColumnsForComplexFilterSSA
     | SetStationRowsForComplexFilterSSA
-    | SetStationComplexFilterConditionsSSA;
+    | SetStationComplexFilterConditionsSSA
+    | ResetStationComplexFilterSSA
+    | SetStationStandardFilterTermSSA
+    | ResetStationStandardFilterSSA;

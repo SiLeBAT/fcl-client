@@ -1,11 +1,11 @@
 .fcl-filter-station-layout-container {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 0.1fr;
     grid-template-rows: auto min-content 1fr;
     grid-template-areas:
-        "standardfilter"
-        "morefilter"
-        "stationtable";
+        "standardfilter clearbutton"
+        "morefilter morefilter"
+        "stationtable stationtable";
     grid-gap: 0.5rem;
     padding: 0.5rem;
     height: 100%;
@@ -22,6 +22,11 @@
 
 .fcl-standard-filter {
     grid-area: standardfilter;
+}
+
+.fcl-clear-all-filter-button-container {
+    grid-area: clearbutton;
+    display: flex;
 }
 
 .fcl-more-filter {

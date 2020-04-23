@@ -23,6 +23,7 @@ export class ComplexFilterComponent implements OnInit, OnDestroy {
     junktorTypeValues: string[];
     propToValues: Map<string, string[]>;
     componentActive: boolean = true;
+    resetComplexFilter$: Observable<boolean> = this.store.select(tracingSelectors.getResetStationComplexFilter);
 
     constructor(
         private store: Store<fromTracing.State>
@@ -39,12 +40,14 @@ export class ComplexFilterComponent implements OnInit, OnDestroy {
 
         const stationColumns$: Observable<TableColumn[]> = this.store
             .pipe(
-                select(tracingSelectors.getStationColumnsForComplexFilter)
+                select(tracingSelectors.getStationColumnsForComplexFilter),
+                takeWhile(() => this.componentActive)
         );
 
         const stationRows$: Observable<StationTableRow[]> = this.store
             .pipe(
-                select(tracingSelectors.getStationRowsForComplexFilter)
+                select(tracingSelectors.getStationRowsForComplexFilter),
+                takeWhile(() => this.componentActive)
         );
 
         combineLatest([
@@ -68,7 +71,11 @@ export class ComplexFilterComponent implements OnInit, OnDestroy {
     }
 
     handleComplexFilterConditions(complexFilterConditions: ComplexFilterCondition[]) {
-        this.store.dispatch(new tracingActions.SetStationComplexFilterConditionsSSA({ stationFilterConditions: complexFilterConditions }));
+        this.store.dispatch(new tracingActions.SetStationComplexFilterConditionsSSA(
+            {
+                stationFilterConditions: complexFilterConditions,
+                reset: false
+            }));
     }
 
     ngOnDestroy() {

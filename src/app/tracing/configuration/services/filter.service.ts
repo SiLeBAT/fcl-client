@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import * as fromTracing from '../../state/tracing.reducers';
+import * as tracingActions from '../../state/tracing.actions';
+import { ShowType } from '../../data.model';
 import {
     ComplexFilterCondition,
     ExtendedOperationType,
@@ -54,17 +56,14 @@ export class FilterService {
             .isRowValueUnequalToIgnoreCaseRegex
     };
 
-    private standardFilterTermSubject = new BehaviorSubject<string>('');
-    standardFilterTerm$: Observable<
-        string
-    > = this.standardFilterTermSubject
-        .asObservable()
-        .pipe(debounceTime(100), distinctUntilChanged());
+    constructor(
+        private store: Store<fromTracing.State>
+    ) {}
 
-    constructor() {}
-
-    processStandardFilterTerm(filterTerm: string) {
-        this.standardFilterTermSubject.next(filterTerm);
+    clearAllFilters() {
+        this.store.dispatch(new tracingActions.ResetStationStandardFilterSSA());
+        this.store.dispatch(new tracingActions.SetTableShowTypeSOA(ShowType.ALL));
+        this.store.dispatch(new tracingActions.ResetStationComplexFilterSSA());
     }
 
     filterRows(filters: Filter[], unfilteredRows: any[]): any[] {
