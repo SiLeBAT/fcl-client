@@ -8,6 +8,7 @@ import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, Aft
 })
 export class StandardFilterViewComponent implements OnInit {
     @Input() filterLabel: string;
+    @Input() currentFilterTerm: string;
     @ViewChild('filterInput', { static: false }) filterInput: ElementRef;
     @Output() standardFilterTerm = new EventEmitter<string>();
 
@@ -16,7 +17,7 @@ export class StandardFilterViewComponent implements OnInit {
     ngOnInit() {
     }
 
-    onKeyup(event) {
+    onKeyup() {
         this.standardFilterTerm.emit(this.filterInput.nativeElement.value);
     }
 }

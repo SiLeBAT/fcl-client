@@ -1,7 +1,8 @@
 import { TableColumn, ExtendedOperationType, JunktorType, ComplexFilterCondition } from './../../data.model';
-import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, takeWhile } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'fcl-complex-filter-view',
@@ -9,7 +10,7 @@ import { map, tap } from 'rxjs/operators';
     styleUrls: ['./complex-filter-view.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class ComplexFilterViewComponent implements OnInit, OnChanges {
+export class ComplexFilterViewComponent implements OnInit, OnDestroy {
 
     @Input() stationColumns: TableColumn[];
     @Input() propToValues: Map<string, string[]>;
@@ -19,11 +20,13 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
     @Input() JunktorType: JunktorType;
     @Input() junktorTypeKeys: string[];
     @Input() junktorTypeValues: string[];
+    @Input() resetComplexFilter$: Observable<boolean>;
     @Output() complexFilterConditions = new EventEmitter<ComplexFilterCondition[]>();
 
     filterConditionForm: FormGroup;
     valueList: string[][] = [[]];
     unfilteredValueList: string[][] = [[]];
+    private componentActive: boolean = true;
 
     constructor(
         private formBuilder: FormBuilder
@@ -31,27 +34,18 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         this.initializeFilter();
-    }
 
-    ngOnChanges(changes: SimpleChanges) {
-        this.initializeFilter();
-
-        this.filterConditionGroups.valueChanges
+        this.resetComplexFilter$
             .pipe(
-                map((filterGroups: FormGroup[]) => {
-                    return filterGroups.filter((filterGroup: FormGroup) => {
-                        return (
-                            filterGroup['propertyControl'] !== '' &&
-                            filterGroup['propertyControl'] !== null &&
-                            filterGroup['operationControl'] !== '' &&
-                            filterGroup['operationControl'] !== null &&
-                            filterGroup['valueControl'] !== '' &&
-                            filterGroup['valueControl'] !== null
-                        );
-                    });
+                tap(reset => {
+                    if (reset) {
+                        this.resetFilter();
+                    }
                 }),
-                tap((filterGroups: FormGroup[]) => this.onFilterGroupsChange(filterGroups))
-        ).subscribe();
+                takeWhile(() => this.componentActive)
+            )
+            .subscribe();
+
     }
 
     buildFilterConditionGroup(property: string, operation: string, value: string, junktor: string): FormGroup {
@@ -107,7 +101,7 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
             this.valueList.splice(index, 1);
             this.unfilteredValueList.splice(index, 1);
         } else {
-            filterConditionGroups.reset();
+            this.resetFilter();
         }
     }
 
@@ -133,6 +127,15 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
         this.valueList[index] = filteredList;
     }
 
+    ngOnDestroy() {
+        this.componentActive = false;
+    }
+
+    private resetFilter() {
+        this.initializeFilter();
+        this.onFilterGroupsChange(null, true);
+    }
+
     private initializeFilter() {
         this.filterConditionForm = this.formBuilder.group({
             filterConditionGroups: this.formBuilder.array([this.buildFilterConditionGroup(
@@ -142,17 +145,41 @@ export class ComplexFilterViewComponent implements OnInit, OnChanges {
                 JunktorType[this.junktorTypeKeys[0]])]
             )
         });
+
+        this.filterConditionGroups.valueChanges
+            .pipe(
+                map((filterGroups: FormGroup[]) => {
+                    return filterGroups.filter((filterGroup: FormGroup) => {
+                        return (
+                            filterGroup['propertyControl'] !== '' &&
+                            filterGroup['propertyControl'] !== null &&
+                            filterGroup['operationControl'] !== '' &&
+                            filterGroup['operationControl'] !== null &&
+                            filterGroup['valueControl'] !== '' &&
+                            filterGroup['valueControl'] !== null
+                        );
+                    });
+                }),
+                tap((filterGroups: FormGroup[]) => this.onFilterGroupsChange(filterGroups))
+        ).subscribe();
+
     }
 
-    private onFilterGroupsChange(filterGroups: FormGroup[]) {
-        const filterConditions = filterGroups.map((filterGroup: FormGroup) => {
-            return {
-                property: filterGroup['propertyControl'],
-                operation: filterGroup['operationControl'],
-                value: filterGroup['valueControl'],
-                junktor: filterGroup['junktorControl']
-            };
-        });
+    private onFilterGroupsChange(filterGroups: FormGroup[], reset?: boolean) {
+        let filterConditions;
+
+        if (!filterGroups && reset) {
+            filterConditions = [];
+        } else {
+            filterConditions = filterGroups.map((filterGroup: FormGroup) => {
+                return {
+                    property: filterGroup['propertyControl'],
+                    operation: filterGroup['operationControl'],
+                    value: filterGroup['valueControl'],
+                    junktor: filterGroup['junktorControl']
+                };
+            });
+        }
 
         this.complexFilterConditions.emit(filterConditions);
     }

@@ -26,12 +26,18 @@ export interface FclData {
 }
 
 export interface FilterSettings {
+    standardFilterSettings: StandardFilterSettings;
     complexFilterSettings: ComplexFilterSettings;
+}
+
+export interface StandardFilterSettings {
+    filterTerm: string;
 }
 export interface ComplexFilterSettings {
     stationColumns: TableColumn[];
     stationRows: StationTableRow[];
     stationFilterConditions: ComplexFilterCondition[];
+    reset: boolean;
 }
 
 export interface ComplexFilterCondition {

@@ -4,6 +4,10 @@
     </fcl-standard-filter>
 </ng-template>
 
+<ng-template #clearAllFilterTemplate>
+    <fcl-clear-all-filter></fcl-clear-all-filter>
+</ng-template>
+
 <ng-template #predefinedFilterTemplate>
     <fcl-predefined-filter></fcl-predefined-filter>
 </ng-template>
@@ -21,6 +25,7 @@
 <fcl-filter-station-layout
     class="fcl-filter-station-container"
     [standardFilterTemplate]="standardFilterTemplate"
+    [clearAllFilterTemplate]="clearAllFilterTemplate"
     [predefinedFilterTemplate]="predefinedFilterTemplate"
     [complexFilterTemplate]="complexFilterTemplate"
     [stationTableTemplate]="stationTableTemplate">
