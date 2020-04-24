@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ff76273_8d5284e9",
+        "filename": "src/app/tracing/configuration/clear-all-filter-view/clear-all-filter-view.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-04-24T14:05:21Z",
+      "side": 1,
+      "message": "here we should find more generic class names,\nbecause the fcl-add-filter-condition-icon for a clear filter button is a bit irritating",
+      "revId": "fa09a0435ad4cb6500e655aa0c9167e9cea4c5ab",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48f432aa_b24217fb",
+        "filename": "src/app/tracing/configuration/complex-filter/complex-filter.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-04-24T14:05:21Z",
+      "side": 1,
+      "message": "Is it the recommended method, to use an observable as input to trigger a function in a child component?",
+      "revId": "fa09a0435ad4cb6500e655aa0c9167e9cea4c5ab",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab8eed43_9a19aefc",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-04-24T14:05:21Z",
+      "side": 1,
+      "message": "Why do we need the reset here? Is this some kind of trigger attribute?",
+      "revId": "fa09a0435ad4cb6500e655aa0c9167e9cea4c5ab",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
