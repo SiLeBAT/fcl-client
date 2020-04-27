@@ -111,3 +111,12 @@
     display: flex !important;
     height: 100%;
 }
+
+.fcl-datatable .datatable-icon-expand {
+    color: $fcl-accent-200;
+}
+
+.fcl-datatable .datatable-header-cell-template-wrap > span.datatable-icon-up::before,
+.fcl-datatable .datatable-header-cell-template-wrap > span.datatable-icon-down::before {
+    display: none;
+}

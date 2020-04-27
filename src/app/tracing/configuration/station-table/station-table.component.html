@@ -9,10 +9,11 @@
 </ng-template>
 
 <ng-template #filterColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-     <span class="header-sort-span" (click)="sort()">
+    <span class="header-sort-span" (click)="sort()">
         {{column.name}}
-        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
-        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
+        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
     </span>
 
     <mat-form-field
