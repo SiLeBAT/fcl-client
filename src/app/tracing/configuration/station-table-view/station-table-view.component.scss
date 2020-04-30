@@ -24,6 +24,10 @@
     padding-bottom: 0.4rem !important;
 }
 
+.fcl-datatable .datatable-row-center .datatable-header-cell.sortable {
+    cursor: pointer;
+}
+
 .fcl-datatable .datatable-header-cell-label,
 .fcl-datatable .datatable-header-cell-template-wrap {
     font-size: 0.9rem;
@@ -78,6 +82,12 @@
     font-size: 0.8rem;
     font-weight: 500;
     color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+}
+
+.fcl-datatable .fcl-visibility-column-row-cell {
+    padding: 0.1rem 0 0 0.5rem !important;
 }
 
 .fcl-more-columns-button {
@@ -95,6 +105,7 @@
 .fcl-more-columns-button:hover {
     background-color: $fcl-accent-300 !important;
     color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
 }
 
 .fcl-more-columns-button:focus {
@@ -119,4 +130,48 @@
 .fcl-datatable .datatable-header-cell-template-wrap > span.datatable-icon-up::before,
 .fcl-datatable .datatable-header-cell-template-wrap > span.datatable-icon-down::before {
     display: none;
+}
+
+.fcl-datatable .datatable-header-cell.fcl-visibility-column-header-cell {
+    padding-left: 0.1rem !important;
+    padding-right: 0.1rem !important;
+}
+
+.fcl-datatable .fcl-column-visibility-header-icon-container {
+    margin-top: 0.25rem;
+    display: flex;
+}
+
+.fcl-datatable .fcl-column-visibility-header-icon {
+    font-size: 1rem;
+}
+
+.fcl-datatable .fcl-column-visibility-header-icon.pointable {
+    cursor: pointer;
+}
+
+.fcl-datatable .fcl-column-visibility-header-icon.unsorted {
+    color: $fcl-accent-200;
+}
+
+.fcl-datatable .fcl-visibility-filter-button {
+    height: 1.5rem;
+    border: 1px solid $fcl-accent-100;
+    padding: 0;
+    background-color: rgb(255, 255, 255);
+    margin-top: 2px;
+    display: flex;
+    justify-content: center;
+}
+
+.fcl-datatable .fcl-visibility-filter-button:hover {
+    background-color: $fcl-accent-300;
+}
+
+.fcl-datatable .fcl-visibility-filter-button:focus {
+    outline: 0;
+}
+
+.fcl-datatable .fcl-row-cell-invisible .datatable-body-cell-label {
+    color: $fcl-accent-200;
 }

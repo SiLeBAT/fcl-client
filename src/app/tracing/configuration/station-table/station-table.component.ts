@@ -22,7 +22,7 @@ import {
 } from '../../data.model';
 import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-select/dialog-select.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FilterService, FilterColumn, Filter, ComplexFilter } from './../services/filter.service';
+import { FilterService, FilterColumn, Filter, ComplexFilter, VisibilityFilterStatus, VisibilityFilter } from './../services/filter.service';
 
 interface StoreDataState {
     graphState: BasicGraphState;
@@ -40,7 +40,9 @@ export class StationTableComponent implements OnInit, OnDestroy {
     private tableViewComponent: StationTableViewComponent;
 
     @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
+    @ViewChild('visibilityColTpl', { static: true }) visibilityColTpl: TemplateRef<any>;
     @ViewChild('filterColTpl', { static: true }) filterColTpl: TemplateRef<any>;
+    @ViewChild('visibilityRowTpl', { static: true }) visibilityRowTpl: TemplateRef<any>;
 
     stationRows: any[];
     stationColumns: any[];
@@ -53,6 +55,13 @@ export class StationTableComponent implements OnInit, OnDestroy {
         select(tracingSelectors.getShowConfigurationSideBar),
         takeWhile(() => this.componentActive)
     );
+
+    visibilityFilterStatus = VisibilityFilterStatus;
+    visibilityFilter: VisibilityFilter = {
+        filterText: FilterService.VISIBILITY_FILTER_NAME,
+        visibilityStatus: VisibilityFilterStatus.UNFILTERED
+    };
+    private visibilityEnumLength: number = Object.keys(VisibilityFilterStatus).length / 2;
 
     private currentFilterColumns: FilterColumn[] = [];
     private rootFilter: Filter = {
@@ -83,7 +92,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
-
         this.showConfigurationSideBar$.subscribe(
             showConfigurationSideBar => {
                 if (!showConfigurationSideBar) {
@@ -152,13 +160,18 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
     onFilterChange() {
         this.filteredRows = this.filterService.filterRows(
-            [].concat(this.currentFilterColumns, this.rootFilter, this.complexFilter),
+            [].concat(this.currentFilterColumns, this.rootFilter, this.complexFilter, this.visibilityFilter),
             this.unfilteredRows
         );
         this.stationRows = this.filteredRows;
         if (this.tableViewComponent) {
             this.tableViewComponent.recalculatePages();
         }
+    }
+
+    filterVisibilityColumn() {
+        this.visibilityFilter.visibilityStatus = ++this.visibilityFilter.visibilityStatus % this.visibilityEnumLength;
+        this.onFilterChange();
     }
 
     ngOnDestroy() {
@@ -203,7 +216,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
     private updateTable(newData: StationTable, tableSettings: TableSettings) {
         if (newData) {
-
             this.currentStationColumnHeaders = tableSettings.stationColumns;
             const stationColumns: TableColumn[] = newData.columns;
             const stationRows: StationTableRow[] = newData.rows;
@@ -223,6 +235,19 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 frozenLeft: true
             };
 
+            const visibilityColumn: any = {
+                name: ' ',
+                prop: 'visCol',
+                resizeable: false,
+                draggable: false,
+                width: 30,
+                headerTemplate: this.visibilityColTpl,
+                cellTemplate: this.visibilityRowTpl,
+                headerClass: 'fcl-visibility-column-header-cell',
+                cellClass: 'fcl-visibility-column-row-cell',
+                comparator: this.visibilityComparator
+            };
+
             const dataColumns = stationColumns
                 .filter(stationColumn => this.currentStationColumnHeaders.indexOf(stationColumn.id) >= 0)
                 .map(stationColumn => {
@@ -231,11 +256,14 @@ export class StationTableComponent implements OnInit, OnDestroy {
                         prop: stationColumn.id,
                         resizable: false,
                         draggable: true,
-                        headerTemplate: this.filterColTpl
+                        headerTemplate: this.filterColTpl,
+                        cellClass: this.getCellClass
                     };
                 });
 
-            this.stationColumns = [buttonColumn].concat(dataColumns);
+            this.stationColumns = [buttonColumn]
+                .concat(visibilityColumn)
+                .concat(dataColumns);
 
             const currentFilterColumns = newData.columns
                 .filter(column => {
@@ -257,11 +285,11 @@ export class StationTableComponent implements OnInit, OnDestroy {
             }, {} as { [key: string]: FilterColumn });
 
             this.rootFilter.filterProps = currentFilterColumns.map(filterColumn => filterColumn.prop);
-            const filters: Filter[] = [].concat(currentFilterColumns, this.rootFilter, this.complexFilter);
+            const filters: Filter[] = [].concat(currentFilterColumns, this.rootFilter, this.complexFilter, this.visibilityFilter);
 
             if (stationRows) {
                 let stationElements: StationTableRow[] = [];
-                stationElements = stationRows.filter(stationRow => !stationRow.invisible && !stationRow.contained);
+                stationElements = stationRows.filter(stationRow => !stationRow.contained);
 
                 if (tableSettings.showType === ShowType.SELECTED_ONLY) {
                     stationElements = stationElements
@@ -288,6 +316,25 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
             this.tableViewComponent.recalculateTable();
         }
+    }
+
+    private getCellClass({ row, column, value }): any {
+        return {
+            'fcl-row-cell-invisible': row['invisible'] === true
+        };
+    }
+
+    private visibilityComparator(valueA, valueB, rowA, rowB, sortDirection): number {
+        let result: number = 0;
+
+        if (rowA['invisible'] === true && rowB['invisible'] === false) {
+            result = -1;
+        }
+        if (rowA['invisible'] === false && rowB['invisible'] === true) {
+            result = 1;
+        }
+
+        return result;
     }
 
     private applySelection(state) {

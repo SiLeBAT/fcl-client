@@ -32,6 +32,16 @@ export interface ComplexFilter extends BasicFilter {
     filterConditions: ComplexFilterCondition[];
 }
 
+export enum VisibilityFilterStatus {
+    UNFILTERED,
+    VISIBLE_STATIONS,
+    INVISIBLE_STATIONS
+}
+
+export interface VisibilityFilter extends BasicFilter {
+    visibilityStatus: number;
+}
+
 type ValueType = number | string | boolean;
 
 @Injectable({
@@ -39,6 +49,7 @@ type ValueType = number | string | boolean;
 })
 export class FilterService {
     static readonly COMPLEX_FILTER_NAME = 'ComplexFilter';
+    static readonly VISIBILITY_FILTER_NAME = 'VisibilityFilter';
 
     private readonly OPERATION_TYPE_TO_FUNCTION_MAP: {
         [key: string]: (filterValue: ValueType, rowValue: ValueType) => boolean;
@@ -68,7 +79,7 @@ export class FilterService {
 
     filterRows(filters: Filter[], unfilteredRows: any[]): any[] {
         const filteredRows = unfilteredRows.filter((row) =>
-            filters.every((filterElem: Filter | ComplexFilter) => {
+            filters.every((filterElem: Filter | ComplexFilter | VisibilityFilter) => {
                 if (
                     filterElem.filterText === null ||
                     filterElem.filterText === ''
@@ -88,6 +99,20 @@ export class FilterService {
                             complexFilterConditions
                         );
                     }
+                } else if (
+                    (filterElem as VisibilityFilter).filterText ===
+                    FilterService.VISIBILITY_FILTER_NAME
+                ) {
+                    const visibilityStatus = (filterElem as VisibilityFilter).visibilityStatus;
+                    if (visibilityStatus === VisibilityFilterStatus.UNFILTERED) {
+                        return true;
+                    } else if (visibilityStatus === VisibilityFilterStatus.VISIBLE_STATIONS) {
+                        return !row['invisible'];
+                    } else if (visibilityStatus === VisibilityFilterStatus.INVISIBLE_STATIONS) {
+                        return row['invisible'];
+                    }
+
+                    return true;
                 } else {
                     const filterText: string = filterElem.filterText.toLowerCase();
 

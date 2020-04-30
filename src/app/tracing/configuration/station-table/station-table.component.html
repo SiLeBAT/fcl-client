@@ -8,6 +8,36 @@
     </button>
 </ng-template>
 
+<ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+    <span class="header-sort-span fcl-column-visibility-header-icon-container" (click)="sort()">
+        <span class="material-icons fcl-column-visibility-header-icon pointable">
+            visibility
+        </span>
+        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+    </span>
+    <button
+        matTooltip="Filter Visibility"
+        matTooltipPosition="above"
+        class="fcl-visibility-filter-button"
+        (click)="filterVisibilityColumn()">
+        <span
+            *ngIf="visibilityFilter.visibilityStatus === visibilityFilterStatus.UNFILTERED ||
+            visibilityFilter.visibilityStatus === visibilityFilterStatus.VISIBLE_STATIONS"
+            class="material-icons fcl-column-visibility-header-icon pointable"
+            [ngClass]="{'unsorted' : visibilityFilter.visibilityStatus === visibilityFilterStatus.UNFILTERED}">
+            visibility
+        </span>
+        <span
+            *ngIf="visibilityFilter.visibilityStatus === visibilityFilterStatus.INVISIBLE_STATIONS"
+            class="material-icons fcl-column-visibility-header-icon pointable"
+            [ngClass]="{'unsorted' : visibilityFilter.visibilityStatus === visibilityFilterStatus.UNFILTERED}">
+            visibility_off
+        </span>
+    </button>
+</ng-template>
+
 <ng-template #filterColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
     <span class="header-sort-span" (click)="sort()">
         {{column.name}}
@@ -31,6 +61,20 @@
         <mat-icon class="fcl-column-filter-field-icon" matSuffix>search</mat-icon>
     </mat-form-field>
 </ng-template>
+
+<ng-template #visibilityRowTpl let-row="row" let-value="value">
+    <span
+        *ngIf="!row.invisible"
+        class="material-icons fcl-column-visibility-header-icon">
+        visibility
+    </span>
+    <span
+        *ngIf="row.invisible"
+        class="material-icons fcl-column-visibility-header-icon unsorted">
+        visibility_off
+    </span>
+</ng-template>
+
 
 <fcl-station-table-view
     #tableView
