@@ -56,6 +56,7 @@ export interface Cy {
     zoomingEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
     viewport(zoom: number, pan: Position): void;
     extent(): CyExtent;
+    remove(selectorOrEles: string | CyElementCollection<CyNode | CyEdge>): void;
 }
 
 export interface CyExtent {

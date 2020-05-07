@@ -138,7 +138,8 @@ export const getSchemaGraphData = createSelector(
         showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
-        layout: graphSettings.schemaLayout
+        layout: graphSettings.schemaLayout,
+        ghostStation: graphSettings.ghostStation
     })
 );
 

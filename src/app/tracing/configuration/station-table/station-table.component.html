@@ -38,7 +38,7 @@
     </button>
 </ng-template>
 
-<ng-template #filterColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+<ng-template #dataColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
     <span class="header-sort-span" (click)="sort()">
         {{column.name}}
         <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
@@ -70,11 +70,26 @@
     </span>
     <span
         *ngIf="row.invisible"
-        class="material-icons fcl-column-visibility-header-icon unsorted">
+        class="material-icons fcl-column-visibility-header-icon unsorted pointable"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave()">
         visibility_off
     </span>
 </ng-template>
 
+<ng-template #dataRowTpl let-row="row" let-value="value">
+    <span
+        *ngIf="!row.invisible">
+        {{ value }}
+    </span>
+    <span
+        *ngIf="row.invisible"
+        class="pointable"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave($event, row)">
+        {{ value }}
+    </span>
+</ng-template>
 
 <fcl-station-table-view
     #tableView
