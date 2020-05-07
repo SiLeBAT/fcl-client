@@ -69,21 +69,21 @@ export class StyleService {
             .style({
                 ...(
                     graphSize !== GraphSize.HUGE ?
-                    {
-                        content: 'data(label)',
-                        'text-valign': 'bottom',
-                        'text-halign': 'right',
-                        'text-wrap': 'none',
-                        'font-size': modelFontSize
-                    }
-                    :
-                    {}
+                        {
+                            content: 'data(label)',
+                            'text-valign': 'bottom',
+                            'text-halign': 'right',
+                            'text-wrap': 'none',
+                            'font-size': modelFontSize
+                        }
+                        :
+                        {}
                 ),
                 'shape': 'data(shape)',
                 ...this.createNodeSizeStyle(modelNodeSize, maxScore),
-                'background-fill' : 'linear-gradient',
-                'background-gradient-stop-colors' : 'data(stopColors)',
-                'background-gradient-stop-positions' : 'data(stopPositions)',
+                'background-fill': 'linear-gradient',
+                'background-gradient-stop-colors': 'data(stopColors)',
+                'background-gradient-stop-positions': 'data(stopPositions)',
                 'background-gradient-direction': 'to-right',
                 'border-width': modelNodeSize * StyleService.NODE_SIZE_TO_BORDER_WIDTH_FACTOR,
                 'border-color': 'rgb(0, 0, 0)',
@@ -95,13 +95,13 @@ export class StyleService {
             .style({
                 ...(
                     graphSize !== GraphSize.HUGE ?
-                    {
-                        content: 'data(label)',
-                        'text-wrap': 'none',
-                        'text-rotation': 'autorotate',
-                        'font-size': modelFontSize
-                    } :
-                    {}
+                        {
+                            content: 'data(label)',
+                            'text-wrap': 'none',
+                            'text-rotation': 'autorotate',
+                            'font-size': modelFontSize
+                        } :
+                        {}
                 ),
                 'control-point-step-size': modelSelectedEdgeWidth * 4,
                 'target-arrow-shape': 'triangle-cross',
@@ -138,15 +138,25 @@ export class StyleService {
             .style({
                 ...(
                     graphSize !== GraphSize.HUGE ?
-                    {
-                        'control-point-step-size': modelFontSize * 2.5
-                    } :
-                    {}
+                        {
+                            'control-point-step-size': modelFontSize * 2.5
+                        } :
+                        {}
                 )
             })
             .selector('edge.edge-label-disabled')
             .style({
                 content: ''
+            })
+            .selector('node.ghost-element')
+            .style({
+                content: '',
+                'border-color': 'rgb(179, 170, 179)'
+            })
+            .selector('edge.ghost-element')
+            .style({
+                content: '',
+                'target-arrow-color': 'rgb(179, 170, 179)'
             })
             .selector('node[?isMeta]')
             .style({

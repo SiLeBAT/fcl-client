@@ -33,6 +33,7 @@ interface GraphSettingsState {
 interface SchemaGraphState extends GraphState, GraphSettingsState {
     stationPositions: { [key: number]: Position };
     layout: Layout;
+    ghostStation: string;
 }
 
 interface Rectangle {
@@ -604,6 +605,48 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         this.edgeLabelOffsetUpdater.update(true);
     }
 
+    private updateGhostElements(graphState: SchemaGraphState, graphData: GraphServiceData) {
+        this.cy.batch(() => {
+            this.removeGhostElements();
+            if (graphState.ghostStation !== undefined && graphState.ghostStation !== null) {
+                const ghostElements = this.createGhostElements(graphState, graphData);
+                this.cy.add([ghostElements.node]);
+                if (ghostElements.edges.length > 0) {
+                    this.cy.add(ghostElements.edges);
+                }
+            }
+        });
+    }
+
+    private removeGhostElements() {
+        this.cy.remove('.ghost-element');
+    }
+
+    private createGhostElements(graphState: SchemaGraphState, graphData: GraphServiceData): { node: CyNodeDef, edges: CyEdgeDef[] } {
+        const ghostStation = graphData.statMap[graphState.ghostStation];
+        const ghostElementData = this.graphService.createGhostElementData(ghostStation, graphState, graphData);
+
+        const ghostNode = {
+            group: 'nodes',
+            data: ghostElementData.nodeData,
+            selected: false,
+            classes: 'ghost-element',
+            position: graphState.stationPositions[ghostElementData.nodeData.station.id]
+        };
+
+        const ghostEdges = ghostElementData.edgeData.map(edgeData => ({
+            group: 'edges',
+            data: edgeData,
+            classes: 'top-center ghost-element',
+            selected: edgeData.selected
+        }));
+
+        return {
+            node: ghostNode,
+            edges: ghostEdges
+        };
+    }
+
     private getStyleInfoFromState(graphState: SchemaGraphState): { fontSize: number, nodeSize: number, zoom: number } {
         return {
             fontSize: graphState.fontSize,
@@ -681,6 +724,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.updateEdgeLabels();
         } else if (!_.isEqual(this.cachedState.layout, newState.layout)) {
             this.applyLayoutStateToGraph(newState, newData);
+        } else if (this.cachedState.ghostStation !== newState.ghostStation) {
+            this.updateGhostElements(newState, newData);
         }
         this.cachedData = {
             ...this.cachedData,

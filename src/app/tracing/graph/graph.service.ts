@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BasicGraphState, DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType } from '../data.model';
+import { BasicGraphState, DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
@@ -31,6 +31,7 @@ export class GraphService {
 
     private static readonly DEFAULT_EDGE_COLOR = [0, 0, 0];
     private static readonly DEFAULT_NODE_COLOR = [255, 255, 255];
+    private static readonly DEFAULT_GHOST_COLOR = [179, 179, 179];
 
     private cachedState: GraphState;
 
@@ -61,6 +62,21 @@ export class GraphService {
     getData(state: GraphState): GraphServiceData {
         this.applyState(state);
         return { ...this.cachedData };
+    }
+
+    createGhostElementData(
+        ghostStation: StationData,
+        state: GraphState,
+        graphData: GraphServiceData
+    ): { nodeData: CyNodeData, edgeData: CyEdgeData[] } {
+
+        const ghostNodeData = this.createGhostNodeData(ghostStation);
+        const ghostEdgeData = this.createGhostEdgeData(ghostNodeData, state, graphData);
+
+        return {
+            nodeData: ghostNodeData,
+            edgeData: ghostEdgeData
+        };
     }
 
     private createNodeData(state: GraphState, data: DataServiceData): CyDataNodes {
@@ -198,7 +214,6 @@ export class GraphService {
                 }
 
             }
-
         } else {
             let iEdge = 0;
             for (const delivery of data.deliveries.filter(d => !d.invisible)) {
@@ -247,6 +262,99 @@ export class GraphService {
             delIdToEdgeDataMap: map,
             edgeSel: Utils.createSimpleStringSet(edgeData.filter(n => n.selected).map(n => n.id))
         };
+    }
+
+    private createGhostNodeData(ghostStation: StationData): CyNodeData {
+        return {
+            id: 'GN',
+            label: '',
+            ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
+            isMeta: ghostStation.contains && ghostStation.contains.length > 0,
+            shape: ghostStation.highlightingInfo.shape ? ghostStation.highlightingInfo.shape : NodeShapeType.CIRCLE,
+            station: ghostStation,
+            score: ghostStation.score,
+            forward: ghostStation.forward,
+            backward: ghostStation.backward,
+            outbreak: ghostStation.outbreak,
+            crossContamination: ghostStation.crossContamination,
+            commonLink: ghostStation.commonLink,
+            killContamination: ghostStation.killContamination,
+            selected: ghostStation.selected,
+            observed: ghostStation.observed,
+            weight: ghostStation.weight
+        };
+    }
+
+    private mapDelToEdgeData(deliveries: DeliveryData[], idSuffix: string, source: CyNodeData, target: CyNodeData) {
+        const edgeData = {
+            id: 'GE' + idSuffix,
+            labelWoPrefix: '',
+            ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
+            source: source.id,
+            target: target.id,
+            deliveries: deliveries,
+            selected: false,
+            backward: false,
+            forward: false,
+            observed: ObservedType.NONE,
+            crossContamination: false,
+            killContamination: false,
+            score: 0,
+            weight: 0,
+            wLabelSpace: false
+        };
+
+        return edgeData;
+    }
+
+    private createGhostEdgeData(ghostNodeData: CyNodeData, state: GraphState, graphData: GraphServiceData): CyEdgeData[] {
+        const ghostDeliveries = this.getGhostDeliveries(ghostNodeData.station, graphData);
+
+        if (state.mergeDeliveriesType === MergeDeliveriesType.NO_MERGE) {
+            return ghostDeliveries.map(
+                (delivery, index) => {
+
+                    const edgeData = this.mapDelToEdgeData(
+                        [delivery],
+                        '' + index,
+                        ghostNodeData.station.id === delivery.source ? ghostNodeData : graphData.statIdToNodeDataMap[delivery.source],
+                        ghostNodeData.station.id === delivery.target ? ghostNodeData : graphData.statIdToNodeDataMap[delivery.target]
+                    );
+
+                    return edgeData;
+                }
+            );
+        }
+        const deliveriesPerNodePair = Utils.groupRows(ghostDeliveries, [(d) => d.source, (d) => d.target]);
+
+        return [].concat(...deliveriesPerNodePair.map(deliveriesForNodePair => {
+            const deliveryGroups = this.groupDeliveries(deliveriesForNodePair, state.mergeDeliveriesType);
+            const fromNode = (
+                deliveryGroups[0][0].source === ghostNodeData.station.id ?
+                ghostNodeData :
+                graphData.statIdToNodeDataMap[deliveryGroups[0][0].source]
+            );
+            const toNode = (
+                deliveryGroups[0][0].target === ghostNodeData.station.id ?
+                ghostNodeData :
+                graphData.statIdToNodeDataMap[deliveryGroups[0][0].target]
+            );
+            return [].concat(...deliveryGroups.map((deliveryGroup, gIndex) => this.mapDelToEdgeData(
+                deliveryGroup,
+                '' + fromNode.id + toNode.id + 'G' + gIndex,
+                fromNode,
+                toNode
+            )));
+        }));
+    }
+
+    private getGhostDeliveries(ghostStation: StationData, graphData: GraphServiceData): DeliveryData[] {
+        const outDeliveries = graphData.getDelById(ghostStation.outgoing).filter(d => !graphData.statMap[d.target].invisible);
+        const outIdSet = Utils.createSimpleStringSet(ghostStation.outgoing);
+        const inDeliveries = graphData.getDelById(ghostStation.incoming)
+            .filter(d => !outIdSet[d.id] && !graphData.statMap[d.source].invisible);
+
+        return [].concat(outDeliveries, inDeliveries);
     }
 
     private updateLabelSpaceFlags(edges: CyEdgeData[]): void {

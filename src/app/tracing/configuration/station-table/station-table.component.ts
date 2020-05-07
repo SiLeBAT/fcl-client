@@ -41,8 +41,9 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
     @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
     @ViewChild('visibilityColTpl', { static: true }) visibilityColTpl: TemplateRef<any>;
-    @ViewChild('filterColTpl', { static: true }) filterColTpl: TemplateRef<any>;
+    @ViewChild('dataColTpl', { static: true }) dataColTpl: TemplateRef<any>;
     @ViewChild('visibilityRowTpl', { static: true }) visibilityRowTpl: TemplateRef<any>;
+    @ViewChild('dataRowTpl', { static: true }) dataRowTpl: TemplateRef<any>;
 
     stationRows: any[];
     stationColumns: any[];
@@ -174,6 +175,15 @@ export class StationTableComponent implements OnInit, OnDestroy {
         this.onFilterChange();
     }
 
+    onMouseOver(row) {
+        const stationId = row['id'];
+        this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: stationId }));
+    }
+
+    onMouseLeave() {
+        this.store.dispatch(new tracingActions.ClearGhostStationMSA());
+    }
+
     ngOnDestroy() {
         this.componentActive = false;
     }
@@ -256,8 +266,9 @@ export class StationTableComponent implements OnInit, OnDestroy {
                         prop: stationColumn.id,
                         resizable: false,
                         draggable: true,
-                        headerTemplate: this.filterColTpl,
-                        cellClass: this.getCellClass
+                        headerTemplate: this.dataColTpl,
+                        cellClass: this.getCellClass,
+                        cellTemplate: this.dataRowTpl
                     };
                 });
 

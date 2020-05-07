@@ -162,6 +162,7 @@ export interface GraphSettings {
     highlightingSettings: HighlightingSettings;
     schemaLayout: Layout;
     gisLayout: Layout;
+    ghostStation: string;
 }
 
 export interface HighlightingSettings {

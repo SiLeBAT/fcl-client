@@ -103,7 +103,8 @@ export function createInitialFclDataState(): FclData {
             schemaLayout: null,
             gisLayout: null,
             mapType: Constants.DEFAULT_MAP_TYPE,
-            shapeFileData: null
+            shapeFileData: null,
+            ghostStation: null
         },
         tracingSettings: {
             stations: [],
@@ -423,6 +424,30 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         highlightingSettings: action.payload.highlightingSettings
+                    }
+                }
+            };
+
+        case TracingActionTypes.ShowGhostStationMSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        ghostStation: action.payload.stationId
+                    }
+                }
+            };
+
+        case TracingActionTypes.ClearGhostStationMSA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        ghostStation: null
                     }
                 }
             };
