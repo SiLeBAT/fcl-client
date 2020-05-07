@@ -45,7 +45,9 @@ export enum TracingActionTypes {
     SetStationComplexFilterConditionsSSA = '[Complex Filter Component] Set Station Complex Filter Conditions',
     ResetStationComplexFilterSSA = '[Filter Service] Reset Station Complex Filter',
     SetStationStandardFilterTermSSA = '[Standard Filter Component] Set Station Standard Filter Term',
-    ResetStationStandardFilterSSA = '[Filter Service] Reset Station Standard Filter'
+    ResetStationStandardFilterSSA = '[Filter Service] Reset Station Standard Filter',
+    ShowGhostStationMSA = '[Station Table] Show Ghost Station',
+    ClearGhostStationMSA = '[Station Table] Clear Ghost Station'
 }
 
 export class TracingActivated implements Action {
@@ -262,6 +264,16 @@ export class ResetStationStandardFilterSSA implements Action {
     readonly type = TracingActionTypes.ResetStationStandardFilterSSA;
 }
 
+export class ShowGhostStationMSA implements Action {
+    readonly type = TracingActionTypes.ShowGhostStationMSA;
+
+    constructor(public payload: { stationId: string }) {}
+}
+
+export class ClearGhostStationMSA implements Action {
+    readonly type = TracingActionTypes.ClearGhostStationMSA;
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -299,4 +311,6 @@ export type TracingActions =
     | SetStationComplexFilterConditionsSSA
     | ResetStationComplexFilterSSA
     | SetStationStandardFilterTermSSA
-    | ResetStationStandardFilterSSA;
+    | ResetStationStandardFilterSSA
+    | ShowGhostStationMSA
+    | ClearGhostStationMSA;
