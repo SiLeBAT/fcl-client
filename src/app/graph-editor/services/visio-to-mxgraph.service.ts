@@ -365,9 +365,25 @@ export class VisioToMxGraphService {
         });
 
         this.drawHeader(parent, report);
-        this.drawLegend(parent, report, { x: 0, y: report.graph.size.height + 10 });
+        const legendCell = this.drawLegend(parent, report, { x: 0, y: report.graph.size.height + 10 });
+
+        this.drawFclImage(parent, { x: 0, y: this.getLowerBound(legendCell.getGeometry()) + 5 });
 
         return this.graph;
+    }
+
+    private getLowerBound(geometry: mxGeometry): number {
+        return geometry.y + geometry.height;
+    }
+
+    private drawFclImage(parent: mxCell, position: Position): mxCell {
+        return this.graph.insertVertex(
+            parent,
+            null,
+            '',
+            position.x, position.y, 220, 20,
+            'shape=image;image=' + '../../assets/CreatedWithFCL_Banner.png',
+            false);
     }
 
     private drawHeader(parent: mxCell, report: VisioReport): Position | Size {
@@ -409,13 +425,13 @@ export class VisioToMxGraphService {
         return boxCell;
     }
 
-    private drawLegend(parent: mxCell, report: VisioReport, position: Position) {
+    private drawLegend(parent: mxCell, report: VisioReport, position: Position): mxCell {
         const legendEntries = this.getLegendEntries(report);
         const showDeliveries = report.graph.connectors.length > 0;
 
         const nEntries = Object.keys(legendEntries).filter(key => legendEntries[key]).length + (showDeliveries ? 1 : 0);
         if (!nEntries) {
-            return;
+            return null;
         }
         const legendCell: mxCell = this.drawLegendCell(parent, { x: position.x + 1, y: position.y + 0 });
 
@@ -453,6 +469,12 @@ export class VisioToMxGraphService {
                 return c.getGeometry().width;
             })) + LEGEND_ENTRY_DIST.x;
         });
+        // add right margin (equal to leftMargin)
+        const geometry = legendCell.getGeometry();
+        geometry.width = geometry.width + startX;
+        legendCell.setGeometry(geometry);
+
+        return legendCell;
     }
 
     private drawLegendEntry(parent: mxCell, legendEntry: LegendEntryInfo, position: Position): mxCell {

@@ -129,4 +129,78 @@ declare class mxPoint {
 
 }
 
+declare class mxRectangle extends mxPoint {
+    /**
+     * Constructs a new rectangle for the optional parameters (default 0).
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
+    constructor(x?: number, y?: number, width?: number, height?: number);
+
+    width: number;
+    height: number;
+
+    /**
+     * Sets this rectangle to the specified values
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
+    setRect(x: number, y: number, width: number, height: number): void;
+
+    /**
+     * Returns the x-coordinate of the center point.
+     */
+    getCenterX(): number;
+
+    /**
+     * Returns the y-coordinate of the center point.
+     */
+    getCenterY(): number;
+
+    /**
+     * Adds the given rectangle to this rectangle.
+     * @param rect
+     */
+    add(rect: {x: number, y: number, width: number, height: number}): void;
+
+    /**
+     * Changes this rectangle to where it overlaps with the given rectangle.
+     * @param rect
+     */
+    intersect(rect: {x: number, y: number, width: number, height: number}): void;
+
+    /**
+     * Grows the rectangle by the given amount, that is, this method subtracts the given amount
+     * from the x- and y-coordinates and adds twice the amount to the width and height.
+     * @param amount
+     */
+    grow(amount: number): void;
+
+    /**
+     * Returns the top, left corner as a new mxPoint.
+     */
+    getPoint(): mxPoint;
+
+    /**
+     * Rotates this rectangle by 90 degree around its center point.
+     */
+    rotate90(): void;
+
+    /**
+     * Returns true if the given object equals this rectangle.
+     * @param obj
+     */
+    equals(obj: any): boolean;
+
+    /**
+     * Returns a new mxRectangle which is a copy of the given rectangle.
+     * @param rect
+     */
+    static fromRectangle(rect: {x: number, y: number, width: number, height: number}): mxRectangle;
+}
+
 /******************      Util end      **************/
