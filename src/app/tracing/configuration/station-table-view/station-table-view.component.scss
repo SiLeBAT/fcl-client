@@ -86,6 +86,10 @@
     align-items: center;
 }
 
+.fcl-datatable .fcl-invisible-data-row-cell {
+    flex: 1;
+}
+
 .fcl-datatable .fcl-visibility-column-row-cell {
     padding: 0.1rem 0 0 0.5rem !important;
 }

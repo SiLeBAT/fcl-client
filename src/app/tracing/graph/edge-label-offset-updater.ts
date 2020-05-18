@@ -113,6 +113,10 @@ export class EdgeLabelOffsetUpdater {
         }
     }
 
+    updateGhostEdges() {
+        this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy.edges('.ghost-element')));
+    }
+
     private updateEdgeLabelOffsets(edges: CyElementCollection<CyEdge>) {
         if (edges.size() === 0) {
             return;

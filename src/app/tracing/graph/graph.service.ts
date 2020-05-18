@@ -70,7 +70,7 @@ export class GraphService {
         graphData: GraphServiceData
     ): { nodeData: CyNodeData, edgeData: CyEdgeData[] } {
 
-        const ghostNodeData = this.createGhostNodeData(ghostStation);
+        const ghostNodeData = this.createGhostNodeData(ghostStation, graphData);
         const ghostEdgeData = this.createGhostEdgeData(ghostNodeData, state, graphData);
 
         return {
@@ -264,10 +264,13 @@ export class GraphService {
         };
     }
 
-    private createGhostNodeData(ghostStation: StationData): CyNodeData {
+    private createGhostNodeData(ghostStation: StationData, graphData: GraphServiceData): CyNodeData {
+
+        console.log('graphData.nodeData: ', graphData.nodeData);
+
         return {
             id: 'GN',
-            label: '',
+            label: ghostStation.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
             isMeta: ghostStation.contains && ghostStation.contains.length > 0,
             shape: ghostStation.highlightingInfo.shape ? ghostStation.highlightingInfo.shape : NodeShapeType.CIRCLE,
@@ -281,14 +284,20 @@ export class GraphService {
             killContamination: ghostStation.killContamination,
             selected: ghostStation.selected,
             observed: ghostStation.observed,
-            weight: ghostStation.weight
+            weight: ghostStation.weight,
+            zindex: (2 * graphData.stations.length) + 1
         };
     }
 
     private mapDelToEdgeData(deliveries: DeliveryData[], idSuffix: string, source: CyNodeData, target: CyNodeData) {
+
+        const labels: string[] = _.uniq(
+            deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
+        );
+
         const edgeData = {
             id: 'GE' + idSuffix,
-            labelWoPrefix: '',
+            labelWoPrefix: labels.length === 1 ? labels[0].replace(/\s+/, ' ') : '',
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
             source: source.id,
             target: target.id,
@@ -308,10 +317,12 @@ export class GraphService {
     }
 
     private createGhostEdgeData(ghostNodeData: CyNodeData, state: GraphState, graphData: GraphServiceData): CyEdgeData[] {
+        let ghostEdgeData: CyEdgeData[];
         const ghostDeliveries = this.getGhostDeliveries(ghostNodeData.station, graphData);
 
         if (state.mergeDeliveriesType === MergeDeliveriesType.NO_MERGE) {
-            return ghostDeliveries.map(
+
+            ghostEdgeData = ghostDeliveries.map(
                 (delivery, index) => {
 
                     const edgeData = this.mapDelToEdgeData(
@@ -324,10 +335,13 @@ export class GraphService {
                     return edgeData;
                 }
             );
+            this.updateEdgeLabels(state, ghostEdgeData);
+
+            return ghostEdgeData;
         }
         const deliveriesPerNodePair = Utils.groupRows(ghostDeliveries, [(d) => d.source, (d) => d.target]);
 
-        return [].concat(...deliveriesPerNodePair.map(deliveriesForNodePair => {
+        ghostEdgeData = [].concat(...deliveriesPerNodePair.map(deliveriesForNodePair => {
             const deliveryGroups = this.groupDeliveries(deliveriesForNodePair, state.mergeDeliveriesType);
             const fromNode = (
                 deliveryGroups[0][0].source === ghostNodeData.station.id ?
@@ -346,6 +360,9 @@ export class GraphService {
                 toNode
             )));
         }));
+        this.updateEdgeLabels(state, ghostEdgeData);
+
+        return ghostEdgeData;
     }
 
     private getGhostDeliveries(ghostStation: StationData, graphData: GraphServiceData): DeliveryData[] {

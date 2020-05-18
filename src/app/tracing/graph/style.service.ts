@@ -150,12 +150,12 @@ export class StyleService {
             })
             .selector('node.ghost-element')
             .style({
-                content: '',
+                color: 'rgb(179, 170, 179)',
                 'border-color': 'rgb(179, 170, 179)'
             })
             .selector('edge.ghost-element')
             .style({
-                content: '',
+                color: 'rgb(179, 170, 179)',
                 'target-arrow-color': 'rgb(179, 170, 179)'
             })
             .selector('node[?isMeta]')

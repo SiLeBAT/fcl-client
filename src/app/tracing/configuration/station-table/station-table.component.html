@@ -71,7 +71,7 @@
     </span>
     <span
         *ngIf="row.invisible"
-        class="material-icons fcl-column-visibility-header-icon unsorted pointable"
+        class="material-icons fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
         (mouseover)="onMouseOver(row)"
         (mouseleave)="onMouseLeave()">
         visibility_off
@@ -85,7 +85,7 @@
     </span>
     <span
         *ngIf="row.invisible"
-        class="pointable"
+        class="pointable fcl-invisible-data-row-cell"
         (mouseover)="onMouseOver(row)"
         (mouseleave)="onMouseLeave()">
         {{ value }}
