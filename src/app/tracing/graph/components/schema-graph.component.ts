@@ -616,6 +616,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                 }
             }
         });
+
+        this.edgeLabelOffsetUpdater.updateGhostEdges();
+
     }
 
     private removeGhostElements() {
