@@ -183,3 +183,22 @@
 .fcl-datatable .fcl-row-cell-invisible .datatable-body-cell-label {
     color: $fcl-accent-200;
 }
+
+.fcl-datatable .fcl-station-shape-header-symbol svg circle {
+    transform: scale(0.5);
+}
+
+.fcl-datatable .fcl-station-shape-symbol {
+    display: flex;
+    align-items: center;
+}
+
+.fcl-datatable .fcl-station-shape-symbol svg {
+    height: 1rem;
+}
+
+.fcl-datatable .fcl-station-shape-symbol svg polygon,
+.fcl-datatable .fcl-station-shape-symbol svg circle,
+.fcl-datatable .fcl-station-shape-symbol svg rect {
+    transform: scale(0.9);
+}
