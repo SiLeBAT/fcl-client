@@ -1,4 +1,15 @@
 <svg viewBox="-55 -55 110 110" height="20" width="20" [ngSwitch]="getShapeType()">
+
+    <defs>
+        <linearGradient [attr.id]="gradientId" x1="0%" y1="0%" x2="100%" y2="0%">
+            <ng-container *ngFor="let stop of gradientStops">
+                <stop
+                    [attr.offset]="stop.offset"
+                    [style.stop-color]="stop.style" />
+            </ng-container>
+        </linearGradient>
+    </defs>
+
     <svg:circle  *ngSwitchCase="'circle'" cx="0" cy="0" r="50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
 
     <svg:rect *ngSwitchCase="'square'" x="-50" y="-50" rx="0" ry="0" width="100" height="100" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>

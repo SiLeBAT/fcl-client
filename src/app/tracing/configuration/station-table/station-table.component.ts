@@ -18,11 +18,13 @@ import {
     TableColumn,
     StationTable,
     StationTableRow,
-    ComplexFilterCondition
+    ComplexFilterCondition,
+    NodeShapeType
 } from '../../data.model';
 import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-select/dialog-select.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FilterService, FilterColumn, Filter, ComplexFilter, VisibilityFilterStatus, VisibilityFilter } from './../services/filter.service';
+import { Utils } from '../../util/non-ui-utils';
 
 interface StoreDataState {
     graphState: BasicGraphState;
@@ -40,8 +42,10 @@ export class StationTableComponent implements OnInit, OnDestroy {
     private tableViewComponent: StationTableViewComponent;
 
     @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
+    @ViewChild('shapeColTpl', { static: true }) shapeColTpl: TemplateRef<any>;
     @ViewChild('visibilityColTpl', { static: true }) visibilityColTpl: TemplateRef<any>;
     @ViewChild('dataColTpl', { static: true }) dataColTpl: TemplateRef<any>;
+    @ViewChild('shapeRowTpl', { static: true }) shapeRowTpl: TemplateRef<any>;
     @ViewChild('visibilityRowTpl', { static: true }) visibilityRowTpl: TemplateRef<any>;
     @ViewChild('dataRowTpl', { static: true }) dataRowTpl: TemplateRef<any>;
 
@@ -73,6 +77,8 @@ export class StationTableComponent implements OnInit, OnDestroy {
         filterText: FilterService.COMPLEX_FILTER_NAME,
         filterConditions: []
     };
+
+    private nodeShapeTypes: string[] = Object.keys(NodeShapeType).map(key => NodeShapeType[key]);
 
     private componentActive: boolean = true;
 
@@ -245,6 +251,19 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 frozenLeft: true
             };
 
+            const shapeColumn: any = {
+                name: ' ',
+                prop: 'shapeCol',
+                resizeable: false,
+                draggable: false,
+                width: 30,
+                headerTemplate: this.shapeColTpl,
+                cellTemplate: this.shapeRowTpl,
+                headerClass: 'fcl-visibility-column-header-cell',
+                cellClass: 'fcl-visibility-column-row-cell',
+                comparator: this.shapeComparator.bind(this)
+            };
+
             const visibilityColumn: any = {
                 name: ' ',
                 prop: 'visCol',
@@ -266,6 +285,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
                         prop: stationColumn.id,
                         resizable: false,
                         draggable: true,
+                        reorderable: true,
                         headerTemplate: this.dataColTpl,
                         cellClass: this.getCellClass,
                         cellTemplate: this.dataRowTpl
@@ -273,6 +293,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 });
 
             this.stationColumns = [buttonColumn]
+                .concat(shapeColumn)
                 .concat(visibilityColumn)
                 .concat(dataColumns);
 
@@ -343,6 +364,38 @@ export class StationTableComponent implements OnInit, OnDestroy {
         }
         if (rowA['invisible'] === false && rowB['invisible'] === true) {
             result = 1;
+        }
+
+        return result;
+    }
+
+    private shapeComparator(valueA, valueB, rowA, rowB, sortDirection): number {
+
+        const shapeA = rowA['highlightingInfo']['shape'] ? rowA['highlightingInfo']['shape'] : NodeShapeType.CIRCLE;
+        const shapeB = rowB['highlightingInfo']['shape'] ? rowB['highlightingInfo']['shape'] : NodeShapeType.CIRCLE;
+
+        const colorA = rowA['highlightingInfo']['color'].length > 0 ? rowA['highlightingInfo']['color'][0] : [255, 255, 255];
+        const colorB = rowB['highlightingInfo']['color'].length > 0 ? rowB['highlightingInfo']['color'][0] : [255, 255, 255];
+
+        const hslA = Utils.rgbToHsl(colorA[0], colorA[1], colorA[2]);
+        const hslB = Utils.rgbToHsl(colorB[0], colorB[1], colorB[2]);
+
+        let result: number = 0;
+
+        if (rowA['invisible'] === true && rowB['invisible'] === false) {
+            result = -1;
+        } else if (this.nodeShapeTypes.indexOf(shapeA) < this.nodeShapeTypes.indexOf(shapeB)) {
+            result = -1;
+        } else if (this.nodeShapeTypes.indexOf(shapeA) > this.nodeShapeTypes.indexOf(shapeB)) {
+            result = 1;
+        } else {
+            if (hslA < hslB) {
+                result = 1;
+            } else if (hslA > hslB) {
+                result = -1;
+            } else {
+                result = 0;
+            }
         }
 
         return result;

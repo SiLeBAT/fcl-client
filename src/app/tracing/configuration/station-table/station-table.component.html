@@ -8,6 +8,17 @@
     </button>
 </ng-template>
 
+<ng-template #shapeColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+    <span class="header-sort-span" (click)="sort()">
+        <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
+            radio_button_unchecked
+        </span>
+        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+    </span>
+</ng-template>
+
 <ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
     <span class="header-sort-span" (click)="sort()">
         <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
@@ -61,6 +72,25 @@
         >
         <mat-icon class="fcl-column-filter-field-icon" matSuffix>search</mat-icon>
     </mat-form-field>
+</ng-template>
+
+<ng-template #shapeRowTpl let-row="row" let-value="value">
+    <fcl-node-symbol
+        *ngIf="!row.invisible"
+        class="fcl-station-shape-symbol"
+        [dataTableShapeType]="row.highlightingInfo.shape"
+        [mapStationColor]="row.highlightingInfo.color"
+        [rowIsInvisible]="row.invisible">
+    </fcl-node-symbol>
+    <fcl-node-symbol
+        *ngIf="row.invisible"
+        class="fcl-station-shape-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
+        [dataTableShapeType]="row.highlightingInfo.shape"
+        [mapStationColor]="row.highlightingInfo.color"
+        [rowIsInvisible]="row.invisible"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave()">
+    </fcl-node-symbol>
 </ng-template>
 
 <ng-template #visibilityRowTpl let-row="row" let-value="value">
