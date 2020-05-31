@@ -39,6 +39,7 @@ export class EdgeLabelOffsetUpdater {
                     this.cy.nodes(':selected').edgesWith(':unselected') :
                     this.grabbedNode.connectedEdges(':simple')
                 );
+                this.switchOffEdgeLabels(this.draggedEdges);
             }
         }).bind(this);
 
@@ -49,18 +50,18 @@ export class EdgeLabelOffsetUpdater {
         if (this.dragListener) {
             this.grabbedNode.removeListener('drag', this.dragListener);
             this.dragListener = null;
+        }
+        if (this.draggedEdges) {
+            this.switchOnEdgeLabels(this.draggedEdges);
             this.draggedEdges = null;
         }
     }
 
     private addFreeOnListener(): void {
         this.freeOnListener = (() => {
-            const draggedEdges = this.draggedEdges;
             this.removeDragListener();
             this.removeFreeOnListener();
             this.grabbedNode = null;
-            this.switchOnEdgeLabels(draggedEdges);
-            this.draggedEdges = null;
         }).bind(this);
         this.grabbedNode.on('freeon', this.freeOnListener);
     }
@@ -134,7 +135,6 @@ export class EdgeLabelOffsetUpdater {
 
     private initDraggedEdges(edges: CyElementCollection<CyEdge>): void {
         this.draggedEdges = edges;
-        this.switchOffEdgeLabels(edges);
     }
 
     private updateEdgeLabelOffset(edge: CyEdge, offset: number): void {
