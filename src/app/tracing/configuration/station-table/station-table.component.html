@@ -79,15 +79,13 @@
         *ngIf="!row.invisible"
         class="fcl-station-shape-symbol"
         [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="row.highlightingInfo.color"
-        [rowIsInvisible]="row.invisible">
+        [mapStationColor]="row.highlightingInfo.color">
     </fcl-node-symbol>
     <fcl-node-symbol
         *ngIf="row.invisible"
         class="fcl-station-shape-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
         [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="row.highlightingInfo.color"
-        [rowIsInvisible]="row.invisible"
+        [mapStationColor]="[[211, 211, 211]]"
         (mouseover)="onMouseOver(row)"
         (mouseleave)="onMouseLeave()">
     </fcl-node-symbol>

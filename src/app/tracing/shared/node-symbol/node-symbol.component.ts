@@ -17,8 +17,6 @@ export class NodeSymbolComponent implements OnInit {
 
     private static readonly DEFAULT_GRADIENT_ID = 'colr255g255b255';
     private static readonly DEFAULT_COLOR_WHITE = 'rgb(255, 255, 255)';
-    private static readonly INVISIBLE_GRADIENT_ID = 'colr211g211b211';
-    private static readonly INVISIBLE_COLOR_GREY = 'rgb(211, 211, 211)';
 
     private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<string, string>({
         [NodeShapeType.CIRCLE]: 'circle',
@@ -35,8 +33,6 @@ export class NodeSymbolComponent implements OnInit {
     private _fillColor: string;
     private _isFillColorNonWhite: boolean;
 
-    @Input() rowIsInvisible: boolean;
-
     @Input() set shapeType(shape: NodeShapeType) {
         this._svgShapeType = shape ? this.ShapeMap.get(shape) : null;
     }
@@ -48,22 +44,18 @@ export class NodeSymbolComponent implements OnInit {
         let gradientStops: GradientStop[];
         let gradientId: string;
 
-        if (this.rowIsInvisible) {
-            gradientId = NodeSymbolComponent.INVISIBLE_GRADIENT_ID;
-            gradientStops = this.invisibleGradientStop;
-        } else {
-            gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolComponent.DEFAULT_GRADIENT_ID;
-            gradientStops = [
-                {
-                    offset: '0%',
-                    style: this._fillColor
-                },
-                {
-                    offset: '100%',
-                    style: this._fillColor
-                }
-            ];
-        }
+        gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolComponent.DEFAULT_GRADIENT_ID;
+        gradientStops = [
+            {
+                offset: '0%',
+                style: this._fillColor
+            },
+            {
+                offset: '100%',
+                style: this._fillColor
+            }
+        ];
+
         this.gradientId = gradientId;
         this.gradientStops = gradientStops;
         this._isFillColorNonWhite = color ? color.r !== 255 || color.b !== 255 || color.g !== 255 : false;
@@ -73,11 +65,8 @@ export class NodeSymbolComponent implements OnInit {
         let gradientId: string = 'col';
         let gradientStops: GradientStop[];
 
-        if (this.rowIsInvisible) {
-            gradientId = NodeSymbolComponent.INVISIBLE_GRADIENT_ID;
-            gradientStops = this.invisibleGradientStop;
-            this._isFillColorNonWhite = false;
-        } else if (color.length > 0) {
+        if (color.length > 0) {
+
             const percent = 100 / color.length;
             gradientStops = color.flatMap((c: number[], index) => {
                 gradientId += `r${c[0]}g${c[1]}b${c[2]}`;
@@ -126,17 +115,6 @@ export class NodeSymbolComponent implements OnInit {
         {
             offset: '100%',
             style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
-        }
-    ];
-
-    private invisibleGradientStop: GradientStop[] = [
-        {
-            offset: '0%',
-            style: NodeSymbolComponent.INVISIBLE_COLOR_GREY
-        },
-        {
-            offset: '100%',
-            style: NodeSymbolComponent.INVISIBLE_COLOR_GREY
         }
     ];
 
