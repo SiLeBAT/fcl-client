@@ -23,6 +23,7 @@ import { DashboardComponent } from './presentation/dashboard/dashboard.component
 import { StoreModule } from '@ngrx/store';
 import { STATE_SLICE_NAME, reducer } from './state/main-page.reducer';
 import { LastChangeDisplayComponent } from './presentation/last-change-display/last-change-display.component';
+import { ContentModule } from './../content/content.module';
 
 @NgModule({
     imports: [
@@ -30,6 +31,7 @@ import { LastChangeDisplayComponent } from './presentation/last-change-display/l
         MainPageRoutingModule,
         SharedModule,
         TracingModule,
+        ContentModule,
         GraphEditorModule,
         StoreModule.forFeature(STATE_SLICE_NAME, reducer)
     ],

@@ -1,0 +1,23 @@
+:host {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.fcl-data-protection-notice {
+    padding-left: 25%;
+    padding-right: 25%;
+    margin-top: 3rem;
+}
+
+.fcl-data-protection-notice-title {
+    text-align: center;
+}
+
+.fcl-data-protection-notice-text {
+    line-height: 1.6;
+}
+
+.fcl-data-protection-notice-subheader {
+    padding: 2rem 0 1rem 0;
+}
