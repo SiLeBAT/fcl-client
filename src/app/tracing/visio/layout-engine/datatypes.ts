@@ -1,4 +1,4 @@
-import { StationData, SampleResultType } from '../../data.model';
+import { StationData, SampleResultType, ROASettings } from '../../data.model';
 
 export interface Position {
     x: number;
@@ -94,16 +94,12 @@ export interface InSampleInformation {
 }
 
 export interface SampleInformation {
-    type: string;
-    time: string;
-    amount: string;
-    result: string;
+    props: { [key: string]: string|number|boolean };
     resultType: SampleResultType;
 }
 
 export interface ProductInformation {
     id: number;
-    name: string;
     lots: LotInformation[];
 }
 
@@ -112,33 +108,26 @@ export enum StationGroupType {
 }
 
 export interface VisioEngineConfiguration {
-    reportType: ReportType;
+    roaSettings: ROASettings;
     groupType: StationGroupType;
 }
+
 export interface LotInformation {
     id: string; // internal id
     key: string; // this key is for sample assignment only
-    commonProductName: string;
-    brandName: string;
-    product: string;
-    lotIdentifier: string; // Lot identifier
-    productionOrDurabilityDate: string; // time / durability
-    quantity: string; // Quantity
+    props: { [key: string]: string|number|boolean };
     samples: SampleInformation[];
     deliveries: DeliveryInformation[];
 }
 
 export interface StationSampleInformation extends SampleInformation {
-    material: string;
 }
 
 export interface StationInformation {
     id: string;
     data: StationData;
     ctno: string;
-    name: string; // FBO / establishment identifier
-    registrationNumber: string; //  Registration number(s)
-    sector: string; // - Food/feed sector
+    props: { [key: string]: string | number | boolean };
     activities: string; // - Activities / step in the food chain
     samples: StationSampleInformation[];
     inSamples: InSampleInformation[];
@@ -146,16 +135,7 @@ export interface StationInformation {
 }
 
 export interface CaseInformation {
-    cases: number;
-    deaths: number;
-    lots: LotInformation[];
-    dateOfSymptoms: string;
-    disease: string; // disease / confirmation
-}
-
-export interface VisioInformation {
-    stations: StationInformation[];
-    cases: CaseInformation[];
+    props: { [key: string]: string|number|boolean };
 }
 
 export interface GroupInformation {
@@ -172,16 +152,6 @@ export interface VisioRowHeader {
 export interface VisioReport {
     graph: VisioGraph;
     graphLayers: GraphLayer[];
-}
-
-export enum ReportType {
-    Confidential, Public
-}
-
-export interface VisioReporter {
-    getLotLabel(lotInfo: LotInformation): VisioLabel;
-    getStationLabel(companyInfo: StationInformation): VisioLabel;
-    getSampleLabel(sampleInfo: SampleInformation): VisioLabel;
 }
 
 export interface FontMetrics {

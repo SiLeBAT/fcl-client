@@ -14,52 +14,52 @@ interface MappedSample {
 
 export function addSampleInformation(
     stationsInfo: StationInformation[],
-    samples: SampleData[]) {
+    samples: SampleData[],
+    sampleProps: string[]) {
 
     const mapped_samples = mapSamples(samples, stationsInfo);
 
-    addSamples(mapped_samples, stationsInfo);
+    addSamples(mapped_samples, stationsInfo, sampleProps);
 }
 
-function addSamples(mapped_samples: MappedSample[], stationsInfo) {
+function addSamples(mapped_samples: MappedSample[], stationsInfo: StationInformation[], sampleProps: string[]) {
     mapped_samples.filter(s => s.plausible).forEach(mappedSample => {
         if (mappedSample.lotInfo === null) {
-            mappedSample.sampleStation.samples.push(createStationSample(mappedSample.sample));
+            mappedSample.sampleStation.samples.push(createStationSample(mappedSample.sample, sampleProps));
         } else if (mappedSample.sampleStation === mappedSample.sourceStation) {
-            mappedSample.lotInfo.samples.push(createLotSample(mappedSample.sample));
+            mappedSample.lotInfo.samples.push(createLotSample(mappedSample.sample, sampleProps));
         } else {
-            mappedSample.sampleStation.inSamples.push(createInSample(mappedSample));
+            mappedSample.sampleStation.inSamples.push(createInSample(mappedSample, sampleProps));
         }
     });
 
     mergeInSamples(stationsInfo);
 }
 
-function createStationSample(sample: SampleData): StationSampleInformation {
+function createStationSample(sample: SampleData, sampleProps: string[]): StationSampleInformation {
     return {
-        type: sample.type,
-        material: sample.material,
-        time: sample.time,
-        amount: sample.amount,
-        result: sample.result,
+        props: sampleProps.reduce((pV, cV) => {
+            pV[cV] = sample[cV];
+            return pV;
+        }, {}),
         resultType: sample.resultType
     };
 }
 
-function createLotSample(sample: SampleData): SampleInformation {
+function createLotSample(sample: SampleData, sampleProps: string[]): SampleInformation {
     return {
-        type: sample.type,
-        time: sample.time,
-        amount: sample.amount,
-        result: sample.result,
+        props: sampleProps.reduce((pV, cV) => {
+            pV[cV] = sample[cV];
+            return pV;
+        }, {}),
         resultType: sample.resultType
     };
 }
 
-function createInSample(mappedSample: MappedSample): InSampleInformation {
+function createInSample(mappedSample: MappedSample, sampleProps: string[]): InSampleInformation {
     return {
         lotId: mappedSample.lotInfo.id,
-        samples: [createLotSample(mappedSample.sample)]
+        samples: [createLotSample(mappedSample.sample, sampleProps)]
     };
 }
 

@@ -3,7 +3,7 @@ import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, TableMode, FclData, ShowType, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
-    TableColumn, StationTableRow, ComplexFilterCondition
+    TableColumn, StationTableRow, ComplexFilterCondition, ROASettings
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -47,7 +47,8 @@ export enum TracingActionTypes {
     SetStationStandardFilterTermSSA = '[Standard Filter Component] Set Station Standard Filter Term',
     ResetStationStandardFilterSSA = '[Filter Service] Reset Station Standard Filter',
     ShowGhostStationMSA = '[Station Table] Show Ghost Station',
-    ClearGhostStationMSA = '[Station Table] Clear Ghost Station'
+    ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
+    SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings'
 }
 
 export class TracingActivated implements Action {
@@ -274,6 +275,12 @@ export class ClearGhostStationMSA implements Action {
     readonly type = TracingActionTypes.ClearGhostStationMSA;
 }
 
+export class SetROAReportSettingsSOA implements Action {
+    readonly type = TracingActionTypes.SetROAReportSettingsSOA;
+
+    constructor(public payload: { roaSettings: ROASettings }) {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -306,6 +313,7 @@ export type TracingActions =
     | SetActiveMainTabIndexSSA
     | SetActiveFilterTabIndexSSA
     | SetActiveHighlightingTabIndexSSA
+    | SetROAReportSettingsSOA
     | SetStationColumnsForComplexFilterSSA
     | SetStationRowsForComplexFilterSSA
     | SetStationComplexFilterConditionsSSA

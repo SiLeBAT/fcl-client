@@ -53,10 +53,11 @@ export class Constants {
 
     static readonly ARROW_STRING = '->';
 
-    static readonly STATION_PROPERTIES = List(
+    static readonly STATION_PROPERTIES: List<keyof StationData> = List<keyof StationData>(
         Object.keys(Constants.STATION_DATA)
     );
-    static readonly DELIVERY_PROPERTIES = List(
+
+    static readonly DELIVERY_PROPERTIES = List<keyof DeliveryData>(
         Object.keys(Constants.DELIVERY_DATA)
     );
 

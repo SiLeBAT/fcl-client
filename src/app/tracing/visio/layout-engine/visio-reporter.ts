@@ -1,22 +1,19 @@
 import * as _ from 'lodash';
 import {
     VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
-    Size, ReportType, StationGrouper, NodeLayoutInfo
+    Size, StationGrouper, NodeLayoutInfo
 } from './datatypes';
-import { Position, StationData, DeliveryData, SampleData } from '../../data.model';
+import { Position, StationData, DeliveryData, SampleData, ROASettings } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
 import { assignToGrid } from './grid-assigner';
-import { LabelCreator } from './label-creator';
-import { ConfidentialLabelCreator } from './confidential-label-creator';
-import { PublicLabelCreator } from './public-label-creator';
 import { InformationProvider } from './information-provider';
 import { getCellGroups } from './cell-grouper';
 import { CtNoAssigner } from './ctno-assigner';
 import { ConnectorCreator } from './connector-creator';
 import { improvePositions } from './station_positioner_lp';
 import { groupStationBoxes } from './stationbox-simple-grouper';
-import { Utils } from '@app/tracing/util/non-ui-utils';
+import { CustomLabelCreator } from './custom-label-creator';
 
 interface FclElements {
     stations: StationData[];
@@ -29,16 +26,17 @@ export class VisioReporter {
     static createReport(
         data: FclElements,
         nodeInfoMap: Map<string, NodeLayoutInfo>,
-        canvas: any, type: ReportType,
+        canvas: any,
+        roaSettings: ROASettings,
         stationGrouper: StationGrouper
         ): VisioReport {
 
         const stationGrid = assignToGrid(data, nodeInfoMap);
         const stationGroups = stationGrouper.groupStations([].concat(...stationGrid).filter(s => s !== null));
-        const infoProvider = new InformationProvider(data);
+        const infoProvider = new InformationProvider(data, roaSettings);
         const cellGroups = getCellGroups(stationGrid, stationGroups);
 
-        const labelCreator = this.getLabelCreator(type, this.getFontMetrics(canvas));
+        const labelCreator = new CustomLabelCreator(this.getFontMetrics(canvas), roaSettings.labelSettings);
         const boxCreator = new BoxCreator(labelCreator, infoProvider);
 
         const infoGrid = this.mapMatrix(stationGrid, (s) => s !== null ? infoProvider.getStationInfo(s) : null);
@@ -98,17 +96,6 @@ export class VisioReporter {
                 height: 10 * text.length
             })
         };
-    }
-
-    private static getLabelCreator(type: ReportType, fontMetrics: FontMetrics): LabelCreator {
-        if (type == null) {
-            throw new Error('Invalid ROA report type.');
-        }
-        if (type === ReportType.Confidential) {
-            return new ConfidentialLabelCreator(fontMetrics);
-        } else {
-            return new PublicLabelCreator(fontMetrics);
-        }
     }
 
     private static mapMatrix<A, B>(matrix: A[][], fn: (a: A) => B): B[][] {

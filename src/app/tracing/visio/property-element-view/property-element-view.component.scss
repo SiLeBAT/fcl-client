@@ -1,0 +1,44 @@
+.fcl-flex-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.fcl-flex-baseline {
+    align-items: baseline;
+}
+
+.fcl-unflex-item {
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.fcl-box {
+    @extend .fcl-flex-row;
+    @extend .fcl-unflex-item;
+    @extend .fcl-flex-baseline;
+
+    background-color: rgb(230, 230, 230);
+    border-width: 0;
+    border-radius: 1em;
+    padding: 0.5em;
+}
+
+.fcl-property-selector {
+    background-color: white;
+}
+
+.fcl-alt-text-box {
+    @extend .fcl-unflex-item;
+
+    background-color: white;
+}
+
+.fcl-warning-icon {
+    font-size: 1.2em;
+    color: red;
+    height: 1em;
+    width: 1em;
+    display: inline-flex;
+    vertical-align: middle;
+}

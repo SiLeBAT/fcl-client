@@ -5,13 +5,13 @@ import { Injectable, EventEmitter } from '@angular/core';
 })
 export class MainPageService {
     doSaveImage: EventEmitter<any>;
-    doVisioLayout: EventEmitter<any>;
+    doROALayout: EventEmitter<any>;
     doOnSave: EventEmitter<any>;
     doInputEmpty: EventEmitter<any>;
 
     constructor() {
         this.doSaveImage = new EventEmitter<any>();
-        this.doVisioLayout = new EventEmitter<any>();
+        this.doROALayout = new EventEmitter<any>();
         this.doOnSave = new EventEmitter<any>();
         this.doInputEmpty = new EventEmitter<any>();
     }
@@ -20,8 +20,8 @@ export class MainPageService {
         this.doSaveImage.emit();
     }
 
-    onVisioLayout() {
-        this.doVisioLayout.emit();
+    onROALayout() {
+        this.doROALayout.emit();
     }
 
     setInputEmpty() {

@@ -9,17 +9,15 @@ import { GraphType } from '../data.model';
 import { GisGraphComponent } from '../graph/components/gis-graph.component';
 import { environment } from '../../../environments/environment';
 import { MainPageService } from '../../main-page/services/main-page.service';
-import { NodeLayoutInfo } from '../visio/layout-engine/datatypes';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingSelectors from '../state/tracing.selectors';
 import * as tracingActions from '../state/tracing.actions';
 import { map, first } from 'rxjs/operators';
-import * as visioActions from '@app/tracing/visio/visio.actions';
+import * as roaActions from '@app/tracing/visio/visio.actions';
 import * as ioActions from '@app/tracing/io/io.actions';
 import { Subscription } from 'rxjs';
 import { AlertService } from '@app/shared/services/alert.service';
-import { Cy } from '../graph/graph.model';
 
 @Component({
     selector: 'fcl-main-tracing',
@@ -72,8 +70,8 @@ export class MainTracingComponent implements OnInit, OnDestroy {
             )
         );
         this.subscriptions.push(
-            this.mainPageService.doVisioLayout.subscribe(
-                () => this.onVisioLayout(),
+            this.mainPageService.doROALayout.subscribe(
+                () => this.onROALayout(),
                 error => {
                     throw new Error(`error creating ROA style: ${error}`);
                 }
@@ -115,40 +113,8 @@ export class MainTracingComponent implements OnInit, OnDestroy {
             .catch((err) => this.alertService.error(`Unable to save image: ${err}`));
     }
 
-    getNodeLayoutInfo(): Promise<Map<string, NodeLayoutInfo>> {
-        return this.getCurrentGraph().then(
-            currentGraph => {
-                const view = currentGraph;
-
-                if (view !== null && view.hasOwnProperty('cy') && (view as any).cy !== null) {
-                    const result: Map<string, NodeLayoutInfo> = new Map();
-
-                    ((view as any).cy as Cy).nodes().forEach(node => {
-                        const position = node.position();
-                        result.set(node.data().station.id, {
-                            size: node.height(),
-                            position: {
-                                x: position.x,
-                                y: position.y
-                            }
-                        });
-                    });
-                    return result;
-                } else {
-                    return null;
-                }
-            }
-        ).catch((err) => {
-            throw new Error(`Unable to retrieve node layout info: ${err}`);
-        });
-    }
-
-    onVisioLayout() {
-        this.getNodeLayoutInfo().then(
-            nodeLayoutInfo => this.store.dispatch(new visioActions.GenerateVisioReportMSA({ nodeLayoutInfo: nodeLayoutInfo }))
-        ).catch((err) => {
-            throw new Error(`Roa report creation failed: ${err}`);
-        });
+    onROALayout() {
+        this.store.dispatch(new roaActions.OpenROAReportConfigurationMSA());
     }
 
     ngOnDestroy() {

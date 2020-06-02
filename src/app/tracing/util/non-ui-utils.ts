@@ -327,6 +327,10 @@ export class Utils {
         return result;
     }
 
+    static arrayFromSimpleStringSet(obj: {[key: string]: boolean}): string[] {
+        return Object.keys(obj).filter(s => obj[s]);
+    }
+
     static compareStrings(a: string, b: string): number {
         if (a === null) {
             if (b === null) {
