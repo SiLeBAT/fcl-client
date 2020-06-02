@@ -29,7 +29,8 @@
             {
                 "ignoreAtRules": [
                     "mixin",
-                    "include"
+                    "include",
+                    "extend"
                 ]
             }
         ],

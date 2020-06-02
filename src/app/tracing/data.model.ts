@@ -171,6 +171,28 @@ export interface HighlightingSettings {
     deliveries?: DeliveryHighlightingData[];
 }
 
+export interface TextElementInfo {
+    text: string;
+}
+
+export interface PropElementInfo {
+    prop: string;
+    altText: string;
+}
+
+export type LabelElementInfo = TextElementInfo | PropElementInfo;
+
+export interface ROALabelSettings {
+    stationLabel: LabelElementInfo[][];
+    lotLabel: LabelElementInfo[][];
+    lotSampleLabel: LabelElementInfo[][];
+    stationSampleLabel: LabelElementInfo[][];
+}
+
+export interface ROASettings {
+    labelSettings: ROALabelSettings;
+}
+
 interface ElementHighlightingData {
     name: string;
     showInLegend: boolean;

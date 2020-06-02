@@ -14,6 +14,7 @@ import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialo
 import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
 import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/deliveries-properties.component';
+import { ReportConfigurationComponent } from './visio/report-configuration/report-configuration.component';
 
 import { STATE_SLICE_NAME, reducer } from './state/tracing.reducers';
 import { StoreModule } from '@ngrx/store';
@@ -51,6 +52,9 @@ import { ComplexFilterComponent } from './configuration/complex-filter/complex-f
 import { ComplexFilterViewComponent } from './configuration/complex-filter-view/complex-filter-view.component';
 import { ClearAllFilterComponent } from './configuration/clear-all-filter/clear-all-filter.component';
 import { ClearAllFilterViewComponent } from './configuration/clear-all-filter-view/clear-all-filter-view.component';
+import { LabelConfigurationViewComponent } from './visio/label-configuration-view/label-configuration-view.component';
+import { PropertyElementViewComponent } from './visio/property-element-view/property-element-view.component';
+import { TextElementViewComponent } from './visio/text-element-view/text-element-view.component';
 
 @NgModule({
     imports: [
@@ -73,6 +77,10 @@ import { ClearAllFilterViewComponent } from './configuration/clear-all-filter-vi
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,
+        ReportConfigurationComponent,
+        LabelConfigurationViewComponent,
+        PropertyElementViewComponent,
+        TextElementViewComponent,
         GraphSettingsComponent,
         TableSettingsComponent,
         NestedMatMenuComponent,
@@ -115,7 +123,8 @@ import { ClearAllFilterViewComponent } from './configuration/clear-all-filter-vi
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,
-        MergeStationsDialogComponent
+        MergeStationsDialogComponent,
+        ReportConfigurationComponent
     ]
 })
 export class TracingModule { }

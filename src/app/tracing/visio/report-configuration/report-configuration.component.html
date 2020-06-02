@@ -1,0 +1,26 @@
+<h1 matDialogTitle>ROA Report Configuration</h1>
+<form>
+    <div mat-dialog-content>
+        <mat-accordion>
+            <mat-expansion-panel *ngFor="let labelKey of labelOrder" [disabled]="labelInfos[labelKey].availableProps.length === 0">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <div>{{labelInfos[labelKey].title}}
+                        <span *ngIf="showLabelWarning(labelKey)"><mat-icon class="fcl-warning-icon" matTooltip="Some data is not available.">warning</mat-icon></span>
+                        </div>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <fcl-label-configuration-view [labelElements]="labelInfos[labelKey].labelElements" [availableProps]="labelInfos[labelKey].availableProps" class="fcl-label-box"></fcl-label-configuration-view>
+
+            </mat-expansion-panel>
+
+        </mat-accordion>
+    </div>
+
+    <div mat-dialog-actions>
+        <button mat-button (click)="onGenerateReport()">Generate Report</button>
+        <button mat-button (click)="onRestoreDefaults()">Restore Defaults</button>
+        <button mat-button (click)="dialogRef.close()">Cancel</button>
+    </div>
+</form>

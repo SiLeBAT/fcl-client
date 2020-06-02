@@ -1,0 +1,19 @@
+.warning {
+    color: red;
+}
+
+.fcl-label-box {
+    display: inline-block;
+    max-width: 500px;
+    min-width: 10em;
+    max-height: 200px;
+}
+
+.fcl-warning-icon {
+    font-size: 1.2em;
+    color: red;
+    height: 1em;
+    width: 1em;
+    display: inline-flex;
+    vertical-align: text-bottom;
+}

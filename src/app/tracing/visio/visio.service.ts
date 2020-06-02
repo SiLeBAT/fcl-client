@@ -1,5 +1,5 @@
-import { StationData, DeliveryData, SampleData } from '../data.model';
-import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo, ReportType } from './layout-engine/datatypes';
+import { StationData, DeliveryData, SampleData, ROASettings } from '../data.model';
+import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo } from './layout-engine/datatypes';
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
 
@@ -22,19 +22,20 @@ function getStationGrouperFromType(groupType: StationGroupType) {
 
 function createReport(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>, engineConf: VisioEngineConfiguration): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
-    const report: VisioReport = VisioReporter.createReport(data, nodeInfoMap, getFontMetricCanvas, engineConf.reportType, stationGrouper);
+    const report: VisioReport = VisioReporter.createReport(data, nodeInfoMap, getFontMetricCanvas, engineConf.roaSettings, stationGrouper);
 
     return report;
 }
 
-export async function generateVisioReport(
+export function generateVisioReport(
     data: FclElements,
-    nodeInfoMap: Map<string, NodeLayoutInfo>
-    ): Promise<VisioReport> {
+    nodeInfoMap: Map<string, NodeLayoutInfo>,
+    roaSettings: ROASettings
+    ): VisioReport {
 
     const engineConf: VisioEngineConfiguration = {
-        reportType: ReportType.Confidential,
-        groupType: StationGroupType.Country
+        groupType: StationGroupType.Country,
+        roaSettings: roaSettings
     };
 
     return createReport(data, nodeInfoMap, engineConf);

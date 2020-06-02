@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import {
     StationInformation, LotInformation, ProductInformation, DeliveryInformation
 } from './datatypes';
-import { StationData, DeliveryData, SampleData } from '../../data.model';
+import { StationData, DeliveryData, SampleData, ROASettings, LabelElementInfo, PropElementInfo } from '../../data.model';
 import { Utils } from '../../util/non-ui-utils';
 import { addSampleInformation } from './sample-information-provider';
 
@@ -12,11 +12,15 @@ interface FclElements {
     samples: SampleData[];
 }
 
+interface VIProps {
+    stationProps: string[];
+    lotProps: string[];
+    sampleProps: string[];
+}
+
 export class InformationProvider {
     private static readonly STATION_PROPERTY_ACTIVITY = 'typeOfBusiness';
-    private static readonly DELIVERY_PROPERTY_BRANDNAME = 'brandName';
-    private static readonly DELIVERY_PROPERTY_LOTQUANTITY = 'lotQuantity';
-    private static readonly UNKNOWN = 'unkown';
+
     private lotCounter: number = 0;
 
     private idToDeliveryMap: Map<string, DeliveryData>;
@@ -24,8 +28,9 @@ export class InformationProvider {
     private stationIdToInfoMap: Map<string, StationInformation>;
     private idToLotMap: Map<string, LotInformation>;
     private deliveryToSourceMap: Map<DeliveryInformation, LotInformation>;
+    private viProps: VIProps;
 
-    constructor(private data: FclElements) {
+    constructor(private data: FclElements, roaSettings: ROASettings) {
         this.idToStationMap = new Map();
         data.stations.forEach((s) => this.idToStationMap.set(s.id, s));
         this.idToDeliveryMap = new Map();
@@ -33,7 +38,26 @@ export class InformationProvider {
         this.stationIdToInfoMap = new Map();
         this.idToLotMap = new Map();
         this.deliveryToSourceMap = new Map();
+        this.viProps = this.getVIProps(roaSettings);
+
         this.init();
+    }
+
+    private getVIProps(roaSettings: ROASettings): VIProps {
+        return {
+            stationProps: this.getLabelProps(roaSettings.labelSettings.stationLabel),
+            lotProps: this.getLabelProps(roaSettings.labelSettings.lotLabel),
+            sampleProps: _.uniq([].concat(
+                this.getLabelProps(roaSettings.labelSettings.lotSampleLabel),
+                this.getLabelProps(roaSettings.labelSettings.stationSampleLabel)
+            ))
+        };
+    }
+
+    private getLabelProps(labelElements: LabelElementInfo[][]): string[] {
+        return [].concat(...labelElements.map(
+            elementRow => elementRow.filter(e => (e as PropElementInfo).prop !== undefined).map(e => (e as PropElementInfo).prop)
+        ));
     }
 
     private init() {
@@ -57,7 +81,7 @@ export class InformationProvider {
             );
         });
 
-        addSampleInformation(Array.from(this.stationIdToInfoMap.values()), this.data.samples);
+        addSampleInformation(Array.from(this.stationIdToInfoMap.values()), this.data.samples, this.viProps.sampleProps);
     }
 
     private createStationInfo(station: StationData): StationInformation {
@@ -65,15 +89,35 @@ export class InformationProvider {
             id: station.id,
             data: station,
             ctno: null,
-            name: station.name,
-            registrationNumber: null,
-            sector: null,
+            props: this.getProps(station, this.viProps.stationProps),
             activities: this.getProperty(station.properties, InformationProvider.STATION_PROPERTY_ACTIVITY),
             samples: [],
             inSamples: [],
             products: this.createProductInformation(this.getStationOutDeliveries(station))
         };
         return stationInfo;
+    }
+
+    private getProps(dataObj: {}, properties: string[]): { [key: string]: string | number | boolean } {
+        const propsObj = {};
+        for (const prop of properties) {
+            propsObj[prop] = this.getPropValue(dataObj, prop);
+        }
+        return propsObj;
+    }
+
+    private getPropValue(dataObj: { properties?: {name: string, value: string}[] }, prop: string): string | number | boolean {
+        let value = dataObj[prop];
+
+        if (value === undefined && dataObj.properties) {
+            const propertyIndex = dataObj.properties.findIndex(property => property.name === prop);
+            if (propertyIndex >= 0) {
+                value = dataObj.properties[propertyIndex].value;
+
+            }
+        }
+
+        return value;
     }
 
     private getProperty(propList: {name: string, value: string}[], propName: string): string {
@@ -89,7 +133,6 @@ export class InformationProvider {
         const productToDeliveriesMap = Utils.getGroups(deliveries, (d) => d.name);
         return Array.from(productToDeliveriesMap).map(([, productDeliveries]) => ({
             id: null,
-            name: productDeliveries[0].name,
             lots: this.createLotInformation(productDeliveries)
         }));
     }
@@ -98,15 +141,8 @@ export class InformationProvider {
         const lotToDeliveriesMap = Utils.getGroups(deliveries, (d) => d.lot);
         return Array.from(lotToDeliveriesMap).map(([, lotDeliveries]) => ({
             id: 'L' + this.lotCounter++,
-            lot: lotDeliveries[0].lot,
+            props: this.getProps(lotDeliveries[0], this.viProps.lotProps),
             key: lotDeliveries[0].lotKey,
-            lotIdentifier: lotDeliveries[0].lot,
-            productionOrDurabilityDate: InformationProvider.UNKNOWN,
-            product: lotDeliveries[0].name,
-            commonProductName: lotDeliveries[0].name,
-            brandName: this.getProperty(lotDeliveries[0].properties, InformationProvider.DELIVERY_PROPERTY_BRANDNAME),
-            production: null,
-            quantity: this.getProperty(lotDeliveries[0].properties, InformationProvider.DELIVERY_PROPERTY_LOTQUANTITY),
             samples: [],
             deliveries: lotDeliveries.map(d => this.createDeliveryInformation(d))
         }));

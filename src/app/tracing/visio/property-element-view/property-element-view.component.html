@@ -1,0 +1,20 @@
+<div class="fcl-box">
+    <mat-select
+        class="fcl-property-selector fcl-compact-mat-select"
+        [(value)]="prop"
+        disableOptionCentering
+        panelClass="fcl-mat-select-below-panel-class"
+        matTooltip="Select property"
+    >
+    <mat-select-trigger *ngIf="!isActivePropAvailable()">
+        {{prop}}
+        <span><mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></span>
+      </mat-select-trigger>
+        <mat-option *ngIf="!isActivePropAvailable()" value="{{prop}}" (click)="setProperty(prop)">{{prop}}<mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></mat-option>
+        <span *ngFor="let prop of availableProps">
+            <mat-option value="{{prop.prop}}" (click)="setProperty(prop.prop)">{{prop.label || prop.prop}}</mat-option>
+        </span>
+    </mat-select>
+    &nbsp;/&nbsp;
+    <fcl-text-element-view class="fcl-alt-text-box" [value]="altText" (valueChange)="onAltTextChange($event)" matTooltip="Enter alternative text"></fcl-text-element-view>
+</div>

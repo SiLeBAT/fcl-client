@@ -1,15 +1,18 @@
 import { Action } from '@ngrx/store';
-import { NodeLayoutInfo } from './layout-engine/datatypes';
 
 export enum VisioActionTypes {
-    GenerateVisioReport = '[Visio] Generate Visio Report'
+    GenerateROAReportMSA = '[Visio] Generate ROA Report',
+    OpenROAReportConfigurationMSA = '[Visio] Open ROA Report Configuration'
 }
 
-export class GenerateVisioReportMSA implements Action {
-    readonly type = VisioActionTypes.GenerateVisioReport;
+export class GenerateROAReportMSA implements Action {
+    readonly type = VisioActionTypes.GenerateROAReportMSA;
+}
 
-    constructor(public payload: { nodeLayoutInfo: Map<string, NodeLayoutInfo> }) {}
+export class OpenROAReportConfigurationMSA implements Action {
+    readonly type = VisioActionTypes.OpenROAReportConfigurationMSA;
 }
 
 export type VisioActions =
-      GenerateVisioReportMSA;
+      GenerateROAReportMSA
+    | OpenROAReportConfigurationMSA;

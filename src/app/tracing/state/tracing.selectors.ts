@@ -19,6 +19,11 @@ export const getVisioReport = createSelector(
     state => state.visioReport
 );
 
+export const getROASettings = createSelector(
+    getTracingFeatureState,
+    state => state.roaSettings
+);
+
 export const getGraphSettings = createSelector(
     getFclData,
     (fclData) => fclData.graphSettings
@@ -140,6 +145,17 @@ export const getSchemaGraphData = createSelector(
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.schemaLayout,
         ghostStation: graphSettings.ghostStation
+    })
+);
+
+export const getROAReportData = createSelector(
+    getFclElements,
+    getSchemaGraphData,
+    getROASettings,
+    (fclElements, schemaGraphState, roaSettings) => ({
+        schemaGraphState: schemaGraphState,
+        roaSettings: roaSettings,
+        samples: fclElements.samples
     })
 );
 
