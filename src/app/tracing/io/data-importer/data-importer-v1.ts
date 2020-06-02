@@ -302,6 +302,7 @@ export class DataImporterV1 implements IDataImporter {
     ) {
         const tracingData: any = this.getProperty(data, ExtDataConstants.TRACING_DATA);
         if (tracingData == null) {
+            this.initTracingData(fclData);
             return;
         }
 
@@ -369,6 +370,29 @@ export class DataImporterV1 implements IDataImporter {
                 observed: element.observed === true ? ObservedType.FULL : ObservedType.NONE
             });
         }
+    }
+
+    private initTracingData(fclData: FclData): void {
+        fclData.tracingSettings = {
+            deliveries: fclData.fclElements.deliveries.map(d => ({
+                id: d.id,
+                weight: 0,
+                observed: ObservedType.NONE,
+                crossContamination: false,
+                killContamination: false
+            })),
+            stations: [].concat(
+                fclData.fclElements.stations.map(s => s.id),
+                fclData.groupSettings.map(g => g.id)
+            ).map(id => ({
+                id: id,
+                weight: 0,
+                outbreak: false,
+                crossContamination: false,
+                killContamination: false,
+                observed: ObservedType.NONE
+            }))
+        };
     }
 
     private applyExternalViewSettings(
