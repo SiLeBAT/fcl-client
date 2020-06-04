@@ -58,7 +58,7 @@ export class TracingService {
                 stations: tracingSettings.stations.map(s => ({
                     ...s,
                     crossContamination: (idSet[s.id] && killContamination ? false : s.crossContamination),
-                    killContamination: (idSet[s.id] ? killContamination : s.crossContamination)
+                    killContamination: (idSet[s.id] ? killContamination : s.killContamination)
                 }))
             }
         };

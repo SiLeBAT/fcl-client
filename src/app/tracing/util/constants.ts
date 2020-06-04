@@ -82,6 +82,7 @@ export class Constants {
                 name: 'Cross Contamination',
                 color: { r: 150, g: 150, b: 150 }
             },
+            killContamination: { name: 'Kill Contamination', color: null },
             commonLink: { name: 'Common Link', color: { r: 255, g: 255, b: 75 } },
             score: { name: 'Score', color: null }
         }
