@@ -1,4 +1,4 @@
-import { takeWhile, take, tap, map } from 'rxjs/operators';
+import { takeWhile, take, tap } from 'rxjs/operators';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
@@ -25,6 +25,7 @@ import { DialogSelectData, DialogSelectComponent } from '../../dialog/dialog-sel
 import { MatDialog } from '@angular/material/dialog';
 import { FilterService, FilterColumn, Filter, ComplexFilter, VisibilityFilterStatus, VisibilityFilter } from './../services/filter.service';
 import { Utils } from '../../util/non-ui-utils';
+import * as _ from 'lodash';
 
 interface StoreDataState {
     graphState: BasicGraphState;
@@ -82,7 +83,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
     private componentActive: boolean = true;
 
-    private currentStationColumnHeaders: string[];
     private filteredRows: any[] = [];
     private unfilteredRows: any[] = [];
     private stateSubscription: Subscription;
@@ -157,7 +157,13 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 take(1)
             ).subscribe((selections: string[]) => {
                 if (selections != null) {
-                    this.store.dispatch(new tracingActions.SetTableColumnsSOA([this.cachedState.tableSettings.mode, selections]));
+                    // assumption, the selection is unordered
+                    const oldOrder = this.tableViewComponent.getColumnOrdering();
+                    const newOrder = [].concat(
+                        oldOrder.filter(prop => selections.includes(prop)),
+                        selections.filter(prop => !oldOrder.includes(prop))
+                    );
+                    this.store.dispatch(new tracingActions.SetTableColumnsSOA([this.cachedState.tableSettings.mode, newOrder]));
                 }
             },
             error => {
@@ -200,7 +206,10 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
         if (
             !this.cachedState ||
-            this.cachedState.tableSettings !== state.tableSettings ||
+            (
+                this.cachedState.tableSettings !== state.tableSettings &&
+                !this.isAlreadyHandledReorderingChange(this.cachedState.tableSettings, state.tableSettings)
+            ) ||
             (
                 state.tableSettings.showType === ShowType.SELECTED_ONLY && ((
                     state.tableSettings.mode === TableMode.STATIONS &&
@@ -230,9 +239,28 @@ export class StationTableComponent implements OnInit, OnDestroy {
         };
     }
 
+    private isAlreadyHandledReorderingChange(oldTableSettings: TableSettings, newTableSettings: TableSettings): boolean {
+        const ignoreField: keyof TableSettings = 'stationColumns';
+        // fields to compare
+        const fields = _.uniq(
+            [].concat(Object.keys(oldTableSettings), Object.keys(newTableSettings))
+        ).filter(field => field !== ignoreField);
+        for (const field of fields) {
+            if (oldTableSettings[field] !== newTableSettings[field]) {
+                return false;
+            }
+        }
+        return (
+            oldTableSettings.stationColumns.length === newTableSettings.stationColumns.length && // column Count matches
+            newTableSettings.stationColumns.every(col => oldTableSettings.stationColumns.includes(col)) && // column sets match
+            this.tableViewComponent.getColumnOrdering().every(
+                (value, index) => newTableSettings.stationColumns[index] === value
+            ) // view is already up to date
+        );
+    }
+
     private updateTable(newData: StationTable, tableSettings: TableSettings) {
         if (newData) {
-            this.currentStationColumnHeaders = tableSettings.stationColumns;
             const stationColumns: TableColumn[] = newData.columns;
             const stationRows: StationTableRow[] = newData.rows;
 
@@ -277,8 +305,9 @@ export class StationTableComponent implements OnInit, OnDestroy {
                 comparator: this.visibilityComparator
             };
 
-            const dataColumns = stationColumns
-                .filter(stationColumn => this.currentStationColumnHeaders.indexOf(stationColumn.id) >= 0)
+            const dataColumns = tableSettings.stationColumns
+                .map(prop => stationColumns.find(c => c.id === prop))
+                .filter(c => c !== undefined)
                 .map(stationColumn => {
                     return {
                         name: stationColumn.name,
@@ -299,7 +328,7 @@ export class StationTableComponent implements OnInit, OnDestroy {
             const currentFilterColumns = newData.columns
                 .filter(column => {
                     const columnProp = column.id;
-                    return this.currentStationColumnHeaders.includes(columnProp);
+                    return tableSettings.stationColumns.includes(columnProp);
 
                 })
                 .map((column, index) => ({
@@ -402,5 +431,9 @@ export class StationTableComponent implements OnInit, OnDestroy {
 
     private applySelection(state) {
 
+    }
+
+    onColumnOrderingChange(props: string[]): void {
+        this.store.dispatch(new tracingActions.SetTableColumnsSOA([this.cachedState.tableSettings.mode, props]));
     }
 }

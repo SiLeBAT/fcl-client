@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input, AfterViewInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input, AfterViewInit, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
@@ -12,6 +12,8 @@ export class StationTableViewComponent implements OnInit {
     @Input() rows: any[];
     @Input() columns: any[];
     @ViewChild('table', { static: true }) table: DatatableComponent;
+
+    @Output() columnOrderingChange = new EventEmitter<string[]>();
 
     rowHeight: number = 18;
 
@@ -32,6 +34,11 @@ export class StationTableViewComponent implements OnInit {
         if (!this.isColumnOrderOk()) {
             this.fixColumnOrder();
         }
+        this.columnOrderingChange.emit(this.getColumnOrdering());
+    }
+
+    getColumnOrdering(): string[] {
+        return this.table._internalColumns.filter(c => c.draggable).map(c => c.prop + '');
     }
 
     private isColumnOrderOk(): boolean {
