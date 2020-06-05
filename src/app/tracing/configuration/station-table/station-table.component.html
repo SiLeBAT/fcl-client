@@ -123,6 +123,7 @@
     #tableView
     class="fcl-station-table-view-container"
     [columns]="stationColumns"
-    [rows]="stationRows">
+    [rows]="stationRows"
+    (columnOrderingChange)="onColumnOrderingChange($event)">
 
 </fcl-station-table-view>
