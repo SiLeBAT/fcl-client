@@ -285,7 +285,6 @@ export class StationTableComponent implements OnInit, OnDestroy {
                         prop: stationColumn.id,
                         resizable: false,
                         draggable: true,
-                        reorderable: true,
                         headerTemplate: this.dataColTpl,
                         cellClass: this.getCellClass,
                         cellTemplate: this.dataRowTpl

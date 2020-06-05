@@ -27,4 +27,25 @@ export class StationTableViewComponent implements OnInit {
     recalculatePages() {
         this.table.recalculatePages();
     }
+
+    onColumnReorder(e: { column: any, newValue: number, prevValue: number }): void {
+        if (!this.isColumnOrderOk()) {
+            this.fixColumnOrder();
+        }
+    }
+
+    private isColumnOrderOk(): boolean {
+        // checks whether all draggable columns are behind undraggable columns
+        return this.table._internalColumns.every(
+            (value, index, arr) => index === 0 || !arr[index - 1].draggable || value.draggable
+        );
+    }
+
+    private fixColumnOrder(): void {
+        // puts undraggable columns in front of draggable columns
+        this.table._internalColumns = [].concat(
+            this.table._internalColumns.filter(c => !c.draggable),
+            this.table._internalColumns.filter(c => c.draggable)
+        );
+    }
 }

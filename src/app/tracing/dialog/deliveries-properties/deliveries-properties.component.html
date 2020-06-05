@@ -18,7 +18,7 @@
     [footerHeight]="50"
     [scrollbarV]="true"
     [scrollbarH]="true"
-    [reorderable]="reorderable"
+    [swapColumns]="false"
     [selected]="selected"
     [selectionType]="'multi'"
     (activate)="onActivate($event)"
@@ -48,30 +48,30 @@
     >
 
         <ng-template let-column="column" let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
+            <div class="draggable">
+                <span class="header-sort-span" (click)="sort()">
+                    {{column.name}}
+                    <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
+                    <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
+                </span><br>
 
-            <span class="header-sort-span" (click)="sort()">
-                {{column.name}}
-                <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
-                <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
-            </span><br>
+                <mat-form-field floatLabel="never">
 
-            <mat-form-field floatLabel="never">
+                    <input type="search" placeholder="Filter" aria-label="Number" matInput
+                        [(ngModel)]="propToColumnMap[column.prop].filterText" id="{{column.prop}}"
+                        [matAutocomplete]="auto"
+                        (keyup)="updateRowsAndOptions()"
+                        (reset)="resetFilter()"
+                    >
 
-                <input type="search" placeholder="Filter" aria-label="Number" matInput
-                    [(ngModel)]="propToColumnMap[column.prop].filterText" id="{{column.prop}}"
-                    [matAutocomplete]="auto"
-                    (keyup)="updateRowsAndOptions()"
-                    (reset)="resetFilter()"
-                >
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateRowsAndOptions()">
+                        <mat-option *ngFor="let option of propToColumnMap[column.prop].filteredOptions" [value]="option">
+                            {{option}}
+                        </mat-option>
+                    </mat-autocomplete>
 
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateRowsAndOptions()">
-                    <mat-option *ngFor="let option of propToColumnMap[column.prop].filteredOptions" [value]="option">
-                        {{option}}
-                    </mat-option>
-                </mat-autocomplete>
-
-            </mat-form-field>
-
+                </mat-form-field>
+            </div>
         </ng-template>
 
     </ngx-datatable-column>

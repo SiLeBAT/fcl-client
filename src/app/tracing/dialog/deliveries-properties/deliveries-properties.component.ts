@@ -60,8 +60,6 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
     stateSubscription: Subscription;
 
-    reorderable: boolean = true;
-
     private readonly columnOrdering = ['id', 'name', 'lot', 'score', 'source.name', 'target.name', 'source', 'target', 'weight', 'crossContamination', 'killContamination', 'observed', 'forward', 'backward', 'selected'];
 
     @ViewChild(DatatableComponent, { static: true }) table: DatatableComponent;
