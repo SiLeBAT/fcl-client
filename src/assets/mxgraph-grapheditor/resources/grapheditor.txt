@@ -1,3 +1,5 @@
+# File was modified
+#
 # Resources from graph.properties
 alreadyConnected=Nodes already connected
 cancel=Cancel
