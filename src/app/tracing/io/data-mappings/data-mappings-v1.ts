@@ -9,6 +9,7 @@ import { Utils } from '../../util/non-ui-utils';
 import { STATION_PROP_TO_REQ_TYPE_MAP, DELIVERY_PROP_TO_REQ_TYPE_MAP, DEL2DEL_PROP_TO_REQ_TYPE_MAP } from '../int-data-constants';
 import { isValueTypeValid } from './shared';
 import * as _ from 'lodash';
+import { InputDataError } from '../io-errors';
 
 export interface ColumnInfo {
     columnId: string;
@@ -387,7 +388,7 @@ export class PropMapper {
                     const intProp = this.extToIntPropMap.get(property.id);
                     const reqType = this.propToTypeMap.get(intProp);
                     if (reqType && !isValueTypeValid(property.value, reqType)) {
-                        throw new Error(
+                        throw new InputDataError(
                             `Invalid property type. The type of value '${property.value}' of \
                             property '${property.id}' is ${typeof property.value} but is required to be ${reqType}`
                         );

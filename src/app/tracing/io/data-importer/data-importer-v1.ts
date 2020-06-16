@@ -25,6 +25,7 @@ import {
     MetaNodeData
 } from '../ext-data-model.v1';
 import * as DataMapper from './../data-mappings/data-mappings-v1';
+import { InputFormatError, InputDataError } from '../io-errors';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -49,7 +50,7 @@ export class DataImporterV1 implements IDataImporter {
         if (await this.isDataFormatSupported(data)) {
             this.convertExternalData(data, fclData);
         } else {
-            throw new SyntaxError('Invalid data format');
+            throw new InputFormatError();
         }
     }
 
@@ -93,11 +94,11 @@ export class DataImporterV1 implements IDataImporter {
             propMapper.applyValuesFromTableRow(stationRow, intStation);
 
             if (intStation.id === undefined || intStation.id === null) {
-                throw new SyntaxError('Missing station id.');
+                throw new InputDataError('Missing station id.');
             }
 
             if (idToStationMap.has(intStation.id)) {
-                throw new SyntaxError('Duplicate station id:' + intStation.id);
+                throw new InputDataError('Duplicate station id:' + intStation.id);
             }
 
             intStations.push(intStation);
@@ -135,27 +136,27 @@ export class DataImporterV1 implements IDataImporter {
             propMapper.applyValuesFromTableRow(deliveryRow, intDelivery);
 
             if (intDelivery.id === undefined || intDelivery.id === null) {
-                throw new SyntaxError('Missing delivery id.');
+                throw new InputDataError('Missing delivery id.');
             }
 
             if (idToDeliveryMap.has(intDelivery.id)) {
-                throw new SyntaxError('Duplicate delivery id:' + intDelivery.id);
+                throw new InputDataError('Duplicate delivery id:' + intDelivery.id);
             }
 
             if (intDelivery.source === undefined || intDelivery.source === null) {
-                throw new SyntaxError('Delivery source is missing for id:' + intDelivery.id);
+                throw new InputDataError('Delivery source is missing for id:' + intDelivery.id);
             }
 
             if (!idToStationMap.has(intDelivery.source)) {
-                throw new SyntaxError('Delivery source with id "' + intDelivery.source + '" is unkown.');
+                throw new InputDataError('Delivery source with id "' + intDelivery.source + '" is unkown.');
             }
 
             if (intDelivery.target === undefined || intDelivery.target === null) {
-                throw new SyntaxError('Delivery target is missing for id:' + intDelivery.id);
+                throw new InputDataError('Delivery target is missing for id:' + intDelivery.id);
             }
 
             if (!idToStationMap.has(intDelivery.target)) {
-                throw new SyntaxError('Delivery target with id "' + intDelivery.target + '" is unkown.');
+                throw new InputDataError('Delivery target with id "' + intDelivery.target + '" is unkown.');
             }
 
             intDelivery.lotKey = intDelivery.lotKey ||
@@ -197,26 +198,26 @@ export class DataImporterV1 implements IDataImporter {
             propMapper.applyValuesFromTableRow(del2DelRow, connection);
 
             if (connection.source === undefined || connection.source === null) {
-                throw new SyntaxError('Missing delivery to delivery source.');
+                throw new InputDataError('Missing delivery to delivery source.');
             }
 
             if (!idToDeliveryMap.has(connection.source)) {
-                throw new SyntaxError('Unkown delivery to delivery source "' + connection.source + '".');
+                throw new InputDataError('Unkown delivery to delivery source "' + connection.source + '".');
             }
 
             if (connection.target === undefined || connection.target === null) {
-                throw new SyntaxError('Missing delivery to delivery target.');
+                throw new InputDataError('Missing delivery to delivery target.');
             }
 
             if (!idToDeliveryMap.has(connection.target)) {
-                throw new SyntaxError('Unkown delivery to delivery target "' + connection.target + '".');
+                throw new InputDataError('Unkown delivery to delivery target "' + connection.target + '".');
             }
 
             const sourceDelivery: DeliveryData = idToDeliveryMap.get(connection.source);
             const targetDelivery: DeliveryData = idToDeliveryMap.get(connection.target);
 
             if (sourceDelivery.target !== targetDelivery.source) {
-                throw new SyntaxError('Invalid delivery relation: ' + JSON.stringify(del2DelRow));
+                throw new InputDataError('Invalid delivery relation: ' + JSON.stringify(del2DelRow));
             }
 
             const conId: string = connection.source + '->' + connection.target;
@@ -246,12 +247,12 @@ export class DataImporterV1 implements IDataImporter {
         for (const extGroup of extGroups) {
 
             if (idToStationMap.has(extGroup.id) || idToGroupMap.has(extGroup.id)) {
-                throw new SyntaxError('Metanode id "' + extGroup.id + '" is not unique.');
+                throw new InputDataError('Metanode id "' + extGroup.id + '" is not unique.');
             }
 
             for (const member of extGroup.members) {
                 if (!stationIds.has(member)) {
-                    throw new SyntaxError('Unknown member "' + member + '" in group "' + extGroup.id + '".');
+                    throw new InputDataError('Unknown member "' + member + '" in group "' + extGroup.id + '".');
                 }
             }
 
@@ -308,23 +309,23 @@ export class DataImporterV1 implements IDataImporter {
 
         const stationTracings: any = this.getProperty(tracingData, ExtDataConstants.TRACING_DATA_STATIONS);
         if (stationTracings == null) {
-            throw new Error('Missing station tracing data.');
+            throw new InputDataError('Missing station tracing data.');
         }
 
         const deliveryTracings: any = this.getProperty(tracingData, ExtDataConstants.TRACING_DATA_DELIVERIES);
         if (deliveryTracings == null) {
-            throw new Error('Missing delivery tracing data.');
+            throw new InputDataError('Missing delivery tracing data.');
         }
 
         for (const element of stationTracings) {
             if (element.id === null) {
-                throw new SyntaxError('Station id is missing in tracing data.');
+                throw new InputDataError('Station id is missing in tracing data.');
             }
 
             const isSimpleStation = idToStationMap.has(element.id);
 
             if (!(isSimpleStation || idToGroupMap.has(element.id))) {
-                throw new SyntaxError('Station/Metanode id "' + element.id + '" is unkown.');
+                throw new InputDataError('Station/Metanode id "' + element.id + '" is unkown.');
             }
 
             if (isSimpleStation) {
@@ -347,11 +348,11 @@ export class DataImporterV1 implements IDataImporter {
 
         for (const element of deliveryTracings) {
             if (element.id === null) {
-                throw new SyntaxError('Delivery id is missing in tracing data.');
+                throw new InputDataError('Delivery id is missing in tracing data.');
             }
 
             if (!idToDeliveryMap.has(element.id)) {
-                throw new SyntaxError('Tracing-data-import: Delivery id "' + element.id + '" is unkown.');
+                throw new InputDataError('Tracing-data-import: Delivery id "' + element.id + '" is unkown.');
             }
 
             const delivery: DeliveryData = idToDeliveryMap.get(element.id);
@@ -441,7 +442,7 @@ export class DataImporterV1 implements IDataImporter {
             viewData.edge.mergeDeliveriesType !== null
         ) {
             if (!DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP.has(viewData.edge.mergeDeliveriesType)) {
-                throw new SyntaxError(
+                throw new InputDataError(
                     `Unknown delivery merge type: ${viewData.edge.mergeDeliveriesType}`
                 );
             }
@@ -628,7 +629,7 @@ export class DataImporterV1 implements IDataImporter {
         if (DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.has(extOperationType)) {
             intOperationType = DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
         } else {
-            throw new Error(`Invalid LogicalCondition.operationType: ${extOperationType}`);
+            throw new InputDataError(`Invalid LogicalCondition.operationType: ${extOperationType}`);
         }
 
         return intOperationType;
@@ -641,7 +642,7 @@ export class DataImporterV1 implements IDataImporter {
             if (DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.has(extShapeType)) {
                 intShapeType = DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.get(extShapeType);
             } else {
-                throw new Error(`Invalid shape: ${extShapeType}`);
+                throw new InputDataError(`Invalid shape: ${extShapeType}`);
             }
         }
 
@@ -679,10 +680,10 @@ export class DataImporterV1 implements IDataImporter {
 
         for (const nodePosition of nodePositions) {
             if (nodePosition.id == null) {
-                throw new SyntaxError('Node position id is missing.');
+                throw new InputDataError('Node position id is missing.');
             }
             if (!(idToStationMap.has(nodePosition.id) || idToGroupMap.has(nodePosition.id))) {
-                throw new SyntaxError('(Meta)Station of node position "' + nodePosition.id + '" is unkown.');
+                throw new InputDataError('(Meta)Station of node position "' + nodePosition.id + '" is unkown.');
             }
 
             fclData.graphSettings.stationPositions[nodePosition.id] = nodePosition.position;
@@ -708,9 +709,9 @@ export class DataImporterV1 implements IDataImporter {
     private checkTracingProps(data: any, propNames: string[], context: string) {
         for (const propName of propNames) {
             if (!data.hasOwnProperty(propName)) {
-                throw new SyntaxError('Property "' + propName + '" is missing in ' + context);
+                throw new InputDataError('Property "' + propName + '" is missing in ' + context);
             } else if (data[propName] === null) {
-                throw new SyntaxError('Property "' + propName + '" is null in ' + context);
+                throw new InputDataError('Property "' + propName + '" is null in ' + context);
             }
         }
     }

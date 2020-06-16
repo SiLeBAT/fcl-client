@@ -7,7 +7,8 @@ import { DataExporter } from './data-exporter';
 import { DataImporterV1 } from './data-importer/data-importer-v1';
 import { createEmptyJson } from './json-data-creator';
 import * as shapeFileImporter from './data-importer/shape-file-importer';
-import { getJsonFromFile } from './io-utils';
+import { getJsonFromFile, getTextFromUtf8EncodedFile } from './io-utils';
+import { InputFormatError } from './io-errors';
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +24,7 @@ export class IOService {
 
     constructor(private httpClient: HttpClient) {}
 
-    getFclData(dataSource: string | File): Promise<FclData> {
+    async getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === 'string') {
             return this.httpClient.get(dataSource)
               .toPromise()
@@ -36,31 +37,38 @@ export class IOService {
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
-                const fileReader = new FileReader();
-
-                fileReader.onload = (event: Event) => {
-                    const contents: any = event.target;
-
-                    try {
-                        const rawData = JSON.parse(contents.result);
-                        this.preprocessData(rawData)
-                        .then(data => {
-                            data.source.name = file.name;
-                            resolve(data);
-                        })
-                        .catch(e => {
-                            reject(e);
-                        });
-                    } catch (e) {
-                        reject(e);
-                    }
-                };
-
-                fileReader.readAsText(file);
+                getTextFromUtf8EncodedFile(file)
+                .then(strData => {
+                    const jsonData = this.try(
+                        () => JSON.parse(strData),
+                        (e) => reject(new InputFormatError(`Invalid json format.${e.message ? ' ' + e.message : ''}`))
+                    );
+                    this.preprocessData(jsonData)
+                    .then(data => {
+                        data.source.name = file.name;
+                        resolve(data);
+                    })
+                    .catch(e => reject(e));
+                })
+                .catch(e => reject(e));
             });
         } else {
             throw new Error('no data source specified');
         }
+    }
+
+    private try<T>(tryFun: () => T, errFun: (e) => void): T {
+        let result: T;
+        try {
+            result = tryFun();
+        } catch (e) {
+            if (!errFun) {
+                throw e;
+            } else {
+                errFun(e);
+            }
+        }
+        return result;
     }
 
     getShapeFileData(dataSource: string | File): Promise<ShapeFileData> {

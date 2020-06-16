@@ -6,6 +6,7 @@ import { Constants } from './../../util/constants';
 import { IDataImporter } from './datatypes';
 import { importSamples } from './sample-importer-v1';
 import { createDefaultHighlights } from './shared';
+import { InputFormatError, InputDataError } from '../io-errors';
 
 export class DataImporterV0 implements IDataImporter {
 
@@ -39,7 +40,7 @@ export class DataImporterV0 implements IDataImporter {
             importSamples(data, fclData);
             fclData.graphSettings.highlightingSettings = createDefaultHighlights();
         } else {
-            throw new SyntaxError('Invalid data format');
+            throw new InputFormatError();
         }
 
     }
@@ -67,7 +68,7 @@ export class DataImporterV0 implements IDataImporter {
             const targetD = deliveriesById[r.target];
 
             if (sourceD.target !== targetD.source) {
-                throw new SyntaxError('Invalid delivery relation: ' + JSON.stringify(r));
+                throw new InputDataError('Invalid delivery relation: ' + JSON.stringify(r));
             }
 
             stationsById[sourceD.target].connections.push(r);
@@ -119,11 +120,11 @@ export class DataImporterV0 implements IDataImporter {
             const id: string = e.id;
 
             if (ids.has(id)) {
-                throw new SyntaxError('Duplicate id: ' + id);
+                throw new InputDataError('Duplicate id: ' + id);
             }
 
             if (id.includes(Constants.ARROW_STRING)) {
-                throw new SyntaxError('ids are not allowed to contain "' + Constants.ARROW_STRING + '"');
+                throw new InputDataError('ids are not allowed to contain "' + Constants.ARROW_STRING + '"');
             }
 
             ids.add(id);
@@ -133,7 +134,7 @@ export class DataImporterV0 implements IDataImporter {
             const lot: string = d.lot;
 
             if (lot != null && lot.includes(Constants.ARROW_STRING)) {
-                throw new SyntaxError('lots are not allowed to contain "' + Constants.ARROW_STRING + '"');
+                throw new InputDataError('lots are not allowed to contain "' + Constants.ARROW_STRING + '"');
             }
         }
 
