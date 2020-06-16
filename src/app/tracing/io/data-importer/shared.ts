@@ -1,11 +1,12 @@
 import * as Ajv from 'ajv';
 import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
+import { InputFormatError } from '../io-errors';
 
 export async function isValidJson(schema: any, data: any, throwError?: boolean): Promise<boolean> {
     const ajv = new Ajv();
     const valid = ajv.validate(schema, data);
     if (!valid && throwError) {
-        throw new Error('Invalid json format: ' + ajv.errors.toString());
+        throw new InputFormatError('Invalid json schema: ' + ajv.errors.toString());
     }
     return valid;
 }

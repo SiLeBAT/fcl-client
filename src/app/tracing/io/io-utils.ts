@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { InputEncodingError } from './io-errors';
 
 export async function getDataFromPath(filePath: string, httpClient: HttpClient): Promise<any> {
     return httpClient.get(filePath).toPromise()
@@ -28,4 +29,14 @@ export async function getTextFromFile(file: File): Promise<any> {
 
         fileReader.readAsText(file);
     });
+}
+
+export async function getTextFromUtf8EncodedFile(file: File): Promise<string> {
+    const arrBuf = await new Response(file).arrayBuffer();
+    const textDecoder = new TextDecoder(undefined, { fatal: true });
+    try {
+        return textDecoder.decode(arrBuf);
+    } catch (e) {
+        throw new InputEncodingError();
+    }
 }

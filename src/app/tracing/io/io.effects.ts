@@ -15,6 +15,7 @@ import { Store, select } from '@ngrx/store';
 import * as ioActions from './io.actions';
 import { Utils } from './../util/ui-utils';
 import { FilterService } from '../configuration/services/filter.service';
+import { InputEncodingError, InputFormatError, InputDataError } from './io-errors';
 
 @Injectable()
 export class IOEffects {
@@ -36,7 +37,17 @@ export class IOEffects {
                 return from(this.ioService.getFclData(fileList[0])).pipe(
                     map((data: FclData) => new tracingStateActions.LoadFclDataSuccess({ fclData: data })),
                     catchError((error) => {
-                        this.alertService.error(`Please select a .json file with the correct format!, error: ${error}`);
+                        let errorMsg = `Data cannot be uploaded.`;
+                        if (error instanceof InputEncodingError) {
+                            errorMsg += ` Please ensure to upload only data encoded in UTF-8 format.`;
+                        } else if (error instanceof InputFormatError) {
+                            errorMsg += ` Please select a .json file with the correct format!${error.message ? '(' + error.message + ')' : ''}`;
+                        } else if (error instanceof InputDataError) {
+                            errorMsg += ` Please select a .json file with valid data!${error.message ? '(' + error.message + ')' : ''}`;
+                        } else {
+                            errorMsg += ` Error: ${error}`;
+                        }
+                        this.alertService.error(errorMsg);
                         return of(new tracingStateActions.LoadFclDataFailure());
                     })
                 );
