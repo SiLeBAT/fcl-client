@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d6e0a63_13270a5e",
+        "filename": "src/app/tracing/configuration/station-table/station-table.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-06-19T15:15:58Z",
+      "side": 1,
+      "message": "please remove comment",
+      "revId": "80aa0889c8c51d27032a602a0471de2eb17f4a43",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
