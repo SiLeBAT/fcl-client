@@ -41,9 +41,9 @@ export class IOEffects {
                         if (error instanceof InputEncodingError) {
                             errorMsg += ` Please ensure to upload only data encoded in UTF-8 format.`;
                         } else if (error instanceof InputFormatError) {
-                            errorMsg += ` Please select a .json file with the correct format!${error.message ? '(' + error.message + ')' : ''}`;
+                            errorMsg += ` Please select a .json file with the correct format!${error.message ? ' (' + error.message + ')' : ''}`;
                         } else if (error instanceof InputDataError) {
-                            errorMsg += ` Please select a .json file with valid data!${error.message ? '(' + error.message + ')' : ''}`;
+                            errorMsg += ` Please select a .json file with valid data!${error.message ? ' (' + error.message + ')' : ''}`;
                         } else {
                             errorMsg += ` Error: ${error}`;
                         }

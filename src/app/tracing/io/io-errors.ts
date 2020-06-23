@@ -9,8 +9,9 @@ export class InputEncodingError extends Error {
         this.name = this.constructor.name;
 
         // Capturing stack trace, excluding constructor call from it.
-        Error.captureStackTrace(this, this.constructor);
-
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
     }
 }
 
@@ -25,7 +26,9 @@ export class InputFormatError extends Error {
         this.name = this.constructor.name;
 
         // Capturing stack trace, excluding constructor call from it.
-        Error.captureStackTrace(this, this.constructor);
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
 
     }
 }
@@ -41,7 +44,9 @@ export class InputDataError extends Error {
         this.name = this.constructor.name;
 
         // Capturing stack trace, excluding constructor call from it.
-        Error.captureStackTrace(this, this.constructor);
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
 
     }
 }
