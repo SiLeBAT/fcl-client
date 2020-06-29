@@ -41,7 +41,7 @@ import { ConfigurationComponent } from './configuration/configuration/configurat
 import { FilterComponent } from './configuration/filter/filter.component';
 import { HighlightingComponent } from './configuration/highlighting/highlighting.component';
 import { FilterStationComponent } from './configuration/filter-station/filter-station.component';
-import { FilterStationLayoutComponent } from './configuration/filter-station-layout/filter-station-layout.component';
+import { ElementFilterLayoutComponent } from './configuration/element-filter-layout/element-filter-layout.component';
 import { StandardFilterComponent } from './configuration/standard-filter/standard-filter.component';
 import { StandardFilterViewComponent } from './configuration/standard-filter-view/standard-filter-view.component';
 import { PredefinedFilterComponent } from './configuration/predefined-filter/predefined-filter.component';
@@ -99,7 +99,7 @@ import { TextElementViewComponent } from './visio/text-element-view/text-element
         FilterComponent,
         HighlightingComponent,
         FilterStationComponent,
-        FilterStationLayoutComponent,
+        ElementFilterLayoutComponent,
         StandardFilterComponent,
         StandardFilterViewComponent,
         PredefinedFilterComponent,

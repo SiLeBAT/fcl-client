@@ -1,17 +1,17 @@
 import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 
 @Component({
-    selector: 'fcl-filter-station-layout',
-    templateUrl: './filter-station-layout.component.html',
-    styleUrls: ['./filter-station-layout.component.scss']
+    selector: 'fcl-element-filter-layout',
+    templateUrl: './element-filter-layout.component.html',
+    styleUrls: ['./element-filter-layout.component.scss']
 })
-export class FilterStationLayoutComponent implements OnInit {
+export class ElementFilterLayoutComponent implements OnInit {
 
     @Input() standardFilterTemplate: TemplateRef<any>;
     @Input() clearAllFilterTemplate: TemplateRef<any>;
     @Input() predefinedFilterTemplate: TemplateRef<any>;
     @Input() complexFilterTemplate: TemplateRef<any>;
-    @Input() stationTableTemplate: TemplateRef<any>;
+    @Input() elementTableTemplate: TemplateRef<any>;
 
     moreFilterOpenState: boolean = false;
     complexFilterOpenState: boolean = false;
