@@ -1,6 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { RegistrationCredentials } from '../../models/user.model';
+import { DataProtectionDeclarationComponent } from './../../../content/data-protection-declaration/data-protection-declaration.component';
 
 export interface IHash {
     [details: string]: string;
@@ -16,7 +18,10 @@ export class RegisterComponent implements OnInit {
     registerForm: FormGroup;
     private pwStrength: number;
 
-    constructor(private changeRef: ChangeDetectorRef) {
+    constructor(
+        private changeRef: ChangeDetectorRef,
+        public dialog: MatDialog
+    ) {
         this.pwStrength = -1;
     }
 
@@ -32,7 +37,8 @@ export class RegisterComponent implements OnInit {
                 Validators.required,
                 Validators.minLength(8)
             ]),
-            password2: new FormControl(null)
+            password2: new FormControl(null),
+            dataProtection: new FormControl(null, Validators.requiredTrue)
         }, this.passwordConfirmationValidator);
     }
 
@@ -42,7 +48,8 @@ export class RegisterComponent implements OnInit {
                 email: this.registerForm.value.email,
                 password: this.registerForm.value.password1,
                 firstName: this.registerForm.value.firstName,
-                lastName: this.registerForm.value.lastName
+                lastName: this.registerForm.value.lastName,
+                dataProtectionAgreed: this.registerForm.value.dataProtection
             };
             this.register.emit(registrationCredentials);
         }
@@ -72,5 +79,11 @@ export class RegisterComponent implements OnInit {
     doStrengthChange(pwStrength: number) {
         this.pwStrength = pwStrength;
         this.changeRef.detectChanges();
+    }
+
+    openPrivacyPolicy() {
+        const dialogRef = this.dialog.open(DataProtectionDeclarationComponent, {
+            maxHeight: '75vh'
+        });
     }
 }
