@@ -15,6 +15,7 @@ export interface LoginCredentials {
 export interface RegistrationCredentials extends LoginCredentials {
     firstName: string;
     lastName: string;
+    dataProtectionAgreed: boolean;
 }
 
 export interface ResetRequestDTO {
@@ -31,6 +32,7 @@ export interface RegistrationDetailsDTO {
     readonly firstName: string;
     readonly lastName: string;
     readonly instituteId: string;
+    readonly dataProtectionAgreed: boolean;
 }
 
 export interface RegistrationRequestResponseDTO {
