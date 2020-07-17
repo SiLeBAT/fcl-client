@@ -1,5 +1,7 @@
-<mat-form-field class="fcl-standard-filter-field fcl-font-size-08" appearance="outline" color="primary">
-    <mat-label>{{ filterLabel }}</mat-label>
-    <input matInput #filterInput [value]="currentFilterTerm" (keyup)="onKeyup()"/>
-    <mat-icon matSuffix>search</mat-icon>
-</mat-form-field>
+<div class="fcl-standard-filter-view">
+    <mat-form-field class="fcl-standard-filter-field fcl-font-size-08" appearance="outline" color="primary">
+        <mat-label>{{ filterLabel }}</mat-label>
+        <input matInput [ngModel]="filterTerm" (ngModelChange)="onFilterTermChange($event)" (keyup)="onKeyup($event)"/>
+        <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+</div>

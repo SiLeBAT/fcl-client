@@ -3,11 +3,11 @@
     <mat-label>Pre-defined Filters</mat-label>
 
     <mat-select
-        [(value)]="tableSettings.showType"
-        (selectionChange)="setTableShowType($event)">
-        <ng-container *ngFor="let showType of showTypes">
-            <mat-option class="fcl-filter-select-option" [value]="showType">
-                {{ showType }}
+        [value]="showType"
+        (valueChange)="onSetShowType($event)">
+        <ng-container *ngFor="let type of showTypes">
+            <mat-option class="fcl-filter-select-option" [value]="type">
+                {{ showTypeLabelMap[type] }}
             </mat-option>
         </ng-container>
     </mat-select>

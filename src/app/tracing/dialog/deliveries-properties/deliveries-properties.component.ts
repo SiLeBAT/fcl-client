@@ -73,8 +73,8 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     ) {
         this.deliveryIds = data.deliveryIds;
 
-        this.stateSubscription = this.store.select(tracingSelectors.getTableData).subscribe(
-            (state) => this.applyState(state.graphState),
+        this.stateSubscription = this.store.select(tracingSelectors.getBasicGraphData).subscribe(
+            (graphState) => this.applyState(graphState),
             err => this.alertService.error(`getTableData store subscription failed: ${err}`)
         );
     }

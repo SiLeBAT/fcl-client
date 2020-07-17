@@ -1,0 +1,49 @@
+.fcl-filter-elements-container {
+    display: grid;
+    grid-template-columns: 1fr 0.1fr;
+    grid-template-rows: auto min-content 1fr;
+    grid-template-areas:
+        "standardfilter clearbutton"
+        "morefilter morefilter"
+        "filtertable filtertable";
+    grid-gap: 0.5rem;
+    padding: 0.5rem;
+    height: 100%;
+    width: 100%;
+}
+
+.fcl-font-size-08 {
+    font-size: 0.8rem;
+    color: rgb(0, 0, 0);
+}
+
+.fcl-border-radius-zero {
+    border-radius: 0;
+}
+
+.fcl-standard-filter-view {
+    grid-area: standardfilter;
+}
+
+.fcl-clear-all-filter-view {
+    grid-area: clearbutton;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.fcl-more-filter {
+    grid-area: morefilter;
+}
+
+.fcl-filter-table-view {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-filter-table-view-container {
+    grid-area: filtertable;
+    overflow-y: hidden;
+    min-height: 150px;
+}

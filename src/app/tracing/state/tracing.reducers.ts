@@ -2,16 +2,15 @@ import { TracingActions, TracingActionTypes } from './tracing.actions';
 import { Constants } from '../util/constants';
 import {
     FclData,
-    TableMode,
     MergeDeliveriesType,
     MapType,
     GraphType,
-    FilterSettings,
-    ComplexFilterSettings,
-    StandardFilterSettings,
     ROASettings
 } from '../data.model';
-import { VisioReport } from '../visio/layout-engine/datatypes';
+
+import { filter } from 'lodash';
+import { TracingState } from '../state.model';
+import { ComplexRowFilterSettings, FilterTableSettings, ShowType, VisibilityFilterState, FilterSettings, ConfigurationTabIndex } from '../configuration/configuration.model';
 
 export const STATE_SLICE_NAME = 'tracing';
 
@@ -19,42 +18,28 @@ export interface State {
     tracing: TracingState;
 }
 
-export interface TracingState {
-    fclData: FclData;
-    visioReport: VisioReport | null;
-    roaSettings: ROASettings;
-    showGraphSettings: boolean;
-    showConfigurationSideBar: boolean;
-    configurationTabIndices: ConfigurationTabIndex;
-    showTableSettings: boolean;
-    tracingActive: boolean;
-}
-
-export interface ConfigurationTabIndex {
-    activeMainTabIndex: number;
-    activeFilterTabIndex: number;
-    activeHighlightingTabIndex: number;
-}
-
-export interface SettingOptions {
-    graphSettingsOption: string;
-    tableSettingsOption: string;
-}
-
-const standardFilterSettings: StandardFilterSettings = {
-    filterTerm: ''
+const complexFilterSettings: ComplexRowFilterSettings = {
+    conditions: []
 };
 
-const complexFilterSettings: ComplexFilterSettings = {
-    stationColumns: [],
-    stationRows: [],
-    stationFilterConditions: [],
-    reset: false
+const filterTableSettings: FilterTableSettings = {
+    columnOrder: [],
+    standardFilter: '',
+    complexFilter: complexFilterSettings,
+    predefinedFilter: ShowType.ALL,
+    visibilityFilter: VisibilityFilterState.SHOW_ALL,
+    columnFilters: []
 };
 
-const filterSettings: FilterSettings = {
-    standardFilterSettings: standardFilterSettings,
-    complexFilterSettings: complexFilterSettings
+const initialFilterSettings: FilterSettings = {
+    stationFilter: {
+        ...filterTableSettings,
+        columnOrder: Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray()
+    },
+    deliveryFilter: {
+        ...filterTableSettings,
+        columnOrder: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray()
+    }
 };
 
 const initialData: FclData = createInitialFclDataState();
@@ -72,8 +57,8 @@ const initialState: TracingState = {
     tracingActive: false,
     showConfigurationSideBar: false,
     configurationTabIndices: initialTabIndices,
-    showTableSettings: false,
-    showGraphSettings: false
+    showGraphSettings: false,
+    filterSettings: initialFilterSettings
 };
 
 export function createInitialFclDataState(): FclData {
@@ -113,16 +98,7 @@ export function createInitialFclDataState(): FclData {
             stations: [],
             deliveries: []
         },
-        tableSettings: {
-            mode: Constants.DEFAULT_TABLE_MODE,
-            width: Constants.DEFAULT_TABLE_WIDTH,
-            stationColumns: Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray(),
-            deliveryColumns: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray(),
-            showType: Constants.DEFAULT_TABLE_SHOW_TYPE
-        },
-        groupSettings: [],
-        filterSettings: filterSettings
-
+        groupSettings: []
     };
 }
 
@@ -176,7 +152,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
 
             return {
                 ...state,
-                fclData: action.payload.fclData
+                fclData: action.payload.fclData,
+                filterSettings: initialFilterSettings
             };
 
         case TracingActionTypes.LoadFclDataFailure:
@@ -201,12 +178,6 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 showConfigurationSideBar: action.payload.showConfigurationSideBar
-            };
-
-        case TracingActionTypes.ShowTableSettingsSOA:
-            return {
-                ...state,
-                showTableSettings: action.payload.showTableSettings
             };
 
         case TracingActionTypes.SetGraphTypeSOA:
@@ -320,45 +291,40 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetTableModeSOA:
+        case TracingActionTypes.SetStationFilterSOA:
             return {
                 ...state,
-                fclData: {
-                    ...state.fclData,
-                    tableSettings: {
-                        ...state.fclData.tableSettings,
-                        mode: action.payload
+                filterSettings: {
+                    ...state.filterSettings,
+                    stationFilter: action.payload.settings
+                }
+            };
+
+        case TracingActionTypes.ResetAllStationFiltersSOA:
+            return {
+                ...state,
+                filterSettings: {
+                    ...initialFilterSettings,
+                    stationFilter: {
+                        ...filterTableSettings,
+                        columnOrder: state.filterSettings.stationFilter.columnOrder
                     }
                 }
             };
 
-        case TracingActionTypes.SetTableColumnsSOA:
-            const tableMode = action.payload[0];
-            const selections: string[] = action.payload[1];
-            const tableSettings = { ...state.fclData.tableSettings };
-            if (tableMode === TableMode.STATIONS) {
-                tableSettings.stationColumns = selections;
-            }
-            if (tableMode === TableMode.DELIVERIES) {
-                tableSettings.deliveryColumns = selections;
-            }
+        case TracingActionTypes.SetFilterStationTableColumnOrderSOA:
+            const newColumnOrder = action.payload.columnOrder;
+            const oldColumnFilters = state.filterSettings.stationFilter.columnFilters;
+            const newColumnFilters = oldColumnFilters.filter(f => newColumnOrder.includes(f.filterProp));
 
             return {
                 ...state,
-                fclData: {
-                    ...state.fclData,
-                    tableSettings: tableSettings
-                }
-            };
-
-        case TracingActionTypes.SetTableShowTypeSOA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    tableSettings: {
-                        ...state.fclData.tableSettings,
-                        showType: action.payload
+                filterSettings: {
+                    ...state.filterSettings,
+                    stationFilter: {
+                        ...state.filterSettings.stationFilter,
+                        columnOrder: newColumnOrder,
+                        columnFilters: oldColumnFilters.length === newColumnOrder.length ? oldColumnFilters : newColumnFilters
                     }
                 }
             };
@@ -514,97 +480,6 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
                     activeHighlightingTabIndex: action.payload.activeHighlightingTabIndex
-                }
-            };
-
-        case TracingActionTypes.SetStationColumnsForComplexFilterSSA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    filterSettings: {
-                        ...state.fclData.filterSettings,
-                        complexFilterSettings: {
-                            ...state.fclData.filterSettings.complexFilterSettings,
-                            stationColumns: action.payload.stationColumns
-                        }
-                    }
-                }
-            };
-
-        case TracingActionTypes.SetStationRowsForComplexFilterSSA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    filterSettings: {
-                        ...state.fclData.filterSettings,
-                        complexFilterSettings: {
-                            ...state.fclData.filterSettings.complexFilterSettings,
-                            stationRows: action.payload.stationRows
-                        }
-                    }
-                }
-            };
-
-        case TracingActionTypes.SetStationComplexFilterConditionsSSA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    filterSettings: {
-                        ...state.fclData.filterSettings,
-                        complexFilterSettings: {
-                            ...state.fclData.filterSettings.complexFilterSettings,
-                            stationFilterConditions: action.payload.stationFilterConditions,
-                            reset: action.payload.reset
-                        }
-                    }
-                }
-            };
-
-        case TracingActionTypes.ResetStationComplexFilterSSA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    filterSettings: {
-                        ...state.fclData.filterSettings,
-                        complexFilterSettings: {
-                            ...state.fclData.filterSettings.complexFilterSettings,
-                            reset: true
-                        }
-                    }
-                }
-            };
-
-        case TracingActionTypes.SetStationStandardFilterTermSSA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    filterSettings: {
-                        ...state.fclData.filterSettings,
-                        standardFilterSettings: {
-                            ...state.fclData.filterSettings.standardFilterSettings,
-                            filterTerm: action.payload.filterTerm
-                        }
-                    }
-                }
-            };
-
-        case TracingActionTypes.ResetStationStandardFilterSSA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    filterSettings: {
-                        ...state.fclData.filterSettings,
-                        standardFilterSettings: {
-                            ...state.fclData.filterSettings.standardFilterSettings,
-                            filterTerm: ''
-                        }
-                    }
                 }
             };
 

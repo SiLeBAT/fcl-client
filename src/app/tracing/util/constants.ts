@@ -1,5 +1,5 @@
 import {
-    Color, GraphType, MapType, ShowType, TableMode, DeliveryData, StationData
+    Color, GraphType, MapType, DeliveryData, StationData
   } from '../data.model';
 import { List, Map } from 'immutable';
 
@@ -92,15 +92,6 @@ export class Constants {
     );
 
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
-    static readonly TABLE_MODES = List.of(
-        TableMode.STATIONS,
-        TableMode.DELIVERIES
-    );
-    static readonly SHOW_TYPES = List.of(
-        ShowType.ALL,
-        ShowType.SELECTED_ONLY,
-        ShowType.TRACE_ONLY
-    );
     static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24);
     static readonly NODE_SIZES = List.of(4, 6, 10, 14, 20, 30, 50);
 
@@ -113,7 +104,6 @@ export class Constants {
     static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
     static readonly DEFAULT_GRAPH_SHOW_ZOOM = true;
 
-    static readonly DEFAULT_TABLE_MODE = TableMode.STATIONS;
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
         'name',
@@ -126,7 +116,6 @@ export class Constants {
         'target',
         'score'
     );
-    static readonly DEFAULT_TABLE_SHOW_TYPE = ShowType.ALL;
 
     static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';
 }
