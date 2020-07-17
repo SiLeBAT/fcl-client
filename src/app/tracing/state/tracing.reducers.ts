@@ -8,7 +8,6 @@ import {
     ROASettings
 } from '../data.model';
 
-import { filter } from 'lodash';
 import { TracingState } from '../state.model';
 import { ComplexRowFilterSettings, FilterTableSettings, ShowType, VisibilityFilterState, FilterSettings, ConfigurationTabIndex } from '../configuration/configuration.model';
 
@@ -38,7 +37,7 @@ const initialFilterSettings: FilterSettings = {
     },
     deliveryFilter: {
         ...filterTableSettings,
-        columnOrder: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray()
+        columnOrder: ['name', 'lot', 'date', 'source.name', 'target.name']
     }
 };
 
@@ -300,6 +299,15 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+        case TracingActionTypes.SetDeliveryFilterSOA:
+            return {
+                ...state,
+                filterSettings: {
+                    ...state.filterSettings,
+                    deliveryFilter: action.payload.settings
+                }
+            };
+
         case TracingActionTypes.ResetAllStationFiltersSOA:
             return {
                 ...state,
@@ -312,7 +320,19 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetFilterStationTableColumnOrderSOA:
+        case TracingActionTypes.ResetAllDeliveryFiltersSOA:
+            return {
+                ...state,
+                filterSettings: {
+                    ...initialFilterSettings,
+                    deliveryFilter: {
+                        ...filterTableSettings,
+                        columnOrder: state.filterSettings.deliveryFilter.columnOrder
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetFilterStationTableColumnOrderSOA: {
             const newColumnOrder = action.payload.columnOrder;
             const oldColumnFilters = state.filterSettings.stationFilter.columnFilters;
             const newColumnFilters = oldColumnFilters.filter(f => newColumnOrder.includes(f.filterProp));
@@ -328,6 +348,25 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     }
                 }
             };
+        }
+
+        case TracingActionTypes.SetFilterDeliveryTableColumnOrderSOA: {
+            const newColumnOrder = action.payload.columnOrder;
+            const oldColumnFilters = state.filterSettings.deliveryFilter.columnFilters;
+            const newColumnFilters = oldColumnFilters.filter(f => newColumnOrder.includes(f.filterProp));
+
+            return {
+                ...state,
+                filterSettings: {
+                    ...state.filterSettings,
+                    deliveryFilter: {
+                        ...state.filterSettings.deliveryFilter,
+                        columnOrder: newColumnOrder,
+                        columnFilters: oldColumnFilters.length === newColumnOrder.length ? oldColumnFilters : newColumnFilters
+                    }
+                }
+            };
+        }
 
         case TracingActionTypes.SetSelectedElementsSOA:
             return {

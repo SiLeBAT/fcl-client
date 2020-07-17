@@ -80,25 +80,10 @@ export const getGraphType = createSelector(
     (graphSettings) => graphSettings.type
 );
 
-// export const getTableSettings = createSelector(
-//     getFclData,
-//     fclData => fclData.tableSettings
-// );
-
-// export const getShowGraphSettings = createSelector(
-//     getTracingFeatureState,
-//     (state) => state.showGraphSettings
-// );
-
 export const getShowConfigurationSideBar = createSelector(
     getTracingFeatureState,
     (state) => state.showConfigurationSideBar
 );
-
-// export const getShowTableSettings = createSelector(
-//     getTracingFeatureState,
-//     (state) => state.showTableSettings
-// );
 
 export const getBasicGraphData = createSelector(
     getFclElements,
@@ -123,25 +108,6 @@ export const getGraphData = createSelector(
         mergeDeliveriesType: mergeDeliveriesType
     })
 );
-
-// export const getTableData = createSelector(
-//     getBasicGraphData,
-//     getTableSettings,
-//     (graphState, tableSettings) => ({
-//         graphState: graphState,
-//         tableSettings: tableSettings
-//     })
-// );
-
-// export const getDeliveryTableData = createSelector(
-//     getBasicGraphData,
-//     getDeliveryFilterSettings
-// //     getTableSettings,
-// //     (graphState, tableSettings) => ({
-// //         graphState: graphState,
-// //         tableSettings: tableSettings
-// //     })
-// );
 
 export const getSchemaGraphData = createSelector(
     getBasicGraphData,
@@ -214,6 +180,15 @@ export const getIsFilterStationTabActive = createSelector(
     )
 );
 
+export const getIsFilterDeliveryTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeFilterTabIndex === 1 &&
+        state.configurationTabIndices.activeMainTabIndex === 0
+    )
+);
+
 export const getFilterSettings = createSelector(
     getTracingFeatureState,
     state => state.filterSettings
@@ -225,5 +200,14 @@ export const getStationFilterData = createSelector(
     (basicGraphData, filterSettings) => ({
         graphState: basicGraphData,
         filterTableState: filterSettings.stationFilter
+    })
+);
+
+export const getDeliveryFilterData = createSelector(
+    getBasicGraphData,
+    getFilterSettings,
+    (basicGraphData, filterSettings) => ({
+        graphState: basicGraphData,
+        filterTableState: filterSettings.deliveryFilter
     })
 );

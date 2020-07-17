@@ -1,32 +1,9 @@
-<!-- <ng-template #standardFilterTemplate>
-    <fcl-standard-filter
-        filterLabel="Filter in all delivery data">
-    </fcl-standard-filter>
-</ng-template>
-
-<ng-template #clearAllFilterTemplate>
-    <fcl-clear-all-filter></fcl-clear-all-filter>
-</ng-template>
-
-<ng-template #predefinedFilterTemplate>
-    <fcl-predefined-filter></fcl-predefined-filter>
-</ng-template>
-
-<ng-template #complexFilterTemplate>
-    <fcl-complex-filter
-        class="fcl-complex-filter">
-    </fcl-complex-filter>
-</ng-template>
-
-<ng-template #deliveryTableTemplate>
-<p>DeliveryTable</p>
-</ng-template>
-
-<fcl-element-filter-layout
-    class="fcl-filter-delivery-container"
-    [standardFilterTemplate]="standardFilterTemplate"
-    [clearAllFilterTemplate]="clearAllFilterTemplate"
-    [predefinedFilterTemplate]="predefinedFilterTemplate"
-    [complexFilterTemplate]="complexFilterTemplate"
-    [elementTableTemplate]="deliveryTableTemplate">
-</fcl-element-filter-layout> -->
+<fcl-filter-elements-view class="fcl-filter-elements-view"
+    standardFilterLabel="Filter in all delivery data"
+    [inputData]="filterElementsViewInputData"
+    (filterSettingsChange)="onFilterSettingsChange($event)"
+    (clearAllFilters)="onClearAllFilters()"
+    (selectTableColumns)="onSelectTableColumns()"
+    (mouseOverTableRow)="onMouseOverTableRow($event)"
+    (mouseLeaveTableRow)="onMouseLeaveTableRow($event)"
+></fcl-filter-elements-view>
