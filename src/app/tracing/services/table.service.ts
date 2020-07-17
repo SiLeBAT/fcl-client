@@ -4,30 +4,36 @@ import {
     DataServiceData,
     DeliveryData,
     StationData,
-    TableSettings,
     TableColumn,
     TableRow,
     StationTable,
-    StationTableRow
+    DataTable,
+    NodeShapeType
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
 
-interface DeliveryHighlightingInfo {
+interface HighlightingInfo {
     color: number[][];
+    shape?: NodeShapeType;
 }
 
-interface DeliveryTableRow extends TableRow<DeliveryHighlightingInfo> {}
+interface DeliveryTableRow extends TableRow {}
+
+interface StationTableRow extends TableRow {}
 
 interface DeliveryTable {
     columns: TableColumn[];
     rows: DeliveryTableRow[];
 }
 
+interface DeliveryTable extends DataTable {}
+
 export interface ColumnOption {
     value: string;
     viewValue: string;
     selected: boolean;
+    index: number;
 }
 
 @Injectable({
@@ -49,33 +55,8 @@ export class TableService {
         const data: DataServiceData = this.dataService.getData(state);
         return {
             columns: this.getStationColumns(data),
-            rows: this.getStationRows(data),
-            dataServiceData: data
+            rows: this.getStationRows(data)
         };
-    }
-
-    getStationColumnOptions(graphState: BasicGraphState, tableSettings: TableSettings): ColumnOption[] {
-        const options: ColumnOption[] = [];
-
-        const dataServiceData: DataServiceData = this.dataService.getData({
-            fclElements: graphState.fclElements,
-            groupSettings: graphState.groupSettings,
-            tracingSettings: graphState.tracingSettings,
-            highlightingSettings: graphState.highlightingSettings,
-            selectedElements: graphState.selectedElements
-        });
-
-        const stationColumns = this.getStationColumns(dataServiceData);
-
-        stationColumns.forEach(column => {
-            options.push({
-                value: column.id,
-                viewValue: column.name,
-                selected: tableSettings.stationColumns.includes(column.id)
-            });
-        });
-
-        return options;
     }
 
     private getDeliveryColumns(data: DataServiceData): TableColumn[] {
@@ -109,7 +90,7 @@ export class TableService {
         return columns;
     }
 
-    private getStationColumns(data: DataServiceData): TableColumn [] {
+    getStationColumns(data: DataServiceData): TableColumn [] {
 
         const columns: TableColumn[] = [
             { id: 'id', name: 'ID' },

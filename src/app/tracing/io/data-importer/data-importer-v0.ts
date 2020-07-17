@@ -1,4 +1,4 @@
-import { FclData, GraphSettings, ObservedType, TableSettings, MergeDeliveriesType } from '../../data.model';
+import { FclData, GraphSettings, ObservedType, MergeDeliveriesType } from '../../data.model';
 
 import { Utils } from './../../util/non-ui-utils';
 import { Constants } from './../../util/constants';
@@ -19,8 +19,7 @@ export class DataImporterV0 implements IDataImporter {
             data.hasOwnProperty('elements') &&
             data.hasOwnProperty('layout') &&
             data.hasOwnProperty('gisLayout') &&
-            data.hasOwnProperty('graphSettings') &&
-            data.hasOwnProperty('tableSettings');
+            data.hasOwnProperty('graphSettings');
         return containsRawData || containsDataWithSettings;
     }
 
@@ -97,18 +96,8 @@ export class DataImporterV0 implements IDataImporter {
             schemaLayout: data.layout,
             gisLayout: data.gisLayout
         };
-        const tableSettings: TableSettings = {
-            mode: data.tableSettings.mode != null ? data.tableSettings.mode : Constants.DEFAULT_TABLE_MODE,
-            width: data.tableSettings.width != null ? data.tableSettings.width : Constants.DEFAULT_TABLE_WIDTH,
-            stationColumns: data.tableSettings.stationColumns != null
-            ? data.tableSettings.stationColumns : Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray(),
-            deliveryColumns: data.tableSettings.deliveryColumns != null
-            ? data.tableSettings.deliveryColumns : Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray(),
-            showType: data.tableSettings.showType != null ? data.tableSettings.showType : Constants.DEFAULT_TABLE_SHOW_TYPE
-        };
 
         fclData.graphSettings = graphSettings,
-        fclData.tableSettings = tableSettings;
         this.applyElements(data.elements.stations, data.elements.deliveries, fclData);
         return true;
     }

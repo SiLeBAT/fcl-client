@@ -1,5 +1,5 @@
 import {
-    DeliveryData, StationData, TableMode, DataServiceData, Color, Position
+    DeliveryData, StationData, DataServiceData, Color, Position
 } from '../data.model';
 import { HttpClient } from '@angular/common/http';
 import { Constants } from './constants';
@@ -9,46 +9,6 @@ import * as _ from 'lodash';
 type USwitch<A, B> = (A | unknown extends A ? B : A) & A;
 
 export class Utils {
-
-    static getTableElements(mode: TableMode, data: DataServiceData): (StationData | DeliveryData)[] {
-        if (mode === TableMode.STATIONS) {
-            return data.stations;
-        } else if (mode === TableMode.DELIVERIES) {
-            return data.deliveries;
-        }
-
-        return null;
-    }
-
-    static getTableProperties(mode: TableMode, stationColumns: string[], deliveryColumns: string[]): string[] {
-        if (mode === TableMode.STATIONS) {
-            return stationColumns;
-        } else if (mode === TableMode.DELIVERIES) {
-            return deliveryColumns;
-        }
-
-        return null;
-    }
-
-    static getAllTableProperties(mode: TableMode, data: DataServiceData): string[] {
-        let properties: string[];
-
-        if (mode === TableMode.STATIONS) {
-            properties = Constants.STATION_PROPERTIES.toArray();
-        } else if (mode === TableMode.DELIVERIES) {
-            properties = Constants.DELIVERY_PROPERTIES.toArray();
-        }
-
-        const additionalProps: Set<string> = new Set();
-
-        for (const element of Utils.getTableElements(mode, data)) {
-            for (const p of element.properties) {
-                additionalProps.add(p.name);
-            }
-        }
-
-        return properties.filter(prop => Constants.PROPERTIES.has(prop)).concat(Array.from(additionalProps));
-    }
 
     static colorToCss(color: Color): string {
         return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';

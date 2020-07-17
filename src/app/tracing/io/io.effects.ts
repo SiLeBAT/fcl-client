@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
-
 import * as tracingStateActions from '../state/tracing.actions';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingSelectors from '../state/tracing.selectors';
@@ -9,12 +8,9 @@ import { map, catchError, mergeMap, withLatestFrom } from 'rxjs/operators';
 import { of, from, EMPTY } from 'rxjs';
 import { IOService } from './io.service';
 import { FclData, ShapeFileData } from '../data.model';
-
 import { Store, select } from '@ngrx/store';
-
 import * as ioActions from './io.actions';
 import { Utils } from './../util/ui-utils';
-import { FilterService } from '../configuration/services/filter.service';
 import { InputEncodingError, InputFormatError, InputDataError } from './io-errors';
 
 @Injectable()
@@ -23,15 +19,13 @@ export class IOEffects {
         private actions$: Actions,
         private ioService: IOService,
         private alertService: AlertService,
-        private store: Store<fromTracing.State>,
-        private filterService: FilterService
+        private store: Store<fromTracing.State>
     ) {}
 
     @Effect()
     loadFclDataMSA$ = this.actions$.pipe(
         ofType<ioActions.LoadFclDataMSA>(ioActions.IOActionTypes.LoadFclDataMSA),
         mergeMap(action => {
-            this.filterService.clearAllFilters();
             const fileList: FileList = action.payload.dataSource;
             if (fileList.length === 1) {
                 return from(this.ioService.getFclData(fileList[0])).pipe(

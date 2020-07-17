@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { SchemaGraphComponent } from '../graph/components/schema-graph.component';
-import { TableComponent } from './table.component';
 import { GraphType } from '../data.model';
 import { GisGraphComponent } from '../graph/components/gis-graph.component';
 import { environment } from '../../../environments/environment';
@@ -33,7 +32,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     @ViewChild('mainContainer', { read: ElementRef, static: true }) mainContainer: ElementRef;
     @ViewChild('schemaGraph', { static: true }) schemaGraph: SchemaGraphComponent;
     @ViewChild('gisGraph', { static: true }) gisGraph: GisGraphComponent;
-    @ViewChild('table', { static: true }) table: TableComponent;
     @ViewChild('rightSidenav', { static: true }) rightSidenav: MatSidenav;
     @ViewChild('rightSidenav', { read: ElementRef, static: true }) rightSidenavElement: ElementRef;
     @ViewChild('sidenavSlider', { static: true }) sidenavSlider: ElementRef;
@@ -45,7 +43,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     showGisGraph$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GIS));
     showSchemaGraph$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GRAPH));
 
-    showGraphSettings$ = this.store.select(tracingSelectors.getShowGraphSettings);
     showConfigurationSideBar$ = this.store.select(tracingSelectors.getShowConfigurationSideBar);
 
     private componentActive = true;
