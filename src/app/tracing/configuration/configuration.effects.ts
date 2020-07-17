@@ -10,7 +10,7 @@ import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select
 import { MatDialog } from '@angular/material/dialog';
 import { SelectFilterTableColumnsMSA, ConfigurationActionTypes } from './configuration.actions';
 import { TableType } from './model';
-import { SetFilterStationTableColumnOrderSOA } from '../state/tracing.actions';
+import { SetFilterStationTableColumnOrderSOA, SetFilterDeliveryTableColumnOrderSOA } from '../state/tracing.actions';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -51,6 +51,8 @@ export class ConfigurationEffects {
                         );
                         if (tableType === TableType.STATIONS) {
                             this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: newColumnOrder }));
+                        } else if (tableType === TableType.DELIVERIES) {
+                            this.store.dispatch(new SetFilterDeliveryTableColumnOrderSOA({ columnOrder: newColumnOrder }));
                         }
                     }
                 },
