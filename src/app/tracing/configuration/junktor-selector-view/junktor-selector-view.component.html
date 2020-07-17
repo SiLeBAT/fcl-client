@@ -1,0 +1,18 @@
+<mat-form-field
+    class="fcl-complex-filter-form-field"
+    appearance="outline"
+    color="primary">
+    <mat-label>junktor</mat-label>
+    <mat-select
+        [value]="value"
+        (valueChange)="onValueChange($event)"
+        >
+        <ng-container *ngFor="let junktor of availableJunktors">
+            <mat-option
+                class="fcl-filter-select-option"
+                [value]="junktor">
+                {{ junktorLabel[junktor] }}
+            </mat-option>
+        </ng-container>
+    </mat-select>
+</mat-form-field>

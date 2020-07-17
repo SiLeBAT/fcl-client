@@ -5,6 +5,7 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
 import { map } from 'rxjs/operators';
 import { TabConfig } from '../tab-layout/tab-layout.component';
+import { ConfigurationTabIndex } from '../configuration.model';
 
 @Component({
     selector: 'fcl-highlighting',
@@ -19,7 +20,7 @@ export class HighlightingComponent implements OnInit {
     configurationTabIndices$ = this.store.select(tracingSelectors.getConfigurationTabIndices);
     activeTabIndex$ = this.configurationTabIndices$
         .pipe(
-            map((configurationTabIndices: fromTracing.ConfigurationTabIndex) => configurationTabIndices.activeHighlightingTabIndex)
+            map((configurationTabIndices: ConfigurationTabIndex) => configurationTabIndices.activeHighlightingTabIndex)
         );
 
     tabGroupId = 'fcl-tab-group-highlighting';

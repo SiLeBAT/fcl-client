@@ -1,12 +1,13 @@
 import { Action } from '@ngrx/store';
 import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
-    GraphType, TableMode, FclData, ShowType, SelectedElements, Position,
+    GraphType, FclData, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
-    TableColumn, StationTableRow, ComplexFilterCondition, ROASettings
+    TableColumn, ROASettings
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
+import { FilterTableSettings } from '../configuration/configuration.model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
@@ -28,9 +29,6 @@ export enum TracingActionTypes {
     ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
-    SetTableModeSOA = '[Tracing] Set Table Mode',
-    SetTableColumnsSOA = '[Tracing] Set Table Columns',
-    SetTableShowTypeSOA = '[Tracing] Set Table Show Type',
     SetSelectedElementsSOA = '[Tracing] Set Element Selection',
     SetStationPositionsSOA = '[Tracing] Set Station Positions',
     SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
@@ -40,12 +38,9 @@ export enum TracingActionTypes {
     SetActiveMainTabIndexSSA = '[Configuration Layout] Set Active Main Tab Index',
     SetActiveFilterTabIndexSSA = '[Configuration Layout] Set Active Filter Tab Index',
     SetActiveHighlightingTabIndexSSA = '[Configuration Layout] Set Active Highlighting Tab Index',
-    SetStationColumnsForComplexFilterSSA = '[Station Table] Set Station Columns For Complex Filter',
-    SetStationRowsForComplexFilterSSA = '[Station Table] Set Station Rows For Complex Filter',
-    SetStationComplexFilterConditionsSSA = '[Complex Filter Component] Set Station Complex Filter Conditions',
-    ResetStationComplexFilterSSA = '[Filter Service] Reset Station Complex Filter',
-    SetStationStandardFilterTermSSA = '[Standard Filter Component] Set Station Standard Filter Term',
-    ResetStationStandardFilterSSA = '[Filter Service] Reset Station Standard Filter',
+    SetStationFilterSOA = '[Configuration Layout] Set Station Filter Settings',
+    ResetAllStationFiltersSOA = '[Configuration Layout] Reset All Station Filters',
+    SetFilterStationTableColumnOrderSOA = '[Configuration Layout] Set Station Table Column Order',
     ShowGhostStationMSA = '[Station Table] Show Ghost Station',
     ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings'
@@ -149,22 +144,10 @@ export class ShowZoomSOA implements Action {
     constructor(public payload: boolean) {}
 }
 
-export class SetTableModeSOA implements Action {
-    readonly type = TracingActionTypes.SetTableModeSOA;
+export class SetFilterStationTableColumnOrderSOA implements Action {
+    readonly type = TracingActionTypes.SetFilterStationTableColumnOrderSOA;
 
-    constructor(public payload: TableMode) {}
-}
-
-export class SetTableColumnsSOA implements Action {
-    readonly type = TracingActionTypes.SetTableColumnsSOA;
-
-    constructor(public payload: [TableMode, string[]]) {}
-}
-
-export class SetTableShowTypeSOA implements Action {
-    readonly type = TracingActionTypes.SetTableShowTypeSOA;
-
-    constructor(public payload: ShowType) {}
+    constructor(public payload: { columnOrder: string[] }) {}
 }
 
 export class SetSelectedElementsSOA implements Action {
@@ -233,36 +216,16 @@ export class SetActiveHighlightingTabIndexSSA implements Action {
     constructor(public payload: { activeHighlightingTabIndex: number }) {}
 }
 
-export class SetStationColumnsForComplexFilterSSA implements Action {
-    readonly type = TracingActionTypes.SetStationColumnsForComplexFilterSSA;
+export class SetStationFilterSOA implements Action {
+    readonly type = TracingActionTypes.SetStationFilterSOA;
 
-    constructor(public payload: { stationColumns: TableColumn[] }) {}
+    constructor(public payload: { settings: FilterTableSettings }) {}
 }
 
-export class SetStationRowsForComplexFilterSSA implements Action {
-    readonly type = TracingActionTypes.SetStationRowsForComplexFilterSSA;
+export class ResetAllStationFiltersSOA implements Action {
+    readonly type = TracingActionTypes.ResetAllStationFiltersSOA;
 
-    constructor(public payload: { stationRows: StationTableRow[] }) {}
-}
-
-export class SetStationComplexFilterConditionsSSA implements Action {
-    readonly type = TracingActionTypes.SetStationComplexFilterConditionsSSA;
-
-    constructor(public payload: { stationFilterConditions: ComplexFilterCondition[], reset: boolean }) {}
-}
-
-export class ResetStationComplexFilterSSA implements Action {
-    readonly type = TracingActionTypes.ResetStationComplexFilterSSA;
-}
-
-export class SetStationStandardFilterTermSSA implements Action {
-    readonly type = TracingActionTypes.SetStationStandardFilterTermSSA;
-
-    constructor(public payload: { filterTerm: string }) {}
-}
-
-export class ResetStationStandardFilterSSA implements Action {
-    readonly type = TracingActionTypes.ResetStationStandardFilterSSA;
+    constructor() {}
 }
 
 export class ShowGhostStationMSA implements Action {
@@ -301,9 +264,7 @@ export type TracingActions =
     | ShowMergedDeliveriesCountsSOA
     | ShowLegendSOA
     | ShowZoomSOA
-    | SetTableModeSOA
-    | SetTableColumnsSOA
-    | SetTableShowTypeSOA
+    | SetFilterStationTableColumnOrderSOA
     | SetSelectedElementsSOA
     | SetStationPositionsSOA
     | SetStationPositionsAndLayoutSOA
@@ -313,12 +274,8 @@ export type TracingActions =
     | SetActiveMainTabIndexSSA
     | SetActiveFilterTabIndexSSA
     | SetActiveHighlightingTabIndexSSA
+    | SetStationFilterSOA
+    | ResetAllStationFiltersSOA
     | SetROAReportSettingsSOA
-    | SetStationColumnsForComplexFilterSSA
-    | SetStationRowsForComplexFilterSSA
-    | SetStationComplexFilterConditionsSSA
-    | ResetStationComplexFilterSSA
-    | SetStationStandardFilterTermSSA
-    | ResetStationStandardFilterSSA
     | ShowGhostStationMSA
     | ClearGhostStationMSA;

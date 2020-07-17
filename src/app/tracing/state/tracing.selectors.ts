@@ -1,5 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { TracingState, STATE_SLICE_NAME } from './tracing.reducers';
+import { STATE_SLICE_NAME } from './tracing.reducers';
+import { TracingState } from '../state.model';
 
 // SELECTORS
 export const getTracingFeatureState = createFeatureSelector<TracingState>(STATE_SLICE_NAME);
@@ -79,25 +80,25 @@ export const getGraphType = createSelector(
     (graphSettings) => graphSettings.type
 );
 
-export const getTableSettings = createSelector(
-    getFclData,
-    fclData => fclData.tableSettings
-);
+// export const getTableSettings = createSelector(
+//     getFclData,
+//     fclData => fclData.tableSettings
+// );
 
-export const getShowGraphSettings = createSelector(
-    getTracingFeatureState,
-    (state) => state.showGraphSettings
-);
+// export const getShowGraphSettings = createSelector(
+//     getTracingFeatureState,
+//     (state) => state.showGraphSettings
+// );
 
 export const getShowConfigurationSideBar = createSelector(
     getTracingFeatureState,
     (state) => state.showConfigurationSideBar
 );
 
-export const getShowTableSettings = createSelector(
-    getTracingFeatureState,
-    (state) => state.showTableSettings
-);
+// export const getShowTableSettings = createSelector(
+//     getTracingFeatureState,
+//     (state) => state.showTableSettings
+// );
 
 export const getBasicGraphData = createSelector(
     getFclElements,
@@ -123,14 +124,24 @@ export const getGraphData = createSelector(
     })
 );
 
-export const getTableData = createSelector(
-    getBasicGraphData,
-    getTableSettings,
-    (graphState, tableSettings) => ({
-        graphState: graphState,
-        tableSettings: tableSettings
-    })
-);
+// export const getTableData = createSelector(
+//     getBasicGraphData,
+//     getTableSettings,
+//     (graphState, tableSettings) => ({
+//         graphState: graphState,
+//         tableSettings: tableSettings
+//     })
+// );
+
+// export const getDeliveryTableData = createSelector(
+//     getBasicGraphData,
+//     getDeliveryFilterSettings
+// //     getTableSettings,
+// //     (graphState, tableSettings) => ({
+// //         graphState: graphState,
+// //         tableSettings: tableSettings
+// //     })
+// );
 
 export const getSchemaGraphData = createSelector(
     getBasicGraphData,
@@ -194,42 +205,25 @@ export const getConfigurationTabIndices = createSelector(
     state => state.configurationTabIndices
 );
 
+export const getIsFilterStationTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeFilterTabIndex === 0 &&
+        state.configurationTabIndices.activeMainTabIndex === 0
+    )
+);
+
 export const getFilterSettings = createSelector(
-    getFclData,
-    fclData => fclData.filterSettings
+    getTracingFeatureState,
+    state => state.filterSettings
 );
 
-export const getComplexFilterSettings = createSelector(
+export const getStationFilterData = createSelector(
+    getBasicGraphData,
     getFilterSettings,
-    filterSettings => filterSettings.complexFilterSettings
-);
-
-export const getStationColumnsForComplexFilter = createSelector(
-    getComplexFilterSettings,
-    complexFilterSettings => complexFilterSettings.stationColumns
-);
-
-export const getStationRowsForComplexFilter = createSelector(
-    getComplexFilterSettings,
-    complexFilterSettings => complexFilterSettings.stationRows
-);
-
-export const getStationComplexFilterConditions = createSelector(
-    getComplexFilterSettings,
-    complexFilterSettings => complexFilterSettings.stationFilterConditions
-);
-
-export const getResetStationComplexFilter = createSelector(
-    getComplexFilterSettings,
-    complexFilterSettings => complexFilterSettings.reset
-);
-
-export const getStandarFilterSettings = createSelector(
-    getFilterSettings,
-    filterSettings => filterSettings.standardFilterSettings
-);
-
-export const getStandardFilterTerm = createSelector(
-    getStandarFilterSettings,
-    standardFilterSettings => standardFilterSettings.filterTerm
+    (basicGraphData, filterSettings) => ({
+        graphState: basicGraphData,
+        filterTableState: filterSettings.stationFilter
+    })
 );
