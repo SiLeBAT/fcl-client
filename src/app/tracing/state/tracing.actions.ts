@@ -3,7 +3,7 @@ import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, FclData, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
-    TableColumn, ROASettings
+    ROASettings
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -41,6 +41,9 @@ export enum TracingActionTypes {
     SetStationFilterSOA = '[Configuration Layout] Set Station Filter Settings',
     ResetAllStationFiltersSOA = '[Configuration Layout] Reset All Station Filters',
     SetFilterStationTableColumnOrderSOA = '[Configuration Layout] Set Station Table Column Order',
+    SetDeliveryFilterSOA = '[Configuration Layout] Set Delivery Filter Settings',
+    ResetAllDeliveryFiltersSOA = '[Configuration Layout] Reset All Delivery Filters',
+    SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
     ShowGhostStationMSA = '[Station Table] Show Ghost Station',
     ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings'
@@ -144,12 +147,6 @@ export class ShowZoomSOA implements Action {
     constructor(public payload: boolean) {}
 }
 
-export class SetFilterStationTableColumnOrderSOA implements Action {
-    readonly type = TracingActionTypes.SetFilterStationTableColumnOrderSOA;
-
-    constructor(public payload: { columnOrder: string[] }) {}
-}
-
 export class SetSelectedElementsSOA implements Action {
     readonly type = TracingActionTypes.SetSelectedElementsSOA;
 
@@ -216,6 +213,12 @@ export class SetActiveHighlightingTabIndexSSA implements Action {
     constructor(public payload: { activeHighlightingTabIndex: number }) {}
 }
 
+export class SetFilterStationTableColumnOrderSOA implements Action {
+    readonly type = TracingActionTypes.SetFilterStationTableColumnOrderSOA;
+
+    constructor(public payload: { columnOrder: string[] }) {}
+}
+
 export class SetStationFilterSOA implements Action {
     readonly type = TracingActionTypes.SetStationFilterSOA;
 
@@ -224,6 +227,24 @@ export class SetStationFilterSOA implements Action {
 
 export class ResetAllStationFiltersSOA implements Action {
     readonly type = TracingActionTypes.ResetAllStationFiltersSOA;
+
+    constructor() {}
+}
+
+export class SetFilterDeliveryTableColumnOrderSOA implements Action {
+    readonly type = TracingActionTypes.SetFilterDeliveryTableColumnOrderSOA;
+
+    constructor(public payload: { columnOrder: string[] }) {}
+}
+
+export class SetDeliveryFilterSOA implements Action {
+    readonly type = TracingActionTypes.SetDeliveryFilterSOA;
+
+    constructor(public payload: { settings: FilterTableSettings }) {}
+}
+
+export class ResetAllDeliveryFiltersSOA implements Action {
+    readonly type = TracingActionTypes.ResetAllDeliveryFiltersSOA;
 
     constructor() {}
 }
@@ -264,7 +285,6 @@ export type TracingActions =
     | ShowMergedDeliveriesCountsSOA
     | ShowLegendSOA
     | ShowZoomSOA
-    | SetFilterStationTableColumnOrderSOA
     | SetSelectedElementsSOA
     | SetStationPositionsSOA
     | SetStationPositionsAndLayoutSOA
@@ -274,8 +294,12 @@ export type TracingActions =
     | SetActiveMainTabIndexSSA
     | SetActiveFilterTabIndexSSA
     | SetActiveHighlightingTabIndexSSA
+    | SetFilterStationTableColumnOrderSOA
     | SetStationFilterSOA
     | ResetAllStationFiltersSOA
+    | SetFilterDeliveryTableColumnOrderSOA
+    | SetDeliveryFilterSOA
+    | ResetAllDeliveryFiltersSOA
     | SetROAReportSettingsSOA
     | ShowGhostStationMSA
     | ClearGhostStationMSA;

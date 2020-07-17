@@ -180,6 +180,15 @@ export const getIsFilterStationTabActive = createSelector(
     )
 );
 
+export const getIsFilterDeliveryTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeFilterTabIndex === 1 &&
+        state.configurationTabIndices.activeMainTabIndex === 0
+    )
+);
+
 export const getFilterSettings = createSelector(
     getTracingFeatureState,
     state => state.filterSettings
@@ -191,5 +200,14 @@ export const getStationFilterData = createSelector(
     (basicGraphData, filterSettings) => ({
         graphState: basicGraphData,
         filterTableState: filterSettings.stationFilter
+    })
+);
+
+export const getDeliveryFilterData = createSelector(
+    getBasicGraphData,
+    getFilterSettings,
+    (basicGraphData, filterSettings) => ({
+        graphState: basicGraphData,
+        filterTableState: filterSettings.deliveryFilter
     })
 );

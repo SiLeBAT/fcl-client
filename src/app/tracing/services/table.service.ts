@@ -13,27 +13,10 @@ import {
 import * as _ from 'lodash';
 import { DataService } from './data.service';
 
-interface HighlightingInfo {
-    color: number[][];
-    shape?: NodeShapeType;
-}
-
-interface DeliveryTableRow extends TableRow {}
-
-interface StationTableRow extends TableRow {}
-
-interface DeliveryTable {
-    columns: TableColumn[];
-    rows: DeliveryTableRow[];
-}
-
-interface DeliveryTable extends DataTable {}
-
 export interface ColumnOption {
     value: string;
     viewValue: string;
     selected: boolean;
-    index: number;
 }
 
 @Injectable({
@@ -43,7 +26,7 @@ export class TableService {
 
     constructor(private dataService: DataService) {}
 
-    getDeliveryData(state: BasicGraphState, deliveryIds: string[]): DeliveryTable {
+    getDeliveryData(state: BasicGraphState, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
         return {
             columns: this.getDeliveryColumns(data),
@@ -59,16 +42,17 @@ export class TableService {
         };
     }
 
-    private getDeliveryColumns(data: DataServiceData): TableColumn[] {
+    getDeliveryColumns(data: DataServiceData): TableColumn[] {
         const d: DeliveryData = null;
         const columns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'source', name: 'Source ID' },
-            { id: 'source.name', name: 'Source Name' },
+            { id: 'source.name', name: 'Source' },
             { id: 'target', name: 'Target ID' },
-            { id: 'target.name', name: 'Target Name' },
+            { id: 'target.name', name: 'Target' },
             { id: 'name', name: 'Product' },
             { id: 'lot', name: 'Lot' },
+            { id: 'date', name: 'Delivery Date' },
             { id: 'weight', name: 'Weight' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
@@ -78,15 +62,9 @@ export class TableService {
             { id: 'score', name: 'Score' },
             { id: 'selected', name: 'Selected' }
         ];
-        const props = this.collectProps(data.deliveries);
-        props.forEach(prop => {
-            const name = this.decamelize(prop.id);
-            const index = columns.findIndex(c => c.name === prop.id);
-            columns.push({
-                id: 'ext' + prop.id,
-                name: index >= 0 ? `${name} (ext)` : name
-            });
-        });
+
+        this.addColumnsForProperties(columns, data.deliveries);
+
         return columns;
     }
 
@@ -110,24 +88,40 @@ export class TableService {
             { id: 'country', name: 'Country' },
             { id: 'typeOfBusiness', name: 'Type of Business' }
         ];
-        const props = this.collectProps(data.stations);
-        props.forEach(prop => {
-            const name = this.decamelize(prop.id);
-            const index = columns.findIndex(column => column.name === prop.id);
-            columns.push({
-                id: 'ext' + prop.id,
-                name: index >= 0 ? `${name} (ext)` : name
-            });
-        });
+
+        this.addColumnsForProperties(columns, data.stations);
 
         return columns;
     }
 
-    private getDeliveryRows(data: DataServiceData, deliveryIds: string[]): DeliveryTableRow[] {
-        return data.getDelById(deliveryIds).map(delivery => {
-            const row: DeliveryTableRow = {
+    private addColumnsForProperties(columns: TableColumn[], arr: (StationData | DeliveryData)[]): void {
+        const props = this.collectProps(arr);
+        props.forEach(prop => {
+            if (!columns.some(c => c.id === prop.id)) {
+                columns.push({
+                    id: prop.id,
+                    name: this.decamelize(prop.id)
+                });
+            }
+        });
+    }
+
+    private getDeliveryRows(data: DataServiceData, deliveryIds?: string[]): TableRow[] {
+        return (
+            deliveryIds ?
+            data.getDelById(deliveryIds) :
+            data.deliveries
+        ).map(delivery => {
+            const row: TableRow = {
                 id: delivery.id,
-                highlightingInfo: { color: delivery.highlightingInfo.color },
+                highlightingInfo: {
+                    color: (
+                        delivery.highlightingInfo.color.length > 0 ?
+                        delivery.highlightingInfo.color :
+                        [[0, 0, 0]]
+                    ),
+                    shape: NodeShapeType.SQUARE
+                },
                 name: delivery.name,
                 lot: delivery.lot,
                 source: delivery.source,
@@ -146,16 +140,16 @@ export class TableService {
             };
 
             delivery.properties.forEach(
-                prop => row['ext' + prop.name] = prop.value
+                prop => row[prop.name] = prop.value
             );
 
             return row;
         });
     }
 
-    private getStationRows(data: DataServiceData): StationTableRow[] {
+    private getStationRows(data: DataServiceData): TableRow[] {
         return data.stations.map(station => {
-            const row: StationTableRow = {
+            const row: TableRow = {
                 id: station.id,
                 name: station.name,
                 score: station.score,
@@ -170,37 +164,15 @@ export class TableService {
                 commonLink: station.commonLink,
                 selected: station.selected,
                 invisible: station.invisible,
-                country: this.findCountry(station.properties),
-                typeOfBusiness: this.findTypeOfBusiness(station.properties),
                 highlightingInfo: station.highlightingInfo
             };
 
             station.properties.forEach(
-                prop => row['ext' + prop.name] = prop.value
+                prop => row[prop.name] = prop.value
             );
 
             return row;
         });
-    }
-
-    private findTypeOfBusiness(properties: { name: string, value: string }[]): string {
-        const businessTypes: string[] = [
-            'typeOfBusiness',
-            'Type of Business',
-            'Type of business',
-            'type of business'
-        ];
-        const businessProperties = properties.filter(property => businessTypes.indexOf(property.name) >= 0);
-        return businessProperties.length > 0 ? businessProperties[0].value : null;
-    }
-
-    private findCountry(properties: { name: string, value: string }[]): string {
-        const countryTypes: string[] = [
-            'country',
-            'Country'
-        ];
-        const countryProperties = properties.filter(property => countryTypes.indexOf(property.name) >= 0);
-        return countryProperties.length > 0 ? countryProperties[0].value : '';
     }
 
     private decamelize(str: string): string {
