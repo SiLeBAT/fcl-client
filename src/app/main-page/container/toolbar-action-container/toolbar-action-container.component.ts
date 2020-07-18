@@ -85,7 +85,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     loadExampleData() {
-        this.ioService.getFclData('../../../../assets/data/bbk.json')
+        this.ioService.getFclData('../../../../assets/data/SampleData_EN_WebApp.json')
             .then((data: FclData) => {
                 this.filterService.clearAllFilters();
                 this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
