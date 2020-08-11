@@ -70,7 +70,13 @@
 
         <div class="form-group fcl-form-checkbox">
             <mat-checkbox required formControlName="dataProtection">
-                I have read and accept the <button mat-button class="fcl-policy-link" color="primary" (click)="openPrivacyPolicy()"> Privacy Policy *</button>
+                I have read and accept the
+                <a
+                    class="fcl-policy-link"
+                    target="_blank"
+                    [routerLink]="['/content/dataprotectiondeclaration']">
+                    Privacy Policy *
+                </a>
             </mat-checkbox>
             <mat-error *ngIf="!validateField('dataProtection')">
                 You must accept the Privacy Policy

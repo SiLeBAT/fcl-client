@@ -32,6 +32,7 @@ import { AdminActivateComponent } from './presentation/admin-activate/admin-acti
 import { AdminActivateViewComponent } from './presentation/admin-activate-view/admin-activate-view.component';
 import { ProfileContainerComponent } from './container/profile-container/profile-container.component';
 import { ProfileComponent } from './presentation/profile/profile.component';
+import { GdprAgreementComponent } from './presentation/gdpr-agreement/gdpr-agreement.component';
 
 @NgModule({
     imports: [
@@ -67,8 +68,13 @@ import { ProfileComponent } from './presentation/profile/profile.component';
         AdminActivateComponent,
         AdminActivateViewComponent,
         ProfileContainerComponent,
-        ProfileComponent
+        ProfileComponent,
+        GdprAgreementComponent
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    entryComponents: [
+        GdprAgreementComponent
+    ]
+
 })
 export class UserModule { }

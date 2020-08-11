@@ -2,9 +2,16 @@ export interface User {
     email: string;
     firstName?: string;
     lastName?: string;
+    gdprAgreementRequested: boolean;
 }
 export interface TokenizedUser extends User {
     token: string;
+}
+
+export interface GdprConfirmationRequestDTO {
+    email: string;
+    token: string;
+    gdprConfirmed: boolean;
 }
 
 export interface LoginCredentials {
@@ -60,4 +67,5 @@ export interface TokenizedUserDTO {
     readonly lastName: string;
     readonly instituteId: string;
     readonly token: string;
+    readonly gdprAgreementRequested: boolean;
 }

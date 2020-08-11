@@ -11,9 +11,12 @@ import {
     NewPasswordRequestDTO,
     PasswordResetResponseDTO,
     ActivationResponseDTO,
-    TokenizedUserDTO
+    TokenizedUserDTO,
+    GdprConfirmationRequestDTO
 } from '../models/user.model';
 import { DataRequestService } from '../../core/services/data-request.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GdprAgreementComponent } from '../presentation/gdpr-agreement/gdpr-agreement.component';
 
 @Injectable({
     providedIn: 'root'
@@ -27,10 +30,14 @@ export class UserService {
         recovery: '/v1/users/reset-password-request',
         reset: '/v1/users/reset-password',
         activate: '/v1/users/verification',
-        adminactivate: '/v1/users/activation'
+        adminactivate: '/v1/users/activation',
+        gdpragreement: '/v1/users/gdpr-agreement'
     };
 
-    constructor(private dataService: DataRequestService) { }
+    constructor(
+        private dataService: DataRequestService,
+        public dialog: MatDialog
+    ) { }
 
     register(credentials: RegistrationDetailsDTO): Observable<RegistrationRequestResponseDTO> {
         return this.dataService.post<RegistrationRequestResponseDTO, RegistrationDetailsDTO>(this.URL.register, credentials);
@@ -56,6 +63,10 @@ export class UserService {
         return this.dataService.post<TokenizedUserDTO, LoginCredentials>(this.URL.login, credentials);
     }
 
+    updateGDPRAgreement(user: GdprConfirmationRequestDTO): Observable<TokenizedUserDTO> {
+        return this.dataService.put<TokenizedUserDTO, GdprConfirmationRequestDTO>(this.URL.gdpragreement, user);
+    }
+
     logout() {
         localStorage.removeItem('currentUser');
         return new Observable<void>();
@@ -73,4 +84,15 @@ export class UserService {
 
         return this.currentUser;
     }
+
+    openGDPRDialog(): Observable<boolean> {
+
+        const dialogRef = this.dialog.open(GdprAgreementComponent, {
+            disableClose: true,
+            closeOnNavigation: true
+        });
+
+        return dialogRef.afterClosed();
+    }
+
 }

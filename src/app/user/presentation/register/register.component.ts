@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@ang
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { RegistrationCredentials } from '../../models/user.model';
-import { DataProtectionDeclarationComponent } from './../../../content/data-protection-declaration/data-protection-declaration.component';
 
 export interface IHash {
     [details: string]: string;
@@ -81,9 +80,4 @@ export class RegisterComponent implements OnInit {
         this.changeRef.detectChanges();
     }
 
-    openPrivacyPolicy() {
-        const dialogRef = this.dialog.open(DataProtectionDeclarationComponent, {
-            maxHeight: '75vh'
-        });
-    }
 }
