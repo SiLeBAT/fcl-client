@@ -1,0 +1,28 @@
+.fcl-gdpr-agreement-dialog {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas:
+        'title'
+        'checkbox'
+        'action';
+}
+
+.fcl-dialog-title {
+    grid-area: title;
+}
+
+.fcl-form-checkbox {
+    grid-area: checkbox;
+}
+
+.fcl-dialog-actions {
+    grid-area: action;
+    justify-self: end;
+}
+
+.fcl-mat-error {
+    color: #fe0000;
+    font-style: italic;
+    font-size: small;
+}
