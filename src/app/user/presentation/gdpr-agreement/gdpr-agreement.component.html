@@ -1,0 +1,44 @@
+<form [formGroup]="gdprAgreementForm" class="fcl-gdpr-agreement-dialog">
+
+    <div class="fcl-dialog-title">
+        <h1 mat-dialog-title class="fcl-title">The Data Protection Declaration has been changed.</h1>
+
+    </div>
+
+    <div class="form-group fcl-form-checkbox">
+        <mat-checkbox
+            required
+            formControlName="dataProtection"
+        >
+            I have read and accept the
+            <a
+                class="fcl-policy-link"
+                target="_blank"
+                [routerLink]="['/content/dataprotectiondeclaration']">
+                Privacy Policy *
+            </a>
+        </mat-checkbox>
+        <br>
+        <mat-error class="fcl-mat-error" *ngIf="!validateField('dataProtection')">
+            You must accept the Privacy Policy or logout
+        </mat-error>
+    </div>
+
+    <div mat-dialog-actions class="fcl-dialog-actions">
+        <button
+            mat-raised-button
+            (click)="closeDialog()"
+        >
+            Logout
+        </button>
+        <button
+            mat-raised-button
+            color="primary"
+            (click)="closeDialog()"
+            [disabled]="!gdprAgreementForm.valid"
+        >
+            Continue
+        </button>
+    </div>
+
+</form>

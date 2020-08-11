@@ -327,7 +327,8 @@
             <hr>
 
             <p>
-                Valid as of: 02 June 2020
+                <!-- the date of this document must be given in the backend config file and is pulled during component loading -->
+                Valid as of: {{ gdprDate$ | async }}
             </p>
 
         </footer>
