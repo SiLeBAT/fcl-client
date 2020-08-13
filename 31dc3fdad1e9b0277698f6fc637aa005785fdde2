@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5e4bab4_20c20367",
+        "filename": "src/app/content/content.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "nice, you implemented state slice pattern :)",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 20,
+        "endChar": 50
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44474342_98c20fc0",
+        "filename": "src/app/content/data-protection-declaration/data-protection-declaration.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "I would prefer removing import * statements and import e.g. getGDPRDate directly. You can consider this for future tickets.",
+      "range": {
+        "startLine": 13,
+        "startChar": 55,
+        "endLine": 13,
+        "endChar": 66
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38f6e9e6_46a57b2f",
+        "filename": "src/app/content/services/content.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "Hard coded API version. Should come from config. But ok, because it is a temp solution.",
+      "range": {
+        "startLine": 13,
+        "startChar": 19,
+        "endLine": 13,
+        "endChar": 37
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23899446_3be056d7",
+        "filename": "src/app/content/services/content.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "If your types are consistent you don\u0027t need to type this. Typescript is able to intefere the type here.",
+      "range": {
+        "startLine": 22,
+        "startChar": 27,
+        "endLine": 22,
+        "endChar": 38
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91850a55_1ee66fd0",
+        "filename": "src/app/content/state/content.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "Why an action named LoadGPDRDate has a payload gdprDate? May be SaveGPDRDate or something is meant?",
+      "range": {
+        "startLine": 12,
+        "startChar": 13,
+        "endLine": 12,
+        "endChar": 26
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21f97948_32691068",
+        "filename": "src/app/content/state/content.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "Missing action postfixes. Are these single source, multi source or what?\nMisleading action names: I suggest something like:\nLoadGDPRDateRequested \u003d\u003e LoadGDPRDateSSA\nLoadGPDRDate \u003d\u003e UpdateGPDRDateSOA",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 19
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b93a2ec_6dfe5f11",
+        "filename": "src/app/content/state/content.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "you should type the return type: Observable\u003cLOADGPDRDate\u003e",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 26
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6645bfe0_6e63b729",
+        "filename": "src/app/content/state/content.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "why not just overwrite the old value? I think it is no problem to load the date every time the data-protection component is loaded.",
+      "range": {
+        "startLine": 24,
+        "startChar": 8,
+        "endLine": 24,
+        "endChar": 40
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26aa86e0_d16240b5",
+        "filename": "src/app/content/state/content.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "? is this a typescript feature i don\u0027t know?",
+      "range": {
+        "startLine": 24,
+        "startChar": 17,
+        "endLine": 24,
+        "endChar": 18
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aad10741_8262ead5",
+        "filename": "src/app/content/state/content.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "possible bug: You should explicitly state what you want to be truth. loaded !\u003d\u003d \"\" or loaded !\u003d\u003d null.",
+      "range": {
+        "startLine": 24,
+        "startChar": 33,
+        "endLine": 24,
+        "endChar": 39
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33e646d7_5858aea5",
+        "filename": "src/app/content/state/content.reducer.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "I would use the empty string for initialState. This would make the depending code easier.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 2
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e72eabc_ba114efd",
+        "filename": "src/app/content/state/content.reducer.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "unnecessary. The state has only one string value.",
+      "range": {
+        "startLine": 27,
+        "startChar": 16,
+        "endLine": 27,
+        "endChar": 25
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "475e9e66_39ed3168",
+        "filename": "src/app/main-page/container/dashboard-container/dashboard-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "I don\u0027t recommend this pattern. Instead store the subscription object returned by .subscribe() and unsubscribe from it in ngOnDestroy. This is the common way of doing this and as documented by Angular. As a bonus your pipes get cleaner because you don\u0027t have to check for isComponentActive",
+      "range": {
+        "startLine": 20,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 44
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "708e0cf4_34bbe2fe",
+        "filename": "src/app/main-page/container/dashboard-container/dashboard-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "this should be explicitly set to true",
+      "range": {
+        "startLine": 49,
+        "startChar": 47,
+        "endLine": 49,
+        "endChar": 60
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7df7e45c_7556aa3b",
+        "filename": "src/app/main-page/container/dashboard-container/dashboard-container.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "Bad unreadable code. Thanks to rxjs. For future tickets i would split such complicated things to different actions and effects handling every part of the flow separatly.",
+      "range": {
+        "startLine": 33,
+        "startChar": 7,
+        "endLine": 67,
+        "endChar": 22
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cba5d8ba_5ad62d31",
+        "filename": "src/app/user/presentation/gdpr-agreement/gdpr-agreement.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "This is a bit jerky englisch. A user must nothing, he should.",
+      "range": {
+        "startLine": 23,
+        "startChar": 12,
+        "endLine": 23,
+        "endChar": 21
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dce26e9a_d692dabf",
+        "filename": "src/app/user/presentation/gdpr-agreement/gdpr-agreement.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-08-13T11:35:25Z",
+      "side": 1,
+      "message": "just a consideration: With using BEM and the classes dependent of the named areas in the grid they should be named like:\nfcl-gdpr-agreement-dialog__title,\nfcl-gdpr-agreement-dialog__checkbox,\nfcl-gdpr-agreement-dialog__action\nThis is because they can not stand alone.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 1
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
