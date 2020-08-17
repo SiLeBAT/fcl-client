@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "d2c38ce8_855d6abe",
+        "filename": "src/app/content/state/content.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-08-17T09:21:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91850a55_1ee66fd0",
+      "range": {
+        "startLine": 12,
+        "startChar": 13,
+        "endLine": 12,
+        "endChar": 26
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21f97948_32691068",
         "filename": "src/app/content/state/content.actions.ts",
         "patchSetId": 1
@@ -140,6 +164,30 @@
     },
     {
       "key": {
+        "uuid": "e34b1568_6091130e",
+        "filename": "src/app/content/state/content.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-08-17T09:21:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21f97948_32691068",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 19
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b93a2ec_6dfe5f11",
         "filename": "src/app/content/state/content.effects.ts",
         "patchSetId": 1
@@ -160,6 +208,30 @@
       "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68bb93a8_c70148f7",
+        "filename": "src/app/content/state/content.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-08-17T09:21:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b93a2ec_6dfe5f11",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 26
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -232,6 +304,30 @@
     },
     {
       "key": {
+        "uuid": "efbc22f9_56c12b15",
+        "filename": "src/app/content/state/content.effects.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-08-17T09:21:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aad10741_8262ead5",
+      "range": {
+        "startLine": 24,
+        "startChar": 33,
+        "endLine": 24,
+        "endChar": 39
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33e646d7_5858aea5",
         "filename": "src/app/content/state/content.reducer.ts",
         "patchSetId": 1
@@ -252,6 +348,30 @@
       "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c479265c_10d294b2",
+        "filename": "src/app/content/state/content.reducer.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-08-17T09:21:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33e646d7_5858aea5",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 2
+      },
+      "revId": "31dc3fdad1e9b0277698f6fc637aa005785fdde2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
