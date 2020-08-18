@@ -33,6 +33,14 @@
     width: 100%;
 }
 
+.fcl-text-wrap {
+    white-space: normal;
+}
+
+.fcl-newsletter-checkbox.mat-accent .mat-checkbox-inner-container {
+    margin: 0.25rem 0.5rem auto 0;
+}
+
 em {
     @include em-errors;
 }

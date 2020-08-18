@@ -23,6 +23,8 @@ export interface RegistrationCredentials extends LoginCredentials {
     firstName: string;
     lastName: string;
     dataProtectionAgreed: boolean;
+    newsRegAgreed: boolean;
+    newsMailAgreed: boolean;
 }
 
 export interface ResetRequestDTO {
@@ -40,6 +42,8 @@ export interface RegistrationDetailsDTO {
     readonly lastName: string;
     readonly instituteId: string;
     readonly dataProtectionAgreed: boolean;
+    readonly newsRegAgreed: boolean;
+    readonly newsMailAgreed: boolean;
 }
 
 export interface RegistrationRequestResponseDTO {

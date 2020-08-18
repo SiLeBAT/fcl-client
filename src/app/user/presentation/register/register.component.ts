@@ -1,6 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { RegistrationCredentials } from '../../models/user.model';
 
 export interface IHash {
@@ -10,7 +9,8 @@ export interface IHash {
 @Component({
     selector: 'fcl-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss']
+    styleUrls: ['./register.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class RegisterComponent implements OnInit {
     @Output() register = new EventEmitter();
@@ -18,8 +18,7 @@ export class RegisterComponent implements OnInit {
     private pwStrength: number;
 
     constructor(
-        private changeRef: ChangeDetectorRef,
-        public dialog: MatDialog
+        private changeRef: ChangeDetectorRef
     ) {
         this.pwStrength = -1;
     }
@@ -37,7 +36,8 @@ export class RegisterComponent implements OnInit {
                 Validators.minLength(8)
             ]),
             password2: new FormControl(null),
-            dataProtection: new FormControl(null, Validators.requiredTrue)
+            dataProtection: new FormControl(null, Validators.requiredTrue),
+            newsletter: new FormControl(false)
         }, this.passwordConfirmationValidator);
     }
 
@@ -48,7 +48,9 @@ export class RegisterComponent implements OnInit {
                 password: this.registerForm.value.password1,
                 firstName: this.registerForm.value.firstName,
                 lastName: this.registerForm.value.lastName,
-                dataProtectionAgreed: this.registerForm.value.dataProtection
+                dataProtectionAgreed: this.registerForm.value.dataProtection,
+                newsRegAgreed: this.registerForm.value.newsletter,
+                newsMailAgreed: false
             };
             this.register.emit(registrationCredentials);
         }
