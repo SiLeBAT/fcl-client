@@ -33,6 +33,9 @@ import { AdminActivateViewComponent } from './presentation/admin-activate-view/a
 import { ProfileContainerComponent } from './container/profile-container/profile-container.component';
 import { ProfileComponent } from './presentation/profile/profile.component';
 import { GdprAgreementComponent } from './presentation/gdpr-agreement/gdpr-agreement.component';
+import { NewsActivateContainerComponent } from './container/news-activate-container/news-activate-container.component';
+import { NewsActivateComponent } from './presentation/news-activate/news-activate.component';
+import { NewsActivateViewComponent } from './presentation/news-activate-view/news-activate-view.component';
 
 @NgModule({
     imports: [
@@ -69,7 +72,10 @@ import { GdprAgreementComponent } from './presentation/gdpr-agreement/gdpr-agree
         AdminActivateViewComponent,
         ProfileContainerComponent,
         ProfileComponent,
-        GdprAgreementComponent
+        GdprAgreementComponent,
+        NewsActivateContainerComponent,
+        NewsActivateComponent,
+        NewsActivateViewComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     entryComponents: [

@@ -12,7 +12,8 @@ import {
     PasswordResetResponseDTO,
     ActivationResponseDTO,
     TokenizedUserDTO,
-    GdprConfirmationRequestDTO
+    GdprConfirmationRequestDTO,
+    NewsConfirmationResponseDTO
 } from '../models/user.model';
 import { DataRequestService } from '../../core/services/data-request.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,7 +32,8 @@ export class UserService {
         reset: '/v1/users/reset-password',
         activate: '/v1/users/verification',
         adminactivate: '/v1/users/activation',
-        gdpragreement: '/v1/users/gdpr-agreement'
+        gdpragreement: '/v1/users/gdpr-agreement',
+        newsconfirmation: '/v1/users/news-confirmation'
     };
 
     constructor(
@@ -65,6 +67,10 @@ export class UserService {
 
     updateGDPRAgreement(user: GdprConfirmationRequestDTO): Observable<TokenizedUserDTO> {
         return this.dataService.put<TokenizedUserDTO, GdprConfirmationRequestDTO>(this.URL.gdpragreement, user);
+    }
+
+    confirmNewsletterSubscription(token: String): Observable<NewsConfirmationResponseDTO> {
+        return this.dataService.patch<NewsConfirmationResponseDTO, string>([this.URL.newsconfirmation, token].join('/'), null);
     }
 
     logout() {

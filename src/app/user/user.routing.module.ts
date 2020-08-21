@@ -11,6 +11,7 @@ import { AdminActivateViewComponent } from './presentation/admin-activate-view/a
 import { ProfileContainerComponent } from './container/profile-container/profile-container.component';
 import { environment } from './../../environments/environment';
 import { AuthGuard } from './guards/auth.guard';
+import { NewsActivateViewComponent } from './presentation/news-activate-view/news-activate-view.component';
 
 const userRoutes: Routes =
     [{
@@ -44,6 +45,10 @@ const userRoutes: Routes =
             {
                 path: 'adminactivate/:id',
                 component: AdminActivateViewComponent
+            },
+            {
+                path: 'newsactivate/:id',
+                component: NewsActivateViewComponent
             }
         ]
     }];
