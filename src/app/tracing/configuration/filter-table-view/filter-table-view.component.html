@@ -1,0 +1,138 @@
+<ng-template #buttonColTpl let-column="column">
+    <button
+        matTooltip="Select more columns"
+        matTooltipPosition="above"
+        class="fcl-more-columns-button"
+        (click)="onSelectColumns()">
+        <mat-icon class="fcl-more-columns-icon">more_vert</mat-icon>
+    </button>
+</ng-template>
+
+<ng-template #patternColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+    <span class="header-sort-span" (click)="sort()">
+        <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
+            radio_button_unchecked
+        </span>
+        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+    </span>
+</ng-template>
+
+<ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+    <span class="header-sort-span" (click)="sort()">
+        <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
+            visibility
+        </span>
+        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+    </span>
+
+    <button
+        matTooltip="Filter Visibility"
+        matTooltipPosition="above"
+        class="fcl-visibility-filter-button"
+        (click)="onToggleVisibilityFilterState()">
+        <span
+            *ngIf="showVisibleElements"
+            class="material-icons fcl-column-visibility-header-icon pointable"
+            [ngClass]="{'unsorted' : showVisibleElements && showInvisibleElements}">
+            visibility
+        </span>
+        <span
+            *ngIf="showInvisibleElements && !showVisibleElements"
+            class="material-icons fcl-column-visibility-header-icon pointable">
+            visibility_off
+        </span>
+
+    </button>
+</ng-template>
+
+<ng-template #dataColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+    <span class="header-sort-span draggable" (click)="sort()">
+        {{ column.name }}
+        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+    </span>
+    <mat-form-field
+        class="fcl-column-filter-field draggable"
+        floatLabel="never"
+        appearance="outline"
+        color="accent">
+        <input
+            matInput
+            type="search"
+
+            [ngModel] = "getColumnFilterText(column.prop) || ''"
+            (ngModelChange)="onSetColumnFilterText(column.prop, $event)"
+        >
+        <mat-icon class="fcl-column-filter-field-icon" matSuffix>search</mat-icon>
+    </mat-form-field>
+</ng-template>
+
+<ng-template #patternRowTpl let-row="row" let-value="value">
+    <fcl-node-symbol
+        *ngIf="!row.invisible"
+        class="fcl-row-symbol"
+        [dataTableShapeType]="row.highlightingInfo.shape"
+        [mapStationColor]="row.highlightingInfo.color"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave(lastMouseOverRow)">
+    </fcl-node-symbol>
+    <fcl-node-symbol
+        *ngIf="row.invisible"
+        class="fcl-row-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
+        [dataTableShapeType]="row.highlightingInfo.shape"
+        [mapStationColor]="[[211, 211, 211]]"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave(lastMouseOverRow)">
+    </fcl-node-symbol>
+</ng-template>
+
+<ng-template #visibilityRowTpl let-row="row" let-value="value">
+    <span
+        *ngIf="!row.invisible"
+        class="material-icons fcl-column-visibility-header-icon">
+        visibility
+    </span>
+    <span
+        *ngIf="row.invisible"
+        class="material-icons fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave()">
+        visibility_off
+    </span>
+</ng-template>
+
+<ng-template #dataRowTpl let-row="row" let-value="value">
+    <span
+        *ngIf="!row.invisible">
+        {{ value }}
+    </span>
+    <span
+        *ngIf="row.invisible"
+        class="pointable fcl-invisible-data-row-cell"
+        (mouseover)="onMouseOver(row)"
+        (mouseleave)="onMouseLeave()">
+        {{ value }}
+    </span>
+</ng-template>
+
+<div class="fcl-datatable-container" #tableWrapper>
+    <ngx-datatable
+        #table
+        class="material fcl-datatable"
+        [columns]="columns"
+        [rows]="filteredRows"
+        [rowHeight]="18"
+        scrollbarV="true"
+        scrollbarH="true"
+        [swapColumns]="false"
+        (reorder)="onColumnReorder($event)"
+        [headerHeight]="60"
+        [footerHeight]="50"
+    >
+    </ngx-datatable>
+</div>

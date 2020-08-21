@@ -1,0 +1,69 @@
+<div *ngIf="dataIsAvailable" class="fcl-filter-elements-container">
+
+    <fcl-standard-filter-view
+        class="fcl-standard-filter-view"
+        [filterTerm] = "standardFilterSettings"
+        (filterTermChange) = "onStandardFilterChange($event)"
+        [filterLabel]="standardFilterLabel">
+    </fcl-standard-filter-view>
+
+    <fcl-clear-all-filter-view
+        class="fcl-clear-all-filter-view"
+        (clearFilter)="onClearAllFilters()">
+    </fcl-clear-all-filter-view>
+
+    <mat-expansion-panel
+        class="fcl-more-filter fcl-border-radius-zero"
+        color="primary"
+        (opened)="moreFilterOpenState = true"
+        (closed)="moreFilterOpenState = false">
+
+        <mat-expansion-panel-header>
+          <mat-panel-title class="fcl-font-size-08">
+            More Filters... click  to {{ moreFilterOpenState ?  'close' : 'open' }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <fcl-predefined-filter-view
+            [showType] = "predefinedFilterSettings"
+            (showTypeChange) = "onPredefinedFilterChange($event)"
+        ></fcl-predefined-filter-view>
+
+        <mat-expansion-panel
+            class="fcl-border-radius-zero"
+            (opened)="complexFilterOpenState = true"
+            (closed)="complexFilterOpenState = false">
+
+            <mat-expansion-panel-header
+                class="fcl-expansion-panel-header">
+                <mat-panel-title class="fcl-font-size-08">
+                    Complex Filters... click  to {{ complexFilterOpenState ?  'close' : 'open' }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="fcl-complex-filter-div">
+                <fcl-complex-filter-view
+                    class="fcl-complex-filter"
+                    [conditions] = "complexFilterSettings"
+                    [availableProperties] = "dataColumns"
+                    [availableOperatorTypes] = "availableOperatorTypes"
+                    [propToValuesMap] = "propToValuesMap"
+                    (conditionsChange) = "onComplexFilterChange($event)"
+                ></fcl-complex-filter-view>
+            </div>
+        </mat-expansion-panel>
+
+    </mat-expansion-panel>
+
+    <div class="fcl-filter-table-view-container">
+        <fcl-filter-table-view
+            class = "fcl-filter-table-view"
+            [inputData] = "filterTableViewInputData"
+            (columnOrderChange) = "onColumnOrderChange($event)"
+            (filterChange)="onTableFilterChange($event)"
+            (selectColumns)="onSelectTableColumns()"
+            (mouseOverRow)="onMouseOverTableRow($event)"
+            (mouseLeaveRow)="onMouseLeaveTableRow($event)"
+        ></fcl-filter-table-view>
+    </div>
+</div>

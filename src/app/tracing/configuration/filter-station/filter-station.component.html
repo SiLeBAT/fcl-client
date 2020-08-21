@@ -1,32 +1,9 @@
-<ng-template #standardFilterTemplate>
-    <fcl-standard-filter
-        filterLabel="Filter in all station data">
-    </fcl-standard-filter>
-</ng-template>
-
-<ng-template #clearAllFilterTemplate>
-    <fcl-clear-all-filter></fcl-clear-all-filter>
-</ng-template>
-
-<ng-template #predefinedFilterTemplate>
-    <fcl-predefined-filter></fcl-predefined-filter>
-</ng-template>
-
-<ng-template #complexFilterTemplate>
-    <fcl-complex-filter
-        class="fcl-complex-filter">
-    </fcl-complex-filter>
-</ng-template>
-
-<ng-template #stationTableTemplate>
-    <fcl-station-table></fcl-station-table>
-</ng-template>
-
-<fcl-filter-station-layout
-    class="fcl-filter-station-container"
-    [standardFilterTemplate]="standardFilterTemplate"
-    [clearAllFilterTemplate]="clearAllFilterTemplate"
-    [predefinedFilterTemplate]="predefinedFilterTemplate"
-    [complexFilterTemplate]="complexFilterTemplate"
-    [stationTableTemplate]="stationTableTemplate">
-</fcl-filter-station-layout>
+<fcl-filter-elements-view class="fcl-filter-elements-view"
+    standardFilterLabel="Filter in all station data"
+    [inputData]="filterElementsViewInputData"
+    (filterSettingsChange)="onFilterSettingsChange($event)"
+    (clearAllFilters)="onClearAllFilters()"
+    (selectTableColumns)="onSelectTableColumns()"
+    (mouseOverTableRow)="onMouseOverTableRow($event)"
+    (mouseLeaveTableRow)="onMouseLeaveTableRow($event)"
+></fcl-filter-elements-view>

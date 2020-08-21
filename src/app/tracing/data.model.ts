@@ -19,32 +19,12 @@ export interface FclData {
     source: FclDataSourceInfo;
     fclElements: FclElements;
     graphSettings: GraphSettings;
-    tableSettings: TableSettings;
     tracingSettings: TracingSettings;
     groupSettings: GroupData[];
-    filterSettings: FilterSettings;
-}
-
-export interface FilterSettings {
-    standardFilterSettings: StandardFilterSettings;
-    complexFilterSettings: ComplexFilterSettings;
 }
 
 export interface StandardFilterSettings {
     filterTerm: string;
-}
-export interface ComplexFilterSettings {
-    stationColumns: TableColumn[];
-    stationRows: StationTableRow[];
-    stationFilterConditions: ComplexFilterCondition[];
-    reset: boolean;
-}
-
-export interface ComplexFilterCondition {
-    property: string;
-    operation: ExtendedOperationType;
-    value: string | number | boolean;
-    junktor: JunktorType;
 }
 
 export interface TableColumn {
@@ -52,25 +32,24 @@ export interface TableColumn {
     name: string;
 }
 
-export interface TableRow<H> {
-    id: string;
-    highlightingInfo: H;
-    [key: string]: string | number | boolean | H;
-}
-
-export interface StationHighlightingInfo {
-    label: string[];
+export interface RowHighlightingInfo {
     color: number[][];
-    shape: NodeShapeType;
+    shape?: NodeShapeType;
 }
 
-export interface StationTable {
+export interface TableRow {
+    id: string;
+    highlightingInfo: RowHighlightingInfo;
+    [key: string]: string | number | boolean | RowHighlightingInfo;
+}
+
+export interface DataTable {
     columns: TableColumn[];
-    rows: StationTableRow[];
-    dataServiceData: DataServiceData;
+    rows: TableRow[];
 }
 
-export interface StationTableRow extends TableRow<StationHighlightingInfo> {}
+export interface StationRow extends TableRow {}
+export interface StationTable extends DataTable {}
 
 export interface FclElements {
     stations: StationStoreData[];
@@ -248,23 +227,6 @@ export enum OperationType {
     REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
 }
 
-export enum ExtendedOperationType {
-    EQUAL = '==',
-    CONTAINS = 'contains',
-    GREATER = '>',
-    NOT_EQUAL = '!=',
-    LESS = '<',
-    REGEX_EQUAL = '== (Regex)',
-    REGEX_NOT_EQUAL = '!= (Regex)',
-    REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
-    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
-}
-
-export enum JunktorType {
-    AND = 'And',
-    OR = 'Or'
-}
-
 export interface ValueCondition {
     propertyName: string;
     valueType: ValueType;
@@ -274,14 +236,6 @@ export interface ValueCondition {
 export enum ValueType {
     VALUE = 'Value',
     LOG_VALUE = 'Log Value'
-}
-
-export interface TableSettings {
-    mode: TableMode;
-    width: number;
-    stationColumns: string[];
-    deliveryColumns: string[];
-    showType: ShowType;
 }
 
 interface TraceableElementSettings {
@@ -333,17 +287,6 @@ export enum GroupType {
     TARGET_GROUP = 'Target group' as any,
     ISOLATED_GROUP = 'Isolated subgraph' as any,
     SIMPLE_CHAIN = 'Simple chain' as any
-}
-
-export enum TableMode {
-    STATIONS = 'Stations' as any,
-    DELIVERIES = 'Deliveries' as any
-}
-
-export enum ShowType {
-    ALL = 'Show all' as any,
-    SELECTED_ONLY = 'Show only selected' as any,
-    TRACE_ONLY = 'Show only traced' as any
 }
 
 export enum ObservedType {
@@ -429,14 +372,6 @@ export interface SelectedElements {
     deliveries: string[];
 }
 
-export interface TableSettings {
-    mode: TableMode;
-    width: number;
-    stationColumns: string[];
-    deliveryColumns: string[];
-    showType: ShowType;
-}
-
 export enum DialogAlignment {
     LEFT, CENTER, RIGHT
 }
@@ -477,4 +412,9 @@ export interface DeliveryLegendEntry extends LegendEntry {
 export interface LegendInfo {
     stations: StationLegendEntry[];
     deliveries: DeliveryLegendEntry[];
+}
+
+export interface Size {
+    width: number;
+    height: number;
 }

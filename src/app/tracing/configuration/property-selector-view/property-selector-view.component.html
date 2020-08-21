@@ -1,0 +1,17 @@
+<mat-form-field
+    class="fcl-complex-filter-form-field"
+    appearance="outline"
+    color="primary">
+    <mat-select
+        [value]="value"
+        (valueChange)="onValueChange($event)"
+        placeholder="property">
+        <ng-container *ngFor="let property of availableProperties">
+            <mat-option
+            class="fcl-filter-select-option"
+            [value]="property.id">
+            {{ property.name }}
+        </mat-option>
+        </ng-container>
+    </mat-select>
+</mat-form-field>

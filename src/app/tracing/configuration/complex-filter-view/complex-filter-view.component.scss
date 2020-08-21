@@ -6,16 +6,17 @@
     grid-template-rows: auto;
 }
 
-.fcl-complex-filter-form-field-select {
+.fcl-complex-filter-form-field {
     font-size: 0.8rem;
+    width: 100%;
 }
 
-.fcl-complex-filter-form-field-select .mat-form-field-wrapper {
+.fcl-complex-filter-form-field .mat-form-field-wrapper {
     padding: 0;
     margin: 0;
 }
 
-.fcl-complex-filter-form-field-select .mat-form-field-wrapper .mat-form-field-infix {
+.fcl-complex-filter-form-field .mat-form-field-wrapper .mat-form-field-infix {
     border-top-width: 0.3rem;
     padding-top: 0.7rem;
     padding-bottom: 0.7rem;

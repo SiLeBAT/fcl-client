@@ -1,11 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation, EventEmitter, Output } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
-import { TableSettings, ShowType } from '../../data.model';
-
-export interface PredefinedLabelConfig {
-    value: string;
-    label: string;
-}
+import { ShowType } from '../configuration.model';
 
 @Component({
     selector: 'fcl-predefined-filter-view',
@@ -14,16 +8,25 @@ export interface PredefinedLabelConfig {
     encapsulation: ViewEncapsulation.None
 })
 export class PredefinedFilterViewComponent implements OnInit {
-    @Input() showTypes: string[];
-    @Input() tableSettings: TableSettings;
-    @Output() newShowType = new EventEmitter<ShowType>();
+
+    @Input() showType: ShowType;
+
+    @Output() showTypeChange = new EventEmitter<ShowType>();
+
+    showTypes: ShowType[] = [ShowType.ALL, ShowType.SELECTED_ONLY, ShowType.TRACE_ONLY];
+
+    showTypeLabelMap: { [key in ShowType]: string } = {
+        [ShowType.ALL]: 'Show all',
+        [ShowType.SELECTED_ONLY]: 'Show only selected',
+        [ShowType.TRACE_ONLY]: 'Show only traced'
+    };
 
     constructor() { }
 
     ngOnInit() { }
 
-    setTableShowType(event: MatSelectChange) {
-        this.newShowType.emit(event.value);
+    onSetShowType(showType: ShowType) {
+        this.showType = showType;
+        this.showTypeChange.emit(showType);
     }
-
 }
