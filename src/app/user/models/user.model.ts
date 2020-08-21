@@ -65,6 +65,11 @@ export interface ActivationResponseDTO {
     readonly username: string;
 }
 
+export interface NewsConfirmationResponseDTO {
+    readonly newsconfirmation: boolean;
+    readonly username: string;
+}
+
 export interface TokenizedUserDTO {
     readonly email: string;
     readonly firstName: string;
