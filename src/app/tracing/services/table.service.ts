@@ -86,7 +86,9 @@ export class TableService {
             { id: 'selected', name: 'Selected' },
             { id: 'invisible', name: 'Invisible' },
             { id: 'country', name: 'Country' },
-            { id: 'typeOfBusiness', name: 'Type of Business' }
+            { id: 'typeOfBusiness', name: 'Type of Business' },
+            { id: 'lat', name: 'Latitude' },
+            { id: 'lon', name: 'Longitude' }
         ];
 
         this.addColumnsForProperties(columns, data.stations);
@@ -164,6 +166,8 @@ export class TableService {
                 commonLink: station.commonLink,
                 selected: station.selected,
                 invisible: station.invisible,
+                lat: station.lat,
+                lon: station.lon,
                 highlightingInfo: station.highlightingInfo
             };
 

@@ -66,6 +66,8 @@ export class Constants {
             id: { name: 'ID', color: null },
             name: { name: 'Name', color: null },
             lot: { name: 'Lot', color: null },
+            lat: { name: 'Latitude', color: null },
+            lon: { name: 'Longitude', color: null },
             date: { name: 'Date', color: null },
             source: { name: 'Source', color: null },
             target: { name: 'Target', color: null },
