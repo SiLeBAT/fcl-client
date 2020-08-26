@@ -9,11 +9,11 @@ interface GradientStop {
 }
 
 @Component({
-    selector: 'fcl-node-symbol',
-    templateUrl: './node-symbol.component.html',
-    styleUrls: ['./node-symbol.component.scss']
+    selector: 'fcl-node-symbol-view',
+    templateUrl: './node-symbol-view.component.html',
+    styleUrls: ['./node-symbol-view.component.scss']
 })
-export class NodeSymbolComponent implements OnInit {
+export class NodeSymbolViewComponent implements OnInit {
 
     private static readonly DEFAULT_GRADIENT_ID = 'colr255g255b255';
     private static readonly DEFAULT_COLOR_WHITE = 'rgb(255, 255, 255)';
@@ -38,13 +38,13 @@ export class NodeSymbolComponent implements OnInit {
     }
 
     @Input() set fillColor(color: Color) {
-        this._fillColor = color ? Utils.colorToCss(color) : NodeSymbolComponent.DEFAULT_COLOR_WHITE;
-        this.gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolComponent.DEFAULT_GRADIENT_ID;
+        this._fillColor = color ? Utils.colorToCss(color) : NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
+        this.gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolViewComponent.DEFAULT_GRADIENT_ID;
 
         let gradientStops: GradientStop[];
         let gradientId: string;
 
-        gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolComponent.DEFAULT_GRADIENT_ID;
+        gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolViewComponent.DEFAULT_GRADIENT_ID;
         gradientStops = [
             {
                 offset: '0%',
@@ -84,15 +84,15 @@ export class NodeSymbolComponent implements OnInit {
             });
             this._isFillColorNonWhite = true;
         } else {
-            this.gradientId = NodeSymbolComponent.DEFAULT_GRADIENT_ID;
+            this.gradientId = NodeSymbolViewComponent.DEFAULT_GRADIENT_ID;
             gradientStops = [
                 {
                     offset: '0%',
-                    style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
+                    style: NodeSymbolViewComponent.DEFAULT_COLOR_WHITE
                 },
                 {
                     offset: '100%',
-                    style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
+                    style: NodeSymbolViewComponent.DEFAULT_COLOR_WHITE
                 }
             ];
             this._isFillColorNonWhite = false;
@@ -106,15 +106,15 @@ export class NodeSymbolComponent implements OnInit {
         this._svgShapeType = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
     }
 
-    gradientId: string = NodeSymbolComponent.DEFAULT_GRADIENT_ID;
+    gradientId: string = NodeSymbolViewComponent.DEFAULT_GRADIENT_ID;
     gradientStops: GradientStop[] = [
         {
             offset: '0%',
-            style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
+            style: NodeSymbolViewComponent.DEFAULT_COLOR_WHITE
         },
         {
             offset: '100%',
-            style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
+            style: NodeSymbolViewComponent.DEFAULT_COLOR_WHITE
         }
     ];
 

@@ -2,11 +2,11 @@ import { Component, OnInit, Output, Input, ViewChild, EventEmitter } from '@angu
 import { MatSlider } from '@angular/material/slider';
 
 @Component({
-    selector: 'fcl-zoom',
-    templateUrl: './zoom.component.html',
-    styleUrls: ['./zoom.component.scss']
+    selector: 'fcl-zoom-view',
+    templateUrl: './zoom-view.component.html',
+    styleUrls: ['./zoom-view.component.scss']
 })
-export class ZoomComponent implements OnInit {
+export class ZoomViewComponent implements OnInit {
 
     @Input() zoomValue: number;
 
