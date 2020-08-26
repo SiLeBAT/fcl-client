@@ -53,6 +53,10 @@ import { OperatorSelectorViewComponent } from './configuration/operator-selector
 import { ValueEditorViewComponent } from './configuration/value-editor-view/value-editor-view.component';
 import { JunctorSelectorViewComponent } from './configuration/junktor-selector-view/junktor-selector-view.component';
 import { ConfigurationEffects } from './configuration/configuration.effects';
+import { HighlightingStationComponent } from './configuration/highlighting-station/highlighting-station.component';
+import { HighlightingDeliveryComponent } from './configuration/highlighting-delivery/highlighting-delivery.component';
+import { HighlightingStationViewComponent } from './configuration/highlighting-station-view/highlighting-station-view.component';
+import { AnonymousButtonViewComponent } from './configuration/anonymous-button-view/anonymous-button-view.component';
 
 @NgModule({
     imports: [
@@ -105,7 +109,11 @@ import { ConfigurationEffects } from './configuration/configuration.effects';
         OperatorSelectorViewComponent,
         ValueEditorViewComponent,
         JunctorSelectorViewComponent,
-        ClearAllFilterViewComponent
+        ClearAllFilterViewComponent,
+        HighlightingStationComponent,
+        HighlightingDeliveryComponent,
+        HighlightingStationViewComponent,
+        AnonymousButtonViewComponent
     ],
     exports: [],
     entryComponents: [
