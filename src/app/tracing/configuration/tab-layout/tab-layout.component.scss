@@ -9,6 +9,10 @@
     flex: 1;
 }
 
+#fcl-tab-group-main .mat-tab-label {
+    height: 2rem;
+}
+
 #fcl-tab-group-main .mat-tab-label.mat-tab-label-active,
 #fcl-tab-group-filter .mat-tab-label.mat-tab-label-active,
 #fcl-tab-group-highlighting .mat-tab-label.mat-tab-label-active {

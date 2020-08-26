@@ -98,6 +98,7 @@ export class FilterElementsViewComponent {
     private filterMap_: RowFilterMap;
 
     moreFilterOpenState = false;
+    complexFilterOpenState = false;
 
     constructor() { }
 
