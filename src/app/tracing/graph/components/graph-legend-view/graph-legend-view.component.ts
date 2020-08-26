@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Utils } from '../../util/non-ui-utils';
+import { Utils } from '../../../util/non-ui-utils';
 import { LegendInfo, Color, NodeShapeType } from '@app/tracing/data.model';
 
 interface LegendEntry {
@@ -13,11 +13,11 @@ interface LegendEntryWithIndices extends LegendEntry {
 }
 
 @Component({
-    selector: 'fcl-graph-legend',
-    templateUrl: './graph-legend.component.html',
-    styleUrls: ['./graph-legend.component.scss']
+    selector: 'fcl-graph-legend-view',
+    templateUrl: './graph-legend-view.component.html',
+    styleUrls: ['./graph-legend-view.component.scss']
 })
-export class GraphLegendComponent implements OnInit {
+export class GraphLegendViewComponent implements OnInit {
 
     private _legendInfo: LegendInfo;
     private _showStationColumn: boolean;

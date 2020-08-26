@@ -5,8 +5,8 @@ import * as ol from 'ol';
 import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
-import { Utils as UIUtils } from '../../util/ui-utils';
-import { Utils as NonUIUtils } from '../../util/non-ui-utils';
+import { Utils as UIUtils } from '../../../util/ui-utils';
+import { Utils as NonUIUtils } from '../../../util/non-ui-utils';
 import {
     Layout,
     Position,
@@ -18,20 +18,20 @@ import {
     MergeDeliveriesType,
     MapType,
     ShapeFileData
-} from '../../data.model';
+} from '../../../data.model';
 import * as _ from 'lodash';
-import { StyleService } from '../style.service';
+import { StyleService } from '../../style.service';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData } from '../graph.model';
-import * as tracingSelectors from '../../state/tracing.selectors';
-import { GraphService } from '../graph.service';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData } from '../../graph.model';
+import * as tracingSelectors from '../../../state/tracing.selectors';
+import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
-import * as tracingStoreActions from '../../state/tracing.actions';
-import { GraphContextMenuComponent } from './graph-context-menu.component';
+import * as tracingStoreActions from '../../../state/tracing.actions';
+import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-menu.component';
 
-import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
+import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
 import { removeFrameLayer, setFrameLayer, createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
 
 interface GraphSettingsState {

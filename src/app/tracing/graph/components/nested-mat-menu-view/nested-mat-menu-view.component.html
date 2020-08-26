@@ -6,7 +6,7 @@
                 <button mat-menu-item color="primary" [matMenuTriggerFor]="subMenu.matMenu" [matMenuTriggerData]="{ menuItems : item.children }" [disabled] = "item.disabled" [matTooltip]="item.toolTip"  matTooltipPosition="right" matTooltipShowDelay="1500" matTooltipClass="mytooltip">
                     {{item.displayName}}
                 </button>
-                <fcl-nested-mat-menu #subMenu (actionSelected)="forwardAction($event)"></fcl-nested-mat-menu>
+                <fcl-nested-mat-menu-view #subMenu (actionSelected)="forwardAction($event)"></fcl-nested-mat-menu-view>
             </span>
             <!-- Leaf node buttons here -->
             <span *ngIf="!item.children || item.children.length === 0">

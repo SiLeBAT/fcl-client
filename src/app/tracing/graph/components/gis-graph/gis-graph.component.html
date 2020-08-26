@@ -1,18 +1,23 @@
 <div class="fcl-graph-container" #container>
     <div class="fcl-graph-map" #map></div>
     <div class="fcl-graph" #graph></div>
-    <fcl-zoom class="fcl-graph-zoom" data-html2canvas-ignore="true"
+    <fcl-zoom-view class="fcl-graph-zoom" data-html2canvas-ignore="true"
         *ngIf="showZoom$ | async"
         [zoomValue] = "zoomPercentage"
         (zoomIn)="zoomInPressed()"
         (zoomOut)="zoomOutPressed()"
         (zoomReset)="zoomResetPressed()"
         (zoomSlided)="zoomSlided($event)">
-    </fcl-zoom>
-    <fcl-graph-legend class="fcl-graph-legend" *ngIf="showLegend$ | async" [legendInfo]="legendInfo" [showMissingGisInfoEntry]="showMissingGISInfoEntry()"></fcl-graph-legend>
+    </fcl-zoom-view>
+    <fcl-graph-legend-view
+        class="fcl-graph-legend"
+        *ngIf="showLegend$ | async"
+        [legendInfo]="legendInfo"
+        [showMissingGisInfoEntry]="showMissingGISInfoEntry()"
+    ></fcl-graph-legend-view>
     <div class="fcl-osm-reference">
         &copy;&nbsp;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>&nbsp;&nbsp;&nbsp;contributors
     </div>
-    <fcl-created-image></fcl-created-image>
+    <fcl-created-image-view></fcl-created-image-view>
 </div>
 <fcl-graph-context-menu #contextMenu></fcl-graph-context-menu>

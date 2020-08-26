@@ -6,22 +6,22 @@ import cytoscape from 'cytoscape';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 
-import { Utils } from '../../util/non-ui-utils';
+import { Utils } from '../../../util/non-ui-utils';
 
-import { GraphState, Layout, Position, GraphType, LegendInfo, MergeDeliveriesType } from '../../data.model';
+import { GraphState, Layout, Position, GraphType, LegendInfo, MergeDeliveriesType } from '../../../data.model';
 
 import * as _ from 'lodash';
-import { LayoutService, LayoutAction } from '../../layout/layout.service';
-import { StyleService } from '../style.service';
-import { GraphService } from '../graph.service';
-import * as tracingSelectors from '../../state/tracing.selectors';
+import { LayoutService, LayoutAction } from '../../../layout/layout.service';
+import { StyleService } from '../../style.service';
+import { GraphService } from '../../graph.service';
+import * as tracingSelectors from '../../../state/tracing.selectors';
 import { filter } from 'rxjs/operators';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection } from '../graph.model';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection } from '../../graph.model';
 import { AlertService } from '@app/shared/services/alert.service';
-import * as tracingStoreActions from '../../state/tracing.actions';
-import { GraphContextMenuComponent } from './graph-context-menu.component';
+import * as tracingStoreActions from '../../../state/tracing.actions';
+import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-menu.component';
 import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
-import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
+import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
 
 interface GraphSettingsState {
     fontSize: number;

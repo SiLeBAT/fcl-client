@@ -2,15 +2,15 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy, Output, EventEmitt
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Store, Action } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
-import * as tracingActions from '../../tracing.actions';
-import * as groupingActions from '../../grouping/grouping.actions';
-import { Position, GroupType, GroupMode, ObservedType, StationData } from '../../data.model';
-import { Cy, CyNode, CyEdge } from '../graph.model';
+import * as tracingActions from '../../../tracing.actions';
+import * as groupingActions from '../../../grouping/grouping.actions';
+import { Position, GroupType, GroupMode, ObservedType, StationData } from '../../../data.model';
+import { Cy, CyNode, CyEdge } from '../../graph.model';
 import { Subject } from 'rxjs';
 import { LayoutService, LayoutActionTypes } from '@app/tracing/layout/layout.service';
-import { MenuItemData } from '../menu-item-data.model';
-import { MenuItemStrings } from '../menu.constants';
-import { Utils } from '../../util/ui-utils';
+import { MenuItemData } from '../../menu-item-data.model';
+import { MenuItemStrings } from '../../menu.constants';
+import { Utils } from '../../../util/ui-utils';
 
 @Component({
     selector: 'fcl-graph-context-menu',
