@@ -3,7 +3,8 @@ import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, FclData, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
-    ROASettings
+    ROASettings,
+    CrossContTraceType
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -34,6 +35,7 @@ export enum TracingActionTypes {
     SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
     SetStationGroupsSOA = '[Tracing] Set Station Groups',
     SetTracingSettingsSOA = '[Tracing] Set Tracing Settings',
+    SetCrossContTraceTypeSOA = '[Tracing] Set Cross Contamination Trace Type',
     SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
     SetActiveMainTabIndexSSA = '[Configuration Layout] Set Active Main Tab Index',
     SetActiveFilterTabIndexSSA = '[Configuration Layout] Set Active Filter Tab Index',
@@ -189,6 +191,12 @@ export class SetTracingSettingsSOA implements Action {
     constructor(public payload: SetTracingSettingsPayload) {}
 }
 
+export class SetCrossContTraceTypeSOA implements Action {
+    readonly type = TracingActionTypes.SetCrossContTraceTypeSOA;
+
+    constructor(public payload: { crossContTraceType: CrossContTraceType }) {}
+}
+
 export class SetHighlightingSettingsSOA implements Action {
     readonly type = TracingActionTypes.SetHighlightingSettingsSOA;
 
@@ -290,6 +298,7 @@ export type TracingActions =
     | SetStationPositionsAndLayoutSOA
     | SetStationGroupsSOA
     | SetTracingSettingsSOA
+    | SetCrossContTraceTypeSOA
     | SetHighlightingSettingsSOA
     | SetActiveMainTabIndexSSA
     | SetActiveFilterTabIndexSSA

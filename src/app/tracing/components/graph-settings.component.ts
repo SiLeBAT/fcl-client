@@ -5,7 +5,11 @@ import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
 import { takeWhile } from 'rxjs/operators';
-import { GraphSettings, MergeDeliveriesType } from '../data.model';
+import { GraphSettings, MergeDeliveriesType, CrossContTraceType } from '../data.model';
+
+interface TracingSettings {
+    crossContTraceType: CrossContTraceType;
+}
 
 @Component({
     selector: 'fcl-graph-settings',
@@ -14,8 +18,32 @@ import { GraphSettings, MergeDeliveriesType } from '../data.model';
 })
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
+    tracingSettings: TracingSettings;
+
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
+
+    readonly crossContTraceTypeOptions: {
+        value: CrossContTraceType;
+        label: string;
+        toolTip: string;
+    }[] = [
+        {
+            value: CrossContTraceType.DO_NOT_CONSIDER_DELIVERY_DATES,
+            label: 'Ignore dates',
+            toolTip: 'Delivery dates are ignored for cross contamination tracing.'
+        },
+        {
+            value: CrossContTraceType.USE_EXPLICIT_DELIVERY_DATES,
+            label: 'Use explicit dates',
+            toolTip: 'Use explicit delivery dates for cross contamination tracing.'
+        },
+        {
+            value: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
+            label: 'Use deduced dates',
+            toolTip: 'Use deduced delivery dates for cross contamination tracing. Deduction is based on explicit delivery dates and delivery relations.'
+        }
+    ];
 
     readonly mergeDeliveriesOptions: {
         value: MergeDeliveriesType;
@@ -62,6 +90,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
             .subscribe(
                 fclData => {
                     this.graphSettings = fclData.graphSettings;
+                    this.tracingSettings = fclData.tracingSettings;
                 },
                 error => {
                     throw new Error(`error loading data: ${error}`);
@@ -85,6 +114,14 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         this.store.dispatch(
             new tracingActions.SetMergeDeliveriesTypeSOA({
                 mergeDeliveriesType: this.graphSettings.mergeDeliveriesType
+            })
+        );
+    }
+
+    setCrossContTraceType() {
+        this.store.dispatch(
+            new tracingActions.SetCrossContTraceTypeSOA({
+                crossContTraceType: this.tracingSettings.crossContTraceType
             })
         );
     }

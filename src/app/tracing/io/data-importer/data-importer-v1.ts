@@ -3,7 +3,7 @@ import {
     Connection, GroupType, Layout, GraphType, GroupData,
     ValueCondition as IntValueCondition,
     LogicalCondition as IntLogicalCondition,
-    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType
+    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType, CrossContTraceType
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -375,6 +375,7 @@ export class DataImporterV1 implements IDataImporter {
 
     private initTracingData(fclData: FclData): void {
         fclData.tracingSettings = {
+            crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
             deliveries: fclData.fclElements.deliveries.map(d => ({
                 id: d.id,
                 weight: 0,

@@ -5,7 +5,8 @@ import {
     MergeDeliveriesType,
     MapType,
     GraphType,
-    ROASettings
+    ROASettings,
+    CrossContTraceType
 } from '../data.model';
 
 import { TracingState } from '../state.model';
@@ -94,6 +95,7 @@ export function createInitialFclDataState(): FclData {
             ghostStation: null
         },
         tracingSettings: {
+            crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
             stations: [],
             deliveries: []
         },
@@ -456,6 +458,18 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 fclData: {
                     ...state.fclData,
                     tracingSettings: action.payload.tracingSettings
+                }
+            };
+
+        case TracingActionTypes.SetCrossContTraceTypeSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    tracingSettings: {
+                        ...state.fclData.tracingSettings,
+                        crossContTraceType: action.payload.crossContTraceType
+                    }
                 }
             };
 

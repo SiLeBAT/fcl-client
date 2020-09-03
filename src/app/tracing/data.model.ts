@@ -73,7 +73,8 @@ export interface DeliveryStoreData {
     name?: string;
     lot?: string;
     lotKey?: string;
-    date?: string;
+    dateIn?: string;
+    dateOut?: string;
     source: string;
     target: string;
     properties: { name: string, value: string }[];
@@ -253,7 +254,14 @@ export interface StationTracingSettings extends TraceableElementSettings {
 export interface DeliveryTracingSettings extends TraceableElementSettings {
 }
 
+export enum CrossContTraceType {
+    USE_EXPLICIT_DELIVERY_DATES,
+    USE_INFERED_DELIVERY_DATES_LIMITS,
+    DO_NOT_CONSIDER_DELIVERY_DATES
+}
+
 export interface TracingSettings {
+    crossContTraceType: CrossContTraceType;
     stations: StationTracingSettings[];
     deliveries: DeliveryTracingSettings[];
 }
@@ -300,6 +308,10 @@ export interface ShapeFileData {
 
 }
 
+export interface TracingResult {
+    maxScore: number;
+}
+
 export interface DataServiceData {
     statMap: { [key: string]: StationData };
     stations: StationData[];
@@ -308,7 +320,7 @@ export interface DataServiceData {
     statSel: { [key: string]: boolean };
     delSel: { [key: string]: boolean };
     statVis: { [key: string]: boolean };
-    tracingResult: { maxScore: number };
+    tracingResult: TracingResult;
     legendInfo: LegendInfo;
 
     getStatById(ids: string[]): StationData[];

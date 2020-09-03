@@ -171,7 +171,7 @@ export class InformationProvider {
         return {
             forward: delivery.forward,
             backward: delivery.backward,
-            date: delivery.date,
+            date: delivery.dateOut,
             target: delivery.target // consider to take another id system
         };
     }

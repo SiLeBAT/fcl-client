@@ -38,6 +38,16 @@
     </mat-checkbox>
 </div>
 
+    <mat-form-field>
+        <mat-select placeholder="Cross Contamination Tracing" [(ngModel)]="tracingSettings.crossContTraceType" (ngModelChange)="setCrossContTraceType()">
+            <mat-option *ngFor="let traceTypeOption of crossContTraceTypeOptions"
+                [value]="traceTypeOption.value"
+                [matTooltip]="traceTypeOption.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip">
+                {{ traceTypeOption.label }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
     <mat-checkbox
           [(ngModel)]="graphSettings.showLegend"
           (ngModelChange)="showLegend()">

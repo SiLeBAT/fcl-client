@@ -299,7 +299,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             name: delivery.name,
             station: otherStation.name,
             lot: delivery.lot,
-            date: delivery.date,
+            date: delivery.dateOut,
             x: null,
             y: null
         };
