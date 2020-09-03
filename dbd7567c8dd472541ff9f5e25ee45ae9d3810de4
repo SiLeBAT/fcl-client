@@ -1,0 +1,544 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4df336e6_41103bc5",
+        "filename": "src/app/tracing/components/graph-settings.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "I believe this is not the recommended pattern. You bi-directional bind to tracingSettings and also subscribe to the store updating tracingSettings when ngModelChange is called.",
+      "range": {
+        "startLine": 42,
+        "startChar": 62,
+        "endLine": 42,
+        "endChar": 152
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "510c8f6c_d5fdc445",
+        "filename": "src/app/tracing/components/graph-settings.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "whose tooltip?",
+      "range": {
+        "startLine": 45,
+        "startChar": 125,
+        "endLine": 45,
+        "endChar": 134
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d568811_5db8aabb",
+        "filename": "src/app/tracing/components/graph-settings.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "Why is this not an interface in ../data.model?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 1
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be00d34f_5b987992",
+        "filename": "src/app/tracing/components/graph-settings.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "these should be defined in a separate file (config file or view-component) but not in a container.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 6
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f53c4bdb_76c73033",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "this file should be splitted, so the models go to the subfeatures",
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1fa3a0f_d96ea5a6",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "Remove",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 1
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce7a1ecb_404a5afe",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "Another interface not yet necessary.",
+      "range": {
+        "startLine": 311,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 1
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fedc54f7_b706bd74",
+        "filename": "src/app/tracing/services/table.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 37
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0661e685_d76bc6ad",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "another interface not used",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 1
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a2df204_e3446ee6",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "public function, but the interface is not exported",
+      "range": {
+        "startLine": 138,
+        "startChar": 50,
+        "endLine": 138,
+        "endChar": 71
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0908847c_587b7368",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "is this a kind of flag: score already calculated? If so, this should be reflected by a boolean. See also initProcessedDeliveryDatesIfNecessary.",
+      "range": {
+        "startLine": 168,
+        "startChar": 8,
+        "endLine": 168,
+        "endChar": 48
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7a0bab5_545ce624",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "duplicate code. You could use some separate function getRange(id, useExp):Range or so",
+      "range": {
+        "startLine": 282,
+        "startChar": 12,
+        "endLine": 299,
+        "endChar": 23
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bec7ba36_370adacc",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "see updateTrace",
+      "range": {
+        "startLine": 353,
+        "startChar": 0,
+        "endLine": 366,
+        "endChar": 5
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1267077b_ef9779ab",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "see updateScore",
+      "range": {
+        "startLine": 368,
+        "startChar": 49,
+        "endLine": 368,
+        "endChar": 70
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9427754_35cff7d5",
+        "filename": "src/app/tracing/services/tracing.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "hard to review, because method was moved. So we should also do a separate commit when moving code.",
+      "range": {
+        "startLine": 369,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 5
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b2d8ed4_ba361b3d",
+        "filename": "src/app/tracing/util/constants.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "how can constants be utilities (see folder name)?",
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95df07f0_651d90d7",
+        "filename": "src/app/tracing/util/constants.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "? Are these defaults? Why they are set to nothing?",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 6
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1c89fb6_f1189126",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "use interface instead to avoid magic numbers like:\ninterface range{\nmin: number,\nmax: number\n}\n\nshould be exported because it is used by exported interface",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 30
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acbf74bb_2306da93",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "should be exported because it is used by exported interface",
+      "range": {
+        "startLine": 7,
+        "startChar": 10,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7adb9b0_a171d08a",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "Alternatively you could use recursive functions and use a tree or graph data structure and traverse it. You used loops and arrays to build and traverse the graph, this is the non-object oriented way and could be useful for building a tracing micro-processor 😊",
+      "range": {
+        "startLine": 28,
+        "startChar": 4,
+        "endLine": 28,
+        "endChar": 13
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b0c42bc_6e9331e7",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "cool, you used strict parsing",
+      "range": {
+        "startLine": 40,
+        "startChar": 48,
+        "endLine": 40,
+        "endChar": 52
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12664ac5_8296e8f4",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "why not put the testing to stringDateToRange?",
+      "range": {
+        "startLine": 52,
+        "startChar": 25,
+        "endLine": 52,
+        "endChar": 100
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e4ee641_56454a8f",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 189,
+        "startChar": 8,
+        "endLine": 189,
+        "endChar": 31
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "479233e9_a9c1baff",
+        "filename": "src/app/tracing/util/delivery-dates-processing.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-03T13:54:39Z",
+      "side": 1,
+      "message": "? is this a flag? Why does the called function not return a boolean then?",
+      "range": {
+        "startLine": 192,
+        "startChar": 66,
+        "endLine": 192,
+        "endChar": 71
+      },
+      "revId": "dbd7567c8dd472541ff9f5e25ee45ae9d3810de4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
