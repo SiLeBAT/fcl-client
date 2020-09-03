@@ -216,10 +216,10 @@ export class DataService {
             this.higlightingService.applyVisibilities(state, this.cachedData);
         }
         if (score) {
-            this.tracingService.updateScores(this.cachedData);
+            this.tracingService.updateScores(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
         if (trace) {
-            this.tracingService.updateTrace(this.cachedData);
+            this.tracingService.updateTrace(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
         if (visibilities || score || trace) {
             this.higlightingService.applyHighlightingProps(state, this.cachedData);

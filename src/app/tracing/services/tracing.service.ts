@@ -1,9 +1,22 @@
 import { Injectable } from '@angular/core';
 import {
     DataServiceData, StationData, DeliveryData, SetTracingSettingsPayload,
-    TracingSettings, ObservedType
+    TracingSettings, ObservedType, CrossContTraceType, GlobalTracingSettings
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
+import { processDeliveryDates, ProcessedDeliveryDatesSetMap, ProcessedDeliveryDates, ProcessedDeliveryDatesSet } from '../util/delivery-dates-processing';
+
+function getProcDelDates(
+    procDelDate: ProcessedDeliveryDatesSet,
+    crossContTraceType: CrossContTraceType.USE_EXPLICIT_DELIVERY_DATES | CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS
+): ProcessedDeliveryDates {
+
+    if (crossContTraceType === CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS) {
+        return procDelDate.compDates;
+    } else {
+        return procDelDate.expDates;
+    }
+}
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +25,9 @@ export class TracingService {
 
     private visitedStats: { [key: string]: boolean };
     private visitedDels: { [key: string]: boolean };
+    private idToProcDelDatesMap: ProcessedDeliveryDatesSetMap;
+    private globalSettings: GlobalTracingSettings;
+    private lastData: DataServiceData;
 
     constructor() {}
 
@@ -120,8 +136,18 @@ export class TracingService {
         data.deliveries.forEach(d => d.score = 0);
     }
 
-    updateScores(data: DataServiceData) {
+    private initProcessedDeliveryDatesIfNecessary(data: DataServiceData): void {
+        if (!this.idToProcDelDatesMap ||
+            this.lastData !== data) {
+            this.idToProcDelDatesMap = processDeliveryDates(data);
+            this.lastData = data;
+        }
+    }
+
+    updateScores(data: DataServiceData, settings: GlobalTracingSettings) {
         this.resetScores(data);
+        this.initProcessedDeliveryDatesIfNecessary(data);
+        this.globalSettings = settings;
 
         let nOutbreaks = 0;
 
@@ -225,23 +251,16 @@ export class TracingService {
 
     private getForwardDeliveries(data: DataServiceData, station: StationData, delivery: DeliveryData): string[] {
         if (station.crossContamination) {
-            if (delivery.date != null) {
-                const date = Utils.stringToDate(delivery.date);
-                const forward: Set<string> = new Set(
-                    station.connections.filter(c => c.source === delivery.id).map(c => c.target)
-                );
+            if (this.globalSettings.crossContTraceType !== CrossContTraceType.DO_NOT_CONSIDER_DELIVERY_DATES) {
+                const inDate = getProcDelDates(this.idToProcDelDatesMap[delivery.id], this.globalSettings.crossContTraceType).inRange.min;
+                const forward: Set<string> = new Set(station.connections.filter(c => c.source === delivery.id).map(c => c.target));
 
                 for (const id of station.outgoing) {
-                    if (!forward.has(id)) {
-                        const d = data.delMap[id];
-
-                        if (d.date != null) {
-                            if (date.getTime() <= Utils.stringToDate(d.date).getTime()) {
-                                forward.add(id);
-                            }
-                        } else {
-                            forward.add(id);
-                        }
+                    if (
+                        !forward.has(id) &&
+                        inDate <= getProcDelDates(this.idToProcDelDatesMap[id], this.globalSettings.crossContTraceType).outRange.max
+                    ) {
+                        forward.add(id);
                     }
                 }
 
@@ -258,21 +277,16 @@ export class TracingService {
         if (station.killContamination) {
             return [];
         } else if (station.crossContamination) {
-            if (delivery.date != null) {
-                const date = Utils.stringToDate(delivery.date);
+            if (this.globalSettings.crossContTraceType !== CrossContTraceType.DO_NOT_CONSIDER_DELIVERY_DATES) {
+                const dateOut = getProcDelDates(this.idToProcDelDatesMap[delivery.id], this.globalSettings.crossContTraceType).outRange.max;
                 const backward: Set<string> = new Set(station.connections.filter(c => c.target === delivery.id).map(c => c.source));
 
                 for (const id of station.incoming) {
-                    if (!backward.has(id)) {
-                        const d = data.delMap[id];
-
-                        if (d.date != null) {
-                            if (date.getTime() >= Utils.stringToDate(d.date).getTime()) {
-                                backward.add(id);
-                            }
-                        } else {
-                            backward.add(id);
-                        }
+                    if (
+                        !backward.has(id) &&
+                        dateOut >= getProcDelDates(this.idToProcDelDatesMap[id], this.globalSettings.crossContTraceType).inRange.min
+                    ) {
+                        backward.add(id);
                     }
                 }
 
@@ -298,41 +312,7 @@ export class TracingService {
         });
     }
 
-    updateTrace(data: DataServiceData) {
-        this.resetTrace(data);
-
-        data.stations.filter(s => s.observed !== ObservedType.NONE).forEach(station => {
-            this.traceStation(
-                data, station,
-                station.observed === ObservedType.FULL || station.observed === ObservedType.FORWARD,
-                station.observed === ObservedType.FULL || station.observed === ObservedType.BACKWARD
-            );
-        });
-        data.deliveries.filter(d => d.observed !== ObservedType.NONE).forEach(delivery => {
-            this.traceDelivery(
-                data, delivery,
-                delivery.observed === ObservedType.FULL || delivery.observed === ObservedType.FORWARD,
-                delivery.observed === ObservedType.FULL || delivery.observed === ObservedType.BACKWARD
-            );
-        });
-    }
-
-    traceStation(data: DataServiceData, station: StationData, forward = true, backward = true) {
-        if (forward && !station.killContamination) {
-            data.getDelById(station.outgoing).filter(d => !d.invisible && !d.forward && !d.killContamination).forEach(delivery => {
-                delivery.forward = true;
-                this.traceDelivery(data, delivery, true, false);
-            });
-        }
-        if (backward) {
-            data.getDelById(station.incoming).filter(d => !d.invisible && !d.backward && !d.killContamination).forEach(delivery => {
-                delivery.backward = true;
-                this.traceDelivery(data, delivery, false, true);
-            });
-        }
-    }
-
-    traceDelivery(data: DataServiceData, delivery: DeliveryData, forward = true, backward = true) {
+    private traceDelivery(data: DataServiceData, delivery: DeliveryData, forward = true, backward = true) {
         if (forward && !delivery.killContamination) {
             const targetStation = data.statMap[delivery.target];
             targetStation.forward = true;
@@ -359,26 +339,39 @@ export class TracingService {
         }
     }
 
-    haveStationSettingsChanged(oldSettings: TracingSettings, newSettings: TracingSettings): boolean {
-        return !(
-            oldSettings === newSettings ||
-            oldSettings.stations === newSettings.stations
-        );
+    private traceStation(data: DataServiceData, station: StationData, forward = true, backward = true) {
+        if (forward && !station.killContamination) {
+            data.getDelById(station.outgoing).filter(d => !d.invisible && !d.forward && !d.killContamination).forEach(delivery => {
+                delivery.forward = true;
+                this.traceDelivery(data, delivery, true, false);
+            });
+        }
+        if (backward) {
+            data.getDelById(station.incoming).filter(d => !d.invisible && !d.backward && !d.killContamination).forEach(delivery => {
+                delivery.backward = true;
+                this.traceDelivery(data, delivery, false, true);
+            });
+        }
     }
 
-    haveDeliverySettingsChanged(oldSettings: TracingSettings, newSettings: TracingSettings): boolean {
-        return !(
-            oldSettings === newSettings ||
-            oldSettings.deliveries === newSettings.deliveries
-        );
-    }
+    updateTrace(data: DataServiceData, settings: GlobalTracingSettings) {
+        this.resetTrace(data);
+        this.initProcessedDeliveryDatesIfNecessary(data);
+        this.globalSettings = settings;
 
-    haveSettingsChanged(oldSettings: TracingSettings, newSettings: TracingSettings): boolean {
-        return !(
-            oldSettings === newSettings ||
-            oldSettings.stations === newSettings.stations ||
-            oldSettings.deliveries === newSettings.deliveries
-        );
+        data.stations.filter(s => s.observed !== ObservedType.NONE).forEach(station => {
+            this.traceStation(
+                data, station,
+                station.observed === ObservedType.FULL || station.observed === ObservedType.FORWARD,
+                station.observed === ObservedType.FULL || station.observed === ObservedType.BACKWARD
+            );
+        });
+        data.deliveries.filter(d => d.observed !== ObservedType.NONE).forEach(delivery => {
+            this.traceDelivery(
+                data, delivery,
+                delivery.observed === ObservedType.FULL || delivery.observed === ObservedType.FORWARD,
+                delivery.observed === ObservedType.FULL || delivery.observed === ObservedType.BACKWARD
+            );
+        });
     }
-
 }

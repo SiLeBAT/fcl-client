@@ -14,6 +14,21 @@
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+
+        // the following compiler flag are planned to be set
+        // "alwaysStrict": true,
+        // "noImplicitAny": true,
+        // "noImplicitThis": true,
+        // "strictNullChecks": true,
+        // "strictBindCallApply": true,
+        // "strictFunctionTypes": true,
+        // "strictPropertyInitialization": true,
+        // "strict": true
+
+        // "noImplicitReturns": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+
         "target": "es2015",
         "typeRoots": ["node_modules/@types"],
         "lib": ["es2019", "dom"],

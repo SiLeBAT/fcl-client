@@ -43,7 +43,6 @@ export class TableService {
     }
 
     getDeliveryColumns(data: DataServiceData): TableColumn[] {
-        const d: DeliveryData = null;
         const columns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'source', name: 'Source ID' },
@@ -52,7 +51,8 @@ export class TableService {
             { id: 'target.name', name: 'Target' },
             { id: 'name', name: 'Product' },
             { id: 'lot', name: 'Lot' },
-            { id: 'date', name: 'Delivery Date' },
+            { id: 'dateOut', name: 'Delivery Date' },
+            { id: 'dateIn', name: 'Delivery Date Arrival' },
             { id: 'weight', name: 'Weight' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
@@ -130,7 +130,8 @@ export class TableService {
                 'source.name': data.statMap[delivery.source].name,
                 target: delivery.target,
                 'target.name': data.statMap[delivery.target].name,
-                date: delivery.date,
+                dateOut: delivery.dateOut,
+                dateIn: delivery.dateIn,
                 weight: delivery.weight,
                 killContamination: delivery.killContamination,
                 crossContamination: delivery.crossContamination,

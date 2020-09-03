@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TestBed, async } from '@angular/core/testing';
 import { IOService } from './io.service';
-import { FclData, GraphType, ObservedType, MergeDeliveriesType, MapType } from '../data.model';
+import { FclData, GraphType, ObservedType, MergeDeliveriesType, MapType, CrossContTraceType } from '../data.model';
 import { JsonData, VERSION } from './ext-data-model.v1';
 import { Constants } from '../util/constants';
 import { DEFAULT_STATION_PROP_INT_TO_EXT_MAP, DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP } from './data-mappings/data-mappings-v1';
@@ -42,7 +42,10 @@ describe('IOService', () => {
                     { id: 'S2', name: 'Station 2', lat: null, lon: null, incoming: ['D2'], outgoing: [], connections: [], properties: [] }
                 ],
                 deliveries: [
-                    { id: 'D1', source: 'S1', target: 'S2', name: 'Product P', lot: 'Lot 1', lotKey: null, date: null, properties: [] }
+                    {
+                        id: 'D1', source: 'S1', target: 'S2', name: 'Product P', lot: 'Lot 1', lotKey: null,
+                        dateIn: null, dateOut: null, properties: []
+                    }
                 ],
                 samples: []
             },
@@ -61,6 +64,7 @@ describe('IOService', () => {
                     stations: [],
                     deliveries: []
                 },
+                ghostStation: undefined,
                 schemaLayout: { zoom: 1, pan: { x: 0.5, y: 0.5 } },
                 gisLayout: null,
                 stationPositions: {
@@ -73,6 +77,7 @@ describe('IOService', () => {
             },
             groupSettings: [],
             tracingSettings: {
+                crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
                 stations: [
                     {
                         id: 'S1',
@@ -100,9 +105,7 @@ describe('IOService', () => {
                         observed: ObservedType.NONE
                     }
                 ]
-            },
-            tableSettings: null,
-            filterSettings: null
+            }
         };
 
         const expectedExportData: JsonData = {
