@@ -126,7 +126,8 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     backward: ExtDataConstants.DELIVERY_BACKWARD,
     score: ExtDataConstants.DELIVERY_SCORE,
     observed: ExtDataConstants.DELIVERY_OBSERVED,
-    date: ExtDataConstants.DELIVERY_OUT_DATE
+    dateOut: ExtDataConstants.DELIVERY_OUT_DATE,
+    dateIn: ExtDataConstants.DELIVERY_IN_DATE
 });
 
 const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
@@ -244,7 +245,7 @@ export function getStationPropMap(jsonData: JsonData): PropMap {
 
 export function getDeliveryPropMap(jsonData: JsonData): PropMap {
     return getPropMap(
-        jsonData.data.deliveryRelations,
+        jsonData.data.deliveries,
         getReferencedProps(
             (
                 jsonData.settings &&

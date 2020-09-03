@@ -3,14 +3,14 @@
         <span *ngFor="let item of aliasMenuItems">
             <!-- Handle branch node buttons here -->
             <span *ngIf="item.children && item.children.length > 0">
-                <button mat-menu-item color="primary" [matMenuTriggerFor]="subMenu.matMenu" [matMenuTriggerData]="{ menuItems : item.children }" [disabled] = "item.disabled" [matTooltip]="item.toolTip"  matTooltipPosition="right" matTooltipShowDelay="1500" matTooltipClass="mytooltip">
+                <button mat-menu-item color="primary" [matMenuTriggerFor]="subMenu.matMenu" [matMenuTriggerData]="{ menuItems : item.children }" [disabled] = "item.disabled" [matTooltip]="item.toolTip"  matTooltipPosition="right" matTooltipShowDelay="1500" matTooltipClass="fcl-option-tooltip">
                     {{item.displayName}}
                 </button>
                 <fcl-nested-mat-menu #subMenu (actionSelected)="forwardAction($event)"></fcl-nested-mat-menu>
             </span>
             <!-- Leaf node buttons here -->
             <span *ngIf="!item.children || item.children.length === 0">
-                <button mat-menu-item color="primary" (click)="itemSelected(item)" [disabled] = "item.disabled" [matTooltip]="item.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="mytooltip"><!-- [routerLink]="item.route">-->
+                <button mat-menu-item color="primary" (click)="itemSelected(item)" [disabled] = "item.disabled" [matTooltip]="item.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="fcl-option-tooltip"><!-- [routerLink]="item.route">-->
                     {{item.displayName}}
                 </button>
             </span>

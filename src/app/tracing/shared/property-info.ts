@@ -11,9 +11,9 @@ export interface PropInfo {
 }
 
 const PUBLIC_STATION_PROPS: (keyof StationData)[] = ['id', 'name'];
-const PUBLIC_DELIVERY_PROPS: (keyof DeliveryData)[] = ['name', 'lot', 'date'];
+const PUBLIC_DELIVERY_PROPS: (keyof DeliveryData)[] = ['name', 'lot', 'dateIn', 'dateOut'];
 
-const DELIVERY_SPECIFIC_PROPS: (keyof DeliveryData)[] = ['id', 'date'];
+const DELIVERY_SPECIFIC_PROPS: (keyof DeliveryData)[] = ['id', 'dateIn', 'dateOut'];
 
 function getPublicProperties(fclItems: StationData[] | DeliveryData[], publicProps: string[]): string[] {
     const props = publicProps.filter(prop => fclItems.some(item => item[prop] !== undefined));

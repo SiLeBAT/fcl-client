@@ -5,7 +5,7 @@ import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
 import { takeWhile } from 'rxjs/operators';
-import { GraphSettings, MergeDeliveriesType } from '../data.model';
+import { GraphSettings, MergeDeliveriesType, CrossContTraceType, TracingSettings } from '../data.model';
 
 @Component({
     selector: 'fcl-graph-settings',
@@ -14,8 +14,32 @@ import { GraphSettings, MergeDeliveriesType } from '../data.model';
 })
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
+    tracingSettings: TracingSettings;
+
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
+
+    readonly crossContTraceTypeOptions: {
+        value: CrossContTraceType;
+        label: string;
+        toolTip: string;
+    }[] = [
+        {
+            value: CrossContTraceType.DO_NOT_CONSIDER_DELIVERY_DATES,
+            label: 'Ignore dates',
+            toolTip: 'Delivery dates are ignored for cross contamination tracing.'
+        },
+        {
+            value: CrossContTraceType.USE_EXPLICIT_DELIVERY_DATES,
+            label: 'Use explicit dates',
+            toolTip: 'Use explicit delivery dates for cross contamination tracing.'
+        },
+        {
+            value: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
+            label: 'Use deduced dates',
+            toolTip: 'Use deduced delivery dates for cross contamination tracing. Deduction is based on explicit delivery dates and delivery relations.'
+        }
+    ];
 
     readonly mergeDeliveriesOptions: {
         value: MergeDeliveriesType;
@@ -62,6 +86,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
             .subscribe(
                 fclData => {
                     this.graphSettings = fclData.graphSettings;
+                    this.tracingSettings = fclData.tracingSettings;
                 },
                 error => {
                     throw new Error(`error loading data: ${error}`);
@@ -69,44 +94,51 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
             );
     }
 
-    setNodeSize() {
+    setNodeSize(nodeSize: number): void {
         this.store.dispatch(
-            new tracingActions.SetNodeSizeSOA({ nodeSize: this.graphSettings.nodeSize })
+            new tracingActions.SetNodeSizeSOA({ nodeSize: nodeSize })
         );
     }
 
-    setFontSize() {
+    setFontSize(fontSize: number): void {
         this.store.dispatch(
-            new tracingActions.SetFontSizeSOA({ fontSize: this.graphSettings.fontSize })
+            new tracingActions.SetFontSizeSOA({ fontSize: fontSize })
         );
     }
 
-    setMergeDeliveriesType() {
+    setMergeDeliveriesType(mergeDeliveriesType: MergeDeliveriesType) {
         this.store.dispatch(
             new tracingActions.SetMergeDeliveriesTypeSOA({
-                mergeDeliveriesType: this.graphSettings.mergeDeliveriesType
+                mergeDeliveriesType: mergeDeliveriesType
             })
         );
     }
 
-    showLegend() {
+    setCrossContTraceType(crossContTraceType: CrossContTraceType) {
         this.store.dispatch(
-            new tracingActions.ShowLegendSOA(this.graphSettings.showLegend)
+            new tracingActions.SetCrossContTraceTypeSOA({
+                crossContTraceType: crossContTraceType
+            })
         );
     }
 
-    showMergedDeliveriesCounts() {
+    showLegend(showLegend: boolean) {
+        this.store.dispatch(
+            new tracingActions.ShowLegendSOA(showLegend)
+        );
+    }
+
+    showMergedDeliveriesCounts(showMergedDeliveriesCounts: boolean) {
         this.store.dispatch(
             new tracingActions.ShowMergedDeliveriesCountsSOA({
-                showMergedDeliveriesCounts: this.graphSettings
-                    .showMergedDeliveriesCounts
+                showMergedDeliveriesCounts: showMergedDeliveriesCounts
             })
         );
     }
 
-    showZoom() {
+    showZoom(showZoom: boolean) {
         this.store.dispatch(
-            new tracingActions.ShowZoomSOA(this.graphSettings.showZoom)
+            new tracingActions.ShowZoomSOA(showZoom)
         );
     }
 

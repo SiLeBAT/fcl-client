@@ -9,7 +9,6 @@ import { DialogActionsComponent } from './dialog/dialog-actions/dialog-actions.c
 import { DialogAlertComponent } from './dialog/dialog-alert/dialog-alert.component';
 import { DialogPromptComponent } from './dialog/dialog-prompt/dialog-prompt.component';
 import { DialogSelectComponent } from './dialog/dialog-select/dialog-select.component';
-import { DialogSingleSelectComponent } from './dialog/dialog-single-select/dialog-single-select.component';
 import { StationPropertiesComponent } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent } from './dialog/delivery-properties/delivery-properties.component';
 import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/deliveries-properties.component';
@@ -74,7 +73,6 @@ import { AnonymousButtonViewComponent } from './configuration/anonymous-button-v
         DialogAlertComponent,
         DialogPromptComponent,
         DialogSelectComponent,
-        DialogSingleSelectComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,
@@ -121,7 +119,6 @@ import { AnonymousButtonViewComponent } from './configuration/anonymous-button-v
         DialogAlertComponent,
         DialogPromptComponent,
         DialogSelectComponent,
-        DialogSingleSelectComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,
