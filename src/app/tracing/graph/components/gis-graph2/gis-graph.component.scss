@@ -1,0 +1,32 @@
+.fcl-graph-container {
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-graph-map {
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-graph {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-osm-reference {
+    z-index: 20;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid rgb(211, 211, 211);
+    background-color: rgba(255, 255, 255, 0.75);
+    padding: 0.25em 1em;
+}

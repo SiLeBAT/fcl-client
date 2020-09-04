@@ -410,6 +410,7 @@ export interface DeliveryLegendEntry extends LegendEntry {
 }
 
 export interface LegendInfo {
+    showMissingGisInfoEntry?: boolean;
     stations: StationLegendEntry[];
     deliveries: DeliveryLegendEntry[];
 }

@@ -163,3 +163,19 @@ export interface GraphServiceData extends DataServiceData {
     propsChangedFlag: {};
     edgeLabelChangedFlag: {};
 }
+
+export interface Size {
+    width: number;
+    height: number;
+}
+
+export type AvailableSpace = Size;
+
+export interface PositionMap {
+    [key: string]: Position;
+}
+
+export enum CyGraphType {
+    DEFAULT_GRAPH,
+    CUSTOM_ZOOM_GRAPH
+}

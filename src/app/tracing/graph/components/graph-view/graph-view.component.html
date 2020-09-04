@@ -1,0 +1,21 @@
+<div fclResizeSensor (resized)="onComponentResized()" class="fcl-graph" #graph></div>
+<!-- <div class="fcl-graph" #graph></div> -->
+
+<fcl-zoom-view
+    class="fcl-graph-zoom"
+    data-html2canvas-ignore="true"
+    *ngIf="showZoom"
+    [zoomValue] = "zoomPercentage"
+    (zoomIn)="onZoomIn()"
+    (zoomOut)="onZoomOut()"
+    (zoomReset)="onZoomReset()"
+    (zoomSlided)="onZoomSlided($event)">
+</fcl-zoom-view>
+
+<fcl-graph-legend-view
+    class="fcl-graph-legend"
+    *ngIf="showLegend"
+    [legendInfo]="legendInfo"
+></fcl-graph-legend-view>
+
+<fcl-created-image-view></fcl-created-image-view>
