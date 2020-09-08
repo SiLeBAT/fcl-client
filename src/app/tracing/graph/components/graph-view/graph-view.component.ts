@@ -6,7 +6,7 @@ import {
 } from '../../../data.model';
 import * as _ from 'lodash';
 import { CyGraphType } from '../../graph.model';
-import { CyGraph, StyleConfig, GraphData, GraphEventType } from '../../cy-graph';
+import { CyGraph, StyleConfig, GraphData, GraphEventType } from './cy-graph';
 
 @Component({
     selector: 'fcl-graph-view',

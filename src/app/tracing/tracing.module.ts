@@ -27,7 +27,7 @@ import { SchemaGraphComponent } from './graph/components/schema-graph/schema-gra
 import { GraphLegendViewComponent } from './graph/components/graph-legend-view/graph-legend-view.component';
 import { NodeSymbolViewComponent } from './shared/node-symbol-view/node-symbol-view.component';
 import { ZoomViewComponent } from './graph/components/zoom-view/zoom-view.component';
-import { GisGraphComponent } from './graph/components/gis-graph2/gis-graph.component';
+import { GisGraphComponent } from './graph/components/gis-graph/gis-graph.component';
 import { GraphContextMenuComponent } from './graph/components/graph-context-menu/graph-context-menu.component';
 import { EdgeSymbolViewComponent } from './graph/components/edge-symbol-view/edge-symbol-view.component';
 import { CreatedImageViewComponent } from './shared/created-image-view/created-image-view.component';
