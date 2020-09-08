@@ -1,3 +1,8 @@
 <div class="fcl-graph-container" #container>
-    <fcl-graph-view class="fcl-graph"></fcl-graph-view>
+    <fcl-graph-view
+        class="fcl-graph"
+        [graphData]="graphData"
+        [styleConfig]="styleConfig"
+        [showZoom]="showZoom$ | async"
+        [showLegend]="showLegend$ | async"></fcl-graph-view>
 </div>

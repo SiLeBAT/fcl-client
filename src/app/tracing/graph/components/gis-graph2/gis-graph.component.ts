@@ -6,7 +6,7 @@ import * as ol from 'ol';
 import html2canvas from 'html2canvas';
 import { ResizeSensor } from 'css-element-queries';
 import { Utils as UIUtils } from '../../../util/ui-utils';
-import { Utils as NonUIUtils } from '../../../util/non-ui-utils';
+import { Utils as NonUIUtils, Utils } from '../../../util/non-ui-utils';
 import {
     Layout,
     Position,
@@ -17,13 +17,14 @@ import {
     DeliveryData,
     MergeDeliveriesType,
     MapType,
-    ShapeFileData
+    ShapeFileData,
+    PositionMap
 } from '../../../data.model';
 import * as _ from 'lodash';
 import { StyleService } from '../../style.service';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData } from '../../graph.model';
+import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeData } from '../../graph.model';
 import * as tracingSelectors from '../../../state/tracing.selectors';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
@@ -33,6 +34,7 @@ import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-m
 
 import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
 import { removeFrameLayer, setFrameLayer, createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
+import { GraphData, StyleConfig, SelectedGraphElements } from '../../cy-graph';
 
 interface GraphSettingsState {
     fontSize: number;
@@ -66,8 +68,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     legendInfo: LegendInfo;
 
-    private cachedState: GisGraphState;
-    private cachedData: GraphServiceData;
+    // private cachedState: GisGraphState;
+    // private cachedData: GraphServiceData;
+    private graphData_: GraphData;
+    private styleConfig_: StyleConfig;
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -119,8 +123,81 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return html2canvas(this.elementRef.nativeElement);
     }
 
+    get graphData(): GraphData {
+        return this.graphData_;
+    }
+
+    get styleConfig(): StyleConfig {
+        return this.styleConfig_;
+    }
+
+    getSelectedElements(newData: GraphServiceData): SelectedGraphElements {
+        return (
+            (
+                !this.graphData_ ||
+                this.graphData_.selectedElements.nodeSel !== newData.nodeSel ||
+                this.graphData_.selectedElements.edgeSel !== newData.edgeSel
+            ) ?
+                {
+                    nodeSel: newData.nodeSel,
+                    edgeSel: newData.edgeSel
+                } :
+                this.graphData_.selectedElements
+        );
+    }
+
+    getPositions(newData: GraphServiceData): PositionMap {
+        return (
+            (
+                !this.graphData_ ||
+                this.graphData_.nodeData !== newData.nodeData
+            ) ?
+            Utils.createObjectFromArray(
+                newData.nodeData,
+                (n: CyNodeData) => n.id,
+                (n: CyNodeData) => ({ x: n.station.lat * 100, y: n.station.lon * 100 })) :
+            this.graphData_.nodePositions
+        );
+    }
+
     private applyState(newState: GisGraphState) {
-        // const newData: GraphServiceData = this.graphService.getData(newState);
+        const newData: GraphServiceData = this.graphService.getData(newState);
+        // if (!this.graphData_ ||
+        //     this.graphData_.nodeData !== newData.nodeData ||
+        //     this.graphData_.edgeData !== newData.edgeData ||
+        //     this.graphData_.propsChangedFlag !==) {
+        //     this.graphData_ = {
+        //         nodeData: newData.nodeData,
+        //         edgeData: newData.edgeData,
+        //         propsChangedFlag: newData.propsChangedFlag,
+        //         edgeLabelChangedFlag: newData.edgeLabelChangedFlag,
+        //         nodePositions: this.getPositions(newData),
+        //         layout: newState.layout,
+        //         selectedElements: this.getSelectedElements(newData)
+        //     };
+        // } else {
+        this.graphData_ = {
+            nodeData: newData.nodeData,
+            edgeData: newData.edgeData,
+            propsChangedFlag: newData.propsChangedFlag,
+            edgeLabelChangedFlag: newData.edgeLabelChangedFlag,
+            nodePositions: this.getPositions(newData),
+            layout: newState.layout,
+            selectedElements: this.getSelectedElements(newData)
+        };
+        // }
+        if (
+            !this.styleConfig_ ||
+            this.styleConfig_.fontSize !== newState.fontSize ||
+            this.styleConfig_.nodeSize !== newState.nodeSize
+        ) {
+
+            this.styleConfig_ = {
+                nodeSize: newState.nodeSize,
+                fontSize: newState.fontSize
+            };
+        }
+
         // if (!this.cachedData || this.cachedState.fclElements !== newState.fclElements) {
         //     this.initCy(newState, newData);
         // } else if (this.cachedData.nodeData !== newData.nodeData) {
@@ -153,6 +230,6 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         //     ...this.cachedState,
         //     ...newState
         // };
-        // this.legendInfo = newData.legendInfo;
+        this.legendInfo = newData.legendInfo;
     }
 }

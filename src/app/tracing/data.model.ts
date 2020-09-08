@@ -95,6 +95,10 @@ export interface Position {
     y: number;
 }
 
+export interface PositionMap {
+    [key: string]: Position;
+}
+
 export interface Connection {
     source: string;
     target: string;

@@ -471,9 +471,6 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.type = showGis === true ? GraphType.GIS : GraphType.GRAPH;
         }
 
-        fclData.graphSettings.gisLayout = this.convertExternalTransformation(
-            this.getProperty(viewData, ExtDataConstants.GISGRAPH_TRANSFORMATION)
-        );
         fclData.graphSettings.schemaLayout = this.convertExternalTransformation(
             this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION)
         );
