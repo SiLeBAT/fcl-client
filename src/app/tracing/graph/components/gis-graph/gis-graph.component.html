@@ -4,5 +4,9 @@
         [graphData]="graphData"
         [styleConfig]="styleConfig"
         [showZoom]="showZoom$ | async"
-        [showLegend]="showLegend$ | async"></fcl-graph-view>
+        [showLegend]="showLegend$ | async"
+        (panChange)="onPanChange($event)"
+        (layoutChange)="onLayoutChange($event)"
+        (selectionChange)="onSelectionChange($event)"
+        ></fcl-graph-view>
 </div>
