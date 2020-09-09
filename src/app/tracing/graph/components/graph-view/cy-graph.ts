@@ -1,22 +1,19 @@
-import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef } from './graph.model';
-import { Layout, Position, PositionMap, Size } from '../data.model';
+import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef } from '../../graph.model';
+import { Layout, Position, PositionMap, Size } from '../../../data.model';
 import { ElementRef } from '@angular/core';
 import cytoscape from 'cytoscape';
+import * as CyListeners from './cy-listeners';
+import { StyleConfig, CyStyle } from './cy-style';
+import { Utils } from '@app/tracing/util/non-ui-utils';
 
 interface CyConfig {
 
-}
-
-export interface StyleConfig {
-    nodeSize: number;
-    fontSize: number;
 }
 
 export interface LayoutConfig {
     name: string;
     zoom?: number;
     pan?: Position;
-    // availableSpace: AvailableSpace;
 }
 
 export interface SelectedGraphElements {
@@ -41,21 +38,12 @@ export enum GraphEventType {
     SELECTION_CHANGE = 'SELECTION_CHANGE',
     CONTEXT_MENU_REQUEST = 'CONTEXT_MENU_REQUEST'
 }
-
-// interface GraphEventListeners {
-//     LAYOUT_IN_PROGRESS?: () => void;
-//     LAYOUT_CHANGE?: () => void;
-//     PAN_CHANGE?: () => void;
-//     SELECTION_CHANGE?: () => void;
-//     CONTEXT_MENU_REQUEST?: () => void;
-// }
-
 interface GraphEventListeners {
-    [GraphEventType.LAYOUT_IN_PROGRESS]?: (() => void)[];
-    [GraphEventType.LAYOUT_CHANGE]?: (() => void)[];
-    [GraphEventType.PAN_CHANGE]?: (() => void)[];
-    [GraphEventType.SELECTION_CHANGE]?: (() => void)[];
-    [GraphEventType.CONTEXT_MENU_REQUEST]?: (() => void)[];
+    [GraphEventType.LAYOUT_IN_PROGRESS]: (() => void)[];
+    [GraphEventType.LAYOUT_CHANGE]: (() => void)[];
+    [GraphEventType.PAN_CHANGE]: (() => void)[];
+    [GraphEventType.SELECTION_CHANGE]: (() => void)[];
+    [GraphEventType.CONTEXT_MENU_REQUEST]: (() => void)[];
 }
 
 export function isLayoutConfig(nodePositionsOrLayoutConfig: PositionMap | LayoutConfig): boolean {
@@ -86,7 +74,13 @@ export class CyGraph {
     private minZoom_: number = CyGraph.DEFAULT_MIN_ZOOM;
     private maxZoom_: number = CyGraph.DEFAULT_MAX_ZOOM;
     private zoomPercentage_: number;
-    private nodePositions_: PositionMap;
+    private listeners: GraphEventListeners = {
+        [GraphEventType.LAYOUT_CHANGE]: [],
+        [GraphEventType.SELECTION_CHANGE]: [],
+        [GraphEventType.PAN_CHANGE]: [],
+        [GraphEventType.CONTEXT_MENU_REQUEST]: [],
+        [GraphEventType.LAYOUT_IN_PROGRESS]: []
+    }
 
     constructor(containerElement: any, graphData: GraphData, styleConfig: StyleConfig, nodePositions: PositionMap, layout?: Layout);
     constructor(containerElement: any, graphData: GraphData, styleConfig: StyleConfig, layoutConfig: LayoutConfig);
@@ -119,9 +113,7 @@ export class CyGraph {
     }
 
     set zoom(value: number) {
-        if (this.cy) {
-            this.cy.zoom(value);
-        }
+        this.cy.zoom(value);
     }
 
     get zoom(): number {
@@ -140,16 +132,20 @@ export class CyGraph {
         return this.maxZoom_;
     }
 
-    get nodePositions(): PositionMap {
-        return this.nodePositions_;
+    get layout(): Layout {
+        return {
+            zoom: this.zoom,
+            pan: this.pan
+        };
     }
 
-    // init(graphData: GraphServiceData, styleInfo: StyleInfo, positionMap: PositionMap, layout?: Layout): void;
-    // init(graphData: GraphServiceData, styleInfo: StyleInfo, layoutGenerator: LayoutGenerator): void;
+    get style(): StyleConfig {
+        return this.styleConfig;
+    }
 
-    // init(graphData: GraphServiceData, styleInfo: StyleInfo, posMapOrLayoutGen: PositionMap | LayoutGenerator, layout?: Layout): void {
-    //     this
-    // }
+    get data(): GraphData {
+        return this.graphData;
+    }
 
     runLayout(layoutConfig: LayoutConfig, nodeIds: string[]): void {}
 
@@ -181,17 +177,17 @@ export class CyGraph {
         this.cleanCy();
     }
 
-    registerListener<GE extends keyof GraphEventListeners>(event: GE, listener: GraphEventListeners[GE][0]): void {}
+    registerListener<GE extends keyof GraphEventListeners>(event: GE, listener: GraphEventListeners[GE][0]): void {
+        this.listeners[event].push(listener);
+    }
 
-    unregisterListener<GE extends keyof GraphEventListeners>(event: GE, listener: GraphEventListeners[GE][0]): void {}
+    unregisterListener<GE extends keyof GraphEventListeners>(event: GE, listener: GraphEventListeners[GE][0]): void {
+        this.listeners[event] = this.listeners[event].filter(l => l !== listener);
+    }
 
     hoverEdges(edgeIds: string): void {}
 
     showGhostElements(nodeData: CyNodeData[], edgeData: CyEdgeData[]): void {}
-
-    updateStyle(styleConfig: StyleConfig): void {}
-
-    updateSelection(): void {}
 
     updateSize(): void {}
 
@@ -222,8 +218,9 @@ export class CyGraph {
         }));
     }
 
-    protected createLayoutConfig(): void {}
-    protected createCyConfig(): void {}
+    protected createCyConfig(): {} {
+        return {};
+    }
 
     private initCy(nodePositions: PositionMap, layoutConfig: LayoutConfig, styleConfig: StyleConfig): void {
         console.log('CyGraph.initCy entered ...');
@@ -236,7 +233,91 @@ export class CyGraph {
                 edges: this.createEdges(this.graphData.edgeData)
             },
             layout: layoutConfig,
-            wheelSensitivity: 0.5
+            style: new CyStyle(this.graphData, this.styleConfig).createCyStyle(),
+            wheelSensitivity: 0.5,
+            ...this.createCyConfig()
         });
+
+        if (this.containerElement) {
+            this.registerCyListeners();
+        }
+    }
+
+    protected registerCyListeners(): void {
+        CyListeners.registerSelectionListener(this.cy, () => this.onSelectionChanged());
+        CyListeners.registerPanListener(this.cy, () => this.onPanChanged(), () => this.onLayoutChanged());
+        this.cy.on('zoom', () => this.onLayoutChanged());
+    }
+
+    protected onSelectionChanged(): void {
+        this.graphData = {
+            ...this.graphData,
+            selectedElements: {
+                nodeSel: Utils.createSimpleStringSet(this.cy.nodes(':selected').map(n => n.id())),
+                edgeSel: Utils.createSimpleStringSet(this.cy.edges(':selected').map(e => e.id()))
+            }
+        };
+        this.listeners.SELECTION_CHANGE.forEach(l => l());
+    }
+
+    protected onPanChanged(): void {
+        this.listeners.PAN_CHANGE.forEach(l => l());
+    }
+
+    protected onLayoutChanged(): void {
+        this.listeners.LAYOUT_CHANGE.forEach(l => l());
+    }
+
+    private updateNodes(): void {
+        this.cy.batch(() => {
+            this.cy.elements().remove();
+            this.cy.add(this.createNodes(this.graphData.nodeData, this.graphData.nodePositions));
+            this.cy.add(this.createEdges(this.graphData.edgeData));
+            this.updateStyle();
+        });
+    }
+
+    private updateEdges(): void {
+        this.cy.batch(() => {
+            this.cy.edges().remove();
+            this.cy.add(this.createEdges(this.graphData.edgeData));
+        });
+    }
+
+    private updateStyle(): void {
+        this.cy.setStyle(new CyStyle(this.graphData, this.styleConfig).createCyStyle());
+        this.cy.elements().scratch('_update', true);
+    }
+
+    private updateSelection(): void {
+        this.cy.batch(() => {
+            this.cy.elements(':selected[!selected]').unselect();
+            this.cy.elements(':unselected[?selected]').select();
+            this.cy.elements().scratch('_update', true);
+        });
+    }
+
+    private updateEdgeLabels(): void {
+        this.cy.edges().scratch('_update', true);
+    }
+
+    updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
+        const oldData = this.graphData;
+        const oldStyle = this.styleConfig;
+        this.graphData = graphData;
+        this.styleConfig = styleConfig;
+        if (oldData.nodeData !== graphData.nodeData) {
+            this.updateNodes();
+        } else if (oldData.edgeData !== graphData.edgeData) {
+            this.updateEdges();
+        } else if (oldData.propsChangedFlag !== graphData.propsChangedFlag) {
+            this.updateStyle();
+        } else if (oldData.selectedElements !== graphData.selectedElements) {
+            this.updateSelection();
+        } else if (oldStyle !== styleConfig) {
+            this.updateStyle();
+        } else if (oldData.edgeLabelChangedFlag !== graphData.edgeLabelChangedFlag) {
+            this.updateEdgeLabels();
+        }
     }
 }

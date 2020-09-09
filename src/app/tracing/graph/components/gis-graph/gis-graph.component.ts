@@ -34,7 +34,11 @@ import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-m
 
 import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
 import { removeFrameLayer, setFrameLayer, createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
-import { GraphData, StyleConfig, SelectedGraphElements } from '../../cy-graph';
+// import { GraphData, StyleConfig } from '../../cy-graph';
+import { LayoutChange, LayoutOnlyChange } from '../graph-view/graph-view.component';
+import { SelectedGraphElements, GraphData } from '../graph-view/cy-graph';
+import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
+import { StyleConfig } from '../graph-view/cy-style';
 
 interface GraphSettingsState {
     fontSize: number;
@@ -121,6 +125,19 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     getCanvas(): Promise<HTMLCanvasElement> {
         return html2canvas(this.elementRef.nativeElement);
+    }
+
+    onSelectionChange(selectedGraphElements: SelectedGraphElements): void {
+        this.store.dispatch(new tracingStoreActions.SetSelectedElementsSOA({
+            selectedElements: mapGraphSelectionToFclElementSelection(selectedGraphElements, this.graphData)
+        }));
+    }
+
+    onLayoutChange(layoutChange: LayoutOnlyChange): void {
+        this.store.dispatch(new tracingStoreActions.SetGisGraphLayoutSOA({ layout: layoutChange.layout }));
+    }
+
+    onPanChange(position: Position): void {
     }
 
     get graphData(): GraphData {
