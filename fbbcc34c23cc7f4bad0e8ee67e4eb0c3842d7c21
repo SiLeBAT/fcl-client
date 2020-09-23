@@ -1,0 +1,826 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a74bf8bc_a00dc6b3",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "why is this optional? Could be another interface \"GisLegendInfo extends LegendInfo\"",
+      "range": {
+        "startLine": 413,
+        "startChar": 4,
+        "endLine": 413,
+        "endChar": 38
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43930dcb_81d29673",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "Consider moving the css code to the view component.",
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddf19a0b_c5d56f8a",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "obsolete, width  of div is always 100%",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 9
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f737a991_9da50525",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "not used in html",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5762e43_47c1416c",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "hope this is really necessary",
+      "range": {
+        "startLine": 16,
+        "startChar": 14,
+        "endLine": 16,
+        "endChar": 19
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "381ad66c_e8e1b67f",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "where is the corresponding index? In another component? Z-indexes should be defined in the same file.",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 15
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e36201c5_88127c5e",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "Remove: not used in html",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adf7b360_994fa581",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "not in html",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 87
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efbafe63_2d0496c3",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "Consider using subscription pattern",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 38
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48076fd0_88a158e4",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 60,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 66
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edf5a1dd_19acf39e",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "Consider moving this to a selector",
+      "range": {
+        "startLine": 85,
+        "startChar": 16,
+        "endLine": 89,
+        "endChar": 21
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "958eb790_223eb031",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "Mixed pattern, use pipe pattern instead",
+      "range": {
+        "startLine": 96,
+        "startChar": 32,
+        "endLine": 97,
+        "endChar": 115
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c33e87d_4834da6b",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "see comment above",
+      "range": {
+        "startLine": 102,
+        "startChar": 12,
+        "endLine": 102,
+        "endChar": 92
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5674614_2f3bc843",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 118,
+        "startChar": 4,
+        "endLine": 120,
+        "endChar": 5
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5445006c_3fcc5154",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "does not exist, remove",
+      "range": {
+        "startLine": 1,
+        "startChar": 61,
+        "endLine": 1,
+        "endChar": 70
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "247686a4_1df997c7",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 34
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05b6d5fd_a9112218",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "zoomSlide",
+      "range": {
+        "startLine": 12,
+        "startChar": 5,
+        "endLine": 12,
+        "endChar": 15
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6fcd9a6_3dbbe4bc",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "onZoomSlide",
+      "range": {
+        "startLine": 12,
+        "startChar": 18,
+        "endLine": 12,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0af55bf4_ad6097f0",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "funny name",
+      "range": {
+        "startLine": 21,
+        "startChar": 5,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87aed166_615690a6",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "try to avoid px values, use relative units instead",
+      "range": {
+        "startLine": 3,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 15
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44cc8408_3af0aaee",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 9,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 16
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4d39f46_0ab3dabf",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 12,
+        "endChar": 17
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e9f53f8_697951e5",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "consider use of subscription pattern",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 38
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3808a4c_7c998308",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "use typing \u003cvoid\u003e",
+      "range": {
+        "startLine": 37,
+        "startChar": 31,
+        "endLine": 37,
+        "endChar": 43
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf0fa06b_52b4bc76",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "should be defined as a constant",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67e77da2_fa9ad27a",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 5
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "240a7e69_f7163a16",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "return type",
+      "range": {
+        "startLine": 81,
+        "startChar": 31,
+        "endLine": 81,
+        "endChar": 32
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05a65c6e_a6604596",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "?, remove or use explicit conversion if necessary",
+      "range": {
+        "startLine": 82,
+        "startChar": 29,
+        "endLine": 82,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6840163c_dd6517a8",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "empty interface, remove",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52534370_10f525e8",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "extends Record\u003cGraphEventType, ()\u003d\u003evoid\u003e",
+      "range": {
+        "startLine": 23,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3236f985_c4237e34",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "does nothing",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 37,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad7f5335_a42bf89b",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "| undefined",
+      "range": {
+        "startLine": 39,
+        "startChar": 16,
+        "endLine": 39,
+        "endChar": 23
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cf06e39_51787be1",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "| undefined",
+      "range": {
+        "startLine": 43,
+        "startChar": 15,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a439a9fd_ec908c05",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "use T",
+      "range": {
+        "startLine": 64,
+        "startChar": 21,
+        "endLine": 64,
+        "endChar": 24
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "528c0d9c_55ba5a47",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "Record\u003cstring, Position\u003e",
+      "range": {
+        "startLine": 174,
+        "startChar": 28,
+        "endLine": 174,
+        "endChar": 29
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cbf5861_8178531c",
+        "filename": "src/app/tracing/tracing.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-23T15:49:38Z",
+      "side": 1,
+      "message": "not in commit",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 94
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
