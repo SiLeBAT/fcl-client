@@ -1,0 +1,1131 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25ddcfaf_0448ebd2",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "record\u003c\u003e as discussed",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 1
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70389b5c_f72af942",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "Consideration: A component should not place itself in the layout. It should be placed by the parent component. It means a component should not made any assumption in which context it will be used.",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd77a8cf_acd33165",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "As discussed: To make the reviewer happy you could have commented out all unused classes.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 1
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29a5639f_41d3d351",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? double import?",
+      "range": {
+        "startLine": 9,
+        "startChar": 9,
+        "endLine": 9,
+        "endChar": 35
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f9aedfc_01fd53c8",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "privat?",
+      "range": {
+        "startLine": 134,
+        "startChar": 4,
+        "endLine": 134,
+        "endChar": 23
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08053ca9_a6d5ea4e",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "also privat?",
+      "range": {
+        "startLine": 149,
+        "startChar": 4,
+        "endLine": 149,
+        "endChar": 16
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0a6082d_fb5dd60d",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "consider using a native array function or lodash",
+      "range": {
+        "startLine": 155,
+        "startChar": 18,
+        "endLine": 155,
+        "endChar": 39
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c05be37_54df5f17",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "magic number, also the method does calculations, but its states its a getter",
+      "range": {
+        "startLine": 158,
+        "startChar": 57,
+        "endLine": 158,
+        "endChar": 60
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3bb46e4_9dc5dc85",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "unclean code: during setting graphData you call methods that read from graphData",
+      "range": {
+        "startLine": 179,
+        "startChar": 8,
+        "endLine": 179,
+        "endChar": 23
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "659e0dc0_c90f9acc",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? why not set directly fro newData?",
+      "range": {
+        "startLine": 184,
+        "startChar": 27,
+        "endLine": 184,
+        "endChar": 53
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9840f907_4da91fcc",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 186,
+        "startChar": 30,
+        "endLine": 186,
+        "endChar": 63
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33f0765d_c48de419",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? why not set directly?",
+      "range": {
+        "startLine": 189,
+        "startChar": 8,
+        "endLine": 193,
+        "endChar": 11
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebf97a30_01555b6c",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? why 2",
+      "range": {
+        "startLine": 1,
+        "startChar": 65,
+        "endLine": 1,
+        "endChar": 71
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7b071a1_b6ad6964",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see gis-graph.css.\nHere the positioning is ok. You place the elements relative to created-image-view.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95455078_f8f7ab81",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "type it or not",
+      "range": {
+        "startLine": 20,
+        "startChar": 28,
+        "endLine": 20,
+        "endChar": 36
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75012013_8efde21e",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "comment this out for the commit",
+      "range": {
+        "startLine": 59,
+        "startChar": 8,
+        "endLine": 59,
+        "endChar": 107
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d9bb96d_0414f7d0",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "perhaps this could be easier with onPush change detection? Defining state depending on different lifecycle hooks is generally a bad idea (not only in angular). It should only be used as a last resort.",
+      "range": {
+        "startLine": 123,
+        "startChar": 8,
+        "endLine": 124,
+        "endChar": 39
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9af9bd9_5c970b08",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "use already defined method cleanCyGraph",
+      "range": {
+        "startLine": 127,
+        "startChar": 24,
+        "endLine": 128,
+        "endChar": 50
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3180acea_0bdeae97",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "use null instead, you define the property to unset so it is not undefined",
+      "range": {
+        "startLine": 128,
+        "startChar": 40,
+        "endLine": 128,
+        "endChar": 49
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d2184fa_2d2fdc62",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? is this a cy defined string?",
+      "range": {
+        "startLine": 131,
+        "startChar": 128,
+        "endLine": 131,
+        "endChar": 134
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f19cfc84_9bab3e94",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "i would put that in a separate method: creatyCyGraph",
+      "range": {
+        "startLine": 131,
+        "startChar": 24,
+        "endLine": 135,
+        "endChar": 125
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa77159d_5a94937c",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 138,
+        "startChar": 19,
+        "endLine": 139,
+        "endChar": 46
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adf6d9f4_5d89bc7b",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "empty interface",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 1
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f07cd73a_1427b933",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "consider using default values in the implementation instead of optionals in the interface",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 19
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6bc0008_fafc9da8",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "Record\u003c\u003e",
+      "range": {
+        "startLine": 23,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 40
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b50d4907_cd432ec3",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? will this be defined later?",
+      "range": {
+        "startLine": 33,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 29
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e6100c5_9b59a41f",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? if this is public put it somewhere in (like a class)",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 7
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3801e384_8abafa4a",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "magic string",
+      "range": {
+        "startLine": 67,
+        "startChar": 15,
+        "endLine": 67,
+        "endChar": 21
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ee65fbe_9b0bcb08",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "magic string",
+      "range": {
+        "startLine": 75,
+        "startChar": 15,
+        "endLine": 75,
+        "endChar": 21
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f0e5529_9b36884b",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "I\u0027m not really happy with the overall overloading pattern. It looks to complicated for such a simple thing. Perhaps we should avoid overloading and us it only if we are implementing common mibi-libraries.",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 115
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83169cdd_eeebadbe",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "- rename this to htmlContainerElement or something\n- this should not be stored (see destroy())\n- type it or explicitly allow any for that line",
+      "range": {
+        "startLine": 95,
+        "startChar": 16,
+        "endLine": 95,
+        "endChar": 32
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b6c78db_f5de3e10",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "check for invalid values like 0 and then set to DEFAULT_MIN_ZOOM",
+      "range": {
+        "startLine": 114,
+        "startChar": 77,
+        "endLine": 114,
+        "endChar": 89
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6673f58_ebd7700b",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? value is a number",
+      "range": {
+        "startLine": 114,
+        "startChar": 30,
+        "endLine": 114,
+        "endChar": 43
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df0464db_9b7b963d",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "? Its a number and cannot be undefined",
+      "range": {
+        "startLine": 118,
+        "startChar": 20,
+        "endLine": 118,
+        "endChar": 36
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff97e1ef_301b07b0",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "this should never be undefinded. It is inited in the constructor",
+      "range": {
+        "startLine": 122,
+        "startChar": 12,
+        "endLine": 122,
+        "endChar": 19
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8efa3d82_33fd9360",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 128,
+        "startChar": 15,
+        "endLine": 128,
+        "endChar": 22
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7bfbdeb_5db923ff",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 132,
+        "startChar": 15,
+        "endLine": 132,
+        "endChar": 22
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "977f10c9_103c0f23",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "this should not be necessary, cy should do that for you (i hope :)",
+      "range": {
+        "startLine": 158,
+        "startChar": 8,
+        "endLine": 158,
+        "endChar": 34
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a824645_900e35fc",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "looks like duplicated code (see setZoomPercentage)",
+      "range": {
+        "startLine": 165,
+        "startChar": 0,
+        "endLine": 165,
+        "endChar": 98
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "896d544f_d8db44e4",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "do you mean newZoom?",
+      "range": {
+        "startLine": 165,
+        "startChar": 31,
+        "endLine": 165,
+        "endChar": 36
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f8f1212_064a6e3d",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "Is it necessary to init and destroy the internal graph from outside? It should be destroyed with the class by the garbage collector.",
+      "range": {
+        "startLine": 180,
+        "startChar": 4,
+        "endLine": 182,
+        "endChar": 5
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2abd91e3_4d79ab0a",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "use T instead",
+      "range": {
+        "startLine": 184,
+        "startChar": 21,
+        "endLine": 184,
+        "endChar": 23
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3a327fe_ea80284e",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 184,
+        "startChar": 103,
+        "endLine": 184,
+        "endChar": 106
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4ac0fbd_0109f9b9",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see destroy()",
+      "range": {
+        "startLine": 200,
+        "startChar": 4,
+        "endLine": 206,
+        "endChar": 5
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f188648_e196c819",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "magic string",
+      "range": {
+        "startLine": 210,
+        "startChar": 20,
+        "endLine": 210,
+        "endChar": 25
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a44d369_4c0130d6",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "magic string",
+      "range": {
+        "startLine": 219,
+        "startChar": 20,
+        "endLine": 219,
+        "endChar": 25
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18e95c89_22a021e2",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "comment that out before commit",
+      "range": {
+        "startLine": 229,
+        "startChar": 0,
+        "endLine": 229,
+        "endChar": 50
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "55905f32_b1206a39",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "see destroy()",
+      "range": {
+        "startLine": 230,
+        "startChar": 8,
+        "endLine": 230,
+        "endChar": 23
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae07d9d0_8ae75c4e",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-24T11:25:28Z",
+      "side": 1,
+      "message": "magic number",
+      "range": {
+        "startLine": 239,
+        "startChar": 30,
+        "endLine": 239,
+        "endChar": 33
+      },
+      "revId": "760f18313c92561dabf9edb82f13c02aa6f46cee",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
