@@ -21,6 +21,7 @@ export type UnknownPosFrameData = BoundaryRect;
 @Component({
     selector: 'fcl-geomap',
     templateUrl: './geomap.component.html',
+    styleUrls: ['./geomap.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeoMapComponent implements DoCheck {
