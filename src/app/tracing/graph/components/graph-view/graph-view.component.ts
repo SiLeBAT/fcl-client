@@ -1,36 +1,36 @@
-import { Component, ElementRef, ViewChild, OnDestroy, Input, Output, AfterViewInit, EventEmitter, DoCheck, OnChanges, SimpleChanges } from '@angular/core';
-
 import {
-    LegendInfo,
-    Position,
-    Size,
-    Layout,
-    PositionMap
-} from '../../../data.model';
-import * as _ from 'lodash';
-import { CyGraphType } from '../../graph.model';
-import { CyGraph, GraphData, GraphEventType, SelectedGraphElements } from './cy-graph';
+    Component, ElementRef, ViewChild, OnDestroy, Input, Output, AfterViewInit,
+    EventEmitter, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy
+} from '@angular/core';
+
+import { Size, Layout, PositionMap } from '../../../data.model';
+import _ from 'lodash';
+import { ContextMenuRequestInfo, SelectedGraphElements } from '../../graph.model';
 import { StyleConfig } from './cy-style';
+import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
+import { GraphEventType, InteractiveCyGraph } from '../../cy-graph/interactive-cy-graph';
+import { GraphData } from './cy-graph';
 
-export interface LayoutOnlyChange {
-    layout: Layout;
+export interface GraphDataChange {
+    layout?: Layout;
+    nodePositions?: PositionMap;
+    selectedElements?: SelectedGraphElements;
 }
-interface PositionChange {
-    nodePositions: PositionMap;
-}
-
-export type LayoutChange = LayoutOnlyChange | PositionChange | (LayoutOnlyChange & PositionChange);
 
 @Component({
     selector: 'fcl-graph-view',
     templateUrl: './graph-view.component.html',
-    styleUrls: ['./graph-view.component.scss']
+    styleUrls: ['./graph-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, OnChanges {
 
+    private static readonly MIN_ZOOM = 0.1;
+    private static readonly MAX_ZOOM = 100.0;
+
     private ngAfterViewInitPassed = false;
-    private inputProcessed: boolean = true;
-    private cyGraph_: CyGraph;
+    private inputProcessed = true;
+    private cyGraph_: InteractiveCyGraph = null;
 
     @ViewChild('graph', { static: true }) graphElement: ElementRef;
 
@@ -38,36 +38,32 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
     @Input() styleConfig: StyleConfig;
 
     @Input() showZoom: boolean;
-    @Input() showLegend: boolean;
-    @Input() legendInfo: LegendInfo;
-    @Input() cyGraphType: CyGraphType;
 
-    @Output() layoutChange = new EventEmitter<LayoutChange>();
-    @Output() panChange = new EventEmitter<Position>();
-    @Output() selectionChange = new EventEmitter<SelectedGraphElements>();
+    @Output() graphDataChange = new EventEmitter<GraphDataChange>();
+    @Output() contextMenuRequest = new EventEmitter<ContextMenuRequestInfo>();
 
-    get zoomPercentage(): number {
-        return this.cyGraph_ ? this.cyGraph_.zoomPercentage : 0.5;
+    get zoomPercentage(): number | undefined {
+        return this.cyGraph_ ? this.cyGraph_.zoomPercentage : undefined;
     }
 
     constructor(public elementRef: ElementRef) {}
 
+    /** --- life cycle hooks */
+
     ngOnChanges(changes: SimpleChanges) {
         this.inputProcessed = false;
+        // console.log('Graph-View.ngOnChanges: ');
+        // console.log(changes);
     }
 
     ngDoCheck(): void {
         if (!this.inputProcessed) {
-            this.checkGraph();
+            this.processInputDataUpdate();
         }
     }
 
-    /** --- life cycle hooks */
-
     ngAfterViewInit(): void {
         this.ngAfterViewInitPassed = true;
-        console.log('GraphView.ngAfterViewInit entered ... (Size:' + JSON.stringify(this.getSize()) + ')');
-        this.checkGraph();
     }
 
     ngOnDestroy() {
@@ -93,15 +89,15 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
         }
     }
 
-    onZoomReset(): void {
+    onZoomFit(): void {
         if (this.cyGraph_) {
-            this.cyGraph_.resetZoom();
+            this.cyGraph_.zoomFit();
         }
     }
 
-    onZoomSlided(value: string) {
+    onZoomSlide(value: string): void {
         if (this.cyGraph_) {
-            this.cyGraph_.zoomPercentage = +value;
+            this.cyGraph_.zoomPercentage = Number(value);
         }
     }
 
@@ -124,47 +120,79 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
         };
     }
 
-    private onLayoutChange(): void {
-        this.layoutChange.emit({
-            layout: this.graphData.layout !== this.cyGraph_.layout ? this.cyGraph_.layout : undefined,
-            nodePositions: this.graphData.nodePositions !== this.cyGraph_.data.nodePositions ? this.cyGraph_.data.nodePositions : undefined
+    private onGraphDataChange(): void {
+        // console.log('Graph-View.onGraphDataChange entered ...');
+        this.graphDataChange.emit({
+            layout:
+                this.graphData.layout !== this.cyGraph_.layout ?
+                this.cyGraph_.layout :
+                undefined
+            ,
+            nodePositions:
+                this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
+                this.cyGraph_.nodePositions :
+                undefined
+            ,
+            selectedElements:
+                this.graphData.selectedElements !== this.cyGraph_.selectedElements ?
+                this.cyGraph_.selectedElements :
+                undefined
         });
+        // console.log('Graph-View.onGraphDataChange leaving ...');
     }
 
-    private onPanChange(): void {
-        this.panChange.emit(this.cyGraph_.pan);
+    private onContextMenuRequest(info: ContextMenuRequestInfo): void {
+        // console.log('GraphView.onContextMenuRequest entered ...');
+        this.contextMenuRequest.emit(info);
+        // console.log('GraphView.onContextMenuRequest leaving ...');
     }
 
-    private onSelectionChange(): void {
-        this.selectionChange.emit(this.cyGraph_.data.selectedElements);
+    private createCyGraph(): void {
+        this.cyGraph_ = new VirtualZoomCyGraph(
+            this.graphElement.nativeElement,
+            this.graphData,
+            this.styleConfig,
+            {
+                minZoom: GraphViewComponent.MIN_ZOOM,
+                maxZoom: GraphViewComponent.MAX_ZOOM,
+                autoungrabify: true,
+                defaultLayout: {
+                    zoom: 2,
+                    pan: { x: 0, y: 0 }
+                }
+            }
+        );
+        this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
+        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, () => this.onGraphDataChange());
+        this.cyGraph_.registerListener(
+            GraphEventType.CONTEXT_MENU_REQUEST,
+            (info: ContextMenuRequestInfo) => this.onContextMenuRequest(info)
+        );
+
+        if (this.graphData !== this.cyGraph_.data) {
+            setTimeout(() => this.onGraphDataChange(), 0);
+        }
     }
 
-    private onContextMenuRequest(): void {}
-
-    private checkGraph(): void {
+    private processInputDataUpdate(): void {
+        // console.log('GraphView.processInputDataUpdate entered ...');
         if (this.ngAfterViewInitPassed) {
             if (!this.inputProcessed) {
                 if (this.graphData && this.styleConfig) {
                     if (this.cyGraph_ && !this.graphData.layout) {
-                        this.cyGraph_.destroy();
-                        this.cyGraph_ = undefined;
+                        this.cleanCyGraph();
                     }
                     if (!this.cyGraph_) {
-                        this.cyGraph_ = new CyGraph(this.graphElement.nativeElement, this.graphData, this.styleConfig, { name: 'random' });
-                        this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onLayoutChange());
-                        this.cyGraph_.registerListener(GraphEventType.PAN_CHANGE, () => this.onPanChange());
-                        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, () => this.onSelectionChange());
-                        this.cyGraph_.registerListener(GraphEventType.CONTEXT_MENU_REQUEST, () => this.onContextMenuRequest());
-                        this.onLayoutChange();
+                        this.createCyGraph();
                     } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
                         this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
                     }
                 } else if (this.cyGraph_) {
-                    this.cyGraph_.destroy();
-                    this.cyGraph_ = undefined;
+                    this.cleanCyGraph();
                 }
                 this.inputProcessed = true;
             }
         }
+        // console.log('GraphView.processInputDataUpdate leaving ...');
     }
 }
