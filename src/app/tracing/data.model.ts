@@ -95,9 +95,7 @@ export interface Position {
     y: number;
 }
 
-export interface PositionMap {
-    [key: string]: Position;
-}
+export type PositionMap = Record<string, Position>;
 
 export interface Connection {
     source: string;
@@ -414,7 +412,6 @@ export interface DeliveryLegendEntry extends LegendEntry {
 }
 
 export interface LegendInfo {
-    showMissingGisInfoEntry?: boolean;
     stations: StationLegendEntry[];
     deliveries: DeliveryLegendEntry[];
 }
@@ -422,4 +419,9 @@ export interface LegendInfo {
 export interface Size {
     width: number;
     height: number;
+}
+
+export interface Range {
+    min: number;
+    max: number;
 }
