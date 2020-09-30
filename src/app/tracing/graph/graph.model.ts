@@ -1,5 +1,5 @@
 import {
-    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData, Position, SelectedElements
+    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData, Position, SelectedElements, StationId, DeliveryId
 } from '../data.model';
 
 class None { private ___ = {}; }
@@ -146,8 +146,11 @@ export interface CyEdge extends CyElement {
     target(): CyNode;
 }
 
+export type NodeId = string;
+export type EdgeId = string;
+
 export interface CyNodeData extends StationTracingData {
-    id: string;
+    id: NodeId;
     station: StationData;
     label: string;
     isMeta: boolean;
@@ -161,15 +164,15 @@ export interface CyNodeData extends StationTracingData {
 }
 
 export interface CyEdgeData extends DeliveryTracingData {
-    id: string;
+    id: EdgeId;
     deliveries: DeliveryData[];
     stopColors: string;
     stopPositions: string;
     label?: string;
     labelWoPrefix: string;
     selected: boolean;
-    source: string;
-    target: string;
+    source: NodeId;
+    target: NodeId;
     wLabelSpace: boolean;
 }
 
@@ -179,13 +182,11 @@ export interface GraphElementData {
 }
 
 export interface GraphServiceData extends GraphElementData, DataServiceData {
-    statIdToNodeDataMap: {[key: string]: CyNodeData };
-    // nodeData: CyNodeData[];
-    idToNodeMap?: { [key: string]: CyNodeData };
-    delIdToEdgeDataMap: {[key: string]: CyEdgeData };
-    // edgeData: CyEdgeData[];
-    nodeSel: {[key: string]: boolean };
-    edgeSel: {[key: string]: boolean };
+    statIdToNodeDataMap: Record<StationId, CyNodeData>;
+    idToNodeMap?: Record<NodeId, CyNodeData>;
+    delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
+    nodeSel: Record<NodeId, boolean>;
+    edgeSel: Record<EdgeId, boolean>;
     propsChangedFlag: {};
     edgeLabelChangedFlag: {};
 }
@@ -196,8 +197,8 @@ export interface Size {
 }
 
 export interface ContextMenuRequestContext {
-    nodeId?: string;
-    edgeId?: string;
+    nodeId?: NodeId;
+    edgeId?: EdgeId;
 }
 
 export interface ContextMenuRequestInfo {
@@ -206,8 +207,8 @@ export interface ContextMenuRequestInfo {
 }
 
 export interface SelectedGraphElements {
-    nodes: string[];
-    edges: string[];
+    nodes: NodeId[];
+    edges: EdgeId[];
 }
 
 export interface ContextSelection extends SelectedElements, SelectedGraphElements {}
