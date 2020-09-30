@@ -1,0 +1,205 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec8c19bf_1156f97b",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "class DenovoFitLayout extends Layout {\n...\n}\nand so on",
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5cd7a05_ea2ffa2a",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "magic object\nDefine const DEFAULT_LAYOUT\u003d{}",
+      "range": {
+        "startLine": 11,
+        "startChar": 37,
+        "endLine": 11,
+        "endChar": 67
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb454f8e_2c406699",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "? cannot be undefined",
+      "range": {
+        "startLine": 13,
+        "startChar": 8,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45b73311_5adceeef",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 14,
+        "startChar": 41,
+        "endLine": 14,
+        "endChar": 47
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2c9df44_a3fae82e",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "and same",
+      "range": {
+        "startLine": 14,
+        "startChar": 65,
+        "endLine": 14,
+        "endChar": 71
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "882350ff_6cdce55c",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 14,
+        "startChar": 8,
+        "endLine": 14,
+        "endChar": 22
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfcbc4ba_c0f00138",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "you checked it begore",
+      "range": {
+        "startLine": 15,
+        "startChar": 12,
+        "endLine": 15,
+        "endChar": 32
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ad4287a_8ca0fe45",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "? cannot be undefined",
+      "range": {
+        "startLine": 17,
+        "startChar": 23,
+        "endLine": 17,
+        "endChar": 48
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f71c44b2_04cfffe3",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T13:35:28Z",
+      "side": 1,
+      "message": "duplicated code",
+      "range": {
+        "startLine": 25,
+        "startChar": 20,
+        "endLine": 26,
+        "endChar": 94
+      },
+      "revId": "df1ba1c3b135d3521993c78402bbb9065d105a11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
