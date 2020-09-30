@@ -16,6 +16,24 @@
       "revId": "f6cb97d2b26d2711856de1ee4312637da3681c59",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97cb970a_2a002a8c",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T19:52:17Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8bb46668_a10c5c40",
+      "revId": "f6cb97d2b26d2711856de1ee4312637da3681c59",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
