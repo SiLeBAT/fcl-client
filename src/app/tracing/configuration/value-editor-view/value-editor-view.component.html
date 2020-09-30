@@ -8,11 +8,11 @@
         placeholder="value"
         autocomplete="off"
         [value] = "value"
-        (change) = "onChange($event)"
         (input) = "onInput($event)"
         [matAutocomplete]="filterValues"
     />
-    <mat-autocomplete #filterValues="matAutocomplete">
+
+    <mat-autocomplete #filterValues="matAutocomplete" (optionSelected)="onOptionSelected($event)">
         <ng-container *ngFor="let item of autoCompleteValues">
             <mat-option
                 class="fcl-filter-select-option"

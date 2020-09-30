@@ -27,10 +27,7 @@ function isConditionValid(condition: InternalLogicalFilterCondition): boolean {
     return (
         condition.property &&
         condition.operation &&
-        (
-            (condition.value !== null && condition.value !== undefined) ||
-            condition.operation in [ExtendedOperationType.EQUAL, ExtendedOperationType.NOT_EQUAL]
-        )
+        condition.value !== null && condition.value !== undefined && condition.value !== ''
     );
 }
 

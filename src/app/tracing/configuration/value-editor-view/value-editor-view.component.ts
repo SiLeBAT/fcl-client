@@ -1,4 +1,5 @@
 import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 type ValueType = string | number | boolean;
 
@@ -18,6 +19,8 @@ interface InputData {
     encapsulation: ViewEncapsulation.None
 })
 export class ValueEditorViewComponent {
+
+    private static readonly MAX_AUTOCOMPLETE_PROPOSALS = 20;
 
     @Input() value: string | number | boolean;
     @Input() availableValues: ValueType[];
@@ -50,18 +53,19 @@ export class ValueEditorViewComponent {
 
     private updateAutoCompleteValues(): void {
         const value = valueToStr(this.value).toLowerCase();
-        this.autocompleteValues_ = this.availableStrValues_.filter(s => s.toLowerCase().includes(value)).slice(1, 20);
-    }
-
-    onChange(event: any): void {
-        const value: string = event.target.value;
-        this.value = value;
-        this.valueChange.emit(value);
+        this.autocompleteValues_ = this.availableStrValues_
+            .filter(s => s.toLowerCase().includes(value))
+            .slice(0, ValueEditorViewComponent.MAX_AUTOCOMPLETE_PROPOSALS);
     }
 
     onInput(event: any): void {
         const value: string = event.target.value;
         this.value = value;
         this.valueChange.emit(value);
+    }
+
+    onOptionSelected(event: MatAutocompleteSelectedEvent): void {
+        const selectedValue = event.option.value;
+        this.valueChange.emit(selectedValue);
     }
 }
