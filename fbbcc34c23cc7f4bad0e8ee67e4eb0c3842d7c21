@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1fef0b4a_c3757e3a",
+        "filename": "src/app/tracing/data.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a74bf8bc_a00dc6b3",
+      "range": {
+        "startLine": 413,
+        "startChar": 4,
+        "endLine": 413,
+        "endChar": 38
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "43930dcb_81d29673",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
         "patchSetId": 1
@@ -39,6 +63,24 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9201e1ee_cee17bf5",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Positioning remains in the container. Styles go into the view components.",
+      "parentUuid": "43930dcb_81d29673",
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "7caa1c81_d6208b04",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ddf19a0b_c5d56f8a",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 9
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f737a991_9da50525",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
         "patchSetId": 1
@@ -85,6 +151,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a875b46_1bcde926",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "It is used now.",
+      "parentUuid": "f737a991_9da50525",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "16322dee_c0c264ed",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Already changed to \u0027absolute\u0027.",
+      "parentUuid": "a5762e43_47c1416c",
+      "range": {
+        "startLine": 16,
+        "startChar": 14,
+        "endLine": 16,
+        "endChar": 19
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "381ad66c_e8e1b67f",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
         "patchSetId": 1
@@ -131,6 +245,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f54ea6dd_d086b32e",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "The other z-indexes are also specified here.",
+      "parentUuid": "381ad66c_e8e1b67f",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 15
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "0cc32305_ead76040",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Used again.",
+      "parentUuid": "e36201c5_88127c5e",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "adf7b360_994fa581",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
         "patchSetId": 1
@@ -177,6 +339,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c19a497e_e96eb41e",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code. \nThis component is already back in html.",
+      "parentUuid": "adf7b360_994fa581",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 87
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -203,6 +389,30 @@
     },
     {
       "key": {
+        "uuid": "c0b10ffd_3ad79ae1",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "efbafe63_2d0496c3",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 38
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "48076fd0_88a158e4",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
         "patchSetId": 1
@@ -223,6 +433,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2e3478c_98de3f1f",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code. Its used again.",
+      "parentUuid": "48076fd0_88a158e4",
+      "range": {
+        "startLine": 60,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 66
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -249,6 +483,30 @@
     },
     {
       "key": {
+        "uuid": "7a46e250_80e24e6f",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "edf5a1dd_19acf39e",
+      "range": {
+        "startLine": 85,
+        "startChar": 16,
+        "endLine": 89,
+        "endChar": 21
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "958eb790_223eb031",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
         "patchSetId": 1
@@ -269,6 +527,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a848928b_48e75b18",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "old code",
+      "parentUuid": "958eb790_223eb031",
+      "range": {
+        "startLine": 96,
+        "startChar": 32,
+        "endLine": 97,
+        "endChar": 115
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -295,6 +577,30 @@
     },
     {
       "key": {
+        "uuid": "b607a871_97e1ba27",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "old code",
+      "parentUuid": "8c33e87d_4834da6b",
+      "range": {
+        "startLine": 102,
+        "startChar": 12,
+        "endLine": 102,
+        "endChar": 92
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5674614_2f3bc843",
         "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
         "patchSetId": 1
@@ -315,6 +621,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d317289_d57d9a92",
+        "filename": "src/app/tracing/graph/components/gis-graph2/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "method is for external access",
+      "parentUuid": "c5674614_2f3bc843",
+      "range": {
+        "startLine": 118,
+        "startChar": 4,
+        "endLine": 120,
+        "endChar": 5
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -341,6 +671,30 @@
     },
     {
       "key": {
+        "uuid": "0cc435fc_a5ad8780",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Yes, it does exist.",
+      "parentUuid": "5445006c_3fcc5154",
+      "range": {
+        "startLine": 1,
+        "startChar": 61,
+        "endLine": 1,
+        "endChar": 70
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "247686a4_1df997c7",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
         "patchSetId": 1
@@ -361,6 +715,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0df0b12b_2df4c438",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "We are using an external library to export images of the graph view. This flags tells this library to ignore this component.",
+      "parentUuid": "247686a4_1df997c7",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 34
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -410,6 +788,54 @@
     },
     {
       "key": {
+        "uuid": "1daefcde_6189a5ec",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Only renamed it in the current component.",
+      "parentUuid": "05b6d5fd_a9112218",
+      "range": {
+        "startLine": 12,
+        "startChar": 5,
+        "endLine": 12,
+        "endChar": 15
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c136a405_b425f6db",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "I rename the function as proposed in the receiving component.",
+      "parentUuid": "e6fcd9a6_3dbbe4bc",
+      "range": {
+        "startLine": 12,
+        "startChar": 18,
+        "endLine": 12,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0af55bf4_ad6097f0",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
         "patchSetId": 1
@@ -430,6 +856,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49577ff3_5e133dba",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "0af55bf4_ad6097f0",
+      "range": {
+        "startLine": 21,
+        "startChar": 5,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -456,6 +906,30 @@
     },
     {
       "key": {
+        "uuid": "99a4a93e_b28d720b",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "87aed166_615690a6",
+      "range": {
+        "startLine": 3,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 15
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "44cc8408_3af0aaee",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
         "patchSetId": 1
@@ -476,6 +950,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29e9f23b_9adfc468",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Obsolete",
+      "parentUuid": "44cc8408_3af0aaee",
+      "range": {
+        "startLine": 9,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 16
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -502,6 +1000,30 @@
     },
     {
       "key": {
+        "uuid": "21abc1f4_50cb88e1",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "e4d39f46_0ab3dabf",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 12,
+        "endChar": 17
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e9f53f8_697951e5",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -522,6 +1044,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "555fb2aa_0e0e08ba",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "3e9f53f8_697951e5",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 38
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -548,6 +1094,30 @@
     },
     {
       "key": {
+        "uuid": "67abd550_298d5373",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Obsolete.",
+      "parentUuid": "f3808a4c_7c998308",
+      "range": {
+        "startLine": 37,
+        "startChar": 31,
+        "endLine": 37,
+        "endChar": 43
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf0fa06b_52b4bc76",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -568,6 +1138,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73396192_817b6c6f",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Obsolete.",
+      "parentUuid": "bf0fa06b_52b4bc76",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -594,6 +1188,30 @@
     },
     {
       "key": {
+        "uuid": "37883138_0f03b00d",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Not empty anymore.",
+      "parentUuid": "67e77da2_fa9ad27a",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 5
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "240a7e69_f7163a16",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -614,6 +1232,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "252fa9c2_f4d41fad",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "240a7e69_f7163a16",
+      "range": {
+        "startLine": 81,
+        "startChar": 31,
+        "endLine": 81,
+        "endChar": 32
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -640,6 +1282,30 @@
     },
     {
       "key": {
+        "uuid": "f57a1632_1c90a757",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05a65c6e_a6604596",
+      "range": {
+        "startLine": 82,
+        "startChar": 29,
+        "endLine": 82,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6840163c_dd6517a8",
         "filename": "src/app/tracing/graph/cy-graph.ts",
         "patchSetId": 1
@@ -660,6 +1326,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5aceb4ef_edfdceaf",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6840163c_dd6517a8",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -686,6 +1376,30 @@
     },
     {
       "key": {
+        "uuid": "322165ef_74133bb8",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Solved differently, because listeners have different declarations.",
+      "parentUuid": "52534370_10f525e8",
+      "range": {
+        "startLine": 23,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3236f985_c4237e34",
         "filename": "src/app/tracing/graph/cy-graph.ts",
         "patchSetId": 1
@@ -706,6 +1420,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ddeb00c_5fcad028",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Only Api declaration. However this is obsolete.",
+      "parentUuid": "3236f985_c4237e34",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 37,
+        "endChar": 30
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -732,6 +1470,30 @@
     },
     {
       "key": {
+        "uuid": "603524d2_acf3fbbd",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Undefined is not returned anymore. The cy graph is set during object construction.",
+      "parentUuid": "ad7f5335_a42bf89b",
+      "range": {
+        "startLine": 39,
+        "startChar": 16,
+        "endLine": 39,
+        "endChar": 23
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9cf06e39_51787be1",
         "filename": "src/app/tracing/graph/cy-graph.ts",
         "patchSetId": 1
@@ -752,6 +1514,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db75d44c_27d90694",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Same as above.",
+      "parentUuid": "9cf06e39_51787be1",
+      "range": {
+        "startLine": 43,
+        "startChar": 15,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -778,6 +1564,30 @@
     },
     {
       "key": {
+        "uuid": "33985b4c_29bf4cd5",
+        "filename": "src/app/tracing/graph/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "I use T now.",
+      "parentUuid": "a439a9fd_ec908c05",
+      "range": {
+        "startLine": 64,
+        "startChar": 21,
+        "endLine": 64,
+        "endChar": 24
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "528c0d9c_55ba5a47",
         "filename": "src/app/tracing/graph/graph.model.ts",
         "patchSetId": 1
@@ -801,6 +1611,30 @@
     },
     {
       "key": {
+        "uuid": "d7f1dd17_2dd45f0a",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "528c0d9c_55ba5a47",
+      "range": {
+        "startLine": 174,
+        "startChar": 28,
+        "endLine": 174,
+        "endChar": 29
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1cbf5861_8178531c",
         "filename": "src/app/tracing/tracing.module.ts",
         "patchSetId": 1
@@ -821,6 +1655,30 @@
       "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "745ba68f_21734b85",
+        "filename": "src/app/tracing/tracing.module.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:01:22Z",
+      "side": 1,
+      "message": "Already discussed.",
+      "parentUuid": "1cbf5861_8178531c",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 94
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
