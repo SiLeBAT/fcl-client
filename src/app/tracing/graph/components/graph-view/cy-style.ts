@@ -22,6 +22,9 @@ export class CyStyle {
     private static readonly META_NODE_BORDER_WIDTH_FACTOR = 2;
     private static readonly SELECTED_NODE_BORDER_WIDTH_FACTOR = 2;
     private static readonly CONTROL_POINT_STEP_SIZE_FACTOR = 4;
+    private static readonly MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
+    private static readonly MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
+    private static readonly MAX_NODE_SIZE_FACTOR = 1.44;
 
     private maxScore: number;
     private minScore: number;
@@ -42,11 +45,9 @@ export class CyStyle {
     }
 
     private getProperGraphSize(): GraphSize {
-        const MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
-        const MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
-        if (this.graphData.nodeData.length > MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
+        if (this.graphData.nodeData.length > CyStyle.MAX_STATION_NUMBER_FOR_SMALL_GRAPHS) {
             return GraphSize.HUGE;
-        } else if (this.graphData.edgeData.length > MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) {
+        } else if (this.graphData.edgeData.length > CyStyle.MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS) {
             return GraphSize.LARGE;
         } else {
             return GraphSize.SMALL;
@@ -54,20 +55,15 @@ export class CyStyle {
     }
 
     private createNodeSizeStyle(): { height: string, width: string } {
-        const nodeSizeMap: string = this.createNodeSizeMap();
+        const nodeSizeMapString = this.createNodeSizeMapString();
         return {
-            height: nodeSizeMap,
-            width: nodeSizeMap
+            height: nodeSizeMapString,
+            width: nodeSizeMapString
         };
     }
 
     private createXGraphStyle(graphSize: GraphSize): any {
 
-        // const modelNodeSize = nodeSize / zoom;
-        // const edgeSize = nodeSize * StyleService.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
-        // const modelEdgeWidth = edgeSize / zoom;
-        // const modelSelectedEdgeWidth = modelEdgeWidth * StyleService.SELECTED_EDGE_WIDTH_FACTOR;
-        // const modelFontSize = fontSize / zoom;
         const fontSize = this.styleConfig.fontSize;
         const nodeSize = this.styleConfig.nodeSize;
         const edgeWidth = nodeSize * CyStyle.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
@@ -199,10 +195,10 @@ export class CyStyle {
         return style;
     }
 
-    private createNodeSizeMap(): string {
+    private createNodeSizeMapString(): string {
         if (this.maxScore > this.minScore) {
             const minNodeSize = this.styleConfig.nodeSize;
-            const maxNodeSize = minNodeSize * 1.2 * 1.2;
+            const maxNodeSize = minNodeSize * CyStyle.MAX_NODE_SIZE_FACTOR;
             return 'mapData(score, ' + this.minScore + ', ' + this.maxScore + ', ' + minNodeSize + ',' + maxNodeSize + ')';
         } else {
             return this.styleConfig.nodeSize.toString();
