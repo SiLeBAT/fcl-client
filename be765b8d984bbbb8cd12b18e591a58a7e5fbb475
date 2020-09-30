@@ -2,6 +2,115 @@
   "comments": [
     {
       "key": {
+        "uuid": "796c0628_8839b634",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "majority of interfaces uses getters as foo():Bar instead of getFoo():Bar or foo:Bar, but luckily this is not a part of this ticket",
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "605ca564_2c4ebcb2",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 32
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85fa0be8_6196260e",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "see comment below",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 30
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bee3dead_84798694",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "you could type it: (options: Partial\u003cBoundingBoxOptions\u003e), then you could remove the optionality of the BoundingBox properties",
+      "range": {
+        "startLine": 106,
+        "startChar": 4,
+        "endLine": 106,
+        "endChar": 23
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95bb32dc_4c884977",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 132,
+        "startChar": 4,
+        "endLine": 132,
+        "endChar": 23
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0f00b017_fabf9118",
         "filename": "src/app/tracing/graph/graph.model.ts",
         "patchSetId": 1
@@ -19,6 +128,24 @@
     },
     {
       "key": {
+        "uuid": "09d07019_cffe060b",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0f00b017_fabf9118",
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0eee9ed_f4483b2c",
         "filename": "src/app/tracing/graph/graph.model.ts",
         "patchSetId": 1
@@ -30,6 +157,70 @@
       "writtenOn": "2020-09-30T08:26:51Z",
       "side": 1,
       "message": "I noted this already. This will be fixed.",
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2176c625_daea36c1",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c0eee9ed_f4483b2c",
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79ff1eaf_26a760ce",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "UI interfaces should be placed in another model\n\nyou could type the id as export type cyID \u003d string",
+      "range": {
+        "startLine": 198,
+        "startChar": 0,
+        "endLine": 213,
+        "endChar": 84
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "037910e1_15abb51b",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-09-30T11:58:08Z",
+      "side": 1,
+      "message": "Context selection contains stations, deliveries and nodes, edges. Is this not the same data?",
+      "range": {
+        "startLine": 213,
+        "startChar": 0,
+        "endLine": 213,
+        "endChar": 84
+      },
       "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
