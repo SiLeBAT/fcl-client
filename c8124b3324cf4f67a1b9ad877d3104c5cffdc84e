@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "47e553a0_26f3c761",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "does not work with Hammer",
+      "parentUuid": "3c44ff1d_6f6a2438",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 35
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c6883d9_ddf07efe",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11522c48_4b9d8443",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "does not work with ol",
+      "parentUuid": "0c6883d9_ddf07efe",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 25
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3c88b74d_ed61c58b",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c81dbfd_495eac9f",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 28
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37bc44f1_fa276e53",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "801ad987_0d88739a",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37bc44f1_fa276e53",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 67
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "7358f533_a4a3da83",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f0269439_cf918760",
+      "range": {
+        "startLine": 131,
+        "startChar": 52,
+        "endLine": 131,
+        "endChar": 74
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5988ef0_1fc78367",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6390de0b_e7dfb42a",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c5988ef0_1fc78367",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 83,
+        "endChar": 5
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "79d09d0d_cb203431",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "80c6051c_2485377d",
+      "range": {
+        "startLine": 185,
+        "startChar": 0,
+        "endLine": 185,
+        "endChar": 82
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c17aa92f_45bf306c",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 1
@@ -183,6 +351,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "573186fb_914f886e",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "containerElement can be undefined for headless usage",
+      "parentUuid": "c17aa92f_45bf306c",
+      "range": {
+        "startLine": 241,
+        "startChar": 8,
+        "endLine": 241,
+        "endChar": 36
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "1344d3b2_49010a59",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6648393_a0eb227e",
+      "range": {
+        "startLine": 294,
+        "startChar": 30,
+        "endLine": 294,
+        "endChar": 50
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3e69af9_cac93341",
         "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
         "patchSetId": 1
@@ -223,6 +439,24 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26802c91_e7b17fd5",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b3e69af9_cac93341",
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -249,6 +483,30 @@
     },
     {
       "key": {
+        "uuid": "fac44a64_e1931fa8",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Renamed to \naddCyPanListeners",
+      "parentUuid": "9c3adcd6_a810a335",
+      "range": {
+        "startLine": 5,
+        "startChar": 16,
+        "endLine": 5,
+        "endChar": 35
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "04dfcecd_2bd7434c",
         "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
         "patchSetId": 1
@@ -269,6 +527,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd13aa06_86c15587",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "because if the user makes a selection, cy raises this event once per node\nso basically this subscription is an indicator for multiple selectionProcessor calls for just one event",
+      "parentUuid": "04dfcecd_2bd7434c",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 34
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -295,6 +577,30 @@
     },
     {
       "key": {
+        "uuid": "5c67e56b_6ff38435",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "I meant \u0027timer\u0027 from \u0027rxjs\u0027\nI replaced it by \u0027setTimeout\u0027",
+      "parentUuid": "d8a773db_d9d200cb",
+      "range": {
+        "startLine": 25,
+        "startChar": 41,
+        "endLine": 25,
+        "endChar": 49
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5e8b5d4_327f1ba0",
         "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
         "patchSetId": 1
@@ -315,6 +621,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99baf9cd_1ca36c5d",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "the linter requires an error handler\nResolved, because I replaced \u0027timer\u0027 (see above)",
+      "parentUuid": "b5e8b5d4_327f1ba0",
+      "range": {
+        "startLine": 31,
+        "startChar": 16,
+        "endLine": 33,
+        "endChar": 17
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -341,6 +671,30 @@
     },
     {
       "key": {
+        "uuid": "2cf95f2b_bc84c55c",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "I added some documentation and made the code more explicit.",
+      "parentUuid": "8a44a79a_1d1679a3",
+      "range": {
+        "startLine": 38,
+        "startChar": 23,
+        "endLine": 38,
+        "endChar": 41
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b8c479b1_27d950eb",
         "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
         "patchSetId": 1
@@ -361,6 +715,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1e9fd87_ae664901",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8c479b1_27d950eb",
+      "range": {
+        "startLine": 8,
+        "startChar": 17,
+        "endLine": 8,
+        "endChar": 27
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -387,6 +765,30 @@
     },
     {
       "key": {
+        "uuid": "22653a21_3f353d4b",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "I don\u0027t understand. There is a constructor and event class members.",
+      "parentUuid": "0504aaeb_38ad8583",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "06b7f83e_10d03058",
         "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
         "patchSetId": 1
@@ -407,6 +809,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16d2113a_a75e03f8",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06b7f83e_10d03058",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 46,
+        "endChar": 60
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -433,6 +859,30 @@
     },
     {
       "key": {
+        "uuid": "bab6ed6c_014f9404",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87fc6c79_36eed487",
+      "range": {
+        "startLine": 57,
+        "startChar": 27,
+        "endLine": 57,
+        "endChar": 34
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "29f81728_d4842b04",
         "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
         "patchSetId": 1
@@ -453,6 +903,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea6ae672_2b8167f6",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "setting of conditional properties",
+      "parentUuid": "29f81728_d4842b04",
+      "range": {
+        "startLine": 86,
+        "startChar": 16,
+        "endLine": 86,
+        "endChar": 19
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -479,6 +953,30 @@
     },
     {
       "key": {
+        "uuid": "d250f3ae_8f726c2c",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e5da787_514e0fd5",
+      "range": {
+        "startLine": 202,
+        "startChar": 12,
+        "endLine": 202,
+        "endChar": 29
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "93e4b109_a97648f9",
         "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
         "patchSetId": 1
@@ -499,6 +997,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71c6f064_980609b3",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93e4b109_a97648f9",
+      "range": {
+        "startLine": 205,
+        "startChar": 46,
+        "endLine": 205,
+        "endChar": 55
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -525,6 +1047,30 @@
     },
     {
       "key": {
+        "uuid": "435c3993_be73b58d",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Obsolete.",
+      "parentUuid": "5a184a86_23864679",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 10
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65d7997b_2ab77a7b",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -548,6 +1094,30 @@
     },
     {
       "key": {
+        "uuid": "1329f159_5d89a320",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "In my eyes the change within in the LayoutChange object is well defined.",
+      "parentUuid": "65d7997b_2ab77a7b",
+      "range": {
+        "startLine": 45,
+        "startChar": 14,
+        "endLine": 45,
+        "endChar": 27
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e858486d_7ebbc69b",
         "filename": "src/app/tracing/graph/graph-utils.ts",
         "patchSetId": 1
@@ -562,6 +1132,24 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8ca868b_24b705bb",
+        "filename": "src/app/tracing/graph/graph-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e858486d_7ebbc69b",
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -588,6 +1176,30 @@
     },
     {
       "key": {
+        "uuid": "b0ee94d2_679729ce",
+        "filename": "src/app/tracing/graph/graph-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b1cf60e_ac33bd55",
+      "range": {
+        "startLine": 9,
+        "startChar": 16,
+        "endLine": 9,
+        "endChar": 54
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a17627fb_c7266d0f",
         "filename": "src/app/tracing/graph/graph-utils.ts",
         "patchSetId": 1
@@ -608,6 +1220,30 @@
       "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebfd4bda_1e64fe92",
+        "filename": "src/app/tracing/graph/graph-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-09-30T12:03:47Z",
+      "side": 1,
+      "message": "This is necessary. Because after the spreading operator follows an array of arrays of strings and I am interested in an array on strings.",
+      "parentUuid": "a17627fb_c7266d0f",
+      "range": {
+        "startLine": 14,
+        "startChar": 20,
+        "endLine": 15,
+        "endChar": 15
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
