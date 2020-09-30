@@ -1,14 +1,13 @@
-import { CyNodeData, CyEdgeData } from './graph.model';
-import { SelectedGraphElements } from './components/graph-view/cy-graph';
+import { SelectedGraphElements, GraphElementData } from './graph.model';
+import { Utils } from '../util/non-ui-utils';
+import { SelectedElements } from '../data.model';
 
-export interface GraphData {
-    nodeData: CyNodeData[];
-    edgeData: CyEdgeData[];
-}
+export function mapGraphSelectionToFclElementSelection(
+    selectedGraphElements: SelectedGraphElements,
+    graphData: GraphElementData): SelectedElements {
+    const nodeSel = Utils.createSimpleStringSet(selectedGraphElements.nodes);
+    const edgeSel = Utils.createSimpleStringSet(selectedGraphElements.edges);
 
-export function mapGraphSelectionToFclElementSelection(selectedGraphElements: SelectedGraphElements, graphData: GraphData) {
-    const nodeSel = selectedGraphElements.nodeSel;
-    const edgeSel = selectedGraphElements.edgeSel;
     return {
         stations: graphData.nodeData.filter(n => nodeSel[n.id]).map(n => n.station.id),
         deliveries: [].concat(

@@ -1,12 +1,25 @@
-<div class="fcl-graph-container" #container>
+<div class="fcl-graph-container">
+
+    <fcl-geomap [mapConfig]="mapConfig" [frameData]="unknownPosFrameData" class="fcl-graph-map"></fcl-geomap>
+
     <fcl-graph-view
         class="fcl-graph"
         [graphData]="graphData"
         [styleConfig]="styleConfig"
         [showZoom]="showZoom$ | async"
-        [showLegend]="showLegend$ | async"
-        (panChange)="onPanChange($event)"
-        (layoutChange)="onLayoutChange($event)"
-        (selectionChange)="onSelectionChange($event)"
-        ></fcl-graph-view>
+        (graphDataChange)="onGraphDataChange($event)"
+        (contextMenuRequest)="onContextMenuRequest($event)"
+    ></fcl-graph-view>
+
+    <fcl-graph-legend-view
+        class="fcl-graph-legend"
+        *ngIf="showLegend$ | async"
+        [legendInfo]="legendInfo"
+        [showMissingGisInfoEntry]="!!unknownPosFrameData"
+    ></fcl-graph-legend-view>
+
+    <fcl-geomap-licref-view class="fcl-osm-reference"></fcl-geomap-licref-view>
+
 </div>
+
+<fcl-context-menu-view (itemSelected)="onContextMenuSelection($event)" #contextMenu></fcl-context-menu-view>

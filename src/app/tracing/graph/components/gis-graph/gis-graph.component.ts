@@ -1,44 +1,28 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Subject, timer, Subscription } from 'rxjs';
-import * as Hammer from 'hammerjs';
-import * as ol from 'ol';
+import { Subscription } from 'rxjs';
 
 import html2canvas from 'html2canvas';
-import { ResizeSensor } from 'css-element-queries';
-import { Utils as UIUtils } from '../../../util/ui-utils';
-import { Utils as NonUIUtils, Utils } from '../../../util/non-ui-utils';
 import {
-    Layout,
-    Position,
-    GraphState,
-    GraphType,
-    LegendInfo,
-    StationData,
-    DeliveryData,
-    MergeDeliveriesType,
-    MapType,
-    ShapeFileData,
-    PositionMap
+    Layout, GraphState, GraphType, LegendInfo, MergeDeliveriesType, MapType,
+    ShapeFileData
 } from '../../../data.model';
-import * as _ from 'lodash';
-import { StyleService } from '../../style.service';
-import { Store } from '@ngrx/store';
-import * as fromTracing from '@app/tracing/state/tracing.reducers';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeData } from '../../graph.model';
-import * as tracingSelectors from '../../../state/tracing.selectors';
+import _ from 'lodash';
+import { Action, Store } from '@ngrx/store';
+import { ContextMenuRequestInfo, GraphServiceData, SelectedGraphElements } from '../../graph.model';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
-import * as tracingStoreActions from '../../../state/tracing.actions';
-import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-menu.component';
-
-import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
-import { removeFrameLayer, setFrameLayer, createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
-// import { GraphData, StyleConfig } from '../../cy-graph';
-import { LayoutChange, LayoutOnlyChange } from '../graph-view/graph-view.component';
-import { SelectedGraphElements, GraphData } from '../graph-view/cy-graph';
+import { GraphDataChange } from '../graph-view/graph-view.component';
+import { GraphData } from '../graph-view/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
 import { StyleConfig } from '../graph-view/cy-style';
+import { MapConfig, UnknownPosFrameData } from '../geomap/geomap.component';
+import { GisPositioningService } from '../../gis-positioning.service';
+import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
+import { ContextMenuService } from '../../context-menu.service';
+import { State } from '@app/tracing/state/tracing.reducers';
+import { SetGisGraphLayoutSOA, SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
+import { getGisGraphData, getGraphType, getShowLegend, getShowZoom } from '@app/tracing/state/tracing.selectors';
 
 interface GraphSettingsState {
     fontSize: number;
@@ -59,28 +43,31 @@ interface GisGraphState extends GraphState, GraphSettingsState {
 })
 export class GisGraphComponent implements OnInit, OnDestroy {
 
-    @ViewChild('contextMenu', { static: true }) contextMenu: GraphContextMenuComponent;
+    @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
 
     private componentIsActive = false;
 
-    showZoom$ = this.store.select(tracingSelectors.getShowZoom);
-    showLegend$ = this.store.select(tracingSelectors.getShowLegend);
-    graphType$ = this.store.select(tracingSelectors.getGraphType);
+    showZoom$ = this.store.select(getShowZoom);
+    showLegend$ = this.store.select(getShowLegend);
+    graphType$ = this.store.select(getGraphType);
 
     private graphStateSubscription: Subscription;
     private graphTypeSubscription: Subscription;
 
     legendInfo: LegendInfo;
 
-    // private cachedState: GisGraphState;
-    // private cachedData: GraphServiceData;
+    private cachedData: GraphServiceData;
     private graphData_: GraphData;
     private styleConfig_: StyleConfig;
+    private mapConfig_: MapConfig;
+    private unknownPosFrameData_: UnknownPosFrameData;
 
     constructor(
-        private store: Store<fromTracing.State>,
+        private store: Store<State>,
         public elementRef: ElementRef,
         private graphService: GraphService,
+        private gisPositioningService: GisPositioningService,
+        private contextMenuService: ContextMenuService,
         private alertService: AlertService
     ) {}
 
@@ -98,7 +85,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                 } else {
                     if (!this.graphStateSubscription) {
                         this.graphStateSubscription = this.store
-                            .select(tracingSelectors.getGisGraphData)
+                            .select(getGisGraphData)
                             .pipe(filter(() => this.componentIsActive))
                             .subscribe(
                                 graphState => this.applyState(graphState),
@@ -127,17 +114,32 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return html2canvas(this.elementRef.nativeElement);
     }
 
-    onSelectionChange(selectedGraphElements: SelectedGraphElements): void {
-        this.store.dispatch(new tracingStoreActions.SetSelectedElementsSOA({
-            selectedElements: mapGraphSelectionToFclElementSelection(selectedGraphElements, this.graphData)
-        }));
+    onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
+        // console.log('Gis-Graph.onContextMenuRequest entered ...');
+        const menuData = this.contextMenuService.getMenuData(requestInfo.context, this.cachedData, false);
+        this.contextMenu.open(requestInfo.position, menuData);
+        // console.log('Gis-Graph.onContextMenuRequest leaving ...');
     }
 
-    onLayoutChange(layoutChange: LayoutOnlyChange): void {
-        this.store.dispatch(new tracingStoreActions.SetGisGraphLayoutSOA({ layout: layoutChange.layout }));
+    onContextMenuSelection(action: Action): void {
+        // console.log('Gis-Graph.onContextMenuSelection entered ...');
+        if (action) {
+            this.store.dispatch(action);
+        }
+        // console.log('Gis-Graph.onContextMenuSelection leaving ...');
     }
 
-    onPanChange(position: Position): void {
+    onGraphDataChange(graphDataChange: GraphDataChange): void {
+        // console.log('Gis-Graph.onGraphDataChange entered ...');
+        if (graphDataChange.layout) {
+            this.store.dispatch(new SetGisGraphLayoutSOA({ layout: graphDataChange.layout }));
+        }
+        if (graphDataChange.selectedElements) {
+            this.store.dispatch(new SetSelectedElementsSOA({
+                selectedElements: mapGraphSelectionToFclElementSelection(graphDataChange.selectedElements, this.cachedData)
+            }));
+        }
+        // console.log('Gis-Graph.onGraphDataChange leaving ...');
     }
 
     get graphData(): GraphData {
@@ -148,61 +150,47 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return this.styleConfig_;
     }
 
-    getSelectedElements(newData: GraphServiceData): SelectedGraphElements {
+    get mapConfig(): MapConfig {
+        return this.mapConfig_;
+    }
+
+    get unknownPosFrameData(): UnknownPosFrameData {
+        return this.unknownPosFrameData_;
+    }
+
+    private getSelectedElements(newData: GraphServiceData): SelectedGraphElements {
         return (
             (
                 !this.graphData_ ||
-                this.graphData_.selectedElements.nodeSel !== newData.nodeSel ||
-                this.graphData_.selectedElements.edgeSel !== newData.edgeSel
+                !this.cachedData ||
+                this.cachedData.nodeSel !== newData.nodeSel ||
+                this.cachedData.edgeSel !== newData.edgeSel
             ) ?
                 {
-                    nodeSel: newData.nodeSel,
-                    edgeSel: newData.edgeSel
+                    nodes: newData.nodeData.map(n => n.id).filter(id => newData.nodeSel[id]),
+                    edges: newData.edgeData.map(e => e.id).filter(id => newData.edgeSel[id])
                 } :
                 this.graphData_.selectedElements
         );
     }
 
-    getPositions(newData: GraphServiceData): PositionMap {
-        return (
-            (
-                !this.graphData_ ||
-                this.graphData_.nodeData !== newData.nodeData
-            ) ?
-            Utils.createObjectFromArray(
-                newData.nodeData,
-                (n: CyNodeData) => n.id,
-                (n: CyNodeData) => ({ x: n.station.lat * 100, y: n.station.lon * 100 })) :
-            this.graphData_.nodePositions
-        );
-    }
-
     private applyState(newState: GisGraphState) {
+        // console.log('Gis-Graph.applyState entered ...');
         const newData: GraphServiceData = this.graphService.getData(newState);
-        // if (!this.graphData_ ||
-        //     this.graphData_.nodeData !== newData.nodeData ||
-        //     this.graphData_.edgeData !== newData.edgeData ||
-        //     this.graphData_.propsChangedFlag !==) {
-        //     this.graphData_ = {
-        //         nodeData: newData.nodeData,
-        //         edgeData: newData.edgeData,
-        //         propsChangedFlag: newData.propsChangedFlag,
-        //         edgeLabelChangedFlag: newData.edgeLabelChangedFlag,
-        //         nodePositions: this.getPositions(newData),
-        //         layout: newState.layout,
-        //         selectedElements: this.getSelectedElements(newData)
-        //     };
-        // } else {
+        const posData = this.gisPositioningService.getPositioningData(newData);
+        this.unknownPosFrameData_ = posData.frameData;
+
+        const selectedElements = this.getSelectedElements(newData);
         this.graphData_ = {
             nodeData: newData.nodeData,
             edgeData: newData.edgeData,
             propsChangedFlag: newData.propsChangedFlag,
             edgeLabelChangedFlag: newData.edgeLabelChangedFlag,
-            nodePositions: this.getPositions(newData),
+            nodePositions: posData.nodePositions,
             layout: newState.layout,
-            selectedElements: this.getSelectedElements(newData)
+            selectedElements: selectedElements
         };
-        // }
+
         if (
             !this.styleConfig_ ||
             this.styleConfig_.fontSize !== newState.fontSize ||
@@ -215,38 +203,24 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             };
         }
 
-        // if (!this.cachedData || this.cachedState.fclElements !== newState.fclElements) {
-        //     this.initCy(newState, newData);
-        // } else if (this.cachedData.nodeData !== newData.nodeData) {
-        //     this.updateGraph(newState, newData);
-        // } else if (this.cachedData.edgeData !== newData.edgeData) {
-        //     this.updateGraphEdges(newData);
-        // } else if (this.cachedData.propsChangedFlag !== newData.propsChangedFlag) {
-        //     this.updateGraphStyle(newState, newData);
-        // } else if (
-        //     !this.selectionTimerSubscription &&
-        //     (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel)) {
-        //     this.updateGraphSelection(newData);
-        // } else if (this.cachedState.nodeSize !== newState.nodeSize) {
-        //     this.updateGraphStyle(newState, newData);
-        // } else if (this.cachedState.fontSize !== newState.fontSize) {
-        //     this.updateGraphStyle(newState, newData);
-        // } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
-        //     this.updateEdgeLabels();
-        // } else if (
-        //     this.cachedState.mapType !== newState.mapType ||
-        //     this.cachedState.shapeFileData !== newState.shapeFileData
-        // ) {
-        //     this.applyMapType(newState);
-        // }
-        // this.cachedData = {
-        //     ...this.cachedData,
-        //     ...newData
-        // };
-        // this.cachedState = {
-        //     ...this.cachedState,
-        //     ...newState
-        // };
+        if (
+            newState.layout &&
+            (
+                !this.mapConfig_ ||
+                this.mapConfig_.layout !== newState.layout ||
+                this.mapConfig_.mapType !== newState.mapType ||
+                this.mapConfig_.shapeFileData !== newState.shapeFileData
+            )
+        ) {
+            this.mapConfig_ = {
+                layout: newState.layout,
+                mapType: newState.mapType,
+                shapeFileData: newState.shapeFileData
+            };
+        }
+
+        this.cachedData = newData;
         this.legendInfo = newData.legendInfo;
+        // console.log('Gis-Graph.applyState leaving ...');
     }
 }

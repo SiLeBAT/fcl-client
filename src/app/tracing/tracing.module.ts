@@ -54,6 +54,9 @@ import { JunctorSelectorViewComponent } from './configuration/junktor-selector-v
 import { ConfigurationEffects } from './configuration/configuration.effects';
 import { ResizeSensorDirective } from './graph/components/graph-view/resize-sensor.directive';
 import { GraphViewComponent } from './graph/components/graph-view/graph-view.component';
+import { GeoMapComponent } from './graph/components/geomap/geomap.component';
+import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
+import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
 
 @NgModule({
     imports: [
@@ -107,7 +110,10 @@ import { GraphViewComponent } from './graph/components/graph-view/graph-view.com
         JunctorSelectorViewComponent,
         ClearAllFilterViewComponent,
         ResizeSensorDirective,
-        GraphViewComponent
+        GraphViewComponent,
+        GeoMapComponent,
+        GeoMapLicRefViewComponent,
+        ContextMenuViewComponent
     ],
     exports: [],
     entryComponents: [
