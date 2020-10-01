@@ -22,6 +22,7 @@ import * as tracingStoreActions from '../../../state/tracing.actions';
 import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-menu.component';
 import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
 import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
+import { addPoints, getCenterFromPoints, getDifference } from '@app/tracing/util/geometry-utils';
 
 interface GraphSettingsState {
     fontSize: number;
@@ -290,7 +291,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         const nodeSet = Utils.createSimpleStringSet(action.payload.nodeIds);
         const isTrueSubSet = action.payload.nodeIds.length > 0 && action.payload.nodeIds.length < this.cy.nodes().size();
         const nodes = isTrueSubSet ? this.cy.nodes().filter(n => nodeSet[n.id()]) : this.cy.nodes();
-        const oldCenter = Utils.getCenter(nodes.map(n => n.position()));
+        const oldCenter = getCenterFromPoints(nodes.map(n => n.position()));
         const cyContext = !isTrueSubSet ? this.cy : nodes;
 
         const oldLayout = {
@@ -333,9 +334,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     private recenterNodes(nodes: CyNodeCollection, oldCenter: Position) {
-        const newCenter = Utils.getCenter(nodes.map(n => n.position()));
-        const delta = Utils.difference(oldCenter, newCenter);
-        nodes.positions(n => Utils.sum(n.position(), delta));
+        const newCenter = getCenterFromPoints(nodes.map(n => n.position()));
+        const delta = getDifference(oldCenter, newCenter);
+        nodes.positions(n => addPoints(n.position(), delta));
     }
 
     private getLayoutFromRect(rect: Rectangle): Layout {

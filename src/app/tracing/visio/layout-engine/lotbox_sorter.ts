@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { VisioBox, VisioConnector, VisioPort, Position } from './datatypes';
-import { Utils } from '../../util/non-ui-utils';
+import { getDifference } from '@app/tracing/util/geometry-utils';
 
 export class LotBoxSorter {
     private portToConnectedPositionsMap: Map<string, Position[]>;
@@ -56,7 +56,7 @@ export class LotBoxSorter {
 
     private getWeight(box: VisioBox, fromPortPosition: Position): number {
         const positions = this.portToConnectedPositionsMap.get(box.ports[0].id);
-        const x = positions.map(p => this.getNormalizedDeltaX(Utils.difference(p, fromPortPosition)));
+        const x = positions.map(p => this.getNormalizedDeltaX(getDifference(p, fromPortPosition)));
         return _.mean(x);
     }
 

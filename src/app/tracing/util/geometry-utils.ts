@@ -60,3 +60,36 @@ export function getNearestPointOnRect(point: Point, rect: BoundaryRect): Point {
         }
     }
 }
+
+export function getCenterFromPoints(points: Point[]): Point {
+    if (points.length > 0) {
+        let xSum = 0;
+        let ySum = 0;
+
+        for (const point of points) {
+            xSum += point.x;
+            ySum += point.y;
+        }
+
+        return {
+            x: xSum / points.length,
+            y: ySum / points.length
+        };
+    } else {
+        return { x: 0, y: 0 };
+    }
+}
+
+export function addPoints(point1: Point, point2: Point): Point {
+    return {
+        x: point1.x + point2.x,
+        y: point1.y + point2.y
+    };
+}
+
+export function getDifference(point1: Point, point2: Point): Point {
+    return {
+        x: point1.x - point2.x,
+        y: point1.y - point2.y
+    };
+}

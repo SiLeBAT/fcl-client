@@ -1,8 +1,7 @@
 import {
-    DeliveryData, StationData, DataServiceData, Color, Position
+    DeliveryData, Color
 } from '../data.model';
 import { HttpClient } from '@angular/common/http';
-import { Constants } from './constants';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
@@ -92,35 +91,6 @@ export class Utils {
         combinations.sort((c1, c2) => c1.length - c2.length);
 
         return combinations;
-    }
-
-    static getCenter(positions: Position[]): Position {
-        let xSum = 0;
-        let ySum = 0;
-
-        for (const pos of positions) {
-            xSum += pos.x;
-            ySum += pos.y;
-        }
-
-        return {
-            x: xSum / positions.length,
-            y: ySum / positions.length
-        };
-    }
-
-    static sum(position1: Position, position2: Position): Position {
-        return {
-            x: position1.x + position2.x,
-            y: position1.y + position2.y
-        };
-    }
-
-    static difference(position1: Position, position2: Position): Position {
-        return {
-            x: position1.x - position2.x,
-            y: position1.y - position2.y
-        };
     }
 
     static stringToDate(dateString: string): Date {
