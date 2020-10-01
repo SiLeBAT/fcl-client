@@ -247,8 +247,8 @@ export function createDefaultHighlights(): HighlightingSettings {
                 showInLegend: true,
                 color: [
                     0,
-                    0,
-                    255
+                    255,
+                    0
                 ],
                 invisible: false,
                 adjustThickness: false,

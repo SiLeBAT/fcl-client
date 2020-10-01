@@ -57,7 +57,7 @@
           },
           {
             "id": "Latitude",
-            "value": 52.847644 
+            "value": 52.847644
           },
           {
             "id": "Longitude",
@@ -237,7 +237,7 @@
           },
           {
             "id": "Latitude",
-            "value": 47.981360 
+            "value": 47.981360
           },
           {
             "id": "Longitude",
@@ -717,7 +717,7 @@
           },
           {
             "id": "Latitude",
-            "value": 53.083475 
+            "value": 53.083475
           },
           {
             "id": "Longitude",
@@ -2421,8 +2421,8 @@
             "showInLegend": true,
             "color": [
               0,
-              0,
-              255
+              255,
+              0
             ],
             "invisible": false,
             "adjustThickness": false,
