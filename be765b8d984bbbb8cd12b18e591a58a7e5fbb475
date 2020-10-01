@@ -295,6 +295,29 @@
     },
     {
       "key": {
+        "uuid": "d0127525_a8bd1ffc",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T12:57:32Z",
+      "side": 1,
+      "message": "Avoid using names that express some action (selected). Use names that do no assumptions on how an interface is used (e.g. GraphElementCollection)",
+      "range": {
+        "startLine": 208,
+        "startChar": 17,
+        "endLine": 208,
+        "endChar": 38
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "79ff1eaf_26a760ce",
         "filename": "src/app/tracing/graph/graph.model.ts",
         "patchSetId": 1
@@ -379,6 +402,30 @@
       "parentUuid": "037910e1_15abb51b",
       "range": {
         "startLine": 213,
+        "startChar": 0,
+        "endLine": 213,
+        "endChar": 84
+      },
+      "revId": "be765b8d984bbbb8cd12b18e591a58a7e5fbb475",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "939d6a34_6c5aeea6",
+        "filename": "src/app/tracing/graph/graph.model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T12:57:32Z",
+      "side": 1,
+      "message": "to clarify:\ngraph.model contains interfaces representing the data structure graph\nui interfaces are interfaces representing the interaction with the UI, so these should be placed independently",
+      "parentUuid": "6b1f2202_2e8d30bb",
+      "range": {
+        "startLine": 198,
         "startChar": 0,
         "endLine": 213,
         "endChar": 84
