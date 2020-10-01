@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ac49559a_eaedd467",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86d6f86f_c930b042",
+      "range": {
+        "startLine": 11,
+        "startChar": 22,
+        "endLine": 11,
+        "endChar": 48
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d1c47b5b_b200453d",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7767111c_383a64f7",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1c47b5b_b200453d",
+      "range": {
+        "startLine": 15,
+        "startChar": 4,
+        "endLine": 15,
+        "endChar": 33
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "471fd0ea_e75d77fd",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2020-09-30T15:39:46Z",
       "side": 1,
       "message": "why renaming the properties?",
+      "range": {
+        "startLine": 19,
+        "startChar": 3,
+        "endLine": 20,
+        "endChar": 28
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d096715_f47f2587",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "What do you mean?",
+      "parentUuid": "471fd0ea_e75d77fd",
       "range": {
         "startLine": 19,
         "startChar": 3,
@@ -91,6 +163,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bb57865_7e82a5f5",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "this. does not work for referencing static methods\n\n\nObsolete.",
+      "parentUuid": "adc3edb7_a78ad031",
+      "range": {
+        "startLine": 33,
+        "startChar": 8,
+        "endLine": 33,
+        "endChar": 29
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -140,6 +236,54 @@
     },
     {
       "key": {
+        "uuid": "7f4cb77d_cd725ae3",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d5c5b48_8635d6cb",
+      "range": {
+        "startLine": 34,
+        "startChar": 106,
+        "endLine": 34,
+        "endChar": 114
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac01b206_7b6ba67c",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82573728_c3885c3f",
+      "range": {
+        "startLine": 34,
+        "startChar": 67,
+        "endLine": 34,
+        "endChar": 72
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "32895210_37001d21",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -160,6 +304,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63546cab_037944d7",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32895210_37001d21",
+      "range": {
+        "startLine": 35,
+        "startChar": 69,
+        "endLine": 35,
+        "endChar": 114
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "c6acb36f_c2a18be3",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ba2ae06_ea7ab969",
+      "range": {
+        "startLine": 41,
+        "startChar": 61,
+        "endLine": 41,
+        "endChar": 77
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dee55daa_8f14974c",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -206,6 +398,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41b74ff9_5c5c5281",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dee55daa_8f14974c",
+      "range": {
+        "startLine": 53,
+        "startChar": 35,
+        "endLine": 53,
+        "endChar": 50
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -232,6 +448,30 @@
     },
     {
       "key": {
+        "uuid": "ba7b2121_b34c082b",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac66a2df_89705b00",
+      "range": {
+        "startLine": 54,
+        "startChar": 23,
+        "endLine": 54,
+        "endChar": 39
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e0d4346_90dae589",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -252,6 +492,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6982a865_15aa9669",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e0d4346_90dae589",
+      "range": {
+        "startLine": 49,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 48
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -278,6 +542,30 @@
     },
     {
       "key": {
+        "uuid": "205642cd_21a732d0",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Obsolete.",
+      "parentUuid": "2deaeb91_305eb643",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 22
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d78e37d_723a9214",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -298,6 +586,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "449327ce_4e273e98",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d78e37d_723a9214",
+      "range": {
+        "startLine": 65,
+        "startChar": 12,
+        "endLine": 65,
+        "endChar": 47
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -324,6 +636,30 @@
     },
     {
       "key": {
+        "uuid": "1082b6a2_76dc20ab",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "changed to frameData:Foo | null",
+      "parentUuid": "d4561470_9230c202",
+      "range": {
+        "startLine": 79,
+        "startChar": 82,
+        "endLine": 79,
+        "endChar": 91
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e67b4dce_447641e2",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -344,6 +680,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfbee5b3_3889637a",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e67b4dce_447641e2",
+      "range": {
+        "startLine": 93,
+        "startChar": 104,
+        "endLine": 93,
+        "endChar": 107
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -370,6 +730,30 @@
     },
     {
       "key": {
+        "uuid": "04e115c0_813f5bbd",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "I am checking here whether the station is a group, in which case contains would contain the member ids.\nSo, checking s.contains.length \u003e 0 would be sufficient",
+      "parentUuid": "b3814d13_ebda48a5",
+      "range": {
+        "startLine": 96,
+        "startChar": 25,
+        "endLine": 96,
+        "endChar": 35
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dc7a4869_31569719",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -390,6 +774,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3c2a54d_0019fd7e",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dc7a4869_31569719",
+      "range": {
+        "startLine": 101,
+        "startChar": 29,
+        "endLine": 101,
+        "endChar": 32
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -416,6 +824,30 @@
     },
     {
       "key": {
+        "uuid": "0c1fb6c3_ab96eb3c",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "added a moved method to geometry-utils. \nin detail:\nUtil.getCenter from non-ui-utils to getCenterFromPoints in geometry-utils\nUtil.sum from non-ui-utils to addPoints in geometry-utils\nUtil.difference from non-ui-utils to getDifference in geometry-utils",
+      "parentUuid": "4199786a_b6fe631e",
+      "range": {
+        "startLine": 103,
+        "startChar": 62,
+        "endLine": 103,
+        "endChar": 72
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89edc023_d58ad3e5",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -436,6 +868,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fecfd1d5_e1ebc8a4",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "see above reply",
+      "parentUuid": "89edc023_d58ad3e5",
+      "range": {
+        "startLine": 122,
+        "startChar": 9,
+        "endLine": 122,
+        "endChar": 109
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -462,6 +918,30 @@
     },
     {
       "key": {
+        "uuid": "df837ee3_b139efb6",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "I disagree. I don\u0027t think it\u0027s a \"magic number\". The meaning of the number is very clear in the context.",
+      "parentUuid": "079bbbbf_6ebfb8a1",
+      "range": {
+        "startLine": 134,
+        "startChar": 23,
+        "endLine": 134,
+        "endChar": 24
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3e0b2c5_808f62a0",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -482,6 +962,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f31affd7_704c327a",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f3e0b2c5_808f62a0",
+      "range": {
+        "startLine": 142,
+        "startChar": 12,
+        "endLine": 143,
+        "endChar": 62
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -508,6 +1012,30 @@
     },
     {
       "key": {
+        "uuid": "b268b303_f7c30c52",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "I disagree. createDefaultPosition creates a new Default Position Object\ngetDefaultPosition or a getter would not clarify that point",
+      "parentUuid": "5e5ef5e6_2015ce93",
+      "range": {
+        "startLine": 147,
+        "startChar": 12,
+        "endLine": 147,
+        "endChar": 33
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a9ad2879_218f98b3",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -528,6 +1056,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f31c90ae_77e0120c",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9ad2879_218f98b3",
+      "range": {
+        "startLine": 166,
+        "startChar": 37,
+        "endLine": 166,
+        "endChar": 55
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -554,6 +1106,30 @@
     },
     {
       "key": {
+        "uuid": "091d4eb0_1ad8ba9b",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "I took a set.",
+      "parentUuid": "334f9c51_749b9cfb",
+      "range": {
+        "startLine": 165,
+        "startChar": 8,
+        "endLine": 173,
+        "endChar": 31
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1a2ccb4_ddd309c8",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -574,6 +1150,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3ae8991_90f58ffe",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Yes, it could be undefined if the neighbor positions is not known so far",
+      "parentUuid": "b1a2ccb4_ddd309c8",
+      "range": {
+        "startLine": 183,
+        "startChar": 24,
+        "endLine": 183,
+        "endChar": 36
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -600,6 +1200,30 @@
     },
     {
       "key": {
+        "uuid": "8e0ad89e_55412611",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Is not the same. An equivalent would be:\n\nposMap \u003d {\n  ...posMap,\n  ...newPosMap\n}",
+      "parentUuid": "69b24232_acefb9a8",
+      "range": {
+        "startLine": 196,
+        "startChar": 12,
+        "endLine": 196,
+        "endChar": 45
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a1a0fba9_3b05dd32",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -623,6 +1247,30 @@
     },
     {
       "key": {
+        "uuid": "4e36f9e9_c22838cf",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1a0fba9_3b05dd32",
+      "range": {
+        "startLine": 198,
+        "startChar": 12,
+        "endLine": 202,
+        "endChar": 15
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ca19e4a2_8bafc813",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -643,6 +1291,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a502d36_340db72f",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-01T08:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca19e4a2_8bafc813",
+      "range": {
+        "startLine": 175,
+        "startChar": 8,
+        "endLine": 204,
+        "endChar": 9
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
