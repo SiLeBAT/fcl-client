@@ -1306,6 +1306,98 @@
     },
     {
       "key": {
+        "uuid": "922354c9_a3e9d8de",
+        "filename": "src/app/tracing/graph/components/graph-view/resize-sensor.directive.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:17:15Z",
+      "side": 1,
+      "message": "\u003cvoid\u003e",
+      "range": {
+        "startLine": 9,
+        "startChar": 28,
+        "endLine": 9,
+        "endChar": 40
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96651112_e0d2b37c",
+        "filename": "src/app/tracing/graph/components/graph-view/resize-sensor.directive.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:17:15Z",
+      "side": 1,
+      "message": "remove comments",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 19,
+        "endChar": 8
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45b01798_948cad19",
+        "filename": "src/app/tracing/graph/components/graph-view/resize-sensor.directive.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:17:15Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 49,
+        "startChar": 18,
+        "endLine": 49,
+        "endChar": 26
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bba5a139_d6c92124",
+        "filename": "src/app/tracing/graph/components/graph-view/resize-sensor.directive.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:17:15Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 59,
+        "endChar": 1
+      },
+      "revId": "fbbcc34c23cc7f4bad0e8ee67e4eb0c3842d7c21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6840163c_dd6517a8",
         "filename": "src/app/tracing/graph/cy-graph.ts",
         "patchSetId": 1
