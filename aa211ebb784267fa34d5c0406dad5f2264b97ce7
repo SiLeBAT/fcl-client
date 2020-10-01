@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "167533f1_78d4972d",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:09:27Z",
+      "side": 1,
+      "message": "why renamed? handler of zoomReset should be named onZoomReset",
+      "range": {
+        "startLine": 10,
+        "startChar": 17,
+        "endLine": 10,
+        "endChar": 26
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81903166_9a4d853e",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:09:27Z",
+      "side": 1,
+      "message": "obsolete",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 9
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90acbb4c_dfa50567",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:09:27Z",
+      "side": 1,
+      "message": "i still not understand why the lifecycle hooks and corresponding flags are necessary. It should be sufficient to detect input changes in ngOnChanges and update the graph accordingly.",
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "164773fd_0abec624",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:09:27Z",
+      "side": 1,
+      "message": "as mentioned some time ago, 3 separate event emitters are preverable because they represent three indepent events that can happen.",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 1
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfe226c1_4d5f9ace",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:09:27Z",
+      "side": 1,
+      "message": "magic object",
+      "range": {
+        "startLine": 159,
+        "startChar": 16,
+        "endLine": 162,
+        "endChar": 17
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
