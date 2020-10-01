@@ -2382,7 +2382,7 @@
     "view": {
       "showGis": false,
       "gisType": "WIKIMEDIA",
-      "showLegend": false,
+      "showLegend": true,
       "exportAsSvg": false,
       "label": null,
       "edge": {
