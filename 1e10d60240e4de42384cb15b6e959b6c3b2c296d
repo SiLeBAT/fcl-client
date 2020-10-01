@@ -1,0 +1,544 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d4d03bcf_09166958",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "why you use a touch library?",
+      "range": {
+        "startLine": 4,
+        "startChar": 25,
+        "endLine": 4,
+        "endChar": 33
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ca57241_f35b0229",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "hammer from hammerjs",
+      "range": {
+        "startLine": 4,
+        "startChar": 7,
+        "endLine": 4,
+        "endChar": 12
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e21280da_4d661a0e",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "imperative programming ...",
+      "range": {
+        "startLine": 14,
+        "startChar": 16,
+        "endLine": 14,
+        "endChar": 36
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c223ba7e_3c093b85",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "Reject: is this necessary? If so, type the vars with | null",
+      "range": {
+        "startLine": 41,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc21e519_1b76cb00",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "magic numbers",
+      "range": {
+        "startLine": 53,
+        "startChar": 48,
+        "endLine": 53,
+        "endChar": 104
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "445b20fb_76f1f8d0",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "Looks complicated to me. Now we have: GraphData, ChachedGraphData and CyGraph. It is hard to understand when and where these structures are updated or changed.\nIs the ChachedGraphData really necessary?",
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "145670d3_f97d6da2",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "you could use options \u003d {} in the parameter definition",
+      "range": {
+        "startLine": 29,
+        "startChar": 8,
+        "endLine": 29,
+        "endChar": 32
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c216227_478a8c5d",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "magic object",
+      "range": {
+        "startLine": 30,
+        "startChar": 55,
+        "endLine": 30,
+        "endChar": 87
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dfc7392_5b79648d",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "reject: check for null or 0 or negative or what?",
+      "range": {
+        "startLine": 32,
+        "startChar": 25,
+        "endLine": 32,
+        "endChar": 33
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7a83c73_ad6371d9",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 33,
+        "startChar": 25,
+        "endLine": 33,
+        "endChar": 33
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "885af988_b5c1fe9c",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "unecessary",
+      "range": {
+        "startLine": 37,
+        "startChar": 34,
+        "endLine": 37,
+        "endChar": 39
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b4eb4cd_a678cdfb",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "i think this is not necessary, just use options as parameter for super constructor",
+      "range": {
+        "startLine": 52,
+        "startChar": 8,
+        "endLine": 53,
+        "endChar": 38
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b63c80ec_30033421",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "Reject: ? why not use () \u003d\u003e this.zoomTo? It should bind this automatically",
+      "range": {
+        "startLine": 72,
+        "startChar": 59,
+        "endLine": 72,
+        "endChar": 81
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2321558_8c7ce9b4",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "not this.updateGraph()?",
+      "range": {
+        "startLine": 128,
+        "startChar": 8,
+        "endLine": 128,
+        "endChar": 13
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "355674ea_5013a6d8",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "am i right that chachedGraphData is now different from graphData?",
+      "range": {
+        "startLine": 128,
+        "startChar": 14,
+        "endLine": 128,
+        "endChar": 25
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4da95b86_419e4c37",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "try to keep setLayout and onLayoutChanged calls together or move onLayoutChanged to setLayout",
+      "range": {
+        "startLine": 227,
+        "startChar": 17,
+        "endLine": 227,
+        "endChar": 32
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e6fc8cf_d88b952a",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "name it positionsChanged or so",
+      "range": {
+        "startLine": 258,
+        "startChar": 14,
+        "endLine": 258,
+        "endChar": 18
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f669fae_35636358",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "same as temp",
+      "range": {
+        "startLine": 260,
+        "startChar": 12,
+        "endLine": 260,
+        "endChar": 66
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2a45928_06a01c5d",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "consider not using util files with loose functions: you split your code and responsibilities to different places instead of encapsulating them in units like classes, services...",
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62e4ac93_beb0f882",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "Could be in a Graph class handling the GraphData",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae04009f_40f01963",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "could be in CyGraph",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0349de9f_78a62f36",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "reject: remove or type it correclty",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 19,
+        "endChar": 14
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "977f7790_85961d55",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "layout: layout or only layout",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 9
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3fd1417_2fa23420",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T14:37:57Z",
+      "side": 1,
+      "message": "could be in Graph class (see above)",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
