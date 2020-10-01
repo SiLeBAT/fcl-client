@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0d10a45_883fafdd",
+        "filename": "src/app/tracing/graph/components/geomap-licref/geomap-licref-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:31:25Z",
+      "side": 1,
+      "message": "should be some input of this component",
+      "range": {
+        "startLine": 2,
+        "startChar": 24,
+        "endLine": 2,
+        "endChar": 65
+      },
+      "revId": "445d3a396be1bb0890c697cd47554d8636d07adb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "121a8f27_551d1b05",
+        "filename": "src/app/tracing/graph/components/geomap-licref/geomap-licref-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-01T15:31:25Z",
+      "side": 1,
+      "message": "can be removedf",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 20
+      },
+      "revId": "445d3a396be1bb0890c697cd47554d8636d07adb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
