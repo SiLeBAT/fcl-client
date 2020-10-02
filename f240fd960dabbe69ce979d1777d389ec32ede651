@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad607d44_54d44de4",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "use flatten or something",
+      "range": {
+        "startLine": 56,
+        "startChar": 16,
+        "endLine": 56,
+        "endChar": 29
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a77cb8ff_d63bc13c",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "consider using more strict interface like contex:{itemClicked:Node|Edge|None, id?: string}",
+      "range": {
+        "startLine": 62,
+        "startChar": 17,
+        "endLine": 62,
+        "endChar": 53
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a22aec5a_53beb824",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "is optional necessary? You could use empty array instead",
+      "range": {
+        "startLine": 78,
+        "startChar": 62,
+        "endLine": 78,
+        "endChar": 80
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c37428c_42d1e37b",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "aigc",
+      "range": {
+        "startLine": 81,
+        "startChar": 30,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a465086_294290fb",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "this is independent of nodeIds.length i think",
+      "range": {
+        "startLine": 82,
+        "startChar": 37,
+        "endLine": 82,
+        "endChar": 67
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aee298cd_ad32398b",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "cannot be undefined, you set it to []",
+      "range": {
+        "startLine": 88,
+        "startChar": 12,
+        "endLine": 88,
+        "endChar": 26
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03a396c0_32d94e20",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "do not write code for things that are not implemented yet, just return []",
+      "range": {
+        "startLine": 89,
+        "startChar": 17,
+        "endLine": 93,
+        "endChar": 20
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e08269a_b3e894a9",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "genral condideration: i personally prefer something like: \nmenuData \u003d []\nif(...) menuData.concat(...)\nmenuData.push(...)\nmenuData.push(...)\n...\nreturn menuData",
+      "range": {
+        "startLine": 106,
+        "startChar": 15,
+        "endLine": 106,
+        "endChar": 24
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4be454f3_9e961490",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "action should be created where it is dispatched. Consider using an enum here. Reason is separating the ngrx framework from code.",
+      "range": {
+        "startLine": 115,
+        "startChar": 32,
+        "endLine": 115,
+        "endChar": 45
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0038818a_3d0c6f30",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "avoid using key names",
+      "range": {
+        "startLine": 319,
+        "startChar": 27,
+        "endLine": 319,
+        "endChar": 31
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28673184_98a0e58a",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-02T15:13:38Z",
+      "side": 1,
+      "message": "check for null?",
+      "range": {
+        "startLine": 320,
+        "startChar": 43,
+        "endLine": 320,
+        "endChar": 55
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
