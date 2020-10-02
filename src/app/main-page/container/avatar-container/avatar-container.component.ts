@@ -1,8 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromUser from '../../../user/state/user.reducer';
-import { Observable } from 'rxjs';
-import { User } from '../../../user/models/user.model';
 import * as userActions from '../../../user/state/user.actions';
 import { Router } from '@angular/router';
 
@@ -23,7 +21,7 @@ export class AvatarContainerComponent implements OnInit {
     }
 
     onLogout() {
-        this.store.dispatch(new userActions.LogoutUser());
+        this.store.dispatch(new userActions.LogoutUserMSA());
     }
 
     onProfile() {

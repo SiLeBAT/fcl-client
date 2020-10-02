@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate, OnDestroy {
 
                       if (isExpired) {
                           this.alertService.error('Not authorized, please login.');
-                          this.store.dispatch(new userActions.LogoutUser());
+                          this.store.dispatch(new userActions.LogoutUserMSA());
                       }
                       return !isExpired;
                   }

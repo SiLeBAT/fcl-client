@@ -51,12 +51,12 @@ export class DashboardContainerComponent implements OnInit, OnDestroy {
                                 takeWhile(() => this.componentActive),
                                 map((mapResult: TokenizedUserDTO) => {
                                     this.userService.setCurrentUser(mapResult);
-                                    this.store.dispatch(new userActions.LoginUserSuccess(mapResult));
+                                    this.store.dispatch(new userActions.UpdateUserSOA({ currentUser: mapResult }));
                                 }),
                                 take(1)
                             );
                         } else {
-                            this.store.dispatch(new userActions.LogoutUser());
+                            this.store.dispatch(new userActions.LogoutUserMSA());
                             return EMPTY;
                         }
                     }),

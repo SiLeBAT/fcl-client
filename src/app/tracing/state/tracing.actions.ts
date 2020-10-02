@@ -48,7 +48,8 @@ export enum TracingActionTypes {
     SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
     ShowGhostStationMSA = '[Station Table] Show Ghost Station',
     ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
-    SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings'
+    SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
+    ResetTracingStateSOA = '[Tracing] Reset Tracing State'
 }
 
 export class TracingActivated implements Action {
@@ -273,6 +274,10 @@ export class SetROAReportSettingsSOA implements Action {
     constructor(public payload: { roaSettings: ROASettings }) {}
 }
 
+export class ResetTracingStateSOA implements Action {
+    readonly type = TracingActionTypes.ResetTracingStateSOA;
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -311,4 +316,5 @@ export type TracingActions =
     | ResetAllDeliveryFiltersSOA
     | SetROAReportSettingsSOA
     | ShowGhostStationMSA
-    | ClearGhostStationMSA;
+    | ClearGhostStationMSA
+    | ResetTracingStateSOA;

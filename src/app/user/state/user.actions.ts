@@ -3,46 +3,38 @@ import { Action } from '@ngrx/store';
 import { ActivationStatus } from '../../shared/model/types';
 
 export enum UserActionTypes {
-    LoginUser = '[User] Login User',
-    LoginUserSuccess = '[User] Login User Success',
-    LoginUserFailure = '[User] Login User Failure',
-    LogoutUser = '[User] Logout User',
-    LoginActivated = '[User] Login active'
+    LoginUserSSA = '[User] Login User',
+    UpdateUserSOA = '[User] Update User',
+    LogoutUserMSA = '[User] Logout User',
+    LoginActivatedSOA = '[User] Login active'
 }
 
-export class LoginUser implements Action {
-    readonly type = UserActionTypes.LoginUser;
+export class LoginUserSSA implements Action {
+    readonly type = UserActionTypes.LoginUserSSA;
 
     constructor(public payload: LoginCredentials) { }
 }
 
-export class LoginUserSuccess implements Action {
-    readonly type = UserActionTypes.LoginUserSuccess;
+export class UpdateUserSOA implements Action {
+    readonly type = UserActionTypes.UpdateUserSOA;
 
-    constructor(public payload: TokenizedUser) { }
+    constructor(public payload: { currentUser: TokenizedUser | null }) { }
 }
 
-export class LoginUserFailure implements Action {
-    readonly type = UserActionTypes.LoginUserFailure;
+export class LogoutUserMSA implements Action {
+    readonly type = UserActionTypes.LogoutUserMSA;
 
     constructor() { }
 }
 
-export class LogoutUser implements Action {
-    readonly type = UserActionTypes.LogoutUser;
-
-    constructor() { }
-}
-
-export class LoginActivated implements Action {
-    readonly type = UserActionTypes.LoginActivated;
+export class LoginActivatedSOA implements Action {
+    readonly type = UserActionTypes.LoginActivatedSOA;
 
     constructor(public payload: ActivationStatus) {}
 }
 
 export type UserActions =
-      LoginUser
-    | LoginUserSuccess
-    | LoginUserFailure
-    | LogoutUser
-    | LoginActivated;
+      LoginUserSSA
+    | UpdateUserSOA
+    | LogoutUserMSA
+    | LoginActivatedSOA;

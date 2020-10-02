@@ -35,26 +35,13 @@ export const getLoginActive = createSelector(
 // REDUCER
 export function reducer(state: UserState = initialState, action: UserActions): UserState {
     switch (action.type) {
-
-        case UserActionTypes.LoginUserSuccess:
+        case UserActionTypes.UpdateUserSOA:
             return {
                 ...state,
-                currentUser: action.payload
+                currentUser: action.payload.currentUser
             };
 
-        case UserActionTypes.LoginUserFailure:
-            return {
-                ...state,
-                currentUser: null
-            };
-
-        case UserActionTypes.LogoutUser:
-            return {
-                ...state,
-                currentUser: null
-            };
-
-        case UserActionTypes.LoginActivated:
+        case UserActionTypes.LoginActivatedSOA:
             return {
                 ...state,
                 loginActive: action.payload.isActivated

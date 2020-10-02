@@ -27,7 +27,7 @@ export class MainPageComponent implements OnInit {
     }
 
     logout() {
-        this.store.dispatch(new userActions.LogoutUser());
+        this.store.dispatch(new userActions.LogoutUserMSA());
     }
 
     getDisplayMode() {

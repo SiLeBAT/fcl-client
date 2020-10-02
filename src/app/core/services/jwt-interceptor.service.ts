@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { AlertService } from '../../shared/services/alert.service';
@@ -23,7 +22,7 @@ export class JwtInterceptor implements HttpInterceptor {
                             `Not authorized or not activated.
                             If already registered please check your Email for an activation link.`
                         );
-                        this.store.dispatch(new userActions.LogoutUser());
+                        this.store.dispatch(new userActions.LogoutUserMSA());
                     }
                 }
                 throw HttpErrorResponse;

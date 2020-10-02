@@ -1,9 +1,7 @@
 import { reducer, UserState } from './user.reducer';
 import {
-    LoginUserSuccess,
-    LoginUserFailure,
-    LogoutUser,
-    LoginActivated
+    UpdateUserSOA,
+    LoginActivatedSOA
 } from './user.actions';
 import { TokenizedUser } from '../models/user.model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -23,12 +21,13 @@ describe('user reducer', () => {
             email: 'test',
             firstName: 'test',
             lastName: 'test',
-            token: 'test'
+            token: 'test',
+            gdprAgreementRequested: true
         };
     });
 
-    it('should have valid state after LoginUserSuccess action', () => {
-        const currentAction: LoginUserSuccess = new LoginUserSuccess(mockUser);
+    it('should have valid state after UpdateUserSOA action', () => {
+        const currentAction: UpdateUserSOA = new UpdateUserSOA({ currentUser: mockUser });
 
         const expectedState: UserState = {
             currentUser: mockUser,
@@ -40,38 +39,12 @@ describe('user reducer', () => {
         expect(result).toMatchObject(expectedState);
     });
 
-    it('should have valid state after LoginUserFailure action', () => {
-        const currentAction: LoginUserFailure = new LoginUserFailure();
-
-        const expectedState: UserState = {
-            currentUser: null,
-            loginActive: false
-        };
-
-        const result: UserState = reducer(currentState, currentAction);
-
-        expect(result).toMatchObject(expectedState);
-    });
-
-    it('should have valid state after LogoutUser action', () => {
-        const currentAction: LogoutUser = new LogoutUser();
-
-        const expectedState: UserState = {
-            currentUser: null,
-            loginActive: false
-        };
-
-        const result: UserState = reducer(currentState, currentAction);
-
-        expect(result).toMatchObject(expectedState);
-    });
-
-    it('should have valid state after LoginActivated action', () => {
+    it('should have valid state after LoginActivatedSOA action', () => {
         const activationStatus: ActivationStatus = {
             isActivated: true
         };
 
-        const currentAction: LoginActivated = new LoginActivated(activationStatus);
+        const currentAction: LoginActivatedSOA = new LoginActivatedSOA(activationStatus);
 
         const expectedState: UserState = {
             currentUser: null,

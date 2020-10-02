@@ -9,6 +9,7 @@ import { map, catchError, exhaustMap, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { TokenizedUserDTO } from '../models/user.model';
+import { ResetTracingStateSOA } from '@app/tracing/state/tracing.actions';
 
 @Injectable()
 export class UserEffects {
@@ -22,9 +23,9 @@ export class UserEffects {
 
     @Effect()
     loginUser$ = this.actions$.pipe(
-      ofType(userActions.UserActionTypes.LoginUser),
+      ofType(userActions.UserActionTypes.LoginUserSSA),
       tap(item => this.spinnerService.show()),
-      exhaustMap((action: userActions.LoginUser) => this.userService.login(action.payload).pipe(
+      exhaustMap((action: userActions.LoginUserSSA) => this.userService.login(action.payload).pipe(
         map((loginResponse: TokenizedUserDTO) => {
             this.spinnerService.hide();
             if (loginResponse && loginResponse.token) {
@@ -33,29 +34,35 @@ export class UserEffects {
                 this.router.navigate(['/dashboard']).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);
                 });
-                return new userActions.LoginUserSuccess(loginResponse);
+                return new userActions.UpdateUserSOA({ currentUser: loginResponse });
             } else {
                 this.alertService.error('Login unsuccessful');
-                return new userActions.LoginUserFailure();
+                return new userActions.UpdateUserSOA({ currentUser: null });
             }
 
         }),
         catchError(() => {
             this.spinnerService.hide();
             // tslint:disable-next-line:deprecation
-            return of(new userActions.LoginUserFailure());
+            return of(new userActions.UpdateUserSOA({ currentUser: null }));
         })
       ))
     );
 
     @Effect()
     logoutUser$ = this.actions$.pipe(
-        ofType(userActions.UserActionTypes.LogoutUser),
+        ofType(userActions.UserActionTypes.LogoutUserMSA),
         mergeMap(() => {
+
             this.router.navigate(['users/login']).catch(() => {
                 throw new Error('Unable to navigate.');
             });
-            return this.userService.logout();
+
+            this.userService.logout();
+            return [
+                new userActions.UpdateUserSOA({ currentUser: null }),
+                new ResetTracingStateSOA()
+            ];
         })
     );
 }

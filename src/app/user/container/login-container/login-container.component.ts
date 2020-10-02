@@ -15,7 +15,7 @@ export class LoginContainerComponent implements OnInit, OnDestroy {
 
     constructor(private store: Store<fromUser.State>,
         private router: Router) {
-        this.store.dispatch(new userActions.LoginActivated({ isActivated: true }));
+        this.store.dispatch(new userActions.LoginActivatedSOA({ isActivated: true }));
     }
 
     ngOnInit() {
@@ -36,11 +36,11 @@ export class LoginContainerComponent implements OnInit, OnDestroy {
     }
 
     login(credentials: LoginCredentials) {
-        this.store.dispatch(new userActions.LoginUser(credentials));
+        this.store.dispatch(new userActions.LoginUserSSA(credentials));
     }
 
     ngOnDestroy() {
         this.componentActive = false;
-        this.store.dispatch(new userActions.LoginActivated({ isActivated: false }));
+        this.store.dispatch(new userActions.LoginActivatedSOA({ isActivated: false }));
     }
 }

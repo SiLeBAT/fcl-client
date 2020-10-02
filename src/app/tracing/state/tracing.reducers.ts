@@ -333,6 +333,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     }
                 }
             };
+        case TracingActionTypes.ResetTracingStateSOA:
+            return initialState;
 
         case TracingActionTypes.SetFilterStationTableColumnOrderSOA: {
             const newColumnOrder = action.payload.columnOrder;
