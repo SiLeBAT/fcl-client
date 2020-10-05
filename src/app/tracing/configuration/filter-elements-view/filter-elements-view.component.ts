@@ -261,7 +261,7 @@ export class FilterElementsViewComponent {
     }
 
     private updatePropValueMap(): void {
-        if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.processedInput_.dataTable.rows) {
+        if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.inputData.dataTable.rows) {
             const propToValuesMap: PropValueMap = {};
             for (const column of this.dataColumns_) {
                 const values = _.uniq(
