@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c88bf406_d708f1cb",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T10:26:26Z",
+      "side": 1,
+      "message": "actionSelect or menuItemSelect (see .ts)",
+      "range": {
+        "startLine": 2,
+        "startChar": 42,
+        "endLine": 2,
+        "endChar": 56
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6521abe_4ca450ad",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T10:26:26Z",
+      "side": 1,
+      "message": "reject (if this is new code)? do not use actions in your view components. ngrx is a external lib and should be only used in the containers. Consider emitting some identifier for the selected item and generate the appropriate action in the container.",
+      "range": {
+        "startLine": 17,
+        "startChar": 46,
+        "endLine": 17,
+        "endChar": 52
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5445ec43_82184190",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T10:26:26Z",
+      "side": 1,
+      "message": "i think this is not the common way to handle material menues",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 80
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8974fdaf_1b30e821",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T10:26:26Z",
+      "side": 1,
+      "message": "reject: not used",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 5
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
