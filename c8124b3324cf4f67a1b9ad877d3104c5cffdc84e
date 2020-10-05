@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1250b9b3_b453ece7",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:25:37Z",
+      "side": 1,
+      "message": "i think because esModuleInteropMode is not set to true in tsconfig",
+      "parentUuid": "47e553a0_26f3c761",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 35
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c6883d9_ddf07efe",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
         "patchSetId": 1
@@ -777,6 +801,30 @@
       "side": 1,
       "message": "I don\u0027t understand. There is a constructor and event class members.",
       "parentUuid": "0504aaeb_38ad8583",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "c8124b3324cf4f67a1b9ad877d3104c5cffdc84e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c97e73bf_11feeb5a",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:25:37Z",
+      "side": 1,
+      "message": "oh, just overlooked the members in the constructor (i dont like this ts pattern because of this, members should be defined in one place).",
+      "parentUuid": "22653a21_3f353d4b",
       "range": {
         "startLine": 18,
         "startChar": 0,
