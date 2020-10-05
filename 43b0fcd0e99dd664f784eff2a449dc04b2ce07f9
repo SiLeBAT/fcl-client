@@ -1,0 +1,343 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ae1789c_c3315ca8",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "reject: not used, you should use it to set position: relative, height:100% to make the absolute positioning of the child elements relative to this component and not some parent component",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 33
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59867e34_348d17e0",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "consider using a getter in the .ts",
+      "range": {
+        "startLine": 18,
+        "startChar": 35,
+        "endLine": 18,
+        "endChar": 56
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd133a0e_dbd2fe8e",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "see prev commit",
+      "range": {
+        "startLine": 25,
+        "startChar": 24,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a832f88_a32b8565",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "how can this be visible if it is not positioned above the other elements? If the positioning is  defined in the context-menu component consider moving the positioning to this component",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97011ba4_58d320ee",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "consider rename: onContextMenuSelect",
+      "range": {
+        "startLine": 25,
+        "startChar": 39,
+        "endLine": 25,
+        "endChar": 61
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18e3f412_f020703d",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "as stated i would put all the positioning stuff in a layout (e.g. for reuse with schema-graph)",
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f0f549c_c2ff099b",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "duplicated code: consider using a class like fcl-map-overlay",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 1
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17f63b42_51a4d69d",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "see comment at osm-reference",
+      "range": {
+        "startLine": 18,
+        "startChar": 14,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d92928fb_c175ded8",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "consider using relative units",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 17
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "064f4585_293dbab7",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "consider moving this to the graph-legend component",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cfd97a5_f22833b7",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "reject: absolute positioned elements should have a defined width and height",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 23
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab02fe51_5d2b6c74",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "consider using selectShowZoom for selectors, get prefix is reserved for simple helper functions used by selectors.",
+      "range": {
+        "startLine": 50,
+        "startChar": 34,
+        "endLine": 50,
+        "endChar": 45
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a93807c_e0bb5aa2",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "here is a reason why naming things is important :)",
+      "range": {
+        "startLine": 66,
+        "startChar": 29,
+        "endLine": 66,
+        "endChar": 34
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca776ac1_7ef73a35",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "general consideration: the reducers in your store are responsible to change state only if data has changed. Even better the components dispatching an action should only dispatch them if data has changed. So if you interested in changed data you should use a selector accessing that specific data with out additional change detection. E.g. a specific selector could look like:\nselectMapConfig \u003d createSelector(\nselectGraphLayout,\nselectGraphMapType,\n...\n(layout, type) \u003d\u003e {layout, type}\n)\nAnd you would use it like:\nmapConfig$ \u003d store.select(selectMapConfig)",
+      "range": {
+        "startLine": 210,
+        "startChar": 16,
+        "endLine": 212,
+        "endChar": 72
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa396bb9_cf56a970",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-05T16:12:50Z",
+      "side": 1,
+      "message": "or: get legendInfo() \u003d\u003e this.cachedData.legendInfo",
+      "range": {
+        "startLine": 223,
+        "startChar": 0,
+        "endLine": 223,
+        "endChar": 45
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
