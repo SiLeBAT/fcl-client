@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NodeShapeType, Color } from '@app/tracing/data.model';
 import { Map as ImmutableMap } from 'immutable';
 import { Utils } from '@app/tracing/util/non-ui-utils';
@@ -8,14 +8,20 @@ interface GradientStop {
     style: string;
 }
 
+function arrayToColor(color: number[]): Color {
+    return { r: color[0], g: color[1], b: color[2] };
+}
+
+function isColorWhite(color: Color): boolean {
+    return color.r === 255 && color.b === 255 && color.g === 255;
+}
+
 @Component({
     selector: 'fcl-node-symbol',
     templateUrl: './node-symbol.component.html',
     styleUrls: ['./node-symbol.component.scss']
 })
-export class NodeSymbolComponent implements OnInit {
-
-    private static readonly DEFAULT_GRADIENT_ID = 'colr255g255b255';
+export class NodeSymbolComponent {
     private static readonly DEFAULT_COLOR_WHITE = 'rgb(255, 255, 255)';
 
     private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<string, string>({
@@ -29,109 +35,102 @@ export class NodeSymbolComponent implements OnInit {
         [NodeShapeType.STAR]: 'star'
     });
 
-    private _svgShapeType: string;
-    private _fillColor: string;
-    private _isFillColorNonWhite: boolean;
+    private svgShapeType_: string = null;
+    private fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
+    private isFillColorNonWhite_ = false;
+    private gradientId_: string = null;
+    private gradientStops_: GradientStop[] = null;
 
     @Input() set shapeType(shape: NodeShapeType) {
-        this._svgShapeType = shape ? this.ShapeMap.get(shape) : null;
+        this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : null;
     }
 
     @Input() set fillColor(color: Color) {
-        this._fillColor = color ? Utils.colorToCss(color) : NodeSymbolComponent.DEFAULT_COLOR_WHITE;
-        this.gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolComponent.DEFAULT_GRADIENT_ID;
-
-        let gradientStops: GradientStop[];
-        let gradientId: string;
-
-        gradientId = color ? `colr${color.r}g${color.g}b${color.b}` : NodeSymbolComponent.DEFAULT_GRADIENT_ID;
-        gradientStops = [
-            {
-                offset: '0%',
-                style: this._fillColor
-            },
-            {
-                offset: '100%',
-                style: this._fillColor
-            }
-        ];
-
-        this.gradientId = gradientId;
-        this.gradientStops = gradientStops;
-        this._isFillColorNonWhite = color ? color.r !== 255 || color.b !== 255 || color.g !== 255 : false;
+        this.setSimpleFillColor(color);
     }
 
-    @Input() set mapStationColor(color: number[][]) {
-        let gradientId: string = 'col';
-        let gradientStops: GradientStop[];
-
-        if (color.length > 0) {
-
-            const percent = 100 / color.length;
-            gradientStops = color.flatMap((c: number[], index) => {
-                gradientId += `r${c[0]}g${c[1]}b${c[2]}`;
-
-                return [
-                    {
-                        offset: `${index * percent}%`,
-                        style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
-                    },
-                    {
-                        offset: `${(index + 1) * percent}%`,
-                        style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
-                    }
-                ];
-            });
-            this._isFillColorNonWhite = true;
-        } else {
-            this.gradientId = NodeSymbolComponent.DEFAULT_GRADIENT_ID;
-            gradientStops = [
-                {
-                    offset: '0%',
-                    style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
-                },
-                {
-                    offset: '100%',
-                    style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
-                }
-            ];
-            this._isFillColorNonWhite = false;
-        }
-
-        this.gradientId = gradientId;
-        this.gradientStops = gradientStops;
+    @Input() set mapStationColor(colors: number[][]) {
+        this.setFillColor(colors);
     }
 
     @Input() set dataTableShapeType(shape: NodeShapeType) {
-        this._svgShapeType = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
+        this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
     }
 
-    gradientId: string = NodeSymbolComponent.DEFAULT_GRADIENT_ID;
-    gradientStops: GradientStop[] = [
-        {
-            offset: '0%',
-            style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
-        },
-        {
-            offset: '100%',
-            style: NodeSymbolComponent.DEFAULT_COLOR_WHITE
-        }
-    ];
-
     getShapeType(): string {
-        return this._svgShapeType;
+        return this.svgShapeType_;
     }
 
     getFillColor(): string {
-        return `url(#${this.gradientId})`;
+        return this.fillColor_ || `url(#${this.gradientId_})`;
     }
 
-    getIsFillColorNonWhite(): boolean {
-        return this._isFillColorNonWhite;
+    get gradientId(): string {
+        return this.gradientId_;
     }
 
-    constructor() { }
+    get useGradient(): boolean {
+        return this.fillColor_ === null;
+    }
 
-    ngOnInit() {
+    get gradientStops(): GradientStop[] {
+        return this.gradientStops_;
+    }
+
+    get isFillColorNonWhite(): boolean {
+        return this.isFillColorNonWhite_;
+    }
+
+    constructor() {}
+
+    private setFillColor(colorOrColors: Color | number[][]): void {
+        this.gradientId_ = null;
+        this.gradientStops_ = [];
+        this.fillColor_ = null;
+
+        if (Array.isArray(colorOrColors)) {
+            const colors: number[][] = colorOrColors;
+            if (colors.length === 0) {
+                this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
+                this.isFillColorNonWhite_ = false;
+            } else if (colors.length === 1) {
+                this.setSimpleFillColor(arrayToColor(colors[0]));
+            } else {
+                this.setGradientFillColor(colors);
+            }
+        } else {
+            const color: Color = colorOrColors;
+            this.setSimpleFillColor(color);
+        }
+    }
+
+    private setSimpleFillColor(color: Color): void {
+        this.fillColor_ = Utils.colorToCss(color);
+        this.isFillColorNonWhite_ = !isColorWhite(color);
+    }
+
+    private setGradientFillColor(colors: number[][]): void {
+        let gradientId: string = 'col';
+        let gradientStops: GradientStop[];
+
+        const percent = 100 / colors.length;
+        gradientStops = colors.flatMap((c: number[], index) => {
+            gradientId += `r${c[0]}g${c[1]}b${c[2]}`;
+
+            return [
+                {
+                    offset: `${index * percent}%`,
+                    style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                },
+                {
+                    offset: `${(index + 1) * percent}%`,
+                    style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                }
+            ];
+        });
+        this.isFillColorNonWhite_ = true;
+
+        this.gradientId_ = gradientId;
+        this.gradientStops_ = gradientStops;
     }
 }
