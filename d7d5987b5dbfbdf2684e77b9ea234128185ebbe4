@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "72b8e136_357582a4",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9b1f0e57_416954f8",
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd1fcae4_443b03b5",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2020-10-01T12:49:33Z",
       "side": 1,
       "message": "why is that outside the cy class?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 1
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36c8c76c_34c84d48",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Because it doesn\u0027t need access to instance members \u0026 I don\u0027t like to use the prefix \"CyGraph.\" to use it.",
+      "parentUuid": "cd1fcae4_443b03b5",
       "range": {
         "startLine": 9,
         "startChar": 0,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "1e30f507_7d0820e7",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5185eb8e_a9e2ab25",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 1
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "95af8a21_bfeb6c8e",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -85,6 +151,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d2023c7_2df704cf",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "95af8a21_bfeb6c8e",
+      "range": {
+        "startLine": 45,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 23
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "3c43880b_70906ad6",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a304c8c_a18b8900",
+      "range": {
+        "startLine": 58,
+        "startChar": 53,
+        "endLine": 58,
+        "endChar": 59
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79bb658b_d1b79033",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -134,6 +248,30 @@
     },
     {
       "key": {
+        "uuid": "997764fc_68bc4df2",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79bb658b_d1b79033",
+      "range": {
+        "startLine": 87,
+        "startChar": 8,
+        "endLine": 87,
+        "endChar": 105
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "10b08b73_edb58deb",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -145,6 +283,30 @@
       "writtenOn": "2020-10-01T12:49:33Z",
       "side": 1,
       "message": "why not use setters? perhaps they cannot be protected?",
+      "range": {
+        "startLine": 128,
+        "startChar": 4,
+        "endLine": 134,
+        "endChar": 5
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1611f4d3_6c77ce3c",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Setters can be protected but they need to have the save access level as getters.\n\nActually, e.g. for the styleConfig:\n\nthe getter is\n\nget style()..\n\nthe setter is\n\nprotected setStyleConfig(..)",
+      "parentUuid": "10b08b73_edb58deb",
       "range": {
         "startLine": 128,
         "startChar": 4,
@@ -180,6 +342,30 @@
     },
     {
       "key": {
+        "uuid": "eb497363_7b941b63",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf67bbdb_38ee0e2b",
+      "range": {
+        "startLine": 145,
+        "startChar": 17,
+        "endLine": 145,
+        "endChar": 19
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d677cc9_9c1fcdce",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -200,6 +386,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e63812e3_f9f37cce",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d677cc9_9c1fcdce",
+      "range": {
+        "startLine": 147,
+        "startChar": 17,
+        "endLine": 147,
+        "endChar": 19
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -249,6 +459,54 @@
     },
     {
       "key": {
+        "uuid": "b54c0945_9c28f423",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3639956a_67e94354",
+      "range": {
+        "startLine": 169,
+        "startChar": 94,
+        "endLine": 169,
+        "endChar": 102
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38e1ed03_dc26af05",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "154f990f_0c52cc45",
+      "range": {
+        "startLine": 169,
+        "startChar": 43,
+        "endLine": 169,
+        "endChar": 54
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "106403f6_8463064b",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -295,6 +553,54 @@
     },
     {
       "key": {
+        "uuid": "335d3344_28cd635b",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cb163ec5_bfaec244",
+      "range": {
+        "startLine": 195,
+        "startChar": 41,
+        "endLine": 195,
+        "endChar": 51
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9ad120a_4a05e4ac",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "To which aspects is \u0027good\u0027 and \u0027not good\u0027 referring to?",
+      "parentUuid": "106403f6_8463064b",
+      "range": {
+        "startLine": 195,
+        "startChar": 54,
+        "endLine": 195,
+        "endChar": 55
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "72874c33_a3e7ce7a",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -315,6 +621,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "145b2e06_61f136a4",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72874c33_a3e7ce7a",
+      "range": {
+        "startLine": 197,
+        "startChar": 16,
+        "endLine": 200,
+        "endChar": 17
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -341,6 +671,30 @@
     },
     {
       "key": {
+        "uuid": "58c6fc9e_1947e9a9",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "Which part should be separated? Where is no initialization here.",
+      "parentUuid": "e2d68ca7_6eb72a31",
+      "range": {
+        "startLine": 187,
+        "startChar": 8,
+        "endLine": 202,
+        "endChar": 9
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5eaacd14_a3167032",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -352,6 +706,30 @@
       "writtenOn": "2020-10-01T12:49:33Z",
       "side": 1,
       "message": "? is this a mix of GraphData and cy positions?",
+      "range": {
+        "startLine": 207,
+        "startChar": 8,
+        "endLine": 209,
+        "endChar": 22
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db5964ed_5fa61110",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-06T09:00:51Z",
+      "side": 1,
+      "message": "The position map can contain more positions than necessary. Only the positions of the presented nodes are updated.\nA better solution would be to give the graph only the relevant positions and not all of them. But this would require an additional service.",
+      "parentUuid": "5eaacd14_a3167032",
       "range": {
         "startLine": 207,
         "startChar": 8,
