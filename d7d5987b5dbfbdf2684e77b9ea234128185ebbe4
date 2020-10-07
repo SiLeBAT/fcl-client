@@ -765,6 +765,30 @@
     },
     {
       "key": {
+        "uuid": "423b82b2_cb8454ae",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Interface removed.",
+      "parentUuid": "cf7f80af_1a9019a9",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 1
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "58c473b6_2499e988",
         "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
         "patchSetId": 2
@@ -785,6 +809,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "122deba2_cfe7d92f",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "58c473b6_2499e988",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 6
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -811,6 +859,30 @@
     },
     {
       "key": {
+        "uuid": "7e02d66f_6949516a",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "contextElement cannot be undefined\nbut check is not necessary here because contextElement is either \u003d\u003d\u003d cy or an nodeElement or an EdgeElement",
+      "parentUuid": "c4b60976_25d98d8f",
+      "range": {
+        "startLine": 79,
+        "startChar": 28,
+        "endLine": 79,
+        "endChar": 35
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e533b269_2b3ec597",
         "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
         "patchSetId": 2
@@ -831,6 +903,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b72ce7c8_d6374134",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "See above",
+      "parentUuid": "e533b269_2b3ec597",
+      "range": {
+        "startLine": 90,
+        "startChar": 28,
+        "endLine": 90,
+        "endChar": 49
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -857,6 +953,30 @@
     },
     {
       "key": {
+        "uuid": "9adf1f1f_ea190a74",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fa5ed68_dfa99d04",
+      "range": {
+        "startLine": 91,
+        "startChar": 43,
+        "endLine": 91,
+        "endChar": 50
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "426d75e1_b608b92b",
         "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
         "patchSetId": 2
@@ -877,6 +997,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1614d926_2b2872ef",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Obsolete",
+      "parentUuid": "426d75e1_b608b92b",
+      "range": {
+        "startLine": 77,
+        "startChar": 8,
+        "endLine": 93,
+        "endChar": 15
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -903,6 +1047,30 @@
     },
     {
       "key": {
+        "uuid": "4cf4ac22_2f07e546",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-style.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "53dc8e3e_94210100",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 1
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e925a50f_a268a454",
         "filename": "src/app/tracing/graph/cy-graph/cy.constants.ts",
         "patchSetId": 2
@@ -920,6 +1088,24 @@
     },
     {
       "key": {
+        "uuid": "fe20c8bc_4b8b726f",
+        "filename": "src/app/tracing/graph/cy-graph/cy.constants.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e925a50f_a268a454",
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27112d4a_4035ebf1",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -934,6 +1120,24 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c11b911c_90194daf",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "No. Super instead of this is a conscious decision. Lets say, we have a class B extends class A and A and B implement t(): \nThe call this.t() inside an arbitrary function in A is calling the implementation t() in B.\n\nLets say, we have a class C extends B extends class A and all of them are implementing t(). \nThe call this.t() inside an arbitrary function in B is calling the implementation t() in C. The call to super.t() inside an arbitrary function in B is calling the implementation t() in A.",
+      "parentUuid": "27112d4a_4035ebf1",
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -960,6 +1164,30 @@
     },
     {
       "key": {
+        "uuid": "6e1341b4_f624c2de",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a6e6f627_4649a861",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 43
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c28fab59_0efb842e",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -980,6 +1208,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a1739e5_93f63390",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c28fab59_0efb842e",
+      "range": {
+        "startLine": 28,
+        "startChar": 12,
+        "endLine": 28,
+        "endChar": 34
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1006,6 +1258,30 @@
     },
     {
       "key": {
+        "uuid": "dc0f28f7_e9dd6223",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "91eb5044_b1e6fc05",
+      "range": {
+        "startLine": 29,
+        "startChar": 3,
+        "endLine": 31,
+        "endChar": 10
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "52a67fc7_cf95053b",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1026,6 +1302,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec781d6b_16f2fd12",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "key does not work here because GraphEventType is a enum",
+      "parentUuid": "52a67fc7_cf95053b",
+      "range": {
+        "startLine": 39,
+        "startChar": 43,
+        "endLine": 39,
+        "endChar": 57
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1052,6 +1352,30 @@
     },
     {
       "key": {
+        "uuid": "b1d8d30a_2f00c69c",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "setter was replaced by zoomToPercentage",
+      "parentUuid": "c5875e87_1eb46aef",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "36c423f8_e3306226",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1072,6 +1396,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f0ebfa8_224514ff",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36c423f8_e3306226",
+      "range": {
+        "startLine": 69,
+        "startChar": 4,
+        "endLine": 84,
+        "endChar": 5
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1098,6 +1446,30 @@
     },
     {
       "key": {
+        "uuid": "d72a44cd_3a1241cc",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1aceacb_073a4ad5",
+      "range": {
+        "startLine": 110,
+        "startChar": 14,
+        "endLine": 110,
+        "endChar": 20
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b188ebe_bb73cc39",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1118,6 +1490,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b49d793_16426e8e",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "No if class A implements t(), B extends A and implements also t() then\na call this.t() inside A uses the implementation of B.\nt() in B is responsible to call the replaced implementation",
+      "parentUuid": "5b188ebe_bb73cc39",
+      "range": {
+        "startLine": 112,
+        "startChar": 8,
+        "endLine": 112,
+        "endChar": 13
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1144,6 +1540,30 @@
     },
     {
       "key": {
+        "uuid": "b15c45e7_60c54878",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "it is not, I tried",
+      "parentUuid": "434942c4_0893ddae",
+      "range": {
+        "startLine": 130,
+        "startChar": 49,
+        "endLine": 130,
+        "endChar": 101
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "de160a6c_0d6d28b0",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1164,6 +1584,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "530c4757_b6a5b2d9",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "As described above. Super is adequate.\nLets say we B extends A\nand A detects some change:\n- either it propagates this change by. means of a listener so that an extending class can react accordingly\n- or a provides a method that an extending class can reimplement and the extending class is responsible for calling the previous implementation\n\nI admit a listener solution would be preferable",
+      "parentUuid": "de160a6c_0d6d28b0",
+      "range": {
+        "startLine": 135,
+        "startChar": 8,
+        "endLine": 135,
+        "endChar": 13
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1190,6 +1634,30 @@
     },
     {
       "key": {
+        "uuid": "1c43140c_20761ccb",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "See above.",
+      "parentUuid": "665cddf3_be721dd5",
+      "range": {
+        "startLine": 136,
+        "startChar": 15,
+        "endLine": 136,
+        "endChar": 20
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a3c083a2_cc8f7de7",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1210,6 +1678,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "690ff64f_9c541ab1",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "See above.",
+      "parentUuid": "a3c083a2_cc8f7de7",
+      "range": {
+        "startLine": 158,
+        "startChar": 52,
+        "endLine": 158,
+        "endChar": 107
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1236,6 +1728,30 @@
     },
     {
       "key": {
+        "uuid": "7a8667dc_45283d42",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Super is adequate. See above.",
+      "parentUuid": "08b1d44f_49459401",
+      "range": {
+        "startLine": 165,
+        "startChar": 31,
+        "endLine": 165,
+        "endChar": 36
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72dec831_ec24d531",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1256,6 +1772,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7457b13_c9114c48",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Super is adequate. See above.",
+      "parentUuid": "72dec831_ec24d531",
+      "range": {
+        "startLine": 166,
+        "startChar": 38,
+        "endLine": 166,
+        "endChar": 43
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -1282,6 +1822,30 @@
     },
     {
       "key": {
+        "uuid": "b1c3ec17_ca862f94",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "You are right. However, a minor issue.",
+      "parentUuid": "259d41f8_ce686dd9",
+      "range": {
+        "startLine": 200,
+        "startChar": 16,
+        "endLine": 200,
+        "endChar": 79
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42215758_fac242be",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1305,6 +1869,30 @@
     },
     {
       "key": {
+        "uuid": "81c2f4c2_7781a4e9",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "But that makes the separation from the code of the previous big cy-graph to a cy-graph (without interaction) and interactive-cy-graph less clear because of the responsibilities.",
+      "parentUuid": "42215758_fac242be",
+      "range": {
+        "startLine": 185,
+        "startChar": 3,
+        "endLine": 219,
+        "endChar": 5
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "413b7afc_a74422e3",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1325,6 +1913,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a878f94_33bbac83",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T04:19:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "413b7afc_a74422e3",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 235,
+        "endChar": 75
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
