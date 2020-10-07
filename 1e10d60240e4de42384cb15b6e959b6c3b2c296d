@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "809810cb_7ddedb21",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "old code.",
+      "parentUuid": "3ca57241_f35b0229",
+      "range": {
+        "startLine": 4,
+        "startChar": 7,
+        "endLine": 4,
+        "endChar": 12
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10ea2eba_7aa9e096",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "basically old code from my predecessor",
+      "parentUuid": "d4d03bcf_09166958",
+      "range": {
+        "startLine": 4,
+        "startChar": 25,
+        "endLine": 4,
+        "endChar": 33
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e21280da_4d661a0e",
         "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec5a007e_bf6582ee",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e21280da_4d661a0e",
+      "range": {
+        "startLine": 14,
+        "startChar": 16,
+        "endLine": 14,
+        "endChar": 36
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "15f639ee_6829637b",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "old code from me predecessor. But I removed these 2 lines. Because someday we want to switch on stricter rules.",
+      "parentUuid": "c223ba7e_3c093b85",
+      "range": {
+        "startLine": 41,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc21e519_1b76cb00",
         "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
         "patchSetId": 1
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "55e760f8_84af24ba",
+        "filename": "src/app/tracing/graph/cy-graph/cy-adapter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "old code from my predecessor. I create a refactoring ticket for this code, because I think it might need some deeper inspection.",
+      "parentUuid": "fc21e519_1b76cb00",
+      "range": {
+        "startLine": 53,
+        "startChar": 48,
+        "endLine": 53,
+        "endChar": 104
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "445b20fb_76f1f8d0",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -131,6 +251,24 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58feff3d_5a73e58b",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "There is no CachedGraphData here, only cachedGraphData: GraphData.\n\nCyGraph is the Cy Wrapper it has a private member graphData: GraphData which contains the supplied data of type GraphData.\n\nI would have liked to use such a private member to in the VirtualZoomCyGraph but I am not allowed. So I choose another name cachedGraphData.\n\nThe VirtualZoomCyGraph transforms the supplied data (zooms it) the transformed data is for the CyGraph.\n\nIn short I need a private member to store the untransformed data.",
+      "parentUuid": "445b20fb_76f1f8d0",
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "5ab56963_f3b066bb",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "145670d3_f97d6da2",
+      "range": {
+        "startLine": 29,
+        "startChar": 8,
+        "endLine": 29,
+        "endChar": 32
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5c216227_478a8c5d",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -177,6 +339,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ffc9ced_21748497",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c216227_478a8c5d",
+      "range": {
+        "startLine": 30,
+        "startChar": 55,
+        "endLine": 30,
+        "endChar": 87
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -203,6 +389,30 @@
     },
     {
       "key": {
+        "uuid": "60c46214_60afbe03",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "check is more explicit and refined now",
+      "parentUuid": "2dfc7392_5b79648d",
+      "range": {
+        "startLine": 32,
+        "startChar": 25,
+        "endLine": 32,
+        "endChar": 33
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d7a83c73_ad6371d9",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -223,6 +433,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fea79c2a_47afa183",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "same",
+      "parentUuid": "d7a83c73_ad6371d9",
+      "range": {
+        "startLine": 33,
+        "startChar": 25,
+        "endLine": 33,
+        "endChar": 33
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -249,6 +483,30 @@
     },
     {
       "key": {
+        "uuid": "c91ae4ee_5c226009",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "885af988_b5c1fe9c",
+      "range": {
+        "startLine": 37,
+        "startChar": 34,
+        "endLine": 37,
+        "endChar": 39
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b4eb4cd_a678cdfb",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -272,6 +530,30 @@
     },
     {
       "key": {
+        "uuid": "97f27a10_7f7187f7",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "At this point in time it was necessary. However, it was removed and replaced by another mechanism.",
+      "parentUuid": "0b4eb4cd_a678cdfb",
+      "range": {
+        "startLine": 52,
+        "startChar": 8,
+        "endLine": 53,
+        "endChar": 38
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b63c80ec_30033421",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -292,6 +574,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be40adcb_24c84e29",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Reason: Less code.\nBut I changed it to the proposed style because the big advantage is: the signature is only checked with the proposed style.",
+      "parentUuid": "b63c80ec_30033421",
+      "range": {
+        "startLine": 72,
+        "startChar": 59,
+        "endLine": 72,
+        "endChar": 81
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -341,6 +647,54 @@
     },
     {
       "key": {
+        "uuid": "0f2c55f5_17283edc",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "The content graphData of the CyGraph is in general different to cachedGraphData of VirtualZoomCyGraph (see document head).",
+      "parentUuid": "355674ea_5013a6d8",
+      "range": {
+        "startLine": 128,
+        "startChar": 14,
+        "endLine": 128,
+        "endChar": 25
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "de798f64_dbaf4906",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Not this.updateGraph()!",
+      "parentUuid": "c2321558_8c7ce9b4",
+      "range": {
+        "startLine": 128,
+        "startChar": 8,
+        "endLine": 128,
+        "endChar": 13
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4da95b86_419e4c37",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -361,6 +715,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f7c831a_e424098e",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Why? Neither are they related nor do they call each other. They only share the infix \u0027Layout\u0027.",
+      "parentUuid": "4da95b86_419e4c37",
+      "range": {
+        "startLine": 227,
+        "startChar": 17,
+        "endLine": 227,
+        "endChar": 32
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -387,6 +765,30 @@
     },
     {
       "key": {
+        "uuid": "72ba01ff_b202165e",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Ups. tmp was a bug tracking artefact. I removed it.",
+      "parentUuid": "3e6fc8cf_d88b952a",
+      "range": {
+        "startLine": 258,
+        "startChar": 14,
+        "endLine": 258,
+        "endChar": 18
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1f669fae_35636358",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -410,6 +812,30 @@
     },
     {
       "key": {
+        "uuid": "39befca3_e8e4d255",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Obsolete.",
+      "parentUuid": "1f669fae_35636358",
+      "range": {
+        "startLine": 260,
+        "startChar": 12,
+        "endLine": 260,
+        "endChar": 66
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2a45928_06a01c5d",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
         "patchSetId": 1
@@ -424,6 +850,24 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcb1e68f_d772b224",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a2a45928_06a01c5d",
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -450,6 +894,30 @@
     },
     {
       "key": {
+        "uuid": "16280bdf_ad60f623",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "62e4ac93_beb0f882",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ae04009f_40f01963",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
         "patchSetId": 1
@@ -470,6 +938,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59e2abf1_4ff74589",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "No. The function is needed before a CyGraph instance is available.",
+      "parentUuid": "ae04009f_40f01963",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -496,6 +988,30 @@
     },
     {
       "key": {
+        "uuid": "cbf24e08_57add39d",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "Check was removed.",
+      "parentUuid": "0349de9f_78a62f36",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 19,
+        "endChar": 14
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "977f7790_85961d55",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
         "patchSetId": 1
@@ -519,6 +1035,30 @@
     },
     {
       "key": {
+        "uuid": "e0c4919d_c08afbfe",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "different layouts",
+      "parentUuid": "977f7790_85961d55",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 9
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3fd1417_2fa23420",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
         "patchSetId": 1
@@ -539,6 +1079,30 @@
       "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7092fa9_2b7e3844",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-07T20:27:05Z",
+      "side": 1,
+      "message": "it is used before I have access to class instance",
+      "parentUuid": "f3fd1417_2fa23420",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
