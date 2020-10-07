@@ -25,12 +25,12 @@ export interface GraphDataChange {
     selectedElements?: SelectedGraphElements;
 }
 
-export type GraphEventListenerType<T extends GraphEventType> =
+export type GraphEventListener<T extends GraphEventType> =
     T extends GraphEventType.LAYOUT_CHANGE | GraphEventType.SELECTION_CHANGE ? () => void :
     T extends GraphEventType.CONTEXT_MENU_REQUEST ? (info: ContextMenuRequestInfo) => void :
     never;
 
-export type GraphEventListeners<T extends GraphEventType> = Record<T, GraphEventListenerType<T>[]>;
+export type GraphEventListeners<T extends GraphEventType> = Record<T, GraphEventListener<T>[]>;
 
 export class InteractiveCyGraph extends CyGraph {
 
@@ -55,7 +55,7 @@ export class InteractiveCyGraph extends CyGraph {
         };
     }
 
-    set zoomPercentage(value: number) {
+    zoomToPercentage(value: number): void {
         this.zoomTo(Math.exp((value / 100) * Math.log(this.maxZoom / this.minZoom)) * this.minZoom);
     }
 
@@ -64,6 +64,30 @@ export class InteractiveCyGraph extends CyGraph {
         return Math.round(
             (Math.log(this.zoom / this.minZoom) / Math.log(this.maxZoom / this.minZoom)) * 100
         );
+    }
+
+    zoomIn(): void {
+        this.zoomTo(this.zoom * InteractiveCyGraph.ZOOM_FACTOR);
+    }
+
+    zoomOut(): void {
+        this.zoomTo(this.zoom / InteractiveCyGraph.ZOOM_FACTOR);
+    }
+
+    zoomFit(): void {
+        this.cy.fit();
+    }
+
+    registerListener<T extends GraphEventType>(event: T, listener: GraphEventListener<T>): void {
+        this.listeners[event].push(listener);
+    }
+
+    unregisterListener<T extends GraphEventType>(event: T, listener: GraphEventListener<T>): void {
+        this.listeners[event] = this.listeners[event].filter(l => l !== listener);
+    }
+
+    updateSize(): void {
+        this.cy.resize();
     }
 
     protected getNextFeasibleZoom(zoom: number): number {
@@ -83,31 +107,11 @@ export class InteractiveCyGraph extends CyGraph {
         // console.log('InteractiveCyGraph.zoomTo leaving ...');
     }
 
-    zoomIn(): void {
-        this.zoomTo(this.zoom * InteractiveCyGraph.ZOOM_FACTOR);
-    }
-
-    zoomOut(): void {
-        this.zoomTo(this.zoom / InteractiveCyGraph.ZOOM_FACTOR);
-    }
-
-    zoomFit(): void {
-        this.cy.fit();
-    }
-
-    registerListener<T extends GraphEventType>(event: T, listener: GraphEventListenerType<T>): void {
-        this.listeners[event].push(listener);
-    }
-
-    unregisterListener<T extends GraphEventType>(event: T, listener: GraphEventListenerType<T>): void {
-        this.listeners[event] = this.listeners[event].filter(l => l !== listener);
-    }
-
-    updateSize(): void {
-        this.cy.resize();
-    }
-
-    protected initCy(htmlContainerElement: HTMLElement, layoutConfig: LayoutConfig, cyConfig: CyConfig): void {
+    protected initCy(
+        htmlContainerElement: HTMLElement | undefined,
+        layoutConfig: LayoutConfig | undefined,
+        cyConfig: CyConfig | undefined
+    ): void {
         // console.log('InteractiveCyGraph.initCy entered ...');
         super.initCy(htmlContainerElement, layoutConfig, cyConfig);
         this.registerCyListeners();
@@ -127,7 +131,7 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     protected onLayoutChanged(): void {
-        this.listeners.LAYOUT_CHANGE.forEach((l: GraphEventListenerType<GraphEventType.LAYOUT_CHANGE>) => l());
+        this.listeners.LAYOUT_CHANGE.forEach((l: GraphEventListener<GraphEventType.LAYOUT_CHANGE>) => l());
     }
 
     protected applyGraphDataChangeBottomUp(dataChange: GraphDataChange): void {
@@ -155,7 +159,7 @@ export class InteractiveCyGraph extends CyGraph {
             }
         });
 
-        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListenerType<GraphEventType.SELECTION_CHANGE>) => l());
+        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListener<GraphEventType.SELECTION_CHANGE>) => l());
         // console.log('InteractiveCyGraph.onSelectionChanged leaving ...');
     }
 

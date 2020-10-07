@@ -6,11 +6,6 @@ import {
     CY_EVENT_ZOOM
 } from '../../cy-graph/cy.constants';
 
-export interface GraphContextSelection {
-    nodeIds: string[];
-    edgeIds: string[];
-}
-
 export function addCyPanListeners(cy: Cy, onPanning: () => void, onPanEnd: () => void): void {
     let tapStarted = false;
     let isPanning = false;
@@ -74,23 +69,18 @@ export function addCyContextMenuRequestListener(
     // context menu open
     cy.on(CY_EVENT_CXT_TAP, event => {
         const contextElement = event.target;
-        if (
-            contextElement === cy ||
-            (contextElement.isNode && (contextElement.isNode() || contextElement.isEdge()))
-        ) {
 
-            const position: Position = {
-                x: event.originalEvent.offsetX,
-                y: event.originalEvent.offsetY
-            };
+        const position: Position = {
+            x: event.originalEvent.offsetX,
+            y: event.originalEvent.offsetY
+        };
 
-            onContextMenuRequest({
-                position: position,
-                context: {
-                    nodeId: contextElement.isNode && contextElement.isNode() ? contextElement.id() : undefined,
-                    edgeId: contextElement.isEdge && contextElement.isEdge() ? contextElement.id() : undefined
-                }
-            });
-        }
+        onContextMenuRequest({
+            position: position,
+            context: {
+                nodeId: contextElement.isNode && contextElement.isNode() ? contextElement.id() : undefined,
+                edgeId: contextElement.isEdge && contextElement.isEdge() ? contextElement.id() : undefined
+            }
+        });
     });
 }

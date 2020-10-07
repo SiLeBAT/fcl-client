@@ -10,6 +10,8 @@ function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);
 }
 
+const DEFAULT_CY_CONFIG = {};
+
 export interface CyConfig {
     // interaction options:
     minZoom?: number;
@@ -58,9 +60,9 @@ export interface GraphData {
 export function createLayoutConfigFromLayout(layout: Layout): LayoutConfig {
     return {
         name: PRESET_LAYOUT_NAME,
-        zoom: layout ? layout.zoom : undefined,
-        pan: layout ? layout.pan : undefined,
-        fit: !layout
+        zoom: layout.zoom,
+        pan: layout.pan,
+        fit: false
     };
 }
 
@@ -84,7 +86,11 @@ export class CyGraph {
         cyConfig?: CyConfig
     ) {
         // console.log('BaseCyGraph entered ...');
-        layoutConfig = layoutConfig ? layoutConfig : createLayoutConfigFromLayout(this.graphData.layout);
+        layoutConfig =
+            layoutConfig === undefined ? layoutConfig :
+            this.graphData.layout ? createLayoutConfigFromLayout(this.graphData.layout) :
+            undefined;
+
         this.initCy(htmlContainerElement, layoutConfig, cyConfig);
         // console.log('BaseCyGraph leaving ...');
     }
@@ -142,9 +148,9 @@ export class CyGraph {
     }
 
     private cleanCy(): void {
-        if (this.cy) {
+        if (this.cy_) {
             this.edgeLabelOffsetUpdater.disconnect();
-            this.cy.destroy();
+            this.cy_.destroy();
             this.cy_ = null;
         }
     }
@@ -166,10 +172,14 @@ export class CyGraph {
         }));
     }
 
-    protected initCy(htmlContainerElement: HTMLElement, layoutConfig: LayoutConfig, cyConfig: CyConfig): void {
+    protected initCy(
+        htmlContainerElement: HTMLElement | undefined,
+        layoutConfig: LayoutConfig | undefined,
+        cyConfig: CyConfig | undefined
+    ): void {
         // console.log('BaseCyGraph.initCy entered ...');
         this.cleanCy();
-        cyConfig = cyConfig || {};
+        cyConfig = cyConfig === undefined ? DEFAULT_CY_CONFIG : cyConfig;
         this.cy_ = cytoscape({
             ...cyConfig,
             container: htmlContainerElement,
@@ -184,23 +194,24 @@ export class CyGraph {
 
         this.edgeLabelOffsetUpdater.connectTo(this.cy);
 
-        if (!isPresetLayoutConfig(layoutConfig)) {
+        if (!layoutConfig || !isPresetLayoutConfig(layoutConfig)) {
             this.graphData = { ...this.graphData,
-                layout: {
-                    zoom: this.cy.zoom(),
-                    pan: { ...this.cy.pan() }
-                },
+                layout: this.extractLayoutFromGraph(),
                 nodePositions: this.extractNodePositionsFromGraph()
             };
         } else if (layoutConfig.zoom === undefined || !layoutConfig.pan) {
             this.graphData = { ...this.graphData,
-                layout: {
-                    zoom: this.cy.zoom(),
-                    pan: { ...this.cy.pan() }
-                }
+                layout: this.extractLayoutFromGraph()
             };
         }
         // console.log('BaseCyGraph.initCy leaving ...');
+    }
+
+    private extractLayoutFromGraph(): Layout {
+        return {
+            zoom: this.cy.zoom(),
+            pan: { ...this.cy.pan() }
+        };
     }
 
     protected extractNodePositionsFromGraph(): PositionMap {

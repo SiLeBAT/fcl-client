@@ -97,7 +97,7 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
 
     onZoomSlide(value: string): void {
         if (this.cyGraph_) {
-            this.cyGraph_.zoomPercentage = Number(value);
+            this.cyGraph_.zoomToPercentage(Number(value));
         }
     }
 

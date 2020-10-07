@@ -1,13 +1,8 @@
 import cytoscape from 'cytoscape';
-import { CyNodeData, CyEdgeData } from '../../graph.model';
+import { CyNodeData, CyEdgeData, GraphElementData } from '../../graph.model';
 
 enum GraphSize {
     SMALL, LARGE, HUGE
-}
-
-export interface GraphData {
-    nodeData: CyNodeData[];
-    edgeData: CyEdgeData[];
 }
 
 export interface StyleConfig {
@@ -29,7 +24,7 @@ export class CyStyle {
     private maxScore: number;
     private minScore: number;
 
-    constructor(private graphData: GraphData, private styleConfig: StyleConfig) {
+    constructor(private graphData: GraphElementData, private styleConfig: StyleConfig) {
         this.initScoreLimits();
     }
 
