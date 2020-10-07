@@ -18,25 +18,25 @@ export interface CyConfig {
     maxZoom?: number;
     zoomingEnabled?: boolean;
     userZoomingEnabled?: boolean;
-    panningEnabled?: boolean;
-    userPanningEnabled?: boolean;
-    boxSelectionEnabled?: boolean;
-    selectionType?: 'single' | 'additive';
-    touchTapThreshold?: number;
-    desktopTapThreshold?: number;
-    autolock?: boolean;
+    // panningEnabled?: boolean;
+    // userPanningEnabled?: boolean;
+    // boxSelectionEnabled?: boolean;
+    // selectionType?: 'single' | 'additive';
+    // touchTapThreshold?: number;
+    // desktopTapThreshold?: number;
+    // autolock?: boolean;
     autoungrabify?: boolean;
-    autounselectify?: boolean;
+    // autounselectify?: boolean;
 
     // rendering options:
-    headless?: boolean;
-    styleEnabled?: boolean;
-    hideEdgesOnViewport?: boolean;
-    textureOnViewport?: boolean;
-    motionBlur?: boolean;
-    motionBlurOpacity?: number;
-    wheelSensitivity?: number;
-    pixelRatio?: number | 'auto';
+    // headless?: boolean;
+    // styleEnabled?: boolean;
+    // hideEdgesOnViewport?: boolean;
+    // textureOnViewport?: boolean;
+    // motionBlur?: boolean;
+    // motionBlurOpacity?: number;
+    // wheelSensitivity?: number;
+    // pixelRatio?: number | 'auto';
 }
 
 export interface LayoutConfig {
@@ -189,7 +189,13 @@ export class CyGraph {
             },
             layout: layoutConfig,
             style: new CyStyle(this.graphData, this.styleConfig).createCyStyle(),
-            wheelSensitivity: CyGraph.WHEEL_SENSITIVITY
+            wheelSensitivity: CyGraph.WHEEL_SENSITIVITY,
+            minZoom: cyConfig.minZoom,
+            maxZoom: cyConfig.maxZoom,
+            autoungrabify: cyConfig.autoungrabify,
+            userZoomingEnabled: cyConfig.userZoomingEnabled,
+            zoomingEnabled: cyConfig.zoomingEnabled
+
         });
 
         this.edgeLabelOffsetUpdater.connectTo(this.cy);

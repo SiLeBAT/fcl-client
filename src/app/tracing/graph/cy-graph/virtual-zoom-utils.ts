@@ -16,19 +16,19 @@ export function getAvailableSpace(htmlElement: HTMLElement): Size {
 }
 
 export function getZoomedNodePositions(nodeData: CyNodeData[], posMap: PositionMap, zoom: number): PositionMap {
-    if (posMap) {
-        const zoomedPosMap: PositionMap = { ...posMap };
-        nodeData.forEach(n => {
-            const oldPos = posMap[n.id];
-            zoomedPosMap[n.id] = {
-                x: oldPos.x * zoom,
-                y: oldPos.y * zoom
-            };
-        });
-        return zoomedPosMap;
-    } else {
-        return {};
-    }
+    // if (posMap) {
+    const zoomedPosMap: PositionMap = { ...posMap };
+    nodeData.forEach(n => {
+        const oldPos = posMap[n.id];
+        zoomedPosMap[n.id] = {
+            x: oldPos.x * zoom,
+            y: oldPos.y * zoom
+        };
+    });
+    return zoomedPosMap;
+    // } else {
+    //     return {};
+    // }
 }
 
 export function getZoomedGraphData(graphData: GraphData): GraphData {
@@ -38,7 +38,9 @@ export function getZoomedGraphData(graphData: GraphData): GraphData {
     };
     return {
         ...graphData,
-        nodePositions: getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, layout.zoom),
+        nodePositions: graphData.nodePositions !== undefined ?
+            getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, layout.zoom) :
+            undefined,
         layout: {
             zoom: 1,
             pan: layout.pan

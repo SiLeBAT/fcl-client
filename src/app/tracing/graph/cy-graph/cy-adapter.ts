@@ -38,8 +38,6 @@ export function addCustomZoomAdapter(cy: Cy, getCurrentZoom: () => number, zoomT
         pinchScale = e.scale;
     });
     hammer.on([HAMMER_EVENT_PINCH_END, HAMMER_EVENT_PINCH_CANCEL].join(' '), () => {
-        pinchCenter = null;
-        pinchScale = null;
         cy.userPanningEnabled(true);
     });
 

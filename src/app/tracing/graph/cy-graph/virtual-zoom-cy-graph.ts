@@ -6,9 +6,22 @@ import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
 import { createLayoutConfigFromLayout, GraphData, CyConfig } from '../components/graph-view/cy-graph';
 import { addCustomZoomAdapter } from './cy-adapter';
 import { getActivePositions, getAvailableSpace, getZoomedGraphData, getZoomedNodePositions } from './virtual-zoom-utils';
+import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
 
 export interface Options extends CyConfig {
     defaultLayout?: Layout;
+}
+
+const DEFAULT_LAYOUT = {
+    zoom: 1,
+    pan: {
+        x: 0,
+        y: 0
+    }
+};
+
+function correctZoomLimit(zoomLimit: number): number {
+    return Math.min(CY_MAX_ZOOM, Math.max(CY_MIN_ZOOM, zoomLimit));
 }
 
 export class VirtualZoomCyGraph extends InteractiveCyGraph {
@@ -27,14 +40,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         // console.log('VirtualZoomCyGraph entered ...');
         const fitLayout = !graphData.layout;
         options = options || {};
-        const defaultLayout = options.defaultLayout || { zoom: 1, pan: { x: 0, y: 0 } };
+        const defaultLayout = options.defaultLayout || DEFAULT_LAYOUT;
         const zoomLimits = {
-            min: options.minZoom || VirtualZoomCyGraph.DEFAULT_MIN_ZOOM,
-            max: options.maxZoom || VirtualZoomCyGraph.DEFAULT_MAX_ZOOM
+            min: options.minZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MIN_ZOOM : correctZoomLimit(options.minZoom),
+            max: options.maxZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MAX_ZOOM : correctZoomLimit(options.maxZoom)
         };
 
         if (!graphData.layout) {
-            const availableSpace: Size = getAvailableSpace(htmlContainerElement);
+            const availableSpace = getAvailableSpace(htmlContainerElement);
 
             graphData = {
                 ...graphData,
@@ -49,15 +62,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
         const layoutConfig = createLayoutConfigFromLayout(graphData.layout);
         layoutConfig.fit = false;
-        const cyConfig = { ...options };
-        delete cyConfig.defaultLayout;
+
         super(
             htmlContainerElement,
             getZoomedGraphData(graphData),
             styleConfig,
             null,
             {
-                ...cyConfig,
+                ...options,
                 zoomingEnabled: false,
                 minZoom: 1,
                 maxZoom: 1
@@ -69,7 +81,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.fitZoomFromCurrentLayout();
         }
         if (this.cy.container()) {
-            addCustomZoomAdapter(this.cy, () => this.zoom, this.zoomTo.bind(this));
+            addCustomZoomAdapter(this.cy, () => this.zoom, (zoom, position) => this.zoomTo(zoom, position));
         }
         // console.log('VirtualZoomCyGraph leaving ...');
     }
@@ -120,8 +132,13 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 zoom: 1,
                 pan: layout.pan
             },
-            nodePositions: layout.zoom !== oldZoom ?
-                getZoomedNodePositions(this.cachedGraphData.nodeData, this.cachedGraphData.nodePositions, layout.zoom) :
+            nodePositions:
+                layout.zoom === oldZoom ? super.nodePositions :
+                this.cachedGraphData.nodePositions !== undefined ? getZoomedNodePositions(
+                    this.cachedGraphData.nodeData,
+                    this.cachedGraphData.nodePositions,
+                    layout.zoom
+                ) :
                 super.nodePositions
         };
 
@@ -255,7 +272,6 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         // console.log('VirtualZoomCyGraph.updateGraph entered ...');
         const oldGraphData = this.cachedGraphData;
         this.cachedGraphData = graphData;
-        const tmp = graphData.nodePositions !== oldGraphData.nodePositions;
         if (
             graphData.nodePositions !== oldGraphData.nodePositions ||
             graphData.layout.zoom !== oldGraphData.layout.zoom
