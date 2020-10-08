@@ -1,5 +1,5 @@
 import {
-    Component, ElementRef, ViewChild, OnDestroy, Input, Output, AfterViewInit,
+    Component, ElementRef, ViewChild, OnDestroy, Input, Output,
     EventEmitter, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -23,12 +23,11 @@ export interface GraphDataChange {
     styleUrls: ['./graph-view.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, OnChanges {
+export class GraphViewComponent implements OnDestroy, DoCheck, OnChanges {
 
     private static readonly MIN_ZOOM = 0.1;
     private static readonly MAX_ZOOM = 100.0;
 
-    private ngAfterViewInitPassed = false;
     private inputProcessed = true;
     private cyGraph_: InteractiveCyGraph = null;
 
@@ -60,10 +59,6 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
         if (!this.inputProcessed) {
             this.processInputDataUpdate();
         }
-    }
-
-    ngAfterViewInit(): void {
-        this.ngAfterViewInitPassed = true;
     }
 
     ngOnDestroy() {
@@ -155,11 +150,7 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
             {
                 minZoom: GraphViewComponent.MIN_ZOOM,
                 maxZoom: GraphViewComponent.MAX_ZOOM,
-                autoungrabify: true,
-                defaultLayout: {
-                    zoom: 2,
-                    pan: { x: 0, y: 0 }
-                }
+                autoungrabify: true
             }
         );
         this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
@@ -176,23 +167,23 @@ export class GraphViewComponent implements OnDestroy, AfterViewInit, DoCheck, On
 
     private processInputDataUpdate(): void {
         // console.log('GraphView.processInputDataUpdate entered ...');
-        if (this.ngAfterViewInitPassed) {
-            if (!this.inputProcessed) {
-                if (this.graphData && this.styleConfig) {
-                    if (this.cyGraph_ && !this.graphData.layout) {
-                        this.cleanCyGraph();
-                    }
-                    if (!this.cyGraph_) {
-                        this.createCyGraph();
-                    } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
-                        this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
-                    }
-                } else if (this.cyGraph_) {
+
+        if (!this.inputProcessed) {
+            if (this.graphData && this.styleConfig) {
+                if (this.cyGraph_ && !this.graphData.layout) {
                     this.cleanCyGraph();
                 }
-                this.inputProcessed = true;
+                if (!this.cyGraph_) {
+                    this.createCyGraph();
+                } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
+                    this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
+                }
+            } else if (this.cyGraph_) {
+                this.cleanCyGraph();
             }
+            this.inputProcessed = true;
         }
+
         // console.log('GraphView.processInputDataUpdate leaving ...');
     }
 }

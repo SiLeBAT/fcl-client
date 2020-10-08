@@ -19,27 +19,27 @@ interface LegendEntryWithIndices extends LegendEntry {
 })
 export class GraphLegendViewComponent implements OnInit {
 
-    private _legendInfo: LegendInfo;
-    private _showStationColumn: boolean;
-    private _showDeliveryColumn: boolean;
+    private legendInfo_: LegendInfo = null;
+    private showStationColumn_ = false;
+    private showDeliveryColumn_ = false;
 
     @Input() showMissingGisInfoEntry: boolean;
 
     @Input() set legendInfo(legendInfo: LegendInfo) {
-        if (this._legendInfo !== legendInfo) {
+        if (this.legendInfo_ !== legendInfo) {
             this.updateLegend(legendInfo);
-            this._legendInfo = legendInfo;
+            this.legendInfo_ = legendInfo;
         }
     }
 
     legend: LegendEntry[] = [];
 
     get showStationColumn(): boolean {
-        return this._showStationColumn;
+        return this.showStationColumn_;
     }
 
     get showDeliveryColumn(): boolean {
-        return this._showDeliveryColumn;
+        return this.showDeliveryColumn_;
     }
 
     isEmpty(): boolean {
@@ -153,8 +153,8 @@ export class GraphLegendViewComponent implements OnInit {
             deliveryColor: e.deliveryColor,
             shape: e.shape
         }));
-        this._showStationColumn = this.legend.some(e => !!e.shape || !!e.stationColor);
-        this._showDeliveryColumn = this.legend.some(e => !!e.deliveryColor);
+        this.showStationColumn_ = this.legend.some(e => !!e.shape || !!e.stationColor);
+        this.showDeliveryColumn_ = this.legend.some(e => !!e.deliveryColor);
     }
 
 }

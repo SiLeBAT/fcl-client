@@ -152,6 +152,23 @@ export const getGisGraphData = createSelector(
     })
 );
 
+export const getMapConfig = createSelector(
+    getGraphSettings,
+    (graphSettings) => ({
+        layout: graphSettings.gisLayout,
+        mapType: graphSettings.mapType,
+        shapeFileData: graphSettings.shapeFileData
+    })
+);
+
+export const getStyleConfig = createSelector(
+    getGraphSettings,
+    (graphSettings) => ({
+        nodeSize: graphSettings.nodeSize,
+        fontSize: graphSettings.fontSize
+    })
+);
+
 export const getSchemaGraphLayout = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.schemaLayout

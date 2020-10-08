@@ -15,14 +15,13 @@ import { filter } from 'rxjs/operators';
 import { GraphDataChange } from '../graph-view/graph-view.component';
 import { GraphData } from '../graph-view/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
-import { StyleConfig } from '../graph-view/cy-style';
-import { MapConfig, UnknownPosFrameData } from '../geomap/geomap.component';
+import { UnknownPosFrameData } from '../geomap/geomap.component';
 import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetGisGraphLayoutSOA, SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
-import { getGisGraphData, getGraphType, getShowLegend, getShowZoom } from '@app/tracing/state/tracing.selectors';
+import { getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 
 interface GraphSettingsState {
     fontSize: number;
@@ -50,17 +49,15 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     showZoom$ = this.store.select(getShowZoom);
     showLegend$ = this.store.select(getShowLegend);
     graphType$ = this.store.select(getGraphType);
+    mapConfig$ = this.store.select(getMapConfig);
+    styleConfig$ = this.store.select(getStyleConfig);
 
     private graphStateSubscription: Subscription;
     private graphTypeSubscription: Subscription;
 
-    legendInfo: LegendInfo;
-
-    private cachedData: GraphServiceData;
-    private graphData_: GraphData;
-    private styleConfig_: StyleConfig;
-    private mapConfig_: MapConfig;
-    private unknownPosFrameData_: UnknownPosFrameData;
+    private cachedData: GraphServiceData | null = null;
+    private graphData_: GraphData | null = null;
+    private unknownPosFrameData_: UnknownPosFrameData | null = null;
 
     constructor(
         private store: Store<State>,
@@ -146,15 +143,11 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return this.graphData_;
     }
 
-    get styleConfig(): StyleConfig {
-        return this.styleConfig_;
+    get legendInfo(): LegendInfo | null {
+        return this.cachedData !== null ? this.cachedData.legendInfo : null;
     }
 
-    get mapConfig(): MapConfig {
-        return this.mapConfig_;
-    }
-
-    get unknownPosFrameData(): UnknownPosFrameData {
+    get unknownPosFrameData(): UnknownPosFrameData | null {
         return this.unknownPosFrameData_;
     }
 
@@ -191,36 +184,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             selectedElements: selectedElements
         };
 
-        if (
-            !this.styleConfig_ ||
-            this.styleConfig_.fontSize !== newState.fontSize ||
-            this.styleConfig_.nodeSize !== newState.nodeSize
-        ) {
-
-            this.styleConfig_ = {
-                nodeSize: newState.nodeSize,
-                fontSize: newState.fontSize
-            };
-        }
-
-        if (
-            newState.layout &&
-            (
-                !this.mapConfig_ ||
-                this.mapConfig_.layout !== newState.layout ||
-                this.mapConfig_.mapType !== newState.mapType ||
-                this.mapConfig_.shapeFileData !== newState.shapeFileData
-            )
-        ) {
-            this.mapConfig_ = {
-                layout: newState.layout,
-                mapType: newState.mapType,
-                shapeFileData: newState.shapeFileData
-            };
-        }
-
         this.cachedData = newData;
-        this.legendInfo = newData.legendInfo;
         // console.log('Gis-Graph.applyState leaving ...');
     }
 }

@@ -11,9 +11,9 @@ import { createOpenLayerMap, removeFrameLayer, setFrameLayer, updateMapType } fr
 import { BoundaryRect } from '@app/tracing/util/geometry-utils';
 
 export interface MapConfig {
-    layout: Layout;
+    layout: Layout | null;
     mapType: MapType;
-    shapeFileData: ShapeFileData;
+    shapeFileData: ShapeFileData | null;
 }
 
 export type UnknownPosFrameData = BoundaryRect;
@@ -31,9 +31,9 @@ export class GeoMapComponent implements DoCheck {
     @Input() mapConfig: MapConfig;
     @Input() frameData: BoundaryRect;
 
-    private map: ol.Map;
-    private processedMapConfig: MapConfig;
-    private processedFrameData: BoundaryRect;
+    private map: ol.Map = null;
+    private processedMapConfig: MapConfig = null;
+    private processedFrameData: BoundaryRect = null;
 
     constructor(public elementRef: ElementRef) {}
 
@@ -71,16 +71,18 @@ export class GeoMapComponent implements DoCheck {
     }
 
     private updateMap() {
-        const size = this.getSize();
-        this.map.setView(UIUtils.panZoomToView(
-            this.mapConfig.layout.pan,
-            this.mapConfig.layout.zoom,
-            size.width, size.height
-        ));
+        if (this.mapConfig.layout !== null) {
+            const size = this.getSize();
+            this.map.setView(UIUtils.panZoomToView(
+                this.mapConfig.layout.pan,
+                this.mapConfig.layout.zoom,
+                size.width, size.height
+            ));
+        }
     }
 
     private resizeMap() {
-        if (this.map) {
+        if (this.map !== null) {
             this.map.updateSize();
             this.updateMap();
         }
@@ -106,10 +108,10 @@ export class GeoMapComponent implements DoCheck {
     }
 
     private checkAndUpdateMap(): void {
-        if (this.mapConfig) {
+        if (this.mapConfig !== undefined && this.mapConfig.layout !== null) {
             const oldMapConfig = this.processedMapConfig;
             const newMapConfig = this.mapConfig;
-            if (!this.map) {
+            if (this.map === null) {
                 this.initMap();
             } else if (oldMapConfig !== newMapConfig) {
                 if (
@@ -127,7 +129,7 @@ export class GeoMapComponent implements DoCheck {
     }
 
     private checkFrameData(): void {
-        if (this.map && this.frameData !== this.processedFrameData) {
+        if (this.map !== null && this.frameData !== this.processedFrameData) {
             if (this.processedFrameData) {
                 this.removeFrameLayer();
             }

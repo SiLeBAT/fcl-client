@@ -133,7 +133,7 @@ export interface InvisibleElements {
 export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
-    shapeFileData: ShapeFileData;
+    shapeFileData: ShapeFileData | null;
     nodeSize: number;
     fontSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
@@ -144,8 +144,8 @@ export interface GraphSettings {
     selectedElements: SelectedElements;
     stationPositions: {[key: string]: Position};
     highlightingSettings: HighlightingSettings;
-    schemaLayout: Layout;
-    gisLayout: Layout;
+    schemaLayout: Layout | null;
+    gisLayout: Layout | null;
     ghostStation: string;
 }
 

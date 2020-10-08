@@ -8,9 +8,9 @@ import { addCustomZoomAdapter } from './cy-adapter';
 import { getActivePositions, getAvailableSpace, getZoomedGraphData, getZoomedNodePositions } from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
 
-export interface Options extends CyConfig {
-    defaultLayout?: Layout;
-}
+// export interface Options extends CyConfig {
+//     defaultLayout?: Layout;
+// }
 
 const DEFAULT_LAYOUT = {
     zoom: 1,
@@ -35,15 +35,15 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         htmlContainerElement: HTMLElement,
         graphData: GraphData,
         styleConfig: StyleConfig,
-        options?: Options
+        cyConfig?: CyConfig
     ) {
         // console.log('VirtualZoomCyGraph entered ...');
         const fitLayout = !graphData.layout;
-        options = options || {};
-        const defaultLayout = options.defaultLayout || DEFAULT_LAYOUT;
+        cyConfig = cyConfig || {};
+        // const defaultLayout = options.defaultLayout || DEFAULT_LAYOUT;
         const zoomLimits = {
-            min: options.minZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MIN_ZOOM : correctZoomLimit(options.minZoom),
-            max: options.maxZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MAX_ZOOM : correctZoomLimit(options.maxZoom)
+            min: cyConfig.minZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MIN_ZOOM : correctZoomLimit(cyConfig.minZoom),
+            max: cyConfig.maxZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MAX_ZOOM : correctZoomLimit(cyConfig.maxZoom)
         };
 
         if (!graphData.layout) {
@@ -55,7 +55,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                     getActivePositions(graphData),
                     availableSpace,
                     zoomLimits,
-                    defaultLayout
+                    DEFAULT_LAYOUT
+                    // defaultLayout
                 )
             };
         }
@@ -69,7 +70,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             styleConfig,
             null,
             {
-                ...options,
+                ...cyConfig,
                 zoomingEnabled: false,
                 minZoom: 1,
                 maxZoom: 1
