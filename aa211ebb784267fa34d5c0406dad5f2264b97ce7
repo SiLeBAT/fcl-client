@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b48abae4_6f97411a",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-08T11:19:37Z",
+      "side": 1,
+      "message": "zoomFit is more adequate than zoomReset because the zoom is fitted to the available space not reseted\nzoomReset needs to be renamed",
+      "parentUuid": "167533f1_78d4972d",
+      "range": {
+        "startLine": 10,
+        "startChar": 17,
+        "endLine": 10,
+        "endChar": 26
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81903166_9a4d853e",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "f1150b54_6a0ba0c1",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-08T11:19:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81903166_9a4d853e",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 9
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90acbb4c_dfa50567",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -62,6 +110,24 @@
       "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72580356_74f3c0b8",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-08T11:19:37Z",
+      "side": 1,
+      "message": "I want maximal one check per lifecyle. ngOnChanges would not be appropriate for that. ngDoCheck is. I dismissed ngAfterViewInit and the ngAfterViewInitPassed flag.",
+      "parentUuid": "90acbb4c_dfa50567",
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "9654a447_437351a1",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-08T11:19:37Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "164773fd_0abec624",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 1
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dfe226c1_4d5f9ace",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -108,6 +198,30 @@
       "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "508bf940_ed42a959",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-08T11:19:37Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "dfe226c1_4d5f9ace",
+      "range": {
+        "startLine": 159,
+        "startChar": 16,
+        "endLine": 162,
+        "endChar": 17
+      },
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
