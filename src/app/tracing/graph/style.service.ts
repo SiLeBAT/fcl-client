@@ -21,7 +21,7 @@ export class StyleService {
     private static readonly SELECTED_EDGE_WIDTH_FACTOR = 3;
     private static readonly META_NODE_BORDER_WIDTH_FACTOR = 2;
     private static readonly SELECTED_NODE_BORDER_WIDTH_FACTOR = 2;
-    private static readonly SCORE_ONE_SIZE_FACTOR = 3;
+    private static readonly SCORE_ONE_SIZE_FACTOR = 2;
 
     constructor() { }
 
