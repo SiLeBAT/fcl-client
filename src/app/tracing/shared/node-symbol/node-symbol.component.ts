@@ -35,18 +35,18 @@ export class NodeSymbolComponent {
         [NodeShapeType.STAR]: 'star'
     });
 
-    private svgShapeType_: string = null;
+    private svgShapeType_: string | null = null;
     private fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
     private isFillColorNonWhite_ = false;
-    private gradientId_: string = null;
-    private gradientStops_: GradientStop[] = null;
+    private gradientId_: string | null = null;
+    private gradientStops_: GradientStop[] = [];
 
     @Input() set shapeType(shape: NodeShapeType) {
         this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : null;
     }
 
-    @Input() set fillColor(color: Color) {
-        this.setSimpleFillColor(color);
+    @Input() set fillColor(color: Color | null) {
+        this.setFillColor(color);
     }
 
     @Input() set mapStationColor(colors: number[][]) {
@@ -83,24 +83,31 @@ export class NodeSymbolComponent {
 
     constructor() {}
 
-    private setFillColor(colorOrColors: Color | number[][]): void {
-        this.gradientId_ = null;
+    private resetColors(): void {
+        this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
+        this.isFillColorNonWhite_ = true;
+        this.gradientStops_ = null;
         this.gradientStops_ = [];
-        this.fillColor_ = null;
+    }
 
-        if (Array.isArray(colorOrColors)) {
-            const colors: number[][] = colorOrColors;
-            if (colors.length === 0) {
-                this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
-                this.isFillColorNonWhite_ = false;
-            } else if (colors.length === 1) {
-                this.setSimpleFillColor(arrayToColor(colors[0]));
+    private setFillColor(colorOrColors: Color | number[][] | null): void {
+        this.resetColors();
+
+        if (colorOrColors !== null) {
+            if (Array.isArray(colorOrColors)) {
+                const colors: number[][] = colorOrColors;
+                if (colors.length === 0) {
+                    this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
+                    this.isFillColorNonWhite_ = false;
+                } else if (colors.length === 1) {
+                    this.setSimpleFillColor(arrayToColor(colors[0]));
+                } else {
+                    this.setGradientFillColor(colors);
+                }
             } else {
-                this.setGradientFillColor(colors);
+                const color: Color = colorOrColors;
+                this.setSimpleFillColor(color);
             }
-        } else {
-            const color: Color = colorOrColors;
-            this.setSimpleFillColor(color);
         }
     }
 
