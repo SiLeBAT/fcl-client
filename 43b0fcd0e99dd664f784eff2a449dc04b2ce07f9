@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "623f0cce_6314fd4e",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ae1789c_c3315ca8",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 33
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59867e34_348d17e0",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "404e8ba7_56749f15",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59867e34_348d17e0",
+      "range": {
+        "startLine": 18,
+        "startChar": 35,
+        "endLine": 18,
+        "endChar": 56
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +165,54 @@
     },
     {
       "key": {
+        "uuid": "7f642404_4225c4a3",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97011ba4_58d320ee",
+      "range": {
+        "startLine": 25,
+        "startChar": 39,
+        "endLine": 25,
+        "endChar": 61
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95993fe8_da61c1c6",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "The context menu view component provides an public open method. This method takes as argument the context position and the menu item data. The positioning is done by an old code thing that simply manipulates the style property of the context menu view.",
+      "parentUuid": "0a832f88_a32b8565",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "18e3f412_f020703d",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
         "patchSetId": 1
@@ -131,6 +227,24 @@
       "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7cbc58e_a65b38d0",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "18e3f412_f020703d",
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -157,6 +271,30 @@
     },
     {
       "key": {
+        "uuid": "21352cc2_321aa11f",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "I can think of no adequate class name (fcl-map-overlay would be confusing, because fcl-graph-map represents the map itself). So is stick to the duplicate code.",
+      "parentUuid": "8f0f549c_c2ff099b",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 1
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "17f63b42_51a4d69d",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
         "patchSetId": 1
@@ -177,6 +315,30 @@
       "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2299ba3_d03d99b1",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "The element size should fit its content in this case. This is done if the width and height  are omitted.",
+      "parentUuid": "17f63b42_51a4d69d",
+      "range": {
+        "startLine": 18,
+        "startChar": 14,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -203,6 +365,30 @@
     },
     {
       "key": {
+        "uuid": "32eb724f_730ef5d5",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d92928fb_c175ded8",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 17
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "064f4585_293dbab7",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
         "patchSetId": 1
@@ -226,6 +412,30 @@
     },
     {
       "key": {
+        "uuid": "92b5fc1d_4b02a88b",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "064f4585_293dbab7",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8cfd97a5_f22833b7",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
         "patchSetId": 1
@@ -237,6 +447,30 @@
       "writtenOn": "2020-10-05T16:12:50Z",
       "side": 1,
       "message": "reject: absolute positioned elements should have a defined width and height",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 23
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35b82ec7_6580abe1",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Why? The element size should fit its content in this case. This is done if the width and height  are omitted.",
+      "parentUuid": "8cfd97a5_f22833b7",
       "range": {
         "startLine": 25,
         "startChar": 4,
@@ -272,6 +506,30 @@
     },
     {
       "key": {
+        "uuid": "2ec7d36d_1871c83f",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "May be in a later refactoring step, because all our selectors use this prefix.",
+      "parentUuid": "ab02fe51_5d2b6c74",
+      "range": {
+        "startLine": 50,
+        "startChar": 34,
+        "endLine": 50,
+        "endChar": 45
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a93807c_e0bb5aa2",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
         "patchSetId": 1
@@ -292,6 +550,30 @@
       "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e4f82a8_7ad65707",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "7a93807c_e0bb5aa2",
+      "range": {
+        "startLine": 66,
+        "startChar": 29,
+        "endLine": 66,
+        "endChar": 34
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -318,6 +600,30 @@
     },
     {
       "key": {
+        "uuid": "c130801d_2ccc00c6",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Done in a previous commit.",
+      "parentUuid": "ca776ac1_7ef73a35",
+      "range": {
+        "startLine": 210,
+        "startChar": 16,
+        "endLine": 212,
+        "endChar": 72
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa396bb9_cf56a970",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
         "patchSetId": 1
@@ -338,6 +644,30 @@
       "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b71b581_5cfd92e5",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T21:44:30Z",
+      "side": 1,
+      "message": "Done in a previous commit.",
+      "parentUuid": "aa396bb9_cf56a970",
+      "range": {
+        "startLine": 223,
+        "startChar": 0,
+        "endLine": 223,
+        "endChar": 45
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
