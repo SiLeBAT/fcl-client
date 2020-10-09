@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fea07ffe_5ee1bf2a",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T07:30:31Z",
+      "side": 1,
+      "message": "ol has no default export",
+      "parentUuid": "9fca5b58_b7b5d3d5",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 25
+      },
+      "revId": "b3f2fcafe89019ba81c57c1656fcd4d66168e227",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa8bcfe0_1e19727d",
         "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "b3f2fcafe89019ba81c57c1656fcd4d66168e227",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60bf7326_6f2a62a8",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T07:30:31Z",
+      "side": 1,
+      "message": "Your are right. Done.",
+      "parentUuid": "fa8bcfe0_1e19727d",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 45
+      },
+      "revId": "b3f2fcafe89019ba81c57c1656fcd4d66168e227",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
