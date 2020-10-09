@@ -118,7 +118,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         // console.log('Gis-Graph.onContextMenuRequest leaving ...');
     }
 
-    onContextMenuSelection(action: Action): void {
+    onContextMenuSelect(action: Action): void {
         // console.log('Gis-Graph.onContextMenuSelection entered ...');
         if (action) {
             this.store.dispatch(action);
@@ -149,6 +149,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     get unknownPosFrameData(): UnknownPosFrameData | null {
         return this.unknownPosFrameData_;
+    }
+
+    get showMissingGisInfoEntry(): boolean {
+        return this.unknownPosFrameData_ !== null;
     }
 
     private getSelectedElements(newData: GraphServiceData): SelectedGraphElements {
