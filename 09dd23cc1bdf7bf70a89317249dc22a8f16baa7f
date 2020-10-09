@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fe76d2d3_18e436d5",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T10:10:22Z",
+      "side": 1,
+      "message": "in next refactoring",
+      "parentUuid": "c88bf406_d708f1cb",
+      "range": {
+        "startLine": 2,
+        "startChar": 42,
+        "endLine": 2,
+        "endChar": 56
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c6521abe_4ca450ad",
         "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f41cc1c_7e453322",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T10:10:22Z",
+      "side": 1,
+      "message": "Just applied old code. Will be done in next refactoring.",
+      "parentUuid": "c6521abe_4ca450ad",
+      "range": {
+        "startLine": 17,
+        "startChar": 46,
+        "endLine": 17,
+        "endChar": 52
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "0d6831a4_0a54dcb0",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T10:10:22Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5445ec43_82184190",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 80
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8974fdaf_1b30e821",
         "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6162b502_57815f83",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T10:10:22Z",
+      "side": 1,
+      "message": "But it is used by the template.",
+      "parentUuid": "8974fdaf_1b30e821",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 5
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
