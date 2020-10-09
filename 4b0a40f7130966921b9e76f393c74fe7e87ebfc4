@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "491addea_f45f7be6",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:47Z",
+      "side": 1,
+      "message": "I don\u0027t want to pollute the local scope with similar named thinks although I need only one. But I see your point.",
+      "parentUuid": "5901112b_bae51e0d",
+      "range": {
+        "startLine": 89,
+        "startChar": 8,
+        "endLine": 89,
+        "endChar": 21
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "18435631_fbd9c719",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "469142c6_af53485b",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18435631_fbd9c719",
+      "range": {
+        "startLine": 90,
+        "startChar": 25,
+        "endLine": 90,
+        "endChar": 38
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cbfd9ef0_7e4fa1b9",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b33adc4c_2c728383",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:47Z",
+      "side": 1,
+      "message": "I set the default in the constructor parameter list",
+      "parentUuid": "cbfd9ef0_7e4fa1b9",
+      "range": {
+        "startLine": 182,
+        "startChar": 8,
+        "endLine": 182,
+        "endChar": 73
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
