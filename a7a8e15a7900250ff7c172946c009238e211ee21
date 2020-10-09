@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b415af74_ade0ec9f",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f1dac4e9_708d7ba6",
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe925079_f23d99f9",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -39,6 +57,30 @@
       "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bf4b926_567fe29a",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "fe925079_f23d99f9",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 10
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "f25bc8f5_2564b2d8",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e41ce0a_9c2ad4d5",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 32,
+        "endChar": 54
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eadb7a5a_8ea05efd",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -85,6 +151,30 @@
       "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d263a5e_a085a95c",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eadb7a5a_8ea05efd",
+      "range": {
+        "startLine": 42,
+        "startChar": 31,
+        "endLine": 42,
+        "endChar": 58
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "9cebfb77_d9a36723",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7898b07_dd898714",
+      "range": {
+        "startLine": 108,
+        "startChar": 12,
+        "endLine": 111,
+        "endChar": 13
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1dc01f7d_94878727",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -131,6 +245,30 @@
       "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fdd1124c_c1c98dbe",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1dc01f7d_94878727",
+      "range": {
+        "startLine": 126,
+        "startChar": 38,
+        "endLine": 126,
+        "endChar": 41
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "91fb9441_5a2b599b",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8fb7e999_c644d7aa",
+      "range": {
+        "startLine": 130,
+        "startChar": 12,
+        "endLine": 130,
+        "endChar": 40
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aac30c04_96e8352e",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -177,6 +339,30 @@
       "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cea2b580_0e5c7167",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aac30c04_96e8352e",
+      "range": {
+        "startLine": 168,
+        "startChar": 12,
+        "endLine": 168,
+        "endChar": 27
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -203,6 +389,30 @@
     },
     {
       "key": {
+        "uuid": "25ed4574_54217c03",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "I didn\u0027t know assert. Thank you. Done.",
+      "parentUuid": "e8371864_be28d9af",
+      "range": {
+        "startLine": 79,
+        "startChar": 8,
+        "endLine": 79,
+        "endChar": 30
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "211d5ea6_a6af8757",
         "filename": "src/app/tracing/util/geometry-utils.ts",
         "patchSetId": 1
@@ -223,6 +433,30 @@
       "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c6a512e_1d9031b6",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "211d5ea6_a6af8757",
+      "range": {
+        "startLine": 83,
+        "startChar": 16,
+        "endLine": 83,
+        "endChar": 25
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
