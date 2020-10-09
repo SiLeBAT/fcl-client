@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fa264d21_0641700c",
+        "filename": "src/app/tracing/graph/components/geomap-licref/geomap-licref-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T10:03:38Z",
+      "side": 1,
+      "message": "At first I would add a map rendering service or a similar thing that knows that kind of lic information should be displayed.",
+      "parentUuid": "e0d10a45_883fafdd",
+      "range": {
+        "startLine": 2,
+        "startChar": 24,
+        "endLine": 2,
+        "endChar": 65
+      },
+      "revId": "445d3a396be1bb0890c697cd47554d8636d07adb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "121a8f27_551d1b05",
         "filename": "src/app/tracing/graph/components/geomap-licref/geomap-licref-view.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "445d3a396be1bb0890c697cd47554d8636d07adb",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4ea0a12_14d96ae5",
+        "filename": "src/app/tracing/graph/components/geomap-licref/geomap-licref-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T10:03:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "121a8f27_551d1b05",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 20
+      },
+      "revId": "445d3a396be1bb0890c697cd47554d8636d07adb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
