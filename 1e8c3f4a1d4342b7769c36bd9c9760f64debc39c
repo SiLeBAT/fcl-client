@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87ca5a53_a6001cf2",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:50:47Z",
+      "side": 1,
+      "message": "reject: types missing | null",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 52
+      },
+      "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c21b228e_11d11b9c",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:50:47Z",
+      "side": 1,
+      "message": "reject: null",
+      "range": {
+        "startLine": 111,
+        "startChar": 31,
+        "endLine": 111,
+        "endChar": 41
+      },
+      "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5a0c5b5_9c44385c",
+        "filename": "src/app/tracing/graph/components/graph-legend-view/graph-legend-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:50:47Z",
+      "side": 1,
+      "message": "reject: | null",
+      "range": {
+        "startLine": 22,
+        "startChar": 25,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bef033b_e3ea78a3",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:50:47Z",
+      "side": 1,
+      "message": "do not forget to remove the comments",
+      "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
