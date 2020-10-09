@@ -65,6 +65,11 @@ export const getHighlightingSettings = createSelector(
     (fclData) => fclData.graphSettings.highlightingSettings
 );
 
+export const getStationHighlightingSettings = createSelector(
+    getHighlightingSettings,
+    (highlightingSettings) => highlightingSettings.stations
+);
+
 export const getNodeSize = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.nodeSize
@@ -186,6 +191,24 @@ export const getIsFilterDeliveryTabActive = createSelector(
         state.showConfigurationSideBar &&
         state.configurationTabIndices.activeFilterTabIndex === 1 &&
         state.configurationTabIndices.activeMainTabIndex === 0
+    )
+);
+
+export const getIsHighlightingStationTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeHighlightingTabIndex === 0 &&
+        state.configurationTabIndices.activeMainTabIndex === 1
+    )
+);
+
+export const getIsHighlightingDeliveryTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeHighlightingTabIndex === 1 &&
+        state.configurationTabIndices.activeMainTabIndex === 1
     )
 );
 
