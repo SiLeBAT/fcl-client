@@ -272,6 +272,24 @@
     },
     {
       "key": {
+        "uuid": "a71bcdea_0cda92b2",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:22Z",
+      "side": 1,
+      "message": "thanks, so you could name it untransformedGraphData instead of cachedGraphData...",
+      "parentUuid": "58feff3d_5a73e58b",
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "145670d3_f97d6da2",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -742,6 +760,30 @@
     },
     {
       "key": {
+        "uuid": "54786543_1c879ecc",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:22Z",
+      "side": 1,
+      "message": "ack, naming implies that setting the layout would be the right place to call the handlers, but thats not the case here.",
+      "parentUuid": "0f7c831a_e424098e",
+      "range": {
+        "startLine": 227,
+        "startChar": 17,
+        "endLine": 227,
+        "endChar": 32
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e6fc8cf_d88b952a",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
         "patchSetId": 1
@@ -965,6 +1007,30 @@
     },
     {
       "key": {
+        "uuid": "f311bee1_ba4d5499",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:22Z",
+      "side": 1,
+      "message": "ack, then this could be in a class encapsulating the htmlElement like cyHtmlElement",
+      "parentUuid": "59e2abf1_4ff74589",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0349de9f_78a62f36",
         "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
         "patchSetId": 1
@@ -1094,6 +1160,30 @@
       "side": 1,
       "message": "it is used before I have access to class instance",
       "parentUuid": "f3fd1417_2fa23420",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 1
+      },
+      "revId": "1e10d60240e4de42384cb15b6e959b6c3b2c296d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "556a24a0_48e831f4",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:22Z",
+      "side": 1,
+      "message": "there is no graphData class or instance yet :)",
+      "parentUuid": "d7092fa9_2b7e3844",
       "range": {
         "startLine": 18,
         "startChar": 0,
