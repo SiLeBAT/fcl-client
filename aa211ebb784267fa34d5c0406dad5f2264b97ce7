@@ -131,6 +131,24 @@
     },
     {
       "key": {
+        "uuid": "700afe66_99dca5f1",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T07:35:01Z",
+      "side": 1,
+      "message": "Please ignore my last reply. You are right. This issue will be resolved in the next commit (UatR: adds geomap).",
+      "parentUuid": "72580356_74f3c0b8",
+      "revId": "aa211ebb784267fa34d5c0406dad5f2264b97ce7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "164773fd_0abec624",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
