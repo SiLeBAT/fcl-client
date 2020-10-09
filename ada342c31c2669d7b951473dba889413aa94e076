@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cbc6a270_1c1ef271",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:42Z",
+      "side": 1,
+      "message": "work in progress?",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 1
+      },
+      "revId": "ada342c31c2669d7b951473dba889413aa94e076",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90094044_fadb0df0",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:42Z",
+      "side": 1,
+      "message": "loose function",
+      "range": {
+        "startLine": 23,
+        "startChar": 9,
+        "endLine": 23,
+        "endChar": 25
+      },
+      "revId": "ada342c31c2669d7b951473dba889413aa94e076",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "313cb60c_a3c59ff7",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:42Z",
+      "side": 1,
+      "message": "you can remove one ?: operator by using || this.cachedGD.nodePos \u003d\u003d\u003d undefined",
+      "range": {
+        "startLine": 136,
+        "startChar": 16,
+        "endLine": 136,
+        "endChar": 39
+      },
+      "revId": "ada342c31c2669d7b951473dba889413aa94e076",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3b6ec17_eb1ed674",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:42Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "ada342c31c2669d7b951473dba889413aa94e076",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffcfde80_ffc8893b",
+        "filename": "src/app/tracing/graph/cy-graph/virtual-zoom-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T16:18:42Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 29,
+        "startChar": 8,
+        "endLine": 31,
+        "endChar": 8
+      },
+      "revId": "ada342c31c2669d7b951473dba889413aa94e076",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
