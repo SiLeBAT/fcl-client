@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Input, DoCheck, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import * as ol from 'ol';
 import { Utils as UIUtils } from '../../../util/ui-utils';
 import {
@@ -24,7 +24,7 @@ export type UnknownPosFrameData = BoundaryRect;
     styleUrls: ['./geomap.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GeoMapComponent implements DoCheck {
+export class GeoMapComponent implements OnChanges {
 
     @ViewChild('map', { static: true }) mapElement: ElementRef;
 
@@ -37,7 +37,7 @@ export class GeoMapComponent implements DoCheck {
 
     constructor(public elementRef: ElementRef) {}
 
-    ngDoCheck(): void {
+    ngOnChanges(): void {
         this.checkAndUpdateMap();
         this.checkFrameData();
     }

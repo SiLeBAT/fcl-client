@@ -1,6 +1,10 @@
 <div class="fcl-graph-container">
 
-    <fcl-geomap [mapConfig]="mapConfig$ | async" [frameData]="unknownPosFrameData" class="fcl-graph-map"></fcl-geomap>
+    <fcl-geomap
+        [mapConfig]="mapConfig$ | async"
+        [frameData]="unknownPosFrameData"
+        class="fcl-graph-map">
+    </fcl-geomap>
 
     <fcl-graph-view
         class="fcl-graph"

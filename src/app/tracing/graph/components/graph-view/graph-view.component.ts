@@ -1,6 +1,6 @@
 import {
     Component, ElementRef, ViewChild, OnDestroy, Input, Output,
-    EventEmitter, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy
+    EventEmitter, OnChanges, ChangeDetectionStrategy
 } from '@angular/core';
 
 import { Size, Layout, PositionMap } from '../../../data.model';
@@ -23,12 +23,11 @@ export interface GraphDataChange {
     styleUrls: ['./graph-view.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GraphViewComponent implements OnDestroy, DoCheck, OnChanges {
+export class GraphViewComponent implements OnDestroy, OnChanges {
 
     private static readonly MIN_ZOOM = 0.1;
     private static readonly MAX_ZOOM = 100.0;
 
-    private inputProcessed = true;
     private cyGraph_: InteractiveCyGraph = null;
 
     @ViewChild('graph', { static: true }) graphElement: ElementRef;
@@ -49,16 +48,8 @@ export class GraphViewComponent implements OnDestroy, DoCheck, OnChanges {
 
     /** --- life cycle hooks */
 
-    ngOnChanges(changes: SimpleChanges) {
-        this.inputProcessed = false;
-        // console.log('Graph-View.ngOnChanges: ');
-        // console.log(changes);
-    }
-
-    ngDoCheck(): void {
-        if (!this.inputProcessed) {
-            this.processInputDataUpdate();
-        }
+    ngOnChanges() {
+        this.processInputDataUpdate();
     }
 
     ngOnDestroy() {
@@ -168,20 +159,17 @@ export class GraphViewComponent implements OnDestroy, DoCheck, OnChanges {
     private processInputDataUpdate(): void {
         // console.log('GraphView.processInputDataUpdate entered ...');
 
-        if (!this.inputProcessed) {
-            if (this.graphData && this.styleConfig) {
-                if (this.cyGraph_ && !this.graphData.layout) {
-                    this.cleanCyGraph();
-                }
-                if (!this.cyGraph_) {
-                    this.createCyGraph();
-                } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
-                    this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
-                }
-            } else if (this.cyGraph_) {
+        if (this.graphData && this.styleConfig) {
+            if (this.cyGraph_ && !this.graphData.layout) {
                 this.cleanCyGraph();
             }
-            this.inputProcessed = true;
+            if (!this.cyGraph_) {
+                this.createCyGraph();
+            } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
+                this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
+            }
+        } else if (this.cyGraph_) {
+            this.cleanCyGraph();
         }
 
         // console.log('GraphView.processInputDataUpdate leaving ...');
