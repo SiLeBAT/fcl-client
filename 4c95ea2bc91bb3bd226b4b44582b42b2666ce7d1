@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "110e2d3c_1dd2f660",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T11:45:29Z",
+      "side": 1,
+      "message": "obsolete, diff is block element",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 16
+      },
+      "revId": "4c95ea2bc91bb3bd226b4b44582b42b2666ce7d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dedfcb4b_db1ace40",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T11:45:29Z",
+      "side": 1,
+      "message": "consider defining new variable instead of setting the input parameter. Another developer might be irretated if he also wants to check the defaultLayout e.g. against undefined.",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "4c95ea2bc91bb3bd226b4b44582b42b2666ce7d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
