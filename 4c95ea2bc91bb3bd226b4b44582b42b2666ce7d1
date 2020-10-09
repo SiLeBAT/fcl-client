@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b9ca6064_a853a81c",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:09Z",
+      "side": 1,
+      "message": "Done. Removed.",
+      "parentUuid": "110e2d3c_1dd2f660",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 16
+      },
+      "revId": "4c95ea2bc91bb3bd226b4b44582b42b2666ce7d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dedfcb4b_db1ace40",
         "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "4c95ea2bc91bb3bd226b4b44582b42b2666ce7d1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "285ab100_af25e5bc",
+        "filename": "src/app/tracing/graph/cy-graph/denovo-fit-layout-computation.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T23:39:09Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "dedfcb4b_db1ace40",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "4c95ea2bc91bb3bd226b4b44582b42b2666ce7d1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
