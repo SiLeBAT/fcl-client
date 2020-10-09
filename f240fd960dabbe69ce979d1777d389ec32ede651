@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9d0aa23d_dc6ca2a3",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "I know that readability is more important than speed.\nBut I think the use of [].concat(...array) is very clear, it uses not external lib and its faster.",
+      "parentUuid": "ad607d44_54d44de4",
+      "range": {
+        "startLine": 56,
+        "startChar": 16,
+        "endLine": 56,
+        "endChar": 29
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a77cb8ff_d63bc13c",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c3183a3_e3b30f00",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a77cb8ff_d63bc13c",
+      "range": {
+        "startLine": 62,
+        "startChar": 17,
+        "endLine": 62,
+        "endChar": 53
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "11d8504e_4821f0e0",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "optional is not necessary. Done.",
+      "parentUuid": "a22aec5a_53beb824",
+      "range": {
+        "startLine": 78,
+        "startChar": 62,
+        "endLine": 78,
+        "endChar": 80
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c37428c_42d1e37b",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9111917_539fdd14",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c37428c_42d1e37b",
+      "range": {
+        "startLine": 81,
+        "startChar": 30,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "d410894d_34ed279a",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Removed. Done.",
+      "parentUuid": "2a465086_294290fb",
+      "range": {
+        "startLine": 82,
+        "startChar": 37,
+        "endLine": 82,
+        "endChar": 67
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aee298cd_ad32398b",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -137,6 +257,30 @@
       "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317f6f57_ab166f9c",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "old code. But I removed this test here.",
+      "parentUuid": "aee298cd_ad32398b",
+      "range": {
+        "startLine": 88,
+        "startChar": 12,
+        "endLine": 88,
+        "endChar": 26
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "908494b2_4f1b40d6",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "I did not write new code here this was copied code. The content assembly was previously done in another context-menu-container. Is simply removed the link to the layout-service. The gis graph does not need a layout service.",
+      "parentUuid": "03a396c0_32d94e20",
+      "range": {
+        "startLine": 89,
+        "startChar": 17,
+        "endLine": 93,
+        "endChar": 20
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e08269a_b3e894a9",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -183,6 +351,30 @@
       "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "329d9094_e6373a21",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1e08269a_b3e894a9",
+      "range": {
+        "startLine": 106,
+        "startChar": 15,
+        "endLine": 106,
+        "endChar": 24
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "2ec93ebf_e9593c29",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Old code.",
+      "parentUuid": "4be454f3_9e961490",
+      "range": {
+        "startLine": 115,
+        "startChar": 32,
+        "endLine": 115,
+        "endChar": 45
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0038818a_3d0c6f30",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -220,6 +436,30 @@
       "writtenOn": "2020-10-02T15:13:38Z",
       "side": 1,
       "message": "avoid using key names",
+      "range": {
+        "startLine": 319,
+        "startChar": 27,
+        "endLine": 319,
+        "endChar": 31
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f25bc47_f47a0149",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Why?",
+      "parentUuid": "0038818a_3d0c6f30",
       "range": {
         "startLine": 319,
         "startChar": 27,
@@ -252,6 +492,30 @@
       "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b873fd0c_f8714f09",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-09T08:38:35Z",
+      "side": 1,
+      "message": "Not necessary.",
+      "parentUuid": "28673184_98a0e58a",
+      "range": {
+        "startLine": 320,
+        "startChar": 43,
+        "endLine": 320,
+        "endChar": 55
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
