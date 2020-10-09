@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "257040d3_945ea457",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "That\u0027s no reason to not put in the class. The class is there to encapsulate functionality of a specific domain. This is a private function in a file with one class, so it is clearly in the domain of the class. If you want to avoid using CyGraph: The method do not have to be static, there is no reason to not define non-static members that do not access instance members.\nIt would be even better to encapsulate the loose layout functions in a separate cyLayout class",
+      "parentUuid": "36c8c76c_34c84d48",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 1
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5185eb8e_a9e2ab25",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -307,6 +331,30 @@
       "side": 1,
       "message": "Setters can be protected but they need to have the save access level as getters.\n\nActually, e.g. for the styleConfig:\n\nthe getter is\n\nget style()..\n\nthe setter is\n\nprotected setStyleConfig(..)",
       "parentUuid": "10b08b73_edb58deb",
+      "range": {
+        "startLine": 128,
+        "startChar": 4,
+        "endLine": 134,
+        "endChar": 5
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af36e479_3f142994",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "funny, in c# this is possible, why they changed the behaviour for typescript?",
+      "parentUuid": "1611f4d3_6c77ce3c",
       "range": {
         "startLine": 128,
         "startChar": 4,
@@ -601,6 +649,30 @@
     },
     {
       "key": {
+        "uuid": "070558fe_e9a9f0aa",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "layoutConifg.zoom \u003d\u003d\u003d undefined vs !layoutConfig.pan\nat least use the same pattern",
+      "parentUuid": "e9ad120a_4a05e4ac",
+      "range": {
+        "startLine": 195,
+        "startChar": 54,
+        "endLine": 195,
+        "endChar": 55
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "72874c33_a3e7ce7a",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -695,6 +767,30 @@
     },
     {
       "key": {
+        "uuid": "af07b004_c7d4031b",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "or updateGraphData(). I meant the code applying the layout from the inited cy back to the graphData",
+      "parentUuid": "58c6fc9e_1947e9a9",
+      "range": {
+        "startLine": 187,
+        "startChar": 8,
+        "endLine": 202,
+        "endChar": 9
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5eaacd14_a3167032",
         "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
         "patchSetId": 2
@@ -739,6 +835,30 @@
       "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2afd7120_eaf4092e",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "db5964ed_5fa61110",
+      "range": {
+        "startLine": 207,
+        "startChar": 8,
+        "endLine": 209,
+        "endChar": 22
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -871,6 +991,30 @@
       "side": 1,
       "message": "contextElement cannot be undefined\nbut check is not necessary here because contextElement is either \u003d\u003d\u003d cy or an nodeElement or an EdgeElement",
       "parentUuid": "c4b60976_25d98d8f",
+      "range": {
+        "startLine": 79,
+        "startChar": 28,
+        "endLine": 79,
+        "endChar": 35
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd250b45_ad5f1e57",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-listeners.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "ack, also i meant the isNode of contextElement not the contextElement itself",
+      "parentUuid": "7e02d66f_6949516a",
       "range": {
         "startLine": 79,
         "startChar": 28,
@@ -1141,6 +1285,24 @@
     },
     {
       "key": {
+        "uuid": "b5e35768_3769d32b",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "so someone overwriting t() in C is angry because your code uses t() in A instead of the new t() in C. As discussed try not to use inheritence because it is in most cases to complicated and can cause bugs.",
+      "parentUuid": "c11b911c_90194daf",
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a6e6f627_4649a861",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1317,6 +1479,30 @@
       "side": 1,
       "message": "key does not work here because GraphEventType is a enum",
       "parentUuid": "52a67fc7_cf95053b",
+      "range": {
+        "startLine": 39,
+        "startChar": 43,
+        "endLine": 39,
+        "endChar": 57
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6e41cfda_2e3bd5d8",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "looks nevertheless strange",
+      "parentUuid": "ec781d6b_16f2fd12",
       "range": {
         "startLine": 39,
         "startChar": 43,
@@ -1517,6 +1703,30 @@
     },
     {
       "key": {
+        "uuid": "7298cc81_46515f51",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "ack, i should read again the corresponding javascript documentation...",
+      "parentUuid": "3b49d793_16426e8e",
+      "range": {
+        "startLine": 112,
+        "startChar": 8,
+        "endLine": 112,
+        "endChar": 13
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "434942c4_0893ddae",
         "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
         "patchSetId": 2
@@ -1552,6 +1762,30 @@
       "side": 1,
       "message": "it is not, I tried",
       "parentUuid": "434942c4_0893ddae",
+      "range": {
+        "startLine": 130,
+        "startChar": 49,
+        "endLine": 130,
+        "endChar": 101
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "686439f3_03daa427",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "ack, this might be due to the calculating structure of GraphEventListenerType",
+      "parentUuid": "b15c45e7_60c54878",
       "range": {
         "startLine": 130,
         "startChar": 49,
@@ -1881,6 +2115,30 @@
       "side": 1,
       "message": "But that makes the separation from the code of the previous big cy-graph to a cy-graph (without interaction) and interactive-cy-graph less clear because of the responsibilities.",
       "parentUuid": "42215758_fac242be",
+      "range": {
+        "startLine": 185,
+        "startChar": 3,
+        "endLine": 219,
+        "endChar": 5
+      },
+      "revId": "d7d5987b5dbfbdf2684e77b9ea234128185ebbe4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad33c92b_b6378632",
+        "filename": "src/app/tracing/graph/cy-graph/interactive-cy-graph.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:30:08Z",
+      "side": 1,
+      "message": "as discussed i had another understanding of the class hierarchy (cyGraph encapsulates cy and interactiveGraph adds interactive functionality, these function do not add functionality they call cy methods)",
+      "parentUuid": "81c2f4c2_7781a4e9",
       "range": {
         "startLine": 185,
         "startChar": 3,
