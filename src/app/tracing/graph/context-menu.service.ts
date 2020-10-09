@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ObservedType, StationData, GroupType, GroupMode } from '../data.model';
+import { ObservedType, StationData, GroupType, GroupMode, StationId, DeliveryId } from '../data.model';
 import {
     ContextMenuRequestContext, CyEdgeData, CyNodeData,
-    GraphServiceData
+    EdgeId,
+    GraphServiceData,
+    NodeId
 } from './graph.model';
 import _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
@@ -17,11 +19,17 @@ import {
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
 
 interface ContextElements {
+    refNodeId: NodeId | undefined;
+    refEdgeId: EdgeId | undefined;
+    refStationId: StationId | undefined;
+    refDeliveryIds: DeliveryId[];
     nodeIds: string[];
     edgeIds: string[];
     stationIds: string[];
     deliveryIds: string[];
 }
+
+const MIN_LAYOUTABLE_NODE_COUNT = 2;
 
 @Injectable({
     providedIn: 'root'
@@ -49,6 +57,13 @@ export class ContextMenuService {
             [];
 
         return {
+            refNodeId: context.nodeId,
+            refEdgeId: context.edgeId,
+            refStationId: context.nodeId === undefined ? undefined :
+                graphData.idToNodeMap[context.nodeId].station.id,
+            refDeliveryIds:
+                context.edgeId === undefined ? undefined :
+                graphData.edgeData.find(d => d.id === context.edgeId).deliveries.map(d => d.id),
             nodeIds: nodes.map(n => n.id),
             edgeIds: edges.map(e => e.id),
             stationIds: nodes.map(n => n.station.id),
@@ -59,33 +74,31 @@ export class ContextMenuService {
     }
 
     getMenuData(
-        context: { nodeId?: string, edgeId?: string },
+        context: ContextMenuRequestContext,
         graphData: GraphServiceData, addLayoutOptions: boolean
     ): MenuItemData[] {
         const contextElements = this.getContextElements(context, graphData);
 
         if (contextElements.nodeIds.length === 0 && contextElements.edgeIds.length === 0) {
             return this.createGraphMenuData(graphData, addLayoutOptions);
-        } else if (context.nodeId) {
+        } else if (context.nodeId !== undefined) {
             return this.createStationActions(contextElements, graphData, addLayoutOptions);
-        } else if (context.edgeId) {
+        } else if (context.edgeId !== undefined) {
             return this.createDeliveryActions(contextElements, graphData);
         } else {
             return [];
         }
     }
 
-    private createLayoutMenuData(graphData: GraphServiceData, nodeIds?: string[]): MenuItemData[] {
-        nodeIds = nodeIds || graphData.nodeData.map(n => n.id);
-        const layoutIsEnabled =
-            nodeIds.length >= 2 ||
-            (nodeIds.length === 0 && graphData.nodeData.length >= 2);
+    private createLayoutMenuData(graphData: GraphServiceData, nodeIds: string[]): MenuItemData[] {
+        nodeIds = nodeIds.length > 0 ? nodeIds : graphData.nodeData.map(n => n.id);
+        const layoutIsEnabled = nodeIds.length >= MIN_LAYOUTABLE_NODE_COUNT;
 
         // todo: reconnect with layoutService
         const layoutMenuData: MenuItemData[] = [];
 
         return (
-            layoutMenuData && layoutMenuData.length > 0 ?
+            layoutMenuData.length > 0 ?
                 [{
                     ...MenuItemStrings.applyLayout,
                     disabled: !layoutIsEnabled,
@@ -104,7 +117,7 @@ export class ContextMenuService {
         const stations = graphData.stations.filter(s => !s.invisible);
 
         return [].concat(
-            addLayoutOptions ? this.createLayoutMenuData(graphData) : [],
+            addLayoutOptions ? this.createLayoutMenuData(graphData, []) : [],
             [
                 {
                     ...MenuItemStrings.clearTrace,
@@ -316,34 +329,36 @@ export class ContextMenuService {
     }
 
     private createTraceMenuItemData(contextElements: ContextElements): MenuItemData {
-        const getAction = (type: ObservedType) => {
-            if (contextElements.stationIds.length === 1) {
-                return new ShowStationTraceMSA({
-                    stationId: contextElements.stationIds[0],
+        const useStationTracing = contextElements.refStationId !== undefined;
+        const useDelTracing = !useStationTracing && contextElements.refDeliveryIds.length === 1;
+
+        const getAction = useStationTracing || useDelTracing ? (
+            (type: ObservedType) =>
+                useStationTracing ? new ShowStationTraceMSA({
+                    stationId: contextElements.refStationId,
                     observedType: type
-                });
-            } else if (contextElements.deliveryIds.length === 1) {
-                return new ShowDeliveryTraceMSA({
-                    deliveryId: contextElements.deliveryIds[0],
+                }) :
+                new ShowDeliveryTraceMSA({
+                    deliveryId: contextElements.refDeliveryIds[0],
                     observedType: type
-                });
-            }
-        };
+                })
+        ) : null;
+
         return {
             ...MenuItemStrings.setTrace,
-            disabled: !getAction,
+            disabled: getAction === null,
             children: [
                 {
                     ...MenuItemStrings.forwardTrace,
-                    action: getAction(ObservedType.FORWARD)
+                    action: getAction === null ? null : getAction(ObservedType.FORWARD)
                 },
                 {
                     ...MenuItemStrings.backwardTrace,
-                    action: getAction(ObservedType.BACKWARD)
+                    action: getAction === null ? null : getAction(ObservedType.BACKWARD)
                 },
                 {
                     ...MenuItemStrings.fullTrace,
-                    action: getAction(ObservedType.FULL)
+                    action: getAction === null ? null : getAction(ObservedType.FULL)
                 }
             ]
         };
