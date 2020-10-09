@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "e4999eda_92735845",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:13:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9d096715_f47f2587",
+      "range": {
+        "startLine": 19,
+        "startChar": 3,
+        "endLine": 20,
+        "endChar": 28
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "adc3edb7_a78ad031",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -942,6 +966,30 @@
     },
     {
       "key": {
+        "uuid": "84e451eb_4a76a862",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:13:59Z",
+      "side": 1,
+      "message": "yes, i agree, but the hard liners would reject that.",
+      "parentUuid": "df837ee3_b139efb6",
+      "range": {
+        "startLine": 134,
+        "startChar": 23,
+        "endLine": 134,
+        "endChar": 24
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3e0b2c5_808f62a0",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -1024,6 +1072,30 @@
       "side": 1,
       "message": "I disagree. createDefaultPosition creates a new Default Position Object\ngetDefaultPosition or a getter would not clarify that point",
       "parentUuid": "5e5ef5e6_2015ce93",
+      "range": {
+        "startLine": 147,
+        "startChar": 12,
+        "endLine": 147,
+        "endChar": 33
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d2784121_85dbb116",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:13:59Z",
+      "side": 1,
+      "message": "ack, since we have no convention when to copy an object it is ok to name things like create. I\u0027ve mentioned it because i think the name defaultPosition  states it is an immutable object and does not need to be created.",
+      "parentUuid": "b268b303_f7c30c52",
       "range": {
         "startLine": 147,
         "startChar": 12,
@@ -1224,6 +1296,30 @@
     },
     {
       "key": {
+        "uuid": "7f09723f_ca37ee32",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:13:59Z",
+      "side": 1,
+      "message": "ack",
+      "parentUuid": "8e0ad89e_55412611",
+      "range": {
+        "startLine": 196,
+        "startChar": 12,
+        "endLine": 196,
+        "endChar": 45
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a1a0fba9_3b05dd32",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -1341,6 +1437,30 @@
     },
     {
       "key": {
+        "uuid": "2df1a51d_aff7e1f1",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:13:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d6361742_6a609f02",
+      "range": {
+        "startLine": 217,
+        "startChar": 12,
+        "endLine": 222,
+        "endChar": 109
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "517abd80_be00f103",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -1361,6 +1481,30 @@
       "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06d9e75e_a0c50ef3",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:13:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "517abd80_be00f103",
+      "range": {
+        "startLine": 227,
+        "startChar": 12,
+        "endLine": 227,
+        "endChar": 73
+      },
+      "revId": "001306c06bfe5d32e56a5b326d76ea2f47310a85",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
