@@ -11,7 +11,7 @@ import { TargetCollapser } from './target-collapser';
 import { SimpleChainCollapser } from './simple-chain-collapser';
 import { IsolatedComponentCollapser } from './isolated-component-collapser';
 import { MergeStationsValidationCode } from './validation-codes';
-import { addPoints, getCenterFromPoints, getDifference } from '../util/geometry-utils';
+import { getSum, getCenterFromPoints, getDifference } from '../util/geometry-utils';
 
 interface EffectiveGroupingChange extends GroupingChange {
     unchangedGroups: GroupData[];
@@ -128,7 +128,7 @@ export class GroupingService {
         for (const group of groupingChange.removeGroups) {
             const pos = stationPositions[group.id];
             for (const stationId of group.contains) {
-                stationPositions[stationId] = addPoints(pos, stationPositions[stationId]);
+                stationPositions[stationId] = getSum(pos, stationPositions[stationId]);
             }
             delete stationPositions[group.id];
         }

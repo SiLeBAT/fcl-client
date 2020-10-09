@@ -22,7 +22,7 @@ import * as tracingStoreActions from '../../../state/tracing.actions';
 import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-menu.component';
 import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
 import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
-import { addPoints, getCenterFromPoints, getDifference } from '@app/tracing/util/geometry-utils';
+import { getSum, getCenterFromPoints, getDifference } from '@app/tracing/util/geometry-utils';
 
 interface GraphSettingsState {
     fontSize: number;
@@ -336,7 +336,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private recenterNodes(nodes: CyNodeCollection, oldCenter: Position) {
         const newCenter = getCenterFromPoints(nodes.map(n => n.position()));
         const delta = getDifference(oldCenter, newCenter);
-        nodes.positions(n => addPoints(n.position(), delta));
+        nodes.positions(n => getSum(n.position(), delta));
     }
 
     private getLayoutFromRect(rect: Rectangle): Layout {

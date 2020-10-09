@@ -10,7 +10,7 @@ interface NeighbourHood {
     neighbourWeights: Record<NodeId, number>;
 }
 
-interface NeighbourHoodMap extends Record<string, NeighbourHood> {}
+interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> {}
 
 export interface PositioningData {
     nodePositions: PositionMap;
@@ -22,24 +22,24 @@ export interface PositioningData {
 })
 export class GisPositioningService {
 
-    private stationModelPositions: PositionMap = null;
-    private nodeModelPositions: PositionMap = null;
-    private innerBoundaryRect: BoundaryRect = null;
-    private outerBoundaryRect: BoundaryRect = null;
-    private cachedPositioningData: PositioningData = null;
-    private graphData: GraphServiceData = null;
+    private stationModelPositions: PositionMap = {};
+    private nodeModelPositions: PositionMap = {};
+    private innerBoundaryRect: BoundaryRect | null = null;
+    private outerBoundaryRect: BoundaryRect | null = null;
+    private cachedPositioningData: PositioningData | null = null;
+    private graphData: GraphServiceData | null = null;
     private areUnknownPositionsPresent: boolean = false;
-    private neighbourHoodMap: NeighbourHoodMap = null;
+    private neighbourHoodMap: NeighbourHoodMap | null = null;
 
     getPositioningData(graphData: GraphServiceData) {
         if (!this.graphData || this.graphData.statVis !== graphData.statVis) {
             this.graphData = graphData;
-            this.setPositioningData(graphData);
+            this.setPositioningData();
         }
         return this.cachedPositioningData;
     }
 
-    private setPositioningData(graphData: GraphServiceData): void {
+    private setPositioningData(): void {
         this.initKnownStationModelPositions();
         this.initKnownNodeModelPositions();
         this.setInnerBoundaryRect();
@@ -103,12 +103,14 @@ export class GisPositioningService {
         if (this.innerBoundaryRect === null) {
             this.outerBoundaryRect = EMPTY_FRAME;
         } else {
-            const xMargin = this.innerBoundaryRect.width * RELATIVE_FRAME_MARGIN;
-            const yMargin = this.innerBoundaryRect.height * RELATIVE_FRAME_MARGIN;
-            let margin = Math.max(xMargin, yMargin);
-            if (margin === 0) {
-                margin = ABSOLUTE_FRAME_MARGIN;
-            }
+            const margin =
+                this.innerBoundaryRect.width === 0 && this.innerBoundaryRect.height === 0 ?
+                ABSOLUTE_FRAME_MARGIN :
+                Math.max(
+                    this.innerBoundaryRect.width * RELATIVE_FRAME_MARGIN,
+                    this.innerBoundaryRect.height * RELATIVE_FRAME_MARGIN
+                );
+
             this.outerBoundaryRect = {
                 left: this.innerBoundaryRect.left - margin,
                 right: this.innerBoundaryRect.right + margin,
@@ -157,21 +159,20 @@ export class GisPositioningService {
             .forEach(n => this.nodeModelPositions[n.id] = this.createDefaultPosition());
     }
 
-    private getNodesWoPosConnectedWithNodeWPos(): Set<string> {
-        const nodeIds = new Set<string>();
+    private getNodesWoPosConnectedWithNodeWPos(): Set<NodeId> {
+        const nodeIds = new Set<NodeId>();
         this.graphData.edgeData.forEach(edge => {
             const sourcePosIsKnown = this.nodeModelPositions[edge.source] !== undefined;
             const targetPosIsKnown = this.nodeModelPositions[edge.target] !== undefined;
             if (sourcePosIsKnown !== targetPosIsKnown) {
                 nodeIds.add(sourcePosIsKnown ? edge.target : edge.source);
             }
-            return nodeIds;
         });
         return nodeIds;
     }
 
-    private getNeighboursWoPosition(nodeIds: Set<string>): Set<string> {
-        const neighbourIds = new Set<string>();
+    private getNeighboursWoPosition(nodeIds: Set<NodeId>): Set<NodeId> {
+        const neighbourIds = new Set<NodeId>();
         nodeIds.forEach(
             nodeId => this.neighbourHoodMap[nodeId].neighbourIds
                     .filter(nId => this.nodeModelPositions[nId] === undefined)
