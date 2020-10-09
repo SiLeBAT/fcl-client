@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { LegendInfo } from '@app/tracing/data.model';
 
 @Component({
     selector: 'fcl-highlighting-station-view',
@@ -6,13 +7,14 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./highlighting-station-view.component.scss']
 })
 export class HighlightingStationViewComponent implements OnInit {
+    @Input() highlightingInfo: LegendInfo;
+
     labelsOpenState = false;
     stationSizeOpenState = false;
     coloursAndShapesOpenState = false;
 
     constructor() { }
 
-    ngOnInit() {
-    }
+    ngOnInit() { }
 
 }

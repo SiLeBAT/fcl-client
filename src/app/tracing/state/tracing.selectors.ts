@@ -189,6 +189,24 @@ export const getIsFilterDeliveryTabActive = createSelector(
     )
 );
 
+export const getIsHighlightingStationTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeHighlightingTabIndex === 0 &&
+        state.configurationTabIndices.activeMainTabIndex === 1
+    )
+);
+
+export const getIsHighlightingDeliveryTabActive = createSelector(
+    getTracingFeatureState,
+    state => (
+        state.showConfigurationSideBar &&
+        state.configurationTabIndices.activeHighlightingTabIndex === 1 &&
+        state.configurationTabIndices.activeMainTabIndex === 1
+    )
+);
+
 export const getFilterSettings = createSelector(
     getTracingFeatureState,
     state => state.filterSettings

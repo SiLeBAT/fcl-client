@@ -1,0 +1,47 @@
+<mat-list id="fcl-highlighting-station-list-view-list" dense>
+    <mat-list-item
+        class="fcl-highlighting-station-list-view-list-item"
+        *ngFor="let item of stationHighlightings"
+    >
+        <div mat-line class="fcl-highlighting-station-list-item-name">
+            {{ item.name }}
+        </div>
+
+        <div class="fcl-highlighting-station-list-item-fix">
+            <fcl-node-symbol
+                *ngIf="item.shape || item.stationColor"
+                [shapeType]="item.shape"
+                [fillColor]="item.stationColor"
+            ></fcl-node-symbol>
+        </div>
+
+        <div class="fcl-highlighting-station-list-item-fix">
+            <mat-icon
+                matTooltip="Conflicting Highlighting Rule"
+                matTooltipPosition="above"
+                color="warn">
+                report_problem
+            </mat-icon>
+        </div>
+
+        <button
+            mat-button
+            matTooltip="Edit Highlighting Rule"
+            matTooltipPosition="above"
+            color="accent">
+            <mat-icon>edit</mat-icon>
+        </button>
+
+        <mat-button-toggle
+            class="fcl-highlighting-station-list-view-legend-button fcl-highlighting-station-list-item-fix"
+            value="legend"
+        >
+            L
+        </mat-button-toggle>
+
+        <div
+            class="fcl-highlighting-station-list-item fcl-highlighting-station-list-item-end">
+            500
+        </div>
+    </mat-list-item>
+</mat-list>
