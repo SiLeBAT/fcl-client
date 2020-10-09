@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5901112b_bae51e0d",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:31:10Z",
+      "side": 1,
+      "message": "as mentioned in another review: consider not writing to parameter values, instead define new variables",
+      "range": {
+        "startLine": 89,
+        "startChar": 8,
+        "endLine": 89,
+        "endChar": 21
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18435631_fbd9c719",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:31:10Z",
+      "side": 1,
+      "message": "reject: !\u003d\u003d undefined (you should not copy paste my comments 😊",
+      "range": {
+        "startLine": 90,
+        "startChar": 25,
+        "endLine": 90,
+        "endChar": 38
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbfd9ef0_7e4fa1b9",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T15:31:10Z",
+      "side": 1,
+      "message": "default parameter does not work? initCy(...,cyConfig \u003d {}) ?",
+      "range": {
+        "startLine": 182,
+        "startChar": 8,
+        "endLine": 182,
+        "endChar": 73
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
