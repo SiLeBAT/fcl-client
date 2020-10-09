@@ -1,0 +1,228 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1dac4e9_708d7ba6",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "general consideration:\ntry not to store your local vars as a class member to easier access them from your methods. You should only use class members for storing data that has to be persisted over the lifecycle of the class, not the lifecycle of a class\u0027s method call.",
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe925079_f23d99f9",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "consider using type if because interface adds nothing to the Record",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 10
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e41ce0a_9c2ad4d5",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "reject: thanks but you should also type them with | null (the compiler should reject that, please consider prioritizing enabling the ts-compiler strict mode options in the next sprint. Most of my rejects should be also rejected by the compiler)",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 32,
+        "endChar": 54
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eadb7a5a_8ea05efd",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "reject: remove",
+      "range": {
+        "startLine": 42,
+        "startChar": 31,
+        "endLine": 42,
+        "endChar": 58
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7898b07_dd898714",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "general consideration: check for edge case before you do the calculations. This could look like:\nif(innerRect.width \u003d\u003d\u003d 0 or innerRect.height \u003d\u003d\u003d 0) {\nmargin \u003d ABSOLUTE_FRAME_MARGIN\n}\nelse {\nmargin \u003d Math.max(...)\n}\nThis improves readability and perhaps reduces also bugs",
+      "range": {
+        "startLine": 108,
+        "startChar": 12,
+        "endLine": 111,
+        "endChar": 13
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dc01f7d_94878727",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "i missed this bug, sorry",
+      "range": {
+        "startLine": 126,
+        "startChar": 38,
+        "endLine": 126,
+        "endChar": 41
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8fb7e999_c644d7aa",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "thanks for the refactoring, much better now",
+      "range": {
+        "startLine": 130,
+        "startChar": 12,
+        "endLine": 130,
+        "endChar": 40
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aac30c04_96e8352e",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "reject: remove, u replaced map with forEach so no return necessary",
+      "range": {
+        "startLine": 168,
+        "startChar": 12,
+        "endLine": 168,
+        "endChar": 27
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8371864_be28d9af",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "consider throwing an exception or better use an assertion against length \u003d 0. Because it makes no sense to call this function with an empty array, so the caller is to blame if so. By returning a default value the caller is not alarmed if he introduces a bug.",
+      "range": {
+        "startLine": 79,
+        "startChar": 8,
+        "endLine": 79,
+        "endChar": 30
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "211d5ea6_a6af8757",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-09T14:16:09Z",
+      "side": 1,
+      "message": "inconsistent naming: should be named getSum",
+      "range": {
+        "startLine": 83,
+        "startChar": 16,
+        "endLine": 83,
+        "endChar": 25
+      },
+      "revId": "a7a8e15a7900250ff7c172946c009238e211ee21",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
