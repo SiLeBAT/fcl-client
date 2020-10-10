@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d1b7276_5f0fdffd",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T16:15:37Z",
+      "side": 1,
+      "message": "lol, i wanted to comment that but was not sure if the semantic was NodeId here too.",
+      "range": {
+        "startLine": 13,
+        "startChar": 42,
+        "endLine": 13,
+        "endChar": 48
+      },
+      "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81674981_41e2cc22",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T16:15:37Z",
+      "side": 1,
+      "message": "thanks, better now: e.g. i first thought this would be || logic (as stated in my comment) but it was \u0026\u0026 logic as coded here. Now this is clearly visible and no misunderstandings anymore",
+      "range": {
+        "startLine": 107,
+        "startChar": 51,
+        "endLine": 107,
+        "endChar": 53
+      },
+      "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8912cda_942f375a",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T16:15:37Z",
+      "side": 1,
+      "message": "we should introduce the assertion pattern to the other developers too",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 67,
+        "endChar": 10
+      },
+      "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
