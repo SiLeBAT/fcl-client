@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3ad8a69_8e560319",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:49:44Z",
+      "side": 1,
+      "message": "ok you removed the container. As before you rely on the parent component to handle the absolute positioning of the elements defined here (by setting position !\u003d static). See: https://developer.mozilla.org/en-US/docs/Web/CSS/position \u003d\u003e absolute\nInstead you could have added position:relative, height:100% to flc-graph-container class",
+      "revId": "9b6d11dd7186b51fd22d686d819c7b66a4445c11",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
