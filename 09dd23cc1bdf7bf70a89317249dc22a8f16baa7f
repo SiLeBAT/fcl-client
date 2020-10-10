@@ -187,6 +187,30 @@
       "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4344dd9f_39b4cf17",
+        "filename": "src/app/tracing/graph/components/context-menu/context-menu-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:54:01Z",
+      "side": 1,
+      "message": "no it is not, but as you stated in another commit this is called by the component opening the menu, and i commented my opinion about that there.",
+      "parentUuid": "6162b502_57815f83",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 5
+      },
+      "revId": "09dd23cc1bdf7bf70a89317249dc22a8f16baa7f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
