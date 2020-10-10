@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7f8315a_b2ad200b",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:28:46Z",
+      "side": 1,
+      "message": "hope this is really necessary. My first impression is that this look kind of to complicated for the task",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 33
+      },
+      "revId": "aa62a153a2cf9526b5e6aca81147cc5b7cba8d87",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed1051bf_4ea4d306",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:28:46Z",
+      "side": 1,
+      "message": "i reject it now, please at leaast comment this out, since the code is unused. It always returns []",
+      "range": {
+        "startLine": 93,
+        "startChar": 4,
+        "endLine": 109,
+        "endChar": 5
+      },
+      "revId": "aa62a153a2cf9526b5e6aca81147cc5b7cba8d87",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26d8ae9c_18c1cf73",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:28:46Z",
+      "side": 1,
+      "message": "can be simplyfied:\ngetAction \u003d null;\nif(useStationTracing){getAction \u003d ...}\nelse if(useDelTracing){getAction \u003d ...}\ntry to avoid nested ?: operators, its to easy to miss a : or ? while reading the code",
+      "range": {
+        "startLine": 335,
+        "startChar": 7,
+        "endLine": 345,
+        "endChar": 17
+      },
+      "revId": "aa62a153a2cf9526b5e6aca81147cc5b7cba8d87",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
