@@ -140,6 +140,30 @@
       "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02310c75_fbbdc869",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:23:12Z",
+      "side": 1,
+      "message": "I changed my mind. I set the default in the initCy parameter list,\nalthough I think its a bit strange that the overloading implementations are different in this point.",
+      "parentUuid": "b33adc4c_2c728383",
+      "range": {
+        "startLine": 182,
+        "startChar": 8,
+        "endLine": 182,
+        "endChar": 73
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
