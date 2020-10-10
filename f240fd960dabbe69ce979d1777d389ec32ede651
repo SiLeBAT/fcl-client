@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d10c080e_4f35bd8f",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:23:47Z",
+      "side": 1,
+      "message": "ack, its your decision what you prefer.\nspeed: perhaps flatten does some checks to prevent bugs and so its slower? Or its slower in your browser but faster in another? Or its slower on your mac but faster on windows?",
+      "parentUuid": "9d0aa23d_dc6ca2a3",
+      "range": {
+        "startLine": 56,
+        "startChar": 16,
+        "endLine": 56,
+        "endChar": 29
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a77cb8ff_d63bc13c",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -331,6 +355,30 @@
     },
     {
       "key": {
+        "uuid": "36d117d2_5d5543a3",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:23:47Z",
+      "side": 1,
+      "message": "i do not understand. For me you set layoutMenuData to [], so its length cannot be \u003e 0 and this method would always return []. So remove the old code, or at least comment it out if you would like to reconnect the service later.",
+      "parentUuid": "908494b2_4f1b40d6",
+      "range": {
+        "startLine": 89,
+        "startChar": 17,
+        "endLine": 93,
+        "endChar": 20
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e08269a_b3e894a9",
         "filename": "src/app/tracing/graph/context-menu.service.ts",
         "patchSetId": 2
@@ -460,6 +508,30 @@
       "side": 1,
       "message": "Why?",
       "parentUuid": "0038818a_3d0c6f30",
+      "range": {
+        "startLine": 319,
+        "startChar": 27,
+        "endLine": 319,
+        "endChar": 31
+      },
+      "revId": "f240fd960dabbe69ce979d1777d389ec32ede651",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ef1c082_be33d36a",
+        "filename": "src/app/tracing/graph/context-menu.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:23:47Z",
+      "side": 1,
+      "message": "sorry i meant reserved keywords, they are reserved and it might happen that in a new compiler version these are not allowed anymore to use. Second another developer might get confused why u assign the type keyword to something, he might think you used some typescript magic that you dont know.",
+      "parentUuid": "7f25bc47_f47a0149",
       "range": {
         "startLine": 319,
         "startChar": 27,
