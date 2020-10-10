@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ce5ab46_8401e11c",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T13:09:30Z",
+      "side": 1,
+      "message": "and again you dont need these because ngOnChanges(changes) gives you the old and new state, so you do not have to manage state yourself.\nif(changes.oldState[inputX].xy !\u003d\u003d changes.newState[inputX].xy) {\nupdateInputX()\n}",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 52
+      },
+      "revId": "1fb8d96e76865c921c587062e493101d477fe296",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f01309be_b3b49143",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T13:09:30Z",
+      "side": 1,
+      "message": "i prefer doing the checks if an update is necessary and calling appropriate update methods  from here. This keeps the actual update methods clean.",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 15
+      },
+      "revId": "1fb8d96e76865c921c587062e493101d477fe296",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0cad9a9b_7621318b",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T13:09:30Z",
+      "side": 1,
+      "message": "see geomap",
+      "range": {
+        "startLine": 51,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 15
+      },
+      "revId": "1fb8d96e76865c921c587062e493101d477fe296",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
