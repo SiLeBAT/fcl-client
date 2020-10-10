@@ -213,6 +213,54 @@
     },
     {
       "key": {
+        "uuid": "d8957c9a_087d05e8",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:47:24Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cd133a0e_dbd2fe8e",
+      "range": {
+        "startLine": 25,
+        "startChar": 24,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eaff0c51_2d5f109c",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:47:24Z",
+      "side": 1,
+      "message": "ack, keep in mind that view components should not make assumption on how and where they are used, so are not responsible for positioning itself. Also prefer @Input instead of public methods on components.",
+      "parentUuid": "95993fe8_da61c1c6",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "18e3f412_f020703d",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
         "patchSetId": 1
@@ -283,6 +331,30 @@
       "side": 1,
       "message": "I can think of no adequate class name (fcl-map-overlay would be confusing, because fcl-graph-map represents the map itself). So is stick to the duplicate code.",
       "parentUuid": "8f0f549c_c2ff099b",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 1
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c6f26af3_e0e1775a",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:47:24Z",
+      "side": 1,
+      "message": "perhaps fcl-gis-container or fcl-gis-canvas?",
+      "parentUuid": "21352cc2_321aa11f",
       "range": {
         "startLine": 1,
         "startChar": 0,
@@ -471,6 +543,30 @@
       "side": 1,
       "message": "Why? The element size should fit its content in this case. This is done if the width and height  are omitted.",
       "parentUuid": "8cfd97a5_f22833b7",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 23
+      },
+      "revId": "43b0fcd0e99dd664f784eff2a449dc04b2ce07f9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a11d5c4_bbbaf00d",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-10T14:47:24Z",
+      "side": 1,
+      "message": "ack, i forgot why",
+      "parentUuid": "35b82ec7_6580abe1",
       "range": {
         "startLine": 25,
         "startChar": 4,
