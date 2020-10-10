@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9e94c5b_9c359ec3",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove OnInit import",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dcbe97b_32dbfbe6",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove unused interface StationHighlightingEntry.",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be4ce2d3_87e7e11f",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove implements OnInit()",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3248ebe1_fe149b3c",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove:\nconstructor() {}\nngOnInit() {}",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7674eae1_f3f0dc67",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove unused import OnInit",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6b8aad3_2d7439f0",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove: implements OnInit",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee803f4b_cceb76a6",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please remove:\nconstructor() {}\nngOnInit() {}",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d935e8c_f5e93b6f",
+        "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-10T23:10:31Z",
+      "side": 1,
+      "message": "Please change to: private stateSubscription: Subscription | null \u003d null;",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
