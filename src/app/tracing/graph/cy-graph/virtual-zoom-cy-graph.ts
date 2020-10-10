@@ -8,10 +8,6 @@ import { addCustomZoomAdapter } from './cy-adapter';
 import { getActivePositions, getAvailableSpace, getZoomedGraphData, getZoomedNodePositions } from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
 
-// export interface Options extends CyConfig {
-//     defaultLayout?: Layout;
-// }
-
 const DEFAULT_LAYOUT = {
     zoom: 1,
     pan: {
@@ -40,7 +36,6 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         // console.log('VirtualZoomCyGraph entered ...');
         const fitLayout = !graphData.layout;
         cyConfig = cyConfig || {};
-        // const defaultLayout = options.defaultLayout || DEFAULT_LAYOUT;
         const zoomLimits = {
             min: cyConfig.minZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MIN_ZOOM : correctZoomLimit(cyConfig.minZoom),
             max: cyConfig.maxZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MAX_ZOOM : correctZoomLimit(cyConfig.maxZoom)
@@ -56,7 +51,6 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                     availableSpace,
                     zoomLimits,
                     DEFAULT_LAYOUT
-                    // defaultLayout
                 )
             };
         }
@@ -68,7 +62,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             htmlContainerElement,
             getZoomedGraphData(graphData),
             styleConfig,
-            null,
+            undefined,
             {
                 ...cyConfig,
                 zoomingEnabled: false,
@@ -134,13 +128,13 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 pan: layout.pan
             },
             nodePositions:
-                layout.zoom === oldZoom ? super.nodePositions :
-                this.cachedGraphData.nodePositions !== undefined ? getZoomedNodePositions(
+                layout.zoom === oldZoom || this.cachedGraphData.nodePositions === undefined ?
+                super.nodePositions :
+                getZoomedNodePositions(
                     this.cachedGraphData.nodeData,
                     this.cachedGraphData.nodePositions,
                     layout.zoom
-                ) :
-                super.nodePositions
+                )
         };
 
         super.updateGraph(zoomedGraphData, this.style);

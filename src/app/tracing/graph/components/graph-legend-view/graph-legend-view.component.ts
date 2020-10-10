@@ -19,7 +19,7 @@ interface LegendEntryWithIndices extends LegendEntry {
 })
 export class GraphLegendViewComponent implements OnInit {
 
-    private legendInfo_: LegendInfo = null;
+    private legendInfo_: LegendInfo | null = null;
     private showStationColumn_ = false;
     private showDeliveryColumn_ = false;
 

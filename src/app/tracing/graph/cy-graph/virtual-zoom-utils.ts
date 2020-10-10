@@ -16,7 +16,6 @@ export function getAvailableSpace(htmlElement: HTMLElement): Size {
 }
 
 export function getZoomedNodePositions(nodeData: CyNodeData[], posMap: PositionMap, zoom: number): PositionMap {
-    // if (posMap) {
     const zoomedPosMap: PositionMap = { ...posMap };
     nodeData.forEach(n => {
         const oldPos = posMap[n.id];
@@ -26,9 +25,6 @@ export function getZoomedNodePositions(nodeData: CyNodeData[], posMap: PositionM
         };
     });
     return zoomedPosMap;
-    // } else {
-    //     return {};
-    // }
 }
 
 export function getZoomedGraphData(graphData: GraphData): GraphData {

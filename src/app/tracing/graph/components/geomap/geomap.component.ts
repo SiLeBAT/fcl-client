@@ -31,9 +31,9 @@ export class GeoMapComponent implements OnChanges {
     @Input() mapConfig: MapConfig;
     @Input() frameData: BoundaryRect;
 
-    private map: ol.Map = null;
-    private processedMapConfig: MapConfig = null;
-    private processedFrameData: BoundaryRect = null;
+    private map: ol.Map | null = null;
+    private processedMapConfig: MapConfig | null = null;
+    private processedFrameData: BoundaryRect | null = null;
 
     constructor(public elementRef: ElementRef) {}
 
@@ -108,7 +108,7 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private checkAndUpdateMap(): void {
-        if (this.mapConfig !== undefined && this.mapConfig.layout !== null) {
+        if (this.mapConfig !== null && this.mapConfig.layout !== null) {
             const oldMapConfig = this.processedMapConfig;
             const newMapConfig = this.mapConfig;
             if (this.map === null) {

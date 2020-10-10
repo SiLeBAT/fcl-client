@@ -13,30 +13,11 @@ function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
 const DEFAULT_CY_CONFIG = {};
 
 export interface CyConfig {
-    // interaction options:
     minZoom?: number;
     maxZoom?: number;
     zoomingEnabled?: boolean;
     userZoomingEnabled?: boolean;
-    // panningEnabled?: boolean;
-    // userPanningEnabled?: boolean;
-    // boxSelectionEnabled?: boolean;
-    // selectionType?: 'single' | 'additive';
-    // touchTapThreshold?: number;
-    // desktopTapThreshold?: number;
-    // autolock?: boolean;
     autoungrabify?: boolean;
-    // autounselectify?: boolean;
-
-    // rendering options:
-    // headless?: boolean;
-    // styleEnabled?: boolean;
-    // hideEdgesOnViewport?: boolean;
-    // textureOnViewport?: boolean;
-    // motionBlur?: boolean;
-    // motionBlurOpacity?: number;
-    // wheelSensitivity?: number;
-    // pixelRatio?: number | 'auto';
 }
 
 export interface LayoutConfig {
@@ -83,15 +64,16 @@ export class CyGraph {
         private graphData: GraphData,
         private styleConfig: StyleConfig,
         layoutConfig?: LayoutConfig,
-        cyConfig?: CyConfig
+        cyConfig?: CyConfig //  = DEFAULT_CY_CONFIG
     ) {
         // console.log('BaseCyGraph entered ...');
         layoutConfig =
-            layoutConfig === undefined ? layoutConfig :
+            layoutConfig !== undefined ? layoutConfig :
             this.graphData.layout ? createLayoutConfigFromLayout(this.graphData.layout) :
             undefined;
 
         this.initCy(htmlContainerElement, layoutConfig, cyConfig);
+
         // console.log('BaseCyGraph leaving ...');
     }
 
@@ -175,7 +157,7 @@ export class CyGraph {
     protected initCy(
         htmlContainerElement: HTMLElement | undefined,
         layoutConfig: LayoutConfig | undefined,
-        cyConfig: CyConfig | undefined
+        cyConfig: CyConfig | undefined = DEFAULT_CY_CONFIG
     ): void {
         // console.log('BaseCyGraph.initCy entered ...');
         this.cleanCy();
