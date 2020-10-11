@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "872fb01b_4fbdf70c",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9e94c5b_9c359ec3",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9dcbe97b_32dbfbe6",
         "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c648523a_89faf5a2",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9dcbe97b_32dbfbe6",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e09f9b8c_6d18013f",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be4ce2d3_87e7e11f",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3248ebe1_fe149b3c",
         "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
         "patchSetId": 2
@@ -67,6 +121,24 @@
       "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9392be91_5d7f33e9",
+        "filename": "src/app/tracing/configuration/highlighting-station-list-view/highlighting-station-list-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3248ebe1_fe149b3c",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "2700e5f8_cf53c971",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7674eae1_f3f0dc67",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f6b8aad3_2d7439f0",
         "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
         "patchSetId": 2
@@ -101,6 +191,24 @@
       "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7c448db_df5df097",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6b8aad3_2d7439f0",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "8da7422d_1054a65a",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee803f4b_cceb76a6",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d935e8c_f5e93b6f",
         "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
         "patchSetId": 2
@@ -135,6 +261,24 @@
       "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3803bfcc_2efb749b",
+        "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-11T07:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d935e8c_f5e93b6f",
+      "revId": "3df5b0113d768a9a051ac880eca50a416bdd2d1c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
