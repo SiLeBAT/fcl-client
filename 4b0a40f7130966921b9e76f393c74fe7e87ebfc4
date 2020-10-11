@@ -164,6 +164,30 @@
       "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "935fb64b_061fa6fe",
+        "filename": "src/app/tracing/graph/components/graph-view/cy-graph.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-11T14:11:33Z",
+      "side": 1,
+      "message": "i think that\u0027s fine because the methods signature does not change",
+      "parentUuid": "02310c75_fbbdc869",
+      "range": {
+        "startLine": 182,
+        "startChar": 8,
+        "endLine": 182,
+        "endChar": 73
+      },
+      "revId": "4b0a40f7130966921b9e76f393c74fe7e87ebfc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
