@@ -175,6 +175,29 @@
       "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ffdd5361_eff91be8",
+        "filename": "src/app/tracing/state/tracing.selectors.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-11T15:15:31Z",
+      "side": 1,
+      "message": "to clearify: every time graphSettings change (its reference) this selector will emit, because every time you create a new object (selector memorization does no deep checking).\nif you want to only emit if gisLayout, mapType or shapeFileData changes you have to write selectors for each of them:\ngetGisLayout \u003d createSelector(getGraphSettings, settings \u003d\u003e settings.gisLayout)\ngetMapType ...\ngetShapeFileData ...\nand write getMapConfig accordingly:\ngetMapConfig \u003d createSelector(\ngetGisLayout,\ngetMapType,\ngetShapeFileData,\n(x, y, z) \u003d\u003e ({layout:x, mapType:y, shapeFileData:z})\n)\nIf using selector as you\u0027ve done i would prefer using a pipe on the graphSettings selector:\nmapConfig$ \u003d store.pipe(select(getGraphSettings), map(s)\u003d\u003e({layout:s.gisLayout, ...})\nSo this makes it clearer that your subscription always emits when settings changes.\n\nI think we should talk about that with the other devs and apply a common best practise to make the usage of selectors more clearer.",
+      "range": {
+        "startLine": 155,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 2
+      },
+      "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
