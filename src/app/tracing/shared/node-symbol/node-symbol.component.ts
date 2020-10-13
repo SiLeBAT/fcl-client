@@ -84,21 +84,27 @@ export class NodeSymbolComponent {
     constructor() {}
 
     private resetColors(): void {
-        this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
+        this.fillColor_ = null;
         this.isFillColorNonWhite_ = true;
         this.gradientStops_ = null;
         this.gradientStops_ = [];
     }
 
+    private setDefaultColor(): void {
+        this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
+        this.isFillColorNonWhite_ = false;
+    }
+
     private setFillColor(colorOrColors: Color | number[][] | null): void {
         this.resetColors();
 
-        if (colorOrColors !== null) {
+        if (colorOrColors === null) {
+            this.setDefaultColor();
+        } else {
             if (Array.isArray(colorOrColors)) {
                 const colors: number[][] = colorOrColors;
                 if (colors.length === 0) {
-                    this.fillColor_ = NodeSymbolComponent.DEFAULT_COLOR_WHITE;
-                    this.isFillColorNonWhite_ = false;
+                    this.setDefaultColor();
                 } else if (colors.length === 1) {
                     this.setSimpleFillColor(arrayToColor(colors[0]));
                 } else {
