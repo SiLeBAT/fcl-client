@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "63d6181d_d141b0ed",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:28:39Z",
+      "side": 1,
+      "message": "processedFrameData I keep, because frameData might change independently from mapConfig. \nIf I initialize the map but frameData was set in an cycle before I miss that change otherwise",
+      "parentUuid": "5ce5ab46_8401e11c",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 52
+      },
+      "revId": "1fb8d96e76865c921c587062e493101d477fe296",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f01309be_b3b49143",
         "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5b247c93_9c6dfcdf",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:28:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f01309be_b3b49143",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 15
+      },
+      "revId": "1fb8d96e76865c921c587062e493101d477fe296",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0cad9a9b_7621318b",
         "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "1fb8d96e76865c921c587062e493101d477fe296",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "623c966f_808190bc",
+        "filename": "src/app/tracing/graph/components/graph-view/graph-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:28:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0cad9a9b_7621318b",
+      "range": {
+        "startLine": 51,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 15
+      },
+      "revId": "1fb8d96e76865c921c587062e493101d477fe296",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
