@@ -198,6 +198,30 @@
       "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abe3ca89_8ce32e27",
+        "filename": "src/app/tracing/state/tracing.selectors.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:27:36Z",
+      "side": 1,
+      "message": "Thanks, for clarifying that. Done.",
+      "parentUuid": "ffdd5361_eff91be8",
+      "range": {
+        "startLine": 155,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 2
+      },
+      "revId": "1e8c3f4a1d4342b7769c36bd9c9760f64debc39c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
