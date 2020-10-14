@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e01faaff_0ef73b61",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:29:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1d1b7276_5f0fdffd",
+      "range": {
+        "startLine": 13,
+        "startChar": 42,
+        "endLine": 13,
+        "endChar": 48
+      },
+      "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81674981_41e2cc22",
         "filename": "src/app/tracing/graph/gis-positioning.service.ts",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "2e4dd726_184ab056",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:29:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "81674981_41e2cc22",
+      "range": {
+        "startLine": 107,
+        "startChar": 51,
+        "endLine": 107,
+        "endChar": 53
+      },
+      "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c8912cda_942f375a",
         "filename": "src/app/tracing/util/geometry-utils.ts",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70513f94_2c53c81d",
+        "filename": "src/app/tracing/util/geometry-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-10-14T14:29:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c8912cda_942f375a",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 67,
+        "endChar": 10
+      },
+      "revId": "e9159ea66ec0308e28c172f9a1f53c2b9675730b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
