@@ -1,26 +1,29 @@
+<div class="fcl-graph-container">
 
-<fcl-geomap
-    [mapConfig]="mapConfig$ | async"
-    [frameData]="unknownPosFrameData"
-    class="fcl-graph-map">
-</fcl-geomap>
+    <fcl-geomap
+        [mapConfig]="mapConfig$ | async"
+        [frameData]="unknownPosFrameData"
+        class="fcl-graph-map">
+    </fcl-geomap>
 
-<fcl-graph-view
-    class="fcl-graph"
-    [graphData]="graphData"
-    [styleConfig]="styleConfig$ | async"
-    [showZoom]="showZoom$ | async"
-    (graphDataChange)="onGraphDataChange($event)"
-    (contextMenuRequest)="onContextMenuRequest($event)"
-></fcl-graph-view>
+    <fcl-graph-view
+        class="fcl-graph"
+        [graphData]="graphData"
+        [styleConfig]="styleConfig$ | async"
+        [showZoom]="showZoom$ | async"
+        (graphDataChange)="onGraphDataChange($event)"
+        (contextMenuRequest)="onContextMenuRequest($event)"
+    ></fcl-graph-view>
 
-<fcl-graph-legend-view
-    class="fcl-graph-legend"
-    *ngIf="(showLegend$ | async) && (legendInfo !== null)"
-    [legendInfo]="legendInfo"
-    [showMissingGisInfoEntry]="showMissingGisInfoEntry"
-></fcl-graph-legend-view>
+    <fcl-graph-legend-view
+        class="fcl-graph-legend"
+        *ngIf="(showLegend$ | async) && (legendInfo !== null)"
+        [legendInfo]="legendInfo"
+        [showMissingGisInfoEntry]="showMissingGisInfoEntry"
+    ></fcl-graph-legend-view>
 
-<fcl-geomap-licref-view class="fcl-osm-reference"></fcl-geomap-licref-view>
+    <fcl-geomap-licref-view class="fcl-osm-reference"></fcl-geomap-licref-view>
+
+</div>
 
 <fcl-context-menu-view (itemSelected)="onContextMenuSelect($event)" #contextMenu></fcl-context-menu-view>

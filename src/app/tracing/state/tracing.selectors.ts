@@ -152,20 +152,36 @@ export const getGisGraphData = createSelector(
     })
 );
 
-export const getMapConfig = createSelector(
+const getGisLayout = createSelector(
     getGraphSettings,
-    (graphSettings) => ({
-        layout: graphSettings.gisLayout,
-        mapType: graphSettings.mapType,
-        shapeFileData: graphSettings.shapeFileData
+    (graphSettings) => graphSettings.gisLayout
+);
+const getMapType = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.mapType
+);
+const getShapeFileData = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.shapeFileData
+);
+
+export const getMapConfig = createSelector(
+    getGisLayout,
+    getMapType,
+    getShapeFileData,
+    (gisLayout, mapType, shapeFileData) => ({
+        layout: gisLayout,
+        mapType: mapType,
+        shapeFileData: shapeFileData
     })
 );
 
 export const getStyleConfig = createSelector(
-    getGraphSettings,
-    (graphSettings) => ({
-        nodeSize: graphSettings.nodeSize,
-        fontSize: graphSettings.fontSize
+    getNodeSize,
+    getFontSize,
+    (nodeSize, fontSize) => ({
+        nodeSize: nodeSize,
+        fontSize: fontSize
     })
 );
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Input, ChangeDetectionStrategy, OnChanges } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as ol from 'ol';
 import { Utils as UIUtils } from '../../../util/ui-utils';
 import {
@@ -21,29 +21,31 @@ export type UnknownPosFrameData = BoundaryRect;
 @Component({
     selector: 'fcl-geomap',
     templateUrl: './geomap.component.html',
-    styleUrls: ['./geomap.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./geomap.component.scss']
 })
 export class GeoMapComponent implements OnChanges {
 
     @ViewChild('map', { static: true }) mapElement: ElementRef;
 
     @Input() mapConfig: MapConfig;
-    @Input() frameData: BoundaryRect;
+    @Input() frameData: BoundaryRect | null = null;
 
     private map: ol.Map | null = null;
-    private processedMapConfig: MapConfig | null = null;
     private processedFrameData: BoundaryRect | null = null;
 
     constructor(public elementRef: ElementRef) {}
 
-    ngOnChanges(): void {
-        this.checkAndUpdateMap();
-        this.checkFrameData();
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.mapConfig !== undefined) {
+            this.checkAndUpdateMap(changes.mapConfig.currentValue, changes.mapConfig.previousValue);
+        }
+        if (changes.frameData !== undefined) {
+            this.checkFrameData(changes.frameData.currentValue);
+        }
     }
 
     onComponentResized(): void {
-        if (this.mapConfig && this.isSizePositive()) {
+        if (this.map !== null && this.isSizePositive()) {
             this.resizeMap();
         }
     }
@@ -61,17 +63,17 @@ export class GeoMapComponent implements OnChanges {
         };
     }
 
-    private initMap(): void {
-        this.map = createOpenLayerMap(this.mapConfig, this.mapElement.nativeElement);
-        this.updateMap();
+    private initMap(mapConfig: MapConfig): void {
+        this.map = createOpenLayerMap(mapConfig, this.mapElement.nativeElement);
+        this.updateMap(mapConfig);
     }
 
-    private updateMapType(): void {
-        updateMapType(this.map, this.mapConfig);
+    private updateMapType(mapConfig: MapConfig): void {
+        updateMapType(this.map, mapConfig);
     }
 
-    private updateMap() {
-        if (this.mapConfig.layout !== null) {
+    private updateMap(mapConfig: MapConfig) {
+        if (mapConfig.layout !== null) {
             const size = this.getSize();
             this.map.setView(UIUtils.panZoomToView(
                 this.mapConfig.layout.pan,
@@ -84,16 +86,16 @@ export class GeoMapComponent implements OnChanges {
     private resizeMap() {
         if (this.map !== null) {
             this.map.updateSize();
-            this.updateMap();
+            this.updateMap(this.mapConfig);
         }
     }
 
-    private addFrameLayer() {
+    private addFrameLayer(frameData: BoundaryRect) {
         const olCoordTopLeft = UIUtils.positionToOlCoords(
-            this.frameData.left, this.frameData.top, 1
+            frameData.left, frameData.top, 1
         );
         const olCoordBottomRight = UIUtils.positionToOlCoords(
-            this.frameData.right, this.frameData.bottom, 1
+            frameData.right, frameData.bottom, 1
         );
         setFrameLayer(this.map, {
             xMin: olCoordTopLeft.x,
@@ -107,36 +109,34 @@ export class GeoMapComponent implements OnChanges {
         removeFrameLayer(this.map);
     }
 
-    private checkAndUpdateMap(): void {
-        if (this.mapConfig !== null && this.mapConfig.layout !== null) {
-            const oldMapConfig = this.processedMapConfig;
-            const newMapConfig = this.mapConfig;
+    private checkAndUpdateMap(newMapConfig: MapConfig, oldMapConfig: MapConfig | undefined): void {
+        if (newMapConfig.layout !== null) {
             if (this.map === null) {
-                this.initMap();
+                this.initMap(newMapConfig);
+                this.checkFrameData(this.frameData);
             } else if (oldMapConfig !== newMapConfig) {
                 if (
                     newMapConfig.mapType !== oldMapConfig.mapType ||
                     newMapConfig.shapeFileData !== oldMapConfig.shapeFileData
                 ) {
-                    this.updateMapType();
+                    this.updateMapType(newMapConfig);
                 }
                 if (newMapConfig.layout !== oldMapConfig.layout) {
-                    this.updateMap();
+                    this.updateMap(newMapConfig);
                 }
             }
-            this.processedMapConfig = newMapConfig;
         }
     }
 
-    private checkFrameData(): void {
-        if (this.map !== null && this.frameData !== this.processedFrameData) {
+    private checkFrameData(newFrameData: BoundaryRect | null): void {
+        if (this.map !== null && newFrameData !== this.processedFrameData) {
             if (this.processedFrameData) {
                 this.removeFrameLayer();
             }
             if (this.frameData) {
-                this.addFrameLayer();
+                this.addFrameLayer(newFrameData);
             }
-            this.processedFrameData = this.frameData;
+            this.processedFrameData = newFrameData;
         }
     }
 }

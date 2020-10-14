@@ -17,6 +17,7 @@ import {
     ShowDeliveryTraceMSA, ShowStationPropertiesMSA, ShowStationTraceMSA
 } from '../tracing.actions';
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
+import { Action } from '@ngrx/store';
 
 interface ContextElements {
     refNodeId: NodeId | undefined;
@@ -94,18 +95,19 @@ export class ContextMenuService {
         nodeIds = nodeIds.length > 0 ? nodeIds : graphData.nodeData.map(n => n.id);
         const layoutIsEnabled = nodeIds.length >= MIN_LAYOUTABLE_NODE_COUNT;
 
-        // todo: reconnect with layoutService
-        const layoutMenuData: MenuItemData[] = [];
+        return [];
+        // // todo: reconnect with layoutService
+        // const layoutMenuData: MenuItemData[] = [];
 
-        return (
-            layoutMenuData.length > 0 ?
-                [{
-                    ...MenuItemStrings.applyLayout,
-                    disabled: !layoutIsEnabled,
-                    children: layoutMenuData.slice()
-                }] :
-                []
-        );
+        // return (
+        //     layoutMenuData.length > 0 ?
+        //         [{
+        //             ...MenuItemStrings.applyLayout,
+        //             disabled: !layoutIsEnabled,
+        //             children: layoutMenuData.slice()
+        //         }] :
+        //         []
+        // );
     }
 
     private createGraphMenuData(graphData: GraphServiceData, addLayoutOptions: boolean): MenuItemData[] {
@@ -332,17 +334,18 @@ export class ContextMenuService {
         const useStationTracing = contextElements.refStationId !== undefined;
         const useDelTracing = !useStationTracing && contextElements.refDeliveryIds.length === 1;
 
-        const getAction = useStationTracing || useDelTracing ? (
-            (type: ObservedType) =>
-                useStationTracing ? new ShowStationTraceMSA({
-                    stationId: contextElements.refStationId,
-                    observedType: type
-                }) :
-                new ShowDeliveryTraceMSA({
-                    deliveryId: contextElements.refDeliveryIds[0],
-                    observedType: type
-                })
-        ) : null;
+        let getAction: ((type: ObservedType) => Action) | null = null;
+        if (useStationTracing) {
+            getAction = (type: ObservedType) => new ShowStationTraceMSA({
+                stationId: contextElements.refStationId,
+                observedType: type
+            });
+        } else if (useDelTracing) {
+            getAction = (type: ObservedType) => new ShowDeliveryTraceMSA({
+                deliveryId: contextElements.refDeliveryIds[0],
+                observedType: type
+            });
+        }
 
         return {
             ...MenuItemStrings.setTrace,
