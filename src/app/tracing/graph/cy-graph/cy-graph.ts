@@ -1,10 +1,10 @@
-import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef, SelectedGraphElements } from '../../graph.model';
-import { Layout, Position, PositionMap } from '../../../data.model';
+import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef, SelectedGraphElements } from '../graph.model';
+import { Layout, Position, PositionMap } from '../../data.model';
 import cytoscape from 'cytoscape';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
-import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
-import { EDGE_GROUP, NODE_GROUP, PRESET_LAYOUT_NAME } from '../../cy-graph/cy.constants';
+import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
+import { EDGE_GROUP, NODE_GROUP, PRESET_LAYOUT_NAME } from './cy.constants';
 
 function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);

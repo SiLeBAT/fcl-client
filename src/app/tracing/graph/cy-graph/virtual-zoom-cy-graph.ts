@@ -1,9 +1,9 @@
 import { Layout, Position, Size, Range, PositionMap } from '../../data.model';
-import { StyleConfig } from '../components/graph-view/cy-style';
+import { StyleConfig } from './cy-style';
 import { getEnclosingRectFromPoints } from '@app/tracing/util/geometry-utils';
 import { getDenovoFitLayout } from './denovo-fit-layout-computation';
 import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
-import { createLayoutConfigFromLayout, GraphData, CyConfig } from '../components/graph-view/cy-graph';
+import { createLayoutConfigFromLayout, GraphData, CyConfig } from './cy-graph';
 import { addCustomZoomAdapter } from './cy-adapter';
 import { getActivePositions, getAvailableSpace, getZoomedGraphData, getZoomedNodePositions } from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';

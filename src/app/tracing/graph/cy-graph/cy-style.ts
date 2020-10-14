@@ -1,5 +1,5 @@
 import cytoscape from 'cytoscape';
-import { CyNodeData, CyEdgeData, GraphElementData } from '../../graph.model';
+import { GraphElementData } from '../graph.model';
 
 enum GraphSize {
     SMALL, LARGE, HUGE

@@ -13,7 +13,7 @@ import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
 import { GraphDataChange } from '../graph-view/graph-view.component';
-import { GraphData } from '../graph-view/cy-graph';
+import { GraphData } from '../../cy-graph/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
 import { UnknownPosFrameData } from '../geomap/geomap.component';
 import { GisPositioningService } from '../../gis-positioning.service';

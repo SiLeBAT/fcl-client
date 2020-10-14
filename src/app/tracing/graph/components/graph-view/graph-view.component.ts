@@ -6,10 +6,10 @@ import {
 import { Size, Layout, PositionMap } from '../../../data.model';
 import _ from 'lodash';
 import { ContextMenuRequestInfo, SelectedGraphElements } from '../../graph.model';
-import { StyleConfig } from './cy-style';
+import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
 import { GraphEventType, InteractiveCyGraph } from '../../cy-graph/interactive-cy-graph';
-import { GraphData } from './cy-graph';
+import { GraphData } from '../../cy-graph/cy-graph';
 
 export interface GraphDataChange {
     layout?: Layout;

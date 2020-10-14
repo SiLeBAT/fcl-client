@@ -1,10 +1,10 @@
-import { Cy, ContextMenuRequestInfo } from '../../graph.model';
-import { Position } from '../../../data.model';
+import { Cy, ContextMenuRequestInfo } from '../graph.model';
+import { Position } from '../../data.model';
 import {
     CY_EVENT_BOX_SELECT, CY_EVENT_CXT_TAP, CY_EVENT_DRAG_FREE_ON, CY_EVENT_PAN,
     CY_EVENT_TAP_END, CY_EVENT_TAP_SELECT, CY_EVENT_TAP_START, CY_EVENT_TAP_UNSELECT,
     CY_EVENT_ZOOM
-} from '../../cy-graph/cy.constants';
+} from './cy.constants';
 
 export function addCyPanListeners(cy: Cy, onPanning: () => void, onPanEnd: () => void): void {
     let tapStarted = false;

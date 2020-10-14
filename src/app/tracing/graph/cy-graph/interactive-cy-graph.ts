@@ -1,12 +1,12 @@
 import { ContextMenuRequestInfo, SelectedGraphElements } from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
-import { StyleConfig, CyStyle } from '../components/graph-view/cy-style';
+import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
-import { CyGraph, CyConfig, GraphData, LayoutConfig } from '../components/graph-view/cy-graph';
+import { CyGraph, CyConfig, GraphData, LayoutConfig } from './cy-graph';
 import {
     addCyContextMenuRequestListener, addCyZoomListener, addCyDragListener,
     addCyPanListeners, addCySelectionListener
-} from '../components/graph-view/cy-listeners';
+} from './cy-listeners';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',

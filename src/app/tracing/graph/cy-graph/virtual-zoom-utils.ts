@@ -1,5 +1,5 @@
 import { Size, PositionMap, Position } from '../../data.model';
-import { GraphData } from '../components/graph-view/cy-graph';
+import { GraphData } from './cy-graph';
 import { CyNodeData } from '../graph.model';
 
 export function getActivePositions(graphData: GraphData): Position[] {

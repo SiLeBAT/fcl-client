@@ -52,7 +52,7 @@ import { OperatorSelectorViewComponent } from './configuration/operator-selector
 import { ValueEditorViewComponent } from './configuration/value-editor-view/value-editor-view.component';
 import { JunctorSelectorViewComponent } from './configuration/junktor-selector-view/junktor-selector-view.component';
 import { ConfigurationEffects } from './configuration/configuration.effects';
-import { ResizeSensorDirective } from './graph/components/graph-view/resize-sensor.directive';
+import { ResizeSensorDirective } from './graph/components/resize-sensor.directive';
 import { GraphViewComponent } from './graph/components/graph-view/graph-view.component';
 import { GeoMapComponent } from './graph/components/geomap/geomap.component';
 import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
