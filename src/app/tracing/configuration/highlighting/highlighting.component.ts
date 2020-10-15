@@ -5,7 +5,8 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
 import { map } from 'rxjs/operators';
 import { TabConfig } from '../tab-layout/tab-layout.component';
-import { ConfigurationTabIndex } from '../configuration.model';
+import { ActiveHighlightingTabId, AddTypedId } from '../configuration.model';
+import { DeliveriesTabId, StationsTabId } from '../configuration.constants';
 
 @Component({
     selector: 'fcl-highlighting',
@@ -15,13 +16,11 @@ export class HighlightingComponent implements OnInit {
 
     @ViewChild('stationTemplate', { static: true }) stationTemplate: TemplateRef<any>;
     @ViewChild('deliveryTemplate', { static: true }) deliveryTemplate: TemplateRef<any>;
-    tabConfigs: TabConfig[];
+    tabConfigs: AddTypedId<TabConfig, ActiveHighlightingTabId>[] = [];
 
-    configurationTabIndices$ = this.store.select(tracingSelectors.getConfigurationTabIndices);
-    activeTabIndex$ = this.configurationTabIndices$
-        .pipe(
-            map((configurationTabIndices: ConfigurationTabIndex) => configurationTabIndices.activeHighlightingTabIndex)
-        );
+    activeTabId$ = this.store.select(tracingSelectors.getActiveHighlightingTabId).pipe(
+        map(tabId => this.tabConfigs.findIndex(tabConfig => tabConfig.id === tabId) || 0)
+    );
 
     tabGroupId = 'fcl-tab-group-highlighting';
 
@@ -32,17 +31,20 @@ export class HighlightingComponent implements OnInit {
     ngOnInit() {
         this.tabConfigs = [
             {
+                id: StationsTabId,
                 tabLabel: 'Stations',
                 tabTemplate: this.stationTemplate
             },
             {
+                id: DeliveriesTabId,
                 tabLabel: 'Deliveries',
                 tabTemplate: this.deliveryTemplate
             }
         ];
     }
 
-    dispatchHighlightingTabIndex(highlightingTabIndex: number) {
-        this.store.dispatch(new tracingActions.SetActiveHighlightingTabIndexSSA({ activeHighlightingTabIndex: highlightingTabIndex }));
+    onTabChange(tabIndex: number) {
+        const tabId = this.tabConfigs[tabIndex].id;
+        this.store.dispatch(new tracingActions.SetActiveHighlightingTabIdSOA({ activeHighlightingTabId: tabId }));
     }
 }

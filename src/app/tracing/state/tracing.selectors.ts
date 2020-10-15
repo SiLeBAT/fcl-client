@@ -1,6 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { STATE_SLICE_NAME } from './tracing.reducers';
 import { TracingState } from '../state.model';
+import { DeliveriesTabId, FilterTabId, HighlightingTabId, StationsTabId } from '../configuration/configuration.constants';
 
 // SELECTORS
 export const getTracingFeatureState = createFeatureSelector<TracingState>(STATE_SLICE_NAME);
@@ -171,17 +172,32 @@ export const getGroupingData = createSelector(
     })
 );
 
-export const getConfigurationTabIndices = createSelector(
+const getConfigurationTabIndices = createSelector(
     getTracingFeatureState,
     state => state.configurationTabIndices
+);
+
+export const getActiveConfigurationTabId = createSelector(
+    getTracingFeatureState,
+    state => state.configurationTabIndices.activeConfigurationTabId
+);
+
+export const getActiveFilterTabId = createSelector(
+    getTracingFeatureState,
+    state => state.configurationTabIndices.activeFilterTabId
+);
+
+export const getActiveHighlightingTabId = createSelector(
+    getTracingFeatureState,
+    state => state.configurationTabIndices.activeHighlightingTabId
 );
 
 export const getIsFilterStationTabActive = createSelector(
     getTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeFilterTabIndex === 0 &&
-        state.configurationTabIndices.activeMainTabIndex === 0
+        state.configurationTabIndices.activeFilterTabId === StationsTabId &&
+        state.configurationTabIndices.activeConfigurationTabId === FilterTabId
     )
 );
 
@@ -189,8 +205,8 @@ export const getIsFilterDeliveryTabActive = createSelector(
     getTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeFilterTabIndex === 1 &&
-        state.configurationTabIndices.activeMainTabIndex === 0
+        state.configurationTabIndices.activeFilterTabId === DeliveriesTabId &&
+        state.configurationTabIndices.activeConfigurationTabId === FilterTabId
     )
 );
 
@@ -198,8 +214,8 @@ export const getIsHighlightingStationTabActive = createSelector(
     getTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeHighlightingTabIndex === 0 &&
-        state.configurationTabIndices.activeMainTabIndex === 1
+        state.configurationTabIndices.activeHighlightingTabId === StationsTabId &&
+        state.configurationTabIndices.activeConfigurationTabId === HighlightingTabId
     )
 );
 
@@ -207,8 +223,8 @@ export const getIsHighlightingDeliveryTabActive = createSelector(
     getTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeHighlightingTabIndex === 1 &&
-        state.configurationTabIndices.activeMainTabIndex === 1
+        state.configurationTabIndices.activeHighlightingTabId === DeliveriesTabId &&
+        state.configurationTabIndices.activeConfigurationTabId === HighlightingTabId
     )
 );
 
