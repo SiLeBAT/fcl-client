@@ -8,7 +8,7 @@ import {
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
-import { FilterTableSettings } from '../configuration/configuration.model';
+import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
@@ -37,9 +37,9 @@ export enum TracingActionTypes {
     SetTracingSettingsSOA = '[Tracing] Set Tracing Settings',
     SetCrossContTraceTypeSOA = '[Tracing] Set Cross Contamination Trace Type',
     SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
-    SetActiveMainTabIndexSSA = '[Configuration Layout] Set Active Main Tab Index',
-    SetActiveFilterTabIndexSSA = '[Configuration Layout] Set Active Filter Tab Index',
-    SetActiveHighlightingTabIndexSSA = '[Configuration Layout] Set Active Highlighting Tab Index',
+    SetActiveConfigurationTabIdSOA = '[Configuration Layout] Set Active Configuration Tab Id',
+    SetActiveFilterTabIdSOA = '[Configuration Layout] Set Active Filter Tab Id',
+    SetActiveHighlightingTabIdSOA = '[Configuration Layout] Set Active Highlighting Tab Id',
     SetStationFilterSOA = '[Configuration Layout] Set Station Filter Settings',
     ResetAllStationFiltersSOA = '[Configuration Layout] Reset All Station Filters',
     SetFilterStationTableColumnOrderSOA = '[Configuration Layout] Set Station Table Column Order',
@@ -204,22 +204,22 @@ export class SetHighlightingSettingsSOA implements Action {
     constructor(public payload: SetHighlightingSettingsPayload) {}
 }
 
-export class SetActiveMainTabIndexSSA implements Action {
-    readonly type = TracingActionTypes.SetActiveMainTabIndexSSA;
+export class SetActiveConfigurationTabIdSOA implements Action {
+    readonly type = TracingActionTypes.SetActiveConfigurationTabIdSOA;
 
-    constructor(public payload: { activeMainTabIndex: number }) {}
+    constructor(public payload: { activeConfigurationTabId: ActiveConfigurationTabId }) {}
 }
 
-export class SetActiveFilterTabIndexSSA implements Action {
-    readonly type = TracingActionTypes.SetActiveFilterTabIndexSSA;
+export class SetActiveFilterTabIdSOA implements Action {
+    readonly type = TracingActionTypes.SetActiveFilterTabIdSOA;
 
-    constructor(public payload: { activeFilterTabIndex: number }) {}
+    constructor(public payload: { activeFilterTabId: ActiveFilterTabId }) {}
 }
 
-export class SetActiveHighlightingTabIndexSSA implements Action {
-    readonly type = TracingActionTypes.SetActiveHighlightingTabIndexSSA;
+export class SetActiveHighlightingTabIdSOA implements Action {
+    readonly type = TracingActionTypes.SetActiveHighlightingTabIdSOA;
 
-    constructor(public payload: { activeHighlightingTabIndex: number }) {}
+    constructor(public payload: { activeHighlightingTabId: ActiveHighlightingTabId }) {}
 }
 
 export class SetFilterStationTableColumnOrderSOA implements Action {
@@ -305,9 +305,9 @@ export type TracingActions =
     | SetTracingSettingsSOA
     | SetCrossContTraceTypeSOA
     | SetHighlightingSettingsSOA
-    | SetActiveMainTabIndexSSA
-    | SetActiveFilterTabIndexSSA
-    | SetActiveHighlightingTabIndexSSA
+    | SetActiveConfigurationTabIdSOA
+    | SetActiveFilterTabIdSOA
+    | SetActiveHighlightingTabIdSOA
     | SetFilterStationTableColumnOrderSOA
     | SetStationFilterSOA
     | ResetAllStationFiltersSOA

@@ -5,7 +5,8 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
 import { map } from 'rxjs/operators';
 import { TabConfig } from '../tab-layout/tab-layout.component';
-import { ConfigurationTabIndex } from '../configuration.model';
+import { ActiveConfigurationTabId, AddTypedId } from '../configuration.model';
+import { FilterTabId, HighlightingTabId, SettingsTabId } from '../configuration.constants';
 
 @Component({
     selector: 'fcl-configuration',
@@ -16,13 +17,11 @@ export class ConfigurationComponent implements OnInit {
     @ViewChild('filterTemplate', { static: true }) filterTemplate: TemplateRef<any>;
     @ViewChild('highlightingTemplate', { static: true }) highlightingTemplate: TemplateRef<any>;
     @ViewChild('settingsTemplate', { static: true }) settingsTemplate: TemplateRef<any>;
-    tabConfigs: TabConfig[];
+    tabConfigs: AddTypedId<TabConfig, ActiveConfigurationTabId>[] = [];
 
-    configurationTabIndices$ = this.store.select(tracingSelectors.getConfigurationTabIndices);
-    activeTabIndex$ = this.configurationTabIndices$
-        .pipe(
-            map((configurationTabIndices: ConfigurationTabIndex) => configurationTabIndices.activeMainTabIndex)
-        );
+    activeConfigurationTabId$ = this.store.select(tracingSelectors.getActiveConfigurationTabId).pipe(
+        map(tabId => this.tabConfigs.findIndex(tabConfig => tabConfig.id === tabId) || 0)
+    );
 
     tabGroupId = 'fcl-tab-group-main';
 
@@ -33,21 +32,25 @@ export class ConfigurationComponent implements OnInit {
     ngOnInit() {
         this.tabConfigs = [
             {
+                id: FilterTabId,
                 tabLabel: 'Filter',
                 tabTemplate: this.filterTemplate
             },
             {
+                id: HighlightingTabId,
                 tabLabel: 'Highlighting',
                 tabTemplate: this.highlightingTemplate
             },
             {
+                id: SettingsTabId,
                 tabLabel: 'Graph Settings',
                 tabTemplate: this.settingsTemplate
             }
         ];
     }
 
-    dispatchMainTabIndex(mainTabIndex: number) {
-        this.store.dispatch(new tracingActions.SetActiveMainTabIndexSSA({ activeMainTabIndex: mainTabIndex }));
+    onTabChange(tabIndex: number) {
+        const tabId = this.tabConfigs[tabIndex].id;
+        this.store.dispatch(new tracingActions.SetActiveConfigurationTabIdSOA({ activeConfigurationTabId: tabId }));
     }
 }

@@ -11,6 +11,7 @@ import {
 
 import { TracingState } from '../state.model';
 import { ComplexRowFilterSettings, FilterTableSettings, ShowType, VisibilityFilterState, FilterSettings, ConfigurationTabIndex } from '../configuration/configuration.model';
+import { FilterTabId, StationsTabId } from '../configuration/configuration.constants';
 
 export const STATE_SLICE_NAME = 'tracing';
 
@@ -45,9 +46,9 @@ const initialFilterSettings: FilterSettings = {
 const initialData: FclData = createInitialFclDataState();
 
 const initialTabIndices: ConfigurationTabIndex = {
-    activeMainTabIndex: 0,
-    activeFilterTabIndex: 0,
-    activeHighlightingTabIndex: 0
+    activeConfigurationTabId: FilterTabId,
+    activeFilterTabId: StationsTabId,
+    activeHighlightingTabId: StationsTabId
 };
 
 const initialState: TracingState = {
@@ -511,30 +512,30 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetActiveMainTabIndexSSA:
+        case TracingActionTypes.SetActiveConfigurationTabIdSOA:
             return {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
-                    activeMainTabIndex: action.payload.activeMainTabIndex
+                    activeConfigurationTabId: action.payload.activeConfigurationTabId
                 }
             };
 
-        case TracingActionTypes.SetActiveFilterTabIndexSSA:
+        case TracingActionTypes.SetActiveFilterTabIdSOA:
             return {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
-                    activeFilterTabIndex: action.payload.activeFilterTabIndex
+                    activeFilterTabId: action.payload.activeFilterTabId
                 }
             };
 
-        case TracingActionTypes.SetActiveHighlightingTabIndexSSA:
+        case TracingActionTypes.SetActiveHighlightingTabIdSOA:
             return {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
-                    activeHighlightingTabIndex: action.payload.activeHighlightingTabIndex
+                    activeHighlightingTabId: action.payload.activeHighlightingTabId
                 }
             };
 
