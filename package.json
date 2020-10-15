@@ -83,6 +83,7 @@
     "codelyzer": "^5.2.1",
     "cypress": "^4.4.0",
     "jest": "^25.1.0",
+    "jest-canvas-mock": "^2.3.0",
     "jest-preset-angular": "^8.0.0",
     "jest-zone-patch": "0.0.10",
     "ngentest": "^1.4.0",

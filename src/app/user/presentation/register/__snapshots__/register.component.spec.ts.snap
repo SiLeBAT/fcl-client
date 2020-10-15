@@ -18,7 +18,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-0 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -61,7 +61,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-1 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -104,7 +104,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-2 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -147,7 +147,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-3 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -208,7 +208,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-4 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -246,6 +246,153 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
         </mat-form-field>
+      </div>
+      <div
+        class="form-group fcl-form-checkbox"
+      >
+        <mat-checkbox
+          class="mat-checkbox mat-accent"
+          formcontrolname="dataProtection"
+          required=""
+        >
+          <label
+            class="mat-checkbox-layout"
+          >
+            <div
+              class="mat-checkbox-inner-container"
+            >
+              <input
+                class="mat-checkbox-input cdk-visually-hidden"
+                type="checkbox"
+              />
+              <div
+                class="mat-checkbox-ripple mat-ripple"
+                matripple=""
+              >
+                <div
+                  class="mat-ripple-element mat-checkbox-persistent-ripple"
+                />
+              </div>
+              <div
+                class="mat-checkbox-frame"
+              />
+              <div
+                class="mat-checkbox-background"
+              >
+                <svg
+                  class="mat-checkbox-checkmark"
+                  focusable="false"
+                  version="1.1"
+                  viewBox="0 0 24 24"
+                  xml:space="preserve"
+                >
+                  <path
+                    class="mat-checkbox-checkmark-path"
+                    d="M4.1,12.7 9,17.6 20.3,6.3"
+                    fill="none"
+                    stroke="white"
+                  />
+                </svg>
+                <div
+                  class="mat-checkbox-mixedmark"
+                />
+              </div>
+            </div>
+            <span
+              class="mat-checkbox-label"
+            >
+              <span
+                style="display:none"
+              >
+                 
+              </span>
+               I have read and accept the 
+              <a
+                class="fcl-policy-link"
+                target="_blank"
+              >
+                 Privacy Policy 
+              </a>
+               * 
+            </span>
+          </label>
+        </mat-checkbox>
+        
+      </div>
+      <div
+        class="form-group fcl-form-checkbox"
+      >
+        <mat-checkbox
+          class="fcl-newsletter-checkbox mat-checkbox mat-accent"
+          formcontrolname="newsletter"
+        >
+          <label
+            class="mat-checkbox-layout"
+          >
+            <div
+              class="mat-checkbox-inner-container"
+            >
+              <input
+                class="mat-checkbox-input cdk-visually-hidden"
+                type="checkbox"
+              />
+              <div
+                class="mat-checkbox-ripple mat-ripple"
+                matripple=""
+              >
+                <div
+                  class="mat-ripple-element mat-checkbox-persistent-ripple"
+                />
+              </div>
+              <div
+                class="mat-checkbox-frame"
+              />
+              <div
+                class="mat-checkbox-background"
+              >
+                <svg
+                  class="mat-checkbox-checkmark"
+                  focusable="false"
+                  version="1.1"
+                  viewBox="0 0 24 24"
+                  xml:space="preserve"
+                >
+                  <path
+                    class="mat-checkbox-checkmark-path"
+                    d="M4.1,12.7 9,17.6 20.3,6.3"
+                    fill="none"
+                    stroke="white"
+                  />
+                </svg>
+                <div
+                  class="mat-checkbox-mixedmark"
+                />
+              </div>
+            </div>
+            <span
+              class="mat-checkbox-label"
+            >
+              <span
+                style="display:none"
+              >
+                 
+              </span>
+              <div
+                class="fcl-text-wrap"
+              >
+                 I agree to receive occasional email newsletters on e.g. new features of FCL Web or user trainings. I can unsubscribe anytime by sending an email to 
+                <a
+                  class="fcl-policy-link"
+                  href="mailto:foodrisklabs@bfr.bund.de"
+                  target="_top"
+                >
+                   foodrisklabs@bfr.bund.de 
+                </a>
+                 . 
+              </div>
+            </span>
+          </label>
+        </mat-checkbox>
       </div>
       <div
         class="fcl-card-action fcl-card-action-container"

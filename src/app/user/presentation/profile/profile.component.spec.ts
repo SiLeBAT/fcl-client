@@ -47,7 +47,8 @@ describe('ProfileComponent', () => {
             email: 'email',
             firstName: 'first',
             lastName: 'last',
-            token: 'test'
+            token: 'test',
+            gdprAgreementRequested: false
         };
         component.currentUser = currentUser;
         fixture.detectChanges();

@@ -27,7 +27,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-0 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -88,7 +88,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field ng-tns-c5-1 mat-primary"
+          class="fcl-form-field mat-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"

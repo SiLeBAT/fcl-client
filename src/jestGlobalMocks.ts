@@ -1,3 +1,5 @@
+import 'jest-canvas-mock';
+
 // @ts-ignore
 global['CSS'] = null;
 

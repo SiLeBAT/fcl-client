@@ -33,5 +33,8 @@
         "typeRoots": ["node_modules/@types"],
         "lib": ["es2019", "dom"],
         "module": "esnext"
-    }
+    },
+    "exclude": [
+        "**/*.spec.ts"
+    ]
 }

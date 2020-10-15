@@ -13,6 +13,7 @@ import {
     ActivationResponseDTO,
     TokenizedUserDTO
 } from '../models/user.model';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('UserService', () => {
 
@@ -25,6 +26,7 @@ describe('UserService', () => {
                 HttpClientTestingModule
             ],
             providers: [
+                { provide: MatDialog, useValue: {} },
                 UserService
             ]
         });
@@ -33,11 +35,17 @@ describe('UserService', () => {
     }));
 
     afterEach(() => {
-        httpTestingController.verify();
+        if (httpTestingController) {
+            httpTestingController.verify();
+        }
     });
 
     it('should instantiate the user service', () => {
         expect(userService).toBeTruthy();
+    });
+
+    it('should instantiate the httpTestingController', () => {
+        expect(httpTestingController).toBeTruthy();
     });
 
     it('should login correctly', () => {
@@ -46,7 +54,8 @@ describe('UserService', () => {
             firstName: 'test',
             lastName: 'test',
             instituteId: 'test',
-            token: 'test'
+            token: 'test',
+            gdprAgreementRequested: false
         };
 
         const loginCredentials: LoginCredentials = {
@@ -77,7 +86,10 @@ describe('UserService', () => {
             password: 'test',
             firstName: 'test',
             lastName: 'test',
-            instituteId: 'test'
+            instituteId: 'test',
+            dataProtectionAgreed: true,
+            newsRegAgreed: true,
+            newsMailAgreed: true
         };
 
         userService.register(registrationCredentials)
@@ -184,7 +196,8 @@ describe('UserService', () => {
             firstName: 'test',
             lastName: 'test',
             email: 'test',
-            token: 'test'
+            token: 'test',
+            gdprAgreementRequested: false
         };
         localStorage.setItem('currentUser', JSON.stringify(mockUser));
 
@@ -201,7 +214,8 @@ describe('UserService', () => {
             firstName: 'test',
             lastName: 'test',
             email: 'test',
-            token: 'test'
+            token: 'test',
+            gdprAgreementRequested: false
         };
         userService.setCurrentUser(mockUser);
         const result = userService.getCurrentUser();

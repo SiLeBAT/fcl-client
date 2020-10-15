@@ -110,6 +110,7 @@ describe('RegisterComponent', () => {
         component.registerForm.controls['password2'].setValue(password);
         component.registerForm.controls['firstName'].setValue(firstName);
         component.registerForm.controls['lastName'].setValue(lastName);
+        component.registerForm.controls['dataProtection'].setValue(true);
 
         expect(component.registerForm.valid).toBeTruthy();
 
