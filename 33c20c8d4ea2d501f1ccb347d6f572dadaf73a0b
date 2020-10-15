@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fee76cf_d3644de9",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "why you removed onPush changeDetection?",
+      "range": {
+        "startLine": 21,
+        "startChar": 1,
+        "endLine": 21,
+        "endChar": 10
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "caec93ce_a74bf80e",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "one possible solution to change detection:\n- all change handling in one place\n- no helper properties\n\nngOnChanges(changes){\n // extracted to separate method to not intefere with other onChange logic (not present yet)\n handleMapAndFrameChanges(changes.mapConfig, changes.frameData);\n}\n\nhandleMapAndFrameChanges(mapChange, frameChange){\n if(mapChange \u0026\u0026 mapChange.firstChange){\n  initMap(mapChange.cur)\n  if(this.frameData !\u003d\u003d null)addFrameLayer(this.frameData);\n  return; // map and frame are up to date\n }\n if(mapChange){\n  checkAndUpdateMap(mapChange.cur, mapChange.prev);\n }\n // ignore frameData changes until map is initialized\n if(frameChange \u0026\u0026 map !\u003d\u003d null){\n  if(!frameChange.firstChange \u0026\u0026 frameChange.prev !\u003d\u003d null)removeFrameLayer();\n  if(frameChange.cur !\u003d\u003d null)addFrameLayer();\n }\n}",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 15
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45845a41_fc5e332f",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "remove \"this\"",
+      "range": {
+        "startLine": 79,
+        "startChar": 16,
+        "endLine": 80,
+        "endChar": 43
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c71fbab4_701f5e2c",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "reject: oldMapConfig possibly undefined and oldMapConfig is always !\u003d\u003d newMapConfig\nconsideration: you could facilitate simpleChange.firstChange, see comment on ngOnChanges",
+      "range": {
+        "startLine": 117,
+        "startChar": 19,
+        "endLine": 126,
+        "endChar": 17
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37a9b2f2_cc8df732",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "about use of processedFrameData and your comment about missing frameDataChange if map is not initialized: if map is not initialized you miss frameData anyway because then this method does nothing",
+      "range": {
+        "startLine": 131,
+        "startChar": 12,
+        "endLine": 131,
+        "endChar": 26
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be981972_3cd98958",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "you mean newFrameData !\u003d\u003d null ?",
+      "range": {
+        "startLine": 136,
+        "startChar": 16,
+        "endLine": 136,
+        "endChar": 30
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41698209_5ac05242",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-10-15T15:20:38Z",
+      "side": 1,
+      "message": "thanks, this was something i would\u0027ve talked about (component based css layout) if i had the time...",
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
