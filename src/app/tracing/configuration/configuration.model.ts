@@ -1,7 +1,19 @@
+export type FilterTabId = 'filterTab';
+export type HighlightingTabId = 'highlightingTab';
+export type SettingsTabId = 'settingsTab';
+export type StationsTabId = 'stationsTab';
+export type DeliveriesTabId = 'deliveriesTab';
+export type ActiveConfigurationTabId = FilterTabId | HighlightingTabId | SettingsTabId;
+type DeliveriesOrStationsTabId = StationsTabId | DeliveriesTabId;
+export type ActiveFilterTabId = DeliveriesOrStationsTabId;
+export type ActiveHighlightingTabId = DeliveriesOrStationsTabId;
+
+export type AddTypedId<T, IT> = T & { id: IT };
+
 export interface ConfigurationTabIndex {
-    activeMainTabIndex: number;
-    activeFilterTabIndex: number;
-    activeHighlightingTabIndex: number;
+    activeConfigurationTabId: ActiveConfigurationTabId;
+    activeFilterTabId: ActiveFilterTabId;
+    activeHighlightingTabId: ActiveHighlightingTabId;
 }
 
 export interface LogicalFilterCondition {

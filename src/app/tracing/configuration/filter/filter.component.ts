@@ -5,7 +5,8 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
 import { map } from 'rxjs/operators';
 import { TabConfig } from '../tab-layout/tab-layout.component';
-import { ConfigurationTabIndex } from '../configuration.model';
+import { ActiveFilterTabId, AddTypedId } from '../configuration.model';
+import { DeliveriesTabId, StationsTabId } from '../configuration.constants';
 
 @Component({
     selector: 'fcl-filter',
@@ -15,13 +16,11 @@ export class FilterComponent implements OnInit {
 
     @ViewChild('stationTemplate', { static: true }) stationTemplate: TemplateRef<any>;
     @ViewChild('deliveryTemplate', { static: true }) deliveryTemplate: TemplateRef<any>;
-    tabConfigs: TabConfig[];
+    tabConfigs: AddTypedId<TabConfig, ActiveFilterTabId>[];
 
-    configurationTabIndices$ = this.store.select(tracingSelectors.getConfigurationTabIndices);
-    activeTabIndex$ = this.configurationTabIndices$
-        .pipe(
-            map((configurationTabIndices: ConfigurationTabIndex) => configurationTabIndices.activeFilterTabIndex)
-        );
+    activeConfigurationTabId$ = this.store.select(tracingSelectors.getActiveFilterTabId).pipe(
+        map(tabId => this.tabConfigs ? this.tabConfigs.findIndex(tabConfig => tabConfig.id === tabId) || 0 : 0)
+    );
 
     tabGroupId = 'fcl-tab-group-filter';
 
@@ -32,17 +31,20 @@ export class FilterComponent implements OnInit {
     ngOnInit() {
         this.tabConfigs = [
             {
+                id: StationsTabId,
                 tabLabel: 'Stations',
                 tabTemplate: this.stationTemplate
             },
             {
+                id: DeliveriesTabId,
                 tabLabel: 'Deliveries',
                 tabTemplate: this.deliveryTemplate
             }
         ];
     }
 
-    dispatchFilterTabIndex(filterTabIndex: number) {
-        this.store.dispatch(new tracingActions.SetActiveFilterTabIndexSSA({ activeFilterTabIndex: filterTabIndex }));
+    onTabChange(tabIndex: number) {
+        const tabId = this.tabConfigs[tabIndex].id;
+        this.store.dispatch(new tracingActions.SetActiveFilterTabIdSOA({ activeFilterTabId: tabId }));
     }
 }
