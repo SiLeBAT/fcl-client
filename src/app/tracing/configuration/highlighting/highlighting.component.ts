@@ -18,7 +18,7 @@ export class HighlightingComponent implements OnInit {
     @ViewChild('deliveryTemplate', { static: true }) deliveryTemplate: TemplateRef<any>;
     tabConfigs: AddTypedId<TabConfig, ActiveHighlightingTabId>[] = [];
 
-    activeTabId$ = this.store.select(tracingSelectors.getActiveHighlightingTabId).pipe(
+    activeTabIndex$ = this.store.select(tracingSelectors.getActiveHighlightingTabId).pipe(
         map(tabId => this.tabConfigs.findIndex(tabConfig => tabConfig.id === tabId) || 0)
     );
 

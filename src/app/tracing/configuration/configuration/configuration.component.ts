@@ -19,7 +19,7 @@ export class ConfigurationComponent implements OnInit {
     @ViewChild('settingsTemplate', { static: true }) settingsTemplate: TemplateRef<any>;
     tabConfigs: AddTypedId<TabConfig, ActiveConfigurationTabId>[] = [];
 
-    activeConfigurationTabId$ = this.store.select(tracingSelectors.getActiveConfigurationTabId).pipe(
+    activeTabIndex$ = this.store.select(tracingSelectors.getActiveConfigurationTabId).pipe(
         map(tabId => this.tabConfigs.findIndex(tabConfig => tabConfig.id === tabId) || 0)
     );
 

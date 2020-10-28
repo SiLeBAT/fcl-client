@@ -18,7 +18,7 @@ export class FilterComponent implements OnInit {
     @ViewChild('deliveryTemplate', { static: true }) deliveryTemplate: TemplateRef<any>;
     tabConfigs: AddTypedId<TabConfig, ActiveFilterTabId>[] = [];
 
-    activeConfigurationTabId$ = this.store.select(tracingSelectors.getActiveFilterTabId).pipe(
+    activeTabIndex$ = this.store.select(tracingSelectors.getActiveFilterTabId).pipe(
         map(tabId => this.tabConfigs.findIndex(tabConfig => tabConfig.id === tabId) || 0)
     );
 
