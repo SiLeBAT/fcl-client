@@ -415,9 +415,9 @@ export class GraphService {
 
     private groupDeliveries(deliveries: DeliveryData[], mergeDeliveriesType: MergeDeliveriesType): DeliveryData[][] {
         if (mergeDeliveriesType === MergeDeliveriesType.MERGE_PRODUCT_WISE) {
-            return Utils.groupDeliveryByProduct(deliveries);
+            return Utils.groupDeliveriesByProduct(deliveries);
         } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_LOT_WISE) {
-            return Utils.groupDeliveryByLot(deliveries);
+            return Utils.groupDeliveriesByLot(deliveries);
         } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE) {
             return Utils.groupRows(deliveries, [(d: DeliveryData) => d.highlightingInfo.label.join('/')]);
         } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL) {
