@@ -332,16 +332,15 @@ export class Utils {
         return result;
     }
 
-    static groupDeliveryByProduct(deliveries: DeliveryData[]): DeliveryData[][] {
+    static groupDeliveriesByProduct(deliveries: DeliveryData[]): DeliveryData[][] {
         return this.groupRows(deliveries, [
             (d) => d.originalSource,
-            (d) => d.originalTarget,
-            (d) => d.name || d.id
+            (d) => d.name ? 'PN:' + d.name : 'DID:' + d.id
         ]);
     }
 
-    static groupDeliveryByLot(deliveries: DeliveryData[]): DeliveryData[][] {
-        const deliveryPGroups = Utils.groupDeliveryByProduct(deliveries);
+    static groupDeliveriesByLot(deliveries: DeliveryData[]): DeliveryData[][] {
+        const deliveryPGroups = Utils.groupDeliveriesByProduct(deliveries);
         const result: DeliveryData[][] = [];
         for (const deliveryPGroup of deliveryPGroups) {
             if (deliveryPGroup.length === 1) {

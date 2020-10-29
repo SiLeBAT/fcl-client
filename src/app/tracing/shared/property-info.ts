@@ -5,15 +5,31 @@ import {
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
+export type PropId = string;
+type PropValue = number | boolean | string;
+
+interface Properties extends Record<PropId, PropValue> {}
+
 export interface PropInfo {
-    prop: string;
+    prop: PropId;
     label: string;
 }
 
 const PUBLIC_STATION_PROPS: (keyof StationData)[] = ['id', 'name'];
-const PUBLIC_DELIVERY_PROPS: (keyof DeliveryData)[] = ['name', 'lot', 'dateIn', 'dateOut'];
+const PUBLIC_DELIVERY_PROPS: (keyof DeliveryData)[] = [
+    'id', 'name', 'lot', 'dateIn', 'dateOut',
+    'backward', 'crossContamination', 'forward', 'killContamination',
+    'weight', 'observed', 'score', 'source', 'selected',
+    'source', 'originalSource', 'target', 'originalTarget',
+    'invisible'];
 
-const DELIVERY_SPECIFIC_PROPS: (keyof DeliveryData)[] = ['id', 'dateIn', 'dateOut'];
+const DELIVERY_SPECIFIC_PROPS: (keyof DeliveryData)[] = [
+    'id', 'dateIn', 'dateOut',
+    'backward', 'crossContamination', 'forward', 'killContamination',
+    'weight', 'observed', 'score', 'source', 'selected',
+    'source', 'originalSource', 'target', 'originalTarget',
+    'invisible'
+];
 
 function getPublicProperties(fclItems: StationData[] | DeliveryData[], publicProps: string[]): string[] {
     const props = publicProps.filter(prop => fclItems.some(item => item[prop] !== undefined));
@@ -39,52 +55,54 @@ export function getLotProperties(deliveries: DeliveryData[]): PropInfo[] {
     // so the lot specific properties need to be collected
     // a delivery property is considered a lot property iif all deliveries within a lot
     // have the same value for this property
-    const deliveryGroups = Utils.groupDeliveryByLot(deliveries);
-    const propCandidates: { [key: string]: any } = {};
-    const ignoreProps: { [key: string]: any } = {};
-    DELIVERY_SPECIFIC_PROPS.forEach(prop => ignoreProps[prop] = true);
-
-    deliveryGroups.forEach(deliveryGroup => {
-        // consider explicit props
-        PUBLIC_DELIVERY_PROPS.forEach(prop => {
-            // this property must have the same value for each delivery coming from the same lot
-            if (!ignoreProps[prop]) {
-                const value = deliveryGroup[0][prop];
-                if (deliveryGroup.some(d => d[prop] !== value)) {
-                    // the values are not identical, ignore this property
-                    ignoreProps[prop] = true;
-                } else if (value !== undefined) {
-                    propCandidates[prop] = true;
-                }
-            }
-        });
-
-        // consider other props
-        const refPropValues = deliveryGroup[0].properties.filter(
-            p => !ignoreProps[p.name] && p.value !== undefined
-        ).reduce(
-            (pV, cV) => {
-                pV[cV.name] = cV.value;
-                return pV;
-            }, {} as { [key: string]: string | number | boolean }
+    const deliveryGroups = Utils.groupDeliveriesByLot(deliveries);
+    const directLotProps = PUBLIC_DELIVERY_PROPS.filter(p => DELIVERY_SPECIFIC_PROPS.indexOf(p) < 0);
+    const availableProps: Set<PropId> = new Set();
+    const inConsistentProps: Set<PropId> = new Set();
+    for (const deliveryGroup of deliveryGroups) {
+        const refProps = getDeliveryProperties(deliveryGroup[0], directLotProps);
+        const propsToCheck = Object.keys(refProps);
+        propsToCheck.forEach(
+            propId => availableProps.add(propId)
         );
-        for (const delivery of deliveryGroup) {
-            const checkProps = Utils.createSimpleStringSet(Object.keys(refPropValues));
-            for (const prop of delivery.properties) {
-                if (!ignoreProps[prop.name]) {
-                    if (refPropValues[prop.name] !== prop.value) {
-                        ignoreProps[prop.name] = true;
+        if (deliveryGroup.length > 1) {
+            for (let i = deliveryGroup.length - 1; i >= 1; i--) {
+                const deliveryProps = getDeliveryProperties(deliveryGroup[i], directLotProps);
+                for (const propId of propsToCheck) {
+                    if (deliveryProps[propId] !== refProps[propId]) {
+                        inConsistentProps.add(propId);
                     }
+                    delete deliveryProps[propId];
                 }
-                checkProps[prop.name] = false;
+                const unmatchedProps = Object.keys(deliveryProps);
+                unmatchedProps.forEach(p => {
+                    availableProps.add(p);
+                    inConsistentProps.add(p);
+                });
             }
-            Utils.arrayFromSimpleStringSet(checkProps).forEach(prop => ignoreProps[prop] = true);
         }
-    });
+    }
 
-    return Utils.arrayFromSimpleStringSet(propCandidates).filter(prop => !ignoreProps[prop]).map(
-        p => ({ prop: p, label: p })
-    );
+    const lotProps = [...availableProps].filter(pId => !inConsistentProps.has(pId));
+    lotProps.sort();
+    return lotProps.map(p => ({
+        prop: p,
+        label: p
+    }));
+}
+
+function getDeliveryProperties(delivery: DeliveryData, directProps: string[]): Properties {
+    const result: Properties = {};
+    for (const propName of directProps) {
+        const value = delivery[propName];
+        if (value !== null && value !== undefined) {
+            result[propName] = delivery[propName];
+        }
+    }
+    for (const prop of delivery.properties) {
+        result[prop.name] = prop.value;
+    }
+    return result;
 }
 
 export function getSampleProperties(samples: SampleData[]): PropInfo[] {
