@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f3a62848_c8400549",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Because with onPush the ResizeSensor-Directive works not sufficiently anymore.",
+      "parentUuid": "9fee76cf_d3644de9",
+      "range": {
+        "startLine": 21,
+        "startChar": 1,
+        "endLine": 21,
+        "endChar": 10
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "caec93ce_a74bf80e",
         "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4acbfad1_e79e712c",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Thank you for the detail comment.",
+      "parentUuid": "caec93ce_a74bf80e",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 15
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "4f6a3758_249ef7ba",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45845a41_fc5e332f",
+      "range": {
+        "startLine": 79,
+        "startChar": 16,
+        "endLine": 80,
+        "endChar": 43
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c71fbab4_701f5e2c",
         "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac452daa_1db2be7f",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c71fbab4_701f5e2c",
+      "range": {
+        "startLine": 117,
+        "startChar": 19,
+        "endLine": 126,
+        "endChar": 17
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "1ff5bad2_647fbe53",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Refactored.",
+      "parentUuid": "37a9b2f2_cc8df732",
+      "range": {
+        "startLine": 131,
+        "startChar": 12,
+        "endLine": 131,
+        "endChar": 26
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be981972_3cd98958",
         "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
         "patchSetId": 1
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "d002254d_f108b857",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "be981972_3cd98958",
+      "range": {
+        "startLine": 136,
+        "startChar": 16,
+        "endLine": 136,
+        "endChar": 30
+      },
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "41698209_5ac05242",
         "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
         "patchSetId": 1
@@ -154,6 +298,24 @@
       "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84662531_424a49d7",
+        "filename": "src/app/tracing/graph/components/gis-graph/gis-graph.component.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-09T11:02:38Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "41698209_5ac05242",
+      "revId": "33c20c8d4ea2d501f1ccb347d6f572dadaf73a0b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
