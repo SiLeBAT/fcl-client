@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7417971_febfbc84",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-11-11T14:06:31Z",
+      "side": 1,
+      "message": "!\u003d\u003d (linter)",
+      "range": {
+        "startLine": 70,
+        "startChar": 48,
+        "endLine": 70,
+        "endChar": 49
+      },
+      "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1dabfec_14988fb1",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-11-11T14:06:31Z",
+      "side": 1,
+      "message": "is this null or undefined on first change? If it is undefined removeFrameLayer might be called with empty frame layer (caller sets first the map and then in another cycle the layer). But perhaps this is ok.",
+      "range": {
+        "startLine": 70,
+        "startChar": 32,
+        "endLine": 70,
+        "endChar": 45
+      },
+      "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
