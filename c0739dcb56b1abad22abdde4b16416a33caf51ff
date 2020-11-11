@@ -93,6 +93,54 @@
       "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "53292176_c5cd5f96",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-11-11T14:43:25Z",
+      "side": 1,
+      "message": "ok, that makes my second comment obsolete. I think the linter will complain about !\u003d if it is configured correctly. That makes sense because you don\u0027t know if !\u003d is a typo or on purpose.",
+      "parentUuid": "0d4bbe71_883919be",
+      "range": {
+        "startLine": 70,
+        "startChar": 48,
+        "endLine": 70,
+        "endChar": 49
+      },
+      "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d1e4fad_c7aa90f8",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015828
+      },
+      "writtenOn": "2020-11-11T14:43:25Z",
+      "side": 1,
+      "message": "ok thanks.",
+      "parentUuid": "a81e02bc_daafdb74",
+      "range": {
+        "startLine": 70,
+        "startChar": 32,
+        "endLine": 70,
+        "endChar": 45
+      },
+      "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
