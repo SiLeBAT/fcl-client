@@ -45,6 +45,54 @@
       "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a81e02bc_daafdb74",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-11T14:33:46Z",
+      "side": 1,
+      "message": "on first change previousValue is always undefined. \nremoveFrameLayer is only called if previousValue actually contains frameData which means a frameLayer exists",
+      "parentUuid": "b1dabfec_14988fb1",
+      "range": {
+        "startLine": 70,
+        "startChar": 32,
+        "endLine": 70,
+        "endChar": 45
+      },
+      "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d4bbe71_883919be",
+        "filename": "src/app/tracing/graph/components/geomap/geomap.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-11-11T14:33:46Z",
+      "side": 1,
+      "message": "The linter does not mind. I use here !\u003d on purpose. It is equivalent to \nframeDataChange.previousValue !\u003d\u003d null \u0026\u0026 frameDataChange.previousValue !\u003d\u003d undefined",
+      "parentUuid": "b7417971_febfbc84",
+      "range": {
+        "startLine": 70,
+        "startChar": 48,
+        "endLine": 70,
+        "endChar": 49
+      },
+      "revId": "c0739dcb56b1abad22abdde4b16416a33caf51ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
