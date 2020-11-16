@@ -127,7 +127,20 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
                 this.propToColumnMap = propToColumnMap;
                 this.columns = columns;
+                const tableWasEmptyBefore = this.filteredRows.length === 0;
                 this.filteredRows = filteredRows;
+                if (
+                    tableWasEmptyBefore &&
+                    this.filteredRows.length > 0 &&
+                    this.table.bodyComponent !== undefined &&
+                    this.table.bodyComponent.offsetY > 0
+                 ) {
+                    // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
+                    // 'No data available'
+                    this.table.bodyComponent.offsetY = 0;
+                    this.table.offset = 0;
+                }
+                this.table.recalculate();
             },
             () => this.alertService.error('Could not load properties.')
         );
