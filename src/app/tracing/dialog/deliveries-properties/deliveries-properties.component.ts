@@ -39,11 +39,7 @@ interface FilterColumn extends Column, Filter {}
 export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
     private readonly MAX_COUNT_SORT_OPTIONS = 100;
-    private readonly MAX_TABLE_HEIGHT = 455;
-    private readonly TABLE_HEIGHT_WO_ROWS = 155;
     readonly ROW_HEIGHT = 30;
-
-    private styleElement: HTMLStyleElement;
 
     selected = [];
 
@@ -83,9 +79,6 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.styleElement) {
-            document.head.removeChild(this.styleElement);
-        }
         if (this.stateSubscription) {
             this.stateSubscription.unsubscribe();
             this.stateSubscription = null;
@@ -127,20 +120,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
                 this.propToColumnMap = propToColumnMap;
                 this.columns = columns;
-                const tableWasEmptyBefore = this.filteredRows.length === 0;
                 this.filteredRows = filteredRows;
-                if (
-                    tableWasEmptyBefore &&
-                    this.filteredRows.length > 0 &&
-                    this.table.bodyComponent !== undefined &&
-                    this.table.bodyComponent.offsetY > 0
-                 ) {
-                    // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
-                    // 'No data available'
-                    this.table.bodyComponent.offsetY = 0;
-                    this.table.offset = 0;
-                }
-                this.table.recalculate();
             },
             () => this.alertService.error('Could not load properties.')
         );
@@ -188,6 +168,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     }
 
     updateRowsAndOptions() {
+        const tableWasEmptyBefore = this.filteredRows.length === 0;
         const filteredRows = this.filterRows([].concat(this.columns, this.rootFilter));
 
         if (this.haveRowsChanged(filteredRows)) {
@@ -198,6 +179,18 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
             }
             this.filteredRows = filteredRows;
         }
+        if (
+            tableWasEmptyBefore &&
+            this.filteredRows.length > 0 &&
+            this.table.bodyComponent !== undefined &&
+            this.table.bodyComponent.offsetY > 0
+         ) {
+            // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
+            // 'No data available'
+            this.table.bodyComponent.offsetY = 0;
+            this.table.offset = 0;
+        }
+        this.table.recalculate();
     }
 
     private haveRowsChanged(rows: any[]) {
