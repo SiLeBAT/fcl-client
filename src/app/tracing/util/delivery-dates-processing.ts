@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 const MIN_DATE_NUMBER = Number.NEGATIVE_INFINITY;
 const MAX_DATE_NUMBER = Number.POSITIVE_INFINITY;
-const DATE_PARSE_STRING = 'YYYY-MM-DD';
+const DATE_PARSE_STRINGS = ['YYYY-MM-DD', 'DD.MM.YYYY'];
 
 interface Range {
     min: number;
@@ -46,7 +46,7 @@ function createFreeDateRange(): Range {
 
 function stringDateToRange(date: string): Range {
     if (date) {
-        const mom = moment(date, DATE_PARSE_STRING, true);
+        const mom = moment(date, DATE_PARSE_STRINGS, true);
         if (mom.isValid()) {
             return { min: mom.valueOf(), max: mom.valueOf() };
         }
