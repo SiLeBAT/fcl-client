@@ -1,0 +1,25 @@
+<mat-toolbar class="fcl-toolbar-item fcl-toolbar-container" color="primary">
+    <div class="fcl-item fcl-toolbar-menu-container">
+        <button
+            class="fcl-toolbar-title"
+            mat-button
+            [ngClass]="{'no-hover': (dashboardActive || loginActive)}"
+            [routerLink]="isServerLess() || currentUser ? ['/dashboard'] : ['/']"
+            matTooltip="{{isServerLess() || currentUser ? 'Go To Dashboard' : 'Go To Login'}}"
+            id="homeButton">
+            <span class="mat-title">{{ appName }}</span>
+        </button>
+    </div>
+    <fcl-toolbar-action-container class="fcl-item fcl-toolbar-action-item fcl-toolbar-action-container"></fcl-toolbar-action-container>
+    <fcl-avatar-container class="fcl-item fcl-toolbar-avatar-container"></fcl-avatar-container>
+    <div class="fcl-item fcl-toolbar-menu-container">
+        <button
+            class="fcl-toolbar-menu-bottom"
+            mat-icon-button
+            (click)="onToggleRightSideBar()"
+            matTooltip="Show/Hide Configuration Settings"
+            [ngStyle]="{'visibility': tracingActive ? 'visible' : 'hidden'}">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>

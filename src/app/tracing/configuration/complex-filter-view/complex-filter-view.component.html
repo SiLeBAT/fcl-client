@@ -1,0 +1,61 @@
+<div>
+
+    <div *ngFor="let condition of conditions; let i=index; index as index; trackBy: trackByIndex">
+
+        <div class="fcl-complex-filter-container">
+
+            <fcl-property-selector-view
+                class="fcl-complex-filter-form-field"
+                [value]="conditions[i].property"
+                (valueChange)="onPropertyChange($event, i)"
+                [availableProperties]="availableProperties"
+            ></fcl-property-selector-view>
+
+            <fcl-operator-selector-view
+                class="fcl-complex-filter-form-field"
+                [value]="conditions[i].operation"
+                (valueChange)="onOperatorChange($event, i)"
+                [availableOperatorTypes] = "availableOperatorTypes"
+            ></fcl-operator-selector-view>
+
+            <fcl-value-editor-view
+                class="fcl-complex-filter-form-field"
+                [value]="conditions[i].value"
+                (valueChange)="onValueChange($event, i)"
+                [availableValues]="propToValuesMap[conditions[i].property || '']"
+            ></fcl-value-editor-view>
+
+            <fcl-junktor-selector-view
+                class="fcl-complex-filter-form-field"
+                *ngIf="i < (conditions.length - 1)"
+                [value]="conditions[i].junktor"
+                (valueChange)="onJunktorChange($event, i)"
+                >
+            </fcl-junktor-selector-view>
+
+            <button
+                *ngIf="i === (conditions.length - 1)"
+                mat-stroked-button
+                class="fcl-filter-condition-button"
+                matTooltip="Add filter condition"
+                matTooltipPosition="above"
+                color="accent"
+                (click)="onAddFilterCondition(i)">
+                <mat-icon class="fcl-add-filter-condition-icon">add</mat-icon>
+            </button>
+
+            <button
+                mat-stroked-button
+                class="fcl-filter-condition-button"
+                matTooltip="Remove filter condition"
+                matTooltipPosition="above"
+                color="accent"
+                (click)="onRemoveFilterCondition(i)">
+                <mat-icon class="fcl-add-filter-condition-icon">remove</mat-icon>
+            </button>
+
+         </div>
+
+    </div>
+
+</div>

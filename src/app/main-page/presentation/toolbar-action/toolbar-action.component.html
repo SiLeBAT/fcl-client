@@ -1,0 +1,76 @@
+<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && graphEditorActive">
+    <button
+        class="fcl-menu-item"
+        mat-button
+        [routerLink]="['/tracing']"
+        matTooltip="Tracing view">
+        <mat-icon>track_changes</mat-icon>
+        Tracing View
+    </button>
+</div>
+
+<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
+    <div class="fcl-graph-type fcl-separator mat-body">
+        <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
+            <mat-radio-button class="fcl-graph-type-button" [value]="'Graph'" matTooltip="Show Schematic Graph">
+                Graph
+            </mat-radio-button>
+            <span class="fcl-graph-type-button">
+                <mat-radio-button [value]="'GIS'" [disabled]="!hasGisInfo" [matTooltip]="!hasGisInfo ? '': 'Show GIS Graph'">
+                    GIS
+                </mat-radio-button>
+                <mat-select class="fcl-map-type-select" [(value)]="selectedMapTypeOption" disableOptionCentering panelClass="fcl-mat-select-below-panel-class" [disabled]="!hasGisInfo" matTooltip="{{hasGisInfo ? 'Select Map Type' : ''}}">
+                    <span *ngFor="let item of availableMapTypes">
+                        <mat-option value="{{item}}" (click)="setMapType(item)">{{mapTypeToLabelMap.get(item)}}</mat-option>
+                    </span>
+                    <mat-option value="" (click)="selectShapeFile($event)">Load Shape File...</mat-option>
+                </mat-select>
+            </span>
+        </mat-radio-group>
+    </div>
+
+    <button
+        mat-button
+        (click)="onLoadExampleData()"
+        matTooltip="Load Example Data"
+        data-cy="fcl-example">
+        <mat-icon>wb_sunny</mat-icon>
+        Load Example Data
+    </button>
+    <input
+        id="fileInput"
+        #fileInput
+        type="file"
+    />
+    <button
+        mat-button
+        (click)="onSelectModelFile()"
+        matTooltip="Upload data">
+        <mat-icon>file_upload</mat-icon>
+        Upload Data
+    </button>
+    <button
+        class="fcl-separator"
+        mat-button
+        (click)="mainPageService.onSave()"
+        matTooltip="Download data">
+        <mat-icon>file_download</mat-icon>
+        Download Data
+    </button>
+    <button
+        class="fcl-separator"
+        mat-button
+        (click)="mainPageService.onSaveImage()"
+        matTooltip="Save image">
+        <mat-icon>image</mat-icon>
+        Save Image
+    </button>
+    <button
+        class="fcl-separator"
+        mat-button
+        (click)="mainPageService.onROALayout()"
+        matTooltip="Generate ROA Layout">
+        <mat-icon>grid_on</mat-icon>
+        ROA Style
+    </button>
+</div>

@@ -1,0 +1,53 @@
+@import '~@angular/material/theming';
+@import '../../../../assets/sass/base';
+
+.fcl-toolbar-item {
+    flex: 1;
+
+    @include mat-elevation($fcl-toolbar-elevation);
+}
+
+.fcl-toolbar-container {
+    display: flex;
+    align-items: stretch;
+}
+
+.fcl-toolbar-menu-container,
+.fcl-toolbar-action-container,
+.fcl-toolbar-avatar-container {
+    display: flex;
+    align-items: center;
+}
+
+.fcl-toolbar-menu-container {
+    justify-content: space-between;
+}
+
+.fcl-toolbar-action-container {
+    justify-content: flex-end;
+}
+
+.fcl-toolbar-menu-bottom {
+    padding: 0 1rem 0 1rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0;
+}
+
+.fcl-toolbar-title {
+    padding: $fcl-toolbar-padding;
+}
+
+.fcl-toolbar-menu-bottom:hover,
+.fcl-toolbar-menu-bottom:active,
+.fcl-toolbar-title:hover,
+.fcl-toolbar-title:active {
+    color: $fcl-primary-hover;
+}
+
+.no-hover {
+    pointer-events: none;
+}
+
+.fcl-toolbar-action-item {
+    flex: 1;
+}

@@ -1,0 +1,30 @@
+<svg viewBox="-55 -55 110 110" height="20" width="20" [ngSwitch]="getShapeType()">
+    <defs *ngIf="useGradient">
+        <linearGradient [attr.id]="gradientId" x1="0%" y1="0%" x2="100%" y2="0%">
+            <ng-container *ngFor="let stop of gradientStops">
+                <stop
+                    [attr.offset]="stop.offset"
+                    [style.stop-color]="stop.style" />
+            </ng-container>
+        </linearGradient>
+    </defs>
+
+    <svg:circle  *ngSwitchCase="'circle'" cx="0" cy="0" r="50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+
+    <svg:rect *ngSwitchCase="'square'" x="-50" y="-50" rx="0" ry="0" width="100" height="100" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <!-- triangle -->
+    <svg:polygon *ngSwitchCase="'triangle'" points="0,-50 50,50 -50,50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <!-- diamond -->
+    <svg:polygon *ngSwitchCase="'diamond'" points="0,-50 50,0 0,50 -50,0" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <!-- pentagon -->
+    <svg:polygon *ngSwitchCase="'pentagon'" points="0,-50 45,-11 30,49 -30,49 -45,-11" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <!-- star -->
+    <svg:polygon *ngSwitchCase="'star'" points="0,-50 12,-16 48,-15 19,6 29,40 0,20 -29,40 -19,6 -48,-15 -12,-16" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+
+    <!-- hexagon -->
+    <svg:polygon *ngSwitchCase="'hexagon'" points="-50,0 -25,-43 25,-43 50,0 25,43 -25,43" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <!-- octagon -->
+    <svg:polygon *ngSwitchCase="'octagon'" points="19,-46 46,-19 46,19 19,46 -19,46 -46,19 -46,-19 -19,-46 " stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <!-- no shape, use klecks -->
+    <svg:circle *ngSwitchDefault cx="0" cy="0" r="50" [attr.stroke]="isFillColorNonWhite ? getFillColor() : 'rgb(211,211,211)'" stroke-width="10" [attr.fill]="getFillColor()"/>
+</svg>

@@ -1,77 +1,28 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
-  MdCheckboxModule,
-  MdDialogModule,
-  MdIconModule,
-  MdInputModule,
-  MdMenuModule,
-  MdRadioModule,
-  MdSelectModule,
-  MdSidenavModule,
-  MdSliderModule,
-  MdToolbarModule
-} from '@angular/material';
-import {FormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
-import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
-import {GraphComponent} from './graph/graph.component';
-import {GisComponent} from './gis/gis.component';
-import {TableComponent} from './table/table.component';
-import {DataService} from './util/data.service';
-import {TracingService} from './tracing/tracing.service';
-
-import {AppComponent} from './app.component';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-  let component: AppComponent;
-  let fixture: ComponentFixture<AppComponent>;
+    let fixture: ComponentFixture<AppComponent>;
+    let component: AppComponent;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpModule,
-        MdCheckboxModule,
-        MdDialogModule,
-        MdIconModule,
-        MdInputModule,
-        MdMenuModule,
-        MdRadioModule,
-        MdSelectModule,
-        MdSidenavModule,
-        MdSliderModule,
-        MdToolbarModule,
-        NgxDatatableModule
-      ],
-      declarations: [
-        AppComponent,
-        GraphComponent,
-        GisComponent,
-        TableComponent
-      ],
-      providers: [
-        DataService,
-        ScrollbarHelper,
-        TracingService
-      ]
-    }).compileComponents().then();
-  }));
+    beforeEach(async(() => {
+        // tslint:disable-next-line: no-floating-promises
+        TestBed.configureTestingModule({
+            declarations: [
+                AppComponent
+            ],
+            schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+        }).compileComponents();
+        fixture = TestBed.createComponent(AppComponent);
+        component = fixture.debugElement.componentInstance;
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    it('should create the component', async () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should render title in a md-toolbar', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('md-toolbar').textContent).toContain('FoodChain-Lab');
-  });
+    it('should render correctlu', () => {
+        expect(fixture).toMatchSnapshot();
+    });
 });

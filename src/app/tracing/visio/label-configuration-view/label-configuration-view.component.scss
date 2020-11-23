@@ -1,0 +1,48 @@
+.fcl-flex-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.fcl-label-row {
+    @extend .fcl-flex-row;
+
+    align-items: baseline;
+    padding: 0 1px;
+}
+
+.fcl-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.fcl-unflex-item {
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.fcl-label-item {
+    @extend .fcl-unflex-item;
+
+    margin: 1px 0;
+}
+
+.fcl-unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.fcl-box {
+    @extend .fcl-flex-column;
+    @extend .fcl-unselectable;
+
+    overflow: scroll;
+    border: 1px solid grey;
+    border-radius: 0.5em;
+    padding: 0.2em;
+}

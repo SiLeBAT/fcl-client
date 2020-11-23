@@ -1,0 +1,31 @@
+@import '../../../../assets/sass/base';
+
+#fcl-tab-group-main,
+#fcl-tab-group-filter {
+    height: 100%;
+}
+
+.mat-tab-body-wrapper {
+    flex: 1;
+}
+
+#fcl-tab-group-main .mat-tab-label {
+    height: 2rem;
+}
+
+#fcl-tab-group-main .mat-tab-label.mat-tab-label-active,
+#fcl-tab-group-filter .mat-tab-label.mat-tab-label-active,
+#fcl-tab-group-highlighting .mat-tab-label.mat-tab-label-active {
+    font-stretch: 100%;
+}
+
+#fcl-tab-group-main .mat-tab-label.mat-tab-label-active {
+    color: rgba(255, 255, 255, 0.8);
+    background-color: $fcl-accent-500;
+}
+
+#fcl-tab-group-filter .mat-tab-label.mat-tab-label-active,
+#fcl-tab-group-highlighting .mat-tab-label.mat-tab-label-active {
+    color: rgba(0, 0, 0, 0.8);
+    background-color: $fcl-accent-100;
+}

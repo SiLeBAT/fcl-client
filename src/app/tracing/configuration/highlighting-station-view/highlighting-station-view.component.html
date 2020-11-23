@@ -1,0 +1,62 @@
+<div class="fcl-highlighting-station-container">
+
+    <fcl-anonymous-button-view
+        class="fcl-anonymous-button-view">
+
+    </fcl-anonymous-button-view>
+
+    <mat-expansion-panel
+        class="fcl-highlighting-label-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="labelsOpenState = true"
+        (closed)="labelsOpenState = false">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+              Labels... click  to {{ labelsOpenState ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        Label Configs...
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+        class="fcl-highlighting-stationsize-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="stationSizeOpenState = true"
+        (closed)="stationSizeOpenState = false">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+              Station Size... click  to {{ stationSizeOpenState ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        Station Size Configs...
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+        class="fcl-highlighting-coloursandshapes-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="coloursAndShapesOpenState = true"
+        (closed)="coloursAndShapesOpenState = false">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+              Colours and Shapes... click  to {{ coloursAndShapesOpenState ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="fcl-highlighting-station-table-view-container">
+
+            <fcl-highlighting-station-list-view
+                class = "fcl-highlighting-station-list-view"
+                [colorAndShapeHighlightings]="colorAndShapeHighlightings"
+
+            ></fcl-highlighting-station-list-view>
+
+        </div>
+
+    </mat-expansion-panel>
+
+</div>
+

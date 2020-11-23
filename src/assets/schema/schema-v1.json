@@ -1,0 +1,258 @@
+{
+    "$id": "http://fcl.bfr.bund.de/schemas/schema.json",
+    "type": "object",
+    "title": "FCL-JSON-Exchange-Format Version 1.0.3",
+    "description": "JSON exchange format of FoodChain-Lab app",
+    "properties": {
+        "data": {
+            "type": "object",
+            "description": "raw data",
+            "properties": {
+                "stations" : { "$ref": "#/definitions/table" },
+                "deliveries": { "$ref": "#/definitions/table" },
+                "deliveryRelations": { "$ref": "#/definitions/table" }
+            },
+            "required": [
+                "stations", "deliveries", "deliveryRelations"
+            ]
+        },
+        "tracing": {
+            "type": ["object", "null"],
+            "description": "tracing data",
+            "properties": {
+                "nodes": { "$ref": "#/definitions/tracings" },
+                "deliveries": { "$ref": "#/definitions/tracings" }
+            }
+        },
+        "settings": {
+            "type": ["object", "null"],
+            "properties": {
+                "metaNodes": {
+                    "type": "array",
+                    "description": "group definitions",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": { "type": "string" },
+                            "name": { "type": "string" },
+                            "type": { "type": ["string", "null"] },
+                            "members": {
+                                "type": "array",
+                                "minSize": 1,
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "required": [
+                            "id", "members"
+                        ]
+                    }
+                },
+                "view": {
+                    "type": "object",
+                    "properties": {
+                        "showGis": { "type": "boolean" },
+                        "showLegend": { "type": "boolean" },
+                        "edge": {
+                            "type": "object",
+                            "properties": {
+                                "joinEdges": { "type": "boolean" },
+                                "mergeDeliveriesType": { "type": "string" },
+                                "showMergedDeliveriesCounts": { "type": "boolean" },
+                                "highlightConditions": {
+                                    "type": ["array", "null"],
+                                    "description": "delivery highlighting definitions",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": { "type": ["string", "null"] },
+                                            "showInLegend": { "type": "boolean" },
+                                            "color": { "$ref": "#/definitions/color" },
+                                            "invisible": { "type": "boolean" },
+                                            "adjustThickness": { "type": "boolean" },
+                                            "labelProperty": { "type": ["string", "null"] },
+                                            "valueCondition": { "$ref": "#/definitions/valueCondition" },
+                                            "logicalConditions": { "$ref": "#/definitions/logicalConditions" },
+                                            "linePattern": { "type": ["string", "null" ] }
+                                        },
+                                        "required": [
+                                            "name", "showInLegend", "color", "invisible", "adjustThickness", "labelProperty", "valueCondition", "logicalConditions", "linePattern"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "node": {
+                            "type": "object",
+                            "properties": {
+                                "skipEdgelessNodes": { "type": "boolean" },
+                                "highlightConditions": {
+                                    "type": ["array", "null"],
+                                    "description": "station highlighting definitions",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": { "type": ["string", "null"] },
+                                            "showInLegend": { "type": "boolean" },
+                                            "color": { "$ref": "#/definitions/color" },
+                                            "invisible": { "type": "boolean" },
+                                            "adjustThickness": { "type": "boolean" },
+                                            "labelProperty": { "type": ["string", "null"] },
+                                            "valueCondition": { "$ref": "#/definitions/valueCondition" },
+                                            "logicalConditions": { "$ref": "#/definitions/logicalConditions" },
+                                            "shape": { "type": ["string", "null" ] }
+                                        },
+                                        "required": [
+                                            "name", "showInLegend", "color", "invisible", "adjustThickness", "labelProperty", "valueCondition", "logicalConditions", "shape"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "graph": {
+                            "type": "object",
+                            "properties": {
+                                "transformation": { "$ref": "#/definitions/transformation" },
+                                "positions": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "string" },
+                                        "position": { "$ref": "#/definitions/xyPair" }
+                                    },
+                                    "required": [
+                                        "id"
+                                    ]
+                                }
+                            }
+                        },
+                        "gis": {
+                            "type": "object",
+                            "properties": {
+                                "transformation": { "$ref": "#/definitions/transformation" }
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "metaNodes"
+            ]
+        }
+    },
+    "required": ["data"],
+    "definitions": {
+        "table": {
+            "type": "object",
+            "properties": {
+                "columnProperties": {
+                    "type": "array",
+                    "minSize": 1,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": { "type": "string" },
+                            "type": {"type": "string" }
+                        },
+                        "required": [
+                            "id", "type"
+                        ]
+                    }
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "minSize": 1,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": { "type": "string" },
+                                "value": {}
+                            },
+                            "required": [
+                                "id", "value"
+                            ]
+                        }
+
+                    }
+                }
+            }
+        },
+        "tracings": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "weight": { "type": ["number", "null"] },
+                    "crossContamination": { "type": ["boolean", "null"] },
+                    "killContamination": { "type": ["boolean", "null"] },
+                    "observed": { "type": ["boolean", "null"] }
+                },
+                "required": [
+                    "id"
+                ]
+            }
+        },
+        "xyPair": {
+            "type": "object",
+            "properties": {
+                "x": { "type": "number" },
+                "y": { "type": "number" }
+            },
+            "required": [
+                "x", "y"
+            ]
+        },
+        "transformation": {
+            "type": ["object", "null"],
+            "properties": {
+                "scale":  { "$ref": "#/definitions/xyPair" },
+                "translation":  { "$ref": "#/definitions/xyPair" }
+            },
+            "required": [
+                "scale", "translation"
+
+            ]
+        },
+        "valueCondition": {
+            "type": ["object", "null"],
+            "properties": {
+                "propertyName": { "type": "string" },
+                "valueType": { "type": "string" },
+                "useZeroAsMinimum": { "type": "boolean" }
+            },
+            "required": [
+                "propertyName", "valueType", "useZeroAsMinimum"
+            ]
+        },
+        "logicalConditions": {
+            "type": ["array", "null"],
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "propertyName": { "type": "string" },
+                        "operationType": { "type": "string" },
+                        "value": { "type": ["number", "boolean", "string" ] }
+                    },
+                    "required": [
+                        "propertyName", "operationType", "value"
+                    ]
+                }
+            }
+        },
+        "color": {
+            "type": ["array", "null"],
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 255
+            }
+        }
+    }
+}

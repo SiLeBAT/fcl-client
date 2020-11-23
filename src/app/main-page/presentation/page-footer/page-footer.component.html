@@ -1,0 +1,32 @@
+<mat-toolbar class="fcl-toolbar-item fcl-toolbar-container" color="accent">
+
+    <fcl-last-change-display></fcl-last-change-display>
+
+    <div class="fcl-item">
+        <a mat-button href="https://www.bfr.bund.de" target="_blank">
+            <mat-icon>public</mat-icon>
+            <span class="mat-caption"> BfR - Bundesinstitut für Risikobewertung</span>
+        </a>
+    </div>
+    <div class="fcl-item">
+        <a mat-button href="https://foodrisklabs.bfr.bund.de/foodrisk-labs/" target="_blank">
+            <mat-icon>public</mat-icon>
+            <span class="mat-caption"> FoodRisk - Labs</span>
+        </a>
+    </div>
+    <div class="fcl-item">
+        <a
+            mat-button
+            target="_blank"
+            [routerLink]="['/content/dataprotectiondeclaration']">
+            <mat-icon>info</mat-icon>
+            <span class="mat-caption"> Data Protection Declaration</span>
+        </a>
+    </div>
+    <div class="fcl-item">
+        <a mat-button href="mailto:{{ supportContact }}" target="_top">
+            <mat-icon>mail</mat-icon>
+            <span class="mat-caption"> Report a Problem</span>
+        </a>
+    </div>
+</mat-toolbar>

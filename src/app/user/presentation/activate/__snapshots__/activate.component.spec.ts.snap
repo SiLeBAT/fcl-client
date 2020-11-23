@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActivateComponent should display the app name if token is valid 1`] = `
+<fcl-activate
+  appName={[Function String]}
+  tokenValid={[Function Boolean]}
+>
+  <div
+    class="fcl-mat-card-content"
+  >
+    <div
+      class="fcl-activate-text"
+    >
+      <p
+        class="mat-subheading-1"
+      >
+        You have activated your test account.
+      </p>
+      <p
+        class="mat-subheading-1"
+      >
+         Once the test Administrator has unlocked your account, you can log in. You will receive a notification after activation. 
+      </p>
+    </div>
+    <div
+      class="fcl-card-action fcl-card-action-container"
+    >
+      <div
+        class="form-group fcl-recover-button"
+      >
+        <button
+          class="mat-raised-button mat-button-base mat-primary"
+          color="primary"
+          mat-raised-button=""
+          tabindex="0"
+          type="submit"
+        >
+          <span
+            class="mat-button-wrapper"
+          >
+             Continue to login 
+          </span>
+          <div
+            class="mat-button-ripple mat-ripple"
+            matripple=""
+          />
+          <div
+            class="mat-button-focus-overlay"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</fcl-activate>
+`;
+
+exports[`ActivateComponent should not display the app name if token is invalid 1`] = `
+<fcl-activate
+  appName={[Function String]}
+  tokenValid="false"
+>
+  <div
+    class="fcl-mat-card-content"
+  >
+    <div
+      class="fcl-activate-text"
+    >
+      <p
+        class="mat-subheading-1"
+      >
+         Your account activation failed. 
+      </p>
+      <p
+        class="mat-subheading-1"
+      >
+         Please login. In the case of a failure you will receive further instructions. 
+      </p>
+    </div>
+    <div
+      class="fcl-card-action fcl-card-action-container"
+    >
+      <div
+        class="form-group fcl-recover-button"
+      >
+        <button
+          class="mat-raised-button mat-button-base mat-primary"
+          color="primary"
+          mat-raised-button=""
+          tabindex="0"
+          type="submit"
+        >
+          <span
+            class="mat-button-wrapper"
+          >
+             Continue to login 
+          </span>
+          <div
+            class="mat-button-ripple mat-ripple"
+            matripple=""
+          />
+          <div
+            class="mat-button-focus-overlay"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</fcl-activate>
+`;
+
+exports[`ActivateComponent should render the component correctly 1`] = `
+<fcl-activate>
+  
+</fcl-activate>
+`;

@@ -1,0 +1,25 @@
+@import '../../../../assets/sass/base';
+
+.fcl-single-center-card-layout-item {
+    padding-top: 5rem;
+}
+
+.fcl-single-center-card-layout-container {
+    display: flex;
+    justify-content: center;
+}
+
+.fcl-mat-card {
+    border-radius: $fcl-card-border-radius;
+    max-width: 800px;
+    min-width: 400px;
+}
+
+.fcl-mat-card__header {
+    display: flex;
+    justify-content: center;
+}
+
+.fcl-mat-card__title {
+    font-size: 2em;
+}

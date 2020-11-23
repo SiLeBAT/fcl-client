@@ -1,0 +1,15 @@
+<ng-template #stationTemplate>
+    <fcl-highlighting-station></fcl-highlighting-station>
+</ng-template>
+
+<ng-template #deliveryTemplate>
+    <fcl-highlighting-delivery></fcl-highlighting-delivery>
+</ng-template>
+
+<fcl-tab-layout
+    [activeTabIndex$]="activeTabIndex$"
+    [tabGroupId]="tabGroupId"
+    [tabConfigs]="tabConfigs"
+    (tabGroupIndex)="onTabChange($event)">
+
+</fcl-tab-layout>

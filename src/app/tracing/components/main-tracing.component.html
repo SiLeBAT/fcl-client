@@ -1,0 +1,15 @@
+<div class="fcl-tracing-container">
+    <mat-sidenav-container id="mainContainer" #mainContainer hasBackdrop="false" >
+
+        <mat-sidenav-content class="mat-sidenav-content-container">
+            <div id="mainContent">
+                <fcl-schema-graph #schemaGraph [hidden]="!(showSchemaGraph$ | async)"></fcl-schema-graph>
+                <fcl-gis-graph #gisGraph [hidden]="!(showGisGraph$ | async)"></fcl-gis-graph>
+            </div>
+        </mat-sidenav-content>
+
+        <mat-sidenav class="fcl-right-sidenav" #rightSidenav position="end" mode="over" [opened]="showConfigurationSideBar$ | async">
+            <fcl-configuration></fcl-configuration>
+        </mat-sidenav>
+    </mat-sidenav-container>
+</div>

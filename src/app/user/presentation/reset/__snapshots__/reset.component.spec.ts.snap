@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ResetComponent should render the component correctly 1`] = `
+<fcl-reset
+  changeRef={[Function ViewRef_]}
+  pwStrength={[Function Number]}
+  reset={[Function EventEmitter]}
+  resetForm={[Function FormGroup]}
+>
+  <form
+    novalidate=""
+  >
+    <div
+      class="fcl-mat-card-content"
+    >
+      <div
+        class="fcl-reset-text"
+      >
+        <div
+          class="mat-subheading-2"
+        >
+          Please enter a new password.
+        </div>
+      </div>
+      <div
+        class="form-group"
+      >
+        <mat-form-field
+          appearance="standard"
+          class="fcl-form-field mat-form-field mat-primary"
+        >
+          <div
+            class="mat-form-field-wrapper"
+          >
+            <div
+              class="mat-form-field-flex"
+            >
+              
+              
+              <div
+                class="mat-form-field-infix"
+              >
+                <input
+                  class="mat-input-element mat-form-field-autofill-control"
+                  formcontrolname="password1"
+                  matinput=""
+                  name="password1"
+                  required=""
+                  type="password"
+                />
+                <span
+                  class="mat-form-field-label-wrapper"
+                >
+                  
+                </span>
+              </div>
+              
+            </div>
+            
+            <div
+              class="mat-form-field-subscript-wrapper"
+            >
+              
+              
+            </div>
+          </div>
+        </mat-form-field>
+      </div>
+      <div
+        class="form-group"
+      >
+        <password-strength-meter>
+          <div>
+            <div
+              class="strength-meter"
+            >
+              <div
+                class="strength-meter-fill"
+              />
+            </div>
+            
+          </div>
+        </password-strength-meter>
+        
+      </div>
+      <div
+        class="form-group"
+      >
+        <mat-form-field
+          appearance="standard"
+          class="fcl-form-field mat-form-field mat-primary"
+        >
+          <div
+            class="mat-form-field-wrapper"
+          >
+            <div
+              class="mat-form-field-flex"
+            >
+              
+              
+              <div
+                class="mat-form-field-infix"
+              >
+                <input
+                  class="mat-input-element mat-form-field-autofill-control"
+                  formcontrolname="password2"
+                  matinput=""
+                  name="password2"
+                  required=""
+                  type="password"
+                />
+                <span
+                  class="mat-form-field-label-wrapper"
+                >
+                  
+                </span>
+              </div>
+              
+            </div>
+            
+            <div
+              class="mat-form-field-subscript-wrapper"
+            >
+              
+              
+            </div>
+          </div>
+        </mat-form-field>
+      </div>
+      <div
+        class="fcl-card-action fcl-card-action-container"
+      >
+        <div
+          class="form-group fcl-reset-button"
+        >
+          <button
+            class="mat-raised-button mat-button-base"
+            color="primary"
+            mat-raised-button=""
+            type="submit"
+          >
+            <span
+              class="mat-button-wrapper"
+            >
+               Recover password 
+            </span>
+            <div
+              class="mat-button-ripple mat-ripple"
+              matripple=""
+            />
+            <div
+              class="mat-button-focus-overlay"
+            />
+          </button>
+        </div>
+        <div>
+          <a
+            class="mat-button mat-button-base"
+            mat-button=""
+          >
+            <span
+              class="mat-button-wrapper"
+            >
+               Cancel 
+            </span>
+            <div
+              class="mat-button-ripple mat-ripple"
+              matripple=""
+            />
+            <div
+              class="mat-button-focus-overlay"
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</fcl-reset>
+`;

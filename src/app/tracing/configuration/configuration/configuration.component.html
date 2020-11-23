@@ -1,0 +1,20 @@
+<ng-template #filterTemplate>
+    <fcl-filter></fcl-filter>
+</ng-template>
+
+<ng-template #highlightingTemplate>
+    <fcl-highlighting></fcl-highlighting>
+</ng-template>
+
+<ng-template #settingsTemplate>
+    <fcl-graph-settings></fcl-graph-settings>
+</ng-template>
+
+
+<fcl-tab-layout
+    [activeTabIndex$]="activeTabIndex$"
+    [tabGroupId]="tabGroupId"
+    [tabConfigs]="tabConfigs"
+    (tabGroupIndex)="onTabChange($event)">
+
+</fcl-tab-layout>

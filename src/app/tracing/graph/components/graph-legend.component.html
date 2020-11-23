@@ -1,0 +1,23 @@
+<mat-card class="fcl-legend" *ngIf="legend.length > 0 || showMissingGisInfoEntry">
+    <mat-card-content>
+        <table>
+            <tr *ngFor="let item of legend">
+                <td>{{item.name}}</td>
+                <td *ngIf="showStationColumn">
+                    <fcl-node-symbol *ngIf="item.shape || item.stationColor" [shapeType]="item.shape" [fillColor]="item.stationColor"></fcl-node-symbol>
+                </td>
+                <td *ngIf="showDeliveryColumn">
+                    <fcl-edge-symbol *ngIf="item.deliveryColor" [edgeColor]="item.deliveryColor"></fcl-edge-symbol>
+                </td>
+            </tr>
+            <tr *ngIf="showMissingGisInfoEntry">
+                <td>Missing GIS information</td>
+                <td [attr.colspan]="showStationColumn && showDeliveryColumn ? 2 : 1">
+                    <svg viewBox="0 0 200 200" height="20" width="20">
+                        <svg:rect x="0" y="50" rx="20" ry="20" width="200" height="100" stroke="none" fill="rgba(255, 0, 0, 0.3)"/>
+                    </svg>
+                </td>
+            </tr>
+        </table>
+    </mat-card-content>
+</mat-card>

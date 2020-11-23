@@ -1,0 +1,103 @@
+<h1 class="title" matDialogTitle>
+    <span>Delivery Properties</span>
+</h1>
+
+<mat-form-field floatLabel="never" class="overall-column-filter">
+
+    <input type="search" placeholder="Filter" aria-label="Number" matInput [(ngModel)]="rootFilter.filterText" name="rootFilter" (keyup)="updateRowsAndOptions()" (reset)="resetFilter()">
+
+</mat-form-field>
+
+<ngx-datatable
+    fclEmptyTableScrollFix
+    class="material ngx-filter-table"
+    [rows]='filteredRows'
+    [columns]='columns'
+    [columnMode]="'standard'"
+    [headerHeight]="80"
+    [rowHeight]="ROW_HEIGHT"
+    [footerHeight]="50"
+    [scrollbarV]="true"
+    [scrollbarH]="true"
+    [swapColumns]="false"
+    [selected]="selected"
+    [selectionType]="'multi'"
+    (activate)="onActivate($event)"
+    (select)='onSelect($event)'
+>
+
+    <ngx-datatable-column name="'H'" prop="hColor" [minWidth]="40" [maxWidth]="40" [width]="40" [sortable]="true" [canAutoResize]="false" [draggable]="false" [resizeable]="false"
+    headerClass="highlighting-column"
+    >
+        <ng-template let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
+            <span class="header-sort-span" (click)="sort()">
+                H
+            </span>
+        </ng-template>
+
+        <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+            <div [ngStyle]="{ 'background': row.hColor }" class="highlighting-div"></div>
+        </ng-template>
+
+    </ngx-datatable-column>
+
+    <ngx-datatable-column *ngFor="let column of columns" name={{column.name}} prop={{column.prop}} [minWidth]="20"
+        [sortable]="true"
+        [canAutoResize]="false"
+        [draggable]="true"
+        [resizeable]="true" headerClass="filter-header"
+    >
+
+        <ng-template let-column="column" let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
+            <div class="draggable">
+                <span class="header-sort-span" (click)="sort()">
+                    {{column.name}}
+                    <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
+                    <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
+                </span><br>
+
+                <mat-form-field floatLabel="never">
+
+                    <input type="search" placeholder="Filter" aria-label="Number" matInput
+                        tabindex="-1"
+                        [(ngModel)]="propToColumnMap[column.prop].filterText" id="{{column.prop}}"
+                        [matAutocomplete]="auto"
+                        (keyup)="updateRowsAndOptions()"
+                        (reset)="resetFilter()"
+                    >
+
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateRowsAndOptions()">
+                        <mat-option *ngFor="let option of propToColumnMap[column.prop].filteredOptions" [value]="option">
+                            {{option}}
+                        </mat-option>
+                    </mat-autocomplete>
+
+                </mat-form-field>
+            </div>
+        </ng-template>
+
+    </ngx-datatable-column>
+
+    <ngx-datatable-footer class="datatable-footer">
+        <ng-template
+            ngx-datatable-footer-template
+            let-rowCount="rowCount"
+            let-pageSize="pageSize"
+            let-selectedCount="selectedCount"
+            let-curPage="curPage"
+            let-offset="offset"
+            let-isVisible="isVisible"
+        >
+            <div class="datatable-footer-inner selected-count">
+                <div class="page-count">
+                    <span> {{selectedCount.toLocaleString()}} selected / </span> {{rowCount.toLocaleString()}} total
+                </div>
+            </div>
+        </ng-template>
+    </ngx-datatable-footer>
+</ngx-datatable>
+
+<div mat-dialog-actions>
+    <button mat-button matDialogClose>OK</button>
+    <button mat-button matDialogClose (click)="applySelection()">Apply Selection & Close</button>
+</div>

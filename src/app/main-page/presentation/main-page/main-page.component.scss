@@ -1,0 +1,39 @@
+@import '../../../../assets/sass/themes';
+
+.fcl-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 18fr 1fr;
+    grid-template-areas:
+        'head'
+        'body'
+        'footer';
+    height: 100vh;
+}
+
+.fcl-page-header-item {
+    grid-area: head;
+}
+
+.fcl-page-footer-item {
+    grid-area: footer;
+}
+
+.fcl-page-header-item,
+.fcl-page-footer-item {
+    z-index: 999;
+}
+
+.fcl-page-header-container,
+.jam-page-footer-container {
+    display: flex;
+}
+
+.fcl-page-body-item {
+    grid-area: body;
+    overflow: auto;
+}
+
+.fcl-page-body-container {
+    display: flex;
+}

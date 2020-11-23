@@ -1,0 +1,18 @@
+@import '../../../../assets/sass/base';
+
+:host {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.fcl-image-container {
+    width: 100vw;
+    background-color: $fcl-bg-color;
+}
+
+.fcl-mat-card__actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}

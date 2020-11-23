@@ -1,0 +1,22 @@
+
+@import '../../../../assets/sass/base';
+
+.fcl-standard-filter-field {
+    width: 100%;
+}
+
+.fcl-standard-filter-view .mat-form-field-wrapper {
+    padding: 0;
+    margin: 0;
+    box-shadow: $fcl-box-shadow;
+}
+
+.fcl-standard-filter-view .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: white;
+    background-color: white;
+}
+
+.fcl-font-size-08 {
+    font-size: 0.8rem;
+    color: rgb(0, 0, 0);
+}

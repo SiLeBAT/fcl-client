@@ -1,0 +1,48 @@
+.mat-toolbar {
+    min-height: 56px !important;
+}
+
+.mat-toolbar-row {
+    height: 56px !important;
+}
+
+.mat-card {
+    padding: 18px !important;
+}
+
+.mat-card-title {
+    font-size: 18px !important;
+}
+
+.mat-menu-item {
+    font-size: 14px !important;
+    font-weight: 500;
+    height: 40px !important;
+    line-height: 40px !important;
+}
+
+.mat-sidenav {
+    box-shadow: none !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.4) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.4) !important;
+}
+
+.snackbar-error {
+    background-color: #c62828;
+    font-weight: 500;
+}
+
+.snackbar-success {
+    background-color: #c8e6c9;
+    color: black;
+}
+
+.snackbar-warn {
+    background-color: #fff9c4;
+    color: black;
+}
+
+.snackbar-info {
+    background-color: #bbdefb;
+    color: black;
+}

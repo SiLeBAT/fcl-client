@@ -1,0 +1,111 @@
+@import '~normalize.css/normalize.css';
+@import '~@swimlane/ngx-datatable/index.css';
+@import '~@swimlane/ngx-datatable/assets/icons.css';
+@import '~ol/ol.css';
+@import 'assets/sass/base';
+@import 'material-style';
+@import 'ngx-datatable-style';
+
+@include mat-core($fcl-typography);
+@include angular-material-theme($fcl-theme);
+
+body {
+    font-family: $fcl-font-family;
+}
+
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+.fcl-option-tooltip {
+    font-size: 16px;
+}
+
+.snackbar-error {
+    background-color: #c62828;
+    font-weight: 500;
+}
+
+.snackbar-success {
+    background-color: #c8e6c9;
+    color: black;
+}
+
+.snackbar-warn {
+    background-color: #fff9c4;
+    color: black;
+}
+
+.snackbar-info {
+    background-color: #bbdefb;
+    color: black;
+}
+
+mat-form-field.less-bottom-padding {
+    .mat-form-field-wrapper {
+        padding-bottom: 0.5em;
+    }
+
+    .mat-form-field-underline {
+        bottom: 0.5em;
+    }
+}
+
+.ngx-filter-table .datatable-header-cell .mat-form-field {
+    width: 100% !important;
+}
+
+.ngx-filter-table .datatable-header-cell .mat-form-field-label-wrapper {
+    box-sizing: content-box;
+}
+
+.ngx-filter-table .datatable-body-row .datatable-body-cell {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+}
+
+.ngx-filter-table .filter-header .datatable-icon-up::before {
+    content: "";
+}
+
+.ngx-filter-table .filter-header .datatable-icon-down::before {
+    content: "";
+}
+
+.ngx-filter-table .filter-header .enforce-icon.datatable-icon-up::before {
+    content: "\65";
+}
+
+.ngx-filter-table .filter-header .enforce-icon.datatable-icon-down::before {
+    content: "\66";
+}
+
+.fcl-mat-select-below-panel-class {
+    margin: 25px 0;
+}
+
+.fcl-graph-type-button .mat-select.mat-select-disabled .mat-select-arrow {
+    opacity: 0.5;
+}
+
+.fcl-toolbar-item .mat-radio-button.mat-accent .mat-radio-outer-circle {
+    border-color: white;
+}
+
+.fcl-toolbar-item .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-outer-circle {
+    opacity: 0.5;
+}
+
+.fcl-toolbar-item .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-label-content {
+    color: white;
+    opacity: 0.5;
+}
+
+.fcl-compact-mat-select {
+    .mat-select-value {
+        max-width: 100%;
+        width: auto;
+    }
+}

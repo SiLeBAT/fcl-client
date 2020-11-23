@@ -1,85 +1,40 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
-import {
-  MdButtonModule,
-  MdCardModule,
-  MdCheckboxModule,
-  MdDialogModule,
-  MdIconModule,
-  MdInputModule,
-  MdMenuModule,
-  MdRadioModule,
-  MdSelectModule,
-  MdSidenavModule,
-  MdSliderModule,
-  MdToolbarModule
-} from '@angular/material';
-import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import {ScrollbarHelper} from '@swimlane/ngx-datatable/release/services/scrollbar-helper.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppRoutingModule } from './app.routing.module';
+import { NgModule } from '@angular/core';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
-import {AppComponent} from './app.component';
-import {GraphComponent} from './graph/graph.component';
-import {TableComponent} from './table/table.component';
-import {DialogActionsComponent} from './dialog/dialog-actions/dialog-actions.component';
-import {DialogAlertComponent} from './dialog/dialog-alert/dialog-alert.component';
-import {DialogPromptComponent} from './dialog/dialog-prompt/dialog-prompt.component';
-import {DialogSelectComponent} from './dialog/dialog-select/dialog-select.component';
-import {StationPropertiesComponent} from './dialog/station-properties/station-properties.component';
-import {DeliveryPropertiesComponent} from './dialog/delivery-properties/delivery-properties.component';
+import { UserModule } from './user/user.module';
 
-import {DataService} from './util/data.service';
-import {TracingService} from './tracing/tracing.service';
-import {GisComponent} from './gis/gis.component';
+import { AppComponent } from './app.component';
+import { environment } from '../environments/environment';
+import { MainPageModule } from './main-page/main-page.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    GraphComponent,
-    GisComponent,
-    TableComponent,
-    DialogActionsComponent,
-    DialogAlertComponent,
-    DialogPromptComponent,
-    DialogSelectComponent,
-    StationPropertiesComponent,
-    DeliveryPropertiesComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpModule,
-    MdButtonModule,
-    MdCardModule,
-    MdCheckboxModule,
-    MdDialogModule,
-    MdIconModule,
-    MdInputModule,
-    MdMenuModule,
-    MdRadioModule,
-    MdSelectModule,
-    MdSidenavModule,
-    MdSliderModule,
-    MdToolbarModule,
-    NgxDatatableModule
-  ],
-  providers: [
-    DataService,
-    TracingService,
-    ScrollbarHelper
-  ],
-  bootstrap: [AppComponent],
-  entryComponents: [
-    DialogActionsComponent,
-    DialogAlertComponent,
-    DialogPromptComponent,
-    DialogSelectComponent,
-    StationPropertiesComponent,
-    DeliveryPropertiesComponent
-  ]
+    declarations: [
+        AppComponent
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        MainPageModule,
+        UserModule,
+        StoreModule.forRoot({}),
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({
+            name: 'FCL Devtools',
+            maxAge: 25,
+            logOnly: environment.production
+        }),
+        // AppRoutingModule needs to be at the end
+        AppRoutingModule
+    ],
+    bootstrap: [
+        AppComponent
+    ]
 })
 export class AppModule {
 }

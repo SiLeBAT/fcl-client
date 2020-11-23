@@ -1,9 +1,0 @@
-.checkboxes {
-  padding: 10px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-md-checkbox {
-  margin: 5px 0;
-}

@@ -1,0 +1,29 @@
+<form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <div class="fcl-mat-card-content">
+        <div class="form-group fcl-form-email">
+            <mat-form-field class="fcl-form-field" appearance="standard">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" name="email" required />
+                <mat-icon matPrefix>mail</mat-icon>
+                <mat-error *ngIf="loginForm.controls.email.invalid">{{ getEmailErrorMessage() }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-group">
+            <mat-form-field class="fcl-form-field" appearance="standard">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password" name="password" required />
+                <mat-icon matPrefix>lock</mat-icon>
+                <mat-error *ngIf="loginForm.controls.password.invalid">{{ getPasswordErrorMessage() }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="fcl-card-action fcl-card-action-container">
+            <div class="form-group">
+                <button class="fcl-login-form__submit-button" mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
+                    Login
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,46 @@
+@import '../../../../assets/sass/base';
+
+.fcl-card-action-container {
+    display: flex;
+}
+
+.fcl-mat-card-content {
+    width: 500px;
+}
+
+.fcl-form-firstname {
+    margin-top: 2rem;
+}
+
+.fcl-form-password,
+.fcl-form-checkbox {
+    margin-top: 1.5rem;
+}
+
+.fcl-policy-link {
+    text-decoration: none;
+}
+
+.fcl-card-action {
+    margin-top: 3rem;
+}
+
+.fcl-submit-button {
+    margin-right: $fcl-toolbar-padding * 4;
+}
+
+.fcl-form-field {
+    width: 100%;
+}
+
+.fcl-text-wrap {
+    white-space: normal;
+}
+
+.fcl-newsletter-checkbox.mat-accent .mat-checkbox-inner-container {
+    margin: 0.25rem 0.5rem auto 0;
+}
+
+em {
+    @include em-errors;
+}
