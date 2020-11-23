@@ -9,6 +9,7 @@
 </mat-form-field>
 
 <ngx-datatable
+    fclEmptyTableScrollFix
     class="material ngx-filter-table"
     [rows]='filteredRows'
     [columns]='columns'
@@ -58,6 +59,7 @@
                 <mat-form-field floatLabel="never">
 
                     <input type="search" placeholder="Filter" aria-label="Number" matInput
+                        tabindex="-1"
                         [(ngModel)]="propToColumnMap[column.prop].filterText" id="{{column.prop}}"
                         [matAutocomplete]="auto"
                         (keyup)="updateRowsAndOptions()"

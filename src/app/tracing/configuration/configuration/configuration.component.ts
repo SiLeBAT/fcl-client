@@ -36,11 +36,11 @@ export class ConfigurationComponent implements OnInit {
                 tabLabel: 'Filter',
                 tabTemplate: this.filterTemplate
             },
-            {
-                id: HighlightingTabId,
-                tabLabel: 'Highlighting',
-                tabTemplate: this.highlightingTemplate
-            },
+            // {
+            //     id: HighlightingTabId,
+            //     tabLabel: 'Highlighting',
+            //     tabTemplate: this.highlightingTemplate
+            // },
             {
                 id: SettingsTabId,
                 tabLabel: 'Graph Settings',

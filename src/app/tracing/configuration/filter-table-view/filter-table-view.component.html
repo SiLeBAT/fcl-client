@@ -32,6 +32,7 @@
     <button
         matTooltip="Filter Visibility"
         matTooltipPosition="above"
+        tabindex="-1"
         class="fcl-visibility-filter-button"
         (click)="onToggleVisibilityFilterState()">
         <span
@@ -64,7 +65,7 @@
         <input
             matInput
             type="search"
-
+            tabindex="-1"
             [ngModel] = "getColumnFilterText(column.prop) || ''"
             (ngModelChange)="onSetColumnFilterText(column.prop, $event)"
         >
@@ -122,6 +123,7 @@
 
 <div class="fcl-datatable-container" #tableWrapper>
     <ngx-datatable
+        fclEmptyTableScrollFix
         #table
         class="material fcl-datatable"
         [columns]="columns"

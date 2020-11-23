@@ -111,7 +111,7 @@ export class FilterTableViewComponent implements AfterViewChecked {
     private processedInput_: InputData;
     private filterMap_: FilterMap;
     private columnFilterTexts_: { [key: string]: string };
-    private filteredRows_: TableRow[];
+    private filteredRows_: TableRow[] = [];
 
     private windowSize: Size = { width: undefined, height: undefined };
     private wrapperSize: Size = { width: undefined, height: undefined };
@@ -288,9 +288,21 @@ export class FilterTableViewComponent implements AfterViewChecked {
             filterMap.visibilityFilter !== this.filterMap_.visibilityFilter ||
             filterMap.columnFilter !== this.filterMap_.columnFilter
         ) {
+            const tableWasEmptyBefore = this.filteredRows_.length === 0;
             this.filterMap_ = filterMap;
             this.filteredRows_ = filterTableRows(newDataRows, [filterMap.visibilityFilter, filterMap.columnFilter]);
             this.updateColumnFilterTexts();
+            if (
+                tableWasEmptyBefore &&
+                this.filteredRows_.length > 0 &&
+                this.table.bodyComponent !== undefined &&
+                this.table.bodyComponent.offsetY > 0
+             ) {
+                // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
+                // 'No data available'
+                this.table.bodyComponent.offsetY = 0;
+                this.table.offset = 0;
+            }
             this.recalculateTable();
         }
     }

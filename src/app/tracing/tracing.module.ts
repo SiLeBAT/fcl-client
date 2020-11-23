@@ -57,6 +57,7 @@ import { HighlightingDeliveryComponent } from './configuration/highlighting-deli
 import { HighlightingStationViewComponent } from './configuration/highlighting-station-view/highlighting-station-view.component';
 import { AnonymousButtonViewComponent } from './configuration/anonymous-button-view/anonymous-button-view.component';
 import { HighlightingStationListViewComponent } from './configuration/highlighting-station-list-view/highlighting-station-list-view.component';
+import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.directive';
 
 @NgModule({
     imports: [
@@ -113,7 +114,8 @@ import { HighlightingStationListViewComponent } from './configuration/highlighti
         HighlightingDeliveryComponent,
         HighlightingStationViewComponent,
         AnonymousButtonViewComponent,
-        HighlightingStationListViewComponent
+        HighlightingStationListViewComponent,
+        EmptyTableScrollFixDirective
     ],
     exports: [],
     entryComponents: [
