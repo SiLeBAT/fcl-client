@@ -1,20 +1,29 @@
 import {
-    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData, Position
+    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData, Position, SelectedElements, StationId, DeliveryId
 } from '../data.model';
 
 class None { private ___ = {}; }
 
-export interface CyNodeDef {
+interface CyElementDef<T> {
     group: string;
-    data: CyNodeData;
+    data: T;
     selected: boolean;
+}
+
+export interface CyNodeDef extends CyElementDef<CyNodeData> {
     position: Position;
 }
 
-export interface CyEdgeDef {
-    group: string;
-    data: CyEdgeData;
-    selected: boolean;
+export interface CyEdgeDef extends CyElementDef<CyEdgeData> {}
+
+export interface BoundingBoxOptions {
+    includeNodes?: boolean;
+    includeEdges?: boolean;
+    includeLabels?: boolean;
+    includeMainLabels?: boolean;
+    includeSourceLabels?: boolean;
+    includeTargetLabels?: boolean;
+    includeOverlays?: boolean;
 }
 
 type CyCallBackFun = (a?: any) => void;
@@ -72,6 +81,15 @@ interface CyLayout {
     run(): void;
 }
 
+export interface BoundingBox {
+    x1: number;
+    x2: number;
+    y1: number;
+    y2: number;
+    w: number;
+    h: number;
+}
+
 export interface CyElementCollection<E> {
     size(): number;
     allAre(a: string): number;
@@ -85,6 +103,7 @@ export interface CyElementCollection<E> {
     filter(a: ((b: E) => boolean) | string): CyElementCollection<E>;
     first(): E;
     toggleClass(a: string, b?: boolean): void;
+    renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
@@ -95,7 +114,7 @@ export interface CyNodeCollection extends CyElementCollection<CyNode> {
     connectedEdges(a?: string): CyElementCollection<CyEdge>;
 }
 
-interface CyElement {
+export interface CyElement {
     isEdge(): boolean;
     isNode(): boolean;
     id(): string;
@@ -110,23 +129,28 @@ interface CyElement {
         K extends (T extends string ? CyCallBackFun : None)
     >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
     removeListener(events: string, handler: (event?: any) => void): void;
+    renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
 }
 
 export interface CyNode extends CyElement {
     data<T extends string | None>(a?: T): None extends T ? CyNodeData : any;
-    selected(): boolean;
     position(): Position;
+    renderedPosition(): Position;
     height(): number;
     connectedEdges(a?: string): CyElementCollection<CyEdge>;
 }
 
 export interface CyEdge extends CyElement {
     data<T extends string | None>(a?: T): None extends T ? CyEdgeData : any;
-    selected(): boolean;
+    source(): CyNode;
+    target(): CyNode;
 }
 
+export type NodeId = string;
+export type EdgeId = string;
+
 export interface CyNodeData extends StationTracingData {
-    id: string;
+    id: NodeId;
     station: StationData;
     label: string;
     isMeta: boolean;
@@ -140,26 +164,51 @@ export interface CyNodeData extends StationTracingData {
 }
 
 export interface CyEdgeData extends DeliveryTracingData {
-    id: string;
+    id: EdgeId;
     deliveries: DeliveryData[];
     stopColors: string;
     stopPositions: string;
     label?: string;
     labelWoPrefix: string;
     selected: boolean;
-    source: string;
-    target: string;
+    source: NodeId;
+    target: NodeId;
     wLabelSpace: boolean;
 }
 
-export interface GraphServiceData extends DataServiceData {
-    statIdToNodeDataMap: {[key: string]: CyNodeData };
+export interface GraphElementData {
     nodeData: CyNodeData[];
-    idToNodeMap?: { [key: string]: CyNodeData };
-    delIdToEdgeDataMap: {[key: string]: CyEdgeData };
     edgeData: CyEdgeData[];
-    nodeSel: {[key: string]: boolean };
-    edgeSel: {[key: string]: boolean };
+}
+
+export interface GraphServiceData extends GraphElementData, DataServiceData {
+    statIdToNodeDataMap: Record<StationId, CyNodeData>;
+    idToNodeMap?: Record<NodeId, CyNodeData>;
+    delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
+    nodeSel: Record<NodeId, boolean>;
+    edgeSel: Record<EdgeId, boolean>;
     propsChangedFlag: {};
     edgeLabelChangedFlag: {};
 }
+
+export interface Size {
+    width: number;
+    height: number;
+}
+
+export interface ContextMenuRequestContext {
+    nodeId?: NodeId;
+    edgeId?: EdgeId;
+}
+
+export interface ContextMenuRequestInfo {
+    position: Position;
+    context: ContextMenuRequestContext;
+}
+
+export interface SelectedGraphElements {
+    nodes: NodeId[];
+    edges: EdgeId[];
+}
+
+export interface ContextSelection extends SelectedElements, SelectedGraphElements {}

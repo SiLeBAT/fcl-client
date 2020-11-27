@@ -5,6 +5,7 @@ import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';
 import { BusinessTypeRanker } from '../../layout/farm-to-fork/business-type-ranker';
 import { Position, NodeLayoutInfo } from './datatypes';
 import { Utils } from '../../util/non-ui-utils';
+import { getDifference } from '@app/tracing/util/geometry-utils';
 
 export enum FoodChainOrientation {
     TopDown, LeftRight, BottomUp, RightLeft
@@ -41,7 +42,7 @@ export function getFoodChainOrientation(
     const deliveries = data.deliveries.filter(
         d => !d.invisible && nodeInfoMap.has(d.source) && nodeInfoMap.has(d.target));
     const deltas = deliveries.map(
-        d => getNormalizedDelta(Utils.difference(
+        d => getNormalizedDelta(getDifference(
             nodeInfoMap.get(d.target).position,
             nodeInfoMap.get(d.source).position
             ))).filter(d => d.x !== 0 || d.y !== 0);

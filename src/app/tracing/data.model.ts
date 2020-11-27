@@ -57,8 +57,11 @@ export interface FclElements {
     samples: SampleData[];
 }
 
+export type StationId = string;
+export type DeliveryId = string;
+
 export interface StationStoreData {
-    id: string;
+    id: StationId;
     name?: string;
     lat?: number;
     lon?: number;
@@ -69,7 +72,7 @@ export interface StationStoreData {
 }
 
 export interface DeliveryStoreData {
-    id: string;
+    id: DeliveryId;
     name?: string;
     lot?: string;
     lotKey?: string;
@@ -96,9 +99,11 @@ export interface Position {
     y: number;
 }
 
+export type PositionMap = Record<string, Position>;
+
 export interface Connection {
-    source: string;
-    target: string;
+    source: DeliveryId;
+    target: DeliveryId;
 }
 
 export enum SampleResultType {
@@ -117,19 +122,19 @@ export interface SampleData {
 }
 
 export interface SelectedElements {
-    stations: string[];
-    deliveries: string[];
+    stations: StationId[];
+    deliveries: DeliveryId[];
 }
 
 export interface InvisibleElements {
-    stations: string[];
-    deliveries: string[];
+    stations: StationId[];
+    deliveries: DeliveryId[];
 }
 
 export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
-    shapeFileData: ShapeFileData;
+    shapeFileData: ShapeFileData | null;
     nodeSize: number;
     fontSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
@@ -140,13 +145,13 @@ export interface GraphSettings {
     selectedElements: SelectedElements;
     stationPositions: {[key: string]: Position};
     highlightingSettings: HighlightingSettings;
-    schemaLayout: Layout;
-    gisLayout: Layout;
+    schemaLayout: Layout | null;
+    gisLayout: Layout | null;
     ghostStation: string;
 }
 
 export interface HighlightingSettings {
-    invisibleStations: string[];
+    invisibleStations: StationId[];
     stations?: StationHighlightingData[];
     deliveries?: DeliveryHighlightingData[];
 }
@@ -240,7 +245,7 @@ export enum ValueType {
 }
 
 interface TraceableElementSettings {
-    id: string;
+    id: StationId | DeliveryId;
     observed: ObservedType;
     crossContamination: boolean;
     killContamination: boolean;
@@ -270,7 +275,7 @@ export interface TracingSettings extends GlobalTracingSettings {
 }
 
 export interface GroupData {
-    id: string;
+    id: StationId;
     name?: string;
     contains: string[];
     groupType: GroupType;
@@ -316,13 +321,13 @@ interface TracingResult {
 }
 
 export interface DataServiceData {
-    statMap: { [key: string]: StationData };
+    statMap: Record<StationId, StationData>;
     stations: StationData[];
-    delMap: { [key: string]: DeliveryData };
+    delMap: Record<DeliveryId, DeliveryData>;
     deliveries: DeliveryData[];
-    statSel: { [key: string]: boolean };
-    delSel: { [key: string]: boolean };
-    statVis: { [key: string]: boolean };
+    statSel: Record<StationId, boolean>;
+    delSel: Record<DeliveryId, boolean>;
+    statVis: Record<StationId, boolean>;
     tracingResult: TracingResult;
     legendInfo: LegendInfo;
 
@@ -366,8 +371,8 @@ export enum LinePatternType {
 }
 
 export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, ViewData {
-    originalSource: string;
-    originalTarget: string;
+    originalSource: StationId;
+    originalTarget: StationId;
     highlightingInfo?: DeliveryHighlightingInfo;
 }
 
@@ -383,8 +388,8 @@ export interface SampleData {
 }
 
 export interface SelectedElements {
-    stations: string[];
-    deliveries: string[];
+    stations: StationId[];
+    deliveries: DeliveryId[];
 }
 
 export enum DialogAlignment {
@@ -432,4 +437,9 @@ export interface LegendInfo {
 export interface Size {
     width: number;
     height: number;
+}
+
+export interface Range {
+    min: number;
+    max: number;
 }

@@ -21,16 +21,15 @@ import { GroupingEffects } from './grouping/grouping.effects';
 import { IOEffects } from './io/io.effects';
 import { VisioEffects } from './visio/visio.effects';
 import { EffectsModule } from '@ngrx/effects';
-import { NestedMatMenuComponent } from './graph/components/nested-mat-menu.component';
-import { SchemaGraphComponent } from './graph/components/schema-graph.component';
-import { GraphLegendComponent } from './graph/components/graph-legend.component';
-import { NodeSymbolComponent } from './shared/node-symbol/node-symbol.component';
-import { ZoomComponent } from './graph/components/zoom.component';
-import { GisGraphComponent } from './graph/components/gis-graph.component';
-import { GraphContextMenuComponent } from './graph/components/graph-context-menu.component';
-import { EdgeSymbolComponent } from './graph/components/edge-symbol.component';
-import { KlecksSymbolComponent } from './graph/components/klecks-symbol.component';
-import { CreatedImageComponent } from './shared/created-image/created-image.component';
+import { NestedMatMenuViewComponent } from './graph/components/nested-mat-menu-view/nested-mat-menu-view.component';
+import { SchemaGraphComponent } from './graph/components/schema-graph/schema-graph.component';
+import { GraphLegendViewComponent } from './graph/components/graph-legend-view/graph-legend-view.component';
+import { NodeSymbolViewComponent } from './shared/node-symbol-view/node-symbol-view.component';
+import { ZoomViewComponent } from './graph/components/zoom-view/zoom-view.component';
+import { GisGraphComponent } from './graph/components/gis-graph/gis-graph.component';
+import { GraphContextMenuComponent } from './graph/components/graph-context-menu/graph-context-menu.component';
+import { EdgeSymbolViewComponent } from './graph/components/edge-symbol-view/edge-symbol-view.component';
+import { CreatedImageViewComponent } from './shared/created-image-view/created-image-view.component';
 import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/merge-stations-dialog.component';
 import { TabLayoutComponent } from './configuration/tab-layout/tab-layout.component';
 import { ConfigurationComponent } from './configuration/configuration/configuration.component';
@@ -58,6 +57,11 @@ import { HighlightingStationViewComponent } from './configuration/highlighting-s
 import { AnonymousButtonViewComponent } from './configuration/anonymous-button-view/anonymous-button-view.component';
 import { HighlightingStationListViewComponent } from './configuration/highlighting-station-list-view/highlighting-station-list-view.component';
 import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.directive';
+import { ResizeSensorDirective } from './graph/components/resize-sensor.directive';
+import { GraphViewComponent } from './graph/components/graph-view/graph-view.component';
+import { GeoMapComponent } from './graph/components/geomap/geomap.component';
+import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
+import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
 
 @NgModule({
     imports: [
@@ -83,16 +87,15 @@ import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.di
         PropertyElementViewComponent,
         TextElementViewComponent,
         GraphSettingsComponent,
-        NestedMatMenuComponent,
+        NestedMatMenuViewComponent,
         SchemaGraphComponent,
         GisGraphComponent,
         GraphContextMenuComponent,
-        GraphLegendComponent,
-        NodeSymbolComponent,
-        EdgeSymbolComponent,
-        KlecksSymbolComponent,
-        ZoomComponent,
-        CreatedImageComponent,
+        GraphLegendViewComponent,
+        NodeSymbolViewComponent,
+        EdgeSymbolViewComponent,
+        ZoomViewComponent,
+        CreatedImageViewComponent,
         MergeStationsDialogComponent,
         TabLayoutComponent,
         ConfigurationComponent,
@@ -115,7 +118,12 @@ import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.di
         HighlightingStationViewComponent,
         AnonymousButtonViewComponent,
         HighlightingStationListViewComponent,
-        EmptyTableScrollFixDirective
+        EmptyTableScrollFixDirective,
+        ResizeSensorDirective,
+        GraphViewComponent,
+        GeoMapComponent,
+        GeoMapLicRefViewComponent,
+        ContextMenuViewComponent
     ],
     exports: [],
     entryComponents: [

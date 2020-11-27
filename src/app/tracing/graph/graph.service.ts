@@ -4,7 +4,6 @@ import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
-import { EdgeLabelOffsetUpdater } from './edge-label-offset-updater';
 
 interface CyDataNodes {
     statIdToNodeDataMap: {[key: string]: CyNodeData };

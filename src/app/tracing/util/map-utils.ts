@@ -140,5 +140,7 @@ function createFrameLayer(frameConfig: FrameConfig): BaseLayer {
         style: polygon
     });
 
+    vectorLayer.set(LAYER_ID_KEY, FRAME_LAYER_ID);
+
     return vectorLayer;
 }

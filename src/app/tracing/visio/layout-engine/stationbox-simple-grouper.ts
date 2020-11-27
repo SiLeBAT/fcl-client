@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { VisioBox, Position, Size, BoxType } from './datatypes';
 import { LabelCreator } from './label-creator';
-import { Utils } from '../../util/non-ui-utils';
 import { GraphSettings } from './graph-settings';
+import { getDifference } from '@app/tracing/util/geometry-utils';
 
 interface BoxGroup {
     label: string;
@@ -26,7 +26,7 @@ export function groupStationBoxes(logicalBoxGroups: BoxGroup[], labelCreator: La
 
 function addTopAndLeftMargin(boxes: VisioBox[]) {
     const left = Math.min(...boxes.map(b => b.position.x)) - GraphSettings.GRID_MARGIN - GraphSettings.GROUP_MARGIN;
-    boxes.forEach(b => b.position = Utils.difference(b.position, { x: left, y: 0 }));
+    boxes.forEach(b => b.position = getDifference(b.position, { x: left, y: 0 }));
 }
 
 function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): VisioBox {
@@ -51,7 +51,7 @@ function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): 
         label: labelCreator.getLabel([visBox.label], GraphSettings.GROUP_MARGIN)
     };
 
-    visioBox.elements.forEach(b => b.relPosition = Utils.difference(b.position, visioBox.relPosition));
+    visioBox.elements.forEach(b => b.relPosition = getDifference(b.position, visioBox.relPosition));
 
     return visioBox;
 }

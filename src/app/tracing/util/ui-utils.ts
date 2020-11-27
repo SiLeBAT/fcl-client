@@ -26,6 +26,13 @@ export class Utils {
         };
     }
 
+    static positionToOlCoords(x: number, y: number, zoom: number): Position {
+        return {
+            x: (x * Utils.CY_TO_OL_FACTOR) / zoom,
+            y: (-y * Utils.CY_TO_OL_FACTOR) / zoom
+        };
+    }
+
     static latLonToPosition(lat: number, lon: number, zoom: number): Position {
         const p = Utils.latLonToOlCoords(lat, lon);
 

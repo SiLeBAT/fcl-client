@@ -8,11 +8,11 @@
         </div>
 
         <div class="fcl-highlighting-station-list-item-fix">
-            <fcl-node-symbol
+            <fcl-node-symbol-view
                 *ngIf="item.color || (item.shape !== undefined && item.shape !== null)"
                 [shapeType]="item.shape"
                 [fillColor]="item.color? { r:item.color[0], g:item.color[1], b:item.color[2] } : null"
-            ></fcl-node-symbol>
+            ></fcl-node-symbol-view>
         </div>
 
         <div class="fcl-highlighting-station-list-item-fix">
