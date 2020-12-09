@@ -1,5 +1,6 @@
 import {
-    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData, Position, SelectedElements, StationId, DeliveryId
+    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData,
+    Position, SelectedElements, StationId, DeliveryId, PositionMap
 } from '../data.model';
 
 class None { private ___ = {}; }
@@ -8,6 +9,7 @@ interface CyElementDef<T> {
     group: string;
     data: T;
     selected: boolean;
+    classes?: string;
 }
 
 export interface CyNodeDef extends CyElementDef<CyNodeData> {
@@ -30,7 +32,7 @@ type CyCallBackFun = (a?: any) => void;
 
 export interface Cy {
     nodes(a?: string): CyNodeCollection;
-    edges(a?: string): CyElementCollection<CyEdge>;
+    edges(a?: string): CyEdgeCollection;
     elements(a?: string): CyElementCollection<CyNode | CyEdge>;
     container(): any;
     resize(): void;
@@ -43,7 +45,7 @@ export interface Cy {
     maxZoom(): number;
     minZoom(): number;
     pan<T extends Position | None>(a?: T): None extends T ? Position : void;
-    add(a: CyNodeDef[] | CyEdgeDef[]): void;
+    add(a: CyNodeDef[] | CyEdgeDef[]): CyElementCollection<CyNode | CyEdge>;
     on<
         T extends string | CyCallBackFun,
         K extends (T extends string ? CyCallBackFun : None)
@@ -104,14 +106,26 @@ export interface CyElementCollection<E> {
     first(): E;
     toggleClass(a: string, b?: boolean): void;
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
+    union(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
+    difference(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
+
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
     layout(options: { name: string, [key: string]: any }): CyLayout;
     positions(a: (b: CyNode) => Position): void;
     filter(a: ((b: CyNode) => boolean) | string): CyNodeCollection;
-    edgesWith(a: string | CyNodeCollection): CyElementCollection<CyEdge>;
-    connectedEdges(a?: string): CyElementCollection<CyEdge>;
+    edgesWith(a: string | CyNodeCollection): CyEdgeCollection;
+    connectedEdges(a?: string): CyEdgeCollection;
+}
+
+export interface CyEdgeCollection extends CyElementCollection<CyEdge> {
+    connectedNodes(a?: string): CyNodeCollection;
+    parallelEdges(selector?: string): CyEdgeCollection;
+    union<T extends CyElementCollection<CyNode | CyEdge>>(
+        elements: T
+    ): T extends CyEdgeCollection ? CyEdgeCollection : CyElementCollection<CyNode | CyEdge>;
+    difference(elementsOrSelector: CyEdgeCollection | string): CyEdgeCollection;
 }
 
 export interface CyElement {
@@ -137,7 +151,7 @@ export interface CyNode extends CyElement {
     position(): Position;
     renderedPosition(): Position;
     height(): number;
-    connectedEdges(a?: string): CyElementCollection<CyEdge>;
+    connectedEdges(a?: string): CyEdgeCollection;
 }
 
 export interface CyEdge extends CyElement {
@@ -189,6 +203,12 @@ export interface GraphServiceData extends GraphElementData, DataServiceData {
     edgeSel: Record<EdgeId, boolean>;
     propsChangedFlag: {};
     edgeLabelChangedFlag: {};
+    ghostElements: GraphElementData;
+    selectedElements: SelectedGraphElements;
+}
+
+export interface GraphGhostData extends GraphElementData {
+    posMap: PositionMap;
 }
 
 export interface Size {

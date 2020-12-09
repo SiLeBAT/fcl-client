@@ -150,6 +150,7 @@ export const getGisGraphData = createSelector(
         selectedElements: graphSettings.selectedElements,
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
+        ghostStation: graphSettings.ghostStation,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.gisLayout,

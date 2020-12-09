@@ -2,39 +2,24 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Subscription } from 'rxjs';
 
 import html2canvas from 'html2canvas';
-import {
-    Layout, GraphState, GraphType, LegendInfo, MergeDeliveriesType, MapType,
-    ShapeFileData
-} from '../../../data.model';
+import { GraphState, GraphType, LegendInfo } from '../../../data.model';
 import _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
-import { ContextMenuRequestInfo, GraphServiceData, SelectedGraphElements } from '../../graph.model';
+import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
 import { GraphDataChange } from '../graph-view/graph-view.component';
 import { GraphData } from '../../cy-graph/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
-import { UnknownPosFrameData } from '../geomap/geomap.component';
 import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetGisGraphLayoutSOA, SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
 import { getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { BoundaryRect } from '@app/tracing/util/geometry-utils';
 
-interface GraphSettingsState {
-    fontSize: number;
-    nodeSize: number;
-    mergeDeliveriesType: MergeDeliveriesType;
-    showMergedDeliveriesCounts: boolean;
-}
-
-interface GisGraphState extends GraphState, GraphSettingsState {
-    layout: Layout;
-    mapType: MapType;
-    shapeFileData: ShapeFileData;
-}
 @Component({
     selector: 'fcl-gis-graph',
     templateUrl: './gis-graph.component.html',
@@ -55,9 +40,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private graphStateSubscription: Subscription;
     private graphTypeSubscription: Subscription;
 
-    private cachedData: GraphServiceData | null = null;
+    private sharedGraphData: GraphServiceData | null = null;
     private graphData_: GraphData | null = null;
-    private unknownPosFrameData_: UnknownPosFrameData | null = null;
+    private unknownLatLonRect_: BoundaryRect | null = null;
+    private legendInfo_: LegendInfo | null = null;
 
     constructor(
         private store: Store<State>,
@@ -112,7 +98,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
-        const menuData = this.contextMenuService.getMenuData(requestInfo.context, this.cachedData, false);
+        const menuData = this.contextMenuService.getMenuData(requestInfo.context, this.sharedGraphData, false);
         this.contextMenu.open(requestInfo.position, menuData);
     }
 
@@ -128,7 +114,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         }
         if (graphDataChange.selectedElements) {
             this.store.dispatch(new SetSelectedElementsSOA({
-                selectedElements: mapGraphSelectionToFclElementSelection(graphDataChange.selectedElements, this.cachedData)
+                selectedElements: mapGraphSelectionToFclElementSelection(graphDataChange.selectedElements, this.graphData_)
             }));
         }
     }
@@ -138,49 +124,38 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     get legendInfo(): LegendInfo | null {
-        return this.cachedData !== null ? this.cachedData.legendInfo : null;
+        return this.legendInfo_;
     }
 
-    get unknownPosFrameData(): UnknownPosFrameData | null {
-        return this.unknownPosFrameData_;
+    get unknownLatLonRect(): BoundaryRect | null {
+        return this.unknownLatLonRect_;
     }
 
     get showMissingGisInfoEntry(): boolean {
-        return this.unknownPosFrameData_ !== null;
+        return this.unknownLatLonRect !== null;
     }
 
-    private getSelectedElements(newData: GraphServiceData): SelectedGraphElements {
-        return (
-            (
-                !this.graphData_ ||
-                !this.cachedData ||
-                this.cachedData.nodeSel !== newData.nodeSel ||
-                this.cachedData.edgeSel !== newData.edgeSel
-            ) ?
-                {
-                    nodes: newData.nodeData.map(n => n.id).filter(id => newData.nodeSel[id]),
-                    edges: newData.edgeData.map(e => e.id).filter(id => newData.edgeSel[id])
-                } :
-                this.graphData_.selectedElements
-        );
-    }
+    private applyState(newState: GraphState) {
+        this.sharedGraphData = this.graphService.getData(newState);
+        const posData = this.gisPositioningService.getPositioningData(this.sharedGraphData);
+        this.unknownLatLonRect_ = posData.unknownLatLonRect;
+        this.legendInfo_ = this.sharedGraphData.legendInfo;
 
-    private applyState(newState: GisGraphState) {
-        const newData: GraphServiceData = this.graphService.getData(newState);
-        const posData = this.gisPositioningService.getPositioningData(newData);
-        this.unknownPosFrameData_ = posData.frameData;
-
-        const selectedElements = this.getSelectedElements(newData);
         this.graphData_ = {
-            nodeData: newData.nodeData,
-            edgeData: newData.edgeData,
-            propsChangedFlag: newData.propsChangedFlag,
-            edgeLabelChangedFlag: newData.edgeLabelChangedFlag,
+            nodeData: this.sharedGraphData.nodeData,
+            edgeData: this.sharedGraphData.edgeData,
+            propsChangedFlag: this.sharedGraphData.propsChangedFlag,
+            edgeLabelChangedFlag: this.sharedGraphData.edgeLabelChangedFlag,
             nodePositions: posData.nodePositions,
             layout: newState.layout,
-            selectedElements: selectedElements
+            selectedElements: this.sharedGraphData.selectedElements,
+            ghostData:
+                this.sharedGraphData.ghostElements == null ?
+                null :
+                ({
+                    ...this.sharedGraphData.ghostElements,
+                    posMap: posData.ghostPositions
+                })
         };
-
-        this.cachedData = newData;
     }
 }

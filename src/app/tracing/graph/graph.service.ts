@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BasicGraphState, DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData } from '../data.model';
+import { DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData, GraphState } from '../data.model';
 import { DataService } from '../services/data.service';
-import { CyNodeData, CyEdgeData, GraphServiceData } from './graph.model';
+import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, NodeId, EdgeId } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 
@@ -16,11 +16,6 @@ interface CyDataEdges {
     delIdToEdgeDataMap: {[key: string]: CyEdgeData };
     edgeData: CyEdgeData[];
     edgeSel: { [key: string]: boolean };
-}
-
-interface GraphState extends BasicGraphState {
-    mergeDeliveriesType: MergeDeliveriesType;
-    showMergedDeliveriesCounts: boolean;
 }
 
 @Injectable({
@@ -67,13 +62,13 @@ export class GraphService {
         ghostStation: StationData,
         state: GraphState,
         graphData: GraphServiceData
-    ): { nodeData: CyNodeData, edgeData: CyEdgeData[] } {
+    ): GraphElementData {
 
         const ghostNodeData = this.createGhostNodeData(ghostStation, graphData);
         const ghostEdgeData = this.createGhostEdgeData(ghostNodeData, state, graphData);
 
         return {
-            nodeData: ghostNodeData,
+            nodeData: [ghostNodeData],
             edgeData: ghostEdgeData
         };
     }
@@ -547,17 +542,29 @@ export class GraphService {
     }
 
     private applyStatSelection(data: GraphServiceData) {
+        const selectedNodeIds: NodeId[] = [];
         data.nodeData.forEach(nodeData => {
             nodeData.selected = nodeData.station.selected;
+            selectedNodeIds.push(nodeData.id);
         });
         data.nodeSel = Utils.createSimpleStringSet(data.nodeData.filter(n => n.selected).map(n => n.id));
+        data.selectedElements = {
+            ...data.selectedElements,
+            nodes: selectedNodeIds
+        };
     }
 
     private applyDelSelection(data: GraphServiceData) {
+        const selectedEdgeIds: EdgeId[] = [];
         data.edgeData.forEach(edgeData => {
             edgeData.selected = edgeData.deliveries.some(d => d.selected);
+            selectedEdgeIds.push(edgeData.id);
         });
         data.edgeSel = Utils.createSimpleStringSet(data.edgeData.filter(e => e.selected).map(e => e.id));
+        data.selectedElements = {
+            ...data.selectedElements,
+            edges: selectedEdgeIds
+        };
     }
 
     private applyState(state: GraphState) {
@@ -571,6 +578,11 @@ export class GraphService {
             edgeSel: undefined,
             propsChangedFlag: undefined,
             edgeLabelChangedFlag: undefined,
+            ghostElements: null,
+            selectedElements: {
+                nodes: [],
+                edges: []
+            },
             ...(this.cachedData ? this.cachedData : {}),
             ...data
         };
@@ -654,6 +666,14 @@ export class GraphService {
         if (edgeLabelUpdateRequired) {
             newData.edgeLabelChangedFlag = {};
             this.updateEdgeLabels(state, newData.edgeData);
+        }
+
+        if (!this.cachedState || this.cachedState.ghostStation !== state.ghostStation) {
+            if (state.ghostStation === null) {
+                newData.ghostElements = null;
+            } else {
+                newData.ghostElements = this.createGhostElementData(data.statMap[state.ghostStation], state, newData);
+            }
         }
 
         this.cachedState = { ...state };
