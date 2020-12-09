@@ -155,7 +155,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                 ({
                     ...this.sharedGraphData.ghostElements,
                     posMap: posData.ghostPositions
-                })
+                }),
+            hoverEdges: this.sharedGraphData.hoverEdges
         };
     }
 }

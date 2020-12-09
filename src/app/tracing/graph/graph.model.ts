@@ -204,6 +204,7 @@ export interface GraphServiceData extends GraphElementData, DataServiceData {
     propsChangedFlag: {};
     edgeLabelChangedFlag: {};
     ghostElements: GraphElementData;
+    hoverEdges: EdgeId[];
     selectedElements: SelectedGraphElements;
 }
 

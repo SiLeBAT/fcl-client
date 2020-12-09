@@ -93,7 +93,8 @@ export function createInitialFclDataState(): FclData {
             gisLayout: null,
             mapType: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
-            ghostStation: null
+            ghostStation: null,
+            hoverDeliveries: []
         },
         tracingSettings: {
             crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
@@ -508,6 +509,18 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         ghostStation: null
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetHoverDeliveriesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        hoverDeliveries: action.payload.deliveryIds
                     }
                 }
             };
