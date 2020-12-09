@@ -9,7 +9,7 @@ import * as fromTracing from './state/tracing.reducers';
 import * as tracingSelectors from './state/tracing.selectors';
 import { mergeMap, withLatestFrom } from 'rxjs/operators';
 import { EMPTY, of } from 'rxjs';
-import { DeliveryData, StationData } from './data.model';
+import { DeliveryData, DeliveryId, StationData, StationId } from './data.model';
 import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
@@ -42,17 +42,17 @@ export class TracingEffects {
             const station = data.statMap[stationId];
 
             if (station) {
-                const deliveries: Map<string, DeliveryData> = new Map();
-                const connectedStations: Map<string, StationData> = new Map();
+                const deliveries: Map<DeliveryId, DeliveryData> = new Map();
+                const connectedStations: Map<StationId, StationData> = new Map();
 
-                for (const d of data.getDelById(station.incoming)) {
-                    deliveries.set(d.id, d);
-                    connectedStations.set(d.source, data.statMap[d.source]);
+                for (const delivery of data.getDelById(station.incoming)) {
+                    deliveries.set(delivery.id, delivery);
+                    connectedStations.set(delivery.source, data.statMap[delivery.source]);
                 }
 
-                for (const d of data.getDelById(station.outgoing)) {
-                    deliveries.set(d.id, d);
-                    connectedStations.set(d.target, data.statMap[d.target]);
+                for (const delivery of data.getDelById(station.outgoing)) {
+                    deliveries.set(delivery.id, delivery);
+                    connectedStations.set(delivery.target, data.statMap[delivery.target]);
                 }
 
                 const dialogData: StationPropertiesData = {
