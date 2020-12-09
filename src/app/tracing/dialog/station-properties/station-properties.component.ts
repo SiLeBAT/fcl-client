@@ -3,9 +3,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 
-import { DeliveryData, StationData, Connection } from '../../data.model';
+import { DeliveryData, StationData, DeliveryId } from '../../data.model';
 import { Constants } from '../../util/constants';
 import { Utils } from '../../util/non-ui-utils';
+import { State } from '@app/tracing/state/tracing.reducers';
+import { Store } from '@ngrx/store';
+import { SetHoverDeliveriesSOA } from '@app/tracing/state/tracing.actions';
 
 export interface StationPropertiesData {
     station: StationData;
@@ -161,7 +164,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
     }
 
-    constructor(public dialogRef: MatDialogRef<StationPropertiesComponent>, @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData) {
+    constructor(
+        public dialogRef: MatDialogRef<StationPropertiesComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData,
+        private store: Store<State>
+    ) {
         this.initProperties(this.data.station);
 
         if (data.station.incoming.length > 0 || data.station.outgoing.length > 0) {
@@ -283,7 +290,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         d3.select('body').on('mousemove', null);
-        this.data.hoverDeliveriesSubject.next([]);
+        this.hoverDeliveries([]);
     }
 
     toggleOtherProperties() {
@@ -472,18 +479,18 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         newNodesIn.on('mouseover', function (d) {
             updateColor(d3.select(this), true);
-            self.data.hoverDeliveriesSubject.next([d.id]);
+            self.store.dispatch(new SetHoverDeliveriesSOA({ deliveryIds: [d.id] }));
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
-            self.data.hoverDeliveriesSubject.next([]);
+            self.hoverDeliveries([]);
         });
 
         newNodesOut.on('mouseover', function (d) {
             updateColor(d3.select(this), true);
-            self.data.hoverDeliveriesSubject.next(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
+            self.hoverDeliveries(self.lotBased ? self.deliveriesByLot.get(d.id) : [d.id]);
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
-            self.data.hoverDeliveriesSubject.next([]);
+            self.hoverDeliveries([]);
         });
     }
 
@@ -512,15 +519,21 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         newEdges.on('mouseover', function (e) {
             if (self.selected == null) {
                 updateColor(d3.select(this), true);
-                self.data.hoverDeliveriesSubject.next([].concat(
-                    [e.source.id],
-                    self.lotBased ? self.deliveriesByLot.get(e.target.id) : [e.target.id]
+                self.hoverDeliveries(
+                    [].concat(
+                        [e.source.id],
+                        self.lotBased ? self.deliveriesByLot.get(e.target.id) : [e.target.id]
                 ));
             }
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
-            self.data.hoverDeliveriesSubject.next([]);
+            self.hoverDeliveries([]);
         });
+    }
+
+    private hoverDeliveries(deliveryIds: DeliveryId[]): void {
+        this.store.dispatch(new SetHoverDeliveriesSOA({ deliveryIds: deliveryIds }));
+        this.data.hoverDeliveriesSubject.next(deliveryIds);
     }
 
     private updateConnectLine() {

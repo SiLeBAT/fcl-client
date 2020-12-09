@@ -127,7 +127,8 @@ export const getSchemaGraphData = createSelector(
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.schemaLayout,
-        ghostStation: graphSettings.ghostStation
+        ghostStation: graphSettings.ghostStation,
+        hoverDeliveries: graphSettings.hoverDeliveries
     })
 );
 
@@ -151,6 +152,7 @@ export const getGisGraphData = createSelector(
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
         ghostStation: graphSettings.ghostStation,
+        hoverDeliveries: graphSettings.hoverDeliveries,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.gisLayout,

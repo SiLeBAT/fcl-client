@@ -579,6 +579,7 @@ export class GraphService {
             propsChangedFlag: undefined,
             edgeLabelChangedFlag: undefined,
             ghostElements: null,
+            hoverEdges: [],
             selectedElements: {
                 nodes: [],
                 edges: []
@@ -674,6 +675,10 @@ export class GraphService {
             } else {
                 newData.ghostElements = this.createGhostElementData(data.statMap[state.ghostStation], state, newData);
             }
+        }
+
+        if (!this.cachedState || this.cachedState.hoverDeliveries !== state.hoverDeliveries) {
+            newData.hoverEdges = state.hoverDeliveries.map(delId => newData.delIdToEdgeDataMap[delId].id);
         }
 
         this.cachedState = { ...state };

@@ -142,7 +142,8 @@ export interface GraphSettings {
     highlightingSettings: HighlightingSettings;
     schemaLayout: Layout | null;
     gisLayout: Layout | null;
-    ghostStation: string;
+    ghostStation: StationId | null;
+    hoverDeliveries: DeliveryId[];
 }
 
 export interface HighlightingSettings {
@@ -402,6 +403,7 @@ export interface SharedGraphState extends BasicGraphState {
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
     ghostStation: StationId | null;
+    hoverDeliveries: DeliveryId[];
 }
 
 export interface GraphState extends SharedGraphState {

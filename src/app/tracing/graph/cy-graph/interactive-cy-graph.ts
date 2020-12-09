@@ -1,4 +1,4 @@
-import { ContextMenuRequestInfo, CyEdgeCollection, CyEdgeDef, CyNodeDef, SelectedGraphElements } from '../graph.model';
+import { ContextMenuRequestInfo, CyEdgeCollection, CyEdgeDef, CyNodeDef, EdgeId, SelectedGraphElements } from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
@@ -7,6 +7,7 @@ import {
     addCyContextMenuRequestListener, addCyZoomListener, addCyDragListener,
     addCyPanListeners, addCySelectionListener
 } from './cy-listeners';
+import { Utils } from '@app/tracing/util/non-ui-utils';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',
@@ -198,11 +199,6 @@ export class InteractiveCyGraph extends CyGraph {
         this.cy.pan({ ...super.pan });
     }
 
-    private getParallelEdges(edges: CyEdgeCollection): CyEdgeCollection {
-
-        return edges.parallelEdges().difference(edges);
-    }
-
     private getParallelEdgesOfGhosts(): CyEdgeCollection {
         const edges = this.cy.edges('.ghost-element');
         return edges.parallelEdges().difference(edges);
@@ -252,6 +248,15 @@ export class InteractiveCyGraph extends CyGraph {
             nodes: ghostNodes,
             edges: ghostEdges
         };
+    }
+
+    private hoverEdges(edgeIds: EdgeId[]): void {
+        const hoverEdge = Utils.createSimpleStringSet(edgeIds);
+
+        this.cy.batch(() => {
+            this.cy.edges().filter(e => !hoverEdge[e.id()]).scratch('_active', false);
+            this.cy.edges().filter(e => !!hoverEdge[e.id()]).scratch('_active', true);
+        });
     }
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
@@ -316,6 +321,10 @@ export class InteractiveCyGraph extends CyGraph {
 
         } else if (updateGhosts) {
             this.updateGhostElements(true);
+        }
+
+        if (oldData.hoverEdges !== graphData.hoverEdges) {
+            this.hoverEdges(graphData.hoverEdges);
         }
     }
 }

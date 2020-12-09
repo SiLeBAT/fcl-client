@@ -1,4 +1,4 @@
-import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef, SelectedGraphElements, GraphGhostData } from '../graph.model';
+import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef, SelectedGraphElements, GraphGhostData, EdgeId } from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import cytoscape from 'cytoscape';
 import { StyleConfig, CyStyle } from './cy-style';
@@ -37,6 +37,7 @@ export interface GraphData {
     propsChangedFlag: {};
     edgeLabelChangedFlag: {};
     ghostData: GraphGhostData;
+    hoverEdges: EdgeId[];
 }
 
 export function createLayoutConfigFromLayout(layout: Layout): LayoutConfig {

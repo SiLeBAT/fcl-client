@@ -4,7 +4,8 @@ import {
     GraphType, FclData, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
     ROASettings,
-    CrossContTraceType
+    CrossContTraceType,
+    DeliveryId
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -48,6 +49,7 @@ export enum TracingActionTypes {
     SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
     ShowGhostStationMSA = '[Station Table] Show Ghost Station',
     ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
+    SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
     ResetTracingStateSOA = '[Tracing] Reset Tracing State'
 }
@@ -268,6 +270,12 @@ export class ClearGhostStationMSA implements Action {
     readonly type = TracingActionTypes.ClearGhostStationMSA;
 }
 
+export class SetHoverDeliveriesSOA implements Action {
+    readonly type = TracingActionTypes.SetHoverDeliveriesSOA;
+
+    constructor(public payload: { deliveryIds: DeliveryId[] }) {}
+}
+
 export class SetROAReportSettingsSOA implements Action {
     readonly type = TracingActionTypes.SetROAReportSettingsSOA;
 
@@ -317,4 +325,5 @@ export type TracingActions =
     | SetROAReportSettingsSOA
     | ShowGhostStationMSA
     | ClearGhostStationMSA
+    | SetHoverDeliveriesSOA
     | ResetTracingStateSOA;
