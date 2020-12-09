@@ -611,7 +611,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.removeGhostElements();
             if (graphState.ghostStation !== undefined && graphState.ghostStation !== null) {
                 const ghostElements = this.createGhostElements(graphState, graphData);
-                this.cy.add([ghostElements.node]);
+                this.cy.add(ghostElements.nodes);
                 if (ghostElements.edges.length > 0) {
                     this.cy.add(ghostElements.edges);
                 }
@@ -626,17 +626,17 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         this.cy.remove('.ghost-element');
     }
 
-    private createGhostElements(graphState: SchemaGraphState, graphData: GraphServiceData): { node: CyNodeDef, edges: CyEdgeDef[] } {
+    private createGhostElements(graphState: SchemaGraphState, graphData: GraphServiceData): { nodes: CyNodeDef[], edges: CyEdgeDef[] } {
         const ghostStation = graphData.statMap[graphState.ghostStation];
         const ghostElementData = this.graphService.createGhostElementData(ghostStation, graphState, graphData);
 
-        const ghostNode = {
+        const ghostNodes = ghostElementData.nodeData.map(nodeData => ({
             group: 'nodes',
-            data: ghostElementData.nodeData,
+            data: nodeData,
             selected: false,
             classes: 'ghost-element',
-            position: graphState.stationPositions[ghostElementData.nodeData.station.id]
-        };
+            position: graphState.stationPositions[nodeData.station.id]
+        }));
 
         const ghostEdges = ghostElementData.edgeData.map(edgeData => ({
             group: 'edges',
@@ -646,7 +646,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         }));
 
         return {
-            node: ghostNode,
+            nodes: ghostNodes,
             edges: ghostEdges
         };
     }

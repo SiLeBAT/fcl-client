@@ -126,11 +126,6 @@ export interface SelectedElements {
     deliveries: DeliveryId[];
 }
 
-export interface InvisibleElements {
-    stations: StationId[];
-    deliveries: DeliveryId[];
-}
-
 export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
@@ -395,7 +390,6 @@ export interface SelectedElements {
 export enum DialogAlignment {
     LEFT, CENTER, RIGHT
 }
-
 export interface BasicGraphState {
     fclElements: FclElements;
     groupSettings: GroupData[];
@@ -404,7 +398,13 @@ export interface BasicGraphState {
     selectedElements: SelectedElements;
 }
 
-export interface GraphState extends BasicGraphState {
+export interface SharedGraphState extends BasicGraphState {
+    mergeDeliveriesType: MergeDeliveriesType;
+    showMergedDeliveriesCounts: boolean;
+    ghostStation: StationId | null;
+}
+
+export interface GraphState extends SharedGraphState {
     layout: Layout;
 }
 

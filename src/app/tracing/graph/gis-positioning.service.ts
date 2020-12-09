@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { PositionMap, Position } from '@app/tracing/data.model';
 import { Utils as UIUtils } from '../util/ui-utils';
 import { getNearestPointOnRect, getEnclosingRectFromPoints, BoundaryRect, getCenterFromPoints } from '@app/tracing/util/geometry-utils';
-import { GraphServiceData, NodeId } from './graph.model';
+import { CyEdgeData, CyNodeData, GraphElementData, GraphServiceData, NodeId } from './graph.model';
 import { ABSOLUTE_FRAME_MARGIN, EMPTY_FRAME, REF_ZOOM, RELATIVE_FRAME_MARGIN } from './gis.constants';
 
 interface NeighbourHood {
@@ -12,9 +12,15 @@ interface NeighbourHood {
 
 interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> {}
 
+interface NodePosInfo {
+    posMap: PositionMap;
+    areUnknownPositionsPresent: boolean;
+}
+
 export interface PositioningData {
     nodePositions: PositionMap;
-    frameData: BoundaryRect | null;
+    ghostPositions: PositionMap | null;
+    unknownLatLonRect: BoundaryRect | null;
 }
 
 @Injectable({
@@ -24,17 +30,21 @@ export class GisPositioningService {
 
     private stationModelPositions: PositionMap = {};
     private nodeModelPositions: PositionMap = {};
+    private ghostModelPositions: PositionMap | null = null;
     private innerBoundaryRect: BoundaryRect | null = null;
     private outerBoundaryRect: BoundaryRect | null = null;
     private cachedPositioningData: PositioningData | null = null;
     private graphData: GraphServiceData | null = null;
-    private areUnknownPositionsPresent: boolean = false;
-    private neighbourHoodMap: NeighbourHoodMap | null = null;
+    private areUnknownPositionsPresent = false;
+    private areUnknownGhostPositionsPresent = false;
 
     getPositioningData(graphData: GraphServiceData) {
         if (!this.graphData || this.graphData.statVis !== graphData.statVis) {
             this.graphData = graphData;
             this.setPositioningData();
+        } else if (this.graphData.ghostElements !== graphData.ghostElements) {
+            this.graphData = graphData;
+            this.updateGhostPositions();
         }
         return this.cachedPositioningData;
     }
@@ -45,9 +55,15 @@ export class GisPositioningService {
         this.setInnerBoundaryRect();
         this.setOuterBoundaryRect();
         this.setUnknownNodeModelPositions();
+        this.updateGhostPositions();
+        this.updateCache();
+    }
+
+    private updateCache(): void {
         this.cachedPositioningData = {
             nodePositions: this.nodeModelPositions,
-            frameData: this.areUnknownPositionsPresent ? this.outerBoundaryRect : null
+            ghostPositions: this.ghostModelPositions,
+            unknownLatLonRect: this.areUnknownPositionsPresent || this.areUnknownGhostPositionsPresent ? this.outerBoundaryRect : null
         };
     }
 
@@ -77,16 +93,9 @@ export class GisPositioningService {
     }
 
     private initKnownNodeModelPositions(): void {
-        this.nodeModelPositions = {};
-        this.areUnknownPositionsPresent = false;
-        for (const nodeData of this.graphData.nodeData) {
-            const position = this.stationModelPositions[nodeData.station.id];
-            if (position) {
-                this.nodeModelPositions[nodeData.id] = position;
-            } else {
-                this.areUnknownPositionsPresent = true;
-            }
-        }
+        const nodePosInfo = this.getKnownNodePosInfo(this.graphData.nodeData);
+        this.nodeModelPositions = nodePosInfo.posMap;
+        this.areUnknownPositionsPresent = nodePosInfo.areUnknownPositionsPresent;
     }
 
     private setInnerBoundaryRect(): void {
@@ -132,38 +141,28 @@ export class GisPositioningService {
     private setUnknownNodeModelPositions(): void {
         // to compute the unknown positions we create a map
         // which gives as easy access to node neighbours
-        this.setNeighbourHoodMap();
+        const nbhMap = this.createNeighbourHoodMap(this.graphData);
 
         // to compute the unkown positions we iteratively
         // get the nodes without positions which are connected to at least one node with a known position
-        // an unkown node position is set to a point on the frame which has minimal distance
+        // an unkown node position is set to a point on the outerBoundaryRect which has minimal distance
         // to the weighted (number of links) center of the connected nodes with positions
 
-        let idsOfConnectedNodesWOPos = this.getNodesWoPosConnectedWithNodeWPos();
+        const idsOfConnectedNodesWOPos = this.getNodesWoPosConnectedWithNodeWPos(this.graphData.edgeData, this.nodeModelPositions);
 
-        while (idsOfConnectedNodesWOPos.size > 0) {
-            const newPosMap: PositionMap = {};
-
-            idsOfConnectedNodesWOPos.forEach(nodeId => {
-                const weightedCenter = this.getGetWeightedNeighbourCenter(nodeId);
-                newPosMap[nodeId] = getNearestPointOnRect(weightedCenter, this.outerBoundaryRect);
-            });
-
-            Object.assign(this.nodeModelPositions, newPosMap);
-
-            idsOfConnectedNodesWOPos = this.getNeighboursWoPosition(idsOfConnectedNodesWOPos);
-        }
+        this.setConnectedPositions(idsOfConnectedNodesWOPos, nbhMap, this.nodeModelPositions);
 
         this.graphData.nodeData
             .filter(n => this.nodeModelPositions[n.id] === undefined)
             .forEach(n => this.nodeModelPositions[n.id] = this.createDefaultPosition());
     }
 
-    private getNodesWoPosConnectedWithNodeWPos(): Set<NodeId> {
+    private getNodesWoPosConnectedWithNodeWPos(edgeData: CyEdgeData[], posMap: PositionMap): Set<NodeId> {
         const nodeIds = new Set<NodeId>();
-        this.graphData.edgeData.forEach(edge => {
-            const sourcePosIsKnown = this.nodeModelPositions[edge.source] !== undefined;
-            const targetPosIsKnown = this.nodeModelPositions[edge.target] !== undefined;
+
+        edgeData.forEach(edge => {
+            const sourcePosIsKnown = posMap[edge.source] !== undefined;
+            const targetPosIsKnown = posMap[edge.target] !== undefined;
             if (sourcePosIsKnown !== targetPosIsKnown) {
                 nodeIds.add(sourcePosIsKnown ? edge.target : edge.source);
             }
@@ -171,22 +170,22 @@ export class GisPositioningService {
         return nodeIds;
     }
 
-    private getNeighboursWoPosition(nodeIds: Set<NodeId>): Set<NodeId> {
+    private getNeighboursWoPosition(nodeIds: Set<NodeId>, nbhMap: NeighbourHoodMap, posMap: PositionMap): Set<NodeId> {
         const neighbourIds = new Set<NodeId>();
         nodeIds.forEach(
-            nodeId => this.neighbourHoodMap[nodeId].neighbourIds
-                    .filter(nId => this.nodeModelPositions[nId] === undefined)
+            nodeId => nbhMap[nodeId].neighbourIds
+                    .filter(nId => posMap[nId] === undefined)
                     .forEach(nId => neighbourIds.add(nId))
         );
         return neighbourIds;
     }
 
-    private getGetWeightedNeighbourCenter(nodeId: NodeId): Position {
+    private getGetWeightedNeighbourCenter(nodeId: NodeId, nbhMap: NeighbourHoodMap, posMap: PositionMap): Position {
         const weightedCenter: Position = { x: 0.0, y: 0.0 };
         let totalWeight = 0;
-        const nbh = this.neighbourHoodMap[nodeId];
+        const nbh = nbhMap[nodeId];
         for (const neighbourId of nbh.neighbourIds) {
-            const neighbourPos = this.nodeModelPositions[neighbourId];
+            const neighbourPos = posMap[neighbourId];
             if (neighbourPos) {
                 const weight = nbh.neighbourWeights[neighbourId];
                 weightedCenter.x += neighbourPos.x * weight;
@@ -201,13 +200,13 @@ export class GisPositioningService {
         return weightedCenter;
     }
 
-    private setNeighbourHoodMap(): void {
+    private createNeighbourHoodMap(graphData: GraphElementData): NeighbourHoodMap {
         const nbhMap: NeighbourHoodMap = {};
 
-        for (const node of this.graphData.nodeData) {
+        for (const node of graphData.nodeData) {
             nbhMap[node.id] = { neighbourIds: [], neighbourWeights: {} };
         }
-        for (const edge of this.graphData.edgeData.filter(e => e.source !== e.target)) {
+        for (const edge of graphData.edgeData.filter(e => e.source !== e.target)) {
             const targetNBH = nbhMap[edge.target];
             if (targetNBH) {
                 targetNBH.neighbourWeights[edge.source] = (targetNBH.neighbourWeights[edge.source] || 0) + 1;
@@ -217,11 +216,83 @@ export class GisPositioningService {
                 sourceNBH.neighbourWeights[edge.target] = (sourceNBH.neighbourWeights[edge.target] || 0) + 1;
             }
         }
-        for (const node of this.graphData.nodeData) {
+        for (const node of graphData.nodeData) {
             const nbh = nbhMap[node.id];
             nbh.neighbourIds = Object.keys(nbh.neighbourWeights);
         }
 
-        this.neighbourHoodMap = nbhMap;
+        return nbhMap;
+    }
+
+    private updateGhostPositions(): void {
+        if (this.graphData.ghostElements) {
+            const nodePosInfo = this.getKnownNodePosInfo(this.graphData.ghostElements.nodeData);
+            this.areUnknownGhostPositionsPresent = nodePosInfo.areUnknownPositionsPresent;
+            this.ghostModelPositions = nodePosInfo.posMap;
+            if (this.areUnknownGhostPositionsPresent) {
+                this.setUnknownGhostPositions();
+            }
+        } else {
+            this.areUnknownGhostPositionsPresent = false;
+            this.ghostModelPositions = null;
+        }
+        this.updateCache();
+    }
+
+    private getKnownNodePosInfo(nodesData: CyNodeData[]): NodePosInfo {
+        const posMap: PositionMap = {};
+        let areUnknownGhostPositionsPresent = false;
+        for (const nodeData of nodesData) {
+            const position = this.stationModelPositions[nodeData.station.id];
+            if (position) {
+                posMap[nodeData.id] = position;
+            } else {
+                areUnknownGhostPositionsPresent = true;
+            }
+        }
+        return {
+            posMap: posMap,
+            areUnknownPositionsPresent: areUnknownGhostPositionsPresent
+        };
+    }
+
+    private setUnknownGhostPositions(): void {
+
+        const posMap = { ...this.ghostModelPositions };
+        Object.assign(posMap, this.nodeModelPositions);
+
+        const idsOfConnectedNodesWOPos = this.getNodesWoPosConnectedWithNodeWPos(
+            this.graphData.ghostElements.edgeData,
+            posMap
+        );
+
+        const nbhMap: NeighbourHoodMap = this.createNeighbourHoodMap(this.graphData.ghostElements);
+
+        this.setConnectedPositions(idsOfConnectedNodesWOPos, nbhMap, posMap);
+
+        this.graphData.ghostElements.nodeData
+            .filter(n => this.ghostModelPositions[n.id] === undefined)
+            .forEach(n => {
+                const pos = posMap[n.id];
+                this.ghostModelPositions[n.id] =
+                    pos !== undefined ?
+                    pos :
+                    this.createDefaultPosition();
+            });
+    }
+
+    private setConnectedPositions(idsOfConnectedNodesWOPos: Set<NodeId>, nbhMap: NeighbourHoodMap, posMap: PositionMap): void {
+        while (idsOfConnectedNodesWOPos.size > 0) {
+            const newPosMap: PositionMap = {};
+
+            idsOfConnectedNodesWOPos.forEach(nodeId => {
+                const weightedCenter = this.getGetWeightedNeighbourCenter(nodeId, nbhMap, posMap);
+                newPosMap[nodeId] = getNearestPointOnRect(weightedCenter, this.outerBoundaryRect);
+            });
+
+            Object.assign(posMap, newPosMap);
+
+            idsOfConnectedNodesWOPos = this.getNeighboursWoPosition(idsOfConnectedNodesWOPos, nbhMap, posMap);
+        }
     }
 }

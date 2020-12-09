@@ -1,4 +1,4 @@
-import { Cy, CyElementCollection, CyEdge, CyNode } from './graph.model';
+import { Cy, CyElementCollection, CyEdge, CyNode, CyEdgeCollection } from './graph.model';
 import { Position } from '../data.model';
 
 export class EdgeLabelOffsetUpdater {
@@ -111,6 +111,12 @@ export class EdgeLabelOffsetUpdater {
             } else {
                 this.updateEdgeLabelOffsets(this.cy.edges());
             }
+        }
+    }
+
+    updateEdges(edges: CyEdgeCollection) {
+        if (this.cy) {
+            this.cy.batch(() => this.updateEdgeLabelOffsets(edges));
         }
     }
 

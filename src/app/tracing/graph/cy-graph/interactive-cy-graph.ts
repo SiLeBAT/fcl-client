@@ -1,4 +1,4 @@
-import { ContextMenuRequestInfo, SelectedGraphElements } from '../graph.model';
+import { ContextMenuRequestInfo, CyEdgeCollection, CyEdgeDef, CyNodeDef, SelectedGraphElements } from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
@@ -198,6 +198,62 @@ export class InteractiveCyGraph extends CyGraph {
         this.cy.pan({ ...super.pan });
     }
 
+    private getParallelEdges(edges: CyEdgeCollection): CyEdgeCollection {
+
+        return edges.parallelEdges().difference(edges);
+    }
+
+    private getParallelEdgesOfGhosts(): CyEdgeCollection {
+        const edges = this.cy.edges('.ghost-element');
+        return edges.parallelEdges().difference(edges);
+    }
+
+    private updateGhostElements(updateLabel: boolean) {
+        if (updateLabel) {
+            const edgesToUpdateBefore = this.getParallelEdgesOfGhosts();
+            this.cy.batch(() => this.updateGhostElements(false));
+            const edgesToUpdateAfter = this.cy.edges('.ghost-element').parallelEdges();
+            this.edgeLabelOffsetUpdater.updateEdges(edgesToUpdateBefore.union(edgesToUpdateAfter));
+        } else {
+            this.removeGhostElements();
+            this.addGhostElements();
+        }
+    }
+
+    private addGhostElements() {
+        if (super.data.ghostData !== null) {
+            const ghostElements = this.createGhostElements();
+            if (ghostElements.nodes.length > 0) {
+                this.cy.add(ghostElements.nodes);
+            }
+            if (ghostElements.edges.length > 0) {
+                this.cy.add(ghostElements.edges);
+            }
+        }
+    }
+
+    private removeGhostElements() {
+        this.cy.remove('.ghost-element');
+    }
+
+    private createGhostElements(): { nodes: CyNodeDef[], edges: CyEdgeDef[] } {
+        const ghostNodes = this.createNodes(super.data.ghostData.nodeData, super.data.ghostData.posMap);
+        ghostNodes.forEach(node => {
+            node.selected = false;
+            node.classes = 'ghost-element';
+        });
+        const ghostEdges = this.createEdges(super.data.ghostData.edgeData);
+        ghostEdges.forEach(node => {
+            node.selected = false;
+            node.classes = 'top-center ghost-element';
+        });
+
+        return {
+            nodes: ghostNodes,
+            edges: ghostEdges
+        };
+    }
+
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         const oldData = super.data;
         const oldStyle = super.style;
@@ -210,12 +266,17 @@ export class InteractiveCyGraph extends CyGraph {
         const updateNodePositions = !updateNodes && oldData.nodePositions !== graphData.nodePositions;
         const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
         const updateEdgeLabel = !updateNodes && !updateEdges && oldData.edgeLabelChangedFlag !== graphData.edgeLabelChangedFlag;
+
         const scratchEdges = updateNodes || updateEdges || updateStyle || updateEdgeLabel || updateSelection;
         const scratchNodes = updateNodes || updateStyle || updateSelection;
 
+        const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges;
+        const updateGhosts = oldData.ghostData !== graphData.ghostData;
+
         if (
             updateNodes || updateEdges || updateStyle || updateSelection ||
-            updateNodes || updateLayout || updateEdgeLabel
+            updateNodes || updateLayout || updateEdgeLabel ||
+            (updateGhosts && setAllEdgeLabelOffsets)
         ) {
 
             this.cy.batch(() => {
@@ -238,6 +299,10 @@ export class InteractiveCyGraph extends CyGraph {
                     this.updateStyle();
                 }
 
+                if (updateGhosts) {
+                    this.updateGhostElements(false);
+                }
+
                 if (scratchNodes && scratchEdges) {
                     this.cy.elements().scratch(SCRATCH_UPDATE_NAMESPACE, true);
                 } else if (scratchEdges) {
@@ -245,9 +310,12 @@ export class InteractiveCyGraph extends CyGraph {
                 }
             });
 
-            if (updateNodePositions || updateNodes || updateEdges || scratchEdges) {
+            if (setAllEdgeLabelOffsets) {
                 this.edgeLabelOffsetUpdater.update(true);
             }
+
+        } else if (updateGhosts) {
+            this.updateGhostElements(true);
         }
     }
 }

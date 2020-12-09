@@ -253,21 +253,37 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         const oldGraphData = this.cachedGraphData;
         this.cachedGraphData = graphData;
-        if (
-            graphData.nodePositions !== oldGraphData.nodePositions ||
-            graphData.layout.zoom !== oldGraphData.layout.zoom
-        ) {
-            super.updateGraph(getZoomedGraphData(graphData), styleConfig);
-        } else {
-            super.updateGraph({
-                ...graphData,
-                nodePositions: super.nodePositions,
-                layout: {
-                    zoom: 1,
-                    pan: graphData.layout.pan
-                }
-            }, styleConfig);
+
+        const zoomChanged = graphData.layout.zoom !== oldGraphData.layout.zoom;
+        const nodePositions =
+            zoomChanged || graphData.nodePositions !== oldGraphData.nodePositions ?
+            getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
+            super.data.nodePositions;
+
+        let ghostPositions: PositionMap | null = null;
+        if (graphData.ghostData) {
+            ghostPositions =
+                zoomChanged ||
+                oldGraphData.ghostData === null ||
+                oldGraphData.ghostData.posMap !== graphData.ghostData.posMap ?
+                getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout.zoom) :
+                super.data.ghostData.posMap;
         }
+
+        super.updateGraph({
+            ...graphData,
+            nodePositions: nodePositions,
+            layout: {
+                zoom: 1,
+                pan: graphData.layout.pan
+            },
+            ghostData: graphData.ghostData === null ?
+                null :
+                {
+                    ...graphData.ghostData,
+                    posMap: ghostPositions
+                }
+        }, styleConfig);
     }
 
     protected applyGraphDataChangeBottomUp(graphDataChange: GraphDataChange): void {

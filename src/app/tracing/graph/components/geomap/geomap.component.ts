@@ -16,8 +16,6 @@ export interface MapConfig {
     shapeFileData: ShapeFileData | null;
 }
 
-export type UnknownPosFrameData = BoundaryRect;
-
 interface TypedSimpleChange<T> extends SimpleChange {
     currentValue: T;
     previousValue: T | undefined;
@@ -33,14 +31,14 @@ export class GeoMapComponent implements OnChanges {
     @ViewChild('map', { static: true }) mapElement: ElementRef;
 
     @Input() mapConfig: MapConfig;
-    @Input() frameData: BoundaryRect | null = null;
+    @Input() unknownLatLonRect: BoundaryRect | null = null;
 
     private map: ol.Map | null = null;
 
     constructor(public elementRef: ElementRef) {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.processMapConfigOrFrameDataChanges(changes.mapConfig, changes.frameData);
+        this.processMapConfigOrFrameDataChanges(changes.mapConfig, changes.unknownLatLonRect);
     }
 
     onComponentResized(): void {
@@ -51,13 +49,13 @@ export class GeoMapComponent implements OnChanges {
 
     private processMapConfigOrFrameDataChanges(
         mapConfigChange: TypedSimpleChange<MapConfig> | undefined,
-        frameDataChange: TypedSimpleChange<BoundaryRect | null> | undefined
+        unknownLatLonRectChange: TypedSimpleChange<BoundaryRect | null> | undefined
     ): void {
         if (mapConfigChange !== undefined && mapConfigChange.currentValue.layout !== null) {
             if (this.map === null) {
                 this.initMap(mapConfigChange.currentValue);
-                if (this.frameData !== null) {
-                    this.addFrameLayer(this.frameData);
+                if (this.unknownLatLonRect !== null) {
+                    this.addUnknownLatLonRect(this.unknownLatLonRect);
                 }
                 return; // map and frame are up to date
             } else {
@@ -66,12 +64,12 @@ export class GeoMapComponent implements OnChanges {
         }
 
         // ignore frameData changes until map is initialized
-        if (frameDataChange !== undefined && this.map !== null) {
-            if (frameDataChange.previousValue != null) {
-                this.removeFrameLayer();
+        if (unknownLatLonRectChange !== undefined && this.map !== null) {
+            if (unknownLatLonRectChange.previousValue != null) {
+                this.removeUnknownLatLonRect();
             }
-            if (frameDataChange.currentValue !== null) {
-                this.addFrameLayer(frameDataChange.currentValue);
+            if (unknownLatLonRectChange.currentValue !== null) {
+                this.addUnknownLatLonRect(unknownLatLonRectChange.currentValue);
             }
         }
     }
@@ -116,12 +114,12 @@ export class GeoMapComponent implements OnChanges {
         }
     }
 
-    private addFrameLayer(frameData: BoundaryRect) {
+    private addUnknownLatLonRect(unknownLatLonRect: BoundaryRect) {
         const olCoordTopLeft = UIUtils.positionToOlCoords(
-            frameData.left, frameData.top, 1
+            unknownLatLonRect.left, unknownLatLonRect.top, 1
         );
         const olCoordBottomRight = UIUtils.positionToOlCoords(
-            frameData.right, frameData.bottom, 1
+            unknownLatLonRect.right, unknownLatLonRect.bottom, 1
         );
         setFrameLayer(this.map, {
             xMin: olCoordTopLeft.x,
@@ -131,7 +129,7 @@ export class GeoMapComponent implements OnChanges {
         });
     }
 
-    private removeFrameLayer() {
+    private removeUnknownLatLonRect() {
         removeFrameLayer(this.map);
     }
 
