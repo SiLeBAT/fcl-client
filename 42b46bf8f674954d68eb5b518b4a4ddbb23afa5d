@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44b571cf_a279d8d4",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2020-12-11T19:32:07Z",
+      "side": 1,
+      "message": "please remove this comment and check if the \u0027functional\u0027 comments are still valid",
+      "revId": "42b46bf8f674954d68eb5b518b4a4ddbb23afa5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
