@@ -16,6 +16,24 @@
       "revId": "42b46bf8f674954d68eb5b518b4a4ddbb23afa5d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5abcf095_b034e41a",
+        "filename": "src/app/tracing/graph/gis-positioning.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2020-12-13T22:11:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44b571cf_a279d8d4",
+      "revId": "42b46bf8f674954d68eb5b518b4a4ddbb23afa5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
