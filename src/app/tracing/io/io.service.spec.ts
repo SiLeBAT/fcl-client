@@ -73,7 +73,8 @@ describe('IOService', () => {
                 },
                 highlightingSettings: {
                     invisibleStations: []
-                }
+                },
+                hoverDeliveries: []
             },
             groupSettings: [],
             tracingSettings: {
