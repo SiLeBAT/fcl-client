@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb5fa007_682819f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-18T18:56:11Z",
+      "side": 1,
+      "message": "Please keep the fix in mind.",
+      "revId": "ce3a81f493e22766857f927c55c5c4115ee76dc7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cf356ae_1c0114ae",
+        "filename": "src/app/main-page/presentation/page-header/page-header.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-18T18:56:11Z",
+      "side": 1,
+      "message": "this is really dirty and needs to be fixed as soon as possible!",
+      "revId": "ce3a81f493e22766857f927c55c5c4115ee76dc7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
