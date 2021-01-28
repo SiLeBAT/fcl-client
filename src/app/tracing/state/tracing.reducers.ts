@@ -19,7 +19,7 @@ export interface State {
     tracing: TracingState;
 }
 
-const complexFilterSettings: ComplexRowFilterSettings = {
+export const complexFilterSettings: ComplexRowFilterSettings = {
     conditions: []
 };
 
@@ -452,6 +452,21 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                             invisibleStations: action.payload.invisibleStations
                         },
                         stationPositions: action.payload.stationPositions
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetStationHighlightingRulesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: {
+                            ...state.fclData.graphSettings.highlightingSettings,
+                            stations: action.payload.stationHighlightingData
+                        }
                     }
                 }
             };

@@ -13,7 +13,8 @@ import {
 import { filterTableRows } from '../shared';
 import { InputData as FilterTableViewInputData, TableFilterChange } from '../filter-table-view/filter-table-view.component';
 import * as _ from 'lodash';
-import { FilterTableSettings, VisibilityFilterState, ColumnFilterSettings, ShowType, ExtendedOperationType, LogicalFilterCondition } from '../configuration.model';
+import { FilterTableSettings, ShowType, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
+import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 export interface InputData {
     dataTable: DataTable;
@@ -25,11 +26,6 @@ interface RowFilterMap {
     complexFilter: ComplexRowFilter;
     standardFilter: OneTermForNColumnsRowFilter;
 }
-
-interface PropValueMap {
-    [key: string]: (string | number | boolean)[];
-}
-
 @Component({
     selector: 'fcl-filter-elements-view',
     templateUrl: './filter-elements-view.component.html',
@@ -214,7 +210,7 @@ export class FilterElementsViewComponent {
 
     private updateDataColumns(): void {
         if (!this.dataColumns_ || this.inputData.dataTable.columns !== this.processedInput_.dataTable.columns) {
-            this.dataColumns_ = this.inputData.dataTable.columns.filter(c => c.id !== 'highlightingInfo');
+            this.dataColumns_ = ComplexFilterUtils.extractDataColumns(this.inputData.dataTable);
         }
     }
 
@@ -262,17 +258,7 @@ export class FilterElementsViewComponent {
 
     private updatePropValueMap(): void {
         if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.inputData.dataTable.rows) {
-            const propToValuesMap: PropValueMap = {};
-            for (const column of this.dataColumns_) {
-                const values = _.uniq(
-                    this.inputData.dataTable.rows
-                        .map(r => r[column.id] as (string | number | boolean))
-                        .filter(v => v !== undefined && v !== null)
-                    ).sort();
-                propToValuesMap[column.id] = values;
-            }
-            propToValuesMap[''] = _.uniq([].concat(...Object.values(propToValuesMap))).sort();
-            this.propToValuesMap_ = propToValuesMap;
+            this.propToValuesMap_ = ComplexFilterUtils.extractPropValueMap(this.inputData.dataTable, this.dataColumns_);
         }
     }
 }
