@@ -278,6 +278,17 @@ export const getStationFilterData = createSelector(
     })
 );
 
+export const getStationHighlightingData = createSelector(
+    getBasicGraphData,
+    getStationHighlightingSettings,
+    getFilterSettings,
+    (basicGraphData, stationHighlightingSettings, filterSettings) => ({
+        graphState: basicGraphData,
+        highlightingTableState: stationHighlightingSettings,
+        complexFilterSettings: filterSettings.stationFilter.complexFilter
+    })
+);
+
 export const getDeliveryFilterData = createSelector(
     getBasicGraphData,
     getFilterSettings,

@@ -455,6 +455,7 @@ export class GraphService {
             const colorInfo = this.getColorInfo(station.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR);
             node.stopColors = colorInfo.stopColors;
             node.stopPositions = colorInfo.stopPositions;
+            node.shape = station.highlightingInfo.shape ? station.highlightingInfo.shape : NodeShapeType.CIRCLE;
             node.backward = station.backward;
             node.commonLink = station.commonLink;
             node.crossContamination = station.crossContamination;
@@ -603,9 +604,13 @@ export class GraphService {
             this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType ||
             tracPropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE;
 
+        const statHighlightingChanged =
+            !this.cachedState ||
+            state.highlightingSettings.stations !== this.cachedState.highlightingSettings.stations;
+
         const nodePropsUpdateRequired =
             !nodeCreationRequired &&
-            tracPropsChanged;
+            (tracPropsChanged || statHighlightingChanged);
 
         const nodeSelUpdateRequired =
             !nodeCreationRequired &&

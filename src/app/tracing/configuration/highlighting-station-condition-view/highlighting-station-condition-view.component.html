@@ -1,0 +1,81 @@
+<div class="fcl-new-highlighting-rule-container">
+
+    <fcl-rule-name-view
+        class="fcl-new-highlighting-rule-name-field"
+        (ruleNameChange) = "onRuleNameChange($event)"
+    >
+    </fcl-rule-name-view>
+
+    <div class="fcl-new-highlighting-rule-shape-field">
+        <fcl-shape-selector-view
+            class="fcl-complex-filter-form-field fcl-font-size-08"
+            [availableShapeTypes]="availableShapeTypes"
+            [value]="undefined"
+            (valueChange)="onShapeChange($event)"
+        ></fcl-shape-selector-view>
+    </div>
+
+    <fcl-color-picker-view
+        class="fcl-new-highlighting-rule-color-field"
+        [color]="color"
+        (colorChange)="onColorChange($event)"
+    >
+    </fcl-color-picker-view>
+
+    <button
+        mat-stroked-button
+        class="fcl-delete-highlighting-button fcl-filter-condition-button"
+        matTooltip="Delete highlighting rule"
+        matTooltipPosition="above"
+        color="primary"
+        (click)="onDeleteRule()"
+        >
+        <mat-icon>clear</mat-icon>
+    </button>
+
+    <div class="fcl-new-highlighting-rule-complex-filter">
+        <fcl-complex-filter-view
+            [conditions] = "complexFilterSettings"
+            [availableProperties] = "dataColumns"
+            [availableOperatorTypes] = "availableOperatorTypes"
+            [propToValuesMap] = "propToValuesMap"
+            (conditionsChange) = "onComplexFilterChange($event)"
+        ></fcl-complex-filter-view>
+    </div>
+
+    <div class="fcl-action-highlighting-button-container">
+        <button
+            mat-stroked-button
+            class="fcl-action-highlighting-button"
+            matTooltip="Apply condition"
+            matTooltipPosition="above"
+            color="primary"
+            (click)="onApplyRule()"
+            >
+            <mat-icon>done</mat-icon>
+            Apply
+        </button>
+        <button
+            mat-stroked-button
+            class="fcl-action-highlighting-button"
+            matTooltip="Close dialogue"
+            matTooltipPosition="above"
+            color="primary"
+            (click)="onCancelRule()"
+            >
+            <mat-icon>clear</mat-icon>
+            Cancel
+        </button>
+        <button
+            mat-stroked-button
+            class="fcl-action-highlighting-button"
+            matTooltip="Apply condition and close dialogue"
+            matTooltipPosition="above"
+            color="primary"
+            (click)="onOkRule()"
+            >
+            <mat-icon>done</mat-icon>
+            OK
+        </button>
+    </div>
+</div>

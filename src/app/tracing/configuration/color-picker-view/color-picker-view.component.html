@@ -1,0 +1,11 @@
+<div
+    [(colorPicker)]="color"
+    [style.color]="color"
+    [cpPosition]="'top'"
+    [cpOutputFormat]="'rgba'"
+    [cpOKButton]="true"
+    [cpCancelButton]="true"
+
+    (colorPickerSelect)="onColorPickerSelect($event)"
+    > <span class="fcl-span-font-size-2rem">Select color &#9660;</span>
+</div>

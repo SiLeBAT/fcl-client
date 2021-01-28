@@ -122,4 +122,6 @@ export class Constants {
     );
 
     static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';
+
+    static readonly NOSHAPE_TYPE = 'NOSHAPE';
 }

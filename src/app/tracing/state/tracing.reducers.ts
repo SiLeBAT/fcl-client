@@ -456,6 +456,21 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+        case TracingActionTypes.AddColoursAndShapesHighlightingRuleSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: {
+                            ...state.fclData.graphSettings.highlightingSettings,
+                            stations: action.payload.stationHighlightingData
+                        }
+                    }
+                }
+            };
+
         case TracingActionTypes.SetTracingSettingsSOA:
             return {
                 ...state,
