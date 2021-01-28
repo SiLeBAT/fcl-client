@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { STATE_SLICE_NAME } from './tracing.reducers';
+import { STATE_SLICE_NAME, complexFilterSettings } from './tracing.reducers';
 import { TracingState } from '../state.model';
 import { DeliveriesTabId, FilterTabId, HighlightingTabId, StationsTabId } from '../configuration/configuration.constants';
 
@@ -275,6 +275,17 @@ export const getStationFilterData = createSelector(
     (basicGraphData, filterSettings) => ({
         graphState: basicGraphData,
         filterTableState: filterSettings.stationFilter
+    })
+);
+
+export const getStationHighlightingData = createSelector(
+    getBasicGraphData,
+    getStationHighlightingSettings,
+    // getFilterSettings,
+    (basicGraphData, stationHighlightingSettings) => ({
+        graphState: basicGraphData,
+        highlightingTableState: stationHighlightingSettings,
+        complexFilterSettings: complexFilterSettings
     })
 );
 

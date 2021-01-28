@@ -240,7 +240,7 @@ export class DataService {
         } else if (this.cachedState.tracingSettings !== state.tracingSettings) {
             this.updateCache(state, false, false);
         } else if (
-            this.cachedState.highlightingSettings !== state.highlightingSettings &&
+            this.cachedState.highlightingSettings !== state.highlightingSettings ||
             this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations
         ) {
             this.updateCache(state, false, false, false, true);

@@ -61,6 +61,10 @@ export interface FilterSettings {
     deliveryFilter: FilterTableSettings;
 }
 
+export interface PropValueMap {
+    [key: string]: (string | number | boolean)[];
+}
+
 export enum ShowType {
     ALL = 'Show all' as any,
     SELECTED_ONLY = 'Show only selected' as any,

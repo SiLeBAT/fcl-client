@@ -54,7 +54,23 @@
 
             ></fcl-highlighting-station-list-view>
 
+            <fcl-add-highlighting-condition-button-view
+                [buttonDisabled]="addButtonDisabled"
+                (addHighlighting)="onAddHighlightingRule()"
+            >
+            </fcl-add-highlighting-condition-button-view>
+
         </div>
+
+        <fcl-highlighting-station-condition-view
+            *ngIf="showHighlightingDialog"
+            [inputData]="highlightingStationConditionViewInputData"
+            (deleteHighlightingRule)="onDeleteHighlightingRule()"
+            (applyHighlightingRule)="onApplyHighlightingRule($event)"
+            (cancelHighlightingRule)="onCancelHighlightingRule()"
+            (okHighlightingRule)="onOkHighlightingRule($event)"
+        >
+        </fcl-highlighting-station-condition-view>
 
     </mat-expansion-panel>
 

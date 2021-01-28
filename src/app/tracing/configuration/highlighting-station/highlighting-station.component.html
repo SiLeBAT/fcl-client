@@ -1,5 +1,6 @@
 <fcl-highlighting-station-view
     class="fcl-hightlighting-station-view"
-    [colorAndShapeHighlightings]="colorAndShapeHighlightings">
-
+    [inputData]="highlightingStationViewInputData"
+    (highlightingConditionChange)="onHighlightingConditionChange($event)"
+>
 </fcl-highlighting-station-view>
