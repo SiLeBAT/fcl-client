@@ -5,7 +5,8 @@ import {
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
     ROASettings,
     CrossContTraceType,
-    DeliveryId
+    DeliveryId,
+    StationHighlightingData
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -51,7 +52,8 @@ export enum TracingActionTypes {
     ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
     SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
-    ResetTracingStateSOA = '[Tracing] Reset Tracing State'
+    ResetTracingStateSOA = '[Tracing] Reset Tracing State',
+    SetStationHighlightingRulesSOA = '[Colours and Shapes Highlighting] Set Station Highlighting Rules'
 }
 
 export class TracingActivated implements Action {
@@ -286,6 +288,13 @@ export class ResetTracingStateSOA implements Action {
     readonly type = TracingActionTypes.ResetTracingStateSOA;
 }
 
+// export class AddColoursAndShapesHighlightingRuleSOA implements Action {
+export class SetStationHighlightingRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetStationHighlightingRulesSOA;
+
+    constructor(public payload: { stationHighlightingData: StationHighlightingData[] }) {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -326,4 +335,5 @@ export type TracingActions =
     | ShowGhostStationMSA
     | ClearGhostStationMSA
     | SetHoverDeliveriesSOA
-    | ResetTracingStateSOA;
+    | ResetTracingStateSOA
+    | SetStationHighlightingRulesSOA;

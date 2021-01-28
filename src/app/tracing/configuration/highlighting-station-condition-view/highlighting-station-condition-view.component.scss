@@ -1,0 +1,66 @@
+@import '../../../../assets/sass/base';
+
+.fcl-new-highlighting-rule-container {
+    display: grid;
+    grid-template-areas:
+        "rulename rulename delete"
+        "shape color delete"
+        "complex complex complex"
+        "ok ok ok";
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-rows: auto;
+    grid-gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    margin-top: 0.5rem;
+}
+
+.fcl-new-highlighting-rule-name-field {
+    grid-area: rulename;
+}
+
+.fcl-new-highlighting-rule-shape-field {
+    grid-area: shape;
+}
+
+.fcl-new-highlighting-rule-color-field {
+    grid-area: color;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 0.25em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.fcl-new-highlighting-rule-color-field:hover {
+    border: 1px solid rgba(0, 0, 0, 0.9);
+}
+
+.fcl-span-font-size-2rem {
+    font-size: 1.2rem;
+}
+
+.fcl-delete-highlighting-button {
+    grid-area: delete;
+}
+
+.fcl-action-highlighting-button {
+    flex: 1;
+}
+
+.fcl-delete-highlighting-button:hover,
+.fcl-action-highlighting-button:hover {
+    background-color: $fcl-accent-300;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.fcl-new-highlighting-rule-complex-filter {
+    grid-area: complex;
+}
+
+.fcl-action-highlighting-button-container {
+    grid-area: ok;
+    display: flex;
+    justify-content: space-between;
+}

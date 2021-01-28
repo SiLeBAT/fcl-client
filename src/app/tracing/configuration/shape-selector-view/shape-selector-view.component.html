@@ -1,16 +1,16 @@
 <mat-form-field
-    class="fcl-complex-filter-form-field"
+    class="fcl-new-highlighting-rule-form-field"
     appearance="outline"
     color="primary">
     <mat-select
         [value]="value"
         (valueChange)="onValueChange($event)"
-        >
-        <ng-container *ngFor="let junktor of availableJunktors">
+        placeholder="Shape">
+        <ng-container *ngFor="let type of availableShapeTypes">
             <mat-option
                 class="fcl-filter-select-option"
-                [value]="junktor">
-                {{ junktorLabel[junktor] }}
+                [value]="type">
+                {{ getShapeLabel(type) }}
             </mat-option>
         </ng-container>
     </mat-select>
