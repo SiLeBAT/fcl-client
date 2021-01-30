@@ -35,6 +35,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a254763b_1b56e556",
+        "filename": "src/app/tracing/configuration/color-picker-view/color-picker-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6974cef_b869baee",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "42aff532_efa07be8",
@@ -48,6 +66,24 @@
       "writtenOn": "2021-01-30T03:47:56Z",
       "side": 1,
       "message": "[R]\nPlease reflect nullable values in type declaration:\nprivate x: Y | null \u003d null;",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "219b6540_0eb863ab",
+        "filename": "src/app/tracing/configuration/highlighting-station-condition-view/highlighting-station-condition-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42aff532_efa07be8",
       "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -69,6 +105,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "07b89d8b_6d6fdf15",
+        "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d0bfd1f_13f8a7e1",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a58c6fc8_72582337",
@@ -86,6 +140,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "561d0835_2e20c957",
+        "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a58c6fc8_72582337",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "806927a9_f1f65e70",
@@ -99,6 +171,24 @@
       "writtenOn": "2021-01-30T03:47:56Z",
       "side": 1,
       "message": "string is already the implicit type.",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c805dde4_1de792ee",
+        "filename": "src/app/tracing/configuration/rule-name-view/rule-name-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "806927a9_f1f65e70",
       "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -256,6 +346,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5fc0821f_b1996b8a",
+        "filename": "src/app/tracing/state/tracing.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31d89c90_5d828ab2",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0333f420_7dbc69bf",
@@ -269,6 +377,24 @@
       "writtenOn": "2021-01-30T03:47:56Z",
       "side": 1,
       "message": "[R]\nRemove duplicate line",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e98516f9_7f9a6cd1",
+        "filename": "src/app/tracing/state/tracing.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1015774
+      },
+      "writtenOn": "2021-01-30T10:58:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0333f420_7dbc69bf",
       "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
