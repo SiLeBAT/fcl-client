@@ -1,0 +1,293 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "440ce4c9_22bdad76",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "Hey Birgit,\n\nnur ein paar Sachen. Reject-Gründe habe ich mit [R] gekennzeichnet.\nDie NodeShapeViewKomponente habe ich mit mehrere Vorschlägen, die sehr ähnlich sind, versehen. \n\nLG, Marco",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6974cef_b869baee",
+        "filename": "src/app/tracing/configuration/color-picker-view/color-picker-view.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "What about adding the line\n[cpAlphaChannel]\u003d\"\u0027disabled\u0027\"\n?",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42aff532_efa07be8",
+        "filename": "src/app/tracing/configuration/highlighting-station-condition-view/highlighting-station-condition-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "[R]\nPlease reflect nullable values in type declaration:\nprivate x: Y | null \u003d null;",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d0bfd1f_13f8a7e1",
+        "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "[R]\nplease use\nx: Y | null \u003d null;\nor \nx: Y | undefined;\ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a58c6fc8_72582337",
+        "filename": "src/app/tracing/configuration/highlighting-station/highlighting-station.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "I guess newHighlightingRules instead of newHighlightingRule is meant?",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "806927a9_f1f65e70",
+        "filename": "src/app/tracing/configuration/rule-name-view/rule-name-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "string is already the implicit type.",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "40ae0729_de755415",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nNodeShapeType | null\ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbb864df_2a0ab360",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nset availableShapeTypes(value: (NodeShapeType | null)[]) {\ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c624cb80_8c73ceb6",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nNodeShapeType | null \ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1b1af70f_84b140ce",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nNodeShapeType | null \ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d84c07f_a2c0c69b",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nNodeShapeType | null \ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b79df780_d81dfc75",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nRecord\u003cNodeShapeType, string\u003e \ninstead\nand remove the entry for no shape",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d93ffe62_d4ba4c65",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \ngetShapeLabel(type: NodeShapeType | null): string {\n  return type \u003d\u003d\u003d null ? NO_SHAPE_LABEL : this.shapeLabel[type];\n}\ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a49eb3dc_675b7a4b",
+        "filename": "src/app/tracing/configuration/shape-selector-view/shape-selector-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "you could use \nNodeShapeType | null \ninstead",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31d89c90_5d828ab2",
+        "filename": "src/app/tracing/state/tracing.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "Name of the action is misleading. This action sets all station highlighting rules.",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0333f420_7dbc69bf",
+        "filename": "src/app/tracing/state/tracing.actions.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "[R]\nRemove duplicate line",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1c344b66_c6f0a1fb",
+        "filename": "src/app/tracing/state/tracing.selectors.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-01-30T03:47:56Z",
+      "side": 1,
+      "message": "[R]\nWhy is here getFilterSettings involved?",
+      "revId": "1acfbf87b1678583be36cda74ab44be74a8c703a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
