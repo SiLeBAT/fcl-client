@@ -1,6 +1,7 @@
-import { HostListener } from '@angular/core';
+import { HostListener, Directive } from '@angular/core';
 
-export abstract class GuardedUnloadComponent {
+@Directive()
+export abstract class GuardedUnloadDirective {
 
     abstract unloadGuard(): boolean;
 

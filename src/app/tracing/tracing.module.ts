@@ -136,17 +136,6 @@ import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-
         ColorPickerViewComponent,
         RuleNameViewComponent
     ],
-    exports: [],
-    entryComponents: [
-        DialogActionsComponent,
-        DialogAlertComponent,
-        DialogPromptComponent,
-        DialogSelectComponent,
-        StationPropertiesComponent,
-        DeliveryPropertiesComponent,
-        DeliveriesPropertiesComponent,
-        MergeStationsDialogComponent,
-        ReportConfigurationComponent
-    ]
+    exports: []
 })
 export class TracingModule { }

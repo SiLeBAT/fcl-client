@@ -77,10 +77,7 @@ import { NewsActivateViewComponent } from './presentation/news-activate-view/new
         NewsActivateComponent,
         NewsActivateViewComponent
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    entryComponents: [
-        GdprAgreementComponent
-    ]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 
 })
 export class UserModule { }

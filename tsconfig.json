@@ -30,9 +30,12 @@
         // "noUnusedParameters": true,
 
         "target": "es2015",
-        "typeRoots": ["node_modules/@types"],
+        "typeRoots": [
+            "node_modules/@types",
+            "src/typings.d.ts"
+        ],
         "lib": ["es2019", "dom"],
-        "module": "esnext"
+        "module": "es2020"
     },
     "exclude": [
         "**/*.spec.ts"

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_LABEL_GLOBAL_OPTIONS } from '@angular/material/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -50,7 +50,7 @@ import { MatListModule } from '@angular/material/list';
         MatListModule
     ],
     providers: [{
-        provide: MAT_LABEL_GLOBAL_OPTIONS,
+        provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
         useValue: { float: 'auto' }
     }]
 })

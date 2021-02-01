@@ -15,7 +15,7 @@ export class ToolbarActionComponent implements OnInit {
 
     private _graphSettings: GraphSettings;
 
-    @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
+    @ViewChild('fileInput') fileInput: ElementRef;
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {

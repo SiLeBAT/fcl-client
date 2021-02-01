@@ -21,7 +21,7 @@ describe('IOService', () => {
             ]
         });
 
-        ioService = TestBed.get(IOService);
+        ioService = TestBed.inject(IOService);
     }));
 
     it('should instantiate the io service', () => {
