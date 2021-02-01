@@ -45,6 +45,9 @@
       "rxjs-no-unsafe-takeuntil": {
         "severity": "error"
       },
+      "deprecation": {
+        "severity": "warning"
+      },
       "ter-indent": [
         true,
         4,
@@ -120,8 +123,6 @@
       "no-trailing-whitespace": true,
       "no-unnecessary-initializer": true,
       "no-unused-expression": true,
-      "no-unused-variable": false,
-      "no-use-before-declare": true,
       "no-var-keyword": true,
       "object-literal-sort-keys": false,
       "one-line": [

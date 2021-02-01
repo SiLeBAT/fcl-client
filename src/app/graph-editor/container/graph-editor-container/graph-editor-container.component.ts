@@ -5,7 +5,7 @@ import * as TracingSelectors from '../../../tracing/state/tracing.selectors';
 import { Store, select } from '@ngrx/store';
 import { VisioToMxGraphService } from '../../services/visio-to-mxgraph.service';
 import { takeWhile } from 'rxjs/operators';
-import { GuardedUnloadComponent } from '../../../shared/container/guarded-unload.component';
+import { GuardedUnloadDirective } from '../../../shared/container/guarded-unload.directive';
 import { Observable } from 'rxjs';
 import { GraphEditorComponent } from '@app/graph-editor/presentation/graph-editor/graph-editor.component';
 
@@ -15,7 +15,7 @@ import { GraphEditorComponent } from '@app/graph-editor/presentation/graph-edito
     styleUrls: ['./graph-editor-container.component.scss']
 
 })
-export class GraphEditorContainerComponent extends GuardedUnloadComponent implements OnInit, OnDestroy {
+export class GraphEditorContainerComponent extends GuardedUnloadDirective implements OnInit, OnDestroy {
 
     @ViewChild(GraphEditorComponent, { static: true }) graphEditorComponent;
 

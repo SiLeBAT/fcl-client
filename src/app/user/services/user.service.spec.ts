@@ -30,8 +30,8 @@ describe('UserService', () => {
                 UserService
             ]
         });
-        userService = TestBed.get(UserService);
-        httpTestingController = TestBed.get(HttpTestingController);
+        userService = TestBed.inject(UserService);
+        httpTestingController = TestBed.inject(HttpTestingController);
     }));
 
     afterEach(() => {

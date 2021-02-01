@@ -37,7 +37,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
 
     private componentIsActive = true;
     private stateSubscription: Subscription | null = null;
-    private cachedData: CachedData | null = null;;
+    private cachedData: CachedData | null = null;
     private cachedState: HighlightingTableState | null = null;
     private highlightingStationViewInputData_: HighlightingInputData | null = null;
 

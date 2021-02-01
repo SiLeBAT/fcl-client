@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routing.module';
 import { NgModule } from '@angular/core';
-import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
@@ -22,7 +21,12 @@ import { MainPageModule } from './main-page/main-page.module';
         BrowserAnimationsModule,
         MainPageModule,
         UserModule,
-        StoreModule.forRoot({}),
+        StoreModule.forRoot({}, {
+            runtimeChecks: {
+                strictStateImmutability: false,
+                strictActionImmutability: false
+            }
+        }),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({
             name: 'FCL Devtools',

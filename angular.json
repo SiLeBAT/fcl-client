@@ -11,6 +11,19 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+                "cytoscape",
+                "zxcvbn",
+                "rbush",
+                "ajv",
+                "css-element-queries",
+                "assert",
+                "pbf",
+                "pixelworks/lib/index",
+                "javascript-lp-solver",
+                "lodash"
+            ],
+            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -48,6 +61,12 @@
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -65,6 +84,12 @@
               ]
             },
             "qa": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -73,6 +98,12 @@
               ]
             },
             "serverless": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -186,7 +217,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "fcl",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "fcl"
