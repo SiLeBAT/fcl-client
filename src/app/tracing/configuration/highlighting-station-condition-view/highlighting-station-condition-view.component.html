@@ -22,17 +22,6 @@
     >
     </fcl-color-picker-view>
 
-    <button
-        mat-stroked-button
-        class="fcl-delete-highlighting-button fcl-filter-condition-button"
-        matTooltip="Delete highlighting rule"
-        matTooltipPosition="above"
-        color="primary"
-        (click)="onDeleteRule()"
-        >
-        <mat-icon>clear</mat-icon>
-    </button>
-
     <div class="fcl-new-highlighting-rule-complex-filter">
         <fcl-complex-filter-view
             [conditions] = "complexFilterSettings"
