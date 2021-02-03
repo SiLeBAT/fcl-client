@@ -3,8 +3,8 @@
 .fcl-new-highlighting-rule-container {
     display: grid;
     grid-template-areas:
-        "rulename rulename delete"
-        "shape color delete"
+        "rulename rulename ."
+        "shape color ."
         "complex complex complex"
         "ok ok ok";
     grid-template-columns: 2fr 2fr 1fr;
@@ -41,15 +41,10 @@
     font-size: 1.2rem;
 }
 
-.fcl-delete-highlighting-button {
-    grid-area: delete;
-}
-
 .fcl-action-highlighting-button {
     flex: 1;
 }
 
-.fcl-delete-highlighting-button:hover,
 .fcl-action-highlighting-button:hover {
     background-color: $fcl-accent-300;
     color: rgba(255, 255, 255, 0.9);

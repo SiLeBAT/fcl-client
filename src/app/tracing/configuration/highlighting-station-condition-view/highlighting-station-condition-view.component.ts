@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { DataTable, LogicalCondition, NodeShapeType, OperationType, StationHighlightingData, TableColumn } from '@app/tracing/data.model';
-import { ComplexRowFilterSettings, ExtendedOperationType, JunktorType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
+import { DataTable, LogicalCondition, NodeShapeType, StationHighlightingData, TableColumn } from '@app/tracing/data.model';
+import { ComplexRowFilterSettings, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import * as _ from 'lodash';
-import { Constants } from '@app/tracing/util/constants';
 
 export interface HighlightingConditionInputData {
     dataTable: DataTable;
@@ -21,7 +20,6 @@ export class HighlightingStationConditionViewComponent {
 
     @Input() inputData: HighlightingConditionInputData;
 
-    @Output() deleteHighlightingRule = new EventEmitter();
     @Output() applyHighlightingRule = new EventEmitter<StationHighlightingData>();
     @Output() cancelHighlightingRule = new EventEmitter();
     @Output() okHighlightingRule = new EventEmitter<StationHighlightingData>();
@@ -84,7 +82,6 @@ export class HighlightingStationConditionViewComponent {
     onShapeChange(shapeType: (NodeShapeType | null)): void {
         this.stationHighlightingCondition_ = {
             ...this.stationHighlightingCondition_,
-            // shape: (shapeType === Constants.NOSHAPE_TYPE ? null : shapeType) as (NodeShapeType | null)
             shape: shapeType
         };
     }
@@ -95,10 +92,6 @@ export class HighlightingStationConditionViewComponent {
             ...this.stationHighlightingCondition_,
             logicalConditions: logicalConditions
         };
-    }
-
-    onDeleteRule(): void {
-        this.deleteHighlightingRule.emit();
     }
 
     onApplyRule(): void {

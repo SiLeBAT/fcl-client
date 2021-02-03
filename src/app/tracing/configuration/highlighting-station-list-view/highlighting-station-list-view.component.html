@@ -1,4 +1,5 @@
 <mat-list id="fcl-highlighting-station-list-view-list" dense>
+
     <mat-list-item
         class="fcl-highlighting-station-list-view-list-item"
         *ngFor="let item of colorAndShapeHighlightings"
@@ -15,15 +16,19 @@
             ></fcl-node-symbol-view>
         </div>
 
-        <div class="fcl-highlighting-station-list-item-fix">
-            <mat-icon
-                matTooltip="Conflicting Highlighting Rule"
-                matTooltipPosition="above"
-                color="warn"
-            >
-                report_problem
-            </mat-icon>
+        <div
+            class="fcl-highlighting-station-list-item fcl-highlighting-station-list-item-end"
+        >
+            500
         </div>
+
+        <mat-button-toggle
+            class="fcl-highlighting-station-list-view-legend-button fcl-highlighting-station-list-item-fix"
+            color="primary"
+            value="legend"
+        >
+            L
+        </mat-button-toggle>
 
         <button
             mat-button
@@ -34,17 +39,15 @@
             <mat-icon>edit</mat-icon>
         </button>
 
-        <mat-button-toggle
-            class="fcl-highlighting-station-list-view-legend-button fcl-highlighting-station-list-item-fix"
-            value="legend"
+        <button
+            mat-button
+            matTooltip="Delete Highlighting Rule"
+            matTooltipPosition="above"
+            color="warn"
         >
-            L
-        </mat-button-toggle>
+            <mat-icon>delete forever</mat-icon>
+        </button>
 
-        <div
-            class="fcl-highlighting-station-list-item fcl-highlighting-station-list-item-end"
-        >
-            500
-        </div>
     </mat-list-item>
+
 </mat-list>
