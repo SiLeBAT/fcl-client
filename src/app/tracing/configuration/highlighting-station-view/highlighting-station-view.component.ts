@@ -8,6 +8,11 @@ export interface HighlightingInputData {
     complexFilterSettings: ComplexRowFilterSettings;
 }
 
+export interface HighlightingConditionChangeData {
+    stationHighlightingData: StationHighlightingData[];
+    indexNewRule: number;
+}
+
 @Component({
     selector: 'fcl-highlighting-station-view',
     templateUrl: './highlighting-station-view.component.html',
@@ -16,7 +21,9 @@ export interface HighlightingInputData {
 })
 export class HighlightingStationViewComponent {
     @Input() inputData: HighlightingInputData;
-    @Output() highlightingConditionChange = new EventEmitter<StationHighlightingData[]>();
+    @Input() indexNewRule: number;
+
+    @Output() highlightingConditionChange = new EventEmitter<HighlightingConditionChangeData>();
 
     get colorAndShapeHighlightings(): StationHighlightingData[] {
         this.processLastInputIfNecessary();
@@ -30,7 +37,7 @@ export class HighlightingStationViewComponent {
     }
 
     showHighlightingDialog = false;
-    addButtonDisabled = false;
+    showAddHighlightingButton = true;
     labelsOpenState = false;
     stationSizeOpenState = false;
     coloursAndShapesOpenState = false;
@@ -44,9 +51,7 @@ export class HighlightingStationViewComponent {
     onAddHighlightingRule(): void {
         this.switchShowHighlightingDialogueState();
         this.switchAddButtonState();
-    }
-
-    onDeleteHighlightingRule() {
+        this.resetIndexNewRule();
     }
 
     onApplyHighlightingRule(newHighlightingRule: StationHighlightingData): void {
@@ -65,20 +70,36 @@ export class HighlightingStationViewComponent {
     }
 
     private changeHighlightingConditionAndEmit(newHighlightingRule: StationHighlightingData): void {
-        const stationHighlightingData: StationHighlightingData[] = [
-            ...this.colorAndShapeHighlightings,
-            newHighlightingRule
-        ];
+        let stationHighlightingData: StationHighlightingData[];
 
-        this.highlightingConditionChange.emit(stationHighlightingData);
+        if (this.indexNewRule) {
+            stationHighlightingData = [
+                ...this.processedInput_.stationHighlightingData
+            ];
+            stationHighlightingData[this.indexNewRule] = newHighlightingRule;
+        } else {
+            stationHighlightingData = [
+                ...this.processedInput_.stationHighlightingData,
+                newHighlightingRule
+            ];
+        }
+
+        this.highlightingConditionChange.emit({
+            stationHighlightingData: stationHighlightingData,
+            indexNewRule: (stationHighlightingData.length - 1)
+        });
     }
 
     private switchAddButtonState(): void {
-        this.addButtonDisabled = !this.addButtonDisabled;
+        this.showAddHighlightingButton = !this.showAddHighlightingButton;
     }
 
     private switchShowHighlightingDialogueState(): void {
         this.showHighlightingDialog = !this.showHighlightingDialog;
+    }
+
+    private resetIndexNewRule() {
+        this.indexNewRule = null;
     }
 
     private processLastInputIfNecessary(): void {

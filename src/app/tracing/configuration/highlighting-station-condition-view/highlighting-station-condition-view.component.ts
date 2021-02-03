@@ -16,7 +16,7 @@ export interface HighlightingConditionInputData {
     encapsulation: ViewEncapsulation.None
 })
 export class HighlightingStationConditionViewComponent {
-    private static readonly COLORPICKER_DEFAULT_COLOR = 'rgba(0, 0, 0)';
+    private static readonly COLORPICKER_DEFAULT_COLOR = 'rgba(3, 78, 162)';
 
     @Input() inputData: HighlightingConditionInputData;
 
@@ -169,7 +169,7 @@ export class HighlightingStationConditionViewComponent {
         return {
             name: '',
             showInLegend: true,
-            color: [0, 0, 0],
+            color: this.convertColorToHighlightingColor(HighlightingStationConditionViewComponent.COLORPICKER_DEFAULT_COLOR),
             invisible: false,
             adjustThickness: false,
             labelProperty: null,

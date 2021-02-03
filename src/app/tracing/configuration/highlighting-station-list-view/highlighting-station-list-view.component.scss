@@ -15,6 +15,9 @@
 .fcl-highlighting-station-list-item-end {
     justify-self: end;
 }
+.fcl-highlighting-station-list-item-end .fcl-highlighting-station-list-item-count {
+    padding-right: 1rem;
+}
 
 .fcl-highlighting-station-list-view-legend-button,
 .fcl-highlighting-station-list-view-legend-button .mat-button-toggle-button .mat-button-toggle-label-content {

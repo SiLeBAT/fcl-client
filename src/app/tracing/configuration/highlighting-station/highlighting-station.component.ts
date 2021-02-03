@@ -8,7 +8,7 @@ import * as tracingSelectors from '../../state/tracing.selectors';
 import { takeWhile } from 'rxjs/operators';
 import { AlertService } from '@app/shared/services/alert.service';
 import { ComplexRowFilterSettings } from '../configuration.model';
-import { HighlightingInputData } from '../highlighting-station-view/highlighting-station-view.component';
+import { HighlightingConditionChangeData, HighlightingInputData } from '../highlighting-station-view/highlighting-station-view.component';
 import { TableService } from '@app/tracing/services/table.service';
 import { DataService } from '@app/tracing/services/data.service';
 
@@ -30,6 +30,12 @@ interface CachedData {
 })
 export class HighlightingStationComponent implements OnInit, OnDestroy {
 
+    get highlightingStationViewInputData(): HighlightingInputData {
+        return this.highlightingStationViewInputData_;
+    }
+
+    indexNewRule: number = null;
+
     private isHighlightingStationTabActive$: Observable<boolean> = this.store.pipe(
         select(tracingSelectors.getIsHighlightingStationTabActive),
         takeWhile(() => this.componentIsActive)
@@ -40,10 +46,6 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
     private cachedData: CachedData | null = null;
     private cachedState: HighlightingTableState | null = null;
     private highlightingStationViewInputData_: HighlightingInputData | null = null;
-
-    get highlightingStationViewInputData(): HighlightingInputData {
-        return this.highlightingStationViewInputData_;
-    }
 
     constructor(
         private tableService: TableService,
@@ -74,10 +76,12 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         );
     }
 
-    onHighlightingConditionChange(newHighlightingRules: StationHighlightingData[]) {
+    onHighlightingConditionChange(changeData: HighlightingConditionChangeData) {
         this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
-            { stationHighlightingData: newHighlightingRules }
+            { stationHighlightingData: changeData.stationHighlightingData }
         ));
+
+        this.indexNewRule = changeData.indexNewRule;
     }
 
     ngOnDestroy() {
