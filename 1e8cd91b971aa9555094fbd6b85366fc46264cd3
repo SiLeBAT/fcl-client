@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f91c868b_5ebfdb11",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-02-10T13:14:11Z",
+      "side": 1,
+      "message": "Not rejected because issues are addressed in an already discussed following ticket.",
+      "revId": "1e8cd91b971aa9555094fbd6b85366fc46264cd3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f8db2e6_c0ab7b64",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-02-10T13:14:11Z",
+      "side": 1,
+      "message": "this is insufficient, a zero index would not match",
+      "revId": "1e8cd91b971aa9555094fbd6b85366fc46264cd3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b454599b_538ffd23",
+        "filename": "src/app/tracing/configuration/highlighting-station-view/highlighting-station-view.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-02-10T13:14:11Z",
+      "side": 1,
+      "message": "why is indeNewRule set here to last rule?",
+      "revId": "1e8cd91b971aa9555094fbd6b85366fc46264cd3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
