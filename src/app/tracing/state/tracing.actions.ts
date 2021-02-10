@@ -53,7 +53,8 @@ export enum TracingActionTypes {
     SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
     ResetTracingStateSOA = '[Tracing] Reset Tracing State',
-    SetStationHighlightingRulesSOA = '[Colours and Shapes Highlighting] Set Station Highlighting Rules'
+    SetStationHighlightingRulesSOA = '[Colors and Shapes] Set Station Highlighting Rules',
+    SetColorsAndShapesEditIndexSOA = '[Colors and Shapes] Set Edit Index'
 }
 
 export class TracingActivated implements Action {
@@ -295,6 +296,12 @@ export class SetStationHighlightingRulesSOA implements Action {
     constructor(public payload: { stationHighlightingData: StationHighlightingData[] }) {}
 }
 
+export class SetColorsAndShapesEditIndexSOA implements Action {
+    readonly type = TracingActionTypes.SetColorsAndShapesEditIndexSOA;
+
+    constructor(public payload: { editIndex: number }) {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -336,4 +343,5 @@ export type TracingActions =
     | ClearGhostStationMSA
     | SetHoverDeliveriesSOA
     | ResetTracingStateSOA
-    | SetStationHighlightingRulesSOA;
+    | SetStationHighlightingRulesSOA
+    | SetColorsAndShapesEditIndexSOA;

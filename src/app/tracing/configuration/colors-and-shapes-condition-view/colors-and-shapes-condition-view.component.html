@@ -6,31 +6,30 @@
     >
     </fcl-rule-name-view>
 
-    <div class="fcl-new-highlighting-rule-shape-field">
+    <div class="fcl-shape-and-color-fields">
         <fcl-shape-selector-view
-            class="fcl-complex-filter-form-field fcl-font-size-08"
+            class="fcl-complex-filter-form-field fcl-font-size-08 fcl-action-highlighting-button"
             [availableShapeTypes]="availableShapeTypes"
             [value]="undefined"
             (valueChange)="onShapeChange($event)"
         ></fcl-shape-selector-view>
+
+        <fcl-color-picker-view
+            class="fcl-new-highlighting-rule-color-field fcl-action-highlighting-button"
+            [color]="color"
+            (colorChange)="onColorChange($event)"
+        >
+        </fcl-color-picker-view>
     </div>
 
-    <fcl-color-picker-view
-        class="fcl-new-highlighting-rule-color-field"
-        [color]="color"
-        (colorChange)="onColorChange($event)"
-    >
-    </fcl-color-picker-view>
-
-    <div class="fcl-new-highlighting-rule-complex-filter">
-        <fcl-complex-filter-view
-            [conditions] = "complexFilterSettings"
-            [availableProperties] = "dataColumns"
-            [availableOperatorTypes] = "availableOperatorTypes"
-            [propToValuesMap] = "propToValuesMap"
-            (conditionsChange) = "onComplexFilterChange($event)"
-        ></fcl-complex-filter-view>
-    </div>
+    <fcl-complex-filter-view
+        class="fcl-new-highlighting-rule-complex-filter"
+        [conditions] = "complexFilterSettings"
+        [availableProperties] = "dataColumns"
+        [availableOperatorTypes] = "availableOperatorTypes"
+        [propToValuesMap] = "propToValuesMap"
+        (conditionsChange) = "onComplexFilterChange($event)"
+    ></fcl-complex-filter-view>
 
     <div class="fcl-action-highlighting-button-container">
         <button

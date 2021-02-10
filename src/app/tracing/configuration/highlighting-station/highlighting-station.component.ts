@@ -2,20 +2,21 @@ import { BasicGraphState, DataServiceData, DataTable, StationHighlightingData } 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import * as fromTracing from '../../state/tracing.reducers';
+import * as tracingReducers from '../../state/tracing.reducers';
 import * as tracingActions from '../../state/tracing.actions';
 import * as tracingSelectors from '../../state/tracing.selectors';
+import * as configurationActions from '../configuration.actions';
 import { takeWhile } from 'rxjs/operators';
 import { AlertService } from '@app/shared/services/alert.service';
-import { ComplexRowFilterSettings } from '../configuration.model';
-import { HighlightingConditionChangeData, HighlightingInputData } from '../highlighting-station-view/highlighting-station-view.component';
+import { HighlightingRuleDeleteRequestData } from '../configuration.model';
+import { HighlightingInputData } from '../highlighting-station-view/highlighting-station-view.component';
 import { TableService } from '@app/tracing/services/table.service';
 import { DataService } from '@app/tracing/services/data.service';
 
-interface HighlightingTableState {
+interface HighlightingState {
     graphState: BasicGraphState;
-    highlightingTableState: StationHighlightingData[];
-    complexFilterSettings: ComplexRowFilterSettings;
+    highlightingState: StationHighlightingData[];
+    editIndex: number;
 }
 
 interface CachedData {
@@ -34,8 +35,6 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         return this.highlightingStationViewInputData_;
     }
 
-    indexNewRule: number = null;
-
     private isHighlightingStationTabActive$: Observable<boolean> = this.store.pipe(
         select(tracingSelectors.getIsHighlightingStationTabActive),
         takeWhile(() => this.componentIsActive)
@@ -44,13 +43,13 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
     private componentIsActive = true;
     private stateSubscription: Subscription | null = null;
     private cachedData: CachedData | null = null;
-    private cachedState: HighlightingTableState | null = null;
+    private cachedState: HighlightingState | null = null;
     private highlightingStationViewInputData_: HighlightingInputData | null = null;
 
     constructor(
         private tableService: TableService,
         private dataService: DataService,
-        private store: Store<fromTracing.State>,
+        private store: Store<tracingReducers.State>,
         private alertService: AlertService
     ) { }
 
@@ -66,7 +65,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
                 } else {
                     if (!this.stateSubscription) {
                         this.stateSubscription = this.store.select(tracingSelectors.getStationHighlightingData).subscribe(
-                            (state: HighlightingTableState) => this.applyState(state),
+                            (state: HighlightingState) => this.applyState(state),
                             err => this.alertService.error(`getStationHighlightingData store subscription failed: ${err}`)
                         );
                     }
@@ -76,12 +75,19 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         );
     }
 
-    onHighlightingConditionChange(changeData: HighlightingConditionChangeData) {
-        this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
-            { stationHighlightingData: changeData.stationHighlightingData }
+    onHighlightingConditionsChange(newHighlightingConditions: StationHighlightingData[]) {
+        this.emitHighlightingConditions(newHighlightingConditions);
+    }
+
+    onChangeEditIndex(editIndex: number | null) {
+        this.emitEditIndex(editIndex);
+    }
+
+    onHighlightingConditionsDelete(conditionToDelete: HighlightingRuleDeleteRequestData) {
+        this.store.dispatch(new configurationActions.DeleteStationHighlightingRulesSSA(
+            { stationHighlightingCondition: conditionToDelete }
         ));
 
-        this.indexNewRule = changeData.indexNewRule;
     }
 
     ngOnDestroy() {
@@ -92,7 +98,19 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         }
     }
 
-    private applyState(state: HighlightingTableState): void {
+    private emitHighlightingConditions(stationHighlightingData: StationHighlightingData[]) {
+        this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
+            { stationHighlightingData: stationHighlightingData }
+        ));
+    }
+
+    private emitEditIndex(editIndex: number | null) {
+        this.store.dispatch(new tracingActions.SetColorsAndShapesEditIndexSOA(
+            { editIndex: editIndex }
+        ));
+    }
+
+    private applyState(state: HighlightingState): void {
         let dataTable: DataTable = this.cachedData ? this.cachedData.dataTable : undefined;
         const data = this.dataService.getData(state.graphState);
         if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
@@ -125,13 +143,14 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         if (
             !this.highlightingStationViewInputData_ ||
             this.cachedData.dataTable !== this.highlightingStationViewInputData_.dataTable ||
-            this.cachedState.highlightingTableState !== this.highlightingStationViewInputData_.stationHighlightingData ||
-            this.cachedState.complexFilterSettings !== this.highlightingStationViewInputData_.complexFilterSettings
+            this.cachedState.highlightingState !== this.highlightingStationViewInputData_.stationHighlightingData ||
+            this.cachedState.editIndex !== this.highlightingStationViewInputData_.editIndex
         ) {
             this.highlightingStationViewInputData_ = {
                 dataTable: this.cachedData.dataTable,
-                stationHighlightingData: this.cachedState.highlightingTableState,
-                complexFilterSettings: this.cachedState.complexFilterSettings
+                stationHighlightingData: this.cachedState.highlightingState,
+                complexFilterSettings: tracingReducers.complexFilterSettings,
+                editIndex: this.cachedState.editIndex
             };
         }
     }

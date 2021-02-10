@@ -10,7 +10,15 @@ import {
 } from '../data.model';
 
 import { TracingState } from '../state.model';
-import { ComplexRowFilterSettings, FilterTableSettings, ShowType, VisibilityFilterState, FilterSettings, ConfigurationTabIndex } from '../configuration/configuration.model';
+import {
+    ComplexRowFilterSettings,
+    FilterTableSettings,
+    ShowType,
+    VisibilityFilterState,
+    FilterSettings,
+    ConfigurationTabIndex,
+    HighlightingConfigurationSettings
+} from '../configuration/configuration.model';
 import { FilterTabId, StationsTabId } from '../configuration/configuration.constants';
 
 export const STATE_SLICE_NAME = 'tracing';
@@ -43,6 +51,12 @@ const initialFilterSettings: FilterSettings = {
     }
 };
 
+const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings = {
+    colorsAndShapesSettings: {
+        editIndex: null
+    }
+};
+
 const initialData: FclData = createInitialFclDataState();
 
 const initialTabIndices: ConfigurationTabIndex = {
@@ -59,7 +73,8 @@ const initialState: TracingState = {
     showConfigurationSideBar: false,
     configurationTabIndices: initialTabIndices,
     showGraphSettings: false,
-    filterSettings: initialFilterSettings
+    filterSettings: initialFilterSettings,
+    highlightingConfigurationSettings: initialHighlightingConfigurationSettings
 };
 
 export function createInitialFclDataState(): FclData {
@@ -156,7 +171,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 fclData: action.payload.fclData,
-                filterSettings: initialFilterSettings
+                filterSettings: initialFilterSettings,
+                highlightingConfigurationSettings: initialHighlightingConfigurationSettings
             };
 
         case TracingActionTypes.LoadFclDataFailure:
@@ -335,6 +351,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     }
                 }
             };
+
         case TracingActionTypes.ResetTracingStateSOA:
             return initialState;
 
@@ -467,6 +484,18 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                             ...state.fclData.graphSettings.highlightingSettings,
                             stations: action.payload.stationHighlightingData
                         }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetColorsAndShapesEditIndexSOA:
+            return {
+                ...state,
+                highlightingConfigurationSettings: {
+                    ...state.highlightingConfigurationSettings,
+                    colorsAndShapesSettings: {
+                        ...state.highlightingConfigurationSettings.colorsAndShapesSettings,
+                        editIndex: action.payload.editIndex
                     }
                 }
             };

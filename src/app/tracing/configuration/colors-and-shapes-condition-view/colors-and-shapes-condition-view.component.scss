@@ -3,11 +3,11 @@
 .fcl-new-highlighting-rule-container {
     display: grid;
     grid-template-areas:
-        "rulename rulename ."
-        "shape color ."
-        "complex complex complex"
-        "ok ok ok";
-    grid-template-columns: 2fr 2fr 1fr;
+        "rulename"
+        "shapecolor"
+        "complex"
+        "ok";
+    grid-template-columns: 100%;
     grid-template-rows: auto;
     grid-gap: 0.5rem;
     padding: 0.5rem;
@@ -19,12 +19,12 @@
     grid-area: rulename;
 }
 
-.fcl-new-highlighting-rule-shape-field {
-    grid-area: shape;
+.fcl-shape-and-color-fields {
+    grid-area: shapecolor;
+    display: flex;
 }
 
 .fcl-new-highlighting-rule-color-field {
-    grid-area: color;
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 0.25em;
     display: flex;
@@ -57,5 +57,4 @@
 .fcl-action-highlighting-button-container {
     grid-area: ok;
     display: flex;
-    justify-content: space-between;
 }

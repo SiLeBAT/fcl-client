@@ -57,17 +57,18 @@ import { HighlightingStationComponent } from './configuration/highlighting-stati
 import { HighlightingDeliveryComponent } from './configuration/highlighting-delivery/highlighting-delivery.component';
 import { HighlightingStationViewComponent } from './configuration/highlighting-station-view/highlighting-station-view.component';
 import { AnonymousButtonViewComponent } from './configuration/anonymous-button-view/anonymous-button-view.component';
-import { HighlightingStationListViewComponent } from './configuration/highlighting-station-list-view/highlighting-station-list-view.component';
 import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.directive';
 import { ResizeSensorDirective } from './graph/components/resize-sensor.directive';
 import { GraphViewComponent } from './graph/components/graph-view/graph-view.component';
 import { GeoMapComponent } from './graph/components/geomap/geomap.component';
 import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
 import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
-import { AddHighlightingConditionButtonViewComponent } from './configuration/add-highlighting-condition-button-view/add-highlighting-condition-button-view.component';
-import { HighlightingStationConditionViewComponent } from './configuration/highlighting-station-condition-view/highlighting-station-condition-view.component';
 import { ColorPickerViewComponent } from './configuration/color-picker-view/color-picker-view.component';
 import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-view.component';
+import { ColorsAndShapesViewComponent } from './configuration/colors-and-shapes-view/colors-and-shapes-view.component';
+import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
+import { ColorsAndShapesConditionViewComponent } from './configuration/colors-and-shapes-condition-view/colors-and-shapes-condition-view.component';
+import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
 @NgModule({
     imports: [
         CommonModule,
@@ -124,17 +125,18 @@ import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-
         HighlightingDeliveryComponent,
         HighlightingStationViewComponent,
         AnonymousButtonViewComponent,
-        HighlightingStationListViewComponent,
         EmptyTableScrollFixDirective,
         ResizeSensorDirective,
         GraphViewComponent,
         GeoMapComponent,
         GeoMapLicRefViewComponent,
         ContextMenuViewComponent,
-        AddHighlightingConditionButtonViewComponent,
-        HighlightingStationConditionViewComponent,
         ColorPickerViewComponent,
-        RuleNameViewComponent
+        RuleNameViewComponent,
+        ColorsAndShapesViewComponent,
+        ColorsAndShapesListViewComponent,
+        ColorsAndShapesConditionViewComponent,
+        DialogYesNoComponent
     ],
     exports: []
 })
