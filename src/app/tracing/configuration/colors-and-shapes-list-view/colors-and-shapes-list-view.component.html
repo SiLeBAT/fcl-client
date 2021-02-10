@@ -1,14 +1,14 @@
-<mat-list id="fcl-highlighting-station-list-view-list" dense>
+<mat-list id="fcl-colors-and-shapes-list-view-list" dense>
 
     <mat-list-item
-        class="fcl-highlighting-station-list-view-list-item"
-        *ngFor="let item of colorAndShapeHighlightings"
+        class="fcl-colors-and-shapes-list-view-list-item"
+        *ngFor="let item of colorsAndShapesHighlightings; let i = index"
     >
-        <div mat-line class="fcl-highlighting-station-list-item-name">
+        <div mat-line class="fcl-colors-and-shapes-list-item-name">
             {{ item.name }}
         </div>
 
-        <div class="fcl-highlighting-station-list-item-fix">
+        <div class="fcl-colors-and-shapes-list-item-fix">
             <fcl-node-symbol-view
                 *ngIf="item.color || (item.shape !== undefined && item.shape !== null)"
                 [shapeType]="item.shape"
@@ -16,14 +16,15 @@
             ></fcl-node-symbol-view>
         </div>
 
-        <div class="fcl-highlighting-station-list-item fcl-highlighting-station-list-item-end">
-            <span class="fcl-highlighting-station-list-item-count">500</span>
+        <div class="fcl-colors-and-shapes-list-item fcl-colors-and-shapes-list-item-end">
+            <span class="fcl-colors-and-shapes-list-item-count">500</span>
         </div>
 
         <mat-button-toggle
-            class="fcl-highlighting-station-list-view-legend-button fcl-highlighting-station-list-item-fix"
+            class="fcl-colors-and-shapes-list-view-legend-button fcl-colors-and-shapes-list-item-fix"
             color="primary"
             value="legend"
+            [disabled]="listButtonDisabled"
         >
             L
         </mat-button-toggle>
@@ -33,6 +34,7 @@
             matTooltip="Edit Highlighting Rule"
             matTooltipPosition="above"
             color="accent"
+            [disabled]="listButtonDisabled"
         >
             <mat-icon>edit</mat-icon>
         </button>
@@ -42,7 +44,9 @@
             matTooltip="Delete Highlighting Rule"
             matTooltipPosition="above"
             color="warn"
-        >
+            (click)="onDeleteHighlightingCondition($event, item, i)"
+            [disabled]="listButtonDisabled"
+            >
             <mat-icon>delete forever</mat-icon>
         </button>
 

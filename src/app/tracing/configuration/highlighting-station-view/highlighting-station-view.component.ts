@@ -1,18 +1,13 @@
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { DataTable, StationHighlightingData } from '@app/tracing/data.model';
-import { ComplexRowFilterSettings } from '../configuration.model';
-import { HighlightingConditionInputData } from '../highlighting-station-condition-view/highlighting-station-condition-view.component';
+import { ColorsAndShapesInputData, ComplexRowFilterSettings, HighlightingConditionToDelete } from '../configuration.model';
+import * as _ from 'lodash';
 export interface HighlightingInputData {
     dataTable: DataTable;
     stationHighlightingData: StationHighlightingData[];
     complexFilterSettings: ComplexRowFilterSettings;
+    editIndex: number;
 }
-
-export interface HighlightingConditionChangeData {
-    stationHighlightingData: StationHighlightingData[];
-    indexNewRule: number;
-}
-
 @Component({
     selector: 'fcl-highlighting-station-view',
     templateUrl: './highlighting-station-view.component.html',
@@ -23,83 +18,50 @@ export class HighlightingStationViewComponent {
     @Input() inputData: HighlightingInputData;
     @Input() indexNewRule: number;
 
-    @Output() highlightingConditionChange = new EventEmitter<HighlightingConditionChangeData>();
+    @Output() highlightingConditionsChange = new EventEmitter<StationHighlightingData[]>();
+    @Output() highlightingConditionsDelete = new EventEmitter<HighlightingConditionToDelete>();
+    @Output() editIndexChange = new EventEmitter<number | null>();
 
-    get colorAndShapeHighlightings(): StationHighlightingData[] {
+    get colorsAndShapesHighlightings(): StationHighlightingData[] {
         this.processLastInputIfNecessary();
-        return this.colorAndShapeHighlightings_;
-
+        return this.colorsAndShapesHighlightings_;
     }
 
-    get highlightingStationConditionViewInputData(): HighlightingConditionInputData {
+    get colorsAndShapesInputData(): ColorsAndShapesInputData {
         this.processLastInputIfNecessary();
-        return this.highlightingStationConditionViewInputData_;
+        return this.colorsAndShapesInputData_;
     }
 
-    showHighlightingDialog = false;
-    showAddHighlightingButton = true;
     labelsOpenState = false;
     stationSizeOpenState = false;
-    coloursAndShapesOpenState = false;
+    colorsAndShapesOpenState = false;
 
     private processedInput_: HighlightingInputData | null = null;
-    private colorAndShapeHighlightings_: StationHighlightingData[] | null = null;
-    private highlightingStationConditionViewInputData_: HighlightingConditionInputData | null = null;
+    private colorsAndShapesHighlightings_: StationHighlightingData[] | null = null;
+    private restHighlightings_: StationHighlightingData[] | null = null;
+    private colorsAndShapesInputData_: ColorsAndShapesInputData | null = null;
 
     constructor() { }
 
-    onAddHighlightingRule(): void {
-        this.switchShowHighlightingDialogueState();
-        this.switchAddButtonState();
-        this.resetIndexNewRule();
-    }
+    onDeleteColorsAndShapesCondition(conditionToDelete: HighlightingConditionToDelete) {
+        const newHighlightingConditions = conditionToDelete.highlightingData.concat(this.restHighlightings_);
 
-    onApplyHighlightingRule(newHighlightingRule: StationHighlightingData): void {
-        this.changeHighlightingConditionAndEmit(newHighlightingRule);
-    }
-
-    onCancelHighlightingRule(): void {
-        this.switchAddButtonState();
-        this.switchShowHighlightingDialogueState();
-    }
-
-    onOkHighlightingRule(newHighlightingRule: StationHighlightingData): void {
-        this.changeHighlightingConditionAndEmit(newHighlightingRule);
-        this.switchAddButtonState();
-        this.switchShowHighlightingDialogueState();
-    }
-
-    private changeHighlightingConditionAndEmit(newHighlightingRule: StationHighlightingData): void {
-        let stationHighlightingData: StationHighlightingData[];
-
-        if (this.indexNewRule) {
-            stationHighlightingData = [
-                ...this.processedInput_.stationHighlightingData
-            ];
-            stationHighlightingData[this.indexNewRule] = newHighlightingRule;
-        } else {
-            stationHighlightingData = [
-                ...this.processedInput_.stationHighlightingData,
-                newHighlightingRule
-            ];
-        }
-
-        this.highlightingConditionChange.emit({
-            stationHighlightingData: stationHighlightingData,
-            indexNewRule: (stationHighlightingData.length - 1)
+        this.highlightingConditionsDelete.emit({
+            highlightingData: newHighlightingConditions,
+            highlightingCondition: conditionToDelete.highlightingCondition,
+            xPos: conditionToDelete.xPos,
+            yPos: conditionToDelete.yPos
         });
     }
 
-    private switchAddButtonState(): void {
-        this.showAddHighlightingButton = !this.showAddHighlightingButton;
+    onChangeColorsAndShapesConditions(newColorsAndShapesHighlightings: StationHighlightingData[]) {
+        this.colorsAndShapesHighlightings_ = newColorsAndShapesHighlightings;
+        const newHighlightingConditions = this.colorsAndShapesHighlightings_.concat(this.restHighlightings_);
+        this.highlightingConditionsChange.emit(newHighlightingConditions);
     }
 
-    private switchShowHighlightingDialogueState(): void {
-        this.showHighlightingDialog = !this.showHighlightingDialog;
-    }
-
-    private resetIndexNewRule() {
-        this.indexNewRule = null;
+    onChangeEditIndex(editIndex: number | null) {
+        this.editIndexChange.emit(editIndex);
     }
 
     private processLastInputIfNecessary(): void {
@@ -109,28 +71,34 @@ export class HighlightingStationViewComponent {
     }
 
     private processInputData(): void {
-        this.updateColorAndShapeHighlightings();
-        this.updateHighlightingConditionViewInputData();
+        this.updateColorsAndShapesHighlightings();
+        this.updateColorsAndShapesInputData();
         this.processedInput_ = this.inputData;
     }
 
-    private updateHighlightingConditionViewInputData(): void {
-        if (!this.highlightingStationConditionViewInputData_ ||
-            this.inputData.complexFilterSettings !== this.highlightingStationConditionViewInputData_.complexFilterSettings ||
-            this.inputData.dataTable !== this.highlightingStationConditionViewInputData_.dataTable) {
+    private updateColorsAndShapesInputData(): void {
+        if (!this.colorsAndShapesInputData_ ||
+            this.inputData.complexFilterSettings !== this.colorsAndShapesInputData_.complexFilterSettings ||
+            this.inputData.dataTable !== this.colorsAndShapesInputData_.dataTable ||
+            this.inputData.editIndex !== this.colorsAndShapesInputData_.editIndex) {
 
-            this.highlightingStationConditionViewInputData_ = {
+            this.colorsAndShapesInputData_ = {
                 complexFilterSettings: this.inputData.complexFilterSettings,
-                dataTable: this.inputData.dataTable
+                dataTable: this.inputData.dataTable,
+                editIndex: this.inputData.editIndex
             };
         }
     }
 
-    private updateColorAndShapeHighlightings(): void {
-        if (!this.colorAndShapeHighlightings_ ||
+    private updateColorsAndShapesHighlightings(): void {
+        if (!this.colorsAndShapesHighlightings_ ||
             this.inputData.stationHighlightingData !== this.processedInput_.stationHighlightingData) {
-            this.colorAndShapeHighlightings_ = this.inputData.stationHighlightingData.filter((item: StationHighlightingData) => {
-                return (item.color || (item.shape !== undefined && item.shape !== null));
+
+            [this.colorsAndShapesHighlightings_, this.restHighlightings_] = _.partition(this.inputData.stationHighlightingData, item => {
+                return (
+                    item.color ||
+                    (item.shape !== undefined && item.shape !== null)
+                );
             });
         }
     }

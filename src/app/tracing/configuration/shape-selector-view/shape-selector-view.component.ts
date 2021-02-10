@@ -4,6 +4,7 @@ import { NodeShapeType } from '@app/tracing/data.model';
 @Component({
     selector: 'fcl-shape-selector-view',
     templateUrl: './shape-selector-view.component.html',
+    styleUrls: ['./shape-selector-view.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class ShapeSelectorViewComponent {

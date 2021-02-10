@@ -1,0 +1,32 @@
+#fcl-colors-and-shapes-list-view-list .fcl-colors-and-shapes-list-view-list-item {
+    font-size: 0.8rem;
+}
+
+#fcl-colors-and-shapes-list-view-list .fcl-colors-and-shapes-list-view-list-item .mat-list-item-content {
+    display: grid;
+    grid-template-columns: 50% 10% 10% 10% 10% 10%;
+    grid-template-rows: auto;
+}
+
+.fcl-colors-and-shapes-list-item-fix {
+    justify-self: center;
+}
+
+.fcl-colors-and-shapes-list-item-end {
+    justify-self: end;
+}
+
+.fcl-colors-and-shapes-list-item-end .fcl-colors-and-shapes-list-item-count {
+    padding-right: 1rem;
+}
+
+.fcl-colors-and-shapes-list-view-legend-button,
+.fcl-colors-and-shapes-list-view-legend-button .mat-button-toggle-button .mat-button-toggle-label-content {
+    height: 2rem;
+    width: 2rem;
+}
+
+.fcl-colors-and-shapes-list-view-legend-button .mat-button-toggle-button .mat-button-toggle-label-content {
+    line-height: 2rem;
+    padding: 0;
+}

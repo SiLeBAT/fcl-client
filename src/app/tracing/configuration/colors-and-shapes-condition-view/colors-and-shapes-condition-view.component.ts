@@ -1,24 +1,20 @@
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { DataTable, LogicalCondition, NodeShapeType, StationHighlightingData, TableColumn } from '@app/tracing/data.model';
-import { ComplexRowFilterSettings, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
+import { LogicalCondition, NodeShapeType, StationHighlightingData, TableColumn } from '@app/tracing/data.model';
+import { ColorsAndShapesConditionInputData, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import * as _ from 'lodash';
 
-export interface HighlightingConditionInputData {
-    dataTable: DataTable;
-    complexFilterSettings: ComplexRowFilterSettings;
-}
-
 @Component({
-    selector: 'fcl-highlighting-station-condition-view',
-    templateUrl: './highlighting-station-condition-view.component.html',
-    styleUrls: ['./highlighting-station-condition-view.component.scss'],
+    selector: 'fcl-colors-and-shapes-condition-view',
+    templateUrl: './colors-and-shapes-condition-view.component.html',
+    styleUrls: ['./colors-and-shapes-condition-view.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class HighlightingStationConditionViewComponent {
+export class ColorsAndShapesConditionViewComponent {
+
     private static readonly COLORPICKER_DEFAULT_COLOR = 'rgba(3, 78, 162)';
 
-    @Input() inputData: HighlightingConditionInputData;
+    @Input() inputData: ColorsAndShapesConditionInputData;
 
     @Output() applyHighlightingRule = new EventEmitter<StationHighlightingData>();
     @Output() cancelHighlightingRule = new EventEmitter();
@@ -47,7 +43,7 @@ export class HighlightingStationConditionViewComponent {
         ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
     ];
 
-    color: string = HighlightingStationConditionViewComponent.COLORPICKER_DEFAULT_COLOR;
+    color: string = ColorsAndShapesConditionViewComponent.COLORPICKER_DEFAULT_COLOR;
 
     get complexFilterSettings(): LogicalFilterCondition[] {
         this.processLastInputIfNecessary();
@@ -64,7 +60,7 @@ export class HighlightingStationConditionViewComponent {
         return this.propToValuesMap_;
     }
 
-    private processedInput_: HighlightingConditionInputData | null = null;
+    private processedInput_: ColorsAndShapesConditionInputData | null = null;
     private complexFilterConditions_: LogicalFilterCondition[] | null = null;
     private dataColumns_: TableColumn[] | null = null;
     private propToValuesMap_: PropValueMap | null = null;
@@ -169,7 +165,7 @@ export class HighlightingStationConditionViewComponent {
         return {
             name: '',
             showInLegend: true,
-            color: this.convertColorToHighlightingColor(HighlightingStationConditionViewComponent.COLORPICKER_DEFAULT_COLOR),
+            color: this.convertColorToHighlightingColor(ColorsAndShapesConditionViewComponent.COLORPICKER_DEFAULT_COLOR),
             invisible: false,
             adjustThickness: false,
             labelProperty: null,

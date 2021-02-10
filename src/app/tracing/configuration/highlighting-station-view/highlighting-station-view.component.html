@@ -36,40 +36,25 @@
     </mat-expansion-panel>
 
     <mat-expansion-panel
-        class="fcl-highlighting-coloursandshapes-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
-        (opened)="coloursAndShapesOpenState = true"
-        (closed)="coloursAndShapesOpenState = false">
+        class="fcl-highlighting-colorsandshapes-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="colorsAndShapesOpenState = true"
+        (closed)="colorsAndShapesOpenState = false">
 
         <mat-expansion-panel-header>
             <mat-panel-title class="fcl-font-size-08">
-              Colours and Shapes... click  to {{ coloursAndShapesOpenState ?  'close' : 'open' }}
+              Colours and Shapes... click  to {{ colorsAndShapesOpenState ?  'close' : 'open' }}
             </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <div class="fcl-highlighting-station-table-view-container">
-
-            <fcl-highlighting-station-list-view
-                class = "fcl-highlighting-station-list-view"
-                [colorAndShapeHighlightings]="colorAndShapeHighlightings"
-
-            ></fcl-highlighting-station-list-view>
-
-            <fcl-add-highlighting-condition-button-view
-                *ngIf="showAddHighlightingButton"
-                (addHighlighting)="onAddHighlightingRule()"
-            >
-            </fcl-add-highlighting-condition-button-view>
-
-            <fcl-highlighting-station-condition-view
-                *ngIf="showHighlightingDialog"
-                [inputData]="highlightingStationConditionViewInputData"
-                (applyHighlightingRule)="onApplyHighlightingRule($event)"
-                (cancelHighlightingRule)="onCancelHighlightingRule()"
-                (okHighlightingRule)="onOkHighlightingRule($event)"
-            >
-            </fcl-highlighting-station-condition-view>
-
-        </div>
+        <fcl-colors-and-shapes-view
+            class="fcl-colors-and-shapes-view-container"
+            [colorsAndShapesHighlightings]="colorsAndShapesHighlightings"
+            [inputData]="colorsAndShapesInputData"
+            (colorsAndShapesConditionsChange)="onChangeColorsAndShapesConditions($event)"
+            (colorsAndShapesConditionsDelete)="onDeleteColorsAndShapesCondition($event)"
+            (editIndexChange)="onChangeEditIndex($event)"
+        >
+        </fcl-colors-and-shapes-view>
 
     </mat-expansion-panel>
 

@@ -1,3 +1,5 @@
+import { DataTable, StationHighlightingData } from '../data.model';
+
 export type FilterTabId = 'filterTab';
 export type HighlightingTabId = 'highlightingTab';
 export type SettingsTabId = 'settingsTab';
@@ -61,8 +63,31 @@ export interface FilterSettings {
     deliveryFilter: FilterTableSettings;
 }
 
+export interface ColorsAndShapesSettings {
+    editIndex: number;
+}
+
+export interface HighlightingConfigurationSettings {
+    colorsAndShapesSettings: ColorsAndShapesSettings;
+}
+
 export interface PropValueMap {
     [key: string]: (string | number | boolean)[];
+}
+
+export interface ColorsAndShapesConditionInputData {
+    dataTable: DataTable;
+    complexFilterSettings: ComplexRowFilterSettings;
+}
+
+export interface ColorsAndShapesInputData extends ColorsAndShapesConditionInputData {
+    editIndex: number;
+}
+export interface HighlightingConditionToDelete {
+    highlightingData: StationHighlightingData[];
+    highlightingCondition: StationHighlightingData;
+    xPos: number;
+    yPos: number;
 }
 
 export enum ShowType {

@@ -278,13 +278,20 @@ export const getStationFilterData = createSelector(
     })
 );
 
+export const getHighlightingConfigurationSettings = createSelector(
+    getTracingFeatureState,
+    state => state.highlightingConfigurationSettings
+);
+
 export const getStationHighlightingData = createSelector(
     getBasicGraphData,
     getStationHighlightingSettings,
-    (basicGraphData, stationHighlightingSettings) => ({
+    getHighlightingConfigurationSettings,
+    (basicGraphData, stationHighlightingSettings, highlightingConfigs) => ({
         graphState: basicGraphData,
-        highlightingTableState: stationHighlightingSettings,
-        complexFilterSettings: complexFilterSettings
+        highlightingState: stationHighlightingSettings,
+        complexFilterSettings: complexFilterSettings,
+        editIndex: highlightingConfigs.colorsAndShapesSettings.editIndex
     })
 );
 

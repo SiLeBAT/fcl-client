@@ -1,7 +1,8 @@
 <fcl-highlighting-station-view
     class="fcl-hightlighting-station-view"
     [inputData]="highlightingStationViewInputData"
-    [indexNewRule]="indexNewRule"
-    (highlightingConditionChange)="onHighlightingConditionChange($event)"
+    (highlightingConditionsChange)="onHighlightingConditionsChange($event)"
+    (editIndexChange)="onChangeEditIndex($event)"
+    (highlightingConditionsDelete)="onHighlightingConditionsDelete($event)"
 >
 </fcl-highlighting-station-view>

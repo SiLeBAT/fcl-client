@@ -1,0 +1,29 @@
+<fcl-colors-and-shapes-list-view
+    class = "fcl-highlighting-station-list-view"
+    [colorsAndShapesHighlightings]="colorsAndShapesHighlightings"
+    [listButtonDisabled]="listButtonDisabled"
+    (deleteHighlightingCondition)="onDeleteHighlightingCondition($event)"
+>
+</fcl-colors-and-shapes-list-view>
+
+<button
+    *ngIf="showAddHighlightingButton"
+    mat-stroked-button
+    class="fcl-add-highlighting-button"
+    matTooltip="Add Highlighting Rule"
+    matTooltipPosition="above"
+    color="primary"
+    (click)="onAddColorsAndShapesCondition()"
+>
+    <mat-icon>add</mat-icon>
+</button>
+
+
+<fcl-colors-and-shapes-condition-view
+    *ngIf="showHighlightingDialog"
+    [inputData]="colorsAndShapesConditionInputData"
+    (applyHighlightingRule)="onApplyColorsAndShapesCondition($event)"
+    (cancelHighlightingRule)="onCancelHighlightingRule()"
+    (okHighlightingRule)="onOkHighlightingRule($event)"
+>
+</fcl-colors-and-shapes-condition-view>
