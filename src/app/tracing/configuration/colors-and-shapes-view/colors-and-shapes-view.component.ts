@@ -67,6 +67,10 @@ export class ColorsAndShapesViewComponent {
         this.colorsAndShapesConditionsDelete.emit(conditionToDelete);
     }
 
+    onToggleShowInLegend(rules: StationHighlightingData[]) {
+        this.emitColorsAndShapesConditions(rules);
+    }
+
     private buildNewColorsAndShapesHighlightings(condition: StationHighlightingData): StationHighlightingData[] {
         const newColorsAndShapesHighlightings = [
             ...this.colorsAndShapesHighlightings_

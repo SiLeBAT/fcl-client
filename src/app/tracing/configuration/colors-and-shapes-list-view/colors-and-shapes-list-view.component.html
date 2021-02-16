@@ -2,7 +2,7 @@
 
     <mat-list-item
         class="fcl-colors-and-shapes-list-view-list-item"
-        *ngFor="let item of colorsAndShapesHighlightings; let i = index"
+        *ngFor="let item of colorsAndShapesRules; let i = index"
     >
         <div mat-line class="fcl-colors-and-shapes-list-item-name">
             {{ item.name }}
@@ -20,14 +20,15 @@
             <span class="fcl-colors-and-shapes-list-item-count">500</span>
         </div>
 
-        <mat-button-toggle
-            class="fcl-colors-and-shapes-list-view-legend-button fcl-colors-and-shapes-list-item-fix"
-            color="primary"
-            value="legend"
-            [disabled]="listButtonDisabled"
-        >
-            L
-        </mat-button-toggle>
+        <div class="fcl-colors-and-shapes-list-view-legend-button fcl-colors-and-shapes-list-item-fix">
+            <mat-button-toggle
+                [checked]="item.showInLegend"
+                (change)="onToggleShowInLegend(i)"
+                [disabled]="listButtonDisabled"
+            >
+                L
+            </mat-button-toggle>
+        </div>
 
         <button
             mat-button

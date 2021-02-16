@@ -1,3 +1,5 @@
+@import '../../../../assets/sass/base';
+
 #fcl-colors-and-shapes-list-view-list .fcl-colors-and-shapes-list-view-list-item {
     font-size: 0.8rem;
 }
@@ -29,4 +31,14 @@
 .fcl-colors-and-shapes-list-view-legend-button .mat-button-toggle-button .mat-button-toggle-label-content {
     line-height: 2rem;
     padding: 0;
+}
+
+.fcl-colors-and-shapes-list-view-legend-button > .mat-button-toggle-checked {
+    background-color: $fcl-primary-500;
+    color: rgb(255, 255, 255);
+}
+
+.fcl-colors-and-shapes-list-view-legend-button > .mat-button-toggle-checked.mat-button-toggle-disabled {
+    background-color: $fcl-primary-100;
+    color: rgb(255, 255, 255);
 }

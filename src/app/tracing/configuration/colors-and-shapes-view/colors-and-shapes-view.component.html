@@ -1,8 +1,9 @@
 <fcl-colors-and-shapes-list-view
     class="fcl-highlighting-station-list-view"
-    [colorsAndShapesHighlightings]="colorsAndShapesHighlightings"
+    [colorsAndShapesRules]="colorsAndShapesHighlightings"
     [listButtonDisabled]="listButtonDisabled"
-    (deleteHighlightingCondition)="onDeleteHighlightingCondition($event)"
+    (deleteHighlightingRule)="onDeleteHighlightingCondition($event)"
+    (toggleShowInLegendProperty)="onToggleShowInLegend($event)"
 >
 </fcl-colors-and-shapes-list-view>
 
