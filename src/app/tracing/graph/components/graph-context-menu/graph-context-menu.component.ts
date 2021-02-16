@@ -64,7 +64,7 @@ export class GraphContextMenuComponent implements OnInit, OnDestroy {
                 );
 
                 this.graphMenuTrigger.menuData = { menuItems: menuData };
-                Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, position);
+                setTimeout(() => Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, position), 0);
             }
         });
     }

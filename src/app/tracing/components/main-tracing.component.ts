@@ -53,7 +53,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
         private mainPageService: MainPageService,
         private store: Store<fromTracing.State>
     ) {
-        document.body.oncontextmenu = e => e.preventDefault();
         this.store.dispatch(new tracingActions.TracingActivated({ isActivated: true }));
     }
 
