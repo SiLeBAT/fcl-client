@@ -9,7 +9,9 @@ import { ContextMenuRequestInfo, SelectedGraphElements } from '../../graph.model
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
 import { GraphEventType, InteractiveCyGraph } from '../../cy-graph/interactive-cy-graph';
-import { GraphData } from '../../cy-graph/cy-graph';
+import { GraphData, LayoutConfig } from '../../cy-graph/cy-graph';
+import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_PRESET, PRESET_LAYOUT_NAME } from '../../cy-graph/cy.constants';
+import { isPosMapEmpty } from '../../cy-graph/shared-utils';
 
 export interface GraphDataChange {
     layout?: Layout;
@@ -129,11 +131,25 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         this.contextMenuRequest.emit(info);
     }
 
+    private createPresetLayoutConfig(viewport: Layout | null): LayoutConfig {
+        return {
+            ...(viewport === null ? {} : viewport),
+            name: PRESET_LAYOUT_NAME,
+            fit: viewport === null
+        };
+    }
+
     private createCyGraph(): void {
+        const layoutConfig: LayoutConfig =
+            isPosMapEmpty(this.graphData.nodePositions) ?
+            { name: LAYOUT_GRID } :
+            this.createPresetLayoutConfig(this.graphData.layout);
+
         this.cyGraph_ = new VirtualZoomCyGraph(
             this.graphElement.nativeElement,
             this.graphData,
             this.styleConfig,
+            layoutConfig,
             {
                 minZoom: GraphViewComponent.MIN_ZOOM,
                 maxZoom: GraphViewComponent.MAX_ZOOM,
@@ -166,4 +182,5 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
             this.cleanCyGraph();
         }
     }
+
 }

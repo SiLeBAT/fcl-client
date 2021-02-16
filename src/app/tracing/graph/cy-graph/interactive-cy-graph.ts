@@ -1,4 +1,4 @@
-import { ContextMenuRequestInfo, CyEdgeCollection, CyEdgeDef, CyNodeDef, EdgeId, SelectedGraphElements } from '../graph.model';
+import { ContextMenuRequestInfo, Cy, CyEdgeCollection, CyEdgeDef, CyNodeCollection, CyNodeDef, EdgeId, NodeId, SelectedGraphElements } from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
@@ -8,6 +8,7 @@ import {
     addCyPanListeners, addCySelectionListener
 } from './cy-listeners';
 import { Utils } from '@app/tracing/util/non-ui-utils';
+import { getLayoutConfig, LayoutName } from './layouting-utils';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',
@@ -43,7 +44,7 @@ export class InteractiveCyGraph extends CyGraph {
         htmlContainerElement: HTMLElement,
         graphData: GraphData,
         styleConfig: StyleConfig,
-        layoutConfig?: LayoutConfig,
+        layoutConfig: LayoutConfig,
         cyConfig?: CyConfig
     ) {
         super(htmlContainerElement, graphData, styleConfig, layoutConfig, cyConfig);
@@ -104,7 +105,7 @@ export class InteractiveCyGraph extends CyGraph {
 
     protected initCy(
         htmlContainerElement: HTMLElement | undefined,
-        layoutConfig: LayoutConfig | undefined,
+        layoutConfig: LayoutConfig,
         cyConfig: CyConfig | undefined
     ): void {
         super.initCy(htmlContainerElement, layoutConfig, cyConfig);
@@ -257,6 +258,58 @@ export class InteractiveCyGraph extends CyGraph {
             this.cy.edges().filter(e => !hoverEdge[e.id()]).scratch('_active', false);
             this.cy.edges().filter(e => !!hoverEdge[e.id()]).scratch('_active', true);
         });
+    }
+
+    runLayout(layoutName: LayoutName, nodeIds: NodeId[]): null | (() => void) {
+        if (nodeIds.length < 2) { return; }
+
+        const layoutConfig: LayoutConfig = getLayoutConfig(layoutName);
+
+        return this.startLayouting(layoutConfig, nodeIds);
+    }
+
+    private getNodeContext(nodeIds: NodeId[]): Cy | CyNodeCollection {
+        if (nodeIds.length === this.cy.nodes().size()) {
+            return this.cy;
+        } else {
+            const nodeIdSet = Utils.createSimpleStringSet(nodeIds);
+            return this.cy.nodes().filter((node) => nodeIdSet[node.id()]);
+        }
+    }
+
+    protected startLayouting(layoutConfig: LayoutConfig, nodeIds: NodeId[]): null | (() => void) {
+        const cyContext = this.getNodeContext(nodeIds);
+        let isAsyncLayout = true;
+        const stopFun = layoutConfig.stop;
+        layoutConfig.stop = () => {
+            isAsyncLayout = false;
+            this.postProcessLayout();
+            if (stopFun !== undefined) {
+                stopFun();
+            }
+        };
+        const layout = cyContext.layout(layoutConfig);
+
+        layout.run();
+
+        if (isAsyncLayout) {
+            return () => layout.stop();
+        } else {
+            return null;
+        }
+    }
+
+    protected postProcessLayout(): void {
+        super.setGraphData({
+            ...super.data,
+            nodePositions: this.extractNodePositionsFromGraph(),
+            layout: {
+                pan: { ...this.cy.pan() },
+                zoom: this.cy.zoom()
+            }
+        });
+        this.edgeLabelOffsetUpdater.update(true);
+        this.onLayoutChanged();
     }
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
