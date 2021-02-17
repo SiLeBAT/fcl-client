@@ -67,7 +67,7 @@ export class ComplexFilterViewComponent {
             this.conditions_.slice(0, index),
             this.conditions_.slice(index + 1)
         );
-        this.conditions_ = conditions;
+        this.conditions_ = conditions.length === 0 ? this.createDefaultConditions() : conditions;
         this.conditionsChange.emit(conditions);
     }
 
