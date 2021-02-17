@@ -18,6 +18,23 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f767571_7f4b609d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1015829
+      },
+      "writtenOn": "2021-02-17T16:37:59Z",
+      "side": 1,
+      "message": "The rejection is due to commented code. These lines will be removed before the squashing. In agreement with the reviewer, the code can pass.",
+      "revId": "57101acdad0a6e1e68f6eed42491a667eb2dcd46",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d3baae8d_2398ea43",
