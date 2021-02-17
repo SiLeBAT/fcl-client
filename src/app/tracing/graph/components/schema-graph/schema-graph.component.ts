@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Subscription } from 'rxjs';
 
 import html2canvas from 'html2canvas';
-import { GraphState, GraphType, LegendInfo, StationId, Position, SchemaGraphState } from '../../../data.model';
+import { GraphType, LegendInfo, StationId, Position, SchemaGraphState } from '../../../data.model';
 import _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData, NodeId } from '../../graph.model';
@@ -12,14 +12,14 @@ import { filter } from 'rxjs/operators';
 import { GraphDataChange, GraphViewComponent } from '../graph-view/graph-view.component';
 import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
-import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
-import { SetGisGraphLayoutSOA, SetSchemaGraphLayoutSOA, SetSelectedElementsSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
-import { getGisGraphData, getGraphType, getMapConfig, getSchemaGraphData, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
-import { BoundaryRect } from '@app/tracing/util/geometry-utils';
+import { SetSchemaGraphLayoutSOA, SetSelectedElementsSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
+import { getGraphType, getSchemaGraphData, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { SchemaGraphService } from '../../schema-graph.service';
+import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'fcl-schema-graph',
@@ -28,6 +28,8 @@ import { SchemaGraphService } from '../../schema-graph.service';
 })
 export class SchemaGraphComponent implements OnInit, OnDestroy {
 
+    private static readonly LAYOUT_RUNNING = 'Layout running ...';
+    private static readonly STOP_LAYOUTING = 'Stop';
     private static readonly MIN_ZOOM = 0.001;
     private static readonly MAX_ZOOM = 10.0;
 
@@ -53,9 +55,12 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         maxZoom: SchemaGraphComponent.MAX_ZOOM
     };
 
+    private asyncRelayoutingDialog: MatDialogRef<DialogActionsComponent, any> | null = null;
+
     constructor(
         private store: Store<State>,
         public elementRef: ElementRef,
+        private dialogService: MatDialog,
         private graphService: GraphService,
         private schemaGraphService: SchemaGraphService,
         private contextMenuService: ContextMenuService,
@@ -122,7 +127,13 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         if (action) {
             if (action.type === LayoutActionTypes.LayoutAction) {
                 const layoutAction: LayoutAction = action as LayoutAction;
-                this.graphViewComponent.runLayoutManager(layoutAction.payload.layoutName, layoutAction.payload.nodeIds);
+                const asyncStopCallback = this.graphViewComponent.runLayoutManager(
+                    layoutAction.payload.layoutName,
+                    layoutAction.payload.nodeIds
+                );
+                if (asyncStopCallback !== null) {
+                    this.openAsyncRelayoutingDialog(asyncStopCallback);
+                }
             } else {
                 this.store.dispatch(action);
             }
@@ -130,6 +141,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     onGraphDataChange(graphDataChange: GraphDataChange): void {
+        if (this.asyncRelayoutingDialog !== null) {
+            this.asyncRelayoutingDialog.close();
+        }
         if (graphDataChange.nodePositions) {
             this.store.dispatch(new SetStationPositionsAndLayoutSOA({
                 stationPositions: this.getNewStationPositions(graphDataChange.nodePositions),
@@ -171,5 +185,16 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             newStationPositions[node.station.id] = nodePositions[node.id];
         }
         return newStationPositions;
+    }
+
+    private openAsyncRelayoutingDialog(stopCallBack: (() => void)): void {
+        const layoutDialogData: DialogActionsData = {
+            title: SchemaGraphComponent.LAYOUT_RUNNING,
+            actions: [{ name: SchemaGraphComponent.STOP_LAYOUTING, action: () => stopCallBack() }]
+        };
+        this.asyncRelayoutingDialog = this.dialogService.open(DialogActionsComponent, {
+            disableClose: true,
+            data: layoutDialogData
+        });
     }
 }
