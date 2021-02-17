@@ -23,7 +23,7 @@ import { IOEffects } from './io/io.effects';
 import { VisioEffects } from './visio/visio.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { NestedMatMenuViewComponent } from './graph/components/nested-mat-menu-view/nested-mat-menu-view.component';
-import { SchemaGraphComponent } from './graph/components/schema-graph/schema-graph.component';
+import { SchemaGraphComponent } from './graph/components/schema-graph-old/schema-graph.component';
 import { GraphLegendViewComponent } from './graph/components/graph-legend-view/graph-legend-view.component';
 import { NodeSymbolViewComponent } from './shared/node-symbol-view/node-symbol-view.component';
 import { ZoomViewComponent } from './graph/components/zoom-view/zoom-view.component';
