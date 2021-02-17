@@ -90,12 +90,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         this.cachedGraphData = graphData;
         this.zoomLimits = zoomLimits;
         if (!isPresetLayout) {
-            this.cachedGraphData.layout = {
-                zoom: super.data.layout.zoom,
-                pan: { ...super.data.layout.pan }
+            this.cachedGraphData = {
+                ...this.cachedGraphData,
+                layout: {
+                    zoom: super.data.layout.zoom,
+                    pan: { ...super.data.layout.pan }
+                },
+                nodePositions: { ...super.data.nodePositions }
             };
-
-            this.cachedGraphData.nodePositions = { ...super.data.nodePositions };
 
             this.zoomFit();
         } else if (fitViewPort) {

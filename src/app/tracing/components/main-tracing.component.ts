@@ -3,7 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { SchemaGraphComponent } from '../graph/components/schema-graph-old/schema-graph.component';
+import { SchemaGraphComponent } from '../graph/components/schema-graph/schema-graph.component';
 import { GraphType } from '../data.model';
 import { GisGraphComponent } from '../graph/components/gis-graph/gis-graph.component';
 import { environment } from '../../../environments/environment';

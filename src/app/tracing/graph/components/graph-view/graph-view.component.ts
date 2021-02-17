@@ -9,10 +9,10 @@ import { ContextMenuRequestInfo, SelectedGraphElements } from '../../graph.model
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
 import { GraphEventType, InteractiveCyGraph } from '../../cy-graph/interactive-cy-graph';
-import { CyConfig, GraphData, LayoutConfig } from '../../cy-graph/cy-graph';
-import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_PRESET, PRESET_LAYOUT_NAME } from '../../cy-graph/cy.constants';
+import { CyConfig, GraphData, LayoutConfig, LayoutName } from '../../cy-graph/cy-graph';
+import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_PRESET } from '../../cy-graph/cy.constants';
 import { isPosMapEmpty } from '../../cy-graph/shared-utils';
-import { getLayoutConfig, LayoutName } from '../../cy-graph/layouting-utils';
+import { getLayoutConfig } from '../../cy-graph/layouting-utils';
 
 export interface GraphDataChange {
     layout?: Layout;
@@ -29,8 +29,6 @@ export interface GraphDataChange {
 export class GraphViewComponent implements OnDestroy, OnChanges {
 
     private static readonly MAX_FARM_TO_FORK_NODE_COUNT = 100;
-    private static readonly MIN_ZOOM = 0.1;
-    private static readonly MAX_ZOOM = 100.0;
 
     private cyGraph_: InteractiveCyGraph = null;
 
@@ -118,6 +116,22 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     }
 
     private onGraphDataChange(): void {
+        const tmp = {
+            layout:
+                this.graphData.layout !== this.cyGraph_.layout ?
+                this.cyGraph_.layout :
+                undefined
+            ,
+            nodePositions:
+                this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
+                this.cyGraph_.nodePositions :
+                undefined
+            ,
+            selectedElements:
+                this.graphData.selectedElements !== this.cyGraph_.selectedElements ?
+                this.cyGraph_.selectedElements :
+                undefined
+        };
         this.graphDataChange.emit({
             layout:
                 this.graphData.layout !== this.cyGraph_.layout ?
@@ -143,7 +157,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     private createPresetLayoutConfig(viewport: Layout | null): LayoutConfig {
         return {
             ...(viewport === null ? {} : viewport),
-            name: PRESET_LAYOUT_NAME,
+            name: LAYOUT_PRESET,
             fit: viewport === null
         };
     }

@@ -2,13 +2,13 @@ import { ContextMenuRequestInfo, Cy, CyEdgeCollection, CyEdgeDef, CyNodeCollecti
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
-import { CyGraph, CyConfig, GraphData, LayoutConfig } from './cy-graph';
+import { CyGraph, CyConfig, GraphData, LayoutConfig, LayoutName } from './cy-graph';
 import {
     addCyContextMenuRequestListener, addCyZoomListener, addCyDragListener,
     addCyPanListeners, addCySelectionListener
 } from './cy-listeners';
 import { Utils } from '@app/tracing/util/non-ui-utils';
-import { getLayoutConfig, LayoutName } from './layouting-utils';
+import { getLayoutConfig } from './layouting-utils';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',

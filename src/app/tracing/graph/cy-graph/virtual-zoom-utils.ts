@@ -19,10 +19,12 @@ export function getZoomedNodePositions(nodeData: CyNodeData[], posMap: PositionM
     const zoomedPosMap: PositionMap = { ...posMap };
     nodeData.forEach(n => {
         const oldPos = posMap[n.id];
-        zoomedPosMap[n.id] = {
-            x: oldPos.x * zoom,
-            y: oldPos.y * zoom
-        };
+        if (oldPos !== undefined) {
+            zoomedPosMap[n.id] = {
+                x: oldPos.x * zoom,
+                y: oldPos.y * zoom
+            };
+        }
     });
     return zoomedPosMap;
 }

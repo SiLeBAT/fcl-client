@@ -457,24 +457,10 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.showMergedDeliveriesCounts = viewData.edge.showMergedDeliveriesCounts;
         }
 
-        const showLegend: any = this.getProperty(viewData, ExtDataConstants.SHOW_LEGEND);
-        if (showLegend !== null) {
-            fclData.graphSettings.showLegend = showLegend;
-        }
-
         const skipUnconnectedStations: any = this.getProperty(viewData, ExtDataConstants.SKIP_UNCONNECTED_STATIONS);
         if (skipUnconnectedStations !== null) {
             fclData.graphSettings.skipUnconnectedStations = skipUnconnectedStations;
         }
-
-        const showGis: any = this.getProperty(viewData, ExtDataConstants.SHOW_GIS);
-        if (showGis !== null) {
-            fclData.graphSettings.type = showGis === true ? GraphType.GIS : GraphType.GRAPH;
-        }
-
-        fclData.graphSettings.schemaLayout = this.convertExternalTransformation(
-            this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION)
-        );
 
         this.convertExternalPositions(viewData, fclData, idToStationMap, idToGroupMap);
         this.convertExternalHighlightingSettings(viewData, fclData);

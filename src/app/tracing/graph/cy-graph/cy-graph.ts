@@ -27,8 +27,10 @@ export interface CyConfig {
     autoungrabify?: boolean;
 }
 
+export type LayoutName = string;
+
 export interface LayoutConfig {
-    name: string;
+    name: LayoutName;
     zoom?: number;
     pan?: Position;
     fit?: boolean;
