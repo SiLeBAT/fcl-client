@@ -106,7 +106,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
-        const menuData = this.contextMenuService.getMenuData(requestInfo.context, this.sharedGraphData, false);
+        const menuData = this.contextMenuService.getMenuData(requestInfo.context, this.sharedGraphData, null);
         this.contextMenu.open(requestInfo.position, menuData);
     }
 
