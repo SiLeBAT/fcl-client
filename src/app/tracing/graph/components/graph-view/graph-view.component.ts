@@ -5,10 +5,10 @@ import {
 
 import { Size, Layout, PositionMap } from '../../../data.model';
 import _ from 'lodash';
-import { ContextMenuRequestInfo, SelectedGraphElements } from '../../graph.model';
+import { ContextMenuRequestInfo, NodeId, SelectedGraphElements } from '../../graph.model';
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
-import { GraphEventType, InteractiveCyGraph } from '../../cy-graph/interactive-cy-graph';
+import { GraphEventType, InteractiveCyGraph, LayoutOption } from '../../cy-graph/interactive-cy-graph';
 import { CyConfig, GraphData, LayoutConfig, LayoutName } from '../../cy-graph/cy-graph';
 import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_PRESET } from '../../cy-graph/cy.constants';
 import { isPosMapEmpty } from '../../cy-graph/shared-utils';
@@ -96,10 +96,14 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
-    runLayoutManager(layoutName: LayoutName): null | (() => void) {
+    runLayoutManager(layoutName: LayoutName, nodesToLayout: NodeId[]): null | (() => void) {
         return this.cyGraph_ === null ?
             null :
-            this.cyGraph_.runLayout(layoutName, this.graphData.selectedElements.nodes);
+            this.cyGraph_.runLayout(layoutName, nodesToLayout);
+    }
+
+    getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] | null {
+        return this.cyGraph_ === null ? null : this.cyGraph_.getLayoutOptions(nodesToLayout);
     }
 
     private isSizePositive(): boolean {

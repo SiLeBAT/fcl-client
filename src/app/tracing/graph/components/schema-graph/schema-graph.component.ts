@@ -14,7 +14,7 @@ import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
 import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
-import { ContextMenuService } from '../../context-menu.service';
+import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetGisGraphLayoutSOA, SetSchemaGraphLayoutSOA, SetSelectedElementsSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
 import { getGisGraphData, getGraphType, getMapConfig, getSchemaGraphData, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
@@ -106,20 +106,31 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
-        const menuData = this.contextMenuService.getMenuData(requestInfo.context, this.sharedGraphData, false);
+        const menuData = this.contextMenuService.getMenuData(
+            requestInfo.context,
+            this.sharedGraphData,
+            this.graphViewComponent.getLayoutOptions(
+                requestInfo.context.edgeId === undefined && requestInfo.context.nodeId === undefined ?
+                this.schemaGraphData.nodeData.map(n => n.id) :
+                this.contextMenuService.getContextElements(requestInfo.context, this.sharedGraphData).nodeIds
+            )
+        );
         this.contextMenu.open(requestInfo.position, menuData);
     }
 
     onContextMenuSelect(action: Action): void {
         if (action) {
-            this.store.dispatch(action);
+            if (action.type === LayoutActionTypes.LayoutAction) {
+                const layoutAction: LayoutAction = action as LayoutAction;
+                this.graphViewComponent.runLayoutManager(layoutAction.payload.layoutName, layoutAction.payload.nodeIds);
+            } else {
+                this.store.dispatch(action);
+            }
         }
     }
 
     onGraphDataChange(graphDataChange: GraphDataChange): void {
         if (graphDataChange.nodePositions) {
-            // const stationPositions = { ...this.cachedState.stationPositions };
-
             this.store.dispatch(new SetStationPositionsAndLayoutSOA({
                 stationPositions: this.getNewStationPositions(graphDataChange.nodePositions),
                 layout: graphDataChange.layout

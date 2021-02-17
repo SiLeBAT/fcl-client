@@ -9,6 +9,10 @@ import {
 } from './cy-listeners';
 import { Utils } from '@app/tracing/util/non-ui-utils';
 import { getLayoutConfig } from './layouting-utils';
+import {
+    LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
+    LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
+} from './cy.constants';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',
@@ -21,6 +25,10 @@ const SELECTED_ELEMENTS_WITH_UNSELECTED_DATA_SELECTOR = ':selected[!selected]';
 const UNSELECTED_ELEMENTS_WITH_SELECTED_DATA_SELECTOR = ':unselected[?selected]';
 const SCRATCH_UPDATE_NAMESPACE = '_update';
 
+export interface LayoutOption {
+    name: LayoutName;
+    disabled: boolean;
+}
 export interface GraphDataChange {
     nodePositions?: PositionMap;
     layout?: Layout;
@@ -37,6 +45,7 @@ export type GraphEventListeners<T extends GraphEventType> = Record<T, GraphEvent
 export class InteractiveCyGraph extends CyGraph {
 
     private static readonly ZOOM_FACTOR = 1.5;
+    private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
 
     private listeners: GraphEventListeners<GraphEventType>;
 
@@ -258,6 +267,24 @@ export class InteractiveCyGraph extends CyGraph {
             this.cy.edges().filter(e => !hoverEdge[e.id()]).scratch('_active', false);
             this.cy.edges().filter(e => !!hoverEdge[e.id()]).scratch('_active', true);
         });
+    }
+
+    getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] {
+        const isNodeCountSufficient = nodesToLayout.length >= InteractiveCyGraph.MIN_RELAYOUTING_NODE_COUNT;
+
+        return [
+            {
+                name: LAYOUT_FRUCHTERMAN,
+                disabled: !isNodeCountSufficient
+            },
+            {
+                name: LAYOUT_FARM_TO_FORK,
+                disabled: !isNodeCountSufficient || nodesToLayout.length < super.data.nodeData.length
+            }
+        ].concat([
+            LAYOUT_CONSTRAINT_BASED, LAYOUT_RANDOM, LAYOUT_GRID, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC,
+            LAYOUT_BREADTH_FIRST, LAYOUT_SPREAD, LAYOUT_DAG
+        ].map(layoutName => ({ name: layoutName, disabled: !isNodeCountSufficient })));
     }
 
     runLayout(layoutName: LayoutName, nodeIds: NodeId[]): null | (() => void) {
