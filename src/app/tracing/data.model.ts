@@ -406,7 +406,13 @@ export interface SharedGraphState extends BasicGraphState {
     hoverDeliveries: DeliveryId[];
 }
 
+
 export interface GraphState extends SharedGraphState {
+    layout: Layout;
+}
+
+export interface SchemaGraphState extends SharedGraphState {
+    stationPositions: Record<StationId, Position>;
     layout: Layout;
 }
 
