@@ -9,9 +9,10 @@ import { ContextMenuRequestInfo, SelectedGraphElements } from '../../graph.model
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
 import { GraphEventType, InteractiveCyGraph } from '../../cy-graph/interactive-cy-graph';
-import { GraphData, LayoutConfig } from '../../cy-graph/cy-graph';
+import { CyConfig, GraphData, LayoutConfig } from '../../cy-graph/cy-graph';
 import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_PRESET, PRESET_LAYOUT_NAME } from '../../cy-graph/cy.constants';
 import { isPosMapEmpty } from '../../cy-graph/shared-utils';
+import { getLayoutConfig, LayoutName } from '../../cy-graph/layouting-utils';
 
 export interface GraphDataChange {
     layout?: Layout;
@@ -27,6 +28,7 @@ export interface GraphDataChange {
 })
 export class GraphViewComponent implements OnDestroy, OnChanges {
 
+    private static readonly MAX_FARM_TO_FORK_NODE_COUNT = 100;
     private static readonly MIN_ZOOM = 0.1;
     private static readonly MAX_ZOOM = 100.0;
 
@@ -36,6 +38,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     @Input() graphData: GraphData;
     @Input() styleConfig: StyleConfig;
+    @Input() cyConfig: CyConfig = {};
 
     @Input() showZoom: boolean;
 
@@ -95,6 +98,12 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
+    runLayoutManager(layoutName: LayoutName): null | (() => void) {
+        return this.cyGraph_ === null ?
+            null :
+            this.cyGraph_.runLayout(layoutName, this.graphData.selectedElements.nodes);
+    }
+
     private isSizePositive(): boolean {
         const size = this.getSize();
         return size.width > 0 && size.height > 0;
@@ -139,22 +148,23 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         };
     }
 
-    private createCyGraph(): void {
-        const layoutConfig: LayoutConfig =
-            isPosMapEmpty(this.graphData.nodePositions) ?
-            { name: LAYOUT_GRID } :
-            this.createPresetLayoutConfig(this.graphData.layout);
+    private createLayoutConfig(): LayoutConfig {
+        if (isPosMapEmpty(this.graphData.nodePositions)) {
+            return this.graphData.nodeData.length > GraphViewComponent.MAX_FARM_TO_FORK_NODE_COUNT ?
+                getLayoutConfig(LAYOUT_FRUCHTERMAN) :
+                getLayoutConfig(LAYOUT_FARM_TO_FORK);
+        } else {
+            return this.createPresetLayoutConfig(this.graphData.layout);
+        }
+    }
 
+    private createCyGraph(): void {
         this.cyGraph_ = new VirtualZoomCyGraph(
             this.graphElement.nativeElement,
             this.graphData,
             this.styleConfig,
-            layoutConfig,
-            {
-                minZoom: GraphViewComponent.MIN_ZOOM,
-                maxZoom: GraphViewComponent.MAX_ZOOM,
-                autoungrabify: true
-            }
+            this.createLayoutConfig(),
+            this.cyConfig
         );
         this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
         this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, () => this.onGraphDataChange());

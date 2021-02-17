@@ -10,6 +10,7 @@
         class="fcl-graph"
         [graphData]="graphData"
         [styleConfig]="styleConfig$ | async"
+        [cyConfig]="cyConfig"
         [showZoom]="showZoom$ | async"
         (graphDataChange)="onGraphDataChange($event)"
         (contextMenuRequest)="onContextMenuRequest($event)"

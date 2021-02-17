@@ -5,6 +5,13 @@ import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
 import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 import { EDGE_GROUP, NODE_GROUP, PRESET_LAYOUT_NAME } from './cy.constants';
+import cola from 'cytoscape-cola';
+import dagre from 'cytoscape-dagre';
+import spread from 'cytoscape-spread';
+import { FruchtermanLayout } from '@app/tracing/layout/fruchterman-reingold';
+import { FarmToForkLayout } from '@app/tracing/layout/farm-to-fork/farm-to-fork';
+// import { FruchtermanLayout } from '..//fruchterman-reingold';
+// import { FarmToForkLayout } from './farm-to-fork/farm-to-fork';
 
 export function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);
@@ -46,6 +53,7 @@ export class CyGraph {
     protected static readonly DEFAULT_MIN_ZOOM = 0.1;
     protected static readonly DEFAULT_MAX_ZOOM = 100.0;
     protected static readonly WHEEL_SENSITIVITY = 0.5;
+    private static CyLayoutManagerLoaded = false;
 
     private cy_: Cy;
     private minZoom_: number = CyGraph.DEFAULT_MIN_ZOOM;
@@ -60,7 +68,19 @@ export class CyGraph {
         layoutConfig: LayoutConfig,
         cyConfig?: CyConfig
     ) {
+        if (!CyGraph.CyLayoutManagerLoaded) {
+            CyGraph.addLayoutManagerToCytoScape();
+            CyGraph.CyLayoutManagerLoaded = true;
+        }
         this.initCy(htmlContainerElement, layoutConfig, cyConfig);
+    }
+
+    private static addLayoutManagerToCytoScape() {
+        cytoscape.use(cola);
+        cytoscape.use(dagre);
+        cytoscape.use(spread);
+        cytoscape('layout', 'fruchterman', FruchtermanLayout);
+        cytoscape('layout', 'farm_to_fork', FarmToForkLayout);
     }
 
     protected get cy(): Cy {

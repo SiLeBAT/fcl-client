@@ -10,7 +10,7 @@ import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
 import { GraphDataChange } from '../graph-view/graph-view.component';
-import { GraphData } from '../../cy-graph/cy-graph';
+import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
 import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
@@ -26,6 +26,9 @@ import { BoundaryRect } from '@app/tracing/util/geometry-utils';
     styleUrls: ['./gis-graph.component.scss']
 })
 export class GisGraphComponent implements OnInit, OnDestroy {
+
+    private static readonly MIN_ZOOM = 0.1;
+    private static readonly MAX_ZOOM = 100.0;
 
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
 
@@ -44,6 +47,11 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private graphData_: GraphData | null = null;
     private unknownLatLonRect_: BoundaryRect | null = null;
     private legendInfo_: LegendInfo | null = null;
+    private cyConfig_: CyConfig = {
+        minZoom: GisGraphComponent.MIN_ZOOM,
+        maxZoom: GisGraphComponent.MAX_ZOOM,
+        autoungrabify: true
+    };
 
     constructor(
         private store: Store<State>,
@@ -133,6 +141,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     get showMissingGisInfoEntry(): boolean {
         return this.unknownLatLonRect !== null;
+    }
+
+    get cyConfig(): CyConfig {
+        return this.cyConfig_;
     }
 
     private applyState(newState: GraphState) {

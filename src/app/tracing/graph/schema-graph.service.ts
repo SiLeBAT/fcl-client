@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { StationId, Position, SchemaGraphState  } from '../data.model';
+import { StationId, Position, SchemaGraphState } from '../data.model';
 import { GraphService } from './graph.service';
 import { CyNodeData, NodeId } from './graph.model';
 import * as _ from 'lodash';
@@ -15,7 +15,6 @@ export class SchemaGraphService {
     private cachedState: SchemaGraphState | null = null;
 
     private cachedData: GraphData | null = null;
-
 
     constructor(
         private graphService: GraphService
@@ -69,10 +68,15 @@ export class SchemaGraphService {
         this.cachedData = schemaGraphData;
     }
 
-    private createNodePositions(stationPosMap: Record<StationId, Position>, nodeData: CyNodeData[], setMissingPosAlwaysToDefault: boolean): Record<NodeId, Position> {
+    private createNodePositions(
+        stationPosMap: Record<StationId, Position>,
+        nodeData: CyNodeData[],
+        setMissingPosAlwaysToDefault: boolean
+    ): Record<NodeId, Position> {
+
         const nodePosMap: Record<NodeId, Position> = {};
         const nodesWoPos: NodeId[] = [];
-        for(const node of nodeData) {
+        for (const node of nodeData) {
             const pos = stationPosMap[node.station.id];
             if (pos === undefined) {
                 nodesWoPos.push(node.id);
