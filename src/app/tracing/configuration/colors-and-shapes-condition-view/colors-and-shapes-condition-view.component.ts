@@ -13,6 +13,9 @@ import * as _ from 'lodash';
 export class ColorsAndShapesConditionViewComponent {
 
     private static readonly COLORPICKER_DEFAULT_COLOR = 'rgba(3, 78, 162)';
+    private static readonly DISABLED_ACTION_TOOLTIP = 'Please select color and/or shape as well as conditions';
+    private static readonly ENABLED_APPLY_TOOLTIP = 'Apply Highlighting Rule';
+    private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
 
     @Input() inputData: ColorsAndShapesConditionInputData;
 
@@ -58,6 +61,24 @@ export class ColorsAndShapesConditionViewComponent {
     get propToValuesMap(): PropValueMap {
         this.processLastInputIfNecessary();
         return this.propToValuesMap_;
+    }
+
+    get actionButtonDisabled(): boolean {
+        return (this.stationHighlightingCondition_.shape === null ||
+                this.stationHighlightingCondition_.color === null ||
+                this.stationHighlightingCondition_.logicalConditions.length === 0);
+    }
+
+    get applyTooltip(): String {
+        return this.actionButtonDisabled ?
+            ColorsAndShapesConditionViewComponent.DISABLED_ACTION_TOOLTIP :
+            ColorsAndShapesConditionViewComponent.ENABLED_APPLY_TOOLTIP;
+    }
+
+    get okTooltip(): String {
+        return this.actionButtonDisabled ?
+            ColorsAndShapesConditionViewComponent.DISABLED_ACTION_TOOLTIP :
+            ColorsAndShapesConditionViewComponent.ENABLED_OK_TOOLTIP;
     }
 
     private processedInput_: ColorsAndShapesConditionInputData | null = null;

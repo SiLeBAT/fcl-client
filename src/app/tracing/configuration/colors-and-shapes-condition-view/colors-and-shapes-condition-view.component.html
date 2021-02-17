@@ -32,38 +32,55 @@
     ></fcl-complex-filter-view>
 
     <div class="fcl-action-highlighting-button-container">
-        <button
-            mat-stroked-button
+        <div
             class="fcl-action-highlighting-button"
-            matTooltip="Apply condition"
-            matTooltipPosition="above"
-            color="primary"
-            (click)="onApplyRule()"
-            >
-            <mat-icon>done</mat-icon>
-            Apply
-        </button>
-        <button
-            mat-stroked-button
+            [matTooltip]="applyTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-colors-and-shapes-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onApplyRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                Apply
+            </button>
+        </div>
+
+        <div
             class="fcl-action-highlighting-button"
-            matTooltip="Close dialogue"
-            matTooltipPosition="above"
-            color="primary"
-            (click)="onCancelRule()"
-            >
-            <mat-icon>clear</mat-icon>
-            Cancel
-        </button>
-        <button
-            mat-stroked-button
+            matTooltip="Close dialogue">
+            <button
+                mat-stroked-button
+                class="fcl-colors-and-shapes-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onCancelRule()"
+                >
+                <mat-icon>clear</mat-icon>
+                Cancel
+            </button>
+        </div>
+
+        <div
             class="fcl-action-highlighting-button"
-            matTooltip="Apply condition and close dialogue"
-            matTooltipPosition="above"
-            color="primary"
-            (click)="onOkRule()"
-            >
-            <mat-icon>done</mat-icon>
-            OK
-        </button>
+            [matTooltip]="okTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-colors-and-shapes-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onOkRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                OK
+            </button>
+        </div>
+
     </div>
 </div>
