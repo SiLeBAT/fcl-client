@@ -8,14 +8,14 @@
 
     <div class="fcl-shape-and-color-fields">
         <fcl-shape-selector-view
-            class="fcl-complex-filter-form-field fcl-font-size-08 fcl-action-highlighting-button"
+            class="fcl-complex-filter-form-field fcl-font-size-08 fcl-action-rule-button"
             [availableShapeTypes]="availableShapeTypes"
             [value]="undefined"
             (valueChange)="onShapeChange($event)"
         ></fcl-shape-selector-view>
 
         <fcl-color-picker-view
-            class="fcl-new-highlighting-rule-color-field fcl-action-highlighting-button"
+            class="fcl-new-highlighting-rule-color-field fcl-action-rule-button"
             [color]="color"
             (colorChange)="onColorChange($event)"
         >
@@ -31,13 +31,13 @@
         (conditionsChange) = "onComplexFilterChange($event)"
     ></fcl-complex-filter-view>
 
-    <div class="fcl-action-highlighting-button-container">
+    <div class="fcl-action-rule-button-container">
         <div
-            class="fcl-action-highlighting-button"
+            class="fcl-action-rule-button-div"
             [matTooltip]="applyTooltip">
             <button
                 mat-stroked-button
-                class="fcl-colors-and-shapes-rule-action-button"
+                class="fcl-action-rule-button"
 
                 matTooltipPosition="above"
                 color="primary"
@@ -50,11 +50,11 @@
         </div>
 
         <div
-            class="fcl-action-highlighting-button"
+            class="fcl-action-rule-button-div"
             matTooltip="Close dialogue">
             <button
                 mat-stroked-button
-                class="fcl-colors-and-shapes-rule-action-button"
+                class="fcl-action-rule-button"
 
                 matTooltipPosition="above"
                 color="primary"
@@ -66,11 +66,11 @@
         </div>
 
         <div
-            class="fcl-action-highlighting-button"
+            class="fcl-action-rule-button-div"
             [matTooltip]="okTooltip">
             <button
                 mat-stroked-button
-                class="fcl-colors-and-shapes-rule-action-button"
+                class="fcl-action-rule-button"
 
                 matTooltipPosition="above"
                 color="primary"

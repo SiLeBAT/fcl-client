@@ -1,30 +1,30 @@
 <fcl-colors-and-shapes-list-view
     class="fcl-highlighting-station-list-view"
-    [colorsAndShapesRules]="colorsAndShapesHighlightings"
+    [colorsAndShapesHighlightings]="colorsAndShapesHighlightings"
     [listButtonDisabled]="listButtonDisabled"
-    (deleteHighlightingRule)="onDeleteHighlightingCondition($event)"
+    (deleteHighlightingRule)="onDeleteHighlightingRule($event)"
     (toggleShowInLegendProperty)="onToggleShowInLegend($event)"
 >
 </fcl-colors-and-shapes-list-view>
 
 <button
-    *ngIf="showAddHighlightingButton"
+    *ngIf="showAddHighlightingRuleButton"
     mat-stroked-button
-    class="fcl-add-highlighting-button"
+    class="fcl-add-highlighting-rule-button"
     matTooltip="Add Highlighting Rule"
     matTooltipPosition="above"
     color="primary"
-    (click)="onAddColorsAndShapesCondition()"
+    (click)="onAddColorsAndShapesRule()"
 >
     <mat-icon>add</mat-icon>
 </button>
 
 
-<fcl-colors-and-shapes-condition-view
-    *ngIf="showHighlightingDialog"
-    [inputData]="colorsAndShapesConditionInputData"
-    (applyHighlightingRule)="onApplyColorsAndShapesCondition($event)"
-    (cancelHighlightingRule)="onCancelHighlightingRule()"
-    (okHighlightingRule)="onOkHighlightingRule($event)"
+<fcl-colors-and-shapes-rule-view
+    *ngIf="showHighlightingRuleDialog"
+    [inputData]="colorsAndShapesRuleInputData"
+    (applyColorsAndShapesRule)="onApplyColorsAndShapesRule($event)"
+    (cancelColorsAndShapesRule)="onCancelColorsAndShapesRule()"
+    (okColorsAndShapesRule)="onOkColorsAndShapesRule($event)"
 >
-</fcl-colors-and-shapes-condition-view>
+</fcl-colors-and-shapes-rule-view>

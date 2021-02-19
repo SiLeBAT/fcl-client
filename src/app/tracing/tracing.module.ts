@@ -67,7 +67,7 @@ import { ColorPickerViewComponent } from './configuration/color-picker-view/colo
 import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-view.component';
 import { ColorsAndShapesViewComponent } from './configuration/colors-and-shapes-view/colors-and-shapes-view.component';
 import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
-import { ColorsAndShapesConditionViewComponent } from './configuration/colors-and-shapes-condition-view/colors-and-shapes-condition-view.component';
+import { ColorsAndShapesRuleViewComponent } from './configuration/colors-and-shapes-rule-view/colors-and-shapes-rule-view.component';
 import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
 @NgModule({
     imports: [
@@ -135,7 +135,7 @@ import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.compo
         RuleNameViewComponent,
         ColorsAndShapesViewComponent,
         ColorsAndShapesListViewComponent,
-        ColorsAndShapesConditionViewComponent,
+        ColorsAndShapesRuleViewComponent,
         DialogYesNoComponent
     ],
     exports: []

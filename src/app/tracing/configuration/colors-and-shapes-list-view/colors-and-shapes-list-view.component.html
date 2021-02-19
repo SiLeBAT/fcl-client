@@ -2,7 +2,7 @@
 
     <mat-list-item
         class="fcl-colors-and-shapes-list-view-list-item"
-        *ngFor="let item of colorsAndShapesRules; let i = index"
+        *ngFor="let item of colorsAndShapesHighlightings; let i = index"
     >
         <div mat-line class="fcl-colors-and-shapes-list-item-name">
             {{ item.name }}
@@ -45,7 +45,7 @@
             matTooltip="Delete Highlighting Rule"
             matTooltipPosition="above"
             color="warn"
-            (click)="onDeleteHighlightingCondition($event, item, i)"
+            (click)="onDeleteHighlightingRule($event, item, i)"
             [disabled]="listButtonDisabled"
             >
             <mat-icon>delete forever</mat-icon>

@@ -10,31 +10,31 @@ import { HighlightingRuleDeleteRequestData } from '../configuration.model';
 })
 export class ColorsAndShapesListViewComponent {
 
-    @Input() colorsAndShapesRules: StationHighlightingData[] = [];
+    @Input() colorsAndShapesHighlightings: StationHighlightingData[] = [];
     @Input() listButtonDisabled = false;
 
     @Output() deleteHighlightingRule = new EventEmitter<HighlightingRuleDeleteRequestData>();
     @Output() toggleShowInLegendProperty = new EventEmitter<StationHighlightingData[]>();
 
-    onDeleteHighlightingCondition(event: MouseEvent, condition: StationHighlightingData, indexToDelete: number) {
-        const newHighlightingRules = this.colorsAndShapesRules
+    onDeleteHighlightingRule(event: MouseEvent, rule: StationHighlightingData, indexToDelete: number) {
+        const newColorsAndShapesHighlightings = this.colorsAndShapesHighlightings
             .filter((item, index) => index !== indexToDelete);
 
         this.deleteHighlightingRule.emit({
-            highlightingData: newHighlightingRules,
-            highlightingCondition: condition,
+            highlightingData: newColorsAndShapesHighlightings,
+            highlightingRule: rule,
             xPos: event.clientX,
             yPos: event.clientY
         });
     }
 
     onToggleShowInLegend(index: number) {
-        const showInLegend: boolean = this.colorsAndShapesRules[index].showInLegend;
-        const newColorsAndShapesRules = [
-            ...this.colorsAndShapesRules
+        const showInLegend: boolean = this.colorsAndShapesHighlightings[index].showInLegend;
+        const newColorsAndShapesHighlightings = [
+            ...this.colorsAndShapesHighlightings
         ];
-        newColorsAndShapesRules[index].showInLegend = !showInLegend;
+        newColorsAndShapesHighlightings[index].showInLegend = !showInLegend;
 
-        this.toggleShowInLegendProperty.emit(newColorsAndShapesRules);
+        this.toggleShowInLegendProperty.emit(newColorsAndShapesHighlightings);
     }
 }

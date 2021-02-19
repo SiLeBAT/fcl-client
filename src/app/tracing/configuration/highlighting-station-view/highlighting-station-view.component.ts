@@ -16,10 +16,9 @@ export interface HighlightingInputData {
 })
 export class HighlightingStationViewComponent {
     @Input() inputData: HighlightingInputData;
-    @Input() indexNewRule: number;
 
-    @Output() highlightingConditionsChange = new EventEmitter<StationHighlightingData[]>();
-    @Output() highlightingConditionsDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
+    @Output() highlightingRulesChange = new EventEmitter<StationHighlightingData[]>();
+    @Output() highlightingRulesDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
     @Output() editIndexChange = new EventEmitter<number | null>();
 
     get colorsAndShapesHighlightings(): StationHighlightingData[] {
@@ -43,21 +42,21 @@ export class HighlightingStationViewComponent {
 
     constructor() { }
 
-    onDeleteColorsAndShapesCondition(conditionToDelete: HighlightingRuleDeleteRequestData) {
-        const newHighlightingConditions = conditionToDelete.highlightingData.concat(this.restHighlightings_);
+    onDeleteColorsAndShapesRule(ruleToDelete: HighlightingRuleDeleteRequestData) {
+        const newHighlightingRules = ruleToDelete.highlightingData.concat(this.restHighlightings_);
 
-        this.highlightingConditionsDelete.emit({
-            highlightingData: newHighlightingConditions,
-            highlightingCondition: conditionToDelete.highlightingCondition,
-            xPos: conditionToDelete.xPos,
-            yPos: conditionToDelete.yPos
+        this.highlightingRulesDelete.emit({
+            highlightingData: newHighlightingRules,
+            highlightingRule: ruleToDelete.highlightingRule,
+            xPos: ruleToDelete.xPos,
+            yPos: ruleToDelete.yPos
         });
     }
 
-    onChangeColorsAndShapesConditions(newColorsAndShapesHighlightings: StationHighlightingData[]) {
+    onChangeColorsAndShapesRules(newColorsAndShapesHighlightings: StationHighlightingData[]) {
         this.colorsAndShapesHighlightings_ = newColorsAndShapesHighlightings;
-        const newHighlightingConditions = this.colorsAndShapesHighlightings_.concat(this.restHighlightings_);
-        this.highlightingConditionsChange.emit(newHighlightingConditions);
+        const newHighlightingRules = this.colorsAndShapesHighlightings_.concat(this.restHighlightings_);
+        this.highlightingRulesChange.emit(newHighlightingRules);
     }
 
     onChangeEditIndex(editIndex: number | null) {

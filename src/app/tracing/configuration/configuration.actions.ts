@@ -15,7 +15,7 @@ export class SelectFilterTableColumnsMSA implements Action {
 export class DeleteStationHighlightingRulesSSA implements Action {
     readonly type = ConfigurationActionTypes.DeleteStationHighlightingRulesSSA;
 
-    constructor(public payload: { stationHighlightingCondition: HighlightingRuleDeleteRequestData }) {}
+    constructor(public payload: { stationHighlightingRule: HighlightingRuleDeleteRequestData }) {}
 }
 
 export type ConfigurationActions =

@@ -75,17 +75,17 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         );
     }
 
-    onHighlightingConditionsChange(newHighlightingConditions: StationHighlightingData[]) {
-        this.emitHighlightingConditions(newHighlightingConditions);
+    onHighlightingRulesChange(newHighlightingRules: StationHighlightingData[]) {
+        this.emitHighlightingRules(newHighlightingRules);
     }
 
     onChangeEditIndex(editIndex: number | null) {
         this.emitEditIndex(editIndex);
     }
 
-    onHighlightingConditionsDelete(conditionToDelete: HighlightingRuleDeleteRequestData) {
+    onHighlightingRulesDelete(ruleToDelete: HighlightingRuleDeleteRequestData) {
         this.store.dispatch(new configurationActions.DeleteStationHighlightingRulesSSA(
-            { stationHighlightingCondition: conditionToDelete }
+            { stationHighlightingRule: ruleToDelete }
         ));
 
     }
@@ -98,7 +98,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         }
     }
 
-    private emitHighlightingConditions(stationHighlightingData: StationHighlightingData[]) {
+    private emitHighlightingRules(stationHighlightingData: StationHighlightingData[]) {
         this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
             { stationHighlightingData: stationHighlightingData }
         ));

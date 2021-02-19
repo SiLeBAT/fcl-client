@@ -75,17 +75,17 @@ export interface PropValueMap {
     [key: string]: (string | number | boolean)[];
 }
 
-export interface ColorsAndShapesConditionInputData {
+export interface ColorsAndShapesRuleInputData {
     dataTable: DataTable;
     complexFilterSettings: ComplexRowFilterSettings;
 }
 
-export interface ColorsAndShapesInputData extends ColorsAndShapesConditionInputData {
+export interface ColorsAndShapesInputData extends ColorsAndShapesRuleInputData {
     editIndex: number;
 }
 export interface HighlightingRuleDeleteRequestData {
     highlightingData: StationHighlightingData[];
-    highlightingCondition: StationHighlightingData;
+    highlightingRule: StationHighlightingData;
     xPos: number;
     yPos: number;
 }

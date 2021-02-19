@@ -41,11 +41,7 @@
     font-size: 1.2rem;
 }
 
-.fcl-action-highlighting-button {
-    flex: 1;
-}
-
-.fcl-action-highlighting-button:hover {
+.fcl-action-highlighting-rule-button:hover {
     background-color: $fcl-accent-300;
     color: rgba(255, 255, 255, 0.9);
 }
@@ -54,11 +50,15 @@
     grid-area: complex;
 }
 
-.fcl-action-highlighting-button-container {
+.fcl-action-rule-button-container {
     grid-area: ok;
     display: flex;
 }
 
-.fcl-colors-and-shapes-rule-action-button {
+.fcl-action-rule-button-div {
+    flex: 1;
+}
+
+.fcl-action-rule-button {
     width: 100%;
 }

@@ -68,10 +68,10 @@ export class ConfigurationEffects {
         ofType<DeleteStationHighlightingRulesSSA>(ConfigurationActionTypes.DeleteStationHighlightingRulesSSA),
         mergeMap(action => {
 
-            const newHighlightingData = action.payload.stationHighlightingCondition.highlightingData;
-            const condition = action.payload.stationHighlightingCondition.highlightingCondition;
-            const xPos = (action.payload.stationHighlightingCondition.xPos - 350).toString(10).concat('px');
-            const yPos = (action.payload.stationHighlightingCondition.yPos - 140).toString(10).concat('px');
+            const newHighlightingData = action.payload.stationHighlightingRule.highlightingData;
+            const rule = action.payload.stationHighlightingRule.highlightingRule;
+            const xPos = (action.payload.stationHighlightingRule.xPos - 350).toString(10).concat('px');
+            const yPos = (action.payload.stationHighlightingRule.yPos - 140).toString(10).concat('px');
 
             const position = {
                 top: yPos,
@@ -79,7 +79,7 @@ export class ConfigurationEffects {
             };
 
             const dialogData: DialogYesNoData = {
-                title: `Really delete the '${condition.name}' highlighting rule?`,
+                title: `Really delete the '${rule.name}' highlighting rule?`,
                 position: position
             };
 

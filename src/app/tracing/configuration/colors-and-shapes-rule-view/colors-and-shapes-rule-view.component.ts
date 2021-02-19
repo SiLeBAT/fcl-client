@@ -1,27 +1,27 @@
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { LogicalCondition, NodeShapeType, StationHighlightingData, TableColumn } from '@app/tracing/data.model';
-import { ColorsAndShapesConditionInputData, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
+import { ColorsAndShapesRuleInputData, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import * as _ from 'lodash';
 
 @Component({
-    selector: 'fcl-colors-and-shapes-condition-view',
-    templateUrl: './colors-and-shapes-condition-view.component.html',
-    styleUrls: ['./colors-and-shapes-condition-view.component.scss'],
+    selector: 'fcl-colors-and-shapes-rule-view',
+    templateUrl: './colors-and-shapes-rule-view.component.html',
+    styleUrls: ['./colors-and-shapes-rule-view.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class ColorsAndShapesConditionViewComponent {
+export class ColorsAndShapesRuleViewComponent {
 
     private static readonly COLORPICKER_DEFAULT_COLOR = 'rgba(3, 78, 162)';
     private static readonly DISABLED_ACTION_TOOLTIP = 'Please select color and/or shape as well as conditions';
     private static readonly ENABLED_APPLY_TOOLTIP = 'Apply Highlighting Rule';
     private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
 
-    @Input() inputData: ColorsAndShapesConditionInputData;
+    @Input() inputData: ColorsAndShapesRuleInputData;
 
-    @Output() applyHighlightingRule = new EventEmitter<StationHighlightingData>();
-    @Output() cancelHighlightingRule = new EventEmitter();
-    @Output() okHighlightingRule = new EventEmitter<StationHighlightingData>();
+    @Output() applyColorsAndShapesRule = new EventEmitter<StationHighlightingData>();
+    @Output() cancelColorsAndShapesRule = new EventEmitter();
+    @Output() okColorsAndShapesRule = new EventEmitter<StationHighlightingData>();
 
     availableShapeTypes: (NodeShapeType | null)[] = [
         null,
@@ -46,7 +46,7 @@ export class ColorsAndShapesConditionViewComponent {
         ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
     ];
 
-    color: string = ColorsAndShapesConditionViewComponent.COLORPICKER_DEFAULT_COLOR;
+    color: string = ColorsAndShapesRuleViewComponent.COLORPICKER_DEFAULT_COLOR;
 
     get complexFilterSettings(): LogicalFilterCondition[] {
         this.processLastInputIfNecessary();
@@ -64,70 +64,70 @@ export class ColorsAndShapesConditionViewComponent {
     }
 
     get actionButtonDisabled(): boolean {
-        return ((this.stationHighlightingCondition_.shape === null &&
-                this.stationHighlightingCondition_.color === null) ||
-                this.stationHighlightingCondition_.logicalConditions.length === 0);
+        return ((this.stationHighlightingRule_.shape === null &&
+                this.stationHighlightingRule_.color === null) ||
+                this.stationHighlightingRule_.logicalConditions.length === 0);
     }
 
     get applyTooltip(): String {
         return this.actionButtonDisabled ?
-            ColorsAndShapesConditionViewComponent.DISABLED_ACTION_TOOLTIP :
-            ColorsAndShapesConditionViewComponent.ENABLED_APPLY_TOOLTIP;
+            ColorsAndShapesRuleViewComponent.DISABLED_ACTION_TOOLTIP :
+            ColorsAndShapesRuleViewComponent.ENABLED_APPLY_TOOLTIP;
     }
 
     get okTooltip(): String {
         return this.actionButtonDisabled ?
-            ColorsAndShapesConditionViewComponent.DISABLED_ACTION_TOOLTIP :
-            ColorsAndShapesConditionViewComponent.ENABLED_OK_TOOLTIP;
+            ColorsAndShapesRuleViewComponent.DISABLED_ACTION_TOOLTIP :
+            ColorsAndShapesRuleViewComponent.ENABLED_OK_TOOLTIP;
     }
 
-    private processedInput_: ColorsAndShapesConditionInputData | null = null;
+    private processedInput_: ColorsAndShapesRuleInputData | null = null;
     private complexFilterConditions_: LogicalFilterCondition[] | null = null;
     private dataColumns_: TableColumn[] | null = null;
     private propToValuesMap_: PropValueMap | null = null;
-    private stationHighlightingCondition_: StationHighlightingData = this.createDefaultCondition();
+    private stationHighlightingRule_: StationHighlightingData = this.createDefaultRule();
 
     constructor() { }
 
     onRuleNameChange(ruleName: string): void {
-        this.stationHighlightingCondition_ = {
-            ...this.stationHighlightingCondition_,
+        this.stationHighlightingRule_ = {
+            ...this.stationHighlightingRule_,
             name: ruleName
         };
     }
 
     onShapeChange(shapeType: (NodeShapeType | null)): void {
-        this.stationHighlightingCondition_ = {
-            ...this.stationHighlightingCondition_,
+        this.stationHighlightingRule_ = {
+            ...this.stationHighlightingRule_,
             shape: shapeType
         };
     }
 
     onComplexFilterChange(conditions: LogicalFilterCondition[]): void {
         const logicalConditions = this.logicalFilterConditionToLogicalCondition(conditions);
-        this.stationHighlightingCondition_ = {
-            ...this.stationHighlightingCondition_,
+        this.stationHighlightingRule_ = {
+            ...this.stationHighlightingRule_,
             logicalConditions: logicalConditions
         };
     }
 
     onApplyRule(): void {
-        this.applyHighlightingRule.emit(this.stationHighlightingCondition_);
+        this.applyColorsAndShapesRule.emit(this.stationHighlightingRule_);
     }
 
     onCancelRule(): void {
-        this.cancelHighlightingRule.emit();
+        this.cancelColorsAndShapesRule.emit();
     }
 
     onOkRule(): void {
-        this.okHighlightingRule.emit(this.stationHighlightingCondition_);
+        this.okColorsAndShapesRule.emit(this.stationHighlightingRule_);
     }
 
     onColorChange(color: string): void {
         this.color = color;
         const highlightingColor = this.convertColorToHighlightingColor(color);
-        this.stationHighlightingCondition_ = {
-            ...this.stationHighlightingCondition_,
+        this.stationHighlightingRule_ = {
+            ...this.stationHighlightingRule_,
             color: highlightingColor
         };
     }
@@ -182,11 +182,11 @@ export class ColorsAndShapesConditionViewComponent {
         }
     }
 
-    private createDefaultCondition(): StationHighlightingData {
+    private createDefaultRule(): StationHighlightingData {
         return {
             name: '',
             showInLegend: true,
-            color: this.convertColorToHighlightingColor(ColorsAndShapesConditionViewComponent.COLORPICKER_DEFAULT_COLOR),
+            color: this.convertColorToHighlightingColor(ColorsAndShapesRuleViewComponent.COLORPICKER_DEFAULT_COLOR),
             invisible: false,
             adjustThickness: false,
             labelProperty: null,
