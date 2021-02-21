@@ -37,10 +37,7 @@ export class ClearInvisibilitiesMSA implements Action {
 export class ShowStationPropertiesMSA implements Action {
     readonly type = TracingActionTypes.ShowStationPropertiesMSA;
 
-    constructor(public payload: {
-        stationId: string,
-        hoverDeliveriesSubject: Subject<string[]>
-    }) {}
+    constructor(public payload: { stationId: string }) {}
 }
 
 export class ShowDeliveryPropertiesMSA implements Action {

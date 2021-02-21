@@ -10,8 +10,6 @@ import dagre from 'cytoscape-dagre';
 import spread from 'cytoscape-spread';
 import { FruchtermanLayout } from '@app/tracing/layout/fruchterman-reingold';
 import { FarmToForkLayout } from '@app/tracing/layout/farm-to-fork/farm-to-fork';
-// import { FruchtermanLayout } from '..//fruchterman-reingold';
-// import { FarmToForkLayout } from './farm-to-fork/farm-to-fork';
 
 export function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);
@@ -34,8 +32,9 @@ export interface LayoutConfig {
     zoom?: number;
     pan?: Position;
     fit?: boolean;
-    ready?(): void; // on layoutready
-    stop?(): void; // on layoutstop
+    animate?: boolean;
+    ready?(): void;
+    stop?(): void;
     [key: string]: any;
 }
 export interface GraphData {

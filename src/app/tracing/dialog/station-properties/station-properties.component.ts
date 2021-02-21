@@ -14,7 +14,6 @@ export interface StationPropertiesData {
     station: StationData;
     deliveries: Map<DeliveryId, DeliveryData>;
     connectedStations: Map<StationId, StationData>;
-    hoverDeliveriesSubject: Subject<DeliveryId[]>;
 }
 
 type LotKey = string;
@@ -547,7 +546,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     private hoverDeliveries(deliveryIds: DeliveryId[]): void {
         this.store.dispatch(new SetHoverDeliveriesSOA({ deliveryIds: deliveryIds }));
-        this.data.hoverDeliveriesSubject.next(deliveryIds);
     }
 
     private updateConnectLine() {

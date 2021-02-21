@@ -9,8 +9,6 @@ import {
 import _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
-import { Subject } from 'rxjs';
-import { LayoutService } from '../layout/layout.service';
 import {
     ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA, MakeStationsInvisibleMSA,
     MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA, SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
@@ -64,9 +62,7 @@ export class ContextMenuService {
         [LAYOUT_DAG]: 'Directed acyclic graph'
     };
 
-    constructor(
-        private layoutService: LayoutService
-    ) {}
+    constructor() {}
 
     getContextElements(context: ContextMenuRequestContext, graphData: GraphServiceData): ContextElements {
         const isContextElementSelected =
@@ -295,10 +291,7 @@ export class ContextMenuService {
                 {
                     ...MenuItemStrings.showProperties,
                     disabled: multipleStationsSelected,
-                    action: new ShowStationPropertiesMSA({
-                        stationId: selectedIds[0],
-                        hoverDeliveriesSubject: new Subject<string[]>()
-                    })
+                    action: new ShowStationPropertiesMSA({ stationId: selectedIds[0] })
                 },
                 this.createTraceMenuItemData(contextElements),
                 {

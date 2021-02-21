@@ -28,7 +28,6 @@ import { GraphLegendViewComponent } from './graph/components/graph-legend-view/g
 import { NodeSymbolViewComponent } from './shared/node-symbol-view/node-symbol-view.component';
 import { ZoomViewComponent } from './graph/components/zoom-view/zoom-view.component';
 import { GisGraphComponent } from './graph/components/gis-graph/gis-graph.component';
-import { GraphContextMenuComponent } from './graph/components/graph-context-menu/graph-context-menu.component';
 import { EdgeSymbolViewComponent } from './graph/components/edge-symbol-view/edge-symbol-view.component';
 import { CreatedImageViewComponent } from './shared/created-image-view/created-image-view.component';
 import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/merge-stations-dialog.component';
@@ -97,7 +96,6 @@ import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.compo
         NestedMatMenuViewComponent,
         SchemaGraphComponent,
         GisGraphComponent,
-        GraphContextMenuComponent,
         GraphLegendViewComponent,
         NodeSymbolViewComponent,
         EdgeSymbolViewComponent,
