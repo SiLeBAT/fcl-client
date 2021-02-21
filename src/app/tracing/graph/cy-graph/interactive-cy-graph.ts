@@ -46,8 +46,10 @@ export class InteractiveCyGraph extends CyGraph {
 
     private static readonly ZOOM_FACTOR = 1.5;
     private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
+    private static readonly POSITION_TOLERANCE = 1e-13;
 
     private listeners: GraphEventListeners<GraphEventType>;
+    protected ignorePanOrZoomEvents = false;
 
     constructor(
         htmlContainerElement: HTMLElement,
@@ -163,8 +165,11 @@ export class InteractiveCyGraph extends CyGraph {
 
     private onPanOrZoom(): void {
         if (
-            this.cy.zoom() !== super.layout.zoom ||
-            !_.isEqual(this.cy.pan(), super.layout.pan
+            !this.ignorePanOrZoomEvents &&
+            (
+                this.cy.zoom() !== super.layout.zoom ||
+                !_.isEqual(this.cy.pan(), super.layout.pan
+            )
         )) {
             this.applyGraphDataChangeBottomUp({
                 layout: {
@@ -271,31 +276,30 @@ export class InteractiveCyGraph extends CyGraph {
 
     getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] {
         const isNodeCountSufficient = nodesToLayout.length >= InteractiveCyGraph.MIN_RELAYOUTING_NODE_COUNT;
+        const areAllNodesGoingToBeLayouted = nodesToLayout.length === super.data.nodeData.length;
 
-        return [
-            {
-                name: LAYOUT_FRUCHTERMAN,
-                disabled: !isNodeCountSufficient
-            },
-            {
-                name: LAYOUT_FARM_TO_FORK,
-                disabled: !isNodeCountSufficient || nodesToLayout.length < super.data.nodeData.length
-            }
-        ].concat([
-            LAYOUT_CONSTRAINT_BASED, LAYOUT_RANDOM, LAYOUT_GRID, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC,
+        const knownLayoutManagerNames = [
+            LAYOUT_FRUCHTERMAN, LAYOUT_FARM_TO_FORK, LAYOUT_CONSTRAINT_BASED, LAYOUT_RANDOM, LAYOUT_GRID, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC,
             LAYOUT_BREADTH_FIRST, LAYOUT_SPREAD, LAYOUT_DAG
-        ].map(layoutName => ({ name: layoutName, disabled: !isNodeCountSufficient })));
+        ];
+        const layoutManagersNotSupportingSubsets = [LAYOUT_FARM_TO_FORK, LAYOUT_SPREAD];
+
+        return knownLayoutManagerNames.map(layoutManagerName => ({
+            name: layoutManagerName,
+            disabled: !isNodeCountSufficient ||
+                (!areAllNodesGoingToBeLayouted && layoutManagersNotSupportingSubsets.indexOf(layoutManagerName) >= 0)
+        }));
     }
 
     runLayout(layoutName: LayoutName, nodeIds: NodeId[]): null | (() => void) {
-        if (nodeIds.length < 2) { return; }
+        if (nodeIds.length >= 2) {
+            const layoutConfig: LayoutConfig = getLayoutConfig(layoutName);
 
-        const layoutConfig: LayoutConfig = getLayoutConfig(layoutName);
-
-        return this.startLayouting(layoutConfig, nodeIds);
+            return this.startLayouting(layoutConfig, nodeIds);
+        }
     }
 
-    private getNodeContext(nodeIds: NodeId[]): Cy | CyNodeCollection {
+    protected getNodeContext(nodeIds: NodeId[]): Cy | CyNodeCollection {
         if (nodeIds.length === this.cy.nodes().size()) {
             return this.cy;
         } else {
@@ -304,18 +308,21 @@ export class InteractiveCyGraph extends CyGraph {
         }
     }
 
-    protected startLayouting(layoutConfig: LayoutConfig, nodeIds: NodeId[]): null | (() => void) {
-        const cyContext = this.getNodeContext(nodeIds);
+    protected startLayouting(layoutConfig: LayoutConfig, nodesToLayout: NodeId[]): null | (() => void) {
+        const cyContext = this.getNodeContext(nodesToLayout);
         let isAsyncLayout = true;
         const stopFun = layoutConfig.stop;
         layoutConfig.stop = () => {
             isAsyncLayout = false;
-            this.postProcessLayout();
+            this.postProcessLayout(nodesToLayout);
             if (stopFun !== undefined) {
                 stopFun();
             }
+            this.ignorePanOrZoomEvents = false;
         };
         const layout = cyContext.layout(layoutConfig);
+
+        this.ignorePanOrZoomEvents = true;
 
         layout.run();
 
@@ -326,7 +333,7 @@ export class InteractiveCyGraph extends CyGraph {
         }
     }
 
-    protected postProcessLayout(): void {
+    protected postProcessLayout(layoutedNodes: NodeId[]): void {
         super.setGraphData({
             ...super.data,
             nodePositions: this.extractNodePositionsFromGraph(),
@@ -347,8 +354,8 @@ export class InteractiveCyGraph extends CyGraph {
         const updateNodes = oldData.nodeData !== graphData.nodeData;
         const updateEdges = !updateNodes && oldData.edgeData !== graphData.edgeData;
         const updateStyle = updateNodes || oldStyle !== styleConfig || oldData.propsChangedFlag !== graphData.propsChangedFlag;
-        const updateSelection = !updateNodes && oldData.selectedElements !== graphData.selectedElements;
-        const updateNodePositions = !updateNodes && oldData.nodePositions !== graphData.nodePositions;
+        const updateSelection = !updateNodes && !_.isEqual(oldData.selectedElements, graphData.selectedElements);
+        const updateNodePositions = !updateNodes && this.arePositionsDifferent(oldData, graphData);
         const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
         const updateEdgeLabel = !updateNodes && !updateEdges && oldData.edgeLabelChangedFlag !== graphData.edgeLabelChangedFlag;
 
@@ -360,7 +367,7 @@ export class InteractiveCyGraph extends CyGraph {
 
         if (
             updateNodes || updateEdges || updateStyle || updateSelection ||
-            updateNodes || updateLayout || updateEdgeLabel ||
+            updateNodes || updateLayout || updateEdgeLabel || updateNodePositions ||
             (updateGhosts && setAllEdgeLabelOffsets)
         ) {
 
@@ -406,5 +413,27 @@ export class InteractiveCyGraph extends CyGraph {
         if (oldData.hoverEdges !== graphData.hoverEdges) {
             this.hoverEdges(graphData.hoverEdges);
         }
+    }
+
+    private arePositionsDifferent(graphData1: GraphData, graphData2: GraphData): boolean {
+        if (graphData1.nodePositions === graphData2.nodePositions) {
+            return false;
+        } else if (graphData1.nodeData !== graphData2.nodeData) {
+            return true;
+        } else {
+            return graphData1.nodeData.some(n => {
+                const pos1 = graphData1.nodePositions[n.id];
+                const pos2 = graphData2.nodePositions[n.id];
+                return this.getRelPosDiff(pos1, pos2) > InteractiveCyGraph.POSITION_TOLERANCE;
+            });
+        }
+    }
+
+    private getRelPosDiff(pos1: Position, pos2: Position): number {
+        return Math.max(this.getRelNumberDiff(pos1.x, pos2.x), this.getRelNumberDiff(pos1.y, pos2.y));
+    }
+
+    private getRelNumberDiff(n1: number, n2: number): number {
+        return n1 === n2 ? 0 : Math.abs(n1 - n2) / Math.max(Math.abs(n1), Math.abs(n2));
     }
 }

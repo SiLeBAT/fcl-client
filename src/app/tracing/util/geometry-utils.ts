@@ -93,3 +93,36 @@ export function getDifference(point1: Point, point2: Point): Point {
         y: point1.y - point2.y
     };
 }
+
+export function getRectUnion(rect1: BoundaryRect, rect2: BoundaryRect): BoundaryRect {
+    const left = Math.min(rect1.left, rect2.left);
+    const right = Math.max(rect1.right, rect2.right);
+    const top = Math.min(rect1.top, rect2.top);
+    const bottom = Math.max(rect1.bottom, rect2.bottom);
+    return {
+        left: left,
+        right: right,
+        top: top,
+        bottom: bottom,
+        width: right - left,
+        height: bottom - top
+    };
+}
+
+export function createRect(left: number, top: number, right: number, bottom: number): BoundaryRect {
+    return {
+        left: left,
+        right: right,
+        top: top,
+        bottom: bottom,
+        width: right - left,
+        height: bottom - top
+    };
+}
+
+export function isRectWithinRect(innerRect: BoundaryRect, outerRect: BoundaryRect): boolean {
+    return innerRect.left >= outerRect.left &&
+        innerRect.right <= outerRect.right &&
+        innerRect.top >= outerRect.top &&
+        innerRect.bottom <= outerRect.bottom;
+}

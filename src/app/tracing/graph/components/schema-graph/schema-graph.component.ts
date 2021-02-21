@@ -2,16 +2,15 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Subscription } from 'rxjs';
 
 import html2canvas from 'html2canvas';
-import { GraphType, LegendInfo, StationId, Position, SchemaGraphState } from '../../../data.model';
+import { GraphType, LegendInfo, SchemaGraphState } from '../../../data.model';
 import _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
-import { ContextMenuRequestInfo, GraphServiceData, NodeId } from '../../graph.model';
+import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
 import { GraphDataChange, GraphViewComponent } from '../graph-view/graph-view.component';
 import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
-import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
@@ -31,7 +30,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private static readonly LAYOUT_RUNNING = 'Layout running ...';
     private static readonly STOP_LAYOUTING = 'Stop';
     private static readonly MIN_ZOOM = 0.001;
-    private static readonly MAX_ZOOM = 10.0;
+    private static readonly MAX_ZOOM = 100.0;
 
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
     @ViewChild('graph', { static: true }) graphViewComponent: GraphViewComponent;
@@ -146,8 +145,12 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         }
         if (graphDataChange.nodePositions) {
             this.store.dispatch(new SetStationPositionsAndLayoutSOA({
-                stationPositions: this.getNewStationPositions(graphDataChange.nodePositions),
-                layout: graphDataChange.layout
+                stationPositions: this.schemaGraphService.convertNodePosToStationPositions(
+                    graphDataChange.nodePositions,
+                    this.cachedState,
+                    this.schemaGraphData
+                ),
+                layout: graphDataChange.layout || this.cachedState.layout
             }));
         }
         if (graphDataChange.layout) {
@@ -155,7 +158,9 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         }
         if (graphDataChange.selectedElements) {
             this.store.dispatch(new SetSelectedElementsSOA({
-                selectedElements: mapGraphSelectionToFclElementSelection(graphDataChange.selectedElements, this.schemaGraphData)
+                selectedElements: this.graphService.convertGraphSelectionToFclSelection(
+                    graphDataChange.selectedElements, this.sharedGraphData
+                )
             }));
         }
     }
@@ -177,14 +182,6 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         this.schemaGraphData = this.schemaGraphService.getData(newState);
         this.legendInfo_ = this.sharedGraphData.legendInfo;
         this.cachedState = newState;
-    }
-
-    private getNewStationPositions(nodePositions: Record<NodeId, Position>): Record<StationId, Position> {
-        const newStationPositions: Record<StationId, Position> = { ...this.cachedState.stationPositions };
-        for (const node of this.schemaGraphData.nodeData) {
-            newStationPositions[node.station.id] = nodePositions[node.id];
-        }
-        return newStationPositions;
     }
 
     private openAsyncRelayoutingDialog(stopCallBack: (() => void)): void {

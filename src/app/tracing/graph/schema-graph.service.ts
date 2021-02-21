@@ -90,4 +90,17 @@ export class SchemaGraphService {
         }
         return nodePosMap;
     }
+
+    convertNodePosToStationPositions(
+        nodePositions: Record<NodeId, Position>,
+        schemaGraphState: SchemaGraphState,
+        graphData: GraphData
+    ): Record<StationId, Position> {
+
+        const newStationPositions: Record<StationId, Position> = { ...schemaGraphState.stationPositions };
+        for (const node of graphData.nodeData) {
+            newStationPositions[node.station.id] = nodePositions[node.id];
+        }
+        return newStationPositions;
+    }
 }

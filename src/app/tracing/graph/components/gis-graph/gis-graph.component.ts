@@ -11,7 +11,6 @@ import { AlertService } from '@app/shared/services/alert.service';
 import { filter } from 'rxjs/operators';
 import { GraphDataChange } from '../graph-view/graph-view.component';
 import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
-import { mapGraphSelectionToFclElementSelection } from '../../graph-utils';
 import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService } from '../../context-menu.service';
@@ -122,7 +121,9 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         }
         if (graphDataChange.selectedElements) {
             this.store.dispatch(new SetSelectedElementsSOA({
-                selectedElements: mapGraphSelectionToFclElementSelection(graphDataChange.selectedElements, this.graphData_)
+                selectedElements: this.graphService.convertGraphSelectionToFclSelection(
+                    graphDataChange.selectedElements, this.sharedGraphData
+                )
             }));
         }
     }

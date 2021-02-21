@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData, GraphState } from '../data.model';
+import {
+    DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData, GraphState, SelectedElements
+} from '../data.model';
 import { DataService } from '../services/data.service';
-import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, NodeId, EdgeId } from './graph.model';
+import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 
@@ -543,11 +545,9 @@ export class GraphService {
     }
 
     private applyStatSelection(data: GraphServiceData) {
-        const selectedNodeIds: NodeId[] = [];
-        data.nodeData.forEach(nodeData => {
-            nodeData.selected = nodeData.station.selected;
-            selectedNodeIds.push(nodeData.id);
-        });
+        data.nodeData.forEach(node => node.selected = node.station.selected);
+        const selectedNodeIds = data.nodeData.filter(node => node.selected).map(node => node.id);
+
         data.nodeSel = Utils.createSimpleStringSet(data.nodeData.filter(n => n.selected).map(n => n.id));
         data.selectedElements = {
             ...data.selectedElements,
@@ -556,11 +556,9 @@ export class GraphService {
     }
 
     private applyDelSelection(data: GraphServiceData) {
-        const selectedEdgeIds: EdgeId[] = [];
-        data.edgeData.forEach(edgeData => {
-            edgeData.selected = edgeData.deliveries.some(d => d.selected);
-            selectedEdgeIds.push(edgeData.id);
-        });
+        data.edgeData.forEach(edge => edge.selected = edge.deliveries.some(d => d.selected));
+        const selectedEdgeIds = data.edgeData.filter(edge => edge.selected).map(edge => edge.id);
+
         data.edgeSel = Utils.createSimpleStringSet(data.edgeData.filter(e => e.selected).map(e => e.id));
         data.selectedElements = {
             ...data.selectedElements,
@@ -688,5 +686,22 @@ export class GraphService {
 
         this.cachedState = { ...state };
         this.cachedData = newData;
+    }
+
+    private getEdgeMap(edgeData: CyEdgeData[]): Record<EdgeId, CyEdgeData> {
+        const edgeMap: Record<EdgeId, CyEdgeData> = {};
+        edgeData.forEach(edge => edgeMap[edge.id] = edge);
+        return edgeMap;
+    }
+
+    convertGraphSelectionToFclSelection(
+        selectedGraphElements: SelectedGraphElements,
+        graphServiceData: GraphServiceData
+    ): SelectedElements {
+        const edgeMap = this.getEdgeMap(graphServiceData.edgeData);
+        return {
+            stations: selectedGraphElements.nodes.map(nodeId => graphServiceData.idToNodeMap[nodeId].station.id),
+            deliveries: [].concat(...selectedGraphElements.edges.map(edgeId => edgeMap[edgeId].deliveries.map(d => d.id)))
+        };
     }
 }
