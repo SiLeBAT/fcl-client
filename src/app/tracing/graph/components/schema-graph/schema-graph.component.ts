@@ -1,54 +1,24 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import * as fromTracing from '@app/tracing/state/tracing.reducers';
-import { Store } from '@ngrx/store';
-import { Subject, timer, Subscription } from 'rxjs';
-import cytoscape from 'cytoscape';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+
 import html2canvas from 'html2canvas';
-import { ResizeSensor } from 'css-element-queries';
-
-import { Utils } from '../../../util/non-ui-utils';
-
-import { GraphState, Layout, Position, GraphType, LegendInfo, MergeDeliveriesType } from '../../../data.model';
-
-import * as _ from 'lodash';
-import { LayoutService, LayoutAction } from '../../../layout/layout.service';
-import { StyleService } from '../../style.service';
+import { GraphType, LegendInfo, SchemaGraphState } from '../../../data.model';
+import _ from 'lodash';
+import { Action, Store } from '@ngrx/store';
+import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
-import * as tracingSelectors from '../../../state/tracing.selectors';
-import { filter } from 'rxjs/operators';
-import { Cy, CyNodeDef, CyEdgeDef, GraphServiceData, CyNodeCollection } from '../../graph.model';
 import { AlertService } from '@app/shared/services/alert.service';
-import * as tracingStoreActions from '../../../state/tracing.actions';
-import { GraphContextMenuComponent } from '../graph-context-menu/graph-context-menu.component';
-import { LayoutManagerInfo } from '@app/tracing/layout/layout.constants';
-import { EdgeLabelOffsetUpdater } from '../../edge-label-offset-updater';
-import { getSum, getCenterFromPoints, getDifference } from '@app/tracing/util/geometry-utils';
-
-interface GraphSettingsState {
-    fontSize: number;
-    nodeSize: number;
-    mergeDeliveriesType: MergeDeliveriesType;
-    showMergedDeliveriesCounts: boolean;
-}
-
-interface SchemaGraphState extends GraphState, GraphSettingsState {
-    stationPositions: { [key: number]: Position };
-    layout: Layout;
-    ghostStation: string;
-}
-
-interface Rectangle {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-}
-
-interface StyleInfo {
-    fontSize: number;
-    nodeSize: number;
-    zoom: number;
-}
+import { filter } from 'rxjs/operators';
+import { GraphDataChange, GraphViewComponent } from '../graph-view/graph-view.component';
+import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
+import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
+import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
+import { State } from '@app/tracing/state/tracing.reducers';
+import { SetSchemaGraphLayoutSOA, SetSelectedElementsSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
+import { getGraphType, getSchemaGraphData, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { SchemaGraphService } from '../../schema-graph.service';
+import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'fcl-schema-graph',
@@ -57,76 +27,46 @@ interface StyleInfo {
 })
 export class SchemaGraphComponent implements OnInit, OnDestroy {
 
-    private static readonly ZOOM_FACTOR = 1.5;
+    private static readonly LAYOUT_RUNNING = 'Layout running ...';
+    private static readonly STOP_LAYOUTING = 'Stop';
+    private static readonly MIN_ZOOM = 0.001;
+    private static readonly MAX_ZOOM = 100.0;
 
-    @ViewChild('container', { static: true }) containerElement: ElementRef;
-    @ViewChild('graph', { static: true }) graphElement: ElementRef;
-    @ViewChild('contextMenu', { static: true }) contextMenu: GraphContextMenuComponent;
+    @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
+    @ViewChild('graph', { static: true }) graphViewComponent: GraphViewComponent;
 
     private componentIsActive = false;
 
-    showZoom$ = this.store.select(state => state.tracing.fclData.graphSettings.showZoom);
-    showLegend$ = this.store.select(state => state.tracing.fclData.graphSettings.showLegend);
-    graphType$ = this.store.select(tracingSelectors.getGraphType);
+    showZoom$ = this.store.select(getShowZoom);
+    showLegend$ = this.store.select(getShowLegend);
+    graphType$ = this.store.select(getGraphType);
+    styleConfig$ = this.store.select(getStyleConfig);
 
     private graphStateSubscription: Subscription;
     private graphTypeSubscription: Subscription;
 
-    zoomPercentage: number = 50;
-    legendInfo: LegendInfo;
+    private cachedState: SchemaGraphState | null = null;
+    private sharedGraphData: GraphServiceData | null = null;
+    private schemaGraphData: GraphData | null = null;
+    private legendInfo_: LegendInfo | null = null;
+    private cyConfig_: CyConfig = {
+        minZoom: SchemaGraphComponent.MIN_ZOOM,
+        maxZoom: SchemaGraphComponent.MAX_ZOOM
+    };
 
-    private cy: Cy;
-
-    private cachedState: SchemaGraphState;
-    private cachedData: GraphServiceData;
-
-    private resizeTimerSubscription: Subscription;
-    private hoverDeliveriesSubject: Subject<string[]> = new Subject();
-    private hoverDeliveriesSubjectSubscription: Subscription;
-    private selectionTimerSubscription: Subscription;
-
-    private isPanning = false;
-    private isZoomHandlerActive = false;
-
-    private edgeLabelOffsetUpdater = new EdgeLabelOffsetUpdater();
+    private asyncRelayoutingDialog: MatDialogRef<DialogActionsComponent, any> | null = null;
 
     constructor(
-        private store: Store<fromTracing.State>,
+        private store: Store<State>,
         public elementRef: ElementRef,
-        private layoutService: LayoutService,
-        private styleService: StyleService,
+        private dialogService: MatDialog,
         private graphService: GraphService,
+        private schemaGraphService: SchemaGraphService,
+        private contextMenuService: ContextMenuService,
         private alertService: AlertService
-    ) {
-        if (cytoscape != null) {
-            this.layoutService.addLayoutManagerToCytoScape(cytoscape);
-        }
-    }
+    ) {}
 
     ngOnInit() {
-        window.onresize = () => {
-            timer(500).subscribe(
-                () => {
-                    if (this.cy) {
-                        this.cy.resize();
-                    }
-                },
-                err => this.alertService.error(`onResize timer subscription failed: ${err}`)
-            );
-        };
-
-        const resizeSensor = new ResizeSensor(this.containerElement.nativeElement, () => {
-            if (!this.resizeTimerSubscription && this.cy) {
-                this.resizeTimerSubscription = timer(100).subscribe(
-                    () => {
-                        this.resizeTimerSubscription.unsubscribe();
-                        this.resizeTimerSubscription = null;
-                        this.cy.resize();
-                    },
-                    err => this.alertService.error(`container resize subscription failed: ${err}`)
-                );
-            }
-        });
 
         this.componentIsActive = true;
 
@@ -139,39 +79,22 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
                     }
                 } else {
                     if (!this.graphStateSubscription) {
-                        this.graphStateSubscription = this.store.select(tracingSelectors.getSchemaGraphData).pipe(
-                            filter(() => this.componentIsActive)
-                        ).subscribe(
-                            graphState => this.applyState(graphState),
-                            err => this.alertService.error(`getSchemaGraphData store subscription failed: ${err}`)
-                        );
+                        this.graphStateSubscription = this.store
+                            .select(getSchemaGraphData)
+                            .pipe(filter(() => this.componentIsActive))
+                            .subscribe(
+                                graphState => this.applyState(graphState),
+                                err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
+                            );
                     }
                 }
             },
             err => this.alertService.error(`getGraphType store subscription failed: ${err}`)
         );
-
-        this.hoverDeliveriesSubjectSubscription = this.hoverDeliveriesSubject.subscribe(
-            ids => {
-                const edgeIds = Utils.createSimpleStringSet(
-                    ids.map(id => this.cachedData.delIdToEdgeDataMap[id]).filter(data => !!data).map(data => data.id)
-                );
-
-                this.cy.batch(() => {
-                    this.cy.edges().filter(e => !edgeIds[e.id()]).scratch('_active', false);
-                    this.cy.edges().filter(e => !!edgeIds[e.id()]).scratch('_active', true);
-                });
-            },
-            err => this.alertService.error(`hoverDelivieriesSubject subscription failed: ${err}`)
-        );
     }
 
     ngOnDestroy() {
         this.componentIsActive = false;
-        if (this.resizeTimerSubscription) {
-            this.resizeTimerSubscription.unsubscribe();
-            this.resizeTimerSubscription = null;
-        }
         if (this.graphTypeSubscription) {
             this.graphTypeSubscription.unsubscribe();
             this.graphTypeSubscription = null;
@@ -180,565 +103,95 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.graphStateSubscription.unsubscribe();
             this.graphStateSubscription = null;
         }
-        if (this.hoverDeliveriesSubjectSubscription) {
-            this.hoverDeliveriesSubjectSubscription.unsubscribe();
-            this.hoverDeliveriesSubjectSubscription = null;
-        }
-        if (this.selectionTimerSubscription) {
-            this.selectionTimerSubscription.unsubscribe();
-            this.selectionTimerSubscription = null;
-        }
-        this.cleanCy();
     }
 
-    private getDefaultLayoutOption(nodeCount: number): any {
-        return nodeCount > 100 ?
-            {
-                name: LayoutManagerInfo.fruchtermanReingold.name
-            } :
-            {
-                name: LayoutManagerInfo.farmToFork.name, timelimit: 10000
-            };
+    getCanvas(): Promise<HTMLCanvasElement> {
+        return html2canvas(this.elementRef.nativeElement);
     }
 
-    private cleanCy(): void {
-        if (this.cy) {
-            this.edgeLabelOffsetUpdater.disconnect();
-            this.cy.destroy();
-            this.cy = null;
-        }
-    }
-
-    private initCy(graphState: SchemaGraphState, graphData: GraphServiceData) {
-        const sub = timer(0).subscribe(
-            () => {
-                const nodesDefs = this.createNodes(graphState, graphData);
-                this.cleanCy();
-                this.cy = cytoscape({
-                    container: this.graphElement.nativeElement,
-                    elements: {
-                        nodes: nodesDefs,
-                        edges: this.createEdges(graphData)
-                    },
-                    layout: (
-                        graphState.layout ?
-                        { name: 'preset', zoom: graphState.layout.zoom, pan: graphState.layout.pan } :
-                        this.getDefaultLayoutOption(nodesDefs.length)
-                    ),
-                    style: this.styleService.createCyStyle(
-                        {
-                            fontSize: graphState.fontSize,
-                            nodeSize: graphState.nodeSize,
-                            zoom: graphState.layout ? graphState.layout.zoom : 1
-                        },
-                        graphData
-                    ),
-                    minZoom: 0.01,
-                    maxZoom: 10,
-                    wheelSensitivity: 0.5
-                });
-
-                this.cy.on('zoom', () => {
-                    if (this.isZoomHandlerActive) {
-                        this.applyLayoutToStateIfNecessary();
-                    }
-                });
-                this.setZoomHandlerActive(true);
-
-                this.cy.on('pan', () => {
-                    this.isPanning = true;
-                });
-
-                this.cy.on('tapstart', () => this.isPanning = false);
-
-                this.cy.on('tapend', () => {
-                    if (this.isPanning) {
-                        this.applyLayoutToStateIfNecessary();
-                    }
-                });
-
-                // nodes move
-                this.cy.on('dragfreeon', () => {
-                    this.applyNodePositionsToState();
-                });
-
-                // click un/selection
-                this.cy.on('tapselect', () => this.processGraphElementSelectionChange());
-                this.cy.on('tapunselect', () => this.processGraphElementSelectionChange());
-
-                // box selection
-                this.cy.on('boxselect', () => this.processGraphElementSelectionChange());
-
-                this.contextMenu.connect(this.cy, this.hoverDeliveriesSubject);
-
-                this.updateZoomPercentage();
-
-                if (!graphState.layout) {
-                    this.applyNodePositionsAndLayoutToState(graphState, graphData);
-                } else {
-                    if (this.cy.elements().size() > 0) {
-                        this.fitCy();
-                    }
-                }
-
-                this.edgeLabelOffsetUpdater.connectTo(this.cy);
-            },
-            err => this.alertService.error(`Cy graph could not be initialized: ${err}`)
+    onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
+        const menuData = this.contextMenuService.getMenuData(
+            requestInfo.context,
+            this.sharedGraphData,
+            this.graphViewComponent.getLayoutOptions(
+                requestInfo.context.edgeId === undefined && requestInfo.context.nodeId === undefined ?
+                this.schemaGraphData.nodeData.map(n => n.id) :
+                this.contextMenuService.getContextElements(requestInfo.context, this.sharedGraphData).nodeIds
+            )
         );
+        this.contextMenu.open(requestInfo.position, menuData);
     }
 
-    performLayoutAction(action: LayoutAction) {
-        const nodeSet = Utils.createSimpleStringSet(action.payload.nodeIds);
-        const isTrueSubSet = action.payload.nodeIds.length > 0 && action.payload.nodeIds.length < this.cy.nodes().size();
-        const nodes = isTrueSubSet ? this.cy.nodes().filter(n => nodeSet[n.id()]) : this.cy.nodes();
-        const oldCenter = getCenterFromPoints(nodes.map(n => n.position()));
-        const cyContext = !isTrueSubSet ? this.cy : nodes;
-
-        const oldLayout = {
-            zoom: this.cy.zoom(),
-            pan: { ...this.cy.pan() }
-        };
-        const oldExtent = this.cy.extent();
-        this.setZoomHandlerActive(false);
-        this.layoutService.runLayout(
-            action.payload.layoutName,
-            cyContext,
-            this.cachedState.nodeSize,
-            () => {
-                if (isTrueSubSet) {
-                    this.recenterNodes(nodes, oldCenter);
-
-                    const newNodesRect = this.getEnclosingRect(nodes);
-                    const newLayout: Layout = (
-                        this.isRectInclosingRect(oldExtent, newNodesRect) ?
-                        oldLayout :
-                        this.getLayoutFromRect(this.getMergedRect(oldExtent, newNodesRect))
-                    );
-
-                    this.cy.batch(() => {
-                        this.cy.zoom(newLayout.zoom);
-                        this.cy.pan({ ...newLayout.pan });
-                    });
-
-                    if (newLayout !== oldLayout) {
-                        this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
-                    } else {
-                        this.applyNodePositionsToState();
-                    }
-                } else {
-                    this.applyNodePositionsAndLayoutToState(this.cachedState, this.cachedData);
+    onContextMenuSelect(action: Action): void {
+        if (action) {
+            if (action.type === LayoutActionTypes.LayoutAction) {
+                const layoutAction: LayoutAction = action as LayoutAction;
+                const asyncStopCallback = this.graphViewComponent.runLayoutManager(
+                    layoutAction.payload.layoutName,
+                    layoutAction.payload.nodeIds
+                );
+                if (asyncStopCallback !== null) {
+                    this.openAsyncRelayoutingDialog(asyncStopCallback);
                 }
-                this.setZoomHandlerActive(true);
+            } else {
+                this.store.dispatch(action);
             }
-        );
-    }
-
-    private recenterNodes(nodes: CyNodeCollection, oldCenter: Position) {
-        const newCenter = getCenterFromPoints(nodes.map(n => n.position()));
-        const delta = getDifference(oldCenter, newCenter);
-        nodes.positions(n => getSum(n.position(), delta));
-    }
-
-    private getLayoutFromRect(rect: Rectangle): Layout {
-        const fitRect = this.getAspectRatioPreservingRect(rect);
-        const zoom = this.cy.width() / (fitRect.x2 - fitRect.x1);
-        return {
-            zoom: zoom,
-            pan: {
-                x: - fitRect.x1 * zoom,
-                y: - fitRect.y1 * zoom
-            }
-        };
-    }
-
-    private getAspectRatioPreservingRect(rect: Rectangle): Rectangle {
-        rect = { ...rect };
-        const cyWidth = this.cy.width();
-        const cyHeight = this.cy.height();
-        const cyWHRatio = cyWidth / cyHeight;
-        const rectWidth = rect.x2 - rect.x1;
-        const rectHeight = rect.y2 - rect.y1;
-        const rectWHRatio = rectWidth / rectHeight;
-        if (cyWHRatio >= rectWHRatio) {
-            const delta = cyWidth * rectHeight / cyHeight - rectWidth;
-            rect.x1 -= delta / 2;
-            rect.x2 += delta / 2;
-        } else {
-            const delta = cyHeight * rectWidth / cyWidth - rectHeight;
-            rect.y1 -= delta / 2;
-            rect.y2 += delta / 2;
-        }
-        return rect;
-    }
-
-    private isRectInclosingRect(enclosingRect: Rectangle, enclosedRect: Rectangle): boolean {
-        return (
-            enclosingRect.x1 <= enclosedRect.x1 &&
-            enclosingRect.y1 <= enclosedRect.y1 &&
-            enclosingRect.x2 >= enclosedRect.x2 &&
-            enclosingRect.y2 >= enclosedRect.y2
-        );
-    }
-
-    private getMergedRect(...rects: Rectangle[]): Rectangle {
-        if (!rects || rects.length === 0) {
-            return null;
-        } else {
-            const mergedRect: Rectangle = {
-                x1: rects[0].x1,
-                y1: rects[0].y1,
-                x2: rects[0].x2,
-                y2: rects[0].y2
-            };
-            for (let i = rects.length - 1; i >= 1; i--) {
-                mergedRect.x1 = Math.min(mergedRect.x1, rects[i].x1);
-                mergedRect.y1 = Math.min(mergedRect.y1, rects[i].y1);
-                mergedRect.x2 = Math.max(mergedRect.x2, rects[i].x2);
-                mergedRect.y2 = Math.max(mergedRect.y2, rects[i].y2);
-            }
-            return mergedRect;
         }
     }
 
-    private getEnclosingRect(nodes: CyNodeCollection): Rectangle {
-        if (nodes.size() === 0) {
-            return null;
-        } else {
-            const rect: Rectangle = {
-                x1: Number.POSITIVE_INFINITY,
-                y1: Number.POSITIVE_INFINITY,
-                x2: Number.NEGATIVE_INFINITY,
-                y2: Number.NEGATIVE_INFINITY
-            };
-            nodes.forEach(node => {
-                const pos = node.position();
-                const size = node.height();
-                rect.x1 = Math.min(rect.x1, pos.x - size);
-                rect.y1 = Math.min(rect.y1, pos.y - size);
-                rect.x2 = Math.max(rect.x2, pos.x + size);
-                rect.y2 = Math.max(rect.y2, pos.y + size);
-            });
-            return rect;
+    onGraphDataChange(graphDataChange: GraphDataChange): void {
+        if (this.asyncRelayoutingDialog !== null) {
+            this.asyncRelayoutingDialog.close();
         }
-    }
-
-    private setZoomHandlerActive(active: boolean) {
-        this.isZoomHandlerActive = active;
-    }
-
-    private applyLayoutToStateIfNecessary() {
-        if (
-            !this.cachedState.layout ||
-            this.cachedState.layout.zoom !== this.cy.zoom() ||
-            this.cachedState.layout.pan.x !== this.cy.pan().x ||
-            this.cachedState.layout.pan.y !== this.cy.pan().y
-        ) {
-            this.store.dispatch(new tracingStoreActions.SetSchemaGraphLayoutSOA({
-                layout: {
-                    zoom: this.cy.zoom(),
-                    pan: { ...this.cy.pan() }
-                }
+        if (graphDataChange.nodePositions) {
+            this.store.dispatch(new SetStationPositionsAndLayoutSOA({
+                stationPositions: this.schemaGraphService.convertNodePosToStationPositions(
+                    graphDataChange.nodePositions,
+                    this.cachedState,
+                    this.schemaGraphData
+                ),
+                layout: graphDataChange.layout || this.cachedState.layout
+            }));
+        }
+        if (graphDataChange.layout) {
+            this.store.dispatch(new SetSchemaGraphLayoutSOA({ layout: graphDataChange.layout }));
+        }
+        if (graphDataChange.selectedElements) {
+            this.store.dispatch(new SetSelectedElementsSOA({
+                selectedElements: this.graphService.convertGraphSelectionToFclSelection(
+                    graphDataChange.selectedElements, this.sharedGraphData
+                )
             }));
         }
     }
 
-    private processGraphElementSelectionChange() {
-        if (!this.selectionTimerSubscription) {
-            this.selectionTimerSubscription = timer(0).subscribe(
-                () => {
-                    this.selectionTimerSubscription.unsubscribe();
-                    this.edgeLabelOffsetUpdater.update(true);
-                    this.applyElementSelectionToState();
-                    this.selectionTimerSubscription = null;
-                },
-                error => {
-                    throw new Error(`${error}`);
-                }
-            );
-        }
+    get graphData(): GraphData {
+        return this.schemaGraphData;
     }
 
-    private applyNodePositionsToState() {
-        // apply old positions
-        const stationPositions: {[key: string]: Position} = this.cachedData.stations.reduce((map, s) => {
-            map[s.id] = this.cachedState.stationPositions[s.id];
-            return map;
-        }, {});
-        // set new positions
-        this.cy.nodes().forEach(node => {
-            stationPositions[node.data().station.id] = (node.position());
-        });
-
-        this.store.dispatch(new tracingStoreActions.SetStationPositionsSOA({
-            stationPositions: stationPositions
-        }));
+    get legendInfo(): LegendInfo | null {
+        return this.legendInfo_;
     }
 
-    private applyNodePositionsAndLayoutToState(graphState: SchemaGraphState, graphData: GraphServiceData) {
-        // apply old positions
-        const stationPositions: {[key: string]: Position} = graphData.stations.reduce((map, s) => {
-            map[s.id] = graphState.stationPositions[s.id];
-            return map;
-        }, {});
-        // set new positions
-        this.cy.nodes().forEach(node => {
-            stationPositions[node.data().station.id] = (node.position());
-        });
-
-        this.store.dispatch(new tracingStoreActions.SetStationPositionsAndLayoutSOA({
-            stationPositions: stationPositions,
-            layout: { zoom: this.cy.zoom(), pan: { ...this.cy.pan() } }
-        }));
-    }
-
-    private applyElementSelectionToState() {
-        const selectedNodes = this.cy.nodes(':selected');
-        const selectedEdges = this.cy.edges(':selected');
-
-        this.store.dispatch(new tracingStoreActions.SetSelectedElementsSOA({
-            selectedElements: {
-                stations: selectedNodes.map(node => node.data().station.id),
-                deliveries: [].concat(...selectedEdges.map(edge => (
-                    edge.data().selected ?
-                    edge.data().deliveries.filter(d => d.selected).map(d => d.id) :
-                    edge.data().deliveries.map(d => d.id))
-                ))
-            }
-        }));
-    }
-
-    getCanvas(): Promise<HTMLCanvasElement> {
-        return html2canvas(this.containerElement.nativeElement, {
-            onclone: function (document) {
-                let element = document.querySelector('.fcl-graph-container');
-                if (element) {
-                    element['style']['backgroundColor'] = 'transparent';
-                }
-                element = document.querySelector('.fcl-legend');
-                if (element) {
-                    element['style']['border'] = '3px solid rgb(211,211,211)';
-                }
-            }
-        });
-    }
-
-    private updateGraphSelection(graphData: GraphServiceData) {
-        if (this.cy != null) {
-            this.cy.batch(() => {
-                this.cy.elements(':selected[!selected]').unselect();
-                this.cy.elements(':unselected[?selected]').select();
-                this.cy.elements().scratch('_update', true);
-            });
-        }
-    }
-
-    zoomInPressed() {
-        this.zoomTo(this.cy.zoom() * SchemaGraphComponent.ZOOM_FACTOR);
-    }
-
-    zoomOutPressed() {
-        this.zoomTo(this.cy.zoom() / SchemaGraphComponent.ZOOM_FACTOR);
-    }
-
-    zoomResetPressed() {
-        if (this.cy.elements().size() === 0) {
-            this.cy.reset();
-        } else {
-            this.fitCy();
-        }
-    }
-
-    zoomSlided(value: string) {
-        this.zoomTo(Math.exp((Number(value) / 100) * Math.log(this.cy.maxZoom() / this.cy.minZoom())) * this.cy.minZoom());
-    }
-
-    private fitCy() {
-        this.setZoomHandlerActive(false);
-        const MAX_ITERATION = 3;
-        let zoom = this.cy.zoom();
-        for (let iIteration = 1; iIteration <= MAX_ITERATION; iIteration++) {
-            this.cy.fit();
-            const newZoom = this.cy.zoom();
-            if (!(newZoom < zoom || newZoom > 1.01 * zoom)) {
-                break;
-            }
-            zoom = newZoom;
-            this.updateGraphStyle({ ...this.getStyleInfoFromState(this.cachedState), zoom: newZoom }, this.cachedData);
-        }
-        this.setZoomHandlerActive(true);
-        this.applyLayoutToStateIfNecessary();
-    }
-
-    private createNodes(graphState: SchemaGraphState, graphData: GraphServiceData): CyNodeDef[] {
-        return graphData.nodeData.map(nodeData => ({
-            group: 'nodes',
-            data: nodeData,
-            selected: nodeData.selected,
-            position: graphState.stationPositions[nodeData.station.id]
-        }));
-    }
-
-    private createEdges(graphData: GraphServiceData): CyEdgeDef[] {
-        return graphData.edgeData.map(edgeData => ({
-            group: 'edges',
-            data: edgeData,
-            classes: 'top-center',
-            selected: edgeData.selected
-        }));
-    }
-
-    private updateGraphEdges(graphData: GraphServiceData) {
-        this.cy.batch(() => {
-            this.cy.edges().remove();
-            this.cy.add(this.createEdges(graphData));
-        });
-        this.edgeLabelOffsetUpdater.update(true);
-    }
-
-    private updateGraph(graphState: SchemaGraphState, graphData: GraphServiceData) {
-        this.cy.batch(() => {
-            this.cy.elements().remove();
-            this.cy.add(this.createNodes(graphState, graphData));
-            this.cy.add(this.createEdges(graphData));
-
-            this.applyLayoutStateToGraph(graphState, graphData);
-        });
-        this.edgeLabelOffsetUpdater.update(true);
-    }
-
-    private updateGhostElements(graphState: SchemaGraphState, graphData: GraphServiceData) {
-        this.cy.batch(() => {
-            this.removeGhostElements();
-            if (graphState.ghostStation !== undefined && graphState.ghostStation !== null) {
-                const ghostElements = this.createGhostElements(graphState, graphData);
-                this.cy.add(ghostElements.nodes);
-                if (ghostElements.edges.length > 0) {
-                    this.cy.add(ghostElements.edges);
-                }
-            }
-        });
-
-        this.edgeLabelOffsetUpdater.updateGhostEdges();
-
-    }
-
-    private removeGhostElements() {
-        this.cy.remove('.ghost-element');
-    }
-
-    private createGhostElements(graphState: SchemaGraphState, graphData: GraphServiceData): { nodes: CyNodeDef[], edges: CyEdgeDef[] } {
-        const ghostStation = graphData.statMap[graphState.ghostStation];
-        const ghostElementData = this.graphService.createGhostElementData(ghostStation, graphState, graphData);
-
-        const ghostNodes = ghostElementData.nodeData.map(nodeData => ({
-            group: 'nodes',
-            data: nodeData,
-            selected: false,
-            classes: 'ghost-element',
-            position: graphState.stationPositions[nodeData.station.id]
-        }));
-
-        const ghostEdges = ghostElementData.edgeData.map(edgeData => ({
-            group: 'edges',
-            data: edgeData,
-            classes: 'top-center ghost-element',
-            selected: edgeData.selected
-        }));
-
-        return {
-            nodes: ghostNodes,
-            edges: ghostEdges
-        };
-    }
-
-    private getStyleInfoFromState(graphState: SchemaGraphState): { fontSize: number, nodeSize: number, zoom: number } {
-        return {
-            fontSize: graphState.fontSize,
-            nodeSize: graphState.nodeSize,
-            zoom: graphState.layout.zoom
-        };
-    }
-
-    private updateGraphStyle(styleInfo: StyleInfo, graphData: GraphServiceData) {
-        if (this.cy && this.cy.style) {
-            this.cy.setStyle(this.styleService.createCyStyle(
-                styleInfo,
-                graphData
-            ));
-            this.cy.elements().scratch('_update', true);
-            this.edgeLabelOffsetUpdater.update(true);
-        }
-    }
-
-    private updateEdgeLabels() {
-        if (this.cy && this.cy.style) {
-            this.cy.edges().scratch('_update', true);
-        }
-    }
-
-    private zoomTo(newZoom: number) {
-        newZoom = Math.min(Math.max(newZoom, this.cy.minZoom()), this.cy.maxZoom());
-
-        if (newZoom !== this.cy.zoom()) {
-            this.cy.zoom({
-                level: newZoom,
-                renderedPosition: { x: this.cy.width() / 2, y: this.cy.height() / 2 }
-            });
-        }
-    }
-
-    private updateZoomPercentage() {
-        this.zoomPercentage = Math.round(
-            (Math.log(this.cy.zoom() / this.cy.minZoom()) / Math.log(this.cy.maxZoom() / this.cy.minZoom())) * 100
-        );
-    }
-
-    private applyLayoutStateToGraph(state: SchemaGraphState, data: GraphServiceData) {
-        this.setZoomHandlerActive(false);
-        if (this.cy.zoom() !== state.layout.zoom) {
-            this.cy.zoom(state.layout.zoom);
-        }
-        if (!_.isEqual(this.cy.pan(), state.layout.pan)) {
-            this.cy.pan({ ...state.layout.pan });
-        }
-        this.updateZoomPercentage();
-        this.updateGraphStyle(this.getStyleInfoFromState(state), data);
-        this.setZoomHandlerActive(true);
+    get cyConfig(): CyConfig {
+        return this.cyConfig_;
     }
 
     private applyState(newState: SchemaGraphState) {
-        const newData: GraphServiceData = this.graphService.getData(newState);
-        if (!this.cachedData || this.cachedState.fclElements !== newState.fclElements || !newState.layout) {
-            this.initCy(newState, newData);
-        } else if (this.cachedData.nodeData !== newData.nodeData) {
-            this.updateGraph(newState, newData);
-        } else if (this.cachedData.edgeData !== newData.edgeData) {
-            this.updateGraphEdges(newData);
-        } else if (this.cachedData.propsChangedFlag !== newData.propsChangedFlag) {
-            this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
-        } else if (
-            !this.selectionTimerSubscription &&
-            (this.cachedData.nodeSel !== newData.nodeSel || this.cachedData.edgeSel !== newData.edgeSel)) {
-            this.updateGraphSelection(newData);
-        } else if (this.cachedState.nodeSize !== newState.nodeSize) {
-            this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
-        } else if (this.cachedState.fontSize !== newState.fontSize) {
-            this.updateGraphStyle(this.getStyleInfoFromState(newState), newData);
-        } else if (this.cachedData.edgeLabelChangedFlag !== newData.edgeLabelChangedFlag) {
-            this.updateEdgeLabels();
-        } else if (!_.isEqual(this.cachedState.layout, newState.layout)) {
-            this.applyLayoutStateToGraph(newState, newData);
-        } else if (this.cachedState.ghostStation !== newState.ghostStation) {
-            this.updateGhostElements(newState, newData);
-        }
-        this.cachedData = {
-            ...this.cachedData,
-            ...newData
+        this.sharedGraphData = this.graphService.getData(newState);
+        this.schemaGraphData = this.schemaGraphService.getData(newState);
+        this.legendInfo_ = this.sharedGraphData.legendInfo;
+        this.cachedState = newState;
+    }
+
+    private openAsyncRelayoutingDialog(stopCallBack: (() => void)): void {
+        const layoutDialogData: DialogActionsData = {
+            title: SchemaGraphComponent.LAYOUT_RUNNING,
+            actions: [{ name: SchemaGraphComponent.STOP_LAYOUTING, action: () => stopCallBack() }]
         };
-        this.cachedState = {
-            ...this.cachedState,
-            ...newState
-        };
-        this.legendInfo = newData.legendInfo;
+        this.asyncRelayoutingDialog = this.dialogService.open(DialogActionsComponent, {
+            disableClose: true,
+            data: layoutDialogData
+        });
     }
 }

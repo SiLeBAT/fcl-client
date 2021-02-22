@@ -36,8 +36,6 @@ export class TracingEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
         mergeMap(([action, state]) => {
             const stationId = action.payload.stationId;
-            // tslint:disable-next-line rxjs-finnish
-            const hoverDeliveriesSubject = action.payload.hoverDeliveriesSubject;
             const data = this.dataService.getData(state);
             const station = data.statMap[stationId];
 
@@ -58,8 +56,7 @@ export class TracingEffects {
                 const dialogData: StationPropertiesData = {
                     station: station,
                     deliveries: deliveries,
-                    connectedStations: connectedStations,
-                    hoverDeliveriesSubject: hoverDeliveriesSubject
+                    connectedStations: connectedStations
                 };
 
                 this.dialogService.open(StationPropertiesComponent, { data: dialogData });

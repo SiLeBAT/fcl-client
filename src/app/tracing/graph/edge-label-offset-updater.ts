@@ -3,13 +3,13 @@ import { Position } from '../data.model';
 
 export class EdgeLabelOffsetUpdater {
 
-    private draggedEdges: CyElementCollection<CyEdge>;
-    private grabbedNode: CyNode;
+    private draggedEdges: CyElementCollection<CyEdge> | null = null;
+    private grabbedNode: CyNode | null = null;
 
-    private cy: Cy;
-    private dragListener: () => void;
-    private freeOnListener: () => void;
-    private grabOnListener: (e: any) => void;
+    private cy: Cy | null = null;
+    private dragListener: () => void | null = null;
+    private freeOnListener: () => void | null = null;
+    private grabOnListener: (e: any) => void | null = null;
 
     private addListener(): void {
         this.addGrabOnListener();
@@ -25,7 +25,7 @@ export class EdgeLabelOffsetUpdater {
     }
 
     private removeGrabOnListener(): void {
-        if (this.grabOnListener) {
+        if (this.grabOnListener !== null) {
             this.cy.removeListener('grabon', this.grabOnListener);
             this.grabOnListener = null;
         }
@@ -33,7 +33,7 @@ export class EdgeLabelOffsetUpdater {
 
     private addDragListener(): void {
         this.dragListener = (() => {
-            if (!this.draggedEdges) {
+            if (this.draggedEdges === null) {
                 this.initDraggedEdges(
                     this.grabbedNode.selected() ?
                     this.cy.nodes(':selected').edgesWith(':unselected') :
@@ -47,11 +47,11 @@ export class EdgeLabelOffsetUpdater {
     }
 
     private removeDragListener(): void {
-        if (this.dragListener) {
+        if (this.dragListener !== null) {
             this.grabbedNode.removeListener('drag', this.dragListener);
             this.dragListener = null;
         }
-        if (this.draggedEdges) {
+        if (this.draggedEdges !== null) {
             this.switchOnEdgeLabels(this.draggedEdges);
             this.draggedEdges = null;
         }
@@ -76,7 +76,7 @@ export class EdgeLabelOffsetUpdater {
     }
 
     private removeFreeOnListener(): void {
-        if (this.freeOnListener) {
+        if (this.freeOnListener !== null) {
             this.grabbedNode.removeListener('freeon', this.freeOnListener);
             this.freeOnListener = null;
         }
@@ -89,23 +89,24 @@ export class EdgeLabelOffsetUpdater {
     }
 
     connectTo(cy: Cy): void {
-        if (this.cy) {
+        if (this.cy !== null) {
             this.disconnect();
         }
         this.cy = cy;
         this.addListener();
+
         this.update(true);
     }
 
     disconnect() {
-        if (this.cy) {
+        if (this.cy !== null) {
             this.removeListener();
             this.cy = null;
         }
     }
 
     update(useBatch: boolean) {
-        if (this.cy) {
+        if (this.cy !== null) {
             if (useBatch) {
                 this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy.edges()));
             } else {
@@ -115,13 +116,15 @@ export class EdgeLabelOffsetUpdater {
     }
 
     updateEdges(edges: CyEdgeCollection) {
-        if (this.cy) {
+        if (this.cy !== null) {
             this.cy.batch(() => this.updateEdgeLabelOffsets(edges));
         }
     }
 
     updateGhostEdges() {
-        this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy.edges('.ghost-element')));
+        if (this.cy !== null) {
+            this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy.edges('.ghost-element')));
+        }
     }
 
     private updateEdgeLabelOffsets(edges: CyElementCollection<CyEdge>) {

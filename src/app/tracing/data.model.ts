@@ -410,6 +410,11 @@ export interface GraphState extends SharedGraphState {
     layout: Layout;
 }
 
+export interface SchemaGraphState extends SharedGraphState {
+    stationPositions: Record<StationId, Position>;
+    layout: Layout;
+}
+
 export interface SetTracingSettingsPayload {
     tracingSettings: TracingSettings;
 }

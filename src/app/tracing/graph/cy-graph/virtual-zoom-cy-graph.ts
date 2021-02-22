@@ -1,14 +1,19 @@
 import { Layout, Position, Size, Range, PositionMap } from '../../data.model';
 import { StyleConfig } from './cy-style';
 import { getEnclosingRectFromPoints } from '@app/tracing/util/geometry-utils';
-import { getDenovoFitLayout } from './denovo-fit-layout-computation';
+import { getPositionBasedFitViewPort } from './position-based-viewport-fitting';
 import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
-import { createLayoutConfigFromLayout, GraphData, CyConfig } from './cy-graph';
+import { GraphData, CyConfig, LayoutConfig, isPresetLayoutConfig } from './cy-graph';
 import { addCustomZoomAdapter } from './cy-adapter';
-import { getActivePositions, getAvailableSpace, getZoomedGraphData, getZoomedNodePositions } from './virtual-zoom-utils';
+import {
+    bbToRect, createMargin, getActivePositions, getAvailableSpace, getExtendedTargetIncludingViewPort,
+    getZoomedGraphData, getZoomedNodePositions, marginToStr, rectToStr, sizeToStr, vpToStr
+} from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
+import { CyNodeCollection, NodeId } from '../graph.model';
+import _ from 'lodash';
 
-const DEFAULT_LAYOUT = {
+const DEFAULT_VIEWPORT = {
     zoom: 1,
     pan: {
         x: 0,
@@ -31,47 +36,78 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         htmlContainerElement: HTMLElement,
         graphData: GraphData,
         styleConfig: StyleConfig,
+        layoutConfig: LayoutConfig,
         cyConfig?: CyConfig
     ) {
-        const fitLayout = !graphData.layout;
+        const isPresetLayout = isPresetLayoutConfig(layoutConfig);
+        const fitViewPort = !isPresetLayout || layoutConfig.fit !== false;
+
         cyConfig = cyConfig || {};
         const zoomLimits = {
             min: cyConfig.minZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MIN_ZOOM : correctZoomLimit(cyConfig.minZoom),
             max: cyConfig.maxZoom === undefined ? VirtualZoomCyGraph.DEFAULT_MAX_ZOOM : correctZoomLimit(cyConfig.maxZoom)
         };
 
-        if (!graphData.layout) {
+        const superLayoutConfig: LayoutConfig = {
+            ...layoutConfig,
+            fit: false
+        };
+
+        if (isPresetLayout && fitViewPort) {
             const availableSpace = getAvailableSpace(htmlContainerElement);
+            const positionBasedFitViewPort = getPositionBasedFitViewPort(
+                getActivePositions(graphData),
+                availableSpace,
+                zoomLimits,
+                DEFAULT_VIEWPORT
+            );
 
             graphData = {
                 ...graphData,
-                layout: getDenovoFitLayout(
-                    getActivePositions(graphData),
-                    availableSpace,
-                    zoomLimits,
-                    DEFAULT_LAYOUT
-                )
+                layout: positionBasedFitViewPort
+            };
+            layoutConfig.pan = positionBasedFitViewPort.pan;
+            layoutConfig.zoom = positionBasedFitViewPort.zoom;
+        }
+
+        if (graphData.layout === null) {
+            graphData = {
+                ...graphData,
+                layout: DEFAULT_VIEWPORT
             };
         }
 
-        const layoutConfig = createLayoutConfigFromLayout(graphData.layout);
-        layoutConfig.fit = false;
+        const superGraphData = getZoomedGraphData(graphData);
+
+        const superCyConfig: CyConfig = {
+            ...cyConfig,
+            zoomingEnabled: false,
+            minZoom: 1,
+            maxZoom: 1
+        };
 
         super(
             htmlContainerElement,
-            getZoomedGraphData(graphData),
+            superGraphData,
             styleConfig,
-            undefined,
-            {
-                ...cyConfig,
-                zoomingEnabled: false,
-                minZoom: 1,
-                maxZoom: 1
-            }
+            superLayoutConfig,
+            superCyConfig
         );
+
         this.cachedGraphData = graphData;
         this.zoomLimits = zoomLimits;
-        if (fitLayout) {
+        if (!isPresetLayout) {
+            this.cachedGraphData = {
+                ...this.cachedGraphData,
+                layout: {
+                    zoom: super.data.layout.zoom,
+                    pan: { ...super.data.layout.pan }
+                },
+                nodePositions: { ...super.data.nodePositions }
+            };
+
+            this.zoomFit();
+        } else if (fitViewPort) {
             this.fitZoomFromCurrentLayout();
         }
         if (this.cy.container()) {
@@ -110,27 +146,27 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         return this.cachedGraphData.layout;
     }
 
-    private setLayout(layout: Layout): void {
+    private setViewPort(viewport: Layout): void {
         const oldZoom = this.zoom;
 
         this.cachedGraphData = {
             ...this.cachedGraphData,
-            layout: layout
+            layout: viewport
         };
 
         const zoomedGraphData: GraphData = {
             ...this.cachedGraphData,
             layout: {
                 zoom: 1,
-                pan: layout.pan
+                pan: viewport.pan
             },
             nodePositions:
-                layout.zoom === oldZoom || this.cachedGraphData.nodePositions === undefined ?
+                viewport.zoom === oldZoom || this.cachedGraphData.nodePositions === undefined ?
                 super.nodePositions :
                 getZoomedNodePositions(
                     this.cachedGraphData.nodeData,
                     this.cachedGraphData.nodePositions,
-                    layout.zoom
+                    viewport.zoom
                 )
         };
 
@@ -147,7 +183,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
             const availableSpace = this.getAvailableSpace();
 
-            // reset the layout so that the rendered graph fits and is centered
+            // reset the viewport so that the rendered graph fits and is centered
             const graphBBox = this.cy.elements().renderedBoundingBox();
 
             const margin = {
@@ -186,12 +222,12 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 y: avSpaceWoMarginsCenter.y - modelGraphCenter.y * newZoom
             };
 
-            const newLayout = {
+            const newViewPort = {
                 zoom: newZoom,
                 pan: newPan
             };
 
-            this.setLayout(newLayout);
+            this.setViewPort(newViewPort);
         }
     }
 
@@ -200,31 +236,31 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
             const availableSpace = this.getAvailableSpace();
 
-            // Approximate initial layout based on node positions only
+            // Approximate initial viewport based on node positions only
             // The Approximation is used as first upper bound on a fitting zoom
-            const posBasedFitLayout = getDenovoFitLayout(
+            const posBasedFitViewPort = getPositionBasedFitViewPort(
                 getActivePositions(this.cachedGraphData),
                 availableSpace,
                 { min: this.minZoom, max: this.maxZoom },
                 { ...this.cachedGraphData.layout }
             );
-            posBasedFitLayout.zoom = this.getNextFeasibleZoom(posBasedFitLayout.zoom);
+            posBasedFitViewPort.zoom = this.getNextFeasibleZoom(posBasedFitViewPort.zoom);
 
             const graphBB = this.cy.elements().renderedBoundingBox();
 
             if (
-                posBasedFitLayout.zoom < this.zoom || // to much zoomed in
+                posBasedFitViewPort.zoom < this.zoom || // to much zoomed in
                 (
                     graphBB.w < availableSpace.width &&
-                    graphBB.h < availableSpace.height // o much zoomed out
+                    graphBB.h < availableSpace.height // to much zoomed out
                 )
             ) {
-                // the current layout is not sufficient for layout prediction
-                // apply the position based layout
-                this.setLayout(posBasedFitLayout);
+                // the current zoom is not sufficient for viewport prediction
+                // apply the position based viewport
+                this.setViewPort(posBasedFitViewPort);
             }
 
-            // the layout will be fitted based on the rendered graph
+            // the viewport will be fitted based on the rendered graph
             this.fitZoomFromCurrentLayout();
 
             this.onLayoutChanged();
@@ -244,9 +280,92 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         };
 
         if (newZoom !== this.zoom || newPan.x !== oldPan.x || newPan.y !== oldPan.y) {
-            this.setLayout({ zoom: newZoom, pan: newPan });
+            this.setViewPort({ zoom: newZoom, pan: newPan });
 
             this.onLayoutChanged();
+        }
+    }
+
+    protected startLayouting(layoutConfig: LayoutConfig, nodesToLayout: NodeId[]): null | (() => void) {
+        if (layoutConfig.animate) {
+            this.cy.minZoom(this.zoomLimits.min);
+            this.cy.maxZoom(this.zoomLimits.max);
+            this.cy.zoomingEnabled(true);
+        } else {
+            layoutConfig.fit = false;
+        }
+
+        return super.startLayouting(layoutConfig, nodesToLayout);
+    }
+
+    protected postProcessLayout(layoutedNodes: NodeId[]): void {
+        const viewportBeforeLayout = this.cachedGraphData.layout;
+
+        if (this.cy.zoom() !== 1) {
+            this.ignorePanOrZoomEvents = true;
+            this.cy.zoom(1);
+            this.edgeLabelOffsetUpdater.update(true);
+            this.ignorePanOrZoomEvents = false;
+        }
+        if (this.cy.zoomingEnabled()) {
+            this.cy.minZoom(1);
+            this.cy.maxZoom(1);
+            this.cy.zoomingEnabled(false);
+        }
+        const nodePositions = this.extractNodePositionsFromGraph();
+        super.setGraphData({
+            ...super.data,
+            nodePositions: nodePositions,
+            layout: {
+                pan: { ...this.cy.pan() },
+                zoom: this.cy.zoom()
+            }
+        });
+        const wereAllNodesLayouted = layoutedNodes.length === this.cachedGraphData.nodeData.length;
+        const newZoom = wereAllNodesLayouted ? 1 : this.cachedGraphData.layout.zoom;
+        this.cachedGraphData = {
+            ...this.cachedGraphData,
+            nodePositions: getZoomedNodePositions(
+                this.cachedGraphData.nodeData,
+                nodePositions,
+                1 / newZoom
+            ),
+            layout: {
+                zoom: newZoom,
+                pan: { ...super.data.layout.pan }
+            }
+        };
+        if (wereAllNodesLayouted) {
+            this.zoomFit();
+        } else {
+            this.extendViewportToIncludeSubgraph(viewportBeforeLayout, layoutedNodes);
+            this.onLayoutChanged();
+        }
+    }
+
+    private extendViewportToIncludeSubgraph(viewportBeforeLayouting: Layout, layoutedNodes: NodeId[]): void {
+        const cyNodes = this.getNodeContext(layoutedNodes) as CyNodeCollection;
+        const cyElements = cyNodes.union(cyNodes.edgesWith(cyNodes));
+        const subGraphPosModelRect = getEnclosingRectFromPoints(layoutedNodes.map(nodeId => this.cachedGraphData.nodePositions[nodeId]));
+        const subGraphBoundingRect = cyElements.renderedBoundingBox();
+        const subGraphPosRenderRect = getEnclosingRectFromPoints(cyNodes.map(node => node.renderedPosition()));
+        const subGraphMargin = {
+            top: subGraphPosRenderRect.top - subGraphBoundingRect.y1,
+            right: subGraphBoundingRect.x2 - subGraphPosRenderRect.right,
+            bottom: subGraphBoundingRect.y2 - subGraphPosRenderRect.bottom,
+            left: subGraphPosRenderRect.left - subGraphBoundingRect.x1
+        };
+        const newViewPort = getExtendedTargetIncludingViewPort(
+            viewportBeforeLayouting,
+            this.getAvailableSpace(),
+            createMargin(VirtualZoomCyGraph.ZOOM_FIT_MARGIN),
+            subGraphPosModelRect,
+            subGraphMargin,
+            this.zoomLimits.min
+        );
+
+        if (!_.isEqual(this.cachedGraphData.layout, newViewPort)) {
+            this.setViewPort(newViewPort);
         }
     }
 

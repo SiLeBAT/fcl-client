@@ -42,8 +42,8 @@ export interface Cy {
     reset(): void;
     fit(): void;
     zoom<T extends number | { level: number } | None>(a?: T): None extends T ? number : void;
-    maxZoom(): number;
-    minZoom(): number;
+    maxZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
+    minZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
     pan<T extends Position | None>(a?: T): None extends T ? Position : void;
     add(a: CyNodeDef[] | CyEdgeDef[]): CyElementCollection<CyNode | CyEdge>;
     on<
@@ -55,6 +55,7 @@ export interface Cy {
         K extends (T extends string ? CyCallBackFun : None)
     >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
     removeListener(events: string, handler: (event?: any) => void): void;
+    removeAllListeners(): void;
     getElementById(id: string): CyNode | CyEdge;
     ready(callBack: () => void): void;
     style(): {};
@@ -64,7 +65,7 @@ export interface Cy {
     userPanningEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
     autoungrabify<T extends boolean | None>(a?: T): None extends T ? boolean : void;
     layout(options: { name: string, [key: string]: any }): CyLayout;
-    zoomingEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
+    zoomingEnabled<T extends boolean | unknown>(a?: T): T extends boolean ? void : boolean;
     viewport(zoom: number, pan: Position): void;
     extent(): CyExtent;
     remove(selectorOrEles: string | CyElementCollection<CyNode | CyEdge>): void;
@@ -81,6 +82,7 @@ export interface CyExtent {
 
 interface CyLayout {
     run(): void;
+    stop(): void;
 }
 
 export interface BoundingBox {

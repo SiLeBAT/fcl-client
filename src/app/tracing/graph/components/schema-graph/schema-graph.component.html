@@ -1,18 +1,22 @@
-<div class="fcl-graph-container" #container>
-    <div class="fcl-graph" #graph></div>
-    <fcl-zoom-view class="fcl-graph-zoom" data-html2canvas-ignore="true"
-        *ngIf="showZoom$ | async"
-        [zoomValue]="zoomPercentage"
-        (zoomIn)="zoomInPressed()"
-        (zoomOut)="zoomOutPressed()"
-        (zoomReset)="zoomResetPressed()"
-        (zoomSlided)="zoomSlided($event)"
-    ></fcl-zoom-view>
+<div class="fcl-graph-container">
+
+    <fcl-graph-view
+        class="fcl-graph"
+        [graphData]="graphData"
+        [styleConfig]="styleConfig$ | async"
+        [cyConfig]="cyConfig"
+        [showZoom]="showZoom$ | async"
+        (graphDataChange)="onGraphDataChange($event)"
+        (contextMenuRequest)="onContextMenuRequest($event)"
+        #graph
+    ></fcl-graph-view>
+
     <fcl-graph-legend-view
         class="fcl-graph-legend"
-        *ngIf="showLegend$ | async"
+        *ngIf="(showLegend$ | async) && (legendInfo !== null)"
         [legendInfo]="legendInfo"
     ></fcl-graph-legend-view>
-    <fcl-created-image-view></fcl-created-image-view>
+
 </div>
-<fcl-graph-context-menu #contextMenu (layoutAction)="performLayoutAction($event)"></fcl-graph-context-menu>
+
+<fcl-context-menu-view (itemSelected)="onContextMenuSelect($event)" #contextMenu></fcl-context-menu-view>

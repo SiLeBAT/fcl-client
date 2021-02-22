@@ -9,8 +9,6 @@ import {
 import _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
-import { Subject } from 'rxjs';
-import { LayoutService } from '../layout/layout.service';
 import {
     ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA, MakeStationsInvisibleMSA,
     MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA, SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
@@ -18,6 +16,12 @@ import {
 } from '../tracing.actions';
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
 import { Action } from '@ngrx/store';
+import { LayoutOption } from './cy-graph/interactive-cy-graph';
+import { LayoutName } from './cy-graph/cy-graph';
+import {
+    LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
+    LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
+} from './cy-graph/cy.constants';
 
 interface ContextElements {
     refNodeId: NodeId | undefined;
@@ -30,18 +34,37 @@ interface ContextElements {
     deliveryIds: string[];
 }
 
-const MIN_LAYOUTABLE_NODE_COUNT = 2;
+export enum LayoutActionTypes {
+    LayoutAction = '[Tracing] Layout'
+}
+
+export class LayoutAction implements Action {
+    readonly type = LayoutActionTypes.LayoutAction;
+
+    constructor(public payload: { layoutName: LayoutName, nodeIds: string[] }) {}
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class ContextMenuService {
 
-    constructor(
-        private layoutService: LayoutService
-    ) {}
+    private static readonly LayoutManagerLabel: Record<LayoutName, string> = {
+        [LAYOUT_FRUCHTERMAN]: 'Fruchterman-Reingold',
+        [LAYOUT_FARM_TO_FORK]: 'Farm-to-fork',
+        [LAYOUT_CONSTRAINT_BASED]: 'Constraint-Based',
+        [LAYOUT_RANDOM]: 'Random',
+        [LAYOUT_GRID]: 'Grid',
+        [LAYOUT_CIRCLE]: 'Circle',
+        [LAYOUT_CONCENTRIC]: 'Concentric',
+        [LAYOUT_BREADTH_FIRST]: 'Breadth-first',
+        [LAYOUT_SPREAD]: 'Spread',
+        [LAYOUT_DAG]: 'Directed acyclic graph'
+    };
 
-    private getContextElements(context: ContextMenuRequestContext, graphData: GraphServiceData): ContextElements {
+    constructor() {}
+
+    getContextElements(context: ContextMenuRequestContext, graphData: GraphServiceData): ContextElements {
         const isContextElementSelected =
             (context.nodeId && graphData.nodeSel[context.nodeId]) ||
             (context.edgeId && graphData.edgeSel[context.edgeId])
@@ -76,14 +99,15 @@ export class ContextMenuService {
 
     getMenuData(
         context: ContextMenuRequestContext,
-        graphData: GraphServiceData, addLayoutOptions: boolean
+        graphData: GraphServiceData,
+        layoutOptions: LayoutOption[]
     ): MenuItemData[] {
         const contextElements = this.getContextElements(context, graphData);
 
         if (contextElements.nodeIds.length === 0 && contextElements.edgeIds.length === 0) {
-            return this.createGraphMenuData(graphData, addLayoutOptions);
+            return this.createGraphMenuData(graphData, layoutOptions);
         } else if (context.nodeId !== undefined) {
-            return this.createStationActions(contextElements, graphData, addLayoutOptions);
+            return this.createStationActions(contextElements, graphData, layoutOptions);
         } else if (context.edgeId !== undefined) {
             return this.createDeliveryActions(contextElements, graphData);
         } else {
@@ -91,26 +115,21 @@ export class ContextMenuService {
         }
     }
 
-    private createLayoutMenuData(graphData: GraphServiceData, nodeIds: string[]): MenuItemData[] {
-        nodeIds = nodeIds.length > 0 ? nodeIds : graphData.nodeData.map(n => n.id);
-        const layoutIsEnabled = nodeIds.length >= MIN_LAYOUTABLE_NODE_COUNT;
+    private createLayoutMenuData(layoutOptions: LayoutOption[], nodesToLayout: NodeId[]): MenuItemData[] {
+        const layoutIsEnabled = layoutOptions.some(options => !options.disabled);
 
-        return [];
-        // // todo: reconnect with layoutService
-        // const layoutMenuData: MenuItemData[] = [];
-
-        // return (
-        //     layoutMenuData.length > 0 ?
-        //         [{
-        //             ...MenuItemStrings.applyLayout,
-        //             disabled: !layoutIsEnabled,
-        //             children: layoutMenuData.slice()
-        //         }] :
-        //         []
-        // );
+        return [{
+            ...MenuItemStrings.applyLayout,
+            disabled: !layoutIsEnabled,
+            children: layoutOptions.map(options => ({
+                ...options,
+                displayName: ContextMenuService.LayoutManagerLabel[options.name],
+                action: new LayoutAction({ layoutName: options.name, nodeIds: nodesToLayout })
+            }))
+        }];
     }
 
-    private createGraphMenuData(graphData: GraphServiceData, addLayoutOptions: boolean): MenuItemData[] {
+    private createGraphMenuData(graphData: GraphServiceData, layoutOptions: LayoutOption[] | null): MenuItemData[] {
         const deliveries = graphData.deliveries.filter(d =>
             !d.invisible &&
             !graphData.statMap[d.source].invisible &&
@@ -119,7 +138,7 @@ export class ContextMenuService {
         const stations = graphData.stations.filter(s => !s.invisible);
 
         return [].concat(
-            addLayoutOptions ? this.createLayoutMenuData(graphData, []) : [],
+            layoutOptions !== null ? this.createLayoutMenuData(layoutOptions, graphData.nodeData.map(n => n.id)) : [],
             [
                 {
                     ...MenuItemStrings.clearTrace,
@@ -255,7 +274,7 @@ export class ContextMenuService {
     private createStationActions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
-        addLayoutOptions: boolean
+        layoutOptions: LayoutOption[] | null
     ): MenuItemData[] {
 
         const contextStations: StationData[] = graphData.getStatById(contextElements.stationIds);
@@ -267,15 +286,12 @@ export class ContextMenuService {
         const allMetaStations = contextStations.every(s => s.contains && s.contains.length > 0);
 
         return [].concat(
-            addLayoutOptions ? this.createLayoutMenuData(graphData, contextElements.stationIds) : [],
+            layoutOptions !== null ? this.createLayoutMenuData(layoutOptions, contextElements.nodeIds) : [],
             [
                 {
                     ...MenuItemStrings.showProperties,
                     disabled: multipleStationsSelected,
-                    action: new ShowStationPropertiesMSA({
-                        stationId: selectedIds[0],
-                        hoverDeliveriesSubject: new Subject<string[]>()
-                    })
+                    action: new ShowStationPropertiesMSA({ stationId: selectedIds[0] })
                 },
                 this.createTraceMenuItemData(contextElements),
                 {

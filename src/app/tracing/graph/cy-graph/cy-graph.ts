@@ -5,8 +5,13 @@ import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
 import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 import { EDGE_GROUP, NODE_GROUP, PRESET_LAYOUT_NAME } from './cy.constants';
+import cola from 'cytoscape-cola';
+import dagre from 'cytoscape-dagre';
+import spread from 'cytoscape-spread';
+import { FruchtermanLayout } from '@app/tracing/layout/fruchterman-reingold';
+import { FarmToForkLayout } from '@app/tracing/layout/farm-to-fork/farm-to-fork';
 
-function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
+export function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);
 }
 
@@ -20,14 +25,18 @@ export interface CyConfig {
     autoungrabify?: boolean;
 }
 
+export type LayoutName = string;
+
 export interface LayoutConfig {
-    name: string;
+    name: LayoutName;
     zoom?: number;
     pan?: Position;
     fit?: boolean;
+    animate?: boolean;
+    ready?(): void;
+    stop?(): void;
     [key: string]: any;
 }
-
 export interface GraphData {
     nodeData: CyNodeData[];
     edgeData: CyEdgeData[];
@@ -40,20 +49,12 @@ export interface GraphData {
     hoverEdges: EdgeId[];
 }
 
-export function createLayoutConfigFromLayout(layout: Layout): LayoutConfig {
-    return {
-        name: PRESET_LAYOUT_NAME,
-        zoom: layout.zoom,
-        pan: layout.pan,
-        fit: false
-    };
-}
-
 export class CyGraph {
 
     protected static readonly DEFAULT_MIN_ZOOM = 0.1;
     protected static readonly DEFAULT_MAX_ZOOM = 100.0;
     protected static readonly WHEEL_SENSITIVITY = 0.5;
+    private static CyLayoutManagerLoaded = false;
 
     private cy_: Cy;
     private minZoom_: number = CyGraph.DEFAULT_MIN_ZOOM;
@@ -65,15 +66,22 @@ export class CyGraph {
         htmlContainerElement: HTMLElement | undefined,
         private graphData: GraphData,
         private styleConfig: StyleConfig,
-        layoutConfig?: LayoutConfig,
+        layoutConfig: LayoutConfig,
         cyConfig?: CyConfig
     ) {
-        layoutConfig =
-            layoutConfig !== undefined ? layoutConfig :
-            this.graphData.layout ? createLayoutConfigFromLayout(this.graphData.layout) :
-            undefined;
-
+        if (!CyGraph.CyLayoutManagerLoaded) {
+            CyGraph.addLayoutManagerToCytoScape();
+            CyGraph.CyLayoutManagerLoaded = true;
+        }
         this.initCy(htmlContainerElement, layoutConfig, cyConfig);
+    }
+
+    private static addLayoutManagerToCytoScape() {
+        cytoscape.use(cola);
+        cytoscape.use(dagre);
+        cytoscape.use(spread);
+        cytoscape('layout', 'fruchterman', FruchtermanLayout);
+        cytoscape('layout', 'farm_to_fork', FarmToForkLayout);
     }
 
     protected get cy(): Cy {
@@ -155,7 +163,7 @@ export class CyGraph {
 
     protected initCy(
         htmlContainerElement: HTMLElement | undefined,
-        layoutConfig: LayoutConfig | undefined,
+        layoutConfig: LayoutConfig,
         cyConfig: CyConfig | undefined = DEFAULT_CY_CONFIG
     ): void {
         this.cleanCy();
@@ -175,24 +183,23 @@ export class CyGraph {
             autoungrabify: cyConfig.autoungrabify,
             userZoomingEnabled: cyConfig.userZoomingEnabled,
             zoomingEnabled: cyConfig.zoomingEnabled
-
         });
 
         this.edgeLabelOffsetUpdater.connectTo(this.cy);
 
-        if (!layoutConfig || !isPresetLayoutConfig(layoutConfig)) {
+        if (!isPresetLayoutConfig(layoutConfig)) {
             this.graphData = { ...this.graphData,
-                layout: this.extractLayoutFromGraph(),
+                layout: this.extractViewPortFromGraph(),
                 nodePositions: this.extractNodePositionsFromGraph()
             };
         } else if (layoutConfig.zoom === undefined || !layoutConfig.pan) {
             this.graphData = { ...this.graphData,
-                layout: this.extractLayoutFromGraph()
+                layout: this.extractViewPortFromGraph()
             };
         }
     }
 
-    private extractLayoutFromGraph(): Layout {
+    private extractViewPortFromGraph(): Layout {
         return {
             zoom: this.cy.zoom(),
             pan: { ...this.cy.pan() }
