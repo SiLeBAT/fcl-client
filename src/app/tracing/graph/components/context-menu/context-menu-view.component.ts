@@ -20,7 +20,7 @@ export class ContextMenuViewComponent {
 
     open(pos: Position, menuData: MenuItemData[]): void {
         this.graphMenuTrigger.menuData = { menuItems: menuData };
-        setTimeout(() => Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, pos), 0);
+        Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, pos);
     }
 
     onItemSelected(action: Action) {
