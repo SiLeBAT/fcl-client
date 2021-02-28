@@ -1,9 +1,9 @@
-import {
-    Color, GraphType, MapType, DeliveryData, StationData
-  } from '../data.model';
+import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.model';
 import { List, Map } from 'immutable';
 
 export class Constants {
+    static readonly EXAMPLE_MODEL_FILE_PATH = 'assets/data/SampleData_EN_WebApp.json';
+
     private static readonly STATION_DATA: StationData = {
         id: null,
         name: null,
