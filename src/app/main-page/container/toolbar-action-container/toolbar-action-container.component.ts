@@ -20,6 +20,9 @@ import { takeWhile } from 'rxjs/operators';
     styleUrls: ['./toolbar-action-container.component.scss']
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
+
+    private static readonly EXAMPLE_FILE_PATH = '../../../../assets/data/SampleData_EN_WebApp.json';
+
     tracingActive$ = this.store.pipe(
         select(TracingSelectors.getTracingActive)
     );
@@ -83,7 +86,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     loadExampleData() {
-        this.ioService.getFclData('../../../../assets/data/SampleData_EN_WebApp.json')
+        this.ioService.getFclData(ToolbarActionContainerComponent.EXAMPLE_FILE_PATH)
             .then((data: FclData) => {
                 this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
 

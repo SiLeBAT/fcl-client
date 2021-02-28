@@ -1,4 +1,4 @@
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
 import { InputFormatError } from '../io-errors';
 
