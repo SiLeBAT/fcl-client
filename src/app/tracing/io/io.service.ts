@@ -27,13 +27,17 @@ export class IOService {
     async getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === 'string') {
             return this.httpClient.get(dataSource)
-              .toPromise()
-              .then(response => {
-                  return this.preprocessData(response);
-              })
-              .then(data => {
-                  return data;
-              });
+                .toPromise()
+                .then(response => {
+                    return this.preprocessData(response);
+                })
+                .then(data => {
+                    return data;
+                })
+                .catch(e => {
+                    return Promise.reject(e);
+                });
+
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {

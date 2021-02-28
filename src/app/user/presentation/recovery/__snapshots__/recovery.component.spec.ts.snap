@@ -2,7 +2,7 @@
 
 exports[`RecoveryComponent should render the component correctly 1`] = `
 <fcl-recovery
-  recovery={[Function EventEmitter]}
+  recovery={[Function EventEmitter_]}
   recoveryForm={[Function FormGroup]}
 >
   <form
@@ -70,7 +70,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
           class="form-group fcl-recover-button"
         >
           <button
-            class="mat-raised-button mat-button-base"
+            class="mat-focus-indicator mat-raised-button mat-button-base"
             color="primary"
             mat-raised-button=""
             type="submit"
@@ -80,18 +80,18 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
             >
                Recover password 
             </span>
-            <div
+            <span
               class="mat-button-ripple mat-ripple"
               matripple=""
             />
-            <div
+            <span
               class="mat-button-focus-overlay"
             />
           </button>
         </div>
         <div>
           <a
-            class="mat-button mat-button-base"
+            class="mat-focus-indicator mat-button mat-button-base"
             mat-button=""
           >
             <span
@@ -99,11 +99,11 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
             >
                Cancel 
             </span>
-            <div
+            <span
               class="mat-button-ripple mat-ripple"
               matripple=""
             />
-            <div
+            <span
               class="mat-button-focus-overlay"
             />
           </a>

@@ -13,6 +13,7 @@ import { DataService } from './../../../tracing/services/data.service';
 import { Utils as UIUtils } from './../../../tracing/util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
+import { Constants } from '@app/tracing/util/constants';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
@@ -20,6 +21,7 @@ import { takeWhile } from 'rxjs/operators';
     styleUrls: ['./toolbar-action-container.component.scss']
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
+
     tracingActive$ = this.store.pipe(
         select(TracingSelectors.getTracingActive)
     );
@@ -83,7 +85,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     loadExampleData() {
-        this.ioService.getFclData('../../../../assets/data/SampleData_EN_WebApp.json')
+        this.ioService.getFclData(Constants.EXAMPLE_MODEL_FILE_PATH)
             .then((data: FclData) => {
                 this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
 
