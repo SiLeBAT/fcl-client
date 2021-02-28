@@ -1,9 +1,9 @@
 import {
     DeliveryStoreData as DeliveryData, FclData, ObservedType, StationStoreData as StationData,
-    Connection, GroupType, Layout, GraphType, GroupData,
+    Connection, GroupType, GroupData,
     ValueCondition as IntValueCondition,
     LogicalCondition as IntLogicalCondition,
-    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType, CrossContTraceType
+    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType, CrossContTraceType, StationId, DeliveryId
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -66,7 +66,6 @@ export class DataImporterV1 implements IDataImporter {
             data,
             fclData,
             idToStationMap,
-            idToGroupMap,
             idToDeliveryMap
         );
         importSamples(data, fclData);
@@ -298,12 +297,12 @@ export class DataImporterV1 implements IDataImporter {
         data: any,
         fclData: FclData,
         idToStationMap: Map<string, StationData>,
-        idToGroupMap: Map<string, GroupData>,
         idToDeliveryMap: Map<string, DeliveryData>
     ) {
+        this.initTracingData(fclData);
+
         const tracingData: any = this.getProperty(data, ExtDataConstants.TRACING_DATA);
-        if (tracingData == null) {
-            this.initTracingData(fclData);
+        if (tracingData === null || tracingData === undefined) {
             return;
         }
 
@@ -317,15 +316,20 @@ export class DataImporterV1 implements IDataImporter {
             throw new InputDataError('Missing delivery tracing data.');
         }
 
+        const statIdToTracIndexMap: Record<StationId, number> = {};
+        fclData.tracingSettings.stations.forEach((tracSet, index) => statIdToTracIndexMap[tracSet.id] = index);
+
         for (const element of stationTracings) {
             if (element.id === null) {
-                throw new InputDataError('Station id is missing in tracing data.');
+                throw new InputDataError('Station / Metastation id is missing in tracing data.');
             }
 
             const isSimpleStation = idToStationMap.has(element.id);
 
-            if (!(isSimpleStation || idToGroupMap.has(element.id))) {
-                throw new InputDataError('Station/Metanode id "' + element.id + '" is unkown.');
+            const tracSetIndex = statIdToTracIndexMap[element.id];
+
+            if (tracSetIndex === undefined) {
+                throw new InputDataError('Station / Meta station id "' + element.id + '" is unkown.');
             }
 
             if (isSimpleStation) {
@@ -336,23 +340,28 @@ export class DataImporterV1 implements IDataImporter {
                     'station ' + element.id
                 );
             }
-            fclData.tracingSettings.stations.push({
+            fclData.tracingSettings.stations[tracSetIndex] = {
                 id: element.id,
                 weight: element.weight,
                 crossContamination: element.crossContamination,
                 killContamination: element.killContamination,
                 observed: (element.observed ? ObservedType.FULL : ObservedType.NONE),
                 outbreak: element.weight > 0
-            });
+            };
         }
+
+        const delIdToTracIndexMap: Record<DeliveryId, number> = {};
+        fclData.tracingSettings.deliveries.forEach((tracSet, index) => delIdToTracIndexMap[tracSet.id] = index);
 
         for (const element of deliveryTracings) {
             if (element.id === null) {
                 throw new InputDataError('Delivery id is missing in tracing data.');
             }
 
-            if (!idToDeliveryMap.has(element.id)) {
-                throw new InputDataError('Tracing-data-import: Delivery id "' + element.id + '" is unkown.');
+            const tracSetIndex = delIdToTracIndexMap[element.id];
+
+            if (tracSetIndex === undefined) {
+                throw new InputDataError('Tracing-data-import: Delivery id "' + element.id + '" is unknown.');
             }
 
             const delivery: DeliveryData = idToDeliveryMap.get(element.id);
@@ -363,13 +372,13 @@ export class DataImporterV1 implements IDataImporter {
                 'delivery ' + delivery.id
             );
 
-            fclData.tracingSettings.deliveries.push({
+            fclData.tracingSettings.deliveries[tracSetIndex] = {
                 id: element.id,
                 weight: element.weight,
                 crossContamination: element.crossContamination,
                 killContamination: element.killContamination,
                 observed: element.observed === true ? ObservedType.FULL : ObservedType.NONE
-            });
+            };
         }
     }
 
@@ -631,24 +640,6 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         return intShapeType;
-    }
-
-    private convertExternalTransformation(extTransformation: any): Layout {
-        const scale: any = this.getProperty(extTransformation, 'scale.x');
-        const translation_x: any = this.getProperty(extTransformation, 'translation.x');
-        const translation_y: any = this.getProperty(extTransformation, 'translation.y');
-
-        if (scale !== null && translation_x !== null && translation_y !== null) {
-            return {
-                zoom: scale,
-                pan: {
-                    x: translation_x,
-                    y: translation_y
-                }
-            };
-        } else {
-            return null;
-        }
     }
 
     private convertExternalPositions(
