@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter, AfterViewChecked } from '@angular/core';
 import { DatatableComponent, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
-import { DataTable, NodeShapeType, TableRow, TableColumn, Size } from '@app/tracing/data.model';
+import { DataTable, NodeShapeType, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
 import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRowFilter, createOneTermForEachColumnRowFilter } from '../filter-provider';
 import { filterTableRows } from '../shared';
 import * as _ from 'lodash';
@@ -90,50 +90,38 @@ export interface TableFilterChange {
 })
 export class FilterTableViewComponent implements AfterViewChecked {
 
-    @Input() inputData: InputData;
-
-    @Output() selectColumns = new EventEmitter();
-    @Output() mouseOverRow = new EventEmitter<TableRow>();
-    @Output() mouseLeaveRow = new EventEmitter<TableRow>();
-    @Output() columnOrderChange = new EventEmitter<string[]>();
-    @Output() filterChange = new EventEmitter<TableFilterChange>();
-
-    @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
-    @ViewChild('patternColTpl', { static: true }) patternColTpl: TemplateRef<any>;
-    @ViewChild('visibilityColTpl', { static: true }) visibilityColTpl: TemplateRef<any>;
-    @ViewChild('dataColTpl', { static: true }) dataColTpl: TemplateRef<any>;
-    @ViewChild('patternRowTpl', { static: true }) patternRowTpl: TemplateRef<any>;
-    @ViewChild('visibilityRowTpl', { static: true }) visibilityRowTpl: TemplateRef<any>;
-    @ViewChild('dataRowTpl', { static: true }) dataRowTpl: TemplateRef<any>;
-    @ViewChild('table', { static: true }) table: DatatableComponent;
-    @ViewChild('tableWrapper', { static: true }) tableWrapper: any;
-
-    private processedInput_: InputData;
-    private filterMap_: FilterMap;
-    private columnFilterTexts_: { [key: string]: string };
-    private filteredRows_: TableRow[] = [];
-
-    private windowSize: Size = { width: undefined, height: undefined };
-    private wrapperSize: Size = { width: undefined, height: undefined };
-    private resizeTriggerIsBlocked = false;
-
-    lastMouseOverRow: TableRow;
-
     get visibilityFilterState(): VisibilityFilterState {
         return this.inputData.visibilityFilter;
     }
 
-    get filteredRows(): TableRow[] {
-        this.processInputIfNecessary();
+    private set filteredRows(filteredRows: TableRow[]) {
+        this.filteredRows_ = filteredRows;
+        this.updateTreeRows();
+    }
+
+    private get filteredRows(): TableRow[] {
         return this.filteredRows_;
+    }
+
+    private get treeRows(): TableRow[] {
+        return this.treeRows_;
+    }
+
+    private set treeRows(treeRows: TableRow[]) {
+        this.treeRows_ = treeRows;
+        this.updateTreeStatusFromCache();
+    }
+
+    get tableRows(): TableRow[] {
+        this.processInputIfNecessary();
+        return !this.useTreeMode ?
+            this.filteredRows : this.treeRows;
     }
 
     get columns(): NgxTableColumn[] {
         this.processInputIfNecessary();
         return this.columns_;
     }
-
-    private columns_: NgxTableColumn[];
 
     get showVisibleElements(): boolean {
         const visState = this.inputData.visibilityFilter;
@@ -143,6 +131,58 @@ export class FilterTableViewComponent implements AfterViewChecked {
     get showInvisibleElements(): boolean {
         const visState = this.inputData.visibilityFilter;
         return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY;
+    }
+
+    @Input() inputData: InputData;
+    @Input() useTreeMode = false;
+
+    @Output() selectColumns = new EventEmitter();
+    @Output() mouseOverRow = new EventEmitter<TableRow | null>();
+    @Output() columnOrderChange = new EventEmitter<string[]>();
+    @Output() filterChange = new EventEmitter<TableFilterChange>();
+
+    @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
+    @ViewChild('patternColTpl', { static: true }) patternColTpl: TemplateRef<any>;
+    @ViewChild('visibilityColTpl', { static: true }) visibilityColTpl: TemplateRef<any>;
+    @ViewChild('treeColTpl', { static: true }) treeColTpl: TemplateRef<any>;
+    @ViewChild('dataColTpl', { static: true }) dataColTpl: TemplateRef<any>;
+    @ViewChild('patternRowTpl', { static: true }) patternRowTpl: TemplateRef<any>;
+    @ViewChild('visibilityRowTpl', { static: true }) visibilityRowTpl: TemplateRef<any>;
+    @ViewChild('dataRowTpl', { static: true }) dataRowTpl: TemplateRef<any>;
+    @ViewChild('treeRowTpl', { static: true }) treeRowTpl: TemplateRef<any>;
+    @ViewChild('table', { static: true }) table: DatatableComponent;
+    @ViewChild('tableWrapper', { static: true }) tableWrapper: any;
+
+    private processedInput_: InputData;
+    private filterMap_: FilterMap;
+    private columnFilterTexts_: { [key: string]: string };
+    private filteredRows_: TableRow[] = [];
+    private treeRows_: TableRow[] = [];
+    private treeStatusCache: Record<string, TreeStatus> = {};
+
+    private windowSize: Size = { width: undefined, height: undefined };
+    private wrapperSize: Size = { width: undefined, height: undefined };
+    private resizeTriggerIsBlocked = false;
+
+    private columns_: NgxTableColumn[];
+
+    private updateTreeRows(): void {
+        if (this.useTreeMode) {
+            const availableRows: Record<string, boolean> = {};
+            this.filteredRows_.forEach(row => availableRows[row.id] = true);
+
+            const missingParents: TableRow[] = [];
+            for (const row of this.filteredRows_) {
+                if (row.parentRow !== undefined && !availableRows[row.parentRowId]) {
+                    missingParents.push(row.parentRow);
+                    availableRows[row.parentRowId] = true;
+                }
+            }
+            this.treeRows =
+                missingParents.length > 0 ?
+                this.filteredRows.concat(missingParents) :
+                this.filteredRows;
+        }
     }
 
     onSelectColumns(): void {
@@ -167,14 +207,28 @@ export class FilterTableViewComponent implements AfterViewChecked {
         this.filterChange.emit({ visibilityFilter: this.getToggledVisibilityState(this.visibilityFilterState) });
     }
 
-    onMouseOver(row: TableRow) {
-        this.lastMouseOverRow = row;
+    onRowOver(row: TableRow | null): void {
         this.mouseOverRow.emit(row);
     }
 
-    onMouseLeave() {
-        this.mouseLeaveRow.emit(this.lastMouseOverRow);
-        this.lastMouseOverRow = undefined;
+    onTreeAction(row: TableRow) {
+        if (row.treeStatus === 'collapsed') {
+            row.treeStatus = 'expanded';
+        } else {
+            row.treeStatus = 'collapsed';
+        }
+        this.treeStatusCache[row.id] = row.treeStatus;
+
+        this.triggerTableRefresh();
+    }
+
+    private triggerTableRefresh(): void {
+        // force table refresh by changing the table input
+        if (this.useTreeMode) {
+            this.treeRows_ = this.treeRows_.slice();
+        } else {
+            this.filteredRows_ = this.filteredRows_.slice();
+        }
     }
 
     private updateTableSizeIfNecessary() {
@@ -199,7 +253,7 @@ export class FilterTableViewComponent implements AfterViewChecked {
                     this.resizeTriggerIsBlocked = false;
                     this.wrapperSize.height = this.tableWrapper.nativeElement.clientHeight;
                     this.wrapperSize.width = this.tableWrapper.nativeElement.clientWidth;
-                    this.filteredRows_ = this.filteredRows_.slice();
+                    this.triggerTableRefresh();
                 }, 0);
             }
         }
@@ -238,10 +292,12 @@ export class FilterTableViewComponent implements AfterViewChecked {
         const oldDataColumns = this.processedInput_ ? this.processedInput_.dataTable.columns : undefined;
         const newColumnOrder = this.inputData.columnOrder;
         if (newDataColumns !== oldDataColumns) {
+            // new model was model
             this.columns_ = [].concat(
                 this.createFixedColumns(),
                 newColumnOrder.map(p => this.createNgxTableDataColumn(newDataColumns, p)).filter(c => !!c)
             );
+            this.treeStatusCache = {};
         } else {
             const currentColumnOrder = this.getColumnOrdering();
             const columnVisChanged =
@@ -264,6 +320,26 @@ export class FilterTableViewComponent implements AfterViewChecked {
             }
         }
         if (this.processedInput_ !== this.inputData) {}
+    }
+
+    private updateTreeStatusFromCache(): void {
+        if (this.useTreeMode) {
+            const hasVisibleMember: Record<string, boolean> = {};
+            for (const row of this.treeRows_) {
+                if (row.parentRowId !== undefined) {
+                    hasVisibleMember[row.parentRowId] = true;
+                }
+            }
+            for (const row of this.treeRows_) {
+                if (row.parentRowId === undefined) {
+                    if (hasVisibleMember[row.id]) {
+                        row.treeStatus = this.treeStatusCache[row.id] || 'collapsed';
+                    } else {
+                        row.treeStatus = undefined;
+                    }
+                }
+            }
+        }
     }
 
     private updateRows(): void {
@@ -290,7 +366,8 @@ export class FilterTableViewComponent implements AfterViewChecked {
         ) {
             const tableWasEmptyBefore = this.filteredRows_.length === 0;
             this.filterMap_ = filterMap;
-            this.filteredRows_ = filterTableRows(newDataRows, [filterMap.visibilityFilter, filterMap.columnFilter]);
+            this.filteredRows = filterTableRows(newDataRows, [filterMap.visibilityFilter, filterMap.columnFilter]);
+
             this.updateColumnFilterTexts();
             if (
                 tableWasEmptyBefore &&
@@ -341,6 +418,7 @@ export class FilterTableViewComponent implements AfterViewChecked {
             draggable: false,
             width: 20,
             headerTemplate: this.buttonColTpl,
+            cellTemplate: this.treeRowTpl,
             headerClass: 'fcl-more-columns-header-cell',
             cellClass: 'fcl-more-column-row-cell',
             frozenLeft: true
@@ -385,18 +463,11 @@ export class FilterTableViewComponent implements AfterViewChecked {
         ];
     }
 
-    private getFixedColumns(): NgxTableColumn[] {
-        return this.columns.slice(0, 3);
-    }
-
-    private getCellClass({ row, column, value }): any {
+    private getCellClass({ row }: { row: TableRow, column: NgxTableColumn, value: any}): any {
         return {
-            'fcl-row-cell-invisible': row['invisible'] === true
+            'fcl-row-cell-invisible': row['invisible'] || (row.parentRow !== undefined && row.parentRow['invisible']),
+            'fcl-font-style-italic': row.parentRowId !== undefined
         };
-    }
-
-    private applySelection(state) {
-
     }
 
     recalculateTable() {

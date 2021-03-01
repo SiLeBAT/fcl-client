@@ -30,6 +30,7 @@ export class DataService {
     } {
         const stations: StationData[] = state.fclElements.stations.map(storeData => ({
             ...storeData,
+            isMeta: false,
             contained: false,
             outbreak: false,
             weight: 0,
@@ -121,6 +122,7 @@ export class DataService {
                 ...groupSet,
                 lat: lat,
                 lon: lon,
+                isMeta: true,
                 contained: false,
                 contains: groupSet.contains.slice(),
                 observed: ObservedType.NONE,

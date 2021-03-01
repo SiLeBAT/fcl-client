@@ -37,10 +37,15 @@ export interface RowHighlightingInfo {
     shape?: NodeShapeType;
 }
 
+export type TreeStatus = 'collapsed' | 'expanded';
+
 export interface TableRow {
     id: string;
     highlightingInfo: RowHighlightingInfo;
-    [key: string]: string | number | boolean | RowHighlightingInfo;
+    parentRow?: TableRow;
+    parentRowId?: string;
+    treeStatus?: TreeStatus;
+    [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
 }
 
 export interface DataTable {
@@ -345,6 +350,7 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
 }
 
 export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
+    isMeta: boolean;
     contained: boolean;
     highlightingInfo?: StationHighlightingInfo;
 }
