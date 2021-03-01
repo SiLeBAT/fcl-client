@@ -1,7 +1,7 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, BasicGraphState, DataTable, DataServiceData } from '@app/tracing/data.model';
+import { TableRow, BasicGraphState, DataTable, DataServiceData, StationId } from '@app/tracing/data.model';
 import { takeWhile } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -43,6 +43,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
     private cachedState: FilterTableState;
 
     private filterElementsViewInputData_: FilterElementsViewInputData;
+    private currentGhostStationId: StationId | null = null;
 
     get filterElementsViewInputData(): FilterElementsViewInputData {
         return this.filterElementsViewInputData_;
@@ -94,15 +95,26 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.ResetAllStationFiltersSOA());
     }
 
-    onMouseOverTableRow(row: TableRow): void {
-        if (this.cachedData.data.statMap[row.id].invisible) {
-            this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: row.id }));
+    onMouseOverTableRow(row: TableRow | null): void {
+        let newGhostStationId: string | null = null;
+        if (row !== null) {
+            const station = this.cachedData.data.statMap[row.id];
+            if (station.contained) {
+                const group = this.cachedData.data.statMap[row.parentRowId];
+                if (group.invisible) {
+                    newGhostStationId = group.id;
+                }
+            } else if (station.invisible) {
+                newGhostStationId = station.id;
+            }
         }
-    }
-
-    onMouseLeaveTableRow(row: TableRow): void {
-        if (this.cachedData.data.statMap[row.id].invisible) {
-            this.store.dispatch(new tracingActions.ClearGhostStationMSA());
+        if (newGhostStationId !== this.currentGhostStationId) {
+            this.currentGhostStationId = newGhostStationId;
+            if (newGhostStationId === null) {
+                this.store.dispatch(new tracingActions.ClearGhostStationMSA());
+            } else {
+                this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: row.id }));
+            }
         }
     }
 
@@ -119,6 +131,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         const data = this.dataService.getData(state.graphState);
         if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
             dataTable = this.tableService.getStationData(state.graphState);
+            this.currentGhostStationId = null;
         } else if (
             data.stations !== this.cachedData.data.stations ||
             data.deliveries !== this.cachedData.data.deliveries ||

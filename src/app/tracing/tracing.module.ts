@@ -68,6 +68,8 @@ import { ColorsAndShapesViewComponent } from './configuration/colors-and-shapes-
 import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
 import { ColorsAndShapesRuleViewComponent } from './configuration/colors-and-shapes-rule-view/colors-and-shapes-rule-view.component';
 import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
+import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatatable-row-event-provider.directive';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -134,7 +136,8 @@ import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.compo
         ColorsAndShapesViewComponent,
         ColorsAndShapesListViewComponent,
         ColorsAndShapesRuleViewComponent,
-        DialogYesNoComponent
+        DialogYesNoComponent,
+        NgxDatatableRowEventProviderDirective
     ],
     exports: []
 })

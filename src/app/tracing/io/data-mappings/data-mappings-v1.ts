@@ -79,7 +79,8 @@ export const DEFAULT_STATION_PROP_INT_TO_EXT_MAP: ImmutableMap<
     crossContamination: ExtDataConstants.STATION_CROSSCONTAMINATION,
     killContamination: ExtDataConstants.STATION_KILLCONTAMINATION,
     forward: ExtDataConstants.STATION_FORWARD,
-    backward: ExtDataConstants.STATION_BACKWARD
+    backward: ExtDataConstants.STATION_BACKWARD,
+    isMeta: ExtDataConstants.STATION_ISMETA
 });
 
 export const DEFAULT_DEL2DEL_PROP_INT_TO_EXT_MAP: ImmutableMap<

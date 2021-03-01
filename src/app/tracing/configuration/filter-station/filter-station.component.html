@@ -1,9 +1,9 @@
 <fcl-filter-elements-view class="fcl-filter-elements-view"
     standardFilterLabel="Filter in all station data"
     [inputData]="filterElementsViewInputData"
+    [useTreeMode]="true"
     (filterSettingsChange)="onFilterSettingsChange($event)"
     (clearAllFilters)="onClearAllFilters()"
     (selectTableColumns)="onSelectTableColumns()"
     (mouseOverTableRow)="onMouseOverTableRow($event)"
-    (mouseLeaveTableRow)="onMouseLeaveTableRow($event)"
 ></fcl-filter-elements-view>

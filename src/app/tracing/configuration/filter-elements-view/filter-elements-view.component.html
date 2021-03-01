@@ -59,11 +59,11 @@
         <fcl-filter-table-view
             class = "fcl-filter-table-view"
             [inputData] = "filterTableViewInputData"
+            [useTreeMode] = "useTreeMode"
             (columnOrderChange) = "onColumnOrderChange($event)"
             (filterChange)="onTableFilterChange($event)"
             (selectColumns)="onSelectTableColumns()"
             (mouseOverRow)="onMouseOverTableRow($event)"
-            (mouseLeaveRow)="onMouseLeaveTableRow($event)"
         ></fcl-filter-table-view>
     </div>
 </div>

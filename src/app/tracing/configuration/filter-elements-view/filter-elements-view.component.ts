@@ -35,6 +35,7 @@ export class FilterElementsViewComponent {
 
     @Input() inputData: InputData;
     @Input() standardFilterLabel: string;
+    @Input() useTreeMode = false;
 
     @Output() filterSettingsChange = new EventEmitter<FilterTableSettings>();
     @Output() clearAllFilters = new EventEmitter();
@@ -141,12 +142,8 @@ export class FilterElementsViewComponent {
         this.selectTableColumns.emit();
     }
 
-    onMouseOverTableRow(row: TableRow): void {
+    onMouseOverTableRow(row: TableRow | null): void {
         this.mouseOverTableRow.emit(row);
-    }
-
-    onMouseLeaveTableRow(row: TableRow): void {
-        this.mouseLeaveTableRow.emit(row);
     }
 
     private processLastInputIfNecessary(): void {
