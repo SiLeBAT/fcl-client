@@ -15,6 +15,7 @@ export class Constants {
         invisible: null,
         contained: null,
         contains: null,
+        isMeta: null,
         groupType: null,
         selected: null,
         observed: null,
