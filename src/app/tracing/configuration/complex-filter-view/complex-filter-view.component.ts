@@ -35,12 +35,15 @@ export class ComplexFilterViewComponent {
 
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
-    filterConditionForm: FormGroup;
+    // filterConditionForm: FormGroup;
     private conditions_ = this.createDefaultConditions();
 
     constructor() { }
 
     onAddFilterCondition(index: number) {
+
+        console.log('onAddFilterCondition blah!!!');
+
         const conditions = this.conditions_.map(c => ({ ...c }));
         const property = conditions[index].property;
         const operation = conditions[index].operation;

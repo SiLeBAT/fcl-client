@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'fcl-color-picker-view',
-    templateUrl: './color-picker-view.component.html'
+    templateUrl: './color-picker-view.component.html',
+    styleUrls: ['./color-picker-view.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class ColorPickerViewComponent implements OnInit {
     @Input() color: string;

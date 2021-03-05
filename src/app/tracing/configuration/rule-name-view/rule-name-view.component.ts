@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'fcl-rule-name-view',
@@ -7,9 +7,8 @@ import { Component, EventEmitter, Output, ViewEncapsulation } from '@angular/cor
     encapsulation: ViewEncapsulation.None
 })
 export class RuleNameViewComponent {
+    @Input() ruleName: string = '';
     @Output() ruleNameChange = new EventEmitter<string>();
-
-    ruleName = '';
 
     constructor() { }
 

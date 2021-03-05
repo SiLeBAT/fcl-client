@@ -1,11 +1,30 @@
-<div
+<!-- <div
+    class="fcl-color-picker-view"
     [(colorPicker)]="color"
     [style.color]="color"
-    [cpPosition]="'top'"
+    [cpPosition]="'top-left'"
+    [cpPositionOffset]="'50%'"
+    [cpPositionRelativeToArrow]="true"
     [cpOutputFormat]="'rgba'"
     [cpOKButton]="true"
     [cpCancelButton]="true"
     [cpAlphaChannel]="'disabled'"
     (colorPickerSelect)="onColorPickerSelect($event)"
     > <span class="fcl-span-font-size-2rem">Select color &#9660;</span>
-</div>
+</div> -->
+
+<input
+    class="fcl-color-picker-view fcl-font-size-08"
+    [(colorPicker)]="color"
+    [cpHeight]="'320px'"
+    [style.background]="color"
+    [cpPosition]="'left'"
+    [cpPositionOffset]="'-390%'"
+    [cpPositionRelativeToArrow]="true"
+    [cpOutputFormat]="'rgba'"
+    [cpOKButton]="true"
+    [cpCancelButton]="true"
+    [cpAlphaChannel]="'disabled'"
+    (colorPickerSelect)="onColorPickerSelect($event)"
+
+/>

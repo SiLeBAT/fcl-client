@@ -4,42 +4,10 @@
     font-size: 0.8rem;
 }
 
-#fcl-colors-and-shapes-list-view-list .fcl-colors-and-shapes-list-view-list-item {
+#fcl-colors-and-shapes-list-view-list .fcl-colors-and-shapes-list-view-list-item .mat-list-item-content {
     display: grid;
-    grid-template-areas:
-        "rulename shape counts legend edit delete"
-        "editdialog editdialog editdialog editdialog editdialog editdialog";
     grid-template-columns: 50% 10% 10% 10% 10% 10%;
     grid-template-rows: auto;
-}
-
-.fcl-colors-and-shapes-list-item-name {
-    grid-area: rulename;
-}
-
-.fcl-colors-and-shapes-list-item-shape {
-    grid-area: shape;
-}
-
-.fcl-colors-and-shapes-list-item-shape {
-    grid-area: counts;
-}
-
-.fcl-colors-and-shapes-list-item-legend {
-    grid-area: legend;
-}
-
-.fcl-colors-and-shapes-list-item-edit-button {
-    grid-area: edit;
-}
-
-.fcl-colors-and-shapes-list-item-delete-button {
-    grid-area: delete;
-}
-
-.fcl-colors-and-shapes-list-item-edit-dialog {
-    grid-area: editdialog;
-    margin-bottom: 2rem;
 }
 
 .fcl-colors-and-shapes-list-item-fix {
@@ -73,16 +41,4 @@
 .fcl-colors-and-shapes-list-view-legend-button > .mat-button-toggle-checked.mat-button-toggle-disabled {
     background-color: $fcl-primary-100;
     color: rgb(255, 255, 255);
-}
-
-.fcl-add-highlighting-rule-button {
-    border-radius: 5;
-    background-color: rgb(255, 255, 255);
-    margin-top: 1rem;
-    width: 100%;
-}
-
-.fcl-add-highlighting-rule-button:hover {
-    background-color: $fcl-accent-300;
-    color: rgba(255, 255, 255, 0.9);
 }

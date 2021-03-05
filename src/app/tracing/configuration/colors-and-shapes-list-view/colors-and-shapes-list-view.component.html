@@ -1,14 +1,16 @@
-<mat-list id="fcl-colors-and-shapes-list-view-list" dense>
+<div id="fcl-colors-and-shapes-list-view-list">
 
-    <mat-list-item
+    <div
         class="fcl-colors-and-shapes-list-view-list-item"
-        *ngFor="let item of colorsAndShapesHighlightings; let i = index"
+        *ngFor="let item of colorsAndShapesListHighlightings; let i = index"
     >
-        <div mat-line class="fcl-colors-and-shapes-list-item-name">
+        <div
+            mat-line
+            class="fcl-colors-and-shapes-list-item-name">
             {{ item.name }}
         </div>
 
-        <div class="fcl-colors-and-shapes-list-item-fix">
+        <div class="fcl-colors-and-shapes-list-item-fix fcl-colors-and-shapes-list-item-shape">
             <fcl-node-symbol-view
                 *ngIf="item.color || (item.shape !== undefined && item.shape !== null)"
                 [shapeType]="item.shape"
@@ -16,11 +18,11 @@
             ></fcl-node-symbol-view>
         </div>
 
-        <div class="fcl-colors-and-shapes-list-item fcl-colors-and-shapes-list-item-end">
+        <div class="fcl-colors-and-shapes-list-item fcl-colors-and-shapes-list-item-end fcl-colors-and-shapes-list-item-counts">
             <span class="fcl-colors-and-shapes-list-item-count">500</span>
         </div>
 
-        <div class="fcl-colors-and-shapes-list-view-legend-button fcl-colors-and-shapes-list-item-fix">
+        <div class="fcl-colors-and-shapes-list-view-legend-button fcl-colors-and-shapes-list-item-fix fcl-colors-and-shapes-list-item-legend">
             <mat-button-toggle
                 [checked]="item.showInLegend"
                 (change)="onToggleShowInLegend(i)"
@@ -31,16 +33,19 @@
         </div>
 
         <button
+            class="fcl-colors-and-shapes-list-item-edit-button"
             mat-button
             matTooltip="Edit Highlighting Rule"
             matTooltipPosition="above"
             color="accent"
+            (click)="onEditHighlightingRule(item, i)"
             [disabled]="listButtonDisabled"
         >
             <mat-icon>edit</mat-icon>
         </button>
 
         <button
+            class="fcl-colors-and-shapes-list-item-delete-button"
             mat-button
             matTooltip="Delete Highlighting Rule"
             matTooltipPosition="above"
@@ -51,6 +56,40 @@
             <mat-icon>delete forever</mat-icon>
         </button>
 
-    </mat-list-item>
+        <fcl-colors-and-shapes-edit-view
+            *ngIf="editIndex === i"
+            class="fcl-colors-and-shapes-list-item-edit-dialog"
+            [inputData]="colorsAndShapesEditInputData"
+            [stationHighlightingRule]="stationHighlightingRule"
+            (applyColorsAndShapesRule)="onApplyColorsAndShapesRule($event)"
+            (cancelColorsAndShapesRule)="onCancelColorsAndShapesRule()"
+            (okColorsAndShapesRule)="onOkColorsAndShapesRule($event)"
+        >
 
-</mat-list>
+        </fcl-colors-and-shapes-edit-view>
+
+    </div>
+
+</div>
+
+<button
+    *ngIf="showAddHighlightingRuleButton"
+    mat-stroked-button
+    class="fcl-add-highlighting-rule-button"
+    matTooltip="Add Highlighting Rule"
+    matTooltipPosition="above"
+    color="primary"
+    (click)="onAddColorsAndShapesRule()"
+>
+    <mat-icon>add</mat-icon>
+</button>
+
+<fcl-colors-and-shapes-edit-view
+    *ngIf="showHighlightingRuleDialog"
+    [inputData]="colorsAndShapesEditInputData"
+    [stationHighlightingRule]="stationHighlightingRule"
+    (applyColorsAndShapesRule)="onApplyColorsAndShapesRule($event)"
+    (cancelColorsAndShapesRule)="onCancelColorsAndShapesRule()"
+    (okColorsAndShapesRule)="onOkColorsAndShapesRule($event)"
+>
+</fcl-colors-and-shapes-edit-view>

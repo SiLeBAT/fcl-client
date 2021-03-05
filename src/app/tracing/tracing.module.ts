@@ -64,9 +64,12 @@ import { ContextMenuViewComponent } from './graph/components/context-menu/contex
 import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
 import { ColorPickerViewComponent } from './configuration/color-picker-view/color-picker-view.component';
 import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-view.component';
+// import { ColorsAndShapesViewComponent } from './configuration/colors-and-shapes-view-old/colors-and-shapes-view.component';
+// import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view-old/colors-and-shapes-list-view.component';
+// import { ColorsAndShapesRuleViewComponent } from './configuration/colors-and-shapes-rule-view-old/colors-and-shapes-rule-view.component';
 import { ColorsAndShapesViewComponent } from './configuration/colors-and-shapes-view/colors-and-shapes-view.component';
 import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
-import { ColorsAndShapesRuleViewComponent } from './configuration/colors-and-shapes-rule-view/colors-and-shapes-rule-view.component';
+import { ColorsAndShapesRuleViewComponent } from './configuration/colors-and-shapes-edit-view/colors-and-shapes-edit-view.component';
 import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
 @NgModule({
     imports: [

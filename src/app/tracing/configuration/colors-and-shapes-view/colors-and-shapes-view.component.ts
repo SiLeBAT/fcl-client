@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { StationHighlightingData } from '@app/tracing/data.model';
-import { ColorsAndShapesRuleInputData, ColorsAndShapesInputData, HighlightingRuleDeleteRequestData } from '../configuration.model';
+import { ColorsAndShapesInputData, HighlightingRuleDeleteRequestData } from '../configuration.model';
 
 @Component({
     selector: 'fcl-colors-and-shapes-view',
@@ -16,28 +16,33 @@ export class ColorsAndShapesViewComponent {
     @Output() colorsAndShapesRulesDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
     @Output() editIndexChange = new EventEmitter<number | null>();
 
-    get colorsAndShapesRuleInputData(): ColorsAndShapesRuleInputData {
+    get colorsAndShapesListInputData(): ColorsAndShapesInputData {
         this.processLastInputIfNecessary();
-        return this.colorsAndShapesRuleInputData_;
+        return this.colorsAndShapesInputData_;
     }
 
-    get showHighlightingRuleDialog(): boolean {
+    get colorsAndShapesListHighlightings(): StationHighlightingData[] {
         this.processLastInputIfNecessary();
-        return this.processedInput_ !== null && this.processedInput_.editIndex !== null;
+        return this.colorsAndShapesHighlightings_;
     }
 
-    get showAddHighlightingRuleButton(): boolean {
-        this.processLastInputIfNecessary();
-        return this.processedInput_ !== null && this.processedInput_.editIndex === null;
-    }
+    // get showHighlightingRuleDialog(): boolean {
+    //     this.processLastInputIfNecessary();
+    //     return this.processedInput_ !== null && this.processedInput_.editIndex !== null;
+    // }
 
-    get listButtonDisabled(): boolean {
-        this.processLastInputIfNecessary();
-        return this.processedInput_ !== null && this.processedInput_.editIndex !== null;
-    }
+    // get showAddHighlightingRuleButton(): boolean {
+    //     this.processLastInputIfNecessary();
+    //     return this.processedInput_ !== null && this.processedInput_.editIndex === null;
+    // }
+
+    // get listButtonDisabled(): boolean {
+    //     this.processLastInputIfNecessary();
+    //     return this.processedInput_ !== null && this.processedInput_.editIndex !== null;
+    // }
 
     private processedInput_: ColorsAndShapesInputData | null = null;
-    private colorsAndShapesRuleInputData_: ColorsAndShapesRuleInputData | null = null;
+    private colorsAndShapesInputData_: ColorsAndShapesInputData | null = null;
     private colorsAndShapesHighlightings_: StationHighlightingData[] | null = null;
 
     constructor() { }
@@ -46,22 +51,22 @@ export class ColorsAndShapesViewComponent {
         this.emitEditIndex(this.colorsAndShapesHighlightings_.length);
     }
 
-    onApplyColorsAndShapesRule(rule: StationHighlightingData): void {
-        const newColorsAndShapesHighlightings = this.buildNewColorsAndShapesHighlightings(rule);
+    // onApplyColorsAndShapesRule(rule: StationHighlightingData): void {
+    //     const newColorsAndShapesHighlightings = this.buildNewColorsAndShapesHighlightings(rule);
 
-        this.emitColorsAndShapesRules(newColorsAndShapesHighlightings);
-    }
+    //     this.emitColorsAndShapesRules(newColorsAndShapesHighlightings);
+    // }
 
-    onCancelColorsAndShapesRule(): void {
-        this.emitEditIndex(null);
-    }
+    // onCancelColorsAndShapesRule(): void {
+    //     this.emitEditIndex(null);
+    // }
 
-    onOkColorsAndShapesRule(rule: StationHighlightingData): void {
-        const newColorsAndShapesHighlightings = this.buildNewColorsAndShapesHighlightings(rule);
-        this.emitEditIndex(null);
+    // onOkColorsAndShapesRule(rule: StationHighlightingData): void {
+    //     const newColorsAndShapesHighlightings = this.buildNewColorsAndShapesHighlightings(rule);
+    //     this.emitEditIndex(null);
 
-        this.emitColorsAndShapesRules(newColorsAndShapesHighlightings);
-    }
+    //     this.emitColorsAndShapesRules(newColorsAndShapesHighlightings);
+    // }
 
     onDeleteHighlightingRule(ruleToDelete: HighlightingRuleDeleteRequestData) {
         this.colorsAndShapesRulesDelete.emit(ruleToDelete);
@@ -71,14 +76,25 @@ export class ColorsAndShapesViewComponent {
         this.emitColorsAndShapesRules(rules);
     }
 
-    private buildNewColorsAndShapesHighlightings(rule: StationHighlightingData): StationHighlightingData[] {
-        const newColorsAndShapesHighlightings = [
-            ...this.colorsAndShapesHighlightings_
-        ];
-        newColorsAndShapesHighlightings[this.processedInput_.editIndex] = rule;
-
-        return newColorsAndShapesHighlightings;
+    onChangeEditIndex(editIndex: number | null) {
+        this.editIndexChange.emit(editIndex);
     }
+
+    onChangeColorsAndShapesRules(newColorsAndShapesHighlightings: StationHighlightingData[]) {
+        // this.colorsAndShapesHighlightings_ = newColorsAndShapesHighlightings;
+        // const newHighlightingRules = this.colorsAndShapesHighlightings_.concat(this.restHighlightings_);
+        this.colorsAndShapesRulesChange.emit(newColorsAndShapesHighlightings);
+        // this.highlightingRulesChange.emit(newHighlightingRules);
+    }
+
+    // private buildNewColorsAndShapesHighlightings(rule: StationHighlightingData): StationHighlightingData[] {
+    //     const newColorsAndShapesHighlightings = [
+    //         ...this.colorsAndShapesHighlightings_
+    //     ];
+    //     newColorsAndShapesHighlightings[this.processedInput_.editIndex] = rule;
+
+    //     return newColorsAndShapesHighlightings;
+    // }
 
     private emitEditIndex(editIndex: number | null) {
         this.editIndexChange.emit(editIndex);
@@ -95,20 +111,22 @@ export class ColorsAndShapesViewComponent {
     }
 
     private processInputData(): void {
-        this.updateColorsAndShapesRulesInputData();
+        this.updateColorsAndShapesInputData();
         this.updateColorsAndShapesHighlightings();
 
         this.processedInput_ = this.inputData;
     }
 
-    private updateColorsAndShapesRulesInputData(): void {
-        if (!this.colorsAndShapesRuleInputData_ ||
-            this.inputData.complexFilterSettings !== this.colorsAndShapesRuleInputData_.complexFilterSettings ||
-            this.inputData.dataTable !== this.colorsAndShapesRuleInputData_.dataTable) {
+    private updateColorsAndShapesInputData(): void {
+        if (!this.colorsAndShapesInputData_ ||
+            this.inputData.complexFilterSettings !== this.colorsAndShapesInputData_.complexFilterSettings ||
+            this.inputData.dataTable !== this.colorsAndShapesInputData_.dataTable ||
+            this.inputData.editIndex !== this.colorsAndShapesInputData_.editIndex) {
 
-            this.colorsAndShapesRuleInputData_ = {
+            this.colorsAndShapesInputData_ = {
                 complexFilterSettings: this.inputData.complexFilterSettings,
-                dataTable: this.inputData.dataTable
+                dataTable: this.inputData.dataTable,
+                editIndex: this.inputData.editIndex
             };
         }
     }

@@ -1,11 +1,10 @@
 <fcl-colors-and-shapes-list-view
     class="fcl-highlighting-station-list-view"
-    [colorsAndShapesListHighlightings]="colorsAndShapesListHighlightings"
-    [colorsAndShapesListInputData]="colorsAndShapesListInputData"
-    (colorsAndShapesRulesChange)="onChangeColorsAndShapesRules($event)"
+    [colorsAndShapesHighlightings]="colorsAndShapesHighlightings"
+    [listButtonDisabled]="listButtonDisabled"
     (deleteHighlightingRule)="onDeleteHighlightingRule($event)"
     (toggleShowInLegendProperty)="onToggleShowInLegend($event)"
-    (editIndexChange)="onChangeEditIndex($event)"
+
 >
 </fcl-colors-and-shapes-list-view>
 
@@ -22,11 +21,11 @@
 </button> -->
 
 
-<!-- <fcl-colors-and-shapes-rule-view
+<fcl-colors-and-shapes-rule-view
     *ngIf="showHighlightingRuleDialog"
     [inputData]="colorsAndShapesRuleInputData"
     (applyColorsAndShapesRule)="onApplyColorsAndShapesRule($event)"
     (cancelColorsAndShapesRule)="onCancelColorsAndShapesRule()"
     (okColorsAndShapesRule)="onOkColorsAndShapesRule($event)"
 >
-</fcl-colors-and-shapes-rule-view> -->
+</fcl-colors-and-shapes-rule-view>
