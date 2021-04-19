@@ -12,7 +12,8 @@
                     "/^mat-./",
                     "fcl-schema-graph",
                     "fcl-gis-graph",
-                    "fcl-table"
+                    "fcl-table",
+                    "color-picker"
                 ]
             }
         ],

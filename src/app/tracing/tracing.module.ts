@@ -62,13 +62,12 @@ import { GraphViewComponent } from './graph/components/graph-view/graph-view.com
 import { GeoMapComponent } from './graph/components/geomap/geomap.component';
 import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
 import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
-import { ColorPickerViewComponent } from './configuration/color-picker-view/color-picker-view.component';
 import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-view.component';
-import { ColorsAndShapesViewComponent } from './configuration/colors-and-shapes-view/colors-and-shapes-view.component';
 import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
-import { ColorsAndShapesRuleViewComponent } from './configuration/colors-and-shapes-rule-view/colors-and-shapes-rule-view.component';
+import { ColorsAndShapesEditViewComponent } from './configuration/colors-and-shapes-edit-view/colors-and-shapes-edit-view.component';
 import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
 import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatatable-row-event-provider.directive';
+import { ColorSelectorViewComponent } from './configuration/color-selector-view/color-selector-view.component';
 
 @NgModule({
     imports: [
@@ -131,13 +130,12 @@ import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatata
         GeoMapComponent,
         GeoMapLicRefViewComponent,
         ContextMenuViewComponent,
-        ColorPickerViewComponent,
         RuleNameViewComponent,
-        ColorsAndShapesViewComponent,
         ColorsAndShapesListViewComponent,
-        ColorsAndShapesRuleViewComponent,
+        ColorsAndShapesEditViewComponent,
         DialogYesNoComponent,
-        NgxDatatableRowEventProviderDirective
+        NgxDatatableRowEventProviderDirective,
+        ColorSelectorViewComponent
     ],
     exports: []
 })

@@ -1,8 +1,10 @@
 <mat-form-field
     class="fcl-new-highlighting-rule-form-field"
     appearance="outline"
-    color="primary">
+    color="primary"
+    >
     <mat-select
+        [disabled]="disabled"
         [value]="value"
         (valueChange)="onValueChange($event)"
         placeholder="Shape">

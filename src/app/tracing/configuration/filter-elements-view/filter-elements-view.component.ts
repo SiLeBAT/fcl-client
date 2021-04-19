@@ -13,7 +13,7 @@ import {
 import { filterTableRows } from '../shared';
 import { InputData as FilterTableViewInputData, TableFilterChange } from '../filter-table-view/filter-table-view.component';
 import * as _ from 'lodash';
-import { FilterTableSettings, ShowType, ExtendedOperationType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
+import { FilterTableSettings, ShowType, ExtendedOperationType, LogicalFilterCondition, PropToValuesMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 export interface InputData {
@@ -72,7 +72,7 @@ export class FilterElementsViewComponent {
         return this.filterTableViewInputData_;
     }
 
-    get propToValuesMap(): PropValueMap {
+    get propToValuesMap(): PropToValuesMap {
         this.processLastInputIfNecessary();
         return this.propToValuesMap_;
     }
@@ -89,7 +89,7 @@ export class FilterElementsViewComponent {
     private processedInput_: InputData;
     private prefilteredRows_: TableRow[];
     private filterTableViewInputData_: FilterTableViewInputData;
-    private propToValuesMap_: PropValueMap;
+    private propToValuesMap_: PropToValuesMap;
     private dataColumns_: TableColumn[];
 
     private filterMap_: RowFilterMap;
@@ -255,7 +255,7 @@ export class FilterElementsViewComponent {
 
     private updatePropValueMap(): void {
         if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.inputData.dataTable.rows) {
-            this.propToValuesMap_ = ComplexFilterUtils.extractPropValueMap(this.inputData.dataTable, this.dataColumns_);
+            this.propToValuesMap_ = ComplexFilterUtils.extractPropToValuesMap(this.inputData.dataTable, this.dataColumns_);
         }
     }
 }

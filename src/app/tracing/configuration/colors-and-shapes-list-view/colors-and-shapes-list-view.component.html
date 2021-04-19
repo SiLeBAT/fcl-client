@@ -1,56 +1,102 @@
-<mat-list id="fcl-colors-and-shapes-list-view-list" dense>
+<div id="fcl-cs-rules-list">
 
-    <mat-list-item
-        class="fcl-colors-and-shapes-list-view-list-item"
-        *ngFor="let item of colorsAndShapesHighlightings; let i = index"
+    <div
+        class="fcl-cs-rules-list-item"
+        *ngFor="let item of rules; let i = index"
     >
-        <div mat-line class="fcl-colors-and-shapes-list-item-name">
+        <div
+            mat-line
+            class="fcl-cs-rules-list-item-name">
             {{ item.name }}
         </div>
 
-        <div class="fcl-colors-and-shapes-list-item-fix">
-            <fcl-node-symbol-view
-                *ngIf="item.color || (item.shape !== undefined && item.shape !== null)"
-                [shapeType]="item.shape"
-                [fillColor]="item.color? { r:item.color[0], g:item.color[1], b:item.color[2] } : null"
-            ></fcl-node-symbol-view>
+        <fcl-node-symbol-view
+            class="fcl-cs-rules-list-item-shape"
+            *ngIf="item.color || (item.shape !== undefined && item.shape !== null)"
+            [shapeType]="item.shape"
+            [fillColor]="item.color? { r:item.color[0], g:item.color[1], b:item.color[2] } : null"
+        ></fcl-node-symbol-view>
+
+        <div class="fcl-cs-rules-list-item-counts">
+            <span class="fcl-colors-and-shapes-list-item-count">{{ 50 * i }}</span>
         </div>
 
-        <div class="fcl-colors-and-shapes-list-item fcl-colors-and-shapes-list-item-end">
-            <span class="fcl-colors-and-shapes-list-item-count">500</span>
-        </div>
-
-        <div class="fcl-colors-and-shapes-list-view-legend-button fcl-colors-and-shapes-list-item-fix">
-            <mat-button-toggle
-                [checked]="item.showInLegend"
-                (change)="onToggleShowInLegend(i)"
-                [disabled]="listButtonDisabled"
-            >
-                L
-            </mat-button-toggle>
-        </div>
+        <mat-button-toggle
+            class="fcl-cs-rules-list-item-legend-button"
+            [matTooltip]="item.showInLegend ? 'Do not show in legend' : 'Show in legend'"
+            matTooltipPosition="above"
+            [checked]="item.showInLegend"
+            (change)="onToggleShowInLegend(i)"
+            [disabled]="isEditRuleModeActive"
+        >
+            L
+        </mat-button-toggle>
 
         <button
+            class="fcl-cs-rules-list-item-edit-button"
             mat-button
             matTooltip="Edit Highlighting Rule"
             matTooltipPosition="above"
             color="accent"
-            [disabled]="listButtonDisabled"
+            (click)="onEditRule(i)"
+            [disabled]="isEditRuleModeActive"
         >
             <mat-icon>edit</mat-icon>
         </button>
 
         <button
+            class="fcl-cs-rules-list-item-delete-button"
             mat-button
             matTooltip="Delete Highlighting Rule"
             matTooltipPosition="above"
             color="warn"
-            (click)="onDeleteHighlightingRule($event, item, i)"
-            [disabled]="listButtonDisabled"
+            (click)="onDeleteRule($event, i)"
+            [disabled]="isEditRuleModeActive"
             >
             <mat-icon>delete forever</mat-icon>
         </button>
 
-    </mat-list-item>
+        <fcl-colors-and-shapes-edit-view
+            *ngIf="editIndex === i"
+            class="fcl-cs-rules-list-edit-item"
 
-</mat-list>
+            [rule]="editRule"
+            [availableProperties]="availableProperties"
+            [propToValuesMap]="propToValuesMap"
+
+            (applyRule)="onApplyRule($event)"
+            (cancelEdit)="onCancelEdit()"
+            (okRule)="onOkRule($event)"
+        >
+        </fcl-colors-and-shapes-edit-view>
+
+    </div>
+
+</div>
+
+<button
+    *ngIf="showAddRuleButton"
+    mat-stroked-button
+    class="fcl-add-cs-rule-button"
+    matTooltip="Add Highlighting Rule"
+    matTooltipPosition="above"
+    color="primary"
+    (click)="onAddRule()"
+    [disabled]="isEditRuleModeActive"
+>
+    <mat-icon>add</mat-icon>
+</button>
+
+<fcl-colors-and-shapes-edit-view
+    *ngIf="showEditNewRuleDialog"
+
+    class="fcl-new-cs-rule-dialog"
+    [rule]="editRule"
+    [availableProperties]="availableProperties"
+    [propToValuesMap]="propToValuesMap"
+
+    (applyRule)="onApplyRule($event)"
+    (cancelEdit)="onCancelEdit()"
+    (okRule)="onOkRule($event)"
+>
+</fcl-colors-and-shapes-edit-view>

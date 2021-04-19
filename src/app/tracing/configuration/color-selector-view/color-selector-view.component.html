@@ -1,0 +1,20 @@
+<div
+    [matTooltip]="'Choose Color'">
+    <button
+        class="fcl-color-view"
+        mat-stroked-button
+        [disabled]="disabled"
+        matTooltipPosition="above"
+        [colorPicker]="rgbaColorStr"
+        [cpHeight]="'320px'"
+        [cpPosition]="'left'"
+        [cpPositionOffset]="'-390%'"
+        [cpPositionRelativeToArrow]="true"
+        [cpOutputFormat]="'rgba'"
+        [cpOKButton]="true"
+        [cpCancelButton]="true"
+        [cpAlphaChannel]="'disabled'"
+        (colorPickerSelect)="onColorPickerSelect($event)"
+        [ngStyle]="style"
+    >&nbsp;</button>
+</div>

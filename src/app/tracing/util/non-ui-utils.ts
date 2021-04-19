@@ -6,6 +6,10 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
 type USwitch<A, B> = (A | unknown extends A ? B : A) & A;
+type RecordKeyType =
+    | string
+    | number
+    | symbol;
 
 export class Utils {
 
@@ -320,5 +324,17 @@ export class Utils {
             }
         }
         return result;
+    }
+
+    static getReversedRecord<
+        K extends RecordKeyType,
+        V extends RecordKeyType
+    >(record: Record<K, V>): Record<V, K> {
+        const result: Record<RecordKeyType, K> = {};
+        const keys: K[] = (Object.keys(record) as Array<K>);
+        for(const key of keys) {
+            result[record[key]] = key;
+        }
+        return result as Record<V, K>;
     }
 }

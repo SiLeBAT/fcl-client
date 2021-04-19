@@ -1,15 +1,14 @@
-import { Component, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'fcl-rule-name-view',
     templateUrl: './rule-name-view.component.html',
-
-    encapsulation: ViewEncapsulation.None
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RuleNameViewComponent {
-    @Output() ruleNameChange = new EventEmitter<string>();
 
-    ruleName = '';
+    @Input() ruleName: string = '';
+    @Output() ruleNameChange = new EventEmitter<string>();
 
     constructor() { }
 

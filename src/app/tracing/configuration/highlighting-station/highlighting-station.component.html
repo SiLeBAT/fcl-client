@@ -1,8 +1,13 @@
 <fcl-highlighting-station-view
     class="fcl-hightlighting-station-view"
-    [inputData]="highlightingStationViewInputData"
-    (highlightingRulesChange)="onHighlightingRulesChange($event)"
-    (editIndexChange)="onChangeEditIndex($event)"
-    (highlightingRulesDelete)="onHighlightingRulesDelete($event)"
+    [availableProperties]="availableProperties"
+    [propToValuesMap]="propToValuesMap"
+    [rules]="rules"
+
+    [colorOrShapeRuleEditIndex]="colorOrShapeRuleEditIndex"
+
+    (rulesChange)="onRulesChange($event)"
+    (ruleDelete)="onRuleDelete($event)"
+    (colorOrShapeRuleEditIndexChange)="onColorOrShapeRuleEditIndexChange($event)"
 >
 </fcl-highlighting-station-view>

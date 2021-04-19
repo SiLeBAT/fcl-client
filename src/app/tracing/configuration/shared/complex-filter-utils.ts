@@ -1,5 +1,6 @@
 import { DataTable, LogicalCondition, OperationType, TableColumn } from '@app/tracing/data.model';
-import { JunktorType, LogicalFilterCondition, PropValueMap } from '../configuration.model';
+import { ComplexFilterCondition, ExtendedOperationType, JunktorType, LogicalFilterCondition, PropToValuesMap } from '../configuration.model';
+import { Utils } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 
 type ConditionGroup = LogicalCondition[];
@@ -7,19 +8,37 @@ type SimpleValueType = string | number | boolean | undefined | null;
 
 export class ComplexFilterUtils {
 
+    static readonly DEFAULT_JUNKTOR = JunktorType.AND;
+
+    private static opTypeToExtOpTypeMap: Record<OperationType, ExtendedOperationType> = {
+        [OperationType.EQUAL]: ExtendedOperationType.EQUAL,
+        [OperationType.GREATER]: ExtendedOperationType.GREATER,
+        [OperationType.LESS]: ExtendedOperationType.LESS,
+        [OperationType.NOT_EQUAL]: ExtendedOperationType.NOT_EQUAL,
+        [OperationType.REGEX_EQUAL]: ExtendedOperationType.REGEX_EQUAL,
+        [OperationType.REGEX_EQUAL_IGNORE_CASE]: ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE,
+        [OperationType.REGEX_NOT_EQUAL]: ExtendedOperationType.REGEX_NOT_EQUAL,
+        [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+
+    };
+
+    private static extOpTypeToOpTypeMap: Record<ExtendedOperationType, OperationType> =
+        Utils.getReversedRecord(ComplexFilterUtils.opTypeToExtOpTypeMap);
+
     static extractDataColumns(dataTable: DataTable): TableColumn[] {
         return dataTable.columns.filter((tableColumn: TableColumn) => {
             return (tableColumn.id !== 'highlightingInfo');
         });
     }
 
-    static extractPropValueMap(dataTable: DataTable, dataColumns: TableColumn[]): PropValueMap {
-        const propToValuesMap: PropValueMap = {};
+    static extractPropToValuesMap(dataTable: DataTable, dataColumns: TableColumn[]): PropToValuesMap {
+        const propToValuesMap: PropToValuesMap = {};
         for (const column of dataColumns) {
-            const values = _.uniq(
+            const values: string[] = _.uniq(
                 dataTable.rows
                     .map(r => r[column.id] as (string | number | boolean))
                     .filter(v => v !== undefined && v !== null)
+                    .map(v => typeof v === 'string' ? v : '' + v)
                 ).sort();
             propToValuesMap[column.id] = values;
         }
@@ -28,18 +47,23 @@ export class ComplexFilterUtils {
         return propToValuesMap;
     }
 
-    static groupConditions(conditions: LogicalFilterCondition[]): LogicalCondition[][] {
+    static complexFilterConditionsToLogicalConditions(filterConditions: LogicalFilterCondition[]): LogicalCondition[][] {
         const groups: ConditionGroup[] = [];
         let newGroup: ConditionGroup = [];
 
-        for (const condition of conditions) {
+        for (const filterCondition of filterConditions) {
+            const opType = (
+                filterCondition.operation !== null ?
+                this.extOpTypeToOpTypeMap[filterCondition.operation] :
+                null
+            );
             const logicalCondition = {
-                propertyName: condition.property,
-                operationType: condition.operation as unknown as OperationType,
-                value: condition.value as string
+                propertyName: filterCondition.property,
+                operationType: opType,
+                value: filterCondition.value as string
             };
             newGroup.push(logicalCondition);
-            if (condition.junktor === JunktorType.OR) {
+            if (filterCondition.junktor === JunktorType.OR) {
                 groups.push(newGroup);
                 newGroup = [];
             }
@@ -89,5 +113,49 @@ export class ComplexFilterUtils {
                     : value.toString()
             );
         }
+    }
+
+    static logicalConditionsToComplexFilterConditions(conditions: LogicalCondition[][]): ComplexFilterCondition[] {
+
+        const filterConditions: ComplexFilterCondition[] = [];
+
+        for (const andConditions of conditions) {
+            if (andConditions.length > 0) {
+                for (const andCondition of andConditions) {
+                    const filterCondition: ComplexFilterCondition = {
+                        property: andCondition.propertyName,
+                        operation: ComplexFilterUtils.opTypeToExtOpTypeMap[andCondition.operationType],  // andCondition.operationType as unknown as ExtendedOperationType,
+                        value: andCondition.value,
+                        junktor: JunktorType.AND
+                    };
+                    if (andCondition === andConditions[andConditions.length - 1]) {
+                        filterCondition.junktor = JunktorType.OR
+                    };
+                    filterConditions.push(filterCondition);
+                }
+            }
+        }
+        if (filterConditions.length === 0) {
+            filterConditions.push({
+                property: null,
+                operation: null,
+                value: '',
+                junktor: JunktorType.AND
+            });
+        } else {
+            filterConditions[filterConditions.length - 1].junktor = JunktorType.AND;
+        }
+
+        return filterConditions;
+
+    }
+
+    static createDefaultFilterConditions(): ComplexFilterCondition[] {
+        return [{
+            property: undefined,
+            operation: undefined,
+            value: '',
+            junktor: this.DEFAULT_JUNKTOR
+        }];
     }
 }

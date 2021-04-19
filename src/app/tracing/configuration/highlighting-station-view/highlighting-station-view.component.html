@@ -46,17 +46,20 @@
             </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <fcl-colors-and-shapes-view
+        <fcl-colors-and-shapes-list-view
             class="fcl-colors-and-shapes-view-container"
-            [colorsAndShapesHighlightings]="colorsAndShapesHighlightings"
-            [inputData]="colorsAndShapesInputData"
-            (colorsAndShapesRulesChange)="onChangeColorsAndShapesRules($event)"
-            (colorsAndShapesRulesDelete)="onDeleteColorsAndShapesRule($event)"
-            (editIndexChange)="onChangeEditIndex($event)"
+
+            [rules]="colorOrShapeRules"
+            [availableProperties]="availableProperties"
+            [propToValuesMap]="propToValuesMap"
+            [editIndex]="colorOrShapeRuleEditIndex"
+
+            (rulesChange)="onColorOrShapeRulesChange($event)"
+            (ruleDelete)="onColorOrShapeRuleDelete($event)"
+            (editIndexChange)="onColorOrShapeRuleEditIndexChange($event)"
         >
-        </fcl-colors-and-shapes-view>
+        </fcl-colors-and-shapes-list-view>
 
     </mat-expansion-panel>
 
 </div>
-

@@ -1,27 +1,29 @@
-import { Component, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { NodeShapeType } from '@app/tracing/data.model';
 
 @Component({
     selector: 'fcl-shape-selector-view',
     templateUrl: './shape-selector-view.component.html',
     styleUrls: ['./shape-selector-view.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShapeSelectorViewComponent {
 
-    private static readonly NO_SHAPE_LABEL = '- no shape -';
-
     @Input() value: (NodeShapeType | null);
-    @Input() set availableShapeTypes(value: (NodeShapeType | null)[]) {
-        this.availableShapeTypes_ = value;
-    }
+    @Input() disabled = false;
 
-    get availableShapeTypes(): (NodeShapeType | null)[] {
-        return this.availableShapeTypes_;
-    }
-    private availableShapeTypes_: (NodeShapeType | null)[];
+    availableShapeTypes: NodeShapeType[] = [
+        NodeShapeType.CIRCLE,
+        NodeShapeType.DIAMOND,
+        NodeShapeType.HEXAGON,
+        NodeShapeType.OCTAGON,
+        NodeShapeType.PENTAGON,
+        NodeShapeType.SQUARE,
+        NodeShapeType.STAR,
+        NodeShapeType.TRIANGLE
+    ];
 
-    @Output() valueChange = new EventEmitter<(NodeShapeType | null)>();
+    @Output() valueChange = new EventEmitter<NodeShapeType>();
 
     private shapeLabel: Record<NodeShapeType, string> = {
         [NodeShapeType.CIRCLE]: 'Circle',
@@ -36,11 +38,11 @@ export class ShapeSelectorViewComponent {
 
     constructor() { }
 
-    getShapeLabel(type: (NodeShapeType | null)): string {
-        return type === null ? ShapeSelectorViewComponent.NO_SHAPE_LABEL : this.shapeLabel[type];
+    getShapeLabel(type: NodeShapeType): string {
+        return this.shapeLabel[type];
     }
 
-    onValueChange(value: (NodeShapeType | null)): void {
+    onValueChange(value: NodeShapeType): void {
         this.value = value;
         this.valueChange.emit(value);
     }

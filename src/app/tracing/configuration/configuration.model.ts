@@ -71,16 +71,14 @@ export interface HighlightingConfigurationSettings {
     colorsAndShapesSettings: ColorsAndShapesSettings;
 }
 
-export interface PropValueMap {
-    [key: string]: (string | number | boolean)[];
-}
+export type PropToValuesMap = Record<string, string[]>
 
-export interface ColorsAndShapesRuleInputData {
+export interface ColorsAndShapesEditInputData {
     dataTable: DataTable;
     complexFilterSettings: ComplexRowFilterSettings;
 }
 
-export interface ColorsAndShapesInputData extends ColorsAndShapesRuleInputData {
+export interface ColorsAndShapesInputData extends ColorsAndShapesEditInputData {
     editIndex: number;
 }
 export interface HighlightingRuleDeleteRequestData {

@@ -1,13 +1,13 @@
 import { TableColumn } from './../../data.model';
 import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { ExtendedOperationType, ComplexFilterCondition, JunktorType } from '../configuration.model';
+import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 @Component({
     selector: 'fcl-complex-filter-view',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './complex-filter-view.component.html',
     styleUrls: ['./complex-filter-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
 export class ComplexFilterViewComponent {
@@ -24,7 +24,11 @@ export class ComplexFilterViewComponent {
     @Input() availableOperatorTypes: ExtendedOperationType[];
 
     @Input() set conditions(value: ComplexFilterCondition[]) {
-        this.conditions_ = value && value.length > 0 ? value.slice() : this.createDefaultConditions();
+        this.conditions_ = (
+            value && value.length > 0 ?
+            value.slice() :
+            ComplexFilterUtils.createDefaultFilterConditions()
+        );
     }
 
     get conditions(): ComplexFilterCondition[] {
@@ -35,12 +39,12 @@ export class ComplexFilterViewComponent {
 
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
-    filterConditionForm: FormGroup;
-    private conditions_ = this.createDefaultConditions();
+    private conditions_ = ComplexFilterUtils.createDefaultFilterConditions();
 
     constructor() { }
 
     onAddFilterCondition(index: number) {
+
         const conditions = this.conditions_.map(c => ({ ...c }));
         const property = conditions[index].property;
         const operation = conditions[index].operation;
@@ -48,15 +52,16 @@ export class ComplexFilterViewComponent {
         const junktor = (
             index > 0 ?
             conditions[index - 1].junktor :
-            JunktorType.AND
+            ComplexFilterUtils.DEFAULT_JUNKTOR
         );
 
-        conditions.push({
+        conditions[index].junktor = junktor;
+        conditions[index+1] = {
             property: property,
             operation: operation,
             value: '',
-            junktor: junktor
-        });
+            junktor: ComplexFilterUtils.DEFAULT_JUNKTOR
+        };
 
         this.conditions_ = conditions;
         this.conditionsChange.emit(conditions);
@@ -67,7 +72,11 @@ export class ComplexFilterViewComponent {
             this.conditions_.slice(0, index),
             this.conditions_.slice(index + 1)
         );
-        this.conditions_ = conditions.length === 0 ? this.createDefaultConditions() : conditions;
+        this.conditions_ = (
+            conditions.length === 0 ?
+            ComplexFilterUtils.createDefaultFilterConditions() :
+            conditions
+        );
         this.conditionsChange.emit(conditions);
     }
 
@@ -108,14 +117,5 @@ export class ComplexFilterViewComponent {
 
     trackByIndex(index: number): number {
         return index;
-    }
-
-    private createDefaultConditions(): ComplexFilterCondition[] {
-        return [{
-            property: undefined,
-            operation: undefined,
-            value: '',
-            junktor: JunktorType.AND
-        }];
     }
 }
