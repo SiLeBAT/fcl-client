@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { MaterialModule } from './material.module';
 import { SpinnerLoaderComponent } from './spinner-loader/spinner-loader.component';
@@ -10,7 +11,8 @@ import { SingleCenterCardLayoutComponent } from './presentation/single-center-ca
 @NgModule({
     imports: [
         CommonModule,
-        MaterialModule
+        MaterialModule,
+        DragDropModule
     ],
     declarations: [
         SpinnerLoaderComponent,
@@ -21,6 +23,7 @@ import { SingleCenterCardLayoutComponent } from './presentation/single-center-ca
         FormsModule,
         ReactiveFormsModule,
         MaterialModule,
+        DragDropModule,
         SpinnerLoaderComponent,
         AlertComponent,
         SingleCenterCardLayoutComponent

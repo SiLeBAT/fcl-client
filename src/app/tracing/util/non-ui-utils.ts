@@ -332,7 +332,7 @@ export class Utils {
     >(record: Record<K, V>): Record<V, K> {
         const result: Record<RecordKeyType, K> = {};
         const keys: K[] = (Object.keys(record) as Array<K>);
-        for(const key of keys) {
+        for (const key of keys) {
             result[record[key]] = key;
         }
         return result as Record<V, K>;

@@ -71,7 +71,7 @@ export interface HighlightingConfigurationSettings {
     colorsAndShapesSettings: ColorsAndShapesSettings;
 }
 
-export type PropToValuesMap = Record<string, string[]>
+export type PropToValuesMap = Record<string, string[]>;
 
 export interface ColorsAndShapesEditInputData {
     dataTable: DataTable;

@@ -56,7 +56,7 @@ export class ComplexFilterViewComponent {
         );
 
         conditions[index].junktor = junktor;
-        conditions[index+1] = {
+        conditions[index + 1] = {
             property: property,
             operation: operation,
             value: '',

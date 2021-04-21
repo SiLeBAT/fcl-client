@@ -12,8 +12,7 @@
 
 .fcl-edit-rule-name-and-symbol-fields {
     display: grid;
-    grid-template-areas:
-        "rulename nodesymbol rest";
+    grid-template-areas: "rulename nodesymbol rest";
     grid-template-columns: calc(((100% - 1rem) / 2) + 0.5rem) calc((100% - 1rem) / 10) calc((100% - 1rem) * 0.4);
     padding-bottom: 0.5rem;
 }

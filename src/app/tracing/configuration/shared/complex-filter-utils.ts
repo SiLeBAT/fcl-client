@@ -1,5 +1,7 @@
 import { DataTable, LogicalCondition, OperationType, TableColumn } from '@app/tracing/data.model';
-import { ComplexFilterCondition, ExtendedOperationType, JunktorType, LogicalFilterCondition, PropToValuesMap } from '../configuration.model';
+import {
+    ComplexFilterCondition, ExtendedOperationType, JunktorType, LogicalFilterCondition, PropToValuesMap
+} from '../configuration.model';
 import { Utils } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 
@@ -124,13 +126,13 @@ export class ComplexFilterUtils {
                 for (const andCondition of andConditions) {
                     const filterCondition: ComplexFilterCondition = {
                         property: andCondition.propertyName,
-                        operation: ComplexFilterUtils.opTypeToExtOpTypeMap[andCondition.operationType],  // andCondition.operationType as unknown as ExtendedOperationType,
+                        operation: ComplexFilterUtils.opTypeToExtOpTypeMap[andCondition.operationType],
                         value: andCondition.value,
                         junktor: JunktorType.AND
                     };
                     if (andCondition === andConditions[andConditions.length - 1]) {
-                        filterCondition.junktor = JunktorType.OR
-                    };
+                        filterCondition.junktor = JunktorType.OR;
+                    }
                     filterConditions.push(filterCondition);
                 }
             }

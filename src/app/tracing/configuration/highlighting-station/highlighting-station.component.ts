@@ -151,7 +151,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
             ...state
         };
 
-        let propToValuesMap: PropToValuesMap =
+        const propToValuesMap: PropToValuesMap =
             this.cachedData === null || this.cachedData.dataTable !== dataTable ?
             ComplexFilterUtils.extractPropToValuesMap(dataTable, dataTable.columns) :
             this.cachedData.propToValuesMap;

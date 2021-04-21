@@ -1,12 +1,21 @@
-<div id="fcl-cs-rules-list">
+<div id="fcl-cs-rules-list"
+    cdkDropList
+    (cdkDropListDropped)="onDrop($event)"
+>
 
     <div
         class="fcl-cs-rules-list-item"
         *ngFor="let item of rules; let i = index"
+        cdkDrag [cdkDragDisabled]="isEditRuleModeActive"
+        cdkDragLockAxis="y"
+        cdkDragBoundary=".cdk-drop-list"
     >
+
+        <div class="fcl-cs-rules-list-drag-indicator" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
         <div
-            mat-line
-            class="fcl-cs-rules-list-item-name">
+            class="fcl-cs-rules-list-item-name"
+            cdkDragHandle
+            >
             {{ item.name }}
         </div>
 
@@ -32,29 +41,33 @@
             L
         </mat-button-toggle>
 
-        <button
-            class="fcl-cs-rules-list-item-edit-button"
-            mat-button
-            matTooltip="Edit Highlighting Rule"
-            matTooltipPosition="above"
-            color="accent"
-            (click)="onEditRule(i)"
-            [disabled]="isEditRuleModeActive"
-        >
-            <mat-icon>edit</mat-icon>
-        </button>
-
-        <button
-            class="fcl-cs-rules-list-item-delete-button"
-            mat-button
-            matTooltip="Delete Highlighting Rule"
-            matTooltipPosition="above"
-            color="warn"
-            (click)="onDeleteRule($event, i)"
-            [disabled]="isEditRuleModeActive"
+        <div class="fcl-cs-rules-list-item-edit-button-wrapper">
+            <button
+                class="fcl-cs-rules-list-item-edit-button"
+                mat-button
+                matTooltip="Edit Highlighting Rule"
+                matTooltipPosition="above"
+                color="accent"
+                (click)="onEditRule(i)"
+                [disabled]="isEditRuleModeActive"
             >
-            <mat-icon>delete forever</mat-icon>
-        </button>
+                <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+
+        <div class="fcl-cs-rules-list-item-delete-button-wrapper">
+            <button
+                class="fcl-cs-rules-list-item-delete-button"
+                mat-button
+                matTooltip="Delete Highlighting Rule"
+                matTooltipPosition="above"
+                color="warn"
+                (click)="onDeleteRule($event, i)"
+                [disabled]="isEditRuleModeActive"
+                >
+                <mat-icon>delete forever</mat-icon>
+            </button>
+        </div>
 
         <fcl-colors-and-shapes-edit-view
             *ngIf="editIndex === i"

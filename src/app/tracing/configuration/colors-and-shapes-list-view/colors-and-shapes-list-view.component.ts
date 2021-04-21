@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { StationHighlightingData, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
@@ -19,7 +20,6 @@ export class ColorsAndShapesListViewComponent {
     @Output() toggleShowInLegendProperty = new EventEmitter<StationHighlightingData[]>();
     @Output() rulesChange = new EventEmitter<StationHighlightingData[]>();
     @Output() editIndexChange = new EventEmitter<number | null>();
-
 
     get showAddRuleButton(): boolean {
         return this.editIndex === null || this.editIndex !== this.rules.length;
@@ -51,7 +51,7 @@ export class ColorsAndShapesListViewComponent {
 
     onDeleteRule(event: MouseEvent, indexToDelete: number) {
         const rule = this.rules[indexToDelete];
-        let newRules = [...this.rules];
+        const newRules = [...this.rules];
         newRules.splice(indexToDelete, 1);
 
         this.ruleDelete.emit({
@@ -68,7 +68,7 @@ export class ColorsAndShapesListViewComponent {
         newRules[index] = {
             ...newRules[index],
             showInLegend: !showInLegend
-        }
+        };
         this.rulesChange.emit(newRules);
     }
 
@@ -101,5 +101,13 @@ export class ColorsAndShapesListViewComponent {
 
     private emitNewRules(newRules: StationHighlightingData[]): void {
         this.rulesChange.emit(newRules);
+    }
+
+    onDrop(event: CdkDragDrop<string[]>) {
+        if (event.previousIndex !== event.currentIndex) {
+            const newRules = [...this.rules];
+            moveItemInArray(newRules, event.previousIndex, event.currentIndex);
+            this.emitNewRules(newRules);
+        }
     }
 }
