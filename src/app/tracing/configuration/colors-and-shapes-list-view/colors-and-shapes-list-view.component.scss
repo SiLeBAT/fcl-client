@@ -1,10 +1,8 @@
 @import '../../../../assets/sass/base';
 
-#fcl-cs-rules-list {
-    font-size: 0.8rem;
-}
-
 .fcl-cs-rules-list-item {
+    font-size: 0.8rem;
+    font-family: #{$fcl-font-family};
     display: grid;
     align-items: center;
     grid-template-areas:
@@ -39,10 +37,6 @@
 
 .cdk-drag-disabled .mat-icon {
     opacity: 0.2;
-}
-
-.cdk-drag-preview {
-    font-size: 0.9rem;
 }
 
 /* Animate items as they're being sorted. */

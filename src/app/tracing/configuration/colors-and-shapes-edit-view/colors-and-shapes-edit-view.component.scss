@@ -13,12 +13,13 @@
 .fcl-edit-rule-name-and-symbol-fields {
     display: grid;
     grid-template-areas: "rulename nodesymbol rest";
-    grid-template-columns: calc(((100% - 1rem) / 2) + 0.5rem) calc((100% - 1rem) / 10) calc((100% - 1rem) * 0.4);
+    grid-template-columns: 50% 24px calc(50% - 24px);
     padding-bottom: 0.5rem;
 }
 
 .fcl-edit-rule-name-field {
     grid-area: rulename;
+    margin-right: 1ch;
 }
 
 .fcl-edit-rule-node-symbol {
