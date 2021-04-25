@@ -19,7 +19,7 @@ export const EMPTY_FRAME: BoundaryRect = {
     height: EMPTY_FRAME_BOTTOMRIGHT_POS.y - EMPTY_FRAME_TOPLEFT_POS.y
 };
 
-export const RELATIVE_FRAME_MARGIN = 0.12;
+export const RELATIVE_FRAME_MARGIN = 0.2;
 export const ABSOLUTE_FRAME_MARGIN =
     RELATIVE_FRAME_MARGIN * Math.min(EMPTY_FRAME.width, EMPTY_FRAME.height) /
     (1 + 2 * RELATIVE_FRAME_MARGIN);

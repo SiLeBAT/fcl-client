@@ -471,6 +471,9 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.skipUnconnectedStations = skipUnconnectedStations;
         }
 
+        const avoidOverlay = this.getProperty(viewData, ExtDataConstants.GISGRAPH_AVOID_OVERLAY) === true;
+        fclData.graphSettings.avoidOverlay = avoidOverlay;
+
         this.convertExternalPositions(viewData, fclData, idToStationMap, idToGroupMap);
         this.convertExternalHighlightingSettings(viewData, fclData);
     }

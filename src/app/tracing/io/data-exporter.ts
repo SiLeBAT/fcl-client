@@ -100,6 +100,7 @@ export class DataExporter {
         viewData.edge.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
 
         Utils.setProperty(viewData, ExtDataConstants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
+        Utils.setProperty(viewData, ExtDataConstants.GISGRAPH_AVOID_OVERLAY, fclData.graphSettings.avoidOverlay);
 
         Utils.setProperty(viewData, ExtDataConstants.GISGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.gisLayout));
         Utils.setProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.schemaLayout));

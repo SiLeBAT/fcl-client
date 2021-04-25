@@ -22,7 +22,6 @@ interface Canvas {
 }
 
 export class CanvasFontMetrics implements FontMetrics {
-    // private static readonly TEXT_BASE_LINE_TOP = 'top';
 
     private context: Context;
     private lineSpace: number;
@@ -30,7 +29,6 @@ export class CanvasFontMetrics implements FontMetrics {
 
     constructor(canvas: Canvas) {
         this.context = canvas.getContext('2d');
-        // this.context.textBaseline = FontMetrics.TEXT_BASE_LINE;
         this.context.font = GraphSettings.FONT_SIZE + ' ' + GraphSettings.FONT_NAME;
         const textSample = 'Abcdefghij';
         const metrics: TextMetrics = this.context.measureText(textSample);

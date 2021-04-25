@@ -53,6 +53,7 @@ describe('IOService', () => {
                 type: GraphType.GRAPH,
                 mapType: MapType.MAPNIK,
                 shapeFileData: null,
+                avoidOverlay: false,
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
                 fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
                 showLegend: true,

@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-
 import html2canvas from 'html2canvas';
 import { GraphType, LegendInfo, SchemaGraphState } from '../../../data.model';
 import _ from 'lodash';
@@ -8,7 +7,7 @@ import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
-import { filter } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { GraphDataChange, GraphViewComponent } from '../graph-view/graph-view.component';
 import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
@@ -19,6 +18,7 @@ import { getGraphType, getSchemaGraphData, getShowLegend, getShowZoom, getStyleC
 import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
 @Component({
     selector: 'fcl-schema-graph',
@@ -35,15 +35,13 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
     @ViewChild('graph', { static: true }) graphViewComponent: GraphViewComponent;
 
-    private componentIsActive = false;
-
-    showZoom$ = this.store.select(getShowZoom);
-    showLegend$ = this.store.select(getShowLegend);
-    graphType$ = this.store.select(getGraphType);
-    styleConfig$ = this.store.select(getStyleConfig);
+    private graphType$ = this.store.select(getGraphType);
+    isGraphActive$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GRAPH));
+    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$));
+    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$));
+    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$));
 
     private graphStateSubscription: Subscription;
-    private graphTypeSubscription: Subscription;
 
     private cachedState: SchemaGraphState | null = null;
     private sharedGraphData: GraphServiceData | null = null;
@@ -68,37 +66,16 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.componentIsActive = true;
-
-        this.graphTypeSubscription = this.graphType$.subscribe(
-            type => {
-                if (type !== GraphType.GRAPH) {
-                    if (this.graphStateSubscription) {
-                        this.graphStateSubscription.unsubscribe();
-                        this.graphStateSubscription = null;
-                    }
-                } else {
-                    if (!this.graphStateSubscription) {
-                        this.graphStateSubscription = this.store
-                            .select(getSchemaGraphData)
-                            .pipe(filter(() => this.componentIsActive))
-                            .subscribe(
-                                graphState => this.applyState(graphState),
-                                err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
-                            );
-                    }
-                }
-            },
-            err => this.alertService.error(`getGraphType store subscription failed: ${err}`)
-        );
+        this.graphStateSubscription = this.store
+            .select(getSchemaGraphData)
+            .pipe(optInGate(this.isGraphActive$))
+            .subscribe(
+                graphState => this.applyState(graphState),
+                err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
+            );
     }
 
     ngOnDestroy() {
-        this.componentIsActive = false;
-        if (this.graphTypeSubscription) {
-            this.graphTypeSubscription.unsubscribe();
-            this.graphTypeSubscription = null;
-        }
         if (this.graphStateSubscription) {
             this.graphStateSubscription.unsubscribe();
             this.graphStateSubscription = null;

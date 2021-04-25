@@ -6,9 +6,8 @@ import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
 import { GraphData, CyConfig, LayoutConfig, isPresetLayoutConfig } from './cy-graph';
 import { addCustomZoomAdapter } from './cy-adapter';
 import {
-    bbToRect, createMargin, getActivePositions, getAvailableSpace, getExtendedTargetIncludingViewPort,
-    getZoomedGraphData, getZoomedNodePositions, marginToStr, rectToStr, sizeToStr, vpToStr
-} from './virtual-zoom-utils';
+    createMargin, getActivePositions, getAvailableSpace, getExtendedTargetIncludingViewPort,
+    getZoomedGraphData, getZoomedNodePositions} from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
 import { CyNodeCollection, NodeId } from '../graph.model';
 import _ from 'lodash';
@@ -122,6 +121,10 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         };
     }
 
+    protected get zoomFitMargin(): number {
+        return VirtualZoomCyGraph.ZOOM_FIT_MARGIN;
+    }
+
     get zoom(): number {
         return this.cachedGraphData.layout.zoom;
     }
@@ -146,7 +149,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         return this.cachedGraphData.layout;
     }
 
-    private setViewPort(viewport: Layout): void {
+    protected setViewPort(viewport: Layout): void {
         const oldZoom = this.zoom;
 
         this.cachedGraphData = {
@@ -173,7 +176,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         super.updateGraph(zoomedGraphData, this.style);
     }
 
-    private fitZoomFromCurrentLayout(): void {
+    protected fitZoomFromCurrentLayout(): void {
         if (this.cachedGraphData.nodeData.length > 0) {
 
             const rendNodePosEnclosingBBox = getEnclosingRectFromPoints(
@@ -197,8 +200,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
             const newZoom = this.getNextFeasibleZoom(
                 Math.min(
-                    (availableSpace.width - hMargin) / (graphBBox.w - hMargin + 2 * VirtualZoomCyGraph.ZOOM_FIT_MARGIN),
-                    (availableSpace.height - vMargin) / (graphBBox.h - vMargin + 2 * VirtualZoomCyGraph.ZOOM_FIT_MARGIN)
+                    (availableSpace.width - hMargin) / (graphBBox.w - hMargin + 2 * this.zoomFitMargin),
+                    (availableSpace.height - vMargin) / (graphBBox.h - vMargin + 2 * this.zoomFitMargin)
                 ) * this.zoom
             );
 
@@ -374,14 +377,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         this.cachedGraphData = graphData;
 
         const zoomChanged = graphData.layout.zoom !== oldGraphData.layout.zoom;
-        const nodePositions =
+        const superNodePositions =
             zoomChanged || graphData.nodePositions !== oldGraphData.nodePositions ?
             getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
             super.data.nodePositions;
 
-        let ghostPositions: PositionMap | null = null;
+        let superGhostPositions: PositionMap | null = null;
         if (graphData.ghostData) {
-            ghostPositions =
+            superGhostPositions =
                 zoomChanged ||
                 oldGraphData.ghostData === null ||
                 oldGraphData.ghostData.posMap !== graphData.ghostData.posMap ?
@@ -391,7 +394,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
         super.updateGraph({
             ...graphData,
-            nodePositions: nodePositions,
+            nodePositions: superNodePositions,
             layout: {
                 zoom: 1,
                 pan: graphData.layout.pan
@@ -400,7 +403,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 null :
                 {
                     ...graphData.ghostData,
-                    posMap: ghostPositions
+                    posMap: superGhostPositions
                 }
         }, styleConfig);
     }

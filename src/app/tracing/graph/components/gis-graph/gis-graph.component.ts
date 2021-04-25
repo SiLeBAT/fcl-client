@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-
+import { Subscription, combineLatest } from 'rxjs';
 import html2canvas from 'html2canvas';
 import { GraphState, GraphType, LegendInfo } from '../../../data.model';
 import _ from 'lodash';
@@ -8,7 +7,7 @@ import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
-import { filter } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { GraphDataChange } from '../graph-view/graph-view.component';
 import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { GisPositioningService } from '../../gis-positioning.service';
@@ -16,8 +15,9 @@ import { ContextMenuViewComponent } from '../context-menu/context-menu-view.comp
 import { ContextMenuService } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetGisGraphLayoutSOA, SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
-import { getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { getAvoidOverlay, getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { BoundaryRect } from '@app/tracing/util/geometry-utils';
+import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
 @Component({
     selector: 'fcl-gis-graph',
@@ -31,16 +31,17 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
 
-    private componentIsActive = false;
-
-    showZoom$ = this.store.select(getShowZoom);
-    showLegend$ = this.store.select(getShowLegend);
     graphType$ = this.store.select(getGraphType);
+    isGraphActive$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GIS));
+    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$));
+    avoidOverlay$ = this.store.select(getAvoidOverlay).pipe(optInGate(this.isGraphActive$));
+    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$));
     mapConfig$ = this.store.select(getMapConfig);
-    styleConfig$ = this.store.select(getStyleConfig);
+    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$));
+    unknownLatLonRectBorderWidth$ = combineLatest([this.styleConfig$, this.avoidOverlay$])
+        .pipe(map(([styleConfig, avoidOverlay]) => styleConfig.nodeSize * (avoidOverlay ? 2 : 1)));
 
-    private graphStateSubscription: Subscription;
-    private graphTypeSubscription: Subscription;
+    private graphStateSubscription: Subscription | null = null;
 
     private sharedGraphData: GraphServiceData | null = null;
     private graphData_: GraphData | null = null;
@@ -63,38 +64,17 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.componentIsActive = true;
-
-        this.graphTypeSubscription = this.graphType$.subscribe(
-            type => {
-                if (type !== GraphType.GIS) {
-                    if (this.graphStateSubscription) {
-                        this.graphStateSubscription.unsubscribe();
-                        this.graphStateSubscription = null;
-                    }
-                } else {
-                    if (!this.graphStateSubscription) {
-                        this.graphStateSubscription = this.store
-                            .select(getGisGraphData)
-                            .pipe(filter(() => this.componentIsActive))
-                            .subscribe(
-                                graphState => this.applyState(graphState),
-                                err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
-                            );
-                    }
-                }
-            },
-            err => this.alertService.error(`getGraphType store subscription failed: ${err}`)
+        this.graphStateSubscription = this.store
+            .select(getGisGraphData)
+            .pipe(optInGate(this.isGraphActive$))
+            .subscribe(
+                graphState => this.applyState(graphState),
+                err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
         );
     }
 
     ngOnDestroy() {
-        this.componentIsActive = false;
-        if (this.graphTypeSubscription) {
-            this.graphTypeSubscription.unsubscribe();
-            this.graphTypeSubscription = null;
-        }
-        if (this.graphStateSubscription) {
+        if (this.graphStateSubscription !== null) {
             this.graphStateSubscription.unsubscribe();
             this.graphStateSubscription = null;
         }
@@ -148,7 +128,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return this.cyConfig_;
     }
 
-    private applyState(newState: GraphState) {
+    private applyState(newState: GraphState): void {
         this.sharedGraphData = this.graphService.getData(newState);
         const posData = this.gisPositioningService.getPositioningData(this.sharedGraphData);
         this.unknownLatLonRect_ = posData.unknownLatLonRect;

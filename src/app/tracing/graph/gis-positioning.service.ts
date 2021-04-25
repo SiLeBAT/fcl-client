@@ -39,11 +39,11 @@ export class GisPositioningService {
     private areUnknownGhostPositionsPresent = false;
 
     getPositioningData(graphData: GraphServiceData) {
-        if (!this.graphData || this.graphData.statVis !== graphData.statVis) {
-            this.graphData = graphData;
+        const oldGraphData = this.graphData;
+        this.graphData = graphData;
+        if (!oldGraphData || oldGraphData.statVis !== graphData.statVis) {
             this.setPositioningData();
-        } else if (this.graphData.ghostElements !== graphData.ghostElements) {
-            this.graphData = graphData;
+        } else if (oldGraphData.ghostElements !== graphData.ghostElements) {
             this.updateGhostPositions();
         }
         return this.cachedPositioningData;
@@ -134,7 +134,7 @@ export class GisPositioningService {
     private createDefaultPosition(): Position {
         return {
             x: this.outerBoundaryRect.left,
-            y: this.outerBoundaryRect.top
+            y: (this.outerBoundaryRect.top + this.outerBoundaryRect.bottom) / 2
         };
     }
 

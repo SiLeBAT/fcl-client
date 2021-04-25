@@ -44,6 +44,7 @@
     "@ngrx/store": "^10.1.2",
     "@ngrx/store-devtools": "^10.1.2",
     "@swimlane/ngx-datatable": "^18.0.0",
+    "@types/seedrandom": "^3.0.0",
     "ajv": "^6.11.0",
     "angular-password-strength-meter": "^2.0.0",
     "core-js": "^3.6.4",
@@ -65,6 +66,7 @@
     "normalize.css": "^8.0.1",
     "ol": "^5.3.3",
     "rxjs": "^6.5.4",
+    "seedrandom": "^3.0.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2",
     "zxcvbn": "^4.4.2"

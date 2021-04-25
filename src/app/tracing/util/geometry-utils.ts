@@ -94,6 +94,12 @@ export function getDifference(point1: Point, point2: Point): Point {
     };
 }
 
+export function getDistance(point1: Point, point2: Point): number {
+    const dx = point1.x - point2.x;
+    const dy = point1.y - point2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
 export function getRectUnion(rect1: BoundaryRect, rect2: BoundaryRect): BoundaryRect {
     const left = Math.min(rect1.left, rect2.left);
     const right = Math.max(rect1.right, rect2.right);

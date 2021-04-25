@@ -32,6 +32,7 @@ export enum TracingActionTypes {
     ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
+    SetAvoidOverlaySOA = '[Tracing] Set Avoid Overlay',
     SetSelectedElementsSOA = '[Tracing] Set Element Selection',
     SetStationPositionsSOA = '[Tracing] Set Station Positions',
     SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
@@ -153,6 +154,12 @@ export class ShowZoomSOA implements Action {
     readonly type = TracingActionTypes.ShowZoomSOA;
 
     constructor(public payload: boolean) {}
+}
+
+export class SetAvoidOverlaySOA implements Action {
+    readonly type = TracingActionTypes.SetAvoidOverlaySOA;
+
+    constructor(public payload: { avoidOverlay: boolean }) {}
 }
 
 export class SetSelectedElementsSOA implements Action {
@@ -322,6 +329,7 @@ export type TracingActions =
     | ShowMergedDeliveriesCountsSOA
     | ShowLegendSOA
     | ShowZoomSOA
+    | SetAvoidOverlaySOA
     | SetSelectedElementsSOA
     | SetStationPositionsSOA
     | SetStationPositionsAndLayoutSOA

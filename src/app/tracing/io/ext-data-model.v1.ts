@@ -112,7 +112,6 @@ interface SchemaGraphViewData extends GraphViewData {
         minSize?: number;
         maxSize?: number;
         positions: { id: string, position: XY }[];
-        // collapsedPositions: [ { id: string, position: XY }];
     };
 }
 

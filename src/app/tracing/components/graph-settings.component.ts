@@ -142,6 +142,12 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         );
     }
 
+    onAvoidOverlay(avoidOverlay: boolean) {
+        this.store.dispatch(
+            new tracingActions.SetAvoidOverlaySOA({ avoidOverlay: avoidOverlay })
+        );
+    }
+
     ngOnDestroy() {
         this.componentActive = false;
     }

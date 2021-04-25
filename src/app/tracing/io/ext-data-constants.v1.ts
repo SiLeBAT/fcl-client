@@ -61,6 +61,7 @@ export const GISGRAPH_TRANSFORMATION = 'gis.transformation';
 export const SCHEMAGRAPH_TRANSFORMATION = 'graph.transformation';
 export const SCHEMAGRAPH_NODE_SIZE = 'graph.node.minSize';
 export const GISGRAPH_NODE_SIZE = 'gis.node.minSize';
+export const GISGRAPH_AVOID_OVERLAY = 'gis.node.avoidOverlay';
 export const SCHEMAGRAPH_FONT_SIZE = 'graph.text.fontSize';
 export const GISGRAPH_FONT_SIZE = 'gis.text.fontSize';
 export const TRACING_DATA_STATIONS = 'nodes';

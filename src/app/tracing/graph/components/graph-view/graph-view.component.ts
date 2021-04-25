@@ -1,8 +1,7 @@
 import {
     Component, ElementRef, ViewChild, OnDestroy, Input, Output,
-    EventEmitter, OnChanges, ChangeDetectionStrategy
+    EventEmitter, OnChanges, ChangeDetectionStrategy, SimpleChanges
 } from '@angular/core';
-
 import { Size, Layout, PositionMap } from '../../../data.model';
 import _ from 'lodash';
 import { ContextMenuRequestInfo, NodeId, SelectedGraphElements } from '../../graph.model';
@@ -13,6 +12,7 @@ import { CyConfig, GraphData, LayoutConfig, LayoutName } from '../../cy-graph/cy
 import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_PRESET } from '../../cy-graph/cy.constants';
 import { isPosMapEmpty } from '../../cy-graph/shared-utils';
 import { getLayoutConfig } from '../../cy-graph/layouting-utils';
+import { AvoidOverlayCyGraph } from '../../cy-graph/avoid-overlay-cy-graph';
 
 export interface GraphDataChange {
     layout?: Layout;
@@ -34,11 +34,12 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     @ViewChild('graph', { static: true }) graphElement: ElementRef;
 
-    @Input() graphData: GraphData;
-    @Input() styleConfig: StyleConfig;
+    @Input() graphData: GraphData | null = null;
+    @Input() styleConfig: StyleConfig | null = null;
     @Input() cyConfig: CyConfig = {};
 
-    @Input() showZoom: boolean;
+    @Input() showZoom: boolean = false;
+    @Input() avoidOverlay: boolean = false;
 
     @Output() graphDataChange = new EventEmitter<GraphDataChange>();
     @Output() contextMenuRequest = new EventEmitter<ContextMenuRequestInfo>();
@@ -51,8 +52,10 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     /** --- life cycle hooks */
 
-    ngOnChanges() {
-        this.processInputDataUpdate();
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.graphData !== undefined || changes.styleConfig !== undefined || changes.avoidOverlay) {
+            this.processGraphInputUpdate();
+        }
     }
 
     ngOnDestroy() {
@@ -161,13 +164,24 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     }
 
     private createCyGraph(): void {
-        this.cyGraph_ = new VirtualZoomCyGraph(
-            this.graphElement.nativeElement,
-            this.graphData,
-            this.styleConfig,
-            this.createLayoutConfig(),
-            this.cyConfig
-        );
+        if (this.avoidOverlay) {
+            this.cyGraph_ = new AvoidOverlayCyGraph(
+                this.graphElement.nativeElement,
+                this.graphData,
+                this.styleConfig,
+                this.createLayoutConfig(),
+                this.cyConfig
+            );
+        } else {
+            this.cyGraph_ = new VirtualZoomCyGraph(
+                this.graphElement.nativeElement,
+                this.graphData,
+                this.styleConfig,
+                this.createLayoutConfig(),
+                this.cyConfig
+            );
+        }
+
         this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
         this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, () => this.onGraphDataChange());
         this.cyGraph_.registerListener(
@@ -180,9 +194,11 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
-    private processInputDataUpdate(): void {
+    private processGraphInputUpdate(): void {
         if (this.graphData && this.styleConfig) {
-            if (this.cyGraph_ && !this.graphData.layout) {
+            if (this.cyGraph_ && (!this.graphData.layout || this.avoidOverlay !== this.cyGraph_ instanceof AvoidOverlayCyGraph)) {
+                // clean cyGraph if the viewport(layout) is unknwon or
+                // avoidOverlay does not match graph type
                 this.cleanCyGraph();
             }
             if (!this.cyGraph_) {

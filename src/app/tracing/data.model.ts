@@ -141,6 +141,7 @@ export interface GraphSettings {
     showMergedDeliveriesCounts: boolean;
     showLegend: boolean;
     showZoom: boolean;
+    avoidOverlay: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
     stationPositions: {[key: string]: Position};

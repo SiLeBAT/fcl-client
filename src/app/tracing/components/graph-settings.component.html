@@ -49,14 +49,21 @@
     </mat-form-field>
 
     <mat-checkbox
-          [ngModel]="graphSettings.showLegend"
-          (ngModelChange)="showLegend($event)">
-          Show Legend
-        </mat-checkbox>
+        [ngModel]="graphSettings.showLegend"
+        (ngModelChange)="showLegend($event)">
+        Show Legend
+    </mat-checkbox>
 
-        <mat-checkbox
-          [ngModel]="graphSettings.showZoom"
-          (ngModelChange)="showZoom($event)">
-          Show Zoom Controls
-        </mat-checkbox>
+    <mat-checkbox
+        [ngModel]="graphSettings.showZoom"
+        (ngModelChange)="showZoom($event)">
+        Show Zoom Controls
+    </mat-checkbox>
+
+    <mat-checkbox
+        [ngModel]="graphSettings.avoidOverlay"
+        (ngModelChange)="onAvoidOverlay($event)">
+        Avoid Overlay in GIS Graph
+    </mat-checkbox>
+
 </div>
