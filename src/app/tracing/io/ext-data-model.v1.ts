@@ -1,5 +1,4 @@
-export const VERSION = '1.0.3';
-export const MIN_VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 
 export interface JsonData {
     version: string;
@@ -135,9 +134,10 @@ interface EdgeDateFilterData {
     showDeliveriesWithoutDate: boolean;
 }
 
-interface ElementHighlightingData {
+export interface ElementHighlightingData {
     name: string;
     showInLegend: boolean;
+    disabled?: boolean;
     color: number[];
     invisible: boolean;
     adjustThickness: boolean;

@@ -273,21 +273,22 @@ export class HighlightingService {
         activeHighlightings: { stations: {[key: string]: boolean}, deliveries: {[key: string]: boolean}}
     ): LegendInfo {
 
-        const isCommonLinkHighlighting: {[key: string]: boolean} = {};
+        const ruleNameToIsCommonLinkRuleMap: {[key: string]: boolean} = {};
         this.getCommonLinkEntries(state).forEach(
-            commonLinkHighData => isCommonLinkHighlighting[commonLinkHighData.name] = true
+            commonLinkRule => ruleNameToIsCommonLinkRuleMap[commonLinkRule.name] = true
         );
 
         return {
-            stations: state.highlightingSettings.stations.filter(
-                hData => hData.showInLegend && (activeHighlightings.stations[hData.name] || isCommonLinkHighlighting[hData.name])
-            ).map(
-                hData => ({ label: hData.name, color: this.mapToColor(hData.color), shape: hData.shape })
+            stations: state.highlightingSettings.stations.filter(rule =>
+                rule.showInLegend &&
+                (activeHighlightings.stations[rule.name] || ruleNameToIsCommonLinkRuleMap[rule.name])
+            ).map(rule =>
+                ({ label: rule.name, color: this.mapToColor(rule.color), shape: rule.shape })
             ),
-            deliveries: state.highlightingSettings.deliveries.filter(
-                hData => hData.showInLegend && (activeHighlightings.deliveries[hData.name])
-            ).map(
-                hData => ({ label: hData.name, color: this.mapToColor(hData.color), linePattern: hData.linePattern })
+            deliveries: state.highlightingSettings.deliveries.filter(rule =>
+                rule.showInLegend && (activeHighlightings.deliveries[rule.name])
+            ).map(rule =>
+                ({ label: rule.name, color: this.mapToColor(rule.color), linePattern: rule.linePattern })
             )
         };
     }
@@ -297,18 +298,18 @@ export class HighlightingService {
     }
 
     private getCommonLinkEntries(state: BasicGraphState): StationHighlightingData[] {
-        return state.highlightingSettings.stations.filter(hSettings => this.isHighlightingSettingCommonLink(hSettings));
+        return state.highlightingSettings.stations.filter(rule => !rule.disabled && this.isCommonLinkRule(rule));
     }
 
-    private isHighlightingSettingCommonLink(highlightingSetting: StationHighlightingData | DeliveryHighlightingData): boolean {
+    private isCommonLinkRule(highlightingRule: StationHighlightingData | DeliveryHighlightingData): boolean {
         if (
-            !highlightingSetting.invisible &&
-            highlightingSetting.showInLegend &&
-            highlightingSetting.logicalConditions &&
-            highlightingSetting.logicalConditions.length === 1 &&
-            highlightingSetting.logicalConditions[0].length === 1
+            !highlightingRule.invisible &&
+            highlightingRule.showInLegend &&
+            highlightingRule.logicalConditions &&
+            highlightingRule.logicalConditions.length === 1 &&
+            highlightingRule.logicalConditions[0].length === 1
         ) {
-            const logicalCondition = highlightingSetting.logicalConditions[0][0];
+            const logicalCondition = highlightingRule.logicalConditions[0][0];
             return (
                 logicalCondition.propertyName === 'score' &&
                 logicalCondition.operationType === OperationType.EQUAL &&
@@ -318,30 +319,36 @@ export class HighlightingService {
         return false;
     }
 
-    private getActiveHighlightingData<
+    private getActiveHighlightingRules<
         T extends StationData | DeliveryData,
         K extends (T extends StationData ? StationHighlightingData : DeliveryHighlightingData)
-    >(fclElement: T, highlightingData: K[]): K[] {
-        return highlightingData.filter(
-            highData => !highData.invisible && (!highData.logicalConditions || highData.logicalConditions.some(andConList => {
-                return andConList.every((condition: LogicalCondition) => {
-                    const propertyValue = this.getPropertyValueFromElement(fclElement, condition.propertyName);
-                    const func = this.OPERATION_TYPE_TO_FUNCTION_MAP[condition.operationType];
-                    if (!func) {
-                        throw new Error(`Operation type ${condition.operationType} not supported`);
-                    }
-                    const result = func(condition.value, propertyValue);
+    >(fclElement: T, highlightingRules: K[]): K[] {
+        return highlightingRules.filter(rule =>
+            !rule.invisible &&
+            !rule.disabled &&
+            (
+                !rule.logicalConditions ||
+                rule.logicalConditions.some(andConList => {
+                    return andConList.every((condition: LogicalCondition) => {
+                        const propertyValue = this.getPropertyValueFromElement(fclElement, condition.propertyName);
+                        const func = this.OPERATION_TYPE_TO_FUNCTION_MAP[condition.operationType];
+                        if (!func) {
+                            throw new Error(`Operation type ${condition.operationType} not supported`);
+                        }
+                        const result = func(condition.value, propertyValue);
 
-                    return result;
-                });
-            })));
+                        return result;
+                    });
+                })
+            )
+        );
     }
     private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, activeList: { [key: string]: boolean }) {
-        const activeHighlightingData = this.getActiveHighlightingData(delivery, state.highlightingSettings.deliveries);
+        const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
 
-        const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingData);
+        const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
-        activeHighlightingData.forEach(hData => activeList[hData.name] = true);
+        activeHighlightingRules.forEach(rule => activeList[rule.name] = true);
 
         return deliveryHighlightingInfo;
     }
@@ -352,16 +359,16 @@ export class HighlightingService {
         activeList: { [key: string]: boolean }
     ): StationHighlightingInfo {
 
-        const activeHighlightingData = this.getActiveHighlightingData(station, state.highlightingSettings.stations);
+        const activeHighlightingRules = this.getActiveHighlightingRules(station, state.highlightingSettings.stations);
 
-        const shape = activeHighlightingData
-                .filter(highData => !!highData.shape)
-                .map(highData => highData.shape);
+        const shape = activeHighlightingRules
+                .filter(rule => rule.shape !== null)
+                .map(rule => rule.shape);
 
-        activeHighlightingData.forEach(hData => activeList[hData.name] = true);
+        activeHighlightingRules.forEach(rule => activeList[rule.name] = true);
 
         const stationHighInfo: StationHighlightingInfo = {
-            ...this.getCommonHighlightingInfo(station, activeHighlightingData),
+            ...this.getCommonHighlightingInfo(station, activeHighlightingRules),
             shape: shape.length > 0 ? shape[0] : null
         };
 
@@ -373,16 +380,16 @@ export class HighlightingService {
         K extends (T extends StationData ? StationHighlightingData : DeliveryHighlightingData)
     >(
         fclElement: T,
-        highlightingData: K[]
+        highlightingRules: K[]
     ): { label: string[], color: number[][] } {
-        const label = highlightingData
-            .filter(highData => !!highData.labelProperty)
-            .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, highData.labelProperty)))
+        const label = highlightingRules
+            .filter(rule => rule.labelProperty !== null)
+            .map(rule => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, rule.labelProperty)))
             .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
 
-        const color = highlightingData
-            .filter(highData => !!highData.color)
-            .map(highData => highData.color);
+        const color = highlightingRules
+            .filter(rule => rule.color !== null)
+            .map(rule => rule.color);
 
         return {
             label: label,

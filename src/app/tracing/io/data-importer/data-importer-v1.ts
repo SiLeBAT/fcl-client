@@ -11,7 +11,7 @@ import { Utils } from '../../util/non-ui-utils';
 import * as ExtDataConstants from '../ext-data-constants.v1';
 
 import { IDataImporter } from './datatypes';
-import { isValidJson, createDefaultHighlights, checkVersionFormat, compareVersions } from './shared';
+import { isValidJson, createDefaultHighlights, checkVersionFormat, areMajorVersionsMatching } from './shared';
 import { importSamples } from './sample-importer-v1';
 import {
     ViewData,
@@ -20,8 +20,7 @@ import {
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
     JsonData,
-    VERSION as MAX_VERSION,
-    MIN_VERSION,
+    VERSION,
     MetaNodeData
 } from '../ext-data-model.v1';
 import * as DataMapper from './../data-mappings/data-mappings-v1';
@@ -37,8 +36,8 @@ export class DataImporterV1 implements IDataImporter {
             data.version &&
             typeof data.version === 'string' &&
             checkVersionFormat(data.version) &&
-            compareVersions(data.version, MIN_VERSION) >= 0 &&
-            compareVersions(data.version, MAX_VERSION) <= 0) {
+            areMajorVersionsMatching(data.version, VERSION)
+        ) {
             const schema = await this.loadSchema();
             return isValidJson(schema, data, true);
         } else {
@@ -481,22 +480,23 @@ export class DataImporterV1 implements IDataImporter {
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
         if (viewData && viewData.node && viewData.node.highlightConditions) {
 
-            const extHighlightingCons: ExtStationHighlightingData[] = viewData.node.highlightConditions;
+            const extStatHighlightingRules: ExtStationHighlightingData[] = viewData.node.highlightConditions;
 
-            if (extHighlightingCons.length > 0) {
+            if (extStatHighlightingRules.length > 0) {
                 const extToIntPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
 
-                fclData.graphSettings.highlightingSettings.stations = extHighlightingCons.map(extCon => (
+                fclData.graphSettings.highlightingSettings.stations = extStatHighlightingRules.map(extRule => (
                     {
-                        name: extCon.name,
-                        showInLegend: extCon.showInLegend,
-                        color: extCon.color,
-                        invisible: extCon.invisible,
-                        adjustThickness: extCon.adjustThickness,
-                        labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
-                        valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
-                        logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
-                        shape: this.mapShapeType(extCon.shape)
+                        name: extRule.name,
+                        showInLegend: extRule.showInLegend === true,
+                        disabled: extRule.disabled === true,
+                        color: extRule.color,
+                        invisible: extRule.invisible,
+                        adjustThickness: extRule.adjustThickness,
+                        labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntPropMap),
+                        valueCondition: this.mapValueCondition(extRule.valueCondition, extToIntPropMap),
+                        logicalConditions: this.mapLogicalConditions(extRule.logicalConditions, extToIntPropMap),
+                        shape: this.mapShapeType(extRule.shape)
                     }
                 ));
             }
@@ -506,21 +506,22 @@ export class DataImporterV1 implements IDataImporter {
 
         if (viewData && viewData.edge && viewData.edge.highlightConditions) {
 
-            const extHighlightingCons: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
+            const extDelHighlightingRules: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
 
-            if (extHighlightingCons.length > 0) {
+            if (extDelHighlightingRules.length > 0) {
                 const extToIntPropMap: Map<string, string> = this.createReverseMapFromSimpleMap(fclData.source.propMaps.deliveryPropMap);
 
-                fclData.graphSettings.highlightingSettings.deliveries = extHighlightingCons.map(extCon => (
+                fclData.graphSettings.highlightingSettings.deliveries = extDelHighlightingRules.map(extRule => (
                     {
-                        name: extCon.name,
-                        showInLegend: extCon.showInLegend,
-                        color: extCon.color,
-                        invisible: extCon.invisible,
-                        adjustThickness: extCon.adjustThickness,
-                        labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
-                        valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
-                        logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
+                        name: extRule.name,
+                        showInLegend: extRule.showInLegend === true,
+                        disabled: extRule.disabled === true,
+                        color: extRule.color,
+                        invisible: extRule.invisible,
+                        adjustThickness: extRule.adjustThickness,
+                        labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntPropMap),
+                        valueCondition: this.mapValueCondition(extRule.valueCondition, extToIntPropMap),
+                        logicalConditions: this.mapLogicalConditions(extRule.logicalConditions, extToIntPropMap),
                         linePattern: LinePatternType.SOLID
                     }
                 ));
@@ -646,15 +647,16 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private convertExternalPositions(
-        viewData: any,
+        viewData: ViewData,
         fclData: FclData,
         idToStationMap: Map<string, StationData>,
         idToGroupMap: Map<string, GroupData>
     ) {
-        const nodePositions: any = this.getProperty(viewData, ExtDataConstants.NODE_POSITIONS);
-        if (nodePositions === null) {
+        if (viewData.graph === null || viewData.graph.node === null || viewData.graph.node.positions === null) {
             return;
         }
+
+        const nodePositions = viewData.graph.node.positions;
 
         for (const nodePosition of nodePositions) {
             if (nodePosition.id == null) {

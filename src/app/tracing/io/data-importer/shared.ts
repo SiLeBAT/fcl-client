@@ -6,7 +6,7 @@ export async function isValidJson(schema: any, data: any, throwError?: boolean):
     const ajv = new Ajv();
     const valid = ajv.validate(schema, data);
     if (!valid && throwError) {
-        throw new InputFormatError('Invalid json schema: ' + ajv.errors.toString());
+        throw new InputFormatError('Invalid json schema: ' + ajv.errorsText(ajv.errors));
     }
     return valid;
 }
@@ -23,6 +23,13 @@ export function compareVersions(version1: string, version2: string): number {
     return 0;
 }
 
+export function areMajorVersionsMatching(version1: string, version2: string): boolean {
+    const versionNumbers1: Number[] = version1.split('.').map(s => Number(s));
+    const versionNumbers2: Number[] = version2.split('.').map(s => Number(s));
+
+    return versionNumbers1[0] === versionNumbers2[0];
+}
+
 export function checkVersionFormat(version: String): boolean {
     return version && version.trim().match('^\\d+\\.\\d+\\.\\d+$').length > 0;
 }
@@ -34,6 +41,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Outbreak',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -57,6 +65,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Observed',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     0,
                     255,
@@ -80,6 +89,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Forward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     200,
@@ -103,6 +113,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Backward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -126,6 +137,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Cross Contamination',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     0,
                     0,
@@ -149,6 +161,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Common Link',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     255,
@@ -172,6 +185,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Score',
                 showInLegend: false,
+                disabled: false,
                 color: null,
                 invisible: false,
                 adjustThickness: true,
@@ -187,6 +201,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'StationLabel',
                 showInLegend: false,
+                disabled: false,
                 color: null,
                 invisible: false,
                 adjustThickness: false,
@@ -200,6 +215,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Kill Contamination',
                 showInLegend: true,
+                disabled: false,
                 color: [ 153, 153, 153 ],
                 invisible: false,
                 adjustThickness: false,
@@ -222,6 +238,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Outbreak',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -245,6 +262,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Observed',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     0,
                     255,
@@ -268,6 +286,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Forward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     200,
@@ -291,6 +310,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Backward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -314,6 +334,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'Kill Contamination',
                 showInLegend: true,
+                disabled: false,
                 color: [ 153, 153, 153 ],
                 invisible: false,
                 adjustThickness: false,
@@ -333,6 +354,7 @@ export function createDefaultHighlights(): HighlightingSettings {
             {
                 name: 'DeliveryLabel',
                 showInLegend: false,
+                disabled: false,
                 color: null,
                 invisible: false,
                 adjustThickness: false,

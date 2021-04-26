@@ -72,6 +72,16 @@ export class ColorsAndShapesListViewComponent {
         this.rulesChange.emit(newRules);
     }
 
+    onToggleRuleIsDisabled(index: number) {
+        const ruleIsDisabled: boolean = this.rules[index].disabled;
+        const newRules = [...this.rules];
+        newRules[index] = {
+            ...newRules[index],
+            disabled: !ruleIsDisabled
+        };
+        this.rulesChange.emit(newRules);
+    }
+
     onApplyRule(rule: StationHighlightingData): void {
         const newRules = this.getNewRulesWithRuleAtEditIndex(rule);
         this.emitNewRules(newRules);

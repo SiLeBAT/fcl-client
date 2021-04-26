@@ -6,9 +6,9 @@
     display: grid;
     align-items: center;
     grid-template-areas:
-        "dragcolumn rulename shape . counts . legend . edit . delete"
-        "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
-    grid-template-columns: 3ch calc(50% - 3ch) 24px calc((50% - 101px - 3ch) / 4) 3ch calc((50% - 101px - 3ch) / 4) 31px calc((50% - 101px - 3ch) / 4) 24px calc((50% - 101px - 3ch) / 4) 22px;
+        "dragcolumn rulename shape . counts . legend . activated . edit . delete"
+        "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
+    grid-template-columns: 3ch calc(50% - 3ch) 24px calc((50% - 134px - 3ch) / 5) 3ch calc((50% - 134px - 3ch) / 5) 32px calc((50% - 134px - 3ch) / 5) 32px calc((50% - 134px - 3ch) / 5) 24px calc((50% - 134px - 3ch) / 5) 22px;
 }
 
 .fcl-cs-rules-list-drag-indicator {
@@ -68,9 +68,39 @@
     grid-area: legend;
     display: flex;
     align-items: center;
-    max-height: 2rem;
     place-self: center;
+    max-width: 32px;
     aspect-ratio: 1 / 1;
+}
+
+.fcl-cs-rules-list-item-legend-button.mat-button-toggle-checked {
+    background-color: $fcl-primary-500;
+    color: rgb(255, 255, 255);
+}
+
+.fcl-cs-rules-list-item-legend-button.mat-button-toggle-checked.mat-button-toggle-disabled {
+    background-color: $fcl-primary-100;
+    color: rgb(255, 255, 255);
+}
+
+.fcl-cs-rules-list-item-activated-button {
+    grid-area: activated;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    place-self: center;
+    max-width: 32px;
+    aspect-ratio: 1 / 1;
+}
+
+.fcl-cs-rules-list-item-activated-button.mat-button-toggle-checked {
+    background-color: $fcl-primary-500;
+    color: rgb(255, 255, 255);
+}
+
+.fcl-cs-rules-list-item-activated-button.mat-button-toggle-checked.mat-button-toggle-disabled {
+    background-color: $fcl-primary-100;
+    color: rgb(255, 255, 255);
 }
 
 .fcl-cs-rules-list-item-edit-button-wrapper {
@@ -94,16 +124,6 @@
 
 .fcl-cs-rules-list-edit-item {
     grid-area: editdialog;
-}
-
-.fcl-cs-rules-list-item-legend-button.mat-button-toggle-checked {
-    background-color: $fcl-primary-500;
-    color: rgb(255, 255, 255);
-}
-
-.fcl-cs-rules-list-item-legend-button.mat-button-toggle-checked.mat-button-toggle-disabled {
-    background-color: $fcl-primary-100;
-    color: rgb(255, 255, 255);
 }
 
 .fcl-new-cs-rule-dialog {

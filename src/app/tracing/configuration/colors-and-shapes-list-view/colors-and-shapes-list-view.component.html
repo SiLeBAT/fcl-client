@@ -41,6 +41,17 @@
             L
         </mat-button-toggle>
 
+        <mat-button-toggle
+            class="fcl-cs-rules-list-item-activated-button"
+            [matTooltip]="item.disabled ? 'Activate rule' : 'Deactivate rule'"
+            matTooltipPosition="above"
+            [checked]="!item.disabled"
+            (change)="onToggleRuleIsDisabled(i)"
+            [disabled]="isEditRuleModeActive"
+        >
+            A
+        </mat-button-toggle>
+
         <div class="fcl-cs-rules-list-item-edit-button-wrapper">
             <button
                 class="fcl-cs-rules-list-item-edit-button"

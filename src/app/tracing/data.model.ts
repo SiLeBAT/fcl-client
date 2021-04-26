@@ -3,7 +3,7 @@ interface ViewData {
     invisible: boolean;
 }
 
-interface PropMap {
+export interface PropMap {
     [key: string]: string;
 }
 
@@ -185,6 +185,7 @@ interface ElementHighlightingData {
     showInLegend: boolean;
     color: number[];
     invisible: boolean;
+    disabled: boolean;
     adjustThickness: boolean;
     labelProperty: string;
     valueCondition: ValueCondition;

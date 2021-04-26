@@ -183,6 +183,7 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
         return {
             name: '',
             showInLegend: true,
+            disabled: false,
             color: this.convertColorToRGBArray(ColorsAndShapesEditViewComponent.DEFAULT_COLOR),
             invisible: false,
             adjustThickness: false,
