@@ -6,16 +6,19 @@
     <div
         class="fcl-cs-rules-list-item"
         *ngFor="let item of rules; let i = index"
+        [ngClass]="item.disabled ? 'fcl-rule-disabled' : ''"
         cdkDrag [cdkDragDisabled]="isEditRuleModeActive"
         cdkDragLockAxis="y"
         cdkDragBoundary=".cdk-drop-list"
     >
 
-        <div class="fcl-cs-rules-list-drag-indicator" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
+        <div class="fcl-cs-rules-list-drag-indicator" cdkDragHandle>
+            <mat-icon [disabled]="isEditRuleModeActive">drag_indicator</mat-icon>
+        </div>
         <div
             class="fcl-cs-rules-list-item-name"
             cdkDragHandle
-            >
+        >
             {{ item.name }}
         </div>
 
@@ -26,31 +29,34 @@
             [fillColor]="item.color? { r:item.color[0], g:item.color[1], b:item.color[2] } : null"
         ></fcl-node-symbol-view>
 
-        <div class="fcl-cs-rules-list-item-counts">
-            <span class="fcl-colors-and-shapes-list-item-count">{{ 50 * i }}</span>
+        <div
+            class="fcl-cs-rules-list-item-counts"
+        >
+            <span
+                class="fcl-colors-and-shapes-list-item-count"
+                [disabled]="isEditRuleModeActive"
+            >{{ 50 * i }}</span>
         </div>
 
         <mat-button-toggle
-            class="fcl-cs-rules-list-item-legend-button"
-            [matTooltip]="item.showInLegend ? 'Do not show in legend' : 'Show in legend'"
+            class="fcl-cs-rules-list-item-legend-button fcl-mat-button-toggle--zero-padding"
+            [matTooltip]="isEditRuleModeActive || item.disabled ? '' : item.showInLegend ? 'Do not show in legend' : 'Show in legend'"
             matTooltipPosition="above"
-            [checked]="item.showInLegend"
+            [checked]="item.showInLegend && !item.disabled"
             (change)="onToggleShowInLegend(i)"
-            [disabled]="isEditRuleModeActive"
+            [disabled]="isEditRuleModeActive || item.disabled"
         >
             L
         </mat-button-toggle>
 
-        <mat-button-toggle
-            class="fcl-cs-rules-list-item-activated-button"
-            [matTooltip]="item.disabled ? 'Activate rule' : 'Deactivate rule'"
+        <mat-slide-toggle
+            class="fcl-cs-rules-list-item-activated-slider fcl-mat-slide-toggle fcl-mat-slide-toggle--small"
+            [matTooltip]="isEditRuleModeActive ? '' : item.disabled ? 'Activate Highlighting Rule' : 'Deactivate Highlighting Rule'"
             matTooltipPosition="above"
             [checked]="!item.disabled"
             (change)="onToggleRuleIsDisabled(i)"
             [disabled]="isEditRuleModeActive"
-        >
-            A
-        </mat-button-toggle>
+        ></mat-slide-toggle>
 
         <div class="fcl-cs-rules-list-item-edit-button-wrapper">
             <button

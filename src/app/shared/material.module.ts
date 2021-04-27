@@ -15,6 +15,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -38,6 +39,7 @@ import { MatListModule } from '@angular/material/list';
         MatSelectModule,
         MatSidenavModule,
         MatSliderModule,
+        MatSlideToggleModule,
         MatToolbarModule,
         MatDividerModule,
         MatExpansionModule,

@@ -1,25 +1,33 @@
 @import '../../../../assets/sass/base';
 
+$fcl-col-legend-width: 27px;
+$fcl-col-edit-width: 24px;
+$fcl-col-delete-width: 22px;
+$fcl-opacity--disabled: 0.38;
+$fcl-font-size: 0.8rem;
+
 .fcl-cs-rules-list-item {
-    font-size: 0.8rem;
+    font-size: $fcl-font-size;
     font-family: #{$fcl-font-family};
     display: grid;
     align-items: center;
     grid-template-areas:
         "dragcolumn rulename shape . counts . legend . activated . edit . delete"
         "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
-    grid-template-columns: 3ch calc(50% - 3ch) 24px calc((50% - 134px - 3ch) / 5) 3ch calc((50% - 134px - 3ch) / 5) 32px calc((50% - 134px - 3ch) / 5) 32px calc((50% - 134px - 3ch) / 5) 24px calc((50% - 134px - 3ch) / 5) 22px;
+    grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 3ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
 }
 
 .fcl-cs-rules-list-drag-indicator {
+    $fcl-drag-indicator-size-factor: 1.2;
+
     display: flex;
     grid-area: dragcolumn;
     justify-self: left;
     align-self: center;
-    max-height: 0.85rem;
+    max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
 
     .mat-icon {
-        font-size: 0.85rem;
+        font-size: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
     }
 }
 
@@ -35,8 +43,8 @@
     visibility: hidden;
 }
 
-.cdk-drag-disabled .mat-icon {
-    opacity: 0.2;
+.cdk-drag-disabled .fcl-cs-rules-list-drag-indicator {
+    opacity: $fcl-opacity--disabled;
 }
 
 /* Animate items as they're being sorted. */
@@ -54,6 +62,10 @@
     justify-self: left;
 }
 
+.fcl-rule-disabled .fcl-cs-rules-list-item-name {
+    opacity: $fcl-opacity--disabled;
+}
+
 .fcl-cs-rules-list-item-shape {
     grid-area: shape;
     justify-self: center;
@@ -64,43 +76,36 @@
     justify-self: end;
 }
 
+.fcl-rule-disabled .fcl-cs-rules-list-item-counts {
+    opacity: $fcl-opacity--disabled;
+}
+
 .fcl-cs-rules-list-item-legend-button {
     grid-area: legend;
-    display: flex;
-    align-items: center;
-    place-self: center;
-    max-width: 32px;
-    aspect-ratio: 1 / 1;
+    width: $fcl-col-legend-width;
+    height: $fcl-col-legend-width;
+    color: $fcl-primary-500;
 }
 
 .fcl-cs-rules-list-item-legend-button.mat-button-toggle-checked {
+    font-weight: bold;
     background-color: $fcl-primary-500;
     color: rgb(255, 255, 255);
 }
 
-.fcl-cs-rules-list-item-legend-button.mat-button-toggle-checked.mat-button-toggle-disabled {
-    background-color: $fcl-primary-100;
-    color: rgb(255, 255, 255);
+.fcl-cs-rules-list-item-legend-button.mat-button-toggle-disabled {
+    opacity: $fcl-opacity--disabled;
 }
 
-.fcl-cs-rules-list-item-activated-button {
+.fcl-cs-rules-list-item-activated-slider {
     grid-area: activated;
     display: flex;
     align-items: center;
     justify-items: center;
-    place-self: center;
-    max-width: 32px;
-    aspect-ratio: 1 / 1;
 }
 
-.fcl-cs-rules-list-item-activated-button.mat-button-toggle-checked {
+.fcl-cs-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
     background-color: $fcl-primary-500;
-    color: rgb(255, 255, 255);
-}
-
-.fcl-cs-rules-list-item-activated-button.mat-button-toggle-checked.mat-button-toggle-disabled {
-    background-color: $fcl-primary-100;
-    color: rgb(255, 255, 255);
 }
 
 .fcl-cs-rules-list-item-edit-button-wrapper {
@@ -108,7 +113,7 @@
     display: flex;
     justify-content: center;
     align-content: center;
-    max-width: 24px;
+    max-width: $fcl-col-edit-width;
     overflow-x: hidden;
 }
 
@@ -118,7 +123,7 @@
     justify-content: center;
     align-content: center;
     justify-self: end;
-    max-width: 24px;
+    max-width: $fcl-col-delete-width;
     overflow-x: hidden;
 }
 
@@ -127,7 +132,7 @@
 }
 
 .fcl-new-cs-rule-dialog {
-    font-size: 0.8rem;
+    font-size: $fcl-font-size;
 }
 
 .fcl-add-cs-rule-button {
