@@ -127,11 +127,7 @@ mat-form-field.less-bottom-padding {
     }
 }
 
-.fcl-mat-slide-toggle.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
-    background-color: $fcl-primary-500;
-}
-
-.fcl-mat-slide-toggle--small.mat-slide-toggle {
+.fcl-mat-slide-toggle.fcl-mat-slide-toggle--small.mat-slide-toggle {
     $fcl-mat-slide-toggle-thumb-size: 14px;
 
     .mat-slide-toggle-bar {
@@ -148,4 +144,8 @@ mat-form-field.less-bottom-padding {
         width: $fcl-mat-slide-toggle-thumb-size;
         height: $fcl-mat-slide-toggle-thumb-size;
     }
+}
+
+.fcl-mat-slide-toggle.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: $fcl-primary-500;
 }
