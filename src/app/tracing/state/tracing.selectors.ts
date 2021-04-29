@@ -41,11 +41,6 @@ export const getShowLegend = createSelector(
     (graphSettings) => graphSettings.showLegend
 );
 
-export const getAvoidOverlay = createSelector(
-    getGraphSettings,
-    (graphSettings) => graphSettings.avoidOverlay
-);
-
 export const getMergeDeliveriesType = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.mergeDeliveriesType

@@ -43,7 +43,7 @@ export class GeoMapComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         this.processInputChanges(
             changes.mapConfig,
-            changes.unknownLatLonRectConfig,
+            changes.unknownLatLonRect,
             changes.unknownLatLonRectBorderWidth
         );
     }

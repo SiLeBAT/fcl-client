@@ -94,7 +94,6 @@ export function createInitialFclDataState(): FclData {
             skipUnconnectedStations: Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
-            avoidOverlay: Constants.DEFAULT_GIS_AVOID_OVERLAY,
             selectedElements: {
                 stations: [],
                 deliveries: []
@@ -307,18 +306,6 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         showZoom: action.payload
-                    }
-                }
-            };
-
-        case TracingActionTypes.SetAvoidOverlaySOA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    graphSettings: {
-                        ...state.fclData.graphSettings,
-                        avoidOverlay: action.payload.avoidOverlay
                     }
                 }
             };

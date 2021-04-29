@@ -21,7 +21,8 @@
                 "pbf",
                 "pixelworks/lib/index",
                 "javascript-lp-solver",
-                "lodash"
+                "lodash",
+                "seedrandom"
             ],
             "aot": true,
             "outputPath": "dist",

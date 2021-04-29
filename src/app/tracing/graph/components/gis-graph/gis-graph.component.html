@@ -3,7 +3,7 @@
     <fcl-geomap
         [mapConfig]="mapConfig$ | async"
         [unknownLatLonRect]="unknownLatLonRect"
-        [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth$ | async"
+        [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth"
         class="fcl-graph-map">
     </fcl-geomap>
 
@@ -12,7 +12,6 @@
         [graphData]="graphData"
         [styleConfig]="styleConfig$ | async"
         [cyConfig]="cyConfig"
-        [avoidOverlay]="avoidOverlay$ | async"
         [showZoom]="showZoom$ | async"
         (graphDataChange)="onGraphDataChange($event)"
         (contextMenuRequest)="onContextMenuRequest($event)"

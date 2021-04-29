@@ -15,7 +15,7 @@ import { ContextMenuViewComponent } from '../context-menu/context-menu-view.comp
 import { ContextMenuService } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetGisGraphLayoutSOA, SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
-import { getAvoidOverlay, getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { BoundaryRect } from '@app/tracing/util/geometry-utils';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
@@ -28,18 +28,17 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     private static readonly MIN_ZOOM = 0.1;
     private static readonly MAX_ZOOM = 100.0;
+    private static readonly DEFAULT_SCREEN_BOUNDARY_WIDTH = 20;
 
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
 
     graphType$ = this.store.select(getGraphType);
     isGraphActive$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GIS));
     showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$));
-    avoidOverlay$ = this.store.select(getAvoidOverlay).pipe(optInGate(this.isGraphActive$));
     showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$));
     mapConfig$ = this.store.select(getMapConfig);
     styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$));
-    unknownLatLonRectBorderWidth$ = combineLatest([this.styleConfig$, this.avoidOverlay$])
-        .pipe(map(([styleConfig, avoidOverlay]) => styleConfig.nodeSize * (avoidOverlay ? 2 : 1)));
+    unknownLatLonRectBorderWidth = GisGraphComponent.DEFAULT_SCREEN_BOUNDARY_WIDTH;
 
     private graphStateSubscription: Subscription | null = null;
 
@@ -133,6 +132,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         const posData = this.gisPositioningService.getPositioningData(this.sharedGraphData);
         this.unknownLatLonRect_ = posData.unknownLatLonRect;
         this.legendInfo_ = this.sharedGraphData.legendInfo;
+        this.unknownLatLonRectBorderWidth = Math.max(
+            posData.unknownLatLonRectModelBorderWidth * (newState.layout !== null ? newState.layout.zoom : 0),
+            GisGraphComponent.DEFAULT_SCREEN_BOUNDARY_WIDTH
+        );
 
         this.graphData_ = {
             nodeData: this.sharedGraphData.nodeData,

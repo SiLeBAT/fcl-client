@@ -4,6 +4,7 @@ import { Utils as UIUtils } from '../util/ui-utils';
 import { getNearestPointOnRect, getEnclosingRectFromPoints, BoundaryRect, getCenterFromPoints } from '@app/tracing/util/geometry-utils';
 import { CyEdgeData, CyNodeData, GraphElementData, GraphServiceData, NodeId } from './graph.model';
 import { ABSOLUTE_FRAME_MARGIN, EMPTY_FRAME, REF_ZOOM, RELATIVE_FRAME_MARGIN } from './gis.constants';
+import { getNonOverlayPositions } from './avoid-overlay-utils';
 
 interface NeighbourHood {
     neighbourIds: NodeId[];
@@ -12,15 +13,11 @@ interface NeighbourHood {
 
 interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> {}
 
-interface NodePosInfo {
-    posMap: PositionMap;
-    areUnknownPositionsPresent: boolean;
-}
-
 export interface PositioningData {
     nodePositions: PositionMap;
     ghostPositions: PositionMap | null;
     unknownLatLonRect: BoundaryRect | null;
+    unknownLatLonRectModelBorderWidth: number;
 }
 
 @Injectable({
@@ -28,15 +25,22 @@ export interface PositioningData {
 })
 export class GisPositioningService {
 
+    private static readonly REF_MAP_SIZE = {
+        width: 1200,
+        height: 800
+    };
+    private static readonly REF_NODE_SIZE = 20;
+
     private stationModelPositions: PositionMap = {};
+    private boundaryNodeIds: NodeId[] = [];
+    private boundaryGhostNodeIds: NodeId[] = [];
     private nodeModelPositions: PositionMap = {};
     private ghostModelPositions: PositionMap | null = null;
     private innerBoundaryRect: BoundaryRect | null = null;
     private outerBoundaryRect: BoundaryRect | null = null;
     private cachedPositioningData: PositioningData | null = null;
     private graphData: GraphServiceData | null = null;
-    private areUnknownPositionsPresent = false;
-    private areUnknownGhostPositionsPresent = false;
+    private modelBorderWidth = 0;
 
     getPositioningData(graphData: GraphServiceData) {
         const oldGraphData = this.graphData;
@@ -55,6 +59,7 @@ export class GisPositioningService {
         this.setInnerBoundaryRect();
         this.setOuterBoundaryRect();
         this.setUnknownNodeModelPositions();
+        this.repositionBoundaryNodesToAvoidOverlay();
         this.updateGhostPositions();
         this.updateCache();
     }
@@ -63,7 +68,11 @@ export class GisPositioningService {
         this.cachedPositioningData = {
             nodePositions: this.nodeModelPositions,
             ghostPositions: this.ghostModelPositions,
-            unknownLatLonRect: this.areUnknownPositionsPresent || this.areUnknownGhostPositionsPresent ? this.outerBoundaryRect : null
+            unknownLatLonRect: (
+                this.boundaryNodeIds.length > 0 || this.boundaryGhostNodeIds.length > 0 ?
+                this.outerBoundaryRect : null
+            ),
+            unknownLatLonRectModelBorderWidth: this.modelBorderWidth
         };
     }
 
@@ -93,19 +102,13 @@ export class GisPositioningService {
     }
 
     private initKnownNodeModelPositions(): void {
-        const nodePosInfo = this.getKnownNodePosInfo(this.graphData.nodeData);
-        this.nodeModelPositions = nodePosInfo.posMap;
-        this.areUnknownPositionsPresent = nodePosInfo.areUnknownPositionsPresent;
+        this.nodeModelPositions = {};
+        this.boundaryNodeIds = [];
+        this.setKnownNodePos(this.graphData.nodeData, this.nodeModelPositions, this.boundaryNodeIds);
     }
 
     private setInnerBoundaryRect(): void {
-        const positions = Object.values(this.nodeModelPositions);
-
-        if (positions.length === 0) {
-            this.innerBoundaryRect = null;
-        } else {
-            this.innerBoundaryRect = getEnclosingRectFromPoints(positions);
-        }
+        this.innerBoundaryRect = this.getModelPositionsIncludingRect();
     }
 
     private setOuterBoundaryRect(): void {
@@ -226,34 +229,33 @@ export class GisPositioningService {
 
     private updateGhostPositions(): void {
         if (this.graphData.ghostElements) {
-            const nodePosInfo = this.getKnownNodePosInfo(this.graphData.ghostElements.nodeData);
-            this.areUnknownGhostPositionsPresent = nodePosInfo.areUnknownPositionsPresent;
-            this.ghostModelPositions = nodePosInfo.posMap;
-            if (this.areUnknownGhostPositionsPresent) {
+            this.ghostModelPositions = {};
+            this.boundaryGhostNodeIds = [];
+            this.setKnownNodePos(this.graphData.ghostElements.nodeData, this.ghostModelPositions, this.boundaryGhostNodeIds);
+
+            if (this.boundaryGhostNodeIds.length > 0) {
                 this.setUnknownGhostPositions();
             }
         } else {
-            this.areUnknownGhostPositionsPresent = false;
             this.ghostModelPositions = null;
         }
         this.updateCache();
     }
 
-    private getKnownNodePosInfo(nodesData: CyNodeData[]): NodePosInfo {
-        const posMap: PositionMap = {};
-        let areUnknownGhostPositionsPresent = false;
+    private setKnownNodePos(
+        nodesData: CyNodeData[],
+        posMap: PositionMap,
+        boundaryNodeIds: NodeId[]
+    ): void {
+
         for (const nodeData of nodesData) {
             const position = this.stationModelPositions[nodeData.station.id];
-            if (position) {
+            if (position !== undefined) {
                 posMap[nodeData.id] = position;
             } else {
-                areUnknownGhostPositionsPresent = true;
+                boundaryNodeIds.push(nodeData.id);
             }
         }
-        return {
-            posMap: posMap,
-            areUnknownPositionsPresent: areUnknownGhostPositionsPresent
-        };
     }
 
     private setUnknownGhostPositions(): void {
@@ -294,5 +296,42 @@ export class GisPositioningService {
 
             idsOfConnectedNodesWOPos = this.getNeighboursWoPosition(idsOfConnectedNodesWOPos, nbhMap, posMap);
         }
+    }
+
+    private repositionBoundaryNodesToAvoidOverlay(): void {
+        if (this.boundaryNodeIds.length > 0) {
+            const boundaryNodes = this.boundaryNodeIds.map(nodeId => this.graphData.idToNodeMap[nodeId]);
+
+            const nodesRect = this.getModelPositionsIncludingRect();
+
+            const estimatedZoomFit = Math.min(
+                GisPositioningService.REF_MAP_SIZE.width / (nodesRect.width > 0 ? nodesRect.width : this.outerBoundaryRect.width),
+                GisPositioningService.REF_MAP_SIZE.height / (nodesRect.height > 0 ? nodesRect.height : this.outerBoundaryRect.height)
+            );
+
+            this.nodeModelPositions = getNonOverlayPositions(
+                boundaryNodes,
+                this.nodeModelPositions,
+                GisPositioningService.REF_NODE_SIZE,
+                estimatedZoomFit
+            );
+            const nodeDistances = this.boundaryNodeIds.map(nodeId => {
+                const point = this.nodeModelPositions[nodeId];
+                const pointOnRect = getNearestPointOnRect(point, this.outerBoundaryRect);
+                return Math.max(Math.abs(pointOnRect.x - point.x), Math.abs(pointOnRect.y - point.y));
+            });
+            const maxNodeDist = Math.max(...nodeDistances);
+            this.modelBorderWidth = maxNodeDist * 2;
+        }
+    }
+
+    private getModelPositionsIncludingRect(): BoundaryRect | null {
+        const nodePositions = Object.values(this.nodeModelPositions);
+
+        return (
+            nodePositions.length === 0 ?
+            null :
+            getEnclosingRectFromPoints(nodePositions)
+        );
     }
 }
