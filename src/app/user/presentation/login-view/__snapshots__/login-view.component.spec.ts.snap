@@ -5,9 +5,12 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
   <div
     class="fcl-image-container"
   >
-    <fcl-main-entry-header />
+    <fcl-main-entry-header
+      class="fcl-main-entry-header"
+    />
     <fcl-single-center-card-layout
       cardtitle="Login"
+      class="fcl-login-card"
     >
       <div
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
@@ -92,6 +95,9 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
         </mat-card>
       </div>
     </fcl-single-center-card-layout>
+    <fcl-funding-sources-view
+      class="fcl-funding-box"
+    />
   </div>
 </fcl-login-view>
 `;

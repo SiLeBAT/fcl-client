@@ -1,12 +1,13 @@
 @import '../../../../assets/sass/base';
 
 :host {
-    flex: 1;
-    display: flex;
-    justify-content: center;
+    width: 100vw;
 }
 
 .fcl-image-container {
-    width: 100vw;
+    width: 100%;
     background-color: $fcl-bg-color;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1rem;
 }

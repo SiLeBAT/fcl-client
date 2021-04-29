@@ -1,0 +1,11 @@
+@import '../../../assets/sass/base';
+
+:host {
+    text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-family: #{$fcl-font-family};
+    font-size: 14px;
+}

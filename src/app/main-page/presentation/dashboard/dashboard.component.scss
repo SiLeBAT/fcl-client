@@ -1,7 +1,26 @@
 @import '../../../../assets/sass/base';
 
+:host {
+    width: 100vw;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "features"
+        "."
+        "fundingbox";
+    grid-template-columns: 1fr;
+    height: 100%;
+}
+
 .fcl-dashboard-container {
+    grid-area: features;
     margin-top: 5rem;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    margin-left: 1ch;
+    margin-right: 1ch;
 }
 
 .mat-flat-button {
@@ -20,4 +39,9 @@
 .fcl-logo {
     max-width: 70%;
     height: 70%;
+}
+
+.fcl-funding-box {
+    grid-area: fundingbox;
+    width: 100%;
 }

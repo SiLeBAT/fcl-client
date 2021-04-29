@@ -9,6 +9,7 @@ import { SharedModule } from './../shared/shared.module';
 import { CoreModule } from '../core/core.module';
 import { MainPageModule } from '../main-page/main-page.module';
 import { UserRoutingModule } from './user.routing.module';
+import { ContentModule } from '@app/content/content.module';
 
 import { STATE_SLICE_NAME, reducer } from './state/user.reducer';
 import { UserEffects } from './state/user.effects';
@@ -40,6 +41,7 @@ import { NewsActivateViewComponent } from './presentation/news-activate-view/new
 @NgModule({
     imports: [
         CommonModule,
+        ContentModule,
         ReactiveFormsModule,
         PasswordStrengthMeterModule,
         SharedModule,

@@ -1,8 +1,12 @@
 @import '../../../../assets/sass/base';
 
+:host {
+    height: 16vh;
+}
+
 .fcl-entry-page-item {
-    flex: 1;
-    height: 18%;
+    height: 100%;
+    box-sizing: border-box;
     background-color: $fcl-bg-color-entry;
     border-bottom: 5px groove rgba(120, 109, 109, 0.5);
 }
