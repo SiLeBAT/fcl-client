@@ -113,7 +113,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
             if (newGhostStationId === null) {
                 this.store.dispatch(new tracingActions.ClearGhostStationMSA());
             } else {
-                this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: row.id }));
+                this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: newGhostStationId }));
             }
         }
     }
