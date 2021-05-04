@@ -153,18 +153,45 @@ export class ContextMenuService {
                     disabled: !stations.some(s => s.outbreak),
                     action: new ClearOutbreakStationsMSA({})
                 },
-                {
-                    ...MenuItemStrings.clearInvisibility,
-                    disabled: !(
-                        graphData.stations.some(s => s.invisible) ||
-                        graphData.deliveries.some(d => d.invisible)
-                    ),
-                    action: new ClearInvisibilitiesMSA({})
-                },
+                this.createClearInvisibilitiesMenuItemData(graphData),
+                // {
+                //     ...MenuItemStrings.clearInvisibility,
+                //     disabled: !(
+                //         graphData.stations.some(s => s.invisible) ||
+                //         graphData.deliveries.some(d => d.invisible)
+                //     ),
+                //     action: new ClearInvisibilitiesMSA({})
+                // },
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
             ]
         );
+    }
+
+    private createClearInvisibilitiesMenuItemData(graphData: GraphServiceData): MenuItemData {
+        const someStationIsInvisible = graphData.stations.some(s => s.invisible);
+        const someDeliveryIsInvisible = graphData.deliveries.some(d => d.invisible);
+        return {
+            ...MenuItemStrings.clearInvisibility,
+            disabled: !(someStationIsInvisible || someDeliveryIsInvisible),
+
+            children: [
+                {
+                    ...MenuItemStrings.clearInvisibleStations,
+                    disabled: !someStationIsInvisible,
+                    action: new ClearInvisibilitiesMSA({ clearStations: true, clearDeliveries: false })
+                },
+                {
+                    ...MenuItemStrings.clearInvisibleDeliveries,
+                    disabled: !someDeliveryIsInvisible,
+                    action: new ClearInvisibilitiesMSA({ clearStations: false, clearDeliveries: true })
+                },
+                {
+                    ...MenuItemStrings.clearInvisibleElements,
+                    action: new ClearInvisibilitiesMSA({ clearStations: true, clearDeliveries: true })
+                }
+            ]
+        };
     }
 
     private createUncollapseStationsMenuItem(graphData: GraphServiceData): MenuItemData {

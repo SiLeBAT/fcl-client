@@ -53,13 +53,16 @@ export class HighlightingService {
         };
     }
 
-    getClearInvisiblitiesPayload(state: HighlightingSettings): SetHighlightingSettingsPayload {
-        return {
-            highlightingSettings: {
-                ...state,
-                invisibleStations: []
-            }
-        };
+    getClearInvisiblitiesPayload(state: HighlightingSettings, clearStations: boolean, clearDeliveries: boolean): SetHighlightingSettingsPayload {
+        if (clearStations || clearDeliveries) {
+            return {
+                highlightingSettings: {
+                    ...state,
+                    invisibleStations: clearStations ? [] : state.invisibleStations
+                }
+            };
+        }
+        return null;
     }
 
     applyVisibilities(state: BasicGraphState, data: DataServiceData) {

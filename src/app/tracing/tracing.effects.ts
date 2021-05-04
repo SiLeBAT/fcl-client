@@ -234,7 +234,7 @@ export class TracingEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.highlightingService.getClearInvisiblitiesPayload(state);
+                const payload = this.highlightingService.getClearInvisiblitiesPayload(state, action.payload.clearStations, action.payload.clearDeliveries);
                 if (payload) {
                     return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
                 }

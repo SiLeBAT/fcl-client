@@ -31,7 +31,7 @@ export class ClearOutbreakStationsMSA implements Action {
 export class ClearInvisibilitiesMSA implements Action {
     readonly type = TracingActionTypes.ClearInvisibilitiesMSA;
 
-    constructor(public payload: {}) {}
+    constructor(public payload: { clearStations: boolean, clearDeliveries: boolean }) {}
 }
 
 export class ShowStationPropertiesMSA implements Action {
