@@ -153,18 +153,37 @@ export class ContextMenuService {
                     disabled: !stations.some(s => s.outbreak),
                     action: new ClearOutbreakStationsMSA({})
                 },
-                {
-                    ...MenuItemStrings.clearInvisibility,
-                    disabled: !(
-                        graphData.stations.some(s => s.invisible) ||
-                        graphData.deliveries.some(d => d.invisible)
-                    ),
-                    action: new ClearInvisibilitiesMSA({ clearStationInvs: true, clearDeliveryInvs: true })
-                },
+                this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
             ]
         );
+    }
+
+    private createClearInvisibilitiesMenuItemData(graphData: GraphServiceData): MenuItemData {
+        const someStationIsExpInvisible = graphData.stations.some(s => s.expInvisible);
+        const someDeliveryIsExpInvisible = graphData.deliveries.some(d => d.expInvisible);
+        return {
+            ...MenuItemStrings.clearInvisibility,
+            disabled: !(someStationIsExpInvisible || someDeliveryIsExpInvisible),
+
+            children: [
+                {
+                    ...MenuItemStrings.clearInvisibleStations,
+                    disabled: !someStationIsExpInvisible,
+                    action: new ClearInvisibilitiesMSA({ clearStationInvs: true, clearDeliveryInvs: false })
+                },
+                {
+                    ...MenuItemStrings.clearInvisibleDeliveries,
+                    disabled: !someDeliveryIsExpInvisible,
+                    action: new ClearInvisibilitiesMSA({ clearStationInvs: false, clearDeliveryInvs: true })
+                },
+                {
+                    ...MenuItemStrings.clearInvisibleElements,
+                    action: new ClearInvisibilitiesMSA({ clearStationInvs: true, clearDeliveryInvs: true })
+                }
+            ]
+        };
     }
 
     private createUncollapseStationsMenuItem(graphData: GraphServiceData): MenuItemData {
@@ -327,16 +346,6 @@ export class ContextMenuService {
                         killContamination: !allKillContaminationStations
                     })
                 },
-                // ( contextElements.deliveryIds.length === 0 ?
-                //     {
-                //         ...MenuItemStrings.makeStationsInvisible,
-                //         action: new MakeElementsInvisibleMSA({ stationIds: selectedIds })
-                //     } :
-                //     {
-                //         ...MenuItemStrings.makeElementsInvisible,
-                //         action: new MakeElementsInvisibleMSA({ stationIds: selectedIds, deliveryIds: contextElements.deliveryIds })
-                //     }
-                // )
                 this.createMakeInvisibleItemData(contextElements),
                 {
                     ...MenuItemStrings.mergeStations,

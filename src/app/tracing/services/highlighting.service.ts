@@ -101,22 +101,40 @@ export class HighlightingService {
         state: HighlightingSettings,
         options: Required<ClearInvisibilitiesOptions>
     ): SetHighlightingSettingsPayload {
-        return {
-            highlightingSettings: {
-                ...state,
-                invisibleStations: options.clearStationInvs ? [] : state.invisibleStations,
-                invisibleDeliveries: options.clearDeliveryInvs ? [] : state.invisibleDeliveries
-            }
-        };
+        if (options.clearDeliveryInvs || options.clearStationInvs) {
+            return {
+                highlightingSettings: {
+                    ...state,
+                    invisibleStations: options.clearStationInvs ? [] : state.invisibleStations,
+                    invisibleDeliveries: options.clearDeliveryInvs ? [] : state.invisibleDeliveries
+                }
+            };
+        }
+        return null;
     }
 
     applyVisibilities(state: BasicGraphState, data: DataServiceData) {
-        data.stations.forEach(s => s.invisible = false);
-        data.deliveries.forEach(s => s.invisible = false);
+        data.stations.forEach(s => {
+            s.invisible = false;
+            s.expInvisible = false;
+        });
+        data.deliveries.forEach(d => {
+            d.invisible = false;
+            d.expInvisible = false;
+        });
         // ToDo: Refactor, check why a s!==null comparison is used here
-        data.getStatById(state.highlightingSettings.invisibleStations).filter(s => s !== null).forEach(s => s.invisible = true);
+        data.getStatById(state.highlightingSettings.invisibleStations)
+            .filter(s => s !== null)
+            .forEach(s => {
+                s.invisible = true;
+                s.expInvisible = true;
+            });
         data.statVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
-        data.getDelById(state.highlightingSettings.invisibleDeliveries).forEach(d => d.invisible = true);
+        data.getDelById(state.highlightingSettings.invisibleDeliveries)
+            .forEach(d => {
+                d.invisible = true;
+                d.expInvisible = true;
+            });
         data.deliveries.filter(d => !d.invisible).forEach(
             d => d.invisible = data.statMap[d.source].invisible || data.statMap[d.target].invisible
         );

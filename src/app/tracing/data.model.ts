@@ -3,6 +3,7 @@ export type HighlightingRuleId = string;
 interface ViewData {
     selected: boolean;
     invisible: boolean;
+    expInvisible: boolean;
 }
 
 export interface PropMap {

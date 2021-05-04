@@ -43,6 +43,7 @@ export class DataService {
             commonLink: false,
             selected: false,
             invisible: false,
+            expInvisible: false,
             contains: [],
             groupType: null,
             incoming: storeData.incoming.slice(),
@@ -78,6 +79,7 @@ export class DataService {
             score: 0,
             selected: false,
             invisible: false,
+            expInvisible: false,
             originalSource: storeData.source,
             originalTarget: storeData.target,
             properties: storeData.properties.map(p => Object.assign({}, p))
@@ -128,6 +130,7 @@ export class DataService {
                 observed: ObservedType.NONE,
                 selected: false,
                 invisible: false,
+                expInvisible: false,
                 outbreak: false,
                 weight: 0,
                 forward: false,
