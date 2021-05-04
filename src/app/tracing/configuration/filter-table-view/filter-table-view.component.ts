@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter, AfterViewChecked } from '@angular/core';
+import { Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
 import { DatatableComponent, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
 import { DataTable, NodeShapeType, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
 import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRowFilter, createOneTermForEachColumnRowFilter } from '../filter-provider';
@@ -88,7 +88,7 @@ export interface TableFilterChange {
     styleUrls: ['./filter-table-view.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class FilterTableViewComponent implements AfterViewChecked {
+export class FilterTableViewComponent {
 
     get visibilityFilterState(): VisibilityFilterState {
         return this.inputData.visibilityFilter;
@@ -160,9 +160,7 @@ export class FilterTableViewComponent implements AfterViewChecked {
     private treeRows_: TableRow[] = [];
     private treeStatusCache: Record<string, TreeStatus> = {};
 
-    private windowSize: Size = { width: undefined, height: undefined };
-    private wrapperSize: Size = { width: undefined, height: undefined };
-    private resizeTriggerIsBlocked = false;
+    private triggerTableRefreshTimeoutHandle: number | null = null;
 
     private columns_: NgxTableColumn[];
 
@@ -231,36 +229,16 @@ export class FilterTableViewComponent implements AfterViewChecked {
         }
     }
 
-    private updateTableSizeIfNecessary() {
-        if (this.table &&
-            !this.resizeTriggerIsBlocked &&
-            (
-                this.tableWrapper.nativeElement.clientHeight !== this.wrapperSize.height ||
-                this.tableWrapper.nativeElement.clientWidth !== this.wrapperSize.width
-            )
-        ) {
-            if (
-                window.innerHeight !== this.windowSize.height ||
-                window.innerWidth !== this.windowSize.width
-            ) {
-                this.windowSize.height = window.innerHeight;
-                this.windowSize.width = window.innerWidth;
-                this.wrapperSize.height = this.tableWrapper.nativeElement.clientHeight;
-                this.wrapperSize.width = this.tableWrapper.nativeElement.clientWidth;
-            } else {
-                this.resizeTriggerIsBlocked = true;
-                setTimeout(() => {
-                    this.resizeTriggerIsBlocked = false;
-                    this.wrapperSize.height = this.tableWrapper.nativeElement.clientHeight;
-                    this.wrapperSize.width = this.tableWrapper.nativeElement.clientWidth;
-                    this.triggerTableRefresh();
-                }, 0);
+    onComponentResized(): void {
+        if (this.table) {
+            if (this.triggerTableRefreshTimeoutHandle !== null) {
+                clearTimeout(this.triggerTableRefreshTimeoutHandle);
             }
+            this.triggerTableRefreshTimeoutHandle = window.setTimeout(() => {
+                this.triggerTableRefreshTimeoutHandle = null;
+                this.triggerTableRefresh();
+            }, 20);
         }
-    }
-
-    ngAfterViewChecked() {
-        this.updateTableSizeIfNecessary();
     }
 
     private getToggledVisibilityState(state: VisibilityFilterState): VisibilityFilterState {

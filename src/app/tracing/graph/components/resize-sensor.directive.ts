@@ -1,35 +1,39 @@
-import { Directive, Output, EventEmitter, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Directive, Output, EventEmitter, ElementRef, AfterViewChecked, AfterViewInit, Input } from '@angular/core';
 import { Size } from '@app/tracing/data.model';
 
 @Directive({
     selector: '[fclResizeSensor]'
 })
 export class ResizeSensorDirective implements AfterViewChecked, AfterViewInit {
-    /// Event Emitter used to communicate the act of scratching to the dog
+
+    @Input() ignoreWindowResize = false;
+    @Input() ignoreNonPositiveResize = false;
+
     @Output() resized = new EventEmitter();
 
     private elementSize: Size;
+    private windowSize: Size;
 
     constructor(private elementRef: ElementRef) { }
 
     ngAfterViewInit(): void {
-        this.setElementSize();
+        this.elementSize = this.getCurrentElementSize();
+        this.windowSize = this.getCurrentWindowSize();
     }
 
-    private setElementSize(): void {
+    private getCurrentElementSize(): Size {
         const clientRect: Size = this.elementRef.nativeElement.getBoundingClientRect();
-        this.elementSize = {
+        return {
             width: clientRect.width,
             height: clientRect.height
         };
     }
 
-    private didElementSizeChanged(): boolean {
-        const clientRect: Size = this.elementRef.nativeElement.getBoundingClientRect();
-        return this.elementSize && (
-            clientRect.height !== this.elementSize.height ||
-            clientRect.width !== this.elementSize.width
-        );
+    private getCurrentWindowSize(): Size {
+        return {
+            height: window.innerHeight,
+            width: window.innerWidth
+        };
     }
 
     ngAfterViewChecked(): void {
@@ -37,15 +41,37 @@ export class ResizeSensorDirective implements AfterViewChecked, AfterViewInit {
     }
 
     private emitResizeEventIfNecessary() {
-        if (this.didElementSizeChanged()) {
-            const oldSize = this.elementSize;
-            this.setElementSize();
-            this.resized.emit();
+        const newElementSize = this.getCurrentElementSize();
+        const oldWindowSize = this.windowSize;
+        this.windowSize = this.getCurrentWindowSize();
+        if (this.isSizeDifferent(this.elementSize, newElementSize)) {
+            if (!this.ignoreNonPositiveResize || !this.isNonPositiveSize(newElementSize)) {
+                this.elementSize = newElementSize;
+                if (!this.ignoreWindowResize || !this.isSizeDifferent(oldWindowSize, this.windowSize)) {
+                    this.resized.emit();
+                }
+            }
         }
     }
 
-    private isElementVisible(): boolean {
-        // works only if there are no 'position: fixed' elements on the page
-        return this.elementRef.nativeElement.offsetParent !== null;
+    private isSizeDifferent(size1: Size, size2: Size): boolean {
+        return !(
+            this.areValuesQuasiEqual(size1.width, size2.width) &&
+            this.areValuesQuasiEqual(size1.height, size2.height)
+        );
+    }
+
+    private getRelativeDifference(value1: number, value2: number): number {
+        const maxAbsValue = Math.max(Math.abs(value1), Math.abs(value2));
+        const diff = Math.abs(value1 - value2);
+        return diff === 0 ? 0 : diff / maxAbsValue;
+    }
+
+    private areValuesQuasiEqual(value1: number, value2: number): boolean {
+        return this.getRelativeDifference(value1, value2) < 1e-6;
+    }
+
+    private isNonPositiveSize(size: Size): boolean {
+        return size.width === 0 || size.height === 0;
     }
 }

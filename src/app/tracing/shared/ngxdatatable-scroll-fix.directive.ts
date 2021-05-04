@@ -1,5 +1,6 @@
-import { Directive, ElementRef, OnInit, AfterViewChecked, OnDestroy, AfterContentInit } from '@angular/core';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { Directive, ElementRef, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { DatatableComponent, TableColumn } from '@swimlane/ngx-datatable';
+import { Size } from '../data.model';
 
 const CLASS_DATATABLE_BODY = 'datatable-body';
 const CLASS_DATATABLE_HEADER = 'datatable-header';
@@ -7,16 +8,36 @@ const CLASS_EMPTY_ROW = 'empty-row';
 const CLASS_DATATABLE_ROW_CENTER = 'datatable-row-center';
 const EVENT_SCROLL = 'scroll';
 
+/**
+ * This directive fixes 2 ngx-datatable issues:
+ * 1. the empty table scroll problem (
+ * if the table is empty the body cannot be scrolled horizontally anymore making it
+ * impossible to scroll to columnheaders which are not in the viewport,
+ * in an non empty table, becomes empty and non empty again the sync of columns and columnheader gets lost
+ * )
+ * 2. the scroll pos loss of tables in reactivated mat-tabs (
+ * if the table is contained in a mat-tab, a non zero scroll pos gets lost after the tab is inactivated
+ * (the user swithces to a different tab) and reactivated again,
+ * the reactivated table might show rendering issues (missing rows)
+ * )
+ */
 @Directive({
-    selector: '[fclEmptyTableScrollFix]'
+    selector: '[fclNgxDatatableScrollFix]'
 })
-export class EmptyTableScrollFixDirective implements OnInit, AfterViewChecked, OnDestroy {
+export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked, OnDestroy {
 
     private emptyRowElement: HTMLElement | null = null;
     private dtRowCenterElement: HTMLElement | null = null;
     private dtHeaderElement: HTMLElement | null = null;
     private dtBodyElement: HTMLElement | null = null;
     private lastRowCount: number = -1;
+    private lastColumns: TableColumn[] = [];
+
+    private lastWidth: number = null;
+    private lastBodyScrollPosition = {
+        top: 0,
+        left: 0
+    };
 
     constructor(
         private hostElement: ElementRef,
@@ -58,6 +79,40 @@ export class EmptyTableScrollFixDirective implements OnInit, AfterViewChecked, O
                 this.unsetElementRefs();
             }
             this.lastRowCount = newRowCount;
+        }
+
+        // fix of scroll behaviour within mat-tab
+        // positive scroll positions are lost after switching the mat-tab container to inactiv
+        // and back to activ
+        // the reason is probably the zero width of the ngx-datatable within the inactiv mat-tab
+        if (this.dtBodyElement) {
+            const elementRect: Size = this.hostElement.nativeElement.getBoundingClientRect();
+            const oldScrollPos = this.lastBodyScrollPosition;
+            if (elementRect.width > 0) {
+                // container mat tab is active
+                // in an inactive mat tab ngx datatable has a width of 0
+                if (this.lastWidth !== null && this.lastWidth === 0) {
+                    // ngx datatable width was 0 on last check
+                    if (
+                        this.lastColumns === this.host.columns &&
+                        (oldScrollPos.top !== 0 || oldScrollPos.left !== 0)
+                    ) {
+                        // columns did not changed
+                        // last scroll pos on was not 0, 0
+                        // restore scroll pos
+                        this.dtBodyElement.scrollTo(oldScrollPos.left, oldScrollPos.top);
+                    }
+                } else {
+                    // store scroll pos & last columns
+                    this.lastColumns = this.host.columns;
+                    this.lastBodyScrollPosition = {
+                        top: this.dtBodyElement.scrollTop,
+                        left: this.dtBodyElement.scrollLeft
+                    };
+                }
+            }
+            // store last width
+            this.lastWidth = elementRect.width;
         }
     }
 

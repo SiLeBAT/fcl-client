@@ -56,7 +56,6 @@ import { HighlightingStationComponent } from './configuration/highlighting-stati
 import { HighlightingDeliveryComponent } from './configuration/highlighting-delivery/highlighting-delivery.component';
 import { HighlightingStationViewComponent } from './configuration/highlighting-station-view/highlighting-station-view.component';
 import { AnonymousButtonViewComponent } from './configuration/anonymous-button-view/anonymous-button-view.component';
-import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.directive';
 import { ResizeSensorDirective } from './graph/components/resize-sensor.directive';
 import { GraphViewComponent } from './graph/components/graph-view/graph-view.component';
 import { GeoMapComponent } from './graph/components/geomap/geomap.component';
@@ -68,6 +67,7 @@ import { ColorsAndShapesEditViewComponent } from './configuration/colors-and-sha
 import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
 import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatatable-row-event-provider.directive';
 import { ColorSelectorViewComponent } from './configuration/color-selector-view/color-selector-view.component';
+import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix.directive';
 
 @NgModule({
     imports: [
@@ -124,7 +124,7 @@ import { ColorSelectorViewComponent } from './configuration/color-selector-view/
         HighlightingDeliveryComponent,
         HighlightingStationViewComponent,
         AnonymousButtonViewComponent,
-        EmptyTableScrollFixDirective,
+        NgxDatatableScrollFixDirective,
         ResizeSensorDirective,
         GraphViewComponent,
         GeoMapComponent,

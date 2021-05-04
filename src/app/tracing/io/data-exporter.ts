@@ -182,9 +182,7 @@ export class DataExporter {
         if (intLogicalConditions) {
             extLogicalConditions = intLogicalConditions.map((andConditionList: IntLogicalCondition[]) =>
                 andConditionList.map((intCondition: IntLogicalCondition) => {
-                    if (intCondition.propertyName === 'weight') {
-                        const tmp = 3;
-                    }
+
                     let propertyName = intToExtPropMap[intCondition.propertyName];
                     let operationType = intToExtOperationTypeMap.get(intCondition.operationType);
                     let value = intCondition.value;

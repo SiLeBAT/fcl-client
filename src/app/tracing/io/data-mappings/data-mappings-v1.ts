@@ -25,12 +25,11 @@ interface AltPropMap {
 }
 
 function getAvailableProps(table: DataTable): { [key: string]: string } {
-    const tmp = Utils.createObjectFromArray(
+    return Utils.createObjectFromArray(
         table.columnProperties,
         (colProp: ColumnProperty) => colProp.id,
         (colProp: ColumnProperty) => colProp.type
     );
-    return tmp;
 }
 
 export const DONT_APPLY_VALUES_FOR_EXT_STATION_COLS: ImmutableList<string> = ImmutableList([
