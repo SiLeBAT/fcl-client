@@ -26,7 +26,7 @@ export class StationByCountryGrouper implements StationGrouper {
 
     private getCountryProperty(station: StationData): string {
         const countryProperties = station.properties.filter(p => p.name.toLocaleLowerCase() === 'country');
-        return (countryProperties.length > 0 ? countryProperties[0].value : null);
+        return (countryProperties.length > 0 ? countryProperties[0].value as string : null);
     }
 
     groupStations(stations: StationData[]): StationGroup[] {

@@ -2,6 +2,9 @@ import Ajv from 'ajv';
 import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
 import { InputFormatError } from '../io-errors';
 
+const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = 'SDHR';
+const DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = 'DDHR';
+
 export async function isValidJson(schema: any, data: any, throwError?: boolean): Promise<boolean> {
     const ajv = new Ajv();
     const valid = ajv.validate(schema, data);
@@ -39,6 +42,7 @@ export function createDefaultHighlights(): HighlightingSettings {
         invisibleStations: [],
         stations: [
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
                 name: 'Outbreak',
                 showInLegend: true,
                 disabled: false,
@@ -63,6 +67,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
                 name: 'Observed',
                 showInLegend: true,
                 disabled: false,
@@ -87,6 +92,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
                 name: 'Forward Trace',
                 showInLegend: true,
                 disabled: false,
@@ -111,6 +117,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
                 name: 'Backward Trace',
                 showInLegend: true,
                 disabled: false,
@@ -135,6 +142,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Cross Contamination',
                 name: 'Cross Contamination',
                 showInLegend: true,
                 disabled: false,
@@ -159,6 +167,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Common Link',
                 name: 'Common Link',
                 showInLegend: true,
                 disabled: false,
@@ -183,6 +192,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Score',
                 name: 'Score',
                 showInLegend: false,
                 disabled: false,
@@ -199,6 +209,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'StationLabel',
                 name: 'StationLabel',
                 showInLegend: false,
                 disabled: false,
@@ -213,6 +224,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
                 name: 'Kill Contamination',
                 showInLegend: true,
                 disabled: false,
@@ -236,6 +248,7 @@ export function createDefaultHighlights(): HighlightingSettings {
 
         deliveries: [
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
                 name: 'Outbreak',
                 showInLegend: true,
                 disabled: false,
@@ -260,6 +273,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
                 name: 'Observed',
                 showInLegend: true,
                 disabled: false,
@@ -284,6 +298,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
                 name: 'Forward Trace',
                 showInLegend: true,
                 disabled: false,
@@ -308,6 +323,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
                 name: 'Backward Trace',
                 showInLegend: true,
                 disabled: false,
@@ -332,6 +348,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
                 name: 'Kill Contamination',
                 showInLegend: true,
                 disabled: false,
@@ -352,6 +369,7 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'DeliveryLabel',
                 name: 'DeliveryLabel',
                 showInLegend: false,
                 disabled: false,

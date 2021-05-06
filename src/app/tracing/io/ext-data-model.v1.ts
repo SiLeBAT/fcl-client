@@ -77,7 +77,7 @@ export interface NodeViewData {
     // labelPosition: string;
     selectedNodes?: string[];
     // invisibleNodes: string[];
-    highlightConditions?: StationHighlightingData[];
+    highlightConditions?: StationHighlightingRule[];
 }
 
 export interface EdgeViewData {
@@ -89,7 +89,7 @@ export interface EdgeViewData {
     // arrowHeadInMiddle: boolean;
     selectedEdges: string[];
     // invisibleEdges: string[];
-    highlightConditions?: DeliveryHighlightingData[];
+    highlightConditions?: DeliveryHighlightingRule[];
     // showCrossContaminatedDeliveries: boolean;
     // filter: EdgeFilterData;
 }
@@ -134,7 +134,7 @@ interface EdgeDateFilterData {
     showDeliveriesWithoutDate: boolean;
 }
 
-export interface ElementHighlightingData {
+export interface HighlightingRule {
     name: string;
     showInLegend: boolean;
     disabled?: boolean;
@@ -146,11 +146,11 @@ export interface ElementHighlightingData {
     logicalConditions: LogicalCondition[][];
 }
 
-export interface DeliveryHighlightingData extends ElementHighlightingData {
+export interface DeliveryHighlightingRule extends HighlightingRule {
     linePattern: string;
 }
 
-export interface StationHighlightingData extends ElementHighlightingData {
+export interface StationHighlightingRule extends HighlightingRule {
     shape: string;
 }
 

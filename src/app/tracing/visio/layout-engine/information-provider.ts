@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import {
     StationInformation, LotInformation, ProductInformation, DeliveryInformation
 } from './datatypes';
-import { StationData, DeliveryData, SampleData, ROASettings, LabelElementInfo, PropElementInfo } from '../../data.model';
+import { StationData, DeliveryData, SampleData, ROASettings, LabelElementInfo, PropElementInfo, PropertyEntry } from '../../data.model';
 import { Utils } from '../../util/non-ui-utils';
 import { addSampleInformation } from './sample-information-provider';
 
@@ -120,10 +120,12 @@ export class InformationProvider {
         return value;
     }
 
-    private getProperty(propList: {name: string, value: string}[], propName: string): string {
+    // private getProperty(propList: PropertyEntry[], propName: string): string {
+    private getProperty(propList: PropertyEntry[], propName: string): string | null {
         const index: number = propList.findIndex((p) => p.name.localeCompare(propName) === 0);
         if (index >= 0) {
-            return propList[index].value;
+            const value = propList[index].value;
+            return value + '';
         } else {
             return null;
         }

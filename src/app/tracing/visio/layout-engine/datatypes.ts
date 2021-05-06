@@ -128,7 +128,7 @@ export interface StationInformation {
     data: StationData;
     ctno: string;
     props: { [key: string]: string | number | boolean };
-    activities: string; // - Activities / step in the food chain
+    activities: string | null; // - Activities / step in the food chain
     samples: StationSampleInformation[];
     inSamples: InSampleInformation[];
     products: ProductInformation[];

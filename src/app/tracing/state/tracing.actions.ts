@@ -6,7 +6,7 @@ import {
     ROASettings,
     CrossContTraceType,
     DeliveryId,
-    StationHighlightingData
+    StationHighlightingRule
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -293,7 +293,7 @@ export class ResetTracingStateSOA implements Action {
 export class SetStationHighlightingRulesSOA implements Action {
     readonly type = TracingActionTypes.SetStationHighlightingRulesSOA;
 
-    constructor(public payload: { stationHighlightingData: StationHighlightingData[] }) {}
+    constructor(public payload: { rules: StationHighlightingRule[] }) {}
 }
 
 export class SetColorsAndShapesEditIndexSOA implements Action {

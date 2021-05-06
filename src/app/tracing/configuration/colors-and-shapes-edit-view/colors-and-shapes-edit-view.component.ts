@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChange, SimpleChanges, ViewEncapsulation } from '@angular/core';
-import { Color, NodeShapeType, StationHighlightingData, TableColumn } from '@app/tracing/data.model';
-import { ComplexFilterCondition, ExtendedOperationType, LogicalFilterCondition, PropToValuesMap } from '../configuration.model';
+import { Color, NodeShapeType, OperationType, StationHighlightingRule, TableColumn } from '@app/tracing/data.model';
+import { ComplexFilterCondition, PropToValuesMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import * as _ from 'lodash';
 
@@ -11,6 +11,8 @@ import * as _ from 'lodash';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ColorsAndShapesEditViewComponent implements OnChanges {
+
+    private static readonly CS_RULE_ID_PREFIX = 'CSR';
 
     get useShape(): boolean {
         return this.useShape_;
@@ -74,23 +76,23 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
     private static readonly ENABLED_APPLY_TOOLTIP = 'Apply Highlighting Rule';
     private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
 
-    @Input() rule: StationHighlightingData | null = null;
+    @Input() rule: StationHighlightingRule | null = null;
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
 
-    @Output() applyRule = new EventEmitter<StationHighlightingData>();
+    @Output() applyRule = new EventEmitter<StationHighlightingRule>();
     @Output() cancelEdit = new EventEmitter();
-    @Output() okRule = new EventEmitter<StationHighlightingData>();
+    @Output() okRule = new EventEmitter<StationHighlightingRule>();
 
-    availableOperatorTypes: ExtendedOperationType[] = [
-        ExtendedOperationType.EQUAL,
-        ExtendedOperationType.GREATER,
-        ExtendedOperationType.NOT_EQUAL,
-        ExtendedOperationType.LESS,
-        ExtendedOperationType.REGEX_EQUAL,
-        ExtendedOperationType.REGEX_NOT_EQUAL,
-        ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE,
-        ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+    availableOperatorTypes: OperationType[] = [
+        OperationType.EQUAL,
+        OperationType.GREATER,
+        OperationType.NOT_EQUAL,
+        OperationType.LESS,
+        OperationType.REGEX_EQUAL,
+        OperationType.REGEX_NOT_EQUAL,
+        OperationType.REGEX_EQUAL_IGNORE_CASE,
+        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
     ];
 
     private useShape_ = false;
@@ -98,8 +100,8 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
     private lastActiveColor: Color = ColorsAndShapesEditViewComponent.DEFAULT_COLOR;
     private lastActiveShape: NodeShapeType | null = null;
 
-    private complexFilterConditions_: LogicalFilterCondition[] = [];
-    private rule_: StationHighlightingData = this.createDefaultRule();
+    private complexFilterConditions_: ComplexFilterCondition[] = [];
+    private rule_: StationHighlightingRule = this.createDefaultRule();
 
     private convertRGBArrayToColor(color: number[]): Color {
         return { r: color[0], g: color[1], b: color[2] };
@@ -131,7 +133,7 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
         this.setShape(shapeType);
     }
 
-    onComplexFilterChange(complexFilterConditions: LogicalFilterCondition[]): void {
+    onComplexFilterChange(complexFilterConditions: ComplexFilterCondition[]): void {
 
         this.complexFilterConditions_ = complexFilterConditions;
         const logicalConditions = ComplexFilterUtils.complexFilterConditionsToLogicalConditions(complexFilterConditions);
@@ -179,8 +181,9 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
         }
     }
 
-    private createDefaultRule(): StationHighlightingData {
+    private createDefaultRule(): StationHighlightingRule {
         return {
+            id: ColorsAndShapesEditViewComponent.CS_RULE_ID_PREFIX + (new Date()).valueOf(),
             name: '',
             showInLegend: true,
             disabled: false,

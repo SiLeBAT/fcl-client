@@ -1,4 +1,4 @@
-import { BasicGraphState, DataServiceData, DataTable, StationHighlightingData, TableColumn } from './../../data.model';
+import { BasicGraphState, DataServiceData, DataTable, StationHighlightingRule, TableColumn } from './../../data.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 interface HighlightingState {
     graphState: BasicGraphState;
-    highlightingState: StationHighlightingData[];
+    highlightingState: StationHighlightingRule[];
     editIndex: number | null;
 }
 
@@ -38,7 +38,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
             this.cachedState.editIndex;
     }
 
-    get rules(): StationHighlightingData[] {
+    get rules(): StationHighlightingRule[] {
         return this.cachedState === null ?
             [] :
             this.cachedState.highlightingState;
@@ -95,7 +95,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         );
     }
 
-    onRulesChange(newRules: StationHighlightingData[]) {
+    onRulesChange(newRules: StationHighlightingRule[]) {
         this.emitNewRules(newRules);
     }
 
@@ -117,9 +117,9 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         }
     }
 
-    private emitNewRules(stationHighlightingData: StationHighlightingData[]) {
+    private emitNewRules(rules: StationHighlightingRule[]) {
         this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
-            { stationHighlightingData: stationHighlightingData }
+            { rules: rules }
         ));
     }
 

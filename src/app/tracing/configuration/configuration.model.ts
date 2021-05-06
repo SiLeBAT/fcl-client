@@ -1,4 +1,4 @@
-import { DataTable, StationHighlightingData } from '../data.model';
+import { DataTable, HighlightingRule, OperationType } from '../data.model';
 
 export type FilterTabId = 'filterTab';
 export type HighlightingTabId = 'highlightingTab';
@@ -17,23 +17,15 @@ export interface ConfigurationTabIndex {
     activeFilterTabId: ActiveFilterTabId;
     activeHighlightingTabId: ActiveHighlightingTabId;
 }
-
-export interface LogicalFilterCondition {
-    property: string;
-    operation: ExtendedOperationType;
-    value: string | number | boolean;
-    junktor: JunktorType;
-}
-
 export interface ComplexFilterCondition {
-    property: string;
-    operation: ExtendedOperationType;
-    value: string | number | boolean;
-    junktor: JunktorType;
+    propertyName: string | null;
+    operationType: OperationType | null;
+    value: string;
+    junktorType: JunktorType;
 }
 
 export interface ComplexRowFilterSettings {
-    conditions: LogicalFilterCondition[];
+    conditions: ComplexFilterCondition[];
 }
 
 export interface ColumnFilterSettings {
@@ -82,8 +74,8 @@ export interface ColorsAndShapesInputData extends ColorsAndShapesEditInputData {
     editIndex: number;
 }
 export interface HighlightingRuleDeleteRequestData {
-    highlightingData: StationHighlightingData[];
-    highlightingRule: StationHighlightingData;
+    highlightingData: HighlightingRule[];
+    highlightingRule: HighlightingRule;
     xPos: number;
     yPos: number;
 }
@@ -92,18 +84,6 @@ export enum ShowType {
     ALL = 'Show all' as any,
     SELECTED_ONLY = 'Show only selected' as any,
     TRACE_ONLY = 'Show only traced' as any
-}
-
-export enum ExtendedOperationType {
-    EQUAL = '==',
-    CONTAINS = 'contains',
-    GREATER = '>',
-    NOT_EQUAL = '!=',
-    LESS = '<',
-    REGEX_EQUAL = '== (Regex)',
-    REGEX_NOT_EQUAL = '!= (Regex)',
-    REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
-    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
 }
 
 export enum JunktorType {

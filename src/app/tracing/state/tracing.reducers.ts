@@ -482,7 +482,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         highlightingSettings: {
                             ...state.fclData.graphSettings.highlightingSettings,
-                            stations: action.payload.stationHighlightingData
+                            stations: action.payload.rules
                         }
                     }
                 }

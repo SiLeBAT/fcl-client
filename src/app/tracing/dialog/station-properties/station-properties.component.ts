@@ -1,7 +1,6 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as d3 from 'd3';
-import { Subject } from 'rxjs';
 
 import { DeliveryData, StationData, DeliveryId, StationId } from '../../data.model';
 import { Constants } from '../../util/constants';
@@ -222,7 +221,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         station.properties.forEach(prop => {
             properties[prop.name] = {
                 label: this.convertPropNameToLabel(prop.name),
-                value: prop.value != null ? prop.value : ''
+                value: prop.value + ''
             };
         });
 

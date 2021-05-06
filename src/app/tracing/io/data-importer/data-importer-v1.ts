@@ -15,8 +15,8 @@ import { isValidJson, createDefaultHighlights, checkVersionFormat, areMajorVersi
 import { importSamples } from './sample-importer-v1';
 import {
     ViewData,
-    StationHighlightingData as ExtStationHighlightingData,
-    DeliveryHighlightingData as ExtDeliveryHighlightingData,
+    StationHighlightingRule as ExtStationHighlightingRule,
+    DeliveryHighlightingRule as ExtDeliveryHighlightingRule,
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
     JsonData,
@@ -477,13 +477,14 @@ export class DataImporterV1 implements IDataImporter {
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
         if (viewData && viewData.node && viewData.node.highlightConditions) {
 
-            const extStatHighlightingRules: ExtStationHighlightingData[] = viewData.node.highlightConditions;
+            const extStatHighlightingRules: ExtStationHighlightingRule[] = viewData.node.highlightConditions;
 
             if (extStatHighlightingRules.length > 0) {
                 const extToIntPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
 
-                fclData.graphSettings.highlightingSettings.stations = extStatHighlightingRules.map(extRule => (
+                fclData.graphSettings.highlightingSettings.stations = extStatHighlightingRules.map((extRule, extRuleIndex) => (
                     {
+                        id: 'SHR' + extRuleIndex,
                         name: extRule.name,
                         showInLegend: extRule.showInLegend === true,
                         disabled: extRule.disabled === true,
@@ -503,13 +504,14 @@ export class DataImporterV1 implements IDataImporter {
 
         if (viewData && viewData.edge && viewData.edge.highlightConditions) {
 
-            const extDelHighlightingRules: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
+            const extDelHighlightingRules: ExtDeliveryHighlightingRule[] = viewData.edge.highlightConditions;
 
             if (extDelHighlightingRules.length > 0) {
                 const extToIntPropMap: Map<string, string> = this.createReverseMapFromSimpleMap(fclData.source.propMaps.deliveryPropMap);
 
-                fclData.graphSettings.highlightingSettings.deliveries = extDelHighlightingRules.map(extRule => (
+                fclData.graphSettings.highlightingSettings.deliveries = extDelHighlightingRules.map((extRule, extRuleIndex) => (
                     {
+                        id: 'DHR' + extRuleIndex,
                         name: extRule.name,
                         showInLegend: extRule.showInLegend === true,
                         disabled: extRule.disabled === true,

@@ -3,8 +3,7 @@ import {
     ValueType,
     ValueCondition as IntValueCondition,
     LogicalCondition as IntLogicalCondition,
-    StationHighlightingData as IntStationHighlightingData,
-    DeliveryHighlightingData as IntDeliveryHighlightingData,
+    HighlightingRule as IntHighlightingRule,
     NodeShapeType,
     OperationType,
     PropMap
@@ -17,7 +16,7 @@ import {
     VERSION, JsonData, ViewData,
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
-    ElementHighlightingData as ExtElementHighlightingData
+    HighlightingRule as ExtHighlightingRule
 } from './ext-data-model.v1';
 import { createDefaultSettings } from './json-data-creator';
 
@@ -154,11 +153,11 @@ export class DataExporter {
     }
 
     private static mapSharedRuleProps(
-        rule: IntStationHighlightingData | IntDeliveryHighlightingData,
+        rule: IntHighlightingRule,
         intToExtPropMap: PropMap,
         intToExtValueTypeMap: Map<ValueType, string>,
         intToExtOpTypeMap: Map<OperationType, string>
-    ): ExtElementHighlightingData {
+    ): ExtHighlightingRule {
         return {
             name: rule.name,
             showInLegend: rule.showInLegend,

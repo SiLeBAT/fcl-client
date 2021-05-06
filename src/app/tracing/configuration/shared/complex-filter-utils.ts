@@ -1,8 +1,7 @@
-import { DataTable, LogicalCondition, OperationType, TableColumn } from '@app/tracing/data.model';
+import { DataTable, LogicalCondition, TableColumn } from '@app/tracing/data.model';
 import {
-    ComplexFilterCondition, ExtendedOperationType, JunktorType, LogicalFilterCondition, PropToValuesMap
+    ComplexFilterCondition, JunktorType, PropToValuesMap
 } from '../configuration.model';
-import { Utils } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 
 type ConditionGroup = LogicalCondition[];
@@ -10,22 +9,7 @@ type SimpleValueType = string | number | boolean | undefined | null;
 
 export class ComplexFilterUtils {
 
-    static readonly DEFAULT_JUNKTOR = JunktorType.AND;
-
-    private static opTypeToExtOpTypeMap: Record<OperationType, ExtendedOperationType> = {
-        [OperationType.EQUAL]: ExtendedOperationType.EQUAL,
-        [OperationType.GREATER]: ExtendedOperationType.GREATER,
-        [OperationType.LESS]: ExtendedOperationType.LESS,
-        [OperationType.NOT_EQUAL]: ExtendedOperationType.NOT_EQUAL,
-        [OperationType.REGEX_EQUAL]: ExtendedOperationType.REGEX_EQUAL,
-        [OperationType.REGEX_EQUAL_IGNORE_CASE]: ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE,
-        [OperationType.REGEX_NOT_EQUAL]: ExtendedOperationType.REGEX_NOT_EQUAL,
-        [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
-
-    };
-
-    private static extOpTypeToOpTypeMap: Record<ExtendedOperationType, OperationType> =
-        Utils.getReversedRecord(ComplexFilterUtils.opTypeToExtOpTypeMap);
+    static readonly DEFAULT_JUNKTOR_TYPE = JunktorType.AND;
 
     static extractDataColumns(dataTable: DataTable): TableColumn[] {
         return dataTable.columns.filter((tableColumn: TableColumn) => {
@@ -49,23 +33,18 @@ export class ComplexFilterUtils {
         return propToValuesMap;
     }
 
-    static complexFilterConditionsToLogicalConditions(filterConditions: LogicalFilterCondition[]): LogicalCondition[][] {
+    static complexFilterConditionsToLogicalConditions(filterConditions: ComplexFilterCondition[]): LogicalCondition[][] {
         const groups: ConditionGroup[] = [];
         let newGroup: ConditionGroup = [];
 
         for (const filterCondition of filterConditions) {
-            const opType = (
-                filterCondition.operation !== null ?
-                this.extOpTypeToOpTypeMap[filterCondition.operation] :
-                null
-            );
             const logicalCondition = {
-                propertyName: filterCondition.property,
-                operationType: opType,
-                value: filterCondition.value as string
+                propertyName: filterCondition.propertyName,
+                operationType: filterCondition.operationType,
+                value: filterCondition.value
             };
             newGroup.push(logicalCondition);
-            if (filterCondition.junktor === JunktorType.OR) {
+            if (filterCondition.junktorType === JunktorType.OR) {
                 groups.push(newGroup);
                 newGroup = [];
             }
@@ -125,13 +104,11 @@ export class ComplexFilterUtils {
             if (andConditions.length > 0) {
                 for (const andCondition of andConditions) {
                     const filterCondition: ComplexFilterCondition = {
-                        property: andCondition.propertyName,
-                        operation: ComplexFilterUtils.opTypeToExtOpTypeMap[andCondition.operationType],
-                        value: andCondition.value,
-                        junktor: JunktorType.AND
+                        ...andCondition,
+                        junktorType: JunktorType.AND
                     };
                     if (andCondition === andConditions[andConditions.length - 1]) {
-                        filterCondition.junktor = JunktorType.OR;
+                        filterCondition.junktorType = JunktorType.OR;
                     }
                     filterConditions.push(filterCondition);
                 }
@@ -139,25 +116,25 @@ export class ComplexFilterUtils {
         }
         if (filterConditions.length === 0) {
             filterConditions.push({
-                property: null,
-                operation: null,
+                propertyName: null,
+                operationType: null,
                 value: '',
-                junktor: JunktorType.AND
+                junktorType: JunktorType.AND
             });
         } else {
-            filterConditions[filterConditions.length - 1].junktor = JunktorType.AND;
+            filterConditions[filterConditions.length - 1].junktorType = JunktorType.AND;
         }
 
         return filterConditions;
 
     }
 
-    static createDefaultFilterConditions(): ComplexFilterCondition[] {
+    static createDefaultComplexFilterConditions(): ComplexFilterCondition[] {
         return [{
-            property: undefined,
-            operation: undefined,
+            propertyName: null,
+            operationType: null,
             value: '',
-            junktor: this.DEFAULT_JUNKTOR
+            junktorType: this.DEFAULT_JUNKTOR_TYPE
         }];
     }
 }

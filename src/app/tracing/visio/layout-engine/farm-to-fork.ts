@@ -83,7 +83,7 @@ export function setFarmToForkPositions(data: FclElements, nodeInfoMap: Map<strin
         const v: Vertex = new Vertex();
         const properties = station.properties.filter(p => p.name === 'typeOfBusiness');
         if (properties.length > 0) {
-            v.typeCode = typeRanker.getBusinessTypeCode(properties[0].value);
+            v.typeCode = typeRanker.getBusinessTypeCode(properties[0].value as string);
         }
         v.size = nodeInfoMap.get(station.id).size;
         v.name = station.name;

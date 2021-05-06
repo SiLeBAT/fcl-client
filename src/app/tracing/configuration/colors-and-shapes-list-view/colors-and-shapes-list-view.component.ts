@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { StationHighlightingData, TableColumn } from '@app/tracing/data.model';
+import { StationHighlightingRule, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
 
 @Component({
@@ -11,14 +11,14 @@ import { HighlightingRuleDeleteRequestData } from '../configuration.model';
 })
 export class ColorsAndShapesListViewComponent {
 
-    @Input() rules: StationHighlightingData[] = [];
+    @Input() rules: StationHighlightingRule[] = [];
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: Record<string, string[]> = {};
     @Input() editIndex: number | null = null;
 
     @Output() ruleDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
-    @Output() toggleShowInLegendProperty = new EventEmitter<StationHighlightingData[]>();
-    @Output() rulesChange = new EventEmitter<StationHighlightingData[]>();
+    @Output() toggleShowInLegendProperty = new EventEmitter<StationHighlightingRule[]>();
+    @Output() rulesChange = new EventEmitter<StationHighlightingRule[]>();
     @Output() editIndexChange = new EventEmitter<number | null>();
 
     get showAddRuleButton(): boolean {
@@ -33,7 +33,7 @@ export class ColorsAndShapesListViewComponent {
         return this.editIndex !== null;
     }
 
-    get editRule(): StationHighlightingData | null {
+    get editRule(): StationHighlightingRule | null {
         return (
             (this.editIndex === null || this.rules.length === this.editIndex) ?
             null :
@@ -82,7 +82,7 @@ export class ColorsAndShapesListViewComponent {
         this.rulesChange.emit(newRules);
     }
 
-    onApplyRule(rule: StationHighlightingData): void {
+    onApplyRule(rule: StationHighlightingRule): void {
         const newRules = this.getNewRulesWithRuleAtEditIndex(rule);
         this.emitNewRules(newRules);
     }
@@ -91,14 +91,14 @@ export class ColorsAndShapesListViewComponent {
         this.emitEditIndex(null);
     }
 
-    onOkRule(rule: StationHighlightingData): void {
+    onOkRule(rule: StationHighlightingRule): void {
         const newRules = this.getNewRulesWithRuleAtEditIndex(rule);
         this.emitEditIndex(null);
 
         this.emitNewRules(newRules);
     }
 
-    private getNewRulesWithRuleAtEditIndex(rule: StationHighlightingData): StationHighlightingData[] {
+    private getNewRulesWithRuleAtEditIndex(rule: StationHighlightingRule): StationHighlightingRule[] {
         const newRules = [...this.rules];
         newRules[this.editIndex] = rule;
 
@@ -109,7 +109,7 @@ export class ColorsAndShapesListViewComponent {
         this.editIndexChange.emit(editIndex);
     }
 
-    private emitNewRules(newRules: StationHighlightingData[]): void {
+    private emitNewRules(newRules: StationHighlightingRule[]): void {
         this.rulesChange.emit(newRules);
     }
 

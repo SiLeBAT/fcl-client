@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
-import { StationHighlightingData, TableColumn } from '@app/tracing/data.model';
+import { StationHighlightingRule, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import * as _ from 'lodash';
 
@@ -14,13 +14,13 @@ export class HighlightingStationViewComponent implements OnChanges {
     @Input() colorOrShapeRuleEditIndex: number | null = null;
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
-    @Input() rules: StationHighlightingData[] = [];
+    @Input() rules: StationHighlightingRule[] = [];
 
-    @Output() rulesChange = new EventEmitter<StationHighlightingData[]>();
+    @Output() rulesChange = new EventEmitter<StationHighlightingRule[]>();
     @Output() ruleDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
     @Output() colorOrShapeRuleEditIndexChange = new EventEmitter<number | null>();
 
-    get colorOrShapeRules(): StationHighlightingData[] {
+    get colorOrShapeRules(): StationHighlightingRule[] {
         return this.colorOrShapeRules_;
     }
 
@@ -28,8 +28,8 @@ export class HighlightingStationViewComponent implements OnChanges {
     stationSizeOpenState = false;
     colorsAndShapesOpenState = false;
 
-    private colorOrShapeRules_: StationHighlightingData[] = [];
-    private restRules_: StationHighlightingData[] = [];
+    private colorOrShapeRules_: StationHighlightingRule[] = [];
+    private restRules_: StationHighlightingRule[] = [];
 
     constructor() { }
 
@@ -50,7 +50,7 @@ export class HighlightingStationViewComponent implements OnChanges {
         });
     }
 
-    onColorOrShapeRulesChange(newColorOrShapeRules: StationHighlightingData[]) {
+    onColorOrShapeRulesChange(newColorOrShapeRules: StationHighlightingRule[]) {
         this.colorOrShapeRules_ = newColorOrShapeRules;
         const newRules = this.colorOrShapeRules_.concat(this.restRules_);
         this.rulesChange.emit(newRules);

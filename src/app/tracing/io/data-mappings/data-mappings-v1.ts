@@ -4,7 +4,7 @@ import { GroupType, OperationType, ValueType, NodeShapeType, MergeDeliveriesType
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import * as ExtDataConstants from './../ext-data-constants.v1';
 import { Constants as IntDataConstants } from '../../util/constants';
-import { DataTable, DataRow, JsonData, DeliveryHighlightingData, StationHighlightingData, ColumnProperty } from '../ext-data-model.v1';
+import { DataTable, DataRow, JsonData, ColumnProperty, HighlightingRule as ExtHighlightingRule } from '../ext-data-model.v1';
 import { Utils } from '../../util/non-ui-utils';
 import { STATION_PROP_TO_REQ_TYPE_MAP, DELIVERY_PROP_TO_REQ_TYPE_MAP, DEL2DEL_PROP_TO_REQ_TYPE_MAP } from '../int-data-constants';
 import { isValueTypeValid } from './shared';
@@ -206,7 +206,7 @@ function getPropMap(
 }
 
 // retrieves all props referenced in HighlightingData
-function getReferencedProps(highlightingConditions: (StationHighlightingData | DeliveryHighlightingData)[]): string[] {
+function getReferencedProps(highlightingConditions: ExtHighlightingRule[]): string[] {
     return (
         highlightingConditions ?
         [].concat(...highlightingConditions.map(
@@ -396,14 +396,12 @@ export class PropMapper {
                     } else if (this.directProps.has(intProp)) {
                         toObj[intProp] = property.value;
                     } else if (toObj['properties']) {
-                        (toObj as StationStoreData | DeliveryStoreData).properties.push({
-                            name: intProp,
-                            value: (
-                                property.value !== null && property.value !== undefined && typeof(property.value) !== 'string' ?
-                                property.value.toString() :
-                                property.value
-                            ) as string
-                        });
+                        if (property.value !== null && property.value !== undefined) {
+                            (toObj as StationStoreData | DeliveryStoreData).properties.push({
+                                name: intProp,
+                                value: property.value
+                            });
+                        }
                     }
                 }
             }

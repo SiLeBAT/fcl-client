@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
-    DataTable, TableRow, TableColumn
+    DataTable, TableRow, TableColumn, OperationType
 } from '@app/tracing/data.model';
 import {
     createPredefinedRowFilter,
@@ -13,7 +13,7 @@ import {
 import { filterTableRows } from '../shared';
 import { InputData as FilterTableViewInputData, TableFilterChange } from '../filter-table-view/filter-table-view.component';
 import * as _ from 'lodash';
-import { FilterTableSettings, ShowType, ExtendedOperationType, LogicalFilterCondition, PropToValuesMap } from '../configuration.model';
+import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 export interface InputData {
@@ -43,16 +43,16 @@ export class FilterElementsViewComponent {
     @Output() mouseOverTableRow = new EventEmitter<TableRow>();
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
 
-    availableOperatorTypes: ExtendedOperationType[] = [
-        ExtendedOperationType.EQUAL,
-        ExtendedOperationType.CONTAINS,
-        ExtendedOperationType.GREATER,
-        ExtendedOperationType.NOT_EQUAL,
-        ExtendedOperationType.LESS,
-        ExtendedOperationType.REGEX_EQUAL,
-        ExtendedOperationType.REGEX_NOT_EQUAL,
-        ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE,
-        ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+    availableOperatorTypes: OperationType[] = [
+        OperationType.EQUAL,
+        OperationType.CONTAINS,
+        OperationType.GREATER,
+        OperationType.NOT_EQUAL,
+        OperationType.LESS,
+        OperationType.REGEX_EQUAL,
+        OperationType.REGEX_NOT_EQUAL,
+        OperationType.REGEX_EQUAL_IGNORE_CASE,
+        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
     ];
 
     get standardFilterSettings(): string {
@@ -63,7 +63,7 @@ export class FilterElementsViewComponent {
         return this.inputData.filterTableSettings.predefinedFilter;
     }
 
-    get complexFilterSettings(): LogicalFilterCondition[] {
+    get complexFilterSettings(): ComplexFilterCondition[] {
         return this.inputData.filterTableSettings.complexFilter.conditions;
     }
 
@@ -117,7 +117,7 @@ export class FilterElementsViewComponent {
         });
     }
 
-    onComplexFilterChange(conditions: LogicalFilterCondition[]): void {
+    onComplexFilterChange(conditions: ComplexFilterCondition[]): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
             complexFilter: { conditions: conditions }

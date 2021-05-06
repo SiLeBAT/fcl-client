@@ -11,6 +11,7 @@ import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteStationHig
 import { TableType } from './model';
 import { SetFilterStationTableColumnOrderSOA, SetFilterDeliveryTableColumnOrderSOA, SetStationHighlightingRulesSOA } from '../state/tracing.actions';
 import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/dialog-yes-no.component';
+import { StationHighlightingRule } from '../data.model';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -68,8 +69,8 @@ export class ConfigurationEffects {
         ofType<DeleteStationHighlightingRulesSSA>(ConfigurationActionTypes.DeleteStationHighlightingRulesSSA),
         mergeMap(action => {
 
-            const newHighlightingData = action.payload.stationHighlightingRule.highlightingData;
-            const rule = action.payload.stationHighlightingRule.highlightingRule;
+            const newRules = action.payload.stationHighlightingRule.highlightingData as (StationHighlightingRule[]);
+            const ruleToDelete = action.payload.stationHighlightingRule.highlightingRule;
             const xPos = (action.payload.stationHighlightingRule.xPos - 350).toString(10).concat('px');
             const yPos = (action.payload.stationHighlightingRule.yPos - 140).toString(10).concat('px');
 
@@ -79,7 +80,7 @@ export class ConfigurationEffects {
             };
 
             const dialogData: DialogYesNoData = {
-                title: `Really delete the '${rule.name}' highlighting rule?`,
+                title: `Really delete the '${ruleToDelete.name}' highlighting rule?`,
                 position: position
             };
 
@@ -93,7 +94,7 @@ export class ConfigurationEffects {
                 ).subscribe((result) => {
                     if (result === true) {
                         this.store.dispatch(new SetStationHighlightingRulesSOA(
-                            { stationHighlightingData: newHighlightingData }
+                            { rules: newRules }
                         ));
                     }
                 },

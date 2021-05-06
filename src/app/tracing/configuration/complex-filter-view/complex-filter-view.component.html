@@ -6,14 +6,14 @@
 
             <fcl-property-selector-view
                 class="fcl-complex-filter-form-field"
-                [value]="conditions[i].property"
+                [value]="conditions[i].propertyName"
                 (valueChange)="onPropertyChange($event, i)"
                 [availableProperties]="availableProperties"
             ></fcl-property-selector-view>
 
             <fcl-operator-selector-view
                 class="fcl-complex-filter-form-field"
-                [value]="conditions[i].operation"
+                [value]="conditions[i].operationType"
                 (valueChange)="onOperatorChange($event, i)"
                 [availableOperatorTypes] = "availableOperatorTypes"
             ></fcl-operator-selector-view>
@@ -22,13 +22,13 @@
                 class="fcl-complex-filter-form-field"
                 [value]="conditions[i].value"
                 (valueChange)="onValueChange($event, i)"
-                [availableValues]="propToValuesMap[conditions[i].property || '']"
+                [availableValues]="propToValuesMap[conditions[i].propertyName || '']"
             ></fcl-value-editor-view>
 
             <fcl-junktor-selector-view
                 class="fcl-complex-filter-form-field"
                 *ngIf="i < (conditions.length - 1)"
-                [value]="conditions[i].junktor"
+                [value]="conditions[i].junktorType"
                 (valueChange)="onJunktorChange($event, i)"
                 >
             </fcl-junktor-selector-view>

@@ -1,3 +1,5 @@
+export type HighlightingRuleId = string;
+
 interface ViewData {
     selected: boolean;
     invisible: boolean;
@@ -65,6 +67,11 @@ export interface FclElements {
 export type StationId = string;
 export type DeliveryId = string;
 
+export interface PropertyEntry {
+    name: string;
+    value: number | boolean | string;
+}
+
 export interface StationStoreData {
     id: StationId;
     name?: string;
@@ -73,7 +80,7 @@ export interface StationStoreData {
     incoming: string[];
     outgoing: string[];
     connections: Connection[];
-    properties: { name: string, value: string }[];
+    properties: PropertyEntry[];
 }
 
 export interface DeliveryStoreData {
@@ -85,7 +92,7 @@ export interface DeliveryStoreData {
     dateOut?: string;
     source: string;
     target: string;
-    properties: { name: string, value: string }[];
+    properties: PropertyEntry[];
 }
 
 export interface Layout {
@@ -153,8 +160,8 @@ export interface GraphSettings {
 
 export interface HighlightingSettings {
     invisibleStations: StationId[];
-    stations?: StationHighlightingData[];
-    deliveries?: DeliveryHighlightingData[];
+    stations?: StationHighlightingRule[];
+    deliveries?: DeliveryHighlightingRule[];
 }
 
 export interface TextElementInfo {
@@ -179,7 +186,8 @@ export interface ROASettings {
     labelSettings: ROALabelSettings;
 }
 
-interface ElementHighlightingData {
+export interface HighlightingRule {
+    id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
     color: number[];
@@ -191,11 +199,11 @@ interface ElementHighlightingData {
     logicalConditions: LogicalCondition[][];
 }
 
-export interface DeliveryHighlightingData extends ElementHighlightingData {
+export interface DeliveryHighlightingRule extends HighlightingRule {
     linePattern: LinePatternType;
 }
 
-export interface StationHighlightingData extends ElementHighlightingData {
+export interface StationHighlightingRule extends HighlightingRule {
     shape: NodeShapeType;
 }
 
@@ -226,6 +234,7 @@ export interface LogicalCondition {
 
 export enum OperationType {
     EQUAL = '==',
+    CONTAINS = 'contains',
     GREATER = '>',
     NOT_EQUAL = '!=',
     LESS = '<',

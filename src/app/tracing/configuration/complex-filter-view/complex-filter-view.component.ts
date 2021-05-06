@@ -1,6 +1,6 @@
-import { TableColumn } from './../../data.model';
+import { OperationType, TableColumn } from './../../data.model';
 import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { ExtendedOperationType, ComplexFilterCondition, JunktorType } from '../configuration.model';
+import { ComplexFilterCondition, JunktorType } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 @Component({
@@ -20,14 +20,14 @@ export class ComplexFilterViewComponent {
         return this.availableProperties_;
     }
 
-    @Input() propToValuesMap: { [key: string]: string[] };
-    @Input() availableOperatorTypes: ExtendedOperationType[];
+    @Input() propToValuesMap: Record<string, string[]> = {};
+    @Input() availableOperatorTypes: OperationType[] = [];
 
     @Input() set conditions(value: ComplexFilterCondition[]) {
         this.conditions_ = (
             value && value.length > 0 ?
             value.slice() :
-            ComplexFilterUtils.createDefaultFilterConditions()
+            ComplexFilterUtils.createDefaultComplexFilterConditions()
         );
     }
 
@@ -39,28 +39,28 @@ export class ComplexFilterViewComponent {
 
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
-    private conditions_ = ComplexFilterUtils.createDefaultFilterConditions();
+    private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
 
     constructor() { }
 
     onAddFilterCondition(index: number) {
 
         const conditions = this.conditions_.map(c => ({ ...c }));
-        const property = conditions[index].property;
-        const operation = conditions[index].operation;
+        const propertyName = conditions[index].propertyName;
+        const operationType = conditions[index].operationType;
 
-        const junktor = (
+        const junktorType = (
             index > 0 ?
-            conditions[index - 1].junktor :
-            ComplexFilterUtils.DEFAULT_JUNKTOR
+            conditions[index - 1].junktorType :
+            ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
         );
 
-        conditions[index].junktor = junktor;
+        conditions[index].junktorType = junktorType;
         conditions[index + 1] = {
-            property: property,
-            operation: operation,
+            propertyName: propertyName,
+            operationType: operationType,
             value: '',
-            junktor: ComplexFilterUtils.DEFAULT_JUNKTOR
+            junktorType: ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
         };
 
         this.conditions_ = conditions;
@@ -74,23 +74,23 @@ export class ComplexFilterViewComponent {
         );
         this.conditions_ = (
             conditions.length === 0 ?
-            ComplexFilterUtils.createDefaultFilterConditions() :
+            ComplexFilterUtils.createDefaultComplexFilterConditions() :
             conditions
         );
         this.conditionsChange.emit(conditions);
     }
 
-    onPropertyChange(property: string, index: number) {
+    onPropertyChange(propertyName: string, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            property: property
+            propertyName: propertyName
         });
     }
 
-    onOperatorChange(operatorType: ExtendedOperationType, index: number) {
+    onOperatorChange(operatorType: OperationType, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            operation: operatorType
+            operationType: operatorType
         });
     }
 
@@ -104,7 +104,7 @@ export class ComplexFilterViewComponent {
     onJunktorChange(junktorType: JunktorType, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            junktor: junktorType
+            junktorType: junktorType
         });
     }
 
