@@ -27,7 +27,7 @@ import { optInGate } from '@app/tracing/shared/rxjs-operators';
 export class GisGraphComponent implements OnInit, OnDestroy {
 
     private static readonly MIN_ZOOM = 0.1;
-    private static readonly MAX_ZOOM = 100.0;
+    private static readonly MAX_ZOOM = 16000;
     private static readonly DEFAULT_SCREEN_BOUNDARY_WIDTH = 20;
 
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
