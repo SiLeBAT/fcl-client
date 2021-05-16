@@ -7,8 +7,7 @@ import {
     ShapeFileData, Size
 } from '../../../data.model';
 import _ from 'lodash';
-import { createOpenLayerMap, removeUnknownLatLonRectLayer, setUnknownLatLonRectLayer, updateMapType } from '@app/tracing/util/map-utils';
-import { BoundaryRect } from '@app/tracing/util/geometry-utils';
+import { createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
 
 export interface MapConfig {
     layout: Layout | null;
@@ -28,24 +27,16 @@ interface TypedSimpleChange<T> extends SimpleChange {
 })
 export class GeoMapComponent implements OnChanges {
 
-    private static readonly UNKNOWN_LATLON_RECT_BORDERWIDTH_DEFAULT = 20;
-
     @ViewChild('map', { static: true }) mapElement: ElementRef;
 
     @Input() mapConfig: MapConfig;
-    @Input() unknownLatLonRect: BoundaryRect | null = null;
-    @Input() unknownLatLonRectBorderWidth: number = GeoMapComponent.UNKNOWN_LATLON_RECT_BORDERWIDTH_DEFAULT;
 
     private map: ol.Map | null = null;
 
     constructor(public elementRef: ElementRef) {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.processInputChanges(
-            changes.mapConfig,
-            changes.unknownLatLonRect,
-            changes.unknownLatLonRectBorderWidth
-        );
+        this.processInputChanges(changes.mapConfig);
     }
 
     onComponentResized(): void {
@@ -55,25 +46,14 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private processInputChanges(
-        mapConfigChange: TypedSimpleChange<MapConfig> | undefined,
-        unknownLatLonRectChange: TypedSimpleChange<BoundaryRect | null> | undefined,
-        unknownLatLonRectBWChange: TypedSimpleChange<number> | undefined
+        mapConfigChange: TypedSimpleChange<MapConfig> | undefined
     ): void {
         if (mapConfigChange !== undefined && mapConfigChange.currentValue.layout !== null) {
             if (this.map === null) {
                 this.initMap(mapConfigChange.currentValue);
-                if (this.unknownLatLonRect !== null) {
-                    this.updateUnknownLatLonRectLayer();
-                }
-                return; // map and unkown rect are up to date
             } else {
                 this.updateMap(mapConfigChange.currentValue, mapConfigChange.previousValue);
             }
-        }
-
-        // ignore unknown rect changes until map is initialized
-        if (this.map !== null && (unknownLatLonRectChange !== undefined || unknownLatLonRectBWChange !== undefined)) {
-            this.updateUnknownLatLonRectLayer();
         }
     }
 
@@ -114,26 +94,6 @@ export class GeoMapComponent implements OnChanges {
         if (this.map !== null) {
             this.map.updateSize();
             this.updateMapView(this.mapConfig);
-        }
-    }
-
-    private updateUnknownLatLonRectLayer(): void {
-        if (this.unknownLatLonRect !== null) {
-            const olCoordTopLeft = UIUtils.positionToOlCoords(
-                this.unknownLatLonRect.left, this.unknownLatLonRect.top, 1
-            );
-            const olCoordBottomRight = UIUtils.positionToOlCoords(
-                this.unknownLatLonRect.right, this.unknownLatLonRect.bottom, 1
-            );
-            setUnknownLatLonRectLayer(this.map, {
-                left: olCoordTopLeft.x,
-                top: olCoordTopLeft.y,
-                right: olCoordBottomRight.x,
-                bottom: olCoordBottomRight.y,
-                borderWidth: this.unknownLatLonRectBorderWidth
-            });
-        } else {
-            removeUnknownLatLonRectLayer(this.map);
         }
     }
 

@@ -68,6 +68,7 @@ import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.compo
 import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatatable-row-event-provider.directive';
 import { ColorSelectorViewComponent } from './configuration/color-selector-view/color-selector-view.component';
 import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix.directive';
+import { UnknownLatLonFrameViewComponent } from './graph/components/unknown-lat-lon-frame-view/unknown-lat-lot-frame-view.component';
 
 @NgModule({
     imports: [
@@ -135,7 +136,8 @@ import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix
         ColorsAndShapesEditViewComponent,
         DialogYesNoComponent,
         NgxDatatableRowEventProviderDirective,
-        ColorSelectorViewComponent
+        ColorSelectorViewComponent,
+        UnknownLatLonFrameViewComponent
     ],
     exports: []
 })

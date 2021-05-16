@@ -2,10 +2,15 @@
 
     <fcl-geomap
         [mapConfig]="mapConfig$ | async"
-        [unknownLatLonRect]="unknownLatLonRect"
-        [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth"
         class="fcl-graph-map">
     </fcl-geomap>
+
+    <fcl-unknown-lat-lon-frame-view *ngIf="viewport !== null && unknownLatLonRect !== null"
+        [viewport]="viewport"
+        [unknownLatLonRect]="unknownLatLonRect"
+        [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth"
+        class="fcl-unknown-lat-lon-frame"
+    ></fcl-unknown-lat-lon-frame-view>
 
     <fcl-graph-view
         class="fcl-graph"

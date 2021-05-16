@@ -23,7 +23,6 @@ export interface RectConfig {
 
 const LAYER_ID_KEY = 'layerId';
 const MAP_LAYER_ID = 'MapLayer';
-const FRAME_LAYER_ID = 'UnknownLatLonRectLayer';
 
 const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
     [MapType.MAPNIK, () => new OSM()],
@@ -94,54 +93,4 @@ function removeLayer(map: ol.Map, layerId: string): void {
     if (layers.length > 0) {
         map.removeLayer(layers[0]);
     }
-}
-
-export function removeUnknownLatLonRectLayer(map: ol.Map) {
-    removeLayer(map, FRAME_LAYER_ID);
-}
-
-export function setUnknownLatLonRectLayer(map: ol.Map, rectConfig: RectConfig): void {
-    removeUnknownLatLonRectLayer(map);
-    map.addLayer(createUnknownLatLonRectLayer(rectConfig));
-}
-
-function createUnknownLatLonRectLayer(rectConfig: RectConfig): BaseLayer {
-    const polygon = new Style({
-        stroke: new Stroke({
-            color: 'rgba(255, 0, 0, 0.3)',
-            width: rectConfig.borderWidth
-        })
-    });
-
-    const geojsonObject = {
-        type: 'FeatureCollection',
-        features: [
-            {
-                type: 'Feature',
-                id: 'polygon',
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: [[
-                        [rectConfig.left, rectConfig.bottom], // .yMax],
-                        [rectConfig.left, rectConfig.top], // .yMin],
-                        [rectConfig.right, rectConfig.top], // .yMin],
-                        [rectConfig.right, rectConfig.bottom] // .yMax]
-                    ]]
-                }
-            }
-        ]
-    };
-
-    const vectorSource = new VectorSource({
-        features: new GeoJSON().readFeatures(geojsonObject)
-    });
-
-    const vectorLayer = new VectorLayer({
-        source: vectorSource,
-        style: polygon
-    });
-
-    vectorLayer.set(LAYER_ID_KEY, FRAME_LAYER_ID);
-
-    return vectorLayer;
 }

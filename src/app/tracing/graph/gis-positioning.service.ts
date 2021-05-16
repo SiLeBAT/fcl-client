@@ -103,7 +103,9 @@ export class GisPositioningService {
 
     private initKnownNodeModelPositions(): void {
         this.nodeModelPositions = {};
+        this.ghostModelPositions = {};
         this.boundaryNodeIds = [];
+        this.boundaryGhostNodeIds = [];
         this.setKnownNodePos(this.graphData.nodeData, this.nodeModelPositions, this.boundaryNodeIds);
     }
 

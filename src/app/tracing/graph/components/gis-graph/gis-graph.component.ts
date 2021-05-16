@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
-import { GraphState, GraphType, LegendInfo } from '../../../data.model';
+import { GraphState, GraphType, Layout, LegendInfo } from '../../../data.model';
 import _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
@@ -121,6 +121,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     get showMissingGisInfoEntry(): boolean {
         return this.unknownLatLonRect !== null;
+    }
+
+    get viewport(): Layout {
+        return this.graphData_ === null ? null : this.graphData_.layout;
     }
 
     get cyConfig(): CyConfig {
