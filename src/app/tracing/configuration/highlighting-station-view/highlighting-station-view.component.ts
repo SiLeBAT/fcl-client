@@ -26,7 +26,7 @@ export class HighlightingStationViewComponent implements OnChanges {
 
     labelsOpenState = false;
     stationSizeOpenState = false;
-    colorsAndShapesOpenState = false;
+    colorsAndShapesOpenState = true;
 
     private colorOrShapeRules_: StationHighlightingRule[] = [];
     private restRules_: StationHighlightingRule[] = [];
