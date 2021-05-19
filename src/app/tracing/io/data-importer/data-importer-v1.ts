@@ -25,6 +25,7 @@ import {
 } from '../ext-data-model.v1';
 import * as DataMapper from './../data-mappings/data-mappings-v1';
 import { InputFormatError, InputDataError } from '../io-errors';
+import { getCenterFromPoints, getDifference } from '@app/tracing/util/geometry-utils';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -666,6 +667,28 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             fclData.graphSettings.stationPositions[nodePosition.id] = nodePosition.position;
+        }
+
+        this.setUnsetGroupPositions(fclData);
+    }
+
+    private setUnsetGroupPositions(fclData: FclData): void {
+        // Desktop App sets group positions on the fly and does not store
+        // group positions in json file
+        // Web app requires group positions (if known) and expects relative
+        // positions of its members
+        const statPos = fclData.graphSettings.stationPositions;
+        for (const group of fclData.groupSettings) {
+            if (statPos[group.id] === undefined) {
+                const memberPositions = group.contains.map(memberId => statPos[memberId]);
+                if (!memberPositions.some(p => p === null || p === undefined)) {
+                    const groupPos = getCenterFromPoints(memberPositions);
+                    group.contains.forEach((memberId, index) => {
+                        statPos[memberId] = getDifference(memberPositions[index], groupPos);
+                    });
+                    statPos[group.id] = groupPos;
+                }
+            }
         }
     }
 
