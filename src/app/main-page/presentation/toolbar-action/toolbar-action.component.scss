@@ -50,3 +50,21 @@
 .mat-radio-ripple {
     background-color: white;
 }
+
+.fcl-draft-marker {
+    display: block;
+    position: relative;
+    left: 0;
+    bottom: 0.9em;
+    line-height: 1.2em;
+    background-color: red;
+    color: white;
+    padding-left: 0.5ch;
+    padding-right: 0.5ch;
+}
+
+.fcl-draft-marker-wrapper {
+    display: inline-block;
+    margin-left: -2.5ch;
+    margin-right: -1.5ch;
+}

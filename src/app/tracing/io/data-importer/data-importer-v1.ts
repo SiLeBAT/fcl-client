@@ -25,7 +25,7 @@ import {
 } from '../ext-data-model.v1';
 import * as DataMapper from './../data-mappings/data-mappings-v1';
 import { InputFormatError, InputDataError } from '../io-errors';
-import { getCenterFromPoints, getDifference } from '@app/tracing/util/geometry-utils';
+import { getCenterFromPoints, getDifference } from '../../util/geometry-utils';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
