@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChange, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Color, NodeShapeType, OperationType, StationHighlightingRule, TableColumn } from '@app/tracing/data.model';
 import { ComplexFilterCondition, PropToValuesMap } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
@@ -31,10 +31,14 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
     }
 
     get actionButtonDisabled(): boolean {
-        return ((this.rule_.shape === null && (
-                    this.rule_.color === null ||
-                    this.useShape
-                )) || !this.areConditionsOk);
+        return (
+            (this.rule_.shape === null && (
+                this.rule_.color === null ||
+                this.useShape
+            )) ||
+            (this.rule_.name || '') === '' ||
+            !this.areConditionsOk
+        );
     }
 
     private get areConditionsOk(): boolean {
@@ -72,7 +76,7 @@ export class ColorsAndShapesEditViewComponent implements OnChanges {
     constructor() { }
 
     private static readonly DEFAULT_COLOR = { r: 3, g: 78, b: 162 };
-    private static readonly DISABLED_ACTION_TOOLTIP = 'Please select color and/or shape as well as conditions';
+    private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select color and/or shape as well as conditions';
     private static readonly ENABLED_APPLY_TOOLTIP = 'Apply Highlighting Rule';
     private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
 
