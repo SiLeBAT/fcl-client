@@ -9,7 +9,7 @@
 </ng-template>
 
 <ng-template #patternColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="header-sort-span" (click)="sort()">
+    <span class="fcl-header-sort-span" (click)="sort()">
         <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
             radio_button_unchecked
         </span>
@@ -20,7 +20,7 @@
 </ng-template>
 
 <ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="header-sort-span" (click)="sort()">
+    <span class="fcl-header-sort-span" (click)="sort()">
         <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
             visibility
         </span>
@@ -51,7 +51,7 @@
 </ng-template>
 
 <ng-template #dataColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="header-sort-span draggable" (click)="sort()">
+    <span class="fcl-header-sort-span draggable" (click)="sort()">
         {{ column.name }}
         <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
         <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
@@ -122,13 +122,13 @@
     {{ value }}
 </ng-template>
 
-<div class="fcl-datatable-container" #tableWrapper>
+<div class="fcl-filtertable-container" #tableWrapper>
     <ngx-datatable
         fclResizeSensor (resized)="onComponentResized()" [ignoreNonPositiveResize]="true" [ignoreWindowResize]="true"
         fclNgxDatatableScrollFix
         fclNgxDatatableRowEventProvider (rowOver)="onRowOver($event)"
         #table
-        class="material fcl-datatable"
+        class="material fcl-datatable fcl-filtertable"
         [columns]="columns"
         [rows]="tableRows"
         [rowHeight]="18"

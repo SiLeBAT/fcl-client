@@ -53,33 +53,51 @@ mat-form-field.less-bottom-padding {
     }
 }
 
-.ngx-filter-table .datatable-header-cell .mat-form-field {
-    width: 100% !important;
+.fcl-deliveries-properties-table {
+    .datatable-header-cell {
+        .mat-form-field {
+            width: 100% !important;
+        }
+
+        .mat-form-field-label-wrapper {
+            box-sizing: content-box;
+        }
+    }
+
+    .datatable-body-row .datatable-body-cell {
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.3rem !important;
+    }
 }
 
-.ngx-filter-table .datatable-header-cell .mat-form-field-label-wrapper {
-    box-sizing: content-box;
-}
+.fcl-datatable {
+    // switch of default sort icons
+    .datatable-icon-up::before {
+        content: "";
+    }
 
-.ngx-filter-table .datatable-body-row .datatable-body-cell {
-    padding-top: 0.3rem !important;
-    padding-bottom: 0.3rem !important;
-}
+    .datatable-icon-down::before {
+        content: "";
+    }
 
-.ngx-filter-table .filter-header .datatable-icon-up::before {
-    content: "";
-}
+    .datatable-icon-sort-unset::before {
+        content: "";
+    }
 
-.ngx-filter-table .filter-header .datatable-icon-down::before {
-    content: "";
-}
+    .fcl-header-sort-span {
+        // switch on sort icons
+        .datatable-icon-up::before {
+            content: "\65";
+        }
 
-.ngx-filter-table .filter-header .enforce-icon.datatable-icon-up::before {
-    content: "\65";
-}
+        .datatable-icon-down::before {
+            content: "\66";
+        }
 
-.ngx-filter-table .filter-header .enforce-icon.datatable-icon-down::before {
-    content: "\66";
+        .datatable-icon-sort-unset::before {
+            content: "\63";
+        }
+    }
 }
 
 .fcl-mat-select-below-panel-class {

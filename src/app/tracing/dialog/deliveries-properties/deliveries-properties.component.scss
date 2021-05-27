@@ -1,6 +1,16 @@
-.ngx-filter-table {
+@import '../../../../assets/sass/base';
+
+.fcl-deliveries-properties-table {
     width: 800px;
     height: 455px;
+
+    .pointable {
+        cursor: pointer;
+    }
+
+    .datatable-icon-expand {
+        color: $fcl-accent-200;
+    }
 }
 
 .overall-column-filter {
@@ -11,7 +21,7 @@
     height: 50px;
 }
 
-.header-sort-span {
+.fcl-header-sort-span {
     color: black;
 }
 

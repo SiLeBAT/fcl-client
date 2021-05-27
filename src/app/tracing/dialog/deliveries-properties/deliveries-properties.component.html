@@ -10,7 +10,7 @@
 
 <ngx-datatable
     fclNgxDatatableScrollFix
-    class="material ngx-filter-table"
+    class="material fcl-datatable fcl-deliveries-properties-table"
     [rows]='filteredRows'
     [columns]='columns'
     [columnMode]="'standard'"
@@ -30,8 +30,11 @@
     headerClass="highlighting-column"
     >
         <ng-template let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
-            <span class="header-sort-span" (click)="sort()">
+            <span class="fcl-header-sort-span pointable" (click)="sort()">
                 H
+                <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+                <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+                <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
             </span>
         </ng-template>
 
@@ -50,10 +53,11 @@
 
         <ng-template let-column="column" let-sort="sortFn" let-sortDir="sortDir" ngx-datatable-header-template>
             <div class="draggable">
-                <span class="header-sort-span" (click)="sort()">
+                <span class="fcl-header-sort-span pointable" (click)="sort()">
                     {{column.name}}
-                    <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up enforce-icon"></span>
-                    <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down enforce-icon"></span>
+                    <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+                    <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+                    <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
                 </span><br>
 
                 <mat-form-field floatLabel="never">

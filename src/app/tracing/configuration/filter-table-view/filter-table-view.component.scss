@@ -1,13 +1,13 @@
 @import '../../../../assets/sass/base';
 
-.fcl-datatable-container {
+.fcl-filtertable-container {
     position: relative;
     display: block;
     height: 100%;
     width: 100%;
 }
 
-.fcl-datatable {
+.fcl-filtertable {
     position: relative;
     display: block;
     width: 100%;
@@ -15,28 +15,28 @@
     box-shadow: $fcl-box-shadow;
 }
 
-.fcl-datatable .datatable-header .datatable-header-inner {
+.fcl-filtertable .datatable-header .datatable-header-inner {
     height: 100%;
 }
 
-.fcl-datatable .datatable-row-center .datatable-header-cell {
+.fcl-filtertable .datatable-row-center .datatable-header-cell {
     padding-top: 0.4rem !important;
     padding-bottom: 0.4rem !important;
 }
 
-.fcl-datatable .datatable-row-center .datatable-header-cell.sortable {
+.fcl-filtertable .datatable-row-center .datatable-header-cell.sortable {
     cursor: pointer;
 }
 
-.fcl-datatable .datatable-header-cell-label,
-.fcl-datatable .datatable-header-cell-template-wrap {
+.fcl-filtertable .datatable-header-cell-label,
+.fcl-filtertable .datatable-header-cell-template-wrap {
     font-size: 0.9rem;
     color: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
 }
 
-.fcl-datatable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap {
+.fcl-filtertable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap {
     height: 100% !important;
 }
 
@@ -66,11 +66,11 @@
     transform: scale(0.8);
 }
 
-.fcl-datatable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap .fcl-column-filter-field {
+.fcl-filtertable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap .fcl-column-filter-field {
     font-size: 0.8rem;
 }
 
-.fcl-datatable .datatable-body-cell {
+.fcl-filtertable .datatable-body-cell {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -78,7 +78,7 @@
     padding-bottom: 0 !important;
 }
 
-.fcl-datatable .datatable-body-cell-label {
+.fcl-filtertable .datatable-body-cell-label {
     font-size: 0.8rem;
     font-weight: 500;
     color: rgb(0, 0, 0);
@@ -86,11 +86,11 @@
     align-items: center;
 }
 
-.fcl-datatable .fcl-invisible-data-row-cell {
+.fcl-filtertable .fcl-invisible-data-row-cell {
     flex: 1;
 }
 
-.fcl-datatable .fcl-visibility-column-row-cell {
+.fcl-filtertable .fcl-visibility-column-row-cell {
     padding: 0.1rem 0 0 0.5rem !important;
 }
 
@@ -121,46 +121,46 @@
     background-color: rgb(255, 255, 255);
 }
 
-.fcl-datatable .datatable-header-cell.fcl-more-columns-header-cell {
+.fcl-filtertable .datatable-header-cell.fcl-more-columns-header-cell {
     padding: 0 !important;
     height: 100%;
 }
 
-.fcl-datatable .datatable-icon-expand {
+.fcl-filtertable .datatable-icon-expand {
     color: $fcl-accent-200;
 }
 
-.fcl-datatable .datatable-header-cell-template-wrap > span.datatable-icon-up::before,
-.fcl-datatable .datatable-header-cell-template-wrap > span.datatable-icon-down::before {
+.fcl-filtertable .datatable-header-cell-template-wrap > span.datatable-icon-up::before,
+.fcl-filtertable .datatable-header-cell-template-wrap > span.datatable-icon-down::before {
     display: none;
 }
 
-.fcl-datatable .datatable-header-cell.fcl-visibility-column-header-cell {
+.fcl-filtertable .datatable-header-cell.fcl-visibility-column-header-cell {
     padding-left: 0.1rem !important;
     padding-right: 0.1rem !important;
 }
 
-.fcl-datatable .fcl-column-visibility-header-icon-container {
+.fcl-filtertable .fcl-column-visibility-header-icon-container {
     margin-top: 0.25rem;
 }
 
-.fcl-datatable .fcl-column-visibility-header-sort-icon {
+.fcl-filtertable .fcl-column-visibility-header-sort-icon {
     font-size: 0.8rem;
 }
 
-.fcl-datatable .fcl-column-visibility-header-icon {
+.fcl-filtertable .fcl-column-visibility-header-icon {
     font-size: 1rem;
 }
 
-.fcl-datatable .pointable {
+.fcl-filtertable .pointable {
     cursor: pointer;
 }
 
-.fcl-datatable .fcl-column-visibility-header-icon.unsorted {
+.fcl-filtertable .fcl-column-visibility-header-icon.unsorted {
     color: $fcl-accent-200;
 }
 
-.fcl-datatable .fcl-visibility-filter-button {
+.fcl-filtertable .fcl-visibility-filter-button {
     height: 1.5rem;
     border: 1px solid $fcl-accent-100;
     padding: 0;
@@ -169,36 +169,36 @@
     justify-content: center;
 }
 
-.fcl-datatable .fcl-visibility-filter-button:hover {
+.fcl-filtertable .fcl-visibility-filter-button:hover {
     background-color: $fcl-accent-300;
 }
 
-.fcl-datatable .fcl-visibility-filter-button:focus {
+.fcl-filtertable .fcl-visibility-filter-button:focus {
     outline: 0;
 }
 
-.fcl-datatable .fcl-row-cell-invisible .datatable-body-cell-label {
+.fcl-filtertable .fcl-row-cell-invisible .datatable-body-cell-label {
     color: $fcl-accent-200;
 }
 
-.fcl-datatable .fcl-row-symbol {
+.fcl-filtertable .fcl-row-symbol {
     display: flex;
     align-items: center;
 }
 
-.fcl-datatable .fcl-row-symbol svg {
+.fcl-filtertable .fcl-row-symbol svg {
     height: 1rem;
 }
 
-.fcl-datatable .fcl-row-symbol svg polygon,
-.fcl-datatable .fcl-row-symbol svg circle,
-.fcl-datatable .fcl-row-symbol svg rect {
+.fcl-filtertable .fcl-row-symbol svg polygon,
+.fcl-filtertable .fcl-row-symbol svg circle,
+.fcl-filtertable .fcl-row-symbol svg rect {
     transform: scale(0.9);
 }
 
-.fcl-datatable .fcl-row-symbol.fcl-invisible-data-row-cell svg polygon,
-.fcl-datatable .fcl-row-symbol.fcl-invisible-data-row-cell svg circle,
-.fcl-datatable .fcl-row-symbol.fcl-invisible-data-row-cell svg rect {
+.fcl-filtertable .fcl-row-symbol.fcl-invisible-data-row-cell svg polygon,
+.fcl-filtertable .fcl-row-symbol.fcl-invisible-data-row-cell svg circle,
+.fcl-filtertable .fcl-row-symbol.fcl-invisible-data-row-cell svg rect {
     transform: scale(0.9);
     stroke: rgb(211, 211, 211);
 }
