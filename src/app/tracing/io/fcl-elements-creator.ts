@@ -54,23 +54,19 @@ export function createFclElements(fclData: FclData): {
 }
 
 function createStationTable(fclData: FclData): DataTable {
-    const propMap = (
-        fclData.source.propMaps && fclData.source.propMaps.stationPropMap ?
-        fclData.source.propMaps.stationPropMap :
-        DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject()
-    );
+    const propMap = fclData.source.propMaps.stationPropMap;
     return {
         columnProperties: collectStationProperties(fclData, propMap),
         data: fclData.fclElements.stations.map(station => {
             const dataRow: DataRow = [];
             dataRow.push({ id: propMap['id'], value: station.id });
-            if (station.name !== undefined) {
+            if (station.name !== undefined && station.name !== null) {
                 dataRow.push({ id: propMap['name'], value: station.name });
             }
-            if (station.lat !== undefined) {
+            if (station.lat !== undefined && station.lat !== null) {
                 dataRow.push({ id: propMap['lat'], value: station.lat });
             }
-            if (station.lon !== undefined) {
+            if (station.lon !== undefined && station.lon !== null) {
                 dataRow.push({ id: propMap['lon'], value: station.lon });
             }
             station.properties.forEach(prop => {
@@ -82,11 +78,7 @@ function createStationTable(fclData: FclData): DataTable {
 }
 
 function createDeliveryTable(fclData: FclData): DataTable {
-    const propMap = (
-        fclData.source.propMaps && fclData.source.propMaps.deliveryPropMap ?
-        fclData.source.propMaps.deliveryPropMap :
-        DataMapper.DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
-    );
+    const propMap = fclData.source.propMaps.deliveryPropMap;
     return {
         columnProperties: collectDeliveryProperties(fclData, propMap),
         data: fclData.fclElements.deliveries.map(delivery => {

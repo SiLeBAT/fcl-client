@@ -82,6 +82,8 @@ export const DEFAULT_STATION_PROP_INT_TO_EXT_MAP: ImmutableMap<
     isMeta: ExtDataConstants.STATION_ISMETA
 });
 
+export const DENOVO_STATION_PROP_INT_TO_EXT_MAP = DEFAULT_STATION_PROP_INT_TO_EXT_MAP;
+
 export const DEFAULT_DEL2DEL_PROP_INT_TO_EXT_MAP: ImmutableMap<
     string,
     string
@@ -117,7 +119,6 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     name: ExtDataConstants.DELIVERY_NAME,
     source: ExtDataConstants.DELIVERY_FROM,
     target: ExtDataConstants.DELIVERY_TO,
-    lot: ExtDataConstants.DELIVERY_LOT_ID,
     lotKey: ExtDataConstants.DELIVERY_PRODUCT_K,
     weight: ExtDataConstants.DELIVERY_WEIGHT,
     crossContamination: ExtDataConstants.DELIVERY_CROSSCONTAMINATION,
@@ -130,9 +131,40 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     dateIn: ExtDataConstants.DELIVERY_IN_DATE
 });
 
+export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
+    string,
+    string
+> = ImmutableMap(Object.assign(
+    DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject(),
+    {
+        lot: ExtDataConstants.DELIVERY_LOT_NUMBER
+    }
+));
+
 const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
     { [key: string]: string | RegExp }
-> = ImmutableList([]);
+> = ImmutableList([
+    {
+        // supposed to target all other outputs
+        // destiller does not provider lot number
+        lotId: ExtDataConstants.DELIVERY_LOT_ID,
+        lot: ExtDataConstants.DELIVERY_LOT_NUMBER
+    },
+    {
+        // supposed to target the destiller output
+        // destiller provides refid
+        lot: ExtDataConstants.DELIVERY_LOT_ID,
+        refId: ExtDataConstants.DELIVERY_REF_ID
+    },
+    {
+        // prefer Lot Number as lot
+        lot: ExtDataConstants.DELIVERY_LOT_NUMBER
+    },
+    {
+        // fall back to lot ID
+        lot: ExtDataConstants.DELIVERY_LOT_ID
+    }
+]);
 
 function getMatchingProp(availableProps: string[], key: string | RegExp): string {
     if (typeof key === 'string') {

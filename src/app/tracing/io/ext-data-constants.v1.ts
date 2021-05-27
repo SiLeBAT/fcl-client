@@ -34,6 +34,7 @@ export const DELIVERY_IN_DATE = 'Date Delivery Arrival';
 export const DELIVERY_IN_DATE_REGEX = /^Date\*Delivery\*Arrival/i;
 export const DELIVERY_OUT_DATE = 'Date Delivery';
 export const DELIVERY_OUT_DATE_REGEX = /^Date\s*Delivery$/i;
+export const DELIVERY_REF_ID = 'Refid'; // Needed as destiller output marker
 export const DELIVERY_LOT_ID = 'Lot ID';
 export const DELIVERY_LOT_NUMBER = 'Lot Number';
 export const DELIVERY_PRODUCT_K = 'Product_k';
