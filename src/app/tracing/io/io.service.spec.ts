@@ -5,7 +5,7 @@ import { IOService } from './io.service';
 import { FclData, GraphType, ObservedType, MergeDeliveriesType, MapType, CrossContTraceType } from '../data.model';
 import { JsonData, VERSION } from './ext-data-model.v1';
 import { Constants } from '../util/constants';
-import { DEFAULT_STATION_PROP_INT_TO_EXT_MAP, DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP } from './data-mappings/data-mappings-v1';
+import { DENOVO_STATION_PROP_INT_TO_EXT_MAP, DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP } from './data-mappings/data-mappings-v1';
 
 describe('IOService', () => {
 
@@ -32,8 +32,8 @@ describe('IOService', () => {
         const fclData: FclData = {
             source: {
                 propMaps: {
-                    stationPropMap: DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject(),
-                    deliveryPropMap: DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+                    stationPropMap: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+                    deliveryPropMap: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
                 }
             },
             fclElements: {
