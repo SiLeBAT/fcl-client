@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
-import { StationHighlightingRule, TableColumn } from '@app/tracing/data.model';
+import { StationHighlightingRule, StationHighlightingStats, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import * as _ from 'lodash';
 
@@ -15,6 +15,7 @@ export class HighlightingStationViewComponent implements OnChanges {
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
     @Input() rules: StationHighlightingRule[] = [];
+    @Input() highlightingStats: StationHighlightingStats | null = null;
 
     @Output() rulesChange = new EventEmitter<StationHighlightingRule[]>();
     @Output() ruleDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();

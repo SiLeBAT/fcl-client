@@ -118,23 +118,40 @@ export class HighlightingService {
     applyHighlightingProps(state: BasicGraphState, data: DataServiceData): void {
         this.preprocessHighlightings(state);
 
-        const activeStationHighlightings: Record<RuleId, boolean> = {};
+        const ruleIdToStatCountMap: Record<RuleId, number> = {};
+        state.highlightingSettings.stations.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
+        const ruleIdToConflictCountMap: Record<RuleId, number> = {};
         data.stations
             .filter((station: StationData) => !station.invisible)
             .forEach((station: StationData) => {
 
-                station.highlightingInfo = this.createStationHighlightingInfo(station, state, activeStationHighlightings);
+                station.highlightingInfo = this.createStationHighlightingInfo(
+                    station, state, ruleIdToStatCountMap, ruleIdToConflictCountMap
+                );
 
             });
 
-        const activeDeliveryHighlightings: Record<RuleId, boolean> = {};
+        const ruleIdToDelCountMap: Record<RuleId, number> = {};
+        state.highlightingSettings.deliveries.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
         data.deliveries
             .filter((delivery: DeliveryData) => !delivery.invisible)
             .forEach((delivery: DeliveryData) => {
-                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, activeDeliveryHighlightings);
+                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, ruleIdToDelCountMap);
             });
 
-        data.legendInfo = this.getLegendInfo(state, { stations: activeStationHighlightings, deliveries: activeDeliveryHighlightings });
+        data.legendInfo = this.getLegendInfo(state, {
+            stations: Utils.mapRecordValues(ruleIdToStatCountMap, (x: number) => x > 0),
+            deliveries: Utils.mapRecordValues(ruleIdToDelCountMap, (x: number) => x > 0)
+        });
+        data.highlightingStats = {
+            stationRuleStats: {
+                counts: ruleIdToStatCountMap,
+                conflicts: ruleIdToConflictCountMap
+            },
+            deliveryRuleStats: {
+                counts: ruleIdToDelCountMap
+            }
+        };
     }
 
     private getLegendInfo(
@@ -201,12 +218,12 @@ export class HighlightingService {
             )
         );
     }
-    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, ruleIdToIsActiveMap: Record<RuleId, boolean>) {
+    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, ruleIdToDelCountMap: Record<RuleId, number>) {
         const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
-        activeHighlightingRules.forEach(rule => ruleIdToIsActiveMap[rule.id] = true);
+        activeHighlightingRules.forEach(rule => ruleIdToDelCountMap[rule.id] = (ruleIdToDelCountMap[rule.id] || 0) + 1);
 
         return deliveryHighlightingInfo;
     }
@@ -214,20 +231,25 @@ export class HighlightingService {
     private createStationHighlightingInfo(
         station: StationData,
         state: BasicGraphState,
-        ruleIdToIsActiveMap: Record<RuleId, boolean>
+        ruleIdToStatCountMap: Record<RuleId, number>,
+        ruleIdToConflictCountMap: Record<RuleId, number>
     ): StationHighlightingInfo {
 
         const activeHighlightingRules = this.getActiveHighlightingRules(station, state.highlightingSettings.stations);
 
-        const shape = activeHighlightingRules
-                .filter(rule => rule.shape !== null)
-                .map(rule => rule.shape);
+        const activeShapeRules = activeHighlightingRules.filter(rule => rule.shape !== null);
+        const shapes = activeShapeRules.map(rule => rule.shape);
 
-        activeHighlightingRules.forEach(rule => ruleIdToIsActiveMap[rule.id] = true);
+        activeHighlightingRules.forEach(rule => ruleIdToStatCountMap[rule.id] = (ruleIdToStatCountMap[rule.id] || 0) + 1);
+        activeShapeRules.forEach((rule, index) => {
+            if (index > 0) {
+                ruleIdToConflictCountMap[rule.id] = (ruleIdToConflictCountMap[rule.id] || 0) + 1;
+            }
+        });
 
         const stationHighInfo: StationHighlightingInfo = {
             ...this.getCommonHighlightingInfo(station, activeHighlightingRules),
-            shape: shape.length > 0 ? shape[0] : null
+            shape: shapes.length > 0 ? shapes[0] : null
         };
 
         return stationHighInfo;

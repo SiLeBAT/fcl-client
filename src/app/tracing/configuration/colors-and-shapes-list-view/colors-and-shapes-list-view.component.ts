@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { StationHighlightingRule, TableColumn } from '@app/tracing/data.model';
+import { StationHighlightingRule, StationHighlightingStats, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
 
 @Component({
@@ -14,6 +14,7 @@ export class ColorsAndShapesListViewComponent {
     @Input() rules: StationHighlightingRule[] = [];
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: Record<string, string[]> = {};
+    @Input() highlightingStats: StationHighlightingStats | null = null;
     @Input() editIndex: number | null = null;
 
     @Output() ruleDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
@@ -39,6 +40,46 @@ export class ColorsAndShapesListViewComponent {
             null :
             this.rules[this.editIndex]
         );
+    }
+
+    getCount(rule: StationHighlightingRule): number | string {
+        if (!rule.disabled && this.highlightingStats !== null) {
+            const statCount = this.highlightingStats.counts[rule.id];
+            return statCount === undefined ? '' : statCount;
+        }
+        return '';
+    }
+
+    getConflictCount(rule: StationHighlightingRule): number | string {
+        if (!rule.disabled && this.highlightingStats !== null) {
+            const conflictCount = this.highlightingStats.conflicts[rule.id];
+            return conflictCount === undefined ? '' : conflictCount;
+        }
+        return '';
+    }
+
+    getCountTooltip(rule: StationHighlightingRule): string {
+        if (!rule.disabled && this.highlightingStats !== null) {
+            const conflictCount = this.highlightingStats.conflicts[rule.id];
+            const statCount = this.highlightingStats.counts[rule.id];
+            if (statCount !== undefined) {
+                if (conflictCount > 0) {
+                    return `For ${conflictCount}/${statCount} stations the shape is not visible\ndue to another rule above this one.`;
+                } else {
+                    return `This highlighting rule applies to ${statCount} stations.`;
+                }
+            } else {
+                return '';
+            }
+        }
+        return '';
+    }
+
+    hasConflict(rule: StationHighlightingRule): boolean {
+        if (!rule.disabled && this.highlightingStats !== null) {
+            return this.highlightingStats.conflicts[rule.id] !== undefined;
+        }
+        return false;
     }
 
     onAddRule(): void {

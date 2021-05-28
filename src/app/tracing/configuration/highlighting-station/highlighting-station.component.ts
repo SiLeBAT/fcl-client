@@ -1,4 +1,4 @@
-import { BasicGraphState, DataServiceData, DataTable, StationHighlightingRule, TableColumn } from './../../data.model';
+import { BasicGraphState, DataServiceData, DataTable, StationHighlightingRule, StationHighlightingStats, TableColumn } from './../../data.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
@@ -54,6 +54,12 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         return this.cachedData ?
             this.cachedData.propToValuesMap :
             {};
+    }
+
+    get highlightingStats(): StationHighlightingStats | null {
+        return this.cachedData ?
+            this.cachedData.data.highlightingStats.stationRuleStats :
+            null;
     }
 
     private isHighlightingStationTabActive$: Observable<boolean> = this.store.pipe(

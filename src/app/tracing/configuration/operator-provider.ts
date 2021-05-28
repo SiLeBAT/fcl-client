@@ -89,14 +89,44 @@ export function createGreaterOpFun(refValue: SimpleValueType): OperatorFun {
 
 export function createEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const strRef = valueToStr(refValue);
+    const strRefLCase = strRef.toLowerCase();
+    const numRef = +strRef;
+    const bolRef = (
+        strRefLCase === 'true' || numRef === 1 ? true :
+        strRefLCase === 'false' || numRef === 0 ? false :
+        undefined
+    );
 
-    return (x: SimpleValueType) => valueToStr(x) === strRef;
+    return (x: SimpleValueType) => {
+        if (x === undefined || x === null) {
+            return false;
+        } else if (typeof x === 'boolean') {
+            return x === bolRef;
+        } else {
+            return valueToStr(x) === strRef;
+        }
+    };
 }
 
 export function createNotEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const strRef = valueToStr(refValue);
+    const strRefLCase = strRef.toLowerCase();
+    const numRef = +strRef;
+    const bolRef = (
+        strRefLCase === 'true' || numRef === 1 ? true :
+        strRefLCase === 'false' || numRef === 0 ? false :
+        undefined
+    );
 
-    return (x: SimpleValueType) => valueToStr(x) !== strRef;
+    return (x: SimpleValueType) => {
+        if (x === undefined || x === null) {
+            return false;
+        } else if (typeof x === 'boolean') {
+            return x !== bolRef;
+        } else {
+            return valueToStr(x) !== strRef;
+        }
+    };
 }
 
 export function createContainsOpFun(refValue: SimpleValueType): OperatorFun {

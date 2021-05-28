@@ -14,7 +14,7 @@ $fcl-font-size: 0.8rem;
     grid-template-areas:
         "dragcolumn rulename shape . counts . legend . activated . edit . delete"
         "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
-    grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 3ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
+    grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 2ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
 }
 
 .fcl-cs-rules-list-drag-indicator {
@@ -73,7 +73,7 @@ $fcl-font-size: 0.8rem;
 
 .fcl-cs-rules-list-item-counts {
     grid-area: counts;
-    justify-self: end;
+    justify-self: center;
 }
 
 .fcl-rule-disabled .fcl-cs-rules-list-item-counts {
@@ -145,4 +145,19 @@ $fcl-font-size: 0.8rem;
 .fcl-add-cs-rule-button:hover:enabled {
     background-color: $fcl-accent-300;
     color: rgba(255, 255, 255, 0.9);
+}
+
+.fcl-cs-rules-list-item-counts-wrapper {
+    height: $fcl-col-legend-width;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    line-height: 1;
+    text-align: center;
+}
+
+.fcl-cs-rules-list-item-conflict-count {
+    color: red;
+    margin-top: -1em;
+    padding-bottom: 0.15em;
 }

@@ -331,6 +331,18 @@ interface TracingResult {
     maxScore: number;
 }
 
+interface SharedHighlightingStats {
+    counts: Record<HighlightingRuleId, number>;
+}
+export interface StationHighlightingStats extends SharedHighlightingStats {
+    conflicts: Record<HighlightingRuleId, number>;
+}
+
+export interface DeliveryHighlightingStats extends SharedHighlightingStats {}
+export interface HighlightingStats {
+    stationRuleStats: StationHighlightingStats;
+    deliveryRuleStats: DeliveryHighlightingStats;
+}
 export interface DataServiceData {
     statMap: Record<StationId, StationData>;
     stations: StationData[];
@@ -341,6 +353,7 @@ export interface DataServiceData {
     statVis: Record<StationId, boolean>;
     tracingResult: TracingResult;
     legendInfo: LegendInfo;
+    highlightingStats: HighlightingStats;
 
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];

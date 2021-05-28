@@ -31,11 +31,22 @@
 
         <div
             class="fcl-cs-rules-list-item-counts"
+            [matTooltip]="getCountTooltip(item)"
+            matTooltipPosition="above"
+            matTooltipClass="fcl-tooltip--with-linebreaks fcl-tooltip--centered"
         >
-            <span
-                class="fcl-colors-and-shapes-list-item-count"
-                [disabled]="isEditRuleModeActive"
-            >{{ 50 * i }}</span>
+            <span *ngIf="!hasConflict(item)">{{ getCount(item) }}</span>
+
+            <div
+                *ngIf="hasConflict(item)"
+                class="fcl-cs-rules-list-item-counts-wrapper"
+            >
+                <div>{{ getCount(item) }}</div>
+                <div
+                    *ngIf="hasConflict(item)"
+                    class="fcl-cs-rules-list-item-conflict-count"
+                >({{ getConflictCount(item) }})</div>
+            </div>
         </div>
 
         <mat-button-toggle
