@@ -28,7 +28,7 @@ Cypress.Commands.add("login", user => {
     return cy
         .request({
             method: "POST",
-            url: "/v1/users/login",
+            url: "/api/v1/users/login",
             body: {
                 email: user.email,
                 password: user.password

@@ -26,14 +26,14 @@ export class UserService {
     private currentUser: TokenizedUser;
 
     private URL = {
-        login: '/v1/users/login',
-        register: '/v1/users/registration',
-        recovery: '/v1/users/reset-password-request',
-        reset: '/v1/users/reset-password',
-        activate: '/v1/users/verification',
-        adminactivate: '/v1/users/activation',
-        gdpragreement: '/v1/users/gdpr-agreement',
-        newsconfirmation: '/v1/users/news-confirmation'
+        login: '/users/login',
+        register: '/users/registration',
+        recovery: '/users/reset-password-request',
+        reset: '/users/reset-password',
+        activate: '/users/verification',
+        adminActivate: '/users/activation',
+        gdprAgreement: '/users/gdpr-agreement',
+        newsConfirmation: '/users/news-confirmation'
     };
 
     constructor(
@@ -58,7 +58,7 @@ export class UserService {
     }
 
     adminActivateAccount(adminToken: String): Observable<ActivationResponseDTO> {
-        return this.dataService.patch<ActivationResponseDTO, string>([this.URL.adminactivate, adminToken].join('/'), null);
+        return this.dataService.patch<ActivationResponseDTO, string>([this.URL.adminActivate, adminToken].join('/'), null);
     }
 
     login(credentials: LoginCredentials): Observable<TokenizedUserDTO> {
@@ -66,11 +66,11 @@ export class UserService {
     }
 
     updateGDPRAgreement(user: GdprConfirmationRequestDTO): Observable<TokenizedUserDTO> {
-        return this.dataService.put<TokenizedUserDTO, GdprConfirmationRequestDTO>(this.URL.gdpragreement, user);
+        return this.dataService.put<TokenizedUserDTO, GdprConfirmationRequestDTO>(this.URL.gdprAgreement, user);
     }
 
     confirmNewsletterSubscription(token: String): Observable<NewsConfirmationResponseDTO> {
-        return this.dataService.patch<NewsConfirmationResponseDTO, string>([this.URL.newsconfirmation, token].join('/'), null);
+        return this.dataService.patch<NewsConfirmationResponseDTO, string>([this.URL.newsConfirmation, token].join('/'), null);
     }
 
     logout() {

@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export class ContentService {
 
     private URL = {
-        gdprdate: '/v1/info/gdpr-date'
+        gdprdate: '/info/gdpr-date'
     };
 
     constructor(

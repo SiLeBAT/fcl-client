@@ -68,7 +68,7 @@ describe('UserService', () => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne('/v1/users/login');
+        const request = httpTestingController.expectOne('/api/v1/users/login');
 
         expect(request.request.method).toEqual('POST');
 
@@ -98,7 +98,7 @@ describe('UserService', () => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne('/v1/users/registration');
+        const request = httpTestingController.expectOne('/api/v1/users/registration');
 
         expect(request.request.method).toEqual('POST');
 
@@ -121,7 +121,7 @@ describe('UserService', () => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne('/v1/users/reset-password-request');
+        const request = httpTestingController.expectOne('/api/v1/users/reset-password-request');
 
         expect(request.request.method).toEqual('PUT');
 
@@ -144,7 +144,7 @@ describe('UserService', () => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne(['/v1/users/reset-password', token].join('/'));
+        const request = httpTestingController.expectOne(['/api/v1/users/reset-password', token].join('/'));
 
         expect(request.request.method).toEqual('PATCH');
 
@@ -164,7 +164,7 @@ describe('UserService', () => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne(['/v1/users/verification', token].join('/'));
+        const request = httpTestingController.expectOne(['/api/v1/users/verification', token].join('/'));
 
         expect(request.request.method).toEqual('PATCH');
 
@@ -184,7 +184,7 @@ describe('UserService', () => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne(['/v1/users/activation', token].join('/'));
+        const request = httpTestingController.expectOne(['/api/v1/users/activation', token].join('/'));
 
         expect(request.request.method).toEqual('PATCH');
 

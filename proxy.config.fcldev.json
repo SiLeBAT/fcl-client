@@ -1,10 +1,5 @@
 {
-  "/v1/*": {
-    "target": "https://fcl-portal-dev.bfr.berlin",
-    "secure": false,
-    "logLevel": "debug"
-  },
-  "/api-docs/*": {
+  "/api/*": {
     "target": "https://fcl-portal-dev.bfr.berlin",
     "secure": false,
     "logLevel": "debug"
