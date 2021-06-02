@@ -14,6 +14,8 @@ describe('Testing the Registration Page', function () {
         cy.get('input[name="email"]').as('emailInput');
         cy.get('input[name="password1"]').as('passwordInput');
         cy.get('input[name="password2"]').as('confirmInput');
+        cy.get('mat-checkbox[formcontrolname="dataProtection"]').as('dataProtectionCheckBox');
+        cy.get('mat-checkbox[formcontrolname="newsletter"]').as('newsLetterCheckBox');
         cy.get('button[type=submit]').as('registerButton');
         cy.contains('a.mat-button', 'Cancel').as('cancelButton');
     });
@@ -33,6 +35,8 @@ describe('Testing the Registration Page', function () {
             cy.get('@emailInput');
             cy.get('@passwordInput');
             cy.get('@confirmInput');
+            cy.get('@dataProtectionCheckBox');
+            cy.get('@newsLetterCheckBox');
             cy.get('@registerButton').should('be.disabled');
             cy.get('@cancelButton');
         });
@@ -54,6 +58,7 @@ describe('Testing the Registration Page', function () {
             cy.get('@emailInput').type(user.email);
             cy.get('@passwordInput').type(user.password);
             cy.get('@confirmInput').type(user.password);
+            cy.get('@dataProtectionCheckBox').click();
         };
 
         beforeEach(function () {
@@ -151,6 +156,38 @@ describe('Testing the Registration Page', function () {
                 cy.get('mat-error')
                     .should('contain', 'Passwords must match')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
+                cy.get('@registerButton').should('be.disabled');
+            });
+        });
+
+        it('should prevent weak passwords', function () {
+            cy.get('form').within(() => {
+                fillOutRegistrationForm(this.users[5]);
+
+                cy.contains('Password').should('have.css', 'color', 'rgb(254, 0, 0)');
+
+                cy.get('mat-error')
+                    .should('contain', 'Password is required')
+                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+
+                cy.get('password-strength-meter')
+                    .next()
+                    .should('contain', 'Password to weak or to short')
+                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+
+                cy.get('@registerButton').should('be.disabled');
+            });
+        });
+
+        it('should require data protection consent', function () {
+            cy.get('form').within(() => {
+                fillOutRegistrationForm(this.users[5]);
+                cy.get('@dataProtectionCheckBox').click();
+
+                cy.get('mat-error')
+                    .should('contain', 'You have to accept the Privacy Policy')
+                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+
                 cy.get('@registerButton').should('be.disabled');
             });
         });

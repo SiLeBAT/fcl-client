@@ -56,7 +56,7 @@ describe('Testing the Password Reset page', function () {
             });
             cy.get('@emailInput').type(this.users[0].email);
             cy.get('@recoverButton').click();
-            cy.contains(this.toaster.passwordResetRequest1);
+            cy.contains(this.toaster.registeredUserPasswordResetRequest1);
             cy.contains(this.toaster.passwordResetRequest2);
             cy.contains(this.toaster.passwordResetRequest3);
         });
@@ -89,7 +89,7 @@ describe('Testing the Password Reset page', function () {
             });
         });
 
-        it('should display toaster on 500', function () {
+        it('should show same toaster message for unregistered users', function () {
             cy.server();
             cy.route({
                 method: 'PUT',
@@ -101,25 +101,10 @@ describe('Testing the Password Reset page', function () {
             cy.get('@emailInput').type('NonexistentUser@none.com');
             cy.get('@recoverButton').click();
             cy.wait('@recoveryRes');
-            cy.contains(this.toaster.passwordResetError);
+            cy.contains(this.toaster.unregisteredUserPasswordResetRequest1);
+            cy.contains(this.toaster.passwordResetRequest2);
+            cy.contains(this.toaster.passwordResetRequest3);
             cy.url().should('include', this.paths.login);
-        });
-
-        it('should display banner for 400', function () {
-            cy.server();
-            cy.route({
-                method: 'PUT',
-                url: this.routes.resetPasswordRequest,
-                response: this.errors[3].body,
-                status: this.errors[3].status
-
-            }).as('recoveryRes');
-
-            cy.get('@emailInput').type(this.users[0].email);
-            cy.get('@recoverButton').click();
-            cy.wait('@recoveryRes');
-            cy.contains(this.toaster.passwordResetError);
-            cy.url().should('include', this.paths.recovery);
         });
 
     });

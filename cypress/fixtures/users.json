@@ -32,6 +32,13 @@
     "firstName": "User5",
     "lastName": "User5",
     "email": "newUser@test.com",
-    "password": "user5secrettestpassword"
+    "password": "user5secrettestpassword$§!"
+  },
+  {
+    "id": 6,
+    "firstName": "User6",
+    "lastName": "User6",
+    "email": "user6@test.com",
+    "password": "toshort"
   }
 ]
