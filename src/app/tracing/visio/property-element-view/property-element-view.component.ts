@@ -41,6 +41,6 @@ export class PropertyElementViewComponent implements OnInit, OnChanges {
     }
 
     onSelectionChange(change: MatSelectChange): void {
-        this.propChange.emit(change.value || null);
+        this.propChange.emit(change.value || null);
     }
 }

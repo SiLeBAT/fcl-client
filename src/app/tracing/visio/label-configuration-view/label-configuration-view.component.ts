@@ -20,7 +20,7 @@ export class LabelConfigurationViewComponent implements OnInit {
 
     onPropElementPropChange(propElement: PropElementInfo, prop: string | null): void {
         propElement.prop = prop;
-        for(const pair of this.amountUnitPairs) {
+        for (const pair of this.amountUnitPairs) {
             if (pair.amount === propElement) {
                 pair.unit.prop = getUnitPropFromAmountProp(propElement.prop, this.availableProps);
             }

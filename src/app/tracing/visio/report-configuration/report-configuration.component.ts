@@ -16,7 +16,6 @@ import { createDefaultROASettings, getUnitPropFromAmountProp } from '../shared';
 import { AmountUnitPair, LabelElementInfo, PropElementInfo, ROALabelSettings, ROASettings, TextElementInfo } from '../model';
 import { some } from 'cypress/types/bluebird';
 
-
 function propCompare(propA: PropInfo, propB: PropInfo): number {
     const textA = propA.label !== undefined ? propA.label : propA.prop;
     const textB = propB.label !== undefined ? propB.label : propB.prop;
@@ -70,13 +69,13 @@ export class ReportConfigurationComponent {
             this.store.select(TracingSelectors.getROASettings)
         ]).pipe(take(1))
         .subscribe(([dataServiceInputState, roaSettings]) => {
-                this.initAvailableProps(dataServiceInputState);
-                if (roaSettings === null) {
-                    this.setDefaultLabelInfos();
-                } else {
-                    this.setLabelInfos(roaSettings);
-                }
-            },
+            this.initAvailableProps(dataServiceInputState);
+            if (roaSettings === null) {
+                this.setDefaultLabelInfos();
+            } else {
+                this.setLabelInfos(roaSettings);
+            }
+        },
             error => {
                 throw new Error(`error load roa configuration state: ${error}`);
             }
@@ -173,7 +172,7 @@ export class ReportConfigurationComponent {
         const labelInfo = this.labelInfos[label];
         const props = Utils.createSimpleStringSet(labelInfo.availableProps.map(p => p.prop));
 
-        for(const labelElementRow of labelInfo.labelElements) {
+        for (const labelElementRow of labelInfo.labelElements) {
             const propElements = labelElementRow.filter(e => (e as PropElementInfo).prop !== undefined) as PropElementInfo[];
             const nonNullPropElements = propElements.filter(e => e.prop !== null);
             if (nonNullPropElements.some(e => !props[e.prop])) {
@@ -190,11 +189,11 @@ export class ReportConfigurationComponent {
     }
 
     private initAmountUnits(): void {
-        for(const labelKey of Object.keys(this.labelInfos)) {
+        for (const labelKey of Object.keys(this.labelInfos)) {
             const labelInfo: LabelInfo = this.labelInfos[labelKey];
             labelInfo.amountUnitPairs.forEach(amountUnitPair => {
                 const unit = getUnitPropFromAmountProp(amountUnitPair.amount.prop, labelInfo.availableProps);
-                amountUnitPair.unit.prop = unit
+                amountUnitPair.unit.prop = unit;
             });
         }
     }
