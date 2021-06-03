@@ -1,4 +1,5 @@
-import { StationData, SampleResultType, ROASettings } from '../../data.model';
+import { StationData, SampleResultType } from '../../data.model';
+import { ROASettings } from '../model';
 
 export interface Position {
     x: number;

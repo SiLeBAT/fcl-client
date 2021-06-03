@@ -3,7 +3,6 @@ import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, FclData, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
-    ROASettings,
     CrossContTraceType,
     DeliveryId,
     StationHighlightingRule
@@ -11,6 +10,7 @@ import {
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
 import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
+import { ROASettings } from '../visio/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',

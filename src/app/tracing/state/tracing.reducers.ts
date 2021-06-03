@@ -5,7 +5,6 @@ import {
     MergeDeliveriesType,
     MapType,
     GraphType,
-    ROASettings,
     CrossContTraceType
 } from '../data.model';
 
@@ -67,7 +66,7 @@ const initialTabIndices: ConfigurationTabIndex = {
 
 const initialState: TracingState = {
     fclData: initialData,
-    roaSettings: createDefaultROASettings(),
+    roaSettings: null,
     visioReport: null,
     tracingActive: false,
     showConfigurationSideBar: false,
@@ -117,41 +116,6 @@ export function createInitialFclDataState(): FclData {
             deliveries: []
         },
         groupSettings: []
-    };
-}
-
-export function createDefaultROASettings(): ROASettings {
-    return {
-        labelSettings: {
-            stationLabel: [
-                [
-                    { prop: 'typeOfBusiness', altText: 'Unknown activity' },
-                    { text: ': ' },
-                    { prop: 'name', altText: 'Unknown FBO' }
-                ]
-            ],
-
-            lotLabel: [
-                [ { prop: 'name', altText: 'Unknown product name' } ],
-                [ { text: 'Lot: ' }, { prop: 'lot', altText: 'unknown' } ],
-                [ { text: 'Amount: ' }, { prop: 'lotQuantity', altText: 'unknown' } ]
-            ],
-
-            stationSampleLabel: [
-                [ { prop: 'type', altText: 'Unknown type' } ],
-                [ { prop: 'material', altText: 'Unknown material' } ],
-                [ { prop: 'amount', altText: 'Unknown amount' } ],
-                [ { prop: 'result', altText: 'Unknown result' } ],
-                [ { prop: 'time', altText: 'Unknown time' } ]
-            ],
-
-            lotSampleLabel: [
-                [ { prop: 'type', altText: 'Unknown type' } ],
-                [ { prop: 'amount', altText: 'Unknown amount' } ],
-                [ { prop: 'result', altText: 'Unknown result' } ],
-                [ { prop: 'time', altText: 'Unknown time' } ]
-            ]
-        }
     };
 }
 

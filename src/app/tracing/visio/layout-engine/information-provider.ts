@@ -2,9 +2,10 @@ import * as _ from 'lodash';
 import {
     StationInformation, LotInformation, ProductInformation, DeliveryInformation
 } from './datatypes';
-import { StationData, DeliveryData, SampleData, ROASettings, LabelElementInfo, PropElementInfo, PropertyEntry } from '../../data.model';
+import { StationData, DeliveryData, SampleData, PropertyEntry } from '../../data.model';
 import { Utils } from '../../util/non-ui-utils';
 import { addSampleInformation } from './sample-information-provider';
+import { LabelElementInfo, PropElementInfo, ROASettings } from '../model';
 
 interface FclElements {
     stations: StationData[];
