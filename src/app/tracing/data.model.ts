@@ -9,7 +9,7 @@ export interface PropMap {
     [key: string]: string;
 }
 
-interface FclDataSourceInfo {
+export interface FclDataSourceInfo {
     name?: string;
     data?: any;
     propMaps?: {
@@ -17,6 +17,7 @@ interface FclDataSourceInfo {
         deliveryPropMap?: PropMap;
     };
 }
+
 export interface FclData {
     source: FclDataSourceInfo;
     fclElements: FclElements;

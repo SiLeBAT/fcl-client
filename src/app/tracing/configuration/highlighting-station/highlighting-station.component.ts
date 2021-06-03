@@ -9,9 +9,9 @@ import * as configurationActions from '../configuration.actions';
 import { takeWhile } from 'rxjs/operators';
 import { AlertService } from '@app/shared/services/alert.service';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
-import { TableService } from '@app/tracing/services/table.service';
 import { DataService } from '@app/tracing/services/data.service';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
+import { EditHighlightingService } from '../edit-highlighting.service';
 
 interface HighlightingState {
     graphState: BasicGraphState;
@@ -73,7 +73,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
     private cachedState: HighlightingState | null = null;
 
     constructor(
-        private tableService: TableService,
+        private editHighlightingService: EditHighlightingService,
         private dataService: DataService,
         private store: Store<tracingReducers.State>,
         private alertService: AlertService
@@ -139,7 +139,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         let dataTable: DataTable | null = this.cachedData ? this.cachedData.dataTable : null;
         const data = this.dataService.getData(state.graphState);
         if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
-            dataTable = this.tableService.getStationData(state.graphState);
+            dataTable = this.editHighlightingService.getStationData(state.graphState);
         } else if (
             data.stations !== this.cachedData.data.stations ||
             data.deliveries !== this.cachedData.data.deliveries ||
@@ -148,7 +148,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
             data.delSel !== this.cachedData.data.delSel
             ) {
             dataTable = {
-                ...this.tableService.getStationData(state.graphState),
+                ...this.editHighlightingService.getStationData(state.graphState),
                 columns: this.cachedData.dataTable.columns
             };
         }

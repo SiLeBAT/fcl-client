@@ -5,7 +5,8 @@ import {
     MergeDeliveriesType,
     MapType,
     GraphType,
-    CrossContTraceType
+    CrossContTraceType,
+    FclDataSourceInfo
 } from '../data.model';
 
 import { TracingState } from '../state.model';
@@ -19,6 +20,7 @@ import {
     HighlightingConfigurationSettings
 } from '../configuration/configuration.model';
 import { FilterTabId, StationsTabId } from '../configuration/configuration.constants';
+import { DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP, DENOVO_STATION_PROP_INT_TO_EXT_MAP } from '../io/data-mappings/data-mappings-v1';
 
 export const STATE_SLICE_NAME = 'tracing';
 
@@ -76,9 +78,18 @@ const initialState: TracingState = {
     highlightingConfigurationSettings: initialHighlightingConfigurationSettings
 };
 
+function createInitialFclDataSourceInfo(): FclDataSourceInfo {
+    return {
+        propMaps: {
+            stationPropMap: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+            deliveryPropMap: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+        }
+    };
+}
+
 export function createInitialFclDataState(): FclData {
     return {
-        source: null,
+        source: createInitialFclDataSourceInfo(),
         fclElements: {
             stations: [],
             deliveries: [],
