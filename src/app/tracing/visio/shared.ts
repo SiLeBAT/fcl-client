@@ -1,5 +1,5 @@
-import { PropInfo } from "../shared/property-info";
-import { ROASettings } from "./model";
+import { PropInfo } from '../shared/property-info';
+import { ROASettings } from './model';
 
 const LCASE_AMOUNT_PROP_SUFFIX = 'amount';
 const LCASE_UNIT_PROP_SUFFIX = 'unit';
@@ -10,7 +10,7 @@ export function getUnitPropFromAmountProp(amountProp: string, availableProps: Pr
         if (lCaseAmountProp.endsWith(LCASE_AMOUNT_PROP_SUFFIX)) {
             const lCasePropPrefix = lCaseAmountProp.substr(0, amountProp.length - LCASE_AMOUNT_PROP_SUFFIX.length);
             const lCaseUnitProp = lCasePropPrefix + LCASE_UNIT_PROP_SUFFIX;
-            for(const propInfo of availableProps) {
+            for (const propInfo of availableProps) {
                 if (propInfo.prop.toLowerCase() === lCaseUnitProp) {
                     return propInfo.prop;
                 }
