@@ -9,7 +9,7 @@ import {
     FclDataSourceInfo
 } from '../data.model';
 
-import { TracingState } from '../state.model';
+import { ModelDependentState, TracingState } from '../state.model';
 import {
     ComplexRowFilterSettings,
     FilterTableSettings,
@@ -58,6 +58,13 @@ const initialHighlightingConfigurationSettings: HighlightingConfigurationSetting
     }
 };
 
+const initialModelDependentState: ModelDependentState = {
+    visioReport: null,
+    roaSettings: null,
+    filterSettings: initialFilterSettings,
+    highlightingConfigurationSettings: initialHighlightingConfigurationSettings
+};
+
 const initialData: FclData = createInitialFclDataState();
 
 const initialTabIndices: ConfigurationTabIndex = {
@@ -68,14 +75,11 @@ const initialTabIndices: ConfigurationTabIndex = {
 
 const initialState: TracingState = {
     fclData: initialData,
-    roaSettings: null,
-    visioReport: null,
+    ...initialModelDependentState,
     tracingActive: false,
     showConfigurationSideBar: false,
     configurationTabIndices: initialTabIndices,
-    showGraphSettings: false,
-    filterSettings: initialFilterSettings,
-    highlightingConfigurationSettings: initialHighlightingConfigurationSettings
+    showGraphSettings: false
 };
 
 function createInitialFclDataSourceInfo(): FclDataSourceInfo {
@@ -146,8 +150,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 fclData: action.payload.fclData,
-                filterSettings: initialFilterSettings,
-                highlightingConfigurationSettings: initialHighlightingConfigurationSettings
+                ...initialModelDependentState
             };
 
         case TracingActionTypes.LoadFclDataFailure:
