@@ -5,7 +5,8 @@ import {
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
     CrossContTraceType,
     DeliveryId,
-    StationHighlightingRule
+    StationHighlightingRule,
+    SetInvisibleElementsPayload
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -39,6 +40,7 @@ export enum TracingActionTypes {
     SetTracingSettingsSOA = '[Tracing] Set Tracing Settings',
     SetCrossContTraceTypeSOA = '[Tracing] Set Cross Contamination Trace Type',
     SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
+    SetInvisibleElementsSOA = '[Tracing] Set Invisible Elements',
     SetActiveConfigurationTabIdSOA = '[Configuration Layout] Set Active Configuration Tab Id',
     SetActiveFilterTabIdSOA = '[Configuration Layout] Set Active Filter Tab Id',
     SetActiveHighlightingTabIdSOA = '[Configuration Layout] Set Active Highlighting Tab Id',
@@ -209,6 +211,12 @@ export class SetHighlightingSettingsSOA implements Action {
     constructor(public payload: SetHighlightingSettingsPayload) {}
 }
 
+export class SetInvisibleElementsSOA implements Action {
+    readonly type = TracingActionTypes.SetInvisibleElementsSOA;
+
+    constructor(public payload: SetInvisibleElementsPayload) {}
+}
+
 export class SetActiveConfigurationTabIdSOA implements Action {
     readonly type = TracingActionTypes.SetActiveConfigurationTabIdSOA;
 
@@ -329,6 +337,7 @@ export type TracingActions =
     | SetTracingSettingsSOA
     | SetCrossContTraceTypeSOA
     | SetHighlightingSettingsSOA
+    | SetInvisibleElementsSOA
     | SetActiveConfigurationTabIdSOA
     | SetActiveFilterTabIdSOA
     | SetActiveHighlightingTabIdSOA

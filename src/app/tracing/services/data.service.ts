@@ -203,6 +203,7 @@ export class DataService {
                 statSel: undefined,
                 delSel: undefined,
                 statVis: undefined,
+                delVis: undefined,
                 tracingResult: undefined,
                 legendInfo: undefined,
                 highlightingStats: undefined
@@ -244,7 +245,8 @@ export class DataService {
             this.updateCache(state, false, false);
         } else if (
             this.cachedState.highlightingSettings !== state.highlightingSettings ||
-            this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations
+            this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations ||
+            this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries
         ) {
             this.updateCache(state, false, false, false, true);
         } else if (this.cachedState.selectedElements !== state.selectedElements) {

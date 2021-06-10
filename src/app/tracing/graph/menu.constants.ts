@@ -88,7 +88,7 @@ export class MenuItemStrings {
         displayName: 'Set Kill Contamination'
     };
 
-    static readonly makeStationsInvisible: ItemInfo = {
+    static readonly makeElementsInvisible: ItemInfo = {
         displayName: 'Make Invisible'
     };
 

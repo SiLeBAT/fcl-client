@@ -14,7 +14,11 @@ import {
     StationHighlightingRule,
     DeliveryHighlightingRule,
     HighlightingRule,
-    OperationType
+    OperationType,
+    ClearInvisibilitiesOptions,
+    SetElementsInvisibilityParams,
+    HighlightingSettingsAndSelectedElements,
+    SetInvisibleElementsPayload
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -37,35 +41,86 @@ export class HighlightingService {
     private statRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
     private delRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
 
-    getMarkStationsInvisiblePayload(state: HighlightingSettings, stationIds: string[], invisible: boolean): SetHighlightingSettingsPayload {
-        let invisibleStations: string[] = [];
-        if (invisible) {
-            invisibleStations = [].concat(state.invisibleStations, stationIds);
+    private getNewInvisibilities(oldInvIds: string[], updateInvIds: string[], invisible: boolean): string[] {
+        if (updateInvIds.length === 0) {
+            return oldInvIds;
+        } else if (invisible) {
+            return [].concat(oldInvIds, updateInvIds);
         } else {
-            const visibleMap = Utils.createSimpleStringSet(stationIds);
-            invisibleStations = state.invisibleStations.filter(id => !visibleMap[id]);
+            return Utils.getStringArrayDifference(oldInvIds, updateInvIds);
+        }
+    }
+
+    private getNewSelection(oldSelection: string[], updateInvIds: string[], invisible: boolean): string[] {
+        if (updateInvIds.length === 0) {
+            return oldSelection;
+        } else if (invisible) {
+            return Utils.getStringArrayDifference(oldSelection, updateInvIds);
+        }
+    }
+
+    getSetInvisibleElementsPayload(
+        state: HighlightingSettingsAndSelectedElements,
+        params: SetElementsInvisibilityParams
+    ): SetInvisibleElementsPayload {
+
+        let selectedElements = state.selectedElements;
+        if (params.invisible) {
+            selectedElements = {
+                stations: this.getNewSelection(
+                    state.selectedElements.stations,
+                    params.stationIds,
+                    params.invisible
+                ),
+                deliveries: this.getNewSelection(
+                    state.selectedElements.deliveries,
+                    params.deliveryIds,
+                    params.invisible
+                )
+            };
         }
         return {
+            selectedElements: selectedElements,
             highlightingSettings: {
-                ...state,
-                invisibleStations: invisibleStations
+                ...state.highlightingSettings,
+                invisibleStations: this.getNewInvisibilities(
+                    state.highlightingSettings.invisibleStations,
+                    params.stationIds,
+                    params.invisible
+                ),
+                invisibleDeliveries: this.getNewInvisibilities(
+                    state.highlightingSettings.invisibleDeliveries,
+                    params.deliveryIds,
+                    params.invisible
+                )
             }
         };
     }
 
-    getClearInvisiblitiesPayload(state: HighlightingSettings): SetHighlightingSettingsPayload {
+    getClearInvisiblitiesPayload(
+        state: HighlightingSettings,
+        options: Required<ClearInvisibilitiesOptions>
+    ): SetHighlightingSettingsPayload {
         return {
             highlightingSettings: {
                 ...state,
-                invisibleStations: []
+                invisibleStations: options.clearStationInvs ? [] : state.invisibleStations,
+                invisibleDeliveries: options.clearDeliveryInvs ? [] : state.invisibleDeliveries
             }
         };
     }
 
     applyVisibilities(state: BasicGraphState, data: DataServiceData) {
         data.stations.forEach(s => s.invisible = false);
+        data.deliveries.forEach(s => s.invisible = false);
+        // ToDo: Refactor, check why a s!==null comparison is used here
         data.getStatById(state.highlightingSettings.invisibleStations).filter(s => s !== null).forEach(s => s.invisible = true);
         data.statVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
+        data.getDelById(state.highlightingSettings.invisibleDeliveries).forEach(d => d.invisible = true);
+        data.deliveries.filter(d => !d.invisible).forEach(
+            d => d.invisible = data.statMap[d.source].invisible || data.statMap[d.target].invisible
+        );
+        data.delVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
     }
 
     hasStationVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
@@ -73,7 +128,7 @@ export class HighlightingService {
     }
 
     hasDeliveryVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
-        return !oldState;
+        return !oldState || oldState.highlightingSettings.invisibleDeliveries !== newState.highlightingSettings.invisibleDeliveries;
     }
 
     private getEvaluatorFunFromRule(rule: HighlightingRule): RuleConditionsEvaluatorFun {

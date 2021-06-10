@@ -172,7 +172,7 @@ export class TracingEffects {
     );
 
     @Effect()
-    setStationKillCantamination$ = this.actions$.pipe(
+    setStationKillContamination$ = this.actions$.pipe(
         ofType<tracingEffectActions.SetStationKillContaminationMSA>(
             tracingEffectActions.TracingActionTypes.SetStationKillContaminationMSA
         ),
@@ -212,14 +212,14 @@ export class TracingEffects {
     );
 
     @Effect()
-    makeStationsInvisible$ = this.actions$.pipe(
-        ofType<tracingEffectActions.MakeStationsInvisibleMSA>(tracingEffectActions.TracingActionTypes.MakeStationsInvisibleMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
+    setElementsInvisibility$ = this.actions$.pipe(
+        ofType<tracingEffectActions.SetElementsInvisibilityMSA>(tracingEffectActions.TracingActionTypes.SetElementsInvisibilityMSA),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettingsAndSelectedElements))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.highlightingService.getMarkStationsInvisiblePayload(state, action.payload.stationIds, true);
+                const payload = this.highlightingService.getSetInvisibleElementsPayload(state, action.payload);
                 if (payload) {
-                    return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
+                    return of(new tracingStateActions.SetInvisibleElementsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Stations could not be made invisible!, error: ${error}`);
@@ -234,7 +234,7 @@ export class TracingEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.highlightingService.getClearInvisiblitiesPayload(state);
+                const payload = this.highlightingService.getClearInvisiblitiesPayload(state, action.payload);
                 if (payload) {
                     return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
                 }

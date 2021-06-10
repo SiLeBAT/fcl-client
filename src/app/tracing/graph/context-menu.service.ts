@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
 import {
-    ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA, MakeStationsInvisibleMSA,
+    ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA, SetElementsInvisibilityMSA,
     MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA, SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
     ShowDeliveryTraceMSA, ShowStationPropertiesMSA, ShowStationTraceMSA
 } from '../tracing.actions';
@@ -159,7 +159,7 @@ export class ContextMenuService {
                         graphData.stations.some(s => s.invisible) ||
                         graphData.deliveries.some(d => d.invisible)
                     ),
-                    action: new ClearInvisibilitiesMSA({})
+                    action: new ClearInvisibilitiesMSA({ clearStationInvs: true, clearDeliveryInvs: true })
                 },
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
@@ -271,6 +271,17 @@ export class ContextMenuService {
         };
     }
 
+    private createMakeInvisibleItemData(contextElements: ContextElements): MenuItemData {
+        return {
+            ...MenuItemStrings.makeElementsInvisible,
+            action: new SetElementsInvisibilityMSA({
+                stationIds: contextElements.stationIds,
+                deliveryIds: contextElements.deliveryIds,
+                invisible: true
+            })
+        };
+    }
+
     private createStationActions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
@@ -316,10 +327,17 @@ export class ContextMenuService {
                         killContamination: !allKillContaminationStations
                     })
                 },
-                {
-                    ...MenuItemStrings.makeStationsInvisible,
-                    action: new MakeStationsInvisibleMSA({ stationIds: selectedIds })
-                },
+                // ( contextElements.deliveryIds.length === 0 ?
+                //     {
+                //         ...MenuItemStrings.makeStationsInvisible,
+                //         action: new MakeElementsInvisibleMSA({ stationIds: selectedIds })
+                //     } :
+                //     {
+                //         ...MenuItemStrings.makeElementsInvisible,
+                //         action: new MakeElementsInvisibleMSA({ stationIds: selectedIds, deliveryIds: contextElements.deliveryIds })
+                //     }
+                // )
+                this.createMakeInvisibleItemData(contextElements),
                 {
                     ...MenuItemStrings.mergeStations,
                     disabled: !multipleStationsSelected,
@@ -342,7 +360,8 @@ export class ContextMenuService {
             },
             {
                 ...this.createTraceMenuItemData(contextElements)
-            }
+            },
+            this.createMakeInvisibleItemData(contextElements)
         ];
     }
 

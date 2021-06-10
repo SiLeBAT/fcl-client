@@ -133,10 +133,20 @@ export interface SampleData {
     result: string;
     resultType: SampleResultType;
 }
-
 export interface SelectedElements {
     stations: StationId[];
     deliveries: DeliveryId[];
+}
+
+export interface ClearInvisibilitiesOptions {
+    clearStationInvs: boolean;
+    clearDeliveryInvs: boolean;
+}
+
+export interface SetElementsInvisibilityParams {
+    stationIds: StationId[];
+    deliveryIds: DeliveryId[];
+    invisible: boolean;
 }
 
 export interface GraphSettings {
@@ -161,8 +171,14 @@ export interface GraphSettings {
 
 export interface HighlightingSettings {
     invisibleStations: StationId[];
+    invisibleDeliveries: DeliveryId[];
     stations?: StationHighlightingRule[];
     deliveries?: DeliveryHighlightingRule[];
+}
+
+export interface HighlightingSettingsAndSelectedElements {
+    selectedElements: SelectedElements;
+    highlightingSettings: HighlightingSettings;
 }
 
 export interface HighlightingRule {
@@ -330,6 +346,7 @@ export interface DataServiceData {
     statSel: Record<StationId, boolean>;
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
+    delVis: Record<DeliveryId, boolean>;
     tracingResult: TracingResult;
     legendInfo: LegendInfo;
     highlightingStats: HighlightingStats;
@@ -429,6 +446,11 @@ export interface SetTracingSettingsPayload {
 
 export interface SetHighlightingSettingsPayload {
     highlightingSettings: HighlightingSettings;
+}
+
+export interface SetInvisibleElementsPayload {
+    highlightingSettings: HighlightingSettings;
+    selectedElements: SelectedElements;
 }
 
 interface LegendEntry {

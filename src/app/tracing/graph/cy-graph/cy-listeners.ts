@@ -75,7 +75,7 @@ export function addCyContextMenuRequestListener(
 
         onContextMenuRequest({
             position: position,
-            context: {
+            hoverContext: {
                 nodeId: contextElement.isNode && contextElement.isNode() ? contextElement.id() : undefined,
                 edgeId: contextElement.isEdge && contextElement.isEdge() ? contextElement.id() : undefined
             }

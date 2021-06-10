@@ -115,6 +115,7 @@ export function createInitialFclDataState(): FclData {
             stationPositions: {},
             highlightingSettings: {
                 invisibleStations: [],
+                invisibleDeliveries: [],
                 stations: [],
                 deliveries: []
             },
@@ -507,6 +508,19 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         highlightingSettings: action.payload.highlightingSettings
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetInvisibleElementsSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: action.payload.highlightingSettings,
+                        selectedElements: action.payload.selectedElements
                     }
                 }
             };

@@ -226,7 +226,7 @@ export interface ContextMenuRequestContext {
 
 export interface ContextMenuRequestInfo {
     position: Position;
-    context: ContextMenuRequestContext;
+    hoverContext: ContextMenuRequestContext;
 }
 
 export interface SelectedGraphElements {

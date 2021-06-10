@@ -350,4 +350,9 @@ export class Utils {
         }
         return result as Record<K, T>;
     }
+
+    static getStringArrayDifference(array1: string[], array2: string[]): string[] {
+        const elementToDeleteMap = this.createSimpleStringSet(array2);
+        return array1.filter(e => !elementToDeleteMap[e]);
+    }
 }

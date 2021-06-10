@@ -1,6 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ObservedType } from './data.model';
-import { Subject } from 'rxjs';
+import { ClearInvisibilitiesOptions, ObservedType, SetElementsInvisibilityParams } from './data.model';
 
 export enum TracingActionTypes {
     ClearTraceMSA = '[Tracing] Clear Trace',
@@ -10,7 +9,7 @@ export enum TracingActionTypes {
     MarkStationsAsOutbreakMSA = '[Tracing] Mark Stations as Outbreak',
     SetStationCrossContaminationMSA = '[Tracing] Set Station Cross Contamination',
     SetStationKillContaminationMSA = '[Tracing] Set Station Kill Contamination',
-    MakeStationsInvisibleMSA = '[Tracing] Make Stations Invisible',
+    SetElementsInvisibilityMSA = '[Tracing] Set Elements Invisibility',
     ShowDeliveryPropertiesMSA = '[Tracing] Show Delivery Properties',
     ShowStationTraceMSA = '[Tracing] Show Station Trace',
     ShowDeliveryTraceMSA = '[Tracing] Show Delivery Trace'
@@ -31,7 +30,7 @@ export class ClearOutbreakStationsMSA implements Action {
 export class ClearInvisibilitiesMSA implements Action {
     readonly type = TracingActionTypes.ClearInvisibilitiesMSA;
 
-    constructor(public payload: {}) {}
+    constructor(public payload: ClearInvisibilitiesOptions) {}
 }
 
 export class ShowStationPropertiesMSA implements Action {
@@ -64,10 +63,10 @@ export class SetStationKillContaminationMSA implements Action {
     constructor(public payload: { stationIds: string[], killContamination: boolean }) {}
 }
 
-export class MakeStationsInvisibleMSA implements Action {
-    readonly type = TracingActionTypes.MakeStationsInvisibleMSA;
+export class SetElementsInvisibilityMSA implements Action {
+    readonly type = TracingActionTypes.SetElementsInvisibilityMSA;
 
-    constructor(public payload: { stationIds: string[] }) {}
+    constructor(public payload: SetElementsInvisibilityParams) {}
 }
 
 export class ShowStationTraceMSA implements Action {
@@ -89,6 +88,6 @@ export type TracingActions =
     | ShowStationPropertiesMSA
     | MarkStationsAsOutbreakMSA
     | SetStationCrossContaminationMSA
-    | MakeStationsInvisibleMSA
+    | SetElementsInvisibilityMSA
     | ShowStationTraceMSA
     | ShowDeliveryTraceMSA ;

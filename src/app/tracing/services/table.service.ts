@@ -60,7 +60,8 @@ export class TableService {
             { id: 'forward', name: 'Forward' },
             { id: 'backward', name: 'Backward' },
             { id: 'score', name: 'Score' },
-            { id: 'selected', name: 'Selected' }
+            { id: 'selected', name: 'Selected' },
+            { id: 'invisible', name: 'Invisible' }
         ];
 
         this.addColumnsForProperties(columns, data.deliveries);
@@ -140,7 +141,8 @@ export class TableService {
                 forward: delivery.forward,
                 backward: delivery.backward,
                 score: delivery.score,
-                selected: delivery.selected
+                selected: delivery.selected,
+                invisible: delivery.invisible
             };
 
             delivery.properties.forEach(

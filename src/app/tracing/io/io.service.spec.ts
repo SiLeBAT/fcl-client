@@ -73,6 +73,7 @@ describe('IOService', () => {
                 },
                 highlightingSettings: {
                     invisibleStations: [],
+                    invisibleDeliveries: [],
                     stations: [],
                     deliveries: []
                 },

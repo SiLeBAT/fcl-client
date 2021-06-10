@@ -599,6 +599,7 @@ export class GraphService {
         const edgeCreationRequired =
             nodeCreationRequired ||
             data.deliveries !== this.cachedData.deliveries ||
+            this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries ||
             this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType ||
             tracPropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE;
 

@@ -40,6 +40,7 @@ export function checkVersionFormat(version: String): boolean {
 export function createDefaultHighlights(): HighlightingSettings {
     const defaultHighlights: HighlightingSettings = {
         invisibleStations: [],
+        invisibleDeliveries: [],
         stations: [
             {
                 id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',

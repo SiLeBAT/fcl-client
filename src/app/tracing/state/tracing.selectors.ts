@@ -66,6 +66,20 @@ export const getHighlightingSettings = createSelector(
     (fclData) => fclData.graphSettings.highlightingSettings
 );
 
+export const getSelectedElements = createSelector(
+    getFclData,
+    (fclData) => fclData.graphSettings.selectedElements
+);
+
+export const getHighlightingSettingsAndSelectedElements = createSelector(
+    getHighlightingSettings,
+    getSelectedElements,
+    (highlightingSettings, selectedElements) => ({
+        highlightingSettings: highlightingSettings,
+        selectedElements: selectedElements
+    })
+);
+
 export const getStationHighlightingSettings = createSelector(
     getHighlightingSettings,
     (highlightingSettings) => highlightingSettings.stations
