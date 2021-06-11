@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { STATE_SLICE_NAME, complexFilterSettings } from './tracing.reducers';
+import { STATE_SLICE_NAME } from './tracing.reducers';
 import { TracingState } from '../state.model';
 import { DeliveriesTabId, FilterTabId, HighlightingTabId, StationsTabId } from '../configuration/configuration.constants';
 
@@ -71,12 +71,14 @@ export const getSelectedElements = createSelector(
     (fclData) => fclData.graphSettings.selectedElements
 );
 
-export const getHighlightingSettingsAndSelectedElements = createSelector(
+export const getMakeElementsInvisibleInputState = createSelector(
     getHighlightingSettings,
     getSelectedElements,
-    (highlightingSettings, selectedElements) => ({
+    getTracingSettings,
+    (highlightingSettings, selectedElements, tracingSettings) => ({
         highlightingSettings: highlightingSettings,
-        selectedElements: selectedElements
+        selectedElements: selectedElements,
+        tracingSettings: tracingSettings
     })
 );
 

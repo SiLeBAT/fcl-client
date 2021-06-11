@@ -3,8 +3,6 @@ import { createPreprocessedConditions } from '../configuration/complex-row-filte
 import {
     DataServiceData,
     BasicGraphState,
-    SetHighlightingSettingsPayload,
-    HighlightingSettings,
     StationData,
     StationHighlightingInfo,
     DeliveryHighlightingInfo,
@@ -14,11 +12,7 @@ import {
     StationHighlightingRule,
     DeliveryHighlightingRule,
     HighlightingRule,
-    OperationType,
-    ClearInvisibilitiesOptions,
-    SetElementsInvisibilityParams,
-    HighlightingSettingsAndSelectedElements,
-    SetInvisibleElementsPayload
+    OperationType
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -40,78 +34,6 @@ export class HighlightingService {
     private ruleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
     private statRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
     private delRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
-
-    private getNewInvisibilities(oldInvIds: string[], updateInvIds: string[], invisible: boolean): string[] {
-        if (updateInvIds.length === 0) {
-            return oldInvIds;
-        } else if (invisible) {
-            return [].concat(oldInvIds, updateInvIds);
-        } else {
-            return Utils.getStringArrayDifference(oldInvIds, updateInvIds);
-        }
-    }
-
-    private getNewSelection(oldSelection: string[], updateInvIds: string[], invisible: boolean): string[] {
-        if (updateInvIds.length === 0) {
-            return oldSelection;
-        } else if (invisible) {
-            return Utils.getStringArrayDifference(oldSelection, updateInvIds);
-        }
-    }
-
-    getSetInvisibleElementsPayload(
-        state: HighlightingSettingsAndSelectedElements,
-        params: SetElementsInvisibilityParams
-    ): SetInvisibleElementsPayload {
-
-        let selectedElements = state.selectedElements;
-        if (params.invisible) {
-            selectedElements = {
-                stations: this.getNewSelection(
-                    state.selectedElements.stations,
-                    params.stationIds,
-                    params.invisible
-                ),
-                deliveries: this.getNewSelection(
-                    state.selectedElements.deliveries,
-                    params.deliveryIds,
-                    params.invisible
-                )
-            };
-        }
-        return {
-            selectedElements: selectedElements,
-            highlightingSettings: {
-                ...state.highlightingSettings,
-                invisibleStations: this.getNewInvisibilities(
-                    state.highlightingSettings.invisibleStations,
-                    params.stationIds,
-                    params.invisible
-                ),
-                invisibleDeliveries: this.getNewInvisibilities(
-                    state.highlightingSettings.invisibleDeliveries,
-                    params.deliveryIds,
-                    params.invisible
-                )
-            }
-        };
-    }
-
-    getClearInvisiblitiesPayload(
-        state: HighlightingSettings,
-        options: Required<ClearInvisibilitiesOptions>
-    ): SetHighlightingSettingsPayload {
-        if (options.clearDeliveryInvs || options.clearStationInvs) {
-            return {
-                highlightingSettings: {
-                    ...state,
-                    invisibleStations: options.clearStationInvs ? [] : state.invisibleStations,
-                    invisibleDeliveries: options.clearDeliveryInvs ? [] : state.invisibleDeliveries
-                }
-            };
-        }
-        return null;
-    }
 
     applyVisibilities(state: BasicGraphState, data: DataServiceData) {
         data.stations.forEach(s => {

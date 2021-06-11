@@ -521,7 +521,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         highlightingSettings: action.payload.highlightingSettings,
                         selectedElements: action.payload.selectedElements
-                    }
+                    },
+                    tracingSettings: action.payload.tracingSettings
                 }
             };
 

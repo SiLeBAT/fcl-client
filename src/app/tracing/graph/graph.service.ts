@@ -594,7 +594,9 @@ export class GraphService {
 
         const tracPropsChanged =
             !this.cachedState ||
-            this.cachedState.tracingSettings !== state.tracingSettings;
+            this.cachedState.tracingSettings !== state.tracingSettings ||
+            data.statVis !== this.cachedData.statVis ||
+            data.delVis !== this.cachedData.delVis;
 
         const edgeCreationRequired =
             nodeCreationRequired ||
@@ -603,13 +605,17 @@ export class GraphService {
             this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType ||
             tracPropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE;
 
-        const statHighlightingChanged =
+        const statHighlightSetChanged =
             !this.cachedState ||
             state.highlightingSettings.stations !== this.cachedState.highlightingSettings.stations;
 
+        const delHighlightSetChanged =
+            !this.cachedState ||
+            state.highlightingSettings.deliveries !== this.cachedState.highlightingSettings.deliveries;
+
         const nodePropsUpdateRequired =
             !nodeCreationRequired &&
-            (tracPropsChanged || statHighlightingChanged);
+            (tracPropsChanged || statHighlightSetChanged);
 
         const nodeSelUpdateRequired =
             !nodeCreationRequired &&
@@ -617,7 +623,7 @@ export class GraphService {
 
         const edgePropsUpdateRequired =
             !edgeCreationRequired &&
-            tracPropsChanged;
+            (tracPropsChanged || delHighlightSetChanged);
 
         const edgeSelUpdateRequired =
             !edgeCreationRequired &&

@@ -10,10 +10,11 @@ import _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
 import {
-    ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA, SetElementsInvisibilityMSA,
+    ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA,
     MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA, SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
-    ShowDeliveryTraceMSA, ShowStationPropertiesMSA, ShowStationTraceMSA
-} from '../tracing.actions';
+    ShowStationPropertiesMSA,
+    ShowElementsTraceMSA,
+    MakeElementsInvisibleMSA} from '../tracing.actions';
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
 import { Action } from '@ngrx/store';
 import { LayoutOption } from './cy-graph/interactive-cy-graph';
@@ -293,10 +294,9 @@ export class ContextMenuService {
     private createMakeInvisibleItemData(contextElements: ContextElements): MenuItemData {
         return {
             ...MenuItemStrings.makeElementsInvisible,
-            action: new SetElementsInvisibilityMSA({
-                stationIds: contextElements.stationIds,
-                deliveryIds: contextElements.deliveryIds,
-                invisible: true
+            action: new MakeElementsInvisibleMSA({
+                stations: contextElements.stationIds,
+                deliveries: contextElements.deliveryIds
             })
         };
     }
@@ -375,25 +375,14 @@ export class ContextMenuService {
     }
 
     private createTraceMenuItemData(contextElements: ContextElements): MenuItemData {
-        const useStationTracing = contextElements.refStationId !== undefined;
-        const useDelTracing = !useStationTracing && contextElements.refDeliveryIds.length === 1;
-
-        let getAction: ((type: ObservedType) => Action) | null = null;
-        if (useStationTracing) {
-            getAction = (type: ObservedType) => new ShowStationTraceMSA({
-                stationId: contextElements.refStationId,
-                observedType: type
-            });
-        } else if (useDelTracing) {
-            getAction = (type: ObservedType) => new ShowDeliveryTraceMSA({
-                deliveryId: contextElements.refDeliveryIds[0],
-                observedType: type
-            });
-        }
+        const getAction = (type: ObservedType) => new ShowElementsTraceMSA({
+            stationIds: contextElements.stationIds,
+            deliveryIds: contextElements.deliveryIds,
+            observedType: type
+        });
 
         return {
             ...MenuItemStrings.setTrace,
-            disabled: getAction === null,
             children: [
                 {
                     ...MenuItemStrings.forwardTrace,

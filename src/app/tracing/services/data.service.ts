@@ -244,14 +244,14 @@ export class DataService {
             this.updateCache(state);
         } else if (this.cachedState.groupSettings !== state.groupSettings) {
             this.updateCache(state, false);
-        } else if (this.cachedState.tracingSettings !== state.tracingSettings) {
-            this.updateCache(state, false, false);
         } else if (
             this.cachedState.highlightingSettings !== state.highlightingSettings ||
             this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations ||
             this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries
         ) {
-            this.updateCache(state, false, false, false, true);
+            this.updateCache(state, false, false, true, true);
+        } else if (this.cachedState.tracingSettings !== state.tracingSettings) {
+            this.updateCache(state, false, false);
         } else if (this.cachedState.selectedElements !== state.selectedElements) {
             this.updateCache(state, false, false, false, false, false, false);
         }

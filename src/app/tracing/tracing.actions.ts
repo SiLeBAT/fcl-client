@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ClearInvisibilitiesOptions, ObservedType, SetElementsInvisibilityParams } from './data.model';
+import { ClearInvisibilitiesOptions, SelectedElements, ShowElementsTraceParams } from './data.model';
 
 export enum TracingActionTypes {
     ClearTraceMSA = '[Tracing] Clear Trace',
@@ -9,10 +9,9 @@ export enum TracingActionTypes {
     MarkStationsAsOutbreakMSA = '[Tracing] Mark Stations as Outbreak',
     SetStationCrossContaminationMSA = '[Tracing] Set Station Cross Contamination',
     SetStationKillContaminationMSA = '[Tracing] Set Station Kill Contamination',
-    SetElementsInvisibilityMSA = '[Tracing] Set Elements Invisibility',
+    MakeElementsInvisibleMSA = '[Tracing] Make Elements Invisible',
     ShowDeliveryPropertiesMSA = '[Tracing] Show Delivery Properties',
-    ShowStationTraceMSA = '[Tracing] Show Station Trace',
-    ShowDeliveryTraceMSA = '[Tracing] Show Delivery Trace'
+    ShowElementsTraceMSA = '[Tracing] Show Elements Trace'
 }
 
 export class ClearTraceMSA implements Action {
@@ -63,22 +62,16 @@ export class SetStationKillContaminationMSA implements Action {
     constructor(public payload: { stationIds: string[], killContamination: boolean }) {}
 }
 
-export class SetElementsInvisibilityMSA implements Action {
-    readonly type = TracingActionTypes.SetElementsInvisibilityMSA;
+export class MakeElementsInvisibleMSA implements Action {
+    readonly type = TracingActionTypes.MakeElementsInvisibleMSA;
 
-    constructor(public payload: SetElementsInvisibilityParams) {}
+    constructor(public payload: SelectedElements) {}
 }
 
-export class ShowStationTraceMSA implements Action {
-    readonly type = TracingActionTypes.ShowStationTraceMSA;
+export class ShowElementsTraceMSA implements Action {
+    readonly type = TracingActionTypes.ShowElementsTraceMSA;
 
-    constructor(public payload: { stationId: string, observedType: ObservedType }) {}
-}
-
-export class ShowDeliveryTraceMSA implements Action {
-    readonly type = TracingActionTypes.ShowDeliveryTraceMSA;
-
-    constructor(public payload: { deliveryId: string, observedType: ObservedType }) {}
+    constructor(public payload: ShowElementsTraceParams) {}
 }
 
 export type TracingActions =
@@ -88,6 +81,5 @@ export type TracingActions =
     | ShowStationPropertiesMSA
     | MarkStationsAsOutbreakMSA
     | SetStationCrossContaminationMSA
-    | SetElementsInvisibilityMSA
-    | ShowStationTraceMSA
-    | ShowDeliveryTraceMSA ;
+    | MakeElementsInvisibleMSA
+    | ShowElementsTraceMSA ;

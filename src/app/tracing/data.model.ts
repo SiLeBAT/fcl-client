@@ -144,10 +144,10 @@ export interface ClearInvisibilitiesOptions {
     clearDeliveryInvs: boolean;
 }
 
-export interface SetElementsInvisibilityParams {
+export interface ShowElementsTraceParams {
     stationIds: StationId[];
     deliveryIds: DeliveryId[];
-    invisible: boolean;
+    observedType: ObservedType;
 }
 
 export interface GraphSettings {
@@ -177,9 +177,10 @@ export interface HighlightingSettings {
     deliveries?: DeliveryHighlightingRule[];
 }
 
-export interface HighlightingSettingsAndSelectedElements {
+export interface MakeElementsInvisibleInputState {
     selectedElements: SelectedElements;
     highlightingSettings: HighlightingSettings;
+    tracingSettings: TracingSettings;
 }
 
 export interface HighlightingRule {
@@ -452,6 +453,7 @@ export interface SetHighlightingSettingsPayload {
 export interface SetInvisibleElementsPayload {
     highlightingSettings: HighlightingSettings;
     selectedElements: SelectedElements;
+    tracingSettings: TracingSettings;
 }
 
 interface LegendEntry {
