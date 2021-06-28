@@ -167,6 +167,7 @@ export interface GraphSettings {
     schemaLayout: Layout | null;
     gisLayout: Layout | null;
     ghostStation: StationId | null;
+    ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
 
@@ -430,6 +431,7 @@ export interface SharedGraphState extends BasicGraphState {
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
     ghostStation: StationId | null;
+    ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
 

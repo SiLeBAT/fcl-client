@@ -93,9 +93,9 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         if (newGhostStationId !== this.currentGhostStationId) {
             this.currentGhostStationId = newGhostStationId;
             if (newGhostStationId === null) {
-                this.store.dispatch(new tracingActions.ClearGhostStationMSA());
+                this.store.dispatch(new tracingActions.DeleteGhostElementSOA());
             } else {
-                this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: newGhostStationId }));
+                this.store.dispatch(new tracingActions.SetGhostStationSOA({ stationId: newGhostStationId }));
             }
         }
     }

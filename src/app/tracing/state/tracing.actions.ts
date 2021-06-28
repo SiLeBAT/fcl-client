@@ -6,7 +6,8 @@ import {
     CrossContTraceType,
     DeliveryId,
     StationHighlightingRule,
-    SetInvisibleElementsPayload
+    SetInvisibleElementsPayload,
+    StationId
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -50,8 +51,9 @@ export enum TracingActionTypes {
     SetDeliveryFilterSOA = '[Configuration Layout] Set Delivery Filter Settings',
     ResetAllDeliveryFiltersSOA = '[Configuration Layout] Reset All Delivery Filters',
     SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
-    ShowGhostStationMSA = '[Station Table] Show Ghost Station',
-    ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
+    SetGhostStationSOA = '[Station Table] Show Ghost Station',
+    SetGhostDeliverySOA = '[Delivery Table] Show Ghost Delivery',
+    DeleteGhostElementSOA = '[Filter Table] Delete Ghost Element',
     SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
     ResetTracingStateSOA = '[Tracing] Reset Tracing State',
@@ -271,14 +273,20 @@ export class ResetAllDeliveryFiltersSOA implements Action {
     constructor() {}
 }
 
-export class ShowGhostStationMSA implements Action {
-    readonly type = TracingActionTypes.ShowGhostStationMSA;
+export class SetGhostStationSOA implements Action {
+    readonly type = TracingActionTypes.SetGhostStationSOA;
 
-    constructor(public payload: { stationId: string }) {}
+    constructor(public payload: { stationId: StationId }) {}
 }
 
-export class ClearGhostStationMSA implements Action {
-    readonly type = TracingActionTypes.ClearGhostStationMSA;
+export class SetGhostDeliverySOA implements Action {
+    readonly type = TracingActionTypes.SetGhostDeliverySOA;
+
+    constructor(public payload: { deliveryId: DeliveryId }) {}
+}
+
+export class DeleteGhostElementSOA implements Action {
+    readonly type = TracingActionTypes.DeleteGhostElementSOA;
 }
 
 export class SetHoverDeliveriesSOA implements Action {
@@ -297,7 +305,6 @@ export class ResetTracingStateSOA implements Action {
     readonly type = TracingActionTypes.ResetTracingStateSOA;
 }
 
-// export class AddColoursAndShapesHighlightingRuleSOA implements Action {
 export class SetStationHighlightingRulesSOA implements Action {
     readonly type = TracingActionTypes.SetStationHighlightingRulesSOA;
 
@@ -348,8 +355,9 @@ export type TracingActions =
     | SetDeliveryFilterSOA
     | ResetAllDeliveryFiltersSOA
     | SetROAReportSettingsSOA
-    | ShowGhostStationMSA
-    | ClearGhostStationMSA
+    | DeleteGhostElementSOA
+    | SetGhostStationSOA
+    | SetGhostDeliverySOA
     | SetHoverDeliveriesSOA
     | ResetTracingStateSOA
     | SetStationHighlightingRulesSOA

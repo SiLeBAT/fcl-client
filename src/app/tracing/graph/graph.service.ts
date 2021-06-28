@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-    DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData, GraphState, SelectedElements
+    DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData, GraphState, SelectedElements, StationId
 } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements } from './graph.model';
@@ -60,18 +60,39 @@ export class GraphService {
         return { ...this.cachedData };
     }
 
-    createGhostElementData(
+    createGhostElementDataFromStation(
         ghostStation: StationData,
         state: GraphState,
         graphData: GraphServiceData
     ): GraphElementData {
 
-        const ghostNodeData = this.createGhostNodeData(ghostStation, graphData);
-        const ghostEdgeData = this.createGhostEdgeData(ghostNodeData, state, graphData);
+        const ghostNodeData = this.createGhostNodeData([ghostStation], graphData)[0];
+        const ghostEdgeData = this.createGhostEdgeDataFromNode(ghostNodeData, state, graphData);
 
         return {
             nodeData: [ghostNodeData],
             edgeData: ghostEdgeData
+        };
+    }
+
+    createGhostElementDataFromDelivery(
+        ghostDelivery: DeliveryData,
+        state: GraphState,
+        graphData: GraphServiceData
+    ): GraphElementData {
+        const ghostStations: StationData[] = [];
+        if (!graphData.statVis[ghostDelivery.source]) {
+            ghostStations.push(graphData.statMap[ghostDelivery.source]);
+        }
+        if (!graphData.statVis[ghostDelivery.target]) {
+            ghostStations.push(graphData.statMap[ghostDelivery.target]);
+        }
+        const ghostNodeData = this.createGhostNodeData(ghostStations, graphData);
+        const ghostEdgeData = this.createGhostEdgeDataFromDelivery(ghostDelivery, ghostNodeData, state, graphData);
+
+        return {
+            nodeData: ghostNodeData,
+            edgeData: [ghostEdgeData]
         };
     }
 
@@ -260,26 +281,26 @@ export class GraphService {
         };
     }
 
-    private createGhostNodeData(ghostStation: StationData, graphData: GraphServiceData): CyNodeData {
-        return {
-            id: 'GN',
-            label: ghostStation.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
+    private createGhostNodeData(ghostStations: StationData[], graphData: GraphServiceData): CyNodeData[] {
+        return ghostStations.map((station, index) => ({
+            id: 'GN' + index,
+            label: station.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
-            isMeta: ghostStation.contains && ghostStation.contains.length > 0,
-            shape: ghostStation.highlightingInfo.shape ? ghostStation.highlightingInfo.shape : NodeShapeType.CIRCLE,
-            station: ghostStation,
-            score: ghostStation.score,
-            forward: ghostStation.forward,
-            backward: ghostStation.backward,
-            outbreak: ghostStation.outbreak,
-            crossContamination: ghostStation.crossContamination,
-            commonLink: ghostStation.commonLink,
-            killContamination: ghostStation.killContamination,
-            selected: ghostStation.selected,
-            observed: ghostStation.observed,
-            weight: ghostStation.weight,
-            zindex: (2 * graphData.stations.length) + 1
-        };
+            isMeta: station.contains && station.contains.length > 0,
+            shape: station.highlightingInfo.shape ? station.highlightingInfo.shape : NodeShapeType.CIRCLE,
+            station: station,
+            score: station.score,
+            forward: station.forward,
+            backward: station.backward,
+            outbreak: station.outbreak,
+            crossContamination: station.crossContamination,
+            commonLink: station.commonLink,
+            killContamination: station.killContamination,
+            selected: station.selected,
+            observed: station.observed,
+            weight: station.weight,
+            zindex: (2 * graphData.stations.length) + index
+        }));
     }
 
     private mapDelToEdgeData(deliveries: DeliveryData[], idSuffix: string, source: CyNodeData, target: CyNodeData) {
@@ -309,7 +330,7 @@ export class GraphService {
         return edgeData;
     }
 
-    private createGhostEdgeData(ghostNodeData: CyNodeData, state: GraphState, graphData: GraphServiceData): CyEdgeData[] {
+    private createGhostEdgeDataFromNode(ghostNodeData: CyNodeData, state: GraphState, graphData: GraphServiceData): CyEdgeData[] {
         let ghostEdgeData: CyEdgeData[];
         const ghostDeliveries = this.getGhostDeliveries(ghostNodeData.station, graphData);
 
@@ -358,11 +379,32 @@ export class GraphService {
         return ghostEdgeData;
     }
 
+    private createGhostEdgeDataFromDelivery(
+        ghostDelivery: DeliveryData,
+        ghostNodeData: CyNodeData[],
+        state: GraphState,
+        graphData: GraphServiceData
+    ): CyEdgeData {
+        const idToGhostNodeDataMap = Utils.createObjectFromArray(ghostNodeData, n => n.station.id, n => n);
+        const sourceNode = graphData.statIdToNodeDataMap[ghostDelivery.source] || idToGhostNodeDataMap[ghostDelivery.source];
+        const targetNode = graphData.statIdToNodeDataMap[ghostDelivery.target] || idToGhostNodeDataMap[ghostDelivery.target];
+
+        const ghostEdgeData = this.mapDelToEdgeData([ghostDelivery], '', sourceNode, targetNode);
+
+        this.updateEdgeLabels(state, [ghostEdgeData]);
+
+        return ghostEdgeData;
+    }
+
     private getGhostDeliveries(ghostStation: StationData, graphData: GraphServiceData): DeliveryData[] {
-        const outDeliveries = graphData.getDelById(ghostStation.outgoing).filter(d => !graphData.statMap[d.target].invisible);
+        const outDeliveries = graphData.getDelById(ghostStation.outgoing).filter(d =>
+            ghostStation.id === d.target || !graphData.statMap[d.target].invisible
+        );
         const outIdSet = Utils.createSimpleStringSet(ghostStation.outgoing);
-        const inDeliveries = graphData.getDelById(ghostStation.incoming)
-            .filter(d => !outIdSet[d.id] && !graphData.statMap[d.source].invisible);
+        const inDeliveries = graphData.getDelById(ghostStation.incoming).filter(d =>
+            !outIdSet[d.id] &&
+            (ghostStation.id === d.source || !graphData.statMap[d.source].invisible)
+        );
 
         return [].concat(outDeliveries, inDeliveries);
     }
@@ -679,11 +721,17 @@ export class GraphService {
             this.updateEdgeLabels(state, newData.edgeData);
         }
 
-        if (!this.cachedState || this.cachedState.ghostStation !== state.ghostStation) {
-            if (state.ghostStation === null) {
+        if (
+            !this.cachedState ||
+            this.cachedState.ghostStation !== state.ghostStation ||
+            this.cachedState.ghostDelivery !== state.ghostDelivery
+        ) {
+            if (state.ghostStation === null && state.ghostDelivery === null) {
                 newData.ghostElements = null;
+            } else if (state.ghostStation !== null) {
+                newData.ghostElements = this.createGhostElementDataFromStation(data.statMap[state.ghostStation], state, newData);
             } else {
-                newData.ghostElements = this.createGhostElementData(data.statMap[state.ghostStation], state, newData);
+                newData.ghostElements = this.createGhostElementDataFromDelivery(data.delMap[state.ghostDelivery], state, newData);
             }
         }
 

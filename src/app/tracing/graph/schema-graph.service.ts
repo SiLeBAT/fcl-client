@@ -37,11 +37,15 @@ export class SchemaGraphService {
             this.cachedData.nodePositions;
 
         const ghostPositions: Record<NodeId, Position> =
-            state.ghostStation === null ?
+            (
+                state.ghostStation === null &&
+                (state.ghostDelivery === null || sharedGraphData.ghostElements.nodeData.length === 0)
+            ) ?
             {} :
             this.cachedState === null ||
             this.cachedState.stationPositions !== state.stationPositions ||
             this.cachedState.ghostStation !== state.ghostStation ||
+            this.cachedData.ghostData === null && sharedGraphData.ghostElements.nodeData.length > 0 ||
             this.cachedData.ghostData.nodeData !== sharedGraphData.ghostElements.nodeData ?
             this.createNodePositions(state.stationPositions, sharedGraphData.ghostElements.nodeData, true) :
             this.cachedData.ghostData.posMap;

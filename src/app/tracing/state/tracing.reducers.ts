@@ -124,6 +124,7 @@ export function createInitialFclDataState(): FclData {
             mapType: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
             ghostStation: null,
+            ghostDelivery: null,
             hoverDeliveries: []
         },
         tracingSettings: {
@@ -526,26 +527,40 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.ShowGhostStationMSA:
+        case TracingActionTypes.SetGhostStationSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        ghostStation: action.payload.stationId
+                        ghostStation: action.payload.stationId,
+                        ghostDelivery: null
+                    }
+                }
+            };
+        case TracingActionTypes.SetGhostDeliverySOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        ghostStation: null,
+                        ghostDelivery: action.payload.deliveryId
                     }
                 }
             };
 
-        case TracingActionTypes.ClearGhostStationMSA:
+        case TracingActionTypes.DeleteGhostElementSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        ghostStation: null
+                        ghostStation: null,
+                        ghostDelivery: null
                     }
                 }
             };

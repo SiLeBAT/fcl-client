@@ -1,7 +1,7 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, BasicGraphState, DataTable, DataServiceData } from '@app/tracing/data.model';
+import { TableRow, BasicGraphState, DataTable, DataServiceData, DeliveryId } from '@app/tracing/data.model';
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -37,6 +37,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
     private cachedState: FilterTableState;
 
     private filterElementsViewInputData_: FilterElementsViewInputData;
+    private currentGhostDeliveryId: DeliveryId | null = null;
 
     get filterElementsViewInputData(): FilterElementsViewInputData {
         return this.filterElementsViewInputData_;
@@ -76,7 +77,22 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.ResetAllDeliveryFiltersSOA());
     }
 
-    onMouseOverTableRow(row: TableRow): void {
+    onMouseOverTableRow(row: TableRow | null): void {
+        let newGhostDeliveryId: string | null = null;
+        if (row !== null) {
+            const delivery = this.cachedData.data.delMap[row.id];
+            if (delivery.invisible) {
+                newGhostDeliveryId = delivery.id;
+            }
+        }
+        if (newGhostDeliveryId !== this.currentGhostDeliveryId) {
+            this.currentGhostDeliveryId = newGhostDeliveryId;
+            if (newGhostDeliveryId === null) {
+                this.store.dispatch(new tracingActions.DeleteGhostElementSOA());
+            } else {
+                this.store.dispatch(new tracingActions.SetGhostDeliverySOA({ deliveryId: newGhostDeliveryId }));
+            }
+        }
     }
 
     onMouseLeaveTableRow(row: TableRow): void {
