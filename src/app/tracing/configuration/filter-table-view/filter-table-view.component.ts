@@ -1,10 +1,11 @@
 import { Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
-import { DatatableComponent, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
+import { DatatableComponent, SelectionType, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
 import { DataTable, NodeShapeType, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
 import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRowFilter, createOneTermForEachColumnRowFilter } from '../filter-provider';
 import { filterTableRows } from '../shared';
 import * as _ from 'lodash';
 import { VisibilityFilterState, ColumnFilterSettings } from '../configuration.model';
+import { Utils } from '@app/tracing/util/non-ui-utils';
 
 interface FilterMap {
     visibilityFilter: VisibilityRowFilter;
@@ -73,6 +74,7 @@ function highlightingComparator(valueA, valueB, rowA, rowB, sortDirection): numb
 export interface InputData {
     dataTable: DataTable;
     columnOrder: string[];
+    selectedRowIds: string[];
     columnFilters: ColumnFilterSettings[];
     visibilityFilter: VisibilityFilterState;
 }
@@ -123,6 +125,10 @@ export class FilterTableViewComponent {
         return this.columns_;
     }
 
+    get selectionType(): SelectionType {
+        return SelectionType.multi;
+    }
+
     get showVisibleElements(): boolean {
         const visState = this.inputData.visibilityFilter;
         return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_VISIBLE_ONLY;
@@ -133,13 +139,18 @@ export class FilterTableViewComponent {
         return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY;
     }
 
-    @Input() inputData: InputData;
+    get selectedRows(): TableRow[] {
+        return this.selectedRows_;
+    }
+
+    @Input() inputData: InputData | null = null;
     @Input() useTreeMode = false;
 
     @Output() selectColumns = new EventEmitter();
     @Output() mouseOverRow = new EventEmitter<TableRow | null>();
     @Output() columnOrderChange = new EventEmitter<string[]>();
     @Output() filterChange = new EventEmitter<TableFilterChange>();
+    @Output() rowSelectionChange = new EventEmitter<string[]>();
 
     @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
     @ViewChild('patternColTpl', { static: true }) patternColTpl: TemplateRef<any>;
@@ -153,8 +164,8 @@ export class FilterTableViewComponent {
     @ViewChild('table', { static: true }) table: DatatableComponent;
     @ViewChild('tableWrapper', { static: true }) tableWrapper: any;
 
-    private processedInput_: InputData;
-    private filterMap_: FilterMap;
+    private processedInput_: InputData = null;
+    private filterMap_: FilterMap = null;
     private columnFilterTexts_: { [key: string]: string };
     private filteredRows_: TableRow[] = [];
     private treeRows_: TableRow[] = [];
@@ -163,6 +174,8 @@ export class FilterTableViewComponent {
     private triggerTableRefreshTimeoutHandle: number | null = null;
 
     private columns_: NgxTableColumn[];
+
+    private selectedRows_: TableRow[] = [];
 
     private updateTreeRows(): void {
         if (this.useTreeMode) {
@@ -185,6 +198,18 @@ export class FilterTableViewComponent {
 
     onSelectColumns(): void {
         this.selectColumns.emit();
+    }
+
+    onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
+        this.processedInput_.selectedRowIds = selected.map(row => row.id);
+
+        this.selectedRows_.splice(0, this.selectedRows_.length);
+        this.selectedRows_.push(...selected);
+
+        this.rowSelectionChange.emit(this.processedInput_.selectedRowIds);
+
+        // we need this to get rid of the text selection
+        window.getSelection().removeAllRanges();
     }
 
     getColumnFilterText(columnId: string): string {
@@ -218,6 +243,10 @@ export class FilterTableViewComponent {
         this.treeStatusCache[row.id] = row.treeStatus;
 
         this.triggerTableRefresh();
+    }
+
+    rowIdentity(row: TableRow): string {
+        return row.id;
     }
 
     private triggerTableRefresh(): void {
@@ -359,6 +388,13 @@ export class FilterTableViewComponent {
                 this.table.offset = 0;
             }
             this.recalculateTable();
+        }
+        if (
+            this.processedInput_ === null ||
+            this.processedInput_.selectedRowIds !== this.inputData.selectedRowIds
+        ) {
+            const idToIsSelectedMap = Utils.createSimpleStringSet(this.inputData.selectedRowIds);
+            this.selectedRows_ = this.filteredRows_.filter(row => idToIsSelectedMap[row.id]);
         }
     }
 

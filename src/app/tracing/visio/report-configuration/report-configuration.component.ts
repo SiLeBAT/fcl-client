@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import * as storeActions from '../../state/tracing.actions';
 import * as roaActions from '../visio.actions';
 import { Utils } from '@app/tracing/util/non-ui-utils';
-import { BasicGraphState } from '@app/tracing/data.model';
+import { DataServiceInputState } from '@app/tracing/data.model';
 import { take } from 'rxjs/operators';
 import * as TracingSelectors from '../../state/tracing.selectors';
 import { State } from '@app/tracing/state/tracing.reducers';
@@ -14,7 +14,6 @@ import { DataService } from '@app/tracing/services/data.service';
 import { combineLatest } from 'rxjs';
 import { createDefaultROASettings, getUnitPropFromAmountProp } from '../shared';
 import { AmountUnitPair, LabelElementInfo, PropElementInfo, ROALabelSettings, ROASettings, TextElementInfo } from '../model';
-import { some } from 'cypress/types/bluebird';
 
 function propCompare(propA: PropInfo, propB: PropInfo): number {
     const textA = propA.label !== undefined ? propA.label : propA.prop;
@@ -65,7 +64,7 @@ export class ReportConfigurationComponent {
 
     private init(): void {
         combineLatest([
-            this.store.select(TracingSelectors.getBasicGraphData),
+            this.store.select(TracingSelectors.selectDataServiceInputState),
             this.store.select(TracingSelectors.getROASettings)
         ]).pipe(take(1))
         .subscribe(([dataServiceInputState, roaSettings]) => {
@@ -82,7 +81,7 @@ export class ReportConfigurationComponent {
         );
     }
 
-    private initAvailableProps(dataServiceInputState: BasicGraphState): void {
+    private initAvailableProps(dataServiceInputState: DataServiceInputState): void {
         const data = this.dataService.getData(dataServiceInputState);
         this.availableProps = {
             companyProps: sortProps(getPublicStationProperties(data.stations)),

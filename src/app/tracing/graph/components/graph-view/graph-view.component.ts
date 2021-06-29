@@ -13,10 +13,14 @@ import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_PRESET } from '../../cy
 import { isPosMapEmpty } from '../../cy-graph/shared-utils';
 import { getLayoutConfig } from '../../cy-graph/layouting-utils';
 
+export interface GraphSelectionChange {
+    selectedElements: SelectedGraphElements;
+    isShiftSelection: boolean;
+}
 export interface GraphDataChange {
     layout?: Layout;
     nodePositions?: PositionMap;
-    selectedElements?: SelectedGraphElements;
+    selectionChange?: GraphSelectionChange;
 }
 
 @Component({
@@ -131,12 +135,18 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
                 this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
                 this.cyGraph_.nodePositions :
                 undefined
-            ,
-            selectedElements:
-                this.graphData.selectedElements !== this.cyGraph_.selectedElements ?
-                this.cyGraph_.selectedElements :
-                undefined
         });
+    }
+
+    private onGraphSelectionChange(isShiftSelection: boolean): void {
+        if (this.graphData.selectedElements !== this.cyGraph_.selectedElements) {
+            this.graphDataChange.emit({
+                selectionChange: {
+                    selectedElements: this.cyGraph_.selectedElements,
+                    isShiftSelection: isShiftSelection
+                }
+            });
+        }
     }
 
     private onContextMenuRequest(info: ContextMenuRequestInfo): void {
@@ -171,7 +181,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         );
 
         this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
-        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, () => this.onGraphDataChange());
+        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, (shift: boolean) => this.onGraphSelectionChange(shift));
         this.cyGraph_.registerListener(
             GraphEventType.CONTEXT_MENU_REQUEST,
             (info: ContextMenuRequestInfo) => this.onContextMenuRequest(info)
@@ -197,5 +207,4 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
             this.cleanCyGraph();
         }
     }
-
 }

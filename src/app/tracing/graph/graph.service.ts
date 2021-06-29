@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
-    DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData, GraphState, SelectedElements, StationId
+    DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData,
+    SharedGraphState, SelectedElements
 } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements } from './graph.model';
@@ -29,7 +30,7 @@ export class GraphService {
     private static readonly DEFAULT_NODE_COLOR = [255, 255, 255];
     private static readonly DEFAULT_GHOST_COLOR = [179, 179, 179];
 
-    private cachedState: GraphState;
+    private cachedState: SharedGraphState;
 
     private cachedData: GraphServiceData;
 
@@ -55,14 +56,14 @@ export class GraphService {
         private dataService: DataService
     ) {}
 
-    getData(state: GraphState): GraphServiceData {
+    getData(state: SharedGraphState): GraphServiceData {
         this.applyState(state);
         return { ...this.cachedData };
     }
 
     createGhostElementDataFromStation(
         ghostStation: StationData,
-        state: GraphState,
+        state: SharedGraphState,
         graphData: GraphServiceData
     ): GraphElementData {
 
@@ -77,7 +78,7 @@ export class GraphService {
 
     createGhostElementDataFromDelivery(
         ghostDelivery: DeliveryData,
-        state: GraphState,
+        state: SharedGraphState,
         graphData: GraphServiceData
     ): GraphElementData {
         const ghostStations: StationData[] = [];
@@ -96,7 +97,7 @@ export class GraphService {
         };
     }
 
-    private createNodeData(state: GraphState, data: DataServiceData): CyDataNodes {
+    private createNodeData(state: SharedGraphState, data: DataServiceData): CyDataNodes {
         let iNode = 0;
         const nodeData: CyNodeData[] = data.stations.filter(s => !s.invisible && !s.contained).map(s => ({
             id: 'N' + iNode++,
@@ -125,7 +126,7 @@ export class GraphService {
         };
     }
 
-    private createEdgeData(state: GraphState, data: DataServiceData, cyDataNodes: CyDataNodes): CyDataEdges {
+    private createEdgeData(state: SharedGraphState, data: DataServiceData, cyDataNodes: CyDataNodes): CyDataEdges {
 
         const edgeData: CyEdgeData[] = [];
 
@@ -330,7 +331,7 @@ export class GraphService {
         return edgeData;
     }
 
-    private createGhostEdgeDataFromNode(ghostNodeData: CyNodeData, state: GraphState, graphData: GraphServiceData): CyEdgeData[] {
+    private createGhostEdgeDataFromNode(ghostNodeData: CyNodeData, state: SharedGraphState, graphData: GraphServiceData): CyEdgeData[] {
         let ghostEdgeData: CyEdgeData[];
         const ghostDeliveries = this.getGhostDeliveries(ghostNodeData.station, graphData);
 
@@ -382,7 +383,7 @@ export class GraphService {
     private createGhostEdgeDataFromDelivery(
         ghostDelivery: DeliveryData,
         ghostNodeData: CyNodeData[],
-        state: GraphState,
+        state: SharedGraphState,
         graphData: GraphServiceData
     ): CyEdgeData {
         const idToGhostNodeDataMap = Utils.createObjectFromArray(ghostNodeData, n => n.station.id, n => n);
@@ -432,7 +433,7 @@ export class GraphService {
         return Object.values(edgeGroups);
     }
 
-    updateEdgeLabels(state: GraphState, edges: CyEdgeData[]): void {
+    updateEdgeLabels(state: SharedGraphState, edges: CyEdgeData[]): void {
         if (state.showMergedDeliveriesCounts) {
             edges.forEach(edge => {
                 const nDel = edge.deliveries.length;
@@ -608,7 +609,7 @@ export class GraphService {
         };
     }
 
-    private applyState(state: GraphState) {
+    private applyState(state: SharedGraphState) {
         const data = this.dataService.getData(state);
         let newData: GraphServiceData = {
             statIdToNodeDataMap: undefined,
@@ -751,12 +752,27 @@ export class GraphService {
 
     convertGraphSelectionToFclSelection(
         selectedGraphElements: SelectedGraphElements,
-        graphServiceData: GraphServiceData
+        graphServiceData: GraphServiceData,
+        maintainOffGraphSelection: boolean
     ): SelectedElements {
         const edgeMap = this.getEdgeMap(graphServiceData.edgeData);
-        return {
+        const selectedElements = {
             stations: selectedGraphElements.nodes.map(nodeId => graphServiceData.idToNodeMap[nodeId].station.id),
             deliveries: [].concat(...selectedGraphElements.edges.map(edgeId => edgeMap[edgeId].deliveries.map(d => d.id)))
         };
+        if (maintainOffGraphSelection) {
+            // add selected elements that cannot be selected in graph
+            selectedElements.stations = [].concat(
+                selectedElements.stations, Utils.getStringArrayDifference(
+                    graphServiceData.stations.filter(s => s.selected).map(s => s.id),
+                    graphServiceData.nodeData.map(n => n.station.id)
+            ));
+            selectedElements.deliveries = [].concat(
+                selectedElements.deliveries, Utils.getStringArrayDifference(
+                    graphServiceData.deliveries.filter(d => d.selected).map(s => s.id),
+                    [].concat(...graphServiceData.edgeData.map(e => e.deliveries.map(d => d.id)))
+            ));
+        }
+        return selectedElements;
     }
 }

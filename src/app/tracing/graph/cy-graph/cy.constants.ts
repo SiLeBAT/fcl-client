@@ -9,6 +9,7 @@ export const CY_MAX_ZOOM = 1e50;
 export const CY_EVENT_PAN = 'pan';
 export const CY_EVENT_TAP_START = 'tapstart';
 export const CY_EVENT_TAP_END = 'tapend';
+export const CY_EVENT_MOUSEDOWN = 'mousedown';
 export const CY_EVENT_TAP_SELECT = 'tapselect';
 export const CY_EVENT_TAP_UNSELECT = 'tapunselect';
 export const CY_EVENT_BOX_SELECT = 'boxselect';

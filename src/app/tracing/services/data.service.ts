@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-    StationData, DeliveryData, ObservedType, BasicGraphState, DataServiceData
+    StationData, DeliveryData, ObservedType, DataServiceData, DataServiceInputState
 } from '../data.model';
 import * as _ from 'lodash';
 import { TracingService } from './tracing.service';
@@ -12,18 +12,18 @@ import { Utils } from '../util/non-ui-utils';
 })
 export class DataService {
 
-    private cachedState: BasicGraphState;
+    private cachedState: DataServiceInputState;
 
     private cachedData: DataServiceData;
 
     constructor(private tracingService: TracingService, private higlightingService: HighlightingService) {}
 
-    getData(state: BasicGraphState): DataServiceData {
+    getData(state: DataServiceInputState): DataServiceData {
         this.applyState(state);
         return { ...this.cachedData };
     }
 
-    private createStations(state: BasicGraphState): {
+    private createStations(state: DataServiceInputState): {
         statMap: { [key: string]: StationData },
         stations: StationData[],
         getStatById(stationIds: string[]): StationData[]
@@ -63,7 +63,7 @@ export class DataService {
         };
     }
 
-    private createDeliveries(state: BasicGraphState): {
+    private createDeliveries(state: DataServiceInputState): {
         delMap: { [key: string]: DeliveryData },
         deliveries: DeliveryData[],
         getDelById(deliveryIds: string[]): DeliveryData[]
@@ -95,7 +95,7 @@ export class DataService {
         };
     }
 
-    private applyGroupSettings(state: BasicGraphState, data: DataServiceData) {
+    private applyGroupSettings(state: DataServiceInputState, data: DataServiceData) {
 
         if (this.cachedState && this.cachedState.fclElements === state.fclElements) {
             // remove old groups
@@ -154,7 +154,7 @@ export class DataService {
         }
     }
 
-    private applyTracingSettingsToStations(state: BasicGraphState, data: DataServiceData) {
+    private applyTracingSettingsToStations(state: DataServiceInputState, data: DataServiceData) {
         for (const traceSet of state.tracingSettings.stations) {
             const station = data.statMap[traceSet.id];
             if (station) {
@@ -167,7 +167,7 @@ export class DataService {
         }
     }
 
-    private applyTracingSettingsToDeliveries(state: BasicGraphState, data: DataServiceData) {
+    private applyTracingSettingsToDeliveries(state: DataServiceInputState, data: DataServiceData) {
         for (const traceSet of state.tracingSettings.deliveries) {
             const delivery = data.delMap[traceSet.id];
             if (delivery) {
@@ -179,7 +179,7 @@ export class DataService {
         }
     }
 
-    private applySelection(state: BasicGraphState, data: DataServiceData) {
+    private applySelection(state: DataServiceInputState, data: DataServiceData) {
         data.stations.forEach(s => s.selected = false);
         data.getStatById(state.selectedElements.stations).forEach(s => s.selected = true);
         data.statSel = Utils.createSimpleStringSet(state.selectedElements.stations);
@@ -189,7 +189,7 @@ export class DataService {
         data.delSel = Utils.createSimpleStringSet(state.selectedElements.deliveries);
     }
 
-    private updateCache(state: BasicGraphState,
+    private updateCache(state: DataServiceInputState,
         all = true, groups = true, traceSet = true,
         visibilities = true, score = true, trace = true, selection = true) {
         groups = all || groups;
@@ -236,7 +236,7 @@ export class DataService {
         }
     }
 
-    private applyState(state: BasicGraphState) {
+    private applyState(state: DataServiceInputState) {
         if (
             !this.cachedState ||
             this.cachedState.fclElements !== state.fclElements

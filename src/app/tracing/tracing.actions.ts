@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 import { ClearInvisibilitiesOptions, SelectedElements, ShowElementsTraceParams } from './data.model';
+import { SelectedGraphElements } from './graph/graph.model';
 
 export enum TracingActionTypes {
     ClearTraceMSA = '[Tracing] Clear Trace',
@@ -11,7 +12,8 @@ export enum TracingActionTypes {
     SetStationKillContaminationMSA = '[Tracing] Set Station Kill Contamination',
     MakeElementsInvisibleMSA = '[Tracing] Make Elements Invisible',
     ShowDeliveryPropertiesMSA = '[Tracing] Show Delivery Properties',
-    ShowElementsTraceMSA = '[Tracing] Show Elements Trace'
+    ShowElementsTraceMSA = '[Tracing] Show Elements Trace',
+    SetSelectedGraphElementsMSA = '[Graph] Set Selected Graph Elements'
 }
 
 export class ClearTraceMSA implements Action {
@@ -74,6 +76,12 @@ export class ShowElementsTraceMSA implements Action {
     constructor(public payload: ShowElementsTraceParams) {}
 }
 
+export class SetSelectedGraphElementsMSA implements Action {
+    readonly type = TracingActionTypes.SetSelectedGraphElementsMSA;
+
+    constructor(public payload: { selectedElements: SelectedGraphElements, maintainOffGraphSelection: boolean }) {}
+}
+
 export type TracingActions =
       ClearTraceMSA
     | ClearOutbreakStationsMSA
@@ -82,4 +90,5 @@ export type TracingActions =
     | MarkStationsAsOutbreakMSA
     | SetStationCrossContaminationMSA
     | MakeElementsInvisibleMSA
-    | ShowElementsTraceMSA ;
+    | ShowElementsTraceMSA
+    | SetSelectedGraphElementsMSA;

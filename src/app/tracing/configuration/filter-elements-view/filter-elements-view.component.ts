@@ -19,6 +19,7 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 export interface InputData {
     dataTable: DataTable;
     filterTableSettings: FilterTableSettings;
+    selectedRowIds: string[];
 }
 
 interface RowFilterMap {
@@ -40,6 +41,7 @@ export class FilterElementsViewComponent {
     @Output() filterSettingsChange = new EventEmitter<FilterTableSettings>();
     @Output() clearAllFilters = new EventEmitter();
     @Output() selectTableColumns = new EventEmitter();
+    @Output() rowSelectionChange = new EventEmitter<string[]>();
     @Output() mouseOverTableRow = new EventEmitter<TableRow>();
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
 
@@ -142,6 +144,10 @@ export class FilterElementsViewComponent {
         this.selectTableColumns.emit();
     }
 
+    onRowSelectionChange(rowIds: string[]): void {
+        this.rowSelectionChange.emit(rowIds);
+    }
+
     onMouseOverTableRow(row: TableRow | null): void {
         this.mouseOverTableRow.emit(row);
     }
@@ -219,6 +225,7 @@ export class FilterElementsViewComponent {
                     rows: this.prefilteredRows_
                 },
                 columnOrder: this.inputData.filterTableSettings.columnOrder,
+                selectedRowIds: this.inputData.selectedRowIds,
                 visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
                 columnFilters: this.inputData.filterTableSettings.columnFilters
             };
@@ -245,6 +252,7 @@ export class FilterElementsViewComponent {
                 ({
                     dataTable: dataTable,
                     columnOrder: this.inputData.filterTableSettings.columnOrder,
+                    selectedRowIds: this.inputData.selectedRowIds,
                     visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
                     columnFilters: this.inputData.filterTableSettings.columnFilters
                 }) :

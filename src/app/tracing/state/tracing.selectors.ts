@@ -107,7 +107,7 @@ export const getShowConfigurationSideBar = createSelector(
     (state) => state.showConfigurationSideBar
 );
 
-export const getBasicGraphData = createSelector(
+export const selectDataServiceInputState = createSelector(
     getFclElements,
     getGroupSettings,
     getTracingSettings,
@@ -122,36 +122,46 @@ export const getBasicGraphData = createSelector(
     })
 );
 
-export const getGraphData = createSelector(
-    getBasicGraphData,
-    getMergeDeliveriesType,
-    (basicGraphData, mergeDeliveriesType) => ({
-        ...basicGraphData,
-        mergeDeliveriesType: mergeDeliveriesType
-    })
-);
-
-export const getSchemaGraphData = createSelector(
-    getBasicGraphData,
+export const selectSharedGraphState = createSelector(
+    selectDataServiceInputState,
     getGraphSettings,
     (basicGraphData, graphSettings) => ({
         ...basicGraphData,
-        stationPositions: graphSettings.stationPositions,
         selectedElements: graphSettings.selectedElements,
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
-        layout: graphSettings.schemaLayout,
         ghostStation: graphSettings.ghostStation,
         ghostDelivery: graphSettings.ghostDelivery,
         hoverDeliveries: graphSettings.hoverDeliveries
     })
 );
 
+const selectSchemaGraphPositions = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.stationPositions
+);
+
+const selectSchemaGraphLayout = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.schemaLayout
+);
+
+export const selectSchemaGraphState = createSelector(
+    selectSharedGraphState,
+    selectSchemaGraphPositions,
+    selectSchemaGraphLayout,
+    (sharedGraphState, positions, layout) => ({
+        ...sharedGraphState,
+        stationPositions: positions,
+        layout: layout
+    })
+);
+
 export const getROAReportData = createSelector(
     getFclElements,
-    getSchemaGraphData,
+    selectSchemaGraphState,
     getROASettings,
     (fclElements, schemaGraphState, roaSettings) => ({
         schemaGraphState: schemaGraphState,
@@ -160,42 +170,38 @@ export const getROAReportData = createSelector(
     })
 );
 
-export const getGisGraphData = createSelector(
-    getBasicGraphData,
-    getGraphSettings,
-    (basicGraphData, graphSettings) => ({
-        ...basicGraphData,
-        selectedElements: graphSettings.selectedElements,
-        mergeDeliveriesType: graphSettings.mergeDeliveriesType,
-        showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
-        ghostStation: graphSettings.ghostStation,
-        ghostDelivery: graphSettings.ghostDelivery,
-        hoverDeliveries: graphSettings.hoverDeliveries,
-        fontSize: graphSettings.fontSize,
-        nodeSize: graphSettings.nodeSize,
-        layout: graphSettings.gisLayout,
-        mapType: graphSettings.mapType,
-        shapeFileData: graphSettings.shapeFileData
-    })
-);
-
-const getGisLayout = createSelector(
+const selectGisGraphLayout = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.gisLayout
 );
-const getMapType = createSelector(
+
+const selectMapType = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.mapType
 );
-const getShapeFileData = createSelector(
+
+const selectShapeFileData = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.shapeFileData
 );
 
+export const selectGisGraphState = createSelector(
+    selectSharedGraphState,
+    selectGisGraphLayout,
+    selectMapType,
+    selectShapeFileData,
+    (sharedGraphState, layout, mapType, shapeFileData) => ({
+        ...sharedGraphState,
+        layout: layout,
+        mapType: mapType,
+        shapeFileData: shapeFileData
+    })
+);
+
 export const getMapConfig = createSelector(
-    getGisLayout,
-    getMapType,
-    getShapeFileData,
+    selectGisGraphLayout,
+    selectMapType,
+    selectShapeFileData,
     (gisLayout, mapType, shapeFileData) => ({
         layout: gisLayout,
         mapType: mapType,
@@ -218,17 +224,12 @@ export const getSchemaGraphLayout = createSelector(
 );
 
 export const getGroupingData = createSelector(
-    getBasicGraphData,
-    getGraphSettings,
-    (basicGraphData, graphSettings) => ({
-        ...basicGraphData,
-        stationPositions: graphSettings.stationPositions
+    selectDataServiceInputState,
+    selectSchemaGraphPositions,
+    (dataServiceInputState, positions) => ({
+        ...dataServiceInputState,
+        stationPositions: positions
     })
-);
-
-const getConfigurationTabIndices = createSelector(
-    getTracingFeatureState,
-    state => state.configurationTabIndices
 );
 
 export const getActiveConfigurationTabId = createSelector(
@@ -282,17 +283,22 @@ export const getIsHighlightingDeliveryTabActive = createSelector(
     )
 );
 
-export const getFilterSettings = createSelector(
+const selectFilterSettings = createSelector(
     getTracingFeatureState,
     state => state.filterSettings
 );
 
-export const getStationFilterData = createSelector(
-    getBasicGraphData,
-    getFilterSettings,
-    (basicGraphData, filterSettings) => ({
-        graphState: basicGraphData,
-        filterTableState: filterSettings.stationFilter
+const selectStationFilterSettings = createSelector(
+    selectFilterSettings,
+    (filterSettings) => filterSettings.stationFilter
+);
+
+export const selectStationFilterState = createSelector(
+    selectDataServiceInputState,
+    selectStationFilterSettings,
+    (dataServiceInputState, stationFilterSettings) => ({
+        dataServiceInputState: dataServiceInputState,
+        filterTableState: stationFilterSettings
     })
 );
 
@@ -301,22 +307,27 @@ export const getHighlightingConfigurationSettings = createSelector(
     state => state.highlightingConfigurationSettings
 );
 
-export const getStationHighlightingData = createSelector(
-    getBasicGraphData,
+export const selectStationHighlightingState = createSelector(
+    selectDataServiceInputState,
     getStationHighlightingSettings,
     getHighlightingConfigurationSettings,
-    (basicGraphData, stationHighlightingSettings, highlightingConfigs) => ({
-        graphState: basicGraphData,
+    (dataServiceInputState, stationHighlightingSettings, highlightingConfigs) => ({
+        dataServiceInputState: dataServiceInputState,
         highlightingState: stationHighlightingSettings,
         editIndex: highlightingConfigs.colorsAndShapesSettings.editIndex
     })
 );
 
-export const getDeliveryFilterData = createSelector(
-    getBasicGraphData,
-    getFilterSettings,
-    (basicGraphData, filterSettings) => ({
-        graphState: basicGraphData,
-        filterTableState: filterSettings.deliveryFilter
+const selectDeliveryFilterSettings = createSelector(
+    selectFilterSettings,
+    (filterSettings) => filterSettings.deliveryFilter
+);
+
+export const selectDeliveryFilterState = createSelector(
+    selectDataServiceInputState,
+    selectDeliveryFilterSettings,
+    (dataServiceInputState, deliveryFilterSettings) => ({
+        dataServiceInputState: dataServiceInputState,
+        filterTableState: deliveryFilterSettings
     })
 );

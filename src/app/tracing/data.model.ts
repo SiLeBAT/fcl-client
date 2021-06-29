@@ -179,7 +179,6 @@ export interface HighlightingSettings {
 }
 
 export interface MakeElementsInvisibleInputState {
-    selectedElements: SelectedElements;
     highlightingSettings: HighlightingSettings;
     tracingSettings: TracingSettings;
 }
@@ -419,7 +418,8 @@ export interface SelectedElements {
 export enum DialogAlignment {
     LEFT, CENTER, RIGHT
 }
-export interface BasicGraphState {
+
+export interface DataServiceInputState {
     fclElements: FclElements;
     groupSettings: GroupData[];
     tracingSettings: TracingSettings;
@@ -427,7 +427,7 @@ export interface BasicGraphState {
     selectedElements: SelectedElements;
 }
 
-export interface SharedGraphState extends BasicGraphState {
+export interface SharedGraphState extends DataServiceInputState {
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
     ghostStation: StationId | null;
@@ -435,10 +435,13 @@ export interface SharedGraphState extends BasicGraphState {
     hoverDeliveries: DeliveryId[];
 }
 
-export interface GraphState extends SharedGraphState {
+// export interface GraphState extends SharedGraphState {
+//     layout: Layout;
+// }
+
+export interface GisGraphState extends SharedGraphState {
     layout: Layout;
 }
-
 export interface SchemaGraphState extends SharedGraphState {
     stationPositions: Record<StationId, Position>;
     layout: Layout;
@@ -454,7 +457,6 @@ export interface SetHighlightingSettingsPayload {
 
 export interface SetInvisibleElementsPayload {
     highlightingSettings: HighlightingSettings;
-    selectedElements: SelectedElements;
     tracingSettings: TracingSettings;
 }
 

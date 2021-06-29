@@ -140,5 +140,9 @@
         [footerHeight]="50"
         [treeFromRelation]="useTreeMode ? 'parentRowId' : undefined"
         [treeToRelation]="'id'"
+        [selected]="selectedRows"
+        [selectionType]="selectionType"
+        [rowIdentity]="rowIdentity"
+        (select)="onRowSelectionChange($event)"
     ></ngx-datatable>
 </div>

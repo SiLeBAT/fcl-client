@@ -15,10 +15,9 @@ import { StationPropertiesComponent, StationPropertiesData } from './dialog/stat
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
 import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/deliveries-properties.component';
 import { MatDialog } from '@angular/material/dialog';
-import { TracingService } from './services/tracing.service';
-import { HighlightingService } from './services/highlighting.service';
 import { EditTracingSettingsService } from './services/edit-tracing-settings.service';
 import { EditHighlightingService } from './configuration/edit-highlighting.service';
+import { GraphService } from './graph/graph.service';
 
 @Injectable()
 export class TracingEffects {
@@ -26,6 +25,7 @@ export class TracingEffects {
         private actions$: Actions,
         private dataService: DataService,
         private editTracSettingsService: EditTracingSettingsService,
+        private graphService: GraphService,
         private dialogService: MatDialog,
         private alertService: AlertService,
         private editHighlightingService: EditHighlightingService,
@@ -35,7 +35,7 @@ export class TracingEffects {
     @Effect()
     showStationProperties$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowStationPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowStationPropertiesMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),
         mergeMap(([action, state]) => {
             const stationId = action.payload.stationId;
             const data = this.dataService.getData(state);
@@ -70,7 +70,7 @@ export class TracingEffects {
     @Effect()
     showDeliveryProperties$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowDeliveryPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryPropertiesMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),
         mergeMap(([action, state]) => {
             const deliveryIds = action.payload.deliveryIds;
             const data = this.dataService.getData(state);
@@ -238,6 +238,30 @@ export class TracingEffects {
                 }
             } catch (error) {
                 this.alertService.error(`Outbreak stations could not be set!, error: ${error}`);
+            }
+            return EMPTY;
+        })
+    );
+
+    @Effect()
+    setSelectedGraphElements$ = this.actions$.pipe(
+        ofType<tracingEffectActions.SetSelectedGraphElementsMSA>(tracingEffectActions.TracingActionTypes.SetSelectedGraphElementsMSA),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
+        mergeMap(([action, state]) => {
+            try {
+                const graphData = this.graphService.getData(state);
+                const selectedFCElements = this.graphService.convertGraphSelectionToFclSelection(
+                    action.payload.selectedElements,
+                    graphData,
+                    action.payload.maintainOffGraphSelection
+                );
+                if (selectedFCElements) {
+                    return of(new tracingStateActions.SetSelectedElementsSOA({
+                        selectedElements: selectedFCElements
+                    }));
+                }
+            } catch (error) {
+                this.alertService.error(`Graph selection could not be set!, error: ${error}`);
             }
             return EMPTY;
         })

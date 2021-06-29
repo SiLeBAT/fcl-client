@@ -1,7 +1,7 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, BasicGraphState, DataTable, DataServiceData, DeliveryId } from '@app/tracing/data.model';
+import { TableRow, DataTable, DataServiceData, DeliveryId, DataServiceInputState } from '@app/tracing/data.model';
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -15,7 +15,7 @@ import { SelectFilterTableColumnsMSA } from '../configuration.actions';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
 interface FilterTableState {
-    graphState: BasicGraphState;
+    dataServiceInputState: DataServiceInputState;
     filterTableState: FilterTableSettings;
 }
 
@@ -52,7 +52,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         const isFilterDeliveryTabActive$ = this.store.select(tracingSelectors.getIsFilterDeliveryTabActive);
-        const deliveryFilterState$ = this.store.select(tracingSelectors.getDeliveryFilterData);
+        const deliveryFilterState$ = this.store.select(tracingSelectors.selectDeliveryFilterState);
         this.stateSubscription = deliveryFilterState$.pipe(optInGate(isFilterDeliveryTabActive$)).subscribe(
             (state) => this.applyState(state),
             err => this.alertService.error(`getDeliveryFilterData store subscription failed: ${err}`)
@@ -71,6 +71,10 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
 
     onFilterSettingsChange(settings: FilterTableSettings): void {
         this.store.dispatch(new tracingActions.SetDeliveryFilterSOA({ settings: settings }));
+    }
+
+    onRowSelectionChange(deliveryIds: DeliveryId[]): void {
+        this.store.dispatch(new tracingActions.SetSelectedDeliveriesSOA({ deliveryIds: deliveryIds }));
     }
 
     onClearAllFilters(): void {
@@ -107,9 +111,12 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
 
     private applyState(state: FilterTableState) {
         let dataTable: DataTable = this.cachedData ? this.cachedData.dataTable : undefined;
-        const data = this.dataService.getData(state.graphState);
-        if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
-            dataTable = this.tableService.getDeliveryData(state.graphState);
+        const data = this.dataService.getData(state.dataServiceInputState);
+        if (
+            !this.cachedState ||
+            this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
+        ) {
+            dataTable = this.tableService.getDeliveryData(state.dataServiceInputState);
         } else if (
             data.stations !== this.cachedData.data.stations ||
             data.deliveries !== this.cachedData.data.deliveries ||
@@ -118,7 +125,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
             data.delSel !== this.cachedData.data.delSel
             ) {
             dataTable = {
-                ...this.tableService.getDeliveryData(state.graphState),
+                ...this.tableService.getDeliveryData(state.dataServiceInputState),
                 columns: this.cachedData.dataTable.columns
             };
         }
@@ -142,7 +149,8 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         ) {
             this.filterElementsViewInputData_ = {
                 dataTable: this.cachedData.dataTable,
-                filterTableSettings: this.cachedState.filterTableState
+                filterTableSettings: this.cachedState.filterTableState,
+                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.deliveries
             };
         }
     }

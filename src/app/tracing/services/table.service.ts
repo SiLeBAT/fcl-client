@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-    BasicGraphState,
     DataServiceData,
     DeliveryData,
     StationData,
@@ -8,7 +7,8 @@ import {
     TableRow,
     StationTable,
     DataTable,
-    NodeShapeType
+    NodeShapeType,
+    DataServiceInputState
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
@@ -26,7 +26,7 @@ export class TableService {
 
     constructor(private dataService: DataService) {}
 
-    getDeliveryData(state: BasicGraphState, deliveryIds?: string[]): DataTable {
+    getDeliveryData(state: DataServiceInputState, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
         return {
             columns: this.getDeliveryColumns(data),
@@ -34,7 +34,7 @@ export class TableService {
         };
     }
 
-    getStationData(state: BasicGraphState): StationTable {
+    getStationData(state: DataServiceInputState): StationTable {
         const data: DataServiceData = this.dataService.getData(state);
         return {
             columns: this.getStationColumns(data),

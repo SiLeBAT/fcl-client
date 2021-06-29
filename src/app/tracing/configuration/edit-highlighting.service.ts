@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-    BasicGraphState,
     TableColumn,
     StationTable,
     SelectedElements,
@@ -8,7 +7,8 @@ import {
     SetInvisibleElementsPayload,
     HighlightingSettings,
     ClearInvisibilitiesOptions,
-    SetHighlightingSettingsPayload
+    SetHighlightingSettingsPayload,
+    DataServiceInputState
 } from '../data.model';
 import { EditTracingSettingsService } from '../services/edit-tracing-settings.service';
 import { TableService } from '../services/table.service';
@@ -26,7 +26,7 @@ export class EditHighlightingService {
         private editTracSettingsService: EditTracingSettingsService
     ) {}
 
-    getStationData(state: BasicGraphState): StationTable {
+    getStationData(state: DataServiceInputState): StationTable {
         const dataTable = this.tableService.getStationData(state);
 
         return {
@@ -55,27 +55,14 @@ export class EditHighlightingService {
         }
     }
 
-    private getNewSelection(oldSelection: string[], newInvIds: string[]): string[] {
-        if (newInvIds.length === 0) {
-            return oldSelection;
-        } else {
-            return Utils.getStringArrayDifference(oldSelection, newInvIds);
-        }
-    }
-
     getMakeElementsInvisiblePayload(
         state: MakeElementsInvisibleInputState,
         elements: SelectedElements
     ): SetInvisibleElementsPayload {
 
-        const selectedElements = {
-            stations: this.getNewSelection(state.selectedElements.stations, elements.stations),
-            deliveries: this.getNewSelection(state.selectedElements.deliveries, elements.deliveries)
-        };
         const tracingSettings = this.editTracSettingsService.resetObservedTypeForElements(state.tracingSettings, elements);
 
         return {
-            selectedElements: selectedElements,
             tracingSettings: tracingSettings,
             highlightingSettings: {
                 ...state.highlightingSettings,

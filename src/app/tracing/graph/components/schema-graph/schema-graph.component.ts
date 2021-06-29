@@ -13,12 +13,13 @@ import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
-import { SetSchemaGraphLayoutSOA, SetSelectedElementsSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
-import { getGraphType, getSchemaGraphData, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { SetSchemaGraphLayoutSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
+import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
+import { SetSelectedGraphElementsMSA } from '@app/tracing/tracing.actions';
 
 @Component({
     selector: 'fcl-schema-graph',
@@ -67,7 +68,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     ngOnInit() {
 
         this.graphStateSubscription = this.store
-            .select(getSchemaGraphData)
+            .select(selectSchemaGraphState)
             .pipe(optInGate(this.isGraphActive$))
             .subscribe(
                 graphState => this.applyState(graphState),
@@ -133,11 +134,10 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         if (graphDataChange.layout) {
             this.store.dispatch(new SetSchemaGraphLayoutSOA({ layout: graphDataChange.layout }));
         }
-        if (graphDataChange.selectedElements) {
-            this.store.dispatch(new SetSelectedElementsSOA({
-                selectedElements: this.graphService.convertGraphSelectionToFclSelection(
-                    graphDataChange.selectedElements, this.sharedGraphData
-                )
+        if (graphDataChange.selectionChange) {
+            this.store.dispatch(new SetSelectedGraphElementsMSA({
+                selectedElements: graphDataChange.selectionChange.selectedElements,
+                maintainOffGraphSelection: graphDataChange.selectionChange.isShiftSelection
             }));
         }
     }

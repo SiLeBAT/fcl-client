@@ -36,7 +36,8 @@ export interface GraphDataChange {
 }
 
 export type GraphEventListener<T extends GraphEventType> =
-    T extends GraphEventType.LAYOUT_CHANGE | GraphEventType.SELECTION_CHANGE ? () => void :
+    T extends GraphEventType.LAYOUT_CHANGE ? () => void :
+    T extends GraphEventType.SELECTION_CHANGE ? (shift: boolean) => void :
     T extends GraphEventType.CONTEXT_MENU_REQUEST ? (info: ContextMenuRequestInfo) => void :
     never;
 
@@ -125,7 +126,7 @@ export class InteractiveCyGraph extends CyGraph {
 
     protected registerCyListeners(): void {
         if (this.cy.container()) {
-            addCySelectionListener(this.cy, () => this.onSelectionChanged());
+            addCySelectionListener(this.cy, (shift: boolean) => this.onSelectionChanged(shift));
             addCyPanListeners(this.cy, () => this.onPanOrZoom(), () => this.onPanOrZoom());
             addCyZoomListener(this.cy, () => this.onPanOrZoom());
             addCyDragListener(this.cy, () => this.onDragEnd());
@@ -152,7 +153,7 @@ export class InteractiveCyGraph extends CyGraph {
         this.onLayoutChanged();
     }
 
-    protected onSelectionChanged(): void {
+    protected onSelectionChanged(shift: boolean): void {
         this.applyGraphDataChangeBottomUp({
             selectedElements: {
                 nodes: this.cy.nodes(SELECTED_ELEMENTS_SELECTOR).map(n => n.id()),
@@ -160,7 +161,7 @@ export class InteractiveCyGraph extends CyGraph {
             }
         });
 
-        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListener<GraphEventType.SELECTION_CHANGE>) => l());
+        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListener<GraphEventType.SELECTION_CHANGE>) => l(shift));
     }
 
     private onPanOrZoom(): void {
@@ -182,7 +183,7 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private onContextMenuRequest(info: ContextMenuRequestInfo): void {
-        this.listeners.CONTEXT_MENU_REQUEST.forEach(l => l(info));
+        this.listeners.CONTEXT_MENU_REQUEST.forEach((l: GraphEventListener<GraphEventType.CONTEXT_MENU_REQUEST>) => l(info));
     }
 
     private updateNodes(): void {

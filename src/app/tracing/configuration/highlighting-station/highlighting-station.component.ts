@@ -1,4 +1,4 @@
-import { BasicGraphState, DataServiceData, DataTable, StationHighlightingRule, StationHighlightingStats, TableColumn } from './../../data.model';
+import { DataServiceData, DataServiceInputState, DataTable, StationHighlightingRule, StationHighlightingStats, TableColumn } from './../../data.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
@@ -14,7 +14,7 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import { EditHighlightingService } from '../edit-highlighting.service';
 
 interface HighlightingState {
-    graphState: BasicGraphState;
+    dataServiceInputState: DataServiceInputState;
     highlightingState: StationHighlightingRule[];
     editIndex: number | null;
 }
@@ -90,7 +90,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
                     }
                 } else {
                     if (!this.stateSubscription) {
-                        this.stateSubscription = this.store.select(tracingSelectors.getStationHighlightingData).subscribe(
+                        this.stateSubscription = this.store.select(tracingSelectors.selectStationHighlightingState).subscribe(
                             (state: HighlightingState) => this.applyState(state),
                             err => this.alertService.error(`getStationHighlightingData store subscription failed: ${err}`)
                         );
@@ -137,9 +137,12 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
 
     private applyState(state: HighlightingState): void {
         let dataTable: DataTable | null = this.cachedData ? this.cachedData.dataTable : null;
-        const data = this.dataService.getData(state.graphState);
-        if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
-            dataTable = this.editHighlightingService.getStationData(state.graphState);
+        const data = this.dataService.getData(state.dataServiceInputState);
+        if (
+            !this.cachedState ||
+            this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
+        ) {
+            dataTable = this.editHighlightingService.getStationData(state.dataServiceInputState);
         } else if (
             data.stations !== this.cachedData.data.stations ||
             data.deliveries !== this.cachedData.data.deliveries ||
@@ -148,7 +151,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
             data.delSel !== this.cachedData.data.delSel
             ) {
             dataTable = {
-                ...this.editHighlightingService.getStationData(state.graphState),
+                ...this.editHighlightingService.getStationData(state.dataServiceInputState),
                 columns: this.cachedData.dataTable.columns
             };
         }

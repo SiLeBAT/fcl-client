@@ -20,10 +20,10 @@
     [scrollbarV]="true"
     [scrollbarH]="true"
     [swapColumns]="false"
-    [selected]="selected"
+    [selected]="selectedRows"
     [selectionType]="'multi'"
     (activate)="onActivate($event)"
-    (select)='onSelect($event)'
+    (select)='onRowSelectionChange($event)'
 >
 
     <ngx-datatable-column name="'H'" prop="hColor" [minWidth]="40" [maxWidth]="40" [width]="40" [sortable]="true" [canAutoResize]="false" [draggable]="false" [resizeable]="false"

@@ -383,6 +383,36 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+        case TracingActionTypes.SetSelectedStationsSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        selectedElements: {
+                            ...state.fclData.graphSettings.selectedElements,
+                            stations: action.payload.stationIds
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetSelectedDeliveriesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        selectedElements: {
+                            ...state.fclData.graphSettings.selectedElements,
+                            deliveries: action.payload.deliveryIds
+                        }
+                    }
+                }
+            };
+
         case TracingActionTypes.SetStationPositionsSOA:
             return {
                 ...state,
@@ -520,8 +550,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        highlightingSettings: action.payload.highlightingSettings,
-                        selectedElements: action.payload.selectedElements
+                        highlightingSettings: action.payload.highlightingSettings
+                        // ,
+                        // selectedElements: action.payload.selectedElements
                     },
                     tracingSettings: action.payload.tracingSettings
                 }

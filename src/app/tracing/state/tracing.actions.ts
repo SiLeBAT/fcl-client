@@ -35,6 +35,8 @@ export enum TracingActionTypes {
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
     SetSelectedElementsSOA = '[Tracing] Set Element Selection',
+    SetSelectedStationsSOA = '[Tracing] Set Station Selection',
+    SetSelectedDeliveriesSOA = '[Tracing] Set Delivery Selection',
     SetStationPositionsSOA = '[Tracing] Set Station Positions',
     SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
     SetStationGroupsSOA = '[Tracing] Set Station Groups',
@@ -163,6 +165,18 @@ export class SetSelectedElementsSOA implements Action {
     readonly type = TracingActionTypes.SetSelectedElementsSOA;
 
     constructor(public payload: { selectedElements: SelectedElements}) {}
+}
+
+export class SetSelectedStationsSOA implements Action {
+    readonly type = TracingActionTypes.SetSelectedStationsSOA;
+
+    constructor(public payload: { stationIds: StationId[] }) {}
+}
+
+export class SetSelectedDeliveriesSOA implements Action {
+    readonly type = TracingActionTypes.SetSelectedDeliveriesSOA;
+
+    constructor(public payload: { deliveryIds: DeliveryId[] }) {}
 }
 
 export class SetStationPositionsSOA implements Action {
@@ -338,6 +352,8 @@ export type TracingActions =
     | ShowLegendSOA
     | ShowZoomSOA
     | SetSelectedElementsSOA
+    | SetSelectedStationsSOA
+    | SetSelectedDeliveriesSOA
     | SetStationPositionsSOA
     | SetStationPositionsAndLayoutSOA
     | SetStationGroupsSOA

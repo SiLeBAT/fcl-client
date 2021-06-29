@@ -2,6 +2,7 @@
     standardFilterLabel="Filter in all delivery data"
     [inputData]="filterElementsViewInputData"
     (filterSettingsChange)="onFilterSettingsChange($event)"
+    (rowSelectionChange)="onRowSelectionChange($event)"
     (clearAllFilters)="onClearAllFilters()"
     (selectTableColumns)="onSelectTableColumns()"
     (mouseOverTableRow)="onMouseOverTableRow($event)"

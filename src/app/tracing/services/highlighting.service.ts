@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { createPreprocessedConditions } from '../configuration/complex-row-filter-provider';
 import {
     DataServiceData,
-    BasicGraphState,
     StationData,
     StationHighlightingInfo,
     DeliveryHighlightingInfo,
@@ -12,7 +11,8 @@ import {
     StationHighlightingRule,
     DeliveryHighlightingRule,
     HighlightingRule,
-    OperationType
+    OperationType,
+    DataServiceInputState
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -35,7 +35,7 @@ export class HighlightingService {
     private statRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
     private delRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
 
-    applyVisibilities(state: BasicGraphState, data: DataServiceData) {
+    applyVisibilities(state: DataServiceInputState, data: DataServiceData) {
         data.stations.forEach(s => {
             s.invisible = false;
             s.expInvisible = false;
@@ -63,11 +63,11 @@ export class HighlightingService {
         data.delVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
     }
 
-    hasStationVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
+    hasStationVisibilityChanged(oldState: DataServiceInputState, newState: DataServiceInputState): boolean {
         return !oldState || oldState.highlightingSettings.invisibleStations !== newState.highlightingSettings.invisibleStations;
     }
 
-    hasDeliveryVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
+    hasDeliveryVisibilityChanged(oldState: DataServiceInputState, newState: DataServiceInputState): boolean {
         return !oldState || oldState.highlightingSettings.invisibleDeliveries !== newState.highlightingSettings.invisibleDeliveries;
     }
 
@@ -85,7 +85,7 @@ export class HighlightingService {
         }
     }
 
-    private preprocessHighlightings(state: BasicGraphState): void {
+    private preprocessHighlightings(state: DataServiceInputState): void {
         const statRulesChanged = state.highlightingSettings.stations !== this.statHighlightingRules;
         const delRulesChanged = state.highlightingSettings.deliveries !== this.delHighlightingRules;
         if (statRulesChanged) {
@@ -110,7 +110,7 @@ export class HighlightingService {
         }
     }
 
-    applyHighlightingProps(state: BasicGraphState, data: DataServiceData): void {
+    applyHighlightingProps(state: DataServiceInputState, data: DataServiceData): void {
         this.preprocessHighlightings(state);
 
         const ruleIdToStatCountMap: Record<RuleId, number> = {};
@@ -150,7 +150,7 @@ export class HighlightingService {
     }
 
     private getLegendInfo(
-        state: BasicGraphState,
+        state: DataServiceInputState,
         activeHighlightings: { stations: Record<RuleId, boolean>, deliveries: Record<RuleId, boolean>}
     ): LegendInfo {
 
@@ -178,7 +178,7 @@ export class HighlightingService {
         return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
     }
 
-    private getCommonLinkEntries(state: BasicGraphState): StationHighlightingRule[] {
+    private getCommonLinkEntries(state: DataServiceInputState): StationHighlightingRule[] {
         return state.highlightingSettings.stations.filter(rule => !rule.disabled && this.isCommonLinkRule(rule));
     }
 
@@ -213,7 +213,11 @@ export class HighlightingService {
             )
         );
     }
-    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, ruleIdToDelCountMap: Record<RuleId, number>) {
+    private createDeliveryHightlightingInfo(
+        delivery: DeliveryData,
+        state: DataServiceInputState,
+        ruleIdToDelCountMap: Record<RuleId, number>
+    ) {
         const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
@@ -225,7 +229,7 @@ export class HighlightingService {
 
     private createStationHighlightingInfo(
         station: StationData,
-        state: BasicGraphState,
+        state: DataServiceInputState,
         ruleIdToStatCountMap: Record<RuleId, number>,
         ruleIdToConflictCountMap: Record<RuleId, number>
     ): StationHighlightingInfo {

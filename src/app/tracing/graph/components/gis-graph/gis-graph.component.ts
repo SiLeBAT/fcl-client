@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
-import { GraphState, GraphType, Layout, LegendInfo } from '../../../data.model';
+import { GraphType, Layout, LegendInfo, GisGraphState } from '../../../data.model';
 import _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
@@ -14,10 +14,11 @@ import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
-import { SetGisGraphLayoutSOA, SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
-import { getGisGraphData, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { SetGisGraphLayoutSOA } from '@app/tracing/state/tracing.actions';
+import { selectGisGraphState, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { BoundaryRect } from '@app/tracing/util/geometry-utils';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
+import { SetSelectedGraphElementsMSA } from '@app/tracing/tracing.actions';
 
 @Component({
     selector: 'fcl-gis-graph',
@@ -64,7 +65,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     ngOnInit() {
 
         this.graphStateSubscription = this.store
-            .select(getGisGraphData)
+            .select(selectGisGraphState)
             .pipe(optInGate(this.isGraphActive$))
             .subscribe(
                 graphState => this.applyState(graphState),
@@ -98,11 +99,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         if (graphDataChange.layout) {
             this.store.dispatch(new SetGisGraphLayoutSOA({ layout: graphDataChange.layout }));
         }
-        if (graphDataChange.selectedElements) {
-            this.store.dispatch(new SetSelectedElementsSOA({
-                selectedElements: this.graphService.convertGraphSelectionToFclSelection(
-                    graphDataChange.selectedElements, this.sharedGraphData
-                )
+        if (graphDataChange.selectionChange) {
+            this.store.dispatch(new SetSelectedGraphElementsMSA({
+                selectedElements: graphDataChange.selectionChange.selectedElements,
+                maintainOffGraphSelection: graphDataChange.selectionChange.isShiftSelection
             }));
         }
     }
@@ -131,7 +131,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return this.cyConfig_;
     }
 
-    private applyState(newState: GraphState): void {
+    private applyState(newState: GisGraphState): void {
         this.sharedGraphData = this.graphService.getData(newState);
         const posData = this.gisPositioningService.getPositioningData(this.sharedGraphData);
         this.unknownLatLonRect_ = posData.unknownLatLonRect;

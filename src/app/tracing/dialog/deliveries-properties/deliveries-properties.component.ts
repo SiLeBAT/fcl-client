@@ -7,9 +7,9 @@ import { TableService } from '@app/tracing/services/table.service';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
-import { BasicGraphState } from '@app/tracing/data.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import { SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
+import { DataServiceInputState, TableRow } from '@app/tracing/data.model';
 
 interface DeliveriesPropertiesData {
     deliveryIds: string[];
@@ -41,7 +41,11 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     private readonly MAX_COUNT_SORT_OPTIONS = 100;
     readonly ROW_HEIGHT = 30;
 
-    selected = [];
+    private selectedRows_: TableRow[] = [];
+
+    get selectedRows(): TableRow[] {
+        return this.selectedRows_;
+    }
 
     columns: FilterColumn[] = [];
     propToColumnMap: { [key: string]: FilterColumn } = {};
@@ -69,7 +73,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     ) {
         this.deliveryIds = data.deliveryIds;
 
-        this.stateSubscription = this.store.select(tracingSelectors.getBasicGraphData).subscribe(
+        this.stateSubscription = this.store.select(tracingSelectors.selectDataServiceInputState).subscribe(
             (graphState) => this.applyState(graphState),
             err => this.alertService.error(`getTableData store subscription failed: ${err}`)
         );
@@ -85,15 +89,18 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         }
     }
 
-    onSelect({ selected }) {
-        this.selected.splice(0, this.selected.length);
-        this.selected.push(...selected);
+    onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
+        this.selectedRows_.splice(0, this.selectedRows_.length);
+        this.selectedRows_.push(...selected);
+
+        // we need this to get rid of the text selection
+        window.getSelection().removeAllRanges();
     }
 
     onActivate(event) {
     }
 
-    private applyState(state: BasicGraphState) {
+    private applyState(state: DataServiceInputState) {
         timer(200).subscribe(
             () => {
                 const newData = this.tableService.getDeliveryData(state, this.deliveryIds);
@@ -270,7 +277,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         this.store.dispatch(new SetSelectedElementsSOA({
             selectedElements: {
                 stations: [],
-                deliveries: this.selected.map(row => row.id)
+                deliveries: this.selectedRows.map(row => row.id)
             }
         }));
     }

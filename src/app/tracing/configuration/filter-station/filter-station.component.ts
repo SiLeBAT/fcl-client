@@ -1,7 +1,7 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, BasicGraphState, DataTable, DataServiceData, StationId } from '@app/tracing/data.model';
+import { TableRow, DataTable, DataServiceData, StationId, DataServiceInputState } from '@app/tracing/data.model';
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -15,7 +15,7 @@ import { SelectFilterTableColumnsMSA } from '../configuration.actions';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
 interface FilterTableState {
-    graphState: BasicGraphState;
+    dataServiceInputState: DataServiceInputState;
     filterTableState: FilterTableSettings;
 }
 
@@ -52,7 +52,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         const isFilterStationTabActive$ = this.store.select(tracingSelectors.getIsFilterStationTabActive);
-        const stationFilterState$ = this.store.select(tracingSelectors.getStationFilterData);
+        const stationFilterState$ = this.store.select(tracingSelectors.selectStationFilterState);
         this.stateSubscription = stationFilterState$.pipe(optInGate(isFilterStationTabActive$)).subscribe(
             (state) => this.applyState(state),
             err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
@@ -71,6 +71,10 @@ export class FilterStationComponent implements OnInit, OnDestroy {
 
     onFilterSettingsChange(settings: FilterTableSettings): void {
         this.store.dispatch(new tracingActions.SetStationFilterSOA({ settings: settings }));
+    }
+
+    onRowSelectionChange(stationIds: StationId[]): void {
+        this.store.dispatch(new tracingActions.SetSelectedStationsSOA({ stationIds: stationIds }));
     }
 
     onClearAllFilters(): void {
@@ -109,9 +113,12 @@ export class FilterStationComponent implements OnInit, OnDestroy {
 
     private applyState(state: FilterTableState) {
         let dataTable: DataTable = this.cachedData ? this.cachedData.dataTable : undefined;
-        const data = this.dataService.getData(state.graphState);
-        if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
-            dataTable = this.tableService.getStationData(state.graphState);
+        const data = this.dataService.getData(state.dataServiceInputState);
+        if (
+            !this.cachedState ||
+            this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
+        ) {
+            dataTable = this.tableService.getStationData(state.dataServiceInputState);
             this.currentGhostStationId = null;
         } else if (
             data.stations !== this.cachedData.data.stations ||
@@ -121,7 +128,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
             data.delSel !== this.cachedData.data.delSel
             ) {
             dataTable = {
-                ...this.tableService.getStationData(state.graphState),
+                ...this.tableService.getStationData(state.dataServiceInputState),
                 columns: this.cachedData.dataTable.columns
             };
         }
@@ -145,7 +152,8 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         ) {
             this.filterElementsViewInputData_ = {
                 dataTable: this.cachedData.dataTable,
-                filterTableSettings: this.cachedState.filterTableState
+                filterTableSettings: this.cachedState.filterTableState,
+                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.stations
             };
         }
     }

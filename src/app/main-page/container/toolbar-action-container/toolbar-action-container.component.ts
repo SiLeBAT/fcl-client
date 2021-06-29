@@ -6,7 +6,7 @@ import * as tracingActions from '@app/tracing/state/tracing.actions';
 import * as tracingIOActions from '@app/tracing/io/io.actions';
 import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
-import { FclData, GraphSettings, BasicGraphState, DataServiceData, GraphType, MapType } from '@app/tracing/data.model';
+import { FclData, GraphSettings, DataServiceData, GraphType, MapType, DataServiceInputState } from '@app/tracing/data.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import { IOService } from '@app/tracing/io/io.service';
 import { DataService } from './../../../tracing/services/data.service';
@@ -53,24 +53,24 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                 select(TracingSelectors.getGraphSettings)
         );
 
-        const basicGraphData$: Observable<BasicGraphState> = this.store
+        const dataServiceInputState$: Observable<DataServiceInputState> = this.store
             .pipe(
-                select(TracingSelectors.getBasicGraphData)
+                select(TracingSelectors.selectDataServiceInputState)
         );
 
         combineLatest([
             graphSettings$,
-            basicGraphData$
+            dataServiceInputState$
         ]).pipe(
             takeWhile(() => this.componentActive)
         ).subscribe(
-            ([graphSettings, basicGraphData]) => {
+            ([graphSettings, dataServiceInputState]) => {
                 this.availableMapTypes = this.mapTypes.filter(
                     mapType => mapType !== MapType.SHAPE_FILE || graphSettings.shapeFileData
                 );
                 this.graphSettings = graphSettings;
 
-                const dataServiceData: DataServiceData = this.dataService.getData(basicGraphData);
+                const dataServiceData: DataServiceData = this.dataService.getData(dataServiceInputState);
                 this.hasGisInfo = UIUtils.hasVisibleStationsWithGisInfo(dataServiceData.stations);
             },
             error => {
