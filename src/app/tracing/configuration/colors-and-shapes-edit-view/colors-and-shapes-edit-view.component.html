@@ -39,8 +39,16 @@
                 Use color:
             </mat-checkbox>
 
-            <fcl-color-selector-view [disabled]="color === null" [color]="color" (colorChange)="onColorChange($event)"></fcl-color-selector-view>
+            <fcl-color-selector-view
+                [disabled]="!useColor"
+                [color]="color"
+                (colorChange)="onColorChange($event)"
+            ></fcl-color-selector-view>
         </div>
+        <fcl-rule-service-view
+            (addSelection)="onAddSelection()"
+            (removeSelection)="onRemoveSelection()"
+        ></fcl-rule-service-view>
     </div>
 
     <fcl-complex-filter-view

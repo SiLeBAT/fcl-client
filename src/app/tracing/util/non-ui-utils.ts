@@ -13,6 +13,14 @@ type RecordKeyType =
 
 export class Utils {
 
+    static rgbArrayToColor(color: number[]): Color {
+        return { r: color[0], g: color[1], b: color[2] };
+    }
+
+    static colorToRGBArray(color: Color): number[] {
+        return [color.r, color.g, color.b];
+    }
+
     static colorToCss(color: Color): string {
         return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
     }

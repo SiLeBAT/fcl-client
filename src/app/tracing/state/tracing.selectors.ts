@@ -82,7 +82,7 @@ export const getMakeElementsInvisibleInputState = createSelector(
     })
 );
 
-export const getStationHighlightingSettings = createSelector(
+export const selectStationHighlightingSettings = createSelector(
     getHighlightingSettings,
     (highlightingSettings) => highlightingSettings.stations
 );
@@ -309,12 +309,12 @@ export const getHighlightingConfigurationSettings = createSelector(
 
 export const selectStationHighlightingState = createSelector(
     selectDataServiceInputState,
-    getStationHighlightingSettings,
+    selectStationHighlightingSettings,
     getHighlightingConfigurationSettings,
     (dataServiceInputState, stationHighlightingSettings, highlightingConfigs) => ({
         dataServiceInputState: dataServiceInputState,
         highlightingState: stationHighlightingSettings,
-        editIndex: highlightingConfigs.colorsAndShapesSettings.editIndex
+        editRules: highlightingConfigs.stationEditRules
     })
 );
 

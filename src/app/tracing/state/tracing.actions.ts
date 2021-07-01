@@ -13,6 +13,7 @@ import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
 import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
 import { ROASettings } from '../visio/model';
+import { StationEditRule } from '../configuration/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
@@ -59,8 +60,8 @@ export enum TracingActionTypes {
     SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
     ResetTracingStateSOA = '[Tracing] Reset Tracing State',
-    SetStationHighlightingRulesSOA = '[Colors and Shapes] Set Station Highlighting Rules',
-    SetColorsAndShapesEditIndexSOA = '[Colors and Shapes] Set Edit Index'
+    SetStationHighlightingRulesSOA = '[Station Highlighting] Set Station Highlighting Rules',
+    SetStationHighlightingEditRulesSOA = '[Station Highlighting] Set Station Highlighting Edit Rules'
 }
 
 export class TracingActivated implements Action {
@@ -325,10 +326,10 @@ export class SetStationHighlightingRulesSOA implements Action {
     constructor(public payload: { rules: StationHighlightingRule[] }) {}
 }
 
-export class SetColorsAndShapesEditIndexSOA implements Action {
-    readonly type = TracingActionTypes.SetColorsAndShapesEditIndexSOA;
+export class SetStationHighlightingEditRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetStationHighlightingEditRulesSOA;
 
-    constructor(public payload: { editIndex: number }) {}
+    constructor(public payload: { editRules: StationEditRule[] }) {}
 }
 
 export type TracingActions =
@@ -377,4 +378,4 @@ export type TracingActions =
     | SetHoverDeliveriesSOA
     | ResetTracingStateSOA
     | SetStationHighlightingRulesSOA
-    | SetColorsAndShapesEditIndexSOA;
+    | SetStationHighlightingEditRulesSOA;

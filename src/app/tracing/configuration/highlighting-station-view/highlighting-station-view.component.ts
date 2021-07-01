@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, Chang
 import { StationHighlightingRule, StationHighlightingStats, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import * as _ from 'lodash';
+import { ColorAndShapeEditRule, RuleId, RuleType, StationEditRule } from '../model';
 
 @Component({
     selector: 'fcl-highlighting-station-view',
@@ -10,27 +11,35 @@ import * as _ from 'lodash';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighlightingStationViewComponent implements OnChanges {
+    RuleType = RuleType;
 
-    @Input() colorOrShapeRuleEditIndex: number | null = null;
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
     @Input() rules: StationHighlightingRule[] = [];
+    @Input() editRules: StationEditRule[] = [];
     @Input() highlightingStats: StationHighlightingStats | null = null;
 
     @Output() rulesChange = new EventEmitter<StationHighlightingRule[]>();
+    @Output() editRulesChange = new EventEmitter<StationEditRule[]>();
     @Output() ruleDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
-    @Output() colorOrShapeRuleEditIndexChange = new EventEmitter<number | null>();
-
-    get colorOrShapeRules(): StationHighlightingRule[] {
-        return this.colorOrShapeRules_;
-    }
+    @Output() addSelectionToRuleConditions = new EventEmitter<StationEditRule>();
+    @Output() removeSelectionFromRuleConditions = new EventEmitter<StationEditRule>();
 
     labelsOpenState = false;
     stationSizeOpenState = false;
     colorsAndShapesOpenState = true;
 
     private colorOrShapeRules_: StationHighlightingRule[] = [];
+    private colorOrShapeEditRule_: ColorAndShapeEditRule | null = null;
     private restRules_: StationHighlightingRule[] = [];
+
+    get colorOrShapeRules(): StationHighlightingRule[] {
+        return this.colorOrShapeRules_;
+    }
+
+    get colorOrShapeEditRule(): ColorAndShapeEditRule | null {
+        return this.colorOrShapeEditRule_;
+    }
 
     constructor() { }
 
@@ -38,27 +47,34 @@ export class HighlightingStationViewComponent implements OnChanges {
         if (changes.rules !== undefined) {
             this.partitionRules();
         }
+        if (changes.editRules !== undefined) {
+            this.partitionEditRules();
+        }
     }
 
-    onColorOrShapeRuleDelete(deleteRuleRequestData: HighlightingRuleDeleteRequestData) {
-        const newRules = deleteRuleRequestData.highlightingData.concat(this.restRules_);
-
-        this.ruleDelete.emit({
-            highlightingData: newRules,
-            highlightingRule: deleteRuleRequestData.highlightingRule,
-            xPos: deleteRuleRequestData.xPos,
-            yPos: deleteRuleRequestData.yPos
-        });
+    onRuleDelete(deleteRuleRequestData: HighlightingRuleDeleteRequestData): void {
+        this.ruleDelete.emit(deleteRuleRequestData);
     }
 
     onColorOrShapeRulesChange(newColorOrShapeRules: StationHighlightingRule[]) {
-        this.colorOrShapeRules_ = newColorOrShapeRules;
-        const newRules = this.colorOrShapeRules_.concat(this.restRules_);
+        const newRules = [].concat(newColorOrShapeRules, this.restRules_);
         this.rulesChange.emit(newRules);
     }
 
-    onColorOrShapeRuleEditIndexChange(editIndex: number | null) {
-        this.colorOrShapeRuleEditIndexChange.emit(editIndex);
+    onStartRuleEdit(editRule: ColorAndShapeEditRule): void {
+        this.editRulesChange.emit([].concat(...this.editRules, editRule));
+    }
+
+    onCancelRuleEdit(ruleId: RuleId): void {
+        this.editRulesChange.emit(this.editRules.filter(r => r.id !== ruleId));
+    }
+
+    onAddSelectionToRuleConditions(editRule: StationEditRule): void {
+        this.addSelectionToRuleConditions.emit(editRule);
+    }
+
+    onRemoveSelectionFromRuleConditions(editRule: StationEditRule): void {
+        this.removeSelectionFromRuleConditions.emit(editRule);
     }
 
     private partitionRules(): void {
@@ -68,5 +84,10 @@ export class HighlightingStationViewComponent implements OnChanges {
                 (item.shape !== undefined && item.shape !== null)
             );
         });
+    }
+
+    private partitionEditRules(): void {
+        const rule = this.editRules.find(r => r.type === RuleType.COLOR_AND_SHAPE) || null;
+        this.colorOrShapeEditRule_ = rule === null ? null : rule as ColorAndShapeEditRule;
     }
 }

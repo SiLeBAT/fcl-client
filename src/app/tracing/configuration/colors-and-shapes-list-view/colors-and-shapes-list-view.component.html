@@ -76,7 +76,7 @@
                 matTooltip="Edit Highlighting Rule"
                 matTooltipPosition="above"
                 color="accent"
-                (click)="onEditRule(i)"
+                (click)="onStartEdit(i)"
                 [disabled]="isEditRuleModeActive"
             >
                 <mat-icon>edit</mat-icon>
@@ -90,7 +90,7 @@
                 matTooltip="Delete Highlighting Rule"
                 matTooltipPosition="above"
                 color="warn"
-                (click)="onDeleteRule($event, i)"
+                (click)="onRuleDelete($event, i)"
                 [disabled]="isEditRuleModeActive"
                 >
                 <mat-icon>delete forever</mat-icon>
@@ -98,16 +98,16 @@
         </div>
 
         <fcl-colors-and-shapes-edit-view
-            *ngIf="editIndex === i"
+            *ngIf="editRule !== null && editRule.id === item.id"
             class="fcl-cs-rules-list-edit-item"
 
             [rule]="editRule"
             [availableProperties]="availableProperties"
             [propToValuesMap]="propToValuesMap"
 
-            (applyRule)="onApplyRule($event)"
+            (applyRule)="onRuleApply($event)"
             (cancelEdit)="onCancelEdit()"
-            (okRule)="onOkRule($event)"
+            (okRule)="onRuleOk($event)"
         >
         </fcl-colors-and-shapes-edit-view>
 
@@ -122,7 +122,7 @@
     matTooltip="Add Highlighting Rule"
     matTooltipPosition="above"
     color="primary"
-    (click)="onAddRule()"
+    (click)="onRuleAdd()"
     [disabled]="isEditRuleModeActive"
 >
     <mat-icon>add</mat-icon>
@@ -136,8 +136,11 @@
     [availableProperties]="availableProperties"
     [propToValuesMap]="propToValuesMap"
 
-    (applyRule)="onApplyRule($event)"
+    (addSelection)="onAddSelectionToRuleConditions($event)"
+    (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+    (applyRule)="onRuleApply($event)"
     (cancelEdit)="onCancelEdit()"
-    (okRule)="onOkRule($event)"
+    (okRule)="onRuleOk($event)"
 >
+<!-- (ruleChange)="onRuleChange($event)" -->
 </fcl-colors-and-shapes-edit-view>

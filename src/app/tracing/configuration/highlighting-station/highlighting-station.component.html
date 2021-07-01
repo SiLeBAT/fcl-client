@@ -3,12 +3,13 @@
     [availableProperties]="availableProperties"
     [propToValuesMap]="propToValuesMap"
     [rules]="rules"
+    [editRules]="editRules"
     [highlightingStats]="highlightingStats"
 
-    [colorOrShapeRuleEditIndex]="colorOrShapeRuleEditIndex"
-
+    (addSelectionToRuleConditions)="onAddSelectionToRuleConditions($event)"
+    (removeSelectionFromRuleConditions)="onRemoveSelectionFromRuleConditions($event)"
     (rulesChange)="onRulesChange($event)"
+    (editRulesChange)="onEditRulesChange($event)"
     (ruleDelete)="onRuleDelete($event)"
-    (colorOrShapeRuleEditIndexChange)="onColorOrShapeRuleEditIndexChange($event)"
 >
 </fcl-highlighting-station-view>

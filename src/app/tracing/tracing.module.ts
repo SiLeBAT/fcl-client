@@ -69,6 +69,7 @@ import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatata
 import { ColorSelectorViewComponent } from './configuration/color-selector-view/color-selector-view.component';
 import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix.directive';
 import { UnknownLatLonFrameViewComponent } from './graph/components/unknown-lat-lon-frame-view/unknown-lat-lot-frame-view.component';
+import { RuleServiceViewComponent } from './configuration/rule-service-view/rule-service-view.component';
 
 @NgModule({
     imports: [
@@ -137,7 +138,8 @@ import { UnknownLatLonFrameViewComponent } from './graph/components/unknown-lat-
         DialogYesNoComponent,
         NgxDatatableRowEventProviderDirective,
         ColorSelectorViewComponent,
-        UnknownLatLonFrameViewComponent
+        UnknownLatLonFrameViewComponent,
+        RuleServiceViewComponent
     ],
     exports: []
 })

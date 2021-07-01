@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 import * as fromTracing from '../state/tracing.reducers';
-import { mergeMap, take } from 'rxjs/operators';
+import { mergeMap, take, withLatestFrom } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteStationHighlightingRulesSSA } from './configuration.actions';
+import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteStationHighlightingRuleSSA } from './configuration.actions';
 import { TableType } from './model';
 import { SetFilterStationTableColumnOrderSOA, SetFilterDeliveryTableColumnOrderSOA, SetStationHighlightingRulesSOA } from '../state/tracing.actions';
 import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/dialog-yes-no.component';
-import { StationHighlightingRule } from '../data.model';
+import { selectStationHighlightingSettings } from '../state/tracing.selectors';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -66,41 +66,47 @@ export class ConfigurationEffects {
 
     @Effect()
     DeleteStationHighlightingRulesSSA$ = this.actions$.pipe(
-        ofType<DeleteStationHighlightingRulesSSA>(ConfigurationActionTypes.DeleteStationHighlightingRulesSSA),
-        mergeMap(action => {
+        ofType<DeleteStationHighlightingRuleSSA>(ConfigurationActionTypes.DeleteStationHighlightingRuleSSA),
+        withLatestFrom(this.store.pipe(select(selectStationHighlightingSettings))),
+        mergeMap(([action, state]) => {
+            const oldRules = state;
+            const deleteRuleId = action.payload.deleteRequestData.ruleId;
+            const ruleToDelete = oldRules.find(rule => rule.id === deleteRuleId) || null;
 
-            const newRules = action.payload.stationHighlightingRule.highlightingData as (StationHighlightingRule[]);
-            const ruleToDelete = action.payload.stationHighlightingRule.highlightingRule;
-            const xPos = (action.payload.stationHighlightingRule.xPos - 350).toString(10).concat('px');
-            const yPos = (action.payload.stationHighlightingRule.yPos - 140).toString(10).concat('px');
+            if (ruleToDelete !== null) {
 
-            const position = {
-                top: yPos,
-                left: xPos
-            };
+                const newRules = oldRules.filter(rule => rule.id !== deleteRuleId);
+                const xPos = (action.payload.deleteRequestData.xPos - 350).toString(10).concat('px');
+                const yPos = (action.payload.deleteRequestData.yPos - 140).toString(10).concat('px');
 
-            const dialogData: DialogYesNoData = {
-                title: `Really delete the '${ruleToDelete.name}' highlighting rule?`,
-                position: position
-            };
+                const position = {
+                    top: yPos,
+                    left: xPos
+                };
 
-            const dialogConfig = new MatDialogConfig();
-            dialogConfig.position = position;
-            dialogConfig.data = dialogData;
+                const dialogData: DialogYesNoData = {
+                    title: `Really delete the '${ruleToDelete.name}' highlighting rule?`,
+                    position: position
+                };
 
-            this.dialogService.open(DialogYesNoComponent, dialogConfig).afterClosed()
-                .pipe(
-                    take(1)
-                ).subscribe((result) => {
-                    if (result === true) {
-                        this.store.dispatch(new SetStationHighlightingRulesSOA(
-                            { rules: newRules }
-                        ));
-                    }
-                },
-                error => {
-                    throw new Error(`error loading YesNo dialog: ${error}`);
-                });
+                const dialogConfig = new MatDialogConfig();
+                dialogConfig.position = position;
+                dialogConfig.data = dialogData;
+
+                this.dialogService.open(DialogYesNoComponent, dialogConfig).afterClosed()
+                    .pipe(
+                        take(1)
+                    ).subscribe((result) => {
+                        if (result === true) {
+                            this.store.dispatch(new SetStationHighlightingRulesSOA(
+                                { rules: newRules }
+                            ));
+                        }
+                    },
+                    error => {
+                        throw new Error(`error loading YesNo dialog: ${error}`);
+                    });
+            }
             return EMPTY;
         })
     );

@@ -53,9 +53,7 @@ const initialFilterSettings: FilterSettings = {
 };
 
 const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings = {
-    colorsAndShapesSettings: {
-        editIndex: null
-    }
+    stationEditRules: []
 };
 
 const initialModelDependentState: ModelDependentState = {
@@ -498,15 +496,12 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetColorsAndShapesEditIndexSOA:
+        case TracingActionTypes.SetStationHighlightingEditRulesSOA:
             return {
                 ...state,
                 highlightingConfigurationSettings: {
                     ...state.highlightingConfigurationSettings,
-                    colorsAndShapesSettings: {
-                        ...state.highlightingConfigurationSettings.colorsAndShapesSettings,
-                        editIndex: action.payload.editIndex
-                    }
+                    stationEditRules: action.payload.editRules
                 }
             };
 

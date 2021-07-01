@@ -1,7 +1,10 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { StationHighlightingRule, StationHighlightingStats, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
+import { EditRuleCreator } from '../edit-rule-creator';
+import { ColorAndShapeEditRule } from '../model';
+import { convertStatHRuleToCSEditRule, convertStatEditRuleToStatHRule } from '../rule-conversion';
 
 @Component({
     selector: 'fcl-colors-and-shapes-list-view',
@@ -9,37 +12,39 @@ import { HighlightingRuleDeleteRequestData } from '../configuration.model';
     styleUrls: ['./colors-and-shapes-list-view.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ColorsAndShapesListViewComponent {
+export class ColorsAndShapesListViewComponent implements OnChanges {
 
     @Input() rules: StationHighlightingRule[] = [];
+    @Input() editRule: ColorAndShapeEditRule | null = null;
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: Record<string, string[]> = {};
     @Input() highlightingStats: StationHighlightingStats | null = null;
-    @Input() editIndex: number | null = null;
 
     @Output() ruleDelete = new EventEmitter<HighlightingRuleDeleteRequestData>();
-    @Output() toggleShowInLegendProperty = new EventEmitter<StationHighlightingRule[]>();
     @Output() rulesChange = new EventEmitter<StationHighlightingRule[]>();
-    @Output() editIndexChange = new EventEmitter<number | null>();
+    @Output() startEdit = new EventEmitter<ColorAndShapeEditRule>();
+    @Output() cancelEdit = new EventEmitter<void>();
+    @Output() addSelectionToRuleConditions = new EventEmitter<ColorAndShapeEditRule>();
+    @Output() removeSelectionFromRuleConditions = new EventEmitter<ColorAndShapeEditRule>();
+
+    private isEditRuleNew = false;
 
     get showAddRuleButton(): boolean {
-        return this.editIndex === null || this.editIndex !== this.rules.length;
+        return this.editRule === null || this.isEditRuleNew; // this.editRule.isNew;
     }
 
     get showEditNewRuleDialog(): boolean {
-        return this.editIndex === this.rules.length;
+        return this.editRule !== null && this.isEditRuleNew; // this.editRule.isNew;
     }
 
     get isEditRuleModeActive(): boolean {
-        return this.editIndex !== null;
+        return this.editRule !== null;
     }
 
-    get editRule(): StationHighlightingRule | null {
-        return (
-            (this.editIndex === null || this.rules.length === this.editIndex) ?
-            null :
-            this.rules[this.editIndex]
-        );
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.editRule !== undefined || changes.rules !== undefined) {
+            this.isEditRuleNew = this.editRule !== null && !this.rules.some(r => r.id === this.editRule.id);
+        }
     }
 
     getCount(rule: StationHighlightingRule): number | string {
@@ -82,72 +87,51 @@ export class ColorsAndShapesListViewComponent {
         return false;
     }
 
-    onAddRule(): void {
-        this.emitEditIndex(this.rules.length);
+    onRuleAdd(): void {
+        this.setEditRule(EditRuleCreator.createColorAndShapeEditRule());
     }
 
-    onEditRule(index: number) {
-        this.emitEditIndex(index);
+    onStartEdit(ruleIndex: number) {
+        const hRule = this.rules[ruleIndex];
+        const editRule = convertStatHRuleToCSEditRule(hRule);
+        this.setEditRule(editRule);
     }
 
-    onDeleteRule(event: MouseEvent, indexToDelete: number) {
-        const rule = this.rules[indexToDelete];
-        const newRules = [...this.rules];
-        newRules.splice(indexToDelete, 1);
-
+    onRuleDelete(event: MouseEvent, index: number) {
         this.ruleDelete.emit({
-            highlightingData: newRules,
-            highlightingRule: rule,
+            ruleId: this.rules[index].id,
             xPos: event.clientX,
             yPos: event.clientY
         });
     }
 
     onToggleShowInLegend(index: number) {
-        const showInLegend: boolean = this.rules[index].showInLegend;
-        const newRules = [...this.rules];
-        newRules[index] = {
-            ...newRules[index],
-            showInLegend: !showInLegend
-        };
-        this.rulesChange.emit(newRules);
+        this.changeRule(index, { showInLegend: !this.rules[index].showInLegend });
     }
 
     onToggleRuleIsDisabled(index: number) {
-        const ruleIsDisabled: boolean = this.rules[index].disabled;
-        const newRules = [...this.rules];
-        newRules[index] = {
-            ...newRules[index],
-            disabled: !ruleIsDisabled
-        };
-        this.rulesChange.emit(newRules);
+        this.changeRule(index, { disabled: !this.rules[index].disabled });
     }
 
-    onApplyRule(rule: StationHighlightingRule): void {
-        const newRules = this.getNewRulesWithRuleAtEditIndex(rule);
-        this.emitNewRules(newRules);
+    onRuleApply(editRule: ColorAndShapeEditRule): void {
+        this.saveEditRule(editRule);
+    }
+
+    onRuleOk(editRule: ColorAndShapeEditRule): void {
+        this.saveEditRule(editRule);
+        this.cancelEdit.emit();
     }
 
     onCancelEdit(): void {
-        this.emitEditIndex(null);
+        this.cancelEdit.emit();
     }
 
-    onOkRule(rule: StationHighlightingRule): void {
-        const newRules = this.getNewRulesWithRuleAtEditIndex(rule);
-        this.emitEditIndex(null);
-
-        this.emitNewRules(newRules);
+    onAddSelectionToRuleConditions(editRule: ColorAndShapeEditRule): void {
+        this.addSelectionToRuleConditions.emit(editRule);
     }
 
-    private getNewRulesWithRuleAtEditIndex(rule: StationHighlightingRule): StationHighlightingRule[] {
-        const newRules = [...this.rules];
-        newRules[this.editIndex] = rule;
-
-        return newRules;
-    }
-
-    private emitEditIndex(editIndex: number | null) {
-        this.editIndexChange.emit(editIndex);
+    onRemoveSelectionFromRuleConditions(editRule: ColorAndShapeEditRule): void {
+        this.removeSelectionFromRuleConditions.emit(editRule);
     }
 
     private emitNewRules(newRules: StationHighlightingRule[]): void {
@@ -160,5 +144,33 @@ export class ColorsAndShapesListViewComponent {
             moveItemInArray(newRules, event.previousIndex, event.currentIndex);
             this.emitNewRules(newRules);
         }
+    }
+
+    protected changeRule(ruleIndex: number, ruleChange: Partial<StationHighlightingRule>): void {
+        const changedRule = {
+            ...this.rules[ruleIndex],
+            ...ruleChange
+        };
+        this.saveRule(changedRule);
+    }
+
+    private saveEditRule(editRule: ColorAndShapeEditRule): void {
+        const hRule = convertStatEditRuleToStatHRule(editRule);
+        this.saveRule(hRule);
+    }
+
+    private saveRule(rule: StationHighlightingRule): void {
+        const newRules = [...this.rules];
+        const ruleIndex = this.rules.findIndex(r => r.id === rule.id);
+        if (ruleIndex >= 0) {
+            newRules[ruleIndex] = rule;
+        } else {
+            newRules.push(rule);
+        }
+        this.rulesChange.emit(newRules);
+    }
+
+    private setEditRule(editRule: ColorAndShapeEditRule): void {
+        this.startEdit.emit(editRule);
     }
 }

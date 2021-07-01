@@ -51,14 +51,18 @@
             class="fcl-colors-and-shapes-view-container"
 
             [rules]="colorOrShapeRules"
+            [editRule]="colorOrShapeEditRule"
             [availableProperties]="availableProperties"
             [propToValuesMap]="propToValuesMap"
             [highlightingStats]="highlightingStats"
-            [editIndex]="colorOrShapeRuleEditIndex"
+
+            (addSelectionToRuleConditions)="onAddSelectionToRuleConditions($event)"
+            (removeSelectionFromRuleConditions)="onRemoveSelectionFromRuleConditions($event)"
+            (ruleDelete)="onRuleDelete($event)"
 
             (rulesChange)="onColorOrShapeRulesChange($event)"
-            (ruleDelete)="onColorOrShapeRuleDelete($event)"
-            (editIndexChange)="onColorOrShapeRuleEditIndexChange($event)"
+            (startEdit)="onStartRuleEdit($event)"
+            (cancelEdit)="onCancelRuleEdit(colorOrShapeEditRule.id)"
         >
         </fcl-colors-and-shapes-list-view>
 

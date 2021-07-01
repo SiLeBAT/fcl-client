@@ -1,4 +1,5 @@
-import { DataTable, HighlightingRule, OperationType } from '../data.model';
+import { DataTable, OperationType } from '../data.model';
+import { RuleId, StationEditRule } from './model';
 
 export type FilterTabId = 'filterTab';
 export type HighlightingTabId = 'highlightingTab';
@@ -55,12 +56,8 @@ export interface FilterSettings {
     deliveryFilter: FilterTableSettings;
 }
 
-export interface ColorsAndShapesSettings {
-    editIndex: number;
-}
-
 export interface HighlightingConfigurationSettings {
-    colorsAndShapesSettings: ColorsAndShapesSettings;
+    stationEditRules: StationEditRule[];
 }
 
 export type PropToValuesMap = Record<string, string[]>;
@@ -74,8 +71,7 @@ export interface ColorsAndShapesInputData extends ColorsAndShapesEditInputData {
     editIndex: number;
 }
 export interface HighlightingRuleDeleteRequestData {
-    highlightingData: HighlightingRule[];
-    highlightingRule: HighlightingRule;
+    ruleId: RuleId;
     xPos: number;
     yPos: number;
 }

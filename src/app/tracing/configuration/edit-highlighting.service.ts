@@ -8,11 +8,15 @@ import {
     HighlightingSettings,
     ClearInvisibilitiesOptions,
     SetHighlightingSettingsPayload,
-    DataServiceInputState
-} from '../data.model';
+    DataServiceInputState,
+    StationData,
+    StationId,
+    OperationType} from '../data.model';
 import { EditTracingSettingsService } from '../services/edit-tracing-settings.service';
 import { TableService } from '../services/table.service';
 import { Utils } from '../util/non-ui-utils';
+import { ComplexFilterCondition, JunktorType } from './configuration.model';
+import { StationEditRule } from './model';
 
 @Injectable({
     providedIn: 'root'
@@ -96,4 +100,72 @@ export class EditHighlightingService {
         return null;
     }
 
+    addSelectionToStatRuleConditions<T extends StationEditRule>(editRule: T, stations: StationData[]): T {
+        const listedIds = this.getListedIdsFromConditions(editRule.complexFilterConditions);
+        const selectedIds = this.getSelectedStatIds(stations);
+        const addIds = Utils.getStringArrayDifference(selectedIds, listedIds);
+        if (addIds.length > 0) {
+            const addConditions = this.createConditionsForIds(addIds);
+            const index = this.getLastNonEmptyConditionIndex(editRule.complexFilterConditions);
+            const newConditions = [].concat(
+                editRule.complexFilterConditions.slice(0, index + 1),
+                addConditions
+            );
+            return {
+                ...editRule,
+                complexFilterConditions: newConditions
+            };
+        }
+
+    }
+
+    removeSelectionFromStatRuleConditions<T extends StationEditRule>(editRule: T, stations: StationData[]): T {
+        const selectedIds = this.getSelectedStatIds(stations);
+        const newConditions = this.filterConditionsForIds(editRule.complexFilterConditions, selectedIds);
+        if (newConditions.length < editRule.complexFilterConditions.length) {
+            return {
+                ...editRule,
+                complexFilterConditions: newConditions
+            };
+        }
+        return editRule;
+    }
+
+    private getListedIdsFromConditions(conditions: ComplexFilterCondition[]): string[] {
+        return conditions.filter(c =>
+            c.propertyName === 'id' && c.operationType === OperationType.EQUAL && c.value.length > 0
+        ).map(c => c.value);
+    }
+
+    private getSelectedStatIds(stations: StationData[]): StationId[] {
+        return stations.filter(s => !s.invisible && !s.contained && s.selected).map(s => s.id);
+    }
+
+    private getLastNonEmptyConditionIndex(conditions: ComplexFilterCondition[]): number {
+        for (let i = conditions.length - 1; i >= 0; i--) {
+            const condition = conditions[i];
+            if (condition.value.length > 0 || condition.propertyName !== null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private createConditionsForIds(ids: string[]): ComplexFilterCondition[] {
+        return ids.map(id => ({
+            propertyName: 'id',
+            operationType: OperationType.EQUAL,
+            value: id,
+            junktorType: JunktorType.OR
+        }));
+    }
+
+    private filterConditionsForIds(conditions: ComplexFilterCondition[], ids: string[]): ComplexFilterCondition[] {
+        const idToDeleteMap = Utils.createSimpleStringSet(ids);
+        return conditions.filter(c =>
+            c.propertyName !== 'id' ||
+            c.operationType !== OperationType.EQUAL ||
+            !idToDeleteMap[c.value]
+        );
+    }
 }

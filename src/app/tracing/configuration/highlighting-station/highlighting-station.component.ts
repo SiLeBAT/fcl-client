@@ -12,11 +12,12 @@ import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configura
 import { DataService } from '@app/tracing/services/data.service';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import { EditHighlightingService } from '../edit-highlighting.service';
+import { StationEditRule } from '../model';
 
 interface HighlightingState {
     dataServiceInputState: DataServiceInputState;
     highlightingState: StationHighlightingRule[];
-    editIndex: number | null;
+    editRules: StationEditRule[];
 }
 
 interface CachedData {
@@ -32,10 +33,10 @@ interface CachedData {
 })
 export class HighlightingStationComponent implements OnInit, OnDestroy {
 
-    get colorOrShapeRuleEditIndex(): number | null {
+    get editRules(): StationEditRule[] {
         return this.cachedState === null ?
-            null :
-            this.cachedState.editIndex;
+            [] :
+            this.cachedState.editRules;
     }
 
     get rules(): StationHighlightingRule[] {
@@ -101,20 +102,6 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         );
     }
 
-    onRulesChange(newRules: StationHighlightingRule[]) {
-        this.emitNewRules(newRules);
-    }
-
-    onColorOrShapeRuleEditIndexChange(editIndex: number | null) {
-        this.emitColorOrShapeRuleEditIndexChange(editIndex);
-    }
-
-    onRuleDelete(deleteRuleRequestData: HighlightingRuleDeleteRequestData) {
-        this.store.dispatch(new configurationActions.DeleteStationHighlightingRulesSSA(
-            { stationHighlightingRule: deleteRuleRequestData }
-        ));
-    }
-
     ngOnDestroy() {
         this.componentIsActive = false;
         if (this.stateSubscription) {
@@ -123,15 +110,50 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         }
     }
 
-    private emitNewRules(rules: StationHighlightingRule[]) {
-        this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
-            { rules: rules }
+    onRulesChange(newRules: StationHighlightingRule[]): void {
+        this.emitNewRules(newRules);
+    }
+
+    onEditRulesChange(newEditRules: StationEditRule[]): void {
+        this.emitNewEditRules(newEditRules);
+    }
+
+    onRuleDelete(deleteRuleRequestData: HighlightingRuleDeleteRequestData): void {
+        this.store.dispatch(new configurationActions.DeleteStationHighlightingRuleSSA(
+            { deleteRequestData: deleteRuleRequestData }
         ));
     }
 
-    private emitColorOrShapeRuleEditIndexChange(editIndex: number | null) {
-        this.store.dispatch(new tracingActions.SetColorsAndShapesEditIndexSOA(
-            { editIndex: editIndex }
+    onAddSelectionToRuleConditions(editRule: StationEditRule): void {
+        const updatedEditRule = this.editHighlightingService.addSelectionToStatRuleConditions(editRule, this.cachedData.data.stations);
+        if (updatedEditRule !== editRule) {
+            this.emitEditRuleChange(updatedEditRule);
+        }
+    }
+
+    onRemoveSelectionFromRuleConditions(editRule: StationEditRule): void {
+        const updatedEditRule = this.editHighlightingService.removeSelectionFromStatRuleConditions(editRule, this.cachedData.data.stations);
+        if (updatedEditRule !== editRule) {
+            this.emitEditRuleChange(updatedEditRule);
+        }
+    }
+
+    private emitEditRuleChange(editRule: StationEditRule): void {
+        const index = this.cachedState.editRules.findIndex(r => r.id === editRule.id);
+        if (index >= 0) {
+            const newEditRules = this.editRules.slice();
+            newEditRules[index] = editRule;
+            this.emitNewEditRules(newEditRules);
+        }
+    }
+
+    private emitNewEditRules(editRules: StationEditRule[]): void {
+        this.store.dispatch(new tracingActions.SetStationHighlightingEditRulesSOA({ editRules: editRules }));
+    }
+
+    private emitNewRules(rules: StationHighlightingRule[]) {
+        this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
+            { rules: rules }
         ));
     }
 
