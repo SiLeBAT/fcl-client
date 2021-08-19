@@ -324,18 +324,16 @@ export interface ShapeFileData {
     // todo: to define
 }
 
-interface TracingResult {
-    maxScore: number;
-}
-
 interface SharedHighlightingStats {
     counts: Record<HighlightingRuleId, number>;
 }
+
 export interface StationHighlightingStats extends SharedHighlightingStats {
     conflicts: Record<HighlightingRuleId, number>;
 }
 
 export interface DeliveryHighlightingStats extends SharedHighlightingStats {}
+
 export interface HighlightingStats {
     stationRuleStats: StationHighlightingStats;
     deliveryRuleStats: DeliveryHighlightingStats;
@@ -349,10 +347,10 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
-    tracingResult: TracingResult;
     legendInfo: LegendInfo;
+    tracingPropsUpdatedFlag: {};
+    stationAndDeliveryHighlightingUpdatedFlag: {};
     highlightingStats: HighlightingStats;
-
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
 }
@@ -383,6 +381,7 @@ export interface HighlightingInfo {
 
 export interface StationHighlightingInfo extends HighlightingInfo {
     shape: NodeShapeType;
+    size: number;
 }
 
 export interface DeliveryHighlightingInfo extends HighlightingInfo {
@@ -434,10 +433,6 @@ export interface SharedGraphState extends DataServiceInputState {
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
-
-// export interface GraphState extends SharedGraphState {
-//     layout: Layout;
-// }
 
 export interface GisGraphState extends SharedGraphState {
     layout: Layout;

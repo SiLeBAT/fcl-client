@@ -7,14 +7,25 @@ import { TracingService } from './tracing.service';
 import { HighlightingService } from './highlighting.service';
 import { Utils } from '../util/non-ui-utils';
 
+interface CacheUpdateOptions {
+    updateAll: boolean;
+    updateGroups: boolean;
+    updateTraceSet: boolean;
+    updateVisibilities: boolean;
+    updateScore: boolean;
+    updateTrace: boolean;
+    updateHighlighting: boolean;
+    updateSelection: boolean;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class DataService {
 
-    private cachedState: DataServiceInputState;
+    private cachedState: DataServiceInputState | null = null;
 
-    private cachedData: DataServiceData;
+    private cachedData: DataServiceData | null = null;
 
     constructor(private tracingService: TracingService, private higlightingService: HighlightingService) {}
 
@@ -180,6 +191,7 @@ export class DataService {
     }
 
     private applySelection(state: DataServiceInputState, data: DataServiceData) {
+
         data.stations.forEach(s => s.selected = false);
         data.getStatById(state.selectedElements.stations).forEach(s => s.selected = true);
         data.statSel = Utils.createSimpleStringSet(state.selectedElements.stations);
@@ -189,50 +201,73 @@ export class DataService {
         data.delSel = Utils.createSimpleStringSet(state.selectedElements.deliveries);
     }
 
-    private updateCache(state: DataServiceInputState,
-        all = true, groups = true, traceSet = true,
-        visibilities = true, score = true, trace = true, selection = true) {
-        groups = all || groups;
-        traceSet = groups || traceSet;
-        visibilities = traceSet || visibilities;
-        score = visibilities || score;
-        trace = visibilities || trace;
-        selection = groups || visibilities || selection;
+    private getFullCacheUpdateOptions(options: Partial<CacheUpdateOptions>): CacheUpdateOptions {
+        const updateAll = options.updateAll === true;
+        const updateGroups = updateAll || options.updateGroups;
+        const updateTraceSet = updateGroups || options.updateTraceSet;
+        const updateVisibilities = updateTraceSet || options.updateVisibilities;
+        const updateScore = updateVisibilities || options.updateScore;
+        const updateTrace = updateVisibilities || options.updateTrace;
+        const updateHighlighting = updateVisibilities || updateScore || updateTrace || options.updateHighlighting;
+        const updateSelection = updateGroups || updateVisibilities || options.updateSelection;
 
-        if (all) {
+        return {
+            updateAll: updateAll,
+            updateGroups: updateGroups,
+            updateSelection: updateSelection,
+            updateVisibilities: updateVisibilities,
+            updateTraceSet: updateTraceSet,
+            updateHighlighting: updateHighlighting,
+            updateScore: updateScore,
+            updateTrace: updateTrace
+        };
+    }
+
+    private updateCache(state: DataServiceInputState, options: Partial<CacheUpdateOptions>) {
+        options = this.getFullCacheUpdateOptions(options);
+
+        if (options.updateAll) {
             this.cachedData = {
                 ...this.createStations(state),
                 ...this.createDeliveries(state),
-                statSel: undefined,
-                delSel: undefined,
-                statVis: undefined,
-                delVis: undefined,
-                tracingResult: undefined,
+                statSel: {},
+                delSel: {},
+                statVis: {},
+                delVis: {},
+                tracingPropsUpdatedFlag: {},
+                stationAndDeliveryHighlightingUpdatedFlag: {},
                 legendInfo: undefined,
                 highlightingStats: undefined
             };
         }
-        if (groups) {
+        if (options.updateGroups) {
             this.applyGroupSettings(state, this.cachedData);
         }
-        if (traceSet) {
+        if (options.updateTraceSet) {
             this.applyTracingSettingsToStations(state, this.cachedData);
             this.applyTracingSettingsToDeliveries(state, this.cachedData);
         }
-        if (visibilities) {
+
+        if (options.updateVisibilities) {
             this.higlightingService.applyVisibilities(state, this.cachedData);
         }
-        if (score) {
+
+        if (options.updateScore) {
             this.tracingService.updateScores(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
-        if (trace) {
+        if (options.updateTrace) {
             this.tracingService.updateTrace(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
-        if (visibilities || score || trace) {
+        if (options.updateHighlighting) {
             this.higlightingService.applyHighlightingProps(state, this.cachedData);
+            this.cachedData.stationAndDeliveryHighlightingUpdatedFlag = {};
         }
-        if (selection) {
+        if (options.updateSelection) {
             this.applySelection(state, this.cachedData);
+        }
+
+        if (options.updateTrace || options.updateScore || options.updateTraceSet) {
+            this.cachedData.tracingPropsUpdatedFlag = {};
         }
     }
 
@@ -241,19 +276,31 @@ export class DataService {
             !this.cachedState ||
             this.cachedState.fclElements !== state.fclElements
          ) {
-            this.updateCache(state);
-        } else if (this.cachedState.groupSettings !== state.groupSettings) {
-            this.updateCache(state, false);
+            // new data model was loaded
+            this.updateCache(state, { updateAll: true });
+        } else if (
+            this.cachedState.groupSettings !== state.groupSettings &&
+            !_.isEqual(this.cachedState.groupSettings, state.groupSettings)
+        ) {
+            // group settings changed
+            this.updateCache(state, { updateGroups: true });
         } else if (
             this.cachedState.highlightingSettings !== state.highlightingSettings ||
             this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations ||
             this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries
         ) {
-            this.updateCache(state, false, false, true, true);
-        } else if (this.cachedState.tracingSettings !== state.tracingSettings) {
-            this.updateCache(state, false, false);
+            // station/delivery related highlightingSettings changed
+            this.updateCache(state, {
+                updateVisibilities: true,
+                updateHighlighting: true
+            });
+        } else if (
+            this.cachedState.tracingSettings !== state.tracingSettings &&
+            !_.isEqual(this.cachedState.tracingSettings, state.tracingSettings)
+        ) {
+            this.updateCache(state, { updateTraceSet: true });
         } else if (this.cachedState.selectedElements !== state.selectedElements) {
-            this.updateCache(state, false, false, false, false, false, false);
+            this.updateCache(state, { updateSelection: true });
         }
         this.cachedState = { ...state };
     }

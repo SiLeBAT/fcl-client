@@ -16,7 +16,25 @@
             </mat-panel-title>
         </mat-expansion-panel-header>
 
-        Label Configurations ... coming soon
+        <fcl-label-rules-list-view
+            class="fcl-rules-list-view-container"
+
+            labelContext="station(s)"
+            [rules]="labelRules"
+            [editRule]="labelEditRule"
+            [availableProperties]="availableProperties"
+            [propToValuesMap]="propToValuesMap"
+            [highlightingStats]="highlightingStats"
+
+            (addSelectionToRuleConditions)="onAddSelectionToRuleConditions($event)"
+            (removeSelectionFromRuleConditions)="onRemoveSelectionFromRuleConditions($event)"
+            (ruleDelete)="onRuleDelete($event)"
+
+            (rulesChange)="onLabelRulesChange($event)"
+            (startEdit)="onStartRuleEdit($event)"
+            (cancelEdit)="onCancelRuleEdit(labelEditRule.id)"
+        >
+        </fcl-label-rules-list-view>
 
     </mat-expansion-panel>
 
@@ -48,7 +66,7 @@
         </mat-expansion-panel-header>
 
         <fcl-colors-and-shapes-list-view
-            class="fcl-colors-and-shapes-view-container"
+            class="fcl-rules-list-view-container"
 
             [rules]="colorOrShapeRules"
             [editRule]="colorOrShapeEditRule"

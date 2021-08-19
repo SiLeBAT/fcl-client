@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
-    DeliveryData, DataServiceData, ObservedType, NodeShapeType, MergeDeliveriesType, StationData,
-    SharedGraphState, SelectedElements
+    DeliveryData, DataServiceData, NodeShapeType, MergeDeliveriesType, StationData,
+    SharedGraphState, SelectedElements, DeliveryId
 } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements } from './graph.model';
@@ -21,6 +21,24 @@ interface CyDataEdges {
     edgeSel: { [key: string]: boolean };
 }
 
+interface CacheUpdateOptions {
+    updateAll: boolean;
+    createNodes: boolean;
+    createEdges: boolean;
+    updateEdges: boolean;
+    updateNodeProps: boolean;
+    updateEdgeProps: boolean;
+    updateNodeSelection: boolean;
+    updateEdgeSelection: boolean;
+    updateEdgeLabel: boolean;
+    updateGhosts: boolean;
+    updateHoverEdges: boolean;
+}
+
+interface EdgeLinking extends Pick<CyEdgeData, 'id' | 'source' | 'target'> {
+    deliveries: DeliveryId[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -30,9 +48,9 @@ export class GraphService {
     private static readonly DEFAULT_NODE_COLOR = [255, 255, 255];
     private static readonly DEFAULT_GHOST_COLOR = [179, 179, 179];
 
-    private cachedState: SharedGraphState;
+    private cachedState: SharedGraphState | null = null;
 
-    private cachedData: GraphServiceData;
+    private cachedData: GraphServiceData | null = null;
 
     static updateRelZindex(nodeData: CyNodeData[]) {
         nodeData = nodeData.slice();
@@ -105,17 +123,9 @@ export class GraphService {
             ...this.getColorInfo(s.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR),
             isMeta: s.contains && s.contains.length > 0,
             shape: s.highlightingInfo.shape ? s.highlightingInfo.shape : NodeShapeType.CIRCLE,
+            size: s.highlightingInfo.size,
             station: s,
-            score: s.score,
-            forward: s.forward,
-            backward: s.backward,
-            outbreak: s.outbreak,
-            crossContamination: s.crossContamination,
-            commonLink: s.commonLink,
-            killContamination: s.killContamination,
-            selected: s.selected,
-            observed: s.observed,
-            weight: s.weight
+            selected: s.selected
         }));
 
         return {
@@ -174,36 +184,9 @@ export class GraphService {
                                 target: targetDataId,
                                 deliveries: [delivery],
                                 selected: selected,
-                                backward: delivery.backward,
-                                forward: delivery.forward,
-                                observed: delivery.observed,
-                                crossContamination: delivery.crossContamination,
-                                killContamination: delivery.killContamination,
-                                score: delivery.score,
-                                weight: delivery.weight,
                                 wLabelSpace: false
                             });
                         } else {
-                            const observedTypes = _.uniq(deliveries.filter(d => d.observed !== ObservedType.NONE).map(d => d.observed));
-
-                            const observedType =
-                                observedTypes.some(t => ObservedType.FULL) ?
-                                ObservedType.FULL :
-                                (
-                                    observedTypes.some(t => ObservedType.BACKWARD) ?
-                                    (
-                                        observedTypes.some(t => ObservedType.FORWARD) ?
-                                        ObservedType.FULL :
-                                        ObservedType.BACKWARD
-                                    ) :
-                                    (
-                                        observedTypes.some(t => ObservedType.FORWARD) ?
-                                        ObservedType.FORWARD :
-                                        ObservedType.NONE
-                                    )
-                                )
-                            ;
-
                             const labels: string[] = _.uniq(
                                 deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
                             );
@@ -218,13 +201,6 @@ export class GraphService {
                                 target: targetDataId,
                                 deliveries: deliveries,
                                 selected: deliveries.some(d => !!selDel[d.id]),
-                                backward: deliveries.some(d => d.backward),
-                                forward: deliveries.some(d => d.forward),
-                                observed: observedType,
-                                crossContamination: deliveries.some(d => d.crossContamination),
-                                killContamination: deliveries.some(d => d.killContamination),
-                                score: _.max(deliveries.map(d => d.score)),
-                                weight: _.sum(deliveries.map(d => d.weight)),
                                 wLabelSpace: false
                             });
                         }
@@ -247,13 +223,6 @@ export class GraphService {
                         target: targetData.id,
                         deliveries: [delivery],
                         selected: delivery.selected,
-                        backward: delivery.backward,
-                        forward: delivery.forward,
-                        observed: delivery.observed,
-                        crossContamination: delivery.crossContamination,
-                        killContamination: delivery.killContamination,
-                        score: delivery.score,
-                        weight: delivery.weight,
                         wLabelSpace: false
                     });
                 }
@@ -289,17 +258,9 @@ export class GraphService {
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
             isMeta: station.contains && station.contains.length > 0,
             shape: station.highlightingInfo.shape ? station.highlightingInfo.shape : NodeShapeType.CIRCLE,
+            size: 0,
             station: station,
-            score: station.score,
-            forward: station.forward,
-            backward: station.backward,
-            outbreak: station.outbreak,
-            crossContamination: station.crossContamination,
-            commonLink: station.commonLink,
-            killContamination: station.killContamination,
             selected: station.selected,
-            observed: station.observed,
-            weight: station.weight,
             zindex: (2 * graphData.stations.length) + index
         }));
     }
@@ -318,13 +279,6 @@ export class GraphService {
             target: target.id,
             deliveries: deliveries,
             selected: false,
-            backward: false,
-            forward: false,
-            observed: ObservedType.NONE,
-            crossContamination: false,
-            killContamination: false,
-            score: 0,
-            weight: 0,
             wLabelSpace: false
         };
 
@@ -497,24 +451,17 @@ export class GraphService {
     private applyStationProps(data: GraphServiceData) {
         for (const node of data.nodeData) {
             const station = node.station;
+            node.label = station.highlightingInfo.label.join(' / ').replace(/\s+/, ' ');
             const colorInfo = this.getColorInfo(station.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR);
             node.stopColors = colorInfo.stopColors;
             node.stopPositions = colorInfo.stopPositions;
             node.shape = station.highlightingInfo.shape ? station.highlightingInfo.shape : NodeShapeType.CIRCLE;
-            node.backward = station.backward;
-            node.commonLink = station.commonLink;
-            node.crossContamination = station.crossContamination;
-            node.forward = station.forward;
-            node.killContamination = station.killContamination;
-            node.observed = station.observed;
-            node.outbreak = station.outbreak;
-            node.score = station.score;
+            node.size = station.highlightingInfo.size;
         }
     }
 
     private applyDeliveryProps(data: GraphServiceData) {
         for (const edge of data.edgeData) {
-            const aggregatedProps = this.aggregateDelProps(edge.deliveries);
             const colorInfo = this.getColorInfo(
                 (
                     edge.deliveries.length > 0 ?
@@ -525,65 +472,6 @@ export class GraphService {
             );
             edge.stopColors = colorInfo.stopColors;
             edge.stopPositions = colorInfo.stopPositions;
-            edge.backward = aggregatedProps.backward;
-            edge.crossContamination = aggregatedProps.crossContamination;
-            edge.forward = aggregatedProps.forward;
-            edge.killContamination = aggregatedProps.killContamination;
-            edge.observed = aggregatedProps.observed;
-            edge.score = aggregatedProps.score;
-        }
-    }
-
-    private aggregateDelProps(deliveries: DeliveryData[]): {
-        backward: boolean,
-        crossContamination: boolean,
-        forward: boolean,
-        killContamination: boolean,
-        observed: ObservedType,
-        score: number,
-        weight: number
-    } {
-        if (deliveries.length === 1) {
-            const delivery = deliveries[0];
-            return {
-                backward: delivery.backward,
-                forward: delivery.forward,
-                observed: delivery.observed,
-                crossContamination: delivery.crossContamination,
-                killContamination: delivery.killContamination,
-                score: delivery.score,
-                weight: delivery.weight
-            };
-        } else {
-            const observedTypes = _.uniq(deliveries.filter(d => d.observed !== ObservedType.NONE).map(d => d.observed));
-
-            const observedType =
-                observedTypes.some(t => ObservedType.FULL) ?
-                ObservedType.FULL :
-                (
-                    observedTypes.some(t => ObservedType.BACKWARD) ?
-                    (
-                        observedTypes.some(t => ObservedType.FORWARD) ?
-                        ObservedType.FULL :
-                        ObservedType.BACKWARD
-                    ) :
-                    (
-                        observedTypes.some(t => ObservedType.FORWARD) ?
-                        ObservedType.FORWARD :
-                        ObservedType.NONE
-                    )
-                )
-            ;
-
-            return {
-                backward: deliveries.some(d => d.backward),
-                forward: deliveries.some(d => d.forward),
-                observed: observedType,
-                crossContamination: deliveries.some(d => d.crossContamination),
-                killContamination: deliveries.some(d => d.killContamination),
-                score: _.max(deliveries.map(d => d.score)),
-                weight: _.sum(deliveries.map(d => d.weight))
-            };
         }
     }
 
@@ -609,17 +497,57 @@ export class GraphService {
         };
     }
 
-    private applyState(state: SharedGraphState) {
-        const data = this.dataService.getData(state);
+    private getEdgeLinkings(edgeData: CyEdgeData[]): EdgeLinking[] {
+        return edgeData.map(e => ({
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            deliveries: e.deliveries.map(d => d.id)
+        }));
+    }
+
+    private isDeliveryMergeDifferent(oldData: CyDataEdges, newData: CyDataEdges): boolean {
+        return !_.isEqual(
+            this.getEdgeLinkings(oldData.edgeData),
+            this.getEdgeLinkings(newData.edgeData)
+        );
+    }
+
+    private copyEdgeProps(edgesFrom: CyEdgeData[], edgesTo: CyEdgeData[]): void {
+        edgesTo.forEach((edgeTo, i) => {
+            const edgeFrom = edgesFrom[i];
+            edgeTo.labelWoPrefix = edgeFrom.labelWoPrefix;
+            edgeTo.label = edgeFrom.label;
+            edgeTo.wLabelSpace = edgeFrom.wLabelSpace;
+            edgeTo.stopColors = edgeFrom.stopColors;
+            edgeTo.stopPositions = edgeFrom.stopPositions;
+            edgeTo.selected = edgeFrom.selected;
+        });
+    }
+
+    private updateGhosts(state: SharedGraphState, newData: GraphServiceData): void {
+        if (state.ghostStation === null && state.ghostDelivery === null) {
+            newData.ghostElements = null;
+        } else if (state.ghostStation !== null) {
+            newData.ghostElements = this.createGhostElementDataFromStation(newData.statMap[state.ghostStation], state, newData);
+        } else {
+            newData.ghostElements = this.createGhostElementDataFromDelivery(newData.delMap[state.ghostDelivery], state, newData);
+        }
+    }
+
+    private updateHoverEdges(state: SharedGraphState, newData: GraphServiceData): void {
+        newData.hoverEdges = state.hoverDeliveries.map(delId => newData.delIdToEdgeDataMap[delId].id);
+    }
+
+    private updateCache(state: SharedGraphState, dataServiceData: DataServiceData, options: Partial<CacheUpdateOptions>): void {
         let newData: GraphServiceData = {
-            statIdToNodeDataMap: undefined,
-            nodeData: undefined,
-            delIdToEdgeDataMap: undefined,
-            edgeData: undefined,
-            nodeSel: undefined,
-            edgeSel: undefined,
-            propsChangedFlag: undefined,
-            edgeLabelChangedFlag: undefined,
+            statIdToNodeDataMap: {},
+            nodeData: [],
+            delIdToEdgeDataMap: {},
+            edgeData: [],
+            nodeSel: {},
+            edgeSel: {},
+            nodeAndEdgePropsUpdatedFlag: {},
             ghostElements: null,
             hoverEdges: [],
             selectedElements: {
@@ -627,121 +555,140 @@ export class GraphService {
                 edges: []
             },
             ...(this.cachedData ? this.cachedData : {}),
-            ...data
+            ...dataServiceData
         };
 
+        if (options.createNodes) {
+            const nodeData = this.createNodeData(state, newData);
+            newData = {
+                ...newData,
+                ...nodeData
+            };
+        }
+
+        if (options.createEdges || options.updateEdges) {
+            const edgeData = this.createEdgeData(state, newData, newData);
+            if (options.createEdges || this.isDeliveryMergeDifferent(this.cachedData, edgeData)) {
+                newData = {
+                    ...newData,
+                    ...edgeData
+                };
+            } else {
+                // deliverey aggregation did not change
+                this.copyEdgeProps(edgeData.edgeData, this.cachedData.edgeData);
+            }
+        }
+
+        if (options.updateNodeProps) {
+            this.applyStationProps(newData);
+            GraphService.updateRelZindex(newData.nodeData);
+        }
+
+        if (options.updateEdgeProps) {
+            this.applyDeliveryProps(newData);
+        }
+
+        if (options.updateNodeSelection) {
+            this.applyStatSelection(newData);
+            GraphService.updateAbsZindex(newData.nodeData);
+        }
+
+        if (options.updateEdgeSelection) {
+            this.applyDelSelection(newData);
+        }
+
+        if (options.updateEdgeLabel) {
+            this.updateEdgeLabels(state, newData.edgeData);
+        }
+
+        if (options.updateGhosts) {
+            this.updateGhosts(state, newData);
+        }
+
+        if (options.updateHoverEdges) {
+            this.updateHoverEdges(state, newData);
+        }
+
+        if (
+            options.updateNodeProps || options.updateEdgeProps || options.updateEdgeLabel ||
+            options.updateEdgeSelection || options.updateNodeSelection
+        ) {
+            newData.nodeAndEdgePropsUpdatedFlag = {};
+        }
+
+        this.cachedData = newData;
+    }
+
+    private applyState(state: SharedGraphState) {
+        const cacheIsEmpty = this.cachedData === null;
+        const dataServiceData = this.dataService.getData(state);
+
         const nodeCreationRequired =
-            !this.cachedState ||
-            data.stations !== this.cachedData.stations ||
-            this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations;
+            cacheIsEmpty ||
+            this.cachedData.stations !== dataServiceData.stations ||
+            this.cachedData.statVis !== dataServiceData.statVis;
 
-        const tracPropsChanged =
-            !this.cachedState ||
-            this.cachedState.tracingSettings !== state.tracingSettings ||
-            data.statVis !== this.cachedData.statVis ||
-            data.delVis !== this.cachedData.delVis;
-
-        const edgeCreationRequired =
+        const edgeCreationIsRequired =
             nodeCreationRequired ||
-            data.deliveries !== this.cachedData.deliveries ||
-            this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries ||
-            this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType ||
-            tracPropsChanged && state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE;
+            this.cachedData.deliveries !== dataServiceData.deliveries ||
+            this.cachedData.delVis !== dataServiceData.delVis;
 
-        const statHighlightSetChanged =
-            !this.cachedState ||
-            state.highlightingSettings.stations !== this.cachedState.highlightingSettings.stations;
+        const tracingPropsWereUpdated = cacheIsEmpty ||
+            this.cachedData.tracingPropsUpdatedFlag !== dataServiceData.tracingPropsUpdatedFlag;
 
-        const delHighlightSetChanged =
-            !this.cachedState ||
-            state.highlightingSettings.deliveries !== this.cachedState.highlightingSettings.deliveries;
+        const highlightingPropsWereUpdated = cacheIsEmpty ||
+            this.cachedData.stationAndDeliveryHighlightingUpdatedFlag !== dataServiceData.stationAndDeliveryHighlightingUpdatedFlag;
+
+        const edgeCreationMightBeRequired = !edgeCreationIsRequired &&
+            (
+                this.cachedState.mergeDeliveriesType !== state.mergeDeliveriesType ||
+                state.mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE && highlightingPropsWereUpdated
+            );
+
+        const propUpdateRequired = tracingPropsWereUpdated || highlightingPropsWereUpdated;
 
         const nodePropsUpdateRequired =
-            !nodeCreationRequired &&
-            (tracPropsChanged || statHighlightSetChanged);
+            !nodeCreationRequired && propUpdateRequired;
 
         const nodeSelUpdateRequired =
             !nodeCreationRequired &&
-            this.cachedState.selectedElements.stations !== state.selectedElements.stations;
+            this.cachedData.statSel !== dataServiceData.statSel;
 
         const edgePropsUpdateRequired =
-            !edgeCreationRequired &&
-            (tracPropsChanged || delHighlightSetChanged);
+            !edgeCreationIsRequired && !edgeCreationMightBeRequired && propUpdateRequired;
 
         const edgeSelUpdateRequired =
-            !edgeCreationRequired &&
-            this.cachedState.selectedElements.deliveries !== state.selectedElements.deliveries;
+            !edgeCreationIsRequired && !edgeCreationMightBeRequired &&
+            this.cachedData.delSel !== dataServiceData.delSel;
 
         const edgeLabelUpdateRequired =
-            !edgeCreationRequired && (
+            !edgeCreationIsRequired && !edgeCreationMightBeRequired && (
                 edgePropsUpdateRequired ||
                 this.cachedState.showMergedDeliveriesCounts !== state.showMergedDeliveriesCounts ||
                 edgeSelUpdateRequired && state.showMergedDeliveriesCounts
             );
 
-        if (nodeCreationRequired) {
-            const nodeData = this.createNodeData(state, data);
-            newData = {
-                ...newData,
-                ...nodeData,
-                ...this.createEdgeData(state, data, nodeData),
-                propsChangedFlag: {},
-                edgeLabelChangedFlag: {}
-            };
-        } else if (edgeCreationRequired) {
-            newData = {
-                ...newData,
-                ...this.createEdgeData(state, data, newData),
-                propsChangedFlag: {},
-                edgeLabelChangedFlag: {}
-            };
-        }
-
-        if (nodePropsUpdateRequired) {
-            newData.propsChangedFlag = {};
-            this.applyStationProps(newData);
-            GraphService.updateRelZindex(newData.nodeData);
-        }
-
-        if (edgePropsUpdateRequired) {
-            newData.propsChangedFlag = {};
-            this.applyDeliveryProps(newData);
-        }
-
-        if (nodeSelUpdateRequired) {
-            this.applyStatSelection(newData);
-            GraphService.updateAbsZindex(newData.nodeData);
-        }
-
-        if (edgeSelUpdateRequired) {
-            this.applyDelSelection(newData);
-        }
-
-        if (edgeLabelUpdateRequired) {
-            newData.edgeLabelChangedFlag = {};
-            this.updateEdgeLabels(state, newData.edgeData);
-        }
-
-        if (
-            !this.cachedState ||
+        const updateGhostElements = cacheIsEmpty ||
             this.cachedState.ghostStation !== state.ghostStation ||
-            this.cachedState.ghostDelivery !== state.ghostDelivery
-        ) {
-            if (state.ghostStation === null && state.ghostDelivery === null) {
-                newData.ghostElements = null;
-            } else if (state.ghostStation !== null) {
-                newData.ghostElements = this.createGhostElementDataFromStation(data.statMap[state.ghostStation], state, newData);
-            } else {
-                newData.ghostElements = this.createGhostElementDataFromDelivery(data.delMap[state.ghostDelivery], state, newData);
-            }
-        }
+            this.cachedState.ghostDelivery !== state.ghostDelivery;
 
-        if (!this.cachedState || this.cachedState.hoverDeliveries !== state.hoverDeliveries) {
-            newData.hoverEdges = state.hoverDeliveries.map(delId => newData.delIdToEdgeDataMap[delId].id);
-        }
+        const updateHoverEdges = cacheIsEmpty ||
+            this.cachedState.hoverDeliveries !== state.hoverDeliveries;
+
+        this.updateCache(state, dataServiceData, {
+            createNodes: nodeCreationRequired,
+            createEdges: edgeCreationIsRequired,
+            updateEdges: edgeCreationMightBeRequired,
+            updateNodeProps: nodePropsUpdateRequired,
+            updateEdgeProps: edgePropsUpdateRequired,
+            updateNodeSelection: nodeSelUpdateRequired,
+            updateEdgeSelection: edgeSelUpdateRequired,
+            updateEdgeLabel: edgeLabelUpdateRequired,
+            updateGhosts: updateGhostElements,
+            updateHoverEdges: updateHoverEdges
+        });
 
         this.cachedState = { ...state };
-        this.cachedData = newData;
     }
 
     private getEdgeMap(edgeData: CyEdgeData[]): Record<EdgeId, CyEdgeData> {

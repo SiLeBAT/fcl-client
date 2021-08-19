@@ -65,6 +65,7 @@ describe('IOService', () => {
                     deliveries: []
                 },
                 ghostStation: undefined,
+                ghostDelivery: null,
                 schemaLayout: { zoom: 1, pan: { x: 0.5, y: 0.5 } },
                 gisLayout: null,
                 stationPositions: {

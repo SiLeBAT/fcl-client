@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { OperationType, TableColumn } from '@app/tracing/data.model';
 import { ComplexFilterCondition, PropToValuesMap } from './configuration.model';
 import * as _ from 'lodash';
 import { EditRule } from './model';
-import { validateEditRule } from './edit-rule-validaton';
+import { isEditRuleValid, validateEditRule } from './edit-rule-validaton';
 
 @Component({ template: '' })
-export abstract class AbstractRuleEditViewComponent<T extends EditRule> {
+export abstract class AbstractRuleEditViewComponent<T extends EditRule> implements OnChanges {
 
     private static readonly ENABLED_APPLY_TOOLTIP = 'Apply Highlighting Rule';
     private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
@@ -76,6 +76,15 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> {
     }
 
     constructor() { }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.rule !== undefined) {
+            this.rule = {
+                ...this.rule,
+                isValid: isEditRuleValid(this.rule)
+            };
+        }
+    }
 
     onRuleNameChange(ruleName: string): void {
         this.changeRule({ name: ruleName });

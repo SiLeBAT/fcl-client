@@ -43,8 +43,7 @@ export interface GraphData {
     nodePositions: PositionMap;
     layout: Layout;
     selectedElements: SelectedGraphElements;
-    propsChangedFlag: {};
-    edgeLabelChangedFlag: {};
+    propsUpdatedFlag: {};
     ghostData: GraphGhostData;
     hoverEdges: EdgeId[];
 }

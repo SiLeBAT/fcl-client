@@ -19,19 +19,19 @@ export class CyStyle {
     private static readonly CONTROL_POINT_STEP_SIZE_FACTOR = 4;
     private static readonly MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
     private static readonly MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
-    private static readonly SCORE_ONE_SIZE_FACTOR = 2;
+    private static readonly SIZE_ONE_SIZE_FACTOR = 2;
 
-    private maxScore: number;
-    private minScore: number;
+    private maxSize: number;
+    private minSize: number;
 
     constructor(private graphData: GraphElementData, private styleConfig: StyleConfig) {
-        this.initScoreLimits();
+        this.initSizeLimits();
     }
 
-    private initScoreLimits(): void {
-        const scores = this.graphData.nodeData.map(n => n.station.score);
-        this.minScore = scores.length === 0 ? 0 : Math.min(...scores);
-        this.maxScore = scores.length === 0 ? 0 : Math.max(...scores);
+    private initSizeLimits(): void {
+        const sizes = this.graphData.nodeData.map(n => n.size);
+        this.minSize = sizes.length === 0 ? 0 : Math.min(...sizes);
+        this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
     }
 
     createCyStyle(): {} {
@@ -191,10 +191,10 @@ export class CyStyle {
     }
 
     private createNodeSizeMapString(): string {
-        if (this.maxScore > this.minScore) {
+        if (this.maxSize > this.minSize) {
             const minNodeSize = this.styleConfig.nodeSize;
-            const maxNodeSize = minNodeSize * CyStyle.SCORE_ONE_SIZE_FACTOR * this.maxScore;
-            return 'mapData(score, ' + this.minScore + ', ' + this.maxScore + ', ' + minNodeSize + ',' + maxNodeSize + ')';
+            const maxNodeSize = minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR * this.maxSize;
+            return 'mapData(size, ' + this.minSize + ', ' + this.maxSize + ', ' + minNodeSize + ',' + maxNodeSize + ')';
         } else {
             return this.styleConfig.nodeSize.toString();
         }

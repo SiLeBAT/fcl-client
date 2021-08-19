@@ -56,8 +56,6 @@ export class TracingService {
 
         let nOutbreaks = 0;
 
-        let maxScore = 0;
-
         data.stations.forEach(s => {
             if (s.outbreak && !s.contained && !s.invisible) {
                 nOutbreaks++;
@@ -71,14 +69,11 @@ export class TracingService {
             data.stations.forEach(s => {
                 s.score /= nOutbreaks;
                 s.commonLink = s.score === 1.0;
-                maxScore = Math.max(maxScore, s.score);
             });
             data.deliveries.forEach(d => {
                 d.score /= nOutbreaks;
             });
         }
-
-        data.tracingResult = { maxScore: maxScore };
     }
 
     private updateStationScore(data: DataServiceData, id: string, outbreakId: string) {

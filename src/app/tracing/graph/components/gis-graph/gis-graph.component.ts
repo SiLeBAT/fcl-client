@@ -144,8 +144,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         this.graphData_ = {
             nodeData: this.sharedGraphData.nodeData,
             edgeData: this.sharedGraphData.edgeData,
-            propsChangedFlag: this.sharedGraphData.propsChangedFlag,
-            edgeLabelChangedFlag: this.sharedGraphData.edgeLabelChangedFlag,
+            propsUpdatedFlag: this.sharedGraphData.nodeAndEdgePropsUpdatedFlag,
             nodePositions: posData.nodePositions,
             layout: newState.layout,
             selectedElements: this.sharedGraphData.selectedElements,

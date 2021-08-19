@@ -21,7 +21,7 @@ interface FilterTableState {
 
 interface CachedData {
     dataTable: DataTable;
-    data: DataServiceData;
+    dataServiceData: DataServiceData;
 }
 
 @Component({
@@ -31,15 +31,15 @@ interface CachedData {
 })
 export class FilterDeliveryComponent implements OnInit, OnDestroy {
 
-    private stateSubscription: Subscription;
+    private stateSubscription: Subscription | null = null;
 
-    private cachedData: CachedData;
-    private cachedState: FilterTableState;
+    private cachedData: CachedData | null = null;
+    private cachedState: FilterTableState | null = null;
 
-    private filterElementsViewInputData_: FilterElementsViewInputData;
+    private filterElementsViewInputData_: FilterElementsViewInputData | null = null;
     private currentGhostDeliveryId: DeliveryId | null = null;
 
-    get filterElementsViewInputData(): FilterElementsViewInputData {
+    get filterElementsViewInputData(): FilterElementsViewInputData | null {
         return this.filterElementsViewInputData_;
     }
 
@@ -63,7 +63,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
                 type: TableType.DELIVERIES,
-                columns: this.tableService.getDeliveryColumns(this.cachedData.data),
+                columns: this.tableService.getDeliveryColumns(this.cachedData.dataServiceData),
                 columnOrder: this.cachedState.filterTableState.columnOrder
             })
         );
@@ -84,7 +84,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
     onMouseOverTableRow(row: TableRow | null): void {
         let newGhostDeliveryId: string | null = null;
         if (row !== null) {
-            const delivery = this.cachedData.data.delMap[row.id];
+            const delivery = this.cachedData.dataServiceData.delMap[row.id];
             if (delivery.invisible) {
                 newGhostDeliveryId = delivery.id;
             }
@@ -110,19 +110,23 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
     }
 
     private applyState(state: FilterTableState) {
-        let dataTable: DataTable = this.cachedData ? this.cachedData.dataTable : undefined;
-        const data = this.dataService.getData(state.dataServiceInputState);
+        const cacheIsEmpty = this.cachedData === null;
+
+        let dataTable: DataTable = !cacheIsEmpty ? this.cachedData.dataTable : undefined;
+        const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
+        const newDSData = this.dataService.getData(state.dataServiceInputState);
         if (
-            !this.cachedState ||
+            cacheIsEmpty ||
             this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
         ) {
             dataTable = this.tableService.getDeliveryData(state.dataServiceInputState);
         } else if (
-            data.stations !== this.cachedData.data.stations ||
-            data.deliveries !== this.cachedData.data.deliveries ||
-            data.tracingResult !== this.cachedData.data.tracingResult ||
-            data.statSel !== this.cachedData.data.statSel ||
-            data.delSel !== this.cachedData.data.delSel
+            newDSData.stations !== cachedDSData.stations ||
+            newDSData.deliveries !== cachedDSData.deliveries ||
+            newDSData.delVis !== cachedDSData.delVis ||
+            newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
+            newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
+            newDSData.delSel !== cachedDSData.delSel
             ) {
             dataTable = {
                 ...this.tableService.getDeliveryData(state.dataServiceInputState),
@@ -135,7 +139,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         };
         this.cachedData = {
             dataTable: dataTable,
-            data: data
+            dataServiceData: newDSData
         };
         this.updateFilterElementsViewInputData();
 
@@ -143,7 +147,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
 
     private updateFilterElementsViewInputData(): void {
         if (
-            !this.filterElementsViewInputData_ ||
+            this.filterElementsViewInputData_ === null ||
             this.cachedData.dataTable !== this.filterElementsViewInputData_.dataTable ||
             this.cachedState.filterTableState !== this.filterElementsViewInputData_.filterTableSettings
         ) {

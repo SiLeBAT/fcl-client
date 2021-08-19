@@ -1,5 +1,5 @@
 import {
-    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData,
+    StationData, DeliveryData, DataServiceData,
     Position, SelectedElements, StationId, DeliveryId, PositionMap
 } from '../data.model';
 
@@ -165,7 +165,7 @@ export interface CyEdge extends CyElement {
 export type NodeId = string;
 export type EdgeId = string;
 
-export interface CyNodeData extends StationTracingData {
+export interface CyNodeData {
     id: NodeId;
     station: StationData;
     label: string;
@@ -174,12 +174,13 @@ export interface CyNodeData extends StationTracingData {
     stopColors: string;
     stopPositions: string;
     shape: string;
+    size: number;
     zindex?: number;
     relZindex?: number;
     degree?: number;
 }
 
-export interface CyEdgeData extends DeliveryTracingData {
+export interface CyEdgeData {
     id: EdgeId;
     deliveries: DeliveryData[];
     stopColors: string;
@@ -203,8 +204,7 @@ export interface GraphServiceData extends GraphElementData, DataServiceData {
     delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
     nodeSel: Record<NodeId, boolean>;
     edgeSel: Record<EdgeId, boolean>;
-    propsChangedFlag: {};
-    edgeLabelChangedFlag: {};
+    nodeAndEdgePropsUpdatedFlag: {};
     ghostElements: GraphElementData;
     hoverEdges: EdgeId[];
     selectedElements: SelectedGraphElements;

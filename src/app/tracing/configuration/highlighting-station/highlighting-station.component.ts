@@ -23,7 +23,7 @@ interface HighlightingState {
 interface CachedData {
     dataTable: DataTable;
     propToValuesMap: PropToValuesMap;
-    data: DataServiceData;
+    dataServiceData: DataServiceData;
 }
 
 @Component({
@@ -59,7 +59,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
 
     get highlightingStats(): StationHighlightingStats | null {
         return this.cachedData ?
-            this.cachedData.data.highlightingStats.stationRuleStats :
+            this.cachedData.dataServiceData.highlightingStats.stationRuleStats :
             null;
     }
 
@@ -125,14 +125,18 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
     }
 
     onAddSelectionToRuleConditions(editRule: StationEditRule): void {
-        const updatedEditRule = this.editHighlightingService.addSelectionToStatRuleConditions(editRule, this.cachedData.data.stations);
+        const updatedEditRule = this.editHighlightingService.addSelectionToStatRuleConditions(
+            editRule, this.cachedData.dataServiceData.stations
+        );
         if (updatedEditRule !== editRule) {
             this.emitEditRuleChange(updatedEditRule);
         }
     }
 
     onRemoveSelectionFromRuleConditions(editRule: StationEditRule): void {
-        const updatedEditRule = this.editHighlightingService.removeSelectionFromStatRuleConditions(editRule, this.cachedData.data.stations);
+        const updatedEditRule = this.editHighlightingService.removeSelectionFromStatRuleConditions(
+            editRule, this.cachedData.dataServiceData.stations
+        );
         if (updatedEditRule !== editRule) {
             this.emitEditRuleChange(updatedEditRule);
         }
@@ -158,19 +162,19 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
     }
 
     private applyState(state: HighlightingState): void {
-        let dataTable: DataTable | null = this.cachedData ? this.cachedData.dataTable : null;
-        const data = this.dataService.getData(state.dataServiceInputState);
+        const cacheIsEmpty = this.cachedData === null;
+        let dataTable: DataTable | null = cacheIsEmpty ? null : this.cachedData.dataTable;
+        const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
+        const newDSData = this.dataService.getData(state.dataServiceInputState);
         if (
-            !this.cachedState ||
+            cacheIsEmpty ||
             this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
         ) {
             dataTable = this.editHighlightingService.getStationData(state.dataServiceInputState);
         } else if (
-            data.stations !== this.cachedData.data.stations ||
-            data.deliveries !== this.cachedData.data.deliveries ||
-            data.tracingResult !== this.cachedData.data.tracingResult ||
-            data.statSel !== this.cachedData.data.statSel ||
-            data.delSel !== this.cachedData.data.delSel
+            newDSData.stations !== cachedDSData.stations ||
+            newDSData.statVis !== cachedDSData.statVis ||
+            newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag
             ) {
             dataTable = {
                 ...this.editHighlightingService.getStationData(state.dataServiceInputState),
@@ -190,7 +194,7 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         this.cachedData = {
             dataTable: dataTable,
             propToValuesMap: propToValuesMap,
-            data: data
+            dataServiceData: newDSData
         };
     }
 

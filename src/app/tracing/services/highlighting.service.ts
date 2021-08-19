@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
 import { createPreprocessedConditions } from '../configuration/complex-row-filter-provider';
 import {
     DataServiceData,
@@ -12,7 +13,9 @@ import {
     DeliveryHighlightingRule,
     HighlightingRule,
     OperationType,
-    DataServiceInputState
+    DataServiceInputState,
+    StationId,
+    DeliveryId
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -36,6 +39,7 @@ export class HighlightingService {
     private delRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
 
     applyVisibilities(state: DataServiceInputState, data: DataServiceData) {
+
         data.stations.forEach(s => {
             s.invisible = false;
             s.expInvisible = false;
@@ -51,7 +55,8 @@ export class HighlightingService {
                 s.invisible = true;
                 s.expInvisible = true;
             });
-        data.statVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
+
+        const newStatVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
         data.getDelById(state.highlightingSettings.invisibleDeliveries)
             .forEach(d => {
                 d.invisible = true;
@@ -60,7 +65,14 @@ export class HighlightingService {
         data.deliveries.filter(d => !d.invisible).forEach(
             d => d.invisible = data.statMap[d.source].invisible || data.statMap[d.target].invisible
         );
-        data.delVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
+        const newDelVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
+
+        if (!_.isEqual(data.delVis, newDelVis)) {
+            data.delVis = newDelVis;
+        }
+        if (!_.isEqual(data.statVis, newStatVis)) {
+            data.statVis = newStatVis;
+        }
     }
 
     hasStationVisibilityChanged(oldState: DataServiceInputState, newState: DataServiceInputState): boolean {
@@ -116,8 +128,9 @@ export class HighlightingService {
         const ruleIdToStatCountMap: Record<RuleId, number> = {};
         state.highlightingSettings.stations.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
         const ruleIdToConflictCountMap: Record<RuleId, number> = {};
+
         data.stations
-            .filter((station: StationData) => !station.invisible)
+            .filter((station: StationData) => !station.contained)
             .forEach((station: StationData) => {
 
                 station.highlightingInfo = this.createStationHighlightingInfo(
@@ -129,9 +142,10 @@ export class HighlightingService {
         const ruleIdToDelCountMap: Record<RuleId, number> = {};
         state.highlightingSettings.deliveries.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
         data.deliveries
-            .filter((delivery: DeliveryData) => !delivery.invisible)
             .forEach((delivery: DeliveryData) => {
+
                 delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, ruleIdToDelCountMap);
+
             });
 
         data.legendInfo = this.getLegendInfo(state, {
@@ -248,7 +262,8 @@ export class HighlightingService {
 
         const stationHighInfo: StationHighlightingInfo = {
             ...this.getCommonHighlightingInfo(station, activeHighlightingRules),
-            shape: shapes.length > 0 ? shapes[0] : null
+            shape: shapes.length > 0 ? shapes[0] : null,
+            size: station.score
         };
 
         return stationHighInfo;

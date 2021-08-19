@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, Chang
 import { StationHighlightingRule, StationHighlightingStats, TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import * as _ from 'lodash';
-import { ColorAndShapeEditRule, RuleId, RuleType, StationEditRule } from '../model';
+import { ColorAndShapeEditRule, LabelEditRule, RuleId, RuleType, StationEditRule } from '../model';
 
 @Component({
     selector: 'fcl-highlighting-station-view',
@@ -31,6 +31,8 @@ export class HighlightingStationViewComponent implements OnChanges {
 
     private colorOrShapeRules_: StationHighlightingRule[] = [];
     private colorOrShapeEditRule_: ColorAndShapeEditRule | null = null;
+    private labelRules_: StationHighlightingRule[] = [];
+    private labelEditRule_: LabelEditRule | null = null;
     private restRules_: StationHighlightingRule[] = [];
 
     get colorOrShapeRules(): StationHighlightingRule[] {
@@ -39,6 +41,14 @@ export class HighlightingStationViewComponent implements OnChanges {
 
     get colorOrShapeEditRule(): ColorAndShapeEditRule | null {
         return this.colorOrShapeEditRule_;
+    }
+
+    get labelRules(): StationHighlightingRule[] {
+        return this.labelRules_;
+    }
+
+    get labelEditRule(): LabelEditRule | null {
+        return this.labelEditRule_;
     }
 
     constructor() { }
@@ -57,11 +67,16 @@ export class HighlightingStationViewComponent implements OnChanges {
     }
 
     onColorOrShapeRulesChange(newColorOrShapeRules: StationHighlightingRule[]) {
-        const newRules = [].concat(newColorOrShapeRules, this.restRules_);
+        const newRules = [].concat(newColorOrShapeRules, this.labelRules, this.restRules_);
         this.rulesChange.emit(newRules);
     }
 
-    onStartRuleEdit(editRule: ColorAndShapeEditRule): void {
+    onLabelRulesChange(newLabelRules: StationHighlightingRule[]) {
+        const newRules = [].concat(this.colorOrShapeRules, newLabelRules, this.restRules_);
+        this.rulesChange.emit(newRules);
+    }
+
+    onStartRuleEdit(editRule: StationEditRule): void {
         this.editRulesChange.emit([].concat(...this.editRules, editRule));
     }
 
@@ -84,10 +99,16 @@ export class HighlightingStationViewComponent implements OnChanges {
                 (item.shape !== undefined && item.shape !== null)
             );
         });
+        [this.labelRules_, this.restRules_] = _.partition(this.restRules_, item => item.labelProperty !== null);
     }
 
     private partitionEditRules(): void {
-        const rule = this.editRules.find(r => r.type === RuleType.COLOR_AND_SHAPE) || null;
-        this.colorOrShapeEditRule_ = rule === null ? null : rule as ColorAndShapeEditRule;
+        this.colorOrShapeEditRule_ = this.getEditRule(RuleType.COLOR_AND_SHAPE) as ColorAndShapeEditRule | null;
+        this.labelEditRule_ = this.getEditRule(RuleType.LABEL) as LabelEditRule | null;
+    }
+
+    private getEditRule(ruleType: RuleType): StationEditRule | null {
+        const rule = this.editRules.find(r => r.type === ruleType) || null;
+        return rule;
     }
 }

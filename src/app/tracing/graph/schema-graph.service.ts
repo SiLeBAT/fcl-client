@@ -53,8 +53,7 @@ export class SchemaGraphService {
         const schemaGraphData: GraphData = {
             nodeData: sharedGraphData.nodeData,
             edgeData: sharedGraphData.edgeData,
-            propsChangedFlag: sharedGraphData.propsChangedFlag,
-            edgeLabelChangedFlag: sharedGraphData.edgeLabelChangedFlag,
+            propsUpdatedFlag: sharedGraphData.nodeAndEdgePropsUpdatedFlag,
             nodePositions: nodePositions,
             layout: state.layout,
             selectedElements: sharedGraphData.selectedElements,

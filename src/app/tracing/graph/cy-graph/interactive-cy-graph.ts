@@ -43,6 +43,35 @@ export type GraphEventListener<T extends GraphEventType> =
 
 export type GraphEventListeners<T extends GraphEventType> = Record<T, GraphEventListener<T>[]>;
 
+interface NodeHProps {
+    size: number;
+    label: string;
+    stopColors: string;
+    shape: string;
+    zindex: number;
+    selected: boolean;
+}
+
+interface EdgeHProps {
+    label: string;
+    stopColors: string;
+    selected: boolean;
+}
+
+interface HProps {
+    nodeProps: NodeHProps[];
+    edgeProps: EdgeHProps[];
+    minNodeSize: number;
+    maxNodeSize: number;
+}
+
+interface HPropsChange {
+    nodeSizeLimitsChanged: boolean;
+    edgePropsChanged: boolean;
+    nodePropsChanged: boolean;
+    edgeLabelChanged: boolean;
+}
+
 export class InteractiveCyGraph extends CyGraph {
 
     private static readonly ZOOM_FACTOR = 1.5;
@@ -51,6 +80,8 @@ export class InteractiveCyGraph extends CyGraph {
 
     private listeners: GraphEventListeners<GraphEventType>;
     protected ignorePanOrZoomEvents = false;
+
+    private cachedHProps: HProps | null = null;
 
     constructor(
         htmlContainerElement: HTMLElement,
@@ -65,6 +96,7 @@ export class InteractiveCyGraph extends CyGraph {
             [GraphEventType.SELECTION_CHANGE]: [],
             [GraphEventType.CONTEXT_MENU_REQUEST]: []
         };
+        this.cacheHProps(graphData);
     }
 
     zoomToPercentage(value: number): void {
@@ -347,6 +379,42 @@ export class InteractiveCyGraph extends CyGraph {
         this.onLayoutChanged();
     }
 
+    private cacheHProps(graphData: GraphData): void {
+        const nodeSizes = graphData.nodeData.length === 0 ? [ 0 ] : graphData.nodeData.map(n => n.size);
+        this.cachedHProps = {
+            nodeProps: graphData.nodeData.map(n => ({
+                stopColors: n.stopColors,
+                label: n.label,
+                zindex: n.zindex,
+                size: n.size,
+                shape: n.shape,
+                selected: n.selected
+            })),
+            edgeProps: graphData.edgeData.map(e => ({
+                stopColors: e.stopColors,
+                label: e.label,
+                selected: e.selected
+            })),
+            minNodeSize: Math.min(...nodeSizes),
+            maxNodeSize: Math.max(...nodeSizes)
+        };
+    }
+
+    private getHPropsChange(oldHProps: HProps, newHProps: HProps): HPropsChange {
+        const edgeLabelChanged = !_.isEqual(
+            oldHProps.edgeProps.map(e => e.label),
+            newHProps.edgeProps.map(e => e.label)
+        );
+        return {
+            nodeSizeLimitsChanged:
+                oldHProps.maxNodeSize !== newHProps.maxNodeSize ||
+                oldHProps.minNodeSize !== newHProps.minNodeSize,
+            nodePropsChanged: !_.isEqual(oldHProps.nodeProps, newHProps.nodeProps),
+            edgePropsChanged: edgeLabelChanged || !_.isEqual(oldHProps.edgeProps, newHProps.edgeProps),
+            edgeLabelChanged: edgeLabelChanged
+        };
+    }
+
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         const oldData = super.data;
         const oldStyle = super.style;
@@ -354,21 +422,35 @@ export class InteractiveCyGraph extends CyGraph {
         super.setStyleConfig(styleConfig);
         const updateNodes = oldData.nodeData !== graphData.nodeData;
         const updateEdges = !updateNodes && oldData.edgeData !== graphData.edgeData;
-        const updateStyle = updateNodes || oldStyle !== styleConfig || oldData.propsChangedFlag !== graphData.propsChangedFlag;
+        const updateCachedHProps = updateNodes || updateEdges || graphData.propsUpdatedFlag !== oldData.propsUpdatedFlag;
+
+        let propChange: Partial<HPropsChange> = {};
+        let updateStyle = !_.isEqual(oldStyle, styleConfig);
+        if (updateCachedHProps) {
+            const oldHProps = this.cachedHProps;
+            this.cacheHProps(graphData);
+            propChange = this.getHPropsChange(oldHProps, this.cachedHProps);
+            if (propChange.nodeSizeLimitsChanged) {
+                updateStyle = true;
+            }
+        }
         const updateSelection = !updateNodes && !_.isEqual(oldData.selectedElements, graphData.selectedElements);
         const updateNodePositions = !updateNodes && this.arePositionsDifferent(oldData, graphData);
         const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
-        const updateEdgeLabel = !updateNodes && !updateEdges && oldData.edgeLabelChangedFlag !== graphData.edgeLabelChangedFlag;
+        const updateEdgeLabel = !updateNodes && !updateEdges && propChange.edgeLabelChanged;
 
-        const scratchEdges = updateNodes || updateEdges || updateStyle || updateEdgeLabel || updateSelection;
-        const scratchNodes = updateNodes || updateStyle || updateSelection;
+        const scratchEdges = !updateNodes && !updateEdges && (
+            updateStyle || updateEdgeLabel || updateSelection || propChange.edgePropsChanged
+        );
+        const scratchNodes = !updateNodes && (updateStyle || updateSelection || propChange.nodePropsChanged);
 
-        const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges;
+        const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges || propChange.nodePropsChanged;
         const updateGhosts = oldData.ghostData !== graphData.ghostData;
 
         if (
             updateNodes || updateEdges || updateStyle || updateSelection ||
             updateNodes || updateLayout || updateEdgeLabel || updateNodePositions ||
+            scratchNodes ||
             (updateGhosts && setAllEdgeLabelOffsets)
         ) {
 
@@ -398,6 +480,8 @@ export class InteractiveCyGraph extends CyGraph {
 
                 if (scratchNodes && scratchEdges) {
                     this.cy.elements().scratch(SCRATCH_UPDATE_NAMESPACE, true);
+                } else if (scratchNodes) {
+                    this.cy.nodes().scratch(SCRATCH_UPDATE_NAMESPACE, true);
                 } else if (scratchEdges) {
                     this.cy.edges().scratch(SCRATCH_UPDATE_NAMESPACE, true);
                 }
