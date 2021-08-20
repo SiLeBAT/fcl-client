@@ -156,6 +156,8 @@ export class DataService {
                 properties: []
             };
 
+            this.applyConsensusPropsToGroup(members, group);
+
             data.getDelById(group.incoming).forEach(d => d.target = group.id);
             data.getDelById(group.outgoing).forEach(d => d.source = group.id);
             members.forEach(m => m.contained = true);
@@ -163,6 +165,27 @@ export class DataService {
             data.statMap[group.id] = group;
             data.stations.push(group);
         }
+    }
+
+    private applyConsensusPropsToGroup(members: StationData[], group: StationData): void {
+        const cprops = Utils.createObjectFromArray(members[0].properties, p => p.name, p => p.value);
+
+        for (const member of members) {
+            const propCheck = Utils.createSimpleStringSet(Object.keys(cprops));
+            for (const prop of member.properties) {
+                const value = cprops[prop.name];
+                if (value !== undefined) {
+                    if (prop.value !== value) {
+                        delete cprops[prop.name];
+                    }
+                    delete propCheck[prop.name];
+                }
+            }
+            for (const propName of Object.keys(propCheck)) {
+                delete cprops[propName];
+            }
+        }
+        group.properties = members[0].properties.filter(p => cprops[p.name] !== undefined);
     }
 
     private applyTracingSettingsToStations(state: DataServiceInputState, data: DataServiceData) {
