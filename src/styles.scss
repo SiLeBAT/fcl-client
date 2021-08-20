@@ -78,7 +78,7 @@ mat-form-field.less-bottom-padding {
     }
 }
 
-.fcl-datatable {
+.fcl-datatable .datatable-header-cell {
     // switch of default sort icons
     .datatable-icon-up::before {
         content: "";
