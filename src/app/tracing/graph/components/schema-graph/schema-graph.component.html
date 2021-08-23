@@ -1,0 +1,22 @@
+<div class="fcl-graph-container">
+
+    <fcl-graph-view
+        class="fcl-graph"
+        [graphData]="graphData"
+        [styleConfig]="styleConfig$ | async"
+        [cyConfig]="cyConfig"
+        [showZoom]="showZoom$ | async"
+        (graphDataChange)="onGraphDataChange($event)"
+        (contextMenuRequest)="onContextMenuRequest($event)"
+        #graph
+    ></fcl-graph-view>
+
+    <fcl-graph-legend-view
+        class="fcl-graph-legend"
+        *ngIf="(showLegend$ | async) && (legendInfo !== null)"
+        [legendInfo]="legendInfo"
+    ></fcl-graph-legend-view>
+
+</div>
+
+<fcl-context-menu-view (itemSelected)="onContextMenuSelect($event)" #contextMenu></fcl-context-menu-view>

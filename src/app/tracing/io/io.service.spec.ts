@@ -1,17 +1,17 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { IOService } from './io.service';
 import { FclData, GraphType, ObservedType, MergeDeliveriesType, MapType, CrossContTraceType } from '../data.model';
 import { JsonData, VERSION } from './ext-data-model.v1';
 import { Constants } from '../util/constants';
-import { DEFAULT_STATION_PROP_INT_TO_EXT_MAP, DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP } from './data-mappings/data-mappings-v1';
+import { DENOVO_STATION_PROP_INT_TO_EXT_MAP, DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP } from './data-mappings/data-mappings-v1';
 
 describe('IOService', () => {
 
     let ioService: IOService;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
                 HttpClientTestingModule
@@ -21,19 +21,19 @@ describe('IOService', () => {
             ]
         });
 
-        ioService = TestBed.get(IOService);
+        ioService = TestBed.inject(IOService);
     }));
 
     it('should instantiate the io service', () => {
         expect(ioService).toBeTruthy();
     });
 
-    it('should generate export data correctly', async(() => {
+    it('should generate export data correctly', async () => {
         const fclData: FclData = {
             source: {
                 propMaps: {
-                    stationPropMap: DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject(),
-                    deliveryPropMap: DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+                    stationPropMap: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+                    deliveryPropMap: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
                 }
             },
             fclElements: {
@@ -72,8 +72,12 @@ describe('IOService', () => {
                     S2: { x: 1, y: 1 }
                 },
                 highlightingSettings: {
-                    invisibleStations: []
-                }
+                    invisibleStations: [],
+                    invisibleDeliveries: [],
+                    stations: [],
+                    deliveries: []
+                },
+                hoverDeliveries: []
             },
             groupSettings: [],
             tracingSettings: {
@@ -122,15 +126,11 @@ describe('IOService', () => {
                     data: [
                         [
                             { id: 'ID', value: 'S1' },
-                            { id: 'Name', value: 'Station 1' },
-                            { id: 'Latitude', value: null },
-                            { id: 'Longitude', value: null }
+                            { id: 'Name', value: 'Station 1' }
                         ],
                         [
                             { id: 'ID', value: 'S2' },
-                            { id: 'Name', value: 'Station 2' },
-                            { id: 'Latitude', value: null },
-                            { id: 'Longitude', value: null }
+                            { id: 'Name', value: 'Station 2' }
                         ]
                     ]
                 },
@@ -140,7 +140,7 @@ describe('IOService', () => {
                         { id: 'from', type: 'string' },
                         { id: 'to', type: 'string' },
                         { id: 'Name', type: 'string' },
-                        { id: 'Lot ID', type: 'string' }
+                        { id: 'Lot Number', type: 'string' }
                     ],
                     data: [
                         [
@@ -148,7 +148,7 @@ describe('IOService', () => {
                             { id: 'from', value: 'S1' },
                             { id: 'to', value: 'S2' },
                             { id: 'Name', value: 'Product P' },
-                            { id: 'Lot ID', value: 'Lot 1' }
+                            { id: 'Lot Number', value: 'Lot 1' }
                         ]
                     ]
                 },
@@ -187,9 +187,11 @@ describe('IOService', () => {
                         joinEdges: fclData.graphSettings.mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL,
                         mergeDeliveriesType: 'NO_MERGE',
                         showMergedDeliveriesCounts: false,
-                        selectedEdges: fclData.graphSettings.selectedElements.deliveries
+                        selectedEdges: fclData.graphSettings.selectedElements.deliveries,
+                        highlightConditions: []
                     },
                     node: {
+                        highlightConditions: [],
                         skipEdgelessNodes: fclData.graphSettings.skipUnconnectedStations,
                         selectedNodes: fclData.graphSettings.selectedElements.stations
                     },
@@ -219,5 +221,5 @@ describe('IOService', () => {
             .then(observedExportData => {
                 expect(observedExportData).toEqual(expectedExportData);
             }).catch(error => { throw error; });
-    }));
+    });
 });

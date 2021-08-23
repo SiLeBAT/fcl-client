@@ -30,6 +30,7 @@ export class DataService {
     } {
         const stations: StationData[] = state.fclElements.stations.map(storeData => ({
             ...storeData,
+            isMeta: false,
             contained: false,
             outbreak: false,
             weight: 0,
@@ -42,6 +43,7 @@ export class DataService {
             commonLink: false,
             selected: false,
             invisible: false,
+            expInvisible: false,
             contains: [],
             groupType: null,
             incoming: storeData.incoming.slice(),
@@ -77,6 +79,7 @@ export class DataService {
             score: 0,
             selected: false,
             invisible: false,
+            expInvisible: false,
             originalSource: storeData.source,
             originalTarget: storeData.target,
             properties: storeData.properties.map(p => Object.assign({}, p))
@@ -121,11 +124,13 @@ export class DataService {
                 ...groupSet,
                 lat: lat,
                 lon: lon,
+                isMeta: true,
                 contained: false,
                 contains: groupSet.contains.slice(),
                 observed: ObservedType.NONE,
                 selected: false,
                 invisible: false,
+                expInvisible: false,
                 outbreak: false,
                 weight: 0,
                 forward: false,
@@ -201,8 +206,10 @@ export class DataService {
                 statSel: undefined,
                 delSel: undefined,
                 statVis: undefined,
+                delVis: undefined,
                 tracingResult: undefined,
-                legendInfo: undefined
+                legendInfo: undefined,
+                highlightingStats: undefined
             };
         }
         if (groups) {
@@ -237,13 +244,14 @@ export class DataService {
             this.updateCache(state);
         } else if (this.cachedState.groupSettings !== state.groupSettings) {
             this.updateCache(state, false);
+        } else if (
+            this.cachedState.highlightingSettings !== state.highlightingSettings ||
+            this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations ||
+            this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries
+        ) {
+            this.updateCache(state, false, false, true, true);
         } else if (this.cachedState.tracingSettings !== state.tracingSettings) {
             this.updateCache(state, false, false);
-        } else if (
-            this.cachedState.highlightingSettings !== state.highlightingSettings &&
-            this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations
-        ) {
-            this.updateCache(state, false, false, false, true);
         } else if (this.cachedState.selectedElements !== state.selectedElements) {
             this.updateCache(state, false, false, false, false, false, false);
         }

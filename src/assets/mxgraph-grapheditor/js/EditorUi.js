@@ -2277,8 +2277,8 @@ EditorUi.prototype.updateDocumentTitle = function()
 	{
 		title += ' - ' + this.editor.appName;
 	}
-
-	document.title = title;
+    // the next code line is commented, because it might be reactivated
+	// document.title = title;
 };
 
 /**

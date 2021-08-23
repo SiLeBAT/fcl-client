@@ -1,5 +1,14 @@
 <fcl-highlighting-station-view
     class="fcl-hightlighting-station-view"
-    [colorAndShapeHighlightings]="colorAndShapeHighlightings">
+    [availableProperties]="availableProperties"
+    [propToValuesMap]="propToValuesMap"
+    [rules]="rules"
+    [highlightingStats]="highlightingStats"
 
+    [colorOrShapeRuleEditIndex]="colorOrShapeRuleEditIndex"
+
+    (rulesChange)="onRulesChange($event)"
+    (ruleDelete)="onRuleDelete($event)"
+    (colorOrShapeRuleEditIndexChange)="onColorOrShapeRuleEditIndexChange($event)"
+>
 </fcl-highlighting-station-view>

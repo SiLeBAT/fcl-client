@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ColorPickerModule } from 'ngx-color-picker';
 import { MainTracingComponent } from './components/main-tracing.component';
 import { SharedModule } from '../shared/shared.module';
 import { TracingRoutingModule } from './tracing.routing.module';
@@ -21,16 +22,14 @@ import { GroupingEffects } from './grouping/grouping.effects';
 import { IOEffects } from './io/io.effects';
 import { VisioEffects } from './visio/visio.effects';
 import { EffectsModule } from '@ngrx/effects';
-import { NestedMatMenuComponent } from './graph/components/nested-mat-menu.component';
-import { SchemaGraphComponent } from './graph/components/schema-graph.component';
-import { GraphLegendComponent } from './graph/components/graph-legend.component';
-import { NodeSymbolComponent } from './shared/node-symbol/node-symbol.component';
-import { ZoomComponent } from './graph/components/zoom.component';
-import { GisGraphComponent } from './graph/components/gis-graph.component';
-import { GraphContextMenuComponent } from './graph/components/graph-context-menu.component';
-import { EdgeSymbolComponent } from './graph/components/edge-symbol.component';
-import { KlecksSymbolComponent } from './graph/components/klecks-symbol.component';
-import { CreatedImageComponent } from './shared/created-image/created-image.component';
+import { NestedMatMenuViewComponent } from './graph/components/nested-mat-menu-view/nested-mat-menu-view.component';
+import { SchemaGraphComponent } from './graph/components/schema-graph/schema-graph.component';
+import { GraphLegendViewComponent } from './graph/components/graph-legend-view/graph-legend-view.component';
+import { NodeSymbolViewComponent } from './shared/node-symbol-view/node-symbol-view.component';
+import { ZoomViewComponent } from './graph/components/zoom-view/zoom-view.component';
+import { GisGraphComponent } from './graph/components/gis-graph/gis-graph.component';
+import { EdgeSymbolViewComponent } from './graph/components/edge-symbol-view/edge-symbol-view.component';
+import { CreatedImageViewComponent } from './shared/created-image-view/created-image-view.component';
 import { MergeStationsDialogComponent } from './grouping/merge-stations-dialog/merge-stations-dialog.component';
 import { TabLayoutComponent } from './configuration/tab-layout/tab-layout.component';
 import { ConfigurationComponent } from './configuration/configuration/configuration.component';
@@ -49,6 +48,7 @@ import { PropertyElementViewComponent } from './visio/property-element-view/prop
 import { TextElementViewComponent } from './visio/text-element-view/text-element-view.component';
 import { PropertySelectorViewComponent } from './configuration/property-selector-view/property-selector-view.component';
 import { OperatorSelectorViewComponent } from './configuration/operator-selector-view/operator-selector-view.component';
+import { ShapeSelectorViewComponent } from './configuration/shape-selector-view/shape-selector-view.component';
 import { ValueEditorViewComponent } from './configuration/value-editor-view/value-editor-view.component';
 import { JunctorSelectorViewComponent } from './configuration/junktor-selector-view/junktor-selector-view.component';
 import { ConfigurationEffects } from './configuration/configuration.effects';
@@ -56,8 +56,19 @@ import { HighlightingStationComponent } from './configuration/highlighting-stati
 import { HighlightingDeliveryComponent } from './configuration/highlighting-delivery/highlighting-delivery.component';
 import { HighlightingStationViewComponent } from './configuration/highlighting-station-view/highlighting-station-view.component';
 import { AnonymousButtonViewComponent } from './configuration/anonymous-button-view/anonymous-button-view.component';
-import { HighlightingStationListViewComponent } from './configuration/highlighting-station-list-view/highlighting-station-list-view.component';
-import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.directive';
+import { ResizeSensorDirective } from './graph/components/resize-sensor.directive';
+import { GraphViewComponent } from './graph/components/graph-view/graph-view.component';
+import { GeoMapComponent } from './graph/components/geomap/geomap.component';
+import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
+import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
+import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-view.component';
+import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
+import { ColorsAndShapesEditViewComponent } from './configuration/colors-and-shapes-edit-view/colors-and-shapes-edit-view.component';
+import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
+import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatatable-row-event-provider.directive';
+import { ColorSelectorViewComponent } from './configuration/color-selector-view/color-selector-view.component';
+import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix.directive';
+import { UnknownLatLonFrameViewComponent } from './graph/components/unknown-lat-lon-frame-view/unknown-lat-lot-frame-view.component';
 
 @NgModule({
     imports: [
@@ -66,6 +77,7 @@ import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.di
         SharedModule,
         NgxDatatableModule,
         TracingRoutingModule,
+        ColorPickerModule,
         StoreModule.forFeature(STATE_SLICE_NAME, reducer),
         EffectsModule.forFeature([TracingEffects, GroupingEffects, IOEffects, VisioEffects, ConfigurationEffects])
     ],
@@ -83,16 +95,14 @@ import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.di
         PropertyElementViewComponent,
         TextElementViewComponent,
         GraphSettingsComponent,
-        NestedMatMenuComponent,
+        NestedMatMenuViewComponent,
         SchemaGraphComponent,
         GisGraphComponent,
-        GraphContextMenuComponent,
-        GraphLegendComponent,
-        NodeSymbolComponent,
-        EdgeSymbolComponent,
-        KlecksSymbolComponent,
-        ZoomComponent,
-        CreatedImageComponent,
+        GraphLegendViewComponent,
+        NodeSymbolViewComponent,
+        EdgeSymbolViewComponent,
+        ZoomViewComponent,
+        CreatedImageViewComponent,
         MergeStationsDialogComponent,
         TabLayoutComponent,
         ConfigurationComponent,
@@ -107,6 +117,7 @@ import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.di
         ComplexFilterViewComponent,
         PropertySelectorViewComponent,
         OperatorSelectorViewComponent,
+        ShapeSelectorViewComponent,
         ValueEditorViewComponent,
         JunctorSelectorViewComponent,
         ClearAllFilterViewComponent,
@@ -114,20 +125,20 @@ import { EmptyTableScrollFixDirective } from './shared/empty-table-scroll-fix.di
         HighlightingDeliveryComponent,
         HighlightingStationViewComponent,
         AnonymousButtonViewComponent,
-        HighlightingStationListViewComponent,
-        EmptyTableScrollFixDirective
+        NgxDatatableScrollFixDirective,
+        ResizeSensorDirective,
+        GraphViewComponent,
+        GeoMapComponent,
+        GeoMapLicRefViewComponent,
+        ContextMenuViewComponent,
+        RuleNameViewComponent,
+        ColorsAndShapesListViewComponent,
+        ColorsAndShapesEditViewComponent,
+        DialogYesNoComponent,
+        NgxDatatableRowEventProviderDirective,
+        ColorSelectorViewComponent,
+        UnknownLatLonFrameViewComponent
     ],
-    exports: [],
-    entryComponents: [
-        DialogActionsComponent,
-        DialogAlertComponent,
-        DialogPromptComponent,
-        DialogSelectComponent,
-        StationPropertiesComponent,
-        DeliveryPropertiesComponent,
-        DeliveriesPropertiesComponent,
-        MergeStationsDialogComponent,
-        ReportConfigurationComponent
-    ]
+    exports: []
 })
 export class TracingModule { }

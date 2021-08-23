@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
-    DataTable, TableRow, TableColumn
+    DataTable, TableRow, TableColumn, OperationType
 } from '@app/tracing/data.model';
 import {
     createPredefinedRowFilter,
@@ -13,7 +13,8 @@ import {
 import { filterTableRows } from '../shared';
 import { InputData as FilterTableViewInputData, TableFilterChange } from '../filter-table-view/filter-table-view.component';
 import * as _ from 'lodash';
-import { FilterTableSettings, VisibilityFilterState, ColumnFilterSettings, ShowType, ExtendedOperationType, LogicalFilterCondition } from '../configuration.model';
+import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap } from '../configuration.model';
+import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 export interface InputData {
     dataTable: DataTable;
@@ -25,11 +26,6 @@ interface RowFilterMap {
     complexFilter: ComplexRowFilter;
     standardFilter: OneTermForNColumnsRowFilter;
 }
-
-interface PropValueMap {
-    [key: string]: (string | number | boolean)[];
-}
-
 @Component({
     selector: 'fcl-filter-elements-view',
     templateUrl: './filter-elements-view.component.html',
@@ -39,6 +35,7 @@ export class FilterElementsViewComponent {
 
     @Input() inputData: InputData;
     @Input() standardFilterLabel: string;
+    @Input() useTreeMode = false;
 
     @Output() filterSettingsChange = new EventEmitter<FilterTableSettings>();
     @Output() clearAllFilters = new EventEmitter();
@@ -46,16 +43,16 @@ export class FilterElementsViewComponent {
     @Output() mouseOverTableRow = new EventEmitter<TableRow>();
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
 
-    availableOperatorTypes: ExtendedOperationType[] = [
-        ExtendedOperationType.EQUAL,
-        ExtendedOperationType.CONTAINS,
-        ExtendedOperationType.GREATER,
-        ExtendedOperationType.NOT_EQUAL,
-        ExtendedOperationType.LESS,
-        ExtendedOperationType.REGEX_EQUAL,
-        ExtendedOperationType.REGEX_NOT_EQUAL,
-        ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE,
-        ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+    availableOperatorTypes: OperationType[] = [
+        OperationType.EQUAL,
+        OperationType.CONTAINS,
+        OperationType.GREATER,
+        OperationType.NOT_EQUAL,
+        OperationType.LESS,
+        OperationType.REGEX_EQUAL,
+        OperationType.REGEX_NOT_EQUAL,
+        OperationType.REGEX_EQUAL_IGNORE_CASE,
+        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
     ];
 
     get standardFilterSettings(): string {
@@ -66,7 +63,7 @@ export class FilterElementsViewComponent {
         return this.inputData.filterTableSettings.predefinedFilter;
     }
 
-    get complexFilterSettings(): LogicalFilterCondition[] {
+    get complexFilterSettings(): ComplexFilterCondition[] {
         return this.inputData.filterTableSettings.complexFilter.conditions;
     }
 
@@ -75,7 +72,7 @@ export class FilterElementsViewComponent {
         return this.filterTableViewInputData_;
     }
 
-    get propToValuesMap(): PropValueMap {
+    get propToValuesMap(): PropToValuesMap {
         this.processLastInputIfNecessary();
         return this.propToValuesMap_;
     }
@@ -92,7 +89,7 @@ export class FilterElementsViewComponent {
     private processedInput_: InputData;
     private prefilteredRows_: TableRow[];
     private filterTableViewInputData_: FilterTableViewInputData;
-    private propToValuesMap_: PropValueMap;
+    private propToValuesMap_: PropToValuesMap;
     private dataColumns_: TableColumn[];
 
     private filterMap_: RowFilterMap;
@@ -120,7 +117,7 @@ export class FilterElementsViewComponent {
         });
     }
 
-    onComplexFilterChange(conditions: LogicalFilterCondition[]): void {
+    onComplexFilterChange(conditions: ComplexFilterCondition[]): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
             complexFilter: { conditions: conditions }
@@ -145,12 +142,8 @@ export class FilterElementsViewComponent {
         this.selectTableColumns.emit();
     }
 
-    onMouseOverTableRow(row: TableRow): void {
+    onMouseOverTableRow(row: TableRow | null): void {
         this.mouseOverTableRow.emit(row);
-    }
-
-    onMouseLeaveTableRow(row: TableRow): void {
-        this.mouseLeaveTableRow.emit(row);
     }
 
     private processLastInputIfNecessary(): void {
@@ -214,7 +207,7 @@ export class FilterElementsViewComponent {
 
     private updateDataColumns(): void {
         if (!this.dataColumns_ || this.inputData.dataTable.columns !== this.processedInput_.dataTable.columns) {
-            this.dataColumns_ = this.inputData.dataTable.columns.filter(c => c.id !== 'highlightingInfo');
+            this.dataColumns_ = ComplexFilterUtils.extractDataColumns(this.inputData.dataTable);
         }
     }
 
@@ -262,17 +255,7 @@ export class FilterElementsViewComponent {
 
     private updatePropValueMap(): void {
         if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.inputData.dataTable.rows) {
-            const propToValuesMap: PropValueMap = {};
-            for (const column of this.dataColumns_) {
-                const values = _.uniq(
-                    this.inputData.dataTable.rows
-                        .map(r => r[column.id] as (string | number | boolean))
-                        .filter(v => v !== undefined && v !== null)
-                    ).sort();
-                propToValuesMap[column.id] = values;
-            }
-            propToValuesMap[''] = _.uniq([].concat(...Object.values(propToValuesMap))).sort();
-            this.propToValuesMap_ = propToValuesMap;
+            this.propToValuesMap_ = ComplexFilterUtils.extractPropToValuesMap(this.inputData.dataTable, this.dataColumns_);
         }
     }
 }

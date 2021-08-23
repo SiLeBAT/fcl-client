@@ -13,8 +13,7 @@ import { UserService } from '../../../user/services/user.service';
 
 @Component({
     selector: 'fcl-dashboard-container',
-    templateUrl: './dashboard-container.component.html',
-    styleUrls: ['./dashboard-container.component.scss']
+    templateUrl: './dashboard-container.component.html'
 })
 export class DashboardContainerComponent implements OnInit, OnDestroy {
     private componentActive: boolean = true;

@@ -9,7 +9,7 @@
 </ng-template>
 
 <ng-template #patternColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="header-sort-span" (click)="sort()">
+    <span class="fcl-header-sort-span" (click)="sort()">
         <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
             radio_button_unchecked
         </span>
@@ -20,7 +20,7 @@
 </ng-template>
 
 <ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="header-sort-span" (click)="sort()">
+    <span class="fcl-header-sort-span" (click)="sort()">
         <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
             visibility
         </span>
@@ -51,7 +51,7 @@
 </ng-template>
 
 <ng-template #dataColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="header-sort-span draggable" (click)="sort()">
+    <span class="fcl-header-sort-span draggable" (click)="sort()">
         {{ column.name }}
         <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
         <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
@@ -73,61 +73,64 @@
     </mat-form-field>
 </ng-template>
 
+<ng-template #treeRowTpl let-row="row" let-value="value">
+    <span *ngIf="row.treeStatus === 'expanded'" class="datatable-icon-down pointable fcl-tree-action-icon" (click)="onTreeAction(row)"></span>
+    <span *ngIf="row.treeStatus === 'collapsed'" class="datatable-icon-right pointable fcl-tree-action-icon" (click)="onTreeAction(row)"></span>
+</ng-template>
+
 <ng-template #patternRowTpl let-row="row" let-value="value">
-    <fcl-node-symbol
-        *ngIf="!row.invisible"
-        class="fcl-row-symbol"
-        [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="row.highlightingInfo.color"
-        (mouseover)="onMouseOver(row)"
-        (mouseleave)="onMouseLeave(lastMouseOverRow)">
-    </fcl-node-symbol>
-    <fcl-node-symbol
-        *ngIf="row.invisible"
-        class="fcl-row-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
-        [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="[[211, 211, 211]]"
-        (mouseover)="onMouseOver(row)"
-        (mouseleave)="onMouseLeave(lastMouseOverRow)">
-    </fcl-node-symbol>
+    <div *ngIf="row.parentRowId === undefined">
+        <fcl-node-symbol-view
+            *ngIf="!row.invisible"
+            class="fcl-row-symbol"
+            [dataTableShapeType]="row.highlightingInfo.shape"
+            [mapStationColor]="row.highlightingInfo.color"
+        ></fcl-node-symbol-view>
+        <fcl-node-symbol-view
+            *ngIf="row.invisible"
+            class="fcl-row-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
+            [dataTableShapeType]="row.highlightingInfo.shape"
+            [mapStationColor]="[[211, 211, 211]]"
+        ></fcl-node-symbol-view>
+    </div>
 </ng-template>
 
 <ng-template #visibilityRowTpl let-row="row" let-value="value">
+    <div *ngIf="row.parentRowId === undefined">
+        <span
+            *ngIf="!row.invisible"
+            class="material-icons fcl-column-visibility-header-icon">
+            visibility
+        </span>
+        <span
+            *ngIf="row.invisible"
+            class="material-icons fcl-column-visibility-header-icon unsorted pointable"
+            >
+            visibility_off
+        </span>
+    </div>
     <span
-        *ngIf="!row.invisible"
-        class="material-icons fcl-column-visibility-header-icon">
-        visibility
-    </span>
-    <span
-        *ngIf="row.invisible"
-        class="material-icons fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
-        (mouseover)="onMouseOver(row)"
-        (mouseleave)="onMouseLeave()">
+        *ngIf="row.parentRowId !== undefined"
+        class="material-icons fcl-column-visibility-header-icon unsorted fcl-invisible-data-row-cell"
+    >
         visibility_off
     </span>
 </ng-template>
 
-<ng-template #dataRowTpl let-row="row" let-value="value">
-    <span
-        *ngIf="!row.invisible">
-        {{ value }}
-    </span>
-    <span
-        *ngIf="row.invisible"
-        class="pointable fcl-invisible-data-row-cell"
-        (mouseover)="onMouseOver(row)"
-        (mouseleave)="onMouseLeave()">
-        {{ value }}
-    </span>
+<ng-template #dataRowTpl let-row="row" let-column="column" let-value="value" let-i="index" let-prop="prop">
+
+    {{ value }}
 </ng-template>
 
-<div class="fcl-datatable-container" #tableWrapper>
+<div class="fcl-filtertable-container" #tableWrapper>
     <ngx-datatable
-        fclEmptyTableScrollFix
+        fclResizeSensor (resized)="onComponentResized()" [ignoreNonPositiveResize]="true" [ignoreWindowResize]="true"
+        fclNgxDatatableScrollFix
+        fclNgxDatatableRowEventProvider (rowOver)="onRowOver($event)"
         #table
-        class="material fcl-datatable"
+        class="material fcl-datatable fcl-filtertable"
         [columns]="columns"
-        [rows]="filteredRows"
+        [rows]="tableRows"
         [rowHeight]="18"
         scrollbarV="true"
         scrollbarH="true"
@@ -135,6 +138,7 @@
         (reorder)="onColumnReorder($event)"
         [headerHeight]="60"
         [footerHeight]="50"
-    >
-    </ngx-datatable>
+        [treeFromRelation]="useTreeMode ? 'parentRowId' : undefined"
+        [treeToRelation]="'id'"
+    ></ngx-datatable>
 </div>

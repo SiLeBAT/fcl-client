@@ -1,13 +1,13 @@
-import { TableColumn } from './../../data.model';
+import { OperationType, TableColumn } from './../../data.model';
 import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { ExtendedOperationType, ComplexFilterCondition, JunktorType } from '../configuration.model';
+import { ComplexFilterCondition, JunktorType } from '../configuration.model';
+import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 
 @Component({
     selector: 'fcl-complex-filter-view',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './complex-filter-view.component.html',
     styleUrls: ['./complex-filter-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
 export class ComplexFilterViewComponent {
@@ -20,11 +20,15 @@ export class ComplexFilterViewComponent {
         return this.availableProperties_;
     }
 
-    @Input() propToValuesMap: { [key: string]: string[] };
-    @Input() availableOperatorTypes: ExtendedOperationType[];
+    @Input() propToValuesMap: Record<string, string[]> = {};
+    @Input() availableOperatorTypes: OperationType[] = [];
 
     @Input() set conditions(value: ComplexFilterCondition[]) {
-        this.conditions_ = value && value.length > 0 ? value.slice() : this.createDefaultConditions();
+        this.conditions_ = (
+            value && value.length > 0 ?
+            value.slice() :
+            ComplexFilterUtils.createDefaultComplexFilterConditions()
+        );
     }
 
     get conditions(): ComplexFilterCondition[] {
@@ -35,28 +39,29 @@ export class ComplexFilterViewComponent {
 
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
-    filterConditionForm: FormGroup;
-    private conditions_ = this.createDefaultConditions();
+    private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
 
     constructor() { }
 
     onAddFilterCondition(index: number) {
-        const conditions = this.conditions_.map(c => ({ ...c }));
-        const property = conditions[index].property;
-        const operation = conditions[index].operation;
 
-        const junktor = (
+        const conditions = this.conditions_.map(c => ({ ...c }));
+        const propertyName = conditions[index].propertyName;
+        const operationType = conditions[index].operationType;
+
+        const junktorType = (
             index > 0 ?
-            conditions[index - 1].junktor :
-            JunktorType.AND
+            conditions[index - 1].junktorType :
+            ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
         );
 
-        conditions.push({
-            property: property,
-            operation: operation,
+        conditions[index].junktorType = junktorType;
+        conditions[index + 1] = {
+            propertyName: propertyName,
+            operationType: operationType,
             value: '',
-            junktor: junktor
-        });
+            junktorType: ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
+        };
 
         this.conditions_ = conditions;
         this.conditionsChange.emit(conditions);
@@ -67,21 +72,25 @@ export class ComplexFilterViewComponent {
             this.conditions_.slice(0, index),
             this.conditions_.slice(index + 1)
         );
-        this.conditions_ = conditions;
+        this.conditions_ = (
+            conditions.length === 0 ?
+            ComplexFilterUtils.createDefaultComplexFilterConditions() :
+            conditions
+        );
         this.conditionsChange.emit(conditions);
     }
 
-    onPropertyChange(property: string, index: number) {
+    onPropertyChange(propertyName: string, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            property: property
+            propertyName: propertyName
         });
     }
 
-    onOperatorChange(operatorType: ExtendedOperationType, index: number) {
+    onOperatorChange(operatorType: OperationType, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            operation: operatorType
+            operationType: operatorType
         });
     }
 
@@ -95,7 +104,7 @@ export class ComplexFilterViewComponent {
     onJunktorChange(junktorType: JunktorType, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            junktor: junktorType
+            junktorType: junktorType
         });
     }
 
@@ -108,14 +117,5 @@ export class ComplexFilterViewComponent {
 
     trackByIndex(index: number): number {
         return index;
-    }
-
-    private createDefaultConditions(): ComplexFilterCondition[] {
-        return [{
-            property: undefined,
-            operation: undefined,
-            value: '',
-            junktor: JunktorType.AND
-        }];
     }
 }

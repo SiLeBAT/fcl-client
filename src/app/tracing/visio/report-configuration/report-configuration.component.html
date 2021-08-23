@@ -11,7 +11,12 @@
                     </mat-panel-title>
                 </mat-expansion-panel-header>
 
-                <fcl-label-configuration-view [labelElements]="labelInfos[labelKey].labelElements" [availableProps]="labelInfos[labelKey].availableProps" class="fcl-label-box"></fcl-label-configuration-view>
+                <fcl-label-configuration-view
+                    class="fcl-label-box"
+                    [labelElements]="labelInfos[labelKey].labelElements"
+                    [availableProps]="labelInfos[labelKey].availableProps"
+                    [amountUnitPairs]="labelInfos[labelKey].amountUnitPairs"
+                ></fcl-label-configuration-view>
 
             </mat-expansion-panel>
 

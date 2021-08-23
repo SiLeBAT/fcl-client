@@ -1,5 +1,5 @@
 <mat-toolbar class="fcl-toolbar-item fcl-toolbar-container" color="primary">
-    <div class="fcl-item fcl-toolbar-menu-container">
+    <div class="fcl-toolbar-menu-container">
         <button
             class="fcl-toolbar-title"
             mat-button
@@ -10,9 +10,35 @@
             <span class="mat-title">{{ appName }}</span>
         </button>
     </div>
-    <fcl-toolbar-action-container class="fcl-item fcl-toolbar-action-item fcl-toolbar-action-container"></fcl-toolbar-action-container>
-    <fcl-avatar-container class="fcl-item fcl-toolbar-avatar-container"></fcl-avatar-container>
-    <div class="fcl-item fcl-toolbar-menu-container">
+    <!-- Dirty fix start -->
+    <!-- either the tracing view action toolbar is visible -->
+    <fcl-toolbar-action-container
+        *ngIf="tracingActive"
+        class="fcl-toolbar-action-item fcl-toolbar-action-container"
+        >
+    </fcl-toolbar-action-container>
+    <!-- or a tracing view link or a placeholder is inserted-->
+    <div
+        *ngIf="!tracingActive"
+        class="fcl-toolbar-action-item fcl-toolbar-action-container"
+    >
+        <!-- a link to tracing view feature is inserted -->
+        <button
+            *ngIf="(isServerLess() || currentUser) && !dashboardActive; else placeholder_content"
+            mat-button
+            [routerLink]="['/tracing']"
+            matTooltip="Tracing view">
+            <mat-icon>track_changes</mat-icon>
+            Tracing View
+        </button>
+        <ng-template #placeholder_content>
+            <!-- place holder is inserted-->
+            <div>&#8203;</div>
+        </ng-template>
+    </div>
+    <!-- dirty fix end-->
+    <fcl-avatar-container class="fcl-toolbar-avatar-container"></fcl-avatar-container>
+    <div class="fcl-toolbar-menu-container">
         <button
             class="fcl-toolbar-menu-bottom"
             mat-icon-button

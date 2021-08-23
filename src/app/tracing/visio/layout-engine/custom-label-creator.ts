@@ -1,8 +1,8 @@
+import { LabelElementInfo, PropElementInfo, ROALabelSettings, TextElementInfo } from '../model';
 import { StationInformation, LotInformation, FontMetrics,
     StationSampleInformation, SampleInformation, VisioLabel } from './datatypes';
 import { GraphSettings } from './graph-settings';
 import { LabelCreator } from './label-creator';
-import { ROALabelSettings, PropElementInfo, TextElementInfo, LabelElementInfo } from '@app/tracing/data.model';
 
 export class CustomLabelCreator extends LabelCreator {
 
@@ -20,11 +20,17 @@ export class CustomLabelCreator extends LabelCreator {
 
     getLabelTexts(infoObj: { props: { [key: string]: string | number | boolean }}, labelElements: LabelElementInfo[][]): string[] {
         return labelElements.map(elements =>
-            elements.map(e =>
-                (e as PropElementInfo).prop !== undefined ?
-                    CustomLabelCreator.getText(infoObj.props[(e as PropElementInfo).prop], (e as PropElementInfo).altText) :
-                    (e as TextElementInfo).text
-            ).join('')
+            elements.map(element => {
+                if ((element as PropElementInfo).prop !== undefined) {
+                    const propElement = element as PropElementInfo;
+                    return propElement.prop === null ?
+                        '' :
+                        CustomLabelCreator.getText(infoObj.props[propElement.prop], propElement.altText);
+                } else {
+                    const textElement = element as TextElementInfo;
+                    return textElement.text;
+                }
+            }).join('').trim()
         );
     }
 

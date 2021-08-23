@@ -11,7 +11,7 @@ exports[`ProfileComponent should display the current user 1`] = `
       class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
     >
       <mat-card
-        class="fcl-mat-card mat-card"
+        class="fcl-mat-card mat-card mat-focus-indicator"
       >
         <mat-card-header
           class="fcl-mat-card__header mat-card-header"
@@ -69,7 +69,7 @@ exports[`ProfileComponent should render the component correctly 1`] = `
       class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
     >
       <mat-card
-        class="fcl-mat-card mat-card"
+        class="fcl-mat-card mat-card mat-focus-indicator"
       >
         <mat-card-header
           class="fcl-mat-card__header mat-card-header"

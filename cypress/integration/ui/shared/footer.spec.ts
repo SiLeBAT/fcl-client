@@ -43,7 +43,7 @@ describe('Testing the Footer', function () {
                     .should(
                         'have.attr',
                         'href',
-                        'https://foodrisklabs.bfr.bund.de'
+                        'https://foodrisklabs.bfr.bund.de/foodrisk-labs/'
                     )
                     .and('have.attr', 'target', '_blank');
             });

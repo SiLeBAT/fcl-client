@@ -66,6 +66,22 @@ export const getHighlightingSettings = createSelector(
     (fclData) => fclData.graphSettings.highlightingSettings
 );
 
+export const getSelectedElements = createSelector(
+    getFclData,
+    (fclData) => fclData.graphSettings.selectedElements
+);
+
+export const getMakeElementsInvisibleInputState = createSelector(
+    getHighlightingSettings,
+    getSelectedElements,
+    getTracingSettings,
+    (highlightingSettings, selectedElements, tracingSettings) => ({
+        highlightingSettings: highlightingSettings,
+        selectedElements: selectedElements,
+        tracingSettings: tracingSettings
+    })
+);
+
 export const getStationHighlightingSettings = createSelector(
     getHighlightingSettings,
     (highlightingSettings) => highlightingSettings.stations
@@ -127,7 +143,8 @@ export const getSchemaGraphData = createSelector(
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.schemaLayout,
-        ghostStation: graphSettings.ghostStation
+        ghostStation: graphSettings.ghostStation,
+        hoverDeliveries: graphSettings.hoverDeliveries
     })
 );
 
@@ -150,11 +167,46 @@ export const getGisGraphData = createSelector(
         selectedElements: graphSettings.selectedElements,
         mergeDeliveriesType: graphSettings.mergeDeliveriesType,
         showMergedDeliveriesCounts: graphSettings.showMergedDeliveriesCounts,
+        ghostStation: graphSettings.ghostStation,
+        hoverDeliveries: graphSettings.hoverDeliveries,
         fontSize: graphSettings.fontSize,
         nodeSize: graphSettings.nodeSize,
         layout: graphSettings.gisLayout,
         mapType: graphSettings.mapType,
         shapeFileData: graphSettings.shapeFileData
+    })
+);
+
+const getGisLayout = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.gisLayout
+);
+const getMapType = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.mapType
+);
+const getShapeFileData = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.shapeFileData
+);
+
+export const getMapConfig = createSelector(
+    getGisLayout,
+    getMapType,
+    getShapeFileData,
+    (gisLayout, mapType, shapeFileData) => ({
+        layout: gisLayout,
+        mapType: mapType,
+        shapeFileData: shapeFileData
+    })
+);
+
+export const getStyleConfig = createSelector(
+    getNodeSize,
+    getFontSize,
+    (nodeSize, fontSize) => ({
+        nodeSize: nodeSize,
+        fontSize: fontSize
     })
 );
 
@@ -239,6 +291,22 @@ export const getStationFilterData = createSelector(
     (basicGraphData, filterSettings) => ({
         graphState: basicGraphData,
         filterTableState: filterSettings.stationFilter
+    })
+);
+
+export const getHighlightingConfigurationSettings = createSelector(
+    getTracingFeatureState,
+    state => state.highlightingConfigurationSettings
+);
+
+export const getStationHighlightingData = createSelector(
+    getBasicGraphData,
+    getStationHighlightingSettings,
+    getHighlightingConfigurationSettings,
+    (basicGraphData, stationHighlightingSettings, highlightingConfigs) => ({
+        graphState: basicGraphData,
+        highlightingState: stationHighlightingSettings,
+        editIndex: highlightingConfigs.colorsAndShapesSettings.editIndex
     })
 );
 

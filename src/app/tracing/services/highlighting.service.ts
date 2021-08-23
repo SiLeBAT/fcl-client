@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
+import { createPreprocessedConditions } from '../configuration/complex-row-filter-provider';
 import {
     DataServiceData,
     BasicGraphState,
-    SetHighlightingSettingsPayload,
-    HighlightingSettings,
     StationData,
     StationHighlightingInfo,
-    StationHighlightingData,
     DeliveryHighlightingInfo,
-    DeliveryHighlightingData,
-    LogicalCondition,
-    OperationType,
     DeliveryData,
     LegendInfo,
-    Color
+    Color,
+    StationHighlightingRule,
+    DeliveryHighlightingRule,
+    HighlightingRule,
+    OperationType
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
 type PropertyValueType = (number | string | boolean);
-type ConditionValueType = string;
+type RuleId = string;
+type StationOrDeliveryData = StationData | DeliveryData;
+type RuleConditionsEvaluatorFun = (element: StationOrDeliveryData) => boolean;
 
 @Injectable({
     providedIn: 'root'
@@ -27,217 +28,39 @@ export class HighlightingService {
 
     static readonly DEFAULT_DELIVERY_COLOR: Color = { r: 0, g: 0, b: 0 };
 
-    private readonly OPERATION_TYPE_TO_FUNCTION_MAP: {
-        [key: string]: (conditionValue: ConditionValueType, propertyValue: PropertyValueType) => boolean
-    } = {
-        [OperationType.EQUAL]: this.areValuesEqual,
-        [OperationType.NOT_EQUAL]: this.areValuesNotEqual,
-        [OperationType.LESS]: this.isPropertyValueLessThanConditionValue,
-        [OperationType.GREATER]: this.isPropertyValueGreaterThanConditionValue,
-        [OperationType.REGEX_EQUAL]: this.isPropertyValueEqualToRegex,
-        [OperationType.REGEX_EQUAL_IGNORE_CASE]: this.isPropertyValueEqualToIgnoreCaseRegex,
-        [OperationType.REGEX_NOT_EQUAL]: this.isPropertyValueUnequalToRegex,
-        [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: this.isPropertyValueUnequalToIgnoreCaseRegex
+    private statHighlightingRules: StationHighlightingRule[] = [];
+    private delHighlightingRules: DeliveryHighlightingRule[] = [];
 
-    };
-
-    private isPropertyValueUnequalToIgnoreCaseRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if (propertyValue === undefined) {
-            result = false;
-        } else if (propertyValue === null) {
-            result = (conditionValue !== '');
-        } else {
-            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
-            if (conditionValue === '') {
-                result = (strValue !== '');
-            } else {
-                const regExp = new RegExp(conditionValue, 'i');
-                result = !regExp.exec(strValue);
-            }
-
-        }
-
-        return result;
-    }
-
-    private isPropertyValueUnequalToRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if (propertyValue === undefined) {
-            result = false;
-        } else if (propertyValue === null) {
-            result = (conditionValue !== '');
-        } else {
-            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
-            if (conditionValue === '') {
-                result = (strValue !== '');
-            } else {
-                const regExp = new RegExp(conditionValue);
-                result = !regExp.exec(strValue);
-            }
-
-        }
-
-        return result;
-    }
-
-    private isPropertyValueEqualToIgnoreCaseRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if (propertyValue === undefined) {
-            result = false;
-        } else if (propertyValue === null) {
-            result = (conditionValue === '');
-        } else {
-            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
-            if (conditionValue === '') {
-                result = (strValue === '');
-            } else {
-                const regExp = new RegExp(conditionValue, 'i');
-                result = !!regExp.exec(strValue);
-            }
-
-        }
-
-        return result;
-    }
-
-    private isPropertyValueEqualToRegex(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if (propertyValue === undefined) {
-            result = false;
-        } else if (propertyValue === null) {
-            result = (conditionValue === '');
-        } else {
-            const strValue = (typeof propertyValue === 'string') ? propertyValue : propertyValue.toString();
-            if (conditionValue === '') {
-                result = (strValue === '');
-            } else {
-                const regExp = new RegExp(conditionValue);
-                result = !!regExp.exec(strValue);
-            }
-
-        }
-
-        return result;
-    }
-
-    private areValuesEqual(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if ((propertyValue === undefined) || (propertyValue === null)) {
-            result = false;
-        } else {
-            const propertyType = typeof propertyValue;
-            if (propertyType === 'boolean') {
-                result = (propertyValue as boolean) === !!conditionValue;
-            } else if (propertyType === 'string') {
-                result = conditionValue.localeCompare(propertyValue as string) === 0;
-            } else if (propertyType === 'number') {
-                if (!isNaN(conditionValue as any)) {
-                    result = (propertyValue as number) === +conditionValue;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private areValuesNotEqual(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if ((propertyValue === undefined) || (propertyValue === null)) {
-            result = false;
-        } else {
-            const propertyType = typeof propertyValue;
-            if (propertyType === 'boolean') {
-                result = (propertyValue as boolean) !== !!conditionValue;
-            } else if (propertyType === 'string') {
-                result = conditionValue.localeCompare(propertyValue as string) !== 0;
-            } else if (propertyType === 'number') {
-                if (!isNaN(conditionValue as any)) {
-                    result = (propertyValue as number) !== +conditionValue;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private isPropertyValueLessThanConditionValue(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if ((propertyValue === undefined) || (propertyValue === null)) {
-            result = false;
-        } else {
-            const propertyType = typeof propertyValue;
-            if (propertyType === 'boolean') {
-                result = !propertyValue && !!conditionValue;
-            } else if (propertyType === 'string') {
-                result = conditionValue.localeCompare(propertyValue as string) > 0;
-            } else if (propertyType === 'number') {
-                if (!isNaN(conditionValue as any)) {
-                    result = (propertyValue as number) < +conditionValue;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private isPropertyValueGreaterThanConditionValue(conditionValue: ConditionValueType, propertyValue: PropertyValueType): boolean {
-        let result: boolean = false;
-
-        if ((propertyValue === undefined) || (propertyValue === null)) {
-            result = false;
-        } else {
-            const propertyType = typeof propertyValue;
-            if (propertyType === 'boolean') {
-                result = !!propertyValue && !conditionValue;
-            } else if (propertyType === 'string') {
-                result = conditionValue.localeCompare(propertyValue as string) < 0;
-            } else if (propertyType === 'number') {
-                if (!isNaN(conditionValue as any)) {
-                    result = (propertyValue as number) > +conditionValue;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    getMarkStationsInvisiblePayload(state: HighlightingSettings, stationIds: string[], invisible: boolean): SetHighlightingSettingsPayload {
-        let invisibleStations: string[] = [];
-        if (invisible) {
-            invisibleStations = [].concat(state.invisibleStations, stationIds);
-        } else {
-            const visibleMap = Utils.createSimpleStringSet(stationIds);
-            invisibleStations = state.invisibleStations.filter(id => !visibleMap[id]);
-        }
-        return {
-            highlightingSettings: {
-                ...state,
-                invisibleStations: invisibleStations
-            }
-        };
-    }
-
-    getClearInvisiblitiesPayload(state: HighlightingSettings): SetHighlightingSettingsPayload {
-        return {
-            highlightingSettings: {
-                ...state,
-                invisibleStations: []
-            }
-        };
-    }
+    private ruleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
+    private statRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
+    private delRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
 
     applyVisibilities(state: BasicGraphState, data: DataServiceData) {
-        data.stations.forEach(s => s.invisible = false);
-        data.getStatById(state.highlightingSettings.invisibleStations).filter(s => s !== null).forEach(s => s.invisible = true);
+        data.stations.forEach(s => {
+            s.invisible = false;
+            s.expInvisible = false;
+        });
+        data.deliveries.forEach(d => {
+            d.invisible = false;
+            d.expInvisible = false;
+        });
+        // ToDo: Refactor, check why a s!==null comparison is used here
+        data.getStatById(state.highlightingSettings.invisibleStations)
+            .filter(s => s !== null)
+            .forEach(s => {
+                s.invisible = true;
+                s.expInvisible = true;
+            });
         data.statVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
+        data.getDelById(state.highlightingSettings.invisibleDeliveries)
+            .forEach(d => {
+                d.invisible = true;
+                d.expInvisible = true;
+            });
+        data.deliveries.filter(d => !d.invisible).forEach(
+            d => d.invisible = data.statMap[d.source].invisible || data.statMap[d.target].invisible
+        );
+        data.delVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
     }
 
     hasStationVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
@@ -245,49 +68,108 @@ export class HighlightingService {
     }
 
     hasDeliveryVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
-        return !oldState;
+        return !oldState || oldState.highlightingSettings.invisibleDeliveries !== newState.highlightingSettings.invisibleDeliveries;
+    }
+
+    private getEvaluatorFunFromRule(rule: HighlightingRule): RuleConditionsEvaluatorFun {
+
+        if (rule.logicalConditions === null) {
+            return (item: StationOrDeliveryData) => true;
+        } else {
+            const ppConditionGroups = createPreprocessedConditions(rule.logicalConditions);
+            return (item: StationOrDeliveryData) => ppConditionGroups.some(
+                ppConditionGroup => ppConditionGroup.every(
+                    ppCondition => ppCondition.isValid(this.getPropertyValueFromElement(item, ppCondition.property))
+                )
+            );
+        }
+    }
+
+    private preprocessHighlightings(state: BasicGraphState): void {
+        const statRulesChanged = state.highlightingSettings.stations !== this.statHighlightingRules;
+        const delRulesChanged = state.highlightingSettings.deliveries !== this.delHighlightingRules;
+        if (statRulesChanged) {
+            this.statHighlightingRules = state.highlightingSettings.stations;
+            this.statRuleIdToEvaluatorFunMap = {};
+            state.highlightingSettings.stations.forEach(
+                rule => this.statRuleIdToEvaluatorFunMap[rule.id] = this.getEvaluatorFunFromRule(rule)
+            );
+        }
+        if (delRulesChanged) {
+            this.delHighlightingRules = state.highlightingSettings.deliveries;
+            this.delRuleIdToEvaluatorFunMap = {};
+            state.highlightingSettings.deliveries.forEach(
+                rule => this.delRuleIdToEvaluatorFunMap[rule.id] = this.getEvaluatorFunFromRule(rule)
+            );
+        }
+        if (statRulesChanged || delRulesChanged) {
+            this.ruleIdToEvaluatorFunMap = {
+                ...this.statRuleIdToEvaluatorFunMap,
+                ...this.delRuleIdToEvaluatorFunMap
+            };
+        }
     }
 
     applyHighlightingProps(state: BasicGraphState, data: DataServiceData): void {
-        const activeStationHighlightings: {[key: string]: boolean} = {};
+        this.preprocessHighlightings(state);
+
+        const ruleIdToStatCountMap: Record<RuleId, number> = {};
+        state.highlightingSettings.stations.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
+        const ruleIdToConflictCountMap: Record<RuleId, number> = {};
         data.stations
             .filter((station: StationData) => !station.invisible)
             .forEach((station: StationData) => {
 
-                station.highlightingInfo = this.createStationHighlightingInfo(station, state, activeStationHighlightings);
+                station.highlightingInfo = this.createStationHighlightingInfo(
+                    station, state, ruleIdToStatCountMap, ruleIdToConflictCountMap
+                );
 
             });
 
-        const activeDeliveryHighlightings: {[key: string]: boolean} = {};
+        const ruleIdToDelCountMap: Record<RuleId, number> = {};
+        state.highlightingSettings.deliveries.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
         data.deliveries
             .filter((delivery: DeliveryData) => !delivery.invisible)
             .forEach((delivery: DeliveryData) => {
-                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, activeDeliveryHighlightings);
+                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, ruleIdToDelCountMap);
             });
 
-        data.legendInfo = this.getLegendInfo(state, { stations: activeStationHighlightings, deliveries: activeDeliveryHighlightings });
+        data.legendInfo = this.getLegendInfo(state, {
+            stations: Utils.mapRecordValues(ruleIdToStatCountMap, (x: number) => x > 0),
+            deliveries: Utils.mapRecordValues(ruleIdToDelCountMap, (x: number) => x > 0)
+        });
+        data.highlightingStats = {
+            stationRuleStats: {
+                counts: ruleIdToStatCountMap,
+                conflicts: ruleIdToConflictCountMap
+            },
+            deliveryRuleStats: {
+                counts: ruleIdToDelCountMap
+            }
+        };
     }
 
     private getLegendInfo(
         state: BasicGraphState,
-        activeHighlightings: { stations: {[key: string]: boolean}, deliveries: {[key: string]: boolean}}
+        activeHighlightings: { stations: Record<RuleId, boolean>, deliveries: Record<RuleId, boolean>}
     ): LegendInfo {
 
-        const isCommonLinkHighlighting: {[key: string]: boolean} = {};
+        const ruleIdToIsCommonLinkRuleMap: Record<RuleId, boolean> = {};
         this.getCommonLinkEntries(state).forEach(
-            commonLinkHighData => isCommonLinkHighlighting[commonLinkHighData.name] = true
+            commonLinkRule => ruleIdToIsCommonLinkRuleMap[commonLinkRule.id] = true
         );
 
         return {
-            stations: state.highlightingSettings.stations.filter(
-                hData => hData.showInLegend && (activeHighlightings.stations[hData.name] || isCommonLinkHighlighting[hData.name])
-            ).map(
-                hData => ({ label: hData.name, color: this.mapToColor(hData.color), shape: hData.shape })
+            stations: state.highlightingSettings.stations.filter(rule =>
+                rule.showInLegend &&
+                (activeHighlightings.stations[rule.id] || ruleIdToIsCommonLinkRuleMap[rule.id])
+            ).map(rule =>
+                ({ label: rule.name, color: this.mapToColor(rule.color), shape: rule.shape })
             ),
-            deliveries: state.highlightingSettings.deliveries.filter(
-                hData => hData.showInLegend && (activeHighlightings.deliveries[hData.name])
-            ).map(
-                hData => ({ label: hData.name, color: this.mapToColor(hData.color), linePattern: hData.linePattern })
+            deliveries: state.highlightingSettings.deliveries.filter(rule =>
+                rule.showInLegend && (activeHighlightings.deliveries[rule.id])
+            ).map(rule =>
+                ({ label: rule.name, color: this.mapToColor(rule.color), linePattern: rule.linePattern })
             )
         };
     }
@@ -296,19 +178,19 @@ export class HighlightingService {
         return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
     }
 
-    private getCommonLinkEntries(state: BasicGraphState): StationHighlightingData[] {
-        return state.highlightingSettings.stations.filter(hSettings => this.isHighlightingSettingCommonLink(hSettings));
+    private getCommonLinkEntries(state: BasicGraphState): StationHighlightingRule[] {
+        return state.highlightingSettings.stations.filter(rule => !rule.disabled && this.isCommonLinkRule(rule));
     }
 
-    private isHighlightingSettingCommonLink(highlightingSetting: StationHighlightingData | DeliveryHighlightingData): boolean {
+    private isCommonLinkRule(rule: HighlightingRule): boolean {
         if (
-            !highlightingSetting.invisible &&
-            highlightingSetting.showInLegend &&
-            highlightingSetting.logicalConditions &&
-            highlightingSetting.logicalConditions.length === 1 &&
-            highlightingSetting.logicalConditions[0].length === 1
+            !rule.invisible &&
+            rule.showInLegend &&
+            rule.logicalConditions &&
+            rule.logicalConditions.length === 1 &&
+            rule.logicalConditions[0].length === 1
         ) {
-            const logicalCondition = highlightingSetting.logicalConditions[0][0];
+            const logicalCondition = rule.logicalConditions[0][0];
             return (
                 logicalCondition.propertyName === 'score' &&
                 logicalCondition.operationType === OperationType.EQUAL &&
@@ -318,30 +200,25 @@ export class HighlightingService {
         return false;
     }
 
-    private getActiveHighlightingData<
-        T extends StationData | DeliveryData,
-        K extends (T extends StationData ? StationHighlightingData : DeliveryHighlightingData)
-    >(fclElement: T, highlightingData: K[]): K[] {
-        return highlightingData.filter(
-            highData => !highData.invisible && (!highData.logicalConditions || highData.logicalConditions.some(andConList => {
-                return andConList.every((condition: LogicalCondition) => {
-                    const propertyValue = this.getPropertyValueFromElement(fclElement, condition.propertyName);
-                    const func = this.OPERATION_TYPE_TO_FUNCTION_MAP[condition.operationType];
-                    if (!func) {
-                        throw new Error(`Operation type ${condition.operationType} not supported`);
-                    }
-                    const result = func(condition.value, propertyValue);
-
-                    return result;
-                });
-            })));
+    private getActiveHighlightingRules<
+        T extends StationOrDeliveryData,
+        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+    >(fclElement: T, highlightingRules: K[]): K[] {
+        return highlightingRules.filter(rule =>
+            !rule.invisible &&
+            !rule.disabled &&
+            (
+                !rule.logicalConditions ||
+                this.ruleIdToEvaluatorFunMap[rule.id](fclElement)
+            )
+        );
     }
-    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, activeList: { [key: string]: boolean }) {
-        const activeHighlightingData = this.getActiveHighlightingData(delivery, state.highlightingSettings.deliveries);
+    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, ruleIdToDelCountMap: Record<RuleId, number>) {
+        const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
 
-        const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingData);
+        const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
-        activeHighlightingData.forEach(hData => activeList[hData.name] = true);
+        activeHighlightingRules.forEach(rule => ruleIdToDelCountMap[rule.id] = (ruleIdToDelCountMap[rule.id] || 0) + 1);
 
         return deliveryHighlightingInfo;
     }
@@ -349,20 +226,25 @@ export class HighlightingService {
     private createStationHighlightingInfo(
         station: StationData,
         state: BasicGraphState,
-        activeList: { [key: string]: boolean }
+        ruleIdToStatCountMap: Record<RuleId, number>,
+        ruleIdToConflictCountMap: Record<RuleId, number>
     ): StationHighlightingInfo {
 
-        const activeHighlightingData = this.getActiveHighlightingData(station, state.highlightingSettings.stations);
+        const activeHighlightingRules = this.getActiveHighlightingRules(station, state.highlightingSettings.stations);
 
-        const shape = activeHighlightingData
-                .filter(highData => !!highData.shape)
-                .map(highData => highData.shape);
+        const activeShapeRules = activeHighlightingRules.filter(rule => rule.shape !== null);
+        const shapes = activeShapeRules.map(rule => rule.shape);
 
-        activeHighlightingData.forEach(hData => activeList[hData.name] = true);
+        activeHighlightingRules.forEach(rule => ruleIdToStatCountMap[rule.id] = (ruleIdToStatCountMap[rule.id] || 0) + 1);
+        activeShapeRules.forEach((rule, index) => {
+            if (index > 0) {
+                ruleIdToConflictCountMap[rule.id] = (ruleIdToConflictCountMap[rule.id] || 0) + 1;
+            }
+        });
 
         const stationHighInfo: StationHighlightingInfo = {
-            ...this.getCommonHighlightingInfo(station, activeHighlightingData),
-            shape: shape.length > 0 ? shape[0] : null
+            ...this.getCommonHighlightingInfo(station, activeHighlightingRules),
+            shape: shapes.length > 0 ? shapes[0] : null
         };
 
         return stationHighInfo;
@@ -370,19 +252,19 @@ export class HighlightingService {
 
     private getCommonHighlightingInfo<
         T extends StationData | DeliveryData,
-        K extends (T extends StationData ? StationHighlightingData : DeliveryHighlightingData)
+        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(
         fclElement: T,
-        highlightingData: K[]
+        highlightingRules: K[]
     ): { label: string[], color: number[][] } {
-        const label = highlightingData
-            .filter(highData => !!highData.labelProperty)
-            .map(highData => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, highData.labelProperty)))
+        const label = highlightingRules
+            .filter(rule => rule.labelProperty !== null)
+            .map(rule => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, rule.labelProperty)))
             .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
 
-        const color = highlightingData
-            .filter(highData => !!highData.color)
-            .map(highData => highData.color);
+        const color = highlightingRules
+            .filter(rule => rule.color !== null)
+            .map(rule => rule.color);
 
         return {
             label: label,

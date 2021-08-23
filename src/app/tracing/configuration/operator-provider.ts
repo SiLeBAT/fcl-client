@@ -1,4 +1,4 @@
-import { ExtendedOperationType } from './configuration.model';
+import { OperationType } from '../data.model';
 
 type SimpleValueType = string | number | boolean | undefined | null;
 type OperatorFun = (value: SimpleValueType) => boolean;
@@ -16,30 +16,45 @@ function valueToStr(value: SimpleValueType): string {
     }
 }
 
-const operatorMap: { [key in ExtendedOperationType]: OperatorFunCreatorFun } = {
-    [ExtendedOperationType.LESS]: createLessOpFun,
-    [ExtendedOperationType.GREATER]: createGreaterOpFun,
-    [ExtendedOperationType.EQUAL]: createEqualOpFun,
-    [ExtendedOperationType.NOT_EQUAL]: createNotEqualOpFun,
-    [ExtendedOperationType.CONTAINS]: createContainsOpFun,
-    [ExtendedOperationType.REGEX_EQUAL]: createRegexEqualOpFun,
-    [ExtendedOperationType.REGEX_NOT_EQUAL]: createRegexNotEqualOpFun,
-    [ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE]: createRegexEqualICOpFun,
-    [ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: createRegexNotEqualICOpFun
+const operatorMap: { [key in OperationType]: OperatorFunCreatorFun } = {
+    [OperationType.LESS]: createLessOpFun,
+    [OperationType.GREATER]: createGreaterOpFun,
+    [OperationType.EQUAL]: createEqualOpFun,
+    [OperationType.NOT_EQUAL]: createNotEqualOpFun,
+    [OperationType.CONTAINS]: createContainsOpFun,
+    [OperationType.REGEX_EQUAL]: createRegexEqualOpFun,
+    [OperationType.REGEX_NOT_EQUAL]: createRegexNotEqualOpFun,
+    [OperationType.REGEX_EQUAL_IGNORE_CASE]: createRegexEqualICOpFun,
+    [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: createRegexNotEqualICOpFun
 };
 
-export function createLessOpFun(refValue: SimpleValueType): OperatorFun {
-    const strRef = valueToStr(refValue);
-    const numRef: number = typeof refValue === 'number' ? refValue : +strRef;
-    const isNumRef = !isNaN(numRef);
+export function createLessOpFun(strRefValue: string): OperatorFun {
+    const numRefValue = +strRefValue;
+    const isNumRef = !isNaN(numRefValue);
 
-    return (x: SimpleValueType) => {
-        const strX = valueToStr(x);
-        return isNumRef && typeof x === 'number' ?
-            x < numRef :
-            strX.localeCompare(strRef) < 0
-        ;
-    };
+    return (
+        isNumRef ?
+        (x: SimpleValueType) => {
+            if (x === undefined || x === null) {
+                return false;
+            } else {
+                const xType = typeof x;
+                if (xType === 'number') {
+                    return x < numRefValue;
+                } else if (xType === 'string') {
+                    const numX = +(x as string);
+                    const isNumX = !isNaN(numX);
+                    if (isNumX) {
+                        return numX < numRefValue;
+                    }
+                    return (x as string).localeCompare(strRefValue) < 0;
+                } else {
+                    return (x + '').localeCompare(strRefValue) < 0;
+                }
+            }
+        } :
+        (x: SimpleValueType) => valueToStr(x).localeCompare(strRefValue) < 0
+    );
 }
 
 export function createGreaterOpFun(refValue: SimpleValueType): OperatorFun {
@@ -47,23 +62,71 @@ export function createGreaterOpFun(refValue: SimpleValueType): OperatorFun {
     const numRef: number = typeof refValue === 'number' ? refValue : +strRef;
     const isNumRef = !isNaN(numRef);
 
-    return (x: SimpleValueType) =>
-        isNumRef && typeof x === 'number' ?
-        x > numRef :
-        valueToStr(x).localeCompare(strRef) > 0
-    ;
+    return (
+        isNumRef ?
+        (x: SimpleValueType) => {
+            if (x === undefined || x === null) {
+                return false;
+            } else {
+                const xType = typeof x;
+                if (xType === 'number') {
+                    return x > numRef;
+                } else if (xType === 'string') {
+                    const numX = +(x as string);
+                    const isNumX = !isNaN(numX);
+                    if (isNumX) {
+                        return numX > numRef;
+                    }
+                    return (x as string).localeCompare(strRef) > 0;
+                } else {
+                    return (x + '').localeCompare(strRef) > 0;
+                }
+            }
+        } :
+        (x: SimpleValueType) => valueToStr(x).localeCompare(strRef) > 0
+    );
 }
 
 export function createEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const strRef = valueToStr(refValue);
+    const strRefLCase = strRef.toLowerCase();
+    const numRef = +strRef;
+    const bolRef = (
+        strRefLCase === 'true' || numRef === 1 ? true :
+        strRefLCase === 'false' || numRef === 0 ? false :
+        undefined
+    );
 
-    return (x: SimpleValueType) => valueToStr(x) === strRef;
+    return (x: SimpleValueType) => {
+        if (x === undefined || x === null) {
+            return false;
+        } else if (typeof x === 'boolean') {
+            return x === bolRef;
+        } else {
+            return valueToStr(x) === strRef;
+        }
+    };
 }
 
 export function createNotEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const strRef = valueToStr(refValue);
+    const strRefLCase = strRef.toLowerCase();
+    const numRef = +strRef;
+    const bolRef = (
+        strRefLCase === 'true' || numRef === 1 ? true :
+        strRefLCase === 'false' || numRef === 0 ? false :
+        undefined
+    );
 
-    return (x: SimpleValueType) => valueToStr(x) !== strRef;
+    return (x: SimpleValueType) => {
+        if (x === undefined || x === null) {
+            return false;
+        } else if (typeof x === 'boolean') {
+            return x !== bolRef;
+        } else {
+            return valueToStr(x) !== strRef;
+        }
+    };
 }
 
 export function createContainsOpFun(refValue: SimpleValueType): OperatorFun {
@@ -104,6 +167,6 @@ export function createRegexNotEqualICOpFun(refValue: SimpleValueType): OperatorF
     return (x: SimpleValueType) => regex && !regex.test(valueToStr(x));
 }
 
-export function createOperatorFun(operatorType: ExtendedOperationType, refValue: SimpleValueType): OperatorFun {
+export function createOperatorFun(operatorType: OperationType, refValue: SimpleValueType): OperatorFun {
     return operatorMap[operatorType](refValue);
 }

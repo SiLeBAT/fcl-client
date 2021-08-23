@@ -1,0 +1,107 @@
+<div class="fcl-edit-rule">
+    <div class="fcl-edit-rule-name-and-symbol-fields">
+        <fcl-rule-name-view
+            class="fcl-edit-rule-name-field"
+            [ruleName]="ruleName"
+            (ruleNameChange) = "onRuleNameChange($event)"
+        >
+        </fcl-rule-name-view>
+        <fcl-node-symbol-view *ngIf="color !== null || shape !== null"
+            class="fcl-edit-rule-node-symbol"
+            [fillColor]="color"
+            [shapeType]="shape"
+        ></fcl-node-symbol-view>
+    </div>
+    <div class="fcl-edit-rule-shape-and-color-fields">
+        <div class="fcl-edit-rule-shape-fields">
+
+            <mat-checkbox
+                class="fcl-edit-rule-color-or-shape-checkbox"
+                [checked]="useShape"
+                (change)="onUseShapeChange($event.checked)"
+            >
+                Use shape:
+            </mat-checkbox>
+
+            <fcl-shape-selector-view
+                class="fcl-complex-filter-form-field fcl-edit-rule-shape-selector"
+                [disabled]="!useShape"
+                [value]="shape"
+                (valueChange)="onShapeChange($event)"
+            ></fcl-shape-selector-view>
+        </div>
+        <div class="fcl-edit-rule-color-fields">
+            <mat-checkbox
+                class="fcl-edit-rule-color-or-shape-checkbox"
+                [checked]="useColor"
+                (change)="onUseColorChange($event.checked)"
+            >
+                Use color:
+            </mat-checkbox>
+
+            <fcl-color-selector-view [disabled]="color === null" [color]="color" (colorChange)="onColorChange($event)"></fcl-color-selector-view>
+        </div>
+    </div>
+
+    <fcl-complex-filter-view
+        class="fcl-edit-rule-complex-filter"
+        [conditions] = "complexFilterConditions"
+        [availableProperties] = "availableProperties"
+        [availableOperatorTypes] = "availableOperatorTypes"
+        [propToValuesMap] = "propToValuesMap"
+        (conditionsChange) = "onComplexFilterChange($event)"
+    ></fcl-complex-filter-view>
+
+    <div class="fcl-edit-rule-action-button-container">
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            [matTooltip]="applyTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onApplyRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                Apply
+            </button>
+        </div>
+
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            matTooltip="Close dialogue">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onCancelRule()"
+                >
+                <mat-icon>clear</mat-icon>
+                Cancel
+            </button>
+        </div>
+
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            [matTooltip]="okTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onOkRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                OK
+            </button>
+        </div>
+
+    </div>
+</div>

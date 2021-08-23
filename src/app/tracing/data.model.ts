@@ -1,13 +1,16 @@
+export type HighlightingRuleId = string;
+
 interface ViewData {
     selected: boolean;
     invisible: boolean;
+    expInvisible: boolean;
 }
 
-interface PropMap {
+export interface PropMap {
     [key: string]: string;
 }
 
-interface FclDataSourceInfo {
+export interface FclDataSourceInfo {
     name?: string;
     data?: any;
     propMaps?: {
@@ -15,6 +18,7 @@ interface FclDataSourceInfo {
         deliveryPropMap?: PropMap;
     };
 }
+
 export interface FclData {
     source: FclDataSourceInfo;
     fclElements: FclElements;
@@ -37,10 +41,15 @@ export interface RowHighlightingInfo {
     shape?: NodeShapeType;
 }
 
+export type TreeStatus = 'collapsed' | 'expanded';
+
 export interface TableRow {
     id: string;
     highlightingInfo: RowHighlightingInfo;
-    [key: string]: string | number | boolean | RowHighlightingInfo;
+    parentRow?: TableRow;
+    parentRowId?: string;
+    treeStatus?: TreeStatus;
+    [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
 }
 
 export interface DataTable {
@@ -57,19 +66,27 @@ export interface FclElements {
     samples: SampleData[];
 }
 
+export type StationId = string;
+export type DeliveryId = string;
+
+export interface PropertyEntry {
+    name: string;
+    value: number | boolean | string;
+}
+
 export interface StationStoreData {
-    id: string;
+    id: StationId;
     name?: string;
     lat?: number;
     lon?: number;
     incoming: string[];
     outgoing: string[];
     connections: Connection[];
-    properties: { name: string, value: string }[];
+    properties: PropertyEntry[];
 }
 
 export interface DeliveryStoreData {
-    id: string;
+    id: DeliveryId;
     name?: string;
     lot?: string;
     lotKey?: string;
@@ -77,7 +94,7 @@ export interface DeliveryStoreData {
     dateOut?: string;
     source: string;
     target: string;
-    properties: { name: string, value: string }[];
+    properties: PropertyEntry[];
 }
 
 export interface Layout {
@@ -96,9 +113,11 @@ export interface Position {
     y: number;
 }
 
+export type PositionMap = Record<string, Position>;
+
 export interface Connection {
-    source: string;
-    target: string;
+    source: DeliveryId;
+    target: DeliveryId;
 }
 
 export enum SampleResultType {
@@ -115,21 +134,26 @@ export interface SampleData {
     result: string;
     resultType: SampleResultType;
 }
-
 export interface SelectedElements {
-    stations: string[];
-    deliveries: string[];
+    stations: StationId[];
+    deliveries: DeliveryId[];
 }
 
-export interface InvisibleElements {
-    stations: string[];
-    deliveries: string[];
+export interface ClearInvisibilitiesOptions {
+    clearStationInvs: boolean;
+    clearDeliveryInvs: boolean;
+}
+
+export interface ShowElementsTraceParams {
+    stationIds: StationId[];
+    deliveryIds: DeliveryId[];
+    observedType: ObservedType;
 }
 
 export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
-    shapeFileData: ShapeFileData;
+    shapeFileData: ShapeFileData | null;
     nodeSize: number;
     fontSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
@@ -140,55 +164,43 @@ export interface GraphSettings {
     selectedElements: SelectedElements;
     stationPositions: {[key: string]: Position};
     highlightingSettings: HighlightingSettings;
-    schemaLayout: Layout;
-    gisLayout: Layout;
-    ghostStation: string;
+    schemaLayout: Layout | null;
+    gisLayout: Layout | null;
+    ghostStation: StationId | null;
+    hoverDeliveries: DeliveryId[];
 }
 
 export interface HighlightingSettings {
-    invisibleStations: string[];
-    stations?: StationHighlightingData[];
-    deliveries?: DeliveryHighlightingData[];
+    invisibleStations: StationId[];
+    invisibleDeliveries: DeliveryId[];
+    stations?: StationHighlightingRule[];
+    deliveries?: DeliveryHighlightingRule[];
 }
 
-export interface TextElementInfo {
-    text: string;
+export interface MakeElementsInvisibleInputState {
+    selectedElements: SelectedElements;
+    highlightingSettings: HighlightingSettings;
+    tracingSettings: TracingSettings;
 }
 
-export interface PropElementInfo {
-    prop: string;
-    altText: string;
-}
-
-export type LabelElementInfo = TextElementInfo | PropElementInfo;
-
-export interface ROALabelSettings {
-    stationLabel: LabelElementInfo[][];
-    lotLabel: LabelElementInfo[][];
-    lotSampleLabel: LabelElementInfo[][];
-    stationSampleLabel: LabelElementInfo[][];
-}
-
-export interface ROASettings {
-    labelSettings: ROALabelSettings;
-}
-
-interface ElementHighlightingData {
+export interface HighlightingRule {
+    id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
     color: number[];
     invisible: boolean;
+    disabled: boolean;
     adjustThickness: boolean;
     labelProperty: string;
     valueCondition: ValueCondition;
     logicalConditions: LogicalCondition[][];
 }
 
-export interface DeliveryHighlightingData extends ElementHighlightingData {
+export interface DeliveryHighlightingRule extends HighlightingRule {
     linePattern: LinePatternType;
 }
 
-export interface StationHighlightingData extends ElementHighlightingData {
+export interface StationHighlightingRule extends HighlightingRule {
     shape: NodeShapeType;
 }
 
@@ -219,6 +231,7 @@ export interface LogicalCondition {
 
 export enum OperationType {
     EQUAL = '==',
+    CONTAINS = 'contains',
     GREATER = '>',
     NOT_EQUAL = '!=',
     LESS = '<',
@@ -240,7 +253,7 @@ export enum ValueType {
 }
 
 interface TraceableElementSettings {
-    id: string;
+    id: StationId | DeliveryId;
     observed: ObservedType;
     crossContamination: boolean;
     killContamination: boolean;
@@ -270,7 +283,7 @@ export interface TracingSettings extends GlobalTracingSettings {
 }
 
 export interface GroupData {
-    id: string;
+    id: StationId;
     name?: string;
     contains: string[];
     groupType: GroupType;
@@ -315,16 +328,30 @@ interface TracingResult {
     maxScore: number;
 }
 
+interface SharedHighlightingStats {
+    counts: Record<HighlightingRuleId, number>;
+}
+export interface StationHighlightingStats extends SharedHighlightingStats {
+    conflicts: Record<HighlightingRuleId, number>;
+}
+
+export interface DeliveryHighlightingStats extends SharedHighlightingStats {}
+export interface HighlightingStats {
+    stationRuleStats: StationHighlightingStats;
+    deliveryRuleStats: DeliveryHighlightingStats;
+}
 export interface DataServiceData {
-    statMap: { [key: string]: StationData };
+    statMap: Record<StationId, StationData>;
     stations: StationData[];
-    delMap: { [key: string]: DeliveryData };
+    delMap: Record<DeliveryId, DeliveryData>;
     deliveries: DeliveryData[];
-    statSel: { [key: string]: boolean };
-    delSel: { [key: string]: boolean };
-    statVis: { [key: string]: boolean };
+    statSel: Record<StationId, boolean>;
+    delSel: Record<DeliveryId, boolean>;
+    statVis: Record<StationId, boolean>;
+    delVis: Record<DeliveryId, boolean>;
     tracingResult: TracingResult;
     legendInfo: LegendInfo;
+    highlightingStats: HighlightingStats;
 
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
@@ -344,6 +371,7 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
 }
 
 export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
+    isMeta: boolean;
     contained: boolean;
     highlightingInfo?: StationHighlightingInfo;
 }
@@ -366,8 +394,8 @@ export enum LinePatternType {
 }
 
 export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, ViewData {
-    originalSource: string;
-    originalTarget: string;
+    originalSource: StationId;
+    originalTarget: StationId;
     highlightingInfo?: DeliveryHighlightingInfo;
 }
 
@@ -383,14 +411,13 @@ export interface SampleData {
 }
 
 export interface SelectedElements {
-    stations: string[];
-    deliveries: string[];
+    stations: StationId[];
+    deliveries: DeliveryId[];
 }
 
 export enum DialogAlignment {
     LEFT, CENTER, RIGHT
 }
-
 export interface BasicGraphState {
     fclElements: FclElements;
     groupSettings: GroupData[];
@@ -399,7 +426,19 @@ export interface BasicGraphState {
     selectedElements: SelectedElements;
 }
 
-export interface GraphState extends BasicGraphState {
+export interface SharedGraphState extends BasicGraphState {
+    mergeDeliveriesType: MergeDeliveriesType;
+    showMergedDeliveriesCounts: boolean;
+    ghostStation: StationId | null;
+    hoverDeliveries: DeliveryId[];
+}
+
+export interface GraphState extends SharedGraphState {
+    layout: Layout;
+}
+
+export interface SchemaGraphState extends SharedGraphState {
+    stationPositions: Record<StationId, Position>;
     layout: Layout;
 }
 
@@ -409,6 +448,12 @@ export interface SetTracingSettingsPayload {
 
 export interface SetHighlightingSettingsPayload {
     highlightingSettings: HighlightingSettings;
+}
+
+export interface SetInvisibleElementsPayload {
+    highlightingSettings: HighlightingSettings;
+    selectedElements: SelectedElements;
+    tracingSettings: TracingSettings;
 }
 
 interface LegendEntry {
@@ -432,4 +477,9 @@ export interface LegendInfo {
 export interface Size {
     width: number;
     height: number;
+}
+
+export interface Range {
+    min: number;
+    max: number;
 }

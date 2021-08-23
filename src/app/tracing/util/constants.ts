@@ -1,9 +1,9 @@
-import {
-    Color, GraphType, MapType, DeliveryData, StationData
-  } from '../data.model';
+import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.model';
 import { List, Map } from 'immutable';
 
 export class Constants {
+    static readonly EXAMPLE_MODEL_FILE_PATH = 'assets/data/SampleData_EN_WebApp.json';
+
     private static readonly STATION_DATA: StationData = {
         id: null,
         name: null,
@@ -13,8 +13,10 @@ export class Constants {
         outgoing: null,
         connections: null,
         invisible: null,
+        expInvisible: false,
         contained: null,
         contains: null,
+        isMeta: null,
         groupType: null,
         selected: null,
         observed: null,
@@ -41,6 +43,7 @@ export class Constants {
         originalSource: null,
         originalTarget: null,
         invisible: null,
+        expInvisible: false,
         selected: null,
         crossContamination: null,
         killContamination: null,
@@ -107,6 +110,7 @@ export class Constants {
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;
     static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
     static readonly DEFAULT_GRAPH_SHOW_ZOOM = true;
+    static readonly DEFAULT_GIS_AVOID_OVERLAY = false;
 
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(

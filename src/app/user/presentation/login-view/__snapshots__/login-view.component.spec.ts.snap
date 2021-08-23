@@ -5,15 +5,18 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
   <div
     class="fcl-image-container"
   >
-    <fcl-main-entry-header />
+    <fcl-main-entry-header
+      class="fcl-main-entry-header"
+    />
     <fcl-single-center-card-layout
       cardtitle="Login"
+      class="fcl-login-card"
     >
       <div
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
       >
         <mat-card
-          class="fcl-mat-card mat-card"
+          class="fcl-mat-card mat-card mat-focus-indicator"
         >
           <mat-card-header
             class="fcl-mat-card__header mat-card-header"
@@ -50,7 +53,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
               class="fcl-mat-card__actions"
             >
               <button
-                class="mat-button mat-button-base"
+                class="mat-focus-indicator mat-button mat-button-base"
                 color="primary"
                 mat-button=""
                 tabindex="0"
@@ -60,16 +63,16 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 >
                   Register
                 </span>
-                <div
+                <span
                   class="mat-button-ripple mat-ripple"
                   matripple=""
                 />
-                <div
+                <span
                   class="mat-button-focus-overlay"
                 />
               </button>
               <button
-                class="mat-button mat-button-base"
+                class="mat-focus-indicator mat-button mat-button-base"
                 color="primary"
                 mat-button=""
                 tabindex="0"
@@ -79,11 +82,11 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 >
                   Password forgotten?
                 </span>
-                <div
+                <span
                   class="mat-button-ripple mat-ripple"
                   matripple=""
                 />
-                <div
+                <span
                   class="mat-button-focus-overlay"
                 />
               </button>
@@ -92,6 +95,9 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
         </mat-card>
       </div>
     </fcl-single-center-card-layout>
+    <fcl-funding-sources-view
+      class="fcl-funding-box"
+    />
   </div>
 </fcl-login-view>
 `;

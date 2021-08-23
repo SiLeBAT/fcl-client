@@ -16,7 +16,7 @@
             </mat-panel-title>
         </mat-expansion-panel-header>
 
-        Label Configs...
+        Label Configurations ... coming soon
 
     </mat-expansion-panel>
 
@@ -31,32 +31,37 @@
             </mat-panel-title>
         </mat-expansion-panel-header>
 
-        Station Size Configs...
+        Station Size Configurations ... coming soon
 
     </mat-expansion-panel>
 
     <mat-expansion-panel
-        class="fcl-highlighting-coloursandshapes-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
-        (opened)="coloursAndShapesOpenState = true"
-        (closed)="coloursAndShapesOpenState = false">
+        class="fcl-highlighting-colorsandshapes-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        [expanded]="colorsAndShapesOpenState"
+        (opened)="colorsAndShapesOpenState = true"
+        (closed)="colorsAndShapesOpenState = false">
 
         <mat-expansion-panel-header>
             <mat-panel-title class="fcl-font-size-08">
-              Colours and Shapes... click  to {{ coloursAndShapesOpenState ?  'close' : 'open' }}
+              Colours and Shapes... click  to {{ colorsAndShapesOpenState ?  'close' : 'open' }}
             </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <div class="fcl-highlighting-station-table-view-container">
+        <fcl-colors-and-shapes-list-view
+            class="fcl-colors-and-shapes-view-container"
 
-            <fcl-highlighting-station-list-view
-                class = "fcl-highlighting-station-list-view"
-                [colorAndShapeHighlightings]="colorAndShapeHighlightings"
+            [rules]="colorOrShapeRules"
+            [availableProperties]="availableProperties"
+            [propToValuesMap]="propToValuesMap"
+            [highlightingStats]="highlightingStats"
+            [editIndex]="colorOrShapeRuleEditIndex"
 
-            ></fcl-highlighting-station-list-view>
-
-        </div>
+            (rulesChange)="onColorOrShapeRulesChange($event)"
+            (ruleDelete)="onColorOrShapeRuleDelete($event)"
+            (editIndexChange)="onColorOrShapeRuleEditIndexChange($event)"
+        >
+        </fcl-colors-and-shapes-list-view>
 
     </mat-expansion-panel>
 
 </div>
-

@@ -120,7 +120,7 @@ describe('Testing the Header of the app', function () {
                 });
             });
 
-            it('should have a link to generate the ROA layout', function () {
+            it('should have a link to open the ROA configuration', function () {
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-action-container').within(function () {
                         cy.get('[data-cy=fcl-example]').click();
@@ -129,9 +129,9 @@ describe('Testing the Header of the app', function () {
                         cy.get('@roaButton').should('contain', 'ROA Style');
                         cy.get('@roaButton').find('mat-icon').should('contain', 'grid_on');
                         cy.get('@roaButton').click();
-                        cy.url().should('contain', this.paths.roa);
                     });
                 });
+                cy.get('.mat-dialog-title').contains('ROA Report Configuration');
             });
 
             it('should have the avatar', function () {
@@ -169,7 +169,7 @@ describe('Testing the Header of the app', function () {
 
             it('should have a link to the tracing view', function () {
                 cy.get('@fclHeader').within(function () {
-                    cy.get('.fcl-action-container').within(function () {
+                    cy.get('.fcl-toolbar-action-container').within(function () {
                         cy.get('[mattooltip="Tracing view"]').as('tracingViewButton');
                         cy.get('@tracingViewButton').should('contain', 'Tracing View');
                         cy.get('@tracingViewButton').find('mat-icon').should('contain', 'track_changes');

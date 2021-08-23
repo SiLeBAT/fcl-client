@@ -2,7 +2,7 @@
 
 exports[`LoginComponent should render the component correctly 1`] = `
 <fcl-login
-  login={[Function EventEmitter]}
+  login={[Function EventEmitter_]}
   loginForm={[Function FormGroup]}
 >
   <form
@@ -105,7 +105,7 @@ exports[`LoginComponent should render the component correctly 1`] = `
           class="form-group"
         >
           <button
-            class="fcl-login-form__submit-button mat-raised-button mat-button-base"
+            class="fcl-login-form__submit-button mat-focus-indicator mat-raised-button mat-button-base"
             color="primary"
             mat-raised-button=""
             type="submit"
@@ -115,11 +115,11 @@ exports[`LoginComponent should render the component correctly 1`] = `
             >
                Login 
             </span>
-            <div
+            <span
               class="mat-button-ripple mat-ripple"
               matripple=""
             />
-            <div
+            <span
               class="mat-button-focus-overlay"
             />
           </button>

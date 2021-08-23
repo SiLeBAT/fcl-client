@@ -1,0 +1,40 @@
+.fcl-graph-container {
+    position: relative;
+    height: 100%;
+}
+
+.fcl-graph-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-unknown-lat-lon-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-graph {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.fcl-graph-legend {
+    position: absolute;
+    left: 16px;
+    bottom: 40px;
+}
+
+.fcl-osm-reference {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

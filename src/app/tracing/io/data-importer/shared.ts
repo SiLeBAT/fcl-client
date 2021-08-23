@@ -1,12 +1,15 @@
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
 import { InputFormatError } from '../io-errors';
+
+const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = 'SDHR';
+const DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = 'DDHR';
 
 export async function isValidJson(schema: any, data: any, throwError?: boolean): Promise<boolean> {
     const ajv = new Ajv();
     const valid = ajv.validate(schema, data);
     if (!valid && throwError) {
-        throw new InputFormatError('Invalid json schema: ' + ajv.errors.toString());
+        throw new InputFormatError('Invalid json schema: ' + ajv.errorsText(ajv.errors));
     }
     return valid;
 }
@@ -23,6 +26,13 @@ export function compareVersions(version1: string, version2: string): number {
     return 0;
 }
 
+export function areMajorVersionsMatching(version1: string, version2: string): boolean {
+    const versionNumbers1: Number[] = version1.split('.').map(s => Number(s));
+    const versionNumbers2: Number[] = version2.split('.').map(s => Number(s));
+
+    return versionNumbers1[0] === versionNumbers2[0];
+}
+
 export function checkVersionFormat(version: String): boolean {
     return version && version.trim().match('^\\d+\\.\\d+\\.\\d+$').length > 0;
 }
@@ -30,10 +40,13 @@ export function checkVersionFormat(version: String): boolean {
 export function createDefaultHighlights(): HighlightingSettings {
     const defaultHighlights: HighlightingSettings = {
         invisibleStations: [],
+        invisibleDeliveries: [],
         stations: [
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
                 name: 'Outbreak',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -55,8 +68,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
                 name: 'Observed',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     0,
                     255,
@@ -78,8 +93,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
                 name: 'Forward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     200,
@@ -101,8 +118,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
                 name: 'Backward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -124,8 +143,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Cross Contamination',
                 name: 'Cross Contamination',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     0,
                     0,
@@ -147,8 +168,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Common Link',
                 name: 'Common Link',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     255,
@@ -170,8 +193,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Score',
                 name: 'Score',
                 showInLegend: false,
+                disabled: false,
                 color: null,
                 invisible: false,
                 adjustThickness: true,
@@ -185,8 +210,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'StationLabel',
                 name: 'StationLabel',
                 showInLegend: false,
+                disabled: false,
                 color: null,
                 invisible: false,
                 adjustThickness: false,
@@ -198,8 +225,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 shape: null
             },
             {
+                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
                 name: 'Kill Contamination',
                 showInLegend: true,
+                disabled: false,
                 color: [ 153, 153, 153 ],
                 invisible: false,
                 adjustThickness: false,
@@ -220,8 +249,10 @@ export function createDefaultHighlights(): HighlightingSettings {
 
         deliveries: [
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
                 name: 'Outbreak',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -243,8 +274,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
                 name: 'Observed',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     0,
                     255,
@@ -266,8 +299,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
                 name: 'Forward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     200,
@@ -289,8 +324,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
                 name: 'Backward Trace',
                 showInLegend: true,
+                disabled: false,
                 color: [
                     255,
                     0,
@@ -312,8 +349,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
                 name: 'Kill Contamination',
                 showInLegend: true,
+                disabled: false,
                 color: [ 153, 153, 153 ],
                 invisible: false,
                 adjustThickness: false,
@@ -331,8 +370,10 @@ export function createDefaultHighlights(): HighlightingSettings {
                 linePattern: LinePatternType.SOLID
             },
             {
+                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'DeliveryLabel',
                 name: 'DeliveryLabel',
                 showInLegend: false,
+                disabled: false,
                 color: null,
                 invisible: false,
                 adjustThickness: false,

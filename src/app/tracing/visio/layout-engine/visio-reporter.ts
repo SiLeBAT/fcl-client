@@ -3,7 +3,7 @@ import {
     VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
     Size, StationGrouper, NodeLayoutInfo
 } from './datatypes';
-import { Position, StationData, DeliveryData, SampleData, ROASettings } from '../../data.model';
+import { Position, StationData, DeliveryData, SampleData } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
 import { assignToGrid } from './grid-assigner';
@@ -14,6 +14,7 @@ import { ConnectorCreator } from './connector-creator';
 import { improvePositions } from './station_positioner_lp';
 import { groupStationBoxes } from './stationbox-simple-grouper';
 import { CustomLabelCreator } from './custom-label-creator';
+import { ROASettings } from '../model';
 
 interface FclElements {
     stations: StationData[];

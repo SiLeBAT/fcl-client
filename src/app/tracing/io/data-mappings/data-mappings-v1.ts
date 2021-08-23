@@ -4,7 +4,7 @@ import { GroupType, OperationType, ValueType, NodeShapeType, MergeDeliveriesType
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import * as ExtDataConstants from './../ext-data-constants.v1';
 import { Constants as IntDataConstants } from '../../util/constants';
-import { DataTable, DataRow, JsonData, DeliveryHighlightingData, StationHighlightingData, ColumnProperty } from '../ext-data-model.v1';
+import { DataTable, DataRow, JsonData, ColumnProperty, HighlightingRule as ExtHighlightingRule } from '../ext-data-model.v1';
 import { Utils } from '../../util/non-ui-utils';
 import { STATION_PROP_TO_REQ_TYPE_MAP, DELIVERY_PROP_TO_REQ_TYPE_MAP, DEL2DEL_PROP_TO_REQ_TYPE_MAP } from '../int-data-constants';
 import { isValueTypeValid } from './shared';
@@ -25,12 +25,11 @@ interface AltPropMap {
 }
 
 function getAvailableProps(table: DataTable): { [key: string]: string } {
-    const tmp = Utils.createObjectFromArray(
+    return Utils.createObjectFromArray(
         table.columnProperties,
         (colProp: ColumnProperty) => colProp.id,
         (colProp: ColumnProperty) => colProp.type
     );
-    return tmp;
 }
 
 export const DONT_APPLY_VALUES_FOR_EXT_STATION_COLS: ImmutableList<string> = ImmutableList([
@@ -79,8 +78,11 @@ export const DEFAULT_STATION_PROP_INT_TO_EXT_MAP: ImmutableMap<
     crossContamination: ExtDataConstants.STATION_CROSSCONTAMINATION,
     killContamination: ExtDataConstants.STATION_KILLCONTAMINATION,
     forward: ExtDataConstants.STATION_FORWARD,
-    backward: ExtDataConstants.STATION_BACKWARD
+    backward: ExtDataConstants.STATION_BACKWARD,
+    isMeta: ExtDataConstants.STATION_ISMETA
 });
+
+export const DENOVO_STATION_PROP_INT_TO_EXT_MAP = DEFAULT_STATION_PROP_INT_TO_EXT_MAP;
 
 export const DEFAULT_DEL2DEL_PROP_INT_TO_EXT_MAP: ImmutableMap<
     string,
@@ -117,7 +119,6 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     name: ExtDataConstants.DELIVERY_NAME,
     source: ExtDataConstants.DELIVERY_FROM,
     target: ExtDataConstants.DELIVERY_TO,
-    lot: ExtDataConstants.DELIVERY_LOT_ID,
     lotKey: ExtDataConstants.DELIVERY_PRODUCT_K,
     weight: ExtDataConstants.DELIVERY_WEIGHT,
     crossContamination: ExtDataConstants.DELIVERY_CROSSCONTAMINATION,
@@ -130,9 +131,40 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     dateIn: ExtDataConstants.DELIVERY_IN_DATE
 });
 
+export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
+    string,
+    string
+> = ImmutableMap(Object.assign(
+    DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject(),
+    {
+        lot: ExtDataConstants.DELIVERY_LOT_NUMBER
+    }
+));
+
 const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
     { [key: string]: string | RegExp }
-> = ImmutableList([]);
+> = ImmutableList([
+    {
+        // supposed to target all other outputs
+        // destiller does not provider lot number
+        lotId: ExtDataConstants.DELIVERY_LOT_ID,
+        lot: ExtDataConstants.DELIVERY_LOT_NUMBER
+    },
+    {
+        // supposed to target the destiller output
+        // destiller provides refid
+        lot: ExtDataConstants.DELIVERY_LOT_ID,
+        refId: ExtDataConstants.DELIVERY_REF_ID
+    },
+    {
+        // prefer Lot Number as lot
+        lot: ExtDataConstants.DELIVERY_LOT_NUMBER
+    },
+    {
+        // fall back to lot ID
+        lot: ExtDataConstants.DELIVERY_LOT_ID
+    }
+]);
 
 function getMatchingProp(availableProps: string[], key: string | RegExp): string {
     if (typeof key === 'string') {
@@ -206,7 +238,7 @@ function getPropMap(
 }
 
 // retrieves all props referenced in HighlightingData
-function getReferencedProps(highlightingConditions: (StationHighlightingData | DeliveryHighlightingData)[]): string[] {
+function getReferencedProps(highlightingConditions: ExtHighlightingRule[]): string[] {
     return (
         highlightingConditions ?
         [].concat(...highlightingConditions.map(
@@ -396,14 +428,12 @@ export class PropMapper {
                     } else if (this.directProps.has(intProp)) {
                         toObj[intProp] = property.value;
                     } else if (toObj['properties']) {
-                        (toObj as StationStoreData | DeliveryStoreData).properties.push({
-                            name: intProp,
-                            value: (
-                                property.value !== null && property.value !== undefined && typeof(property.value) !== 'string' ?
-                                property.value.toString() :
-                                property.value
-                            ) as string
-                        });
+                        if (property.value !== null && property.value !== undefined) {
+                            (toObj as StationStoreData | DeliveryStoreData).properties.push({
+                                name: intProp,
+                                value: property.value
+                            });
+                        }
                     }
                 }
             }

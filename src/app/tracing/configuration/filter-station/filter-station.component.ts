@@ -1,11 +1,10 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, BasicGraphState, DataTable, DataServiceData } from '@app/tracing/data.model';
-import { takeWhile } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { TableRow, BasicGraphState, DataTable, DataServiceData, StationId } from '@app/tracing/data.model';
+import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { TableService } from '@app/tracing/services/table.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { DataService } from '@app/tracing/services/data.service';
@@ -13,6 +12,7 @@ import { InputData as FilterElementsViewInputData } from '../filter-elements-vie
 import { FilterTableSettings } from '../configuration.model';
 import { TableType } from '../model';
 import { SelectFilterTableColumnsMSA } from '../configuration.actions';
+import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
 interface FilterTableState {
     graphState: BasicGraphState;
@@ -31,18 +31,13 @@ interface CachedData {
 })
 export class FilterStationComponent implements OnInit, OnDestroy {
 
-    private isFilterStationTabActive$: Observable<boolean> = this.store.pipe(
-        select(tracingSelectors.getIsFilterStationTabActive),
-        takeWhile(() => this.componentIsActive)
-    );
-
-    private componentIsActive = true;
     private stateSubscription: Subscription;
 
     private cachedData: CachedData;
     private cachedState: FilterTableState;
 
     private filterElementsViewInputData_: FilterElementsViewInputData;
+    private currentGhostStationId: StationId | null = null;
 
     get filterElementsViewInputData(): FilterElementsViewInputData {
         return this.filterElementsViewInputData_;
@@ -56,23 +51,11 @@ export class FilterStationComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.isFilterStationTabActive$.subscribe(
-            isActive => {
-                if (!isActive) {
-                    if (this.stateSubscription) {
-                        this.stateSubscription.unsubscribe();
-                        this.stateSubscription = null;
-                    }
-                } else {
-                    if (!this.stateSubscription) {
-                        this.stateSubscription = this.store.select(tracingSelectors.getStationFilterData).subscribe(
-                            (state) => this.applyState(state),
-                            err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
-                        );
-                    }
-                }
-            },
-            err => this.alertService.error(`showConfigurationSideBar store subscription failed: ${err}`)
+        const isFilterStationTabActive$ = this.store.select(tracingSelectors.getIsFilterStationTabActive);
+        const stationFilterState$ = this.store.select(tracingSelectors.getStationFilterData);
+        this.stateSubscription = stationFilterState$.pipe(optInGate(isFilterStationTabActive$)).subscribe(
+            (state) => this.applyState(state),
+            err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
         );
     }
 
@@ -94,20 +77,30 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.ResetAllStationFiltersSOA());
     }
 
-    onMouseOverTableRow(row: TableRow): void {
-        if (this.cachedData.data.statMap[row.id].invisible) {
-            this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: row.id }));
+    onMouseOverTableRow(row: TableRow | null): void {
+        let newGhostStationId: string | null = null;
+        if (row !== null) {
+            const station = this.cachedData.data.statMap[row.id];
+            if (station.contained) {
+                const group = this.cachedData.data.statMap[row.parentRowId];
+                if (group.invisible) {
+                    newGhostStationId = group.id;
+                }
+            } else if (station.invisible) {
+                newGhostStationId = station.id;
+            }
         }
-    }
-
-    onMouseLeaveTableRow(row: TableRow): void {
-        if (this.cachedData.data.statMap[row.id].invisible) {
-            this.store.dispatch(new tracingActions.ClearGhostStationMSA());
+        if (newGhostStationId !== this.currentGhostStationId) {
+            this.currentGhostStationId = newGhostStationId;
+            if (newGhostStationId === null) {
+                this.store.dispatch(new tracingActions.ClearGhostStationMSA());
+            } else {
+                this.store.dispatch(new tracingActions.ShowGhostStationMSA({ stationId: newGhostStationId }));
+            }
         }
     }
 
     ngOnDestroy() {
-        this.componentIsActive = false;
         if (this.stateSubscription) {
             this.stateSubscription.unsubscribe();
             this.stateSubscription = null;
@@ -119,6 +112,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         const data = this.dataService.getData(state.graphState);
         if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
             dataTable = this.tableService.getStationData(state.graphState);
+            this.currentGhostStationId = null;
         } else if (
             data.stations !== this.cachedData.data.stations ||
             data.deliveries !== this.cachedData.data.deliveries ||

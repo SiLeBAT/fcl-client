@@ -13,16 +13,16 @@ export interface MapConfig {
     shapeFileData: ShapeFileData;
 }
 
-export interface FrameConfig {
-    xMin: number;
-    xMax: number;
-    yMin: number;
-    yMax: number;
+export interface RectConfig {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+    borderWidth: number;
 }
 
 const LAYER_ID_KEY = 'layerId';
 const MAP_LAYER_ID = 'MapLayer';
-const FRAME_LAYER_ID = 'FrameLayer';
 
 const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
     [MapType.MAPNIK, () => new OSM()],
@@ -93,52 +93,4 @@ function removeLayer(map: ol.Map, layerId: string): void {
     if (layers.length > 0) {
         map.removeLayer(layers[0]);
     }
-}
-
-export function removeFrameLayer(map: ol.Map) {
-    removeLayer(map, FRAME_LAYER_ID);
-}
-
-export function setFrameLayer(map: ol.Map, frameConfig: FrameConfig): void {
-    removeFrameLayer(map);
-    map.addLayer(createFrameLayer(frameConfig));
-}
-
-function createFrameLayer(frameConfig: FrameConfig): BaseLayer {
-    const polygon = new Style({
-        stroke: new Stroke({
-            color: 'rgba(255, 0, 0, 0.3)',
-            width: 20
-        })
-    });
-
-    const geojsonObject = {
-        type: 'FeatureCollection',
-        features: [
-            {
-                type: 'Feature',
-                id: 'polygon',
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: [[
-                        [frameConfig.xMin, frameConfig.yMax],
-                        [frameConfig.xMin, frameConfig.yMin],
-                        [frameConfig.xMax, frameConfig.yMin],
-                        [frameConfig.xMax, frameConfig.yMax]
-                    ]]
-                }
-            }
-        ]
-    };
-
-    const vectorSource = new VectorSource({
-        features: new GeoJSON().readFeatures(geojsonObject)
-    });
-
-    const vectorLayer = new VectorLayer({
-        source: vectorSource,
-        style: polygon
-    });
-
-    return vectorLayer;
 }

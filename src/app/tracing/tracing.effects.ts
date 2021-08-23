@@ -9,7 +9,7 @@ import * as fromTracing from './state/tracing.reducers';
 import * as tracingSelectors from './state/tracing.selectors';
 import { mergeMap, withLatestFrom } from 'rxjs/operators';
 import { EMPTY, of } from 'rxjs';
-import { DeliveryData, StationData } from './data.model';
+import { DeliveryData, DeliveryId, StationData, StationId } from './data.model';
 import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
@@ -17,16 +17,18 @@ import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/de
 import { MatDialog } from '@angular/material/dialog';
 import { TracingService } from './services/tracing.service';
 import { HighlightingService } from './services/highlighting.service';
+import { EditTracingSettingsService } from './services/edit-tracing-settings.service';
+import { EditHighlightingService } from './configuration/edit-highlighting.service';
 
 @Injectable()
 export class TracingEffects {
     constructor(
         private actions$: Actions,
         private dataService: DataService,
-        private tracingService: TracingService,
+        private editTracSettingsService: EditTracingSettingsService,
         private dialogService: MatDialog,
         private alertService: AlertService,
-        private highlightingService: HighlightingService,
+        private editHighlightingService: EditHighlightingService,
         private store: Store<fromTracing.State>
     ) {}
 
@@ -36,30 +38,27 @@ export class TracingEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getBasicGraphData))),
         mergeMap(([action, state]) => {
             const stationId = action.payload.stationId;
-            // tslint:disable-next-line rxjs-finnish
-            const hoverDeliveriesSubject = action.payload.hoverDeliveriesSubject;
             const data = this.dataService.getData(state);
             const station = data.statMap[stationId];
 
             if (station) {
-                const deliveries: Map<string, DeliveryData> = new Map();
-                const connectedStations: Map<string, StationData> = new Map();
+                const deliveries: Map<DeliveryId, DeliveryData> = new Map();
+                const connectedStations: Map<StationId, StationData> = new Map();
 
-                for (const d of data.getDelById(station.incoming)) {
-                    deliveries.set(d.id, d);
-                    connectedStations.set(d.source, data.statMap[d.source]);
+                for (const delivery of data.getDelById(station.incoming)) {
+                    deliveries.set(delivery.id, delivery);
+                    connectedStations.set(delivery.source, data.statMap[delivery.source]);
                 }
 
-                for (const d of data.getDelById(station.outgoing)) {
-                    deliveries.set(d.id, d);
-                    connectedStations.set(d.target, data.statMap[d.target]);
+                for (const delivery of data.getDelById(station.outgoing)) {
+                    deliveries.set(delivery.id, delivery);
+                    connectedStations.set(delivery.target, data.statMap[delivery.target]);
                 }
 
                 const dialogData: StationPropertiesData = {
                     station: station,
                     deliveries: deliveries,
-                    connectedStations: connectedStations,
-                    hoverDeliveriesSubject: hoverDeliveriesSubject
+                    connectedStations: connectedStations
                 };
 
                 this.dialogService.open(StationPropertiesComponent, { data: dialogData });
@@ -99,14 +98,12 @@ export class TracingEffects {
     );
 
     @Effect()
-    showStationTrace$ = this.actions$.pipe(
-        ofType<tracingEffectActions.ShowStationTraceMSA>(tracingEffectActions.TracingActionTypes.ShowStationTraceMSA),
+    showElementsTrace$ = this.actions$.pipe(
+        ofType<tracingEffectActions.ShowElementsTraceMSA>(tracingEffectActions.TracingActionTypes.ShowElementsTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
-            const stationId = action.payload.stationId;
-            const observedType = action.payload.observedType;
             try {
-                const payload = this.tracingService.getShowStationTracePayload(state, stationId, observedType);
+                const payload = this.editTracSettingsService.getShowElementsTracePayload(state, action.payload);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
@@ -118,31 +115,12 @@ export class TracingEffects {
     );
 
     @Effect()
-    showDeliveryTrace$ = this.actions$.pipe(
-        ofType<tracingEffectActions.ShowDeliveryTraceMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryTraceMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
-        mergeMap(([action, state]) => {
-            const deliveryId = action.payload.deliveryId;
-            const observedType = action.payload.observedType;
-            try {
-                const payload = this.tracingService.getShowDeliveryTracePayload(state, deliveryId, observedType);
-                if (payload) {
-                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
-                }
-            } catch (error) {
-                this.alertService.error(`Delivery trace could not be set!, error: ${error}`);
-            }
-            return EMPTY;
-        })
-    );
-
-    @Effect()
     clearTrace$ = this.actions$.pipe(
         ofType<tracingEffectActions.ClearTraceMSA>(tracingEffectActions.TracingActionTypes.ClearTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.tracingService.getClearTracePayload(state);
+                const payload = this.editTracSettingsService.getClearTracePayload(state);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
@@ -163,7 +141,7 @@ export class TracingEffects {
             const stationIds = action.payload.stationIds;
             const crossContamination = action.payload.crossContamination;
             try {
-                const payload = this.tracingService.getSetStationCrossContPayload(state, stationIds, crossContamination);
+                const payload = this.editTracSettingsService.getSetStationCrossContPayload(state, stationIds, crossContamination);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
@@ -175,7 +153,7 @@ export class TracingEffects {
     );
 
     @Effect()
-    setStationKillCantamination$ = this.actions$.pipe(
+    setStationKillContamination$ = this.actions$.pipe(
         ofType<tracingEffectActions.SetStationKillContaminationMSA>(
             tracingEffectActions.TracingActionTypes.SetStationKillContaminationMSA
         ),
@@ -184,7 +162,7 @@ export class TracingEffects {
             const stationIds = action.payload.stationIds;
             const killContamination = action.payload.killContamination;
             try {
-                const payload = this.tracingService.getSetStationKillContPayload(state, stationIds, killContamination);
+                const payload = this.editTracSettingsService.getSetStationKillContPayload(state, stationIds, killContamination);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
@@ -203,7 +181,7 @@ export class TracingEffects {
             const stationIds = action.payload.stationIds;
             const outbreak = action.payload.outbreak;
             try {
-                const payload = this.tracingService.getMarkStationsAsOutbreakPayload(state, stationIds, outbreak);
+                const payload = this.editTracSettingsService.getMarkStationsAsOutbreakPayload(state, stationIds, outbreak);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
@@ -215,14 +193,14 @@ export class TracingEffects {
     );
 
     @Effect()
-    makeStationsInvisible$ = this.actions$.pipe(
-        ofType<tracingEffectActions.MakeStationsInvisibleMSA>(tracingEffectActions.TracingActionTypes.MakeStationsInvisibleMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
+    makeElementsInvisible$ = this.actions$.pipe(
+        ofType<tracingEffectActions.MakeElementsInvisibleMSA>(tracingEffectActions.TracingActionTypes.MakeElementsInvisibleMSA),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.getMakeElementsInvisibleInputState))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.highlightingService.getMarkStationsInvisiblePayload(state, action.payload.stationIds, true);
+                const payload = this.editHighlightingService.getMakeElementsInvisiblePayload(state, action.payload);
                 if (payload) {
-                    return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
+                    return of(new tracingStateActions.SetInvisibleElementsSOA(payload));
                 }
             } catch (error) {
                 this.alertService.error(`Stations could not be made invisible!, error: ${error}`);
@@ -237,7 +215,7 @@ export class TracingEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.highlightingService.getClearInvisiblitiesPayload(state);
+                const payload = this.editHighlightingService.getClearInvisiblitiesPayload(state, action.payload);
                 if (payload) {
                     return of(new tracingStateActions.SetHighlightingSettingsSOA(payload));
                 }
@@ -254,7 +232,7 @@ export class TracingEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.tracingService.getClearOutbreakStationsPayload(state);
+                const payload = this.editTracSettingsService.getClearOutbreakStationsPayload(state);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }

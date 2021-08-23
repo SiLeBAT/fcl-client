@@ -7,11 +7,13 @@ import { StoreModule } from '@ngrx/store';
 import { reducer, STATE_SLICE_NAME } from './state/content.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { ContentEffects } from './state/content.effects';
+import { FundingSourcesViewComponent } from './funding-sources-view/funding-sources-view.component';
 
 @NgModule({
     declarations: [
         DataProtectionDeclarationComponent,
-        DataProtectionNoticeComponent
+        DataProtectionNoticeComponent,
+        FundingSourcesViewComponent
     ],
     imports: [
         CommonModule,
@@ -19,6 +21,8 @@ import { ContentEffects } from './state/content.effects';
         StoreModule.forFeature(STATE_SLICE_NAME, reducer),
         EffectsModule.forFeature([ContentEffects])
     ],
-    exports: []
+    exports: [
+        FundingSourcesViewComponent
+    ]
 })
 export class ContentModule { }

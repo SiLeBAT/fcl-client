@@ -571,7 +571,6 @@ export class VisioToMxGraphService {
             );
         }
 
-        // this.graph.updateCellSize(entryCell, false);
         return entryCell;
     }
 

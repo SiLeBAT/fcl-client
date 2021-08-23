@@ -3,12 +3,15 @@ import { VisioReport } from '../visio/layout-engine/datatypes';
 import {
     GraphType, FclData, SelectedElements, Position,
     SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
-    ROASettings,
-    CrossContTraceType
+    CrossContTraceType,
+    DeliveryId,
+    StationHighlightingRule,
+    SetInvisibleElementsPayload
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
 import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
+import { ROASettings } from '../visio/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
@@ -37,6 +40,7 @@ export enum TracingActionTypes {
     SetTracingSettingsSOA = '[Tracing] Set Tracing Settings',
     SetCrossContTraceTypeSOA = '[Tracing] Set Cross Contamination Trace Type',
     SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
+    SetInvisibleElementsSOA = '[Tracing] Set Invisible Elements',
     SetActiveConfigurationTabIdSOA = '[Configuration Layout] Set Active Configuration Tab Id',
     SetActiveFilterTabIdSOA = '[Configuration Layout] Set Active Filter Tab Id',
     SetActiveHighlightingTabIdSOA = '[Configuration Layout] Set Active Highlighting Tab Id',
@@ -48,8 +52,11 @@ export enum TracingActionTypes {
     SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
     ShowGhostStationMSA = '[Station Table] Show Ghost Station',
     ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
+    SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
-    ResetTracingStateSOA = '[Tracing] Reset Tracing State'
+    ResetTracingStateSOA = '[Tracing] Reset Tracing State',
+    SetStationHighlightingRulesSOA = '[Colors and Shapes] Set Station Highlighting Rules',
+    SetColorsAndShapesEditIndexSOA = '[Colors and Shapes] Set Edit Index'
 }
 
 export class TracingActivated implements Action {
@@ -204,6 +211,12 @@ export class SetHighlightingSettingsSOA implements Action {
     constructor(public payload: SetHighlightingSettingsPayload) {}
 }
 
+export class SetInvisibleElementsSOA implements Action {
+    readonly type = TracingActionTypes.SetInvisibleElementsSOA;
+
+    constructor(public payload: SetInvisibleElementsPayload) {}
+}
+
 export class SetActiveConfigurationTabIdSOA implements Action {
     readonly type = TracingActionTypes.SetActiveConfigurationTabIdSOA;
 
@@ -268,6 +281,12 @@ export class ClearGhostStationMSA implements Action {
     readonly type = TracingActionTypes.ClearGhostStationMSA;
 }
 
+export class SetHoverDeliveriesSOA implements Action {
+    readonly type = TracingActionTypes.SetHoverDeliveriesSOA;
+
+    constructor(public payload: { deliveryIds: DeliveryId[] }) {}
+}
+
 export class SetROAReportSettingsSOA implements Action {
     readonly type = TracingActionTypes.SetROAReportSettingsSOA;
 
@@ -276,6 +295,19 @@ export class SetROAReportSettingsSOA implements Action {
 
 export class ResetTracingStateSOA implements Action {
     readonly type = TracingActionTypes.ResetTracingStateSOA;
+}
+
+// export class AddColoursAndShapesHighlightingRuleSOA implements Action {
+export class SetStationHighlightingRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetStationHighlightingRulesSOA;
+
+    constructor(public payload: { rules: StationHighlightingRule[] }) {}
+}
+
+export class SetColorsAndShapesEditIndexSOA implements Action {
+    readonly type = TracingActionTypes.SetColorsAndShapesEditIndexSOA;
+
+    constructor(public payload: { editIndex: number }) {}
 }
 
 export type TracingActions =
@@ -305,6 +337,7 @@ export type TracingActions =
     | SetTracingSettingsSOA
     | SetCrossContTraceTypeSOA
     | SetHighlightingSettingsSOA
+    | SetInvisibleElementsSOA
     | SetActiveConfigurationTabIdSOA
     | SetActiveFilterTabIdSOA
     | SetActiveHighlightingTabIdSOA
@@ -317,4 +350,7 @@ export type TracingActions =
     | SetROAReportSettingsSOA
     | ShowGhostStationMSA
     | ClearGhostStationMSA
-    | ResetTracingStateSOA;
+    | SetHoverDeliveriesSOA
+    | ResetTracingStateSOA
+    | SetStationHighlightingRulesSOA
+    | SetColorsAndShapesEditIndexSOA;

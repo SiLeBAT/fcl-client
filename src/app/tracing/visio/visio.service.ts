@@ -1,7 +1,8 @@
-import { StationData, DeliveryData, SampleData, ROASettings } from '../data.model';
+import { StationData, DeliveryData, SampleData } from '../data.model';
 import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo } from './layout-engine/datatypes';
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
+import { ROASettings } from './model';
 
 interface FclElements {
     stations: StationData[];

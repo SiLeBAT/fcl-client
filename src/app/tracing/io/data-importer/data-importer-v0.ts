@@ -1,4 +1,4 @@
-import { FclData, GraphSettings, ObservedType, MergeDeliveriesType } from '../../data.model';
+import { FclData, GraphSettings, ObservedType, MergeDeliveriesType, PropMap } from '../../data.model';
 
 import { Utils } from './../../util/non-ui-utils';
 import { Constants } from './../../util/constants';
@@ -7,6 +7,8 @@ import { IDataImporter } from './datatypes';
 import { importSamples } from './sample-importer-v1';
 import { createDefaultHighlights } from './shared';
 import { InputFormatError, InputDataError } from '../io-errors';
+import { DENOVO_STATION_PROP_INT_TO_EXT_MAP, DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP } from '../data-mappings/data-mappings-v1';
+import { DELIVERY_PROP_V0_TO_V1_MAP } from '../data-mappings/data-mappings-v0-to-v1';
 
 export class DataImporterV0 implements IDataImporter {
 
@@ -133,13 +135,20 @@ export class DataImporterV0 implements IDataImporter {
 
     private applyStations(elements: any[], fclData: FclData) {
         const defaultKeys: Set<string> = new Set(Constants.STATION_PROPERTIES.toArray());
+        const propMap: PropMap = DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
             const properties: { name: string, value: string }[] = [];
 
             for (const key of Object.keys(e)) {
-                if (!defaultKeys.has(key)) {
-                    properties.push({ name: key, value: e[key] });
+                const value = e[key];
+                if (value !== undefined && value !== null) {
+                    if (!defaultKeys.has(key)) {
+                        properties.push({ name: key, value: value });
+                        if (propMap[key] === undefined) {
+                            propMap[key] = key;
+                        }
+                    }
                 }
             }
 
@@ -182,17 +191,37 @@ export class DataImporterV0 implements IDataImporter {
                 fclData.graphSettings.stationPositions[e.id] = e.position;
             }
         }
+
+        if (fclData.source === undefined) {
+            fclData.source = {};
+        }
+        if (fclData.source.propMaps === undefined) {
+            fclData.source.propMaps = {};
+        }
+        fclData.source.propMaps.stationPropMap = propMap;
     }
 
     private applyDeliveries(elements: any[], fclData: FclData) {
-        const defaultKeys: Set<string> = new Set(Constants.DELIVERY_PROPERTIES.toArray());
+        const v0ToV1PropMap: Record<string, string> = DELIVERY_PROP_V0_TO_V1_MAP.toObject();
+        const v1ToV0PropMap = Utils.getReversedRecord(v0ToV1PropMap);
+        const defaultKeys: Set<string> = new Set(
+            Constants.DELIVERY_PROPERTIES.toArray().map(
+                p => v1ToV0PropMap[p] !== undefined ? v1ToV0PropMap[p] : p
+        ));
+        const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
             const properties: { name: string, value: string }[] = [];
 
             for (const key of Object.keys(e)) {
-                if (!defaultKeys.has(key)) {
-                    properties.push({ name: key, value: e[key] });
+                const value = e[key];
+                if (value !== undefined && value !== null) {
+                    if (!defaultKeys.has(key)) {
+                        properties.push({ name: key, value: e[key] });
+                        if (propMap[key] === undefined) {
+                            propMap[key] = key;
+                        }
+                    }
                 }
             }
 
@@ -219,5 +248,13 @@ export class DataImporterV0 implements IDataImporter {
                 fclData.graphSettings.selectedElements.deliveries.push(e.id);
             }
         }
+
+        if (fclData.source === undefined) {
+            fclData.source = {};
+        }
+        if (fclData.source.propMaps === undefined) {
+            fclData.source.propMaps = {};
+        }
+        fclData.source.propMaps.deliveryPropMap = propMap;
     }
 }

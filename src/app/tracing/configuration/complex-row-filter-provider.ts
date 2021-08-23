@@ -1,32 +1,24 @@
 import { RowFilter } from './model';
 import * as _ from 'lodash';
-import { TableRow } from '../data.model';
+import { LogicalCondition, TableRow } from '../data.model';
 import { createOperatorFun } from './operator-provider';
-import { ExtendedOperationType, ComplexRowFilterSettings, LogicalFilterCondition, JunktorType } from './configuration.model';
+import { ComplexFilterCondition, ComplexRowFilterSettings, JunktorType } from './configuration.model';
 
 type FilterFun = (rows: TableRow[]) => TableRow[];
 
 type SimpleValueType = string | number | boolean | undefined | null;
-
-interface InternalLogicalFilterCondition {
-    property: string;
-    operation: ExtendedOperationType;
-    value: string | number | boolean;
-}
 
 interface PreprocessedCondition {
     property: string;
     isValid(value: SimpleValueType): boolean;
 }
 
-type ConditionGroup = InternalLogicalFilterCondition[];
+export type ComplexRowFilter = RowFilter<LogicalCondition[][]>;
 
-export type ComplexRowFilter = RowFilter<ConditionGroup[]>;
-
-function isConditionValid(condition: InternalLogicalFilterCondition): boolean {
+function isConditionValid(condition: LogicalCondition): boolean {
     return (
-        condition.property &&
-        condition.operation &&
+        condition.propertyName &&
+        condition.operationType !== undefined &&
         condition.value !== null && condition.value !== undefined && condition.value !== ''
     );
 }
@@ -43,11 +35,11 @@ function valueToStr(value: SimpleValueType): string {
     }
 }
 
-function conditionComparator(con1: InternalLogicalFilterCondition, con2: InternalLogicalFilterCondition): number {
-    if (con1.property !== con2.property) {
-        return con1.property.localeCompare(con2.property);
-    } else if (con1.operation !== con2.operation) {
-        return con1.operation.localeCompare(con2.operation);
+function conditionComparator(con1: LogicalCondition, con2: LogicalCondition): number {
+    if (con1.propertyName !== con2.propertyName) {
+        return con1.propertyName.localeCompare(con2.propertyName);
+    } else if (con1.operationType !== con2.operationType) {
+        return con1.operationType.localeCompare(con2.operationType);
     } else {
         const val1 = valueToStr(con1.value);
         const val2 = valueToStr(con2.value);
@@ -59,13 +51,13 @@ function conditionComparator(con1: InternalLogicalFilterCondition, con2: Interna
     }
 }
 
-function groupConditions(conditions: LogicalFilterCondition[]): ConditionGroup[] {
-    const groups: ConditionGroup[] = [];
-    let newGroup: ConditionGroup = [];
+function groupConditions(conditions: ComplexFilterCondition[]): ComplexFilterCondition[][] {
+    const groups: ComplexFilterCondition[][] = [];
+    let newGroup: ComplexFilterCondition[] = [];
 
     for (const condition of conditions) {
         newGroup.push(condition);
-        if (condition.junktor === JunktorType.OR) {
+        if (condition.junktorType === JunktorType.OR) {
             groups.push(newGroup);
             newGroup = [];
         }
@@ -79,14 +71,14 @@ function groupConditions(conditions: LogicalFilterCondition[]): ConditionGroup[]
         .filter(group => group.length > 0);
 }
 
-function createPreprocessedCondition(condition: InternalLogicalFilterCondition): PreprocessedCondition {
+function createPreprocessedCondition(condition: LogicalCondition): PreprocessedCondition {
     return {
-        property: condition.property,
-        isValid: createOperatorFun(condition.operation, condition.value)
+        property: condition.propertyName,
+        isValid: createOperatorFun(condition.operationType, condition.value)
     };
 }
 
-function createPreprocessedConditions(conditionGroups: ConditionGroup[]): PreprocessedCondition[][] {
+export function createPreprocessedConditions(conditionGroups: LogicalCondition[][]): PreprocessedCondition[][] {
     return conditionGroups.map(group => group.map(createPreprocessedCondition));
 }
 

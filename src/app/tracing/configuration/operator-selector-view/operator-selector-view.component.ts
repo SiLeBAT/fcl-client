@@ -1,5 +1,5 @@
 import { Component, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
-import { ExtendedOperationType } from '../configuration.model';
+import { OperationType } from '@app/tracing/data.model';
 
 @Component({
     selector: 'fcl-operator-selector-view',
@@ -8,37 +8,38 @@ import { ExtendedOperationType } from '../configuration.model';
 })
 export class OperatorSelectorViewComponent {
 
-    @Input() value: ExtendedOperationType;
-    @Input() set availableOperatorTypes(value: ExtendedOperationType[]) {
+    @Input() value: OperationType;
+    @Input() set availableOperatorTypes(value: OperationType[]) {
         this.availableOperatorTypes_ = value;
     }
 
-    get availableOperatorTypes(): ExtendedOperationType[] {
+    get availableOperatorTypes(): OperationType[] {
         return this.availableOperatorTypes_;
     }
-    private availableOperatorTypes_: ExtendedOperationType[];
 
-    @Output() valueChange = new EventEmitter<ExtendedOperationType>();
+    private availableOperatorTypes_: OperationType[];
 
-    private operatorLabel: { [key in ExtendedOperationType]: string } = {
-        [ExtendedOperationType.EQUAL]: '==',
-        [ExtendedOperationType.NOT_EQUAL]: '!=',
-        [ExtendedOperationType.CONTAINS]: 'contains',
-        [ExtendedOperationType.GREATER]: '>',
-        [ExtendedOperationType.LESS]: '<',
-        [ExtendedOperationType.REGEX_EQUAL]: '== (Regex)',
-        [ExtendedOperationType.REGEX_EQUAL_IGNORE_CASE]: '== (Regex Ignore Case)',
-        [ExtendedOperationType.REGEX_NOT_EQUAL]: '!= (Regex)',
-        [ExtendedOperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: '!= (Regex Ignore Case)'
+    @Output() valueChange = new EventEmitter<OperationType>();
+
+    private operatorLabel: { [key in OperationType]: string } = {
+        [OperationType.EQUAL]: '==',
+        [OperationType.NOT_EQUAL]: '!=',
+        [OperationType.CONTAINS]: 'contains',
+        [OperationType.GREATER]: '>',
+        [OperationType.LESS]: '<',
+        [OperationType.REGEX_EQUAL]: '== (Regex)',
+        [OperationType.REGEX_EQUAL_IGNORE_CASE]: '== (Regex Ignore Case)',
+        [OperationType.REGEX_NOT_EQUAL]: '!= (Regex)',
+        [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: '!= (Regex Ignore Case)'
     };
 
     constructor() { }
 
-    getOperatorLabel(type: ExtendedOperationType): string {
+    getOperatorLabel(type: OperationType): string {
         return this.operatorLabel[type];
     }
 
-    onValueChange(value: ExtendedOperationType): void {
+    onValueChange(value: OperationType): void {
         this.value = value;
         this.valueChange.emit(value);
     }

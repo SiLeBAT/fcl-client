@@ -13,10 +13,10 @@ module.exports = {
     ],
     globals: {
         'ts-jest': {
-            tsConfig: './src/tsconfig.spec.json',
+            tsconfig: './src/tsconfig.spec.json',
             stringifyContentPathRegex: '\\.html$',
             diagnostics: {
-                pathRegex: /\.(spec|test)\.ts$/,
+                exclude: /\.(spec|test)\.ts$/,
                 ignoreCodes: ['TS2349', 'TS2351', 'TS2304']
             }
         }

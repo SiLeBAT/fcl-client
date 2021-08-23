@@ -4,7 +4,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
 <fcl-register
   changeRef={[Function ViewRef_]}
   pwStrength={[Function Number]}
-  register={[Function EventEmitter]}
+  register={[Function EventEmitter_]}
   registerForm={[Function FormGroup]}
 >
   <form
@@ -266,7 +266,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 type="checkbox"
               />
               <div
-                class="mat-checkbox-ripple mat-ripple"
+                class="mat-checkbox-ripple mat-focus-indicator mat-ripple"
                 matripple=""
               >
                 <div
@@ -337,7 +337,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 type="checkbox"
               />
               <div
-                class="mat-checkbox-ripple mat-ripple"
+                class="mat-checkbox-ripple mat-focus-indicator mat-ripple"
                 matripple=""
               >
                 <div
@@ -401,7 +401,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
           class="form-group fcl-submit-button"
         >
           <button
-            class="mat-raised-button mat-button-base"
+            class="mat-focus-indicator mat-raised-button mat-button-base"
             color="primary"
             mat-raised-button=""
             type="submit"
@@ -411,18 +411,18 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             >
                Submit 
             </span>
-            <div
+            <span
               class="mat-button-ripple mat-ripple"
               matripple=""
             />
-            <div
+            <span
               class="mat-button-focus-overlay"
             />
           </button>
         </div>
         <div>
           <a
-            class="mat-button mat-button-base"
+            class="mat-focus-indicator mat-button mat-button-base"
             mat-button=""
           >
             <span
@@ -430,11 +430,11 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             >
                Cancel 
             </span>
-            <div
+            <span
               class="mat-button-ripple mat-ripple"
               matripple=""
             />
-            <div
+            <span
               class="mat-button-focus-overlay"
             />
           </a>

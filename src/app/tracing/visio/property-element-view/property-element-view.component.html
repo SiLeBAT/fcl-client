@@ -1,18 +1,21 @@
 <div class="fcl-box">
     <mat-select
         class="fcl-property-selector fcl-compact-mat-select"
-        [(value)]="prop"
+        [value]="prop === null ? '' : prop"
+        (selectionChange)="onSelectionChange($event)"
+        placeholder="Select property"
         disableOptionCentering
         panelClass="fcl-mat-select-below-panel-class"
         matTooltip="Select property"
     >
-    <mat-select-trigger *ngIf="!isActivePropAvailable()">
+    <mat-select-trigger *ngIf="prop !== null && !isActivePropAvailable()">
         {{prop}}
-        <span><mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></span>
-      </mat-select-trigger>
-        <mat-option *ngIf="!isActivePropAvailable()" value="{{prop}}" (click)="setProperty(prop)">{{prop}}<mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></mat-option>
+    <span><mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></span>
+    </mat-select-trigger>
+        <mat-option *ngIf="enableNullProp" value="">None</mat-option>
+        <mat-option *ngIf="prop !== null && !isActivePropAvailable()" value="{{prop}}">{{prop}}<mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></mat-option>
         <span *ngFor="let prop of availableProps">
-            <mat-option value="{{prop.prop}}" (click)="setProperty(prop.prop)">{{prop.label || prop.prop}}</mat-option>
+            <mat-option value="{{prop.prop}}">{{prop.label || prop.prop}}</mat-option>
         </span>
     </mat-select>
     &nbsp;/&nbsp;

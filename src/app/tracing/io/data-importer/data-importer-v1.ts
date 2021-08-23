@@ -1,9 +1,9 @@
 import {
     DeliveryStoreData as DeliveryData, FclData, ObservedType, StationStoreData as StationData,
-    Connection, GroupType, Layout, GraphType, GroupData,
+    Connection, GroupType, GroupData,
     ValueCondition as IntValueCondition,
     LogicalCondition as IntLogicalCondition,
-    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType, CrossContTraceType
+    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType, CrossContTraceType, StationId, DeliveryId
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -11,21 +11,21 @@ import { Utils } from '../../util/non-ui-utils';
 import * as ExtDataConstants from '../ext-data-constants.v1';
 
 import { IDataImporter } from './datatypes';
-import { isValidJson, createDefaultHighlights, checkVersionFormat, compareVersions } from './shared';
+import { isValidJson, createDefaultHighlights, checkVersionFormat, areMajorVersionsMatching } from './shared';
 import { importSamples } from './sample-importer-v1';
 import {
     ViewData,
-    StationHighlightingData as ExtStationHighlightingData,
-    DeliveryHighlightingData as ExtDeliveryHighlightingData,
+    StationHighlightingRule as ExtStationHighlightingRule,
+    DeliveryHighlightingRule as ExtDeliveryHighlightingRule,
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
     JsonData,
-    VERSION as MAX_VERSION,
-    MIN_VERSION,
+    VERSION,
     MetaNodeData
 } from '../ext-data-model.v1';
 import * as DataMapper from './../data-mappings/data-mappings-v1';
 import { InputFormatError, InputDataError } from '../io-errors';
+import { getCenterFromPoints, getDifference } from '../../util/geometry-utils';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -37,8 +37,8 @@ export class DataImporterV1 implements IDataImporter {
             data.version &&
             typeof data.version === 'string' &&
             checkVersionFormat(data.version) &&
-            compareVersions(data.version, MIN_VERSION) >= 0 &&
-            compareVersions(data.version, MAX_VERSION) <= 0) {
+            areMajorVersionsMatching(data.version, VERSION)
+        ) {
             const schema = await this.loadSchema();
             return isValidJson(schema, data, true);
         } else {
@@ -66,7 +66,6 @@ export class DataImporterV1 implements IDataImporter {
             data,
             fclData,
             idToStationMap,
-            idToGroupMap,
             idToDeliveryMap
         );
         importSamples(data, fclData);
@@ -298,12 +297,12 @@ export class DataImporterV1 implements IDataImporter {
         data: any,
         fclData: FclData,
         idToStationMap: Map<string, StationData>,
-        idToGroupMap: Map<string, GroupData>,
         idToDeliveryMap: Map<string, DeliveryData>
     ) {
+        this.initTracingData(fclData);
+
         const tracingData: any = this.getProperty(data, ExtDataConstants.TRACING_DATA);
-        if (tracingData == null) {
-            this.initTracingData(fclData);
+        if (tracingData === null || tracingData === undefined) {
             return;
         }
 
@@ -317,15 +316,20 @@ export class DataImporterV1 implements IDataImporter {
             throw new InputDataError('Missing delivery tracing data.');
         }
 
+        const statIdToTracIndexMap: Record<StationId, number> = {};
+        fclData.tracingSettings.stations.forEach((tracSet, index) => statIdToTracIndexMap[tracSet.id] = index);
+
         for (const element of stationTracings) {
             if (element.id === null) {
-                throw new InputDataError('Station id is missing in tracing data.');
+                throw new InputDataError('Station / Metastation id is missing in tracing data.');
             }
 
             const isSimpleStation = idToStationMap.has(element.id);
 
-            if (!(isSimpleStation || idToGroupMap.has(element.id))) {
-                throw new InputDataError('Station/Metanode id "' + element.id + '" is unkown.');
+            const tracSetIndex = statIdToTracIndexMap[element.id];
+
+            if (tracSetIndex === undefined) {
+                throw new InputDataError('Station / Meta station id "' + element.id + '" is unkown.');
             }
 
             if (isSimpleStation) {
@@ -336,23 +340,28 @@ export class DataImporterV1 implements IDataImporter {
                     'station ' + element.id
                 );
             }
-            fclData.tracingSettings.stations.push({
+            fclData.tracingSettings.stations[tracSetIndex] = {
                 id: element.id,
                 weight: element.weight,
                 crossContamination: element.crossContamination,
                 killContamination: element.killContamination,
                 observed: (element.observed ? ObservedType.FULL : ObservedType.NONE),
                 outbreak: element.weight > 0
-            });
+            };
         }
+
+        const delIdToTracIndexMap: Record<DeliveryId, number> = {};
+        fclData.tracingSettings.deliveries.forEach((tracSet, index) => delIdToTracIndexMap[tracSet.id] = index);
 
         for (const element of deliveryTracings) {
             if (element.id === null) {
                 throw new InputDataError('Delivery id is missing in tracing data.');
             }
 
-            if (!idToDeliveryMap.has(element.id)) {
-                throw new InputDataError('Tracing-data-import: Delivery id "' + element.id + '" is unkown.');
+            const tracSetIndex = delIdToTracIndexMap[element.id];
+
+            if (tracSetIndex === undefined) {
+                throw new InputDataError('Tracing-data-import: Delivery id "' + element.id + '" is unknown.');
             }
 
             const delivery: DeliveryData = idToDeliveryMap.get(element.id);
@@ -363,13 +372,13 @@ export class DataImporterV1 implements IDataImporter {
                 'delivery ' + delivery.id
             );
 
-            fclData.tracingSettings.deliveries.push({
+            fclData.tracingSettings.deliveries[tracSetIndex] = {
                 id: element.id,
                 weight: element.weight,
                 crossContamination: element.crossContamination,
                 killContamination: element.killContamination,
                 observed: element.observed === true ? ObservedType.FULL : ObservedType.NONE
-            });
+            };
         }
     }
 
@@ -457,27 +466,10 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.showMergedDeliveriesCounts = viewData.edge.showMergedDeliveriesCounts;
         }
 
-        const showLegend: any = this.getProperty(viewData, ExtDataConstants.SHOW_LEGEND);
-        if (showLegend !== null) {
-            fclData.graphSettings.showLegend = showLegend;
-        }
-
         const skipUnconnectedStations: any = this.getProperty(viewData, ExtDataConstants.SKIP_UNCONNECTED_STATIONS);
         if (skipUnconnectedStations !== null) {
             fclData.graphSettings.skipUnconnectedStations = skipUnconnectedStations;
         }
-
-        const showGis: any = this.getProperty(viewData, ExtDataConstants.SHOW_GIS);
-        if (showGis !== null) {
-            fclData.graphSettings.type = showGis === true ? GraphType.GIS : GraphType.GRAPH;
-        }
-
-        fclData.graphSettings.gisLayout = this.convertExternalTransformation(
-            this.getProperty(viewData, ExtDataConstants.GISGRAPH_TRANSFORMATION)
-        );
-        fclData.graphSettings.schemaLayout = this.convertExternalTransformation(
-            this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION)
-        );
 
         this.convertExternalPositions(viewData, fclData, idToStationMap, idToGroupMap);
         this.convertExternalHighlightingSettings(viewData, fclData);
@@ -486,22 +478,24 @@ export class DataImporterV1 implements IDataImporter {
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
         if (viewData && viewData.node && viewData.node.highlightConditions) {
 
-            const extHighlightingCons: ExtStationHighlightingData[] = viewData.node.highlightConditions;
+            const extStatHighlightingRules: ExtStationHighlightingRule[] = viewData.node.highlightConditions;
 
-            if (extHighlightingCons.length > 0) {
+            if (extStatHighlightingRules.length > 0) {
                 const extToIntPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
 
-                fclData.graphSettings.highlightingSettings.stations = extHighlightingCons.map(extCon => (
+                fclData.graphSettings.highlightingSettings.stations = extStatHighlightingRules.map((extRule, extRuleIndex) => (
                     {
-                        name: extCon.name,
-                        showInLegend: extCon.showInLegend,
-                        color: extCon.color,
-                        invisible: extCon.invisible,
-                        adjustThickness: extCon.adjustThickness,
-                        labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
-                        valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
-                        logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
-                        shape: this.mapShapeType(extCon.shape)
+                        id: 'SHR' + extRuleIndex,
+                        name: extRule.name,
+                        showInLegend: extRule.showInLegend === true,
+                        disabled: extRule.disabled === true,
+                        color: extRule.color,
+                        invisible: extRule.invisible,
+                        adjustThickness: extRule.adjustThickness,
+                        labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntPropMap),
+                        valueCondition: this.mapValueCondition(extRule.valueCondition, extToIntPropMap),
+                        logicalConditions: this.mapLogicalConditions(extRule.logicalConditions, extToIntPropMap),
+                        shape: this.mapShapeType(extRule.shape)
                     }
                 ));
             }
@@ -511,21 +505,23 @@ export class DataImporterV1 implements IDataImporter {
 
         if (viewData && viewData.edge && viewData.edge.highlightConditions) {
 
-            const extHighlightingCons: ExtDeliveryHighlightingData[] = viewData.edge.highlightConditions;
+            const extDelHighlightingRules: ExtDeliveryHighlightingRule[] = viewData.edge.highlightConditions;
 
-            if (extHighlightingCons.length > 0) {
+            if (extDelHighlightingRules.length > 0) {
                 const extToIntPropMap: Map<string, string> = this.createReverseMapFromSimpleMap(fclData.source.propMaps.deliveryPropMap);
 
-                fclData.graphSettings.highlightingSettings.deliveries = extHighlightingCons.map(extCon => (
+                fclData.graphSettings.highlightingSettings.deliveries = extDelHighlightingRules.map((extRule, extRuleIndex) => (
                     {
-                        name: extCon.name,
-                        showInLegend: extCon.showInLegend,
-                        color: extCon.color,
-                        invisible: extCon.invisible,
-                        adjustThickness: extCon.adjustThickness,
-                        labelProperty: this.mapLabelProperty(extCon.labelProperty, extToIntPropMap),
-                        valueCondition: this.mapValueCondition(extCon.valueCondition, extToIntPropMap),
-                        logicalConditions: this.mapLogicalConditions(extCon.logicalConditions, extToIntPropMap),
+                        id: 'DHR' + extRuleIndex,
+                        name: extRule.name,
+                        showInLegend: extRule.showInLegend === true,
+                        disabled: extRule.disabled === true,
+                        color: extRule.color,
+                        invisible: extRule.invisible,
+                        adjustThickness: extRule.adjustThickness,
+                        labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntPropMap),
+                        valueCondition: this.mapValueCondition(extRule.valueCondition, extToIntPropMap),
+                        logicalConditions: this.mapLogicalConditions(extRule.logicalConditions, extToIntPropMap),
                         linePattern: LinePatternType.SOLID
                     }
                 ));
@@ -650,34 +646,17 @@ export class DataImporterV1 implements IDataImporter {
         return intShapeType;
     }
 
-    private convertExternalTransformation(extTransformation: any): Layout {
-        const scale: any = this.getProperty(extTransformation, 'scale.x');
-        const translation_x: any = this.getProperty(extTransformation, 'translation.x');
-        const translation_y: any = this.getProperty(extTransformation, 'translation.y');
-
-        if (scale !== null && translation_x !== null && translation_y !== null) {
-            return {
-                zoom: scale,
-                pan: {
-                    x: translation_x,
-                    y: translation_y
-                }
-            };
-        } else {
-            return null;
-        }
-    }
-
     private convertExternalPositions(
-        viewData: any,
+        viewData: ViewData,
         fclData: FclData,
         idToStationMap: Map<string, StationData>,
         idToGroupMap: Map<string, GroupData>
     ) {
-        const nodePositions: any = this.getProperty(viewData, ExtDataConstants.NODE_POSITIONS);
-        if (nodePositions === null) {
+        if (viewData.graph === null || viewData.graph.node === null || viewData.graph.node.positions === null) {
             return;
         }
+
+        const nodePositions = viewData.graph.node.positions;
 
         for (const nodePosition of nodePositions) {
             if (nodePosition.id == null) {
@@ -688,6 +667,28 @@ export class DataImporterV1 implements IDataImporter {
             }
 
             fclData.graphSettings.stationPositions[nodePosition.id] = nodePosition.position;
+        }
+
+        this.setUnsetGroupPositions(fclData);
+    }
+
+    private setUnsetGroupPositions(fclData: FclData): void {
+        // Desktop App sets group positions on the fly and does not store
+        // group positions in json file
+        // Web app requires group positions (if known) and expects relative
+        // positions of its members
+        const statPos = fclData.graphSettings.stationPositions;
+        for (const group of fclData.groupSettings) {
+            if (statPos[group.id] === undefined) {
+                const memberPositions = group.contains.map(memberId => statPos[memberId]);
+                if (!memberPositions.some(p => p === null || p === undefined)) {
+                    const groupPos = getCenterFromPoints(memberPositions);
+                    group.contains.forEach((memberId, index) => {
+                        statPos[memberId] = getDifference(memberPositions[index], groupPos);
+                    });
+                    statPos[group.id] = groupPos;
+                }
+            }
         }
     }
 

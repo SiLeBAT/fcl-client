@@ -54,7 +54,7 @@ export class DeliveryPropertiesComponent implements OnInit {
         this.data.delivery.properties.forEach(prop => {
             properties[prop.name] = {
                 label: this.convertPropNameToLabel(prop.name),
-                value: prop.value != null ? prop.value : ''
+                value: typeof prop.value === 'string' ? prop.value : prop.value + ''
             };
         });
 

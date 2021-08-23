@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
-    DataServiceData, StationData, DeliveryData, SetTracingSettingsPayload,
-    TracingSettings, ObservedType, CrossContTraceType, GlobalTracingSettings
+    DataServiceData, StationData, DeliveryData, ObservedType, CrossContTraceType,
+    GlobalTracingSettings
 } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
-import { processDeliveryDates, ProcessedDeliveryDatesSetMap, ProcessedDeliveryDates, ProcessedDeliveryDatesSet } from '../util/delivery-dates-processing';
+import {
+    processDeliveryDates, ProcessedDeliveryDatesSetMap, ProcessedDeliveryDates,
+    ProcessedDeliveryDatesSet
+} from '../util/delivery-dates-processing';
 
 function getProcDelDates(
     procDelDate: ProcessedDeliveryDatesSet,
@@ -30,103 +32,6 @@ export class TracingService {
     private lastData: DataServiceData;
 
     constructor() {}
-
-    getClearOutbreakStationsPayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {
-        return this.getMarkStationsAsOutbreakPayload(
-            tracingSettings,
-            tracingSettings.stations.filter(s => s.outbreak).map(s => s.id),
-            false
-        );
-    }
-
-    getMarkStationsAsOutbreakPayload(tracingSettings: TracingSettings, ids: string[], outbreak: boolean): SetTracingSettingsPayload {
-        const weight = (outbreak ? 1 : 0);
-        const idSet = Utils.createSimpleStringSet(ids);
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    ...(idSet[s.id] ? { outbreak: outbreak, weight: weight } : { outbreak: s.outbreak, weight: s.weight })
-                }))
-            }
-        };
-    }
-
-    getSetStationCrossContPayload(tracingSettings: TracingSettings, ids: string[], crossContamination: boolean): SetTracingSettingsPayload {
-        const idSet = Utils.createSimpleStringSet(ids);
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    crossContamination: (idSet[s.id] ? crossContamination : s.crossContamination)
-                }))
-            }
-        };
-    }
-
-    getSetStationKillContPayload(tracingSettings: TracingSettings, ids: string[], killContamination: boolean): SetTracingSettingsPayload {
-        const idSet = Utils.createSimpleStringSet(ids);
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    crossContamination: (idSet[s.id] && killContamination ? false : s.crossContamination),
-                    killContamination: (idSet[s.id] ? killContamination : s.killContamination)
-                }))
-            }
-        };
-    }
-
-    getClearTracePayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    observed: ObservedType.NONE
-                })),
-                deliveries: tracingSettings.deliveries.map(d => ({
-                    ...d,
-                    observed: ObservedType.NONE
-                }))
-            }
-        };
-    }
-
-    getShowStationTracePayload(tracingSettings: TracingSettings, id: string, observed: ObservedType): SetTracingSettingsPayload {
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                deliveries: tracingSettings.deliveries.map(s => ({
-                    ...s,
-                    observed: ObservedType.NONE
-                })),
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    observed: (s.id === id ? observed : ObservedType.NONE)
-                }))
-            }
-        };
-    }
-
-    getShowDeliveryTracePayload(tracingSettings: TracingSettings, id: string, observed: ObservedType): SetTracingSettingsPayload {
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                deliveries: tracingSettings.deliveries.map(s => ({
-                    ...s,
-                    observed: (s.id === id ? observed : ObservedType.NONE)
-                })),
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    observed: ObservedType.NONE
-                }))
-            }
-        };
-    }
 
     private resetScores(data: DataServiceData) {
         data.stations.forEach(s => {

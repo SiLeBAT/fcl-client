@@ -1,14 +1,3 @@
-<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && graphEditorActive">
-    <button
-        class="fcl-menu-item"
-        mat-button
-        [routerLink]="['/tracing']"
-        matTooltip="Tracing view">
-        <mat-icon>track_changes</mat-icon>
-        Tracing View
-    </button>
-</div>
-
 <div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
     <div class="fcl-graph-type fcl-separator mat-body">
         <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
@@ -72,5 +61,8 @@
         matTooltip="Generate ROA Layout">
         <mat-icon>grid_on</mat-icon>
         ROA Style
+        <span class="fcl-draft-marker-wrapper">
+            <span class="fcl-draft-marker">draft</span>
+        </span>
     </button>
 </div>

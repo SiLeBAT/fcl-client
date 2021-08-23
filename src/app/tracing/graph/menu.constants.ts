@@ -20,6 +20,18 @@ export class MenuItemStrings {
         displayName: 'Clear Invisibility'
     };
 
+    static readonly clearInvisibleStations: ItemInfo = {
+        displayName: 'Clear Invisible Stations'
+    };
+
+    static readonly clearInvisibleDeliveries: ItemInfo = {
+        displayName: 'Clear Invisible Deliveries'
+    };
+
+    static readonly clearInvisibleElements: ItemInfo = {
+        displayName: 'Clear All'
+    };
+
     static readonly collapseStations: ItemInfo = {
         displayName: 'Collapse Stations'
     };
@@ -88,7 +100,7 @@ export class MenuItemStrings {
         displayName: 'Set Kill Contamination'
     };
 
-    static readonly makeStationsInvisible: ItemInfo = {
+    static readonly makeElementsInvisible: ItemInfo = {
         displayName: 'Make Invisible'
     };
 

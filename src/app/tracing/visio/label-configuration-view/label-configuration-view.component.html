@@ -5,9 +5,12 @@
             </div>
             <ng-template #propElement>
                 <fcl-property-element-view
-                    [(prop)]="labelElement.prop"
-                    [(altText)]="labelElement.altText"
+                    [prop]="labelElement.prop"
+                    [altText]="labelElement.altText"
+                    (propChange)="onPropElementPropChange(labelElement, $event)"
+                    (altTextChange)="onPropElementAltTextChange(labelElement, $event)"
                     [availableProps]="availableProps"
+                    [enableNullProp]="labelElement.isNullable"
                 ></fcl-property-element-view>
             </ng-template>
             <ng-template #textElement>

@@ -7,7 +7,6 @@
         "coloursAndShapes";
     grid-gap: 0.5rem;
     padding: 0.5rem;
-    height: 100%;
     width: 100%;
 }
 
@@ -33,6 +32,10 @@
     grid-area: stationSize;
 }
 
-.fcl-highlighting-coloursandshapes-config {
+.fcl-highlighting-colorsandshapes-config {
     grid-area: coloursAndShapes;
+}
+
+.fcl-colors-and-shapes-view-container {
+    display: block;
 }

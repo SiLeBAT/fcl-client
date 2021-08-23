@@ -1,5 +1,4 @@
-export const VERSION = '1.0.3';
-export const MIN_VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 
 export interface JsonData {
     version: string;
@@ -78,7 +77,7 @@ export interface NodeViewData {
     // labelPosition: string;
     selectedNodes?: string[];
     // invisibleNodes: string[];
-    highlightConditions?: StationHighlightingData[];
+    highlightConditions?: StationHighlightingRule[];
 }
 
 export interface EdgeViewData {
@@ -90,7 +89,7 @@ export interface EdgeViewData {
     // arrowHeadInMiddle: boolean;
     selectedEdges: string[];
     // invisibleEdges: string[];
-    highlightConditions?: DeliveryHighlightingData[];
+    highlightConditions?: DeliveryHighlightingRule[];
     // showCrossContaminatedDeliveries: boolean;
     // filter: EdgeFilterData;
 }
@@ -112,7 +111,6 @@ interface SchemaGraphViewData extends GraphViewData {
         minSize?: number;
         maxSize?: number;
         positions: { id: string, position: XY }[];
-        // collapsedPositions: [ { id: string, position: XY }];
     };
 }
 
@@ -136,9 +134,10 @@ interface EdgeDateFilterData {
     showDeliveriesWithoutDate: boolean;
 }
 
-interface ElementHighlightingData {
+export interface HighlightingRule {
     name: string;
     showInLegend: boolean;
+    disabled?: boolean;
     color: number[];
     invisible: boolean;
     adjustThickness: boolean;
@@ -147,11 +146,11 @@ interface ElementHighlightingData {
     logicalConditions: LogicalCondition[][];
 }
 
-export interface DeliveryHighlightingData extends ElementHighlightingData {
+export interface DeliveryHighlightingRule extends HighlightingRule {
     linePattern: string;
 }
 
-export interface StationHighlightingData extends ElementHighlightingData {
+export interface StationHighlightingRule extends HighlightingRule {
     shape: string;
 }
 

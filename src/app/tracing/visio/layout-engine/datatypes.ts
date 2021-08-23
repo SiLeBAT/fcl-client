@@ -1,4 +1,5 @@
-import { StationData, SampleResultType, ROASettings } from '../../data.model';
+import { StationData, SampleResultType } from '../../data.model';
+import { ROASettings } from '../model';
 
 export interface Position {
     x: number;
@@ -128,7 +129,7 @@ export interface StationInformation {
     data: StationData;
     ctno: string;
     props: { [key: string]: string | number | boolean };
-    activities: string; // - Activities / step in the food chain
+    activities: string | null; // - Activities / step in the food chain
     samples: StationSampleInformation[];
     inSamples: InSampleInformation[];
     products: ProductInformation[];

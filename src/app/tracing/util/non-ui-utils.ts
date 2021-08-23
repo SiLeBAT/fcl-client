@@ -1,12 +1,15 @@
 import {
-    DeliveryData, StationData, DataServiceData, Color, Position
+    DeliveryData, Color
 } from '../data.model';
 import { HttpClient } from '@angular/common/http';
-import { Constants } from './constants';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
 type USwitch<A, B> = (A | unknown extends A ? B : A) & A;
+type RecordKeyType =
+    | string
+    | number
+    | symbol;
 
 export class Utils {
 
@@ -92,35 +95,6 @@ export class Utils {
         combinations.sort((c1, c2) => c1.length - c2.length);
 
         return combinations;
-    }
-
-    static getCenter(positions: Position[]): Position {
-        let xSum = 0;
-        let ySum = 0;
-
-        for (const pos of positions) {
-            xSum += pos.x;
-            ySum += pos.y;
-        }
-
-        return {
-            x: xSum / positions.length,
-            y: ySum / positions.length
-        };
-    }
-
-    static sum(position1: Position, position2: Position): Position {
-        return {
-            x: position1.x + position2.x,
-            y: position1.y + position2.y
-        };
-    }
-
-    static difference(position1: Position, position2: Position): Position {
-        return {
-            x: position1.x - position2.x,
-            y: position1.y - position2.y
-        };
     }
 
     static stringToDate(dateString: string): Date {
@@ -350,5 +324,35 @@ export class Utils {
             }
         }
         return result;
+    }
+
+    static getReversedRecord<
+        K extends RecordKeyType,
+        V extends RecordKeyType
+    >(record: Record<K, V>): Record<V, K> {
+        const result: Record<RecordKeyType, K> = {};
+        const keys: K[] = (Object.keys(record) as Array<K>);
+        for (const key of keys) {
+            result[record[key]] = key;
+        }
+        return result as Record<V, K>;
+    }
+
+    static mapRecordValues<
+        K extends RecordKeyType,
+        V extends any,
+        T extends any
+    >(record: Record<K, V>, mapFun: (v: V) => T): Record<K, T> {
+        const result: Record<RecordKeyType, T> = {};
+        const keys: K[] = (Object.keys(record) as Array<K>);
+        for (const key of keys) {
+            result[key] = mapFun(record[key]);
+        }
+        return result as Record<K, T>;
+    }
+
+    static getStringArrayDifference(array1: string[], array2: string[]): string[] {
+        const elementToDeleteMap = this.createSimpleStringSet(array2);
+        return array1.filter(e => !elementToDeleteMap[e]);
     }
 }

@@ -5,13 +5,22 @@ import {
     MergeDeliveriesType,
     MapType,
     GraphType,
-    ROASettings,
-    CrossContTraceType
+    CrossContTraceType,
+    FclDataSourceInfo
 } from '../data.model';
 
-import { TracingState } from '../state.model';
-import { ComplexRowFilterSettings, FilterTableSettings, ShowType, VisibilityFilterState, FilterSettings, ConfigurationTabIndex } from '../configuration/configuration.model';
+import { ModelDependentState, TracingState } from '../state.model';
+import {
+    ComplexRowFilterSettings,
+    FilterTableSettings,
+    ShowType,
+    VisibilityFilterState,
+    FilterSettings,
+    ConfigurationTabIndex,
+    HighlightingConfigurationSettings
+} from '../configuration/configuration.model';
 import { FilterTabId, StationsTabId } from '../configuration/configuration.constants';
+import { DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP, DENOVO_STATION_PROP_INT_TO_EXT_MAP } from '../io/data-mappings/data-mappings-v1';
 
 export const STATE_SLICE_NAME = 'tracing';
 
@@ -19,7 +28,7 @@ export interface State {
     tracing: TracingState;
 }
 
-const complexFilterSettings: ComplexRowFilterSettings = {
+export const complexFilterSettings: ComplexRowFilterSettings = {
     conditions: []
 };
 
@@ -43,6 +52,19 @@ const initialFilterSettings: FilterSettings = {
     }
 };
 
+const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings = {
+    colorsAndShapesSettings: {
+        editIndex: null
+    }
+};
+
+const initialModelDependentState: ModelDependentState = {
+    visioReport: null,
+    roaSettings: null,
+    filterSettings: initialFilterSettings,
+    highlightingConfigurationSettings: initialHighlightingConfigurationSettings
+};
+
 const initialData: FclData = createInitialFclDataState();
 
 const initialTabIndices: ConfigurationTabIndex = {
@@ -53,18 +75,25 @@ const initialTabIndices: ConfigurationTabIndex = {
 
 const initialState: TracingState = {
     fclData: initialData,
-    roaSettings: createDefaultROASettings(),
-    visioReport: null,
+    ...initialModelDependentState,
     tracingActive: false,
     showConfigurationSideBar: false,
     configurationTabIndices: initialTabIndices,
-    showGraphSettings: false,
-    filterSettings: initialFilterSettings
+    showGraphSettings: false
 };
+
+function createInitialFclDataSourceInfo(): FclDataSourceInfo {
+    return {
+        propMaps: {
+            stationPropMap: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+            deliveryPropMap: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+        }
+    };
+}
 
 export function createInitialFclDataState(): FclData {
     return {
-        source: null,
+        source: createInitialFclDataSourceInfo(),
         fclElements: {
             stations: [],
             deliveries: [],
@@ -86,6 +115,7 @@ export function createInitialFclDataState(): FclData {
             stationPositions: {},
             highlightingSettings: {
                 invisibleStations: [],
+                invisibleDeliveries: [],
                 stations: [],
                 deliveries: []
             },
@@ -93,7 +123,8 @@ export function createInitialFclDataState(): FclData {
             gisLayout: null,
             mapType: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
-            ghostStation: null
+            ghostStation: null,
+            hoverDeliveries: []
         },
         tracingSettings: {
             crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
@@ -101,41 +132,6 @@ export function createInitialFclDataState(): FclData {
             deliveries: []
         },
         groupSettings: []
-    };
-}
-
-export function createDefaultROASettings(): ROASettings {
-    return {
-        labelSettings: {
-            stationLabel: [
-                [
-                    { prop: 'typeOfBusiness', altText: 'Unknown activity' },
-                    { text: ': ' },
-                    { prop: 'name', altText: 'Unknown FBO' }
-                ]
-            ],
-
-            lotLabel: [
-                [ { prop: 'name', altText: 'Unknown product name' } ],
-                [ { text: 'Lot: ' }, { prop: 'lot', altText: 'unknown' } ],
-                [ { text: 'Amount: ' }, { prop: 'lotQuantity', altText: 'unknown' } ]
-            ],
-
-            stationSampleLabel: [
-                [ { prop: 'type', altText: 'Unknown type' } ],
-                [ { prop: 'material', altText: 'Unknown material' } ],
-                [ { prop: 'amount', altText: 'Unknown amount' } ],
-                [ { prop: 'result', altText: 'Unknown result' } ],
-                [ { prop: 'time', altText: 'Unknown time' } ]
-            ],
-
-            lotSampleLabel: [
-                [ { prop: 'type', altText: 'Unknown type' } ],
-                [ { prop: 'amount', altText: 'Unknown amount' } ],
-                [ { prop: 'result', altText: 'Unknown result' } ],
-                [ { prop: 'time', altText: 'Unknown time' } ]
-            ]
-        }
     };
 }
 
@@ -155,7 +151,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 fclData: action.payload.fclData,
-                filterSettings: initialFilterSettings
+                ...initialModelDependentState
             };
 
         case TracingActionTypes.LoadFclDataFailure:
@@ -334,6 +330,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     }
                 }
             };
+
         case TracingActionTypes.ResetTracingStateSOA:
             return initialState;
 
@@ -455,6 +452,33 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+        case TracingActionTypes.SetStationHighlightingRulesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: {
+                            ...state.fclData.graphSettings.highlightingSettings,
+                            stations: action.payload.rules
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetColorsAndShapesEditIndexSOA:
+            return {
+                ...state,
+                highlightingConfigurationSettings: {
+                    ...state.highlightingConfigurationSettings,
+                    colorsAndShapesSettings: {
+                        ...state.highlightingConfigurationSettings.colorsAndShapesSettings,
+                        editIndex: action.payload.editIndex
+                    }
+                }
+            };
+
         case TracingActionTypes.SetTracingSettingsSOA:
             return {
                 ...state,
@@ -488,6 +512,20 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+        case TracingActionTypes.SetInvisibleElementsSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: action.payload.highlightingSettings,
+                        selectedElements: action.payload.selectedElements
+                    },
+                    tracingSettings: action.payload.tracingSettings
+                }
+            };
+
         case TracingActionTypes.ShowGhostStationMSA:
             return {
                 ...state,
@@ -508,6 +546,18 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         ghostStation: null
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetHoverDeliveriesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        hoverDeliveries: action.payload.deliveryIds
                     }
                 }
             };

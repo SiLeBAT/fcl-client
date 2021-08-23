@@ -3,6 +3,7 @@ import { VisioBox, GridCell, Polygon, CustomBoxShape,
     VisioLabel, GraphLayer, BoxType, Position, Size } from './datatypes';
 import { GraphSettings } from './graph-settings';
 import { Utils } from '../../util/non-ui-utils';
+import { getDifference } from '@app/tracing/util/geometry-utils';
 
 type CellPolygon = GridCell[];
 
@@ -258,7 +259,7 @@ export class GroupContainerCreator {
     }
 
     private getRelativePolygon(polygon: Polygon, relativePosition: Position): Polygon {
-        return polygon.map(p => Utils.difference(p, relativePosition));
+        return polygon.map(p => getDifference(p, relativePosition));
     }
 
     private convertCellPolygon(polygon: CellPolygon, invert: boolean): Polygon {

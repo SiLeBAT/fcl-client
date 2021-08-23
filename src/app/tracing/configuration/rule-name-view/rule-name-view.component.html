@@ -1,0 +1,11 @@
+<mat-form-field
+    class="fcl-complex-filter-form-field"
+    appearance="outline"
+    color="primary">
+    <mat-label>Enter a name</mat-label>
+    <input
+        matInput
+        [ngModel]="ruleName"
+        (ngModelChange)="onRuleNameChange($event)"
+    />
+</mat-form-field>

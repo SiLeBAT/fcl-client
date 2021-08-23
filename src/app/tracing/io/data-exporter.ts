@@ -1,15 +1,33 @@
-import { FclData, GroupType, ObservedType, GraphType, Layout, StationTracingSettings, MergeDeliveriesType } from '../data.model';
+import {
+    FclData, GroupType, ObservedType, GraphType, Layout, StationTracingSettings, MergeDeliveriesType,
+    ValueType,
+    ValueCondition as IntValueCondition,
+    LogicalCondition as IntLogicalCondition,
+    HighlightingRule as IntHighlightingRule,
+    NodeShapeType,
+    OperationType,
+    PropMap
+} from '../data.model';
 import * as DataMapper from './data-mappings/data-mappings-v1';
 import * as ExtDataConstants from './ext-data-constants.v1';
 import { Utils } from './../util/non-ui-utils';
 import { createFclElements } from './fcl-elements-creator';
-import { VERSION, JsonData, ViewData } from './ext-data-model.v1';
+import {
+    VERSION, JsonData, ViewData,
+    ValueCondition as ExtValueCondition,
+    LogicalCondition as ExtLogicalCondition,
+    HighlightingRule as ExtHighlightingRule
+} from './ext-data-model.v1';
 import { createDefaultSettings } from './json-data-creator';
 
 export class DataExporter {
 
-    static exportData(fclData: FclData, rawData: JsonData) {
+    private static readonly INTERNAL_OBSERVED_ATTRIBUTE = 'observed';
+    private static readonly INTERNAL_OUTBREAK_ATTRIBUTE = 'outbreak';
+    private static readonly INTERNAL_WEIGHT_ATTRIBUTE = 'weight';
 
+    static exportData(fclData: FclData, rawData: JsonData) {
+        rawData.version = VERSION;
         this.setGroupData(fclData, rawData);
         this.setTracingData(fclData, rawData);
         this.setViewData(fclData, rawData);
@@ -111,7 +129,146 @@ export class DataExporter {
 
         viewData.edge.selectedEdges = fclData.graphSettings.selectedElements.deliveries.slice();
         viewData.node.selectedNodes = fclData.graphSettings.selectedElements.stations.slice();
+
+        this.setHighlightingSettings(fclData, viewData);
         jsonData.settings.view = viewData;
+    }
+
+    private static setHighlightingSettings(fclData: FclData, viewData: ViewData): void {
+        const intToExtValueTypeMap = Utils.createReverseMap(DataMapper.VALUE_TYPE_EXT_TO_INT_MAP);
+        const intToExtOpTypeMap = Utils.createReverseMap(DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP);
+
+        const intToExtShapeMap = Utils.createReverseMap(DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP);
+        const intToExtStatPropMap = fclData.source.propMaps.stationPropMap;
+        viewData.node.highlightConditions = fclData.graphSettings.highlightingSettings.stations.map(rule => ({
+            ...this.mapSharedRuleProps(rule, intToExtStatPropMap, intToExtValueTypeMap, intToExtOpTypeMap),
+            shape: this.mapShapeType(rule.shape, intToExtShapeMap)
+        }));
+
+        const intToExtDelPropMap = fclData.source.propMaps.deliveryPropMap;
+        viewData.edge.highlightConditions = fclData.graphSettings.highlightingSettings.deliveries.map(rule => ({
+            ...this.mapSharedRuleProps(rule, intToExtDelPropMap, intToExtValueTypeMap, intToExtOpTypeMap),
+            linePattern: null
+        }));
+    }
+
+    private static mapSharedRuleProps(
+        rule: IntHighlightingRule,
+        intToExtPropMap: PropMap,
+        intToExtValueTypeMap: Map<ValueType, string>,
+        intToExtOpTypeMap: Map<OperationType, string>
+    ): ExtHighlightingRule {
+        return {
+            name: rule.name,
+            showInLegend: rule.showInLegend,
+            disabled: rule.disabled,
+            invisible: rule.invisible,
+            adjustThickness: rule.adjustThickness,
+            color: rule.color,
+            labelProperty: rule.labelProperty === null ? null : intToExtPropMap[rule.labelProperty],
+            valueCondition: this.mapValueCondition(rule.valueCondition, intToExtPropMap, intToExtValueTypeMap),
+            logicalConditions: this.mapLogicalConditions(rule.logicalConditions, intToExtPropMap, intToExtOpTypeMap)
+        };
+    }
+
+    private static mapLogicalConditions(
+        intLogicalConditions: IntLogicalCondition[][],
+        intToExtPropMap: PropMap,
+        intToExtOperationTypeMap: Map<OperationType, string>
+    ): ExtLogicalCondition[][] {
+        let extLogicalConditions: ExtLogicalCondition[][] = null;
+
+        if (intLogicalConditions) {
+            extLogicalConditions = intLogicalConditions.map((andConditionList: IntLogicalCondition[]) =>
+                andConditionList.map((intCondition: IntLogicalCondition) => {
+
+                    let propertyName = intToExtPropMap[intCondition.propertyName];
+                    let operationType = intToExtOperationTypeMap.get(intCondition.operationType);
+                    let value = intCondition.value;
+
+                    if (intCondition.propertyName === this.INTERNAL_OBSERVED_ATTRIBUTE) {
+                        if (this.isInternalObservedType(intCondition.value)) {
+                            if (
+                                intCondition.value === (ObservedType.NONE + '') &&
+                                intCondition.operationType === OperationType.NOT_EQUAL
+                            ) {
+                                operationType = intToExtOperationTypeMap.get(OperationType.EQUAL);
+                                value = '1';
+                            } else {
+                                value = intCondition.value !== (ObservedType.NONE + '') ? '1' : '0';
+                            }
+                        }
+                    } else if (intCondition.propertyName === this.INTERNAL_OUTBREAK_ATTRIBUTE) {
+                        if (
+                            this.isBoolean(value) &&
+                            (
+                                intCondition.operationType === OperationType.EQUAL ||
+                                intCondition.operationType === OperationType.NOT_EQUAL
+                            )
+                        ) {
+                            propertyName = intToExtPropMap[this.INTERNAL_WEIGHT_ATTRIBUTE];
+                            if (this.isTrue(value) === (intCondition.operationType === OperationType.EQUAL)) {
+                                operationType = intToExtOperationTypeMap.get(OperationType.GREATER);
+                                value = '0';
+                            } else {
+                                operationType = intToExtOperationTypeMap.get(OperationType.EQUAL);
+                                value = '0';
+                            }
+                        } else {
+                            propertyName = intCondition.propertyName;
+                        }
+
+                    }
+
+                    return {
+                        propertyName: propertyName,
+                        operationType: operationType,
+                        value: value
+                    };
+                })
+            );
+        }
+
+        return extLogicalConditions;
+    }
+
+    private static isInternalObservedType(value: string): boolean {
+        return [
+            ObservedType.NONE + '',
+            ObservedType.BACKWARD + '',
+            ObservedType.FORWARD + '',
+            ObservedType.FULL + ''
+        ].indexOf(value) >= 0;
+    }
+
+    private static isBoolean(value: string): boolean {
+        return this.isTrue(value) || this.isFalse(value);
+    }
+
+    private static isTrue(value: string): boolean {
+        return value === '1' || value.toLowerCase() === 'true';
+    }
+
+    private static isFalse(value: string): boolean {
+        return value === '0' || value.toLowerCase() === 'false';
+    }
+
+    private static mapValueCondition(
+        intValueCondition: IntValueCondition,
+        intToExtPropMap: PropMap,
+        intToExtValueTypeMap: Map<ValueType, string>
+    ): ExtValueCondition {
+        return intValueCondition === null ?
+            null :
+            {
+                propertyName: intToExtPropMap[intValueCondition.propertyName],
+                valueType: intToExtValueTypeMap.get(intValueCondition.valueType),
+                useZeroAsMinimum: intValueCondition.useZeroAsMinimum
+            };
+    }
+
+    private static mapShapeType(intShapeType: NodeShapeType, intToExtShapeMap: Map<NodeShapeType, string>): string {
+        return intShapeType === null ? null : intToExtShapeMap.get(intShapeType);
     }
 
     private static convertLayout(intLayout: Layout): any {

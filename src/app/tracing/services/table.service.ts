@@ -60,7 +60,8 @@ export class TableService {
             { id: 'forward', name: 'Forward' },
             { id: 'backward', name: 'Backward' },
             { id: 'score', name: 'Score' },
-            { id: 'selected', name: 'Selected' }
+            { id: 'selected', name: 'Selected' },
+            { id: 'invisible', name: 'Invisible' }
         ];
 
         this.addColumnsForProperties(columns, data.deliveries);
@@ -74,7 +75,6 @@ export class TableService {
             { id: 'id', name: 'ID' },
             { id: 'name', name: 'Name' },
             { id: 'score', name: 'Score' },
-            { id: 'contained', name: 'Contained' },
             { id: 'outbreak', name: 'Outbreak' },
             { id: 'weight', name: 'Weight' },
             { id: 'forward', name: 'Forward' },
@@ -88,7 +88,9 @@ export class TableService {
             { id: 'country', name: 'Country' },
             { id: 'typeOfBusiness', name: 'Type of Business' },
             { id: 'lat', name: 'Latitude' },
-            { id: 'lon', name: 'Longitude' }
+            { id: 'lon', name: 'Longitude' },
+            { id: 'isMeta', name: 'Is Meta Station' },
+            { id: 'contained', name: 'Is Meta Member' }
         ];
 
         this.addColumnsForProperties(columns, data.stations);
@@ -139,7 +141,8 @@ export class TableService {
                 forward: delivery.forward,
                 backward: delivery.backward,
                 score: delivery.score,
-                selected: delivery.selected
+                selected: delivery.selected,
+                invisible: delivery.invisible
             };
 
             delivery.properties.forEach(
@@ -151,11 +154,12 @@ export class TableService {
     }
 
     private getStationRows(data: DataServiceData): TableRow[] {
-        return data.stations.map(station => {
+        const rows = data.stations.map(station => {
             const row: TableRow = {
                 id: station.id,
                 name: station.name,
                 score: station.score,
+                isMeta: station.isMeta,
                 contained: station.contained,
                 outbreak: station.outbreak,
                 weight: station.weight,
@@ -177,6 +181,26 @@ export class TableService {
             );
 
             return row;
+        });
+
+        this.assignParentsToStationRows(rows, data);
+
+        return rows;
+    }
+
+    private assignParentsToStationRows(rows: TableRow[], data: DataServiceData): void {
+        const idToRowMap: Record<string, TableRow> = {};
+        data.stations.forEach((station, index) => {
+            if (station.contained) {
+                idToRowMap[station.id] = rows[index];
+            } else if (station.contains.length > 0) {
+                const row = rows[index];
+                for (const memberId of station.contains) {
+                    const memberRow = idToRowMap[memberId];
+                    memberRow.parentRow = row;
+                    memberRow.parentRowId = row.id;
+                }
+            }
         });
     }
 
