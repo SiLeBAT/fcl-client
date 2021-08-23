@@ -219,6 +219,10 @@
         .datatable-body-row {
             &.active,
             &.active .datatable-row-group {
+                .datatable-body-cell-label .fcl-tree-action-icon {
+                    color: rgb(0, 0, 0);
+                }
+
                 .fcl-row-cell-invisible {
                     .datatable-body-cell-label {
                         color: $fcl-accent-200;
