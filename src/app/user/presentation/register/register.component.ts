@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RegistrationCredentials } from '../../models/user.model';
 
 export interface IHash {
@@ -13,6 +13,9 @@ export interface IHash {
     encapsulation: ViewEncapsulation.None
 })
 export class RegisterComponent implements OnInit {
+
+    private static readonly NAME_REGEXP = /^[^<>]*$/;
+
     @Output() register = new EventEmitter();
     registerForm: FormGroup;
     private pwStrength: number;
@@ -25,8 +28,14 @@ export class RegisterComponent implements OnInit {
 
     ngOnInit() {
         this.registerForm = new FormGroup({
-            firstName: new FormControl(null, Validators.required),
-            lastName: new FormControl(null, Validators.required),
+            firstName: new FormControl(null, [
+                Validators.required,
+                this.nameValidator
+            ]),
+            lastName: new FormControl(null, [
+                Validators.required,
+                this.nameValidator
+            ]),
             email: new FormControl(null, [
                 Validators.required,
                 Validators.email
@@ -75,6 +84,11 @@ export class RegisterComponent implements OnInit {
             pw2.setErrors(null);
         }
         return null;
+    }
+
+    private nameValidator(control: AbstractControl): ValidationErrors {
+        return RegisterComponent.NAME_REGEXP.test(control.value || '') ?
+            null : { illegalCharacters: true };
     }
 
     doStrengthChange(pwStrength: number) {

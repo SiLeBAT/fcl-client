@@ -47,7 +47,7 @@ describe('Testing the Header of the app', function () {
                     cy.get('mat-menu')
                     cy.get('button').should('have.class', 'mat-icon-button');
                     cy.contains('mat-icon', 'account_circle');
-                    cy.get('button').click();
+                    cy.get('button').click({ force: true});
                 });
             });
             cy.get('.mat-menu-content')

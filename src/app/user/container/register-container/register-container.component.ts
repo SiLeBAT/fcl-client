@@ -6,6 +6,7 @@ import { AlertService } from '../../../shared/services/alert.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { HTML_ERROR_CODE_UNPROCESSABLE_ENTITY } from '@app/core/html-error-codes.constants';
 
 @Component({
     selector: 'fcl-register-container',
@@ -34,11 +35,15 @@ export class RegisterContainerComponent implements OnInit {
             this.router.navigate(['users/login']).catch((err) => {
                 throw new Error(`Unable to navigate: ${err}`);
             });
-        }, () => {
+        }, (err: HttpErrorResponse) => {
             this.spinnerService.hide();
-            this.alertService.error(`Error during registration.
-            An email has been sent to an ${credentials.email} with further instructions.
-            If you don't receive an email please contact us directly per email to: ${this.supportContact}.`);
+            if (err.status === HTML_ERROR_CODE_UNPROCESSABLE_ENTITY) {
+                this.alertService.error('The registration data is invalid.');
+            } else {
+                this.alertService.error(`Error during registration.
+                An email has been sent to an ${credentials.email} with further instructions.
+                If you don't receive an email please contact us directly per email to: ${this.supportContact}.`);
+            }
         });
 
     }

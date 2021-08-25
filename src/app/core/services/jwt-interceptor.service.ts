@@ -7,6 +7,11 @@ import { Store } from '@ngrx/store';
 import { AlertService } from '../../shared/services/alert.service';
 import * as fromUser from './../../user/state/user.reducer';
 import * as userActions from './../../user/state/user.actions';
+import {
+    HTML_ERROR_CODE_INTERNAL_SERVER_ERROR,
+    HTML_ERROR_CODE_UNAUTHORIZED,
+    HTML_ERROR_CODE_UNPROCESSABLE_ENTITY
+} from '../html-error-codes.constants';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -17,12 +22,17 @@ export class JwtInterceptor implements HttpInterceptor {
         return next.handle(req).pipe(
             catchError((errorResponse: Error) => {
                 if (errorResponse instanceof HttpErrorResponse) {
-                    if ((errorResponse.status === 401) || (errorResponse.status === 500)) {
+                    if (
+                        (errorResponse.status === HTML_ERROR_CODE_UNAUTHORIZED) ||
+                        (errorResponse.status === HTML_ERROR_CODE_INTERNAL_SERVER_ERROR)
+                    ) {
                         this.alertService.error(
                             `Not authorized or not activated.
                             If already registered please check your Email for an activation link.`
                         );
                         this.store.dispatch(new userActions.LogoutUserMSA());
+                    } else if (errorResponse.status === HTML_ERROR_CODE_UNPROCESSABLE_ENTITY) {
+                        throw(errorResponse);
                     }
                 }
                 throw HttpErrorResponse;

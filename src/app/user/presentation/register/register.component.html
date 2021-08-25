@@ -5,8 +5,11 @@
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName" name="firstName" required />
                 <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error *ngIf="!validateField('firstName')">
+                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.required">
                     Required Field
+                </mat-error>
+                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.illegalCharacters">
+                    Symbols '&#60;' and '&#62;' are not allowed.
                 </mat-error>
             </mat-form-field>
         </div>
@@ -16,8 +19,11 @@
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName" name="lastName" required />
                 <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error *ngIf="!validateField('lastName')">
+                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.required">
                     Required Field
+                </mat-error>
+                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.illegalCharacters">
+                    Symbols '&#60;' and '&#62;' are not allowed.
                 </mat-error>
             </mat-form-field>
         </div>

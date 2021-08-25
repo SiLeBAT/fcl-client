@@ -28,7 +28,7 @@ describe('Use-cases Login Page', function () {
             cy.get('fcl-page-header').within(function () {
                 cy.get('.fcl-avatar-item')
                     .find('button')
-                    .click();
+                    .click({ force: true});
             });
 
             cy.get('.mat-menu-content').within(function () {

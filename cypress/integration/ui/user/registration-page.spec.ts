@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
 
+const USER_NAME_ILLEGAL_CHARACTERS = '<>';
+
 describe('Testing the Registration Page', function () {
     beforeEach(function () {
         cy.fixture('ui-routes.json').as('paths');
@@ -82,6 +84,20 @@ describe('Testing the Registration Page', function () {
             });
         });
 
+        it('should have no illegal characters in first name', function () {
+            cy.get('form').within(() => {
+                fillOutRegistrationForm(this.users[4]);
+                cy.get('@firstNameInput').clear().blur();
+                cy.get('@firstNameInput').type(USER_NAME_ILLEGAL_CHARACTERS);
+
+                cy.contains('First Name').should('have.css', 'color', 'rgb(254, 0, 0)');
+                cy.get('mat-error')
+                    .should('contain', 'Symbols \'<\' and \'>\' are not allowed.')
+                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+                cy.get('@registerButton').should('be.disabled');
+            });
+        });
+
         it('should require last name', function () {
             cy.get('form').within(() => {
                 fillOutRegistrationForm(this.users[4]);
@@ -90,6 +106,20 @@ describe('Testing the Registration Page', function () {
                 cy.contains('Last Name').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
                     .should('contain', 'Required Field')
+                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+                cy.get('@registerButton').should('be.disabled');
+            });
+        });
+
+        it('should have no illegal characters in last name', function () {
+            cy.get('form').within(() => {
+                fillOutRegistrationForm(this.users[4]);
+                cy.get('@lastNameInput').clear().blur();
+                cy.get('@lastNameInput').type(USER_NAME_ILLEGAL_CHARACTERS);
+
+                cy.contains('Last Name').should('have.css', 'color', 'rgb(254, 0, 0)');
+                cy.get('mat-error')
+                    .should('contain', 'Symbols \'<\' and \'>\' are not allowed.')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('@registerButton').should('be.disabled');
             });
