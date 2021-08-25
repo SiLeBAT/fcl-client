@@ -115,6 +115,7 @@ export class ColorsAndShapesListViewComponent implements OnChanges {
 
     onRuleApply(editRule: ColorAndShapeEditRule): void {
         this.saveEditRule(editRule);
+        this.setEditRule(editRule);
     }
 
     onRuleOk(editRule: ColorAndShapeEditRule): void {

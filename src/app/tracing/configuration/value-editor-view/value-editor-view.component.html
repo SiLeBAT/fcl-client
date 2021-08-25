@@ -10,6 +10,7 @@
         [value] = "value"
         (input) = "onInput($event)"
         [matAutocomplete]="filterValues"
+        [disabled]="disabled"
     />
 
     <mat-autocomplete #filterValues="matAutocomplete" (optionSelected)="onOptionSelected($event)">

@@ -5,6 +5,7 @@
         matTooltip="Add conditions for graph selection"
         matTooltipPosition="above"
         color="accent"
+        [disabled]="disabled"
         (click)="onAddSelectionClick()"
     >
         Add selection
@@ -15,6 +16,7 @@
         matTooltip="Remove conditions for graph selection"
         matTooltipPosition="above"
         color="accent"
+        [disabled]="disabled"
         (click)="onRemoveSelectionClick()"
     >
         Remove Selection

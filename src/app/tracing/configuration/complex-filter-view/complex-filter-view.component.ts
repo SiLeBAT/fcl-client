@@ -12,6 +12,7 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 })
 export class ComplexFilterViewComponent {
 
+    @Input() disabled = false;
     @Input() set availableProperties(value: TableColumn[]) {
         this.availableProperties_ = value;
     }

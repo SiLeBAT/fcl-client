@@ -5,6 +5,7 @@
     <mat-select
         [value]="value"
         (valueChange)="onValueChange($event)"
+        [disabled]="disabled"
         >
         <ng-container *ngFor="let junktor of availableJunktors">
             <mat-option

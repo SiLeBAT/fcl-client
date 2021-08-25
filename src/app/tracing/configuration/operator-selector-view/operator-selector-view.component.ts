@@ -8,6 +8,7 @@ import { OperationType } from '@app/tracing/data.model';
 })
 export class OperatorSelectorViewComponent {
 
+    @Input() disabled = false;
     @Input() value: OperationType;
     @Input() set availableOperatorTypes(value: OperationType[]) {
         this.availableOperatorTypes_ = value;

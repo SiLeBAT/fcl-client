@@ -16,11 +16,11 @@ function isConditionEmpty(condition: ComplexFilterCondition): boolean {
     );
 }
 
-function getCompleteConditionsCount(conditions: ComplexFilterCondition[]): number {
+export function getCompleteConditionsCount(conditions: ComplexFilterCondition[]): number {
     return conditions.filter(c => isConditionComplete(c)).length;
 }
 
-function getNonEmptyConditionCount(conditions: ComplexFilterCondition[]): number {
+export function getNonEmptyConditionCount(conditions: ComplexFilterCondition[]): number {
     return conditions.filter(c => !isConditionEmpty(c)).length;
 }
 

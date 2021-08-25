@@ -105,6 +105,9 @@
             [availableProperties]="availableProperties"
             [propToValuesMap]="propToValuesMap"
 
+            (addSelection)="onAddSelectionToRuleConditions($event)"
+            (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+
             (applyRule)="onRuleApply($event)"
             (cancelEdit)="onCancelEdit()"
             (okRule)="onRuleOk($event)"

@@ -90,7 +90,7 @@ export function convertStatHRuleToCSEditRule(rule: StationHighlightingRule): Col
     };
 }
 
-function convertHRuleToLabelEditRule(rule: HighlightingRule): LabelEditRule {
+export function convertHRuleToLabelEditRule(rule: HighlightingRule): LabelEditRule {
     return {
         ...convertHRuleToEditRule(rule, RuleType.LABEL),
         labelProperty: rule.labelProperty,

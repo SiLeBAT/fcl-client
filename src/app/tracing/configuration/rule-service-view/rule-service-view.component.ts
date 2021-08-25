@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectionStrategy, Input } from '@angular/core';
 
 @Component({
     selector: 'fcl-rule-service-view',
@@ -7,6 +7,8 @@ import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angul
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RuleServiceViewComponent {
+
+    @Input() disabled = false;
 
     @Output() addSelection = new EventEmitter<void>();
     @Output() removeSelection = new EventEmitter<void>();

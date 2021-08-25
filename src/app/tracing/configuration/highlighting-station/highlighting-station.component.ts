@@ -33,28 +33,33 @@ interface CachedData {
 })
 export class HighlightingStationComponent implements OnInit, OnDestroy {
 
+    private emptyEditRules_: StationEditRule[] = [];
+    private emptyRules_: StationHighlightingRule[] = [];
+    private emptyAvailableProperties_: TableColumn[] = [];
+    private emptyPropToValuesMap_: PropToValuesMap = {};
+
     get editRules(): StationEditRule[] {
         return this.cachedState === null ?
-            [] :
+            this.emptyEditRules_ :
             this.cachedState.editRules;
     }
 
     get rules(): StationHighlightingRule[] {
         return this.cachedState === null ?
-            [] :
+            this.emptyRules_ :
             this.cachedState.highlightingState;
     }
 
     get availableProperties(): TableColumn[] {
-        return this.cachedData ?
-            this.cachedData.dataTable.columns :
-            [];
+        return this.cachedData === null ?
+            this.emptyAvailableProperties_ :
+            this.cachedData.dataTable.columns ;
     }
 
     get propToValuesMap(): PropToValuesMap {
-        return this.cachedData ?
-            this.cachedData.propToValuesMap :
-            {};
+        return this.cachedData === null ?
+            this.emptyPropToValuesMap_ :
+            this.cachedData.propToValuesMap;
     }
 
     get highlightingStats(): StationHighlightingStats | null {

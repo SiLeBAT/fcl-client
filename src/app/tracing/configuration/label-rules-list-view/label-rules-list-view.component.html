@@ -68,7 +68,7 @@
             </button>
         </div>
 
-        <fcl-colors-and-shapes-edit-view
+        <fcl-label-rules-edit-view
             *ngIf="editRule !== null && editRule.id === item.id"
             class="fcl-cs-rules-list-edit-item"
 
@@ -76,11 +76,14 @@
             [availableProperties]="availableProperties"
             [propToValuesMap]="propToValuesMap"
 
+            (addSelection)="onAddSelectionToRuleConditions($event)"
+            (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+
             (applyRule)="onRuleApply($event)"
             (cancelEdit)="onCancelEdit()"
             (okRule)="onRuleOk($event)"
         >
-        </fcl-colors-and-shapes-edit-view>
+        </fcl-label-rules-edit-view>
 
     </div>
 
@@ -94,12 +97,12 @@
     matTooltipPosition="above"
     color="primary"
     (click)="onRuleAdd()"
-    [disabled]="!isStartEditAvailable"
+    [disabled]="isEditRuleModeActive"
 >
     <mat-icon>add</mat-icon>
 </button>
 
-<fcl-colors-and-shapes-edit-view
+<fcl-label-rules-edit-view
     *ngIf="showEditNewRuleDialog"
 
     class="fcl-new-cs-rule-dialog"
@@ -113,4 +116,4 @@
     (cancelEdit)="onCancelEdit()"
     (okRule)="onRuleOk($event)"
 >
-</fcl-colors-and-shapes-edit-view>
+</fcl-label-rules-edit-view>

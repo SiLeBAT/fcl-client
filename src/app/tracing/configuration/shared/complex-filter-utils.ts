@@ -53,11 +53,13 @@ export class ComplexFilterUtils {
             groups.push(newGroup);
         }
 
-        return groups
+        const result = groups
             .map(group => group
                 .filter(condition => ComplexFilterUtils.isConditionValid(condition))
                 .sort(ComplexFilterUtils.conditionComparator))
             .filter(group => group.length > 0);
+
+        return result.length === 0 ? [[]] : result;
     }
 
     static isConditionValid(condition: LogicalCondition): boolean {
@@ -113,16 +115,6 @@ export class ComplexFilterUtils {
                     filterConditions.push(filterCondition);
                 }
             }
-        }
-        if (filterConditions.length === 0) {
-            filterConditions.push({
-                propertyName: null,
-                operationType: null,
-                value: '',
-                junktorType: JunktorType.AND
-            });
-        } else {
-            filterConditions[filterConditions.length - 1].junktorType = JunktorType.AND;
         }
 
         return filterConditions;

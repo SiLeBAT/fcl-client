@@ -77,7 +77,7 @@ export class HighlightingStationViewComponent implements OnChanges {
     }
 
     onStartRuleEdit(editRule: StationEditRule): void {
-        this.editRulesChange.emit([].concat(...this.editRules, editRule));
+        this.editRulesChange.emit([].concat(...this.editRules.filter(r => r.id !== editRule.id), editRule));
     }
 
     onCancelRuleEdit(ruleId: RuleId): void {

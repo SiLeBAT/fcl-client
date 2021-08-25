@@ -10,6 +10,7 @@ import { JunktorType } from '../configuration.model';
 export class JunctorSelectorViewComponent {
 
     @Input() value: JunktorType;
+    @Input() disabled = false;
 
     @Output() valueChange = new EventEmitter<JunktorType>();
 

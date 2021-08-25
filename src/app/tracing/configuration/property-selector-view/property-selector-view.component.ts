@@ -13,6 +13,8 @@ interface Property {
 })
 export class PropertySelectorViewComponent {
 
+    @Input() label: string | null = null;
+    @Input() disabled = false;
     @Input() value: string;
     @Input() availableProperties: Property[];
 

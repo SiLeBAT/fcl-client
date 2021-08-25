@@ -5,7 +5,9 @@ import {
     StationHighlightingStats, TableColumn
 } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
+import { EditRuleCreator } from '../edit-rule-creator';
 import { LabelEditRule } from '../model';
+import { convertHRuleToLabelEditRule, convertStatEditRuleToStatHRule } from '../rule-conversion';
 
 @Component({
     selector: 'fcl-label-rules-list-view',
@@ -44,7 +46,7 @@ export class LabelRulesListViewComponent<T extends StationHighlightingRule | Del
     }
 
     get isStartEditAvailable(): boolean {
-        return false;
+        return this.editRule === null;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -74,13 +76,13 @@ export class LabelRulesListViewComponent<T extends StationHighlightingRule | Del
     }
 
     onRuleAdd(): void {
-        // this.setEditRule(EditRuleCreator.createLabelEditRule());
+        this.setEditRule(EditRuleCreator.createLabelEditRule());
     }
 
     onStartEdit(ruleIndex: number) {
-        // const hRule = this.rules[ruleIndex];
-        // const editRule = convertHRuleToLabelEditRule(hRule);
-        // this.setEditRule(editRule);
+        const hRule = this.rules[ruleIndex];
+        const editRule = convertHRuleToLabelEditRule(hRule);
+        this.setEditRule(editRule);
     }
 
     onRuleDelete(event: MouseEvent, index: number) {
@@ -97,6 +99,7 @@ export class LabelRulesListViewComponent<T extends StationHighlightingRule | Del
 
     onRuleApply(editRule: LabelEditRule): void {
         this.saveEditRule(editRule);
+        this.setEditRule(editRule);
     }
 
     onRuleOk(editRule: LabelEditRule): void {
@@ -137,8 +140,8 @@ export class LabelRulesListViewComponent<T extends StationHighlightingRule | Del
     }
 
     private saveEditRule(editRule: LabelEditRule): void {
-        // const hRule = convertLabelEditRuleToStatHRule(editRule);
-        // this.saveRule(hRule);
+        const hRule = convertStatEditRuleToStatHRule(editRule);
+        this.saveRule(hRule as T);
     }
 
     private saveRule(rule: T): void {
@@ -152,7 +155,7 @@ export class LabelRulesListViewComponent<T extends StationHighlightingRule | Del
         this.rulesChange.emit(newRules);
     }
 
-    // private setEditRule(editRule: LabelEditRule): void {
-    //     this.startEdit.emit(editRule);
-    // }
+    private setEditRule(editRule: LabelEditRule): void {
+        this.startEdit.emit(editRule);
+    }
 }
