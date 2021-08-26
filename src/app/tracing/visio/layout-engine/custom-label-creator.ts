@@ -21,8 +21,17 @@ export class CustomLabelCreator extends LabelCreator {
     getLabelTexts(infoObj: { props: { [key: string]: string | number | boolean }}, labelElements: LabelElementInfo[][]): string[] {
         return labelElements.map(elements =>
             elements.map(element => {
+                if (
+                    element.dependendOnProp !== undefined &&
+                    infoObj.props[element.dependendOnProp] === undefined
+                ) {
+                    // an element can be dependent on other elements
+                    // however the dependency is not matched
+                    return '';
+                } else
                 if ((element as PropElementInfo).prop !== undefined) {
                     const propElement = element as PropElementInfo;
+
                     return propElement.prop === null ?
                         '' :
                         CustomLabelCreator.getText(infoObj.props[propElement.prop], propElement.altText);

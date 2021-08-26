@@ -104,6 +104,26 @@ export class ReportConfigurationComponent {
         }
     }
 
+    private setElementDependencies(): void {
+        for (const labelKey of Object.keys(this.labelInfos)) {
+            const labelInfo: LabelInfo = this.labelInfos[labelKey];
+            labelInfo.amountUnitPairs.forEach(amountUnitPair => {
+                const depOn = amountUnitPair.amount;
+                const labelElements = labelInfo.labelElements.find(elements =>
+                    elements.indexOf(amountUnitPair.amount) >= 0 &&
+                    elements.indexOf(amountUnitPair.unit)
+                );
+                if (labelElements !== undefined) {
+                    const startIndex = labelElements.indexOf(amountUnitPair.amount);
+                    const endIndex = labelElements.indexOf(amountUnitPair.unit);
+                    for (let i = startIndex + 1; i <= endIndex; i++) {
+                        labelElements[i].dependendOnProp = amountUnitPair.amount.prop;
+                    }
+                }
+            });
+        }
+    }
+
     private setLabelInfos(roaSettings: ROASettings): void {
         this.labelInfos = {
             stationLabel: {
@@ -152,13 +172,14 @@ export class ReportConfigurationComponent {
             for (const labelElement of labelRow) {
                 if ((labelElement as PropElementInfo).prop === undefined) {
                     const textElement = labelElement as TextElementInfo;
-                    row.push({ text: textElement.text });
+                    row.push({ text: textElement.text, dependendOnProp: labelElement.dependendOnProp });
                 } else {
                     const propElement = labelElement as PropElementInfo;
                     row.push({
                         prop: propElement.prop,
                         altText: propElement.altText,
-                        isNullable: propElement.isNullable
+                        isNullable: propElement.isNullable,
+                        dependendOnProp: labelElement.dependendOnProp
                     });
                 }
             }
@@ -198,6 +219,7 @@ export class ReportConfigurationComponent {
     }
 
     onGenerateReport() {
+        this.setElementDependencies();
         this.store.dispatch(new storeActions.SetROAReportSettingsSOA({ roaSettings: this.getROASettings() }));
         this.store.dispatch(new roaActions.GenerateROAReportMSA());
         this.dialogRef.close();

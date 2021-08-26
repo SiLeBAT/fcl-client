@@ -1,8 +1,11 @@
-export interface TextElementInfo {
+interface SharedElementInfo {
+    dependendOnProp?: string;
+}
+export interface TextElementInfo extends SharedElementInfo {
     text: string;
 }
 
-export interface PropElementInfo {
+export interface PropElementInfo extends SharedElementInfo {
     prop: string | null;
     altText: string;
     isNullable: boolean;
