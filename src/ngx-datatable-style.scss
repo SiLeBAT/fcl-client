@@ -7,31 +7,33 @@ ngx-datatable {
 }
 
 .fcl-datatable {
-    // switch of default sort icons
-    .datatable-icon-up::before {
-        content: "";
-    }
-
-    .datatable-icon-down::before {
-        content: "";
-    }
-
-    .datatable-icon-sort-unset::before {
-        content: "";
-    }
-
-    .fcl-header-sort-span {
-        // switch on sort icons
+    .datatable-header-cell {
+        // switch of default sort icons
         .datatable-icon-up::before {
-            content: "\65";
+            content: "";
         }
 
         .datatable-icon-down::before {
-            content: "\66";
+            content: "";
         }
 
         .datatable-icon-sort-unset::before {
-            content: "\63";
+            content: "";
+        }
+
+        .fcl-header-sort-span {
+            // switch on sort icons
+            .datatable-icon-up::before {
+                content: "\65";
+            }
+
+            .datatable-icon-down::before {
+                content: "\66";
+            }
+
+            .datatable-icon-sort-unset::before {
+                content: "\63";
+            }
         }
     }
 
