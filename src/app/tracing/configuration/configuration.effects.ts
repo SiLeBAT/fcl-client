@@ -85,7 +85,7 @@ export class ConfigurationEffects {
                 };
 
                 const dialogData: DialogYesNoData = {
-                    title: `Really delete the '${ruleToDelete.name}' highlighting rule?`,
+                    title: `Are you sure you want to delete the '${ruleToDelete.name}' highlighting rule?`,
                     position: position
                 };
 

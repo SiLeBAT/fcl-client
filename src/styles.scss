@@ -19,6 +19,10 @@ body {
     box-sizing: border-box;
 }
 
+.mat-dialog-container {
+    font-family: #{$fcl-font-family};
+}
+
 .fcl-option-tooltip {
     font-size: 16px;
 }
