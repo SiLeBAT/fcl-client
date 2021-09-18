@@ -14,8 +14,7 @@ import {
     HighlightingRule,
     OperationType,
     DataServiceInputState,
-    StationId,
-    DeliveryId
+    HighlightingStats
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -125,42 +124,45 @@ export class HighlightingService {
     applyHighlightingProps(state: DataServiceInputState, data: DataServiceData): void {
         this.preprocessHighlightings(state);
 
-        const ruleIdToStatCountMap: Record<RuleId, number> = {};
-        state.highlightingSettings.stations.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
-        const ruleIdToConflictCountMap: Record<RuleId, number> = {};
+        const effElementsStats: HighlightingStats = {
+            counts: {},
+            conflicts: {}
+        };
 
         data.stations
             .filter((station: StationData) => !station.contained)
             .forEach((station: StationData) => {
 
                 station.highlightingInfo = this.createStationHighlightingInfo(
-                    station, state, ruleIdToStatCountMap, ruleIdToConflictCountMap
+                    station, state, effElementsStats
                 );
 
             });
 
-        const ruleIdToDelCountMap: Record<RuleId, number> = {};
-        state.highlightingSettings.deliveries.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
         data.deliveries
             .forEach((delivery: DeliveryData) => {
 
-                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, ruleIdToDelCountMap);
+                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, effElementsStats);
 
             });
 
         data.legendInfo = this.getLegendInfo(state, {
-            stations: Utils.mapRecordValues(ruleIdToStatCountMap, (x: number) => x > 0),
-            deliveries: Utils.mapRecordValues(ruleIdToDelCountMap, (x: number) => x > 0)
+            stations: this.getRuleIdToIsActiveMap(
+                state.highlightingSettings.stations.filter(r => !r.disabled),
+                effElementsStats
+            ),
+            deliveries: this.getRuleIdToIsActiveMap(
+                state.highlightingSettings.deliveries.filter(r => !r.disabled),
+                effElementsStats
+            )
         });
-        data.highlightingStats = {
-            stationRuleStats: {
-                counts: ruleIdToStatCountMap,
-                conflicts: ruleIdToConflictCountMap
-            },
-            deliveryRuleStats: {
-                counts: ruleIdToDelCountMap
-            }
-        };
+        data.highlightingStats = effElementsStats;
+    }
+
+    private getRuleIdToIsActiveMap(hrules: HighlightingRule[], effElementsStats: HighlightingStats): Record<RuleId, boolean> {
+        const result: Record<RuleId, boolean> = {};
+        hrules.forEach(rule => result[rule.id] = (effElementsStats.counts[rule.id] || 0) > 0);
+        return result;
     }
 
     private getLegendInfo(
@@ -230,13 +232,13 @@ export class HighlightingService {
     private createDeliveryHightlightingInfo(
         delivery: DeliveryData,
         state: DataServiceInputState,
-        ruleIdToDelCountMap: Record<RuleId, number>
+        effElementsStats: HighlightingStats
     ) {
         const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
-        activeHighlightingRules.forEach(rule => ruleIdToDelCountMap[rule.id] = (ruleIdToDelCountMap[rule.id] || 0) + 1);
+        activeHighlightingRules.forEach(rule => effElementsStats.counts[rule.id] = (effElementsStats[rule.id] || 0) + 1);
 
         return deliveryHighlightingInfo;
     }
@@ -244,8 +246,7 @@ export class HighlightingService {
     private createStationHighlightingInfo(
         station: StationData,
         state: DataServiceInputState,
-        ruleIdToStatCountMap: Record<RuleId, number>,
-        ruleIdToConflictCountMap: Record<RuleId, number>
+        effElementsStats: HighlightingStats
     ): StationHighlightingInfo {
 
         const activeHighlightingRules = this.getActiveHighlightingRules(station, state.highlightingSettings.stations);
@@ -253,10 +254,10 @@ export class HighlightingService {
         const activeShapeRules = activeHighlightingRules.filter(rule => rule.shape !== null);
         const shapes = activeShapeRules.map(rule => rule.shape);
 
-        activeHighlightingRules.forEach(rule => ruleIdToStatCountMap[rule.id] = (ruleIdToStatCountMap[rule.id] || 0) + 1);
+        activeHighlightingRules.forEach(rule => effElementsStats.counts[rule.id] = (effElementsStats.counts[rule.id] || 0) + 1);
         activeShapeRules.forEach((rule, index) => {
             if (index > 0) {
-                ruleIdToConflictCountMap[rule.id] = (ruleIdToConflictCountMap[rule.id] || 0) + 1;
+                effElementsStats.conflicts[rule.id] = (effElementsStats.conflicts[rule.id] || 0) + 1;
             }
         });
 

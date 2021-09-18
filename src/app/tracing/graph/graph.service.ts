@@ -119,7 +119,7 @@ export class GraphService {
         let iNode = 0;
         const nodeData: CyNodeData[] = data.stations.filter(s => !s.invisible && !s.contained).map(s => ({
             id: 'N' + iNode++,
-            label: s.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
+            label: this.createLabel(s),
             ...this.getColorInfo(s.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR),
             isMeta: s.contains && s.contains.length > 0,
             shape: s.highlightingInfo.shape ? s.highlightingInfo.shape : NodeShapeType.CIRCLE,
@@ -178,7 +178,7 @@ export class GraphService {
                             const selected = !!selDel[delivery.id];
                             edgeData.push({
                                 id: 'E' + iEdge++,
-                                labelWoPrefix: delivery.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
+                                labelWoPrefix: this.createLabel(delivery),
                                 ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                                 source: sourceDataId,
                                 target: targetDataId,
@@ -187,12 +187,13 @@ export class GraphService {
                                 wLabelSpace: false
                             });
                         } else {
-                            const labels: string[] = _.uniq(
-                                deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
-                            );
+                            // const labels: string[] = _.uniq(
+                            //     deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
+                            // );
                             edgeData.push({
                                 id: 'E' + iEdge++,
-                                labelWoPrefix: labels.length === 1 ? labels[0].replace(/\s+/, ' ') : '',
+                                labelWoPrefix: this.createMergedLabelWoPrefix(deliveries),
+                                // labels.length === 1 ? labels[0].replace(/\s+/, ' ') : '',
                                 ...this.getColorInfo(
                                     this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
                                     GraphService.DEFAULT_EDGE_COLOR
@@ -217,7 +218,7 @@ export class GraphService {
                 if (sourceData && targetData) {
                     edgeData.push({
                         id: 'E' + iEdge++,
-                        labelWoPrefix: delivery.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
+                        labelWoPrefix: this.createLabel(delivery),
                         ...this.getColorInfo(delivery.highlightingInfo.color, GraphService.DEFAULT_EDGE_COLOR),
                         source: sourceData.id,
                         target: targetData.id,
@@ -249,6 +250,21 @@ export class GraphService {
             delIdToEdgeDataMap: map,
             edgeSel: Utils.createSimpleStringSet(edgeData.filter(n => n.selected).map(n => n.id))
         };
+    }
+
+    private createLabel(element: DeliveryData | StationData): string {
+        return element.highlightingInfo.label.join(' / ').replace(/\s+/, ' ');
+    }
+
+    private createMergedLabelWoPrefix(deliveries: DeliveryData[]): string {
+        if (deliveries.length === 0) {
+            return '';
+        }
+        const labels: string[] = _.uniq(
+            deliveries.map(d => this.createLabel(d))
+            // (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
+        );
+        return labels.length > 1 ? '' : labels[0]; // delivery.highlightingInfo.label.join(' / ').replace(/\s+/, ' ');
     }
 
     private createGhostNodeData(ghostStations: StationData[], graphData: GraphServiceData): CyNodeData[] {
@@ -472,6 +488,7 @@ export class GraphService {
             );
             edge.stopColors = colorInfo.stopColors;
             edge.stopPositions = colorInfo.stopPositions;
+            edge.labelWoPrefix = this.createMergedLabelWoPrefix(edge.deliveries);
         }
     }
 

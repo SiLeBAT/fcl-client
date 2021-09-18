@@ -10,7 +10,7 @@ import {
     getUpdatedOneTermForNColumnsRowFilter,
     getUpdatedComplexRowFilter
 } from '../filter-provider';
-import { filterTableRows } from '../shared';
+import { extractPropToValuesMap, filterTableRows } from '../shared';
 import { InputData as FilterTableViewInputData, TableFilterChange } from '../filter-table-view/filter-table-view.component';
 import * as _ from 'lodash';
 import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap } from '../configuration.model';
@@ -263,7 +263,7 @@ export class FilterElementsViewComponent {
 
     private updatePropValueMap(): void {
         if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.inputData.dataTable.rows) {
-            this.propToValuesMap_ = ComplexFilterUtils.extractPropToValuesMap(this.inputData.dataTable, this.dataColumns_);
+            this.propToValuesMap_ = extractPropToValuesMap(this.inputData.dataTable.rows, this.dataColumns_);
         }
     }
 }

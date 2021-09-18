@@ -62,7 +62,6 @@ import { GeoMapComponent } from './graph/components/geomap/geomap.component';
 import { ContextMenuViewComponent } from './graph/components/context-menu/context-menu-view.component';
 import { GeoMapLicRefViewComponent } from './graph/components/geomap-licref/geomap-licref-view.component';
 import { RuleNameViewComponent } from './configuration/rule-name-view/rule-name-view.component';
-import { ColorsAndShapesListViewComponent } from './configuration/colors-and-shapes-list-view/colors-and-shapes-list-view.component';
 import { ColorsAndShapesEditViewComponent } from './configuration/colors-and-shapes-edit-view/colors-and-shapes-edit-view.component';
 import { DialogYesNoComponent } from './dialog/dialog-yes-no/dialog-yes-no.component';
 import { NgxDatatableRowEventProviderDirective } from './configuration/ngxdatatable-row-event-provider.directive';
@@ -70,8 +69,9 @@ import { ColorSelectorViewComponent } from './configuration/color-selector-view/
 import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix.directive';
 import { UnknownLatLonFrameViewComponent } from './graph/components/unknown-lat-lon-frame-view/unknown-lat-lot-frame-view.component';
 import { RuleServiceViewComponent } from './configuration/rule-service-view/rule-service-view.component';
-import { LabelRulesListViewComponent } from './configuration/label-rules-list-view/label-rules-list-view.component';
 import { LabelRulesEditViewComponent } from './configuration/label-rules-edit-view/label-rules-edit-view.component';
+import { HighlightingRulesListViewComponent } from './configuration/highlighting-rules-list-view/highlighting-rules-list-view.component';
+import { HighlightingDeliveryViewComponent } from './configuration/highlighting-delivery-view/highlighting-delivery-view.component';
 
 @NgModule({
     imports: [
@@ -135,15 +135,15 @@ import { LabelRulesEditViewComponent } from './configuration/label-rules-edit-vi
         GeoMapLicRefViewComponent,
         ContextMenuViewComponent,
         RuleNameViewComponent,
-        ColorsAndShapesListViewComponent,
         ColorsAndShapesEditViewComponent,
         DialogYesNoComponent,
         NgxDatatableRowEventProviderDirective,
         ColorSelectorViewComponent,
         UnknownLatLonFrameViewComponent,
         RuleServiceViewComponent,
-        LabelRulesListViewComponent,
-        LabelRulesEditViewComponent
+        LabelRulesEditViewComponent,
+        HighlightingRulesListViewComponent,
+        HighlightingDeliveryViewComponent
     ],
     exports: []
 })

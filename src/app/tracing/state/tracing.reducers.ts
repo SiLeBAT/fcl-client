@@ -53,7 +53,8 @@ const initialFilterSettings: FilterSettings = {
 };
 
 const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings = {
-    stationEditRules: []
+    stationEditRules: [],
+    deliveryEditRules: []
 };
 
 const initialModelDependentState: ModelDependentState = {
@@ -502,6 +503,30 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 highlightingConfigurationSettings: {
                     ...state.highlightingConfigurationSettings,
                     stationEditRules: action.payload.editRules
+                }
+            };
+
+        case TracingActionTypes.SetDeliveryHighlightingRulesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: {
+                            ...state.fclData.graphSettings.highlightingSettings,
+                            deliveries: action.payload.rules
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetDeliveryHighlightingEditRulesSOA:
+            return {
+                ...state,
+                highlightingConfigurationSettings: {
+                    ...state.highlightingConfigurationSettings,
+                    deliveryEditRules: action.payload.editRules
                 }
             };
 

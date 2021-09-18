@@ -1,15 +1,20 @@
 <fcl-highlighting-station-view
-    class="fcl-hightlighting-station-view"
-    [availableProperties]="availableProperties"
-    [propToValuesMap]="propToValuesMap"
-    [rules]="rules"
-    [editRules]="editRules"
-    [highlightingStats]="highlightingStats"
+    [availableProperties] = "availableProperties"
+    [propToValuesMap] = "propToValuesMap"
+    [ruleListItems] = "ruleListItems"
+    [editRules] = "editRules"
+
+    (ruleOrderChange) = "onRuleOrderChange($event)"
+    (toggleRuleIsDisabled) = "onToggleRuleIsDisabled($event)"
+    (toggleShowRuleInLegend) = "onToggleShowRuleInLegend($event)"
+    (deleteRule) = "onDeleteRule($event)"
+
+    (newRule) = "onNewRule($event)"
+    (startEdit) = "onStartEdit($event)"
+    (applyEdit) = "onApplyEdit($event)"
+    (okEdit) = "onOkEdit($event)"
+    (cancelEdit) = "onCancelEdit($event)"
 
     (addSelectionToRuleConditions)="onAddSelectionToRuleConditions($event)"
     (removeSelectionFromRuleConditions)="onRemoveSelectionFromRuleConditions($event)"
-    (rulesChange)="onRulesChange($event)"
-    (editRulesChange)="onEditRulesChange($event)"
-    (ruleDelete)="onRuleDelete($event)"
->
-</fcl-highlighting-station-view>
+></fcl-highlighting-station-view>

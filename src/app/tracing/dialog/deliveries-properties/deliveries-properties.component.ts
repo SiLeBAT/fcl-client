@@ -103,7 +103,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
     private applyState(state: DataServiceInputState) {
         timer(200).subscribe(
             () => {
-                const newData = this.tableService.getDeliveryData(state, this.deliveryIds);
+                const newData = this.tableService.getDeliveryData(state, true, this.deliveryIds);
                 const columns: FilterColumn[] = newData.columns.map((c, i) => ({
                     id: 'c' + i,
                     prop: c.id,

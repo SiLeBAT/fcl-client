@@ -17,22 +17,6 @@ export class ComplexFilterUtils {
         });
     }
 
-    static extractPropToValuesMap(dataTable: DataTable, dataColumns: TableColumn[]): PropToValuesMap {
-        const propToValuesMap: PropToValuesMap = {};
-        for (const column of dataColumns) {
-            const values: string[] = _.uniq(
-                dataTable.rows
-                    .map(r => r[column.id] as (string | number | boolean))
-                    .filter(v => v !== undefined && v !== null)
-                    .map(v => typeof v === 'string' ? v : '' + v)
-                ).sort();
-            propToValuesMap[column.id] = values;
-        }
-        propToValuesMap[''] = _.uniq([].concat(...Object.values(propToValuesMap))).sort();
-
-        return propToValuesMap;
-    }
-
     static complexFilterConditionsToLogicalConditions(filterConditions: ComplexFilterCondition[]): LogicalCondition[][] {
         const groups: ConditionGroup[] = [];
         let newGroup: ConditionGroup = [];

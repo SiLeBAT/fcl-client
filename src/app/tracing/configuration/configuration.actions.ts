@@ -5,19 +5,20 @@ import { HighlightingRuleDeleteRequestData } from './configuration.model';
 
 export enum ConfigurationActionTypes {
     SelectFilterTableColumnsMSA = '[Tracing][Configuration] Choose Filter Table Columns',
-    DeleteStationHighlightingRuleSSA = '[Tracing][Configuration][HighlightingStationList] Delete Station Highlighting Condition'
+    DeleteHighlightingRuleSSA = '[Tracing][Configuration][HighlightingList] Delete Highlighting Rule'
 }
 export class SelectFilterTableColumnsMSA implements Action {
     readonly type = ConfigurationActionTypes.SelectFilterTableColumnsMSA;
 
     constructor(public payload: { type: TableType, columns: TableColumn[], columnOrder: string[] }) {}
 }
-export class DeleteStationHighlightingRuleSSA implements Action {
-    readonly type = ConfigurationActionTypes.DeleteStationHighlightingRuleSSA;
+
+export class DeleteHighlightingRuleSSA implements Action {
+    readonly type = ConfigurationActionTypes.DeleteHighlightingRuleSSA;
 
     constructor(public payload: { deleteRequestData: HighlightingRuleDeleteRequestData }) {}
 }
 
 export type ConfigurationActions =
       SelectFilterTableColumnsMSA
-    | DeleteStationHighlightingRuleSSA;
+    | DeleteHighlightingRuleSSA;

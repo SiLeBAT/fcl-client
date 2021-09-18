@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
 import { Color, NodeShapeType } from '@app/tracing/data.model';
 import * as _ from 'lodash';
 import { ColorAndShapeEditRule } from '../model';
@@ -11,7 +11,7 @@ import { COLOR_BFR_BLUE } from '../constants';
     styleUrls: ['./colors-and-shapes-edit-view.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewComponent<ColorAndShapeEditRule> {
+export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewComponent<ColorAndShapeEditRule> implements OnChanges {
 
     private static readonly DEFAULT_COLOR = COLOR_BFR_BLUE;
     private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select color and/or shape as well as conditions';
@@ -49,6 +49,13 @@ export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewCompon
 
     constructor() {
         super();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.rule !== undefined && changes.rule.isFirstChange()) {
+            this.useShape_ = this.rule.shape !== null;
+        }
+        super.ngOnChanges(changes);
     }
 
     onShapeChange(shapeType: NodeShapeType | null): void {

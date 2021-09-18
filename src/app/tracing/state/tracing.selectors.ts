@@ -4,25 +4,25 @@ import { TracingState } from '../state.model';
 import { DeliveriesTabId, FilterTabId, HighlightingTabId, StationsTabId } from '../configuration/configuration.constants';
 
 // SELECTORS
-export const getTracingFeatureState = createFeatureSelector<TracingState>(STATE_SLICE_NAME);
+export const selectTracingFeatureState = createFeatureSelector<TracingState>(STATE_SLICE_NAME);
 
 export const getFclData = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.fclData
 );
 
 export const getTracingActive = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.tracingActive
 );
 
 export const getVisioReport = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.visioReport
 );
 
 export const getROASettings = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.roaSettings
 );
 
@@ -61,7 +61,7 @@ export const getTracingSettings = createSelector(
     (fclData) => fclData.tracingSettings
 );
 
-export const getHighlightingSettings = createSelector(
+export const selectHighlightingSettings = createSelector(
     getFclData,
     (fclData) => fclData.graphSettings.highlightingSettings
 );
@@ -72,7 +72,7 @@ export const getSelectedElements = createSelector(
 );
 
 export const getMakeElementsInvisibleInputState = createSelector(
-    getHighlightingSettings,
+    selectHighlightingSettings,
     getSelectedElements,
     getTracingSettings,
     (highlightingSettings, selectedElements, tracingSettings) => ({
@@ -83,7 +83,7 @@ export const getMakeElementsInvisibleInputState = createSelector(
 );
 
 export const selectStationHighlightingSettings = createSelector(
-    getHighlightingSettings,
+    selectHighlightingSettings,
     (highlightingSettings) => highlightingSettings.stations
 );
 
@@ -103,7 +103,7 @@ export const getGraphType = createSelector(
 );
 
 export const getShowConfigurationSideBar = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     (state) => state.showConfigurationSideBar
 );
 
@@ -111,7 +111,7 @@ export const selectDataServiceInputState = createSelector(
     getFclElements,
     getGroupSettings,
     getTracingSettings,
-    getHighlightingSettings,
+    selectHighlightingSettings,
     getGraphSettings,
     (fclElements, groupSettings, tracingSettings, highlightingSettings, graphSettings) => ({
         fclElements: fclElements,
@@ -233,22 +233,22 @@ export const getGroupingData = createSelector(
 );
 
 export const getActiveConfigurationTabId = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.configurationTabIndices.activeConfigurationTabId
 );
 
 export const getActiveFilterTabId = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.configurationTabIndices.activeFilterTabId
 );
 
 export const getActiveHighlightingTabId = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.configurationTabIndices.activeHighlightingTabId
 );
 
 export const getIsFilterStationTabActive = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
         state.configurationTabIndices.activeFilterTabId === StationsTabId &&
@@ -257,7 +257,7 @@ export const getIsFilterStationTabActive = createSelector(
 );
 
 export const getIsFilterDeliveryTabActive = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
         state.configurationTabIndices.activeFilterTabId === DeliveriesTabId &&
@@ -265,8 +265,8 @@ export const getIsFilterDeliveryTabActive = createSelector(
     )
 );
 
-export const getIsHighlightingStationTabActive = createSelector(
-    getTracingFeatureState,
+export const selectIsHighlightingStationTabActive = createSelector(
+    selectTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
         state.configurationTabIndices.activeHighlightingTabId === StationsTabId &&
@@ -274,8 +274,8 @@ export const getIsHighlightingStationTabActive = createSelector(
     )
 );
 
-export const getIsHighlightingDeliveryTabActive = createSelector(
-    getTracingFeatureState,
+export const selectIsHighlightingDeliveryTabActive = createSelector(
+    selectTracingFeatureState,
     state => (
         state.showConfigurationSideBar &&
         state.configurationTabIndices.activeHighlightingTabId === DeliveriesTabId &&
@@ -284,7 +284,7 @@ export const getIsHighlightingDeliveryTabActive = createSelector(
 );
 
 const selectFilterSettings = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.filterSettings
 );
 
@@ -303,8 +303,13 @@ export const selectStationFilterState = createSelector(
 );
 
 export const getHighlightingConfigurationSettings = createSelector(
-    getTracingFeatureState,
+    selectTracingFeatureState,
     state => state.highlightingConfigurationSettings
+);
+
+const selectDeliveryHighlightingConfigurationSettings = createSelector(
+    getHighlightingConfigurationSettings,
+    state => state.deliveryEditRules
 );
 
 export const selectStationHighlightingState = createSelector(
@@ -315,6 +320,15 @@ export const selectStationHighlightingState = createSelector(
         dataServiceInputState: dataServiceInputState,
         highlightingState: stationHighlightingSettings,
         editRules: highlightingConfigs.stationEditRules
+    })
+);
+
+export const selectDeliveryHighlightingState = createSelector(
+    selectDataServiceInputState,
+    selectDeliveryHighlightingConfigurationSettings,
+    (dataServiceInputState, editRules) => ({
+        dataServiceInputState: dataServiceInputState,
+        editRules: editRules
     })
 );
 

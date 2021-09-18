@@ -6,18 +6,18 @@ $fcl-col-delete-width: 22px;
 $fcl-opacity--disabled: 0.38;
 $fcl-font-size: 0.8rem;
 
-.fcl-cs-rules-list-item {
+.fcl-rules-list-item {
     font-size: $fcl-font-size;
     font-family: #{$fcl-font-family};
     display: grid;
     align-items: center;
     grid-template-areas:
-        "dragcolumn rulename . counts . legend . activated . edit . delete"
-        "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
-    grid-template-columns: 3ch calc(50% - 3ch + 24px) 1fr 2ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
+        "dragcolumn rulename symbol . counts . legend . activated . edit . delete"
+        "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
+    grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 2ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
 }
 
-.fcl-cs-rules-list-drag-indicator {
+.fcl-rules-list-drag-indicator {
     $fcl-drag-indicator-size-factor: 1.2;
 
     display: flex;
@@ -57,36 +57,58 @@ $fcl-font-size: 0.8rem;
     transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.fcl-cs-rules-list-item-name {
+.fcl-rules-list-item-name {
     grid-area: rulename;
     justify-self: left;
 }
 
-.fcl-rule-disabled .fcl-cs-rules-list-item-name {
+.fcl-rule-disabled .fcl-rules-list-item-name {
     opacity: $fcl-opacity--disabled;
 }
 
-.fcl-cs-rules-list-item-counts {
+.fcl-rules-list-item-symbol {
+    grid-area: symbol;
+    justify-self: center;
+}
+
+.fcl-rules-list-item-counts {
     grid-area: counts;
     justify-self: center;
 }
 
-.fcl-rule-disabled .fcl-cs-rules-list-item-counts {
+.fcl-rule-disabled .fcl-rules-list-item-counts {
     opacity: $fcl-opacity--disabled;
 }
 
-.fcl-cs-rules-list-item-activated-slider {
+.fcl-rules-list-item-legend-button {
+    grid-area: legend;
+    width: $fcl-col-legend-width;
+    height: $fcl-col-legend-width;
+    color: $fcl-primary-500;
+}
+
+.fcl-rules-list-item-legend-button.mat-button-toggle-checked {
+    font-weight: bold;
+    background-color: $fcl-primary-500;
+    color: rgb(255, 255, 255);
+}
+
+.fcl-rules-list-item-legend-button.mat-button-toggle-disabled {
+    opacity: $fcl-opacity--disabled;
+}
+
+.fcl-rules-list-item-activated-slider {
     grid-area: activated;
     display: flex;
     align-items: center;
     justify-items: center;
 }
 
-.fcl-cs-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+.fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
     background-color: $fcl-primary-500;
 }
 
-.fcl-cs-rules-list-item-edit-button-wrapper {
+.fcl-rules-list-item-edit-button-wrapper {
     grid-area: edit;
     display: flex;
     justify-content: center;
@@ -95,7 +117,7 @@ $fcl-font-size: 0.8rem;
     overflow-x: hidden;
 }
 
-.fcl-cs-rules-list-item-delete-button-wrapper {
+.fcl-rules-list-item-delete-button-wrapper {
     display: flex;
     grid-area: delete;
     justify-content: center;
@@ -105,27 +127,27 @@ $fcl-font-size: 0.8rem;
     overflow-x: hidden;
 }
 
-.fcl-cs-rules-list-edit-item {
+.fcl-rules-list-edit-item {
     grid-area: editdialog;
 }
 
-.fcl-new-cs-rule-dialog {
+.fcl-new-rule-dialog {
     font-size: $fcl-font-size;
 }
 
-.fcl-add-cs-rule-button {
+.fcl-add-rule-button {
     border-radius: 5;
     background-color: rgb(255, 255, 255);
     margin-top: 1rem;
     width: 100%;
 }
 
-.fcl-add-cs-rule-button:hover:enabled {
+.fcl-add-rule-button:hover:enabled {
     background-color: $fcl-accent-300;
     color: rgba(255, 255, 255, 0.9);
 }
 
-.fcl-cs-rules-list-item-counts-wrapper {
+.fcl-rules-list-item-counts-wrapper {
     height: $fcl-col-legend-width;
     display: flex;
     flex-direction: column;
@@ -134,7 +156,7 @@ $fcl-font-size: 0.8rem;
     text-align: center;
 }
 
-.fcl-cs-rules-list-item-conflict-count {
+.fcl-rules-list-item-conflict-count {
     color: red;
     margin-top: -1em;
     padding-bottom: 0.15em;

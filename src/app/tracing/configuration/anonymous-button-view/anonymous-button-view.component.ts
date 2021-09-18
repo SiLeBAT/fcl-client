@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
     selector: 'fcl-anonymous-button-view',
@@ -7,11 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AnonymousButtonViewComponent implements OnInit {
 
+    @Input() tooltip = '';
+
     constructor() { }
 
     ngOnInit() {
     }
 
-    anonymizeStations() { }
+    onAnonymize() { }
 
 }

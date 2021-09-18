@@ -7,13 +7,14 @@ import {
     DeliveryId,
     StationHighlightingRule,
     SetInvisibleElementsPayload,
-    StationId
+    StationId,
+    DeliveryHighlightingRule
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
 import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
 import { ROASettings } from '../visio/model';
-import { StationEditRule } from '../configuration/model';
+import { DeliveryEditRule, StationEditRule } from '../configuration/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
@@ -61,7 +62,9 @@ export enum TracingActionTypes {
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
     ResetTracingStateSOA = '[Tracing] Reset Tracing State',
     SetStationHighlightingRulesSOA = '[Station Highlighting] Set Station Highlighting Rules',
-    SetStationHighlightingEditRulesSOA = '[Station Highlighting] Set Station Highlighting Edit Rules'
+    SetStationHighlightingEditRulesSOA = '[Station Highlighting] Set Station Highlighting Edit Rules',
+    SetDeliveryHighlightingRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Rules',
+    SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules'
 }
 
 export class TracingActivated implements Action {
@@ -332,6 +335,18 @@ export class SetStationHighlightingEditRulesSOA implements Action {
     constructor(public payload: { editRules: StationEditRule[] }) {}
 }
 
+export class SetDeliveryHighlightingRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetDeliveryHighlightingRulesSOA;
+
+    constructor(public payload: { rules: DeliveryHighlightingRule[] }) {}
+}
+
+export class SetDeliveryHighlightingEditRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetDeliveryHighlightingEditRulesSOA;
+
+    constructor(public payload: { editRules: DeliveryEditRule[] }) {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -378,4 +393,6 @@ export type TracingActions =
     | SetHoverDeliveriesSOA
     | ResetTracingStateSOA
     | SetStationHighlightingRulesSOA
-    | SetStationHighlightingEditRulesSOA;
+    | SetStationHighlightingEditRulesSOA
+    | SetDeliveryHighlightingRulesSOA
+    | SetDeliveryHighlightingEditRulesSOA;

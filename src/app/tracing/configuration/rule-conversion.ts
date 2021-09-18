@@ -1,6 +1,9 @@
-import { HighlightingRule, StationHighlightingRule } from '../data.model';
+import { DeliveryHighlightingRule, HighlightingRule, HighlightingStats, StationHighlightingRule } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
-import { ColorAndShapeEditRule, EditRule, InvEditRule, LabelEditRule, RuleType, StationEditRule } from './model';
+import {
+    ColorAndShapeEditRule, ColorEditRule, DeliveryEditRule, DeliveryRuleType, EditRule, InvEditRule,
+    LabelEditRule, RuleListItem, RuleType, StationEditRule, StationRuleType
+} from './model';
 import { ComplexFilterUtils } from './shared/complex-filter-utils';
 
 function convertEditRuleToHRule(editRule: EditRule): HighlightingRule {
@@ -33,8 +36,19 @@ function convertHRuleToStatHRule(rule: HighlightingRule): StationHighlightingRul
     };
 }
 
+function convertHRuleToDeliveryHRule(rule: HighlightingRule): DeliveryHighlightingRule {
+    return {
+        ...rule,
+        linePattern: null
+    };
+}
+
 function convertLabelEditRuleToStatHRule(editRule: LabelEditRule): StationHighlightingRule {
     return convertHRuleToStatHRule(convertLabelEditRuleToHRule(editRule));
+}
+
+function convertLabelEditRuleToDeliveryHRule(editRule: LabelEditRule): DeliveryHighlightingRule {
+    return convertHRuleToDeliveryHRule(convertLabelEditRuleToHRule(editRule));
 }
 
 function convertInvEditRuleToHRule(editRule: InvEditRule): HighlightingRule {
@@ -48,6 +62,10 @@ function convertInvEditRuleToStatHRule(editRule: InvEditRule): StationHighlighti
     return convertHRuleToStatHRule(convertInvEditRuleToHRule(editRule));
 }
 
+function convertInvEditRuleToDeliveryHRule(editRule: InvEditRule): DeliveryHighlightingRule {
+    return convertHRuleToDeliveryHRule(convertInvEditRuleToHRule(editRule));
+}
+
 function convertCSEditRuleToStatHRule(editRule: ColorAndShapeEditRule): StationHighlightingRule {
     return {
         ...convertEditRuleToHRule(editRule),
@@ -57,7 +75,16 @@ function convertCSEditRuleToStatHRule(editRule: ColorAndShapeEditRule): StationH
     };
 }
 
-export function convertStatEditRuleToStatHRule(editRule: StationEditRule): StationHighlightingRule {
+function convertColorEditRuleToDeliveryHRule(editRule: ColorEditRule): DeliveryHighlightingRule {
+    return {
+        ...convertEditRuleToHRule(editRule),
+        color: Utils.colorToRGBArray(editRule.color),
+        showInLegend: editRule.showInLegend,
+        linePattern: null
+    };
+}
+
+export function convertStationEditRuleToHRule(editRule: StationEditRule): StationHighlightingRule {
     switch (editRule.type) {
         case RuleType.COLOR_AND_SHAPE:
             return convertCSEditRuleToStatHRule(editRule as ColorAndShapeEditRule);
@@ -65,6 +92,19 @@ export function convertStatEditRuleToStatHRule(editRule: StationEditRule): Stati
             return convertLabelEditRuleToStatHRule(editRule as LabelEditRule);
         case RuleType.INVISIBILITY:
             return convertInvEditRuleToStatHRule(editRule as InvEditRule);
+        default:
+            throw new Error('Rule not convertable.');
+    }
+}
+
+export function convertDeliveryEditRuleToHRule(editRule: DeliveryEditRule): DeliveryHighlightingRule {
+    switch (editRule.type) {
+        case RuleType.COLOR:
+            return convertColorEditRuleToDeliveryHRule(editRule as ColorEditRule);
+        case RuleType.LABEL:
+            return convertLabelEditRuleToDeliveryHRule(editRule as LabelEditRule);
+        case RuleType.INVISIBILITY:
+            return convertInvEditRuleToDeliveryHRule(editRule as InvEditRule);
         default:
             throw new Error('Rule not convertable.');
     }
@@ -90,6 +130,14 @@ export function convertStatHRuleToCSEditRule(rule: StationHighlightingRule): Col
     };
 }
 
+export function convertDeliveryHRuleToColorEditRule(rule: DeliveryHighlightingRule): ColorEditRule {
+    return {
+        ...convertHRuleToEditRule(rule, RuleType.COLOR),
+        color: Utils.rgbArrayToColor(rule.color),
+        showInLegend: rule.showInLegend
+    };
+}
+
 export function convertHRuleToLabelEditRule(rule: HighlightingRule): LabelEditRule {
     return {
         ...convertHRuleToEditRule(rule, RuleType.LABEL),
@@ -102,7 +150,7 @@ function convertHRuleToInvEditRule(rule: HighlightingRule): InvEditRule {
     return this.convertHRuleToEditRule(rule);
 }
 
-export function convertStatHRuleToEditRule(rule: StationHighlightingRule): StationEditRule {
+export function convertStationHRuleToEditRule(rule: StationHighlightingRule): StationEditRule {
     if (rule.color || rule.shape) {
         return convertStatHRuleToCSEditRule(rule);
     } else if (rule.labelProperty) {
@@ -111,5 +159,92 @@ export function convertStatHRuleToEditRule(rule: StationHighlightingRule): Stati
         return convertHRuleToInvEditRule(rule);
     } else {
         throw new Error('Station Highlighting Rule cannot be converted to EditRule.');
+    }
+}
+
+export function convertDeliveryHRuleToEditRule(rule: DeliveryHighlightingRule): DeliveryEditRule {
+    if (rule.color) {
+        return convertDeliveryHRuleToColorEditRule(rule);
+    } else if (rule.labelProperty) {
+        return convertHRuleToLabelEditRule(rule);
+    } else if (rule.invisible) {
+        return convertHRuleToInvEditRule(rule);
+    } else {
+        throw new Error('Delivery Highlighting Rule cannot be converted to EditRule.');
+    }
+}
+
+export function getStatRuleType(rule: StationHighlightingRule): StationRuleType | null {
+    if (rule.color || rule.shape) {
+        return RuleType.COLOR_AND_SHAPE;
+    } else if (rule.labelProperty) {
+        return RuleType.LABEL;
+    } else {
+        return null;
+    }
+}
+
+export function getDeliveryRuleType(rule: DeliveryHighlightingRule): DeliveryRuleType | null {
+    if (rule.color) {
+        return RuleType.COLOR;
+    } else if (rule.labelProperty) {
+        return RuleType.LABEL;
+    } else {
+        return null;
+    }
+}
+
+function convertHRuleToRuleListItem(rule: HighlightingRule, stats: HighlightingStats): Omit<RuleListItem, 'ruleType'> {
+    return {
+        id: rule.id,
+        name: rule.name,
+        color: rule.color === null ? null : Utils.rgbArrayToColor(rule.color),
+        shape: null,
+        showInLegend: rule.showInLegend,
+        disabled: rule.disabled,
+        effElementsCount: stats.counts[rule.id] || 0,
+        conflictCount: stats.conflicts[rule.id] || 0,
+        effElementsCountTooltip: ''
+    };
+}
+
+export function convertStationHRuleToRuleListItem(rule: StationHighlightingRule, stats: HighlightingStats): RuleListItem {
+    const item = convertHRuleToRuleListItem(rule, stats);
+    const result = {
+        ...item,
+        shape: rule.shape,
+        ruleType: getStatRuleType(rule)
+    };
+    addTooltipToStatRuleListItem(result);
+    return result;
+}
+
+export function convertDeliveryHRuleToRuleListItem(rule: DeliveryHighlightingRule, stats: HighlightingStats): RuleListItem {
+    const item = convertHRuleToRuleListItem(rule, stats);
+    const result = {
+        ...item,
+        ruleType: getDeliveryRuleType(rule)
+    };
+    addTooltipToDeliveryRuleListItem(result);
+    return result;
+}
+
+function addTooltipToDeliveryRuleListItem(ruleListItem: RuleListItem): void {
+    if (ruleListItem.disabled) {
+        // do nothing
+    } else {
+        ruleListItem.effElementsCountTooltip = `This highlighting rule applies to ${ruleListItem.effElementsCount} deliveries.`;
+    }
+}
+
+function addTooltipToStatRuleListItem(ruleListItem: RuleListItem): void {
+    if (ruleListItem.disabled) {
+        // do nothing
+    } else if (ruleListItem.conflictCount > 0) {
+        ruleListItem.effElementsCountTooltip =
+            `For ${ruleListItem.conflictCount}/${ruleListItem.effElementsCount} stations the shape is not visible\n` +
+            `due to another rule above this one.`;
+    } else {
+        ruleListItem.effElementsCountTooltip = `This highlighting rule applies to ${ruleListItem.effElementsCount} stations.`;
     }
 }

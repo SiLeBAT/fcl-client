@@ -26,11 +26,11 @@ export class TableService {
 
     constructor(private dataService: DataService) {}
 
-    getDeliveryData(state: DataServiceInputState, deliveryIds?: string[]): DataTable {
+    getDeliveryData(state: DataServiceInputState, addStationProps: boolean, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
         return {
-            columns: this.getDeliveryColumns(data),
-            rows: this.getDeliveryRows(data, deliveryIds)
+            columns: this.getDeliveryColumns(data, addStationProps),
+            rows: this.getDeliveryRows(data, addStationProps, deliveryIds)
         };
     }
 
@@ -42,8 +42,8 @@ export class TableService {
         };
     }
 
-    getDeliveryColumns(data: DataServiceData): TableColumn[] {
-        const columns: TableColumn[] = [
+    getDeliveryColumns(data: DataServiceData, addStationProps: boolean): TableColumn[] {
+        let columns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'source', name: 'Source ID' },
             { id: 'source.name', name: 'Source' },
@@ -64,6 +64,9 @@ export class TableService {
             { id: 'invisible', name: 'Invisible' }
         ];
 
+        if (addStationProps === false) {
+            columns = columns.filter(c => !c.id.startsWith('source.') && !c.id.startsWith('target.'));
+        }
         this.addColumnsForProperties(columns, data.deliveries);
 
         return columns;
@@ -110,7 +113,7 @@ export class TableService {
         });
     }
 
-    private getDeliveryRows(data: DataServiceData, deliveryIds?: string[]): TableRow[] {
+    private getDeliveryRows(data: DataServiceData, addStationProps: boolean, deliveryIds?: string[]): TableRow[] {
         return (
             deliveryIds ?
             data.getDelById(deliveryIds) :
@@ -129,9 +132,7 @@ export class TableService {
                 name: delivery.name,
                 lot: delivery.lot,
                 source: delivery.source,
-                'source.name': data.statMap[delivery.source].name,
                 target: delivery.target,
-                'target.name': data.statMap[delivery.target].name,
                 dateOut: delivery.dateOut,
                 dateIn: delivery.dateIn,
                 weight: delivery.weight,
@@ -144,6 +145,11 @@ export class TableService {
                 selected: delivery.selected,
                 invisible: delivery.invisible
             };
+
+            if (addStationProps) {
+                row['source.name'] = data.statMap[delivery.source].name;
+                row['target.name'] = data.statMap[delivery.target].name;
+            }
 
             delivery.properties.forEach(
                 prop => row[prop.name] = prop.value

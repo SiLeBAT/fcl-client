@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, OnChanges, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
 import { LabelEditRule } from '../model';
 import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
@@ -49,10 +49,10 @@ export class LabelRulesEditViewComponent extends AbstractRuleEditViewComponent<L
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        super.ngOnChanges(changes);
-        if (changes.rule !== undefined) {
+        if (changes.rule !== undefined && changes.rule.isFirstChange()) {
             this.useConditions_ = this.rule.complexFilterConditions.length > 0;
         }
+        super.ngOnChanges(changes);
     }
 
     onUseConditionsChange(useConditions: boolean): void {

@@ -16,32 +16,6 @@
     </fcl-label-rules-edit-view>
 </ng-template>
 
-<ng-template let-editRule="editRule" #colorShapeEditTemplate>
-    <fcl-colors-and-shapes-edit-view
-        *ngIf="editRule !== null"
-        class="fcl-new-rule-dialog"
-        [rule]="editRule"
-        [availableProperties]="availableProperties"
-        [propToValuesMap]="propToValuesMap"
-
-        (addSelection)="onAddSelectionToRuleConditions($event)"
-        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-
-        (applyRule)="onApplyEdit($event)"
-        (cancelEdit)="onCancelEdit(editRule.id)"
-        (okRule)="onOkEdit($event)"
-    >
-    </fcl-colors-and-shapes-edit-view>
-</ng-template>
-
-<ng-template let-item="item" #colorShapeSymbolTemplate>
-    <fcl-node-symbol-view
-        *ngIf="item.color || item.shape !== null"
-        [shapeType]="item.shape"
-        [fillColor]="item.color"
-    ></fcl-node-symbol-view>
-</ng-template>
-
 <ng-template
     let-ruleType="ruleType"
     let-title="title"
@@ -83,34 +57,13 @@
     </mat-expansion-panel>
 </ng-template>
 
-
-
 <div class="fcl-highlighting-element-container">
 
-    <fcl-anonymous-button-view tooltip="Anonymize stations ... coming soon">
+    <fcl-anonymous-button-view tooltip="Anonymize deliveries ... coming soon">
     </fcl-anonymous-button-view>
 
     <ng-container [ngTemplateOutlet]="panelTemplate"
         [ngTemplateOutletContext] ="{ ruleType: RuleType.LABEL, title: 'Label', editTemplate: labelEditTemplate, showInLegendTB: false }">
-    </ng-container>
-
-    <mat-expansion-panel
-        class="fcl-highlighting-stationsize-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
-        (opened)="sizeOpenState = true"
-        (closed)="sizeOpenState = false">
-
-        <mat-expansion-panel-header>
-            <mat-panel-title class="fcl-font-size-08">
-              Station Size... click  to {{ sizeOpenState ?  'close' : 'open' }}
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        Station Size Configurations ... coming soon
-
-    </mat-expansion-panel>
-
-    <ng-container [ngTemplateOutlet]="panelTemplate"
-        [ngTemplateOutletContext] ="{ ruleType: RuleType.COLOR_AND_SHAPE, title: 'Colours and Shapes', editTemplate: colorShapeEditTemplate, symbolTemplate: colorShapeSymbolTemplate }">
     </ng-container>
 
 </div>

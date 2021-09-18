@@ -63,7 +63,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
                 type: TableType.DELIVERIES,
-                columns: this.tableService.getDeliveryColumns(this.cachedData.dataServiceData),
+                columns: this.tableService.getDeliveryColumns(this.cachedData.dataServiceData, true),
                 columnOrder: this.cachedState.filterTableState.columnOrder
             })
         );
@@ -119,7 +119,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
             cacheIsEmpty ||
             this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
         ) {
-            dataTable = this.tableService.getDeliveryData(state.dataServiceInputState);
+            dataTable = this.tableService.getDeliveryData(state.dataServiceInputState, true);
         } else if (
             newDSData.stations !== cachedDSData.stations ||
             newDSData.deliveries !== cachedDSData.deliveries ||
@@ -129,7 +129,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
             newDSData.delSel !== cachedDSData.delSel
             ) {
             dataTable = {
-                ...this.tableService.getDeliveryData(state.dataServiceInputState),
+                ...this.tableService.getDeliveryData(state.dataServiceInputState, true),
                 columns: this.cachedData.dataTable.columns
             };
         }

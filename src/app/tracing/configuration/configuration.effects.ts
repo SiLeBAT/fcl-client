@@ -7,15 +7,20 @@ import { EMPTY } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteStationHighlightingRuleSSA } from './configuration.actions';
+import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteHighlightingRuleSSA } from './configuration.actions';
 import { TableType } from './model';
-import { SetFilterStationTableColumnOrderSOA, SetFilterDeliveryTableColumnOrderSOA, SetStationHighlightingRulesSOA } from '../state/tracing.actions';
+import {
+    SetFilterStationTableColumnOrderSOA, SetFilterDeliveryTableColumnOrderSOA, SetStationHighlightingRulesSOA,
+    SetDeliveryHighlightingRulesSOA
+} from '../state/tracing.actions';
 import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/dialog-yes-no.component';
-import { selectStationHighlightingSettings } from '../state/tracing.selectors';
+import { selectHighlightingSettings } from '../state/tracing.selectors';
+import { EditHighlightingService } from './edit-highlighting.service';
 
 @Injectable()
 export class ConfigurationEffects {
     constructor(
+        private editHighlightingService: EditHighlightingService,
         private actions$: Actions,
         private dialogService: MatDialog,
         private alertService: AlertService,
@@ -65,17 +70,21 @@ export class ConfigurationEffects {
     );
 
     @Effect()
-    DeleteStationHighlightingRulesSSA$ = this.actions$.pipe(
-        ofType<DeleteStationHighlightingRuleSSA>(ConfigurationActionTypes.DeleteStationHighlightingRuleSSA),
-        withLatestFrom(this.store.pipe(select(selectStationHighlightingSettings))),
+    DeleteHighlightingRuleSSA$ = this.actions$.pipe(
+        ofType<DeleteHighlightingRuleSSA>(ConfigurationActionTypes.DeleteHighlightingRuleSSA),
+        withLatestFrom(this.store.pipe(select(selectHighlightingSettings))),
         mergeMap(([action, state]) => {
-            const oldRules = state;
             const deleteRuleId = action.payload.deleteRequestData.ruleId;
-            const ruleToDelete = oldRules.find(rule => rule.id === deleteRuleId) || null;
+            const stationRuleToDelete = state.stations.find(rule => rule.id === deleteRuleId) || null;
+            const deliveryRuleToDelete =
+                stationRuleToDelete !== null ?
+                null :
+                (state.deliveries.find(rule => rule.id === deleteRuleId) || null);
+
+            const ruleToDelete = stationRuleToDelete || deliveryRuleToDelete;
 
             if (ruleToDelete !== null) {
 
-                const newRules = oldRules.filter(rule => rule.id !== deleteRuleId);
                 const xPos = (action.payload.deleteRequestData.xPos - 350).toString(10).concat('px');
                 const yPos = (action.payload.deleteRequestData.yPos - 140).toString(10).concat('px');
 
@@ -98,9 +107,13 @@ export class ConfigurationEffects {
                         take(1)
                     ).subscribe((result) => {
                         if (result === true) {
-                            this.store.dispatch(new SetStationHighlightingRulesSOA(
-                                { rules: newRules }
-                            ));
+                            if (stationRuleToDelete !== null) {
+                                const newRules = this.editHighlightingService.removeRule(state.stations, deleteRuleId);
+                                this.store.dispatch(new SetStationHighlightingRulesSOA({ rules: newRules }));
+                            } else {
+                                const newRules = this.editHighlightingService.removeRule(state.deliveries, deleteRuleId);
+                                this.store.dispatch(new SetDeliveryHighlightingRulesSOA({ rules: newRules }));
+                            }
                         }
                     },
                     error => {

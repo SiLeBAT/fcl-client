@@ -324,19 +324,9 @@ export interface ShapeFileData {
     // todo: to define
 }
 
-interface SharedHighlightingStats {
-    counts: Record<HighlightingRuleId, number>;
-}
-
-export interface StationHighlightingStats extends SharedHighlightingStats {
-    conflicts: Record<HighlightingRuleId, number>;
-}
-
-export interface DeliveryHighlightingStats extends SharedHighlightingStats {}
-
 export interface HighlightingStats {
-    stationRuleStats: StationHighlightingStats;
-    deliveryRuleStats: DeliveryHighlightingStats;
+    counts: Record<HighlightingRuleId, number>;
+    conflicts: Record<HighlightingRuleId, number>;
 }
 export interface DataServiceData {
     statMap: Record<StationId, StationData>;

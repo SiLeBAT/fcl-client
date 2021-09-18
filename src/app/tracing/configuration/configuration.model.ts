@@ -1,5 +1,5 @@
 import { DataTable, OperationType } from '../data.model';
-import { RuleId, StationEditRule } from './model';
+import { DeliveryEditRule, RuleId, StationEditRule } from './model';
 
 export type FilterTabId = 'filterTab';
 export type HighlightingTabId = 'highlightingTab';
@@ -58,6 +58,7 @@ export interface FilterSettings {
 
 export interface HighlightingConfigurationSettings {
     stationEditRules: StationEditRule[];
+    deliveryEditRules: DeliveryEditRule[];
 }
 
 export type PropToValuesMap = Record<string, string[]>;

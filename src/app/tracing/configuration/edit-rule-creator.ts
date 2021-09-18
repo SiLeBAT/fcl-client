@@ -1,5 +1,5 @@
 import { COLOR_BFR_BLUE } from './constants';
-import { ColorAndShapeEditRule, EditRule, InvEditRule, LabelEditRule, RuleType } from './model';
+import { ColorAndShapeEditRule, ColorEditRule, EditRule, InvEditRule, LabelEditRule, RuleType } from './model';
 
 export class EditRuleCreator {
     private static readonly DEFAULT_COLOR = COLOR_BFR_BLUE;
@@ -23,6 +23,14 @@ export class EditRuleCreator {
             showInLegend: true,
             color:  this.DEFAULT_COLOR,
             shape: null
+        };
+    }
+
+    static createColorEditRule(): ColorEditRule {
+        return {
+            ...this.createEditRule(RuleType.COLOR),
+            showInLegend: true,
+            color:  this.DEFAULT_COLOR
         };
     }
 

@@ -212,7 +212,7 @@ export class TracingEffects {
     @Effect()
     clearInvisiblities$ = this.actions$.pipe(
         ofType<tracingEffectActions.ClearInvisibilitiesMSA>(tracingEffectActions.TracingActionTypes.ClearInvisibilitiesMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getHighlightingSettings))),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.selectHighlightingSettings))),
         mergeMap(([action, state]) => {
             try {
                 const payload = this.editHighlightingService.getClearInvisiblitiesPayload(state, action.payload);
