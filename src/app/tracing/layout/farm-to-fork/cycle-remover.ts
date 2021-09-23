@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './farm-to-fork.model';
+import { Graph, Vertex, Edge } from './data-structures';
 import { BusinessTypeRanker } from './business-type-ranker';
 
 class CycleRemover {

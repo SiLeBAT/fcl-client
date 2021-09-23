@@ -1,4 +1,4 @@
-import { Vertex } from './farm-to-fork.model';
+import { Vertex } from './data-structures';
 
 class VertexPositionerSimple {
     constructor() {}

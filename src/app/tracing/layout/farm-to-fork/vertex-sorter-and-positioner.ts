@@ -1,13 +1,16 @@
-import { Graph } from './farm-to-fork.model';
+import { Graph, Vertex } from './data-structures';
 import { compressSimpleSources, decompressSimpleSources, compressSimpleTargets, decompressSimpleTargets } from './component-compressor';
 import { LayeredComponent, splitUnconnectedComponents, mergeUnconnectedComponents } from './component-seperator';
 import { sortVerticesInLayers as sortVerticesToOptimality } from './vertex-sorter-milp';
 import { sortVertices as sortVerticesWithHeuristic } from './vertex-sorter';
 import { positionVertices } from './vertex-positioner-lp';
-import { createVirtualVertices } from './shared';
+import { createVirtualVertices, getRequiredLayerSpace } from './shared';
 import * as _ from 'lodash';
+import { Size } from '@app/tracing/data.model';
 
-export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit: number) {
+const INTER_COMPONENT_SPACE_FACTOR = 2;
+
+export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit: number, availableSpace: Size) {
     if (timeLimit === undefined) {
         timeLimit = Number.POSITIVE_INFINITY;
     } else {
@@ -20,19 +23,42 @@ export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit:
         graph.layers = layeredComponent.layers;
         compressSimpleSources(graph, vertexDistance);
         compressSimpleTargets(graph, vertexDistance);
+
         createVirtualVertices(graph);
 
         sortVertices(graph, timeLimit - (new Date().getTime() - startTime));
-        positionVerticesInLayers(graph, vertexDistance);
-        decompressSimpleSources(graph, vertexDistance);
-        decompressSimpleTargets(graph, vertexDistance);
     }
 
-    graph.layers = mergeUnconnectedComponents(layeredComponents, vertexDistance * 2);
+    const availableSpacesForComponents = getAvailableSpacesForComponents(graph, layeredComponents, availableSpace, vertexDistance);
+
+    layeredComponents.forEach((layeredComponent, i) => {
+
+        graph.layers = layeredComponent.layers;
+
+        positionVerticesInLayers(
+            graph, vertexDistance, availableSpacesForComponents[i]
+        );
+
+        decompressSimpleSources(graph, vertexDistance);
+        decompressSimpleTargets(graph, vertexDistance);
+        printPositions(graph.layers);
+    });
+
+    graph.layers = mergeUnconnectedComponents(layeredComponents, vertexDistance * INTER_COMPONENT_SPACE_FACTOR);
 }
 
-function positionVerticesInLayers(graph: Graph, vertexDistance: number) {
-    positionVertices(graph.layers, vertexDistance);
+function printPositions(layers: Vertex[][]): void {
+    const positions = [].concat(
+        ...layers.map(layer => layer.filter(v => !v.isVirtual).map(v => 'p' + v.index + '_' + v.name + ': ' + v.y))
+    );
+    // tslint:disable-next-line:no-console
+    console.log('uncompressed positions:');
+    // tslint:disable-next-line:no-console
+    console.log(positions.join('\n'));
+}
+
+function positionVerticesInLayers(graph: Graph, vertexDistance: number, maxLayerLength: number) {
+    positionVertices(graph.layers, vertexDistance, maxLayerLength);
 }
 
 function sortVertices(graph: Graph, timeLimit: number) {
@@ -49,4 +75,23 @@ function sortVertices(graph: Graph, timeLimit: number) {
     } else {
         sortVerticesToOptimality(graph, timeLimit);
     }
+}
+
+function getAvailableSpacesForComponents(
+    graph: Graph,
+    layeredComponents: LayeredComponent[],
+    availableSpace: Size,
+    vertexDistance: number
+): number[] {
+    const requiredComponentSpaces = layeredComponents.map(comp => getReqiredComponentSpace(comp.layers, vertexDistance));
+    const totalSpaceRequirement = _.sum(requiredComponentSpaces) +
+        vertexDistance * INTER_COMPONENT_SPACE_FACTOR * (layeredComponents.length - 1);
+    const graphScale = availableSpace.height / totalSpaceRequirement;
+
+    return requiredComponentSpaces.map(s => s * graphScale);
+}
+
+function getReqiredComponentSpace(layers: Vertex[][], vertexDistance: number): number {
+    const requiredLayerSpaces: number[] = layers.map(layer => getRequiredLayerSpace(layer, vertexDistance));
+    return Math.max(...requiredLayerSpaces);
 }

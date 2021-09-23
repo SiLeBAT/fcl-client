@@ -1,4 +1,4 @@
-import { Vertex } from './farm-to-fork.model';
+import { Vertex } from './data-structures';
 
 export class BusinessTypeRanker {
     private indexMap: Map<String, number> = new Map();

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { StationData, DeliveryData } from '../../data.model';
+import { StationData, DeliveryData, StationId } from '../../data.model';
 import { Graph, Vertex } from '../../layout/farm-to-fork/data-structures';
 import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';
 import { BusinessTypeRanker } from '../../layout/farm-to-fork/business-type-ranker';
-import { Position, NodeLayoutInfo } from './datatypes';
+import { Position } from './datatypes';
 import { Utils } from '../../util/non-ui-utils';
 import { getDifference } from '@app/tracing/util/geometry-utils';
 
@@ -36,62 +36,78 @@ function getNormalizedDelta(delta: Position): Position {
  */
 export function getFoodChainOrientation(
     data: FclElements,
-    nodeInfoMap: Map<string, NodeLayoutInfo>
-    ): FoodChainOrientation {
+    // nodeInfoMap: Map<string, NodeLayoutInfo>
+    statIdToPosMap: Record<StationId, Position>
+): FoodChainOrientation | undefined {
 
-    const deliveries = data.deliveries.filter(
-        d => !d.invisible && nodeInfoMap.has(d.source) && nodeInfoMap.has(d.target));
-    const deltas = deliveries.map(
-        d => getNormalizedDelta(getDifference(
-            nodeInfoMap.get(d.target).position,
-            nodeInfoMap.get(d.source).position
-            ))).filter(d => d.x !== 0 || d.y !== 0);
+    const visibleStations = data.stations.filter(s => !s.invisible && !s.contained);
 
-    if (deltas.length > 0) {
-        const meanDelta = {
-            x: _.mean(deltas.map(d => d.x)),
-            y: _.mean(deltas.map(d => d.y))
-        };
-        if (meanDelta.x > 1 / Math.sqrt(2)) {
-            return FoodChainOrientation.LeftRight;
-        } else {
-            return null;
-        }
+    if (visibleStations.some(s => statIdToPosMap[s.id] === undefined)) {
+        return undefined;
     } else {
-        return null;
+        const relevantDeliveries = data.deliveries.filter(delivery =>
+            !delivery.invisible &&
+            delivery.source !== delivery.target &&
+            statIdToPosMap[delivery.source] !== undefined && // this is supposed to be a redundant check
+            statIdToPosMap[delivery.target] !== undefined    // this is supposed to be a redundant check
+        );
+        const deltas = relevantDeliveries.map(
+            d => getNormalizedDelta(getDifference(
+                statIdToPosMap[d.target],
+                statIdToPosMap[d.source]
+            ))
+        ).filter(d => d.x !== 0 || d.y !== 0);
+
+        if (deltas.length > 0) {
+            const meanDelta = {
+                x: _.mean(deltas.map(d => d.x)),
+                y: _.mean(deltas.map(d => d.y))
+            };
+            if (meanDelta.x > 1 / Math.sqrt(2)) {
+                return FoodChainOrientation.LeftRight;
+            } else {
+                return undefined;
+            }
+        } else {
+            return undefined;
+        }
     }
 }
 
-export function isFarmToForkLayout(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>): boolean {
-    return getFoodChainOrientation(data, nodeInfoMap) === FoodChainOrientation.LeftRight;
+export function isFarmToForkLayout(data: FclElements, statIdToPosMap: Record<StationId, Position>): boolean {
+    return getFoodChainOrientation(data, statIdToPosMap) === FoodChainOrientation.LeftRight;
 }
 
 /**
  * Performs a farm to fork layout and update the nodeInfoMap
  *
  * @param data
- * @param nodeInfoMap station id => layout info
+ * @param statIdToPosMap station id => station position
  */
-export function setFarmToForkPositions(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>) {
+export function setFarmToForkPositions(data: FclElements, statIdToPosMap: Record<StationId, Position>) {
     const graph = new Graph();
     const vertices: Map<string, Vertex> = new Map();
     const typeRanker: BusinessTypeRanker = new BusinessTypeRanker([], [], []);
-    const stations = data.stations.filter(s => nodeInfoMap.has(s.id));
-    const idToStationMap: Map<string, StationData> = Utils.arrayToMap(stations, (s) => s.id);
+    const visibleStations = data.stations.filter(s => statIdToPosMap[s.id] !== undefined);
+    const idToStationMap: Map<string, StationData> = Utils.arrayToMap(visibleStations, (s) => s.id);
 
-    for (const station of data.stations.filter(s => nodeInfoMap.has(s.id))) {
+    const stationSize = 20;
+    const vertexDistance = stationSize;
+
+    for (const station of visibleStations) {
         const v: Vertex = new Vertex();
         const properties = station.properties.filter(p => p.name === 'typeOfBusiness');
         if (properties.length > 0) {
             v.typeCode = typeRanker.getBusinessTypeCode(properties[0].value as string);
         }
-        v.size = nodeInfoMap.get(station.id).size;
+        v.outerSize = stationSize;
+        v.topPadding = v.outerSize / 2;
+        v.bottomPadding = v.topPadding;
+        v.innerSize = 0;
         v.name = station.name;
         vertices.set(station.id, v);
         graph.insertVertex(v);
     }
-
-    const vertexDistance: number = Math.min(...graph.vertices.map(v => v.size)) / 2;
 
     data.deliveries.filter(
         d => !d.invisible && idToStationMap.has(d.source) && idToStationMap.has(d.target)
@@ -102,15 +118,20 @@ export function setFarmToForkPositions(data: FclElements, nodeInfoMap: Map<strin
           );
     });
 
+    const availableSpace = {
+        width: undefined,
+        height: undefined
+    };
     // tslint:disable-next-line
     const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
         graph,
-        typeRanker
+        typeRanker,
+        availableSpace
     );
 
-    layoutManager.layout(vertexDistance);
-    for (let i = stations.length - 1; i >= 0; i--) {
-        nodeInfoMap.get(stations[i].id).position = {
+    layoutManager.layout(vertexDistance, availableSpace);
+    for (let i = visibleStations.length - 1; i >= 0; i--) {
+        statIdToPosMap[visibleStations[i].id] = {
             // primary producers are supposed to be in the last layer
             x: -graph.vertices[i].layerIndex,
             y: graph.vertices[i].y

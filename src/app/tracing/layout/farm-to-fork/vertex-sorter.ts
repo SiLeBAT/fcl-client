@@ -1,4 +1,4 @@
-import { Graph, Vertex, Edge, VertexCounter } from './farm-to-fork.model';
+import { Graph, Vertex, Edge, VertexCounter } from './data-structures';
 
 class VertexSorter {
     constructor() {}

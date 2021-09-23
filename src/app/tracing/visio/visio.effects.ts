@@ -15,7 +15,7 @@ import { Store, select } from '@ngrx/store';
 import { generateVisioReport } from './visio.service';
 import { Router } from '@angular/router';
 import { ReportConfigurationComponent } from './report-configuration/report-configuration.component';
-import { NodeLayoutInfo } from './layout-engine/datatypes';
+import { Position, StationId } from '../data.model';
 
 @Injectable()
 export class VisioEffects {
@@ -49,18 +49,14 @@ export class VisioEffects {
                 samples: roaReportData.samples
             };
             const visStations = fclElements.stations.filter(s => !s.invisible && !s.contained);
-            const nodeLayoutInfo: Map<string, NodeLayoutInfo> = new Map(
-                visStations.map(s => [
-                    s.id,
-                    {
-                        position: roaReportData.schemaGraphState.stationPositions[s.id],
-                        size: 1
-                    }
-                ])
+
+            const stationIdToPosMap: Record<StationId, Position> = {};
+            visStations.forEach(station =>
+                stationIdToPosMap[station.id] = roaReportData.schemaGraphState.stationPositions[station.id]
             );
 
             try {
-                const roaReport = generateVisioReport(fclElements, nodeLayoutInfo, roaReportData.roaSettings);
+                const roaReport = generateVisioReport(fclElements, stationIdToPosMap, roaReportData.roaSettings);
                 if (roaReport !== null) {
                     this.router.navigate(['/graph-editor']).catch(err => {
                         this.alertService.error(`Unable to navigate to graph editor: ${err}`);

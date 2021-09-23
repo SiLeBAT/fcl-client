@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Graph, Vertex } from './farm-to-fork.model';
+import { Graph, Vertex } from './data-structures';
 import { lpSolve, LPModel, LPResult } from './../../../shared/lp-solver';
 import { createVirtualVertices } from './shared';
 

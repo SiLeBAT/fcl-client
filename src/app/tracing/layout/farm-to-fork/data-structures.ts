@@ -45,6 +45,8 @@ export class Graph {
     }
 }
 
+export type VertexIndex = number;
+
 export class Vertex {
     index: number;
     name: string;
@@ -58,7 +60,12 @@ export class Vertex {
     typeCode: number;
     isVirtual: boolean = false;
 
-    size: number = 0;
+    outerSize: number = 0;
+    innerSize: number = 0;
+    bottomPadding: number;
+    topPadding: number;
+    layerScale: number = 1;
+    innerScale: number = 1;
 
     constructor() {}
 }
