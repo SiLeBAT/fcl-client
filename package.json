@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "serverlessstart": "ng serve --configuration=serverless",
+    "serverlessstart:wra": "ng serve --host 0.0.0.0 --configuration=serverless",
     "start": "ng serve --proxy-config proxy.config.json",
     "serve": "ng serve --proxy-config proxy.config.json --watch",
     "serve:fcldev": "ng serve --proxy-config proxy.config.fcldev.json --watch",

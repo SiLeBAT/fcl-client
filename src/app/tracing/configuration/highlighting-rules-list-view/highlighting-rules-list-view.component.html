@@ -101,7 +101,7 @@
         </div>
 
         <div *ngIf="editRule !== null && editRule.id === item.id && editTemplate !== null"
-            class="fcl-rules-list-edit-item">
+            class="fcl-edit-rule-dialog fcl-rules-list-edit-item">
             <ng-container [ngTemplateOutlet]="editTemplate"
                 [ngTemplateOutletContext] ="{ editRule: editRule }">
             </ng-container>
@@ -125,7 +125,7 @@
 </button>
 
 <div *ngIf="showEditNewRuleDialog && editTemplate !== null"
-    class="fcl-new-rule-dialog">
+    class="fcl-edit-rule-dialog">
     <ng-container [ngTemplateOutlet]="editTemplate"
         [ngTemplateOutletContext] ="{ editRule: editRule}">
     </ng-container>

@@ -238,7 +238,7 @@ export class HighlightingService {
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
-        activeHighlightingRules.forEach(rule => effElementsStats.counts[rule.id] = (effElementsStats[rule.id] || 0) + 1);
+        activeHighlightingRules.forEach(rule => effElementsStats.counts[rule.id] = (effElementsStats.counts[rule.id] || 0) + 1);
 
         return deliveryHighlightingInfo;
     }

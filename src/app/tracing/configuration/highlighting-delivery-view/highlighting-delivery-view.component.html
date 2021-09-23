@@ -1,7 +1,7 @@
 <ng-template let-editRule="editRule" #labelEditTemplate>
     <fcl-label-rules-edit-view
         *ngIf="editRule !== null"
-        class="fcl-new-rule-dialog"
+
         [rule]="editRule"
         [availableProperties]="availableProperties"
         [propToValuesMap]="propToValuesMap"
@@ -65,5 +65,35 @@
     <ng-container [ngTemplateOutlet]="panelTemplate"
         [ngTemplateOutletContext] ="{ ruleType: RuleType.LABEL, title: 'Label', editTemplate: labelEditTemplate, showInLegendTB: false }">
     </ng-container>
+
+    <mat-expansion-panel
+        class="fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="widthOpenState = true"
+        (closed)="widthOpenState = false">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+              Delivery Width... click  to {{ widthOpenState ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        Delivery Width Configurations ... coming soon
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+        class="ffcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="colorOpenState = true"
+        (closed)="colorOpenState = false">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+              Colours... click  to {{ colorOpenState ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        Colours Configurations ... coming soon
+
+    </mat-expansion-panel>
 
 </div>

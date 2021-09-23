@@ -1,7 +1,7 @@
 <ng-template let-editRule="editRule" #labelEditTemplate>
     <fcl-label-rules-edit-view
         *ngIf="editRule !== null"
-        class="fcl-new-rule-dialog"
+
         [rule]="editRule"
         [availableProperties]="availableProperties"
         [propToValuesMap]="propToValuesMap"
@@ -19,7 +19,7 @@
 <ng-template let-editRule="editRule" #colorShapeEditTemplate>
     <fcl-colors-and-shapes-edit-view
         *ngIf="editRule !== null"
-        class="fcl-new-rule-dialog"
+
         [rule]="editRule"
         [availableProperties]="availableProperties"
         [propToValuesMap]="propToValuesMap"

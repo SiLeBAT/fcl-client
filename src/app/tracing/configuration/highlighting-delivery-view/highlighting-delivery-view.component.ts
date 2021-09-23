@@ -12,6 +12,9 @@ import { HighlightingElementViewComponent } from '../highlighting-element-view/h
 export class HighlightingDeliveryViewComponent
     extends HighlightingElementViewComponent<DeliveryEditRule> implements OnChanges {
 
+    widthOpenState = false;
+    colorOpenState = false;
+
     constructor() {
         super();
     }

@@ -128,10 +128,11 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rules-list-edit-item {
+    width: 100%;
     grid-area: editdialog;
 }
 
-.fcl-new-rule-dialog {
+.fcl-edit-rule-dialog {
     font-size: $fcl-font-size;
 }
 
