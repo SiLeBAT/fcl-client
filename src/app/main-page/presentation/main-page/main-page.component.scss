@@ -29,6 +29,10 @@
     display: flex;
 }
 
+.fcl-page-header-container {
+    min-width: 1296px;
+}
+
 .fcl-page-body-item {
     grid-area: body;
     overflow: auto;

@@ -2,7 +2,7 @@ import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.mo
 import { List, Map } from 'immutable';
 
 export class Constants {
-    static readonly EXAMPLE_MODEL_FILE_PATH = 'assets/data/SampleData_EN_WebApp.json';
+    static readonly EXAMPLE_MODEL_FILE_PATH = 'assets/data/SampleData.json';
 
     private static readonly STATION_DATA: StationData = {
         id: null,

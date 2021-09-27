@@ -71,6 +71,11 @@ export const getSelectedElements = createSelector(
     (fclData) => fclData.graphSettings.selectedElements
 );
 
+export const selectSourceFileName = createSelector(
+    getFclData,
+    (fclData) => fclData.source ? fclData.source.name || null : null
+);
+
 export const getMakeElementsInvisibleInputState = createSelector(
     selectHighlightingSettings,
     getSelectedElements,

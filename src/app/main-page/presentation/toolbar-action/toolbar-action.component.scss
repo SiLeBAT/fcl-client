@@ -8,6 +8,11 @@
     display: flex;
     justify-content: flex-end;
     padding-right: $fcl-toolbar-padding * 4;
+    min-width: 0;
+}
+
+.fcl-no-shrink {
+    flex-shrink: 0;
 }
 
 .fcl-separator {
@@ -19,7 +24,24 @@
     display: none;
 }
 
+.fcl-file-name-wrapper {
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.fcl-file-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .fcl-graph-type {
+    padding-left: 1rem;
     font-weight: 500;
     display: flex;
     flex-direction: column;

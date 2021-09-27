@@ -32,6 +32,7 @@ export class IOService {
                     return this.preprocessData(response);
                 })
                 .then(data => {
+                    data.source.name = this.getFileName(dataSource);
                     return data;
                 })
                 .catch(e => {
@@ -59,6 +60,10 @@ export class IOService {
         } else {
             throw new Error('no data source specified');
         }
+    }
+
+    private getFileName(filePath: string): string {
+        return filePath.split('/').pop().split('\\').pop();
     }
 
     private try<T>(tryFun: () => T, errFun: (e) => void): T {

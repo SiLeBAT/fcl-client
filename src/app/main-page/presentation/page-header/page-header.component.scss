@@ -10,6 +10,7 @@
 .fcl-toolbar-container {
     display: flex;
     align-items: stretch;
+    min-width: 0;
 }
 
 .fcl-toolbar-menu-container,
@@ -21,6 +22,10 @@
 
 .fcl-toolbar-menu-container {
     justify-content: space-between;
+}
+
+.fcl-tracing-view-menu-container {
+    min-width: 0;
 }
 
 .fcl-toolbar-action-container {

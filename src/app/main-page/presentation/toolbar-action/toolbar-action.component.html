@@ -1,4 +1,7 @@
 <div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
+    <div *ngIf="fileName !== null" class="fcl-file-name-wrapper fcl-separator mat-body">
+        <div class="fcl-file-name" [matTooltip]="fileName">File: {{ fileNameWoExt }}</div>
+    </div>
     <div class="fcl-graph-type fcl-separator mat-body">
         <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
             <mat-radio-button class="fcl-graph-type-button" [value]="'Graph'" matTooltip="Show Schematic Graph">
@@ -19,6 +22,7 @@
     </div>
 
     <button
+        class="fcl-no-shrink"
         mat-button
         (click)="onLoadExampleData()"
         matTooltip="Load Example Data"
@@ -32,14 +36,15 @@
         type="file"
     />
     <button
-        mat-button
+    class="fcl-no-shrink"
+    mat-button
         (click)="onSelectModelFile()"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
         Upload Data
     </button>
     <button
-        class="fcl-separator"
+        class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="mainPageService.onSave()"
         matTooltip="Download data">
@@ -47,7 +52,7 @@
         Download Data
     </button>
     <button
-        class="fcl-separator"
+        class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="mainPageService.onSaveImage()"
         matTooltip="Save image">
@@ -55,7 +60,7 @@
         Save Image
     </button>
     <button
-        class="fcl-separator"
+        class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="mainPageService.onROALayout()"
         matTooltip="Generate ROA Layout">

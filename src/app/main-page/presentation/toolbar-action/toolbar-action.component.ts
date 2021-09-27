@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { environment } from '@env/environment';
 import * as _ from 'lodash';
 import { MainPageService } from '../../services/main-page.service';
@@ -11,7 +11,7 @@ import { Constants } from './../../../tracing/util/constants';
     templateUrl: './toolbar-action.component.html',
     styleUrls: ['./toolbar-action.component.scss']
 })
-export class ToolbarActionComponent implements OnInit {
+export class ToolbarActionComponent implements OnInit, OnChanges {
 
     private _graphSettings: GraphSettings;
 
@@ -30,6 +30,7 @@ export class ToolbarActionComponent implements OnInit {
     @Input() availableMapTypes: MapType[];
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
+    @Input() fileName: string | null = null;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
@@ -39,6 +40,7 @@ export class ToolbarActionComponent implements OnInit {
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
+    fileNameWoExt: string | null = null;
 
     mapTypeToLabelMap: Map<MapType, string> = new Map([
         [MapType.MAPNIK, 'Mapnik'],
@@ -49,6 +51,16 @@ export class ToolbarActionComponent implements OnInit {
     constructor(private mainPageService: MainPageService) { }
 
     ngOnInit() {}
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.fileName !== undefined) {
+            this.fileNameWoExt = (
+                this.fileName === null ?
+                null :
+                this.fileName.replace(/\.[^\.]+$/, '')
+            );
+        }
+    }
 
     isServerLess(): boolean {
         return environment.serverless;

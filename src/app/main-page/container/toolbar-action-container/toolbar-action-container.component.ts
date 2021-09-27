@@ -31,6 +31,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     currentUser$ = this.store.pipe(
         select(fromUser.getCurrentUser)
     );
+    fileName$ = this.store.pipe(
+        select(TracingSelectors.selectSourceFileName)
+    );
 
     graphSettings: GraphSettings;
     hasGisInfo = false;
