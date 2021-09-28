@@ -36,7 +36,7 @@ export class VisioReporter {
         const infoProvider = new InformationProvider(data, roaSettings);
         const cellGroups = getCellGroups(stationGrid, stationGroups);
 
-        const labelCreator = new CustomLabelCreator(this.getFontMetrics(canvas), roaSettings.labelSettings);
+        const labelCreator = new CustomLabelCreator(this.getFontMetrics(canvas), roaSettings.labelSettings, roaSettings.roundNumbers);
         const boxCreator = new BoxCreator(labelCreator, infoProvider);
 
         const infoGrid = this.mapMatrix(stationGrid, (s) => s !== null ? infoProvider.getStationInfo(s) : null);

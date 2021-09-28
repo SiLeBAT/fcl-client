@@ -1,42 +1,101 @@
 import * as _ from 'lodash';
-import { StationData, DeliveryData, StationId } from '../../data.model';
+import { StationData, DeliveryData, StationId, DeliveryId, Range } from '../../data.model';
 import { Graph, Vertex } from '../../layout/farm-to-fork/data-structures';
 import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';
 import { BusinessTypeRanker } from '../../layout/farm-to-fork/business-type-ranker';
 import { Position } from './datatypes';
 import { Utils } from '../../util/non-ui-utils';
-import { getDifference } from '@app/tracing/util/geometry-utils';
 
 export enum FoodChainOrientation {
     TopDown, LeftRight, BottomUp, RightLeft
 }
 
+interface FarmToForkGroups {
+    forks: StationData[];
+    unconnectedStations: StationData[];
+    otherStations: StationData[];
+}
 interface FclElements {
     stations: StationData[];
     deliveries: DeliveryData[];
 }
 
-function getNormalizedDelta(delta: Position): Position {
-    const distance = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
-    if (distance === 0) {
-        return delta;
+function getFarmToForkGroups(stations: StationData[], deliveries: DeliveryData[]): FarmToForkGroups {
+    const visDel: Record<DeliveryId, boolean> = {};
+    deliveries.forEach(d => visDel[d.id] = true);
+    const result: FarmToForkGroups = {
+        forks: [],
+        unconnectedStations: [],
+        otherStations: []
+    };
+    for (const station of stations) {
+        const hasNoInDel = station.incoming.filter(delId => visDel[delId]).length === 0;
+        const hasNoOutDel = station.outgoing.filter(delId => visDel[delId]).length === 0;
+        if (hasNoOutDel) {
+            if (hasNoInDel) {
+                result.unconnectedStations.push(station);
+            } else {
+                result.forks.push(station);
+            }
+        } else {
+            result.otherStations.push(station);
+        }
+    }
+    return result;
+}
+
+function getStationGroupXPosRanges(stationGroup: StationData[], statIdToPosMap: Record<StationId, Position>): Range {
+    if (stationGroup.length === 0) {
+        return undefined;
     } else {
+        const pos = stationGroup.map(s => statIdToPosMap[s.id].x);
         return {
-            x: delta.x / distance,
-            y: delta.y / distance
+            min: Math.min(...pos),
+            max: Math.max(...pos)
         };
     }
 }
+
+function doRangesRespectOrdering(ranges: Range[]): boolean {
+    let lowerBound = Number.NEGATIVE_INFINITY;
+    for (const range of ranges) {
+        if (range.min <= lowerBound) {
+            return false;
+        }
+        lowerBound = range.max;
+    }
+
+    let upperBound = Number.POSITIVE_INFINITY;
+    for (const range of ranges.slice().reverse()) {
+        if (range.max >= upperBound) {
+            return false;
+        }
+        upperBound = range.min;
+    }
+    return true;
+}
+
+function doStationXPosRespectGroupOrdering(stationGroupOrderings: StationData[][][], statIdToPosMap: Record<StationId, Position>): boolean {
+    for (const stationGroupOrdering of stationGroupOrderings) {
+        const nonEmptyGroups = stationGroupOrdering.filter(group => group.length > 0);
+        const groupPosRanges = nonEmptyGroups.map(group => getStationGroupXPosRanges(group, statIdToPosMap));
+        if (!doRangesRespectOrdering(groupPosRanges)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const MAX_LEFT_RIGHT_VIOLATION_QUOTA = 0.1;
 
 /**
  * Retrieves the orientation of the food chain in the graph view, on the bases of the deliveries
  *
  * @param data
- * @param nodeInfoMap station id => layout info
+ * @param statIdToPosMap station id => Position
  */
 export function getFoodChainOrientation(
     data: FclElements,
-    // nodeInfoMap: Map<string, NodeLayoutInfo>
     statIdToPosMap: Record<StationId, Position>
 ): FoodChainOrientation | undefined {
 
@@ -51,23 +110,26 @@ export function getFoodChainOrientation(
             statIdToPosMap[delivery.source] !== undefined && // this is supposed to be a redundant check
             statIdToPosMap[delivery.target] !== undefined    // this is supposed to be a redundant check
         );
-        const deltas = relevantDeliveries.map(
-            d => getNormalizedDelta(getDifference(
-                statIdToPosMap[d.target],
-                statIdToPosMap[d.source]
-            ))
-        ).filter(d => d.x !== 0 || d.y !== 0);
 
-        if (deltas.length > 0) {
-            const meanDelta = {
-                x: _.mean(deltas.map(d => d.x)),
-                y: _.mean(deltas.map(d => d.y))
-            };
-            if (meanDelta.x > 1 / Math.sqrt(2)) {
-                return FoodChainOrientation.LeftRight;
-            } else {
-                return undefined;
-            }
+        const stationGroups = getFarmToForkGroups(visibleStations, relevantDeliveries);
+
+        if (!doStationXPosRespectGroupOrdering(
+            [
+                [stationGroups.otherStations, stationGroups.forks],
+                [stationGroups.otherStations, stationGroups.unconnectedStations]
+            ],
+            statIdToPosMap
+        )) {
+            return undefined;
+        }
+
+        const xDeltas = relevantDeliveries.map(d => statIdToPosMap[d.target].x - statIdToPosMap[d.source].x);
+
+        const leftRightViolationCount = xDeltas.filter(d => d < 0).length;
+        const leftRightViolationQuota = leftRightViolationCount / (xDeltas.length === 0 ? 1 : xDeltas.length);
+
+        if (xDeltas.length > 0 && leftRightViolationQuota <= MAX_LEFT_RIGHT_VIOLATION_QUOTA) {
+            return FoodChainOrientation.LeftRight;
         } else {
             return undefined;
         }

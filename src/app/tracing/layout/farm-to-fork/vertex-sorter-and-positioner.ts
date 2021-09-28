@@ -41,12 +41,12 @@ export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit:
 
         decompressSimpleSources(graph, vertexDistance);
         decompressSimpleTargets(graph, vertexDistance);
-        printPositions(graph.layers);
     });
 
     graph.layers = mergeUnconnectedComponents(layeredComponents, vertexDistance * INTER_COMPONENT_SPACE_FACTOR);
 }
 
+// debug method
 function printPositions(layers: Vertex[][]): void {
     const positions = [].concat(
         ...layers.map(layer => layer.filter(v => !v.isVirtual).map(v => 'p' + v.index + '_' + v.name + ': ' + v.y))

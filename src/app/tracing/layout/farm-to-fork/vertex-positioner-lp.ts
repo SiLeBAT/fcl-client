@@ -87,8 +87,6 @@ class VertexPositionerLP {
 
         const lpResult: LPResult = lpSolve(lpModel);
 
-        lpModel.printResult(lpResult);
-
         const bottomMargin = 0.0;
 
         for (const layer of layers) {

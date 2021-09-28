@@ -36,6 +36,8 @@ interface LabelInfo {
     amountUnitPairs: AmountUnitPair[];
 }
 
+const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
+
 @Component({
     selector: 'fcl-report-configuration',
     templateUrl: './report-configuration.component.html',
@@ -48,6 +50,8 @@ export class ReportConfigurationComponent {
         lotProps: PropInfo[],
         sampleProps: PropInfo[]
     };
+
+    roundNumbers: boolean = true;
 
     labelInfos: { [key in (keyof ROALabelSettings)]: LabelInfo };
 
@@ -152,17 +156,36 @@ export class ReportConfigurationComponent {
             }
         };
         this.setAmountUnitPairs();
+        this.roundNumbers = roaSettings.roundNumbers;
     }
 
     private getROASettings(): ROASettings {
-        return {
+        const roaSettings = {
             labelSettings: {
                 stationLabel: this.createLabelElementInfos(this.labelInfos.stationLabel.labelElements),
                 lotLabel: this.createLabelElementInfos(this.labelInfos.lotLabel.labelElements),
                 lotSampleLabel: this.createLabelElementInfos(this.labelInfos.lotSampleLabel.labelElements),
                 stationSampleLabel: this.createLabelElementInfos(this.labelInfos.lotSampleLabel.labelElements)
-            }
+            },
+            roundNumbers: this.roundNumbers
         };
+        this.setInterpretAsNumberFlag(roaSettings);
+        return roaSettings;
+    }
+
+    private setInterpretAsNumberFlag(roaSettings: ROASettings): void {
+        const labelElements: LabelElementInfo[][][] = Object.values(roaSettings.labelSettings);
+        const flattenedLabelElements: LabelElementInfo[] = _.flattenDepth(labelElements, 2);
+        const propElements = flattenedLabelElements.filter(e => (e as PropElementInfo).prop != null) as PropElementInfo[];
+        for (const propElement of propElements) {
+            if (propElement.prop.match(AMOUNT_PROP_MATCHER_REGEXP)) {
+                propElement.interpretAsNumber = true;
+            }
+        }
+        const expectedAmountPropElement = roaSettings.labelSettings.lotSampleLabel[2].find(e => (e as PropElementInfo).prop != null);
+        if (expectedAmountPropElement !== undefined) {
+            (expectedAmountPropElement as PropElementInfo).interpretAsNumber = true;
+        }
     }
 
     private createLabelElementInfos(labelElements: LabelElementInfo[][]): LabelElementInfo[][] {

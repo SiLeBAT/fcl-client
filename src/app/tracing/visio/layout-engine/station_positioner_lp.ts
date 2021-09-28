@@ -220,8 +220,7 @@ export function improvePositions(
     const lpModel = constructLPModel(boxModel, intraGroupDistance, interGroupDistance);
 
     const lpResult = lpSolve(lpModel);
-    lpModel.printConstraints(lpResult);
-    lpModel.printObjective(lpResult);
+
     for (let r = 0; r < stationBoxes.length; r++) {
         for (let c = 0; c < stationBoxes[r].length; c++) {
             stationBoxes[r][c].relPosition.x = lpResult.vars.get(boxModel.boxes[r][c].id);

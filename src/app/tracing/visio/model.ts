@@ -9,6 +9,7 @@ export interface PropElementInfo extends SharedElementInfo {
     prop: string | null;
     altText: string;
     isNullable: boolean;
+    interpretAsNumber?: boolean;
 }
 
 export type LabelElementInfo = TextElementInfo | PropElementInfo;
@@ -22,6 +23,7 @@ export interface ROALabelSettings {
 
 export interface ROASettings {
     labelSettings: ROALabelSettings;
+    roundNumbers: boolean;
 }
 
 export interface AmountUnitPair {

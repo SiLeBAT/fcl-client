@@ -6,7 +6,7 @@ import { LabelCreator } from './label-creator';
 
 export class CustomLabelCreator extends LabelCreator {
 
-    constructor(protected fontMetrics: FontMetrics, private labelSettings: ROALabelSettings) {
+    constructor(protected fontMetrics: FontMetrics, private labelSettings: ROALabelSettings, private roundNumbers: boolean) {
         super(fontMetrics);
     }
 
@@ -32,9 +32,19 @@ export class CustomLabelCreator extends LabelCreator {
                 if ((element as PropElementInfo).prop !== undefined) {
                     const propElement = element as PropElementInfo;
 
+                    let propValue = propElement.prop === null ? null : infoObj.props[propElement.prop];
+                    if (
+                        propValue !== null && propValue !== undefined && this.roundNumbers &&
+                        (
+                            typeof propValue === 'number' ||
+                            typeof propValue === 'string' && propElement.interpretAsNumber
+                        )
+                    ) {
+                        propValue = this.roundValue(propValue);
+                    }
                     return propElement.prop === null ?
                         '' :
-                        CustomLabelCreator.getText(infoObj.props[propElement.prop], propElement.altText);
+                        CustomLabelCreator.getText(propValue, propElement.altText);
                 } else {
                     const textElement = element as TextElementInfo;
                     return textElement.text;
@@ -57,5 +67,36 @@ export class CustomLabelCreator extends LabelCreator {
 
     getStationLabel(stationInfo: StationInformation): VisioLabel {
         return this.getLabel(this.getLabelTexts(stationInfo, this.labelSettings.stationLabel), GraphSettings.STATION_BOX_MARGIN);
+    }
+
+    private roundNumberToDigits(value: number, nDigits: number): number {
+        if (!Number.isFinite(value) || !Number.isInteger(nDigits) || nDigits < 0) {
+            return value;
+        } else if (value === 0) {
+            return 0;
+        } else if (nDigits === 0) {
+            return value;
+        } else {
+            const absValue = Math.abs(value);
+            return Math.sign(value) * +(Math.round(+(absValue + 'e+' + nDigits)) + 'e-' + nDigits);
+        }
+    }
+
+    private roundValue(value: string | number): string | number {
+        const valueType = typeof value;
+        const numValue = valueType === 'number' ? value as number : (valueType === 'string' ? +value : NaN);
+        if (!Number.isFinite(numValue)) {
+            return value;
+        } else if (numValue === 0) {
+            return 0;
+        } else {
+            let roundedValue = this.roundNumberToDigits(numValue, 3);
+            if (roundedValue === 0) {
+                const absNumValue = Math.abs(numValue);
+                const flooredLogAbsValue = Math.floor(Math.log10(absNumValue));
+                roundedValue = Math.sign(numValue) * this.roundNumberToDigits(absNumValue, -flooredLogAbsValue + 2);
+            }
+            return roundedValue;
+        }
     }
 }
