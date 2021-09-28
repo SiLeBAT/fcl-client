@@ -436,8 +436,12 @@ export class GraphService {
         }
     }
 
-    private mergeColors(colors: number[][][]): number[][] {
-        return _.uniqWith([].concat(...colors),
+    private mergeColors(edgeColors: number[][][]): number[][] {
+        const addDefaultColor = edgeColors.some(deliveryColors => deliveryColors.length === 0);
+        if (addDefaultColor) {
+            edgeColors = [].concat([[GraphService.DEFAULT_EDGE_COLOR]], edgeColors);
+        }
+        return _.uniqWith([].concat(...edgeColors),
             (c1: number[], c2: number[]) => c1[0] === c2[0] && c1[1] === c2[1] && c1[2] === c2[2]
         );
     }
