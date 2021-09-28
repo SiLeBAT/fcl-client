@@ -50,6 +50,8 @@ export class EditRuleCreator {
         switch (ruleType) {
             case RuleType.COLOR_AND_SHAPE:
                 return this.createColorAndShapeEditRule();
+            case RuleType.COLOR:
+                return this.createColorEditRule();
             case RuleType.LABEL:
                 return this.createLabelEditRule();
             case RuleType.INVISIBILITY:

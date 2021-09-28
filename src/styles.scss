@@ -153,3 +153,23 @@ mat-form-field.less-bottom-padding {
 .fcl-checkbox-wo-ripple .mat-ripple {
     display: none;
 }
+
+.fcl-color-picker .color-picker {
+    .arrow.arrow-left,
+    .arrow.arrow-right {
+        top: 165px;
+    }
+
+    .arrow.arrow-top,
+    .arrow.arrow-bottom {
+        left: 100px;
+    }
+}
+
+.fcl-color-picker.fcl-color-picker--wo-space .color-picker {
+    margin-left: 180px;
+
+    .arrow {
+        display: none;
+    }
+}

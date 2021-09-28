@@ -65,7 +65,7 @@ export interface LabelEditRule extends EditRule {
 export interface InvEditRule extends EditRule {}
 
 export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule;
-export type DeliveryEditRule = LabelEditRule | InvEditRule;
+export type DeliveryEditRule = LabelEditRule | InvEditRule | ColorEditRule;
 
 export type DeliveryRuleType = RuleType.LABEL | RuleType.COLOR;
 export type StationRuleType = RuleType.LABEL | RuleType.COLOR_AND_SHAPE;

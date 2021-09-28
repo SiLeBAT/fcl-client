@@ -72,6 +72,7 @@ import { RuleServiceViewComponent } from './configuration/rule-service-view/rule
 import { LabelRulesEditViewComponent } from './configuration/label-rules-edit-view/label-rules-edit-view.component';
 import { HighlightingRulesListViewComponent } from './configuration/highlighting-rules-list-view/highlighting-rules-list-view.component';
 import { HighlightingDeliveryViewComponent } from './configuration/highlighting-delivery-view/highlighting-delivery-view.component';
+import { EdgeColorEditViewComponent } from './configuration/edge-color-edit-view/edge-color-edit-view.component';
 
 @NgModule({
     imports: [
@@ -143,7 +144,8 @@ import { HighlightingDeliveryViewComponent } from './configuration/highlighting-
         RuleServiceViewComponent,
         LabelRulesEditViewComponent,
         HighlightingRulesListViewComponent,
-        HighlightingDeliveryViewComponent
+        HighlightingDeliveryViewComponent,
+        EdgeColorEditViewComponent
     ],
     exports: []
 })

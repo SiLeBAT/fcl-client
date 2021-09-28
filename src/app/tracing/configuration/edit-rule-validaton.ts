@@ -1,5 +1,5 @@
 import { ComplexFilterCondition } from './configuration.model';
-import { ColorAndShapeEditRule, EditRule, InvEditRule, LabelEditRule, RuleType } from './model';
+import { ColorAndShapeEditRule, ColorEditRule, EditRule, InvEditRule, LabelEditRule, RuleType } from './model';
 
 function isConditionComplete(condition: ComplexFilterCondition): boolean {
     return (
@@ -31,6 +31,14 @@ function isGenericEditRuleValid(editRule: EditRule): boolean {
     );
 }
 
+function isColorEditRuleValid(editRule: ColorEditRule): boolean {
+    return (
+        isGenericEditRuleValid(editRule) &&
+        (editRule.color !== null) &&
+        getCompleteConditionsCount(editRule.complexFilterConditions) >= 1
+    );
+}
+
 function isColorAndShapeEditRuleValid(editRule: ColorAndShapeEditRule): boolean {
     return (
         isGenericEditRuleValid(editRule) &&
@@ -54,6 +62,8 @@ export function isEditRuleValid(editRule: EditRule): boolean {
     switch (editRule.type) {
         case RuleType.COLOR_AND_SHAPE:
             return isColorAndShapeEditRuleValid(editRule as ColorAndShapeEditRule);
+        case RuleType.COLOR:
+            return isColorEditRuleValid(editRule as ColorEditRule);
         case RuleType.LABEL:
             return isLabelEditRuleValid(editRule as LabelEditRule);
         case RuleType.INVISIBILITY:

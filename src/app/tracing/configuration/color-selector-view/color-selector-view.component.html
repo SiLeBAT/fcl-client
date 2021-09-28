@@ -1,20 +1,57 @@
 <div
+    #colorpicker
+    class="fcl-color-picker"
+    [ngClass]="ngClass"
     [matTooltip]="'Choose Color'">
+    <!--
+        Here 2 identical color picker buttons are used.
+        This mechanism is required, because color picker doesn't updates
+        its cpPosition.
+        The position, where the color-picker-dialog should be opened can be provided by an input, but
+        once the color-picker-dialog was opened the position cannot be changed anymore it will always be opened
+        at the same position.
+        By using 2 alternating color picker buttons the update of the position can be forced.
+    -->
     <button
+        *ngIf="useFirstColorPickerButton"
         class="fcl-color-view"
         mat-stroked-button
+        [cpDisabled]="true"
         [disabled]="disabled"
         matTooltipPosition="above"
         [colorPicker]="rgbaColorStr"
         [cpHeight]="'320px'"
-        [cpPosition]="'left'"
-        [cpPositionOffset]="'-390%'"
+        [cpPosition]="cpPosition"
+        [cpPositionOffset]="cpPositionOffset"
         [cpPositionRelativeToArrow]="true"
+        (colorPickerClose)="onColorPickerClose()"
         [cpOutputFormat]="'rgba'"
         [cpOKButton]="true"
         [cpCancelButton]="true"
         [cpAlphaChannel]="'disabled'"
         (colorPickerSelect)="onColorPickerSelect($event)"
+        (click)="onClick($event)"
+        [ngStyle]="style"
+    >&nbsp;</button>
+    <button
+        *ngIf="!useFirstColorPickerButton"
+        class="fcl-color-view"
+        mat-stroked-button
+        [cpDisabled]="true"
+        [disabled]="disabled"
+        matTooltipPosition="above"
+        [colorPicker]="rgbaColorStr"
+        [cpHeight]="'320px'"
+        [cpPosition]="cpPosition"
+        [cpPositionOffset]="cpPositionOffset"
+        [cpPositionRelativeToArrow]="true"
+        (colorPickerClose)="onColorPickerClose()"
+        [cpOutputFormat]="'rgba'"
+        [cpOKButton]="true"
+        [cpCancelButton]="true"
+        [cpAlphaChannel]="'disabled'"
+        (colorPickerSelect)="onColorPickerSelect($event)"
+        (click)="onClick($event)"
         [ngStyle]="style"
     >&nbsp;</button>
 </div>

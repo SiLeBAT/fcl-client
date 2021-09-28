@@ -6,44 +6,18 @@
             (ruleNameChange) = "onRuleNameChange($event)"
         >
         </fcl-rule-name-view>
-        <fcl-node-symbol-view *ngIf="color !== null || shape !== null"
-            class="fcl-edit-rule-node-symbol"
-            [fillColor]="color"
-            [shapeType]="shape"
-        ></fcl-node-symbol-view>
+        <fcl-edge-symbol-view *ngIf="color !== null"
+            class="fcl-edit-rule-symbol"
+            [edgeColor]="color"
+        ></fcl-edge-symbol-view>
     </div>
-    <div class="fcl-edit-rule-shape-and-color-fields">
-        <div class="fcl-edit-rule-shape-fields">
-
-            <mat-checkbox
-                class="fcl-edit-rule-color-or-shape-checkbox fcl-checkbox-wo-ripple"
-                [checked]="useShape"
-                (change)="onUseShapeChange($event.checked)"
-            >
-                Use shape:
-            </mat-checkbox>
-
-            <fcl-shape-selector-view
-                class="fcl-complex-filter-form-field fcl-edit-rule-shape-selector"
-                [disabled]="!useShape"
-                [value]="shape"
-                (valueChange)="onShapeChange($event)"
-            ></fcl-shape-selector-view>
-        </div>
+    <div class="fcl-edit-rule-color-and-service-fields">
         <div class="fcl-edit-rule-color-fields">
-            <mat-checkbox
-                class="fcl-edit-rule-color-or-shape-checkbox fcl-checkbox-wo-ripple"
-                [checked]="useColor"
-                (change)="onUseColorChange($event.checked)"
-            >
-                Use color:
-            </mat-checkbox>
-
+            <span class="fcl-edit-rule-color-label">Color:</span>
             <fcl-color-selector-view
-                [disabled]="!useColor"
                 [color]="color"
-                preferredColorPickerPosition="left"
                 (colorChange)="onColorChange($event)"
+                preferredColorPickerPosition="right"
             ></fcl-color-selector-view>
         </div>
         <fcl-rule-service-view

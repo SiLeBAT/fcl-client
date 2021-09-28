@@ -1,6 +1,6 @@
 import { Component, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import * as _ from 'lodash';
-import { DeliveryEditRule } from '../model';
+import { DeliveryEditRule, RuleType } from '../model';
 import { HighlightingElementViewComponent } from '../highlighting-element-view/highlighting-element-view.component';
 
 @Component({
@@ -13,10 +13,10 @@ export class HighlightingDeliveryViewComponent
     extends HighlightingElementViewComponent<DeliveryEditRule> implements OnChanges {
 
     widthOpenState = false;
-    colorOpenState = false;
 
     constructor() {
         super();
+        this.setOpenState(RuleType.COLOR, true);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
