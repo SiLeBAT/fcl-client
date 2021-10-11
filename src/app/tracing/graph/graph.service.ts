@@ -712,6 +712,18 @@ export class GraphService {
         this.cachedState = { ...state };
     }
 
+    private optionsToString(options: Partial<CacheUpdateOptions>): string {
+        const keys = Object.keys(options);
+        const result: string[] = [];
+        for (const key of keys) {
+            const value = options[key];
+            if (value !== false) {
+                result.push(key);
+            }
+        }
+        return result.join(', ');
+    }
+
     private getEdgeMap(edgeData: CyEdgeData[]): Record<EdgeId, CyEdgeData> {
         const edgeMap: Record<EdgeId, CyEdgeData> = {};
         edgeData.forEach(edge => edgeMap[edge.id] = edge);

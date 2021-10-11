@@ -424,7 +424,12 @@ export class InteractiveCyGraph extends CyGraph {
         const updateEdges = !updateNodes && oldData.edgeData !== graphData.edgeData;
         const updateCachedHProps = updateNodes || updateEdges || graphData.propsUpdatedFlag !== oldData.propsUpdatedFlag;
 
-        let propChange: Partial<HPropsChange> = {};
+        let propChange: HPropsChange = {
+            nodeSizeLimitsChanged: false,
+            edgePropsChanged: false,
+            edgeLabelChanged: false,
+            nodePropsChanged: false
+        };
         let updateStyle = !_.isEqual(oldStyle, styleConfig);
         if (updateCachedHProps) {
             const oldHProps = this.cachedHProps;
@@ -442,6 +447,7 @@ export class InteractiveCyGraph extends CyGraph {
         const scratchEdges = !updateNodes && !updateEdges && (
             updateStyle || updateEdgeLabel || updateSelection || propChange.edgePropsChanged
         );
+
         const scratchNodes = !updateNodes && (updateStyle || updateSelection || propChange.nodePropsChanged);
 
         const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges || propChange.nodePropsChanged;
@@ -450,7 +456,7 @@ export class InteractiveCyGraph extends CyGraph {
         if (
             updateNodes || updateEdges || updateStyle || updateSelection ||
             updateNodes || updateLayout || updateEdgeLabel || updateNodePositions ||
-            scratchNodes ||
+            scratchNodes || scratchEdges ||
             (updateGhosts && setAllEdgeLabelOffsets)
         ) {
 

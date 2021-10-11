@@ -12,7 +12,7 @@ import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
 })
 export class EdgeColorEditViewComponent extends AbstractRuleEditViewComponent<ColorEditRule> implements OnChanges {
 
-    private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select color as well as conditions';
+    private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select colour as well as conditions';
 
     get color(): Color {
         return this.rule.color;

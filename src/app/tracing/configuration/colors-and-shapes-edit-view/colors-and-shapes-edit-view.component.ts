@@ -14,7 +14,7 @@ import { COLOR_BFR_BLUE } from '../constants';
 export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewComponent<ColorAndShapeEditRule> implements OnChanges {
 
     private static readonly DEFAULT_COLOR = COLOR_BFR_BLUE;
-    private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select color and/or shape as well as conditions';
+    private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select colour and/or shape as well as conditions';
 
     private useShape_ = false;
     private lastActiveColor: Color = ColorsAndShapesEditViewComponent.DEFAULT_COLOR;
