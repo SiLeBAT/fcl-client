@@ -1,6 +1,6 @@
 {
   "name": "fcl-web-app",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "GPL v3",
   "scripts": {
     "ng": "ng",
