@@ -170,7 +170,7 @@
                             "type": "object",
                             "properties": {
                                 "id": { "type": "string" },
-                                "value": {  "type": ["string", "number", "boolean"] }
+                                "value": {  "type": ["string", "number", "boolean", "null"] }
                             },
                             "required": [
                                 "id", "value"
