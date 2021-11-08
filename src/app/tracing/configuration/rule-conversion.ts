@@ -69,7 +69,7 @@ function convertInvEditRuleToDeliveryHRule(editRule: InvEditRule): DeliveryHighl
 function convertCSEditRuleToStatHRule(editRule: ColorAndShapeEditRule): StationHighlightingRule {
     return {
         ...convertEditRuleToHRule(editRule),
-        color: Utils.colorToRGBArray(editRule.color),
+        color: editRule.color === null ? null : Utils.colorToRGBArray(editRule.color),
         shape: editRule.shape,
         showInLegend: editRule.showInLegend
     };
