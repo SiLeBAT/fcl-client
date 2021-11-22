@@ -26,6 +26,7 @@ import {
 import * as DataMapper from './../data-mappings/data-mappings-v1';
 import { InputFormatError, InputDataError } from '../io-errors';
 import { getCenterFromPoints, getDifference } from '../../util/geometry-utils';
+import * as _ from 'lodash';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -69,7 +70,7 @@ export class DataImporterV1 implements IDataImporter {
             idToDeliveryMap
         );
         importSamples(data, fclData);
-        this.applyExternalViewSettings(data, fclData, idToStationMap, idToGroupMap);
+        this.applyExternalViewSettings(data, fclData, idToStationMap, idToGroupMap, idToDeliveryMap);
     }
 
     private applyExternalStations(jsonData: JsonData, fclData: FclData): Map<string, StationData> {
@@ -410,7 +411,8 @@ export class DataImporterV1 implements IDataImporter {
         jsonData: JsonData,
         fclData: FclData,
         idToStationMap: Map<string, StationData>,
-        idToGroupMap: Map<string, GroupData>
+        idToGroupMap: Map<string, GroupData>,
+        idToDeliveryMap: Map<string, DeliveryData>
     ) {
 
         if (
@@ -473,6 +475,32 @@ export class DataImporterV1 implements IDataImporter {
 
         this.convertExternalPositions(viewData, fclData, idToStationMap, idToGroupMap);
         this.convertExternalHighlightingSettings(viewData, fclData);
+        this.importInvisibleElements(viewData, fclData, idToStationMap, idToGroupMap, idToDeliveryMap);
+    }
+
+    private importInvisibleElements(
+        viewData: ViewData,
+        fclData: FclData,
+        idToStationMap: Map<string, StationData>,
+        idToGroupMap: Map<string, GroupData>,
+        idToDeliveryMap: Map<string, DeliveryData>
+    ): void {
+        const invStatOrGroupIds = viewData.node.invisibleNodes;
+        if (invStatOrGroupIds !== undefined && invStatOrGroupIds !== null) {
+            const unknownIds = invStatOrGroupIds.filter(id => !idToStationMap.has(id) && !idToGroupMap.has(id));
+            if (unknownIds.length > 0) {
+                throw new InputDataError('Unknown station/group id "' + unknownIds[0] + '" in "invisibleNodes".');
+            }
+            fclData.graphSettings.highlightingSettings.invisibleStations = _.uniq(invStatOrGroupIds);
+        }
+        const invDelIds = viewData.edge.invisibleEdges;
+        if (invDelIds !== undefined && invDelIds !== null) {
+            const unknownIds = invDelIds.filter(id => !idToDeliveryMap.has(id));
+            if (unknownIds.length > 0) {
+                throw new InputDataError('Unknown delivery id "' + unknownIds[0] + '" in "invisibleEdges".');
+            }
+            fclData.graphSettings.highlightingSettings.invisibleDeliveries = _.uniq(invDelIds);
+        }
     }
 
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {

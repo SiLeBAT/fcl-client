@@ -104,9 +104,13 @@ export class DataExporter {
                 selectedEdges: []
             };
         }
+        viewData.edge.invisibleEdges = fclData.graphSettings.highlightingSettings.invisibleDeliveries;
+
         if (!viewData.node) {
             viewData.node = {};
         }
+
+        viewData.node.invisibleNodes = fclData.graphSettings.highlightingSettings.invisibleStations;
 
         Utils.setProperty(viewData, ExtDataConstants.SHOW_LEGEND, fclData.graphSettings.showLegend);
         Utils.setProperty(viewData, ExtDataConstants.SKIP_UNCONNECTED_STATIONS, fclData.graphSettings.skipUnconnectedStations);

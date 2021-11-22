@@ -1,4 +1,4 @@
-export const VERSION = '1.1.0';
+export const VERSION = '1.1.1';
 
 export interface JsonData {
     version: string;
@@ -76,7 +76,7 @@ export interface NodeViewData {
     skipEdgelessNodes?: boolean;
     // labelPosition: string;
     selectedNodes?: string[];
-    // invisibleNodes: string[];
+    invisibleNodes?: string[] | null;
     highlightConditions?: StationHighlightingRule[];
 }
 
@@ -88,7 +88,7 @@ export interface EdgeViewData {
     // hideArrowHead: boolean;
     // arrowHeadInMiddle: boolean;
     selectedEdges: string[];
-    // invisibleEdges: string[];
+    invisibleEdges?: string[] | null;
     highlightConditions?: DeliveryHighlightingRule[];
     // showCrossContaminatedDeliveries: boolean;
     // filter: EdgeFilterData;
