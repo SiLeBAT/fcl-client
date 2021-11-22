@@ -34,7 +34,7 @@ export interface Cy {
     nodes(a?: string): CyNodeCollection;
     edges(a?: string): CyEdgeCollection;
     elements(a?: string): CyElementCollection<CyNode | CyEdge>;
-    container(): any;
+    container(): HTMLElement | undefined;
     resize(): void;
     destroy(): void;
     destroyed(): boolean;
@@ -45,6 +45,7 @@ export interface Cy {
     maxZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
     minZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
     pan<T extends Position | None>(a?: T): None extends T ? Position : void;
+    panBy(renderedPos: Position): void;
     add(a: CyNodeDef[] | CyEdgeDef[]): CyElementCollection<CyNode | CyEdge>;
     on<
         T extends string | CyCallBackFun,
@@ -110,7 +111,7 @@ export interface CyElementCollection<E> {
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
     union(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
     difference(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
-
+    getElementById(id: string): E;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
@@ -146,12 +147,15 @@ export interface CyElement {
     >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
     removeListener(events: string, handler: (event?: any) => void): void;
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
+    visible(): boolean;
 }
 
 export interface CyNode extends CyElement {
     data<T extends string | None>(a?: T): None extends T ? CyNodeData : any;
     position(): Position;
     renderedPosition(): Position;
+    renderedHeight(): number;
+    renderedWidth(): number;
     height(): number;
     connectedEdges(a?: string): CyEdgeCollection;
 }
@@ -160,6 +164,16 @@ export interface CyEdge extends CyElement {
     data<T extends string | None>(a?: T): None extends T ? CyEdgeData : any;
     source(): CyNode;
     target(): CyNode;
+    controlPoints(): Position[] | undefined;
+    renderedControlPoints(): Position[];
+    midpoint(): Position;
+    renderedMidpoint(): Position;
+    sourceEndpoint(): Position;
+    renderedSourceEndpoint(): Position;
+    targetEndpoint(): Position;
+    renderedTargetEndpoint(): Position;
+    isLoop(): boolean;
+    isSimple(): boolean;
 }
 
 export type NodeId = string;

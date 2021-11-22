@@ -8,7 +8,7 @@ import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { map } from 'rxjs/operators';
-import { GraphDataChange } from '../graph-view/graph-view.component';
+import { GraphDataChange, GraphViewComponent } from '../graph-view/graph-view.component';
 import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { GisPositioningService } from '../../gis-positioning.service';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
@@ -18,7 +18,8 @@ import { SetGisGraphLayoutSOA } from '@app/tracing/state/tracing.actions';
 import { selectGisGraphState, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { BoundaryRect } from '@app/tracing/util/geometry-utils';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
-import { SetSelectedGraphElementsMSA } from '@app/tracing/tracing.actions';
+import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes } from '@app/tracing/tracing.actions';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
     selector: 'fcl-gis-graph',
@@ -32,15 +33,17 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private static readonly DEFAULT_SCREEN_BOUNDARY_WIDTH = 20;
 
     @ViewChild('contextMenu', { static: true }) contextMenu: ContextMenuViewComponent;
+    @ViewChild('graph', { static: true }) graphViewComponent: GraphViewComponent;
 
     graphType$ = this.store.select(getGraphType);
     isGraphActive$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GIS));
-    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$));
-    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$));
+    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$, true));
+    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$, true));
     mapConfig$ = this.store.select(getMapConfig);
-    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$));
+    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
     unknownLatLonRectBorderWidth = GisGraphComponent.DEFAULT_SCREEN_BOUNDARY_WIDTH;
 
+    private focusElementSubscription: Subscription;
     private graphStateSubscription: Subscription | null = null;
 
     private sharedGraphData: GraphServiceData | null = null;
@@ -54,6 +57,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     };
 
     constructor(
+        private actions$: Actions,
         private store: Store<State>,
         public elementRef: ElementRef,
         private graphService: GraphService,
@@ -66,10 +70,18 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
         this.graphStateSubscription = this.store
             .select(selectGisGraphState)
-            .pipe(optInGate(this.isGraphActive$))
+            .pipe(optInGate(this.isGraphActive$, true))
             .subscribe(
                 graphState => this.applyState(graphState),
                 err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
+        );
+
+        this.focusElementSubscription = this.actions$
+            .pipe(ofType<FocusGraphElementSSA>(TracingActionTypes.FocusGraphElementSSA))
+            .pipe(optInGate(this.isGraphActive$, false))
+            .subscribe(
+                action => this.graphViewComponent.focusElement(action.payload.elementId),
+                err => this.alertService.error(`focusElement subscription failed: ${err}`)
         );
     }
 
@@ -77,6 +89,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         if (this.graphStateSubscription !== null) {
             this.graphStateSubscription.unsubscribe();
             this.graphStateSubscription = null;
+        }
+        if (this.focusElementSubscription) {
+            this.focusElementSubscription.unsubscribe();
+            this.focusElementSubscription = null;
         }
     }
 

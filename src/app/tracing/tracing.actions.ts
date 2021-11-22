@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
-import { ClearInvisibilitiesOptions, SelectedElements, ShowElementsTraceParams } from './data.model';
-import { SelectedGraphElements } from './graph/graph.model';
+import { ClearInvisibilitiesOptions, DeliveryId, SelectedElements, ShowElementsTraceParams, StationId } from './data.model';
+import { EdgeId, NodeId, SelectedGraphElements } from './graph/graph.model';
 
 export enum TracingActionTypes {
     ClearTraceMSA = '[Tracing] Clear Trace',
@@ -13,7 +13,10 @@ export enum TracingActionTypes {
     MakeElementsInvisibleMSA = '[Tracing] Make Elements Invisible',
     ShowDeliveryPropertiesMSA = '[Tracing] Show Delivery Properties',
     ShowElementsTraceMSA = '[Tracing] Show Elements Trace',
-    SetSelectedGraphElementsMSA = '[Graph] Set Selected Graph Elements'
+    SetSelectedGraphElementsMSA = '[Graph] Set Selected Graph Elements',
+    FocusStationSSA = '[Graph] Focus Station',
+    FocusDeliverySSA = '[Graph] Focus Delivery',
+    FocusGraphElementSSA = '[Graph] Focus Graph Element'
 }
 
 export class ClearTraceMSA implements Action {
@@ -82,6 +85,24 @@ export class SetSelectedGraphElementsMSA implements Action {
     constructor(public payload: { selectedElements: SelectedGraphElements, maintainOffGraphSelection: boolean }) {}
 }
 
+export class FocusStationSSA implements Action {
+    readonly type = TracingActionTypes.FocusStationSSA;
+
+    constructor(public payload: { stationId: StationId }) {}
+}
+
+export class FocusDeliverySSA implements Action {
+    readonly type = TracingActionTypes.FocusDeliverySSA;
+
+    constructor(public payload: { deliveryId: DeliveryId }) {}
+}
+
+export class FocusGraphElementSSA implements Action {
+    readonly type = TracingActionTypes.FocusGraphElementSSA;
+
+    constructor(public payload: { elementId: NodeId | EdgeId }) {}
+}
+
 export type TracingActions =
       ClearTraceMSA
     | ClearOutbreakStationsMSA
@@ -91,4 +112,7 @@ export type TracingActions =
     | SetStationCrossContaminationMSA
     | MakeElementsInvisibleMSA
     | ShowElementsTraceMSA
-    | SetSelectedGraphElementsMSA;
+    | SetSelectedGraphElementsMSA
+    | FocusStationSSA
+    | FocusDeliverySSA
+    | FocusGraphElementSSA;

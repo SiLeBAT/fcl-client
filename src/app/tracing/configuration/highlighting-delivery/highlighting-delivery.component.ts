@@ -58,7 +58,7 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
 
         const isHighlightingDeliveryTabActive$ = this.store.select(tracingSelectors.selectIsHighlightingDeliveryTabActive);
         const deliveryHighlightingState$ = this.store.select(tracingSelectors.selectDeliveryHighlightingState);
-        this.stateSubscription = deliveryHighlightingState$.pipe(optInGate(isHighlightingDeliveryTabActive$)).subscribe(
+        this.stateSubscription = deliveryHighlightingState$.pipe(optInGate(isHighlightingDeliveryTabActive$, true)).subscribe(
             (state) => this.applyState(state),
             err => this.alertService.error(`getDeliveryHighlightingData store subscription failed: ${err}`)
         );

@@ -126,7 +126,7 @@
     <ngx-datatable
         fclResizeSensor (resized)="onComponentResized()" [ignoreNonPositiveResize]="true" [ignoreWindowResize]="true"
         fclNgxDatatableScrollFix
-        fclNgxDatatableRowEventProvider (rowOver)="onRowOver($event)"
+        fclNgxDatatableRowEventProvider (rowOver)="onRowOver($event)" (rowDblClick)="onRowDblClick($event)"
         #table
         class="material fcl-datatable fcl-filtertable"
         [columns]="columns"

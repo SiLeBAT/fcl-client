@@ -44,6 +44,7 @@ export class FilterElementsViewComponent {
     @Output() rowSelectionChange = new EventEmitter<string[]>();
     @Output() mouseOverTableRow = new EventEmitter<TableRow>();
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
+    @Output() tableRowDblClick = new EventEmitter<TableRow>();
 
     availableOperatorTypes: OperationType[] = [
         OperationType.EQUAL,
@@ -150,6 +151,10 @@ export class FilterElementsViewComponent {
 
     onMouseOverTableRow(row: TableRow | null): void {
         this.mouseOverTableRow.emit(row);
+    }
+
+    onRowDblClick(row: TableRow): void {
+        this.tableRowDblClick.emit(row);
     }
 
     private processLastInputIfNecessary(): void {

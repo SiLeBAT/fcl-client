@@ -19,7 +19,8 @@ import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
-import { SetSelectedGraphElementsMSA } from '@app/tracing/tracing.actions';
+import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes } from '@app/tracing/tracing.actions';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
     selector: 'fcl-schema-graph',
@@ -38,10 +39,11 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     private graphType$ = this.store.select(getGraphType);
     isGraphActive$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GRAPH));
-    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$));
-    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$));
-    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$));
+    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$, true));
+    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$, true));
+    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
 
+    private focusElementSubscription: Subscription;
     private graphStateSubscription: Subscription;
 
     private cachedState: SchemaGraphState | null = null;
@@ -56,6 +58,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private asyncRelayoutingDialog: MatDialogRef<DialogActionsComponent, any> | null = null;
 
     constructor(
+        private actions$: Actions,
         private store: Store<State>,
         public elementRef: ElementRef,
         private dialogService: MatDialog,
@@ -69,17 +72,29 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
         this.graphStateSubscription = this.store
             .select(selectSchemaGraphState)
-            .pipe(optInGate(this.isGraphActive$))
+            .pipe(optInGate(this.isGraphActive$, true))
             .subscribe(
                 graphState => this.applyState(graphState),
                 err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
             );
+
+        this.focusElementSubscription = this.actions$
+            .pipe(ofType<FocusGraphElementSSA>(TracingActionTypes.FocusGraphElementSSA))
+            .pipe(optInGate(this.isGraphActive$, false))
+            .subscribe(
+                action => this.graphViewComponent.focusElement(action.payload.elementId),
+                err => this.alertService.error(`focusElement subscription failed: ${err}`)
+        );
     }
 
     ngOnDestroy() {
         if (this.graphStateSubscription) {
             this.graphStateSubscription.unsubscribe();
             this.graphStateSubscription = null;
+        }
+        if (this.focusElementSubscription) {
+            this.focusElementSubscription.unsubscribe();
+            this.focusElementSubscription = null;
         }
     }
 

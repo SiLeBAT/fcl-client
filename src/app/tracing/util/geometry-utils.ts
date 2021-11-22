@@ -115,6 +115,32 @@ export function getRectUnion(rect1: BoundaryRect, rect2: BoundaryRect): Boundary
     };
 }
 
+export function doRectsIntersect(rect1: BoundaryRect, rect2: BoundaryRect): boolean {
+    return !(rect2.left > rect1.right ||
+             rect2.right < rect1.left ||
+             rect2.top > rect1.bottom ||
+             rect2.bottom < rect1.top);
+}
+
+export function getRectIntersection(rect1: BoundaryRect, rect2: BoundaryRect): BoundaryRect | null {
+    if (!doRectsIntersect(rect1, rect2)) {
+        return null;
+    } else {
+        const left = Math.max(rect1.left, rect2.left);
+        const right = Math.min(rect1.right, rect2.right);
+        const top = Math.max(rect1.top, rect2.top);
+        const bottom = Math.min(rect1.bottom, rect2.bottom);
+        return {
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
+            width: right - left,
+            height: bottom - top
+        };
+    }
+}
+
 export function createRect(left: number, top: number, right: number, bottom: number): BoundaryRect {
     return {
         left: left,
@@ -131,4 +157,11 @@ export function isRectWithinRect(innerRect: BoundaryRect, outerRect: BoundaryRec
         innerRect.right <= outerRect.right &&
         innerRect.top >= outerRect.top &&
         innerRect.bottom <= outerRect.bottom;
+}
+
+export function getRectCenter(rect: BoundaryRect): Point {
+    return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+    };
 }

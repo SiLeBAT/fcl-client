@@ -1,12 +1,12 @@
 import { Observable } from 'rxjs';
 
-export function optInGate(gate: Observable<boolean>) {
+export function optInGate(gateIsOpen$: Observable<boolean>, waitingEnabled: boolean) {
     return function<T>(source: Observable<T>): Observable<T> {
         return new Observable(subscriber => {
             let isSourceEmitWaiting = false;
             let waitingSourceEmit: T | null = null;
             let gateIsOpen = false;
-            const gateSubscription = gate.subscribe({
+            const gateSubscription = gateIsOpen$.subscribe({
                 next(value) {
                     if (value !== gateIsOpen) {
                         gateIsOpen = value;
@@ -28,7 +28,7 @@ export function optInGate(gate: Observable<boolean>) {
                 next(value) {
                     if (gateIsOpen) {
                         subscriber.next(value);
-                    } else {
+                    } else if (waitingEnabled) {
                         isSourceEmitWaiting = true;
                         waitingSourceEmit = value;
                     }

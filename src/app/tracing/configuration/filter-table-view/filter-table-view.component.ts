@@ -148,6 +148,7 @@ export class FilterTableViewComponent {
 
     @Output() selectColumns = new EventEmitter();
     @Output() mouseOverRow = new EventEmitter<TableRow | null>();
+    @Output() rowDblClick = new EventEmitter<TableRow>();
     @Output() columnOrderChange = new EventEmitter<string[]>();
     @Output() filterChange = new EventEmitter<TableFilterChange>();
     @Output() rowSelectionChange = new EventEmitter<string[]>();
@@ -232,6 +233,10 @@ export class FilterTableViewComponent {
 
     onRowOver(row: TableRow | null): void {
         this.mouseOverRow.emit(row);
+    }
+
+    onRowDblClick(row: TableRow): void {
+        this.rowDblClick.emit(row);
     }
 
     onTreeAction(row: TableRow) {

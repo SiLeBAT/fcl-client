@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { Size, Layout, PositionMap } from '../../../data.model';
 import _ from 'lodash';
-import { ContextMenuRequestInfo, NodeId, SelectedGraphElements } from '../../graph.model';
+import { ContextMenuRequestInfo, EdgeId, NodeId, SelectedGraphElements } from '../../graph.model';
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
 import { GraphEventType, InteractiveCyGraph, LayoutOption } from '../../cy-graph/interactive-cy-graph';
@@ -109,6 +109,10 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] | null {
         return this.cyGraph_ === null ? null : this.cyGraph_.getLayoutOptions(nodesToLayout);
+    }
+
+    focusElement(elementId: NodeId | EdgeId): void {
+        this.cyGraph_.focusElement(elementId);
     }
 
     private isSizePositive(): boolean {

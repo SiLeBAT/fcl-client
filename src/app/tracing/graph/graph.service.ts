@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
     DeliveryData, DataServiceData, NodeShapeType, MergeDeliveriesType, StationData,
-    SharedGraphState, SelectedElements, DeliveryId
+    SharedGraphState, SelectedElements, DeliveryId, StationId
 } from '../data.model';
 import { DataService } from '../services/data.service';
-import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements } from './graph.model';
+import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements, NodeId } from './graph.model';
 import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 
@@ -754,5 +754,25 @@ export class GraphService {
             ));
         }
         return selectedElements;
+    }
+
+    getNodeIdFromStationId(stationId: StationId, state: SharedGraphState): NodeId | null {
+        const data = this.getData(state);
+        for (const node of data.nodeData) {
+            if (node.station.id === stationId) {
+                return node.id;
+            }
+        }
+        return null;
+    }
+
+    getEdgeIdFromDeliveryId(deliveryId: DeliveryId, state: SharedGraphState): NodeId | null {
+        const data = this.getData(state);
+        for (const edge of data.edgeData) {
+            if (edge.deliveries.some(d => d.id === deliveryId)) {
+                return edge.id;
+            }
+        }
+        return null;
     }
 }

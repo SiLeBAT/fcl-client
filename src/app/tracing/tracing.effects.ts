@@ -68,6 +68,36 @@ export class TracingEffects {
     );
 
     @Effect()
+    focusStationSSA$ = this.actions$.pipe(
+        ofType<tracingEffectActions.FocusStationSSA>(tracingEffectActions.TracingActionTypes.FocusStationSSA),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
+        mergeMap(([action, state]) => {
+            const focusStationId = action.payload.stationId;
+            const focuseNodeId = this.graphService.getNodeIdFromStationId(focusStationId, state);
+
+            if (focuseNodeId !== null) {
+                return of(new tracingEffectActions.FocusGraphElementSSA({ elementId: focuseNodeId }));
+            }
+            return EMPTY;
+        })
+    );
+
+    @Effect()
+    focusDeliverySSA$ = this.actions$.pipe(
+        ofType<tracingEffectActions.FocusDeliverySSA>(tracingEffectActions.TracingActionTypes.FocusDeliverySSA),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
+        mergeMap(([action, state]) => {
+            const focusDeliveryId = action.payload.deliveryId;
+            const focuseEdgeId = this.graphService.getEdgeIdFromDeliveryId(focusDeliveryId, state);
+
+            if (focuseEdgeId !== null) {
+                return of(new tracingEffectActions.FocusGraphElementSSA({ elementId: focuseEdgeId }));
+            }
+            return EMPTY;
+        })
+    );
+
+    @Effect()
     showDeliveryProperties$ = this.actions$.pipe(
         ofType<tracingEffectActions.ShowDeliveryPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryPropertiesMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),

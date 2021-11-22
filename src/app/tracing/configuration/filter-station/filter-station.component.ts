@@ -13,6 +13,7 @@ import { FilterTableSettings } from '../configuration.model';
 import { TableType } from '../model';
 import { SelectFilterTableColumnsMSA } from '../configuration.actions';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
+import { FocusStationSSA } from '@app/tracing/tracing.actions';
 
 interface FilterTableState {
     dataServiceInputState: DataServiceInputState;
@@ -53,7 +54,7 @@ export class FilterStationComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         const isFilterStationTabActive$ = this.store.select(tracingSelectors.getIsFilterStationTabActive);
         const stationFilterState$ = this.store.select(tracingSelectors.selectStationFilterState);
-        this.stateSubscription = stationFilterState$.pipe(optInGate(isFilterStationTabActive$)).subscribe(
+        this.stateSubscription = stationFilterState$.pipe(optInGate(isFilterStationTabActive$, true)).subscribe(
             (state) => this.applyState(state),
             err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
         );
@@ -101,6 +102,23 @@ export class FilterStationComponent implements OnInit, OnDestroy {
             } else {
                 this.store.dispatch(new tracingActions.SetGhostStationSOA({ stationId: newGhostStationId }));
             }
+        }
+    }
+
+    onTableRowDblClick(row: TableRow): void {
+        let focusStationId: string | null = null;
+
+        const station = this.cachedData.dataServiceData.statMap[row.id];
+        if (station.contained) {
+            const group = this.cachedData.dataServiceData.statMap[row.parentRowId];
+            if (!group.invisible) {
+                focusStationId = group.id;
+            }
+        } else if (!station.invisible) {
+            focusStationId = station.id;
+        }
+        if (focusStationId !== null) {
+            this.store.dispatch(new FocusStationSSA({ stationId: focusStationId }));
         }
     }
 

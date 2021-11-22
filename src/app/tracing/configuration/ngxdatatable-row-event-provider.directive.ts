@@ -4,10 +4,11 @@ import { Subscription } from 'rxjs';
 import { TableRow } from '../data.model';
 
 const EVENT_MOUSE_LEAVE = 'mouseleave';
+const EVENT_DBLCLICK = 'dblclick';
 const EVENT_MOUSE_ENTER = 'mouseenter';
 
 interface ActivateEvent {
-    type: 'mouseenter' | 'keyboard';
+    type: 'mouseenter' | 'keyboard' | 'dblclick';
     event: any;
     row: TableRow;
     rowElement: any;
@@ -22,6 +23,7 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
         private host: DatatableComponent
     ) {}
 
+    @Output() rowDblClick = new EventEmitter<TableRow>();
     @Output() rowEnter = new EventEmitter<TableRow>();
     @Output() rowLeave = new EventEmitter<void>();
     @Output() rowOver = new EventEmitter<TableRow>();
@@ -95,6 +97,8 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
     private onCellActivate(event: ActivateEvent): void {
         if (event.type === EVENT_MOUSE_ENTER) {
             this.onRowEnter(event.row, event.rowElement);
+        } else if (event.type === EVENT_DBLCLICK) {
+            this.rowDblClick.emit(event.row);
         }
     }
 }

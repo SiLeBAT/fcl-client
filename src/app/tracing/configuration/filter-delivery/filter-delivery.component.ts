@@ -13,6 +13,7 @@ import { FilterTableSettings } from '../configuration.model';
 import { TableType } from '../model';
 import { SelectFilterTableColumnsMSA } from '../configuration.actions';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
+import { FocusDeliverySSA } from '@app/tracing/tracing.actions';
 
 interface FilterTableState {
     dataServiceInputState: DataServiceInputState;
@@ -53,7 +54,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         const isFilterDeliveryTabActive$ = this.store.select(tracingSelectors.getIsFilterDeliveryTabActive);
         const deliveryFilterState$ = this.store.select(tracingSelectors.selectDeliveryFilterState);
-        this.stateSubscription = deliveryFilterState$.pipe(optInGate(isFilterDeliveryTabActive$)).subscribe(
+        this.stateSubscription = deliveryFilterState$.pipe(optInGate(isFilterDeliveryTabActive$, true)).subscribe(
             (state) => this.applyState(state),
             err => this.alertService.error(`getDeliveryFilterData store subscription failed: ${err}`)
         );
@@ -100,6 +101,13 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
     }
 
     onMouseLeaveTableRow(row: TableRow): void {
+    }
+
+    onTableRowDblClick(row: TableRow): void {
+        const delivery = this.cachedData.dataServiceData.delMap[row.id];
+        if (!delivery.invisible) {
+            this.store.dispatch(new FocusDeliverySSA({ deliveryId: delivery.id }));
+        }
     }
 
     ngOnDestroy() {

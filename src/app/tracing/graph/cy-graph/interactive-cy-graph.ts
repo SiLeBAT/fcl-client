@@ -1,4 +1,8 @@
-import { ContextMenuRequestInfo, Cy, CyEdgeCollection, CyEdgeDef, CyNodeCollection, CyNodeDef, EdgeId, NodeId, SelectedGraphElements } from '../graph.model';
+import {
+    ContextMenuRequestInfo, Cy, CyEdge, CyEdgeCollection,
+    CyEdgeDef, CyNode, CyNodeCollection, CyNodeDef,
+    EdgeId, NodeId, SelectedGraphElements
+} from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
@@ -13,6 +17,8 @@ import {
     LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
 } from './cy.constants';
+import { BoundaryRect, getDifference, getDistance, getRectCenter } from '@app/tracing/util/geometry-utils';
+import { cropRect, getNonBlockedRect } from './shared-utils';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',
@@ -77,6 +83,7 @@ export class InteractiveCyGraph extends CyGraph {
     private static readonly ZOOM_FACTOR = 1.5;
     private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
     private static readonly POSITION_TOLERANCE = 1e-13;
+    private static readonly GOLDEN_RATIO = 1 / 1.618033;
 
     private listeners: GraphEventListeners<GraphEventType>;
     protected ignorePanOrZoomEvents = false;
@@ -330,6 +337,67 @@ export class InteractiveCyGraph extends CyGraph {
 
             return this.startLayouting(layoutConfig, nodeIds);
         }
+    }
+
+    focusElement(elementId: NodeId | EdgeId): void {
+        const cyElement = this.cy.getElementById(elementId);
+        if (cyElement.isEdge()) {
+            this.focusEdge(cyElement as CyEdge);
+        } else if (cyElement.isNode()) {
+            this.focusNode(cyElement as CyNode);
+        }
+    }
+
+    protected focusEdge(cyEdge: CyEdge): void {
+        // not implemented
+    }
+
+    private focusNode(cyNode: CyNode): void {
+        const maxFocusRect = this.getMaxFocusRect();
+        // const prefFocusRect = this.getPreferredFocusRect(maxSize);
+        const focusPoint = getRectCenter(maxFocusRect);
+        const refPoint = cyNode.renderedPosition();
+
+        const panBy = getDifference(focusPoint, refPoint);
+        if (panBy.x !== 0 || panBy.y !== 0) {
+            this.cy.panBy(panBy);
+        }
+    }
+
+    protected getPreferredFocusRect(maxFocusRect: BoundaryRect): BoundaryRect {
+        const xMargin = (InteractiveCyGraph.GOLDEN_RATIO) * maxFocusRect.width / 2;
+        const yMargin = (InteractiveCyGraph.GOLDEN_RATIO) * maxFocusRect.height / 2;
+        return {
+            left: maxFocusRect.left + xMargin,
+            top: maxFocusRect.top + yMargin,
+            right: maxFocusRect.right - xMargin,
+            bottom: maxFocusRect.bottom - yMargin,
+            width: maxFocusRect.width - 2 * xMargin,
+            height: maxFocusRect.height - 2 * yMargin
+        };
+    }
+
+    protected getMaxFocusRect(): BoundaryRect {
+        const margin = this.style.fontSize;
+
+        let rect = this.getNotBlockedSpace();
+        rect = cropRect(rect, margin);
+        return rect;
+    }
+
+    protected getEdgeLength(cyEdge: CyEdge): number {
+        const mpt = cyEdge.renderedMidpoint();
+        if (Number.isNaN(mpt.x)) {
+            return 0;
+        } else {
+            const spt = cyEdge.renderedSourceEndpoint();
+            const tpt = cyEdge.renderedTargetEndpoint();
+            return getDistance(mpt, spt) + getDistance(mpt, tpt);
+        }
+    }
+
+    private getNotBlockedSpace(): BoundaryRect {
+        return getNonBlockedRect(this.cy.container(), 'fcl-right-sidenav');
     }
 
     protected getNodeContext(nodeIds: NodeId[]): Cy | CyNodeCollection {
