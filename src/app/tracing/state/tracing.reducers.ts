@@ -78,6 +78,8 @@ const initialState: TracingState = {
     tracingActive: false,
     showConfigurationSideBar: false,
     configurationTabIndices: initialTabIndices,
+    animatingTabCount: 0,
+    isConfSideBarOpening: false,
     showGraphSettings: false
 };
 
@@ -138,6 +140,16 @@ export function createInitialFclDataState(): FclData {
 // REDUCER
 export function reducer(state: TracingState = initialState, action: TracingActions): TracingState {
     switch (action.type) {
+        case TracingActionTypes.SetConfigurationSideBarOpenedSOA:
+            return {
+                ...state,
+                isConfSideBarOpening: false
+            };
+        case TracingActionTypes.SetTabAnimationDoneSOA:
+            return {
+                ...state,
+                animatingTabCount: Math.max(state.animatingTabCount - 1, 0)
+            };
         case TracingActionTypes.TracingActivated:
             return {
                 ...state,
@@ -175,7 +187,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.ShowConfigurationSideBarSOA:
             return {
                 ...state,
-                showConfigurationSideBar: action.payload.showConfigurationSideBar
+                showConfigurationSideBar: action.payload.showConfigurationSideBar,
+                isConfSideBarOpening: action.payload.showConfigurationSideBar
             };
 
         case TracingActionTypes.SetGraphTypeSOA:
@@ -571,8 +584,6 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         highlightingSettings: action.payload.highlightingSettings
-                        // ,
-                        // selectedElements: action.payload.selectedElements
                     },
                     tracingSettings: action.payload.tracingSettings
                 }
@@ -634,7 +645,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
                     activeConfigurationTabId: action.payload.activeConfigurationTabId
-                }
+                },
+                animatingTabCount: state.animatingTabCount + 1
             };
 
         case TracingActionTypes.SetActiveFilterTabIdSOA:
@@ -643,7 +655,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
                     activeFilterTabId: action.payload.activeFilterTabId
-                }
+                },
+                animatingTabCount: state.animatingTabCount + 1
             };
 
         case TracingActionTypes.SetActiveHighlightingTabIdSOA:

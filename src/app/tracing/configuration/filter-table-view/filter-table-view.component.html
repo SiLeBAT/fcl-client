@@ -1,132 +1,60 @@
 <ng-template #buttonColTpl let-column="column">
-    <button
-        matTooltip="Select more columns"
-        matTooltipPosition="above"
+    <fcl-opensettings-header-cell-view
         class="fcl-more-columns-button"
         (click)="onSelectColumns()">
-        <mat-icon class="fcl-more-columns-icon">more_vert</mat-icon>
-    </button>
+    </fcl-opensettings-header-cell-view>
 </ng-template>
 
 <ng-template #patternColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="fcl-header-sort-span" (click)="sort()">
-        <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
-            radio_button_unchecked
-        </span>
-        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
-        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
-        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
-    </span>
+    <fcl-symbol-header-cell-view
+        class="fcl-textfilter-header-cell"
+        [sortDir]="sortDir"
+        (sort)="sort()"
+    ></fcl-symbol-header-cell-view>
 </ng-template>
 
 <ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="fcl-header-sort-span" (click)="sort()">
-        <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
-            visibility
-        </span>
-        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
-        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
-        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
-    </span>
-
-    <button
-        matTooltip="Filter Visibility"
-        matTooltipPosition="above"
-        tabindex="-1"
-        class="fcl-visibility-filter-button"
-        (click)="onToggleVisibilityFilterState()">
-        <span
-            *ngIf="showVisibleElements"
-            class="material-icons fcl-column-visibility-header-icon pointable"
-            [ngClass]="{'unsorted' : showVisibleElements && showInvisibleElements}">
-            visibility
-        </span>
-        <span
-            *ngIf="showInvisibleElements && !showVisibleElements"
-            class="material-icons fcl-column-visibility-header-icon pointable">
-            visibility_off
-        </span>
-
-    </button>
+    <fcl-visibilityfilter-header-cell-view
+        class="fcl-textfilter-header-cell"
+        [sortDir]="sortDir"
+        [showVisibleElements]="showVisibleElements"
+        [showInvisibleElements]="showInvisibleElements"
+        (sort)="sort()"
+        (toggleFilterState)="onToggleVisibilityFilterState()"
+    ></fcl-visibilityfilter-header-cell-view>
 </ng-template>
 
 <ng-template #dataColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
-    <span class="fcl-header-sort-span draggable" (click)="sort()">
-        {{ column.name }}
-        <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
-        <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
-        <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
-    </span>
-    <mat-form-field
-        class="fcl-column-filter-field draggable"
-        floatLabel="never"
-        appearance="outline"
-        color="accent">
-        <input
-            matInput
-            type="search"
-            tabindex="-1"
-            [ngModel] = "getColumnFilterText(column.prop) || ''"
-            (ngModelChange)="onSetColumnFilterText(column.prop, $event)"
-        >
-        <mat-icon class="fcl-column-filter-field-icon" matSuffix>search</mat-icon>
-    </mat-form-field>
+    <fcl-textfilter-header-cell-view
+        class="fcl-textfilter-header-cell"
+        [column]="column"
+        [sortDir]="sortDir"
+        [filterText]="getColumnFilterText(column.prop)"
+        (sort)="sort()"
+        (filterChange)="onSetColumnFilterText(column.prop, $event)">
+    </fcl-textfilter-header-cell-view>
 </ng-template>
 
 <ng-template #treeRowTpl let-row="row" let-value="value">
-    <span *ngIf="row.treeStatus === 'expanded'" class="datatable-icon-down pointable fcl-tree-action-icon" (click)="onTreeAction(row)"></span>
-    <span *ngIf="row.treeStatus === 'collapsed'" class="datatable-icon-right pointable fcl-tree-action-icon" (click)="onTreeAction(row)"></span>
+    <fcl-collapse-status-cell-view [status]="row.treeStatus" (toggleStatus)="onTreeAction(row)"></fcl-collapse-status-cell-view>
 </ng-template>
 
 <ng-template #patternRowTpl let-row="row" let-value="value">
-    <div *ngIf="row.parentRowId === undefined">
-        <fcl-node-symbol-view
-            *ngIf="!row.invisible"
-            class="fcl-row-symbol"
-            [dataTableShapeType]="row.highlightingInfo.shape"
-            [mapStationColor]="row.highlightingInfo.color"
-        ></fcl-node-symbol-view>
-        <fcl-node-symbol-view
-            *ngIf="row.invisible"
-            class="fcl-row-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
-            [dataTableShapeType]="row.highlightingInfo.shape"
-            [mapStationColor]="[[211, 211, 211]]"
-        ></fcl-node-symbol-view>
-    </div>
+    <fcl-symbol-cell-view [row]="row"></fcl-symbol-cell-view>
 </ng-template>
 
 <ng-template #visibilityRowTpl let-row="row" let-value="value">
-    <div *ngIf="row.parentRowId === undefined">
-        <span
-            *ngIf="!row.invisible"
-            class="material-icons fcl-column-visibility-header-icon">
-            visibility
-        </span>
-        <span
-            *ngIf="row.invisible"
-            class="material-icons fcl-column-visibility-header-icon unsorted pointable"
-            >
-            visibility_off
-        </span>
-    </div>
-    <span
-        *ngIf="row.parentRowId !== undefined"
-        class="material-icons fcl-column-visibility-header-icon unsorted fcl-invisible-data-row-cell"
-    >
-        visibility_off
-    </span>
+    <fcl-visibility-cell-view [row]="row"></fcl-visibility-cell-view>
 </ng-template>
 
 <ng-template #dataRowTpl let-row="row" let-column="column" let-value="value" let-i="index" let-prop="prop">
-
-    {{ value }}
+    <fcl-row-cell-view [value]="value"></fcl-row-cell-view>
 </ng-template>
 
 <div class="fcl-filtertable-container" #tableWrapper>
     <ngx-datatable
-        fclResizeSensor (resized)="onComponentResized()" [ignoreNonPositiveResize]="true" [ignoreWindowResize]="true"
-        fclNgxDatatableScrollFix
         fclNgxDatatableRowEventProvider (rowOver)="onRowOver($event)" (rowDblClick)="onRowDblClick($event)"
+        fclNgxDatatableScrollFix [activityState$]="activityState$" [cycleStart$]="cycleStart$"
         #table
         class="material fcl-datatable fcl-filtertable"
         [columns]="columns"

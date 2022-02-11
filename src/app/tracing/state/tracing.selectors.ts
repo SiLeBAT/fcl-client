@@ -2,6 +2,7 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { STATE_SLICE_NAME } from './tracing.reducers';
 import { TracingState } from '../state.model';
 import { DeliveriesTabId, FilterTabId, HighlightingTabId, StationsTabId } from '../configuration/configuration.constants';
+import { ActivityState } from '../configuration/configuration.model';
 
 // SELECTORS
 export const selectTracingFeatureState = createFeatureSelector<TracingState>(STATE_SLICE_NAME);
@@ -117,13 +118,13 @@ export const selectDataServiceInputState = createSelector(
     getGroupSettings,
     getTracingSettings,
     selectHighlightingSettings,
-    getGraphSettings,
-    (fclElements, groupSettings, tracingSettings, highlightingSettings, graphSettings) => ({
+    getSelectedElements,
+    (fclElements, groupSettings, tracingSettings, highlightingSettings, selectedElements) => ({
         fclElements: fclElements,
         groupSettings: groupSettings,
         tracingSettings: tracingSettings,
         highlightingSettings: highlightingSettings,
-        selectedElements: graphSettings.selectedElements
+        selectedElements: selectedElements
     })
 );
 
@@ -252,21 +253,29 @@ export const getActiveHighlightingTabId = createSelector(
     state => state.configurationTabIndices.activeHighlightingTabId
 );
 
-export const getIsFilterStationTabActive = createSelector(
+export const selectFilterStationTabActivityState = createSelector(
     selectTracingFeatureState,
     state => (
-        state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeFilterTabId === StationsTabId &&
-        state.configurationTabIndices.activeConfigurationTabId === FilterTabId
+        (
+            state.showConfigurationSideBar &&
+            state.configurationTabIndices.activeFilterTabId === StationsTabId &&
+            state.configurationTabIndices.activeConfigurationTabId === FilterTabId
+        ) ?
+        (state.animatingTabCount === 0 && !state.isConfSideBarOpening ? ActivityState.OPEN : ActivityState.OPENING) :
+        ActivityState.INACTIVE
     )
 );
 
-export const getIsFilterDeliveryTabActive = createSelector(
+export const selectFilterDeliveryTabActivityState = createSelector(
     selectTracingFeatureState,
     state => (
-        state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeFilterTabId === DeliveriesTabId &&
-        state.configurationTabIndices.activeConfigurationTabId === FilterTabId
+        (
+            state.showConfigurationSideBar &&
+            state.configurationTabIndices.activeFilterTabId === DeliveriesTabId &&
+            state.configurationTabIndices.activeConfigurationTabId === FilterTabId
+        ) ?
+        (state.animatingTabCount === 0 && !state.isConfSideBarOpening ? ActivityState.OPEN : ActivityState.OPENING) :
+        ActivityState.INACTIVE
     )
 );
 
@@ -299,9 +308,11 @@ const selectStationFilterSettings = createSelector(
 );
 
 export const selectStationFilterState = createSelector(
+    selectFilterStationTabActivityState,
     selectDataServiceInputState,
     selectStationFilterSettings,
-    (dataServiceInputState, stationFilterSettings) => ({
+    (activityState, dataServiceInputState, stationFilterSettings) => ({
+        activityState: activityState,
         dataServiceInputState: dataServiceInputState,
         filterTableState: stationFilterSettings
     })
@@ -343,9 +354,11 @@ const selectDeliveryFilterSettings = createSelector(
 );
 
 export const selectDeliveryFilterState = createSelector(
+    selectFilterDeliveryTabActivityState,
     selectDataServiceInputState,
     selectDeliveryFilterSettings,
-    (dataServiceInputState, deliveryFilterSettings) => ({
+    (activityState, dataServiceInputState, deliveryFilterSettings) => ({
+        activityState: activityState,
         dataServiceInputState: dataServiceInputState,
         filterTableState: deliveryFilterSettings
     })

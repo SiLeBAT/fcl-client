@@ -1,24 +1,18 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, DataTable, DataServiceData, DeliveryId, DataServiceInputState } from '@app/tracing/data.model';
-import { Subscription } from 'rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { TableRow, DataTable, DataServiceData, DeliveryId } from '@app/tracing/data.model';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TableService } from '@app/tracing/services/table.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { DataService } from '@app/tracing/services/data.service';
 import { InputData as FilterElementsViewInputData } from '../filter-elements-view/filter-elements-view.component';
-import { FilterTableSettings } from '../configuration.model';
+import { ActivityState, FilterTableSettings, FilterTableState } from '../configuration.model';
 import { TableType } from '../model';
 import { SelectFilterTableColumnsMSA } from '../configuration.actions';
-import { optInGate } from '@app/tracing/shared/rxjs-operators';
 import { FocusDeliverySSA } from '@app/tracing/tracing.actions';
-
-interface FilterTableState {
-    dataServiceInputState: DataServiceInputState;
-    filterTableState: FilterTableSettings;
-}
 
 interface CachedData {
     dataTable: DataTable;
@@ -30,12 +24,18 @@ interface CachedData {
     templateUrl: './filter-delivery.component.html',
     styleUrls: ['./filter-delivery.component.scss']
 })
-export class FilterDeliveryComponent implements OnInit, OnDestroy {
+export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
 
     private stateSubscription: Subscription | null = null;
 
     private cachedData: CachedData | null = null;
     private cachedState: FilterTableState | null = null;
+
+    private activityState_ = ActivityState.INACTIVE;
+    private activityStateSubject_ = new BehaviorSubject(this.activityState_);
+    activityState$ = this.activityStateSubject_.asObservable();
+    private cycleStartSubject_ = new Subject<void>();
+    cycleStart$ = this.cycleStartSubject_.asObservable();
 
     private filterElementsViewInputData_: FilterElementsViewInputData | null = null;
     private currentGhostDeliveryId: DeliveryId | null = null;
@@ -51,14 +51,29 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         private alertService: AlertService
     ) { }
 
+    // lifecycle hooks start
     ngOnInit(): void {
-        const isFilterDeliveryTabActive$ = this.store.select(tracingSelectors.getIsFilterDeliveryTabActive);
         const deliveryFilterState$ = this.store.select(tracingSelectors.selectDeliveryFilterState);
-        this.stateSubscription = deliveryFilterState$.pipe(optInGate(isFilterDeliveryTabActive$, true)).subscribe(
+        this.stateSubscription = deliveryFilterState$.subscribe(
             (state) => this.applyState(state),
             err => this.alertService.error(`getDeliveryFilterData store subscription failed: ${err}`)
         );
     }
+
+    ngDoCheck(): void {
+        this.cycleStartSubject_.next();
+    }
+
+    ngOnDestroy() {
+        if (this.stateSubscription) {
+            this.stateSubscription.unsubscribe();
+            this.stateSubscription = null;
+        }
+    }
+
+    // lifecycle hooks end
+
+    // template trigger start
 
     onSelectTableColumns(): void {
         this.store.dispatch(
@@ -110,47 +125,51 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy {
         }
     }
 
-    ngOnDestroy() {
-        if (this.stateSubscription) {
-            this.stateSubscription.unsubscribe();
-            this.stateSubscription = null;
+    // template trigger end
+
+    private setActivityState(state: ActivityState): void {
+        if (state !== this.activityState_) {
+            this.activityState_ = state;
+            this.activityStateSubject_.next(state);
         }
     }
 
     private applyState(state: FilterTableState) {
-        const cacheIsEmpty = this.cachedData === null;
+        if (state.activityState !== ActivityState.INACTIVE) {
+            const cacheIsEmpty = this.cachedData === null;
 
-        let dataTable: DataTable = !cacheIsEmpty ? this.cachedData.dataTable : undefined;
-        const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
-        const newDSData = this.dataService.getData(state.dataServiceInputState);
-        if (
-            cacheIsEmpty ||
-            this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
-        ) {
-            dataTable = this.tableService.getDeliveryData(state.dataServiceInputState, true);
-        } else if (
-            newDSData.stations !== cachedDSData.stations ||
-            newDSData.deliveries !== cachedDSData.deliveries ||
-            newDSData.delVis !== cachedDSData.delVis ||
-            newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
-            newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
-            newDSData.delSel !== cachedDSData.delSel
+            let dataTable: DataTable = !cacheIsEmpty ? this.cachedData.dataTable : undefined;
+            const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
+            const newDSData = this.dataService.getData(state.dataServiceInputState);
+            if (
+                cacheIsEmpty ||
+                this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
             ) {
-            dataTable = {
-                ...this.tableService.getDeliveryData(state.dataServiceInputState, true),
-                columns: this.cachedData.dataTable.columns
+                dataTable = this.tableService.getDeliveryData(state.dataServiceInputState, true);
+            } else if (
+                newDSData.stations !== cachedDSData.stations ||
+                newDSData.deliveries !== cachedDSData.deliveries ||
+                newDSData.delVis !== cachedDSData.delVis ||
+                newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
+                newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
+                newDSData.delSel !== cachedDSData.delSel
+                ) {
+                dataTable = {
+                    ...this.tableService.getDeliveryData(state.dataServiceInputState, true),
+                    columns: this.cachedData.dataTable.columns
+                };
+            }
+
+            this.cachedState = {
+                ...state
             };
+            this.cachedData = {
+                dataTable: dataTable,
+                dataServiceData: newDSData
+            };
+            this.updateFilterElementsViewInputData();
         }
-
-        this.cachedState = {
-            ...state
-        };
-        this.cachedData = {
-            dataTable: dataTable,
-            dataServiceData: newDSData
-        };
-        this.updateFilterElementsViewInputData();
-
+        this.setActivityState(state.activityState);
     }
 
     private updateFilterElementsViewInputData(): void {

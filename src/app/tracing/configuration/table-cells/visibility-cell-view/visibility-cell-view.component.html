@@ -1,0 +1,21 @@
+<ng-container *ngIf="row !== null">
+    <ng-container *ngIf="row.parentRowId === undefined">
+        <span
+            *ngIf="!row.invisible"
+            class="material-icons fcl-column-visibility-header-icon">
+            visibility
+        </span>
+        <span
+            *ngIf="row.invisible"
+            class="material-icons fcl-column-visibility-header-icon unsorted pointable"
+            >
+            visibility_off
+        </span>
+    </ng-container>
+    <span
+        *ngIf="row.parentRowId !== undefined"
+        class="material-icons fcl-column-visibility-header-icon unsorted fcl-invisible-data-row-cell"
+    >
+        visibility_off
+    </span>
+</ng-container>

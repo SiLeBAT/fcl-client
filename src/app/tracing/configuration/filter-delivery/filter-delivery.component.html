@@ -1,6 +1,8 @@
 <fcl-filter-elements-view class="fcl-filter-elements-view"
     standardFilterLabel="Filter in all delivery data"
     [inputData]="filterElementsViewInputData"
+    [activityState$]="activityState$"
+    [cycleStart$]="cycleStart$"
     (filterSettingsChange)="onFilterSettingsChange($event)"
     (rowSelectionChange)="onRowSelectionChange($event)"
     (clearAllFilters)="onClearAllFilters()"

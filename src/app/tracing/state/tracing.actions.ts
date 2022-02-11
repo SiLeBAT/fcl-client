@@ -64,7 +64,9 @@ export enum TracingActionTypes {
     SetStationHighlightingRulesSOA = '[Station Highlighting] Set Station Highlighting Rules',
     SetStationHighlightingEditRulesSOA = '[Station Highlighting] Set Station Highlighting Edit Rules',
     SetDeliveryHighlightingRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Rules',
-    SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules'
+    SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules',
+    SetTabAnimationDoneSOA = '[Configuration] Tab animation done',
+    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened'
 }
 
 export class TracingActivated implements Action {
@@ -347,6 +349,18 @@ export class SetDeliveryHighlightingEditRulesSOA implements Action {
     constructor(public payload: { editRules: DeliveryEditRule[] }) {}
 }
 
+export class SetTabAnimationDoneSOA implements Action {
+    readonly type = TracingActionTypes.SetTabAnimationDoneSOA;
+
+    constructor() {}
+}
+
+export class SetConfigurationSideBarOpenedSOA implements Action {
+    readonly type = TracingActionTypes.SetConfigurationSideBarOpenedSOA;
+
+    constructor() {}
+}
+
 export type TracingActions =
       TracingActivated
     | LoadFclDataSuccess
@@ -395,4 +409,6 @@ export type TracingActions =
     | SetStationHighlightingRulesSOA
     | SetStationHighlightingEditRulesSOA
     | SetDeliveryHighlightingRulesSOA
-    | SetDeliveryHighlightingEditRulesSOA;
+    | SetDeliveryHighlightingEditRulesSOA
+    | SetTabAnimationDoneSOA
+    | SetConfigurationSideBarOpenedSOA;

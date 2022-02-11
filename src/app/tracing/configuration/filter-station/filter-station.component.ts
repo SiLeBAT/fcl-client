@@ -1,24 +1,18 @@
 import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, DataTable, DataServiceData, StationId, DataServiceInputState } from '@app/tracing/data.model';
-import { Subscription } from 'rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { TableRow, DataTable, DataServiceData, StationId } from '@app/tracing/data.model';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TableService } from '@app/tracing/services/table.service';
 import { AlertService } from '@app/shared/services/alert.service';
 import { DataService } from '@app/tracing/services/data.service';
 import { InputData as FilterElementsViewInputData } from '../filter-elements-view/filter-elements-view.component';
-import { FilterTableSettings } from '../configuration.model';
+import { ActivityState, FilterTableSettings, FilterTableState } from '../configuration.model';
 import { TableType } from '../model';
 import { SelectFilterTableColumnsMSA } from '../configuration.actions';
-import { optInGate } from '@app/tracing/shared/rxjs-operators';
 import { FocusStationSSA } from '@app/tracing/tracing.actions';
-
-interface FilterTableState {
-    dataServiceInputState: DataServiceInputState;
-    filterTableState: FilterTableSettings;
-}
 
 interface CachedData {
     dataTable: DataTable;
@@ -30,12 +24,18 @@ interface CachedData {
     templateUrl: './filter-station.component.html',
     styleUrls: ['./filter-station.component.scss']
 })
-export class FilterStationComponent implements OnInit, OnDestroy {
+export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
 
     private stateSubscription: Subscription | null = null;
 
     private cachedData: CachedData | null = null;
     private cachedState: FilterTableState | null = null;
+
+    private activityState_ = ActivityState.INACTIVE;
+    private activityStateSubject_ = new BehaviorSubject(this.activityState_);
+    activityState$ = this.activityStateSubject_.asObservable();
+    private cycleStartSubject_ = new Subject<void>();
+    cycleStart$ = this.cycleStartSubject_.asObservable();
 
     private filterElementsViewInputData_: FilterElementsViewInputData | null = null;
     private currentGhostStationId: StationId | null = null;
@@ -51,15 +51,37 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         private alertService: AlertService
     ) { }
 
+    private setActivityState(state: ActivityState): void {
+        if (state !== this.activityState_) {
+            this.activityState_ = state;
+            this.activityStateSubject_.next(state);
+        }
+    }
+
+    // lifecycle hooks start
+
     ngOnInit(): void {
-        const isFilterStationTabActive$ = this.store.select(tracingSelectors.getIsFilterStationTabActive);
         const stationFilterState$ = this.store.select(tracingSelectors.selectStationFilterState);
-        this.stateSubscription = stationFilterState$.pipe(optInGate(isFilterStationTabActive$, true)).subscribe(
-            (state) => this.applyState(state),
-            err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
+        this.stateSubscription = stationFilterState$.subscribe(
+                (state) => this.applyState(state),
+                err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
         );
     }
 
+    ngDoCheck(): void {
+        this.cycleStartSubject_.next();
+    }
+
+    ngOnDestroy() {
+        if (this.stateSubscription !== null) {
+            this.stateSubscription.unsubscribe();
+            this.stateSubscription = null;
+        }
+    }
+
+    // lifecycle hooks end
+
+    // template trigger start
     onSelectTableColumns(): void {
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
@@ -122,48 +144,45 @@ export class FilterStationComponent implements OnInit, OnDestroy {
         }
     }
 
-    ngOnDestroy() {
-        if (this.stateSubscription !== null) {
-            this.stateSubscription.unsubscribe();
-            this.stateSubscription = null;
-        }
-    }
+    // template trigger end
 
     private applyState(state: FilterTableState) {
-        const cacheIsEmpty = this.cachedState === null;
-        let dataTable: DataTable = !cacheIsEmpty ? this.cachedData.dataTable : undefined;
-        const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
-        const newDSData = this.dataService.getData(state.dataServiceInputState);
+        if (state.activityState !== ActivityState.INACTIVE) {
+            const cacheIsEmpty = this.cachedState === null;
+            let dataTable: DataTable = !cacheIsEmpty ? this.cachedData.dataTable : undefined;
+            const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
+            const newDSData = this.dataService.getData(state.dataServiceInputState);
 
-        if (
-            cacheIsEmpty ||
-            this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
-        ) {
-            // new Model
-            dataTable = this.tableService.getStationData(state.dataServiceInputState);
-            this.currentGhostStationId = null;
-        } else if (
-            newDSData.stations !== cachedDSData.stations ||
-            newDSData.statVis !== cachedDSData.statVis ||
-            newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
-            newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
-            newDSData.statSel !== cachedDSData.statSel
+            if (
+                cacheIsEmpty ||
+                this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
             ) {
-            dataTable = {
-                ...this.tableService.getStationData(state.dataServiceInputState),
-                columns: this.cachedData.dataTable.columns
+                // new Model
+                dataTable = this.tableService.getStationData(state.dataServiceInputState);
+                this.currentGhostStationId = null;
+            } else if (
+                newDSData.stations !== cachedDSData.stations ||
+                newDSData.statVis !== cachedDSData.statVis ||
+                newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
+                newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
+                newDSData.statSel !== cachedDSData.statSel
+                ) {
+                dataTable = {
+                    ...this.tableService.getStationData(state.dataServiceInputState),
+                    columns: this.cachedData.dataTable.columns
+                };
+            }
+
+            this.cachedState = {
+                ...state
             };
+            this.cachedData = {
+                dataTable: dataTable,
+                dataServiceData: newDSData
+            };
+            this.updateFilterElementsViewInputData();
         }
-
-        this.cachedState = {
-            ...state
-        };
-        this.cachedData = {
-            dataTable: dataTable,
-            dataServiceData: newDSData
-        };
-        this.updateFilterElementsViewInputData();
-
+        this.setActivityState(state.activityState);
     }
 
     private updateFilterElementsViewInputData(): void {

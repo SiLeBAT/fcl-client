@@ -1,4 +1,4 @@
-import { DataTable, OperationType } from '../data.model';
+import { DataServiceInputState, DataTable, OperationType } from '../data.model';
 import { DeliveryEditRule, RuleId, StationEditRule } from './model';
 
 export type FilterTabId = 'filterTab';
@@ -54,6 +54,18 @@ export interface FilterTableSettings {
 export interface FilterSettings {
     stationFilter: FilterTableSettings;
     deliveryFilter: FilterTableSettings;
+}
+
+export enum ActivityState {
+    OPENING = 'opening',
+    OPEN = 'open',
+    INACTIVE = 'inactive'
+}
+
+export interface FilterTableState {
+    activityState: ActivityState;
+    dataServiceInputState: DataServiceInputState;
+    filterTableState: FilterTableSettings;
 }
 
 export interface HighlightingConfigurationSettings {

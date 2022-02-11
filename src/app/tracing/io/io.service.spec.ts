@@ -189,10 +189,12 @@ describe('IOService', () => {
                         mergeDeliveriesType: 'NO_MERGE',
                         showMergedDeliveriesCounts: false,
                         selectedEdges: fclData.graphSettings.selectedElements.deliveries,
-                        highlightConditions: []
+                        highlightConditions: [],
+                        invisibleEdges: []
                     },
                     node: {
                         highlightConditions: [],
+                        invisibleNodes: [],
                         skipEdgelessNodes: fclData.graphSettings.skipUnconnectedStations,
                         selectedNodes: fclData.graphSettings.selectedElements.stations
                     },

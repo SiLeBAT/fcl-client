@@ -47,4 +47,8 @@ export class FilterComponent implements OnInit {
         const tabId = this.tabConfigs[tabIndex].id;
         this.store.dispatch(new tracingActions.SetActiveFilterTabIdSOA({ activeFilterTabId: tabId }));
     }
+
+    onTabAnimationDone(): void {
+        this.store.dispatch(new tracingActions.SetTabAnimationDoneSOA());
+    }
 }

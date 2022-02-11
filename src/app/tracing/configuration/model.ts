@@ -15,6 +15,8 @@ export enum TableType {
     STATIONS, DELIVERIES
 }
 
+export type TreeStatus = 'collapsed' | 'expanded';
+
 export interface EditHighlightingServiceData {
     availableProperties: TableColumn[];
     propToValuesMap: PropToValuesMap;

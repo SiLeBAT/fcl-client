@@ -5,9 +5,9 @@ import {
 
 @Component({
     selector: 'fcl-standard-filter-view',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './standard-filter-view.component.html',
     styleUrls: ['./standard-filter-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
 export class StandardFilterViewComponent {

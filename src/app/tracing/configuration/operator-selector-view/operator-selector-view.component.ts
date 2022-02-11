@@ -1,10 +1,10 @@
-import { Component, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { OperationType } from '@app/tracing/data.model';
 
 @Component({
     selector: 'fcl-operator-selector-view',
     templateUrl: './operator-selector-view.component.html',
-    encapsulation: ViewEncapsulation.None
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OperatorSelectorViewComponent {
 

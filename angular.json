@@ -111,7 +111,30 @@
                   "with": "src/environments/environment.serverless.ts"
                 }
               ]
-            }
+            },
+            "serverlessprod": {
+                "budgets": [
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "6kb"
+                  }
+                ],
+                "optimization": true,
+                "outputHashing": "all",
+                "sourceMap": false,
+                "extractCss": false,
+                "namedChunks": false,
+                "aot": true,
+                "extractLicenses": true,
+                "vendorChunk": false,
+                "buildOptimizer": true,
+                "fileReplacements": [
+                  {
+                    "replace": "src/environments/environment.ts",
+                    "with": "src/environments/environment.serverlessprod.ts"
+                  }
+                ]
+              }
           }
         },
         "serve": {
@@ -128,6 +151,9 @@
             },
             "serverless": {
               "browserTarget": "fcl-web-app:build:serverless"
+            },
+            "serverelessprod": {
+                "browserTarget": "fcl-web-app:build:serverlessprod"
             }
           }
         },

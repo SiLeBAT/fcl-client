@@ -73,6 +73,14 @@ import { LabelRulesEditViewComponent } from './configuration/label-rules-edit-vi
 import { HighlightingRulesListViewComponent } from './configuration/highlighting-rules-list-view/highlighting-rules-list-view.component';
 import { HighlightingDeliveryViewComponent } from './configuration/highlighting-delivery-view/highlighting-delivery-view.component';
 import { EdgeColorEditViewComponent } from './configuration/edge-color-edit-view/edge-color-edit-view.component';
+import { VisibilityCellViewComponent } from './configuration/table-cells/visibility-cell-view/visibility-cell-view.component';
+import { SymbolCellViewComponent } from './configuration/table-cells/symbol-cell-view/symbol-cell-view.component';
+import { TextFilterHeaderCellViewComponent } from './configuration/table-cells/textfilter-header-cell-view/textfilter-header-cell-view.component';
+import { RowCellViewComponent } from './configuration/table-cells/row-cell-view/row-cell-view.component';
+import { VisibilityFilterHeaderCellViewComponent } from './configuration/table-cells/visibilityfilter-header-cell-view/visibilityfilter-header-cell-view.component';
+import { OpenSettingsHeaderCellViewComponent } from './configuration/table-cells/opensettings-header-cell-view/opensettings-header-cell-view.component';
+import { CollapseStatusCellViewComponent } from './configuration/table-cells/collapse-status-cell-view/collapse-status-cell-view.component';
+import { SymbolHeaderCellViewComponent } from './configuration/table-cells/symbol-header-cell-view/symbol-header-cell-view.component';
 
 @NgModule({
     imports: [
@@ -145,7 +153,15 @@ import { EdgeColorEditViewComponent } from './configuration/edge-color-edit-view
         LabelRulesEditViewComponent,
         HighlightingRulesListViewComponent,
         HighlightingDeliveryViewComponent,
-        EdgeColorEditViewComponent
+        EdgeColorEditViewComponent,
+        TextFilterHeaderCellViewComponent,
+        VisibilityFilterHeaderCellViewComponent,
+        SymbolHeaderCellViewComponent,
+        OpenSettingsHeaderCellViewComponent,
+        CollapseStatusCellViewComponent,
+        SymbolCellViewComponent,
+        VisibilityCellViewComponent,
+        RowCellViewComponent
     ],
     exports: []
 })

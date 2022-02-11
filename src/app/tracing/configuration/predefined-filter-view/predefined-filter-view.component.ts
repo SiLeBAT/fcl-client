@@ -1,13 +1,14 @@
-import { Component, OnInit, Input, ViewEncapsulation, EventEmitter, Output } from '@angular/core';
+import { Component, Input, ViewEncapsulation, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ShowType } from '../configuration.model';
 
 @Component({
     selector: 'fcl-predefined-filter-view',
     templateUrl: './predefined-filter-view.component.html',
     styleUrls: ['./predefined-filter-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class PredefinedFilterViewComponent implements OnInit {
+export class PredefinedFilterViewComponent {
 
     @Input() showType: ShowType;
 
@@ -22,8 +23,6 @@ export class PredefinedFilterViewComponent implements OnInit {
     };
 
     constructor() { }
-
-    ngOnInit() { }
 
     onSetShowType(showType: ShowType) {
         this.showType = showType;

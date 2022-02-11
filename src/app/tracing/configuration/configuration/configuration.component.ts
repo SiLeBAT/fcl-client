@@ -53,4 +53,8 @@ export class ConfigurationComponent implements OnInit {
         const tabId = this.tabConfigs[tabIndex].id;
         this.store.dispatch(new tracingActions.SetActiveConfigurationTabIdSOA({ activeConfigurationTabId: tabId }));
     }
+
+    onTabAnimationDone(): void {
+        this.store.dispatch(new tracingActions.SetTabAnimationDoneSOA());
+    }
 }

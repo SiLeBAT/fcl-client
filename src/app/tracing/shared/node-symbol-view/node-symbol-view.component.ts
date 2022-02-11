@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { NodeShapeType, Color } from '@app/tracing/data.model';
 import { Map as ImmutableMap } from 'immutable';
 import { Utils } from '@app/tracing/util/non-ui-utils';
@@ -19,7 +19,8 @@ function isColorWhite(color: Color): boolean {
 @Component({
     selector: 'fcl-node-symbol-view',
     templateUrl: './node-symbol-view.component.html',
-    styleUrls: ['./node-symbol-view.component.scss']
+    styleUrls: ['./node-symbol-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NodeSymbolViewComponent {
 

@@ -13,6 +13,7 @@
     "build:qa": "npm run clean && ng build --configuration=qa --output-path \"public\"",
     "build:qa_wo_lint": "npm run clean && ng build --configuration=qa --output-path \"public\"",
     "build:production": "npm run clean && ng build --configuration=production --output-path \"public\"",
+    "build:serverlessprod": "npm run clean && ng build --configuration=serverlessprod --output-path \"public\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",

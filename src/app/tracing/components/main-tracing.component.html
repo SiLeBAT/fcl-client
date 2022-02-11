@@ -8,7 +8,13 @@
             </div>
         </mat-sidenav-content>
 
-        <mat-sidenav class="fcl-right-sidenav" #rightSidenav position="end" mode="over" [opened]="showConfigurationSideBar$ | async">
+        <mat-sidenav
+            class="fcl-right-sidenav"
+            #rightSidenav
+            position="end"
+            mode="over"
+            [opened]="showConfigurationSideBar$ | async"
+            (openedChange)="onConfigurationSideBarOpened()">
             <fcl-configuration></fcl-configuration>
         </mat-sidenav>
     </mat-sidenav-container>

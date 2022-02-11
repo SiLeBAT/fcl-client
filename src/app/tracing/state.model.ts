@@ -15,5 +15,7 @@ export interface TracingState extends ModelDependentState {
     showGraphSettings: boolean;
     showConfigurationSideBar: boolean;
     configurationTabIndices: ConfigurationTabIndex;
+    animatingTabCount: number;
+    isConfSideBarOpening: boolean;
     tracingActive: boolean;
 }
