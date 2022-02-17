@@ -663,7 +663,6 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.updateRows();
 
         this.processedInput__ = this.inputData;
-        this.cdRef.markForCheck();
     }
 
     private updateColumns(): void {

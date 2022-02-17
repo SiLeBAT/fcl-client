@@ -1,7 +1,7 @@
 import {
     Directive, ElementRef, OnInit, AfterViewChecked, OnDestroy, Input, ChangeDetectorRef, DoCheck
 } from '@angular/core';
-import { DatatableComponent, TableColumn } from '@swimlane/ngx-datatable';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { Observable, Subscription } from 'rxjs';
 import { ActivityState } from '../configuration/configuration.model';
 import { Size } from '../data.model';
@@ -40,7 +40,6 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
     private dtHeaderElement: HTMLElement | null = null;
     private dtBodyElement: HTMLElement | null = null;
     private lastRowCount: number = -1;
-    private lastColumns: TableColumn[] = [];
 
     private lastBodyScrollPosition: ScrollPosition = {
         top: 0,
@@ -162,11 +161,12 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
         }
     }
 
+    private isLastScrollPositionPositive(): boolean {
+        return this.lastBodyScrollPosition.top !== 0 || this.lastBodyScrollPosition.left !== 0;
+    }
+
     private isScrollPosRestoreRequired(): boolean {
-        return (
-            this.lastColumns === this.host.columns &&
-            (this.lastBodyScrollPosition.top !== 0 || this.lastBodyScrollPosition.left !== 0)
-        );
+        return this.isLastScrollPositionPositive();
     }
 
     private getSize(): Size {
@@ -174,7 +174,6 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
     }
 
     private captureScrollState(): void {
-        this.lastColumns = this.host.columns;
         this.lastBodyScrollPosition = {
             top: this.dtBodyElement.scrollTop,
             left: this.dtBodyElement.scrollLeft
