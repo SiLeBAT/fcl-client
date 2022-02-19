@@ -1,4 +1,4 @@
-This folder is an extract of the npm package @mapbox/geojsonhint v.3.0.0
+This folder is an extract of the npm package @mapbox/geojsonhint v.3.0.1
 The files object.js and rhr.js are originating from the folder @mapbox/geojsonhint/lib/
 
 Because of a vulnerability issue ([see](https://npmjs.com/advisories/1179)) of the dependency minimist (v. 1.2.0)

@@ -7,8 +7,7 @@ import { DataExporter } from './data-exporter';
 import { DataImporterV1 } from './data-importer/data-importer-v1';
 import { createEmptyJson } from './json-data-creator';
 import * as shapeFileImporter from './data-importer/shape-file-importer';
-import { getJsonFromFile, getTextFromUtf8EncodedFile } from './io-utils';
-import { InputFormatError } from './io-errors';
+import { getJsonFromFile } from './io-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -42,12 +41,8 @@ export class IOService {
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
-                getTextFromUtf8EncodedFile(file)
-                .then(strData => {
-                    const jsonData = this.try(
-                        () => JSON.parse(strData),
-                        (e) => reject(new InputFormatError(`Invalid json format.${e.message ? ' ' + e.message : ''}`))
-                    );
+                getJsonFromFile(file)
+                .then(jsonData => {
                     this.preprocessData(jsonData)
                     .then(data => {
                         data.source.name = file.name;
@@ -58,7 +53,7 @@ export class IOService {
                 .catch(e => reject(e));
             });
         } else {
-            throw new Error('no data source specified');
+            throw new Error('No data source specified.');
         }
     }
 
@@ -66,52 +61,11 @@ export class IOService {
         return filePath.split('/').pop().split('\\').pop();
     }
 
-    private try<T>(tryFun: () => T, errFun: (e) => void): T {
-        let result: T;
-        try {
-            result = tryFun();
-        } catch (e) {
-            if (!errFun) {
-                throw e;
-            } else {
-                errFun(e);
-            }
-        }
-        return result;
-    }
-
-    getShapeFileData(dataSource: string | File): Promise<ShapeFileData> {
-        if (typeof dataSource === 'string') {
-            let rawData: any;
-            return this.httpClient.get(dataSource)
-                .toPromise()
-                .then(response => {
-                    rawData = response;
-                    return shapeFileImporter.validateShapeFileData(rawData);
-                })
-                .then(validationResult => {
-                    if (validationResult.isValid) {
-                        return rawData;
-                    } else {
-                        throw new Error(validationResult.messages.join(' '));
-                    }
-                });
-        } else if (dataSource instanceof File) {
-            let jsonData;
-            return getJsonFromFile(dataSource)
-                .then(response => {
-                    jsonData = response;
-                    return shapeFileImporter.validateShapeFileData(jsonData);
-                })
-                .then(validationResult => {
-                    if (validationResult.isValid) {
-                        return jsonData;
-                    } else {
-                        throw new Error(validationResult.messages.join(' '));
-                    }
-                });
+    getShapeFileData(dataSource: File): Promise<ShapeFileData> {
+        if (dataSource instanceof File) {
+            return shapeFileImporter.getShapeFileData(dataSource);
         } else {
-            throw new Error('no data source specified');
+            throw new Error('No data source specified.');
         }
     }
 

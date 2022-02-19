@@ -7,6 +7,8 @@ import { Tile } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
 import { Stroke, Style } from 'ol/style';
+import _ from 'lodash';
+import { InputDataError } from '../io/io-errors';
 
 export interface MapConfig {
     mapType: MapType;
@@ -65,9 +67,31 @@ function createTileLayer(mapConfig: MapConfig): BaseLayer {
     });
 }
 
+export function isProjectionSupported(shapeFileData: ShapeFileData): boolean {
+    try {
+        const projection = (new GeoJSON()).readProjection(shapeFileData);
+        return projection !== null;
+    } catch {
+        return false;
+    }
+}
+
+function getProjectionCode(shapeFileData: ShapeFileData): string {
+    const projection = (new GeoJSON()).readProjection(shapeFileData);
+    if (projection === null) {
+        throw new InputDataError(`Unsupported projection type. Please use geojson with pojection type 'EPSG:4326' or 'EPSG:3857' instead.`);
+    }
+    return projection.getCode();
+}
+
 export function createShapeFileLayer(mapConfig: MapConfig): BaseLayer {
+    const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
-        features: (new GeoJSON()).readFeatures(mapConfig.shapeFileData)
+        features: (new GeoJSON()).readFeatures(mapConfig.shapeFileData, (
+            code !== undefined ?
+            { dataProjection: code, featureProjection: 'EPSG:3857' } :
+            { featureProjection: 'EPSG:3857' }
+        ))
     });
 
     const style = new Style({

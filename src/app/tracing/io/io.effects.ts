@@ -35,11 +35,11 @@ export class IOEffects {
                         if (error instanceof InputEncodingError) {
                             errorMsg += ` Please ensure to upload only data encoded in UTF-8 format.`;
                         } else if (error instanceof InputFormatError) {
-                            errorMsg += ` Please select a .json file with the correct format!${error.message ? ' (' + error.message + ')' : ''}`;
+                            errorMsg += ` Please select a .json file with the correct format!${error.message ? ' ' + error.message + '' : ''}`;
                         } else if (error instanceof InputDataError) {
-                            errorMsg += ` Please select a .json file with valid data!${error.message ? ' (' + error.message + ')' : ''}`;
+                            errorMsg += ` Please select a .json file with valid data!${error.message ? ' ' + error.message + '' : ''}`;
                         } else {
-                            errorMsg += ` Error: ${error}`;
+                            errorMsg += ` Error: ${ error.message }`;
                         }
                         this.alertService.error(errorMsg);
                         return of(new tracingStateActions.LoadFclDataFailure());
@@ -61,7 +61,17 @@ export class IOEffects {
                 return from(this.ioService.getShapeFileData(fileList[0])).pipe(
                     map((data: ShapeFileData) => new tracingStateActions.LoadShapeFileSuccessSOA({ shapeFileData: data })),
                     catchError((error) => {
-                        this.alertService.error(`The file could not be loaded: ${typeof error === 'string' ? error : error.message}`);
+                        let errorMsg = `Data cannot be loaded.`;
+                        if (error instanceof InputEncodingError) {
+                            errorMsg += ` Please ensure to load only data encoded in UTF-8.`;
+                        } else if (error instanceof InputFormatError) {
+                            errorMsg += ` ${ error.message ? error.message : 'Invalid .geojson format.'}`;
+                        } else if (error instanceof InputDataError) {
+                            errorMsg += ` ${ error.message ? error.message : 'Invalid data.'}`;
+                        } else {
+                            errorMsg += ` Error: ${ error.message }`;
+                        }
+                        this.alertService.error(errorMsg);
                         return of(new tracingStateActions.LoadShapeFileFailureMSA());
                     })
                 );
