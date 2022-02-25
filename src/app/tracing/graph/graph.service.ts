@@ -52,7 +52,7 @@ export class GraphService {
 
     private cachedData: GraphServiceData | null = null;
 
-    static updateRelZindex(nodeData: CyNodeData[]) {
+    static updateRelZindexOfNodes(nodeData: CyNodeData[]) {
         nodeData = nodeData.slice();
         nodeData.sort((n1, n2) => (
             n1.station.score !== n2.station.score ?
@@ -62,12 +62,38 @@ export class GraphService {
         nodeData.forEach((n, i) => {
             n.relZindex = i;
         });
-        this.updateAbsZindex(nodeData);
     }
 
-    static updateAbsZindex(nodeData: CyNodeData[]) {
-        const nNodes = nodeData.length;
-        nodeData.forEach(n => n.zindex = n.relZindex + (n.selected ? nNodes : 0));
+    static updateRelZindexOfEdges(edgeData: CyEdgeData[]) {
+        edgeData = edgeData.slice();
+        const eScore: Record<EdgeId, number> = {};
+        edgeData.forEach(edge => eScore[edge.id] = Math.max(...edge.deliveries.map(d => d.score)));
+        edgeData.sort((e1, e2) => eScore[e1.id] - eScore[e2.id]);
+        edgeData.forEach((edge, i) => {
+            edge.relZindex = i;
+        });
+    }
+
+    static updateAbsZindex(nodeData: CyNodeData[], edgeData: CyEdgeData[]) {
+        const isNodeConToSelEdge: Record<NodeId, boolean> = {};
+        edgeData.forEach(edge => {
+            if (edge.selected) {
+                isNodeConToSelEdge[edge.source] = true;
+                isNodeConToSelEdge[edge.target] = true;
+            }
+        });
+        const indexOffsetOfSelEdgeEndPoint = nodeData.length;
+        const indexOffsetOfSelNode = indexOffsetOfSelEdgeEndPoint + nodeData.length;
+
+        const indexOffsetOfSelEdge = edgeData.length;
+        nodeData.forEach(
+            n => n.zindex = n.relZindex + (
+                n.selected ? indexOffsetOfSelNode : (
+                    isNodeConToSelEdge[n.id] ? indexOffsetOfSelEdgeEndPoint : 0
+                )
+            )
+        );
+        edgeData.forEach(e => e.zindex = e.relZindex + (e.selected ? indexOffsetOfSelEdge : 0));
     }
 
     constructor(
@@ -125,6 +151,9 @@ export class GraphService {
             shape: s.highlightingInfo.shape ? s.highlightingInfo.shape : NodeShapeType.CIRCLE,
             size: s.highlightingInfo.size,
             station: s,
+            relZindex: 0,
+            zindex: 0,
+            degree: 0,
             selected: s.selected
         }));
 
@@ -183,17 +212,15 @@ export class GraphService {
                                 source: sourceDataId,
                                 target: targetDataId,
                                 deliveries: [delivery],
+                                zindex: 0,
+                                relZindex: 0,
                                 selected: selected,
                                 wLabelSpace: false
                             });
                         } else {
-                            // const labels: string[] = _.uniq(
-                            //     deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
-                            // );
                             edgeData.push({
                                 id: 'E' + iEdge++,
                                 labelWoPrefix: this.createMergedLabelWoPrefix(deliveries),
-                                // labels.length === 1 ? labels[0].replace(/\s+/, ' ') : '',
                                 ...this.getColorInfo(
                                     this.mergeColors(deliveries.map(d => d.highlightingInfo.color)),
                                     GraphService.DEFAULT_EDGE_COLOR
@@ -201,6 +228,8 @@ export class GraphService {
                                 source: sourceDataId,
                                 target: targetDataId,
                                 deliveries: deliveries,
+                                relZindex: 0,
+                                zindex: 0,
                                 selected: deliveries.some(d => !!selDel[d.id]),
                                 wLabelSpace: false
                             });
@@ -223,6 +252,8 @@ export class GraphService {
                         source: sourceData.id,
                         target: targetData.id,
                         deliveries: [delivery],
+                        relZindex: 0,
+                        zindex: 0,
                         selected: delivery.selected,
                         wLabelSpace: false
                     });
@@ -242,7 +273,6 @@ export class GraphService {
                 cyDataNodes.idToNodeMap[eData.target].degree += eData.deliveries.length;
             }
         }
-        GraphService.updateRelZindex(cyDataNodes.nodeData);
         this.updateEdgeLabels(state, edgeData);
 
         return {
@@ -262,9 +292,8 @@ export class GraphService {
         }
         const labels: string[] = _.uniq(
             deliveries.map(d => this.createLabel(d))
-            // (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
         );
-        return labels.length > 1 ? '' : labels[0]; // delivery.highlightingInfo.label.join(' / ').replace(/\s+/, ' ');
+        return labels.length > 1 ? '' : labels[0];
     }
 
     private createGhostNodeData(ghostStations: StationData[], graphData: GraphServiceData): CyNodeData[] {
@@ -277,7 +306,9 @@ export class GraphService {
             size: 0,
             station: station,
             selected: station.selected,
-            zindex: (2 * graphData.stations.length) + index
+            relZindex: 0,
+            degree: 0,
+            zindex: 3 * graphData.nodeData.length + index
         }));
     }
 
@@ -317,7 +348,11 @@ export class GraphService {
                         ghostNodeData.station.id === delivery.target ? ghostNodeData : graphData.statIdToNodeDataMap[delivery.target]
                     );
 
-                    return edgeData;
+                    return {
+                        ...edgeData,
+                        relZindex: 0,
+                        zindex: 2 * graphData.edgeData.length + index
+                    };
                 }
             );
             this.updateEdgeLabels(state, ghostEdgeData);
@@ -360,7 +395,11 @@ export class GraphService {
         const sourceNode = graphData.statIdToNodeDataMap[ghostDelivery.source] || idToGhostNodeDataMap[ghostDelivery.source];
         const targetNode = graphData.statIdToNodeDataMap[ghostDelivery.target] || idToGhostNodeDataMap[ghostDelivery.target];
 
-        const ghostEdgeData = this.mapDelToEdgeData([ghostDelivery], '', sourceNode, targetNode);
+        const ghostEdgeData = {
+            ...this.mapDelToEdgeData([ghostDelivery], '', sourceNode, targetNode),
+            relZindex: 0,
+            zindex: (2 * (graphData.stations.length + graphData.deliveries.length)) + 1
+        };
 
         this.updateEdgeLabels(state, [ghostEdgeData]);
 
@@ -602,7 +641,6 @@ export class GraphService {
 
         if (options.updateNodeProps) {
             this.applyStationProps(newData);
-            GraphService.updateRelZindex(newData.nodeData);
         }
 
         if (options.updateEdgeProps) {
@@ -611,11 +649,33 @@ export class GraphService {
 
         if (options.updateNodeSelection) {
             this.applyStatSelection(newData);
-            GraphService.updateAbsZindex(newData.nodeData);
         }
 
         if (options.updateEdgeSelection) {
             this.applyDelSelection(newData);
+        }
+
+        const updateRelZIndexOfNodes = (
+            options.createNodes || options.updateNodeProps || options.updateEdges
+        );
+        const updateRelZIndexOfEdges = (
+            options.createEdges || options.updateEdgeProps || options.updateEdges
+        );
+        const updateAbsZIndex = (
+            updateRelZIndexOfNodes || updateRelZIndexOfEdges ||
+            options.updateNodeSelection || options.updateEdgeSelection
+        );
+
+        if (updateRelZIndexOfNodes) {
+            GraphService.updateRelZindexOfNodes(newData.nodeData);
+        }
+
+        if (updateRelZIndexOfEdges) {
+            GraphService.updateRelZindexOfEdges(newData.edgeData);
+        }
+
+        if (updateAbsZIndex) {
+            GraphService.updateAbsZindex(newData.nodeData, newData.edgeData);
         }
 
         if (options.updateEdgeLabel) {

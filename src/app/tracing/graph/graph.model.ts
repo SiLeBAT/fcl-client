@@ -193,9 +193,9 @@ export interface CyNodeData {
     stopPositions: string;
     shape: string;
     size: number;
-    zindex?: number;
-    relZindex?: number;
-    degree?: number;
+    zindex: number;
+    relZindex: number;
+    degree: number;
 }
 
 export interface CyEdgeData {
@@ -208,6 +208,8 @@ export interface CyEdgeData {
     selected: boolean;
     source: NodeId;
     target: NodeId;
+    zindex: number;
+    relZindex: number;
     wLabelSpace: boolean;
 }
 

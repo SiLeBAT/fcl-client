@@ -125,6 +125,7 @@ export class CyStyle {
                 'line-fill': 'linear-gradient',
                 'line-gradient-stop-colors': 'data(stopColors)',
                 'line-gradient-stop-positions': 'data(stopPositions)',
+                'z-index': 'data(zindex)',
                 width: edgeWidth,
                 'arrow-scale': 1.4
             })

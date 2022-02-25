@@ -62,6 +62,7 @@ interface NodeHProps {
 interface EdgeHProps {
     label: string;
     stopColors: string;
+    zindex: number;
     selected: boolean;
 }
 
@@ -464,6 +465,7 @@ export class InteractiveCyGraph extends CyGraph {
             edgeProps: graphData.edgeData.map(e => ({
                 stopColors: e.stopColors,
                 label: e.label,
+                zindex: e.zindex,
                 selected: e.selected
             })),
             minNodeSize: Math.min(...nodeSizes),
