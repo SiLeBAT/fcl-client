@@ -25,16 +25,15 @@ interface FilterMap {
     columnFilter: OneTermForEachColumnRowFilter;
 }
 
-const shapeTypePriorities: NodeShapeType[] = [NodeShapeType.CIRCLE, NodeShapeType.TRIANGLE];
 const shapePrioMap: { [key in NodeShapeType]: number } = {
-    [NodeShapeType.CIRCLE]: shapeTypePriorities.indexOf(NodeShapeType.CIRCLE),
-    [NodeShapeType.TRIANGLE]: shapeTypePriorities.indexOf(NodeShapeType.TRIANGLE),
-    [NodeShapeType.SQUARE]: shapeTypePriorities.indexOf(NodeShapeType.SQUARE),
-    [NodeShapeType.DIAMOND]: shapeTypePriorities.indexOf(NodeShapeType.DIAMOND),
-    [NodeShapeType.PENTAGON]: shapeTypePriorities.indexOf(NodeShapeType.PENTAGON),
-    [NodeShapeType.HEXAGON]: shapeTypePriorities.indexOf(NodeShapeType.HEXAGON),
-    [NodeShapeType.OCTAGON]: shapeTypePriorities.indexOf(NodeShapeType.OCTAGON),
-    [NodeShapeType.STAR]: shapeTypePriorities.indexOf(NodeShapeType.STAR)
+    [NodeShapeType.CIRCLE]: 0,
+    [NodeShapeType.TRIANGLE]: 1,
+    [NodeShapeType.SQUARE]: 2,
+    [NodeShapeType.DIAMOND]: 3,
+    [NodeShapeType.PENTAGON]: 4,
+    [NodeShapeType.HEXAGON]: 5,
+    [NodeShapeType.OCTAGON]: 6,
+    [NodeShapeType.STAR]: 7
 };
 
 function visibilityComparator(valueA, valueB, rowA, rowB, sortDirection): number {
