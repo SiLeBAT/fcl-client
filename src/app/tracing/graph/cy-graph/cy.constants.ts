@@ -28,3 +28,5 @@ export const LAYOUT_BREADTH_FIRST = 'breadthfirst';
 export const LAYOUT_SPREAD = 'spread';
 export const LAYOUT_DAG = 'dagre';
 export const LAYOUT_PRESET = 'preset';
+
+export const CSS_CLASS_HOVER = 'hover';

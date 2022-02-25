@@ -14,6 +14,7 @@ import {
 import { Utils } from '@app/tracing/util/non-ui-utils';
 import { getLayoutConfig } from './layouting-utils';
 import {
+    CSS_CLASS_HOVER,
     LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
 } from './cy.constants';
@@ -309,8 +310,10 @@ export class InteractiveCyGraph extends CyGraph {
         const hoverEdge = Utils.createSimpleStringSet(edgeIds);
 
         this.cy.batch(() => {
-            this.cy.edges().filter(e => !hoverEdge[e.id()]).scratch('_active', false);
-            this.cy.edges().filter(e => !!hoverEdge[e.id()]).scratch('_active', true);
+            const notHoveredEdges = this.cy.edges().filter(e => !hoverEdge[e.id()]);
+            const hoveredEdges = this.cy.edges().filter(e => !!hoverEdge[e.id()]);
+            notHoveredEdges.removeClass(CSS_CLASS_HOVER);
+            hoveredEdges.addClass(CSS_CLASS_HOVER);
         });
     }
 

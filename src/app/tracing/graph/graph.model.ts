@@ -112,6 +112,8 @@ export interface CyElementCollection<E> {
     union(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
     difference(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
     getElementById(id: string): E;
+    addClass(classes: string | string[]): void;
+    removeClass(classes: string | string[]): void;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
@@ -148,6 +150,8 @@ export interface CyElement {
     removeListener(events: string, handler: (event?: any) => void): void;
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
     visible(): boolean;
+    addClass(classes: string | string[]): void;
+    removeClass(classes: string | string[]): void;
 }
 
 export interface CyNode extends CyElement {

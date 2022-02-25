@@ -1,5 +1,6 @@
 import cytoscape from 'cytoscape';
 import { GraphElementData } from '../graph.model';
+import { CSS_CLASS_HOVER } from './cy.constants';
 
 enum GraphSize {
     SMALL, LARGE, HUGE
@@ -20,6 +21,9 @@ export class CyStyle {
     private static readonly MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
     private static readonly MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
     private static readonly SIZE_ONE_SIZE_FACTOR = 2;
+    private static readonly DEFAULT_ACTIVE_OVERLAY_OPACITY = 0.5;
+    private static readonly DEFAULT_ACTIVE_OVERLAY_COLOR = 'rgb(0, 0, 255)';
+    private static readonly DEFAULT_ACTIVE_OVERLAY_PADDING = 10;
 
     private maxSize: number;
     private minSize: number;
@@ -68,9 +72,13 @@ export class CyStyle {
             .stylesheet()
             .selector('*')
             .style({
-                'overlay-color': 'rgb(0, 0, 255)',
-                'overlay-padding': 10,
-                'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
+                'overlay-color': CyStyle.DEFAULT_ACTIVE_OVERLAY_COLOR,
+                'overlay-padding': CyStyle.DEFAULT_ACTIVE_OVERLAY_PADDING,
+                'overlay-opacity': 0.0
+            })
+            .selector('.' + CSS_CLASS_HOVER)
+            .style({
+                'overlay-opacity': CyStyle.DEFAULT_ACTIVE_OVERLAY_OPACITY
             })
             .selector('node')
             .style({
@@ -140,6 +148,12 @@ export class CyStyle {
                 'overlay-padding': selectedEdgeWidth / 5.0,
                 'overlay-opacity': 1,
                 'target-arrow-color': 'rgb(0, 0, 255)'
+            })
+            .selector('edge:selected:inactive.' + CSS_CLASS_HOVER)
+            .style({
+                'overlay-color': CyStyle.DEFAULT_ACTIVE_OVERLAY_COLOR,
+                'overlay-padding': CyStyle.DEFAULT_ACTIVE_OVERLAY_PADDING,
+                'overlay-opacity': CyStyle.DEFAULT_ACTIVE_OVERLAY_OPACITY
             })
             .selector('edge[?wLabelSpace]')
             .style({
