@@ -258,25 +258,25 @@ exports[`RegisterComponent should render the component correctly 1`] = `
           <label
             class="mat-checkbox-layout"
           >
-            <div
+            <span
               class="mat-checkbox-inner-container"
             >
               <input
                 class="mat-checkbox-input cdk-visually-hidden"
                 type="checkbox"
               />
-              <div
+              <span
                 class="mat-checkbox-ripple mat-focus-indicator mat-ripple"
                 matripple=""
               >
-                <div
+                <span
                   class="mat-ripple-element mat-checkbox-persistent-ripple"
                 />
-              </div>
-              <div
+              </span>
+              <span
                 class="mat-checkbox-frame"
               />
-              <div
+              <span
                 class="mat-checkbox-background"
               >
                 <svg
@@ -293,11 +293,11 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                     stroke="white"
                   />
                 </svg>
-                <div
+                <span
                   class="mat-checkbox-mixedmark"
                 />
-              </div>
-            </div>
+              </span>
+            </span>
             <span
               class="mat-checkbox-label"
             >
@@ -329,25 +329,25 @@ exports[`RegisterComponent should render the component correctly 1`] = `
           <label
             class="mat-checkbox-layout"
           >
-            <div
+            <span
               class="mat-checkbox-inner-container"
             >
               <input
                 class="mat-checkbox-input cdk-visually-hidden"
                 type="checkbox"
               />
-              <div
+              <span
                 class="mat-checkbox-ripple mat-focus-indicator mat-ripple"
                 matripple=""
               >
-                <div
+                <span
                   class="mat-ripple-element mat-checkbox-persistent-ripple"
                 />
-              </div>
-              <div
+              </span>
+              <span
                 class="mat-checkbox-frame"
               />
-              <div
+              <span
                 class="mat-checkbox-background"
               >
                 <svg
@@ -364,11 +364,11 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                     stroke="white"
                   />
                 </svg>
-                <div
+                <span
                   class="mat-checkbox-mixedmark"
                 />
-              </div>
-            </div>
+              </span>
+            </span>
             <span
               class="mat-checkbox-label"
             >
