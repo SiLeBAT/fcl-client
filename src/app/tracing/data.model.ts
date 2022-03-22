@@ -296,7 +296,9 @@ export enum GraphType {
 
 export enum MapType {
     SHAPE_FILE,
-    BLACK_AND_WHITE,
+    // the following code is commented because
+    // the Black & White Map might be deactivatd only temporaryly
+    // BLACK_AND_WHITE,
     MAPNIK
 }
 

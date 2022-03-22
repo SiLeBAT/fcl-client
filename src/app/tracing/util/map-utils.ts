@@ -27,14 +27,20 @@ const LAYER_ID_KEY = 'layerId';
 const MAP_LAYER_ID = 'MapLayer';
 
 const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
-    [MapType.MAPNIK, () => new OSM()],
-    [MapType.BLACK_AND_WHITE, () => new OSM({
-        url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-        crossOrigin: null
-    })]
+    [MapType.MAPNIK, () => new OSM()]
+    // the following code is commented because
+    // the Black & White Map might be deactivatd only temporaryly
+    // ,
+    // [MapType.BLACK_AND_WHITE, () => new OSM({
+    //     url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+    //     crossOrigin: null
+    // })]
 ]);
 
-const availableMapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE ];
+// the following code is commented because
+// the Black & White Map might be deactivatd only temporaryly
+// const availableMapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE ];
+const availableMapTypes: MapType[] = [ MapType.MAPNIK ];
 
 export function getAvailableMapTypes(): MapType[] {
     return availableMapTypes;
