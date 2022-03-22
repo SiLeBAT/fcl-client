@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 
 import * as visioActions from './visio.actions';
@@ -28,17 +28,18 @@ export class VisioEffects {
         private router: Router
     ) {}
 
-    @Effect()
-    openROAReportConfiguration$ = this.actions$.pipe(
-        ofType<visioActions.OpenROAReportConfigurationMSA>(visioActions.VisioActionTypes.OpenROAReportConfigurationMSA),
-        mergeMap((action) => {
-            this.dialogService.open(ReportConfigurationComponent, { data: null });
-            return EMPTY;
-        })
+    openROAReportConfiguration$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<visioActions.OpenROAReportConfigurationMSA>(visioActions.VisioActionTypes.OpenROAReportConfigurationMSA),
+            mergeMap((action) => {
+                this.dialogService.open(ReportConfigurationComponent, { data: null });
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 
-    @Effect()
-    generateROAReport$ = this.actions$.pipe(
+    generateROAReport$ = createEffect(() => this.actions$.pipe(
         ofType<visioActions.GenerateROAReportMSA>(visioActions.VisioActionTypes.GenerateROAReportMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getROAReportData))),
         mergeMap(([action, roaReportData]) => {
@@ -70,5 +71,5 @@ export class VisioEffects {
                 return EMPTY;
             }
         })
-    );
+    ));
 }

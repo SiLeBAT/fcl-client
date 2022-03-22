@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 import * as fromTracing from '../state/tracing.reducers';
 import { mergeMap, take, withLatestFrom } from 'rxjs/operators';
@@ -27,100 +27,104 @@ export class ConfigurationEffects {
         private store: Store<fromTracing.State>
     ) {}
 
-    @Effect()
-    selectFilterTableColumnsMSA$ = this.actions$.pipe(
-        ofType<SelectFilterTableColumnsMSA>(ConfigurationActionTypes.SelectFilterTableColumnsMSA),
-        mergeMap(action => {
+    selectFilterTableColumnsMSA$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<SelectFilterTableColumnsMSA>(ConfigurationActionTypes.SelectFilterTableColumnsMSA),
+            mergeMap(action => {
 
-            const tableType = action.payload.type;
-            const oldColumnOrder = action.payload.columnOrder;
-            const columnOptions = action.payload.columns.map(c => ({
-                value: c.id,
-                viewValue: c.name,
-                selected: oldColumnOrder.includes(c.id)
-            }));
+                const tableType = action.payload.type;
+                const oldColumnOrder = action.payload.columnOrder;
+                const columnOptions = action.payload.columns.map(c => ({
+                    value: c.id,
+                    viewValue: c.name,
+                    selected: oldColumnOrder.includes(c.id)
+                }));
 
-            const dialogData: DialogSelectData = {
-                title: 'Show Columns',
-                options: columnOptions
-            };
-
-            this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
-                .pipe(
-                    take(1)
-                ).subscribe((selections: string[]) => {
-                    if (selections != null) {
-                        // assumption, the selection is unordered
-                        const newColumnOrder = [].concat(
-                            oldColumnOrder.filter(prop => selections.includes(prop)),
-                            selections.filter(prop => !oldColumnOrder.includes(prop))
-                        );
-                        if (tableType === TableType.STATIONS) {
-                            this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: newColumnOrder }));
-                        } else if (tableType === TableType.DELIVERIES) {
-                            this.store.dispatch(new SetFilterDeliveryTableColumnOrderSOA({ columnOrder: newColumnOrder }));
-                        }
-                    }
-                },
-                error => {
-                    throw new Error(`error loading dialog or selecting columns: ${error}`);
-                });
-            return EMPTY;
-        })
-    );
-
-    @Effect()
-    DeleteHighlightingRuleSSA$ = this.actions$.pipe(
-        ofType<DeleteHighlightingRuleSSA>(ConfigurationActionTypes.DeleteHighlightingRuleSSA),
-        withLatestFrom(this.store.pipe(select(selectHighlightingSettings))),
-        mergeMap(([action, state]) => {
-            const deleteRuleId = action.payload.deleteRequestData.ruleId;
-            const stationRuleToDelete = state.stations.find(rule => rule.id === deleteRuleId) || null;
-            const deliveryRuleToDelete =
-                stationRuleToDelete !== null ?
-                null :
-                (state.deliveries.find(rule => rule.id === deleteRuleId) || null);
-
-            const ruleToDelete = stationRuleToDelete || deliveryRuleToDelete;
-
-            if (ruleToDelete !== null) {
-
-                const xPos = (action.payload.deleteRequestData.xPos - 350).toString(10).concat('px');
-                const yPos = (action.payload.deleteRequestData.yPos - 140).toString(10).concat('px');
-
-                const position = {
-                    top: yPos,
-                    left: xPos
+                const dialogData: DialogSelectData = {
+                    title: 'Show Columns',
+                    options: columnOptions
                 };
 
-                const dialogData: DialogYesNoData = {
-                    title: `Are you sure you want to delete the '${ruleToDelete.name}' highlighting rule?`,
-                    position: position
-                };
-
-                const dialogConfig = new MatDialogConfig();
-                dialogConfig.position = position;
-                dialogConfig.data = dialogData;
-
-                this.dialogService.open(DialogYesNoComponent, dialogConfig).afterClosed()
+                this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
                     .pipe(
                         take(1)
-                    ).subscribe((result) => {
-                        if (result === true) {
-                            if (stationRuleToDelete !== null) {
-                                const newRules = this.editHighlightingService.removeRule(state.stations, deleteRuleId);
-                                this.store.dispatch(new SetStationHighlightingRulesSOA({ rules: newRules }));
-                            } else {
-                                const newRules = this.editHighlightingService.removeRule(state.deliveries, deleteRuleId);
-                                this.store.dispatch(new SetDeliveryHighlightingRulesSOA({ rules: newRules }));
+                    ).subscribe((selections: string[]) => {
+                        if (selections != null) {
+                            // assumption, the selection is unordered
+                            const newColumnOrder = [].concat(
+                                oldColumnOrder.filter(prop => selections.includes(prop)),
+                                selections.filter(prop => !oldColumnOrder.includes(prop))
+                            );
+                            if (tableType === TableType.STATIONS) {
+                                this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: newColumnOrder }));
+                            } else if (tableType === TableType.DELIVERIES) {
+                                this.store.dispatch(new SetFilterDeliveryTableColumnOrderSOA({ columnOrder: newColumnOrder }));
                             }
                         }
                     },
                     error => {
-                        throw new Error(`error loading YesNo dialog: ${error}`);
+                        throw new Error(`error loading dialog or selecting columns: ${error}`);
                     });
-            }
-            return EMPTY;
-        })
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
+    );
+
+    DeleteHighlightingRuleSSA$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<DeleteHighlightingRuleSSA>(ConfigurationActionTypes.DeleteHighlightingRuleSSA),
+            withLatestFrom(this.store.pipe(select(selectHighlightingSettings))),
+            mergeMap(([action, state]) => {
+                const deleteRuleId = action.payload.deleteRequestData.ruleId;
+                const stationRuleToDelete = state.stations.find(rule => rule.id === deleteRuleId) || null;
+                const deliveryRuleToDelete =
+                    stationRuleToDelete !== null ?
+                    null :
+                    (state.deliveries.find(rule => rule.id === deleteRuleId) || null);
+
+                const ruleToDelete = stationRuleToDelete || deliveryRuleToDelete;
+
+                if (ruleToDelete !== null) {
+
+                    const xPos = (action.payload.deleteRequestData.xPos - 350).toString(10).concat('px');
+                    const yPos = (action.payload.deleteRequestData.yPos - 140).toString(10).concat('px');
+
+                    const position = {
+                        top: yPos,
+                        left: xPos
+                    };
+
+                    const dialogData: DialogYesNoData = {
+                        title: `Are you sure you want to delete the '${ruleToDelete.name}' highlighting rule?`,
+                        position: position
+                    };
+
+                    const dialogConfig = new MatDialogConfig();
+                    dialogConfig.position = position;
+                    dialogConfig.data = dialogData;
+
+                    this.dialogService.open(DialogYesNoComponent, dialogConfig).afterClosed()
+                        .pipe(
+                            take(1)
+                        ).subscribe((result) => {
+                            if (result === true) {
+                                if (stationRuleToDelete !== null) {
+                                    const newRules = this.editHighlightingService.removeRule(state.stations, deleteRuleId);
+                                    this.store.dispatch(new SetStationHighlightingRulesSOA({ rules: newRules }));
+                                } else {
+                                    const newRules = this.editHighlightingService.removeRule(state.deliveries, deleteRuleId);
+                                    this.store.dispatch(new SetDeliveryHighlightingRulesSOA({ rules: newRules }));
+                                }
+                            }
+                        },
+                        error => {
+                            throw new Error(`error loading YesNo dialog: ${error}`);
+                        });
+                }
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 }

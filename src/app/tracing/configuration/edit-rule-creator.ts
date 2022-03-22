@@ -21,7 +21,7 @@ export class EditRuleCreator {
         return {
             ...this.createEditRule(RuleType.COLOR_AND_SHAPE),
             showInLegend: true,
-            color:  this.DEFAULT_COLOR,
+            color: this.DEFAULT_COLOR,
             shape: null
         };
     }
@@ -30,7 +30,7 @@ export class EditRuleCreator {
         return {
             ...this.createEditRule(RuleType.COLOR),
             showInLegend: true,
-            color:  this.DEFAULT_COLOR
+            color: this.DEFAULT_COLOR
         };
     }
 

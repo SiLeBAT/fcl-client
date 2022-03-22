@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 
 import * as groupingActions from './grouping.actions';
@@ -24,25 +24,26 @@ export class GroupingEffects {
         private groupingService: GroupingService
     ) {}
 
-    @Effect()
-    mergeStations$ = this.actions$.pipe(
-        ofType<groupingActions.MergeStationsMSA>(groupingActions.GroupingActionTypes.MergeStationsMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
-        mergeMap(([action, state]) => {
-            const memberIds = action.payload.memberIds;
+    mergeStations$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<groupingActions.MergeStationsMSA>(groupingActions.GroupingActionTypes.MergeStationsMSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
+            mergeMap(([action, state]) => {
+                const memberIds = action.payload.memberIds;
 
-            const dialogData: MergeStationsDialogData = {
-                memberIds: memberIds,
-                state: state
-            };
+                const dialogData: MergeStationsDialogData = {
+                    memberIds: memberIds,
+                    state: state
+                };
 
-            this.dialogService.open(MergeStationsDialogComponent, { data: dialogData });
-            return EMPTY;
-        })
+                this.dialogService.open(MergeStationsDialogComponent, { data: dialogData });
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 
-    @Effect()
-    collapseStations$ = this.actions$.pipe(
+    collapseStations$ = createEffect(() => this.actions$.pipe(
         ofType<groupingActions.CollapseStationsMSA>(groupingActions.GroupingActionTypes.CollapseStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
         mergeMap(([action, state]) => {
@@ -61,10 +62,9 @@ export class GroupingEffects {
                 return EMPTY;
             }
         })
-    );
+    ));
 
-    @Effect()
-    uncollapseStations$ = this.actions$.pipe(
+    uncollapseStations$ = createEffect(() => this.actions$.pipe(
         ofType<groupingActions.UncollapseStationsMSA>(groupingActions.GroupingActionTypes.UncollapseStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
         mergeMap(([action, state]) => {
@@ -82,10 +82,9 @@ export class GroupingEffects {
                 return EMPTY;
             }
         })
-    );
+    ));
 
-    @Effect()
-    expandStations$ = this.actions$.pipe(
+    expandStations$ = createEffect(() => this.actions$.pipe(
         ofType<groupingActions.ExpandStationsMSA>(groupingActions.GroupingActionTypes.ExpandStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getGroupingData))),
         mergeMap(([action, state]) => {
@@ -103,5 +102,5 @@ export class GroupingEffects {
                 return EMPTY;
             }
         })
-    );
+    ));
 }

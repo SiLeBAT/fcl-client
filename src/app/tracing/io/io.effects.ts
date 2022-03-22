@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 import * as tracingStateActions from '../state/tracing.actions';
 import * as fromTracing from '../state/tracing.reducers';
@@ -22,8 +22,7 @@ export class IOEffects {
         private store: Store<fromTracing.State>
     ) {}
 
-    @Effect()
-    loadFclDataMSA$ = this.actions$.pipe(
+    loadFclDataMSA$ = createEffect(() => this.actions$.pipe(
         ofType<ioActions.LoadFclDataMSA>(ioActions.IOActionTypes.LoadFclDataMSA),
         mergeMap(action => {
             const fileList: FileList = action.payload.dataSource;
@@ -50,10 +49,9 @@ export class IOEffects {
                 return of(new tracingStateActions.LoadFclDataFailure());
             }
         })
-    );
+    ));
 
-    @Effect()
-    loadShapeFileMSA$ = this.actions$.pipe(
+    loadShapeFileMSA$ = createEffect(() => this.actions$.pipe(
         ofType<ioActions.LoadShapeFileMSA>(ioActions.IOActionTypes.LoadShapeFileMSA),
         mergeMap(action => {
             const fileList: FileList = action.payload.dataSource;
@@ -79,58 +77,58 @@ export class IOEffects {
                 return of(new tracingStateActions.LoadShapeFileFailureMSA());
             }
         })
-    );
+    ));
 
-    @Effect()
-    saveFclData$ = this.actions$.pipe(
-        ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
-        mergeMap(([action, fclData]) => {
-            return from(this.ioService.getExportData(fclData)).pipe(
-                mergeMap(exportData => {
-                    if (exportData) {
-                        const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
-                        const fileName = 'data.json';
+    saveFclData$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
+            mergeMap(([action, fclData]) => {
+                return from(this.ioService.getExportData(fclData)).pipe(
+                    mergeMap(exportData => {
+                        if (exportData) {
+                            const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
+                            const fileName = 'data.json';
 
-                        if (window.navigator.msSaveOrOpenBlob != null) {
-                            window.navigator.msSaveOrOpenBlob(blob, fileName);
-                        } else {
                             const url = window.URL.createObjectURL(blob);
 
                             Utils.openSaveDialog(url, fileName);
                             window.URL.revokeObjectURL(url);
                         }
-                    }
-                    return EMPTY;
-                }),
-                catchError(error => {
-                    if (error) {
-                        this.alertService.error(`File could not be saved!, error: ${error}`);
-                    }
-                    return EMPTY;
-                })
-            );
-        })
+                        return EMPTY;
+                    }),
+                    catchError(error => {
+                        if (error) {
+                            this.alertService.error(`File could not be saved!, error: ${error}`);
+                        }
+                        return EMPTY;
+                    })
+                );
+            })
+        ),
+        { dispatch: false }
     );
 
-    @Effect()
-    saveGraphImage$ = this.actions$.pipe(
-        ofType<ioActions.SaveGraphImageMSA>(ioActions.IOActionTypes.SaveGraphImageMSA),
-        mergeMap((action) => {
-            const canvas = action.payload.canvas;
-            const fileName = 'graph.png';
-            try {
-                if (canvas.toBlob) {
-                    canvas.toBlob((blob: any) => {
-                        Utils.openSaveBlobDialog(blob, fileName);
-                    });
-                } else {
-                    Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+    saveGraphImage$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<ioActions.SaveGraphImageMSA>(ioActions.IOActionTypes.SaveGraphImageMSA),
+            mergeMap((action) => {
+                const canvas = action.payload.canvas;
+                const fileName = 'graph.png';
+                try {
+                    if (canvas.toBlob) {
+                        canvas.toBlob((blob: any) => {
+                            Utils.openSaveBlobDialog(blob, fileName);
+                        });
+                    } else {
+                        Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+                    }
+                } catch (error) {
+                    this.alertService.error(`Graph image could not be saved!, error: ${error}`);
                 }
-            } catch (error) {
-                this.alertService.error(`Graph image could not be saved!, error: ${error}`);
-            }
-            return EMPTY;
-        })
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 }

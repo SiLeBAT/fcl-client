@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../../shared/services/alert.service';
@@ -21,8 +21,7 @@ export class UserEffects {
       private router: Router
     ) { }
 
-    @Effect()
-    loginUser$ = this.actions$.pipe(
+    loginUser$ = createEffect(() => this.actions$.pipe(
       ofType(userActions.UserActionTypes.LoginUserSSA),
       tap(item => this.spinnerService.show()),
       exhaustMap((action: userActions.LoginUserSSA) => this.userService.login(action.payload).pipe(
@@ -47,10 +46,9 @@ export class UserEffects {
             return of(new userActions.UpdateUserSOA({ currentUser: null }));
         })
       ))
-    );
+    ));
 
-    @Effect()
-    logoutUser$ = this.actions$.pipe(
+    logoutUser$ = createEffect(() => this.actions$.pipe(
         ofType(userActions.UserActionTypes.LogoutUserMSA),
         mergeMap(() => {
 
@@ -64,5 +62,5 @@ export class UserEffects {
                 new ResetTracingStateSOA()
             ];
         })
-    );
+    ));
 }
