@@ -44,7 +44,9 @@ export class ToolbarActionComponent implements OnInit, OnChanges {
 
     mapTypeToLabelMap: Map<MapType, string> = new Map([
         [MapType.MAPNIK, 'Mapnik'],
-        [MapType.BLACK_AND_WHITE, 'Black & White'],
+        // the following code is commented because
+        // the Black & White Map might be deactivatd only temporaryly
+        // [MapType.BLACK_AND_WHITE, 'Black & White'],
         [MapType.SHAPE_FILE, 'Shape File']
     ]);
 
