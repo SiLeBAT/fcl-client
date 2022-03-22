@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
-import { AlertService } from '../../shared/services/alert.service';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import * as contentActions from './content.actions';
 import * as fromContent from './content.reducer';
@@ -18,14 +17,13 @@ export class ContentEffects {
         private contentService: ContentService
     ) { }
 
-    @Effect()
-    loadGDPRDateRequested: Observable<contentActions.UpdateGDPRDateSOA> = this.actions$.pipe(
+    loadGDPRDateRequested: Observable<contentActions.UpdateGDPRDateSOA> = createEffect(() => this.actions$.pipe(
         ofType(contentActions.ContentActionTypes.LoadGDPRDateSSA),
         withLatestFrom(this.store$.select(fromContent.getGDPRDate)),
         filter(([_, loaded]) => loaded === ''),
         exhaustMap(() => this.contentService.getGDPRDate().pipe(
             map((gdprDate: string) => new contentActions.UpdateGDPRDateSOA({ gdprDate: gdprDate }))
         ))
-    );
+    ));
 
 }

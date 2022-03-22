@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
-import { VisioBox, GridCell, Polygon, CustomBoxShape,
-    VisioLabel, GraphLayer, BoxType, Position, Size } from './datatypes';
+import {
+    VisioBox, GridCell, Polygon, CustomBoxShape,
+    VisioLabel, GraphLayer, BoxType, Position, Size
+} from './datatypes';
 import { GraphSettings } from './graph-settings';
 import { Utils } from '../../util/non-ui-utils';
 import { getDifference } from '@app/tracing/util/geometry-utils';
@@ -131,7 +133,7 @@ export class GroupContainerCreator {
         this.markCells(matrix, transCells);
 
         const outerBoundary: CellPolygon = [{
-            row:  transCells[0].row,
+            row: transCells[0].row,
             column: transCells[0].column
         } ];
         this.parseOuterBoundary(matrix, outerBoundary);

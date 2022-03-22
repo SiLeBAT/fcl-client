@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../shared/services/alert.service';
 
 import { DataService } from './services/data.service';
@@ -32,43 +32,44 @@ export class TracingEffects {
         private store: Store<fromTracing.State>
     ) {}
 
-    @Effect()
-    showStationProperties$ = this.actions$.pipe(
-        ofType<tracingEffectActions.ShowStationPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowStationPropertiesMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),
-        mergeMap(([action, state]) => {
-            const stationId = action.payload.stationId;
-            const data = this.dataService.getData(state);
-            const station = data.statMap[stationId];
+    showStationProperties$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<tracingEffectActions.ShowStationPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowStationPropertiesMSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),
+            mergeMap(([action, state]) => {
+                const stationId = action.payload.stationId;
+                const data = this.dataService.getData(state);
+                const station = data.statMap[stationId];
 
-            if (station) {
-                const deliveries: Map<DeliveryId, DeliveryData> = new Map();
-                const connectedStations: Map<StationId, StationData> = new Map();
+                if (station) {
+                    const deliveries: Map<DeliveryId, DeliveryData> = new Map();
+                    const connectedStations: Map<StationId, StationData> = new Map();
 
-                for (const delivery of data.getDelById(station.incoming)) {
-                    deliveries.set(delivery.id, delivery);
-                    connectedStations.set(delivery.source, data.statMap[delivery.source]);
+                    for (const delivery of data.getDelById(station.incoming)) {
+                        deliveries.set(delivery.id, delivery);
+                        connectedStations.set(delivery.source, data.statMap[delivery.source]);
+                    }
+
+                    for (const delivery of data.getDelById(station.outgoing)) {
+                        deliveries.set(delivery.id, delivery);
+                        connectedStations.set(delivery.target, data.statMap[delivery.target]);
+                    }
+
+                    const dialogData: StationPropertiesData = {
+                        station: station,
+                        deliveries: deliveries,
+                        connectedStations: connectedStations
+                    };
+
+                    this.dialogService.open(StationPropertiesComponent, { data: dialogData });
                 }
-
-                for (const delivery of data.getDelById(station.outgoing)) {
-                    deliveries.set(delivery.id, delivery);
-                    connectedStations.set(delivery.target, data.statMap[delivery.target]);
-                }
-
-                const dialogData: StationPropertiesData = {
-                    station: station,
-                    deliveries: deliveries,
-                    connectedStations: connectedStations
-                };
-
-                this.dialogService.open(StationPropertiesComponent, { data: dialogData });
-            }
-            return EMPTY;
-        })
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 
-    @Effect()
-    focusStationSSA$ = this.actions$.pipe(
+    focusStationSSA$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.FocusStationSSA>(tracingEffectActions.TracingActionTypes.FocusStationSSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
         mergeMap(([action, state]) => {
@@ -80,10 +81,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    focusDeliverySSA$ = this.actions$.pipe(
+    focusDeliverySSA$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.FocusDeliverySSA>(tracingEffectActions.TracingActionTypes.FocusDeliverySSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
         mergeMap(([action, state]) => {
@@ -95,40 +95,41 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    showDeliveryProperties$ = this.actions$.pipe(
-        ofType<tracingEffectActions.ShowDeliveryPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryPropertiesMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),
-        mergeMap(([action, state]) => {
-            const deliveryIds = action.payload.deliveryIds;
-            const data = this.dataService.getData(state);
-            if (deliveryIds.length === 1) {
-                const delivery = data.delMap[deliveryIds[0]];
+    showDeliveryProperties$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<tracingEffectActions.ShowDeliveryPropertiesMSA>(tracingEffectActions.TracingActionTypes.ShowDeliveryPropertiesMSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.selectDataServiceInputState))),
+            mergeMap(([action, state]) => {
+                const deliveryIds = action.payload.deliveryIds;
+                const data = this.dataService.getData(state);
+                if (deliveryIds.length === 1) {
+                    const delivery = data.delMap[deliveryIds[0]];
 
-                if (delivery) {
-                    const dialogData: DeliveryPropertiesData = {
-                        delivery: delivery,
-                        source: data.statMap[delivery.source],
-                        target: data.statMap[delivery.target],
-                        originalSource: data.statMap[delivery.originalSource],
-                        originalTarget: data.statMap[delivery.originalTarget]
-                    };
+                    if (delivery) {
+                        const dialogData: DeliveryPropertiesData = {
+                            delivery: delivery,
+                            source: data.statMap[delivery.source],
+                            target: data.statMap[delivery.target],
+                            originalSource: data.statMap[delivery.originalSource],
+                            originalTarget: data.statMap[delivery.originalTarget]
+                        };
 
-                    this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });
+                        this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });
+                    }
+                } else {
+                    this.dialogService.open(DeliveriesPropertiesComponent, {
+                        data: { deliveryIds: deliveryIds }
+                    });
                 }
-            } else {
-                this.dialogService.open(DeliveriesPropertiesComponent, {
-                    data: { deliveryIds: deliveryIds }
-                });
-            }
-            return EMPTY;
-        })
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 
-    @Effect()
-    showElementsTrace$ = this.actions$.pipe(
+    showElementsTrace$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.ShowElementsTraceMSA>(tracingEffectActions.TracingActionTypes.ShowElementsTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
@@ -142,10 +143,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    clearTrace$ = this.actions$.pipe(
+    clearTrace$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.ClearTraceMSA>(tracingEffectActions.TracingActionTypes.ClearTraceMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
@@ -159,10 +159,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    setStationCrossCantamination$ = this.actions$.pipe(
+    setStationCrossCantamination$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.SetStationCrossContaminationMSA>(
             tracingEffectActions.TracingActionTypes.SetStationCrossContaminationMSA
         ),
@@ -180,10 +179,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    setStationKillContamination$ = this.actions$.pipe(
+    setStationKillContamination$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.SetStationKillContaminationMSA>(
             tracingEffectActions.TracingActionTypes.SetStationKillContaminationMSA
         ),
@@ -201,10 +199,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    markStationsAsOutbreak$ = this.actions$.pipe(
+    markStationsAsOutbreak$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.MarkStationsAsOutbreakMSA>(tracingEffectActions.TracingActionTypes.MarkStationsAsOutbreakMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
@@ -220,10 +217,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    makeElementsInvisible$ = this.actions$.pipe(
+    makeElementsInvisible$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.MakeElementsInvisibleMSA>(tracingEffectActions.TracingActionTypes.MakeElementsInvisibleMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getMakeElementsInvisibleInputState))),
         mergeMap(([action, state]) => {
@@ -237,10 +233,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    clearInvisiblities$ = this.actions$.pipe(
+    clearInvisiblities$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.ClearInvisibilitiesMSA>(tracingEffectActions.TracingActionTypes.ClearInvisibilitiesMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.selectHighlightingSettings))),
         mergeMap(([action, state]) => {
@@ -254,10 +249,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    clearOutbreakStations$ = this.actions$.pipe(
+    clearOutbreakStations$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.ClearOutbreakStationsMSA>(tracingEffectActions.TracingActionTypes.ClearOutbreakStationsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
@@ -271,10 +265,9 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 
-    @Effect()
-    setSelectedGraphElements$ = this.actions$.pipe(
+    setSelectedGraphElements$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.SetSelectedGraphElementsMSA>(tracingEffectActions.TracingActionTypes.SetSelectedGraphElementsMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
         mergeMap(([action, state]) => {
@@ -295,5 +288,5 @@ export class TracingEffects {
             }
             return EMPTY;
         })
-    );
+    ));
 }

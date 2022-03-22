@@ -95,7 +95,7 @@ export class DataImporterV0 implements IDataImporter {
     private preprocessDataWithSettings(data: any, fclData: FclData): boolean {
         const graphSettings: GraphSettings = {
             ...fclData.graphSettings,
-            type:  data.graphSettings.type || fclData.graphSettings.type,
+            type: data.graphSettings.type || fclData.graphSettings.type,
             nodeSize: data.graphSettings.nodeSize || fclData.graphSettings.nodeSize,
             fontSize: data.graphSettings.fontSize || fclData.graphSettings.fontSize,
             mergeDeliveriesType: (
