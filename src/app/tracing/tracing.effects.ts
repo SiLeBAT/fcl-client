@@ -69,33 +69,45 @@ export class TracingEffects {
         { dispatch: false }
     );
 
-    focusStationSSA$ = createEffect(() => this.actions$.pipe(
-        ofType<tracingEffectActions.FocusStationSSA>(tracingEffectActions.TracingActionTypes.FocusStationSSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
-        mergeMap(([action, state]) => {
-            const focusStationId = action.payload.stationId;
-            const focuseNodeId = this.graphService.getNodeIdFromStationId(focusStationId, state);
+    focusStationSSA$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<tracingEffectActions.FocusStationSSA>(tracingEffectActions.TracingActionTypes.FocusStationSSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
+            mergeMap(([action, state]) => {
+                const focusStationId = action.payload.stationId;
+                const focuseNodeId = this.graphService.getNodeIdFromStationId(focusStationId, state);
 
-            if (focuseNodeId !== null) {
-                return of(new tracingEffectActions.FocusGraphElementSSA({ elementId: focuseNodeId }));
-            }
-            return EMPTY;
-        })
-    ));
+                if (focuseNodeId !== null) {
+                    if (state.selectedElements.deliveries.length > 0) {
+                        this.store.dispatch(new tracingStateActions.SetSelectedDeliveriesSOA({ deliveryIds: [] }));
+                    }
+                    this.store.dispatch(new tracingEffectActions.FocusGraphElementSSA({ elementId: focuseNodeId }));
+                }
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
+    );
 
-    focusDeliverySSA$ = createEffect(() => this.actions$.pipe(
-        ofType<tracingEffectActions.FocusDeliverySSA>(tracingEffectActions.TracingActionTypes.FocusDeliverySSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
-        mergeMap(([action, state]) => {
-            const focusDeliveryId = action.payload.deliveryId;
-            const focuseEdgeId = this.graphService.getEdgeIdFromDeliveryId(focusDeliveryId, state);
+    focusDeliverySSA$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<tracingEffectActions.FocusDeliverySSA>(tracingEffectActions.TracingActionTypes.FocusDeliverySSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.selectSharedGraphState))),
+            mergeMap(([action, state]) => {
+                const focusDeliveryId = action.payload.deliveryId;
+                const focuseEdgeId = this.graphService.getEdgeIdFromDeliveryId(focusDeliveryId, state);
 
-            if (focuseEdgeId !== null) {
-                return of(new tracingEffectActions.FocusGraphElementSSA({ elementId: focuseEdgeId }));
-            }
-            return EMPTY;
-        })
-    ));
+                if (focuseEdgeId !== null) {
+                    if (state.selectedElements.stations.length > 0) {
+                        this.store.dispatch(new tracingStateActions.SetSelectedStationsSOA({ stationIds: [] }));
+                    }
+                    this.store.dispatch(new tracingEffectActions.FocusGraphElementSSA({ elementId: focuseEdgeId }));
+                }
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
+    );
 
     showDeliveryProperties$ = createEffect(
         () => this.actions$.pipe(
