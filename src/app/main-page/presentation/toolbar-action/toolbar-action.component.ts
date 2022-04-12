@@ -58,8 +58,8 @@ export class ToolbarActionComponent implements OnInit, OnChanges {
         if (changes.fileName !== undefined) {
             this.fileNameWoExt = (
                 this.fileName === null ?
-                null :
-                this.fileName.replace(/\.[^\.]+$/, '')
+                    null :
+                    this.fileName.replace(/\.[^\.]+$/, '')
             );
         }
     }

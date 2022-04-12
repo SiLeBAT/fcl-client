@@ -80,8 +80,8 @@ export class ConfigurationEffects {
                 const stationRuleToDelete = state.stations.find(rule => rule.id === deleteRuleId) || null;
                 const deliveryRuleToDelete =
                     stationRuleToDelete !== null ?
-                    null :
-                    (state.deliveries.find(rule => rule.id === deleteRuleId) || null);
+                        null :
+                        (state.deliveries.find(rule => rule.id === deleteRuleId) || null);
 
                 const ruleToDelete = stationRuleToDelete || deliveryRuleToDelete;
 

@@ -27,16 +27,16 @@ export class ResetContainerComponent implements OnInit {
         const token = this.activatedRoute.snapshot.params['id'];
         this.spinnerService.show();
         this.userService.resetPassword(password, token)
-        .subscribe((resetResponse: PasswordResetResponseDTO) => {
-            this.spinnerService.hide();
-            this.alertService.success('Please login with your new password');
-            this.router.navigate(['users/login']).catch((err) => {
-                throw new Error(`Unable to navigate: ${err}`);
-            });
-        }, () => {
-            this.spinnerService.hide();
-            this.alertService.error(`Error during password reset, the token is not valid.
+            .subscribe((resetResponse: PasswordResetResponseDTO) => {
+                this.spinnerService.hide();
+                this.alertService.success('Please login with your new password');
+                this.router.navigate(['users/login']).catch((err) => {
+                    throw new Error(`Unable to navigate: ${err}`);
+                });
+            }, () => {
+                this.spinnerService.hide();
+                this.alertService.error(`Error during password reset, the token is not valid.
             Please receive a new 'Password-Reset' link with the option 'Password forgotten?'.`);
-        });
+            });
     }
 }

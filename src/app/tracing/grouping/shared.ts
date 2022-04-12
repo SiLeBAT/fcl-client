@@ -16,7 +16,7 @@ export function extractNewGroups(
 
         let size: number = 0;
         const linkIndices: Set<number> = new Set();
-        // tslint:disable-next-line:one-variable-per-declaration
+        // eslint-disable-next-line one-var
         for (let iLS: number = 0, nLS: number = linkStation.linkedStations.length; iLS < nLS; iLS++) {
 
             if (linkStation.linkedStations[iLS].linkKeys.length !== size) {
@@ -35,7 +35,7 @@ export function addNewGroups(
     newGroups: GroupData[],
     linkIndices: Set<number>,
     getGroupInfo: GroupInfoFun
-  ) {
+) {
 
     if (linkIndices.size > 1) {
 

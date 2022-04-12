@@ -291,14 +291,14 @@ export class BoxCreator {
         boxGrid: VisioBox[][],
         cellGroups: { label: string, cells: GridCell[] }[],
         graphLayers: GraphLayer[]
-        ): VisioBox[] {
+    ): VisioBox[] {
 
         const groupCreator = new GroupContainerCreator();
         return groupCreator.createGroupBoxes(
             boxGrid,
             cellGroups.map(g => ({ label: this.labelCreator.getLabel([g.label], null), cells: g.cells })),
             graphLayers
-            );
+        );
     }
 
     resortLotBoxes(connectors: VisioConnector[]) {

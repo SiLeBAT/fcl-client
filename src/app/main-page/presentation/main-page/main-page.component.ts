@@ -21,7 +21,7 @@ export class MainPageComponent implements OnInit {
     public userService: UserService,
     public mainPageService: MainPageService,
     private store: Store<fromUser.State>
-  ) {}
+    ) {}
 
     ngOnInit() {
     }

@@ -53,7 +53,7 @@ function getLayerIndices(y: number[]): number[] {
 export function extractLayersFromPositions(
     data: FclElements,
     stationToPositionMap: Map<StationData, Position>
-    ): StationData[][] {
+): StationData[][] {
 
     const stations: StationData[] = data.stations.filter(s => stationToPositionMap.has(s));
     const layers: StationData[][] = [];

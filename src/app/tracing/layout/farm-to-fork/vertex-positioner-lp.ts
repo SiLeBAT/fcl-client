@@ -16,7 +16,7 @@ const OBJ_FUN_CENTER_DISTANCE_PENALTY = 1; // 0.01
 const OBJ_FUN_MAX_SIZE_PENALTY = 1; // 0.01
 
 export function positionVertices(layers: Vertex[][], vertexDistance: number, maxLayerLength: number | undefined) {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     const vertexPositioner: VertexPositionerLP = new VertexPositionerLP();
     vertexPositioner.positionVertices(layers, vertexDistance, maxLayerLength);
 }
@@ -222,7 +222,7 @@ class VertexPositionerLP {
             );
 
             // add minDistances between neighbours
-            // tslint:disable-next-line:one-variable-per-declaration
+            // eslint-disable-next-line one-var
             for (let iV: number = 1, nV: number = layer.length; iV < nV; iV++) {
                 const vertex: Vertex = layer[iV];
                 const precessorVertex: Vertex = layer[iV - 1];

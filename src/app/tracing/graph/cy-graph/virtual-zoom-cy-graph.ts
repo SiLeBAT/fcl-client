@@ -166,12 +166,12 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             },
             nodePositions:
                 viewport.zoom === oldZoom || this.cachedGraphData.nodePositions === undefined ?
-                super.nodePositions :
-                getZoomedNodePositions(
-                    this.cachedGraphData.nodeData,
-                    this.cachedGraphData.nodePositions,
-                    viewport.zoom
-                )
+                    super.nodePositions :
+                    getZoomedNodePositions(
+                        this.cachedGraphData.nodeData,
+                        this.cachedGraphData.nodePositions,
+                        viewport.zoom
+                    )
         };
 
         super.updateGraph(zoomedGraphData, this.style);
@@ -458,8 +458,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         const zoomChanged = graphData.layout.zoom !== oldGraphData.layout.zoom;
         const superNodePositions =
             zoomChanged || graphData.nodePositions !== oldGraphData.nodePositions ?
-            getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
-            super.data.nodePositions;
+                getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
+                super.data.nodePositions;
 
         let superGhostPositions: PositionMap | null = null;
         if (graphData.ghostData) {
@@ -467,8 +467,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 zoomChanged ||
                 oldGraphData.ghostData === null ||
                 oldGraphData.ghostData.posMap !== graphData.ghostData.posMap ?
-                getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout.zoom) :
-                super.data.ghostData.posMap;
+                    getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout.zoom) :
+                    super.data.ghostData.posMap;
         }
 
         super.updateGraph({

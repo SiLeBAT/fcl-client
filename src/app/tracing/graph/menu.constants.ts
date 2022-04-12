@@ -119,19 +119,19 @@ export class MenuItemStrings {
 
     static readonly collapseSourcesWeightOnly: ItemInfo = {
         displayName: 'weight sensitive',
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         toolTip: 'Stations without incoming edges are collapsed iif they send their delivieres to the same station and either their weights are all positive or all zero.'
     };
 
     static readonly collapseSourcesProductAndWeight: ItemInfo = {
         displayName: 'product name and weight sensitive',
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the the same products of the same station and either their weights are all positive or all zero.'
     };
 
     static readonly collapseSourcesLotAndWeight: ItemInfo = {
         displayName: 'lot and weight sensitive',
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         toolTip: 'Stations without incoming edges are collapsed iif their outgoing delivieres go into the same lots of the same station and either their weights are all positive or all zero.'
     };
 
@@ -142,19 +142,19 @@ export class MenuItemStrings {
 
     static readonly collapseTargetsWeightOnly: ItemInfo = {
         displayName: 'weight sensitive',
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         toolTip: 'Stations without outgoing edges are collapsed iif they get their delivieres from the same station and either their weights are all positive or all zero.'
     };
 
     static readonly collapseTargetsProductAndWeight: ItemInfo = {
         displayName: 'product name and weight sensitive',
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same product and either their weights are all positive or all zero.'
     };
 
     static readonly collapseTargetsLotAndWeight: ItemInfo = {
         displayName: 'lot and weight sensitive',
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         toolTip: 'Stations without outgoing edges are collapsed iif their incoming delivieres are all from the same lot and either their weights are all positive or all zero.'
     };
 

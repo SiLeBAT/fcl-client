@@ -38,7 +38,7 @@ export function generateVisioReport(
     data: FclElements,
     stationIdToPosMap: Record<StationId, Position>,
     roaSettings: ROASettings
-    ): VisioReport {
+): VisioReport {
 
     const engineConf: VisioEngineConfiguration = {
         groupType: StationGroupType.Country,

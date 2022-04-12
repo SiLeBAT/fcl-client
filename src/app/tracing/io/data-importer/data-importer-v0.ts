@@ -100,13 +100,13 @@ export class DataImporterV0 implements IDataImporter {
             fontSize: data.graphSettings.fontSize || fclData.graphSettings.fontSize,
             mergeDeliveriesType: (
                 data.graphSettings.mergeDeliveries !== null && data.graphSettings.mergeDeliveries !== undefined ?
-                (data.graphSettings.mergeDeliveries ? MergeDeliveriesType.MERGE_ALL : MergeDeliveriesType.NO_MERGE) :
-                fclData.graphSettings.mergeDeliveriesType
+                    (data.graphSettings.mergeDeliveries ? MergeDeliveriesType.MERGE_ALL : MergeDeliveriesType.NO_MERGE) :
+                    fclData.graphSettings.mergeDeliveriesType
             ),
             skipUnconnectedStations:
                 data.graphSettings.skipUnconnectedStations != null ?
-                data.graphSettings.skipUnconnectedStations :
-                fclData.graphSettings.skipUnconnectedStations,
+                    data.graphSettings.skipUnconnectedStations :
+                    fclData.graphSettings.skipUnconnectedStations,
             showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : fclData.graphSettings.showLegend,
             showZoom: data.graphSettings.showZoom != null ? data.graphSettings.showZoom : fclData.graphSettings.showZoom,
             schemaLayout: data.layout,
@@ -218,7 +218,7 @@ export class DataImporterV0 implements IDataImporter {
         const defaultKeys: Set<string> = new Set(
             Constants.DELIVERY_PROPERTIES.toArray().map(
                 p => v1ToV0PropMap[p] !== undefined ? v1ToV0PropMap[p] : p
-        ));
+            ));
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {

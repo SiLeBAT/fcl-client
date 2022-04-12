@@ -27,17 +27,17 @@ export class AdminActivateContainerComponent implements OnInit {
 
         this.spinnerService.show();
         this.userService.adminActivateAccount(adminToken)
-        .subscribe((adminActivateResponse: ActivationResponseDTO) => {
-            this.spinnerService.hide();
-            const message = `Admin account activation! A confirmation is sent to ${adminActivateResponse.username}`;
-            this.name = adminActivateResponse.username;
-            this.alertService.success(message);
-            this.adminTokenValid = true;
-        }, () => {
-            this.spinnerService.hide();
-            this.alertService.error('Your admin account activation failed!');
-            this.adminTokenValid = false;
-        });
+            .subscribe((adminActivateResponse: ActivationResponseDTO) => {
+                this.spinnerService.hide();
+                const message = `Admin account activation! A confirmation is sent to ${adminActivateResponse.username}`;
+                this.name = adminActivateResponse.username;
+                this.alertService.success(message);
+                this.adminTokenValid = true;
+            }, () => {
+                this.spinnerService.hide();
+                this.alertService.error('Your admin account activation failed!');
+                this.adminTokenValid = false;
+            });
     }
 
 }

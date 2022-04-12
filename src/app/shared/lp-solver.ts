@@ -210,7 +210,7 @@ export class LPModel {
     }
 
     printConstraints(lpResult: LPResult | null): void {
-        // tslint:disable-next-line:no-console
+        // eslint-disable-next-line no-console
         console.log('Constraints:');
         const sortedConstraintIds = this.getSortedConstraintIds();
         for (const constraintId of sortedConstraintIds) {
@@ -222,13 +222,13 @@ export class LPModel {
             const checkUB = checkBounds && constraint.ub !== null;
             const lbMsg = (
                 checkLB ?
-                this.getResidualMsg(constraint.lb, constraint.termValue) + this.getViolationMsg(constraint.lb, constraint.termValue) :
-                ''
+                    this.getResidualMsg(constraint.lb, constraint.termValue) + this.getViolationMsg(constraint.lb, constraint.termValue) :
+                    ''
             );
             const ubMsg = (
                 checkUB ?
-                this.getViolationMsg(constraint.termValue, constraint.ub) + this.getResidualMsg(constraint.termValue, constraint.ub) :
-                ''
+                    this.getViolationMsg(constraint.termValue, constraint.ub) + this.getResidualMsg(constraint.termValue, constraint.ub) :
+                    ''
             );
             const text =
                 constraint.label +
@@ -240,7 +240,7 @@ export class LPModel {
                 (constraint.ub === null ? '' : ' <= ' + getRoundedValue(constraint.ub)) +
                 (ubMsg === '' ? '' : ' ') + ubMsg;
 
-            // tslint:disable-next-line:no-console
+            // eslint-disable-next-line no-console
             console.log(text);
         }
     }
@@ -250,17 +250,17 @@ export class LPModel {
 
         const objectiveText = objective.optimizationType + ': ' + this.termToString(objective.term, objective.termValue, lpResult);
 
-        // tslint:disable-next-line:no-console
+        // eslint-disable-next-line no-console
         console.log('Objective:\n' + objectiveText);
     }
 
     printVars(lpResult: LPResult | null): void {
         const variableIds = this.getSortedVariableIds();
-        // tslint:disable-next-line:no-console
+        // eslint-disable-next-line no-console
         console.log('Variables:');
         for (const variableId of variableIds) {
             const roundedVarValue = getRoundedValue(this.getVariableValue(variableId, lpResult));
-            // tslint:disable-next-line:no-console
+            // eslint-disable-next-line no-console
             console.log(variableId + ': ' + roundedVarValue);
         }
     }

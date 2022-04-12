@@ -28,23 +28,23 @@ export class RegisterContainerComponent implements OnInit {
     register(credentials: RegistrationDetailsDTO) {
         this.spinnerService.show();
         this.userService.register(credentials)
-        .subscribe((registerResponse: RegistrationRequestResponseDTO) => {
-            this.spinnerService.hide();
-            this.alertService.success(
-                `Please activate your account: An email has been sent to an ${registerResponse.email} with further instructions.`);
-            this.router.navigate(['users/login']).catch((err) => {
-                throw new Error(`Unable to navigate: ${err}`);
-            });
-        }, (err: HttpErrorResponse) => {
-            this.spinnerService.hide();
-            if (err.status === HTML_ERROR_CODE_UNPROCESSABLE_ENTITY) {
-                this.alertService.error('The registration data is invalid.');
-            } else {
-                this.alertService.error(`Error during registration.
+            .subscribe((registerResponse: RegistrationRequestResponseDTO) => {
+                this.spinnerService.hide();
+                this.alertService.success(
+                    `Please activate your account: An email has been sent to an ${registerResponse.email} with further instructions.`);
+                this.router.navigate(['users/login']).catch((err) => {
+                    throw new Error(`Unable to navigate: ${err}`);
+                });
+            }, (err: HttpErrorResponse) => {
+                this.spinnerService.hide();
+                if (err.status === HTML_ERROR_CODE_UNPROCESSABLE_ENTITY) {
+                    this.alertService.error('The registration data is invalid.');
+                } else {
+                    this.alertService.error(`Error during registration.
                 An email has been sent to an ${credentials.email} with further instructions.
                 If you don't receive an email please contact us directly per email to: ${this.supportContact}.`);
-            }
-        });
+                }
+            });
 
     }
 }

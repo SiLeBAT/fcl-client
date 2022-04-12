@@ -24,7 +24,7 @@ export class GroupContainerCreator {
         boxGrid: VisioBox[][],
         cellGroups: {label: VisioLabel, cells: GridCell[]}[],
         graphLayers: GraphLayer[]
-        ): VisioBox[] {
+    ): VisioBox[] {
 
         if (boxGrid.length === 0) {
             return [];
@@ -220,7 +220,7 @@ export class GroupContainerCreator {
                     matrix[lastCell.row + 1][lastCell.column] === matrix[lastCell.row][lastCell.column]
                     // start cell, but going down is available
                 )
-             ) {
+            ) {
 
                 // check left
                 const leftCell: GridCell = {
@@ -325,12 +325,12 @@ export class GroupContainerCreator {
     private convertCellToPoint(cell: GridCell, lastMove: GridCell, nextMove: GridCell, margin: number): Position {
 
         const x: number = lastMove.row < 0 || nextMove.row < 0 ?
-                          this.columnLeft[cell.column] + margin :
-                          this.columnLeft[cell.column + 1] - margin;
+            this.columnLeft[cell.column] + margin :
+            this.columnLeft[cell.column + 1] - margin;
 
         const y: number = lastMove.column > 0 || nextMove.column > 0 ?
-                          this.rowTop[cell.row] + margin :
-                          this.rowTop[cell.row + 1] - margin;
+            this.rowTop[cell.row] + margin :
+            this.rowTop[cell.row + 1] - margin;
 
         return { x: x, y: y };
     }

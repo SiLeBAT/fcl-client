@@ -12,7 +12,7 @@ describe('RecoveryComponent', () => {
     let fixture: ComponentFixture<RecoveryComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 RecoveryComponent
@@ -85,7 +85,6 @@ describe('RecoveryComponent', () => {
         expect(component.recoveryForm.valid).toBeTruthy();
 
         let emailRequest: ResetRequestDTO;
-        // tslint:disable-next-line: rxjs-no-ignored-error
         component.recovery.subscribe((value) => emailRequest = value);
 
         component.onRecovery();

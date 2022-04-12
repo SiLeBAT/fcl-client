@@ -23,8 +23,8 @@ const initialState: UserState = {
 export const getUserFeatureState = createFeatureSelector<UserState>(STATE_SLICE_NAME);
 
 export const getCurrentUser = createSelector(
-  getUserFeatureState,
-  state => state.currentUser
+    getUserFeatureState,
+    state => state.currentUser
 );
 
 export const getLoginActive = createSelector(

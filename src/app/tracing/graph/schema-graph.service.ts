@@ -33,22 +33,22 @@ export class SchemaGraphService {
             this.cachedState.stationPositions !== state.stationPositions ||
             this.cachedData === null ||
             this.cachedData.nodeData !== sharedGraphData.nodeData ?
-            this.createNodePositions(state.stationPositions, sharedGraphData.nodeData, false) :
-            this.cachedData.nodePositions;
+                this.createNodePositions(state.stationPositions, sharedGraphData.nodeData, false) :
+                this.cachedData.nodePositions;
 
         const ghostPositions: Record<NodeId, Position> =
             (
                 state.ghostStation === null &&
                 (state.ghostDelivery === null || sharedGraphData.ghostElements.nodeData.length === 0)
             ) ?
-            {} :
-            this.cachedState === null ||
+                {} :
+                this.cachedState === null ||
             this.cachedState.stationPositions !== state.stationPositions ||
             this.cachedState.ghostStation !== state.ghostStation ||
             this.cachedData.ghostData === null && sharedGraphData.ghostElements.nodeData.length > 0 ||
             this.cachedData.ghostData.nodeData !== sharedGraphData.ghostElements.nodeData ?
-            this.createNodePositions(state.stationPositions, sharedGraphData.ghostElements.nodeData, true) :
-            this.cachedData.ghostData.posMap;
+                    this.createNodePositions(state.stationPositions, sharedGraphData.ghostElements.nodeData, true) :
+                    this.cachedData.ghostData.posMap;
 
         const schemaGraphData: GraphData = {
             nodeData: sharedGraphData.nodeData,
@@ -59,11 +59,11 @@ export class SchemaGraphService {
             selectedElements: sharedGraphData.selectedElements,
             ghostData:
                 sharedGraphData.ghostElements == null ?
-                null :
-                ({
-                    ...sharedGraphData.ghostElements,
-                    posMap: ghostPositions
-                }),
+                    null :
+                    ({
+                        ...sharedGraphData.ghostElements,
+                        posMap: ghostPositions
+                    }),
             hoverEdges: sharedGraphData.hoverEdges
         };
 

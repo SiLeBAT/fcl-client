@@ -71,18 +71,18 @@ export class ReportConfigurationComponent {
             this.store.select(TracingSelectors.selectDataServiceInputState),
             this.store.select(TracingSelectors.getROASettings)
         ]).pipe(take(1))
-        .subscribe(([dataServiceInputState, roaSettings]) => {
-            this.initAvailableProps(dataServiceInputState);
-            if (roaSettings === null) {
-                this.setDefaultLabelInfos();
-            } else {
-                this.setLabelInfos(roaSettings);
-            }
-        },
+            .subscribe(([dataServiceInputState, roaSettings]) => {
+                this.initAvailableProps(dataServiceInputState);
+                if (roaSettings === null) {
+                    this.setDefaultLabelInfos();
+                } else {
+                    this.setLabelInfos(roaSettings);
+                }
+            },
             error => {
                 throw new Error(`error load roa configuration state: ${error}`);
             }
-        );
+            );
     }
 
     private initAvailableProps(dataServiceInputState: DataServiceInputState): void {

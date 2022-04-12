@@ -26,16 +26,16 @@ export class ActivateContainerComponent implements OnInit {
 
         this.spinnerService.show();
         this.userService.activateAccount(token)
-        .subscribe((activationResponse: ActivationResponseDTO) => {
-            this.spinnerService.hide();
-            const message = 'Account activation successful!';
-            this.alertService.success(message);
-            this.tokenValid = true;
-        }, () => {
-            this.spinnerService.hide();
-            this.alertService.error('Your account activation failed!');
-            this.tokenValid = false;
-        });
+            .subscribe((activationResponse: ActivationResponseDTO) => {
+                this.spinnerService.hide();
+                const message = 'Account activation successful!';
+                this.alertService.success(message);
+                this.tokenValid = true;
+            }, () => {
+                this.spinnerService.hide();
+                this.alertService.error('Your account activation failed!');
+                this.tokenValid = false;
+            });
     }
 
 }

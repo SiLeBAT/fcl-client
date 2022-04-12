@@ -132,13 +132,13 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         this.graphDataChange.emit({
             layout:
                 this.graphData.layout !== this.cyGraph_.layout ?
-                this.cyGraph_.layout :
-                undefined
+                    this.cyGraph_.layout :
+                    undefined
             ,
             nodePositions:
                 this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
-                this.cyGraph_.nodePositions :
-                undefined
+                    this.cyGraph_.nodePositions :
+                    undefined
         });
     }
 

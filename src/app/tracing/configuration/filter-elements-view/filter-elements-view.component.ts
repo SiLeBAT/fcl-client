@@ -223,24 +223,24 @@ export class FilterElementsViewComponent implements OnChanges {
         const newFilterMap: RowFilterMap = {
             predefinedFilter: (
                 !oldSettings || oldSettings.predefinedFilter !== newSettings.predefinedFilter ?
-                createPredefinedRowFilter(newSettings.predefinedFilter) :
-                oldFilterMap.predefinedFilter
+                    createPredefinedRowFilter(newSettings.predefinedFilter) :
+                    oldFilterMap.predefinedFilter
             ),
             complexFilter: (
                 !oldSettings || oldSettings.complexFilter !== newSettings.complexFilter ?
-                getUpdatedComplexRowFilter(newSettings.complexFilter, oldFilterMap ? oldFilterMap.complexFilter : undefined) :
-                oldFilterMap.complexFilter
+                    getUpdatedComplexRowFilter(newSettings.complexFilter, oldFilterMap ? oldFilterMap.complexFilter : undefined) :
+                    oldFilterMap.complexFilter
             ),
             standardFilter: (
                 !oldSettings ||
                 oldSettings.standardFilter !== newSettings.standardFilter ||
                 oldSettings.columnOrder !== newSettings.columnOrder ?
-                getUpdatedOneTermForNColumnsRowFilter(
-                    newSettings.standardFilter,
-                    newSettings.columnOrder,
-                    oldFilterMap ? oldFilterMap.standardFilter : undefined
-                ) :
-                this.filterMap_.standardFilter
+                    getUpdatedOneTermForNColumnsRowFilter(
+                        newSettings.standardFilter,
+                        newSettings.columnOrder,
+                        oldFilterMap ? oldFilterMap.standardFilter : undefined
+                    ) :
+                    this.filterMap_.standardFilter
             )
         };
 
@@ -283,11 +283,11 @@ export class FilterElementsViewComponent implements OnChanges {
                     this.inputData.dataTable.columns !== this.filterTableViewInputData_.dataTable.columns ||
                     this.prefilteredRows_ !== this.filterTableViewInputData_.dataTable.rows
                 ) ?
-                {
-                    columns: this.inputData.dataTable.columns,
-                    rows: this.prefilteredRows_
-                } :
-                this.filterTableViewInputData_.dataTable
+                    {
+                        columns: this.inputData.dataTable.columns,
+                        rows: this.prefilteredRows_
+                    } :
+                    this.filterTableViewInputData_.dataTable
             );
 
             this.filterTableViewInputData_ = (
@@ -297,14 +297,14 @@ export class FilterElementsViewComponent implements OnChanges {
                     this.filterTableViewInputData_.columnFilters !== this.inputData.filterTableSettings.columnFilters ||
                     this.filterTableViewInputData_.columnOrder !== this.inputData.filterTableSettings.columnOrder
                 ) ?
-                ({
-                    dataTable: dataTable,
-                    columnOrder: this.inputData.filterTableSettings.columnOrder,
-                    selectedRowIds: this.inputData.selectedRowIds,
-                    visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
-                    columnFilters: this.inputData.filterTableSettings.columnFilters
-                }) :
-                this.filterTableViewInputData_
+                    ({
+                        dataTable: dataTable,
+                        columnOrder: this.inputData.filterTableSettings.columnOrder,
+                        selectedRowIds: this.inputData.selectedRowIds,
+                        visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
+                        columnFilters: this.inputData.filterTableSettings.columnFilters
+                    }) :
+                    this.filterTableViewInputData_
             );
         }
     }

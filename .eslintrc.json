@@ -1,0 +1,77 @@
+{
+    "root": true,
+    "ignorePatterns": [
+      "projects/**/*",
+      "src/mxtypes.d.ts",
+      "src/mxtypes/**"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.ts"
+        ],
+        "parserOptions": {
+          "project": [
+            "tsconfig.json",
+            "e2e/tsconfig.e2e.json"
+          ],
+          "createDefaultProgram": true
+        },
+        "extends": [
+          "eslint:recommended",
+          "plugin:@typescript-eslint/recommended",
+          "plugin:@angular-eslint/recommended"
+        ],
+        "rules": {
+          "@angular-eslint/component-selector": [
+            "error",
+            {
+              "type": "element",
+              "prefix": "fcl",
+              "style": "kebab-case"
+            }
+          ],
+          "@angular-eslint/directive-selector": [
+            "error",
+            {
+              "type": "attribute",
+              "prefix": "fcl",
+              "style": "camelCase"
+            }
+          ],
+          "quotes": ["error", "single"],
+          "prefer-rest-params": "off",
+          "no-prototype-builtins": "off",
+          "no-useless-escape": "off",
+          "no-empty": "off",
+          "prefer-const": "off",
+          "indent": ["error", 4, { "SwitchCase": 1 }],
+          "@typescript-eslint/no-explicit-any": "off",
+          "@typescript-eslint/no-empty-function": "off",
+          "@typescript-eslint/no-empty-interface": "off",
+          "@typescript-eslint/no-unused-vars": "off",
+          "@typescript-eslint/no-this-alias": "off",
+          "@typescript-eslint/explicit-module-boundary-types": "off",
+          "@typescript-eslint/ban-types": "off",
+          "@typescript-eslint/no-var-requires": "off",
+          "@typescript-eslint/ban-ts-comment": "off",
+          "@typescript-eslint/no-inferrable-types": "off",
+          "@typescript-eslint/no-floating-promises": "off",
+          "@angular-eslint/no-empty-lifecycle-method": "off",
+          "@angular-eslint/no-output-on-prefix": "off",
+          "@angular-eslint/template/no-negated-async": "off",
+          "@angular-eslint/no-conflicting-lifecycle": "off",
+          "@angular-eslint/no-output-native": "off"
+        }
+      },
+      {
+        "files": [
+          "*.html"
+        ],
+        "extends": [
+          "plugin:@angular-eslint/template/recommended"
+        ],
+        "rules": {}
+      }
+    ]
+  }

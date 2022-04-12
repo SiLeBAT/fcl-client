@@ -298,7 +298,7 @@ export class DataService {
         if (
             !this.cachedState ||
             this.cachedState.fclElements !== state.fclElements
-         ) {
+        ) {
             // new data model was loaded
             this.updateCache(state, { updateAll: true });
         } else if (

@@ -390,8 +390,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
             this.treeRows =
                 missingParents.length > 0 ?
-                this.filteredRows.concat(missingParents) :
-                this.filteredRows;
+                    this.filteredRows.concat(missingParents) :
+                    this.filteredRows;
         }
     }
 
@@ -726,13 +726,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         const filterMap: FilterMap = {
             visibilityFilter: (
                 !this.processedInput__ || this.processedInput__.visibilityFilter !== this.inputData.visibilityFilter ?
-                createVisibilityRowFilter(this.inputData.visibilityFilter) :
-                this.filterMap_.visibilityFilter
+                    createVisibilityRowFilter(this.inputData.visibilityFilter) :
+                    this.filterMap_.visibilityFilter
             ),
             columnFilter: (
                 !this.processedInput__ || this.processedInput__.columnFilters !== this.inputData.columnFilters ?
-                createOneTermForEachColumnRowFilter(this.inputData.columnFilters) :
-                this.filterMap_.columnFilter
+                    createOneTermForEachColumnRowFilter(this.inputData.columnFilters) :
+                    this.filterMap_.columnFilter
             )
         };
 
@@ -751,7 +751,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 this.filteredRows_.length > 0 &&
                 this.table.bodyComponent !== undefined &&
                 this.table.bodyComponent.offsetY > 0
-             ) {
+            ) {
                 // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
                 // 'No data available'
                 this.table.bodyComponent.offsetY = 0;
@@ -780,16 +780,16 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         const dataColumn = dataColumns.find(c => c.id === prop);
         const ngxColumn = (
             !dataColumn ?
-            undefined :
-            ({
-                name: dataColumn.name,
-                prop: dataColumn.id,
-                resizeable: true,
-                draggable: true,
-                headerTemplate: this.dataColTpl,
-                cellClass: this.getCellClass,
-                cellTemplate: this.dataRowTpl
-            })
+                undefined :
+                ({
+                    name: dataColumn.name,
+                    prop: dataColumn.id,
+                    resizeable: true,
+                    draggable: true,
+                    headerTemplate: this.dataColTpl,
+                    cellClass: this.getCellClass,
+                    cellTemplate: this.dataRowTpl
+                })
         );
         return ngxColumn;
     }

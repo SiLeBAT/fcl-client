@@ -243,7 +243,7 @@ function addTooltipToStatRuleListItem(ruleListItem: RuleListItem): void {
     } else if (ruleListItem.conflictCount > 0) {
         ruleListItem.effElementsCountTooltip =
             `For ${ruleListItem.conflictCount}/${ruleListItem.effElementsCount} stations the shape is not visible\n` +
-            `due to another rule above this one.`;
+            'due to another rule above this one.';
     } else {
         ruleListItem.effElementsCountTooltip = `This highlighting rule applies to ${ruleListItem.effElementsCount} stations.`;
     }

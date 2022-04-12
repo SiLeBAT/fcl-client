@@ -21,7 +21,7 @@ class ColumnAssigner {
     assignToColumns(
         layers: StationData[][],
         stationToPositionMap: Map<StationData, Position>
-        ): StationData[][] {
+    ): StationData[][] {
 
         this.stationToLayerIndexMap = ColumnAssigner.getStationToLayerIndexMap(layers);
         this.stations = [].concat(...layers);
@@ -63,7 +63,7 @@ class ColumnAssigner {
         if (this.stations.length > 0) {
             result[0].push(this.stations[0]);
             let c = 0;
-            // tslint:disable-next-line:one-variable-per-declaration
+            // eslint-disable-next-line one-var
             for (let i = 1, n = this.stations.length; i < n; i++) {
                 if (this.columnSwitch[i - 1]) {
                     c++;
@@ -86,7 +86,7 @@ class ColumnAssigner {
 export function assignToColumns(
     layers: StationData[][],
     stationToPositionMap: Map<StationData, Position>
-    ): StationData[][] {
+): StationData[][] {
 
     const columnAssigner = new ColumnAssigner();
     return columnAssigner.assignToColumns(layers, stationToPositionMap);

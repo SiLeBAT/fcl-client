@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-row-cell-view',
-    template: `{{ value }}`,
+    template: '{{ value }}',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RowCellViewComponent {

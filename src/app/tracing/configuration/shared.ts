@@ -19,7 +19,7 @@ export function extractPropToValuesMap(tableRows: TableRow[], tableColumns: Tabl
                 .map(r => r[column.id] as (string | number | boolean))
                 .filter(v => v !== undefined && v !== null)
                 .map(v => typeof v === 'string' ? v : '' + v)
-            ).sort();
+        ).sort();
         propToValuesMap[column.id] = values;
     }
 

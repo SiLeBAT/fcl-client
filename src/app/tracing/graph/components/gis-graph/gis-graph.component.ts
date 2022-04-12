@@ -74,7 +74,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             .subscribe(
                 graphState => this.applyState(graphState),
                 err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
-        );
+            );
 
         this.focusElementSubscription = this.actions$
             .pipe(ofType<FocusGraphElementSSA>(TracingActionTypes.FocusGraphElementSSA))
@@ -82,7 +82,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             .subscribe(
                 action => this.graphViewComponent.focusElement(action.payload.elementId),
                 err => this.alertService.error(`focusElement subscription failed: ${err}`)
-        );
+            );
     }
 
     ngOnDestroy() {
@@ -166,11 +166,11 @@ export class GisGraphComponent implements OnInit, OnDestroy {
             selectedElements: this.sharedGraphData.selectedElements,
             ghostData:
                 this.sharedGraphData.ghostElements == null ?
-                null :
-                ({
-                    ...this.sharedGraphData.ghostElements,
-                    posMap: posData.ghostPositions
-                }),
+                    null :
+                    ({
+                        ...this.sharedGraphData.ghostElements,
+                        posMap: posData.ghostPositions
+                    }),
             hoverEdges: this.sharedGraphData.hoverEdges
         };
     }

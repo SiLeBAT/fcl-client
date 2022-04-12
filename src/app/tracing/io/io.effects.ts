@@ -30,9 +30,9 @@ export class IOEffects {
                 return from(this.ioService.getFclData(fileList[0])).pipe(
                     map((data: FclData) => new tracingStateActions.LoadFclDataSuccess({ fclData: data })),
                     catchError((error) => {
-                        let errorMsg = `Data cannot be uploaded.`;
+                        let errorMsg = 'Data cannot be uploaded.';
                         if (error instanceof InputEncodingError) {
-                            errorMsg += ` Please ensure to upload only data encoded in UTF-8 format.`;
+                            errorMsg += ' Please ensure to upload only data encoded in UTF-8 format.';
                         } else if (error instanceof InputFormatError) {
                             errorMsg += ` Please select a .json file with the correct format!${error.message ? ' ' + error.message + '' : ''}`;
                         } else if (error instanceof InputDataError) {
@@ -59,9 +59,9 @@ export class IOEffects {
                 return from(this.ioService.getShapeFileData(fileList[0])).pipe(
                     map((data: ShapeFileData) => new tracingStateActions.LoadShapeFileSuccessSOA({ shapeFileData: data })),
                     catchError((error) => {
-                        let errorMsg = `Data cannot be loaded.`;
+                        let errorMsg = 'Data cannot be loaded.';
                         if (error instanceof InputEncodingError) {
-                            errorMsg += ` Please ensure to load only data encoded in UTF-8.`;
+                            errorMsg += ' Please ensure to load only data encoded in UTF-8.';
                         } else if (error instanceof InputFormatError) {
                             errorMsg += ` ${ error.message ? error.message : 'Invalid .geojson format.'}`;
                         } else if (error instanceof InputDataError) {

@@ -64,12 +64,12 @@ describe('DataImporterV1', () => {
                 extData.tracing = {
                     version: VERSION,
                     nodes: allStatIds.map(statId => ({
-                            id: statId,
-                            weight: 0,
-                            killContamination: false,
-                            crossContamination: false,
-                            observed: false
-                        })).slice(0, allStatIds.length - 1),
+                        id: statId,
+                        weight: 0,
+                        killContamination: false,
+                        crossContamination: false,
+                        observed: false
+                    })).slice(0, allStatIds.length - 1),
                     deliveries: fclData.fclElements.deliveries.map(d => ({
                         id: d.id,
                         weight: 0,

@@ -31,8 +31,8 @@ export class GraphEditorContainerComponent extends GuardedUnloadDirective implem
 
     ngOnInit() {
         this.store.pipe(
-          select(TracingSelectors.getVisioReport),
-          takeWhile(() => this.componentActive)
+            select(TracingSelectors.getVisioReport),
+            takeWhile(() => this.componentActive)
         ).subscribe(
             (visioReport: VisioReport) => {
                 this.graph = visioReport ? this.converter.createGraph(visioReport) : null;

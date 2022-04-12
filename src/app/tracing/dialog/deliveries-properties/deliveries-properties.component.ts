@@ -191,7 +191,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
             this.filteredRows.length > 0 &&
             this.table.bodyComponent !== undefined &&
             this.table.bodyComponent.offsetY > 0
-         ) {
+        ) {
             // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
             // 'No data available'
             this.table.bodyComponent.offsetY = 0;
@@ -243,8 +243,8 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
 
                 column.filteredOptions = (
                     filteredOptions.length > this.MAX_COUNT_SORT_OPTIONS ?
-                    [] :
-                    filteredOptions
+                        [] :
+                        filteredOptions
                 );
             }
         });
@@ -254,8 +254,8 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         if (values.length > 0) {
             const map: { [key: string]: T } = (
                 typeof values[0] === 'string' ?
-                Utils.createObjectFromArray(values, (x) => (x as string).toLocaleLowerCase()) :
-                Utils.createObjectFromArray(values, (x) => x.toString())
+                    Utils.createObjectFromArray(values, (x) => (x as string).toLocaleLowerCase()) :
+                    Utils.createObjectFromArray(values, (x) => x.toString())
             );
             values = Object.keys(map).map(x => map[x]);
             if (comparator) {
@@ -266,7 +266,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
             return (
                 (typeof values[0] === 'string') ?
                 values as string[] :
-                values.map(x => x.toString())
+                    values.map(x => x.toString())
             );
         } else {
             return [];

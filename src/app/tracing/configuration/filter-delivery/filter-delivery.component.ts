@@ -153,7 +153,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
                 newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
                 newDSData.delSel !== cachedDSData.delSel
-                ) {
+            ) {
                 dataTable = {
                     ...this.tableService.getDeliveryData(state.dataServiceInputState, true),
                     columns: this.cachedData.dataTable.columns

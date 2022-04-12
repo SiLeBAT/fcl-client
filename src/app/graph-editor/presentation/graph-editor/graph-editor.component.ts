@@ -67,7 +67,7 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
             // Main
             const editor = new Editor(false, themes, graphModel);
 
-            // tslint:disable-next-line
+            // eslint-disable-next-line
             this.editorUi = new EditorUi(editor, that.editorContainer.nativeElement);
             if (graphModel) {
                 graphModel.endUpdate();

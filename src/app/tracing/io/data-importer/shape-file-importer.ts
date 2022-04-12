@@ -5,8 +5,8 @@ import { InputDataError, InputFormatError } from '../io-errors';
 import { getJsonFromFile } from '../io-utils';
 const geojsonHintObject = require('../../../../assets/geojsonhint/object');
 
-const ERROR_OLD_STYLE_CRS = `old-style crs member is not recommended`;
-const UNSUPPORTED_PROJECTION_TYPE_MSG = `Unsupported projection type. Please use geojson with pojection type 'EPSG:4326' or 'EPSG:3857' instead.`;
+const ERROR_OLD_STYLE_CRS = 'old-style crs member is not recommended';
+const UNSUPPORTED_PROJECTION_TYPE_MSG = 'Unsupported projection type. Please use geojson with pojection type \'EPSG:4326\' or \'EPSG:3857\' instead.';
 
 interface ValidationResult {
     isValid: boolean;

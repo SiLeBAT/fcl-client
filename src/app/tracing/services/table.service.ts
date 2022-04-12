@@ -116,16 +116,16 @@ export class TableService {
     private getDeliveryRows(data: DataServiceData, addStationProps: boolean, deliveryIds?: string[]): TableRow[] {
         return (
             deliveryIds ?
-            data.getDelById(deliveryIds) :
-            data.deliveries
+                data.getDelById(deliveryIds) :
+                data.deliveries
         ).map(delivery => {
             const row: TableRow = {
                 id: delivery.id,
                 highlightingInfo: {
                     color: (
                         delivery.highlightingInfo.color.length > 0 ?
-                        delivery.highlightingInfo.color :
-                        [[0, 0, 0]]
+                            delivery.highlightingInfo.color :
+                            [[0, 0, 0]]
                     ),
                     shape: NodeShapeType.SQUARE
                 },
