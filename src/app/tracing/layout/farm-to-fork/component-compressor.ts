@@ -191,8 +191,8 @@ export function decompressSimpleSources(graph: Graph, vertexDistance: number) {
 export function decompressSimpleTargets(graph: Graph, vertexDistance: number) {
     for (const layer of graph.layers) {
         for (const vertex of layer.filter(
-      v => v instanceof CompressedVertexGroup
-    )) {
+            v => v instanceof CompressedVertexGroup
+        )) {
             const vertexGroup: CompressedVertexGroup = vertex as CompressedVertexGroup;
             if (vertexGroup.compressionType === CompressionType.TARGET_COMPRESSION) {
                 const source: Vertex = vertexGroup.inEdges[0].source;

@@ -140,8 +140,8 @@ export class Utils {
     static createReverseMap<X, Y>(map: Map<X, Y> | ImmutableMap<X, Y>): Map<Y, X> {
         return (
             map['asImmutable'] ?
-            Utils.getReverseMapOfImmutableMap(map as ImmutableMap<X, Y>) :
-            Utils.getReverseMapOfMap(map as Map<X, Y>)
+                Utils.getReverseMapOfImmutableMap(map as ImmutableMap<X, Y>) :
+                Utils.getReverseMapOfMap(map as Map<X, Y>)
         );
     }
 
@@ -182,7 +182,7 @@ export class Utils {
     static setProperty(rawData: any, propPath: string, value: any) {
         let container: any = rawData;
         const propNames: string[] = propPath.split('.');
-        // tslint:disable-next-line:one-variable-per-declaration
+        // eslint-disable-next-line one-var
         for (let i = 0, iMax = propNames.length - 1; i < iMax; i++) {
             if (!container.hasOwnProperty(propNames[i])) {
                 container[propNames[i]] = {};

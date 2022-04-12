@@ -60,8 +60,8 @@ export function createOpenLayerMap(mapConfig: MapConfig, target: HTMLElement): o
 function createMapLayer(mapConfig: MapConfig): BaseLayer {
     const baseLayer = (
         mapConfig.mapType !== MapType.SHAPE_FILE ?
-        createTileLayer(mapConfig) :
-        createShapeFileLayer(mapConfig)
+            createTileLayer(mapConfig) :
+            createShapeFileLayer(mapConfig)
     );
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
     return baseLayer;
@@ -85,7 +85,7 @@ export function isProjectionSupported(shapeFileData: ShapeFileData): boolean {
 function getProjectionCode(shapeFileData: ShapeFileData): string {
     const projection = (new GeoJSON()).readProjection(shapeFileData);
     if (projection === null) {
-        throw new InputDataError(`Unsupported projection type. Please use geojson with pojection type 'EPSG:4326' or 'EPSG:3857' instead.`);
+        throw new InputDataError('Unsupported projection type. Please use geojson with pojection type \'EPSG:4326\' or \'EPSG:3857\' instead.');
     }
     return projection.getCode();
 }
@@ -95,8 +95,8 @@ export function createShapeFileLayer(mapConfig: MapConfig): BaseLayer {
     const vectorSource = new VectorSource({
         features: (new GeoJSON()).readFeatures(mapConfig.shapeFileData, (
             code !== undefined ?
-            { dataProjection: code, featureProjection: 'EPSG:3857' } :
-            { featureProjection: 'EPSG:3857' }
+                { dataProjection: code, featureProjection: 'EPSG:3857' } :
+                { featureProjection: 'EPSG:3857' }
         ))
     });
 

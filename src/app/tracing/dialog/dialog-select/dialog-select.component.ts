@@ -19,7 +19,7 @@ export class DialogSelectComponent {
         this.options = JSON.parse(JSON.stringify(data.options));
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     close() {
         this.dialogRef.close(this.options.filter(o => o.selected).map(o => o.value));
     }

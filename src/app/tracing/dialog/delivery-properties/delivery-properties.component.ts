@@ -43,13 +43,13 @@ export class DeliveryPropertiesComponent implements OnInit {
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(this.data.delivery).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
-        .forEach(key => {
-            const value = this.data.delivery[key];
-            properties[key] = {
-                label: Constants.PROPERTIES.get(key).name,
-                value: value != null ? value + '' : ''
-            };
-        });
+            .forEach(key => {
+                const value = this.data.delivery[key];
+                properties[key] = {
+                    label: Constants.PROPERTIES.get(key).name,
+                    value: value != null ? value + '' : ''
+                };
+            });
 
         this.data.delivery.properties.forEach(prop => {
             properties[prop.name] = {

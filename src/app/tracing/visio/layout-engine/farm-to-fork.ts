@@ -177,14 +177,14 @@ export function setFarmToForkPositions(data: FclElements, statIdToPosMap: Record
         graph.insertEdge(
             vertices.get(d.source),
             vertices.get(d.target)
-          );
+        );
     });
 
     const availableSpace = {
         width: undefined,
         height: undefined
     };
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
         graph,
         typeRanker,

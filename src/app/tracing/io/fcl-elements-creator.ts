@@ -111,8 +111,8 @@ function createDeliveryRelationTable(fclData: FclData): DataTable {
         data: [].concat(...(fclData.fclElements.stations.map(
             station => station.connections.map(
                 con => [
-                        { id: columnSourceId, value: con.source },
-                        { id: columnTargetId, value: con.target }
+                    { id: columnSourceId, value: con.source },
+                    { id: columnTargetId, value: con.target }
                 ]
             )
         )))

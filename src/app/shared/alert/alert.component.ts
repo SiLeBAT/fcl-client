@@ -16,9 +16,9 @@ export class AlertComponent implements OnInit {
         this.alertService.notification$.subscribe(notification => {
             this.showToaster(notification);
         },
-            (error => {
-                throw new Error(`error showing toaster: ${error}`);
-            }));
+        (error => {
+            throw new Error(`error showing toaster: ${error}`);
+        }));
     }
 
     showToaster(notification: INotification) {

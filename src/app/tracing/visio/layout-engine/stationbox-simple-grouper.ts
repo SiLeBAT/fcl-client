@@ -89,7 +89,7 @@ function aggregateHorizontally(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
         if (
             visGroups[i].logicalGroupIndex === visGroups[i + 1].logicalGroupIndex &&
             visGroups[i].position.y === visGroups[i + 1].position.y
-           ) {
+        ) {
 
             visGroups[i] = mergeGroups([ visGroups[i], visGroups[i + 1] ]);
             visGroups.splice(i + 1, 1);
@@ -111,7 +111,7 @@ function aggregateVertically(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
             if (
                 mergeBox1.logicalGroupIndex === mergeBox2.logicalGroupIndex &&
                 !visGroups.some((testBox) => !doesMergeRespectBox(mergeBox1, mergeBox2, testBox))
-               ) {
+            ) {
                 // mergeGroups
                 visGroups[i1] = mergeGroups([mergeBox1, mergeBox2]);
                 visGroups.splice(i2, 1);

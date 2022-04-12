@@ -8,8 +8,8 @@ function sortVerticesAccordingToResult(graph: Graph, lpResult: LPResult) {
     for (const layer of graph.layers) {
         layer.sort((a, b) => (
             a.indexInLayer < b.indexInLayer ?
-            (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
-            (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)
+                (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
+                (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)
         ));
 
         for (let i: number = layer.length - 1; i >= 0; i--) { layer[i].indexInLayer = i; }

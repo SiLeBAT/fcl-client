@@ -14,7 +14,7 @@ describe('ResetComponent', () => {
     let fixture: ComponentFixture<ResetComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 ResetComponent
@@ -82,7 +82,6 @@ describe('ResetComponent', () => {
         expect(component.resetForm.valid).toBeTruthy();
 
         let passwordRequest: NewPasswordRequestDTO;
-        // tslint:disable-next-line: rxjs-no-ignored-error
         component.reset.subscribe((value) => passwordRequest = value);
 
         component.onReset();

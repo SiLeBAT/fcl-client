@@ -196,8 +196,8 @@ export class TracingService {
             }
         } else {
             return station.connections
-        .filter(c => c.target === delivery.id)
-        .map(c => c.source);
+                .filter(c => c.target === delivery.id)
+                .map(c => c.source);
         }
     }
 

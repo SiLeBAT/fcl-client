@@ -42,15 +42,15 @@ export class IOService {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
                 getJsonFromFile(file)
-                .then(jsonData => {
-                    this.preprocessData(jsonData)
-                    .then(data => {
-                        data.source.name = file.name;
-                        resolve(data);
+                    .then(jsonData => {
+                        this.preprocessData(jsonData)
+                            .then(data => {
+                                data.source.name = file.name;
+                                resolve(data);
+                            })
+                            .catch(e => reject(e));
                     })
                     .catch(e => reject(e));
-                })
-                .catch(e => reject(e));
             });
         } else {
             throw new Error('No data source specified.');
@@ -76,8 +76,8 @@ export class IOService {
                 isSupported => {
                     const exportData: any = (
                         isSupported ?
-                        JSON.parse(JSON.stringify(data.source.data)) :
-                        createEmptyJson()
+                            JSON.parse(JSON.stringify(data.source.data)) :
+                            createEmptyJson()
                     );
                     DataExporter.exportData(data, exportData);
                     return exportData;

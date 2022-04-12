@@ -66,7 +66,7 @@ function getTopDownPositions(
     data: FclElements,
     statIdToPosMap: Record<StationId, Position>,
     orientation: FoodChainOrientation
-    ): Map<StationData, Position> {
+): Map<StationData, Position> {
 
     const positionMapping = getPositionMapping(orientation);
     const result: Map<StationData, Position> = new Map();

@@ -22,34 +22,6 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
          Once the test Administrator has unlocked your account, you can log in. You will receive a notification after activation. 
       </p>
     </div>
-    <div
-      class="fcl-card-action fcl-card-action-container"
-    >
-      <div
-        class="form-group fcl-recover-button"
-      >
-        <button
-          class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
-          color="primary"
-          mat-raised-button=""
-          tabindex="0"
-          type="submit"
-        >
-          <span
-            class="mat-button-wrapper"
-          >
-             Continue to login 
-          </span>
-          <span
-            class="mat-button-ripple mat-ripple"
-            matripple=""
-          />
-          <span
-            class="mat-button-focus-overlay"
-          />
-        </button>
-      </div>
-    </div>
   </div>
 </fcl-activate>
 `;

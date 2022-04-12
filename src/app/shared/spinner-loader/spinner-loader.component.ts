@@ -23,9 +23,9 @@ export class SpinnerLoaderComponent implements OnInit, OnDestroy {
         this.subscription = this.spinnerService.loaderState.subscribe((state: LoaderState) => {
             this.show = state.show;
         },
-            (error => {
-                throw new Error(`error loading spinner: ${error}`);
-            }));
+        (error => {
+            throw new Error(`error loading spinner: ${error}`);
+        }));
     }
 
     ngOnDestroy() {

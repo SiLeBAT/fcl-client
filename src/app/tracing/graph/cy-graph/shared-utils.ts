@@ -2,7 +2,7 @@ import { PositionMap } from '@app/tracing/data.model';
 import { BoundaryRect, createRect, doRectsIntersect, getRectIntersection, isRectWithinRect } from '@app/tracing/util/geometry-utils';
 
 export function isPosMapEmpty(posMap: PositionMap): boolean {
-    // tslint:disable-next-line:forin
+    // eslint-disable-next-line guard-for-in
     for (const x in posMap) {
         return false;
     }

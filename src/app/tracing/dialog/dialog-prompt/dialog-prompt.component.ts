@@ -13,7 +13,7 @@ export interface DialogPromptData {
 })
 export class DialogPromptComponent {
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     value: string;
 
     constructor(public dialogRef: MatDialogRef<DialogPromptComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogPromptData) {

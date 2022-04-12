@@ -7,9 +7,9 @@ export interface LayeredComponent {
 }
 
 function traverseComponent(
-  vertex: Vertex,
-  marked: boolean[],
-  members: Vertex[]
+    vertex: Vertex,
+    marked: boolean[],
+    members: Vertex[]
 ) {
 
     if (!marked[vertex.index]) {
@@ -25,7 +25,7 @@ function traverseComponent(
 }
 
 export function splitUnconnectedComponents(
-  layers: Vertex[][]
+    layers: Vertex[][]
 ): LayeredComponent[] {
 
     const result: LayeredComponent[] = [];
@@ -96,19 +96,19 @@ function getComponentSize(layeredComponent: LayeredComponent): number {
 }
 
 export function mergeUnconnectedComponents(
-  layeredComponents: LayeredComponent[],
-  unscaledComponentDistance: number
+    layeredComponents: LayeredComponent[],
+    unscaledComponentDistance: number
 ): Vertex[][] {
 
     const componentDistance = unscaledComponentDistance * getMinComponentScale(layeredComponents);
     const result: Vertex[][] = [];
     const nLayers: number = Math.max(
-      ...layeredComponents.map(
-        layeredComponent =>
-          layeredComponent.layerIndices[
-            layeredComponent.layerIndices.length - 1
-          ]
-      )
+        ...layeredComponents.map(
+            layeredComponent =>
+                layeredComponent.layerIndices[
+                    layeredComponent.layerIndices.length - 1
+                ]
+        )
     ) + 1;
 
     for (let iLayer: number = nLayers - 1; iLayer >= 0; iLayer--) {

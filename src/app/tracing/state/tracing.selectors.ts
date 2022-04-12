@@ -261,8 +261,8 @@ export const selectFilterStationTabActivityState = createSelector(
             state.configurationTabIndices.activeFilterTabId === StationsTabId &&
             state.configurationTabIndices.activeConfigurationTabId === FilterTabId
         ) ?
-        (state.animatingTabCount === 0 && !state.isConfSideBarOpening ? ActivityState.OPEN : ActivityState.OPENING) :
-        ActivityState.INACTIVE
+            (state.animatingTabCount === 0 && !state.isConfSideBarOpening ? ActivityState.OPEN : ActivityState.OPENING) :
+            ActivityState.INACTIVE
     )
 );
 
@@ -274,8 +274,8 @@ export const selectFilterDeliveryTabActivityState = createSelector(
             state.configurationTabIndices.activeFilterTabId === DeliveriesTabId &&
             state.configurationTabIndices.activeConfigurationTabId === FilterTabId
         ) ?
-        (state.animatingTabCount === 0 && !state.isConfSideBarOpening ? ActivityState.OPEN : ActivityState.OPENING) :
-        ActivityState.INACTIVE
+            (state.animatingTabCount === 0 && !state.isConfSideBarOpening ? ActivityState.OPEN : ActivityState.OPENING) :
+            ActivityState.INACTIVE
     )
 );
 

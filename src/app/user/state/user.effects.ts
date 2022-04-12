@@ -22,30 +22,29 @@ export class UserEffects {
     ) { }
 
     loginUser$ = createEffect(() => this.actions$.pipe(
-      ofType(userActions.UserActionTypes.LoginUserSSA),
-      tap(item => this.spinnerService.show()),
-      exhaustMap((action: userActions.LoginUserSSA) => this.userService.login(action.payload).pipe(
-        map((loginResponse: TokenizedUserDTO) => {
-            this.spinnerService.hide();
-            if (loginResponse && loginResponse.token) {
+        ofType(userActions.UserActionTypes.LoginUserSSA),
+        tap(item => this.spinnerService.show()),
+        exhaustMap((action: userActions.LoginUserSSA) => this.userService.login(action.payload).pipe(
+            map((loginResponse: TokenizedUserDTO) => {
                 this.spinnerService.hide();
-                this.userService.setCurrentUser(loginResponse);
-                this.router.navigate(['/dashboard']).catch((err) => {
-                    throw new Error(`Unable to navigate: ${err}`);
-                });
-                return new userActions.UpdateUserSOA({ currentUser: loginResponse });
-            } else {
-                this.alertService.error('Login unsuccessful');
-                return new userActions.UpdateUserSOA({ currentUser: null });
-            }
+                if (loginResponse && loginResponse.token) {
+                    this.spinnerService.hide();
+                    this.userService.setCurrentUser(loginResponse);
+                    this.router.navigate(['/dashboard']).catch((err) => {
+                        throw new Error(`Unable to navigate: ${err}`);
+                    });
+                    return new userActions.UpdateUserSOA({ currentUser: loginResponse });
+                } else {
+                    this.alertService.error('Login unsuccessful');
+                    return new userActions.UpdateUserSOA({ currentUser: null });
+                }
 
-        }),
-        catchError(() => {
-            this.spinnerService.hide();
-            // tslint:disable-next-line:deprecation
-            return of(new userActions.UpdateUserSOA({ currentUser: null }));
-        })
-      ))
+            }),
+            catchError(() => {
+                this.spinnerService.hide();
+                return of(new userActions.UpdateUserSOA({ currentUser: null }));
+            })
+        ))
     ));
 
     logoutUser$ = createEffect(() => this.actions$.pipe(

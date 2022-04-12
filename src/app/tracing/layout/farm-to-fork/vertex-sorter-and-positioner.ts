@@ -51,9 +51,9 @@ function printPositions(layers: Vertex[][]): void {
     const positions = [].concat(
         ...layers.map(layer => layer.filter(v => !v.isVirtual).map(v => 'p' + v.index + '_' + v.name + ': ' + v.y))
     );
-    // tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.log('uncompressed positions:');
-    // tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.log(positions.join('\n'));
 }
 
@@ -65,7 +65,7 @@ function sortVertices(graph: Graph, timeLimit: number) {
     const maxLayerSize: number = Math.max(...graph.layers.map(layer => layer.length));
     const graphSize: number = _.sum(graph.layers.map(layer => layer.length));
     const splitCount: number = _.sum(graph.layers.map(layer => _.sum(layer.map(
-          vertex =>
+        vertex =>
             (vertex.inEdges.length >= 2 ? 1 : 0) +
             (vertex.outEdges.length >= 2 ? 1 : 0)
     ))));

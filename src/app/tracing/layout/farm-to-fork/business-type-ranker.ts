@@ -10,15 +10,15 @@ export class BusinessTypeRanker {
     private sinkTypes: String[],
     private sourceTypes: String[],
     typeOrderings: String[][]
-  ) {
+    ) {
         this.init(sinkTypes, sourceTypes, typeOrderings);
     }
 
     private init(
-    sinkTypes: String[],
-    sourceTypes: String[],
-    typeOrderings: String[][]
-  ) {
+        sinkTypes: String[],
+        sourceTypes: String[],
+        typeOrderings: String[][]
+    ) {
     // register businessTypes
         for (const s of sinkTypes) { this.isSink[this.add(s)] = true; }
         for (const s of sourceTypes) { this.isSource[this.add(s)] = true; }
@@ -31,7 +31,7 @@ export class BusinessTypeRanker {
             if (this.isSink[i] != null) { this.isSink[i] = false; }
             if (this.isSource[i] != null) { this.isSource[i] = false; }
         }
-    // init rankMatrix
+        // init rankMatrix
         this.rankMatrix[typeCount - 1] = [];
         for (let i: number = typeCount - 1; i >= 0; i--) {
             this.rankMatrix[typeCount - 1][i] = null;
@@ -56,11 +56,11 @@ export class BusinessTypeRanker {
         for (const orderedChain of typeOrderings) {
             for (let i: number = orderedChain.length - 2; i > 0; i--) {
                 this.rankMatrix[this.indexMap.get(orderedChain[i])][
-          this.indexMap.get(orderedChain[i + 1])
-        ] = true;
+                    this.indexMap.get(orderedChain[i + 1])
+                ] = true;
             }
         }
-    // make rank matrix transitive
+        // make rank matrix transitive
         for (let i: number = 0; i < typeCount; i++) {
             for (let j: number = 0; j < typeCount; j++) {
                 if (i !== j) {
@@ -81,13 +81,13 @@ export class BusinessTypeRanker {
                 if (this.rankMatrix[typeB][typeA]) { return 1; }
                 return null;
             } else {
-        // type B is unknown
+                // type B is unknown
                 if (this.isSink[typeA]) { return -1; }
                 if (this.isSource[typeA]) { return 1; }
                 return null;
             }
         } else if (typeB != null) {
-      // typeA is unkown
+            // typeA is unkown
             if (this.isSink[typeB]) { return 1; }
             if (this.isSource[typeB]) { return -1; }
             return null;
@@ -97,11 +97,11 @@ export class BusinessTypeRanker {
 
     compareRankingByType(typeA: String, typeB: String): number {
         const codeA: number = this.indexMap.has(typeA)
-      ? this.indexMap.get(typeA)
-      : -1;
+            ? this.indexMap.get(typeA)
+            : -1;
         const codeB: number = this.indexMap.has(typeB)
-      ? this.indexMap.get(typeB)
-      : -1;
+            ? this.indexMap.get(typeB)
+            : -1;
         return this.compareRankingByCode(codeA, codeB);
     }
 

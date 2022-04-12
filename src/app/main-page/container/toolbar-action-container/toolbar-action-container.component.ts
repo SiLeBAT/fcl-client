@@ -57,12 +57,12 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         const graphSettings$: Observable<GraphSettings> = this.store
             .pipe(
                 select(TracingSelectors.getGraphSettings)
-        );
+            );
 
         const dataServiceInputState$: Observable<DataServiceInputState> = this.store
             .pipe(
                 select(TracingSelectors.selectDataServiceInputState)
-        );
+            );
 
         combineLatest([
             graphSettings$,

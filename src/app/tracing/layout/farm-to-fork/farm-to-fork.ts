@@ -14,7 +14,7 @@ export function FarmToForkLayout(options) {
 }
 
 FarmToForkLayout.prototype.run = function () {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     new FarmToForkLayoutClass(this).run();
 };
 

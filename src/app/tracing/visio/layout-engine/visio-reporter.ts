@@ -29,7 +29,7 @@ export class VisioReporter {
         canvas: any,
         roaSettings: ROASettings,
         stationGrouper: StationGrouper
-        ): VisioReport {
+    ): VisioReport {
 
         const stationGrid = assignToGrid(data, statIdToPosMap);
         const stationGroups = stationGrouper.groupStations([].concat(...stationGrid).filter(s => s !== null));

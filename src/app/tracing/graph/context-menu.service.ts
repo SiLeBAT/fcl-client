@@ -73,13 +73,13 @@ export class ContextMenuService {
 
         const nodes: CyNodeData[] =
             isContextElementSelected ? graphData.nodeData.filter(n => n.selected) :
-            context.nodeId ? [graphData.nodeData.find(n => n.id === context.nodeId)] :
-            [];
+                context.nodeId ? [graphData.nodeData.find(n => n.id === context.nodeId)] :
+                    [];
 
         const edges: CyEdgeData[] =
             isContextElementSelected ? graphData.edgeData.filter(e => e.selected) :
-            context.edgeId ? [graphData.edgeData.find(e => e.id === context.edgeId)] :
-            [];
+                context.edgeId ? [graphData.edgeData.find(e => e.id === context.edgeId)] :
+                    [];
 
         return {
             refNodeId: context.nodeId,
@@ -88,7 +88,7 @@ export class ContextMenuService {
                 graphData.idToNodeMap[context.nodeId].station.id,
             refDeliveryIds:
                 context.edgeId === undefined ? undefined :
-                graphData.edgeData.find(d => d.id === context.edgeId).deliveries.map(d => d.id),
+                    graphData.edgeData.find(d => d.id === context.edgeId).deliveries.map(d => d.id),
             nodeIds: nodes.map(n => n.id),
             edgeIds: edges.map(e => e.id),
             stationIds: nodes.map(n => n.station.id),

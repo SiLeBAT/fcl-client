@@ -10,7 +10,7 @@ import { NewsConfirmationResponseDTO } from '@app/user/models/user.model';
     selector: 'fcl-news-activate-container',
     templateUrl: './news-activate-container.component.html'
 })
-  export class NewsActivateContainerComponent implements OnInit {
+export class NewsActivateContainerComponent implements OnInit {
     tokenValid: boolean;
     appName: string = environment.appName;
     supportContact: string = environment.supportContact;
@@ -24,14 +24,14 @@ import { NewsConfirmationResponseDTO } from '@app/user/models/user.model';
         const token = this.activatedRoute.snapshot.params['id'];
 
         this.userService.confirmNewsletterSubscription(token)
-        .subscribe((newsConfirmationResponse: NewsConfirmationResponseDTO) => {
-            const message = 'Newsletter Subscription successful!';
-            this.alertService.success(message);
-            this.tokenValid = true;
-        }, () => {
-            this.alertService.error('Your Newsletter Subscription failed!');
-            this.tokenValid = false;
-        });
+            .subscribe((newsConfirmationResponse: NewsConfirmationResponseDTO) => {
+                const message = 'Newsletter Subscription successful!';
+                this.alertService.success(message);
+                this.tokenValid = true;
+            }, () => {
+                this.alertService.error('Your Newsletter Subscription failed!');
+                this.tokenValid = false;
+            });
     }
 
 }

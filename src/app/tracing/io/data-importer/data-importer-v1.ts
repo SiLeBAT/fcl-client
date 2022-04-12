@@ -583,7 +583,7 @@ export class DataImporterV1 implements IDataImporter {
                             ].indexOf(operationType) >= 0) ||
                             (operationType === OperationType.LESS && !value) ||
                             (operationType === OperationType.GREATER && value)) {
-                            // tslint:disable-next-line:max-line-length
+                            // eslint-disable-next-line max-len
                             throw Error(`Could not convert logical condition (propertyName: ${propertyName}, operationType: ${operationType}, value: ${value})`);
                         }
 

@@ -156,7 +156,7 @@ export class InformationProvider {
             delId => this.idToDeliveryMap.get(delId)
         ).filter(
             d =>
-            !d.invisible &&
+                !d.invisible &&
             !this.idToStationMap.get(d.source).invisible &&
             !this.idToStationMap.get(d.target).invisible
         );

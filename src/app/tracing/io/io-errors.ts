@@ -1,5 +1,5 @@
 export class InputEncodingError extends Error {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     constructor(...args: any[]) {
 
         // Calling parent constructor of base Error class.
@@ -16,7 +16,7 @@ export class InputEncodingError extends Error {
 }
 
 export class InputFormatError extends Error {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     constructor(...args: any[]) {
 
         // Calling parent constructor of base Error class.
@@ -34,7 +34,7 @@ export class InputFormatError extends Error {
 }
 
 export class InputDataError extends Error {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     constructor(...args: any[]) {
 
         // Calling parent constructor of base Error class.

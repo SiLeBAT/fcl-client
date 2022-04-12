@@ -10,7 +10,7 @@ export class Graph {
     }
 
     insertEdge(from: Vertex, to: Vertex) {
-        // tslint:disable-next-line
+        // eslint-disable-next-line
         const edge: Edge = new Edge(from, to, false);
         from.outEdges.push(edge);
         to.inEdges.push(edge);
@@ -134,8 +134,8 @@ export class VertexCounter {
 
         let index: number =
       position > this.lastPositionRequest && this.lastAboveIndex >= 0
-        ? this.lastAboveIndex
-        : 0;
+          ? this.lastAboveIndex
+          : 0;
         const n: number = this.positions.length;
         while (index < n && this.positions[index] <= position) {
             index++;

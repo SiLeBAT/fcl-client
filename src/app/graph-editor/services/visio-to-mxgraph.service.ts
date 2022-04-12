@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import {
-  VisioReport,
-  VisioGraph,
-  VisioBox,
-  VisioConnector,
-  Size,
-  VisioLabel,
-  BoxType,
-  VisioPort,
-  Position,
-  GraphLayer
+    VisioReport,
+    VisioGraph,
+    VisioBox,
+    VisioConnector,
+    Size,
+    VisioLabel,
+    BoxType,
+    VisioPort,
+    Position,
+    GraphLayer
 } from '../../tracing/visio/layout-engine/datatypes';
 import * as _ from 'lodash';
 
@@ -152,10 +152,10 @@ function getStyle(...styles): string {
 
 function regionStyle(forLegend = false) {
     return getStyle(
-      BoxStyles.FillColor(BoxStyles.RegionColor),
-      (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor)),
-      BoxStyles.Rounded,
-      BoxStyles.LineArcSize(1 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0))
+        BoxStyles.FillColor(BoxStyles.RegionColor),
+        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor)),
+        BoxStyles.Rounded,
+        BoxStyles.LineArcSize(1 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0))
     );
 }
 
@@ -166,101 +166,101 @@ function legendStyle() {
         BoxStyles.FillColor(BoxStyles.LegendColor),
         BoxStyles.StrokeColor(BoxStyles.LegendStrokeColor),
         BoxStyles.StrokeWidth(2)
-      );
+    );
 }
 
 function legendEntryStyle() {
     return getStyle(
         BoxStyles.StrokeOpacity(0),
         BoxStyles.FillOpacity(0)
-        );
+    );
 }
 
 function stationStyle(forLegend = false) {
     return getStyle(
-      BoxStyles.Rounded,
-      BoxStyles.LineArcSize(5 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
-      BoxStyles.FillColor(BoxStyles.StationColor),
-      (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        BoxStyles.Rounded,
+        BoxStyles.LineArcSize(5 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
+        BoxStyles.FillColor(BoxStyles.StationColor),
+        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
     );
 }
 
 function lotStyle(forLegend = false) {
     return getStyle(
-      BoxStyles.Rounded,
-      BoxStyles.LineArcSize(3 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
-      BoxStyles.FillColor(BoxStyles.LotColor),
-      (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        BoxStyles.Rounded,
+        BoxStyles.LineArcSize(3 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
+        BoxStyles.FillColor(BoxStyles.LotColor),
+        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
     );
 }
 
 function sampleNegativeStyle(forLegend = false) {
     return getStyle(
-      BoxStyles.Rounded,
-      BoxStyles.FillColor(BoxStyles.SampleNegativeColor),
-      (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        BoxStyles.Rounded,
+        BoxStyles.FillColor(BoxStyles.SampleNegativeColor),
+        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
     );
 }
 
 function sampleConfirmedStyle(forLegend = false) {
     return getStyle(
-      BoxStyles.Rounded,
-      BoxStyles.FillColor(BoxStyles.SampleConfirmedColor),
-      (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        BoxStyles.Rounded,
+        BoxStyles.FillColor(BoxStyles.SampleConfirmedColor),
+        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
     );
 }
 
 function sampleProbableStyle(forLegend = false) {
     return getStyle(
-      BoxStyles.Rounded,
-      BoxStyles.FillColor(BoxStyles.SampleProbableColor),
-      (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        BoxStyles.Rounded,
+        BoxStyles.FillColor(BoxStyles.SampleProbableColor),
+        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
     );
 }
 
 function labelStyle() {
     return getStyle(
-      BoxStyles.StrokeOpacity(0),
-      BoxStyles.FillOpacity(0),
-      BoxStyles.FontColor(BoxStyles.LabelColor),
-      BoxStyles.FontFamily(FontFamily.VERDANA),
-      BoxStyles.FontSize(8)
+        BoxStyles.StrokeOpacity(0),
+        BoxStyles.FillOpacity(0),
+        BoxStyles.FontColor(BoxStyles.LabelColor),
+        BoxStyles.FontFamily(FontFamily.VERDANA),
+        BoxStyles.FontSize(8)
     );
 }
 
 function legendTitleStyle() {
     return getStyle(
-      BoxStyles.StrokeOpacity(0),
-      BoxStyles.FillOpacity(0),
-      BoxStyles.FontColor(BoxStyles.LabelColor),
-      BoxStyles.FontFamily(FontFamily.VERDANA),
-      BoxStyles.FontSize(10),
-      BoxStyles.FontStyle(true, false, false),
-      BoxStyles.HAlign(HorizontalAlignment.LEFT)
+        BoxStyles.StrokeOpacity(0),
+        BoxStyles.FillOpacity(0),
+        BoxStyles.FontColor(BoxStyles.LabelColor),
+        BoxStyles.FontFamily(FontFamily.VERDANA),
+        BoxStyles.FontSize(10),
+        BoxStyles.FontStyle(true, false, false),
+        BoxStyles.HAlign(HorizontalAlignment.LEFT)
     );
 }
 
 function legendEntryLabelStyle() {
     return getStyle(
-      BoxStyles.StrokeOpacity(0),
-      BoxStyles.FillOpacity(0),
-      BoxStyles.FontColor(BoxStyles.LabelColor),
-      BoxStyles.FontFamily(FontFamily.VERDANA),
-      BoxStyles.FontSize(8),
-      BoxStyles.HAlign(HorizontalAlignment.LEFT),
-      BoxStyles.VAlign(VerticalAlignment.MIDDLE)
+        BoxStyles.StrokeOpacity(0),
+        BoxStyles.FillOpacity(0),
+        BoxStyles.FontColor(BoxStyles.LabelColor),
+        BoxStyles.FontFamily(FontFamily.VERDANA),
+        BoxStyles.FontSize(8),
+        BoxStyles.HAlign(HorizontalAlignment.LEFT),
+        BoxStyles.VAlign(VerticalAlignment.MIDDLE)
     );
 }
 
 function connectorStyle(exitX: number = 0.5, exitY: number = 1, entryX: number = 0.5, entryY: number = 0) {
     return getStyle(
-      BoxStyles.ExitX(exitX),
-      BoxStyles.ExitY(exitY),
-      BoxStyles.EntryX(entryX),
-      BoxStyles.EntryY(entryY),
-      BoxStyles.EndArrow(mxConstants.ARROW_OPEN),
-      BoxStyles.FillColor(BoxStyles.LabelColor),
-      BoxStyles.ConnectorColor(ElementColor.CONNECTOR_COLOR)
+        BoxStyles.ExitX(exitX),
+        BoxStyles.ExitY(exitY),
+        BoxStyles.EntryX(entryX),
+        BoxStyles.EntryY(entryY),
+        BoxStyles.EndArrow(mxConstants.ARROW_OPEN),
+        BoxStyles.FillColor(BoxStyles.LabelColor),
+        BoxStyles.ConnectorColor(ElementColor.CONNECTOR_COLOR)
     );
 }
 
@@ -407,7 +407,7 @@ export class VisioToMxGraphService {
             layer.height,
             headerBoxStyle,
             false
-          );
+        );
 
         const headerLabelStyle = headerTextStyle();
         const labelCell: mxCell = this.graph.insertVertex(
@@ -420,7 +420,7 @@ export class VisioToMxGraphService {
             0,
             headerLabelStyle,
             false
-          );
+        );
 
         return boxCell;
     }
@@ -439,7 +439,7 @@ export class VisioToMxGraphService {
 
         const legendEntryInfos =
             [BoxType.StationGroup, BoxType.Station, BoxType.Lot, BoxType.SampleNegative, BoxType.SampleConfirmed, BoxType.SampleProbable]
-            .filter(t => legendEntries[t]).map(t => BoxTypeToLegendEntryInfo[t]);
+                .filter(t => legendEntries[t]).map(t => BoxTypeToLegendEntryInfo[t]);
         if (showDeliveries) {
             legendEntryInfos.push({
                 label: 'Deliveries',
@@ -500,7 +500,7 @@ export class VisioToMxGraphService {
                 LEGEND_ENTRY_SIZE.height,
                 legendEntry.style,
                 false
-              );
+            );
             const labelCell: mxCell = this.graph.insertVertex(
                 entryCell,
                 null,
@@ -528,7 +528,7 @@ export class VisioToMxGraphService {
                 0,
                 null,
                 false
-              );
+            );
 
             const toCell: mxCell = this.graph.insertVertex(
                 entryCell,
@@ -540,14 +540,14 @@ export class VisioToMxGraphService {
                 0,
                 null,
                 false
-              );
+            );
 
             const style = connectorStyle(
                 0,
                 0,
                 0,
                 0
-              );
+            );
 
             const newEdge: mxCell = this.graph.insertEdge(
                 entryCell,
@@ -585,7 +585,7 @@ export class VisioToMxGraphService {
             100,
             legendStyle(),
             false
-          );
+        );
     }
 
     private drawLegendTitleCell(parent: mxCell, position: Position): mxCell {
@@ -654,15 +654,15 @@ export class VisioToMxGraphService {
         }
 
         const newCell: mxCell = this.graph.insertVertex(
-          parent,
-          null,
-          null,
-          box.relPosition.x + (!offset ? 0 : offset.x),
-          box.relPosition.y + (!offset ? 0 : offset.y),
-          box.size.width,
-          box.size.height,
-          cellStyle,
-          false
+            parent,
+            null,
+            null,
+            box.relPosition.x + (!offset ? 0 : offset.x),
+            box.relPosition.y + (!offset ? 0 : offset.y),
+            box.size.width,
+            box.size.height,
+            cellStyle,
+            false
         );
 
         return newCell;
@@ -687,19 +687,19 @@ export class VisioToMxGraphService {
 
     private drawEdge(parent: mxCell, fromBox: BoxPort, toBox: BoxPort): mxCell {
         const style = connectorStyle(
-          fromBox.currentPort.normalizedPosition.x,
-          fromBox.currentPort.normalizedPosition.y,
-          toBox.currentPort.normalizedPosition.x,
-          toBox.currentPort.normalizedPosition.y
+            fromBox.currentPort.normalizedPosition.x,
+            fromBox.currentPort.normalizedPosition.y,
+            toBox.currentPort.normalizedPosition.x,
+            toBox.currentPort.normalizedPosition.y
         );
 
         const newEdge: mxCell = this.graph.insertEdge(
-          parent,
-          null,
-          null,
-          fromBox.box.cell,
-          toBox.box.cell,
-          style
+            parent,
+            null,
+            null,
+            fromBox.box.cell,
+            toBox.box.cell,
+            style
         );
 
         return newEdge;

@@ -241,18 +241,18 @@ function getPropMap(
 function getReferencedProps(highlightingConditions: ExtHighlightingRule[]): string[] {
     return (
         highlightingConditions ?
-        [].concat(...highlightingConditions.map(
-            hCon => [
-                hCon.labelProperty,
-                ...(
-                    hCon.logicalConditions ?
-                    [].concat(...hCon.logicalConditions.map(logConA => logConA.map(logCon => logCon.propertyName))) :
-                    []
-                ),
-                ...hCon.valueCondition ? [hCon.valueCondition.propertyName] : []
-            ]
-        )).filter(prop => prop !== undefined && prop !== null) :
-        []
+            [].concat(...highlightingConditions.map(
+                hCon => [
+                    hCon.labelProperty,
+                    ...(
+                        hCon.logicalConditions ?
+                            [].concat(...hCon.logicalConditions.map(logConA => logConA.map(logCon => logCon.propertyName))) :
+                            []
+                    ),
+                    ...hCon.valueCondition ? [hCon.valueCondition.propertyName] : []
+                ]
+            )).filter(prop => prop !== undefined && prop !== null) :
+            []
     );
 }
 
@@ -265,9 +265,9 @@ export function getStationPropMap(jsonData: JsonData): PropMap {
                 jsonData.settings.view &&
                 jsonData.settings.view.node &&
                 jsonData.settings.view.node.highlightConditions
-             ) ?
-            jsonData.settings.view.node.highlightConditions :
-            []
+            ) ?
+                jsonData.settings.view.node.highlightConditions :
+                []
         ),
         DEFAULT_STATION_PROP_INT_TO_EXT_MAP,
         STATION_PROPS_INT_TO_EXT_ALT_MAP,
@@ -284,9 +284,9 @@ export function getDeliveryPropMap(jsonData: JsonData): PropMap {
                 jsonData.settings.view &&
                 jsonData.settings.view.edge &&
                 jsonData.settings.view.edge.highlightConditions
-             ) ?
-            jsonData.settings.view.edge.highlightConditions :
-            []
+            ) ?
+                jsonData.settings.view.edge.highlightConditions :
+                []
         ),
         DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP,
         DELIVERY_PROPS_INT_TO_EXT_ALT_MAP,

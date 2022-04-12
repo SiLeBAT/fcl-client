@@ -84,7 +84,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             .subscribe(
                 action => this.graphViewComponent.focusElement(action.payload.elementId),
                 err => this.alertService.error(`focusElement subscription failed: ${err}`)
-        );
+            );
     }
 
     ngOnDestroy() {
@@ -108,8 +108,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.sharedGraphData,
             this.graphViewComponent.getLayoutOptions(
                 requestInfo.hoverContext.edgeId === undefined && requestInfo.hoverContext.nodeId === undefined ?
-                this.schemaGraphData.nodeData.map(n => n.id) :
-                this.contextMenuService.getContextElements(requestInfo.hoverContext, this.sharedGraphData).nodeIds
+                    this.schemaGraphData.nodeData.map(n => n.id) :
+                    this.contextMenuService.getContextElements(requestInfo.hoverContext, this.sharedGraphData).nodeIds
             )
         );
         this.contextMenu.open(requestInfo.position, menuData);

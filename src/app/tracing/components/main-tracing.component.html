@@ -3,8 +3,8 @@
 
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
-                <fcl-schema-graph #schemaGraph [hidden]="!(showSchemaGraph$ | async)"></fcl-schema-graph>
-                <fcl-gis-graph #gisGraph [hidden]="!(showGisGraph$ | async)"></fcl-gis-graph>
+                <fcl-schema-graph #schemaGraph [hidden]="(showSchemaGraph$ | async) === false"></fcl-schema-graph>
+                <fcl-gis-graph #gisGraph [hidden]="(showGisGraph$ | async) === false"></fcl-gis-graph>
             </div>
         </mat-sidenav-content>
 

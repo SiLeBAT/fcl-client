@@ -56,8 +56,8 @@ export class GraphService {
         nodeData = nodeData.slice();
         nodeData.sort((n1, n2) => (
             n1.station.score !== n2.station.score ?
-            (n1.station.score < n2.station.score ? -1 : 1) :
-            (n1.degree !== n2.degree ? (n1.degree < n2.degree ? -1 : 1) : 0)
+                (n1.station.score < n2.station.score ? -1 : 1) :
+                (n1.degree !== n2.degree ? (n1.degree < n2.degree ? -1 : 1) : 0)
         ));
         nodeData.forEach((n, i) => {
             n.relZindex = i;
@@ -365,13 +365,13 @@ export class GraphService {
             const deliveryGroups = this.groupDeliveries(deliveriesForNodePair, state.mergeDeliveriesType);
             const fromNode = (
                 deliveryGroups[0][0].source === ghostNodeData.station.id ?
-                ghostNodeData :
-                graphData.statIdToNodeDataMap[deliveryGroups[0][0].source]
+                    ghostNodeData :
+                    graphData.statIdToNodeDataMap[deliveryGroups[0][0].source]
             );
             const toNode = (
                 deliveryGroups[0][0].target === ghostNodeData.station.id ?
-                ghostNodeData :
-                graphData.statIdToNodeDataMap[deliveryGroups[0][0].target]
+                    ghostNodeData :
+                    graphData.statIdToNodeDataMap[deliveryGroups[0][0].target]
             );
             return [].concat(...deliveryGroups.map((deliveryGroup, gIndex) => this.mapDelToEdgeData(
                 deliveryGroup,
@@ -524,8 +524,8 @@ export class GraphService {
             const colorInfo = this.getColorInfo(
                 (
                     edge.deliveries.length > 0 ?
-                    this.mergeColors(edge.deliveries.map(d => d.highlightingInfo.color)) :
-                    edge.deliveries[0].highlightingInfo.color
+                        this.mergeColors(edge.deliveries.map(d => d.highlightingInfo.color)) :
+                        edge.deliveries[0].highlightingInfo.color
                 ),
                 GraphService.DEFAULT_EDGE_COLOR
             );
@@ -806,12 +806,12 @@ export class GraphService {
                 selectedElements.stations, Utils.getStringArrayDifference(
                     graphServiceData.stations.filter(s => s.selected).map(s => s.id),
                     graphServiceData.nodeData.map(n => n.station.id)
-            ));
+                ));
             selectedElements.deliveries = [].concat(
                 selectedElements.deliveries, Utils.getStringArrayDifference(
                     graphServiceData.deliveries.filter(d => d.selected).map(s => s.id),
                     [].concat(...graphServiceData.edgeData.map(e => e.deliveries.map(d => d.id)))
-            ));
+                ));
         }
         return selectedElements;
     }

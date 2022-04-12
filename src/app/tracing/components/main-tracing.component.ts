@@ -123,8 +123,8 @@ export class MainTracingComponent implements OnInit, OnDestroy {
             map(graphType => {
                 return (
                     graphType === GraphType.GRAPH ?
-                    this.schemaGraphChildren.first || this.schemaGraphContentChild :
-                    this.gisGraphChildren.first || this.gisGraphContentChild
+                        this.schemaGraphChildren.first || this.schemaGraphContentChild :
+                        this.gisGraphChildren.first || this.gisGraphContentChild
                 );
             }),
             first()

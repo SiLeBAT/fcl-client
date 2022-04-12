@@ -211,8 +211,8 @@ export class InteractiveCyGraph extends CyGraph {
             (
                 this.cy.zoom() !== super.layout.zoom ||
                 !_.isEqual(this.cy.pan(), super.layout.pan
-            )
-        )) {
+                )
+            )) {
             this.applyGraphDataChangeBottomUp({
                 layout: {
                     zoom: this.cy.zoom(),

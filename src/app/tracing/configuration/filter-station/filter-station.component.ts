@@ -63,8 +63,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     ngOnInit(): void {
         const stationFilterState$ = this.store.select(tracingSelectors.selectStationFilterState);
         this.stateSubscription = stationFilterState$.subscribe(
-                (state) => this.applyState(state),
-                err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
+            (state) => this.applyState(state),
+            err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
         );
     }
 
@@ -166,7 +166,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
                 newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
                 newDSData.statSel !== cachedDSData.statSel
-                ) {
+            ) {
                 dataTable = {
                     ...this.tableService.getStationData(state.dataServiceInputState),
                     columns: this.cachedData.dataTable.columns
