@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 
 import { ResetComponent } from './reset.component';
 import { MaterialModule } from '../../../shared/material.module';
@@ -23,8 +22,7 @@ describe('ResetComponent', () => {
                 MaterialModule,
                 SharedModule,
                 RouterTestingModule,
-                NoopAnimationsModule,
-                PasswordStrengthMeterModule
+                NoopAnimationsModule
             ]
         }).compileComponents()
             .then(() => {

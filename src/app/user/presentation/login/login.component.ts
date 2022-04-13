@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { LoginCredentials } from '../../models/user.model';
@@ -6,10 +6,11 @@ import { LoginCredentials } from '../../models/user.model';
 @Component({
     selector: 'fcl-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+    styleUrls: ['./login.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
-    @Output() login = new EventEmitter();
+    @Output() login = new EventEmitter<LoginCredentials>();
     loginForm: FormGroup;
 
     constructor() {}
@@ -21,18 +22,6 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    getEmailErrorMessage() {
-        return this.loginForm.controls.email.hasError('required')
-            ? 'You must enter a valid email'
-            : this.loginForm.controls.email.hasError('email')
-                ? 'Not a valid email'
-                : '';
-    }
-
-    getPasswordErrorMessage() {
-        return this.loginForm.controls.password.hasError('required') ? 'Password is required' : '';
-    }
-
     onLogin() {
         const credentials: LoginCredentials = {
             email: this.loginForm.value.email,
@@ -40,5 +29,10 @@ export class LoginComponent implements OnInit {
         };
         this.login.emit(credentials);
         this.loginForm.reset();
+    }
+
+    validateField(fieldName: string) {
+        return this.loginForm.controls[fieldName].valid
+               || this.loginForm.controls[fieldName].untouched;
     }
 }
