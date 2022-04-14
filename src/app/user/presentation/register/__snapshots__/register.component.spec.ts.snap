@@ -2,12 +2,13 @@
 
 exports[`RegisterComponent should render the component correctly 1`] = `
 <fcl-register
-  changeRef={[Function ViewRef_]}
-  pwStrength={[Function Number]}
+  _lastSubmittedCredentials="null"
   register={[Function EventEmitter_]}
   registerForm={[Function FormGroup]}
+  serverValidationErrors={[Function Array]}
 >
   <form
+    class="fcl-register-form"
     novalidate=""
   >
     <div
@@ -185,23 +186,6 @@ exports[`RegisterComponent should render the component correctly 1`] = `
             </div>
           </div>
         </mat-form-field>
-      </div>
-      <div
-        class="form-group"
-      >
-        <password-strength-meter>
-          <div>
-            <div
-              class="strength-meter"
-            >
-              <div
-                class="strength-meter-fill"
-              />
-            </div>
-            
-          </div>
-        </password-strength-meter>
-        
       </div>
       <div
         class="form-group"

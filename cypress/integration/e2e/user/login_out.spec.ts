@@ -2,6 +2,7 @@
 
 describe('Use-cases Login Page', function () {
     beforeEach(function () {
+        cy.viewport(1400, 1000);
         cy.fixture('ui-routes.json').as('paths');
         cy.visit('/');
     });

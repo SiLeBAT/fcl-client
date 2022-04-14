@@ -13,7 +13,9 @@
                     "fcl-schema-graph",
                     "fcl-gis-graph",
                     "fcl-table",
-                    "color-picker"
+                    "color-picker",
+                    "fcl-reset",
+                    "fcl-register"
                 ]
             }
         ],

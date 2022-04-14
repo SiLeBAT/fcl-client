@@ -1,48 +1,58 @@
-import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import {
+    Component, OnInit, Output, EventEmitter,
+    Input, ChangeDetectionStrategy, OnChanges, SimpleChanges
+} from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ValidationError } from '@app/core/model';
+import { CODE_TO_FIELD_MAP } from '../../consts/error-code-mappings.consts';
 import { RegistrationCredentials } from '../../models/user.model';
 
 export interface IHash {
     [details: string]: string;
 }
-
 @Component({
     selector: 'fcl-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnChanges {
 
-    private static readonly NAME_REGEXP = /^[^<>]*$/;
+    @Input() serverValidationErrors: ValidationError[] = [];
 
     @Output() register = new EventEmitter();
     registerForm: FormGroup;
-    private pwStrength: number;
 
-    constructor(
-        private changeRef: ChangeDetectorRef
-    ) {
-        this.pwStrength = -1;
+    _lastSubmittedCredentials: RegistrationCredentials | null = null;
+
+    constructor() {}
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.serverValidationErrors !== undefined) {
+            if (this.registerForm) {
+                const controls = Object.values(this.registerForm.controls);
+                controls.forEach(c => c.updateValueAndValidity());
+            }
+        }
     }
 
     ngOnInit() {
         this.registerForm = new FormGroup({
             firstName: new FormControl(null, [
                 Validators.required,
-                this.nameValidator
+                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'firstName')
             ]),
             lastName: new FormControl(null, [
                 Validators.required,
-                this.nameValidator
+                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'lastName')
             ]),
             email: new FormControl(null, [
                 Validators.required,
-                Validators.email
+                Validators.email,
+                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'email')
             ]),
             password1: new FormControl(null, [
                 Validators.required,
-                Validators.minLength(8)
+                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'password')
             ]),
             password2: new FormControl(null),
             dataProtection: new FormControl(null, Validators.requiredTrue),
@@ -61,6 +71,7 @@ export class RegisterComponent implements OnInit {
                 newsRegAgreed: this.registerForm.value.newsletter,
                 newsMailAgreed: false
             };
+            this._lastSubmittedCredentials = registrationCredentials;
             this.register.emit(registrationCredentials);
         }
     }
@@ -70,11 +81,7 @@ export class RegisterComponent implements OnInit {
                || this.registerForm.controls[fieldName].untouched;
     }
 
-    validatePwStrength() {
-        return (this.pwStrength >= 0 && this.pwStrength < 2);
-    }
-
-    private passwordConfirmationValidator(fg: FormGroup) {
+    private passwordConfirmationValidator(fg: FormGroup): ValidationErrors {
         const pw1 = fg.controls.password1;
         const pw2 = fg.controls.password2;
 
@@ -86,14 +93,20 @@ export class RegisterComponent implements OnInit {
         return null;
     }
 
-    private nameValidator(control: AbstractControl): ValidationErrors {
-        return RegisterComponent.NAME_REGEXP.test(control.value || '') ?
-            null : { illegalCharacters: true };
-    }
+    private getServerValidationErrorsOfField(control: AbstractControl, fieldName: keyof RegistrationCredentials): ValidationErrors {
+        let result: ValidationErrors = null;
+        if (this.serverValidationErrors.length > 0) {
+            if (control.value !== this._lastSubmittedCredentials[fieldName]) {
+                // delete related server errors
+                this.serverValidationErrors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_MAP[e.code] !== fieldName);
+            } else {
+                const errors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_MAP[e.code] === fieldName);
+                if (errors.length > 0) {
+                    result = { serverValidationErrors: errors };
+                }
+            }
+        }
 
-    doStrengthChange(pwStrength: number) {
-        this.pwStrength = pwStrength;
-        this.changeRef.detectChanges();
+        return result;
     }
-
 }

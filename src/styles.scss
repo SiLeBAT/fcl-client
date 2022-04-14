@@ -55,6 +55,24 @@ body {
     color: black;
 }
 
+// improves multiline error messages
+fcl-register,
+fcl-reset {
+    mat-form-field .mat-form-field {
+        &-underline {
+            position: relative;
+            bottom: auto;
+        }
+
+        &-subscript-wrapper {
+            position: static;
+            overflow-y: visible;
+            min-height: 0.8rem;
+            margin-bottom: -1.2rem;
+        }
+    }
+}
+
 mat-form-field.less-bottom-padding {
     .mat-form-field-wrapper {
         padding-bottom: 0.5em;

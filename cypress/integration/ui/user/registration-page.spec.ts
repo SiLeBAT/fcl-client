@@ -1,6 +1,7 @@
 /// <reference types="Cypress" />
 
 const USER_NAME_ILLEGAL_CHARACTERS = '<>';
+const INVALID_PASSWORDS = ['toShort1!', 'withoutDigits!', 'WITHOUT_LCASE1', 'without_ucase1', 'withoutSpecialChar1'];
 
 describe('Testing the Registration Page', function () {
     beforeEach(function () {
@@ -89,10 +90,12 @@ describe('Testing the Registration Page', function () {
                 fillOutRegistrationForm(this.users[4]);
                 cy.get('@firstNameInput').clear().blur();
                 cy.get('@firstNameInput').type(USER_NAME_ILLEGAL_CHARACTERS);
+                cy.get('@registerButton').should('be.enabled');
+                cy.get('@registerButton').click();
 
                 cy.contains('First Name').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
-                    .should('contain', 'Symbols \'<\' and \'>\' are not allowed.')
+                    .should('contain', 'Characters \'<\' and \'>\' are not allowed.')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('@registerButton').should('be.disabled');
             });
@@ -116,10 +119,12 @@ describe('Testing the Registration Page', function () {
                 fillOutRegistrationForm(this.users[4]);
                 cy.get('@lastNameInput').clear().blur();
                 cy.get('@lastNameInput').type(USER_NAME_ILLEGAL_CHARACTERS);
+                cy.get('@registerButton').should('be.enabled');
+                cy.get('@registerButton').click();
 
                 cy.contains('Last Name').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
-                    .should('contain', 'Symbols \'<\' and \'>\' are not allowed.')
+                    .should('contain', 'Characters \'<\' and \'>\' are not allowed.')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('@registerButton').should('be.disabled');
             });
@@ -132,7 +137,7 @@ describe('Testing the Registration Page', function () {
 
                 cy.contains('Email').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
-                    .should('contain', 'You must enter a valid email')
+                    .should('contain', 'Required field')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('@registerButton').should('be.disabled');
             });
@@ -141,7 +146,7 @@ describe('Testing the Registration Page', function () {
         it('should require valid email', function () {
             cy.get('form').within(() => {
                 fillOutRegistrationForm(this.users[4]);
-                cy.get('@emailInput').clear().type('NonexistentUser').blur();
+                cy.get('@emailInput').clear().type('InvalidEmail').blur();
 
                 cy.contains('Email').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
@@ -158,7 +163,7 @@ describe('Testing the Registration Page', function () {
 
                 cy.contains('Password').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
-                    .should('contain', 'Password is required')
+                    .should('contain', 'Required field')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('@registerButton').should('be.disabled');
             });
@@ -194,18 +199,22 @@ describe('Testing the Registration Page', function () {
             cy.get('form').within(() => {
                 fillOutRegistrationForm(this.users[5]);
 
-                cy.contains('Password').should('have.css', 'color', 'rgb(254, 0, 0)');
+                for (const pw of INVALID_PASSWORDS) {
+                    cy.get('@passwordInput').clear().type(pw).blur();
+                    cy.get('@confirmInput').clear().type(pw).blur();
+                    cy.get('@registerButton').should('be.enabled');
+                    cy.get('@registerButton').click();
 
-                cy.get('mat-error')
-                    .should('contain', 'Password is required')
-                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+                    cy.contains('Password').should('have.css', 'color', 'rgb(254, 0, 0)');
 
-                cy.get('password-strength-meter')
-                    .next()
-                    .should('contain', 'Password to weak or to short')
-                    .and('have.css', 'color', 'rgb(254, 0, 0)');
+                    cy.get('mat-error')
+                        .should('contain', 'Your password must be at least 10 ' +
+                            'characters long, contain at least one number and one special character and have a mixture of ' +
+                            'uppercase and lowercase letters.')
+                        .and('have.css', 'color', 'rgb(254, 0, 0)');
 
-                cy.get('@registerButton').should('be.disabled');
+                    cy.get('@registerButton').should('be.disabled');
+                }
             });
         });
 

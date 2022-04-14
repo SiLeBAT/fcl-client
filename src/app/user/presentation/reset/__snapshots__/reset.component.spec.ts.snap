@@ -2,10 +2,10 @@
 
 exports[`ResetComponent should render the component correctly 1`] = `
 <fcl-reset
-  changeRef={[Function ViewRef_]}
-  pwStrength={[Function Number]}
+  _lastSubmittedCredentials="null"
   reset={[Function EventEmitter_]}
   resetForm={[Function FormGroup]}
+  serverValidationErrors={[Function Array]}
 >
   <form
     novalidate=""
@@ -65,23 +65,6 @@ exports[`ResetComponent should render the component correctly 1`] = `
             </div>
           </div>
         </mat-form-field>
-      </div>
-      <div
-        class="form-group"
-      >
-        <password-strength-meter>
-          <div>
-            <div
-              class="strength-meter"
-            >
-              <div
-                class="strength-meter-fill"
-              />
-            </div>
-            
-          </div>
-        </password-strength-meter>
-        
       </div>
       <div
         class="form-group"

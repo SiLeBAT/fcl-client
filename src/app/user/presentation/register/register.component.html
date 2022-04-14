@@ -1,15 +1,23 @@
-<form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+<ng-template let-controlName="controlName" #serverValidationErrorsTemplate>
+    <ng-container *ngFor="let error of registerForm.controls[controlName].errors.serverValidationErrors; let i=index">
+        <br *ngIf="i>0"><span>{{ error.message }}</span>
+    </ng-container>
+</ng-template>
+
+<form [formGroup]="registerForm" class="fcl-register-form" (ngSubmit)="onRegister()">
     <div class="fcl-mat-card-content">
         <div class="form-group fcl-form-firstname">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>First Name</mat-label>
-                <input matInput formControlName="firstName" name="firstName" required />
+                <input matInput formControlName="firstName" name="firstName" required/>
                 <mat-icon matPrefix>account_circle</mat-icon>
                 <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.required">
                     Required Field
                 </mat-error>
-                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.illegalCharacters">
-                    Symbols '&#60;' and '&#62;' are not allowed.
+                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.serverValidationErrors">
+                    <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
+                        [ngTemplateOutletContext] ="{ controlName: 'firstName' }">
+                    </ng-container>
                 </mat-error>
             </mat-form-field>
         </div>
@@ -17,13 +25,15 @@
         <div class="form-group">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Last Name</mat-label>
-                <input matInput formControlName="lastName" name="lastName" required />
+                <input matInput formControlName="lastName" name="lastName" required/>
                 <mat-icon matPrefix>account_circle</mat-icon>
                 <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.required">
                     Required Field
                 </mat-error>
-                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.illegalCharacters">
-                    Symbols '&#60;' and '&#62;' are not allowed.
+                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.serverValidationErrors">
+                    <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
+                        [ngTemplateOutletContext] ="{ controlName: 'lastName' }">
+                    </ng-container>
                 </mat-error>
             </mat-form-field>
         </div>
@@ -31,37 +41,36 @@
         <div class="form-group">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Email</mat-label>
-                <input matInput formControlName="email" name="email" required />
+                <input matInput formControlName="email" name="email" required/>
                 <mat-icon matPrefix>mail</mat-icon>
+                <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.required">
+                    Required field
+                </mat-error>
                 <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.email">
                     Not a valid email
                 </mat-error>
-                <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.required">
-                    You must enter a valid email
+                <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.serverValidationErrors">
+                    <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
+                        [ngTemplateOutletContext] ="{ controlName: 'email' }">
+                    </ng-container>
                 </mat-error>
             </mat-form-field>
         </div>
 
-        <div class="form-group fcl-form-password" [ngClass]="{ error: !validateField('password1') || validatePwStrength() }">
+        <div class="form-group fcl-form-password" [ngClass]="{ error: !validateField('password1') }">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Password</mat-label>
-                <input matInput #message formControlName="password1" type="password" name="password1" required />
+                <input matInput #message formControlName="password1" type="password" name="password1" required/>
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-hint align="start">
-                    At least 8 characters
-                </mat-hint>
-                <mat-hint align="end"> {{ message.value.length }} characters </mat-hint>
-                <mat-error *ngIf="!validateField('password1')">
-                    Password is required
+                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1.errors.required">
+                    Required field
+                </mat-error>
+                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1.errors.serverValidationErrors">
+                    <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
+                        [ngTemplateOutletContext] ="{ controlName: 'password1' }">
+                    </ng-container>
                 </mat-error>
             </mat-form-field>
-        </div>
-        <div class="form-group" [ngClass]="{ error: !validateField('password2') }">
-            <password-strength-meter [password]="registerForm.value.password1" (strengthChange)="doStrengthChange($event)">
-            </password-strength-meter>
-            <em *ngIf="validatePwStrength()">
-                Password to weak or to short
-            </em>
         </div>
         <div class="form-group">
             <mat-form-field class="fcl-form-field" appearance="standard">

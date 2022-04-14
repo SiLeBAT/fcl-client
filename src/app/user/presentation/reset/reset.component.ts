@@ -1,25 +1,40 @@
-import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { NewPasswordRequestDTO } from '@app/user/models/user.model';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ValidationError } from '@app/core/model';
+import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 
 @Component({
     selector: 'fcl-reset',
     templateUrl: './reset.component.html',
     styleUrls: ['./reset.component.scss']
 })
-export class ResetComponent implements OnInit {
-    @Output() reset = new EventEmitter();
-    resetForm: FormGroup;
-    private pwStrength: number;
+export class ResetComponent implements OnInit, OnChanges {
 
-    constructor(private changeRef: ChangeDetectorRef) {
-        this.pwStrength = -1;
+    @Input() serverValidationErrors: ValidationError[] = [];
+    @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
+
+    resetForm: FormGroup;
+
+    private _lastSubmittedCredentials: NewPasswordRequestDTO | null = null;
+
+    constructor() {}
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.serverValidationErrors !== undefined) {
+            if (this.resetForm) {
+                const controls = Object.values(this.resetForm.controls);
+                controls.forEach(c => c.updateValueAndValidity());
+            }
+        }
     }
 
     ngOnInit() {
         this.resetForm = new FormGroup({
-            password1: new FormControl(null, Validators.required),
-            password2: new FormControl(null, [Validators.required, Validators.minLength(8)])
+            password1: new FormControl(null, [
+                Validators.required,
+                (control: AbstractControl) => this.getServerValidationErrors(control)
+            ]),
+            password2: new FormControl(null)
         }, this.passwordConfirmationValidator);
     }
 
@@ -28,21 +43,12 @@ export class ResetComponent implements OnInit {
       || this.resetForm.controls[fieldName].untouched;
     }
 
-    validatePwStrength() {
-        return (this.pwStrength >= 0 && this.pwStrength < 2);
-    }
-
-    doStrengthChange(pwStrength: number) {
-        this.pwStrength = pwStrength;
-        this.changeRef.detectChanges();
-    }
-
     onReset() {
         const password: NewPasswordRequestDTO = {
             password: this.resetForm.value.password1
         };
+        this._lastSubmittedCredentials = password;
         this.reset.emit(password);
-
     }
 
     private passwordConfirmationValidator(fg: FormGroup) {
@@ -57,4 +63,17 @@ export class ResetComponent implements OnInit {
         return null;
     }
 
+    private getServerValidationErrors(control: AbstractControl): ValidationErrors {
+        let result: ValidationErrors = null;
+        if (this.serverValidationErrors.length > 0) {
+            if (control.value !== this._lastSubmittedCredentials.password) {
+                // delete related server errors
+                this.serverValidationErrors = [];
+            } else {
+                result = { serverValidationErrors: this.serverValidationErrors };
+            }
+        }
+
+        return result;
+    }
 }

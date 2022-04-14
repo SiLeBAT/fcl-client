@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
-
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { SpinnerLoaderService } from '../../../shared/services/spinner-loader.service';
-import { NewPasswordRequestDTO, PasswordResetResponseDTO } from '@app/user/models/user.model';
+import { NewPasswordRequestDTO, PasswordResetResponseDTO } from '../../../user/models/user.model';
+import { InvalidServerInputHttpErrorResponse } from '../../../core/errors';
+import { ValidationError } from '@app/core/model';
 
 @Component({
     selector: 'fcl-reset-container',
     templateUrl: './reset-container.component.html'
 })
 export class ResetContainerComponent implements OnInit {
+
+    serverValidationErrors: ValidationError[] = [];
 
     constructor(
         private userService: UserService,
@@ -33,10 +35,15 @@ export class ResetContainerComponent implements OnInit {
                 this.router.navigate(['users/login']).catch((err) => {
                     throw new Error(`Unable to navigate: ${err}`);
                 });
-            }, () => {
+            }, (err) => {
                 this.spinnerService.hide();
-                this.alertService.error(`Error during password reset, the token is not valid.
-            Please receive a new 'Password-Reset' link with the option 'Password forgotten?'.`);
+                if (err instanceof InvalidServerInputHttpErrorResponse) {
+                    this.serverValidationErrors = err.errors;
+                    this.alertService.error('The password could not be updated. The password is not compliant with the password rules.');
+                } else {
+                    this.alertService.error(`Error during password reset, the token is not valid.
+                    Please receive a new 'Password-Reset' link with the option 'Password forgotten?'.`);
+                }
             });
     }
 }
