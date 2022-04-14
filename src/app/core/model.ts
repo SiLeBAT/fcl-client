@@ -1,10 +1,4 @@
-export enum SERVER_ERROR_CODE {
-    INVALID_INPUT = 5
-}
-
-export interface ServerInputValidationError {
+export interface ValidationError {
     code: string;
     message: string;
 }
-
-export type ServerInputValidationErrorDTO = Readonly<ServerInputValidationError>;

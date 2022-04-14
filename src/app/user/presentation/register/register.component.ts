@@ -3,8 +3,8 @@ import {
     Input, ChangeDetectionStrategy, OnChanges, SimpleChanges
 } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ServerInputValidationError } from '../../../core/model';
-import { CODE_TO_FIELD_Map } from '../../../user/consts/error-codes.const';
+import { ValidationError } from '@app/core/model';
+import { CODE_TO_FIELD_MAP } from '../../consts/error-code-mappings.consts';
 import { RegistrationCredentials } from '../../models/user.model';
 
 export interface IHash {
@@ -13,12 +13,11 @@ export interface IHash {
 @Component({
     selector: 'fcl-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit, OnChanges {
 
-    @Input() serverValidationErrors: ServerInputValidationError[] = [];
+    @Input() serverValidationErrors: ValidationError[] = [];
 
     @Output() register = new EventEmitter();
     registerForm: FormGroup;
@@ -99,9 +98,9 @@ export class RegisterComponent implements OnInit, OnChanges {
         if (this.serverValidationErrors.length > 0) {
             if (control.value !== this._lastSubmittedCredentials[fieldName]) {
                 // delete related server errors
-                this.serverValidationErrors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_Map[e.code] !== fieldName);
+                this.serverValidationErrors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_MAP[e.code] !== fieldName);
             } else {
-                const errors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_Map[e.code] === fieldName);
+                const errors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_MAP[e.code] === fieldName);
                 if (errors.length > 0) {
                     result = { serverValidationErrors: errors };
                 }

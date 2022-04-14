@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { HTML_ERROR_CODE_UNPROCESSABLE_ENTITY } from '../html-error-codes.constants';
-import { ServerInputValidationError, ServerInputValidationErrorDTO, SERVER_ERROR_CODE } from '../model';
 import { InvalidServerInputHttpErrorResponse } from '../errors';
+import { fromErrorExtractInvalidDataErrorDTO, isErrorWithInvalidDataErrorDTO } from '../server-response-mapping';
 
 @Injectable({
     providedIn: 'root'
@@ -15,53 +14,29 @@ export class DataRequestService {
 
     post<T, S>(url: string, body: S): Observable<T> {
         return this.httpClient.post<T>(url, body)
-            .pipe(catchError((err: any) => this.throwPostProcessedError(err, body)));
+            .pipe(catchError(this.handleError));
     }
 
     patch<T, S>(url: string, body: S): Observable<T> {
         return this.httpClient.patch<T>(url, body)
-            .pipe(catchError((err: any) => this.throwPostProcessedError(err, body)));
+            .pipe(catchError(this.handleError));
     }
     put<T, S>(url: string, body: S): Observable<T> {
-        return this.httpClient.put<T>(url, body);
+        return this.httpClient.put<T>(url, body)
+            .pipe(catchError(this.handleError));
     }
 
     get<T>(url: string): Observable<T> {
         return this.httpClient.get<T>(url);
     }
 
-    private throwPostProcessedError<S>(error: Error, body: S): never {
-        if (error instanceof HttpErrorResponse) {
-            if (
-                body instanceof Object &&
-                error instanceof Object &&
-                error.status === HTML_ERROR_CODE_UNPROCESSABLE_ENTITY &&
-                error.error instanceof Object &&
-                error.error.code === SERVER_ERROR_CODE.INVALID_INPUT &&
-                error.error.errors instanceof Array &&
-                this.isServerValidationResultValid(body, error.error.errors)
-            ) {
-                throw new InvalidServerInputHttpErrorResponse(
-                    error.error.message, error.error.errors as ServerInputValidationError[]
-                );
-            }
+    private handleError(error: unknown): never {
+        if (isErrorWithInvalidDataErrorDTO(error)) {
+            const invDataErrDTO = fromErrorExtractInvalidDataErrorDTO(error);
+            throw new InvalidServerInputHttpErrorResponse(
+                invDataErrDTO.message, invDataErrDTO.errors
+            );
         }
         throw error;
-    }
-
-    private isServerValidationResultValid<T>(serverInput: T, serverOutput: any): boolean {
-        return (
-            serverOutput instanceof Array &&
-            serverOutput.every(item => {
-                if (item instanceof Object) {
-                    const error = item as ServerInputValidationErrorDTO;
-                    return (
-                        typeof error.code === 'string' && error.code !== '' &&
-                        typeof error.message === 'string' && error.message !== ''
-                    );
-                }
-                return false;
-            })
-        );
     }
 }

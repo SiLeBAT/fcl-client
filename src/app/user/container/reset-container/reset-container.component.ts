@@ -5,7 +5,7 @@ import { AlertService } from '../../../shared/services/alert.service';
 import { SpinnerLoaderService } from '../../../shared/services/spinner-loader.service';
 import { NewPasswordRequestDTO, PasswordResetResponseDTO } from '../../../user/models/user.model';
 import { InvalidServerInputHttpErrorResponse } from '../../../core/errors';
-import { ServerInputValidationError } from '../../../core/model';
+import { ValidationError } from '@app/core/model';
 
 @Component({
     selector: 'fcl-reset-container',
@@ -13,7 +13,7 @@ import { ServerInputValidationError } from '../../../core/model';
 })
 export class ResetContainerComponent implements OnInit {
 
-    serverValidationErrors: ServerInputValidationError[] = [];
+    serverValidationErrors: ValidationError[] = [];
 
     constructor(
         private userService: UserService,

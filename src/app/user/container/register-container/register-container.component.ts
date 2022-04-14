@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { InvalidServerInputHttpErrorResponse } from '../../../core/errors';
-import { ServerInputValidationError } from '../../../core/model';
+import { ValidationError } from '../../../core/model';
 
 @Component({
     selector: 'fcl-register-container',
@@ -16,7 +16,7 @@ import { ServerInputValidationError } from '../../../core/model';
 export class RegisterContainerComponent implements OnInit {
 
     private supportContact: string;
-    serverValidationErrors: ServerInputValidationError[] = [];
+    serverValidationErrors: ValidationError[] = [];
 
     constructor(private spinnerService: SpinnerLoaderService,
                 private alertService: AlertService,
@@ -44,7 +44,7 @@ export class RegisterContainerComponent implements OnInit {
                     this.spinnerService.hide();
                     if (err instanceof InvalidServerInputHttpErrorResponse) {
                         this.serverValidationErrors = err.errors;
-                        this.alertService.error(err.message || 'The registration failed.'); //   'The registration data is invalid.');
+                        this.alertService.error(err.message || 'The registration failed.');
                     } else {
                         this.alertService.error(`Error during registration.
                         An email has been sent to an ${credentials.email} with further instructions.

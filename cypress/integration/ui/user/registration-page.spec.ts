@@ -92,7 +92,6 @@ describe('Testing the Registration Page', function () {
                 cy.get('@firstNameInput').type(USER_NAME_ILLEGAL_CHARACTERS);
                 cy.get('@registerButton').should('be.enabled');
                 cy.get('@registerButton').click();
-                cy.wait(500);
 
                 cy.contains('First Name').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
@@ -122,7 +121,6 @@ describe('Testing the Registration Page', function () {
                 cy.get('@lastNameInput').type(USER_NAME_ILLEGAL_CHARACTERS);
                 cy.get('@registerButton').should('be.enabled');
                 cy.get('@registerButton').click();
-                cy.wait(500);
 
                 cy.contains('Last Name').should('have.css', 'color', 'rgb(254, 0, 0)');
                 cy.get('mat-error')
@@ -206,7 +204,6 @@ describe('Testing the Registration Page', function () {
                     cy.get('@confirmInput').clear().type(pw).blur();
                     cy.get('@registerButton').should('be.enabled');
                     cy.get('@registerButton').click();
-                    cy.wait(500);
 
                     cy.contains('Password').should('have.css', 'color', 'rgb(254, 0, 0)');
 

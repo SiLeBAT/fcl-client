@@ -6,8 +6,7 @@ import { LoginCredentials } from '../../models/user.model';
 @Component({
     selector: 'fcl-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
     @Output() login = new EventEmitter<LoginCredentials>();

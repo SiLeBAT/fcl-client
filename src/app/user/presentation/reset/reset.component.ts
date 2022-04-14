@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ServerInputValidationError } from '../../../core/model';
+import { ValidationError } from '@app/core/model';
 import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 
 @Component({
@@ -10,7 +10,7 @@ import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 })
 export class ResetComponent implements OnInit, OnChanges {
 
-    @Input() serverValidationErrors: ServerInputValidationError[] = [];
+    @Input() serverValidationErrors: ValidationError[] = [];
     @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
 
     resetForm: FormGroup;
