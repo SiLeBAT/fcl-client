@@ -226,29 +226,6 @@
           }
         }
       }
-    },
-    "fcl-web-app-e2e": {
-      "root": "e2e",
-      "sourceRoot": "e2e",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "fcl-web-app:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "e2e/**/*.ts",
-              "e2e/**/*.html"
-            ]
-          }
-        }
-      }
     }
   },
   "defaultProject": "fcl-web-app",
