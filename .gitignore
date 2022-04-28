@@ -30,12 +30,6 @@ npm-debug.log
 testem.log
 /typings
 
-# e2e
-/e2e
-/cypress/videos
-/cypress/screenshots
-/cypress/reports
-
 #System Files
 .DS_Store
 Thumbs.db

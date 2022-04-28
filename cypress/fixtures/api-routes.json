@@ -1,5 +1,0 @@
-{
-  "login": "/v1/users/login",
-  "resetPasswordRequest": "/v1/users/reset-password-request",
-  "registration": "/v1/users/registration"
-}
