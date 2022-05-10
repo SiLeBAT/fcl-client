@@ -98,7 +98,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         }
     }
 
-    getCanvas(): Promise<HTMLCanvasElement> {
+    async getCanvas(): Promise<HTMLCanvasElement> {
         return html2canvas(this.elementRef.nativeElement);
     }
 

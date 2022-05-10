@@ -10,5 +10,4 @@ import * as _ from 'lodash';
 })
 export class OpenSettingsHeaderCellViewComponent {
 
-    constructor() {}
 }

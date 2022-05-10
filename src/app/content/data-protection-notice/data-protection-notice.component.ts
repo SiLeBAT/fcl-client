@@ -7,8 +7,6 @@ import { Component, AfterViewInit } from '@angular/core';
 })
 export class DataProtectionNoticeComponent implements AfterViewInit {
 
-    constructor() { }
-
     ngAfterViewInit() {
         let top = document.getElementById('fcl-notice-top');
         if (top !== null) {

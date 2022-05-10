@@ -25,7 +25,7 @@ interface BoxModel {
     isGroupEqual: (a: Box, b: Box) => boolean;
 }
 
-function addBoxPorts(ports: { id: string, port: BoxPort }[], visioBox: VisioBox, unnormalizePos: (x: number) => number) {
+function addBoxPorts(ports: { id: string; port: BoxPort }[], visioBox: VisioBox, unnormalizePos: (x: number) => number) {
     visioBox.ports.forEach(p =>
         ports.push({
             id: p.id,
@@ -38,13 +38,13 @@ function addBoxPorts(ports: { id: string, port: BoxPort }[], visioBox: VisioBox,
     );
 }
 
-function createBoxPorts(stationBox: VisioBox): { id: string, port: BoxPort }[] {
-    const result: { id: string, port: BoxPort }[] = [];
+function createBoxPorts(stationBox: VisioBox): { id: string; port: BoxPort }[] {
+    const result: { id: string; port: BoxPort }[] = [];
     addBoxPorts(result, stationBox, (x: number) => stationBox.size.width * x);
     return result;
 }
 
-function createBoxToGroupIndexMap(stationBoxToBoxMap: Map<VisioBox, Box>, groups: {label: string, boxes: VisioBox[]}[]): Map<Box, number> {
+function createBoxToGroupIndexMap(stationBoxToBoxMap: Map<VisioBox, Box>, groups: {label: string; boxes: VisioBox[]}[]): Map<Box, number> {
     const result: Map<Box, number> = new Map();
     groups.forEach((group, groupIndex) => {
         group.boxes.forEach(stationBox => result.set(stationBoxToBoxMap.get(stationBox), groupIndex));
@@ -55,6 +55,7 @@ function createBoxToGroupIndexMap(stationBoxToBoxMap: Map<VisioBox, Box>, groups
 function createLinks(idToPortMap: Map<string, BoxPort>, connectors: VisioConnector[]): Link[] {
     const result: Link[] = [];
     let id = 0;
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < connectors.length; i++) {
         result.push({
             id: 'L' + id++,
@@ -67,7 +68,7 @@ function createLinks(idToPortMap: Map<string, BoxPort>, connectors: VisioConnect
 
 function constructBoxModel(
     stationBoxes: VisioBox[][],
-    groups: { label: string, boxes: VisioBox[] }[],
+    groups: { label: string; boxes: VisioBox[] }[],
     connectors: VisioConnector[]): BoxModel {
 
     const idToPortMap: Map<string, BoxPort> = new Map();
@@ -211,7 +212,7 @@ function addLinkConstraints(boxModel: BoxModel, lpModel: LPModel) {
 
 export function improvePositions(
     stationBoxes: VisioBox[][],
-    groups: { label: string, boxes: VisioBox[]}[],
+    groups: { label: string; boxes: VisioBox[]}[],
     connectors: VisioConnector[],
     intraGroupDistance: number,
     interGroupDistance: number) {

@@ -34,8 +34,6 @@ export class OperatorSelectorViewComponent {
         [OperationType.REGEX_NOT_EQUAL_IGNORE_CASE]: '!= (Regex Ignore Case)'
     };
 
-    constructor() { }
-
     getOperatorLabel(type: OperationType): string {
         return this.operatorLabel[type];
     }

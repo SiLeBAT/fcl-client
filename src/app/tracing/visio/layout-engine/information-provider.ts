@@ -99,6 +99,7 @@ export class InformationProvider {
         return stationInfo;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private getProps(dataObj: {}, properties: string[]): { [key: string]: string | number | boolean } {
         const propsObj = {};
         for (const prop of properties) {
@@ -107,7 +108,7 @@ export class InformationProvider {
         return propsObj;
     }
 
-    private getPropValue(dataObj: { properties?: {name: string, value: string}[] }, prop: string): string | number | boolean {
+    private getPropValue(dataObj: { properties?: {name: string; value: string}[] }, prop: string): string | number | boolean {
         let value = dataObj[prop];
 
         if (value === undefined && dataObj.properties) {
@@ -191,7 +192,6 @@ export class InformationProvider {
         return this.stationIdToInfoMap.get(deliveryInfo.target);
     }
 
-    compressInformation() {
-
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    compressInformation() { }
 }

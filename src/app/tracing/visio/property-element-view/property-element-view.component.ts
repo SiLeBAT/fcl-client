@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Output, Input, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { PropInfo } from '@app/tracing/shared/property-info';
 
@@ -7,7 +7,7 @@ import { PropInfo } from '@app/tracing/shared/property-info';
     templateUrl: './property-element-view.component.html',
     styleUrls: ['./property-element-view.component.scss']
 })
-export class PropertyElementViewComponent implements OnInit, OnChanges {
+export class PropertyElementViewComponent implements OnChanges {
 
     @Input() availableProps: PropInfo[];
     @Input() prop: string | null = null;
@@ -23,13 +23,8 @@ export class PropertyElementViewComponent implements OnInit, OnChanges {
         return this.propWrapper_;
     }
 
-    constructor() { }
-
     ngOnChanges(changes: SimpleChanges): void {
         this.propWrapper_ = this.prop || '';
-    }
-
-    ngOnInit() {
     }
 
     isActivePropAvailable(): boolean {

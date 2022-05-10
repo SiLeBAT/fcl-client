@@ -8,7 +8,8 @@ import { Utils } from '../util/non-ui-utils';
 export type PropId = string;
 type PropValue = number | boolean | string;
 
-interface Properties extends Record<PropId, PropValue> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface Properties extends Record<PropId, PropValue> { }
 
 export interface PropInfo {
     prop: PropId;

@@ -94,9 +94,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
 
     onSaveImage() {
         this.getCurrentGraph()
-            .then(currentGraph => {
-                return currentGraph.getCanvas();
-            })
+            .then(async currentGraph => currentGraph.getCanvas())
             .then(canvas => {
                 this.store.dispatch(new ioActions.SaveGraphImageMSA({ canvas: canvas }));
             })
@@ -118,15 +116,13 @@ export class MainTracingComponent implements OnInit, OnDestroy {
 
     }
 
-    private getCurrentGraph(): Promise<SchemaGraphComponent | GisGraphComponent> {
+    private async getCurrentGraph(): Promise<SchemaGraphComponent | GisGraphComponent> {
         return this.graphType$.pipe(
-            map(graphType => {
-                return (
-                    graphType === GraphType.GRAPH ?
-                        this.schemaGraphChildren.first || this.schemaGraphContentChild :
-                        this.gisGraphChildren.first || this.gisGraphContentChild
-                );
-            }),
+            map(graphType => (
+                graphType === GraphType.GRAPH ?
+                    this.schemaGraphChildren.first || this.schemaGraphContentChild :
+                    this.gisGraphChildren.first || this.gisGraphContentChild
+            )),
             first()
         ).toPromise();
     }

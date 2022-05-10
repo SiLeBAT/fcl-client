@@ -110,7 +110,7 @@ interface SchemaGraphViewData extends GraphViewData {
     node?: {
         minSize?: number;
         maxSize?: number;
-        positions: { id: string, position: XY }[];
+        positions: { id: string; position: XY }[];
     };
 }
 
@@ -166,6 +166,7 @@ export interface ValueCondition {
     useZeroAsMinimum: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ExplosionViewData {
 
 }

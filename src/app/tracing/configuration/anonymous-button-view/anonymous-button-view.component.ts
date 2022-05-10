@@ -1,19 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'fcl-anonymous-button-view',
     templateUrl: './anonymous-button-view.component.html',
     styleUrls: ['./anonymous-button-view.component.scss']
 })
-export class AnonymousButtonViewComponent implements OnInit {
+export class AnonymousButtonViewComponent {
 
     @Input() tooltip = '';
 
-    constructor() { }
-
-    ngOnInit() {
-    }
-
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onAnonymize() { }
 
 }

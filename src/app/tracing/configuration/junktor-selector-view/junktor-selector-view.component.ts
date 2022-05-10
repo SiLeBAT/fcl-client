@@ -21,8 +21,6 @@ export class JunctorSelectorViewComponent {
         Or: 'Or'
     };
 
-    constructor() { }
-
     onValueChange(value: JunktorType): void {
         this.value = value;
         this.valueChange.emit(value);

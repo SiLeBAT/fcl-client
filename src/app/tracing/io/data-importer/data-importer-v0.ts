@@ -14,14 +14,14 @@ export class DataImporterV0 implements IDataImporter {
 
     async isDataFormatSupported(data: any): Promise<boolean> {
         const containsRawData =
-            data.hasOwnProperty('stations') &&
-            data.hasOwnProperty('deliveries') &&
-            data.hasOwnProperty('deliveriesRelations');
+            Object.prototype.hasOwnProperty.call(data, 'stations') &&
+            Object.prototype.hasOwnProperty.call(data, 'deliveries') &&
+            Object.prototype.hasOwnProperty.call(data, 'deliveriesRelations');
         const containsDataWithSettings =
-            data.hasOwnProperty('elements') &&
-            data.hasOwnProperty('layout') &&
-            data.hasOwnProperty('gisLayout') &&
-            data.hasOwnProperty('graphSettings');
+            Object.prototype.hasOwnProperty.call(data, 'elements') &&
+            Object.prototype.hasOwnProperty.call(data, 'layout') &&
+            Object.prototype.hasOwnProperty.call(data, 'gisLayout') &&
+            Object.prototype.hasOwnProperty.call(data, 'graphSettings');
         return containsRawData || containsDataWithSettings;
     }
 
@@ -29,9 +29,9 @@ export class DataImporterV0 implements IDataImporter {
         if (await this.isDataFormatSupported(data)) {
 
             const containsRawData =
-                data.hasOwnProperty('stations') &&
-                data.hasOwnProperty('deliveries') &&
-                data.hasOwnProperty('deliveriesRelations');
+                Object.prototype.hasOwnProperty.call(data, 'stations') &&
+                Object.prototype.hasOwnProperty.call(data, 'deliveries') &&
+                Object.prototype.hasOwnProperty.call(data, 'deliveriesRelations');
 
             if (containsRawData) {
                 this.preprocessRawData(data, fclData);
@@ -113,7 +113,7 @@ export class DataImporterV0 implements IDataImporter {
             gisLayout: data.gisLayout
         };
 
-        fclData.graphSettings = graphSettings,
+        fclData.graphSettings = graphSettings;
         this.applyElements(data.elements.stations, data.elements.deliveries, fclData);
         return true;
     }
@@ -149,7 +149,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string, value: string }[] = [];
+            const properties: { name: string; value: string }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];
@@ -222,7 +222,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string, value: string }[] = [];
+            const properties: { name: string; value: string }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];

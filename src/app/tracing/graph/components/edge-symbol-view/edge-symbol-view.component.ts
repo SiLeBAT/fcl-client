@@ -20,5 +20,4 @@ export class EdgeSymbolViewComponent {
         return this._edgeColor;
     }
 
-    constructor() { }
 }

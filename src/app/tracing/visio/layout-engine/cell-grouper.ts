@@ -117,7 +117,7 @@ class CellGrouper {
 export function getCellGroups(
     stationGrid: StationData[][],
     stationGroups: StationGroup[]
-): {label: string, cells: GridCell[]}[] {
+): {label: string; cells: GridCell[]}[] {
 
     const cellGrouping = new CellGrouper();
     return cellGrouping.groupCells(stationGrid, stationGroups);

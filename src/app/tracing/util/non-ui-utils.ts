@@ -160,13 +160,13 @@ export class Utils {
     static async getJson(filePath: string, httpClient: HttpClient): Promise<any> {
         return httpClient.get(filePath).toPromise()
             .then(response => response)
-            .catch(error => Promise.reject(error));
+            .catch(async error => Promise.reject(error));
     }
 
     static getProperty(data: any, path: string): any {
         if (data != null) {
             for (const propName of path.split('.')) {
-                if (data.hasOwnProperty(propName)) {
+                if (Object.prototype.hasOwnProperty.call(data, propName)) {
                     data = data[propName];
                 } else {
                     return null;
@@ -184,7 +184,7 @@ export class Utils {
         const propNames: string[] = propPath.split('.');
         // eslint-disable-next-line one-var
         for (let i = 0, iMax = propNames.length - 1; i < iMax; i++) {
-            if (!container.hasOwnProperty(propNames[i])) {
+            if (!Object.prototype.hasOwnProperty.call(container, propNames[i])) {
                 container[propNames[i]] = {};
             }
             container = container[propNames[i]];

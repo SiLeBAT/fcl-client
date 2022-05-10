@@ -31,8 +31,6 @@ export class TracingService {
     private globalSettings: GlobalTracingSettings;
     private lastData: DataServiceData;
 
-    constructor() {}
-
     private resetScores(data: DataServiceData) {
         data.stations.forEach(s => {
             s.score = 0;

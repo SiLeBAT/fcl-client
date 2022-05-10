@@ -5,7 +5,7 @@ export function FruchtermanLayout(options) {
 class Graph {
 
     vertices: Vertex[] = [];
-    edges: { vertex1: Vertex, vertex2: Vertex }[] = [];
+    edges: { vertex1: Vertex; vertex2: Vertex }[] = [];
 
     insertVertex(vertex: Vertex) {
         this.vertices.push(vertex);
@@ -204,7 +204,7 @@ class FruchtermanLayoutClass {
         }
 
         for (const key of Object.keys(FruchtermanLayoutClass.DEFAULTS)) {
-            if (!this.options.hasOwnProperty(key)) {
+            if (!Object.prototype.hasOwnProperty.call(this.options, key)) {
                 this.options[key] = FruchtermanLayoutClass.DEFAULTS[key];
             }
         }

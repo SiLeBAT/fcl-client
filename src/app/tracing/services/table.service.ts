@@ -219,8 +219,8 @@ export class TableService {
             .toLowerCase();
     }
 
-    private collectProps(arr: (StationData | DeliveryData)[]): { id: string, type: string }[] {
-        const result: { id: string, type: string }[] = [];
+    private collectProps(arr: (StationData | DeliveryData)[]): { id: string; type: string }[] {
+        const result: { id: string; type: string }[] = [];
         const props: { [key: string ]: string } = {};
         arr.forEach(item => item.properties.filter(
             prop => prop.value !== undefined || prop.value !== null

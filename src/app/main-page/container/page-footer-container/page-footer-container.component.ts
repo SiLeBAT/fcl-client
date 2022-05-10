@@ -9,8 +9,6 @@ import { environment } from '../../../../environments/environment';
 export class PageFooterContainerComponent implements OnInit {
     supportContact: string;
 
-    constructor() { }
-
     ngOnInit() {
         this.supportContact = environment.supportContact;
     }

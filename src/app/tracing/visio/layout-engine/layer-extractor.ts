@@ -16,8 +16,8 @@ function getNormalizedValues(values: number[]): number[] {
 function getLayerIndices(y: number[]): number[] {
     y = getNormalizedValues(y);
     const maxDist = 0.1;
-    const layers: {y: number, index: number}[] = [];
-    const iToLayer: {y: number, index: number}[] = [];
+    const layers: {y: number; index: number}[] = [];
+    const iToLayer: {y: number; index: number}[] = [];
     for (let i: number = y.length - 1; i >= 0; i--) {
         let noLayer = true;
         for (let k: number = layers.length - 1; k >= 0; --k) {

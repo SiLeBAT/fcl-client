@@ -75,7 +75,6 @@ function buildInterLayerPosConName(vertex: Vertex): string {
 }
 
 class VertexPositionerLP {
-    constructor() {}
 
     positionVertices(layers: Vertex[][], vertexDistance: number, maxLayerLength: number | undefined) {
 

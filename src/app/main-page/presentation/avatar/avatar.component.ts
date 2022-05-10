@@ -9,10 +9,10 @@ import { Observable } from 'rxjs';
 })
 export class AvatarComponent {
     @Input() currentUser: User | null;
+    // eslint-disable-next-line @angular-eslint/no-output-on-prefix
     @Output() onLogout = new EventEmitter();
+    // eslint-disable-next-line @angular-eslint/no-output-on-prefix
     @Output() onProfile = new EventEmitter();
-
-    constructor() { }
 
     logout() {
         this.onLogout.emit();

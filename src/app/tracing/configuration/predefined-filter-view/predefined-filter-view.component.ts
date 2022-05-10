@@ -22,8 +22,6 @@ export class PredefinedFilterViewComponent {
         [ShowType.TRACE_ONLY]: 'Show only traced'
     };
 
-    constructor() { }
-
     onSetShowType(showType: ShowType) {
         this.showType = showType;
         this.showTypeChange.emit(showType);

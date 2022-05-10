@@ -11,13 +11,12 @@ import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 export class ResetComponent implements OnInit, OnChanges {
 
     @Input() serverValidationErrors: ValidationError[] = [];
+    // eslint-disable-next-line @angular-eslint/no-output-native
     @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
 
     resetForm: FormGroup;
 
     private _lastSubmittedCredentials: NewPasswordRequestDTO | null = null;
-
-    constructor() {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.serverValidationErrors !== undefined) {

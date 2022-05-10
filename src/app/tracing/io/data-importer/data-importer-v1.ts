@@ -723,7 +723,7 @@ export class DataImporterV1 implements IDataImporter {
     private getProperty(data: any, path: string): any {
         if (data != null) {
             for (const propName of path.split('.')) {
-                if (data.hasOwnProperty(propName)) {
+                if (Object.prototype.hasOwnProperty.call(data, propName)) {
                     data = data[propName];
                 } else {
                     return null;
@@ -738,7 +738,7 @@ export class DataImporterV1 implements IDataImporter {
 
     private checkTracingProps(data: any, propNames: string[], context: string) {
         for (const propName of propNames) {
-            if (!data.hasOwnProperty(propName)) {
+            if (!Object.prototype.hasOwnProperty.call(data, propName)) {
                 throw new InputDataError('Property "' + propName + '" is missing in ' + context);
             } else if (data[propName] === null) {
                 throw new InputDataError('Property "' + propName + '" is null in ' + context);

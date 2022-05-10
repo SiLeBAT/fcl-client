@@ -49,15 +49,15 @@ export class UserService {
         return this.dataService.put<PasswordResetRequestResponseDTO, ResetRequestDTO>(this.URL.recovery, email);
     }
 
-    resetPassword(newPw: NewPasswordRequestDTO, token: String): Observable<PasswordResetResponseDTO> {
+    resetPassword(newPw: NewPasswordRequestDTO, token: string): Observable<PasswordResetResponseDTO> {
         return this.dataService.patch<PasswordResetResponseDTO, NewPasswordRequestDTO>([this.URL.reset, token].join('/'), newPw);
     }
 
-    activateAccount(token: String): Observable<ActivationResponseDTO> {
+    activateAccount(token: string): Observable<ActivationResponseDTO> {
         return this.dataService.patch<ActivationResponseDTO, string>([this.URL.activate, token].join('/'), null);
     }
 
-    adminActivateAccount(adminToken: String): Observable<ActivationResponseDTO> {
+    adminActivateAccount(adminToken: string): Observable<ActivationResponseDTO> {
         return this.dataService.patch<ActivationResponseDTO, string>([this.URL.adminactivate, adminToken].join('/'), null);
     }
 
@@ -69,7 +69,7 @@ export class UserService {
         return this.dataService.put<TokenizedUserDTO, GdprConfirmationRequestDTO>(this.URL.gdpragreement, user);
     }
 
-    confirmNewsletterSubscription(token: String): Observable<NewsConfirmationResponseDTO> {
+    confirmNewsletterSubscription(token: string): Observable<NewsConfirmationResponseDTO> {
         return this.dataService.patch<NewsConfirmationResponseDTO, string>([this.URL.newsconfirmation, token].join('/'), null);
     }
 

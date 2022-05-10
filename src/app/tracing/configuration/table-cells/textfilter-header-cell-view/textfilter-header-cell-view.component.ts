@@ -18,8 +18,6 @@ export class TextFilterHeaderCellViewComponent {
     @Output() sort = new EventEmitter<void>();
     @Output() filterChange = new EventEmitter<string>();
 
-    constructor() {}
-
     onSort(): void {
         this.sort.emit();
     }

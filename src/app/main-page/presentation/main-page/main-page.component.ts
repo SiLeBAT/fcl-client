@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { environment } from '../../../../environments/environment';
 import { UserService } from '../../../user/services/user.service';
@@ -12,19 +12,16 @@ import * as userActions from '../../../user/state/user.actions';
     templateUrl: './main-page.component.html',
     styleUrls: ['./main-page.component.scss']
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent {
     private isActive = false;
     appName: string = environment.appName;
     supportContact: string = environment.supportContact;
 
     constructor(
-    public userService: UserService,
-    public mainPageService: MainPageService,
-    private store: Store<fromUser.State>
-    ) {}
-
-    ngOnInit() {
-    }
+        public userService: UserService,
+        public mainPageService: MainPageService,
+        private store: Store<fromUser.State>
+    ) { }
 
     logout() {
         this.store.dispatch(new userActions.LogoutUserMSA());

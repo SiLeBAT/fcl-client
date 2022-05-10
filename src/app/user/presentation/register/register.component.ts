@@ -24,8 +24,6 @@ export class RegisterComponent implements OnInit, OnChanges {
 
     _lastSubmittedCredentials: RegistrationCredentials | null = null;
 
-    constructor() {}
-
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.serverValidationErrors !== undefined) {
             if (this.registerForm) {

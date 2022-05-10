@@ -4,7 +4,7 @@ import { InputEncodingError, InputFormatError } from './io-errors';
 export async function getDataFromPath(filePath: string, httpClient: HttpClient): Promise<any> {
     return httpClient.get(filePath).toPromise()
         .then(response => response)
-        .catch(error => Promise.reject(error));
+        .catch(async error => Promise.reject(error));
 }
 
 export async function getJsonFromFile(file: File): Promise<any> {

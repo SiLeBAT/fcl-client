@@ -141,7 +141,7 @@ interface BoxPort {
     currentPort: VisioPort;
 }
 interface LegendEntryInfo {
-    label: String;
+    label: string;
     style: any;
     isEdge?: boolean;
 }
@@ -458,16 +458,12 @@ export class VisioToMxGraphService {
 
         let xPos = startX;
         legendEntryMatrix.forEach((legendColumnEntries) => {
-            const columnCells = legendColumnEntries.map((legendEntry, rowIndex) => {
-                return this.drawLegendEntry(
-                    legendCell,
-                    legendEntry,
-                    { x: xPos, y: startY + rowIndex * (LEGEND_ENTRY_SIZE.height + LEGEND_ENTRY_DIST.y) }
-                );
-            });
-            xPos += Math.max(...columnCells.map(c => {
-                return c.getGeometry().width;
-            })) + LEGEND_ENTRY_DIST.x;
+            const columnCells = legendColumnEntries.map((legendEntry, rowIndex) => this.drawLegendEntry(
+                legendCell,
+                legendEntry,
+                { x: xPos, y: startY + rowIndex * (LEGEND_ENTRY_SIZE.height + LEGEND_ENTRY_DIST.y) }
+            ));
+            xPos += Math.max(...columnCells.map(c => c.getGeometry().width)) + LEGEND_ENTRY_DIST.x;
         });
         // add right margin (equal to leftMargin)
         const geometry = legendCell.getGeometry();

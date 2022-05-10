@@ -27,7 +27,7 @@ export interface LinkGroup {
     }[];
 }
 
-export type GroupInfoFun = (linkGroup: LinkGroup, groupNumber: number) => { id: string, name: string, groupType: GroupType };
+export type GroupInfoFun = (linkGroup: LinkGroup, groupNumber: number) => { id: string; name: string; groupType: GroupType };
 
 export interface IsolatedComponent {
     ids: string[];

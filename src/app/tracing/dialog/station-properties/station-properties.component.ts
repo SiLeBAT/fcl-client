@@ -487,6 +487,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         initRectAndText(newNodesIn, true);
         initRectAndText(newNodesOut, false);
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
 
         newNodesIn.on('mouseover', function (inNode: NodeDatum) {
@@ -514,18 +515,17 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
             .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
-        const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => {
-            return StationPropertiesComponent.line(
-                d.source.x + StationPropertiesComponent.NODE_WIDTH,
-                d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-                d.target.x,
-                d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
-            );
-        }).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
+        const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => StationPropertiesComponent.line(
+            d.source.x + StationPropertiesComponent.NODE_WIDTH,
+            d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
+            d.target.x,
+            d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
+        )).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
 
         updateColor(newEdges, false);
         edges.exit().remove();
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
 
         newEdges.on('mouseover', function (edge: EdgeDatum) {

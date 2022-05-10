@@ -12,8 +12,6 @@ import { Utils } from '../util/non-ui-utils';
 })
 export class EditTracingSettingsService {
 
-    constructor() {}
-
     getClearOutbreakStationsPayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {
         return this.getMarkStationsAsOutbreakPayload(
             tracingSettings,
@@ -79,7 +77,7 @@ export class EditTracingSettingsService {
         };
     }
 
-    private getNewTracing<T extends (StationTracingSettings | DeliveryTracingSettings)>(
+    private getNewTracing<T extends(StationTracingSettings | DeliveryTracingSettings)>(
         oldTracing: T[], newInvIds: string[]
     ): T[] {
         if (newInvIds.length === 0) {
@@ -103,7 +101,7 @@ export class EditTracingSettingsService {
         }
     }
 
-    private setElementsObservedType<T extends (StationTracingSettings | DeliveryTracingSettings)>(
+    private setElementsObservedType<T extends(StationTracingSettings | DeliveryTracingSettings)>(
         elements: T[],
         ids: string[],
         observedType: ObservedType

@@ -289,7 +289,7 @@ export class InteractiveCyGraph extends CyGraph {
         this.cy.remove('.ghost-element');
     }
 
-    private createGhostElements(): { nodes: CyNodeDef[], edges: CyEdgeDef[] } {
+    private createGhostElements(): { nodes: CyNodeDef[]; edges: CyEdgeDef[] } {
         const ghostNodes = this.createNodes(super.data.ghostData.nodeData, super.data.ghostData.posMap);
         ghostNodes.forEach(node => {
             node.selected = false;

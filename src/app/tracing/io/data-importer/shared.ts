@@ -15,8 +15,8 @@ export async function isValidJson(schema: any, data: any, throwError?: boolean):
 }
 
 export function compareVersions(version1: string, version2: string): number {
-    const versionNumbers1: Number[] = version1.split('.').map(s => Number(s));
-    const versionNumbers2: Number[] = version2.split('.').map(s => Number(s));
+    const versionNumbers1: number[] = version1.split('.').map(s => Number(s));
+    const versionNumbers2: number[] = version2.split('.').map(s => Number(s));
 
     for (let i = 0; i < 3; i++) {
         if (versionNumbers1[i] !== versionNumbers2[i]) {
@@ -27,13 +27,13 @@ export function compareVersions(version1: string, version2: string): number {
 }
 
 export function areMajorVersionsMatching(version1: string, version2: string): boolean {
-    const versionNumbers1: Number[] = version1.split('.').map(s => Number(s));
-    const versionNumbers2: Number[] = version2.split('.').map(s => Number(s));
+    const versionNumbers1: number[] = version1.split('.').map(s => Number(s));
+    const versionNumbers2: number[] = version2.split('.').map(s => Number(s));
 
     return versionNumbers1[0] === versionNumbers2[0];
 }
 
-export function checkVersionFormat(version: String): boolean {
+export function checkVersionFormat(version: string): boolean {
     return version && version.trim().match('^\\d+\\.\\d+\\.\\d+$').length > 0;
 }
 

@@ -52,7 +52,9 @@ interface PropData {
 interface CachedData {
     stationSpecificData: UnsharedData;
     deliverySpecificData: UnsharedData;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     highlightingStats: {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
     tracingPropsUpdatedFlag: {};
 }
 

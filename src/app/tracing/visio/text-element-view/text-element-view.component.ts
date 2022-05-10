@@ -1,11 +1,11 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, Output, Input, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'fcl-text-element-view',
     templateUrl: './text-element-view.component.html',
     styleUrls: ['./text-element-view.component.scss']
 })
-export class TextElementViewComponent implements OnInit {
+export class TextElementViewComponent {
 
     @Input() set value(value: string) {
         if (value !== this.lastInput) {
@@ -17,11 +17,6 @@ export class TextElementViewComponent implements OnInit {
 
     private lastInput: string = undefined;
     initialValue: string = undefined;
-
-    constructor() { }
-
-    ngOnInit() {
-    }
 
     onKeyDown(e: KeyboardEvent): boolean {
         // filter out Enter

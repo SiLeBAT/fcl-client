@@ -115,6 +115,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onMouseLeaveTableRow(row: TableRow): void {
     }
 

@@ -16,7 +16,8 @@ export interface CyNodeDef extends CyElementDef<CyNodeData> {
     position: Position;
 }
 
-export interface CyEdgeDef extends CyElementDef<CyEdgeData> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface CyEdgeDef extends CyElementDef<CyEdgeData> { }
 
 export interface BoundingBoxOptions {
     includeNodes?: boolean;
@@ -59,13 +60,15 @@ export interface Cy {
     removeAllListeners(): void;
     getElementById(id: string): CyNode | CyEdge;
     ready(callBack: () => void): void;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     style(): {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
     setStyle(style: {}): void;
     width(): number;
     height(): number;
     userPanningEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
     autoungrabify<T extends boolean | None>(a?: T): None extends T ? boolean : void;
-    layout(options: { name: string, [key: string]: any }): CyLayout;
+    layout(options: { name: string; [key: string]: any }): CyLayout;
     zoomingEnabled<T extends boolean | unknown>(a?: T): T extends boolean ? void : boolean;
     viewport(zoom: number, pan: Position): void;
     extent(): CyExtent;
@@ -99,6 +102,7 @@ export interface CyElementCollection<E> {
     size(): number;
     allAre(a: string): number;
     map<T>(a: (b: E) => T): T[];
+    // eslint-disable-next-line @typescript-eslint/ban-types
     style(a: {}): void;
     unselect(): void;
     select(): void;
@@ -117,7 +121,7 @@ export interface CyElementCollection<E> {
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
-    layout(options: { name: string, [key: string]: any }): CyLayout;
+    layout(options: { name: string; [key: string]: any }): CyLayout;
     positions(a: (b: CyNode) => Position): void;
     filter(a: ((b: CyNode) => boolean) | string): CyNodeCollection;
     edgesWith(a: string | CyNodeCollection): CyEdgeCollection;
@@ -142,6 +146,7 @@ export interface CyElement {
     style<
         T extends string | {[key: string]: any} | None,
         K extends (None extends T ? None : T extends string ? number | string | boolean | None : None)
+    // eslint-disable-next-line @typescript-eslint/ban-types
     >(a?: T, b?: K): None extends T ? {} : (T extends string ? (None extends K ? number | string | boolean : void) : void);
     on<
         T extends string | CyCallBackFun,
@@ -224,6 +229,7 @@ export interface GraphServiceData extends GraphElementData, DataServiceData {
     delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
     nodeSel: Record<NodeId, boolean>;
     edgeSel: Record<EdgeId, boolean>;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     nodeAndEdgePropsUpdatedFlag: {};
     ghostElements: GraphElementData;
     hoverEdges: EdgeId[];

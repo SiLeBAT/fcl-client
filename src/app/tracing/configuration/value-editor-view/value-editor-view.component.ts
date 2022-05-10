@@ -37,8 +37,6 @@ export class ValueEditorViewComponent {
         return this.autocompleteValues_;
     }
 
-    constructor() { }
-
     private processInputIfNecessary(): void {
         if (!this.processedInput || this.processedInput.availableValues !== this.availableValues) {
             this.availableStrValues_ = this.availableValues.map(valueToStr);

@@ -14,8 +14,6 @@ export class SymbolHeaderCellViewComponent {
 
     @Output() sort = new EventEmitter<void>();
 
-    constructor() {}
-
     onSort(): void {
         this.sort.emit();
     }

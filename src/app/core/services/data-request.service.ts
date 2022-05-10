@@ -14,16 +14,22 @@ export class DataRequestService {
 
     post<T, S>(url: string, body: S): Observable<T> {
         return this.httpClient.post<T>(url, body)
-            .pipe(catchError(this.handleError));
+            .pipe(
+                catchError((e) => this.handleError(e))
+            );
     }
 
     patch<T, S>(url: string, body: S): Observable<T> {
         return this.httpClient.patch<T>(url, body)
-            .pipe(catchError(this.handleError));
+            .pipe(
+                catchError((e) => this.handleError(e))
+            );
     }
     put<T, S>(url: string, body: S): Observable<T> {
         return this.httpClient.put<T>(url, body)
-            .pipe(catchError(this.handleError));
+            .pipe(
+                catchError((e) => this.handleError(e))
+            );
     }
 
     get<T>(url: string): Observable<T> {

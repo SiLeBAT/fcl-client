@@ -80,9 +80,8 @@ function aggregateVisualGroups(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
 
 function aggregateHorizontally(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
     visGroups.sort(
-        (b1: VisualBoxGroup, b2: VisualBoxGroup) => {
-            return b1.position.y !== b2.position.y ? b1.position.y - b2.position.y : b1.position.x - b2.position.x;
-        }
+        (b1: VisualBoxGroup, b2: VisualBoxGroup) =>
+            b1.position.y !== b2.position.y ? b1.position.y - b2.position.y : b1.position.x - b2.position.x
     );
     let i = 0;
     while (i < visGroups.length - 1) {

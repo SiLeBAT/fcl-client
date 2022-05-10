@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -11,7 +11,7 @@ import { ValidationError } from '@app/core/model';
     selector: 'fcl-reset-container',
     templateUrl: './reset-container.component.html'
 })
-export class ResetContainerComponent implements OnInit {
+export class ResetContainerComponent {
 
     serverValidationErrors: ValidationError[] = [];
 
@@ -21,9 +21,6 @@ export class ResetContainerComponent implements OnInit {
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private spinnerService: SpinnerLoaderService) { }
-
-    ngOnInit() {
-    }
 
     reset(password: NewPasswordRequestDTO) {
         const token = this.activatedRoute.snapshot.params['id'];

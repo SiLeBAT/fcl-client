@@ -20,8 +20,6 @@ export class PropertySelectorViewComponent {
 
     @Output() valueChange = new EventEmitter<string>();
 
-    constructor() { }
-
     onValueChange(value: string): void {
         this.valueChange.emit(value);
     }

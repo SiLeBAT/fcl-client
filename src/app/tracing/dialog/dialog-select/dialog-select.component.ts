@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface DialogSelectData {
     title: string;
-    options: { value: string, viewValue: string, selected: boolean }[];
+    options: { value: string; viewValue: string; selected: boolean }[];
 }
 
 @Component({

@@ -66,8 +66,6 @@ export class Vertex {
     topPadding: number;
     layerScale: number = 1;
     innerScale: number = 1;
-
-    constructor() {}
 }
 
 export enum CompressionType {
@@ -106,7 +104,6 @@ export class VertexCounter {
     private lastAboveIndex: number = -1;
     private lastVertexCountRequest: number = -1;
 
-    constructor() {}
     insertVertex(position: number) {
         if (this.positionCount.has(position)) {
             this.positionCount.set(position, this.positionCount.get(position) + 1);

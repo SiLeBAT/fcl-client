@@ -96,7 +96,7 @@ class FarmToForkLayoutClass {
         }
 
         for (const key of Object.keys(FarmToForkLayoutClass.DEFAULTS)) {
-            if (!this.options.hasOwnProperty(key)) {
+            if (!Object.prototype.hasOwnProperty.call(this.options, key)) {
                 this.options[key] = FarmToForkLayoutClass.DEFAULTS[key];
             }
         }

@@ -14,8 +14,6 @@ export class VisibilityFilterHeaderCellViewComponent {
 
     @Output() sort = new EventEmitter<void>();
 
-    constructor() {}
-
     onSort(): void {
         this.sort.emit();
     }

@@ -83,28 +83,26 @@ export class IOEffects {
         () => this.actions$.pipe(
             ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
             withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
-            mergeMap(([action, fclData]) => {
-                return from(this.ioService.getExportData(fclData)).pipe(
-                    mergeMap(exportData => {
-                        if (exportData) {
-                            const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
-                            const fileName = 'data.json';
+            mergeMap(([action, fclData]) => from(this.ioService.getExportData(fclData)).pipe(
+                mergeMap(exportData => {
+                    if (exportData) {
+                        const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
+                        const fileName = 'data.json';
 
-                            const url = window.URL.createObjectURL(blob);
+                        const url = window.URL.createObjectURL(blob);
 
-                            Utils.openSaveDialog(url, fileName);
-                            window.URL.revokeObjectURL(url);
-                        }
-                        return EMPTY;
-                    }),
-                    catchError(error => {
-                        if (error) {
-                            this.alertService.error(`File could not be saved!, error: ${error}`);
-                        }
-                        return EMPTY;
-                    })
-                );
-            })
+                        Utils.openSaveDialog(url, fileName);
+                        window.URL.revokeObjectURL(url);
+                    }
+                    return EMPTY;
+                }),
+                catchError(error => {
+                    if (error) {
+                        this.alertService.error(`File could not be saved!, error: ${error}`);
+                    }
+                    return EMPTY;
+                })
+            ))
         ),
         { dispatch: false }
     );

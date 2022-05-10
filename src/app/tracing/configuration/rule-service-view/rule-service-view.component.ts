@@ -13,8 +13,6 @@ export class RuleServiceViewComponent {
     @Output() addSelection = new EventEmitter<void>();
     @Output() removeSelection = new EventEmitter<void>();
 
-    constructor() { }
-
     onAddSelectionClick(): void {
         this.addSelection.emit();
     }
