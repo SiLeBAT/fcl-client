@@ -1,7 +1,6 @@
 import { Graph, Vertex, Edge, VertexCounter } from './data-structures';
 
 class VertexSorter {
-    constructor() {}
 
     sortVertices(graph: Graph, timeLimit: number) {
         if (timeLimit === undefined) {
@@ -226,12 +225,8 @@ class VertexSorter {
             vertex.layerIndex = iL;
         }
 
-        const edgeOutIndex: number = edge.source.outEdges.findIndex(e => {
-            return e.target.index === edge.target.index;
-        });
-        const edgeInIndex: number = edge.target.inEdges.findIndex(e => {
-            return e.source.index === edge.source.index;
-        });
+        const edgeOutIndex: number = edge.source.outEdges.findIndex(e => e.target.index === edge.target.index);
+        const edgeInIndex: number = edge.target.inEdges.findIndex(e => e.source.index === edge.source.index);
         const newSpanStartEdge: Edge = new Edge(
             graph.vertices[edge.source.index],
             graph.vertices[maxVertexIndex + 1],

@@ -42,7 +42,7 @@ export enum LayoutActionTypes {
 export class LayoutAction implements Action {
     readonly type = LayoutActionTypes.LayoutAction;
 
-    constructor(public payload: { layoutName: LayoutName, nodeIds: string[] }) {}
+    constructor(public payload: { layoutName: LayoutName; nodeIds: string[] }) {}
 }
 
 @Injectable({
@@ -62,8 +62,6 @@ export class ContextMenuService {
         [LAYOUT_SPREAD]: 'Spread',
         [LAYOUT_DAG]: 'Directed acyclic graph'
     };
-
-    constructor() {}
 
     getContextElements(context: ContextMenuRequestContext, graphData: GraphServiceData): ContextElements {
         const isContextElementSelected =

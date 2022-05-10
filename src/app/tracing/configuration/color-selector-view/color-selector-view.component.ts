@@ -159,7 +159,7 @@ export class ColorSelectorViewComponent {
         }
     }
 
-    private getSpaceForColorPicker(): { left: number; right: number, bottom: number, top: number } {
+    private getSpaceForColorPicker(): { left: number; right: number; bottom: number; top: number } {
         let element: HTMLElement = this.colorPickerElement.nativeElement;
         const buttonRect = element.getBoundingClientRect();
         while (element.tagName !== ColorSelectorViewComponent.MAT_EXPANSION_PANEL_TAGNAME && element.parentElement) {

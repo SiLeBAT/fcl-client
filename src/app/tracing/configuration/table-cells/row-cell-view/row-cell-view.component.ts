@@ -12,5 +12,4 @@ export class RowCellViewComponent {
 
     @Input() value: string | boolean | number | null | undefined = '';
 
-    constructor() {}
 }

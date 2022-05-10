@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeliveryData, StationData } from '../../data.model';
 import { Constants } from '../../util/constants';
@@ -26,7 +26,7 @@ interface Properties {
     templateUrl: './delivery-properties.component.html',
     styleUrls: ['./delivery-properties.component.scss']
 })
-export class DeliveryPropertiesComponent implements OnInit {
+export class DeliveryPropertiesComponent {
 
     otherPropertiesHidden = true;
     properties: Properties = {};
@@ -128,8 +128,4 @@ export class DeliveryPropertiesComponent implements OnInit {
     toggleOtherProperties() {
         this.otherPropertiesHidden = !this.otherPropertiesHidden;
     }
-
-    ngOnInit() {
-    }
-
 }

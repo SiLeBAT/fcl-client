@@ -11,5 +11,4 @@ export class SymbolCellViewComponent {
 
     @Input() row: TableRow | null = null;
 
-    constructor() {}
 }

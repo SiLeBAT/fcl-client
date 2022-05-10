@@ -19,9 +19,7 @@ export class ContentService {
 
     getGDPRDate(): Observable<string> {
         return this.dataService.get<GDPRDateDTO>(this.URL.gdprdate).pipe(
-            map((gdprDate: GDPRDateDTO) => {
-                return gdprDate.gdprDate;
-            }));
+            map((gdprDate: GDPRDateDTO) => gdprDate.gdprDate));
     }
 
 }

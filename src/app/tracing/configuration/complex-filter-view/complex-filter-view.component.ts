@@ -42,8 +42,6 @@ export class ComplexFilterViewComponent {
 
     private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
 
-    constructor() { }
-
     onAddFilterCondition(index: number) {
 
         const conditions = this.conditions_.map(c => ({ ...c }));

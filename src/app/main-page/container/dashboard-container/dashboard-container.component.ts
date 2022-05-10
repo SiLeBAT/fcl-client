@@ -37,31 +37,29 @@ export class DashboardContainerComponent implements OnInit, OnDestroy {
 
         currentUser$.pipe(
             takeWhile(() => this.componentActive),
-            exhaustMap((currentUser: TokenizedUser) => {
-                return this.userService.openGDPRDialog().pipe(
-                    takeWhile(() => this.componentActive),
-                    exhaustMap((gdprConfirmed: boolean) => {
-                        if (gdprConfirmed) {
-                            return this.userService.updateGDPRAgreement({
-                                email: currentUser.email,
-                                token: currentUser.token,
-                                gdprConfirmed: gdprConfirmed
-                            }).pipe(
-                                takeWhile(() => this.componentActive),
-                                map((mapResult: TokenizedUserDTO) => {
-                                    this.userService.setCurrentUser(mapResult);
-                                    this.store.dispatch(new userActions.UpdateUserSOA({ currentUser: mapResult }));
-                                }),
-                                take(1)
-                            );
-                        } else {
-                            this.store.dispatch(new userActions.LogoutUserMSA());
-                            return EMPTY;
-                        }
-                    }),
-                    take(1)
-                );
-            }),
+            exhaustMap((currentUser: TokenizedUser) => this.userService.openGDPRDialog().pipe(
+                takeWhile(() => this.componentActive),
+                exhaustMap((gdprConfirmed: boolean) => {
+                    if (gdprConfirmed) {
+                        return this.userService.updateGDPRAgreement({
+                            email: currentUser.email,
+                            token: currentUser.token,
+                            gdprConfirmed: gdprConfirmed
+                        }).pipe(
+                            takeWhile(() => this.componentActive),
+                            map((mapResult: TokenizedUserDTO) => {
+                                this.userService.setCurrentUser(mapResult);
+                                this.store.dispatch(new userActions.UpdateUserSOA({ currentUser: mapResult }));
+                            }),
+                            take(1)
+                        );
+                    } else {
+                        this.store.dispatch(new userActions.LogoutUserMSA());
+                        return EMPTY;
+                    }
+                }),
+                take(1)
+            )),
             take(1)
         ).subscribe();
 

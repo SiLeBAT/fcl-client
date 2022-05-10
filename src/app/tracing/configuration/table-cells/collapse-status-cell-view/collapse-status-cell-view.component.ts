@@ -13,8 +13,6 @@ export class CollapseStatusCellViewComponent {
 
     @Output() toggleStatus = new EventEmitter<void>();
 
-    constructor() {}
-
     onToggleStatus(): void {
         this.toggleStatus.emit();
     }

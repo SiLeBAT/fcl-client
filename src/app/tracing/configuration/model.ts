@@ -64,7 +64,8 @@ export interface LabelEditRule extends EditRule {
     labelProperty: string;
 }
 
-export interface InvEditRule extends EditRule {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface InvEditRule extends EditRule { }
 
 export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule;
 export type DeliveryEditRule = LabelEditRule | InvEditRule | ColorEditRule;

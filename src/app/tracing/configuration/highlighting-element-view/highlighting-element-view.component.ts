@@ -32,8 +32,6 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
     private typeToEditRuleMap_: Record<RuleType, T> = {} as Record<RuleType, T>;
     private emptyArray = [];
 
-    constructor() { }
-
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.ruleListItems !== undefined) {
             this.updateTypeToListItemsMap();

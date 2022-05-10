@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
+import { Component, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { Subscription, timer } from 'rxjs';
@@ -36,7 +36,7 @@ interface FilterColumn extends Column, Filter {}
     templateUrl: './deliveries-properties.component.html',
     styleUrls: ['./deliveries-properties.component.scss']
 })
-export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
+export class DeliveriesPropertiesComponent implements OnDestroy {
 
     private readonly MAX_COUNT_SORT_OPTIONS = 100;
     readonly ROW_HEIGHT = 30;
@@ -79,9 +79,6 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         );
     }
 
-    ngOnInit() {
-    }
-
     ngOnDestroy() {
         if (this.stateSubscription) {
             this.stateSubscription.unsubscribe();
@@ -97,6 +94,7 @@ export class DeliveriesPropertiesComponent implements OnInit, OnDestroy {
         window.getSelection().removeAllRanges();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onActivate(event) {
     }
 

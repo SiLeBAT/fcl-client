@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromUser from '../../../user/state/user.reducer';
 import * as userActions from '../../../user/state/user.actions';
@@ -9,16 +9,13 @@ import { Router } from '@angular/router';
     templateUrl: './avatar-container.component.html',
     styleUrls: ['./avatar-container.component.scss']
 })
-export class AvatarContainerComponent implements OnInit {
+export class AvatarContainerComponent {
     currentUser$ = this.store.pipe(
         select(fromUser.getCurrentUser)
     );
 
     constructor(private router: Router,
         private store: Store<fromUser.State>) { }
-
-    ngOnInit() {
-    }
 
     onLogout() {
         this.store.dispatch(new userActions.LogoutUserMSA());

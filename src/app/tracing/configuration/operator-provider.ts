@@ -138,6 +138,7 @@ export function createContainsOpFun(refValue: SimpleValueType): OperatorFun {
 function createRegExp(pattern: string, ignoreCase?: boolean): RegExp {
     try {
         return new RegExp(pattern, ignoreCase ? 'i' : undefined);
+    // eslint-disable-next-line no-empty
     } catch (e) {}
 
     return null;

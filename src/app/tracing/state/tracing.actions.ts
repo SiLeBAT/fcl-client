@@ -194,19 +194,19 @@ export class SetStationPositionsSOA implements Action {
 export class SetStationPositionsAndLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsAndLayoutSOA;
 
-    constructor(public payload: { stationPositions: { [key: string]: Position }, layout: Layout }) {}
+    constructor(public payload: { stationPositions: { [key: string]: Position }; layout: Layout }) {}
 }
 
 export class SetSchemaGraphLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetSchemaGraphLayoutSOA;
 
-    constructor(public payload: { layout: { zoom: number, pan: Position } }) {}
+    constructor(public payload: { layout: { zoom: number; pan: Position } }) {}
 }
 
 export class SetGisGraphLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetGisGraphLayoutSOA;
 
-    constructor(public payload: { layout: { zoom: number, pan: Position } }) {}
+    constructor(public payload: { layout: { zoom: number; pan: Position } }) {}
 }
 
 export class SetStationGroupsSOA implements Action {
@@ -271,8 +271,6 @@ export class SetStationFilterSOA implements Action {
 
 export class ResetAllStationFiltersSOA implements Action {
     readonly type = TracingActionTypes.ResetAllStationFiltersSOA;
-
-    constructor() {}
 }
 
 export class SetFilterDeliveryTableColumnOrderSOA implements Action {
@@ -289,8 +287,6 @@ export class SetDeliveryFilterSOA implements Action {
 
 export class ResetAllDeliveryFiltersSOA implements Action {
     readonly type = TracingActionTypes.ResetAllDeliveryFiltersSOA;
-
-    constructor() {}
 }
 
 export class SetGhostStationSOA implements Action {
@@ -351,14 +347,10 @@ export class SetDeliveryHighlightingEditRulesSOA implements Action {
 
 export class SetTabAnimationDoneSOA implements Action {
     readonly type = TracingActionTypes.SetTabAnimationDoneSOA;
-
-    constructor() {}
 }
 
 export class SetConfigurationSideBarOpenedSOA implements Action {
     readonly type = TracingActionTypes.SetConfigurationSideBarOpenedSOA;
-
-    constructor() {}
 }
 
 export type TracingActions =

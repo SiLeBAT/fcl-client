@@ -103,6 +103,7 @@ export interface TableFilterChange {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
+// eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
 export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnDestroy, AfterViewInit {
 
     get visibilityFilterState(): VisibilityFilterState {
@@ -220,22 +221,26 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     // lifecycle hooks start
 
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.inputData !== undefined && changes.inputData.currentValue !== null) {
             this.processDataIsRequired_ = true;
         }
     }
 
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngOnInit(): void {
         if (this.activityState$ !== undefined && this.activityState$ !== null) {
             this.subscriptions_.push(this.activityState$.subscribe(
                 (activityState) => this.setActivityState(activityState),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 () => {}
             ));
         }
         if (this.checkTableSize$ !== undefined && this.checkTableSize$ !== null) {
             this.subscriptions_.push(this.checkTableSize$.subscribe(
                 () => this.checkTableSizeOnStableWrapperSize({ stopOnOpen: false }),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 () => {}
             ));
         }
@@ -247,11 +252,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                         this.cdRef.markForCheck();
                     }
                 },
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 () => {}
             ));
         }
     }
 
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngDoCheck(): void {
         if (this.isActive) {
             if (this.processDataIsRequired_ || this.tableSizeUpdateIsRequired_ || this.tableSizeCheckIsRequired_) {
@@ -294,10 +301,12 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
     }
 
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngAfterViewInit(): void {
         this.dtFooterElement = this.hostElement.nativeElement.getElementsByClassName(CLASS_DATATABLE_FOOTER)[0];
     }
 
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngOnDestroy(): void {
         this.subscriptions_.forEach(s => s.unsubscribe());
         this.subscriptions_ = [];
@@ -368,7 +377,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.updateTableSize();
     }
 
-    onColumnReorder(e: { column: any, newValue: number, prevValue: number }): void {
+    onColumnReorder(e: { column: any; newValue: number; prevValue: number }): void {
         if (!this.isColumnOrderOk()) {
             this.fixColumnOrder();
         }
@@ -513,15 +522,16 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
             }
         };
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         asyncTask.subscription = this.cycleStart$.subscribe(callBack, () => {});
         this.asyncTasks_.push(asyncTask as AsyncTask);
     }
 
     private checkTableSizeOnStableWrapperSize(options: {
-        stopOnOpen?: boolean,
-        maxTimeSpan?: number,
-        timeoutSpan?: number,
-        minStableTimeSpan?: number
+        stopOnOpen?: boolean;
+        maxTimeSpan?: number;
+        timeoutSpan?: number;
+        minStableTimeSpan?: number;
     }): void {
         const asyncTask: Partial<AsyncTask> = {
             id: 'checkTableSizeOnStableWrapperSize',
@@ -696,6 +706,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 }
             }
         }
+        // eslint-disable-next-line no-empty
         if (this.processedInput__ !== this.inputData) {}
     }
 
@@ -847,7 +858,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         ];
     }
 
-    private getCellClass({ row }: { row: TableRow, column: NgxTableColumn, value: any}): any {
+    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any}): any {
         return {
             'fcl-row-cell-invisible': row['invisible'] || (row.parentRow !== undefined && row.parentRow['invisible']),
             'fcl-font-style-italic': row.parentRowId !== undefined
@@ -859,11 +870,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private getColumnOrdering(): string[] {
+        // eslint-disable-next-line no-underscore-dangle
         return this.table._internalColumns.filter(c => c.draggable).map(c => c.prop + '');
     }
 
     private isColumnOrderOk(): boolean {
         // checks whether all draggable columns are behind undraggable columns
+        // eslint-disable-next-line no-underscore-dangle
         return this.table._internalColumns.every(
             (value, index, arr) => index === 0 || !arr[index - 1].draggable || value.draggable
         );
@@ -871,17 +884,23 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private fixColumnOrder(): void {
         // puts undraggable columns in front of draggable columns
+        // eslint-disable-next-line no-underscore-dangle
         this.table._internalColumns = [].concat(
+            // eslint-disable-next-line no-underscore-dangle
             this.table._internalColumns.filter(c => !c.draggable),
+            // eslint-disable-next-line no-underscore-dangle
             this.table._internalColumns.filter(c => c.draggable)
         );
     }
 
     private applyColumnOrder(newColumnOrder: string[]) {
+        // eslint-disable-next-line no-underscore-dangle
         const fixedColumns = this.table._internalColumns.filter(c => !c.draggable);
+        // eslint-disable-next-line no-underscore-dangle
         const filterColumns = this.table._internalColumns.filter(c => c.draggable);
         const orderedFilterColumns = newColumnOrder.map(p => filterColumns.find(c => c.prop === p)).filter(c => !!c);
 
+        // eslint-disable-next-line no-underscore-dangle
         this.table._internalColumns = [].concat(
             fixedColumns,
             orderedFilterColumns,

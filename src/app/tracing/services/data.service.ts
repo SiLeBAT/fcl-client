@@ -35,9 +35,9 @@ export class DataService {
     }
 
     private createStations(state: DataServiceInputState): {
-        statMap: { [key: string]: StationData },
-        stations: StationData[],
-        getStatById(stationIds: string[]): StationData[]
+        statMap: { [key: string]: StationData };
+        stations: StationData[];
+        getStatById(stationIds: string[]): StationData[];
     } {
         const stations: StationData[] = state.fclElements.stations.map(storeData => ({
             ...storeData,
@@ -75,9 +75,9 @@ export class DataService {
     }
 
     private createDeliveries(state: DataServiceInputState): {
-        delMap: { [key: string]: DeliveryData },
-        deliveries: DeliveryData[],
-        getDelById(deliveryIds: string[]): DeliveryData[]
+        delMap: { [key: string]: DeliveryData };
+        deliveries: DeliveryData[];
+        getDelById(deliveryIds: string[]): DeliveryData[];
     } {
         const deliveries: DeliveryData[] = state.fclElements.deliveries.map(storeData => ({
             ...storeData,
@@ -194,8 +194,8 @@ export class DataService {
             if (station) {
                 station.outbreak = traceSet.outbreak;
                 station.observed = traceSet.observed;
-                station.crossContamination = traceSet.crossContamination,
-                station.killContamination = traceSet.killContamination,
+                station.crossContamination = traceSet.crossContamination;
+                station.killContamination = traceSet.killContamination;
                 station.weight = traceSet.weight;
             }
         }
@@ -206,8 +206,8 @@ export class DataService {
             const delivery = data.delMap[traceSet.id];
             if (delivery) {
                 delivery.observed = traceSet.observed;
-                delivery.crossContamination = traceSet.crossContamination,
-                delivery.killContamination = traceSet.killContamination,
+                delivery.crossContamination = traceSet.crossContamination;
+                delivery.killContamination = traceSet.killContamination;
                 delivery.weight = traceSet.weight;
             }
         }

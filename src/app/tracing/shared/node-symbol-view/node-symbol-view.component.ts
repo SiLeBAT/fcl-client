@@ -83,8 +83,6 @@ export class NodeSymbolViewComponent {
         return this.isFillColorNonWhite_;
     }
 
-    constructor() {}
-
     private resetColors(): void {
         this.fillColor_ = null;
         this.isFillColorNonWhite_ = true;
@@ -126,7 +124,7 @@ export class NodeSymbolViewComponent {
 
     private setGradientFillColor(colors: number[][]): void {
         let gradientId: string = 'col';
-        let gradientStops: GradientStop[];
+        let gradientStops: GradientStop[] = [];
 
         const percent = 100 / colors.length;
         gradientStops = colors.flatMap((c: number[], index) => {

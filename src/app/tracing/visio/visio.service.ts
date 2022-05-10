@@ -10,9 +10,8 @@ interface FclElements {
     samples: SampleData[];
 }
 
-function getFontMetricCanvas(): any {
-
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function getFontMetricCanvas(): any { }
 
 function getStationGrouperFromType(groupType: StationGroupType) {
     switch (groupType) {

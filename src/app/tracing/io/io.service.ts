@@ -27,16 +27,12 @@ export class IOService {
         if (typeof dataSource === 'string') {
             return this.httpClient.get(dataSource)
                 .toPromise()
-                .then(response => {
-                    return this.preprocessData(response);
-                })
+                .then(async response => this.preprocessData(response))
                 .then(data => {
                     data.source.name = this.getFileName(dataSource);
                     return data;
                 })
-                .catch(e => {
-                    return Promise.reject(e);
-                });
+                .catch(async e => Promise.reject(e));
 
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
@@ -61,7 +57,7 @@ export class IOService {
         return filePath.split('/').pop().split('\\').pop();
     }
 
-    getShapeFileData(dataSource: File): Promise<ShapeFileData> {
+    async getShapeFileData(dataSource: File): Promise<ShapeFileData> {
         if (dataSource instanceof File) {
             return shapeFileImporter.getShapeFileData(dataSource);
         } else {
@@ -69,7 +65,7 @@ export class IOService {
         }
     }
 
-    getExportData(data: FclData): Promise<any> {
+    async getExportData(data: FclData): Promise<any> {
         if (data.source && data.source.data) {
             const dataImporter = new DataImporterV1(this.httpClient);
             return dataImporter.isDataFormatSupported(data.source.data).then(

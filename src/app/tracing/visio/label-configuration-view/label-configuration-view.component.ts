@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AmountUnitPair, LabelElementInfo, PropElementInfo } from '../model';
 import { getUnitPropFromAmountProp } from '../shared';
 
@@ -7,16 +7,11 @@ import { getUnitPropFromAmountProp } from '../shared';
     templateUrl: './label-configuration-view.component.html',
     styleUrls: ['./label-configuration-view.component.scss']
 })
-export class LabelConfigurationViewComponent implements OnInit {
+export class LabelConfigurationViewComponent {
 
     @Input() labelElements: LabelElementInfo[][];
-    @Input() availableProps: { prop: string, label: string }[];
+    @Input() availableProps: { prop: string; label: string }[];
     @Input() amountUnitPairs: AmountUnitPair[] = [];
-
-    constructor() { }
-
-    ngOnInit() {
-    }
 
     onPropElementPropChange(propElement: PropElementInfo, prop: string | null): void {
         propElement.prop = prop;

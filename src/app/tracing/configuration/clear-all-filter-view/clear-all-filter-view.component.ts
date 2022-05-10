@@ -9,8 +9,6 @@ import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angul
 export class ClearAllFilterViewComponent {
     @Output() clearFilter = new EventEmitter();
 
-    constructor() { }
-
     clearAllFilter() {
         this.clearFilter.emit();
     }

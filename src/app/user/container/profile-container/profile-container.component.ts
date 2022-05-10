@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TokenizedUser } from '../../models/user.model';
 import * as fromUser from '../../../user/state/user.reducer';
 import { Store, select } from '@ngrx/store';
@@ -10,13 +10,11 @@ import * as _ from 'lodash';
     templateUrl: './profile-container.component.html',
     styleUrls: ['./profile-container.component.scss']
 })
-export class ProfileContainerComponent implements OnInit {
+export class ProfileContainerComponent {
     currentUser$ = this.store.pipe(
         select(fromUser.getCurrentUser)
     );
 
     constructor(private store: Store<fromUser.State>) { }
 
-    ngOnInit() {
-    }
 }

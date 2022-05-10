@@ -38,6 +38,7 @@ export class CyStyle {
         this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     createCyStyle(): {} {
         const graphSize = this.getProperGraphSize();
         return this.createXGraphStyle(graphSize);
@@ -53,7 +54,7 @@ export class CyStyle {
         }
     }
 
-    private createNodeSizeStyle(): { height: string, width: string } {
+    private createNodeSizeStyle(): { height: string; width: string } {
         const nodeSizeMapString = this.createNodeSizeMapString();
         return {
             height: nodeSizeMapString,
@@ -85,7 +86,7 @@ export class CyStyle {
                 ...(
                     graphSize !== GraphSize.HUGE ?
                         {
-                            content: 'data(label)',
+                            'content': 'data(label)',
                             'text-valign': 'bottom',
                             'text-halign': 'right',
                             'text-wrap': 'none',
@@ -103,7 +104,7 @@ export class CyStyle {
                 'border-width': nodeSize * CyStyle.NODE_SIZE_TO_BORDER_WIDTH_FACTOR,
                 'border-color': 'rgb(0, 0, 0)',
                 'z-index': 'data(zindex)',
-                color: 'rgb(0, 0, 0)'
+                'color': 'rgb(0, 0, 0)'
             })
 
             .selector('edge')
@@ -111,7 +112,7 @@ export class CyStyle {
                 ...(
                     graphSize !== GraphSize.HUGE ?
                         {
-                            content: 'data(label)',
+                            'content': 'data(label)',
                             'text-wrap': 'none',
                             'text-rotation': 'autorotate',
                             'font-size': fontSize
@@ -126,7 +127,7 @@ export class CyStyle {
                 'line-gradient-stop-colors': 'data(stopColors)',
                 'line-gradient-stop-positions': 'data(stopPositions)',
                 'z-index': 'data(zindex)',
-                width: edgeWidth,
+                'width': edgeWidth,
                 'arrow-scale': 1.4
             })
 
@@ -139,12 +140,12 @@ export class CyStyle {
                     CyStyle.SELECTED_NODE_BORDER_WIDTH_FACTOR
                 ),
                 'border-color': 'rgb(0, 0, 255)',
-                color: 'rgb(0, 0, 255)'
+                'color': 'rgb(0, 0, 255)'
             })
             .selector('edge:selected:inactive')
             .style({
-                width: selectedEdgeWidth,
-                color: 'rgb(0, 0, 255)',
+                'width': selectedEdgeWidth,
+                'color': 'rgb(0, 0, 255)',
                 'overlay-color': 'rgb(0, 0, 255)',
                 'overlay-padding': selectedEdgeWidth / 5.0,
                 'overlay-opacity': 1,
@@ -172,12 +173,12 @@ export class CyStyle {
             })
             .selector('node.ghost-element')
             .style({
-                color: 'rgb(179, 170, 179)',
+                'color': 'rgb(179, 170, 179)',
                 'border-color': 'rgb(179, 170, 179)'
             })
             .selector('edge.ghost-element')
             .style({
-                color: 'rgb(179, 170, 179)',
+                'color': 'rgb(179, 170, 179)',
                 'target-arrow-color': 'rgb(179, 170, 179)'
             })
             .selector('node[?isMeta]')

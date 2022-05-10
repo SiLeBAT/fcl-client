@@ -5,8 +5,6 @@ import { BusinessTypeRanker } from './business-type-ranker';
 class LayerAssignment {
     private vertexOutEdgeCounts: number[];
 
-    constructor() {}
-
     private getForkVertices(graph: Graph): Vertex[] {
         const result: Vertex[] = [];
         for (

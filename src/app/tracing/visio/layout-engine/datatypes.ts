@@ -83,7 +83,7 @@ export interface VisioLabel {
 export interface StationGrouper {
     areStationsInTheSameGroup(s1: StationData, s2: StationData): boolean;
     getGroupLabel(stations: StationData);
-    groupStations(stations: StationData[]): {label: string, stations: StationData[]}[];
+    groupStations(stations: StationData[]): {label: string; stations: StationData[]}[];
 }
 
 export interface DeliveryInformation {
@@ -125,6 +125,7 @@ export interface LotInformation {
     deliveries: DeliveryInformation[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface StationSampleInformation extends SampleInformation {
 }
 
@@ -161,5 +162,5 @@ export interface VisioReport {
 
 export interface FontMetrics {
     measureTextWidth(text: string[]): number;
-    measureText(text: string[]): {width: number, height: number};
+    measureText(text: string[]): {width: number; height: number};
 }

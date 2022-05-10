@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { environment } from '@env/environment';
 import * as _ from 'lodash';
 import { MainPageService } from '../../services/main-page.service';
@@ -11,7 +11,7 @@ import { Constants } from './../../../tracing/util/constants';
     templateUrl: './toolbar-action.component.html',
     styleUrls: ['./toolbar-action.component.scss']
 })
-export class ToolbarActionComponent implements OnInit, OnChanges {
+export class ToolbarActionComponent implements OnChanges {
 
     private _graphSettings: GraphSettings;
 
@@ -51,8 +51,6 @@ export class ToolbarActionComponent implements OnInit, OnChanges {
     ]);
 
     constructor(private mainPageService: MainPageService) { }
-
-    ngOnInit() {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.fileName !== undefined) {

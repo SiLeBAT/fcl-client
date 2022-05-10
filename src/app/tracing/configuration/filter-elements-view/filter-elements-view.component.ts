@@ -94,6 +94,7 @@ export class FilterElementsViewComponent implements OnChanges {
         return this.dataColumns_;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     get filterTableResizeFlag(): {} {
         return this.filterTableResizeFlag_;
     }
@@ -108,14 +109,13 @@ export class FilterElementsViewComponent implements OnChanges {
     moreFilterOpenState = false;
     complexFilterOpenState = false;
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private filterTableResizeFlag_: {} = {};
 
     private checkTableSizeSubject_ = new Subject<number>();
     checkTableSize$ = this.checkTableSizeSubject_.asObservable();
     private updateTableSizeSubject_ = new Subject<void>();
     updateTableSize$ = this.updateTableSizeSubject_.asObservable();
-
-    constructor() { }
 
     // lifecycle hooks start
 

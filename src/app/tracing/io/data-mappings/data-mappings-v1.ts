@@ -16,6 +16,7 @@ export interface ColumnInfo {
     type: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface PropMap extends Map<string, string> {
 
 }

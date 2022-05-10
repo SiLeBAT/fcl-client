@@ -103,8 +103,6 @@ export class LPModel {
     private constraintIdToLabelMap: Map<string, string> = new Map();
     private constraintIds: string[] = [];
 
-    constructor() {}
-
     addConstraint(
         constraintLabel: string,
         min: number,
@@ -123,7 +121,7 @@ export class LPModel {
             this.model[LPModel.CONSTRAINTS][constraintId][LPModel.OPTYPE_MAX] = max;
         }
         for (const varName of Object.getOwnPropertyNames(term)) {
-            if (!this.model[LPModel.VARS].hasOwnProperty(varName)) {
+            if (!Object.prototype.hasOwnProperty.call(this.model[LPModel.VARS], varName)) {
                 this.model[LPModel.VARS][varName] = {};
             }
             this.model[LPModel.VARS][varName][constraintId] = term[varName];
@@ -169,7 +167,7 @@ export class LPModel {
     setObjective(opType: OptimizationType, objective: Term) {
         this.model[LPModel.OPTYPE] = opType;
         for (const varName of Object.getOwnPropertyNames(objective)) {
-            if (!this.model[LPModel.VARS].hasOwnProperty(varName)) {
+            if (!Object.prototype.hasOwnProperty.call(this.model[LPModel.VARS], varName)) {
                 this.model[LPModel.VARS][varName] = {};
             }
             this.model[LPModel.VARS][varName][LPModel.OBJECTIVE] = objective[varName];
@@ -182,7 +180,7 @@ export class LPModel {
         }
         this.model[LPModel.BINS] = binaries;
         for (const varName of vars) {
-            if (!this.model[LPModel.VARS].hasOwnProperty(varName)) {
+            if (!Object.prototype.hasOwnProperty.call(this.model[LPModel.VARS], varName)) {
                 this.model[LPModel.VARS][varName] = { [varName]: 1 };
             } else {
                 this.model[LPModel.VARS][varName][varName] = 1;
@@ -191,7 +189,7 @@ export class LPModel {
     }
 
     setObjectiveCoefficient(variableId: VariableId, coeff: number) {
-        if (!this.model[LPModel.VARS].hasOwnProperty(variableId)) {
+        if (!Object.prototype.hasOwnProperty.call(this.model[LPModel.VARS], variableId)) {
             this.model[LPModel.VARS][variableId] = { [variableId]: 1 };
         }
         this.model[LPModel.VARS][variableId][LPModel.OBJECTIVE] = coeff;
@@ -289,7 +287,7 @@ export class LPModel {
     }
 
     private isVariableInConstraint(variableId: string, constraintId: string): boolean {
-        return this.model[LPModel.VARS][variableId].hasOwnProperty(constraintId);
+        return Object.prototype.hasOwnProperty.call(this.model[LPModel.VARS][variableId], constraintId);
     }
 
     private getCoeff(variableId: VariableId, constraintId: ConstraintId): number | undefined {

@@ -1,23 +1,23 @@
 import { Vertex } from './data-structures';
 
 export class BusinessTypeRanker {
-    private indexMap: Map<String, number> = new Map();
+    private indexMap: Map<string, number> = new Map();
     private isSink: boolean[] = [];
     private isSource: boolean[] = [];
     private rankMatrix: boolean[][] = [];
 
     constructor(
-    private sinkTypes: String[],
-    private sourceTypes: String[],
-    typeOrderings: String[][]
+    private sinkTypes: string[],
+    private sourceTypes: string[],
+    typeOrderings: string[][]
     ) {
         this.init(sinkTypes, sourceTypes, typeOrderings);
     }
 
     private init(
-        sinkTypes: String[],
-        sourceTypes: String[],
-        typeOrderings: String[][]
+        sinkTypes: string[],
+        sourceTypes: string[],
+        typeOrderings: string[][]
     ) {
     // register businessTypes
         for (const s of sinkTypes) { this.isSink[this.add(s)] = true; }
@@ -40,12 +40,8 @@ export class BusinessTypeRanker {
             this.rankMatrix[i] = this.rankMatrix[typeCount - 1].slice();
         }
 
-        const sinkCodes = sinkTypes.map(t => {
-            return this.indexMap.get(t);
-        });
-        const sourceCodes = sourceTypes.map(t => {
-            return this.indexMap.get(t);
-        });
+        const sinkCodes = sinkTypes.map(t => this.indexMap.get(t));
+        const sourceCodes = sourceTypes.map(t => this.indexMap.get(t));
 
         for (const sinkCode of sinkCodes) {
             for (let i: number = typeCount - 1; i >= 0; i--) {
@@ -95,7 +91,7 @@ export class BusinessTypeRanker {
         return null;
     }
 
-    compareRankingByType(typeA: String, typeB: String): number {
+    compareRankingByType(typeA: string, typeB: string): number {
         const codeA: number = this.indexMap.has(typeA)
             ? this.indexMap.get(typeA)
             : -1;
@@ -109,11 +105,11 @@ export class BusinessTypeRanker {
         return this.compareRankingByCode(vertexA.typeCode, vertexB.typeCode);
     }
 
-    getBusinessTypeCode(type: String): number {
+    getBusinessTypeCode(type: string): number {
         return this.indexMap.has(type) ? this.indexMap.get(type) : null;
     }
 
-    private add(type: String): number {
+    private add(type: string): number {
         if (this.indexMap.has(type)) { return this.indexMap.get(type); }
         const index: number = this.indexMap.size;
         this.indexMap.set(type, index);

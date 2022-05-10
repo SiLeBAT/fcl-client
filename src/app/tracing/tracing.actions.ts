@@ -22,12 +22,14 @@ export enum TracingActionTypes {
 export class ClearTraceMSA implements Action {
     readonly type = TracingActionTypes.ClearTraceMSA;
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     constructor(public payload: {}) {}
 }
 
 export class ClearOutbreakStationsMSA implements Action {
     readonly type = TracingActionTypes.ClearOutbreakStationsMSA;
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     constructor(public payload: {}) {}
 }
 
@@ -52,19 +54,19 @@ export class ShowDeliveryPropertiesMSA implements Action {
 export class MarkStationsAsOutbreakMSA implements Action {
     readonly type = TracingActionTypes.MarkStationsAsOutbreakMSA;
 
-    constructor(public payload: { stationIds: string[], outbreak: boolean }) {}
+    constructor(public payload: { stationIds: string[]; outbreak: boolean }) {}
 }
 
 export class SetStationCrossContaminationMSA implements Action {
     readonly type = TracingActionTypes.SetStationCrossContaminationMSA;
 
-    constructor(public payload: { stationIds: string[], crossContamination: boolean }) {}
+    constructor(public payload: { stationIds: string[]; crossContamination: boolean }) {}
 }
 
 export class SetStationKillContaminationMSA implements Action {
     readonly type = TracingActionTypes.SetStationKillContaminationMSA;
 
-    constructor(public payload: { stationIds: string[], killContamination: boolean }) {}
+    constructor(public payload: { stationIds: string[]; killContamination: boolean }) {}
 }
 
 export class MakeElementsInvisibleMSA implements Action {
@@ -82,7 +84,7 @@ export class ShowElementsTraceMSA implements Action {
 export class SetSelectedGraphElementsMSA implements Action {
     readonly type = TracingActionTypes.SetSelectedGraphElementsMSA;
 
-    constructor(public payload: { selectedElements: SelectedGraphElements, maintainOffGraphSelection: boolean }) {}
+    constructor(public payload: { selectedElements: SelectedGraphElements; maintainOffGraphSelection: boolean }) {}
 }
 
 export class FocusStationSSA implements Action {

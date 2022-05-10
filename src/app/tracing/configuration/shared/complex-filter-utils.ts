@@ -12,9 +12,7 @@ export class ComplexFilterUtils {
     static readonly DEFAULT_JUNKTOR_TYPE = JunktorType.AND;
 
     static extractDataColumns(dataTable: DataTable): TableColumn[] {
-        return dataTable.columns.filter((tableColumn: TableColumn) => {
-            return (tableColumn.id !== 'highlightingInfo');
-        });
+        return dataTable.columns.filter((tableColumn: TableColumn) => (tableColumn.id !== 'highlightingInfo'));
     }
 
     static complexFilterConditionsToLogicalConditions(filterConditions: ComplexFilterCondition[]): LogicalCondition[][] {

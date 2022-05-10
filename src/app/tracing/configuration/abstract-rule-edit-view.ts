@@ -59,23 +59,21 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
         return AbstractRuleEditViewComponent.ENABLED_OK_TOOLTIP;
     }
 
-    get applyTooltip(): String {
+    get applyTooltip(): string {
         return this.actionButtonDisabled ?
             this.disabledActionToolTip :
             this.enabledApplyToolTip;
     }
 
-    get okTooltip(): String {
+    get okTooltip(): string {
         return this.actionButtonDisabled ?
             this.disabledActionToolTip :
             this.enabledOkToolTip;
     }
 
-    get ruleName(): String {
+    get ruleName(): string {
         return this.rule === null ? '' : this.rule.name;
     }
-
-    constructor() { }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.rule !== undefined) {

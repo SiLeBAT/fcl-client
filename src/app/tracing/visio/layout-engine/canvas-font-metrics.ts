@@ -40,7 +40,7 @@ export class CanvasFontMetrics implements FontMetrics {
         return Math.max(...text.map(t => this.context.measureText(t).width));
     }
 
-    measureText(text: string[]): {width: number, height: number} {
+    measureText(text: string[]): {width: number; height: number} {
         const sizes = text.map(t => this.context.measureText(t));
         return {
             width: Math.max(...sizes.map(s => s.width)),

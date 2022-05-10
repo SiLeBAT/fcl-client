@@ -22,7 +22,7 @@ export class GroupContainerCreator {
 
     createGroupBoxes(
         boxGrid: VisioBox[][],
-        cellGroups: {label: VisioLabel, cells: GridCell[]}[],
+        cellGroups: {label: VisioLabel; cells: GridCell[]}[],
         graphLayers: GraphLayer[]
     ): VisioBox[] {
 
@@ -91,7 +91,7 @@ export class GroupContainerCreator {
         return cells.find(cell => cell.column === minColumn);
     }
 
-    private setRowAndColumnHeights(cellGroups: {label: VisioLabel, cells: GridCell[]}[], graphLayers: GraphLayer[]) {
+    private setRowAndColumnHeights(cellGroups: {label: VisioLabel; cells: GridCell[]}[], graphLayers: GraphLayer[]) {
 
         this.groupHeaderHeight = Math.max(...cellGroups.map(g => g.label.size.height)) + GraphSettings.SECTION_DISTANCE;
         this.bottomMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;

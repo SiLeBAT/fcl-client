@@ -57,8 +57,11 @@ export interface DataTable {
     rows: TableRow[];
 }
 
-export interface StationRow extends TableRow {}
-export interface StationTable extends DataTable {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface StationRow extends TableRow { }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface StationTable extends DataTable { }
 
 export interface FclElements {
     stations: StationStoreData[];
@@ -264,6 +267,7 @@ export interface StationTracingSettings extends TraceableElementSettings {
     outbreak: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DeliveryTracingSettings extends TraceableElementSettings {
 }
 
@@ -322,6 +326,7 @@ export enum ObservedType {
     BACKWARD = 'backward' as any
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ShapeFileData {
     // todo: to define
 }
@@ -340,7 +345,9 @@ export interface DataServiceData {
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
     legendInfo: LegendInfo;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     tracingPropsUpdatedFlag: {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
     stationAndDeliveryHighlightingUpdatedFlag: {};
     highlightingStats: HighlightingStats;
     getStatById(ids: string[]): StationData[];

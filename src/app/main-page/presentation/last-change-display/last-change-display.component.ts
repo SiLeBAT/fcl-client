@@ -16,8 +16,6 @@ export class LastChangeDisplayComponent implements OnInit {
     tooltipPosition: string = 'above';
     tooltipInfo: string;
 
-    constructor() { }
-
     ngOnInit() {
         moment.locale('en');
         this.clientLastChange = moment(environment.lastChange, this.dateParseString).format(this.dateFormatString);

@@ -486,8 +486,8 @@ export class GraphService {
     }
 
     private getColorInfo(colors: number[][], defaultColor: number[]): {
-        stopColors: string,
-        stopPositions: string
+        stopColors: string;
+        stopPositions: string;
     } {
         if (colors.length === 0) {
             colors = [defaultColor];

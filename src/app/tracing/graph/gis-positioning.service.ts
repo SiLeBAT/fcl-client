@@ -11,7 +11,8 @@ interface NeighbourHood {
     neighbourWeights: Record<NodeId, number>;
 }
 
-interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> { }
 
 export interface PositioningData {
     nodePositions: PositionMap;

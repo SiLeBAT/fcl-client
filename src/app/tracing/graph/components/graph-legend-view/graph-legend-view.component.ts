@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Utils } from '../../../util/non-ui-utils';
 import { LegendInfo, Color, NodeShapeType } from '@app/tracing/data.model';
 
@@ -17,7 +17,7 @@ interface LegendEntryWithIndices extends LegendEntry {
     templateUrl: './graph-legend-view.component.html',
     styleUrls: ['./graph-legend-view.component.scss']
 })
-export class GraphLegendViewComponent implements OnInit {
+export class GraphLegendViewComponent {
 
     private legendInfo_: LegendInfo | null = null;
     private showStationColumn_ = false;
@@ -44,10 +44,6 @@ export class GraphLegendViewComponent implements OnInit {
 
     isEmpty(): boolean {
         return this.legend.length === 0;
-    }
-    constructor() { }
-
-    ngOnInit() {
     }
 
     private updateLegend(legendInfo: LegendInfo) {

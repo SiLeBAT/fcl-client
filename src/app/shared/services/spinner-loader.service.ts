@@ -10,8 +10,6 @@ export class SpinnerLoaderService {
     private loaderSubject = new Subject<LoaderState>();
     loaderState = this.loaderSubject.asObservable();
 
-    constructor() {}
-
     show() {
         this.loaderSubject.next({ show: true } as LoaderState);
     }

@@ -25,6 +25,7 @@ function sortProps(props: PropInfo[]): PropInfo[] {
     return props.sort(propCompare);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReportConfigurationData {
 
 }
@@ -46,9 +47,9 @@ const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
 export class ReportConfigurationComponent {
 
     availableProps: {
-        companyProps: PropInfo[],
-        lotProps: PropInfo[],
-        sampleProps: PropInfo[]
+        companyProps: PropInfo[];
+        lotProps: PropInfo[];
+        sampleProps: PropInfo[];
     };
 
     roundNumbers: boolean = true;

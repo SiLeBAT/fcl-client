@@ -80,6 +80,7 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
         if (this.activityState$ !== null && this.activityState$ !== undefined) {
             this.subscriptions_.push(this.activityState$.subscribe(
                 (state) => this.setActivityState(state),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 () => {}
             ));
         }
@@ -90,6 +91,7 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
                         this.cdRef.markForCheck();
                     }
                 },
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 () => {}
             ));
         }

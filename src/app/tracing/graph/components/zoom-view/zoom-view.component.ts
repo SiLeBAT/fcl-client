@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, ViewChild, EventEmitter } from '@angular/core';
+import { Component, Output, Input, ViewChild, EventEmitter } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
 
 @Component({
@@ -6,7 +6,7 @@ import { MatSlider } from '@angular/material/slider';
     templateUrl: './zoom-view.component.html',
     styleUrls: ['./zoom-view.component.scss']
 })
-export class ZoomViewComponent implements OnInit {
+export class ZoomViewComponent {
 
     @Input() zoomValue: number;
 
@@ -17,11 +17,6 @@ export class ZoomViewComponent implements OnInit {
     @Output() zoomSlided = new EventEmitter();
 
     @ViewChild('slider', { static: true }) slider: MatSlider;
-
-    constructor() { }
-
-    ngOnInit() {
-    }
 
     slide() {
         this.zoomSlide.emit(this.slider.value.toString());

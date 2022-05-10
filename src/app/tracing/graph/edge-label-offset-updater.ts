@@ -20,6 +20,7 @@ export class EdgeLabelOffsetUpdater {
             this.grabbedNode = event.target;
             this.addDragListener();
             this.addFreeOnListener();
+        // eslint-disable-next-line no-extra-bind
         }).bind(this);
         this.cy.on('grabon', this.grabOnListener);
     }
@@ -41,6 +42,7 @@ export class EdgeLabelOffsetUpdater {
                 );
                 this.switchOffEdgeLabels(this.draggedEdges);
             }
+        // eslint-disable-next-line no-extra-bind
         }).bind(this);
 
         this.grabbedNode.on('drag', this.dragListener);
@@ -62,6 +64,7 @@ export class EdgeLabelOffsetUpdater {
             this.removeDragListener();
             this.removeFreeOnListener();
             this.grabbedNode = null;
+        // eslint-disable-next-line no-extra-bind
         }).bind(this);
         this.grabbedNode.on('freeon', this.freeOnListener);
     }

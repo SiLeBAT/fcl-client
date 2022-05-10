@@ -17,8 +17,6 @@ export class StandardFilterViewComponent {
 
     @Output() filterTermChange = new EventEmitter<string>();
 
-    constructor() { }
-
     onFilterTermChange(filterTerm: string): void {
         this.filterTerm = filterTerm;
         this.filterTermChange.emit(filterTerm);

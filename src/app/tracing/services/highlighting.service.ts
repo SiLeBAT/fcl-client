@@ -167,7 +167,7 @@ export class HighlightingService {
 
     private getLegendInfo(
         state: DataServiceInputState,
-        activeHighlightings: { stations: Record<RuleId, boolean>, deliveries: Record<RuleId, boolean>}
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean>}
     ): LegendInfo {
 
         const ruleIdToIsCommonLinkRuleMap: Record<RuleId, boolean> = {};
@@ -218,7 +218,7 @@ export class HighlightingService {
 
     private getActiveHighlightingRules<
         T extends StationOrDeliveryData,
-        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(fclElement: T, highlightingRules: K[]): K[] {
         return highlightingRules.filter(rule =>
             !rule.invisible &&
@@ -272,11 +272,11 @@ export class HighlightingService {
 
     private getCommonHighlightingInfo<
         T extends StationData | DeliveryData,
-        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(
         fclElement: T,
         highlightingRules: K[]
-    ): { label: string[], color: number[][] } {
+    ): { label: string[]; color: number[][] } {
         const label = highlightingRules
             .filter(rule => rule.labelProperty !== null)
             .map(rule => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, rule.labelProperty)))

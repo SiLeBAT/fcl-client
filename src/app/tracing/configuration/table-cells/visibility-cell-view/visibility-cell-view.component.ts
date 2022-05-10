@@ -11,5 +11,4 @@ export class VisibilityCellViewComponent {
 
     @Input() row: TableRow | null = null;
 
-    constructor() {}
 }
