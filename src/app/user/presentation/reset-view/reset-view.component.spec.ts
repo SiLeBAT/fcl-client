@@ -27,8 +27,6 @@ describe('ResetViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ResetViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

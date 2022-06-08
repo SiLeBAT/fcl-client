@@ -5,6 +5,7 @@ import { MainPageService } from '../../services/main-page.service';
 import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
+import { ExampleData } from '../../model/types';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -34,7 +35,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() loadExampleData = new EventEmitter();
+    @Output() loadExampleDataFile: EventEmitter<ExampleData> = new EventEmitter();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapType = new EventEmitter<MapType>();
 
@@ -49,6 +50,8 @@ export class ToolbarActionComponent implements OnChanges {
         // [MapType.BLACK_AND_WHITE, 'Black & White'],
         [MapType.SHAPE_FILE, 'Shape File']
     ]);
+
+    exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     constructor(private mainPageService: MainPageService) { }
 
@@ -76,8 +79,8 @@ export class ToolbarActionComponent implements OnChanges {
         );
     }
 
-    onLoadExampleData() {
-        this.loadExampleData.emit();
+    onLoadExampleDataFile(exampleData: ExampleData) {
+        this.loadExampleDataFile.emit(exampleData);
     }
 
     setGraphType() {

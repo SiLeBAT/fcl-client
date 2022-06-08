@@ -1,8 +1,36 @@
 import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.model';
 import { List, Map } from 'immutable';
+import { ExampleData } from '@app/main-page/model/types';
 
 export class Constants {
     static readonly EXAMPLE_MODEL_FILE_PATH = 'assets/data/ExampleData.json';
+
+    static readonly EXAMPLE_DATA_BASE_DIR = 'assets/example-data/';
+    static readonly EXAMPLE_DATA_SUB_DIR_1 = 'baby-tea/';
+    static readonly EXAMPLE_DATA_FILE_STRUCTURE: ExampleData[] = [
+        {
+            name: 'Example Data',
+            path:  Constants.EXAMPLE_DATA_BASE_DIR + 'ExampleData.json'
+        },
+        {
+            name: 'Babytea',
+            path: Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1,
+            children: [
+                {
+                    name: 'Scenario 1',
+                    path:  Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_1_Outbreak-Baby-Tea.json'
+                },
+                {
+                    name: 'Scenario 2',
+                    path:  Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_2_LaSource.json'
+                },
+                {
+                    name: 'Scenario 3',
+                    path:  Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_3_All-Stations.json'
+                }
+            ]
+        }
+    ];
 
     private static readonly STATION_DATA: StationData = {
         id: null,

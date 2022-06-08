@@ -27,8 +27,6 @@ describe('RecoveryViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(RecoveryViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

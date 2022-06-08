@@ -27,8 +27,6 @@ describe('ActivateViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ActivateViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

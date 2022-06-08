@@ -27,8 +27,6 @@ describe('ActivateComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ActivateComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

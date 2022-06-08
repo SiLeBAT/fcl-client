@@ -27,8 +27,6 @@ describe('RegisterViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(RegisterViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 
