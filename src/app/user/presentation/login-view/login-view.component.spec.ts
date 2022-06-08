@@ -27,8 +27,6 @@ describe('LoginViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(LoginViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as TracingSelectors from '@app/tracing/state/tracing.selectors';
@@ -14,6 +14,8 @@ import { Utils as UIUtils } from './../../../tracing/util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { Constants } from '@app/tracing/util/constants';
+import { ExampleMenuComponent } from '@app/main-page/presentation/example-menu/example-menu.component';
+import { ExampleData } from '@app/main-page/model/types';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
@@ -21,6 +23,7 @@ import { Constants } from '@app/tracing/util/constants';
     styleUrls: ['./toolbar-action-container.component.scss']
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
+    @ViewChild(ExampleMenuComponent) exampleMenuComponent: ExampleMenuComponent;
 
     tracingActive$ = this.store.pipe(
         select(TracingSelectors.getTracingActive)
@@ -90,8 +93,8 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingIOActions.LoadFclDataMSA({ dataSource: fileList }));
     }
 
-    loadExampleData() {
-        this.ioService.getFclData(Constants.EXAMPLE_MODEL_FILE_PATH)
+    loadExampleDataFile(exampleData: ExampleData) {
+        this.ioService.getFclData(exampleData.path)
             .then((data: FclData) => {
                 this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
 

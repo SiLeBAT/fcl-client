@@ -24,20 +24,25 @@
     <button
         class="fcl-no-shrink"
         mat-button
-        (click)="onLoadExampleData()"
-        matTooltip="Load Example Data"
-        data-cy="fcl-example">
+        [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu">
         <mat-icon>wb_sunny</mat-icon>
         Load Example Data
+        <mat-icon>arrow_drop_down</mat-icon>
     </button>
+    <fcl-example-menu
+        #exampleMenuComponent
+        [exampleData]="exampleData"
+        (loadExampleDataFile)="onLoadExampleDataFile($event)">
+    </fcl-example-menu>
+
     <input
         id="fileInput"
         #fileInput
         type="file"
     />
     <button
-    class="fcl-no-shrink"
-    mat-button
+        class="fcl-no-shrink"
+        mat-button
         (click)="onSelectModelFile()"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>

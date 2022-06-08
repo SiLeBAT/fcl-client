@@ -27,8 +27,6 @@ describe('AdminActivateViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(AdminActivateViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

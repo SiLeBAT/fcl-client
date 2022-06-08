@@ -20,6 +20,7 @@ import { ToolbarActionComponent } from './presentation/toolbar-action/toolbar-ac
 import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-entry-header.component';
 import { DashboardContainerComponent } from './container/dashboard-container/dashboard-container.component';
 import { DashboardComponent } from './presentation/dashboard/dashboard.component';
+import { ExampleMenuComponent } from './presentation/example-menu/example-menu.component';
 import { StoreModule } from '@ngrx/store';
 import { STATE_SLICE_NAME, reducer } from './state/main-page.reducer';
 import { LastChangeDisplayComponent } from './presentation/last-change-display/last-change-display.component';
@@ -50,7 +51,8 @@ import { ContentModule } from './../content/content.module';
         MainEntryHeaderComponent,
         DashboardContainerComponent,
         DashboardComponent,
-        LastChangeDisplayComponent
+        LastChangeDisplayComponent,
+        ExampleMenuComponent
     ],
     providers: [
         ScrollbarHelper
