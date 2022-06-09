@@ -46,9 +46,8 @@ export class UserService {
 
     register(credentials: RegistrationDetailsDTO): Observable<RegistrationRequestResponseDTO> {
         return this.dataService.post<RegistrationRequestResponseDTO, RegistrationDetailsDTO>(this.URL.register, credentials)
-            .pipe(catchError(this.handleRegistrationError));
+            .pipe(catchError((e) => this.handleRegistrationError(e)));
     }
-
 
     recoverPassword(email: ResetRequestDTO): Observable<PasswordResetRequestResponseDTO> {
         return this.dataService.put<PasswordResetRequestResponseDTO, ResetRequestDTO>(this.URL.recovery, email);
