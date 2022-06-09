@@ -1,5 +1,5 @@
-<ng-template let-controlName="controlName" #serverValidationErrorsTemplate>
-    <ng-container *ngFor="let error of registerForm.controls[controlName].errors.serverValidationErrors; let i=index">
+<ng-template let-fieldName="fieldName" #serverValidationErrorsTemplate>
+    <ng-container *ngFor="let error of serverValidationErrors[fieldName]; let i=index">
         <br *ngIf="i>0"><span>{{ error.message }}</span>
     </ng-container>
 </ng-template>
@@ -11,14 +11,14 @@
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName" name="firstName" required/>
                 <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.required">
+                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.required && !serverValidationErrors.firstName">
                     Required Field
                 </mat-error>
-                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.serverValidationErrors">
+                <mat-hint *ngIf="serverValidationErrors.firstName" class="mat-error">
                     <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
-                        [ngTemplateOutletContext] ="{ controlName: 'firstName' }">
+                        [ngTemplateOutletContext] ="{ fieldName: 'firstName' }">
                     </ng-container>
-                </mat-error>
+                </mat-hint>
             </mat-form-field>
         </div>
 
@@ -27,14 +27,14 @@
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName" name="lastName" required/>
                 <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.required">
+                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.required && !serverValidationErrors.lastName">
                     Required Field
                 </mat-error>
-                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.serverValidationErrors">
+                <mat-hint *ngIf="serverValidationErrors.lastName" class="mat-error">
                     <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
-                        [ngTemplateOutletContext] ="{ controlName: 'lastName' }">
+                        [ngTemplateOutletContext] ="{ fieldName: 'lastName' }">
                     </ng-container>
-                </mat-error>
+                </mat-hint>
             </mat-form-field>
         </div>
 
@@ -49,11 +49,11 @@
                 <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.email">
                     Not a valid email
                 </mat-error>
-                <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.serverValidationErrors">
-                    <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
-                        [ngTemplateOutletContext] ="{ controlName: 'email' }">
+                <mat-hint *ngIf="serverValidationErrors.email" class="mat-error">
+                   <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
+                        [ngTemplateOutletContext] ="{ fieldName: 'email' }">
                     </ng-container>
-                </mat-error>
+                </mat-hint>
             </mat-form-field>
         </div>
 
@@ -62,14 +62,14 @@
                 <mat-label>Password</mat-label>
                 <input matInput #message formControlName="password1" type="password" name="password1" required/>
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1.errors.required">
+                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1.errors.required && !serverValidationErrors.password">
                     Required field
                 </mat-error>
-                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1.errors.serverValidationErrors">
+                <mat-hint *ngIf="serverValidationErrors.password" class="mat-error">
                     <ng-container [ngTemplateOutlet]="serverValidationErrorsTemplate"
-                        [ngTemplateOutletContext] ="{ controlName: 'password1' }">
+                        [ngTemplateOutletContext] ="{ fieldName: 'password' }">
                     </ng-container>
-                </mat-error>
+                </mat-hint>
             </mat-form-field>
         </div>
         <div class="form-group">
