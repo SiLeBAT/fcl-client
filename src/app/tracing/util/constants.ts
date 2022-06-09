@@ -3,8 +3,6 @@ import { List, Map } from 'immutable';
 import { ExampleData } from '@app/main-page/model/types';
 
 export class Constants {
-    static readonly EXAMPLE_MODEL_FILE_PATH = 'assets/data/ExampleData.json';
-
     static readonly EXAMPLE_DATA_BASE_DIR = 'assets/example-data/';
     static readonly EXAMPLE_DATA_SUB_DIR_1 = 'baby-tea/';
     static readonly EXAMPLE_DATA_FILE_STRUCTURE: ExampleData[] = [
