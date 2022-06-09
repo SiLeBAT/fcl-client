@@ -18,6 +18,9 @@ import {
 import { DataRequestService } from '../../core/services/data-request.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GdprAgreementComponent } from '../presentation/gdpr-agreement/gdpr-agreement.component';
+import { InvalidRegistrationInput } from '../errors';
+import { catchError } from 'rxjs/operators';
+import { InvalidServerInputHttpErrorResponse } from '@app/core/errors';
 
 @Injectable({
     providedIn: 'root'
@@ -42,8 +45,10 @@ export class UserService {
     ) { }
 
     register(credentials: RegistrationDetailsDTO): Observable<RegistrationRequestResponseDTO> {
-        return this.dataService.post<RegistrationRequestResponseDTO, RegistrationDetailsDTO>(this.URL.register, credentials);
+        return this.dataService.post<RegistrationRequestResponseDTO, RegistrationDetailsDTO>(this.URL.register, credentials)
+            .pipe(catchError(this.handleRegistrationError));
     }
+
 
     recoverPassword(email: ResetRequestDTO): Observable<PasswordResetRequestResponseDTO> {
         return this.dataService.put<PasswordResetRequestResponseDTO, ResetRequestDTO>(this.URL.recovery, email);
@@ -101,4 +106,10 @@ export class UserService {
         return dialogRef.afterClosed();
     }
 
+    private handleRegistrationError(error: unknown): never {
+        if (error instanceof InvalidServerInputHttpErrorResponse) {
+            throw new InvalidRegistrationInput(error);
+        }
+        throw error;
+    }
 }

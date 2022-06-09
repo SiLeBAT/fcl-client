@@ -1,57 +1,31 @@
 import {
     Component, OnInit, Output, EventEmitter,
-    Input, ChangeDetectionStrategy, OnChanges, SimpleChanges
-} from '@angular/core';
-import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+    Input} from '@angular/core';
+import { FormGroup, FormControl, Validators, ValidationErrors } from '@angular/forms';
 import { ValidationError } from '@app/core/model';
-import { CODE_TO_FIELD_MAP } from '../../consts/error-code-mappings.consts';
 import { RegistrationCredentials } from '../../models/user.model';
 
-export interface IHash {
-    [details: string]: string;
-}
 @Component({
     selector: 'fcl-register',
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit, OnChanges {
+export class RegisterComponent implements OnInit {
 
-    @Input() serverValidationErrors: ValidationError[] = [];
+    @Input() serverValidationErrors: Partial<Record<keyof RegistrationCredentials, ValidationError[]>> = {};
 
-    @Output() register = new EventEmitter();
+    @Output() register = new EventEmitter<RegistrationCredentials>();
     registerForm: FormGroup;
-
-    _lastSubmittedCredentials: RegistrationCredentials | null = null;
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.serverValidationErrors !== undefined) {
-            if (this.registerForm) {
-                const controls = Object.values(this.registerForm.controls);
-                controls.forEach(c => c.updateValueAndValidity());
-            }
-        }
-    }
 
     ngOnInit() {
         this.registerForm = new FormGroup({
-            firstName: new FormControl(null, [
-                Validators.required,
-                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'firstName')
-            ]),
-            lastName: new FormControl(null, [
-                Validators.required,
-                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'lastName')
-            ]),
+            firstName: new FormControl(null, Validators.required),
+            lastName: new FormControl(null, Validators.required),
             email: new FormControl(null, [
                 Validators.required,
-                Validators.email,
-                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'email')
+                Validators.email
             ]),
-            password1: new FormControl(null, [
-                Validators.required,
-                (control: AbstractControl) => this.getServerValidationErrorsOfField(control, 'password')
-            ]),
+            password1: new FormControl(null, Validators.required),
             password2: new FormControl(null),
             dataProtection: new FormControl(null, Validators.requiredTrue),
             newsletter: new FormControl(false)
@@ -69,7 +43,6 @@ export class RegisterComponent implements OnInit, OnChanges {
                 newsRegAgreed: this.registerForm.value.newsletter,
                 newsMailAgreed: false
             };
-            this._lastSubmittedCredentials = registrationCredentials;
             this.register.emit(registrationCredentials);
         }
     }
@@ -89,22 +62,5 @@ export class RegisterComponent implements OnInit, OnChanges {
             pw2.setErrors(null);
         }
         return null;
-    }
-
-    private getServerValidationErrorsOfField(control: AbstractControl, fieldName: keyof RegistrationCredentials): ValidationErrors {
-        let result: ValidationErrors = null;
-        if (this.serverValidationErrors.length > 0) {
-            if (control.value !== this._lastSubmittedCredentials[fieldName]) {
-                // delete related server errors
-                this.serverValidationErrors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_MAP[e.code] !== fieldName);
-            } else {
-                const errors = this.serverValidationErrors.filter(e => CODE_TO_FIELD_MAP[e.code] === fieldName);
-                if (errors.length > 0) {
-                    result = { serverValidationErrors: errors };
-                }
-            }
-        }
-
-        return result;
     }
 }

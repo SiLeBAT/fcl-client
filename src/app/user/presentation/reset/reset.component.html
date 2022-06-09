@@ -9,14 +9,14 @@
                 <mat-label>New password</mat-label>
                 <input matInput #message formControlName="password1" type="password" name="password1" required />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required">
+                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required && serverValidationErrors.length === 0">
                     Password is required
                 </mat-error>
-                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.serverValidationErrors">
-                    <ng-container *ngFor="let error of resetForm.controls.password1.errors.serverValidationErrors; let i=index">
+                <mat-hint *ngIf="serverValidationErrors.length > 0">
+                    <ng-container *ngFor="let error of serverValidationErrors; let i=index">
                         <br *ngIf="i>0"><span>{{ error.message }}</span>
                     </ng-container>
-                </mat-error>
+                </mat-hint>
             </mat-form-field>
         </div>
         <div class="form-group">

@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ValidationError } from '@app/core/model';
 import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 
@@ -8,7 +8,7 @@ import { NewPasswordRequestDTO } from '../../../user/models/user.model';
     templateUrl: './reset.component.html',
     styleUrls: ['./reset.component.scss']
 })
-export class ResetComponent implements OnInit, OnChanges {
+export class ResetComponent implements OnInit {
 
     @Input() serverValidationErrors: ValidationError[] = [];
     // eslint-disable-next-line @angular-eslint/no-output-native
@@ -16,22 +16,10 @@ export class ResetComponent implements OnInit, OnChanges {
 
     resetForm: FormGroup;
 
-    private _lastSubmittedCredentials: NewPasswordRequestDTO | null = null;
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.serverValidationErrors !== undefined) {
-            if (this.resetForm) {
-                const controls = Object.values(this.resetForm.controls);
-                controls.forEach(c => c.updateValueAndValidity());
-            }
-        }
-    }
-
     ngOnInit() {
         this.resetForm = new FormGroup({
             password1: new FormControl(null, [
-                Validators.required,
-                (control: AbstractControl) => this.getServerValidationErrors(control)
+                Validators.required
             ]),
             password2: new FormControl(null)
         }, this.passwordConfirmationValidator);
@@ -46,7 +34,6 @@ export class ResetComponent implements OnInit, OnChanges {
         const password: NewPasswordRequestDTO = {
             password: this.resetForm.value.password1
         };
-        this._lastSubmittedCredentials = password;
         this.reset.emit(password);
     }
 
@@ -60,19 +47,5 @@ export class ResetComponent implements OnInit, OnChanges {
             pw2.setErrors(null);
         }
         return null;
-    }
-
-    private getServerValidationErrors(control: AbstractControl): ValidationErrors {
-        let result: ValidationErrors = null;
-        if (this.serverValidationErrors.length > 0) {
-            if (control.value !== this._lastSubmittedCredentials.password) {
-                // delete related server errors
-                this.serverValidationErrors = [];
-            } else {
-                result = { serverValidationErrors: this.serverValidationErrors };
-            }
-        }
-
-        return result;
     }
 }
