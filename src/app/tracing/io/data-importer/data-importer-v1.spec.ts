@@ -49,8 +49,10 @@ describe('DataImporterV1', () => {
     });
 
     it('should add missing tracing entries for station/group/delivery element', async () => {
+
+        const exampleDataPath: string = Constants.EXAMPLE_DATA_FILE_STRUCTURE[0].path;
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const extData: JsonData = require(Constants.EXAMPLE_MODEL_FILE_PATH);
+        const extData: JsonData = require(exampleDataPath);
         // simulate no tracing settings in the external model
         extData.tracing = null;
         let fclData = createInitialFclDataState();
