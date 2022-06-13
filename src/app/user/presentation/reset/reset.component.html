@@ -12,7 +12,7 @@
                 <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required && serverValidationErrors.length === 0">
                     Password is required
                 </mat-error>
-                <mat-hint *ngIf="serverValidationErrors.length > 0">
+                <mat-hint *ngIf="serverValidationErrors.length > 0" class="mat-error">
                     <ng-container *ngFor="let error of serverValidationErrors; let i=index">
                         <br *ngIf="i>0"><span>{{ error.message }}</span>
                     </ng-container>
