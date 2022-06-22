@@ -1,0 +1,23 @@
+.fcl-dialog-save-data {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas:
+        'title'
+        'text'
+        'action';
+    padding: 1rem;
+}
+
+.fcl-dialog-title {
+    grid-area: title;
+}
+
+.fcl-dialog-content {
+    grid-area: text;
+}
+
+.fcl-dialog-actions {
+    grid-area: action;
+    justify-self: end;
+}
