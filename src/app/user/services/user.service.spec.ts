@@ -1,5 +1,5 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { UserService } from './user.service';
 import {
     LoginCredentials,
@@ -20,7 +20,7 @@ describe('UserService', () => {
     let userService: UserService;
     let httpTestingController: HttpTestingController;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
                 HttpClientTestingModule

@@ -21,6 +21,7 @@ import { MainEntryHeaderComponent } from './presentation/main-entry-header/main-
 import { DashboardContainerComponent } from './container/dashboard-container/dashboard-container.component';
 import { DashboardComponent } from './presentation/dashboard/dashboard.component';
 import { ExampleMenuComponent } from './presentation/example-menu/example-menu.component';
+import { DialogSaveDataComponent } from './presentation/dialog-save-data/dialog-save-data.component';
 import { StoreModule } from '@ngrx/store';
 import { STATE_SLICE_NAME, reducer } from './state/main-page.reducer';
 import { LastChangeDisplayComponent } from './presentation/last-change-display/last-change-display.component';
@@ -52,7 +53,8 @@ import { ContentModule } from './../content/content.module';
         DashboardContainerComponent,
         DashboardComponent,
         LastChangeDisplayComponent,
-        ExampleMenuComponent
+        ExampleMenuComponent,
+        DialogSaveDataComponent
     ],
     providers: [
         ScrollbarHelper

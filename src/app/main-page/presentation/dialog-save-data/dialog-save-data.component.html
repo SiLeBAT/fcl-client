@@ -1,0 +1,35 @@
+<div class="fcl-dialog-save-data">
+
+    <div class="fcl-dialog-title">
+        <h1 mat-dialog-title class="fcl-title">Save / Discard Data Changes?</h1>
+    </div>
+
+    <mat-dialog-content class="fcl-dialog-content">
+        Do you want to save the changes you made to "{{ data.fileName }}"?
+        <p>Your changes will be lost, if you do not save them.</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="fcl-dialog-actions">
+        <button
+            mat-raised-button
+            (click)="cancelDialog()"
+        >
+            {{ cancel }}
+        </button>
+        <button
+            mat-raised-button
+            (click)="dontSaveAndCloseDialog()"
+        >
+            {{ dontSave }}
+        </button>
+        <button
+            mat-raised-button
+            color="primary"
+            (click)="saveAndCloseDialog()"
+
+        >
+            {{ save }}
+        </button>
+    </mat-dialog-actions>
+
+</div>

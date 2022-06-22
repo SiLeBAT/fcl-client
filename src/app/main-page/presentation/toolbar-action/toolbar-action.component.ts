@@ -1,4 +1,5 @@
 import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '@env/environment';
 import * as _ from 'lodash';
 import { MainPageService } from '../../services/main-page.service';
@@ -6,6 +7,7 @@ import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
 import { ExampleData } from '../../model/types';
+import { DialogSaveDataComponent } from '../dialog-save-data/dialog-save-data.component';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -53,7 +55,10 @@ export class ToolbarActionComponent implements OnChanges {
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
-    constructor(private mainPageService: MainPageService) { }
+    constructor(
+        private mainPageService: MainPageService,
+        public dialog: MatDialog
+    ) { }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.fileName !== undefined) {
@@ -80,7 +85,25 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
-        this.loadExampleDataFile.emit(exampleData);
+        if (this.fileNameWoExt !== null) {
+            const dialogRef: MatDialogRef<DialogSaveDataComponent, any> = this.dialog.open(DialogSaveDataComponent, {
+                closeOnNavigation: true,
+                data: {
+                    fileName: this.fileNameWoExt
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result === Constants.DIALOG_DONT_SAVE) {
+                    this.loadExampleDataFile.emit(exampleData);
+                } else if (result === Constants.DIALOG_SAVE) {
+                    this.mainPageService.onSave();
+                    this.loadExampleDataFile.emit(exampleData);
+                }
+            });
+        } else {
+            this.loadExampleDataFile.emit(exampleData);
+        }
     }
 
     setGraphType() {
