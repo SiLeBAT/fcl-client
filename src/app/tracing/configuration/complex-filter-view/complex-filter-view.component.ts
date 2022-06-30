@@ -21,6 +21,22 @@ export class ComplexFilterViewComponent {
         return this.availableProperties_;
     }
 
+    @Input() set favoriteColumnsLength(value: number) {
+        this.favoriteColumnsLength_ = value;
+    }
+
+    get favoriteColumnsLength(): number {
+        return this.favoriteColumnsLength_;
+    }
+
+    get favoriteProperties(): TableColumn[] {
+        return this.availableProperties.slice(0, this.favoriteColumnsLength);
+    }
+
+    get additionalProperties(): TableColumn[] {
+        return this.availableProperties.slice(this.favoriteColumnsLength);
+    }
+
     @Input() propToValuesMap: Record<string, string[]> = {};
     @Input() availableOperatorTypes: OperationType[] = [];
 
@@ -41,6 +57,7 @@ export class ComplexFilterViewComponent {
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
     private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
+    private favoriteColumnsLength_: number;
 
     onAddFilterCondition(index: number) {
 

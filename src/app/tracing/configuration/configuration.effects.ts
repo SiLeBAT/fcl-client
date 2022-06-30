@@ -42,7 +42,8 @@ export class ConfigurationEffects {
 
                 const dialogData: DialogSelectData = {
                     title: 'Show Columns',
-                    options: columnOptions
+                    options: columnOptions,
+                    favoriteColumnLength: action.payload.favoriteColumnsLength
                 };
 
                 this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
