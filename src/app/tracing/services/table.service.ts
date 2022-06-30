@@ -23,6 +23,8 @@ export interface ColumnOption {
     providedIn: 'root'
 })
 export class TableService {
+    favoriteStationColumnsLength: number;
+    favoriteDeliveryColumnsLength: number;
 
     constructor(private dataService: DataService) {}
 
@@ -64,6 +66,8 @@ export class TableService {
             { id: 'invisible', name: 'Invisible' }
         ];
 
+        this.favoriteDeliveryColumnsLength = columns.length;
+
         if (addStationProps === false) {
             columns = columns.filter(c => !c.id.startsWith('source.') && !c.id.startsWith('target.'));
         }
@@ -73,32 +77,42 @@ export class TableService {
     }
 
     getStationColumns(data: DataServiceData): TableColumn [] {
-
-        const columns: TableColumn[] = [
+        const favoriteColumns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'name', name: 'Name' },
+            { id: 'address', name: 'address' },
+            { id: 'country', name: 'Country' },
+            { id: 'typeOfBusiness', name: 'Type of Business' },
             { id: 'score', name: 'Score' },
+            { id: 'commonLink', name: 'Common Link' },
             { id: 'outbreak', name: 'Outbreak' },
-            { id: 'weight', name: 'Weight' },
+            { id: 'weight', name: 'Weight' }
+        ];
+
+        this.favoriteStationColumnsLength = favoriteColumns.length;
+
+        const additionalColumns: TableColumn[] = [
             { id: 'forward', name: 'Forward' },
             { id: 'backward', name: 'Backward' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
             { id: 'observed', name: 'Observed' },
-            { id: 'commonLink', name: 'Common Link' },
             { id: 'selected', name: 'Selected' },
             { id: 'invisible', name: 'Invisible' },
-            { id: 'country', name: 'Country' },
-            { id: 'typeOfBusiness', name: 'Type of Business' },
             { id: 'lat', name: 'Latitude' },
             { id: 'lon', name: 'Longitude' },
             { id: 'isMeta', name: 'Is Meta Station' },
             { id: 'contained', name: 'Is Meta Member' }
         ];
 
-        this.addColumnsForProperties(columns, data.stations);
+        this.addColumnsForProperties(additionalColumns, data.stations);
 
-        return columns;
+        const columns: TableColumn[] = [
+            ...favoriteColumns,
+            ..._.sortBy(additionalColumns, [(columnItem: TableColumn) => columnItem.name.toUpperCase()])
+        ];
+
+        return _.uniqBy(columns, (item: TableColumn) => item.id);
     }
 
     private addColumnsForProperties(columns: TableColumn[], arr: (StationData | DeliveryData)[]): void {

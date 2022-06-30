@@ -10,6 +10,8 @@
                 [value]="conditions[i].propertyName"
                 (valueChange)="onPropertyChange($event, i)"
                 [availableProperties]="availableProperties"
+                [favoriteProperties]="favoriteProperties"
+                [additionalProperties]="additionalProperties"
             ></fcl-property-selector-view>
 
             <fcl-operator-selector-view

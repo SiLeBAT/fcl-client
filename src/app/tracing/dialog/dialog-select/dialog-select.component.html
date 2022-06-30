@@ -1,7 +1,9 @@
 <h1 matDialogTitle>{{data.title}}</h1>
 <div mat-dialog-content>
   <div class="checkboxes">
-    <mat-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.viewValue}}</mat-checkbox>
+    <mat-checkbox *ngFor="let option of favoriteColumnSet" [(ngModel)]="option.selected">{{option.viewValue}}</mat-checkbox>
+    <hr class="fcl-dialog-select-horizontal-line">
+    <mat-checkbox *ngFor="let option of additionalColumnSet" [(ngModel)]="option.selected">{{option.viewValue}}</mat-checkbox>
   </div>
 </div>
 <div mat-dialog-actions>

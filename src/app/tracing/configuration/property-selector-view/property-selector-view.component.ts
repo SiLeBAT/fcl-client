@@ -17,6 +17,8 @@ export class PropertySelectorViewComponent {
     @Input() disabled = false;
     @Input() value: string;
     @Input() availableProperties: Property[];
+    @Input() favoriteProperties: Property[];
+    @Input() additionalProperties: Property[];
 
     @Output() valueChange = new EventEmitter<string>();
 

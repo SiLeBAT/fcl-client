@@ -80,7 +80,8 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
             new SelectFilterTableColumnsMSA({
                 type: TableType.DELIVERIES,
                 columns: this.tableService.getDeliveryColumns(this.cachedData.dataServiceData, true),
-                columnOrder: this.cachedState.filterTableState.columnOrder
+                columnOrder: this.cachedState.filterTableState.columnOrder,
+                favoriteColumnsLength: this.tableService.favoriteDeliveryColumnsLength
             })
         );
     }
@@ -182,7 +183,8 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
             this.filterElementsViewInputData_ = {
                 dataTable: this.cachedData.dataTable,
                 filterTableSettings: this.cachedState.filterTableState,
-                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.deliveries
+                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.deliveries,
+                favoriteColumnsLength: this.tableService.favoriteDeliveryColumnsLength
             };
         }
     }

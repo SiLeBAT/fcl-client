@@ -25,6 +25,7 @@ export interface InputData {
     dataTable: DataTable;
     filterTableSettings: FilterTableSettings;
     selectedRowIds: string[];
+    favoriteColumnsLength: number;
 }
 
 interface RowFilterMap {
@@ -76,6 +77,10 @@ export class FilterElementsViewComponent implements OnChanges {
 
     get complexFilterSettings(): ComplexFilterCondition[] {
         return this.inputData.filterTableSettings.complexFilter.conditions;
+    }
+
+    get favoriteColumnsLength(): number {
+        return this.inputData.favoriteColumnsLength;
     }
 
     get filterTableViewInputData(): FilterTableViewInputData {
