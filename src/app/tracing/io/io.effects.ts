@@ -87,7 +87,10 @@ export class IOEffects {
                 mergeMap(exportData => {
                     if (exportData) {
                         const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
-                        const fileName = 'data.json';
+                        let fileName: string = 'data.json';
+                        if (fileName !== undefined || fileName !== null) {
+                            fileName = `${action.payload.fileName}.json`;
+                        }
 
                         const url = window.URL.createObjectURL(blob);
 

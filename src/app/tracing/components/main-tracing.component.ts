@@ -73,7 +73,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
         );
         this.subscriptions.push(
             this.mainPageService.doOnSave.subscribe(
-                () => this.onSave(),
+                (fileNameWoExt: string) => this.onSave(fileNameWoExt),
                 error => {
                     throw new Error(`error saving: ${error}`);
                 }
@@ -88,8 +88,8 @@ export class MainTracingComponent implements OnInit, OnDestroy {
         });
     }
 
-    onSave() {
-        this.store.dispatch(new ioActions.SaveFclDataMSA({}));
+    onSave(fileNameWoExt: string) {
+        this.store.dispatch(new ioActions.SaveFclDataMSA({fileName: fileNameWoExt}));
     }
 
     onSaveImage() {
