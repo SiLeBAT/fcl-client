@@ -97,13 +97,17 @@ export class ToolbarActionComponent implements OnChanges {
                 if (result === Constants.DIALOG_DONT_SAVE) {
                     this.loadExampleDataFile.emit(exampleData);
                 } else if (result === Constants.DIALOG_SAVE) {
-                    this.mainPageService.onSave();
+                    this.mainPageService.onSave(this.fileNameWoExt);
                     this.loadExampleDataFile.emit(exampleData);
                 }
             });
         } else {
             this.loadExampleDataFile.emit(exampleData);
         }
+    }
+
+    onDownloadDataFile() {
+        this.mainPageService.onSave(this.fileNameWoExt);
     }
 
     setGraphType() {

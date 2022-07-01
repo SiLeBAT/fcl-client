@@ -33,7 +33,7 @@ export class Constants {
     static readonly DIALOG_CANCEL = 'Cancel';
     // eslint-disable-next-line @typescript-eslint/quotes
     static readonly DIALOG_DONT_SAVE = "Don't save";
-    static readonly DIALOG_SAVE = 'Save';
+    static readonly DIALOG_SAVE = 'Save Current and Load New';
 
     private static readonly STATION_DATA: StationData = {
         id: null,
