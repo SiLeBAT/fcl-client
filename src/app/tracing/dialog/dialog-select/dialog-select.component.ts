@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export interface DialogSelectData {
     title: string;
     options: { value: string; viewValue: string; selected: boolean }[];
-    favoriteColumnLength: number;
+    favoriteColumnsLength: number;
 }
 
 @Component({
@@ -15,13 +15,13 @@ export interface DialogSelectData {
 export class DialogSelectComponent {
 
     options: any[];
-    favoriteColumnSet: any[];
-    additionalColumnSet: any[];
+    favoriteColumnsSet: any[];
+    additionalColumnsSet: any[];
 
     constructor(public dialogRef: MatDialogRef<DialogSelectComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogSelectData) {
         this.options = JSON.parse(JSON.stringify(data.options));
-        this.favoriteColumnSet = this.options.slice(0, data.favoriteColumnLength);
-        this.additionalColumnSet = this.options.slice(data.favoriteColumnLength);
+        this.favoriteColumnsSet = this.options.slice(0, data.favoriteColumnsLength);
+        this.additionalColumnsSet = this.options.slice(data.favoriteColumnsLength);
     }
 
     //noinspection JSUnusedGlobalSymbols

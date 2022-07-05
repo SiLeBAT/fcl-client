@@ -29,14 +29,6 @@ export class ComplexFilterViewComponent {
         return this.favoriteColumnsLength_;
     }
 
-    get favoriteProperties(): TableColumn[] {
-        return this.availableProperties.slice(0, this.favoriteColumnsLength);
-    }
-
-    get additionalProperties(): TableColumn[] {
-        return this.availableProperties.slice(this.favoriteColumnsLength);
-    }
-
     @Input() propToValuesMap: Record<string, string[]> = {};
     @Input() availableOperatorTypes: OperationType[] = [];
 

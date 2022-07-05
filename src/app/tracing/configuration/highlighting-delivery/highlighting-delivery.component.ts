@@ -44,6 +44,10 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
         return this.cachedData === null ? this.emptyObject_ : this.cachedData.propToValuesMap;
     }
 
+    get favoriteColumnsLength(): number {
+        return this.cachedData === null ? 0 : this.cachedData.favoriteColumnsLength;
+    }
+
     private stateSubscription: Subscription | null = null;
     private cachedData: CachedData | null = null;
     private cachedState: CachedState | null = null;

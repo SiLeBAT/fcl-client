@@ -13,6 +13,7 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
 
     @Input() rule: T | null = null;
     @Input() availableProperties: TableColumn[] = [];
+    @Input() favoriteColumnsLength: number = 0;
     @Input() propToValuesMap: PropToValuesMap = {};
 
     @Output() applyRule = new EventEmitter<T>();
