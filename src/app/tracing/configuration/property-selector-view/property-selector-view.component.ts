@@ -17,8 +17,15 @@ export class PropertySelectorViewComponent {
     @Input() disabled = false;
     @Input() value: string;
     @Input() availableProperties: Property[];
-    @Input() favoriteProperties: Property[];
-    @Input() additionalProperties: Property[];
+    @Input() favoriteColumnsLength: number;
+
+    get favoriteProperties(): Property[] {
+        return this.availableProperties.slice(0, this.favoriteColumnsLength);
+    }
+
+    get additionalProperties(): Property[] {
+        return this.availableProperties.slice(this.favoriteColumnsLength);
+    }
 
     @Output() valueChange = new EventEmitter<string>();
 

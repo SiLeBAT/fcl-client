@@ -10,6 +10,7 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
 
     @Input() availableProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
+    @Input() favoriteColumnsLength: number = 0;
     @Input() editRules: T[] = [];
     @Input() ruleListItems: RuleListItem[] = [];
 

@@ -47,6 +47,7 @@ interface UnsharedData {
 interface PropData {
     availableProperties: TableColumn[];
     propToValuesMap: PropToValuesMap;
+    favoriteColumnsLength: number;
 }
 
 interface CachedData {
@@ -416,18 +417,22 @@ export class EditHighlightingService {
     private createDeliveryPropData(state: DataServiceInputState): PropData {
         const dataTable = this.tableService.getDeliveryData(state, false);
         const columns = this.filterDeliveryColumns(dataTable.columns);
+        const favoriteDeliveryColumnLength = this.tableService.favoriteDeliveryColumnsLength;
         return {
             availableProperties: columns,
-            propToValuesMap: extractPropToValuesMap(dataTable.rows, columns)
+            propToValuesMap: extractPropToValuesMap(dataTable.rows, columns),
+            favoriteColumnsLength: favoriteDeliveryColumnLength
         };
     }
 
     private createStationPropData(state: DataServiceInputState): PropData {
         const dataTable = this.tableService.getStationData(state);
         const columns = this.filterStationColumns(dataTable.columns);
+        const favoriteStationColumnLength = this.tableService.favoriteStationColumnsLength;
         return {
             availableProperties: columns,
-            propToValuesMap: extractPropToValuesMap(dataTable.rows, columns)
+            propToValuesMap: extractPropToValuesMap(dataTable.rows, columns),
+            favoriteColumnsLength: favoriteStationColumnLength
         };
     }
 }

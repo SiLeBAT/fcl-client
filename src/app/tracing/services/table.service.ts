@@ -45,16 +45,22 @@ export class TableService {
     }
 
     getDeliveryColumns(data: DataServiceData, addStationProps: boolean): TableColumn[] {
-        let columns: TableColumn[] = [
+        const favoriteColumns: TableColumn[] = [
             { id: 'id', name: 'ID' },
-            { id: 'source', name: 'Source ID' },
-            { id: 'source.name', name: 'Source' },
-            { id: 'target', name: 'Target ID' },
-            { id: 'target.name', name: 'Target' },
             { id: 'name', name: 'Product' },
             { id: 'lot', name: 'Lot' },
+            { id: 'amount', name: 'amount' },
             { id: 'dateOut', name: 'Delivery Date' },
             { id: 'dateIn', name: 'Delivery Date Arrival' },
+            { id: 'source.name', name: 'Source' },
+            { id: 'target.name', name: 'Target' }
+        ];
+
+        this.favoriteDeliveryColumnsLength = favoriteColumns.length;
+
+        let additionalColumns: TableColumn[] = [
+            { id: 'source', name: 'Source ID' },
+            { id: 'target', name: 'Target ID' },
             { id: 'weight', name: 'Weight' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
@@ -66,14 +72,12 @@ export class TableService {
             { id: 'invisible', name: 'Invisible' }
         ];
 
-        this.favoriteDeliveryColumnsLength = columns.length;
-
         if (addStationProps === false) {
-            columns = columns.filter(c => !c.id.startsWith('source.') && !c.id.startsWith('target.'));
+            additionalColumns = additionalColumns.filter(c => !c.id.startsWith('source.') && !c.id.startsWith('target.'));
         }
-        this.addColumnsForProperties(columns, data.deliveries);
+        this.addColumnsForProperties(additionalColumns, data.deliveries);
 
-        return columns;
+        return this.mergeColumns(favoriteColumns, additionalColumns);
     }
 
     getStationColumns(data: DataServiceData): TableColumn [] {
@@ -107,12 +111,16 @@ export class TableService {
 
         this.addColumnsForProperties(additionalColumns, data.stations);
 
+        return this.mergeColumns(favoriteColumns, additionalColumns);
+    }
+
+    private mergeColumns(favoriteColumns: TableColumn[], additionalColumns: TableColumn[]): TableColumn[] {
         const columns: TableColumn[] = [
             ...favoriteColumns,
-            ..._.sortBy(additionalColumns, [(columnItem: TableColumn) => columnItem.name.toUpperCase()])
+            ..._.sortBy(additionalColumns, [(columnItem: TableColumn) => columnItem.name.toLowerCase()])
         ];
 
-        return _.uniqBy(columns, (item: TableColumn) => item.id);
+        return _.uniqBy(columns, (item: TableColumn) => item.id.toLowerCase());
     }
 
     private addColumnsForProperties(columns: TableColumn[], arr: (StationData | DeliveryData)[]): void {
