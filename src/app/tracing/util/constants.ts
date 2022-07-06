@@ -147,13 +147,18 @@ export class Constants {
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
         'name',
         'country',
-        'typeOfBusiness'
+        'typeOfBusiness',
+        'score',
+        'commonLink'
     );
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
-        'id',
-        'source',
-        'target',
-        'score'
+        'name',
+        'lot',
+        'amount',
+        'dateOut',
+        'dateIn',
+        'source.name',
+        'target.name'
     );
 
     static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';

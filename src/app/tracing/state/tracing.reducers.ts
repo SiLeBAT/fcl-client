@@ -48,7 +48,7 @@ const initialFilterSettings: FilterSettings = {
     },
     deliveryFilter: {
         ...filterTableSettings,
-        columnOrder: ['name', 'lot', 'date', 'source.name', 'target.name']
+        columnOrder: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray()
     }
 };
 
