@@ -122,7 +122,8 @@ export class Constants {
             },
             killContamination: { name: 'Kill Contamination', color: null },
             commonLink: { name: 'Common Link', color: { r: 255, g: 255, b: 75 } },
-            score: { name: 'Score', color: null }
+            score: { name: 'Score', color: null },
+            weight: { name: 'Weight', color: { r: 255, g: 0, b: 0 } }
         }
     );
     static readonly PROPERTIES_WITH_COLORS = List(
