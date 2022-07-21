@@ -49,7 +49,7 @@ export class TableService {
             { id: 'id', name: 'ID' },
             { id: 'name', name: 'Product' },
             { id: 'lot', name: 'Lot' },
-            { id: 'amount', name: 'amount' },
+            { id: 'amount', name: 'Amount' },
             { id: 'dateOut', name: 'Delivery Date' },
             { id: 'dateIn', name: 'Delivery Date Arrival' },
             { id: 'source.name', name: 'Source' },
@@ -65,8 +65,10 @@ export class TableService {
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
             { id: 'observed', name: 'Observed' },
-            { id: 'forward', name: 'Forward' },
-            { id: 'backward', name: 'Backward' },
+            { id: 'forward', name: 'On Forward Trace' },
+            { id: 'Forward', name: 'On Forward Trace' },
+            { id: 'backward', name: 'On Backward Trace' },
+            { id: 'Backward', name: 'On Backward Trace' },
             { id: 'score', name: 'Score' },
             { id: 'selected', name: 'Selected' },
             { id: 'invisible', name: 'Invisible' }
@@ -84,7 +86,7 @@ export class TableService {
         const favoriteColumns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'name', name: 'Name' },
-            { id: 'address', name: 'address' },
+            { id: 'address', name: 'Address' },
             { id: 'country', name: 'Country' },
             { id: 'typeOfBusiness', name: 'Type of Business' },
             { id: 'score', name: 'Score' },
@@ -96,8 +98,10 @@ export class TableService {
         this.favoriteStationColumnsLength = favoriteColumns.length;
 
         const additionalColumns: TableColumn[] = [
-            { id: 'forward', name: 'Forward' },
-            { id: 'backward', name: 'Backward' },
+            { id: 'forward', name: 'On Forward Trace' },
+            { id: 'Forward', name: 'On Forward Trace' },
+            { id: 'backward', name: 'On Backward Trace' },
+            { id: 'Backward', name: 'On Backward Trace' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
             { id: 'observed', name: 'Observed' },
@@ -120,7 +124,7 @@ export class TableService {
             ..._.sortBy(additionalColumns, [(columnItem: TableColumn) => columnItem.name.toLowerCase()])
         ];
 
-        return _.uniqBy(columns, (item: TableColumn) => item.id.toLowerCase());
+        return _.uniqBy(columns, (item: TableColumn) => item.id.replace(/\s/g, '').toLowerCase());
     }
 
     private addColumnsForProperties(columns: TableColumn[], arr: (StationData | DeliveryData)[]): void {
@@ -238,7 +242,12 @@ export class TableService {
         return str
             .replace(/([a-z\d])([A-Z])/g, '$1' + separator + '$2')
             .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1' + separator + '$2')
-            .toLowerCase();
+            .replace(/^([a-z]+)/g, (match: string, p1: string) => p1.charAt(0).toUpperCase() + p1.slice(1))
+            .replace(/(^\_chargen\.)(.*)/gi, 'Lot ' + '$2'.trim().charAt(0).toUpperCase() + '$2'.slice(1))
+            .replace(/(^\_lieferungen\.)(.*)/gi, (match: string, p1: string, p2: string) =>
+                'Delivery ' + p2.charAt(0).toUpperCase() + p2.slice(1))
+            .replace(/lot id/gi, 'Lot ID');
+
     }
 
     private collectProps(arr: (StationData | DeliveryData)[]): { id: string; type: string }[] {
