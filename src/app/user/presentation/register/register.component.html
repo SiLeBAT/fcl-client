@@ -4,7 +4,7 @@
     </ng-container>
 </ng-template>
 
-<form [formGroup]="registerForm" class="fcl-register-form" (ngSubmit)="onRegister()">
+<form [formGroup]="registerForm" class="fcl-register-form" (ngSubmit)="onRegister()" fclDisableSubscriptWrapperTabFocus>
     <div class="fcl-mat-card-content">
         <div class="form-group fcl-form-firstname">
             <mat-form-field class="fcl-form-field" appearance="standard">

@@ -7,6 +7,7 @@ import { SpinnerLoaderComponent } from './spinner-loader/spinner-loader.componen
 import { AlertComponent } from './alert/alert.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SingleCenterCardLayoutComponent } from './presentation/single-center-card-layout/single-center-card-layout.component';
+import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-subscript-wrapper-tab-focus';
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import { SingleCenterCardLayoutComponent } from './presentation/single-center-ca
     declarations: [
         SpinnerLoaderComponent,
         AlertComponent,
-        SingleCenterCardLayoutComponent
+        SingleCenterCardLayoutComponent,
+        DisableSubscriptWrapperTabFocusDirective
     ],
     exports: [
         FormsModule,
@@ -26,7 +28,8 @@ import { SingleCenterCardLayoutComponent } from './presentation/single-center-ca
         DragDropModule,
         SpinnerLoaderComponent,
         AlertComponent,
-        SingleCenterCardLayoutComponent
+        SingleCenterCardLayoutComponent,
+        DisableSubscriptWrapperTabFocusDirective
     ]
 })
 export class SharedModule { }
