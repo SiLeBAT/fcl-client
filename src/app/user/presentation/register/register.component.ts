@@ -15,6 +15,7 @@ export class RegisterComponent implements OnInit {
     @Input() serverValidationErrors: Partial<Record<keyof RegistrationCredentials, ValidationError[]>> = {};
 
     @Output() register = new EventEmitter<RegistrationCredentials>();
+
     registerForm: FormGroup;
 
     ngOnInit() {
