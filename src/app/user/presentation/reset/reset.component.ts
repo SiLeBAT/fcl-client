@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ValidationError } from '@app/core/model';
 import { NewPasswordRequestDTO } from '../../../user/models/user.model';
@@ -15,6 +15,8 @@ export class ResetComponent implements OnInit {
     @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
 
     resetForm: FormGroup;
+
+    constructor(public elementRef: ElementRef) {}
 
     ngOnInit() {
         this.resetForm = new FormGroup({
