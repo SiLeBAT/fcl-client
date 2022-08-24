@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DeliveryData, StationData } from '../../data.model';
+import { DeliveryData, StationData, TableColumn } from '../../data.model';
 import { Constants } from '../../util/constants';
 import { Utils } from '../../util/non-ui-utils';
 
@@ -10,6 +10,7 @@ export interface DeliveryPropertiesData {
     target: StationData;
     originalSource: StationData;
     originalTarget: StationData;
+    deliveryColumns: TableColumn[];
 }
 
 interface Property {
@@ -31,7 +32,7 @@ export class DeliveryPropertiesComponent {
     otherPropertiesHidden = true;
     properties: Properties = {};
 
-    vipProperties: string[] = ['id', 'lot', 'score', 'sourceName', 'targetName', 'sourceId', 'targetId', 'weight', 'crossContamination', 'killContamination', 'observed', 'forward', 'backward'];
+    vipProperties: string[] = ['id', 'lot', 'amount', 'dateOut', 'dateIn', 'sourceName', 'targetName'];
     notListedProps: string[] = ['name', 'source', 'target', 'originalSource', 'originalTarget'];
     otherProperties: string[] = [];
 
@@ -39,21 +40,32 @@ export class DeliveryPropertiesComponent {
         this.initProperties();
     }
 
+    getOtherPropertiesOri() {
+        return this.otherProperties
+            .map(property => Object.keys(this.properties)
+                .find(key => this.properties[key].label === property));
+    }
+
     private initProperties(): void {
+        const columns: TableColumn[] = this.data.deliveryColumns;
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(this.data.delivery).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
             .forEach(key => {
+                const column: TableColumn = columns.find(column => column.id === key);
+                const label = column !== undefined ? column.name : Constants.PROPERTIES.get(key).name;
                 const value = this.data.delivery[key];
                 properties[key] = {
-                    label: Constants.PROPERTIES.get(key).name,
+                    label: label,
                     value: value != null ? value + '' : ''
                 };
             });
 
         this.data.delivery.properties.forEach(prop => {
+            const column: TableColumn = columns.find(column => column.id === prop.name);
+            const label = column !== undefined ? column.name : this.convertPropNameToLabel(prop.name);
             properties[prop.name] = {
-                label: this.convertPropNameToLabel(prop.name),
+                label: label,
                 value: typeof prop.value === 'string' ? prop.value : prop.value + ''
             };
         });
@@ -61,7 +73,15 @@ export class DeliveryPropertiesComponent {
         this.addCustomProps(properties);
 
         const vipProps = Utils.createSimpleStringSet(this.vipProperties);
-        this.otherProperties = Object.keys(properties).filter(key => !vipProps[key]).slice();
+        this.otherProperties = Object
+            .keys(properties)
+            .filter(key => !vipProps[key])
+            .slice()
+            .map(property => {
+                const column: Property = properties[property];
+                return column !== undefined ? column.label : Constants.PROPERTIES.get(property).name;
+            });
+
         this.otherProperties.sort();
         // add default for missing props
         this.vipProperties.filter(key => !properties[key]).forEach(key => {

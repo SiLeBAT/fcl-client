@@ -129,7 +129,8 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     score: ExtDataConstants.DELIVERY_SCORE,
     observed: ExtDataConstants.DELIVERY_OBSERVED,
     dateOut: ExtDataConstants.DELIVERY_OUT_DATE,
-    dateIn: ExtDataConstants.DELIVERY_IN_DATE
+    dateIn: ExtDataConstants.DELIVERY_IN_DATE,
+    amount: ExtDataConstants.DELIVERY_AMOUNT
 });
 
 export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
