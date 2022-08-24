@@ -9,7 +9,7 @@ import * as fromTracing from './state/tracing.reducers';
 import * as tracingSelectors from './state/tracing.selectors';
 import { mergeMap, withLatestFrom } from 'rxjs/operators';
 import { EMPTY, of } from 'rxjs';
-import { DeliveryData, DeliveryId, StationData, StationId } from './data.model';
+import { DeliveryData, DeliveryId, StationData, StationId, TableColumn } from './data.model';
 import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditTracingSettingsService } from './services/edit-tracing-settings.service';
 import { EditHighlightingService } from './configuration/edit-highlighting.service';
 import { GraphService } from './graph/graph.service';
+import { TableService } from './services/table.service';
 
 @Injectable()
 export class TracingEffects {
@@ -29,6 +30,7 @@ export class TracingEffects {
         private dialogService: MatDialog,
         private alertService: AlertService,
         private editHighlightingService: EditHighlightingService,
+        private tableService: TableService,
         private store: Store<fromTracing.State>
     ) {}
 
@@ -58,7 +60,8 @@ export class TracingEffects {
                     const dialogData: StationPropertiesData = {
                         station: station,
                         deliveries: deliveries,
-                        connectedStations: connectedStations
+                        connectedStations: connectedStations,
+                        stationColumns: this.tableService.getStationColumns(data)
                     };
 
                     this.dialogService.open(StationPropertiesComponent, { data: dialogData });
@@ -125,7 +128,8 @@ export class TracingEffects {
                             source: data.statMap[delivery.source],
                             target: data.statMap[delivery.target],
                             originalSource: data.statMap[delivery.originalSource],
-                            originalTarget: data.statMap[delivery.originalTarget]
+                            originalTarget: data.statMap[delivery.originalTarget],
+                            deliveryColumns: this.tableService.getDeliveryColumns(data, true)
                         };
 
                         this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });

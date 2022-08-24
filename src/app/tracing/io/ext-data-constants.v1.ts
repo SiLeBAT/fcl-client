@@ -47,6 +47,7 @@ export const DELIVERY_LOT_SCORE = 'Lot Score';
 export const DELIVERY_NORM_SCORE = 'Normalized Score';
 export const DELIVERY_POS_SCORE = 'Positive Score';
 export const DELIVERY_NEG_SCORE = 'Negative Score';
+export const DELIVERY_AMOUNT = 'Amount';
 
 export const DEL2DEL_ID = 'ID';
 export const DEL2DEL_NEXT = 'Next';

@@ -66,9 +66,7 @@ export class TableService {
             { id: 'killContamination', name: 'Kill Contamination' },
             { id: 'observed', name: 'Observed' },
             { id: 'forward', name: 'On Forward Trace' },
-            { id: 'Forward', name: 'On Forward Trace' },
             { id: 'backward', name: 'On Backward Trace' },
-            { id: 'Backward', name: 'On Backward Trace' },
             { id: 'score', name: 'Score' },
             { id: 'selected', name: 'Selected' },
             { id: 'invisible', name: 'Invisible' }
@@ -99,9 +97,7 @@ export class TableService {
 
         const additionalColumns: TableColumn[] = [
             { id: 'forward', name: 'On Forward Trace' },
-            { id: 'Forward', name: 'On Forward Trace' },
             { id: 'backward', name: 'On Backward Trace' },
-            { id: 'Backward', name: 'On Backward Trace' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
             { id: 'observed', name: 'Observed' },
@@ -113,8 +109,11 @@ export class TableService {
             { id: 'contained', name: 'Is Meta Member' }
         ];
 
+        // the addColumnsForProperties method adds properties to the additionalColmns that are already present
+        // in the favoriteColumns which results finally in double entries
         this.addColumnsForProperties(additionalColumns, data.stations);
 
+        // double entries are removed in the mergeColumns method
         return this.mergeColumns(favoriteColumns, additionalColumns);
     }
 
@@ -124,7 +123,8 @@ export class TableService {
             ..._.sortBy(additionalColumns, [(columnItem: TableColumn) => columnItem.name.toLowerCase()])
         ];
 
-        return _.uniqBy(columns, (item: TableColumn) => item.id.replace(/\s/g, '').toLowerCase());
+        // uniqBy removes the double entries that were collected in the addColumnsForProperties method
+        return _.uniqBy(columns, (item: TableColumn) => item.id);
     }
 
     private addColumnsForProperties(columns: TableColumn[], arr: (StationData | DeliveryData)[]): void {
