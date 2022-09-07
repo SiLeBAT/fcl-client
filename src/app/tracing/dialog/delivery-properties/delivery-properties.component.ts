@@ -103,30 +103,36 @@ export class DeliveryPropertiesComponent {
             label: 'Target ID',
             value: this.data.delivery.target
         };
-        properties['originalSourceId'] = {
-            label: 'Original Source ID',
-            value: this.data.delivery.originalSource
-        };
-        properties['originalTargetId'] = {
-            label: 'Original Target ID',
-            value: this.data.delivery.originalTarget
-        };
+
+        if (this.data.source.isMeta === true) {
+            properties['originalSourceId'] = {
+                label: 'Original Source ID',
+                value: this.data.delivery.originalSource
+            };
+            properties['originalSourceName'] = {
+                label: 'Original Source',
+                value: this.data.originalSource.name
+            };
+        }
+
+        if (this.data.target.isMeta === true) {
+            properties['originalTargetId'] = {
+                label: 'Original Target ID',
+                value: this.data.delivery.originalTarget
+            };
+            properties['originalTargetName'] = {
+                label: 'Original Target',
+                value: this.data.originalTarget.name
+            };
+        }
 
         properties['sourceName'] = {
-            label: 'Source Name',
+            label: 'Source',
             value: this.data.source.name
         };
         properties['targetName'] = {
-            label: 'Target Name',
+            label: 'Target',
             value: this.data.target.name
-        };
-        properties['originalSourceName'] = {
-            label: 'Original Source Name',
-            value: this.data.originalSource.name
-        };
-        properties['originalTargetName'] = {
-            label: 'Original Target Name',
-            value: this.data.originalTarget.name
         };
     }
 
