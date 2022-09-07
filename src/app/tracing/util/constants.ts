@@ -112,6 +112,7 @@ export class Constants {
             incoming: { name: 'Incoming', color: null },
             outgoing: { name: 'Outgoing', color: null },
             contains: { name: 'Contains', color: null },
+            isMeta: { name: 'Is Meta Station', color: null },
             forward: { name: 'Forward Trace', color: { r: 150, g: 255, b: 75 } },
             backward: { name: 'Backward Trace', color: { r: 255, g: 150, b: 75 } },
             observed: { name: 'Observed', color: { r: 75, g: 150, b: 255 } },

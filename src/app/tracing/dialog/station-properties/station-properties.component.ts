@@ -149,6 +149,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     notListedProps: string[] = ['name', 'incoming', 'outgoing'];
     otherProperties: string[] = [];
 
+    conditionalNotListedPropsMap = new Map<string, (station: StationData) => boolean>([
+        ['contains', (station: StationData) => station.isMeta === false]
+    ]);
+
     private nodeInData: NodeDatum[];
     private nodeOutData: NodeDatum[];
     private edgeData: EdgeDatum[];
@@ -211,6 +215,9 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private initProperties(station: StationData, columns: TableColumn[]): void {
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
+
+        this.conditionalNotListedPropsMap.forEach((isHiddenFun, propId) => hiddenProps[propId] = isHiddenFun(station));
+
         Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
             .forEach(key => {
                 const column: TableColumn = columns.find(column => column.id === key);
