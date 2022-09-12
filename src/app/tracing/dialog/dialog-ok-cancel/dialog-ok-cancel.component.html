@@ -1,0 +1,28 @@
+<div class="fcl-dialog-ok-cancel">
+
+    <div class="fcl-dialog-title">
+        <h1 mat-dialog-title class="fcl-title">{{ data.title }}</h1>
+    </div>
+
+    <mat-dialog-content class="fcl-dialog-content">
+        {{ data.content1 }}
+        <p *ngIf="data.content2 !== undefined">{{ data.content2 }}</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="fcl-dialog-actions">
+        <button
+            mat-raised-button
+            color="primary"
+            (click)="cancelDialog()"
+        >
+            {{ data.cancelText }}
+        </button>
+        <button
+            mat-raised-button
+            (click)="dontSaveAndCloseDialog()"
+        >
+            {{ data.okText }}
+        </button>
+    </mat-dialog-actions>
+
+</div>
