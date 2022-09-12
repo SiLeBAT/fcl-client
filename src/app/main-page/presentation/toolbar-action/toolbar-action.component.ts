@@ -7,7 +7,7 @@ import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
 import { ExampleData } from '../../model/types';
-import { DialogSaveDataComponent } from '../dialog-save-data/dialog-save-data.component';
+import { DialogOkCancelComponent, DialogOkCancelData } from '../../../tracing/dialog/dialog-ok-cancel/dialog-ok-cancel.component';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -86,18 +86,20 @@ export class ToolbarActionComponent implements OnChanges {
 
     onLoadExampleDataFile(exampleData: ExampleData) {
         if (this.fileNameWoExt !== null) {
-            const dialogRef: MatDialogRef<DialogSaveDataComponent, any> = this.dialog.open(DialogSaveDataComponent, {
+            const dialogData: DialogOkCancelData = {
+                title: 'Save / Discard Data Changes?',
+                content1: `Do you want to save the changes you made to ${this.fileNameWoExt}?`,
+                content2: 'Your changes will be lost, if you do not save them.',
+                cancelText: Constants.DIALOG_CANCEL,
+                okText: Constants.DIALOG_DONT_SAVE
+            };
+            const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.dialog.open(DialogOkCancelComponent, {
                 closeOnNavigation: true,
-                data: {
-                    fileName: this.fileNameWoExt
-                }
+                data: dialogData
             });
 
             dialogRef.afterClosed().subscribe(result => {
                 if (result === Constants.DIALOG_DONT_SAVE) {
-                    this.loadExampleDataFile.emit(exampleData);
-                } else if (result === Constants.DIALOG_SAVE) {
-                    this.mainPageService.onSave(this.fileNameWoExt);
                     this.loadExampleDataFile.emit(exampleData);
                 }
             });
