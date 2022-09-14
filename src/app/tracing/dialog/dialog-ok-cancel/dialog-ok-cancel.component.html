@@ -15,13 +15,13 @@
             color="primary"
             (click)="cancelDialog()"
         >
-            {{ data.cancelText }}
+            {{ data.cancel }}
         </button>
         <button
             mat-raised-button
-            (click)="dontSaveAndCloseDialog()"
+            (click)="okDialog()"
         >
-            {{ data.okText }}
+            {{ data.ok }}
         </button>
     </mat-dialog-actions>
 

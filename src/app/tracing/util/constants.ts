@@ -31,6 +31,7 @@ export class Constants {
     ];
 
     static readonly DIALOG_CANCEL = 'Cancel';
+    static readonly DIALOG_OK = 'Ok';
     static readonly DIALOG_DONT_SAVE = 'Don\'t save and proceed';
 
     private static readonly STATION_DATA: StationData = {

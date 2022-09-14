@@ -1,12 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Constants } from '../../util/constants';
 
 export interface DialogOkCancelData {
     title: string;
     content1: string;
     content2?: string;
-    cancelText: string;
-    okText: string;
+    cancel: string;
+    ok: string;
 }
 
 @Component({
@@ -25,10 +26,10 @@ export class DialogOkCancelComponent {
     }
 
     cancelDialog() {
-        this.dialogRef.close(this.data.cancelText);
+        this.dialogRef.close(Constants.DIALOG_CANCEL);
     }
 
-    dontSaveAndCloseDialog() {
-        this.dialogRef.close(this.data.okText);
+    okDialog() {
+        this.dialogRef.close(Constants.DIALOG_OK);
     }
 }
