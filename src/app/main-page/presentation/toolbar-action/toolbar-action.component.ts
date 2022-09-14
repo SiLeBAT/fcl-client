@@ -75,31 +75,25 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onSelectModelFile() {
-        this.selectInputFile(
-            '.json',
-            (event$) => {
-                const fileList: FileList = event$.target.files;
-                this.loadModelFile.emit(fileList);
-            }
-        );
+        const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.openOkCancelDialog();
+
+        if (dialogRef !== null) {
+            dialogRef.afterClosed().subscribe(result => {
+                if (result === Constants.DIALOG_OK) {
+                    this.openSelectInputFileDialog();
+                }
+            });
+        } else {
+            this.openSelectInputFileDialog();
+        }
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
-        if (this.fileNameWoExt !== null) {
-            const dialogData: DialogOkCancelData = {
-                title: 'Save / Discard Data Changes?',
-                content1: `Do you want to save the changes you made to ${this.fileNameWoExt}?`,
-                content2: 'Your changes will be lost, if you do not save them.',
-                cancelText: Constants.DIALOG_CANCEL,
-                okText: Constants.DIALOG_DONT_SAVE
-            };
-            const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.dialog.open(DialogOkCancelComponent, {
-                closeOnNavigation: true,
-                data: dialogData
-            });
+        const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.openOkCancelDialog();
 
+        if (dialogRef !== null) {
             dialogRef.afterClosed().subscribe(result => {
-                if (result === Constants.DIALOG_DONT_SAVE) {
+                if (result === Constants.DIALOG_OK) {
                     this.loadExampleDataFile.emit(exampleData);
                 }
             });
@@ -139,5 +133,35 @@ export class ToolbarActionComponent implements OnChanges {
         nativeFileInput.accept = accept;
         nativeFileInput.onchange = changeHandler;
         nativeFileInput.click();
+    }
+
+    private openOkCancelDialog(): MatDialogRef<DialogOkCancelComponent, any> {
+        if (this.fileNameWoExt !== null) {
+            const dialogData: DialogOkCancelData = {
+                title: 'Save / Discard Data Changes?',
+                content1: `Do you want to save the changes you made to ${this.fileNameWoExt}?`,
+                content2: 'Your changes will be lost, if you do not save them.',
+                cancel: Constants.DIALOG_CANCEL,
+                ok: Constants.DIALOG_DONT_SAVE
+            };
+            const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.dialog.open(DialogOkCancelComponent, {
+                closeOnNavigation: true,
+                data: dialogData
+            });
+
+            return dialogRef;
+        }
+
+        return null;
+    }
+
+    private openSelectInputFileDialog(): void {
+        this.selectInputFile(
+            '.json',
+            (event$) => {
+                const fileList: FileList = event$.target.files;
+                this.loadModelFile.emit(fileList);
+            }
+        );
     }
 }
