@@ -74,17 +74,23 @@ export class ToolbarActionComponent implements OnChanges {
         return environment.serverless;
     }
 
+    onFileInput(event: any) {
+        const fileList: FileList = event.target.files;
+        this.loadModelFile.emit(fileList);
+        event.target.value = null;
+    }
+
     onSelectModelFile() {
         const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.openOkCancelDialog();
 
         if (dialogRef !== null) {
             dialogRef.afterClosed().subscribe(result => {
                 if (result === Constants.DIALOG_OK) {
-                    this.openSelectInputFileDialog();
+                    this.fileInput.nativeElement.click();
                 }
             });
         } else {
-            this.openSelectInputFileDialog();
+            this.fileInput.nativeElement.click();
         }
     }
 
@@ -153,15 +159,5 @@ export class ToolbarActionComponent implements OnChanges {
         }
 
         return null;
-    }
-
-    private openSelectInputFileDialog(): void {
-        this.selectInputFile(
-            '.json',
-            (event$) => {
-                const fileList: FileList = event$.target.files;
-                this.loadModelFile.emit(fileList);
-            }
-        );
     }
 }
