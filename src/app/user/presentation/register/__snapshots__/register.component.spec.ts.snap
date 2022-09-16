@@ -8,6 +8,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
 >
   <form
     class="fcl-register-form"
+    fcldisablesubscriptwrappertabfocus=""
     novalidate=""
   >
     <div

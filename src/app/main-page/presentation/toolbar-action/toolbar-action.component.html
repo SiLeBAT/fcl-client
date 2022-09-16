@@ -38,13 +38,17 @@
     </fcl-example-menu>
 
     <input
-        id="fileInput"
-        #fileInput
         type="file"
-    />
+        accept=".json"
+        id="fileInput"
+        (change)="onFileInput($event)"
+        #fileInput
+        data-cy="fcl-upload-model-fileinput"
+    >
     <button
         class="fcl-no-shrink"
         mat-button
+        data-cy="fcl-upload-model-button"
         (click)="onSelectModelFile()"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
@@ -54,6 +58,7 @@
         class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="onDownloadDataFile()"
+        data-cy="fcl-download-model-button"
         matTooltip="Download data">
         <mat-icon>file_download</mat-icon>
         Download Data
