@@ -2,13 +2,13 @@
 
 exports[`RegisterComponent should render the component correctly 1`] = `
 <fcl-register
-  _lastSubmittedCredentials="null"
   register={[Function EventEmitter_]}
   registerForm={[Function FormGroup]}
-  serverValidationErrors={[Function Array]}
+  serverValidationErrors={[Function Object]}
 >
   <form
     class="fcl-register-form"
+    fcldisablesubscriptwrappertabfocus=""
     novalidate=""
   >
     <div
