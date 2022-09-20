@@ -20,7 +20,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GdprAgreementComponent } from '../presentation/gdpr-agreement/gdpr-agreement.component';
 import { InvalidRegistrationInput } from '../errors';
 import { catchError } from 'rxjs/operators';
-import { InvalidServerInputHttpErrorResponse } from '@app/core/errors';
+import { InvalidServerInputHttpErrorResponse } from '../../core/errors';
 
 @Injectable({
     providedIn: 'root'
