@@ -8,12 +8,14 @@ import { reducer, STATE_SLICE_NAME } from './state/content.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { ContentEffects } from './state/content.effects';
 import { FundingSourcesViewComponent } from './funding-sources-view/funding-sources-view.component';
+import { MaintenanceNotificationViewComponent } from './maintenance-notification-view/maintenance-notification-view.component';
 
 @NgModule({
     declarations: [
         DataProtectionDeclarationComponent,
         DataProtectionNoticeComponent,
-        FundingSourcesViewComponent
+        FundingSourcesViewComponent,
+        MaintenanceNotificationViewComponent
     ],
     imports: [
         CommonModule,
@@ -22,7 +24,8 @@ import { FundingSourcesViewComponent } from './funding-sources-view/funding-sour
         EffectsModule.forFeature([ContentEffects])
     ],
     exports: [
-        FundingSourcesViewComponent
+        FundingSourcesViewComponent,
+        MaintenanceNotificationViewComponent
     ]
 })
 export class ContentModule { }
