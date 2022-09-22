@@ -145,7 +145,7 @@ export class ToolbarActionComponent implements OnChanges {
         if (this.fileNameWoExt !== null) {
             const dialogData: DialogOkCancelData = {
                 title: 'Save / Discard Data Changes?',
-                content1: `Do you want to save the changes you made to ${this.fileNameWoExt}?`,
+                content1: `Do you want to save the changes you made to "${this.fileNameWoExt}" ?`,
                 content2: 'Your changes will be lost, if you do not save them.',
                 cancel: Constants.DIALOG_CANCEL,
                 ok: Constants.DIALOG_DONT_SAVE
