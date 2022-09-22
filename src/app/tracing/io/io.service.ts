@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FclData, ShapeFileData } from '../data.model';
+import { FclData, ShapeFileData, JsonDataExtract } from '../data.model';
 import { createInitialFclDataState } from '../state/tracing.reducers';
 import { DataImporter } from './data-importer/data-importer';
 import { DataExporter } from './data-exporter';
@@ -8,6 +8,9 @@ import { DataImporterV1 } from './data-importer/data-importer-v1';
 import { createEmptyJson } from './json-data-creator';
 import * as shapeFileImporter from './data-importer/shape-file-importer';
 import { getJsonFromFile } from './io-utils';
+import { JsonData } from './ext-data-model.v1';
+import * as _ from 'lodash';
+
 
 @Injectable({
     providedIn: 'root'
@@ -21,7 +24,9 @@ export class IOService {
         return fclData;
     }
 
-    constructor(private httpClient: HttpClient) {}
+    constructor(
+        private httpClient: HttpClient
+    ) { }
 
     async getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === 'string') {
@@ -86,5 +91,42 @@ export class IOService {
                 resolve(exportData);
             });
         }
+    }
+
+    async hasDataChanged(currentData: FclData, lastUnchangedJsonDataExtract: JsonDataExtract): Promise<boolean> {
+        return this.getExportData(currentData)
+            .then(async (currentExtData: JsonData) => this.getJsonDataExtract(currentExtData))
+            .then((currentJsonDataExtract: JsonDataExtract) => {
+
+                const dataHasChanged = !(_.isEqual(
+                    _.omit(lastUnchangedJsonDataExtract, [
+                        'settings.view.graph.transformation',
+                        'settings.view.gis.transformation',
+                        'settings.view.showGis'
+                    ]),
+                    _.omit(currentJsonDataExtract, [
+                        'settings.view.graph.transformation',
+                        'settings.view.gis.transformation',
+                        'settings.view.showGis'
+                    ])
+                ));
+
+                return dataHasChanged;
+            });
+    }
+
+    async fclDataToJsonDataExtract(data: FclData): Promise<JsonDataExtract> {
+
+        return this.getExportData(data)
+            .then(async (extData: JsonData) => this.getJsonDataExtract(extData));
+    }
+
+    async getJsonDataExtract(extData: JsonData): Promise<JsonDataExtract> {
+        const extract = {
+            settings: _.cloneDeep(extData.settings),
+            tracing: _.cloneDeep(extData.tracing)
+        };
+
+        return extract;
     }
 }

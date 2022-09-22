@@ -61,7 +61,8 @@ const initialModelDependentState: ModelDependentState = {
     visioReport: null,
     roaSettings: null,
     filterSettings: initialFilterSettings,
-    highlightingConfigurationSettings: initialHighlightingConfigurationSettings
+    highlightingConfigurationSettings: initialHighlightingConfigurationSettings,
+    lastUnchangedJsonDataExtract: {}
 };
 
 const initialData: FclData = createInitialFclDataState();
@@ -156,7 +157,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 tracingActive: action.payload.isActivated
             };
 
-        case TracingActionTypes.LoadFclDataSuccess:
+        case TracingActionTypes.LoadFclDataSuccessSOA:
             action.payload.fclData.graphSettings.mapType = state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData = state.fclData.graphSettings.shapeFileData;
 
@@ -166,7 +167,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...initialModelDependentState
             };
 
-        case TracingActionTypes.LoadFclDataFailure:
+        case TracingActionTypes.LoadFclDataFailureSOA:
             return {
                 ...state,
                 fclData: initialData
@@ -672,6 +673,12 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 roaSettings: action.payload.roaSettings
+            };
+
+        case TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA:
+            return {
+                ...state,
+                lastUnchangedJsonDataExtract: action.payload.extractData
             };
 
         default:

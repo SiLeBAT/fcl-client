@@ -1,4 +1,7 @@
+import { JsonData } from './io/ext-data-model.v1';
+
 export type HighlightingRuleId = string;
+export type JsonDataExtract = Pick<JsonData, 'settings' | 'tracing'>;
 
 interface ViewData {
     selected: boolean;

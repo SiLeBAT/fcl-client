@@ -8,7 +8,8 @@ import {
     StationHighlightingRule,
     SetInvisibleElementsPayload,
     StationId,
-    DeliveryHighlightingRule
+    DeliveryHighlightingRule,
+    JsonDataExtract
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -18,8 +19,8 @@ import { DeliveryEditRule, StationEditRule } from '../configuration/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
-    LoadFclDataSuccess = '[Tracing] Load Fcl Data Success',
-    LoadFclDataFailure = '[Tracing] Load Fcl Data Failure',
+    LoadFclDataSuccessSOA = '[Tracing] Load Fcl Data Success',
+    LoadFclDataFailureSOA = '[Tracing] Load Fcl Data Failure',
     LoadShapeFileSuccessSOA = '[Tracing] Load Shape File Success',
     LoadShapeFileFailureMSA = '[Tracing] Load Shape File Failure',
     GenerateVisioLayoutSuccess = '[Tracing] Generate Visio Layout Success',
@@ -66,7 +67,8 @@ export enum TracingActionTypes {
     SetDeliveryHighlightingRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Rules',
     SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules',
     SetTabAnimationDoneSOA = '[Configuration] Tab animation done',
-    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened'
+    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened',
+    SetLastUnchangedJsonDataExtractSuccessSOA = '[Tracing] Refresh Last Unchanged JsonData Extract Success'
 }
 
 export class TracingActivated implements Action {
@@ -75,14 +77,14 @@ export class TracingActivated implements Action {
     constructor(public payload: ActivationStatus) {}
 }
 
-export class LoadFclDataSuccess implements Action {
-    readonly type = TracingActionTypes.LoadFclDataSuccess;
+export class LoadFclDataSuccessSOA implements Action {
+    readonly type = TracingActionTypes.LoadFclDataSuccessSOA;
 
     constructor(public payload: { fclData: FclData }) {}
 }
 
-export class LoadFclDataFailure implements Action {
-    readonly type = TracingActionTypes.LoadFclDataFailure;
+export class LoadFclDataFailureSOA implements Action {
+    readonly type = TracingActionTypes.LoadFclDataFailureSOA;
 }
 
 export class LoadShapeFileSuccessSOA implements Action {
@@ -353,10 +355,16 @@ export class SetConfigurationSideBarOpenedSOA implements Action {
     readonly type = TracingActionTypes.SetConfigurationSideBarOpenedSOA;
 }
 
+export class SetLastUnchangedJsonDataExtractSuccessSOA implements Action {
+    readonly type = TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA;
+
+    constructor(public payload: { extractData: JsonDataExtract }) {}
+}
+
 export type TracingActions =
       TracingActivated
-    | LoadFclDataSuccess
-    | LoadFclDataFailure
+    | LoadFclDataSuccessSOA
+    | LoadFclDataFailureSOA
     | LoadShapeFileSuccessSOA
     | LoadShapeFileFailureMSA
     | GenerateVisioLayoutSuccess
@@ -403,4 +411,5 @@ export type TracingActions =
     | SetDeliveryHighlightingRulesSOA
     | SetDeliveryHighlightingEditRulesSOA
     | SetTabAnimationDoneSOA
-    | SetConfigurationSideBarOpenedSOA;
+    | SetConfigurationSideBarOpenedSOA
+    | SetLastUnchangedJsonDataExtractSuccessSOA;

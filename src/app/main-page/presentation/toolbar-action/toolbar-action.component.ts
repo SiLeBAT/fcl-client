@@ -1,13 +1,9 @@
 import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '@env/environment';
-import * as _ from 'lodash';
-import { MainPageService } from '../../services/main-page.service';
 import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
 import { ExampleData } from '../../model/types';
-import { DialogOkCancelComponent, DialogOkCancelData } from '../../../tracing/dialog/dialog-ok-cancel/dialog-ok-cancel.component';
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -37,9 +33,11 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() loadExampleDataFile: EventEmitter<ExampleData> = new EventEmitter();
+    @Output() selectModelFile = new EventEmitter();
+    @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapType = new EventEmitter<MapType>();
+    @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
@@ -54,11 +52,6 @@ export class ToolbarActionComponent implements OnChanges {
     ]);
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
-
-    constructor(
-        private mainPageService: MainPageService,
-        public dialog: MatDialog
-    ) { }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.fileName !== undefined) {
@@ -81,35 +74,23 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onSelectModelFile() {
-        const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.openOkCancelDialog();
+        this.selectModelFile.emit();
+    }
 
-        if (dialogRef !== null) {
-            dialogRef.afterClosed().subscribe(result => {
-                if (result === Constants.DIALOG_OK) {
-                    this.fileInput.nativeElement.click();
-                }
-            });
-        } else {
-            this.fileInput.nativeElement.click();
-        }
+    clickFileInputElement() {
+        this.fileInput.nativeElement.click();
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
-        const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.openOkCancelDialog();
-
-        if (dialogRef !== null) {
-            dialogRef.afterClosed().subscribe(result => {
-                if (result === Constants.DIALOG_OK) {
-                    this.loadExampleDataFile.emit(exampleData);
-                }
-            });
-        } else {
-            this.loadExampleDataFile.emit(exampleData);
-        }
+        this.loadExampleDataFile.emit(exampleData);
     }
 
     onDownloadDataFile() {
-        this.mainPageService.onSave(this.fileNameWoExt);
+        this.downloadFile.emit(this.fileNameWoExt);
+    }
+
+    getFileNameWoExt(): string | null {
+        return this.fileNameWoExt;
     }
 
     setGraphType() {
@@ -141,23 +122,4 @@ export class ToolbarActionComponent implements OnChanges {
         nativeFileInput.click();
     }
 
-    private openOkCancelDialog(): MatDialogRef<DialogOkCancelComponent, any> {
-        if (this.fileNameWoExt !== null) {
-            const dialogData: DialogOkCancelData = {
-                title: 'Save / Discard Data Changes?',
-                content1: `Do you want to save the changes you made to "${this.fileNameWoExt}" ?`,
-                content2: 'Your changes will be lost, if you do not save them.',
-                cancel: Constants.DIALOG_CANCEL,
-                ok: Constants.DIALOG_DONT_SAVE
-            };
-            const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.dialog.open(DialogOkCancelComponent, {
-                closeOnNavigation: true,
-                data: dialogData
-            });
-
-            return dialogRef;
-        }
-
-        return null;
-    }
 }
