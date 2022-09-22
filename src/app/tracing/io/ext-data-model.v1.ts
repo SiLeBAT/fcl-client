@@ -1,5 +1,4 @@
 export const VERSION = '1.1.1';
-
 export interface JsonData {
     version: string;
     data: Data;
@@ -39,7 +38,7 @@ interface TracingElementSettings {
     observed: boolean;
 }
 
-interface TracingData {
+export interface TracingData {
     version: string;
     // enforceTemporalOrder: boolean;
     nodes: TracingElementSettings[];

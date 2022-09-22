@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 import * as tracingStateActions from '../state/tracing.actions';
+import * as tracingEffectActions from '../tracing.actions';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingSelectors from '../state/tracing.selectors';
-import { map, catchError, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { map, catchError, mergeMap, withLatestFrom, concatMap } from 'rxjs/operators';
 import { of, from, EMPTY } from 'rxjs';
 import { IOService } from './io.service';
 import { FclData, ShapeFileData } from '../data.model';
@@ -25,29 +26,36 @@ export class IOEffects {
     loadFclDataMSA$ = createEffect(() => this.actions$.pipe(
         ofType<ioActions.LoadFclDataMSA>(ioActions.IOActionTypes.LoadFclDataMSA),
         mergeMap(action => {
-            const fileList: FileList = action.payload.dataSource;
-            if (fileList.length === 1) {
-                return from(this.ioService.getFclData(fileList[0])).pipe(
-                    map((data: FclData) => new tracingStateActions.LoadFclDataSuccess({ fclData: data })),
-                    catchError((error) => {
-                        let errorMsg = 'Data cannot be uploaded.';
-                        if (error instanceof InputEncodingError) {
-                            errorMsg += ' Please ensure to upload only data encoded in UTF-8 format.';
-                        } else if (error instanceof InputFormatError) {
-                            errorMsg += ` Please select a .json file with the correct format!${error.message ? ' ' + error.message + '' : ''}`;
-                        } else if (error instanceof InputDataError) {
-                            errorMsg += ` Please select a .json file with valid data!${error.message ? ' ' + error.message + '' : ''}`;
-                        } else {
-                            errorMsg += ` Error: ${ error.message }`;
-                        }
-                        this.alertService.error(errorMsg);
-                        return of(new tracingStateActions.LoadFclDataFailure());
-                    })
-                );
+            const dataSource: string | FileList = action.payload.dataSource;
+            let source: string | File;
+            if (dataSource instanceof FileList && dataSource.length === 1) {
+                source = dataSource[0] as File;
+            } else if (typeof dataSource === 'string') {
+                source = dataSource as string;
             } else {
                 this.alertService.error('Please select a .json file with the correct format!');
-                return of(new tracingStateActions.LoadFclDataFailure());
+                return of(new tracingStateActions.LoadFclDataFailureSOA());
             }
+            return from(this.ioService.getFclData(source)).pipe(
+                concatMap((data: FclData) => of(
+                    new tracingStateActions.LoadFclDataSuccessSOA({ fclData: data }),
+                    new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA()
+                )),
+                catchError((error) => {
+                    let errorMsg = 'Data cannot be uploaded.';
+                    if (error instanceof InputEncodingError) {
+                        errorMsg += ' Please ensure to upload only data encoded in UTF-8 format.';
+                    } else if (error instanceof InputFormatError) {
+                        errorMsg += ` Please select a .json file with the correct format!${error.message ? ' ' + error.message + '' : ''}`;
+                    } else if (error instanceof InputDataError) {
+                        errorMsg += ` Please select a .json file with valid data!${error.message ? ' ' + error.message + '' : ''}`;
+                    } else {
+                        errorMsg += ` Error: ${ error.message }`;
+                    }
+                    this.alertService.error(errorMsg);
+                    return of(new tracingStateActions.LoadFclDataFailureSOA());
+                })
+            );
         })
     ));
 

@@ -12,6 +12,11 @@ export const getFclData = createSelector(
     state => state.fclData
 );
 
+export const getLastUnchangedJsonDataExtract = createSelector(
+    selectTracingFeatureState,
+    state => state.lastUnchangedJsonDataExtract
+);
+
 export const getTracingActive = createSelector(
     selectTracingFeatureState,
     state => state.tracingActive

@@ -10,7 +10,7 @@ export enum IOActionTypes {
 export class LoadFclDataMSA implements Action {
     readonly type = IOActionTypes.LoadFclDataMSA;
 
-    constructor(public payload: { dataSource: FileList | null }) {}
+    constructor(public payload: { dataSource: string | FileList }) {}
 }
 
 export class LoadShapeFileMSA implements Action {
