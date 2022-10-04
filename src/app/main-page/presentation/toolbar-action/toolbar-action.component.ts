@@ -34,6 +34,8 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
     @Output() selectModelFile = new EventEmitter();
+    @Output() saveImage = new EventEmitter();
+    @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapType = new EventEmitter<MapType>();
@@ -87,6 +89,14 @@ export class ToolbarActionComponent implements OnChanges {
 
     onDownloadDataFile() {
         this.downloadFile.emit(this.fileNameWoExt);
+    }
+
+    onSaveImage() {
+        this.saveImage.emit();
+    }
+
+    onOpenRoaLayout() {
+        this.openRoaLayout.emit();
     }
 
     getFileNameWoExt(): string | null {
