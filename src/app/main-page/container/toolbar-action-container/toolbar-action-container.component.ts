@@ -128,6 +128,14 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA());
     }
 
+    onSaveImage() {
+        this.mainPageService.onSaveImage();
+    }
+
+    onOpenRoaLayout() {
+        this.mainPageService.onROALayout();;
+    }
+
     ngOnDestroy() {
         this.componentActive = false;
     }
