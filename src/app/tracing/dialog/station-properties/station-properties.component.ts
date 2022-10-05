@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import * as d3 from 'd3';
+import * as d3 from 'd3-selection';
 
 import { DeliveryData, StationData, DeliveryId, StationId, TableColumn } from '../../data.model';
 import { Constants } from '../../util/constants';
@@ -162,9 +162,9 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private selected: NodeDatum;
 
     private svg: d3.Selection<SVGGElement, any, any, any>;
-    private nodesInG: d3.Selection<SVGElement, any, any, any>;
-    private nodesOutG: d3.Selection<SVGElement, any, any, any>;
-    private edgesG: d3.Selection<SVGElement, any, any, any>;
+    private nodesInG: d3.Selection<SVGElement, NodeDatum, any, any>;
+    private nodesOutG: d3.Selection<SVGElement, NodeDatum, any, any>;
+    private edgesG: d3.Selection<SVGElement, EdgeDatum, any, any>;
     private connectLine: d3.Selection<SVGElement, any, any, any>;
 
     private static line(x1: number, y1: number, x2: number, y2: number) {
@@ -513,28 +513,25 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         initRectAndText(newNodesIn, true);
         initRectAndText(newNodesOut, false);
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this;
-
-        newNodesIn.on('mouseover', function (inNode: NodeDatum) {
-            updateColor(d3.select(this), true);
-            self.hoverDeliveries(inNode.deliveryIds);
-        }).on('mouseout', function () {
-            updateColor(d3.select(this), false);
-            self.hoverDeliveries([]);
+        newNodesIn.on('mouseover', (event, inNode: NodeDatum) => {
+            updateColor(d3.select(event.currentTarget), true);
+            this.hoverDeliveries(inNode.deliveryIds);
+        }).on('mouseout', (event) => {
+            updateColor(d3.select(event.currentTarget), false);
+            this.hoverDeliveries([]);
         });
 
-        newNodesOut.on('mouseover', function (outNode: NodeDatum) {
-            updateColor(d3.select(this), true);
-            self.hoverDeliveries(outNode.deliveryIds);
-        }).on('mouseout', function () {
-            updateColor(d3.select(this), false);
-            self.hoverDeliveries([]);
+        newNodesOut.on('mouseover', (event, outNode: NodeDatum) => {
+            updateColor(d3.select(event.currentTarget), true);
+            this.hoverDeliveries(outNode.deliveryIds);
+        }).on('mouseout', (event) => {
+            updateColor(d3.select(event.currentTarget), false);
+            this.hoverDeliveries([]);
         });
     }
 
     private updateEdges() {
-    // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
+        // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
         const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
             edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
         };
@@ -551,21 +548,18 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         updateColor(newEdges, false);
         edges.exit().remove();
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this;
-
-        newEdges.on('mouseover', function (edge: EdgeDatum) {
-            if (self.selected == null) {
-                updateColor(d3.select(this), true);
-                self.hoverDeliveries(
+        newEdges.on('mouseover', (event, edge: EdgeDatum) => {
+            if (this.selected == null) {
+                updateColor(d3.select(event.currentTarget), true);
+                this.hoverDeliveries(
                     [].concat(
                         edge.source.deliveryIds,
                         edge.target.deliveryIds
                     ));
             }
-        }).on('mouseout', function () {
-            updateColor(d3.select(this), false);
-            self.hoverDeliveries([]);
+        }).on('mouseout', (event) => {
+            updateColor(d3.select(event.currentTarget), false);
+            this.hoverDeliveries([]);
         });
     }
 
@@ -575,7 +569,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     private updateConnectLine() {
         if (this.selected != null) {
-            const mousePos = d3.mouse(this.svg.node());
+            const mousePos = d3.pointer(this.svg.node());
 
             this.connectLine.attr('d', StationPropertiesComponent.line(
                 this.selected.x + StationPropertiesComponent.NODE_WIDTH,
