@@ -133,7 +133,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     onOpenRoaLayout() {
-        this.mainPageService.onROALayout();;
+        this.mainPageService.onROALayout();
     }
 
     ngOnDestroy() {
