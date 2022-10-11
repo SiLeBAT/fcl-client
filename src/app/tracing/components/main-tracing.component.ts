@@ -45,8 +45,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
 
     showConfigurationSideBar$ = this.store.select(tracingSelectors.getShowConfigurationSideBar);
 
-    private componentActive = true;
-
     constructor(
         private alertService: AlertService,
         private router: Router,
@@ -84,10 +82,6 @@ export class MainTracingComponent implements OnInit, OnDestroy {
 
     }
 
-    private changeDataTableWidth(newWidth: number) {
-        (this.rightSidenavElement.nativeElement as HTMLElement).style.width = (newWidth * 100) + '%';
-    }
-
     onHome() {
         this.router.navigate(['/']).catch(err => {
             throw new Error(`Unable to navigate: ${err}`);
@@ -100,9 +94,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
 
     onSaveImage() {
         this.getCurrentGraph()
-            .then(currentGraph => {
-                return currentGraph.getCanvas();
-            })
+            .then(async currentGraph => currentGraph.getCanvas())
             .then(canvas => {
                 this.store.dispatch(new ioActions.SaveGraphImageMSA({ canvas: canvas }));
             })
@@ -113,23 +105,24 @@ export class MainTracingComponent implements OnInit, OnDestroy {
         this.store.dispatch(new roaActions.OpenROAReportConfigurationMSA());
     }
 
+    onConfigurationSideBarOpened() {
+        this.store.dispatch(new tracingActions.SetConfigurationSideBarOpenedSOA());
+    }
+
     ngOnDestroy() {
 
         this.store.dispatch(new tracingActions.TracingActivated({ isActivated: false }));
         _.forEach(this.subscriptions, subscription => subscription.unsubscribe());
 
-        this.componentActive = false;
     }
 
-    private getCurrentGraph(): Promise<SchemaGraphComponent | GisGraphComponent> {
+    private async getCurrentGraph(): Promise<SchemaGraphComponent | GisGraphComponent> {
         return this.graphType$.pipe(
-            map(graphType => {
-                return (
-                    graphType === GraphType.GRAPH ?
+            map(graphType => (
+                graphType === GraphType.GRAPH ?
                     this.schemaGraphChildren.first || this.schemaGraphContentChild :
                     this.gisGraphChildren.first || this.gisGraphContentChild
-                );
-            }),
+            )),
             first()
         ).toPromise();
     }

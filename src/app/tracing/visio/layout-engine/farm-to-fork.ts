@@ -1,97 +1,175 @@
 import * as _ from 'lodash';
-import { StationData, DeliveryData } from '../../data.model';
+import { StationData, DeliveryData, StationId, DeliveryId, Range } from '../../data.model';
 import { Graph, Vertex } from '../../layout/farm-to-fork/data-structures';
 import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';
 import { BusinessTypeRanker } from '../../layout/farm-to-fork/business-type-ranker';
-import { Position, NodeLayoutInfo } from './datatypes';
+import { Position } from './datatypes';
 import { Utils } from '../../util/non-ui-utils';
-import { getDifference } from '@app/tracing/util/geometry-utils';
 
 export enum FoodChainOrientation {
     TopDown, LeftRight, BottomUp, RightLeft
 }
 
+interface FarmToForkGroups {
+    forks: StationData[];
+    unconnectedStations: StationData[];
+    otherStations: StationData[];
+}
 interface FclElements {
     stations: StationData[];
     deliveries: DeliveryData[];
 }
 
-function getNormalizedDelta(delta: Position): Position {
-    const distance = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
-    if (distance === 0) {
-        return delta;
+function getFarmToForkGroups(stations: StationData[], deliveries: DeliveryData[]): FarmToForkGroups {
+    const visDel: Record<DeliveryId, boolean> = {};
+    deliveries.forEach(d => visDel[d.id] = true);
+    const result: FarmToForkGroups = {
+        forks: [],
+        unconnectedStations: [],
+        otherStations: []
+    };
+    for (const station of stations) {
+        const hasNoInDel = station.incoming.filter(delId => visDel[delId]).length === 0;
+        const hasNoOutDel = station.outgoing.filter(delId => visDel[delId]).length === 0;
+        if (hasNoOutDel) {
+            if (hasNoInDel) {
+                result.unconnectedStations.push(station);
+            } else {
+                result.forks.push(station);
+            }
+        } else {
+            result.otherStations.push(station);
+        }
+    }
+    return result;
+}
+
+function getStationGroupXPosRanges(stationGroup: StationData[], statIdToPosMap: Record<StationId, Position>): Range {
+    if (stationGroup.length === 0) {
+        return undefined;
     } else {
+        const pos = stationGroup.map(s => statIdToPosMap[s.id].x);
         return {
-            x: delta.x / distance,
-            y: delta.y / distance
+            min: Math.min(...pos),
+            max: Math.max(...pos)
         };
     }
 }
+
+function doRangesRespectOrdering(ranges: Range[]): boolean {
+    let lowerBound = Number.NEGATIVE_INFINITY;
+    for (const range of ranges) {
+        if (range.min <= lowerBound) {
+            return false;
+        }
+        lowerBound = range.max;
+    }
+
+    let upperBound = Number.POSITIVE_INFINITY;
+    for (const range of ranges.slice().reverse()) {
+        if (range.max >= upperBound) {
+            return false;
+        }
+        upperBound = range.min;
+    }
+    return true;
+}
+
+function doStationXPosRespectGroupOrdering(stationGroupOrderings: StationData[][][], statIdToPosMap: Record<StationId, Position>): boolean {
+    for (const stationGroupOrdering of stationGroupOrderings) {
+        const nonEmptyGroups = stationGroupOrdering.filter(group => group.length > 0);
+        const groupPosRanges = nonEmptyGroups.map(group => getStationGroupXPosRanges(group, statIdToPosMap));
+        if (!doRangesRespectOrdering(groupPosRanges)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const MAX_LEFT_RIGHT_VIOLATION_QUOTA = 0.1;
 
 /**
  * Retrieves the orientation of the food chain in the graph view, on the bases of the deliveries
  *
  * @param data
- * @param nodeInfoMap station id => layout info
+ * @param statIdToPosMap station id => Position
  */
 export function getFoodChainOrientation(
     data: FclElements,
-    nodeInfoMap: Map<string, NodeLayoutInfo>
-    ): FoodChainOrientation {
+    statIdToPosMap: Record<StationId, Position>
+): FoodChainOrientation | undefined {
 
-    const deliveries = data.deliveries.filter(
-        d => !d.invisible && nodeInfoMap.has(d.source) && nodeInfoMap.has(d.target));
-    const deltas = deliveries.map(
-        d => getNormalizedDelta(getDifference(
-            nodeInfoMap.get(d.target).position,
-            nodeInfoMap.get(d.source).position
-            ))).filter(d => d.x !== 0 || d.y !== 0);
+    const visibleStations = data.stations.filter(s => !s.invisible && !s.contained);
 
-    if (deltas.length > 0) {
-        const meanDelta = {
-            x: _.mean(deltas.map(d => d.x)),
-            y: _.mean(deltas.map(d => d.y))
-        };
-        if (meanDelta.x > 1 / Math.sqrt(2)) {
+    if (visibleStations.some(s => statIdToPosMap[s.id] === undefined)) {
+        return undefined;
+    } else {
+        const relevantDeliveries = data.deliveries.filter(delivery =>
+            !delivery.invisible &&
+            delivery.source !== delivery.target &&
+            statIdToPosMap[delivery.source] !== undefined && // this is supposed to be a redundant check
+            statIdToPosMap[delivery.target] !== undefined    // this is supposed to be a redundant check
+        );
+
+        const stationGroups = getFarmToForkGroups(visibleStations, relevantDeliveries);
+
+        if (!doStationXPosRespectGroupOrdering(
+            [
+                [stationGroups.otherStations, stationGroups.forks],
+                [stationGroups.otherStations, stationGroups.unconnectedStations]
+            ],
+            statIdToPosMap
+        )) {
+            return undefined;
+        }
+
+        const xDeltas = relevantDeliveries.map(d => statIdToPosMap[d.target].x - statIdToPosMap[d.source].x);
+
+        const leftRightViolationCount = xDeltas.filter(d => d < 0).length;
+        const leftRightViolationQuota = leftRightViolationCount / (xDeltas.length === 0 ? 1 : xDeltas.length);
+
+        if (xDeltas.length > 0 && leftRightViolationQuota <= MAX_LEFT_RIGHT_VIOLATION_QUOTA) {
             return FoodChainOrientation.LeftRight;
         } else {
-            return null;
+            return undefined;
         }
-    } else {
-        return null;
     }
 }
 
-export function isFarmToForkLayout(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>): boolean {
-    return getFoodChainOrientation(data, nodeInfoMap) === FoodChainOrientation.LeftRight;
+export function isFarmToForkLayout(data: FclElements, statIdToPosMap: Record<StationId, Position>): boolean {
+    return getFoodChainOrientation(data, statIdToPosMap) === FoodChainOrientation.LeftRight;
 }
 
 /**
  * Performs a farm to fork layout and update the nodeInfoMap
  *
  * @param data
- * @param nodeInfoMap station id => layout info
+ * @param statIdToPosMap station id => station position
  */
-export function setFarmToForkPositions(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>) {
+export function setFarmToForkPositions(data: FclElements, statIdToPosMap: Record<StationId, Position>) {
     const graph = new Graph();
     const vertices: Map<string, Vertex> = new Map();
     const typeRanker: BusinessTypeRanker = new BusinessTypeRanker([], [], []);
-    const stations = data.stations.filter(s => nodeInfoMap.has(s.id));
-    const idToStationMap: Map<string, StationData> = Utils.arrayToMap(stations, (s) => s.id);
+    const visibleStations = data.stations.filter(s => statIdToPosMap[s.id] !== undefined);
+    const idToStationMap: Map<string, StationData> = Utils.arrayToMap(visibleStations, (s) => s.id);
 
-    for (const station of data.stations.filter(s => nodeInfoMap.has(s.id))) {
+    const stationSize = 20;
+    const vertexDistance = stationSize;
+
+    for (const station of visibleStations) {
         const v: Vertex = new Vertex();
         const properties = station.properties.filter(p => p.name === 'typeOfBusiness');
         if (properties.length > 0) {
             v.typeCode = typeRanker.getBusinessTypeCode(properties[0].value as string);
         }
-        v.size = nodeInfoMap.get(station.id).size;
+        v.outerSize = stationSize;
+        v.topPadding = v.outerSize / 2;
+        v.bottomPadding = v.topPadding;
+        v.innerSize = 0;
         v.name = station.name;
         vertices.set(station.id, v);
         graph.insertVertex(v);
     }
-
-    const vertexDistance: number = Math.min(...graph.vertices.map(v => v.size)) / 2;
 
     data.deliveries.filter(
         d => !d.invisible && idToStationMap.has(d.source) && idToStationMap.has(d.target)
@@ -99,18 +177,23 @@ export function setFarmToForkPositions(data: FclElements, nodeInfoMap: Map<strin
         graph.insertEdge(
             vertices.get(d.source),
             vertices.get(d.target)
-          );
+        );
     });
 
-    // tslint:disable-next-line
+    const availableSpace = {
+        width: undefined,
+        height: undefined
+    };
+    // eslint-disable-next-line
     const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
         graph,
-        typeRanker
+        typeRanker,
+        availableSpace
     );
 
-    layoutManager.layout(vertexDistance);
-    for (let i = stations.length - 1; i >= 0; i--) {
-        nodeInfoMap.get(stations[i].id).position = {
+    layoutManager.layout(vertexDistance, availableSpace);
+    for (let i = visibleStations.length - 1; i >= 0; i--) {
+        statIdToPosMap[visibleStations[i].id] = {
             // primary producers are supposed to be in the last layer
             x: -graph.vertices[i].layerIndex,
             y: graph.vertices[i].y

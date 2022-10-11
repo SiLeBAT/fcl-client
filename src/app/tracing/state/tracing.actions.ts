@@ -6,12 +6,15 @@ import {
     CrossContTraceType,
     DeliveryId,
     StationHighlightingRule,
-    SetInvisibleElementsPayload
+    SetInvisibleElementsPayload,
+    StationId,
+    DeliveryHighlightingRule
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
 import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
 import { ROASettings } from '../visio/model';
+import { DeliveryEditRule, StationEditRule } from '../configuration/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
@@ -34,6 +37,8 @@ export enum TracingActionTypes {
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
     SetSelectedElementsSOA = '[Tracing] Set Element Selection',
+    SetSelectedStationsSOA = '[Tracing] Set Station Selection',
+    SetSelectedDeliveriesSOA = '[Tracing] Set Delivery Selection',
     SetStationPositionsSOA = '[Tracing] Set Station Positions',
     SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
     SetStationGroupsSOA = '[Tracing] Set Station Groups',
@@ -50,13 +55,18 @@ export enum TracingActionTypes {
     SetDeliveryFilterSOA = '[Configuration Layout] Set Delivery Filter Settings',
     ResetAllDeliveryFiltersSOA = '[Configuration Layout] Reset All Delivery Filters',
     SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
-    ShowGhostStationMSA = '[Station Table] Show Ghost Station',
-    ClearGhostStationMSA = '[Station Table] Clear Ghost Station',
+    SetGhostStationSOA = '[Station Table] Show Ghost Station',
+    SetGhostDeliverySOA = '[Delivery Table] Show Ghost Delivery',
+    DeleteGhostElementSOA = '[Filter Table] Delete Ghost Element',
     SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
     SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
     ResetTracingStateSOA = '[Tracing] Reset Tracing State',
-    SetStationHighlightingRulesSOA = '[Colors and Shapes] Set Station Highlighting Rules',
-    SetColorsAndShapesEditIndexSOA = '[Colors and Shapes] Set Edit Index'
+    SetStationHighlightingRulesSOA = '[Station Highlighting] Set Station Highlighting Rules',
+    SetStationHighlightingEditRulesSOA = '[Station Highlighting] Set Station Highlighting Edit Rules',
+    SetDeliveryHighlightingRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Rules',
+    SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules',
+    SetTabAnimationDoneSOA = '[Configuration] Tab animation done',
+    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened'
 }
 
 export class TracingActivated implements Action {
@@ -163,6 +173,18 @@ export class SetSelectedElementsSOA implements Action {
     constructor(public payload: { selectedElements: SelectedElements}) {}
 }
 
+export class SetSelectedStationsSOA implements Action {
+    readonly type = TracingActionTypes.SetSelectedStationsSOA;
+
+    constructor(public payload: { stationIds: StationId[] }) {}
+}
+
+export class SetSelectedDeliveriesSOA implements Action {
+    readonly type = TracingActionTypes.SetSelectedDeliveriesSOA;
+
+    constructor(public payload: { deliveryIds: DeliveryId[] }) {}
+}
+
 export class SetStationPositionsSOA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsSOA;
 
@@ -172,19 +194,19 @@ export class SetStationPositionsSOA implements Action {
 export class SetStationPositionsAndLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsAndLayoutSOA;
 
-    constructor(public payload: { stationPositions: { [key: string]: Position }, layout: Layout }) {}
+    constructor(public payload: { stationPositions: { [key: string]: Position }; layout: Layout }) {}
 }
 
 export class SetSchemaGraphLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetSchemaGraphLayoutSOA;
 
-    constructor(public payload: { layout: { zoom: number, pan: Position } }) {}
+    constructor(public payload: { layout: { zoom: number; pan: Position } }) {}
 }
 
 export class SetGisGraphLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetGisGraphLayoutSOA;
 
-    constructor(public payload: { layout: { zoom: number, pan: Position } }) {}
+    constructor(public payload: { layout: { zoom: number; pan: Position } }) {}
 }
 
 export class SetStationGroupsSOA implements Action {
@@ -249,8 +271,6 @@ export class SetStationFilterSOA implements Action {
 
 export class ResetAllStationFiltersSOA implements Action {
     readonly type = TracingActionTypes.ResetAllStationFiltersSOA;
-
-    constructor() {}
 }
 
 export class SetFilterDeliveryTableColumnOrderSOA implements Action {
@@ -267,18 +287,22 @@ export class SetDeliveryFilterSOA implements Action {
 
 export class ResetAllDeliveryFiltersSOA implements Action {
     readonly type = TracingActionTypes.ResetAllDeliveryFiltersSOA;
-
-    constructor() {}
 }
 
-export class ShowGhostStationMSA implements Action {
-    readonly type = TracingActionTypes.ShowGhostStationMSA;
+export class SetGhostStationSOA implements Action {
+    readonly type = TracingActionTypes.SetGhostStationSOA;
 
-    constructor(public payload: { stationId: string }) {}
+    constructor(public payload: { stationId: StationId }) {}
 }
 
-export class ClearGhostStationMSA implements Action {
-    readonly type = TracingActionTypes.ClearGhostStationMSA;
+export class SetGhostDeliverySOA implements Action {
+    readonly type = TracingActionTypes.SetGhostDeliverySOA;
+
+    constructor(public payload: { deliveryId: DeliveryId }) {}
+}
+
+export class DeleteGhostElementSOA implements Action {
+    readonly type = TracingActionTypes.DeleteGhostElementSOA;
 }
 
 export class SetHoverDeliveriesSOA implements Action {
@@ -297,17 +321,36 @@ export class ResetTracingStateSOA implements Action {
     readonly type = TracingActionTypes.ResetTracingStateSOA;
 }
 
-// export class AddColoursAndShapesHighlightingRuleSOA implements Action {
 export class SetStationHighlightingRulesSOA implements Action {
     readonly type = TracingActionTypes.SetStationHighlightingRulesSOA;
 
     constructor(public payload: { rules: StationHighlightingRule[] }) {}
 }
 
-export class SetColorsAndShapesEditIndexSOA implements Action {
-    readonly type = TracingActionTypes.SetColorsAndShapesEditIndexSOA;
+export class SetStationHighlightingEditRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetStationHighlightingEditRulesSOA;
 
-    constructor(public payload: { editIndex: number }) {}
+    constructor(public payload: { editRules: StationEditRule[] }) {}
+}
+
+export class SetDeliveryHighlightingRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetDeliveryHighlightingRulesSOA;
+
+    constructor(public payload: { rules: DeliveryHighlightingRule[] }) {}
+}
+
+export class SetDeliveryHighlightingEditRulesSOA implements Action {
+    readonly type = TracingActionTypes.SetDeliveryHighlightingEditRulesSOA;
+
+    constructor(public payload: { editRules: DeliveryEditRule[] }) {}
+}
+
+export class SetTabAnimationDoneSOA implements Action {
+    readonly type = TracingActionTypes.SetTabAnimationDoneSOA;
+}
+
+export class SetConfigurationSideBarOpenedSOA implements Action {
+    readonly type = TracingActionTypes.SetConfigurationSideBarOpenedSOA;
 }
 
 export type TracingActions =
@@ -331,6 +374,8 @@ export type TracingActions =
     | ShowLegendSOA
     | ShowZoomSOA
     | SetSelectedElementsSOA
+    | SetSelectedStationsSOA
+    | SetSelectedDeliveriesSOA
     | SetStationPositionsSOA
     | SetStationPositionsAndLayoutSOA
     | SetStationGroupsSOA
@@ -348,9 +393,14 @@ export type TracingActions =
     | SetDeliveryFilterSOA
     | ResetAllDeliveryFiltersSOA
     | SetROAReportSettingsSOA
-    | ShowGhostStationMSA
-    | ClearGhostStationMSA
+    | DeleteGhostElementSOA
+    | SetGhostStationSOA
+    | SetGhostDeliverySOA
     | SetHoverDeliveriesSOA
     | ResetTracingStateSOA
     | SetStationHighlightingRulesSOA
-    | SetColorsAndShapesEditIndexSOA;
+    | SetStationHighlightingEditRulesSOA
+    | SetDeliveryHighlightingRulesSOA
+    | SetDeliveryHighlightingEditRulesSOA
+    | SetTabAnimationDoneSOA
+    | SetConfigurationSideBarOpenedSOA;

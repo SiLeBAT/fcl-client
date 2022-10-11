@@ -1,5 +1,5 @@
 import {
-    StationTracingData, DeliveryTracingData, StationData, DeliveryData, DataServiceData,
+    StationData, DeliveryData, DataServiceData,
     Position, SelectedElements, StationId, DeliveryId, PositionMap
 } from '../data.model';
 
@@ -16,7 +16,8 @@ export interface CyNodeDef extends CyElementDef<CyNodeData> {
     position: Position;
 }
 
-export interface CyEdgeDef extends CyElementDef<CyEdgeData> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface CyEdgeDef extends CyElementDef<CyEdgeData> { }
 
 export interface BoundingBoxOptions {
     includeNodes?: boolean;
@@ -34,7 +35,7 @@ export interface Cy {
     nodes(a?: string): CyNodeCollection;
     edges(a?: string): CyEdgeCollection;
     elements(a?: string): CyElementCollection<CyNode | CyEdge>;
-    container(): any;
+    container(): HTMLElement | undefined;
     resize(): void;
     destroy(): void;
     destroyed(): boolean;
@@ -45,6 +46,7 @@ export interface Cy {
     maxZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
     minZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
     pan<T extends Position | None>(a?: T): None extends T ? Position : void;
+    panBy(renderedPos: Position): void;
     add(a: CyNodeDef[] | CyEdgeDef[]): CyElementCollection<CyNode | CyEdge>;
     on<
         T extends string | CyCallBackFun,
@@ -58,13 +60,15 @@ export interface Cy {
     removeAllListeners(): void;
     getElementById(id: string): CyNode | CyEdge;
     ready(callBack: () => void): void;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     style(): {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
     setStyle(style: {}): void;
     width(): number;
     height(): number;
     userPanningEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
     autoungrabify<T extends boolean | None>(a?: T): None extends T ? boolean : void;
-    layout(options: { name: string, [key: string]: any }): CyLayout;
+    layout(options: { name: string; [key: string]: any }): CyLayout;
     zoomingEnabled<T extends boolean | unknown>(a?: T): T extends boolean ? void : boolean;
     viewport(zoom: number, pan: Position): void;
     extent(): CyExtent;
@@ -98,6 +102,7 @@ export interface CyElementCollection<E> {
     size(): number;
     allAre(a: string): number;
     map<T>(a: (b: E) => T): T[];
+    // eslint-disable-next-line @typescript-eslint/ban-types
     style(a: {}): void;
     unselect(): void;
     select(): void;
@@ -110,11 +115,13 @@ export interface CyElementCollection<E> {
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
     union(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
     difference(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
-
+    getElementById(id: string): E;
+    addClass(classes: string | string[]): void;
+    removeClass(classes: string | string[]): void;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
-    layout(options: { name: string, [key: string]: any }): CyLayout;
+    layout(options: { name: string; [key: string]: any }): CyLayout;
     positions(a: (b: CyNode) => Position): void;
     filter(a: ((b: CyNode) => boolean) | string): CyNodeCollection;
     edgesWith(a: string | CyNodeCollection): CyEdgeCollection;
@@ -139,6 +146,7 @@ export interface CyElement {
     style<
         T extends string | {[key: string]: any} | None,
         K extends (None extends T ? None : T extends string ? number | string | boolean | None : None)
+    // eslint-disable-next-line @typescript-eslint/ban-types
     >(a?: T, b?: K): None extends T ? {} : (T extends string ? (None extends K ? number | string | boolean : void) : void);
     on<
         T extends string | CyCallBackFun,
@@ -146,12 +154,17 @@ export interface CyElement {
     >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
     removeListener(events: string, handler: (event?: any) => void): void;
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
+    visible(): boolean;
+    addClass(classes: string | string[]): void;
+    removeClass(classes: string | string[]): void;
 }
 
 export interface CyNode extends CyElement {
     data<T extends string | None>(a?: T): None extends T ? CyNodeData : any;
     position(): Position;
     renderedPosition(): Position;
+    renderedHeight(): number;
+    renderedWidth(): number;
     height(): number;
     connectedEdges(a?: string): CyEdgeCollection;
 }
@@ -160,12 +173,22 @@ export interface CyEdge extends CyElement {
     data<T extends string | None>(a?: T): None extends T ? CyEdgeData : any;
     source(): CyNode;
     target(): CyNode;
+    controlPoints(): Position[] | undefined;
+    renderedControlPoints(): Position[];
+    midpoint(): Position;
+    renderedMidpoint(): Position;
+    sourceEndpoint(): Position;
+    renderedSourceEndpoint(): Position;
+    targetEndpoint(): Position;
+    renderedTargetEndpoint(): Position;
+    isLoop(): boolean;
+    isSimple(): boolean;
 }
 
 export type NodeId = string;
 export type EdgeId = string;
 
-export interface CyNodeData extends StationTracingData {
+export interface CyNodeData {
     id: NodeId;
     station: StationData;
     label: string;
@@ -174,12 +197,13 @@ export interface CyNodeData extends StationTracingData {
     stopColors: string;
     stopPositions: string;
     shape: string;
-    zindex?: number;
-    relZindex?: number;
-    degree?: number;
+    size: number;
+    zindex: number;
+    relZindex: number;
+    degree: number;
 }
 
-export interface CyEdgeData extends DeliveryTracingData {
+export interface CyEdgeData {
     id: EdgeId;
     deliveries: DeliveryData[];
     stopColors: string;
@@ -189,6 +213,8 @@ export interface CyEdgeData extends DeliveryTracingData {
     selected: boolean;
     source: NodeId;
     target: NodeId;
+    zindex: number;
+    relZindex: number;
     wLabelSpace: boolean;
 }
 
@@ -203,8 +229,8 @@ export interface GraphServiceData extends GraphElementData, DataServiceData {
     delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
     nodeSel: Record<NodeId, boolean>;
     edgeSel: Record<EdgeId, boolean>;
-    propsChangedFlag: {};
-    edgeLabelChangedFlag: {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    nodeAndEdgePropsUpdatedFlag: {};
     ghostElements: GraphElementData;
     hoverEdges: EdgeId[];
     selectedElements: SelectedGraphElements;

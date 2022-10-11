@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface DialogSelectData {
     title: string;
-    options: { value: string, viewValue: string, selected: boolean }[];
+    options: { value: string; viewValue: string; selected: boolean }[];
 }
 
 @Component({
@@ -19,7 +19,7 @@ export class DialogSelectComponent {
         this.options = JSON.parse(JSON.stringify(data.options));
     }
 
-  //noinspection JSUnusedGlobalSymbols
+    //noinspection JSUnusedGlobalSymbols
     close() {
         this.dialogRef.close(this.options.filter(o => o.selected).map(o => o.value));
     }

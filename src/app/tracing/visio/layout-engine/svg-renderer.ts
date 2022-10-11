@@ -91,14 +91,14 @@ export class SvgRenderer {
                 x: p.x + box.position.x,
                 y: p.y + box.position.y
             })), this.BoxColors.get(box.type), '0.5'
-            ) + box.shape.holes.map(
-                h => this.renderPolygon(
-                    h.map(p => ({
-                        x: p.x + box.position.x,
-                        y: p.y + box.position.y
-                    })), 'white', '1'
-                    )
-                ).join('\n');
+        ) + box.shape.holes.map(
+            h => this.renderPolygon(
+                h.map(p => ({
+                    x: p.x + box.position.x,
+                    y: p.y + box.position.y
+                })), 'white', '1'
+            )
+        ).join('\n');
     }
 
     private static renderPolygon(polygon: Position[], color: string, opacity: string): string {

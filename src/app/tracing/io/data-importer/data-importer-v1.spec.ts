@@ -27,7 +27,9 @@ function checkElementTracSettingsCompleteness(fclData: FclData): void {
 }
 
 class HttpClientMock {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     get(filePath: string): Observable<Object> {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const data = require(filePath);
         return of(data);
     }
@@ -47,13 +49,16 @@ describe('DataImporterV1', () => {
     });
 
     it('should add missing tracing entries for station/group/delivery element', async () => {
-        const extData: JsonData = require(Constants.EXAMPLE_MODEL_FILE_PATH);
+
+        const exampleDataPath: string = Constants.EXAMPLE_DATA_FILE_STRUCTURE[0].path;
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const extData: JsonData = require(exampleDataPath);
         // simulate no tracing settings in the external model
         extData.tracing = null;
         let fclData = createInitialFclDataState();
         fclData.source = {};
         return dataImporterV1.preprocessData(extData, fclData)
-            .then(() => {
+            .then(async () => {
                 checkElementTracSettingsCompleteness(fclData);
 
                 const allStatIds = [].concat(
@@ -64,12 +69,12 @@ describe('DataImporterV1', () => {
                 extData.tracing = {
                     version: VERSION,
                     nodes: allStatIds.map(statId => ({
-                            id: statId,
-                            weight: 0,
-                            killContamination: false,
-                            crossContamination: false,
-                            observed: false
-                        })).slice(0, allStatIds.length - 1),
+                        id: statId,
+                        weight: 0,
+                        killContamination: false,
+                        crossContamination: false,
+                        observed: false
+                    })).slice(0, allStatIds.length - 1),
                     deliveries: fclData.fclElements.deliveries.map(d => ({
                         id: d.id,
                         weight: 0,
@@ -77,7 +82,7 @@ describe('DataImporterV1', () => {
                         crossContamination: false,
                         observed: false
                     })).slice(0, fclData.fclElements.deliveries.length - 1)
-                }
+                };
 
                 fclData = createInitialFclDataState();
                 fclData.source = {};

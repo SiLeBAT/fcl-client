@@ -12,17 +12,17 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-                "cytoscape",
-                "zxcvbn",
-                "rbush",
-                "ajv",
-                "css-element-queries",
-                "assert",
-                "pbf",
-                "pixelworks/lib/index",
-                "javascript-lp-solver",
-                "lodash",
-                "seedrandom"
+              "cytoscape",
+              "zxcvbn",
+              "rbush",
+              "ajv",
+              "css-element-queries",
+              "assert",
+              "pbf",
+              "pixelworks/lib/index",
+              "javascript-lp-solver",
+              "lodash",
+              "seedrandom"
             ],
             "aot": true,
             "outputPath": "dist",
@@ -31,8 +31,16 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
-              { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
-              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" },
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/mxgraph/javascript/src",
+                "output": "/assets/mxgraph"
+              },
               "src/favicon.png"
             ],
             "styles": [
@@ -111,6 +119,29 @@
                   "with": "src/environments/environment.serverless.ts"
                 }
               ]
+            },
+            "serverlessprod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.serverlessprod.ts"
+                }
+              ]
             }
           }
         },
@@ -128,6 +159,9 @@
             },
             "serverless": {
               "browserTarget": "fcl-web-app:build:serverless"
+            },
+            "serverelessprod": {
+              "browserTarget": "fcl-web-app:build:serverlessprod"
             }
           }
         },
@@ -168,46 +202,26 @@
               "src/styles.scss"
             ],
             "assets": [
-              { "glob": "**/*", "input": "src/assets/", "output": "/assets/" },
-              { "glob": "**/*", "input": "./node_modules/mxgraph/javascript/src", "output": "/assets/mxgraph" },
-              "src/favicon.png",
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/mxgraph/javascript/src",
+                "output": "/assets/mxgraph"
+              },
+              "src/favicon.png"
             ]
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "fcl-web-app-e2e": {
-      "root": "e2e",
-      "sourceRoot": "e2e",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "fcl-web-app:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         }
@@ -223,5 +237,8 @@
     "@schematics/angular:directive": {
       "prefix": "fcl"
     }
+  },
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }

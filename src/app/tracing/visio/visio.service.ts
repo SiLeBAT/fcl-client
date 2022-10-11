@@ -1,5 +1,5 @@
-import { StationData, DeliveryData, SampleData } from '../data.model';
-import { VisioReport, VisioEngineConfiguration, StationGroupType, NodeLayoutInfo } from './layout-engine/datatypes';
+import { StationData, DeliveryData, SampleData, StationId, Position } from '../data.model';
+import { VisioReport, VisioEngineConfiguration, StationGroupType } from './layout-engine/datatypes';
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
 import { ROASettings } from './model';
@@ -10,9 +10,8 @@ interface FclElements {
     samples: SampleData[];
 }
 
-function getFontMetricCanvas(): any {
-
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function getFontMetricCanvas(): any { }
 
 function getStationGrouperFromType(groupType: StationGroupType) {
     switch (groupType) {
@@ -21,23 +20,29 @@ function getStationGrouperFromType(groupType: StationGroupType) {
     }
 }
 
-function createReport(data: FclElements, nodeInfoMap: Map<string, NodeLayoutInfo>, engineConf: VisioEngineConfiguration): VisioReport {
+function createReport(
+    data: FclElements,
+    stationIdToPosMap: Record<StationId, Position>,
+    engineConf: VisioEngineConfiguration
+): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
-    const report: VisioReport = VisioReporter.createReport(data, nodeInfoMap, getFontMetricCanvas, engineConf.roaSettings, stationGrouper);
+    const report: VisioReport = VisioReporter.createReport(
+        data, stationIdToPosMap, getFontMetricCanvas, engineConf.roaSettings, stationGrouper
+    );
 
     return report;
 }
 
 export function generateVisioReport(
     data: FclElements,
-    nodeInfoMap: Map<string, NodeLayoutInfo>,
+    stationIdToPosMap: Record<StationId, Position>,
     roaSettings: ROASettings
-    ): VisioReport {
+): VisioReport {
 
     const engineConf: VisioEngineConfiguration = {
         groupType: StationGroupType.Country,
         roaSettings: roaSettings
     };
 
-    return createReport(data, nodeInfoMap, engineConf);
+    return createReport(data, stationIdToPosMap, engineConf);
 }

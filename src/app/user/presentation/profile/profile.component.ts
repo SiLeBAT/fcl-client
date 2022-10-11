@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { TokenizedUser } from '../../models/user.model';
 
 @Component({
@@ -6,11 +6,7 @@ import { TokenizedUser } from '../../models/user.model';
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent {
     @Input() currentUser: TokenizedUser;
-
-    constructor() { }
-
-    ngOnInit() {}
 
 }

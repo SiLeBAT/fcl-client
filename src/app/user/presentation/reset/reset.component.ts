@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { NewPasswordRequestDTO } from '@app/user/models/user.model';
+import { ValidationError } from '@app/core/model';
+import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 
 @Component({
     selector: 'fcl-reset',
@@ -8,18 +9,21 @@ import { NewPasswordRequestDTO } from '@app/user/models/user.model';
     styleUrls: ['./reset.component.scss']
 })
 export class ResetComponent implements OnInit {
-    @Output() reset = new EventEmitter();
-    resetForm: FormGroup;
-    private pwStrength: number;
 
-    constructor(private changeRef: ChangeDetectorRef) {
-        this.pwStrength = -1;
-    }
+    @Input() serverValidationErrors: ValidationError[] = [];
+    // eslint-disable-next-line @angular-eslint/no-output-native
+    @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
+
+    resetForm: FormGroup;
+
+    constructor(public elementRef: ElementRef) {}
 
     ngOnInit() {
         this.resetForm = new FormGroup({
-            password1: new FormControl(null, Validators.required),
-            password2: new FormControl(null, [Validators.required, Validators.minLength(8)])
+            password1: new FormControl(null, [
+                Validators.required
+            ]),
+            password2: new FormControl(null)
         }, this.passwordConfirmationValidator);
     }
 
@@ -28,21 +32,11 @@ export class ResetComponent implements OnInit {
       || this.resetForm.controls[fieldName].untouched;
     }
 
-    validatePwStrength() {
-        return (this.pwStrength >= 0 && this.pwStrength < 2);
-    }
-
-    doStrengthChange(pwStrength: number) {
-        this.pwStrength = pwStrength;
-        this.changeRef.detectChanges();
-    }
-
     onReset() {
         const password: NewPasswordRequestDTO = {
             password: this.resetForm.value.password1
         };
         this.reset.emit(password);
-
     }
 
     private passwordConfirmationValidator(fg: FormGroup) {
@@ -56,5 +50,4 @@ export class ResetComponent implements OnInit {
         }
         return null;
     }
-
 }

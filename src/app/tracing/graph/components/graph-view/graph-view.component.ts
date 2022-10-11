@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { Size, Layout, PositionMap } from '../../../data.model';
 import _ from 'lodash';
-import { ContextMenuRequestInfo, NodeId, SelectedGraphElements } from '../../graph.model';
+import { ContextMenuRequestInfo, EdgeId, NodeId, SelectedGraphElements } from '../../graph.model';
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
 import { GraphEventType, InteractiveCyGraph, LayoutOption } from '../../cy-graph/interactive-cy-graph';
@@ -13,10 +13,14 @@ import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_PRESET } from '../../cy
 import { isPosMapEmpty } from '../../cy-graph/shared-utils';
 import { getLayoutConfig } from '../../cy-graph/layouting-utils';
 
+export interface GraphSelectionChange {
+    selectedElements: SelectedGraphElements;
+    isShiftSelection: boolean;
+}
 export interface GraphDataChange {
     layout?: Layout;
     nodePositions?: PositionMap;
-    selectedElements?: SelectedGraphElements;
+    selectionChange?: GraphSelectionChange;
 }
 
 @Component({
@@ -107,6 +111,10 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         return this.cyGraph_ === null ? null : this.cyGraph_.getLayoutOptions(nodesToLayout);
     }
 
+    focusElement(elementId: NodeId | EdgeId): void {
+        this.cyGraph_.focusElement(elementId);
+    }
+
     private isSizePositive(): boolean {
         const size = this.getSize();
         return size.width > 0 && size.height > 0;
@@ -124,19 +132,25 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         this.graphDataChange.emit({
             layout:
                 this.graphData.layout !== this.cyGraph_.layout ?
-                this.cyGraph_.layout :
-                undefined
+                    this.cyGraph_.layout :
+                    undefined
             ,
             nodePositions:
                 this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
-                this.cyGraph_.nodePositions :
-                undefined
-            ,
-            selectedElements:
-                this.graphData.selectedElements !== this.cyGraph_.selectedElements ?
-                this.cyGraph_.selectedElements :
-                undefined
+                    this.cyGraph_.nodePositions :
+                    undefined
         });
+    }
+
+    private onGraphSelectionChange(isShiftSelection: boolean): void {
+        if (this.graphData.selectedElements !== this.cyGraph_.selectedElements) {
+            this.graphDataChange.emit({
+                selectionChange: {
+                    selectedElements: this.cyGraph_.selectedElements,
+                    isShiftSelection: isShiftSelection
+                }
+            });
+        }
     }
 
     private onContextMenuRequest(info: ContextMenuRequestInfo): void {
@@ -171,7 +185,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         );
 
         this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
-        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, () => this.onGraphDataChange());
+        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, (shift: boolean) => this.onGraphSelectionChange(shift));
         this.cyGraph_.registerListener(
             GraphEventType.CONTEXT_MENU_REQUEST,
             (info: ContextMenuRequestInfo) => this.onContextMenuRequest(info)
@@ -197,5 +211,4 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
             this.cleanCyGraph();
         }
     }
-
 }

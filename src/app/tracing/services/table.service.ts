@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-    BasicGraphState,
     DataServiceData,
     DeliveryData,
     StationData,
@@ -8,7 +7,8 @@ import {
     TableRow,
     StationTable,
     DataTable,
-    NodeShapeType
+    NodeShapeType,
+    DataServiceInputState
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
@@ -26,15 +26,15 @@ export class TableService {
 
     constructor(private dataService: DataService) {}
 
-    getDeliveryData(state: BasicGraphState, deliveryIds?: string[]): DataTable {
+    getDeliveryData(state: DataServiceInputState, addStationProps: boolean, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
         return {
-            columns: this.getDeliveryColumns(data),
-            rows: this.getDeliveryRows(data, deliveryIds)
+            columns: this.getDeliveryColumns(data, addStationProps),
+            rows: this.getDeliveryRows(data, addStationProps, deliveryIds)
         };
     }
 
-    getStationData(state: BasicGraphState): StationTable {
+    getStationData(state: DataServiceInputState): StationTable {
         const data: DataServiceData = this.dataService.getData(state);
         return {
             columns: this.getStationColumns(data),
@@ -42,8 +42,8 @@ export class TableService {
         };
     }
 
-    getDeliveryColumns(data: DataServiceData): TableColumn[] {
-        const columns: TableColumn[] = [
+    getDeliveryColumns(data: DataServiceData, addStationProps: boolean): TableColumn[] {
+        let columns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'source', name: 'Source ID' },
             { id: 'source.name', name: 'Source' },
@@ -64,6 +64,9 @@ export class TableService {
             { id: 'invisible', name: 'Invisible' }
         ];
 
+        if (addStationProps === false) {
+            columns = columns.filter(c => !c.id.startsWith('source.') && !c.id.startsWith('target.'));
+        }
         this.addColumnsForProperties(columns, data.deliveries);
 
         return columns;
@@ -110,28 +113,26 @@ export class TableService {
         });
     }
 
-    private getDeliveryRows(data: DataServiceData, deliveryIds?: string[]): TableRow[] {
+    private getDeliveryRows(data: DataServiceData, addStationProps: boolean, deliveryIds?: string[]): TableRow[] {
         return (
             deliveryIds ?
-            data.getDelById(deliveryIds) :
-            data.deliveries
+                data.getDelById(deliveryIds) :
+                data.deliveries
         ).map(delivery => {
             const row: TableRow = {
                 id: delivery.id,
                 highlightingInfo: {
                     color: (
                         delivery.highlightingInfo.color.length > 0 ?
-                        delivery.highlightingInfo.color :
-                        [[0, 0, 0]]
+                            delivery.highlightingInfo.color :
+                            [[0, 0, 0]]
                     ),
                     shape: NodeShapeType.SQUARE
                 },
                 name: delivery.name,
                 lot: delivery.lot,
                 source: delivery.source,
-                'source.name': data.statMap[delivery.source].name,
                 target: delivery.target,
-                'target.name': data.statMap[delivery.target].name,
                 dateOut: delivery.dateOut,
                 dateIn: delivery.dateIn,
                 weight: delivery.weight,
@@ -144,6 +145,11 @@ export class TableService {
                 selected: delivery.selected,
                 invisible: delivery.invisible
             };
+
+            if (addStationProps) {
+                row['source.name'] = data.statMap[delivery.source].name;
+                row['target.name'] = data.statMap[delivery.target].name;
+            }
 
             delivery.properties.forEach(
                 prop => row[prop.name] = prop.value
@@ -213,8 +219,8 @@ export class TableService {
             .toLowerCase();
     }
 
-    private collectProps(arr: (StationData | DeliveryData)[]): { id: string, type: string }[] {
-        const result: { id: string, type: string }[] = [];
+    private collectProps(arr: (StationData | DeliveryData)[]): { id: string; type: string }[] {
+        const result: { id: string; type: string }[] = [];
         const props: { [key: string ]: string } = {};
         arr.forEach(item => item.properties.filter(
             prop => prop.value !== undefined || prop.value !== null

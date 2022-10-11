@@ -1,7 +1,7 @@
 import { Cy, ContextMenuRequestInfo } from '../graph.model';
 import { Position } from '../../data.model';
 import {
-    CY_EVENT_BOX_SELECT, CY_EVENT_CXT_TAP, CY_EVENT_DRAG_FREE_ON, CY_EVENT_PAN,
+    CY_EVENT_BOX_SELECT, CY_EVENT_CXT_TAP, CY_EVENT_DRAG_FREE_ON, CY_EVENT_MOUSEDOWN, CY_EVENT_PAN,
     CY_EVENT_TAP_END, CY_EVENT_TAP_SELECT, CY_EVENT_TAP_START, CY_EVENT_TAP_UNSELECT,
     CY_EVENT_ZOOM
 } from './cy.constants';
@@ -31,25 +31,31 @@ export function addCyPanListeners(cy: Cy, onPanning: () => void, onPanEnd: () =>
     });
 }
 
-export function addCySelectionListener(cy: Cy, onSelectionChanged: () => void): void {
+export function addCySelectionListener(cy: Cy, onSelectionChanged: (shift: boolean) => void): void {
     let triggerListener = true;
+    let shiftOnLastMouseDown = false;
+
     // cy raises the selection event usually multiple times per user selection
     // but we are only interested in one event per user selection
-    const selectionProcessor = () => {
+    const selectionProcessor = (shift: boolean) => {
         if (triggerListener) {
             triggerListener = false;
             setTimeout(() => {
-                onSelectionChanged();
+                onSelectionChanged(shift);
                 triggerListener = true;
             }, 0);
         }
     };
+    // store shift on mouse down
+    cy.on(CY_EVENT_MOUSEDOWN, (event: { originalEvent: MouseEvent }) => {
+        shiftOnLastMouseDown = event.originalEvent.shiftKey;
+    });
     // click un/selection
-    cy.on(CY_EVENT_TAP_SELECT, () => selectionProcessor());
-    cy.on(CY_EVENT_TAP_UNSELECT, () => selectionProcessor());
+    cy.on(CY_EVENT_TAP_SELECT, () => selectionProcessor(shiftOnLastMouseDown));
+    cy.on(CY_EVENT_TAP_UNSELECT, () => selectionProcessor(shiftOnLastMouseDown));
 
     // box selection
-    cy.on(CY_EVENT_BOX_SELECT, () => selectionProcessor());
+    cy.on(CY_EVENT_BOX_SELECT, () => selectionProcessor(true));
 }
 
 export function addCyDragListener(cy: Cy, onDragEnd: () => void): void {

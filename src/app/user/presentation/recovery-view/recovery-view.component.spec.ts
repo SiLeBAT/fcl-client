@@ -12,7 +12,7 @@ describe('RecoveryViewComponent', () => {
     let fixture: ComponentFixture<RecoveryViewComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 RecoveryViewComponent
@@ -27,8 +27,6 @@ describe('RecoveryViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(RecoveryViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

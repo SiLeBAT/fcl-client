@@ -1,16 +1,14 @@
 import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './farm-to-fork.model';
+import { Graph, Vertex, Edge } from './data-structures';
 import { BusinessTypeRanker } from './business-type-ranker';
 
 class LayerAssignment {
     private vertexOutEdgeCounts: number[];
 
-    constructor() {}
-
     private getForkVertices(graph: Graph): Vertex[] {
         const result: Vertex[] = [];
         for (
-            // tslint:disable-next-line:one-variable-per-declaration
+            // eslint-disable-next-line one-var
             let i: number = 0, n: number = this.vertexOutEdgeCounts.length;
             i < n;
             ++i

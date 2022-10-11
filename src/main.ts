@@ -11,7 +11,7 @@ if (environment.production) {
 }
 
 platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch(() => {
-      throw new Error('Unable to bootstrap application');
-  });
+    .bootstrapModule(AppModule)
+    .catch(() => {
+        throw new Error('Unable to bootstrap application');
+    });

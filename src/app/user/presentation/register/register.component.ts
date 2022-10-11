@@ -1,27 +1,22 @@
-import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+    Component, OnInit, Output, EventEmitter,
+    Input} from '@angular/core';
+import { FormGroup, FormControl, Validators, ValidationErrors } from '@angular/forms';
+import { ValidationError } from '@app/core/model';
 import { RegistrationCredentials } from '../../models/user.model';
-
-export interface IHash {
-    [details: string]: string;
-}
 
 @Component({
     selector: 'fcl-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-    @Output() register = new EventEmitter();
-    registerForm: FormGroup;
-    private pwStrength: number;
 
-    constructor(
-        private changeRef: ChangeDetectorRef
-    ) {
-        this.pwStrength = -1;
-    }
+    @Input() serverValidationErrors: Partial<Record<keyof RegistrationCredentials, ValidationError[]>> = {};
+
+    @Output() register = new EventEmitter<RegistrationCredentials>();
+
+    registerForm: FormGroup;
 
     ngOnInit() {
         this.registerForm = new FormGroup({
@@ -31,10 +26,7 @@ export class RegisterComponent implements OnInit {
                 Validators.required,
                 Validators.email
             ]),
-            password1: new FormControl(null, [
-                Validators.required,
-                Validators.minLength(8)
-            ]),
+            password1: new FormControl(null, Validators.required),
             password2: new FormControl(null),
             dataProtection: new FormControl(null, Validators.requiredTrue),
             newsletter: new FormControl(false)
@@ -61,11 +53,7 @@ export class RegisterComponent implements OnInit {
                || this.registerForm.controls[fieldName].untouched;
     }
 
-    validatePwStrength() {
-        return (this.pwStrength >= 0 && this.pwStrength < 2);
-    }
-
-    private passwordConfirmationValidator(fg: FormGroup) {
+    private passwordConfirmationValidator(fg: FormGroup): ValidationErrors {
         const pw1 = fg.controls.password1;
         const pw2 = fg.controls.password2;
 
@@ -76,10 +64,4 @@ export class RegisterComponent implements OnInit {
         }
         return null;
     }
-
-    doStrengthChange(pwStrength: number) {
-        this.pwStrength = pwStrength;
-        this.changeRef.detectChanges();
-    }
-
 }

@@ -54,6 +54,7 @@ export function createDefaultROASettings(): ROASettings {
                 [ { prop: 'result', altText: 'Unknown result', isNullable: false } ],
                 [ { prop: 'time', altText: 'Unknown time', isNullable: false } ]
             ]
-        }
+        },
+        roundNumbers: true
     };
 }

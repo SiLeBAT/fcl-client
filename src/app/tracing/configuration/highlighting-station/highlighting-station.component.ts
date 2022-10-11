@@ -1,172 +1,175 @@
-import { BasicGraphState, DataServiceData, DataTable, StationHighlightingRule, StationHighlightingStats, TableColumn } from './../../data.model';
+import { DataServiceInputState, StationHighlightingRule, TableColumn } from '../../data.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import * as tracingReducers from '../../state/tracing.reducers';
 import * as tracingActions from '../../state/tracing.actions';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import * as configurationActions from '../configuration.actions';
-import { takeWhile } from 'rxjs/operators';
 import { AlertService } from '@app/shared/services/alert.service';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
-import { DataService } from '@app/tracing/services/data.service';
-import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import { EditHighlightingService } from '../edit-highlighting.service';
+import {
+    EditHighlightingServiceData,
+    EditHighlightingState,
+    RuleId, RuleListItem, StationEditRule, StationRuleType
+} from '../model';
+import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
-interface HighlightingState {
-    graphState: BasicGraphState;
-    highlightingState: StationHighlightingRule[];
-    editIndex: number | null;
-}
-
-interface CachedData {
-    dataTable: DataTable;
-    propToValuesMap: PropToValuesMap;
-    data: DataServiceData;
-}
+type CachedState = EditHighlightingState<StationEditRule>;
+type CachedData = EditHighlightingServiceData;
 
 @Component({
     selector: 'fcl-highlighting-station',
-    templateUrl: './highlighting-station.component.html',
-    styleUrls: ['./highlighting-station.component.scss']
+    templateUrl: './highlighting-station.component.html'
 })
 export class HighlightingStationComponent implements OnInit, OnDestroy {
 
-    get colorOrShapeRuleEditIndex(): number | null {
-        return this.cachedState === null ?
-            null :
-            this.cachedState.editIndex;
+    private emptyArray_ = [];
+    private emptyObject_ = {};
+
+    get ruleListItems(): RuleListItem[] {
+        return this.cachedData === null ? this.emptyArray_ : this.cachedData.ruleListItems;
     }
 
-    get rules(): StationHighlightingRule[] {
-        return this.cachedState === null ?
-            [] :
-            this.cachedState.highlightingState;
+    get editRules(): StationEditRule[] {
+        return this.cachedState === null ? this.emptyArray_ : this.cachedState.editRules;
     }
 
     get availableProperties(): TableColumn[] {
-        return this.cachedData ?
-            this.cachedData.dataTable.columns :
-            [];
+        return this.cachedData === null ? this.emptyArray_ : this.cachedData.availableProperties;
     }
 
     get propToValuesMap(): PropToValuesMap {
-        return this.cachedData ?
-            this.cachedData.propToValuesMap :
-            {};
+        return this.cachedData === null ? this.emptyObject_ : this.cachedData.propToValuesMap;
     }
 
-    get highlightingStats(): StationHighlightingStats | null {
-        return this.cachedData ?
-            this.cachedData.data.highlightingStats.stationRuleStats :
-            null;
-    }
-
-    private isHighlightingStationTabActive$: Observable<boolean> = this.store.pipe(
-        select(tracingSelectors.getIsHighlightingStationTabActive),
-        takeWhile(() => this.componentIsActive)
-    );
-
-    private componentIsActive = true;
     private stateSubscription: Subscription | null = null;
     private cachedData: CachedData | null = null;
-    private cachedState: HighlightingState | null = null;
+    private cachedState: CachedState | null = null;
 
     constructor(
         private editHighlightingService: EditHighlightingService,
-        private dataService: DataService,
         private store: Store<tracingReducers.State>,
         private alertService: AlertService
     ) { }
 
     ngOnInit() {
 
-        this.isHighlightingStationTabActive$.subscribe(
-            isActive => {
-                if (!isActive) {
-                    if (this.stateSubscription) {
-                        this.stateSubscription.unsubscribe();
-                        this.stateSubscription = null;
-                    }
-                } else {
-                    if (!this.stateSubscription) {
-                        this.stateSubscription = this.store.select(tracingSelectors.getStationHighlightingData).subscribe(
-                            (state: HighlightingState) => this.applyState(state),
-                            err => this.alertService.error(`getStationHighlightingData store subscription failed: ${err}`)
-                        );
-                    }
-                }
-            },
-            err => this.alertService.error(`showConfigurationSideBar store subscription failed: ${err}`)
+        const isHighlightingStationTabActive$ = this.store.select(tracingSelectors.selectIsHighlightingStationTabActive);
+        const stationHighlightingState$ = this.store.select(tracingSelectors.selectStationHighlightingState);
+        this.stateSubscription = stationHighlightingState$.pipe(optInGate(isHighlightingStationTabActive$, true)).subscribe(
+            (state) => this.applyState(state),
+            err => this.alertService.error(`getStationHighlightingData store subscription failed: ${err}`)
         );
     }
 
-    onRulesChange(newRules: StationHighlightingRule[]) {
-        this.emitNewRules(newRules);
-    }
-
-    onColorOrShapeRuleEditIndexChange(editIndex: number | null) {
-        this.emitColorOrShapeRuleEditIndexChange(editIndex);
-    }
-
-    onRuleDelete(deleteRuleRequestData: HighlightingRuleDeleteRequestData) {
-        this.store.dispatch(new configurationActions.DeleteStationHighlightingRulesSSA(
-            { stationHighlightingRule: deleteRuleRequestData }
-        ));
-    }
-
     ngOnDestroy() {
-        this.componentIsActive = false;
-        if (this.stateSubscription) {
+        if (this.stateSubscription !== null) {
             this.stateSubscription.unsubscribe();
             this.stateSubscription = null;
         }
     }
 
-    private emitNewRules(rules: StationHighlightingRule[]) {
-        this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA(
-            { rules: rules }
+    onRuleOrderChange(ruleIds: RuleId[]): void {
+        const newRules = this.editHighlightingService.applyRuleOrderChange(
+            ruleIds, this.cachedState.dataServiceInputState.highlightingSettings.stations
+        );
+        this.emitNewRules(newRules);
+    }
+
+    onToggleRuleIsDisabled(ruleId: RuleId): void {
+        const newRules = this.editHighlightingService.toggleRuleIsDisabled(
+            ruleId, this.cachedState.dataServiceInputState.highlightingSettings.stations
+        );
+        this.emitNewRules(newRules);
+    }
+
+    onToggleShowRuleInLegend(ruleId: RuleId): void {
+        const newRules = this.editHighlightingService.toggleShowRuleInLegend(
+            ruleId, this.cachedState.dataServiceInputState.highlightingSettings.stations
+        );
+        this.emitNewRules(newRules);
+    }
+
+    onStartEdit(ruleId: RuleId): void {
+        const newEditRule = this.editHighlightingService.createEditRuleFromStationRule(
+            ruleId, this.cachedState.dataServiceInputState.highlightingSettings.stations
+        );
+        this.writeEditRuleToStore(newEditRule);
+    }
+
+    onNewRule(ruleType: StationRuleType): void {
+        const newEditRule = this.editHighlightingService.createEditRuleFromRuleType(ruleType);
+        this.writeEditRuleToStore(newEditRule);
+    }
+
+    onApplyEdit(editRule: StationEditRule): void {
+        this.saveRule(editRule);
+    }
+
+    onOkEdit(editRule: StationEditRule): void {
+        this.saveRule(editRule);
+        this.cancelEdit(editRule.id);
+    }
+
+    onCancelEdit(ruleId: RuleId): void {
+        this.cancelEdit(ruleId);
+    }
+
+    onDeleteRule(deleteRuleRequestData: HighlightingRuleDeleteRequestData): void {
+        this.store.dispatch(new configurationActions.DeleteHighlightingRuleSSA(
+            { deleteRequestData: deleteRuleRequestData }
         ));
     }
 
-    private emitColorOrShapeRuleEditIndexChange(editIndex: number | null) {
-        this.store.dispatch(new tracingActions.SetColorsAndShapesEditIndexSOA(
-            { editIndex: editIndex }
-        ));
-    }
-
-    private applyState(state: HighlightingState): void {
-        let dataTable: DataTable | null = this.cachedData ? this.cachedData.dataTable : null;
-        const data = this.dataService.getData(state.graphState);
-        if (!this.cachedState || this.cachedState.graphState.fclElements !== state.graphState.fclElements) {
-            dataTable = this.editHighlightingService.getStationData(state.graphState);
-        } else if (
-            data.stations !== this.cachedData.data.stations ||
-            data.deliveries !== this.cachedData.data.deliveries ||
-            data.tracingResult !== this.cachedData.data.tracingResult ||
-            data.statSel !== this.cachedData.data.statSel ||
-            data.delSel !== this.cachedData.data.delSel
-            ) {
-            dataTable = {
-                ...this.editHighlightingService.getStationData(state.graphState),
-                columns: this.cachedData.dataTable.columns
-            };
+    onAddSelectionToRuleConditions(editRule: StationEditRule): void {
+        const updatedEditRule = this.editHighlightingService.addSelectionToStationRuleConditions(
+            editRule, this.cachedState.dataServiceInputState
+        );
+        if (updatedEditRule !== editRule) {
+            this.writeEditRuleToStore(updatedEditRule);
         }
+    }
 
-        this.cachedState = {
-            ...state
-        };
+    onRemoveSelectionFromRuleConditions(editRule: StationEditRule): void {
+        const updatedEditRule = this.editHighlightingService.removeSelectionFromStationRuleConditions(
+            editRule, this.cachedState.dataServiceInputState
+        );
+        if (updatedEditRule !== editRule) {
+            this.writeEditRuleToStore(updatedEditRule);
+        }
+    }
 
-        const propToValuesMap: PropToValuesMap =
-            this.cachedData === null || this.cachedData.dataTable !== dataTable ?
-            ComplexFilterUtils.extractPropToValuesMap(dataTable, dataTable.columns) :
-            this.cachedData.propToValuesMap;
+    private emitNewEditRules(editRules: StationEditRule[]): void {
+        this.store.dispatch(new tracingActions.SetStationHighlightingEditRulesSOA({ editRules: editRules }));
+    }
 
-        this.cachedData = {
-            dataTable: dataTable,
-            propToValuesMap: propToValuesMap,
-            data: data
-        };
+    private emitNewRules(rules: StationHighlightingRule[]) {
+        this.store.dispatch(new tracingActions.SetStationHighlightingRulesSOA({ rules: rules }));
+    }
+
+    private saveRule(editRule: StationEditRule): void {
+        const newRules = this.editHighlightingService.applyStationRule(
+            editRule, this.cachedState.dataServiceInputState.highlightingSettings.stations
+        );
+        this.emitNewRules(newRules);
+        this.writeEditRuleToStore(editRule);
+    }
+
+    private writeEditRuleToStore(editRule: StationEditRule): void {
+        const newEditRules = this.editHighlightingService.applyRule(editRule, this.cachedState.editRules);
+        this.emitNewEditRules(newEditRules);
+    }
+
+    private cancelEdit(ruleId: RuleId): void {
+        const newEditRules = this.editHighlightingService.removeRule(this.cachedState.editRules, ruleId);
+        this.emitNewEditRules(newEditRules);
+    }
+
+    private applyState(state: EditHighlightingState<StationEditRule>): void {
+        this.cachedData = this.editHighlightingService.getDataForEditStationHighlightingRules(state.dataServiceInputState);
+        this.cachedState = { ...state };
     }
 
 }

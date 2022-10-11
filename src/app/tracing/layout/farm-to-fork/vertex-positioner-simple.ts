@@ -1,7 +1,6 @@
-import { Vertex } from './farm-to-fork.model';
+import { Vertex } from './data-structures';
 
 class VertexPositionerSimple {
-    constructor() {}
 
     positionVertices(layers: Vertex[][], vertexDistance: number) {
         const nLayers: number = layers.length;

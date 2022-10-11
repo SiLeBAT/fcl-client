@@ -1,0 +1,164 @@
+@import '../../../../assets/sass/base';
+
+$fcl-col-legend-width: 27px;
+$fcl-col-edit-width: 24px;
+$fcl-col-delete-width: 22px;
+$fcl-opacity--disabled: 0.38;
+$fcl-font-size: 0.8rem;
+
+.fcl-rules-list-item {
+    font-size: $fcl-font-size;
+    font-family: #{$fcl-font-family};
+    display: grid;
+    align-items: center;
+    grid-template-areas:
+        "dragcolumn rulename symbol . counts . legend . activated . edit . delete"
+        "editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog editdialog";
+    grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 2ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
+}
+
+.fcl-rules-list-drag-indicator {
+    $fcl-drag-indicator-size-factor: 1.2;
+
+    display: flex;
+    grid-area: dragcolumn;
+    justify-self: left;
+    align-self: center;
+    max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+
+    .mat-icon {
+        font-size: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+    }
+}
+
+.cdk-drag-handle {
+    cursor: ns-resize;
+}
+
+.cdk-drag-disabled .cdk-drag-handle {
+    cursor: default;
+}
+
+.cdk-drag-placeholder {
+    visibility: hidden;
+}
+
+.cdk-drag-disabled .fcl-cs-rules-list-drag-indicator {
+    opacity: $fcl-opacity--disabled;
+}
+
+/* Animate items as they're being sorted. */
+.cdk-drop-list-dragging .cdk-drag {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animate an item that has been dropped. */
+.cdk-drag-animating {
+    transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.fcl-rules-list-item-name {
+    grid-area: rulename;
+    justify-self: left;
+}
+
+.fcl-rule-disabled .fcl-rules-list-item-name {
+    opacity: $fcl-opacity--disabled;
+}
+
+.fcl-rules-list-item-symbol {
+    grid-area: symbol;
+    justify-self: center;
+}
+
+.fcl-rules-list-item-counts {
+    grid-area: counts;
+    justify-self: center;
+}
+
+.fcl-rule-disabled .fcl-rules-list-item-counts {
+    opacity: $fcl-opacity--disabled;
+}
+
+.fcl-rules-list-item-legend-button {
+    grid-area: legend;
+    width: $fcl-col-legend-width;
+    height: $fcl-col-legend-width;
+    color: $fcl-primary-500;
+}
+
+.fcl-rules-list-item-legend-button.mat-button-toggle-checked {
+    font-weight: bold;
+    background-color: $fcl-primary-500;
+    color: rgb(255, 255, 255);
+}
+
+.fcl-rules-list-item-legend-button.mat-button-toggle-disabled {
+    opacity: $fcl-opacity--disabled;
+}
+
+.fcl-rules-list-item-activated-slider {
+    grid-area: activated;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+}
+
+.fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+    background-color: $fcl-primary-500;
+}
+
+.fcl-rules-list-item-edit-button-wrapper {
+    grid-area: edit;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    max-width: $fcl-col-edit-width;
+    overflow-x: hidden;
+}
+
+.fcl-rules-list-item-delete-button-wrapper {
+    display: flex;
+    grid-area: delete;
+    justify-content: center;
+    align-content: center;
+    justify-self: end;
+    max-width: $fcl-col-delete-width;
+    overflow-x: hidden;
+}
+
+.fcl-rules-list-edit-item {
+    width: 100%;
+    grid-area: editdialog;
+}
+
+.fcl-edit-rule-dialog {
+    font-size: $fcl-font-size;
+}
+
+.fcl-add-rule-button {
+    border-radius: 5;
+    background-color: rgb(255, 255, 255);
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.fcl-add-rule-button:hover:enabled {
+    background-color: $fcl-accent-300;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.fcl-rules-list-item-counts-wrapper {
+    height: $fcl-col-legend-width;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    line-height: 1;
+    text-align: center;
+}
+
+.fcl-rules-list-item-conflict-count {
+    color: red;
+    margin-top: -1em;
+    padding-bottom: 0.15em;
+}

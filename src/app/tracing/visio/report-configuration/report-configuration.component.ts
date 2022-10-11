@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import * as storeActions from '../../state/tracing.actions';
 import * as roaActions from '../visio.actions';
 import { Utils } from '@app/tracing/util/non-ui-utils';
-import { BasicGraphState } from '@app/tracing/data.model';
+import { DataServiceInputState } from '@app/tracing/data.model';
 import { take } from 'rxjs/operators';
 import * as TracingSelectors from '../../state/tracing.selectors';
 import { State } from '@app/tracing/state/tracing.reducers';
@@ -14,7 +14,6 @@ import { DataService } from '@app/tracing/services/data.service';
 import { combineLatest } from 'rxjs';
 import { createDefaultROASettings, getUnitPropFromAmountProp } from '../shared';
 import { AmountUnitPair, LabelElementInfo, PropElementInfo, ROALabelSettings, ROASettings, TextElementInfo } from '../model';
-import { some } from 'cypress/types/bluebird';
 
 function propCompare(propA: PropInfo, propB: PropInfo): number {
     const textA = propA.label !== undefined ? propA.label : propA.prop;
@@ -26,6 +25,7 @@ function sortProps(props: PropInfo[]): PropInfo[] {
     return props.sort(propCompare);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReportConfigurationData {
 
 }
@@ -37,6 +37,8 @@ interface LabelInfo {
     amountUnitPairs: AmountUnitPair[];
 }
 
+const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
+
 @Component({
     selector: 'fcl-report-configuration',
     templateUrl: './report-configuration.component.html',
@@ -45,10 +47,12 @@ interface LabelInfo {
 export class ReportConfigurationComponent {
 
     availableProps: {
-        companyProps: PropInfo[],
-        lotProps: PropInfo[],
-        sampleProps: PropInfo[]
+        companyProps: PropInfo[];
+        lotProps: PropInfo[];
+        sampleProps: PropInfo[];
     };
+
+    roundNumbers: boolean = true;
 
     labelInfos: { [key in (keyof ROALabelSettings)]: LabelInfo };
 
@@ -65,24 +69,24 @@ export class ReportConfigurationComponent {
 
     private init(): void {
         combineLatest([
-            this.store.select(TracingSelectors.getBasicGraphData),
+            this.store.select(TracingSelectors.selectDataServiceInputState),
             this.store.select(TracingSelectors.getROASettings)
         ]).pipe(take(1))
-        .subscribe(([dataServiceInputState, roaSettings]) => {
-            this.initAvailableProps(dataServiceInputState);
-            if (roaSettings === null) {
-                this.setDefaultLabelInfos();
-            } else {
-                this.setLabelInfos(roaSettings);
-            }
-        },
+            .subscribe(([dataServiceInputState, roaSettings]) => {
+                this.initAvailableProps(dataServiceInputState);
+                if (roaSettings === null) {
+                    this.setDefaultLabelInfos();
+                } else {
+                    this.setLabelInfos(roaSettings);
+                }
+            },
             error => {
                 throw new Error(`error load roa configuration state: ${error}`);
             }
-        );
+            );
     }
 
-    private initAvailableProps(dataServiceInputState: BasicGraphState): void {
+    private initAvailableProps(dataServiceInputState: DataServiceInputState): void {
         const data = this.dataService.getData(dataServiceInputState);
         this.availableProps = {
             companyProps: sortProps(getPublicStationProperties(data.stations)),
@@ -102,6 +106,26 @@ export class ReportConfigurationComponent {
                     unit: propElements[1]
                 }];
             }
+        }
+    }
+
+    private setElementDependencies(): void {
+        for (const labelKey of Object.keys(this.labelInfos)) {
+            const labelInfo: LabelInfo = this.labelInfos[labelKey];
+            labelInfo.amountUnitPairs.forEach(amountUnitPair => {
+                const depOn = amountUnitPair.amount;
+                const labelElements = labelInfo.labelElements.find(elements =>
+                    elements.indexOf(amountUnitPair.amount) >= 0 &&
+                    elements.indexOf(amountUnitPair.unit)
+                );
+                if (labelElements !== undefined) {
+                    const startIndex = labelElements.indexOf(amountUnitPair.amount);
+                    const endIndex = labelElements.indexOf(amountUnitPair.unit);
+                    for (let i = startIndex + 1; i <= endIndex; i++) {
+                        labelElements[i].dependendOnProp = amountUnitPair.amount.prop;
+                    }
+                }
+            });
         }
     }
 
@@ -133,17 +157,36 @@ export class ReportConfigurationComponent {
             }
         };
         this.setAmountUnitPairs();
+        this.roundNumbers = roaSettings.roundNumbers;
     }
 
     private getROASettings(): ROASettings {
-        return {
+        const roaSettings = {
             labelSettings: {
                 stationLabel: this.createLabelElementInfos(this.labelInfos.stationLabel.labelElements),
                 lotLabel: this.createLabelElementInfos(this.labelInfos.lotLabel.labelElements),
                 lotSampleLabel: this.createLabelElementInfos(this.labelInfos.lotSampleLabel.labelElements),
                 stationSampleLabel: this.createLabelElementInfos(this.labelInfos.lotSampleLabel.labelElements)
-            }
+            },
+            roundNumbers: this.roundNumbers
         };
+        this.setInterpretAsNumberFlag(roaSettings);
+        return roaSettings;
+    }
+
+    private setInterpretAsNumberFlag(roaSettings: ROASettings): void {
+        const labelElements: LabelElementInfo[][][] = Object.values(roaSettings.labelSettings);
+        const flattenedLabelElements: LabelElementInfo[] = _.flattenDepth(labelElements, 2);
+        const propElements = flattenedLabelElements.filter(e => (e as PropElementInfo).prop != null) as PropElementInfo[];
+        for (const propElement of propElements) {
+            if (propElement.prop.match(AMOUNT_PROP_MATCHER_REGEXP)) {
+                propElement.interpretAsNumber = true;
+            }
+        }
+        const expectedAmountPropElement = roaSettings.labelSettings.lotSampleLabel[2].find(e => (e as PropElementInfo).prop != null);
+        if (expectedAmountPropElement !== undefined) {
+            (expectedAmountPropElement as PropElementInfo).interpretAsNumber = true;
+        }
     }
 
     private createLabelElementInfos(labelElements: LabelElementInfo[][]): LabelElementInfo[][] {
@@ -153,13 +196,14 @@ export class ReportConfigurationComponent {
             for (const labelElement of labelRow) {
                 if ((labelElement as PropElementInfo).prop === undefined) {
                     const textElement = labelElement as TextElementInfo;
-                    row.push({ text: textElement.text });
+                    row.push({ text: textElement.text, dependendOnProp: labelElement.dependendOnProp });
                 } else {
                     const propElement = labelElement as PropElementInfo;
                     row.push({
                         prop: propElement.prop,
                         altText: propElement.altText,
-                        isNullable: propElement.isNullable
+                        isNullable: propElement.isNullable,
+                        dependendOnProp: labelElement.dependendOnProp
                     });
                 }
             }
@@ -199,6 +243,7 @@ export class ReportConfigurationComponent {
     }
 
     onGenerateReport() {
+        this.setElementDependencies();
         this.store.dispatch(new storeActions.SetROAReportSettingsSOA({ roaSettings: this.getROASettings() }));
         this.store.dispatch(new roaActions.GenerateROAReportMSA());
         this.dialogRef.close();

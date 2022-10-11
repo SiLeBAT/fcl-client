@@ -210,13 +210,13 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
-        .forEach(key => {
-            const value = station[key];
-            properties[key] = {
-                label: Constants.PROPERTIES.get(key).name,
-                value: value != null ? value + '' : ''
-            };
-        });
+            .forEach(key => {
+                const value = station[key];
+                properties[key] = {
+                    label: Constants.PROPERTIES.get(key).name,
+                    value: value != null ? value + '' : ''
+                };
+            });
 
         station.properties.forEach(prop => {
             properties[prop.name] = {
@@ -257,26 +257,26 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     ngOnInit() {
         if (this.height != null) {
             this.svg = d3
-        .select(this.inOutConnector.nativeElement).append<SVGGElement>('svg')
-        .attr('display', 'block')
-        .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height);
+                .select(this.inOutConnector.nativeElement).append<SVGGElement>('svg')
+                .attr('display', 'block')
+                .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height);
 
             const defs = this.svg.append<SVGElement>('defs');
             const g = this.svg.append<SVGElement>('g');
 
             defs.append('marker')
-        .attr('id', 'end-arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 7)
-        .attr('markerWidth', 3.5)
-        .attr('markerHeight', 3.5)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-5L10,0L0,5')
-        .attr('fill', 'rgb(0, 0, 0)');
+                .attr('id', 'end-arrow')
+                .attr('viewBox', '0 -5 10 10')
+                .attr('refX', 7)
+                .attr('markerWidth', 3.5)
+                .attr('markerHeight', 3.5)
+                .attr('orient', 'auto')
+                .append('path')
+                .attr('d', 'M0,-5L10,0L0,5')
+                .attr('fill', 'rgb(0, 0, 0)');
 
             this.connectLine = g.append<SVGElement>('path').attr('marker-end', 'url(#end-arrow)').attr('visibility', 'hidden')
-        .attr('fill', 'none').attr('stroke', 'rgb(0, 0, 0)').attr('stroke-width', '6px').attr('cursor', 'default');
+                .attr('fill', 'none').attr('stroke', 'rgb(0, 0, 0)').attr('stroke-width', '6px').attr('cursor', 'default');
             this.edgesG = g.append<SVGElement>('g');
             this.nodesInG = g.append<SVGElement>('g');
             this.nodesOutG = g.append<SVGElement>('g');
@@ -476,17 +476,18 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 .attr('dy', 15).attr('font-size', '14px')
                 .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
             text.filter(d => d.date != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
-            .attr('dy', 15).attr('font-size', '12px').text(d => d.date);
+                .attr('dy', 15).attr('font-size', '12px').text(d => d.date);
         };
 
         const newNodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter()
-      .append<SVGElement>('g');
+            .append<SVGElement>('g');
         const newNodesOut = this.nodesOutG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeOutData, d => d.id).enter()
-      .append<SVGElement>('g');
+            .append<SVGElement>('g');
 
         initRectAndText(newNodesIn, true);
         initRectAndText(newNodesOut, false);
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
 
         newNodesIn.on('mouseover', function (inNode: NodeDatum) {
@@ -507,25 +508,24 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private updateEdges() {
-    // tslint:disable-next-line:no-shadowed-variable
+    // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
         const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
             edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
         };
 
         const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
-      .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
-        const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => {
-      return StationPropertiesComponent.line(
-        d.source.x + StationPropertiesComponent.NODE_WIDTH,
-        d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-        d.target.x,
-        d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
-      );
-    }).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
+            .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
+        const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => StationPropertiesComponent.line(
+            d.source.x + StationPropertiesComponent.NODE_WIDTH,
+            d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
+            d.target.x,
+            d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
+        )).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
 
         updateColor(newEdges, false);
         edges.exit().remove();
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
 
         newEdges.on('mouseover', function (edge: EdgeDatum) {
@@ -535,7 +535,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     [].concat(
                         edge.source.deliveryIds,
                         edge.target.deliveryIds
-                ));
+                    ));
             }
         }).on('mouseout', function () {
             updateColor(d3.select(this), false);
@@ -552,11 +552,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             const mousePos = d3.mouse(this.svg.node());
 
             this.connectLine.attr('d', StationPropertiesComponent.line(
-        this.selected.x + StationPropertiesComponent.NODE_WIDTH,
-        this.selected.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-        mousePos[0],
-        mousePos[1]
-      ));
+                this.selected.x + StationPropertiesComponent.NODE_WIDTH,
+                this.selected.y + StationPropertiesComponent.NODE_HEIGHT / 2,
+                mousePos[0],
+                mousePos[1]
+            ));
         }
     }
 }

@@ -1,0 +1,26 @@
+<div class="fcl-button-container">
+
+    <button
+        class="fcl-font-size-inherit"
+        mat-stroked-button
+        matTooltip="Add conditions for graph selection"
+        matTooltipPosition="above"
+        color="accent"
+        [disabled]="disabled"
+        (click)="onAddSelectionClick()"
+    >
+        Add selection
+    </button>
+
+    <button
+        class="fcl-font-size-inherit"
+        mat-stroked-button
+        matTooltip="Remove conditions for graph selection"
+        matTooltipPosition="above"
+        color="accent"
+        [disabled]="disabled"
+        (click)="onRemoveSelectionClick()"
+    >
+        Remove Selection
+    </button>
+</div>

@@ -34,26 +34,26 @@ export function createLessOpFun(strRefValue: string): OperatorFun {
 
     return (
         isNumRef ?
-        (x: SimpleValueType) => {
-            if (x === undefined || x === null) {
-                return false;
-            } else {
-                const xType = typeof x;
-                if (xType === 'number') {
-                    return x < numRefValue;
-                } else if (xType === 'string') {
-                    const numX = +(x as string);
-                    const isNumX = !isNaN(numX);
-                    if (isNumX) {
-                        return numX < numRefValue;
-                    }
-                    return (x as string).localeCompare(strRefValue) < 0;
+            (x: SimpleValueType) => {
+                if (x === undefined || x === null) {
+                    return false;
                 } else {
-                    return (x + '').localeCompare(strRefValue) < 0;
+                    const xType = typeof x;
+                    if (xType === 'number') {
+                        return x < numRefValue;
+                    } else if (xType === 'string') {
+                        const numX = +(x as string);
+                        const isNumX = !isNaN(numX);
+                        if (isNumX) {
+                            return numX < numRefValue;
+                        }
+                        return (x as string).localeCompare(strRefValue) < 0;
+                    } else {
+                        return (x + '').localeCompare(strRefValue) < 0;
+                    }
                 }
-            }
-        } :
-        (x: SimpleValueType) => valueToStr(x).localeCompare(strRefValue) < 0
+            } :
+            (x: SimpleValueType) => valueToStr(x).localeCompare(strRefValue) < 0
     );
 }
 
@@ -64,26 +64,26 @@ export function createGreaterOpFun(refValue: SimpleValueType): OperatorFun {
 
     return (
         isNumRef ?
-        (x: SimpleValueType) => {
-            if (x === undefined || x === null) {
-                return false;
-            } else {
-                const xType = typeof x;
-                if (xType === 'number') {
-                    return x > numRef;
-                } else if (xType === 'string') {
-                    const numX = +(x as string);
-                    const isNumX = !isNaN(numX);
-                    if (isNumX) {
-                        return numX > numRef;
-                    }
-                    return (x as string).localeCompare(strRef) > 0;
+            (x: SimpleValueType) => {
+                if (x === undefined || x === null) {
+                    return false;
                 } else {
-                    return (x + '').localeCompare(strRef) > 0;
+                    const xType = typeof x;
+                    if (xType === 'number') {
+                        return x > numRef;
+                    } else if (xType === 'string') {
+                        const numX = +(x as string);
+                        const isNumX = !isNaN(numX);
+                        if (isNumX) {
+                            return numX > numRef;
+                        }
+                        return (x as string).localeCompare(strRef) > 0;
+                    } else {
+                        return (x + '').localeCompare(strRef) > 0;
+                    }
                 }
-            }
-        } :
-        (x: SimpleValueType) => valueToStr(x).localeCompare(strRef) > 0
+            } :
+            (x: SimpleValueType) => valueToStr(x).localeCompare(strRef) > 0
     );
 }
 
@@ -93,8 +93,8 @@ export function createEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const numRef = +strRef;
     const bolRef = (
         strRefLCase === 'true' || numRef === 1 ? true :
-        strRefLCase === 'false' || numRef === 0 ? false :
-        undefined
+            strRefLCase === 'false' || numRef === 0 ? false :
+                undefined
     );
 
     return (x: SimpleValueType) => {
@@ -114,8 +114,8 @@ export function createNotEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const numRef = +strRef;
     const bolRef = (
         strRefLCase === 'true' || numRef === 1 ? true :
-        strRefLCase === 'false' || numRef === 0 ? false :
-        undefined
+            strRefLCase === 'false' || numRef === 0 ? false :
+                undefined
     );
 
     return (x: SimpleValueType) => {
@@ -138,6 +138,7 @@ export function createContainsOpFun(refValue: SimpleValueType): OperatorFun {
 function createRegExp(pattern: string, ignoreCase?: boolean): RegExp {
     try {
         return new RegExp(pattern, ignoreCase ? 'i' : undefined);
+    // eslint-disable-next-line no-empty
     } catch (e) {}
 
     return null;

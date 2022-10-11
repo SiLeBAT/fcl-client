@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, ViewChild, EventEmitter, Output } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 import { MenuItemData } from '../../menu-item-data.model';
 import { Action } from '@ngrx/store';
@@ -7,15 +7,10 @@ import { Action } from '@ngrx/store';
     selector: 'fcl-nested-mat-menu-view',
     templateUrl: './nested-mat-menu-view.component.html'
 })
-export class NestedMatMenuViewComponent implements OnInit {
+export class NestedMatMenuViewComponent {
 
     @ViewChild('menu', { static: true }) matMenu: MatMenu;
     @Output() actionSelected = new EventEmitter<Action>();
-
-    constructor() { }
-
-    ngOnInit() {
-    }
 
     itemSelected(item: MenuItemData) {
         if (item.action) {

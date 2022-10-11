@@ -20,6 +20,7 @@
         [showZoom]="showZoom$ | async"
         (graphDataChange)="onGraphDataChange($event)"
         (contextMenuRequest)="onContextMenuRequest($event)"
+        #graph
     ></fcl-graph-view>
 
     <fcl-graph-legend-view

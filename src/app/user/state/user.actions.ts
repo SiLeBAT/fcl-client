@@ -23,8 +23,6 @@ export class UpdateUserSOA implements Action {
 
 export class LogoutUserMSA implements Action {
     readonly type = UserActionTypes.LogoutUserMSA;
-
-    constructor() { }
 }
 
 export class LoginActivatedSOA implements Action {

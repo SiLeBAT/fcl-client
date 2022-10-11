@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UserService } from '../../services/user.service';
@@ -13,15 +13,13 @@ import {
     selector: 'fcl-recovery-container',
     templateUrl: './recovery-container.component.html'
 })
-export class RecoveryContainerComponent implements OnInit {
+export class RecoveryContainerComponent {
     constructor(
         private userService: UserService,
         private alertService: AlertService,
         private router: Router,
         private spinnerService: SpinnerLoaderService
     ) {}
-
-    ngOnInit() {}
 
     recovery(email: ResetRequestDTO) {
         const message = `An email has been sent to ${email.email} with further instructions.

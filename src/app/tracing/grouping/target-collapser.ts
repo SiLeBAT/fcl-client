@@ -11,7 +11,7 @@ export class TargetCollapser {
     getGroupingChange(
         state: GroupingState,
         groupMode: GroupMode
-      ): GroupingChange {
+    ): GroupingChange {
 
         const oldGroups = state.groupSettings.filter(g => g.groupType === GroupType.SOURCE_GROUP);
         const ignoreMemberIdSet: Set<string> = new Set([].concat(...oldGroups.map(g => g.contains)));

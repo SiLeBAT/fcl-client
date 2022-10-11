@@ -1,7 +1,6 @@
-import { Graph, Vertex, Edge, VertexCounter } from './farm-to-fork.model';
+import { Graph, Vertex, Edge, VertexCounter } from './data-structures';
 
 class VertexSorter {
-    constructor() {}
 
     sortVertices(graph: Graph, timeLimit: number) {
         if (timeLimit === undefined) {
@@ -31,7 +30,7 @@ class VertexSorter {
         const temperatures: number[] = [];
 
         for (
-            // tslint:disable-next-line:one-variable-per-declaration
+            // eslint-disable-next-line one-var
             let iIteration = 0,
                 maxIterationIndex = ITERATION_LIMIT + 2 * temperatures.length;
             iIteration <= maxIterationIndex;
@@ -40,8 +39,8 @@ class VertexSorter {
             const iIterationRound: number = Math.floor(iIteration / 2);
             const temperature: number =
                 iIterationRound >= temperatures.length
-                ? 0
-                : temperatures[iIterationRound];
+                    ? 0
+                    : temperatures[iIterationRound];
             this.sortVerticesInLayers(layers, iIteration);
 
             this.transpose(layers, temperature);
@@ -67,7 +66,7 @@ class VertexSorter {
             improved = false;
             for (let iL: number = 0; iL <= maxRank; iL++) {
                 for (
-                    // tslint:disable-next-line:one-variable-per-declaration
+                    // eslint-disable-next-line one-var
                     let iV: number = 0, maxiV: number = layers[iL].length - 2;
                     iV <= maxiV;
                     iV++
@@ -129,7 +128,7 @@ class VertexSorter {
 
         let totalCrossing: number = 0;
 
-        // tslint:disable-next-line:one-variable-per-declaration
+        // eslint-disable-next-line one-var
         for (let iL: number = 0, nL = layers.length; iL < nL - 1; iL++) {
             const vertexCounter = new VertexCounter();
             for (const vertex of layers[iL]) {
@@ -149,7 +148,7 @@ class VertexSorter {
         const compareNumbers = (a: number, b: number) => a < b ? -1 : a === b ? 0 : 1;
 
         if (iIteration % 2 === 0) {
-            // tslint:disable-next-line:one-variable-per-declaration
+            // eslint-disable-next-line one-var
             for (let iL: number = 1, nL = layers.length; iL < nL; iL++) {
                 for (const vertex of layers[iL]) {
                     vertex.weight = this.getWeight(vertex, iL - 1);
@@ -177,8 +176,8 @@ class VertexSorter {
 
         const adjacentPositions: number[] =
             rank < vertex.layerIndex
-            ? vertex.outEdges.map(e => e.target.indexInLayer)
-            : vertex.inEdges.map(e => e.source.indexInLayer);
+                ? vertex.outEdges.map(e => e.target.indexInLayer)
+                : vertex.inEdges.map(e => e.source.indexInLayer);
         const pCount = adjacentPositions.length;
 
         if (pCount === 0) {
@@ -226,12 +225,8 @@ class VertexSorter {
             vertex.layerIndex = iL;
         }
 
-        const edgeOutIndex: number = edge.source.outEdges.findIndex(e => {
-            return e.target.index === edge.target.index;
-        });
-        const edgeInIndex: number = edge.target.inEdges.findIndex(e => {
-            return e.source.index === edge.source.index;
-        });
+        const edgeOutIndex: number = edge.source.outEdges.findIndex(e => e.target.index === edge.target.index);
+        const edgeInIndex: number = edge.target.inEdges.findIndex(e => e.source.index === edge.source.index);
         const newSpanStartEdge: Edge = new Edge(
             graph.vertices[edge.source.index],
             graph.vertices[maxVertexIndex + 1],

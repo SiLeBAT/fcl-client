@@ -1,5 +1,6 @@
 import cytoscape from 'cytoscape';
 import { GraphElementData } from '../graph.model';
+import { CSS_CLASS_HOVER } from './cy.constants';
 
 enum GraphSize {
     SMALL, LARGE, HUGE
@@ -19,21 +20,25 @@ export class CyStyle {
     private static readonly CONTROL_POINT_STEP_SIZE_FACTOR = 4;
     private static readonly MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
     private static readonly MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
-    private static readonly SCORE_ONE_SIZE_FACTOR = 2;
+    private static readonly SIZE_ONE_SIZE_FACTOR = 2;
+    private static readonly DEFAULT_ACTIVE_OVERLAY_OPACITY = 0.5;
+    private static readonly DEFAULT_ACTIVE_OVERLAY_COLOR = 'rgb(0, 0, 255)';
+    private static readonly DEFAULT_ACTIVE_OVERLAY_PADDING = 10;
 
-    private maxScore: number;
-    private minScore: number;
+    private maxSize: number;
+    private minSize: number;
 
     constructor(private graphData: GraphElementData, private styleConfig: StyleConfig) {
-        this.initScoreLimits();
+        this.initSizeLimits();
     }
 
-    private initScoreLimits(): void {
-        const scores = this.graphData.nodeData.map(n => n.station.score);
-        this.minScore = scores.length === 0 ? 0 : Math.min(...scores);
-        this.maxScore = scores.length === 0 ? 0 : Math.max(...scores);
+    private initSizeLimits(): void {
+        const sizes = this.graphData.nodeData.map(n => n.size);
+        this.minSize = sizes.length === 0 ? 0 : Math.min(...sizes);
+        this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     createCyStyle(): {} {
         const graphSize = this.getProperGraphSize();
         return this.createXGraphStyle(graphSize);
@@ -49,7 +54,7 @@ export class CyStyle {
         }
     }
 
-    private createNodeSizeStyle(): { height: string, width: string } {
+    private createNodeSizeStyle(): { height: string; width: string } {
         const nodeSizeMapString = this.createNodeSizeMapString();
         return {
             height: nodeSizeMapString,
@@ -68,16 +73,20 @@ export class CyStyle {
             .stylesheet()
             .selector('*')
             .style({
-                'overlay-color': 'rgb(0, 0, 255)',
-                'overlay-padding': 10,
-                'overlay-opacity': e => (e.scratch('_active') ? 0.5 : 0.0)
+                'overlay-color': CyStyle.DEFAULT_ACTIVE_OVERLAY_COLOR,
+                'overlay-padding': CyStyle.DEFAULT_ACTIVE_OVERLAY_PADDING,
+                'overlay-opacity': 0.0
+            })
+            .selector('.' + CSS_CLASS_HOVER)
+            .style({
+                'overlay-opacity': CyStyle.DEFAULT_ACTIVE_OVERLAY_OPACITY
             })
             .selector('node')
             .style({
                 ...(
                     graphSize !== GraphSize.HUGE ?
                         {
-                            content: 'data(label)',
+                            'content': 'data(label)',
                             'text-valign': 'bottom',
                             'text-halign': 'right',
                             'text-wrap': 'none',
@@ -95,7 +104,7 @@ export class CyStyle {
                 'border-width': nodeSize * CyStyle.NODE_SIZE_TO_BORDER_WIDTH_FACTOR,
                 'border-color': 'rgb(0, 0, 0)',
                 'z-index': 'data(zindex)',
-                color: 'rgb(0, 0, 0)'
+                'color': 'rgb(0, 0, 0)'
             })
 
             .selector('edge')
@@ -103,7 +112,7 @@ export class CyStyle {
                 ...(
                     graphSize !== GraphSize.HUGE ?
                         {
-                            content: 'data(label)',
+                            'content': 'data(label)',
                             'text-wrap': 'none',
                             'text-rotation': 'autorotate',
                             'font-size': fontSize
@@ -117,7 +126,8 @@ export class CyStyle {
                 'line-fill': 'linear-gradient',
                 'line-gradient-stop-colors': 'data(stopColors)',
                 'line-gradient-stop-positions': 'data(stopPositions)',
-                width: edgeWidth,
+                'z-index': 'data(zindex)',
+                'width': edgeWidth,
                 'arrow-scale': 1.4
             })
 
@@ -130,16 +140,22 @@ export class CyStyle {
                     CyStyle.SELECTED_NODE_BORDER_WIDTH_FACTOR
                 ),
                 'border-color': 'rgb(0, 0, 255)',
-                color: 'rgb(0, 0, 255)'
+                'color': 'rgb(0, 0, 255)'
             })
             .selector('edge:selected:inactive')
             .style({
-                width: selectedEdgeWidth,
-                color: 'rgb(0, 0, 255)',
+                'width': selectedEdgeWidth,
+                'color': 'rgb(0, 0, 255)',
                 'overlay-color': 'rgb(0, 0, 255)',
                 'overlay-padding': selectedEdgeWidth / 5.0,
                 'overlay-opacity': 1,
                 'target-arrow-color': 'rgb(0, 0, 255)'
+            })
+            .selector('edge:selected:inactive.' + CSS_CLASS_HOVER)
+            .style({
+                'overlay-color': CyStyle.DEFAULT_ACTIVE_OVERLAY_COLOR,
+                'overlay-padding': CyStyle.DEFAULT_ACTIVE_OVERLAY_PADDING,
+                'overlay-opacity': CyStyle.DEFAULT_ACTIVE_OVERLAY_OPACITY
             })
             .selector('edge[?wLabelSpace]')
             .style({
@@ -157,12 +173,12 @@ export class CyStyle {
             })
             .selector('node.ghost-element')
             .style({
-                color: 'rgb(179, 170, 179)',
+                'color': 'rgb(179, 170, 179)',
                 'border-color': 'rgb(179, 170, 179)'
             })
             .selector('edge.ghost-element')
             .style({
-                color: 'rgb(179, 170, 179)',
+                'color': 'rgb(179, 170, 179)',
                 'target-arrow-color': 'rgb(179, 170, 179)'
             })
             .selector('node[?isMeta]')
@@ -191,10 +207,10 @@ export class CyStyle {
     }
 
     private createNodeSizeMapString(): string {
-        if (this.maxScore > this.minScore) {
+        if (this.maxSize > this.minSize) {
             const minNodeSize = this.styleConfig.nodeSize;
-            const maxNodeSize = minNodeSize * CyStyle.SCORE_ONE_SIZE_FACTOR * this.maxScore;
-            return 'mapData(score, ' + this.minScore + ', ' + this.maxScore + ', ' + minNodeSize + ',' + maxNodeSize + ')';
+            const maxNodeSize = minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR * this.maxSize;
+            return 'mapData(size, ' + this.minSize + ', ' + this.maxSize + ', ' + minNodeSize + ',' + maxNodeSize + ')';
         } else {
             return this.styleConfig.nodeSize.toString();
         }

@@ -1,15 +1,16 @@
 import { Layout, Position, Size, Range, PositionMap } from '../../data.model';
 import { StyleConfig } from './cy-style';
-import { getEnclosingRectFromPoints } from '@app/tracing/util/geometry-utils';
+import { getCenterFromPoints, getDifference, getDistance, getEnclosingRectFromPoints, getRectCenter } from '@app/tracing/util/geometry-utils';
 import { getPositionBasedFitViewPort } from './position-based-viewport-fitting';
 import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
 import { GraphData, CyConfig, LayoutConfig, isPresetLayoutConfig } from './cy-graph';
 import { addCustomZoomAdapter } from './cy-adapter';
 import {
+    bbToRect,
     createMargin, getActivePositions, getAvailableSpace, getExtendedTargetIncludingViewPort,
     getZoomedGraphData, getZoomedNodePositions} from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
-import { CyNodeCollection, NodeId } from '../graph.model';
+import { CyEdge, CyNode, CyNodeCollection, NodeId } from '../graph.model';
 import _ from 'lodash';
 
 const DEFAULT_VIEWPORT = {
@@ -165,12 +166,12 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             },
             nodePositions:
                 viewport.zoom === oldZoom || this.cachedGraphData.nodePositions === undefined ?
-                super.nodePositions :
-                getZoomedNodePositions(
-                    this.cachedGraphData.nodeData,
-                    this.cachedGraphData.nodePositions,
-                    viewport.zoom
-                )
+                    super.nodePositions :
+                    getZoomedNodePositions(
+                        this.cachedGraphData.nodeData,
+                        this.cachedGraphData.nodePositions,
+                        viewport.zoom
+                    )
         };
 
         super.updateGraph(zoomedGraphData, this.style);
@@ -231,6 +232,84 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             };
 
             this.setViewPort(newViewPort);
+        }
+    }
+
+    private getRenderedNodeSize(cyNode: CyNode): number {
+        return Math.max(cyNode.renderedHeight(), cyNode.renderedWidth());
+    }
+
+    protected focusEdge(cyEdge: CyEdge): void {
+        const maxFocusRect = this.getMaxFocusRect();
+        const minEdgeLength = this.style.nodeSize;
+        const prefFocusRect = this.getPreferredFocusRect(maxFocusRect);
+        const edgeLength = this.getEdgeLength(cyEdge);
+        let edgeBB = cyEdge.renderedBoundingBox();
+        const source = cyEdge.source();
+        const target = cyEdge.target();
+        const sourceModelPos = this.nodePositions[source.id()];
+        const targetModelPos = this.nodePositions[target.id()];
+        const toBig = edgeBB.w > maxFocusRect.width || edgeBB.h > maxFocusRect.height;
+        const toSmall = edgeLength < minEdgeLength;
+        const isLoop = cyEdge.isLoop();
+        const nodePosModelDist = getDistance(sourceModelPos, targetModelPos);
+        const oldZoom = this.layout.zoom;
+        const focusPoint = getRectCenter(prefFocusRect);
+
+        if (!isLoop && (toSmall || toBig) && nodePosModelDist > 0) {
+            // zoom graph
+            let newZoom = oldZoom;
+            if (toSmall) {
+                // zoom = rendDist / modelDist = (sourceSize/2 + minEdgeLength + targetSize/2) / modelDist
+                const minNodePosRenderDist = this.getRenderedNodeSize(source) / 2 + minEdgeLength + this.getRenderedNodeSize(target) / 2;
+                newZoom = minNodePosRenderDist / nodePosModelDist;
+            } else {
+                // toBig
+                newZoom = Math.min(
+                    prefFocusRect.width / Math.abs(sourceModelPos.x - targetModelPos.x),
+                    prefFocusRect.height / Math.abs(sourceModelPos.y - targetModelPos.y)
+                );
+            }
+            newZoom = this.getNextFeasibleZoom(newZoom);
+            if (newZoom !== oldZoom) {
+                this.setViewPort({ zoom: newZoom, pan: this.layout.pan });
+                edgeBB = cyEdge.renderedBoundingBox();
+            }
+        }
+
+        const edgeIsDisplayed = !Number.isNaN(cyEdge.renderedMidpoint().x);
+        const refPos = edgeIsDisplayed ?
+            getRectCenter(bbToRect(edgeBB)) :
+            getCenterFromPoints([source.renderedPosition(), target.renderedPosition()]);
+
+        // ensure that edge target is within maxFocusRect
+        const targetBB = target.renderedBoundingBox({
+            includeEdges: false,
+            includeLabels: false
+        });
+        const leftExcess = maxFocusRect.left - (targetBB.x1 + (focusPoint.x - refPos.x));
+        if (leftExcess > 0) {
+            refPos.x -= leftExcess;
+        }
+        const rightExcess = (targetBB.x2 + (focusPoint.x - refPos.x)) - maxFocusRect.right;
+        if (rightExcess > 0) {
+            refPos.x += rightExcess;
+        }
+        const topExcess = maxFocusRect.top - (targetBB.y1 + (focusPoint.y - refPos.y));
+        if (topExcess > 0) {
+            refPos.y -= topExcess;
+        }
+        const bottomExcess = (targetBB.y2 + (focusPoint.y - refPos.y)) - maxFocusRect.bottom;
+        if (bottomExcess > 0) {
+            refPos.y += bottomExcess;
+        }
+
+        const panBy = getDifference(focusPoint, refPos);
+
+        if (panBy.x !== 0 || panBy.y !== 0) {
+            this.cy.panBy(panBy);
+        } else if (this.layout.zoom !== oldZoom) {
+            this.onLayoutChanged();
         }
     }
 
@@ -379,8 +458,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         const zoomChanged = graphData.layout.zoom !== oldGraphData.layout.zoom;
         const superNodePositions =
             zoomChanged || graphData.nodePositions !== oldGraphData.nodePositions ?
-            getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
-            super.data.nodePositions;
+                getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
+                super.data.nodePositions;
 
         let superGhostPositions: PositionMap | null = null;
         if (graphData.ghostData) {
@@ -388,8 +467,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 zoomChanged ||
                 oldGraphData.ghostData === null ||
                 oldGraphData.ghostData.posMap !== graphData.ghostData.posMap ?
-                getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout.zoom) :
-                super.data.ghostData.posMap;
+                    getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout.zoom) :
+                    super.data.ghostData.posMap;
         }
 
         super.updateGraph({

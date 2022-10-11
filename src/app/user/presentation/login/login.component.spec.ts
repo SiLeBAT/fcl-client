@@ -11,7 +11,7 @@ describe('LoginComponent', () => {
     let fixture: ComponentFixture<LoginComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 LoginComponent
@@ -107,7 +107,6 @@ describe('LoginComponent', () => {
         expect(component.loginForm.valid).toBeTruthy();
 
         let credentials: LoginCredentials;
-        // tslint:disable-next-line: rxjs-no-ignored-error
         component.login.subscribe((value) => credentials = value);
 
         component.onLogin();

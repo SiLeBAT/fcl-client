@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { SpinnerLoaderService } from '../../shared/services/spinner-loader.service';
 import { UserService } from '../services/user.service';
 import { AlertService } from '../../shared/services/alert.service';
@@ -21,36 +21,33 @@ export class UserEffects {
       private router: Router
     ) { }
 
-    @Effect()
-    loginUser$ = this.actions$.pipe(
-      ofType(userActions.UserActionTypes.LoginUserSSA),
-      tap(item => this.spinnerService.show()),
-      exhaustMap((action: userActions.LoginUserSSA) => this.userService.login(action.payload).pipe(
-        map((loginResponse: TokenizedUserDTO) => {
-            this.spinnerService.hide();
-            if (loginResponse && loginResponse.token) {
+    loginUser$ = createEffect(() => this.actions$.pipe(
+        ofType(userActions.UserActionTypes.LoginUserSSA),
+        tap(item => this.spinnerService.show()),
+        exhaustMap((action: userActions.LoginUserSSA) => this.userService.login(action.payload).pipe(
+            map((loginResponse: TokenizedUserDTO) => {
                 this.spinnerService.hide();
-                this.userService.setCurrentUser(loginResponse);
-                this.router.navigate(['/dashboard']).catch((err) => {
-                    throw new Error(`Unable to navigate: ${err}`);
-                });
-                return new userActions.UpdateUserSOA({ currentUser: loginResponse });
-            } else {
-                this.alertService.error('Login unsuccessful');
-                return new userActions.UpdateUserSOA({ currentUser: null });
-            }
+                if (loginResponse && loginResponse.token) {
+                    this.spinnerService.hide();
+                    this.userService.setCurrentUser(loginResponse);
+                    this.router.navigate(['/dashboard']).catch((err) => {
+                        throw new Error(`Unable to navigate: ${err}`);
+                    });
+                    return new userActions.UpdateUserSOA({ currentUser: loginResponse });
+                } else {
+                    this.alertService.error('Login unsuccessful');
+                    return new userActions.UpdateUserSOA({ currentUser: null });
+                }
 
-        }),
-        catchError(() => {
-            this.spinnerService.hide();
-            // tslint:disable-next-line:deprecation
-            return of(new userActions.UpdateUserSOA({ currentUser: null }));
-        })
-      ))
-    );
+            }),
+            catchError(() => {
+                this.spinnerService.hide();
+                return of(new userActions.UpdateUserSOA({ currentUser: null }));
+            })
+        ))
+    ));
 
-    @Effect()
-    logoutUser$ = this.actions$.pipe(
+    logoutUser$ = createEffect(() => this.actions$.pipe(
         ofType(userActions.UserActionTypes.LogoutUserMSA),
         mergeMap(() => {
 
@@ -64,5 +61,5 @@ export class UserEffects {
                 new ResetTracingStateSOA()
             ];
         })
-    );
+    ));
 }

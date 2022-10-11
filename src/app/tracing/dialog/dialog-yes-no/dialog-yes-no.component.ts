@@ -5,7 +5,7 @@ export interface DialogYesNoData {
     title: string;
     position: {
         top: string;
-        left: string
+        left: string;
     };
 }
 

@@ -12,7 +12,7 @@ describe('ActivateComponent', () => {
     let fixture: ComponentFixture<ActivateComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 ActivateComponent
@@ -27,8 +27,6 @@ describe('ActivateComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ActivateComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

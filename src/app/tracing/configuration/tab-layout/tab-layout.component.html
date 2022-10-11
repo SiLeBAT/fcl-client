@@ -1,13 +1,22 @@
-
+<!--
+    selectedTabChange event is not used here anymore
+    because it is fired in firefox to late
+-->
 <mat-tab-group
     [id]="tabGroupId"
     mat-stretch-tabs
     [selectedIndex]="activeTabIndex$ | async"
-    (selectedTabChange)="onTabGroupClick($event)">
+    (selectedIndexChange)="onSelectedIndexChange($event)"
+    (animationDone)="onAnimationDone()"
+    animationDuration="0ms">
 
-    <ng-container *ngFor="let tab of tabConfigs">
-
-        <mat-tab [label]="tab.tabLabel">
+    <ng-container *ngFor="let tab of tabConfigs; index as i">
+        <!--
+            if the active tab has not finished animation all other tabs are blocked
+            in firefox the user can otherwise switch in fast succession tabs and the system may become
+            inresponsive for a short time due to procession of the different tab activations for big models
+        -->
+        <mat-tab [label]="tab.tabLabel" [disabled]="animatingTabIndex !== null && i !== animatingTabIndex" (click)="onTabClick($event)">
             <ng-container [ngTemplateOutlet]="tab.tabTemplate">
             </ng-container>
         </mat-tab>

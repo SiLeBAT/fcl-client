@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
 import {
     VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
-    Size, StationGrouper, NodeLayoutInfo
-} from './datatypes';
-import { Position, StationData, DeliveryData, SampleData } from '../../data.model';
+    Size, StationGrouper} from './datatypes';
+import { Position, StationData, DeliveryData, SampleData, StationId } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
 import { assignToGrid } from './grid-assigner';
@@ -26,18 +25,18 @@ export class VisioReporter {
 
     static createReport(
         data: FclElements,
-        nodeInfoMap: Map<string, NodeLayoutInfo>,
+        statIdToPosMap: Record<StationId, Position>,
         canvas: any,
         roaSettings: ROASettings,
         stationGrouper: StationGrouper
-        ): VisioReport {
+    ): VisioReport {
 
-        const stationGrid = assignToGrid(data, nodeInfoMap);
+        const stationGrid = assignToGrid(data, statIdToPosMap);
         const stationGroups = stationGrouper.groupStations([].concat(...stationGrid).filter(s => s !== null));
         const infoProvider = new InformationProvider(data, roaSettings);
         const cellGroups = getCellGroups(stationGrid, stationGroups);
 
-        const labelCreator = new CustomLabelCreator(this.getFontMetrics(canvas), roaSettings.labelSettings);
+        const labelCreator = new CustomLabelCreator(this.getFontMetrics(canvas), roaSettings.labelSettings, roaSettings.roundNumbers);
         const boxCreator = new BoxCreator(labelCreator, infoProvider);
 
         const infoGrid = this.mapMatrix(stationGrid, (s) => s !== null ? infoProvider.getStationInfo(s) : null);

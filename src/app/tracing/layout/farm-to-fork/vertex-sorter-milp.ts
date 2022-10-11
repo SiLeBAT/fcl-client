@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Graph, Vertex } from './farm-to-fork.model';
+import { Graph, Vertex } from './data-structures';
 import { lpSolve, LPModel, LPResult } from './../../../shared/lp-solver';
 import { createVirtualVertices } from './shared';
 
@@ -8,8 +8,8 @@ function sortVerticesAccordingToResult(graph: Graph, lpResult: LPResult) {
     for (const layer of graph.layers) {
         layer.sort((a, b) => (
             a.indexInLayer < b.indexInLayer ?
-            (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
-            (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)
+                (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
+                (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)
         ));
 
         for (let i: number = layer.length - 1; i >= 0; i--) { layer[i].indexInLayer = i; }

@@ -5,9 +5,9 @@ import {
 
 @Component({
     selector: 'fcl-standard-filter-view',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './standard-filter-view.component.html',
     styleUrls: ['./standard-filter-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
 export class StandardFilterViewComponent {
@@ -16,8 +16,6 @@ export class StandardFilterViewComponent {
     @Input() filterTerm: string;
 
     @Output() filterTermChange = new EventEmitter<string>();
-
-    constructor() { }
 
     onFilterTermChange(filterTerm: string): void {
         this.filterTerm = filterTerm;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { LoginCredentials } from '../../models/user.model';
@@ -9,28 +9,14 @@ import { LoginCredentials } from '../../models/user.model';
     styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-    @Output() login = new EventEmitter();
+    @Output() login = new EventEmitter<LoginCredentials>();
     loginForm: FormGroup;
-
-    constructor() {}
 
     ngOnInit() {
         this.loginForm = new FormGroup({
             email: new FormControl(null, [Validators.required, Validators.email]),
             password: new FormControl(null, Validators.required)
         });
-    }
-
-    getEmailErrorMessage() {
-        return this.loginForm.controls.email.hasError('required')
-            ? 'You must enter a valid email'
-            : this.loginForm.controls.email.hasError('email')
-            ? 'Not a valid email'
-            : '';
-    }
-
-    getPasswordErrorMessage() {
-        return this.loginForm.controls.password.hasError('required') ? 'Password is required' : '';
     }
 
     onLogin() {
@@ -40,5 +26,10 @@ export class LoginComponent implements OnInit {
         };
         this.login.emit(credentials);
         this.loginForm.reset();
+    }
+
+    validateField(fieldName: string) {
+        return this.loginForm.controls[fieldName].valid
+               || this.loginForm.controls[fieldName].untouched;
     }
 }

@@ -1,7 +1,7 @@
 {
     "$id": "http://fcl.bfr.bund.de/schemas/schema.json",
     "type": "object",
-    "title": "FCL-JSON-Exchange-Format-Schema Version 1.1.1",
+    "title": "FCL-JSON-Exchange-Format-Schema Version 1.1.2",
     "description": "JSON exchange format of FoodChain-Lab app",
     "properties": {
         "data": {
@@ -60,6 +60,11 @@
                                 "joinEdges": { "type": "boolean" },
                                 "mergeDeliveriesType": { "type": "string" },
                                 "showMergedDeliveriesCounts": { "type": "boolean" },
+                                "invisibleEdges": {
+                                    "type": ["array", "null"],
+                                    "description": "ids of invisible deliveries",
+                                    "items": { "type": "string" }
+                                },
                                 "highlightConditions": {
                                     "type": ["array", "null"],
                                     "description": "delivery highlighting definitions",
@@ -88,6 +93,11 @@
                             "type": "object",
                             "properties": {
                                 "skipEdgelessNodes": { "type": "boolean" },
+                                "invisibleNodes": {
+                                    "type": ["array", "null"],
+                                    "description": "ids of invisible stations/groups",
+                                    "items": { "type": "string" }
+                                },
                                 "highlightConditions": {
                                     "type": ["array", "null"],
                                     "description": "station highlighting definitions",

@@ -57,8 +57,11 @@ export interface DataTable {
     rows: TableRow[];
 }
 
-export interface StationRow extends TableRow {}
-export interface StationTable extends DataTable {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface StationRow extends TableRow { }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface StationTable extends DataTable { }
 
 export interface FclElements {
     stations: StationStoreData[];
@@ -167,6 +170,7 @@ export interface GraphSettings {
     schemaLayout: Layout | null;
     gisLayout: Layout | null;
     ghostStation: StationId | null;
+    ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
 
@@ -178,7 +182,6 @@ export interface HighlightingSettings {
 }
 
 export interface MakeElementsInvisibleInputState {
-    selectedElements: SelectedElements;
     highlightingSettings: HighlightingSettings;
     tracingSettings: TracingSettings;
 }
@@ -264,6 +267,7 @@ export interface StationTracingSettings extends TraceableElementSettings {
     outbreak: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DeliveryTracingSettings extends TraceableElementSettings {
 }
 
@@ -296,7 +300,9 @@ export enum GraphType {
 
 export enum MapType {
     SHAPE_FILE,
-    BLACK_AND_WHITE,
+    // the following code is commented because
+    // the Black & White Map might be deactivatd only temporaryly
+    // BLACK_AND_WHITE,
     MAPNIK
 }
 
@@ -320,25 +326,14 @@ export enum ObservedType {
     BACKWARD = 'backward' as any
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ShapeFileData {
     // todo: to define
 }
 
-interface TracingResult {
-    maxScore: number;
-}
-
-interface SharedHighlightingStats {
-    counts: Record<HighlightingRuleId, number>;
-}
-export interface StationHighlightingStats extends SharedHighlightingStats {
-    conflicts: Record<HighlightingRuleId, number>;
-}
-
-export interface DeliveryHighlightingStats extends SharedHighlightingStats {}
 export interface HighlightingStats {
-    stationRuleStats: StationHighlightingStats;
-    deliveryRuleStats: DeliveryHighlightingStats;
+    counts: Record<HighlightingRuleId, number>;
+    conflicts: Record<HighlightingRuleId, number>;
 }
 export interface DataServiceData {
     statMap: Record<StationId, StationData>;
@@ -349,10 +344,12 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
-    tracingResult: TracingResult;
     legendInfo: LegendInfo;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    tracingPropsUpdatedFlag: {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    stationAndDeliveryHighlightingUpdatedFlag: {};
     highlightingStats: HighlightingStats;
-
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
 }
@@ -383,6 +380,7 @@ export interface HighlightingInfo {
 
 export interface StationHighlightingInfo extends HighlightingInfo {
     shape: NodeShapeType;
+    size: number;
 }
 
 export interface DeliveryHighlightingInfo extends HighlightingInfo {
@@ -418,7 +416,8 @@ export interface SelectedElements {
 export enum DialogAlignment {
     LEFT, CENTER, RIGHT
 }
-export interface BasicGraphState {
+
+export interface DataServiceInputState {
     fclElements: FclElements;
     groupSettings: GroupData[];
     tracingSettings: TracingSettings;
@@ -426,17 +425,17 @@ export interface BasicGraphState {
     selectedElements: SelectedElements;
 }
 
-export interface SharedGraphState extends BasicGraphState {
+export interface SharedGraphState extends DataServiceInputState {
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
     ghostStation: StationId | null;
+    ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
 
-export interface GraphState extends SharedGraphState {
+export interface GisGraphState extends SharedGraphState {
     layout: Layout;
 }
-
 export interface SchemaGraphState extends SharedGraphState {
     stationPositions: Record<StationId, Position>;
     layout: Layout;
@@ -452,7 +451,6 @@ export interface SetHighlightingSettingsPayload {
 
 export interface SetInvisibleElementsPayload {
     highlightingSettings: HighlightingSettings;
-    selectedElements: SelectedElements;
     tracingSettings: TracingSettings;
 }
 

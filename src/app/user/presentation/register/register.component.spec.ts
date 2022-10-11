@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 
 import { RegisterComponent } from './register.component';
 import { MaterialModule } from '../../../shared/material.module';
@@ -14,7 +13,7 @@ describe('RegisterComponent', () => {
     let fixture: ComponentFixture<RegisterComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 RegisterComponent
@@ -23,8 +22,7 @@ describe('RegisterComponent', () => {
                 MaterialModule,
                 SharedModule,
                 RouterTestingModule,
-                NoopAnimationsModule,
-                PasswordStrengthMeterModule
+                NoopAnimationsModule
             ]
         }).compileComponents()
             .then(() => {
@@ -115,7 +113,6 @@ describe('RegisterComponent', () => {
         expect(component.registerForm.valid).toBeTruthy();
 
         let registerRequest: RegistrationCredentials;
-        // tslint:disable-next-line: rxjs-no-ignored-error
         component.register.subscribe((value) => registerRequest = value);
 
         component.onRegister();

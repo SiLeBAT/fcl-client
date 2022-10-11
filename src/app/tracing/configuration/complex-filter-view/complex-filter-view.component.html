@@ -6,6 +6,7 @@
 
             <fcl-property-selector-view
                 class="fcl-complex-filter-form-field"
+                [disabled]="disabled"
                 [value]="conditions[i].propertyName"
                 (valueChange)="onPropertyChange($event, i)"
                 [availableProperties]="availableProperties"
@@ -13,6 +14,7 @@
 
             <fcl-operator-selector-view
                 class="fcl-complex-filter-form-field"
+                [disabled]="disabled"
                 [value]="conditions[i].operationType"
                 (valueChange)="onOperatorChange($event, i)"
                 [availableOperatorTypes] = "availableOperatorTypes"
@@ -20,6 +22,7 @@
 
             <fcl-value-editor-view
                 class="fcl-complex-filter-form-field"
+                [disabled]="disabled"
                 [value]="conditions[i].value"
                 (valueChange)="onValueChange($event, i)"
                 [availableValues]="propToValuesMap[conditions[i].propertyName || '']"
@@ -27,6 +30,7 @@
 
             <fcl-junktor-selector-view
                 class="fcl-complex-filter-form-field"
+                [disabled]="disabled"
                 *ngIf="i < (conditions.length - 1)"
                 [value]="conditions[i].junktorType"
                 (valueChange)="onJunktorChange($event, i)"
@@ -37,6 +41,7 @@
                 *ngIf="i === (conditions.length - 1)"
                 mat-stroked-button
                 class="fcl-filter-condition-button"
+                [disabled]="disabled"
                 matTooltip="Add condition"
                 matTooltipPosition="above"
                 color="accent"
@@ -47,6 +52,7 @@
             <button
                 mat-stroked-button
                 class="fcl-filter-condition-button"
+                [disabled]="disabled"
                 matTooltip="Remove condition"
                 matTooltipPosition="above"
                 color="accent"

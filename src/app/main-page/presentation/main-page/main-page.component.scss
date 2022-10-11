@@ -1,5 +1,3 @@
-@import '../../../../assets/sass/themes';
-
 .fcl-wrapper {
     display: grid;
     grid-template-columns: 1fr;
@@ -27,6 +25,10 @@
 .fcl-page-header-container,
 .jam-page-footer-container {
     display: flex;
+}
+
+.fcl-page-header-container {
+    min-width: 1296px;
 }
 
 .fcl-page-body-item {

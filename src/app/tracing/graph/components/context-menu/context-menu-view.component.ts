@@ -16,8 +16,6 @@ export class ContextMenuViewComponent {
 
     @Output() itemSelected = new EventEmitter<Action>();
 
-    constructor() {}
-
     open(pos: Position, menuData: MenuItemData[]): void {
         this.graphMenuTrigger.menuData = { menuItems: menuData };
         Utils.openMenu(this.graphMenuTrigger, this.graphMenuTriggerElement, pos);

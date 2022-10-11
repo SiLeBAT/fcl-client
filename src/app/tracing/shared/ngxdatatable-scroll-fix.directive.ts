@@ -1,5 +1,9 @@
-import { Directive, ElementRef, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
-import { DatatableComponent, TableColumn } from '@swimlane/ngx-datatable';
+import {
+    Directive, ElementRef, OnInit, AfterViewChecked, OnDestroy, Input, ChangeDetectorRef, DoCheck
+} from '@angular/core';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { Observable, Subscription } from 'rxjs';
+import { ActivityState } from '../configuration/configuration.model';
 import { Size } from '../data.model';
 
 const CLASS_DATATABLE_BODY = 'datatable-body';
@@ -7,6 +11,11 @@ const CLASS_DATATABLE_HEADER = 'datatable-header';
 const CLASS_EMPTY_ROW = 'empty-row';
 const CLASS_DATATABLE_ROW_CENTER = 'datatable-row-center';
 const EVENT_SCROLL = 'scroll';
+
+interface ScrollPosition {
+    left: number;
+    top: number;
+}
 
 /**
  * This directive fixes 2 ngx-datatable issues:
@@ -17,40 +26,50 @@ const EVENT_SCROLL = 'scroll';
  * )
  * 2. the scroll pos loss of tables in reactivated mat-tabs (
  * if the table is contained in a mat-tab, a non zero scroll pos gets lost after the tab is inactivated
- * (the user swithces to a different tab) and reactivated again,
+ * (the user switches to a different tab) and reactivated again,
  * the reactivated table might show rendering issues (missing rows)
  * )
  */
 @Directive({
     selector: '[fclNgxDatatableScrollFix]'
 })
-export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked, OnDestroy {
+export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked, OnDestroy, DoCheck {
 
     private emptyRowElement: HTMLElement | null = null;
     private dtRowCenterElement: HTMLElement | null = null;
     private dtHeaderElement: HTMLElement | null = null;
     private dtBodyElement: HTMLElement | null = null;
     private lastRowCount: number = -1;
-    private lastColumns: TableColumn[] = [];
 
-    private lastWidth: number = null;
-    private lastBodyScrollPosition = {
+    private lastBodyScrollPosition: ScrollPosition = {
         top: 0,
         left: 0
     };
 
+    @Input() activityState$: Observable<ActivityState> | null = null;
+    @Input() cycleStart$: Observable<void> | null = null;
+
+    private restoreScrollPosOnPosWidth = false;
+    private activityState_ = ActivityState.OPEN;
+    private subscriptions_: Subscription[] = [];
+
     constructor(
         private hostElement: ElementRef,
-        private host: DatatableComponent
+        private host: DatatableComponent,
+        private cdRef: ChangeDetectorRef
     ) {}
+
+    // lifecycle hooks start
 
     ngOnInit() {
         this.dtBodyElement = this.hostElement.nativeElement.getElementsByClassName(CLASS_DATATABLE_BODY)[0];
         this.dtBodyElement.addEventListener(
             EVENT_SCROLL,
-            event => {
+            () => {
+                this.captureScrollState();
                 if (this.host.rows && this.host.rows.length === 0) {
                     // 'No data available.' placeholder is shown
+                    // this event is sent to sync column and row offset
                     this.host.onBodyScroll({
                         offsetX: this.dtBodyElement.scrollLeft,
                         offsetY: this.dtBodyElement.scrollTop
@@ -58,9 +77,34 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
                 }
             }
         );
+        if (this.activityState$ !== null && this.activityState$ !== undefined) {
+            this.subscriptions_.push(this.activityState$.subscribe(
+                (state) => this.setActivityState(state),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                () => {}
+            ));
+        }
+        if (this.cycleStart$ !== null && this.cycleStart$ !== undefined) {
+            this.subscriptions_.push(this.cycleStart$.subscribe(
+                () => {
+                    if (this.activityState_ !== ActivityState.INACTIVE && this.restoreScrollPosOnPosWidth) {
+                        this.cdRef.markForCheck();
+                    }
+                },
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                () => {}
+            ));
+        }
+    }
+
+    ngDoCheck(): void {
+        if (this.restoreScrollPosOnPosWidth) {
+            this.restoreScrollPosOnPosWidth = this.isScrollPosRestoreRequired();
+        }
     }
 
     ngAfterViewChecked() {
+
         if (this.dtHeaderElement === null) {
             this.setHeaderElement();
         }
@@ -86,33 +130,14 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
         // and back to activ
         // the reason is probably the zero width of the ngx-datatable within the inactiv mat-tab
         if (this.dtBodyElement) {
-            const elementRect: Size = this.hostElement.nativeElement.getBoundingClientRect();
-            const oldScrollPos = this.lastBodyScrollPosition;
-            if (elementRect.width > 0) {
-                // container mat tab is active
-                // in an inactive mat tab ngx datatable has a width of 0
-                if (this.lastWidth !== null && this.lastWidth === 0) {
-                    // ngx datatable width was 0 on last check
-                    if (
-                        this.lastColumns === this.host.columns &&
-                        (oldScrollPos.top !== 0 || oldScrollPos.left !== 0)
-                    ) {
-                        // columns did not changed
-                        // last scroll pos on was not 0, 0
-                        // restore scroll pos
-                        this.dtBodyElement.scrollTo(oldScrollPos.left, oldScrollPos.top);
-                    }
-                } else {
-                    // store scroll pos & last columns
-                    this.lastColumns = this.host.columns;
-                    this.lastBodyScrollPosition = {
-                        top: this.dtBodyElement.scrollTop,
-                        left: this.dtBodyElement.scrollLeft
-                    };
+            if (this.restoreScrollPosOnPosWidth) {
+
+                const tableSize: Size = this.getSize();
+
+                if (tableSize.width > 0) {
+                    this.restoreScrollPos();
                 }
             }
-            // store last width
-            this.lastWidth = elementRect.width;
         }
     }
 
@@ -120,6 +145,46 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
         this.unsetElementRefs();
         this.dtHeaderElement = null;
         this.dtBodyElement = null;
+        this.subscriptions_.forEach(s => s.unsubscribe());
+        this.subscriptions_ = [];
+    }
+
+    // lifecycle hooks end
+
+    private setActivityState(state: ActivityState): void {
+        if (state !== this.activityState_) {
+            if (this.activityState_ === ActivityState.INACTIVE) {
+                this.restoreScrollPosOnPosWidth = this.isScrollPosRestoreRequired();
+            }
+            this.activityState_ = state;
+            if (state !== ActivityState.INACTIVE && this.restoreScrollPosOnPosWidth) {
+                this.cdRef.markForCheck();
+            }
+        }
+    }
+
+    private isLastScrollPositionPositive(): boolean {
+        return this.lastBodyScrollPosition.top !== 0 || this.lastBodyScrollPosition.left !== 0;
+    }
+
+    private isScrollPosRestoreRequired(): boolean {
+        return this.isLastScrollPositionPositive();
+    }
+
+    private getSize(): Size {
+        return this.hostElement.nativeElement.getBoundingClientRect();
+    }
+
+    private captureScrollState(): void {
+        this.lastBodyScrollPosition = {
+            top: this.dtBodyElement.scrollTop,
+            left: this.dtBodyElement.scrollLeft
+        };
+    }
+
+    private restoreScrollPos(): void {
+        this.restoreScrollPosOnPosWidth = false;
+        this.dtBodyElement.scrollTo(this.lastBodyScrollPosition.left, this.lastBodyScrollPosition.top);
     }
 
     private unsetElementRefs(): void {
@@ -144,7 +209,7 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
             this.dtHeaderElement = dtHeaders[0];
             this.dtHeaderElement.addEventListener(
                 EVENT_SCROLL,
-                event => {
+                () => {
                     const scrollLeft = this.dtHeaderElement.scrollLeft;
                     if (scrollLeft !== 0) {
                         this.dtHeaderElement.scrollTo(0, this.dtHeaderElement.scrollTop);

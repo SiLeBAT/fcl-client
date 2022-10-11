@@ -1,32 +1,43 @@
 import { Injectable } from '@angular/core';
 import {
-    StationData, DeliveryData, ObservedType, BasicGraphState, DataServiceData
+    StationData, DeliveryData, ObservedType, DataServiceData, DataServiceInputState
 } from '../data.model';
 import * as _ from 'lodash';
 import { TracingService } from './tracing.service';
 import { HighlightingService } from './highlighting.service';
 import { Utils } from '../util/non-ui-utils';
 
+interface CacheUpdateOptions {
+    updateAll: boolean;
+    updateGroups: boolean;
+    updateTraceSet: boolean;
+    updateVisibilities: boolean;
+    updateScore: boolean;
+    updateTrace: boolean;
+    updateHighlighting: boolean;
+    updateSelection: boolean;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class DataService {
 
-    private cachedState: BasicGraphState;
+    private cachedState: DataServiceInputState | null = null;
 
-    private cachedData: DataServiceData;
+    private cachedData: DataServiceData | null = null;
 
     constructor(private tracingService: TracingService, private higlightingService: HighlightingService) {}
 
-    getData(state: BasicGraphState): DataServiceData {
+    getData(state: DataServiceInputState): DataServiceData {
         this.applyState(state);
         return { ...this.cachedData };
     }
 
-    private createStations(state: BasicGraphState): {
-        statMap: { [key: string]: StationData },
-        stations: StationData[],
-        getStatById(stationIds: string[]): StationData[]
+    private createStations(state: DataServiceInputState): {
+        statMap: { [key: string]: StationData };
+        stations: StationData[];
+        getStatById(stationIds: string[]): StationData[];
     } {
         const stations: StationData[] = state.fclElements.stations.map(storeData => ({
             ...storeData,
@@ -63,10 +74,10 @@ export class DataService {
         };
     }
 
-    private createDeliveries(state: BasicGraphState): {
-        delMap: { [key: string]: DeliveryData },
-        deliveries: DeliveryData[],
-        getDelById(deliveryIds: string[]): DeliveryData[]
+    private createDeliveries(state: DataServiceInputState): {
+        delMap: { [key: string]: DeliveryData };
+        deliveries: DeliveryData[];
+        getDelById(deliveryIds: string[]): DeliveryData[];
     } {
         const deliveries: DeliveryData[] = state.fclElements.deliveries.map(storeData => ({
             ...storeData,
@@ -95,7 +106,7 @@ export class DataService {
         };
     }
 
-    private applyGroupSettings(state: BasicGraphState, data: DataServiceData) {
+    private applyGroupSettings(state: DataServiceInputState, data: DataServiceData) {
 
         if (this.cachedState && this.cachedState.fclElements === state.fclElements) {
             // remove old groups
@@ -145,6 +156,8 @@ export class DataService {
                 properties: []
             };
 
+            this.applyConsensusPropsToGroup(members, group);
+
             data.getDelById(group.incoming).forEach(d => d.target = group.id);
             data.getDelById(group.outgoing).forEach(d => d.source = group.id);
             members.forEach(m => m.contained = true);
@@ -154,32 +167,54 @@ export class DataService {
         }
     }
 
-    private applyTracingSettingsToStations(state: BasicGraphState, data: DataServiceData) {
+    private applyConsensusPropsToGroup(members: StationData[], group: StationData): void {
+        const cprops = Utils.createObjectFromArray(members[0].properties, p => p.name, p => p.value);
+
+        for (const member of members) {
+            const propCheck = Utils.createSimpleStringSet(Object.keys(cprops));
+            for (const prop of member.properties) {
+                const value = cprops[prop.name];
+                if (value !== undefined) {
+                    if (prop.value !== value) {
+                        delete cprops[prop.name];
+                    }
+                    delete propCheck[prop.name];
+                }
+            }
+            for (const propName of Object.keys(propCheck)) {
+                delete cprops[propName];
+            }
+        }
+        group.properties = members[0].properties.filter(p => cprops[p.name] !== undefined);
+    }
+
+    private applyTracingSettingsToStations(state: DataServiceInputState, data: DataServiceData) {
         for (const traceSet of state.tracingSettings.stations) {
             const station = data.statMap[traceSet.id];
             if (station) {
                 station.outbreak = traceSet.outbreak;
                 station.observed = traceSet.observed;
-                station.crossContamination = traceSet.crossContamination,
-                station.killContamination = traceSet.killContamination,
+                station.crossContamination = traceSet.crossContamination;
+                station.killContamination = traceSet.killContamination;
                 station.weight = traceSet.weight;
             }
         }
     }
 
-    private applyTracingSettingsToDeliveries(state: BasicGraphState, data: DataServiceData) {
+    private applyTracingSettingsToDeliveries(state: DataServiceInputState, data: DataServiceData) {
         for (const traceSet of state.tracingSettings.deliveries) {
             const delivery = data.delMap[traceSet.id];
             if (delivery) {
                 delivery.observed = traceSet.observed;
-                delivery.crossContamination = traceSet.crossContamination,
-                delivery.killContamination = traceSet.killContamination,
+                delivery.crossContamination = traceSet.crossContamination;
+                delivery.killContamination = traceSet.killContamination;
                 delivery.weight = traceSet.weight;
             }
         }
     }
 
-    private applySelection(state: BasicGraphState, data: DataServiceData) {
+    private applySelection(state: DataServiceInputState, data: DataServiceData) {
+
         data.stations.forEach(s => s.selected = false);
         data.getStatById(state.selectedElements.stations).forEach(s => s.selected = true);
         data.statSel = Utils.createSimpleStringSet(state.selectedElements.stations);
@@ -189,71 +224,106 @@ export class DataService {
         data.delSel = Utils.createSimpleStringSet(state.selectedElements.deliveries);
     }
 
-    private updateCache(state: BasicGraphState,
-        all = true, groups = true, traceSet = true,
-        visibilities = true, score = true, trace = true, selection = true) {
-        groups = all || groups;
-        traceSet = groups || traceSet;
-        visibilities = traceSet || visibilities;
-        score = visibilities || score;
-        trace = visibilities || trace;
-        selection = groups || visibilities || selection;
+    private getFullCacheUpdateOptions(options: Partial<CacheUpdateOptions>): CacheUpdateOptions {
+        const updateAll = options.updateAll === true;
+        const updateGroups = updateAll || options.updateGroups;
+        const updateTraceSet = updateGroups || options.updateTraceSet;
+        const updateVisibilities = updateTraceSet || options.updateVisibilities;
+        const updateScore = updateVisibilities || options.updateScore;
+        const updateTrace = updateVisibilities || options.updateTrace;
+        const updateHighlighting = updateVisibilities || updateScore || updateTrace || options.updateHighlighting;
+        const updateSelection = updateGroups || updateVisibilities || options.updateSelection;
 
-        if (all) {
+        return {
+            updateAll: updateAll,
+            updateGroups: updateGroups,
+            updateSelection: updateSelection,
+            updateVisibilities: updateVisibilities,
+            updateTraceSet: updateTraceSet,
+            updateHighlighting: updateHighlighting,
+            updateScore: updateScore,
+            updateTrace: updateTrace
+        };
+    }
+
+    private updateCache(state: DataServiceInputState, options: Partial<CacheUpdateOptions>) {
+        options = this.getFullCacheUpdateOptions(options);
+
+        if (options.updateAll) {
             this.cachedData = {
                 ...this.createStations(state),
                 ...this.createDeliveries(state),
-                statSel: undefined,
-                delSel: undefined,
-                statVis: undefined,
-                delVis: undefined,
-                tracingResult: undefined,
+                statSel: {},
+                delSel: {},
+                statVis: {},
+                delVis: {},
+                tracingPropsUpdatedFlag: {},
+                stationAndDeliveryHighlightingUpdatedFlag: {},
                 legendInfo: undefined,
                 highlightingStats: undefined
             };
         }
-        if (groups) {
+        if (options.updateGroups) {
             this.applyGroupSettings(state, this.cachedData);
         }
-        if (traceSet) {
+        if (options.updateTraceSet) {
             this.applyTracingSettingsToStations(state, this.cachedData);
             this.applyTracingSettingsToDeliveries(state, this.cachedData);
         }
-        if (visibilities) {
+
+        if (options.updateVisibilities) {
             this.higlightingService.applyVisibilities(state, this.cachedData);
         }
-        if (score) {
+
+        if (options.updateScore) {
             this.tracingService.updateScores(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
-        if (trace) {
+        if (options.updateTrace) {
             this.tracingService.updateTrace(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
-        if (visibilities || score || trace) {
+        if (options.updateHighlighting) {
             this.higlightingService.applyHighlightingProps(state, this.cachedData);
+            this.cachedData.stationAndDeliveryHighlightingUpdatedFlag = {};
         }
-        if (selection) {
+        if (options.updateSelection) {
             this.applySelection(state, this.cachedData);
+        }
+
+        if (options.updateTrace || options.updateScore || options.updateTraceSet) {
+            this.cachedData.tracingPropsUpdatedFlag = {};
         }
     }
 
-    private applyState(state: BasicGraphState) {
+    private applyState(state: DataServiceInputState) {
         if (
             !this.cachedState ||
             this.cachedState.fclElements !== state.fclElements
-         ) {
-            this.updateCache(state);
-        } else if (this.cachedState.groupSettings !== state.groupSettings) {
-            this.updateCache(state, false);
+        ) {
+            // new data model was loaded
+            this.updateCache(state, { updateAll: true });
+        } else if (
+            this.cachedState.groupSettings !== state.groupSettings &&
+            !_.isEqual(this.cachedState.groupSettings, state.groupSettings)
+        ) {
+            // group settings changed
+            this.updateCache(state, { updateGroups: true });
         } else if (
             this.cachedState.highlightingSettings !== state.highlightingSettings ||
             this.cachedState.highlightingSettings.invisibleStations !== state.highlightingSettings.invisibleStations ||
             this.cachedState.highlightingSettings.invisibleDeliveries !== state.highlightingSettings.invisibleDeliveries
         ) {
-            this.updateCache(state, false, false, true, true);
-        } else if (this.cachedState.tracingSettings !== state.tracingSettings) {
-            this.updateCache(state, false, false);
+            // station/delivery related highlightingSettings changed
+            this.updateCache(state, {
+                updateVisibilities: true,
+                updateHighlighting: true
+            });
+        } else if (
+            this.cachedState.tracingSettings !== state.tracingSettings &&
+            !_.isEqual(this.cachedState.tracingSettings, state.tracingSettings)
+        ) {
+            this.updateCache(state, { updateTraceSet: true });
         } else if (this.cachedState.selectedElements !== state.selectedElements) {
-            this.updateCache(state, false, false, false, false, false, false);
+            this.updateCache(state, { updateSelection: true });
         }
         this.cachedState = { ...state };
     }

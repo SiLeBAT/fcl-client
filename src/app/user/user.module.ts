@@ -1,7 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
@@ -43,7 +42,6 @@ import { NewsActivateViewComponent } from './presentation/news-activate-view/new
         CommonModule,
         ContentModule,
         ReactiveFormsModule,
-        PasswordStrengthMeterModule,
         SharedModule,
         CoreModule,
         MainPageModule,

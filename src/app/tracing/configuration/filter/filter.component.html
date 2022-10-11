@@ -10,6 +10,6 @@
     [activeTabIndex$]="activeTabIndex$"
     [tabGroupId]="tabGroupId"
     [tabConfigs]="tabConfigs"
-    (tabGroupIndex)="onTabChange($event)">
-
+    (tabGroupIndex)="onTabChange($event)"
+    (animationDone)="onTabAnimationDone()">
 </fcl-tab-layout>

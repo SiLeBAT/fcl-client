@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '../../../tracing/state/tracing.reducers';
@@ -12,7 +12,7 @@ import * as tracingActions from '../../../tracing/state/tracing.actions';
     templateUrl: './page-header-container.component.html',
     styleUrls: ['./page-header-container.component.scss']
 })
-export class PageHeaderContainerComponent implements OnInit {
+export class PageHeaderContainerComponent {
     appName = environment.appName;
     tracingActive$ = this.store.pipe(
         select(TracingSelectors.getTracingActive)
@@ -28,9 +28,6 @@ export class PageHeaderContainerComponent implements OnInit {
     );
 
     constructor(private store: Store<fromTracing.State>) { }
-
-    ngOnInit() {
-    }
 
     toggleRightSideBar(open: boolean) {
         this.store.dispatch(new tracingActions.ShowConfigurationSideBarSOA({ showConfigurationSideBar: open }));

@@ -28,11 +28,11 @@ export class BoxCreator {
         }
     }
 
-    private static getRight(object: {relPosition: Position, size: Size}): number {
+    private static getRight(object: {relPosition: Position; size: Size}): number {
         return object.relPosition.x + object.size.width;
     }
 
-    private static getBottom(object: {relPosition: Position, size: Size}): number {
+    private static getBottom(object: {relPosition: Position; size: Size}): number {
         return object.relPosition.y + object.size.height;
     }
 
@@ -86,7 +86,7 @@ export class BoxCreator {
         }
     }
 
-    private static hcAlign(boxes: { size: Size, relPosition: Position }[][], margin: number) {
+    private static hcAlign(boxes: { size: Size; relPosition: Position }[][], margin: number) {
         if (boxes.length > 0) {
 
             const widths = boxes.map(row => this.getSize(row, 0).width);
@@ -289,16 +289,16 @@ export class BoxCreator {
 
     createGroupBoxes(
         boxGrid: VisioBox[][],
-        cellGroups: { label: string, cells: GridCell[] }[],
+        cellGroups: { label: string; cells: GridCell[] }[],
         graphLayers: GraphLayer[]
-        ): VisioBox[] {
+    ): VisioBox[] {
 
         const groupCreator = new GroupContainerCreator();
         return groupCreator.createGroupBoxes(
             boxGrid,
             cellGroups.map(g => ({ label: this.labelCreator.getLabel([g.label], null), cells: g.cells })),
             graphLayers
-            );
+        );
     }
 
     resortLotBoxes(connectors: VisioConnector[]) {

@@ -63,7 +63,6 @@ describe('UserService', () => {
             password: 'test'
         };
         userService.login(loginCredentials)
-            // tslint:disable-next-line: rxjs-no-ignored-error
             .subscribe((currentResponse: TokenizedUserDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
@@ -93,7 +92,6 @@ describe('UserService', () => {
         };
 
         userService.register(registrationCredentials)
-            // tslint:disable-next-line: rxjs-no-ignored-error
             .subscribe((currentResponse: RegistrationRequestResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
@@ -116,7 +114,6 @@ describe('UserService', () => {
         };
 
         userService.recoverPassword(resetRequest)
-            // tslint:disable-next-line: rxjs-no-ignored-error
             .subscribe((currentResponse: PasswordResetRequestResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
@@ -139,7 +136,6 @@ describe('UserService', () => {
         };
 
         userService.resetPassword(resetRequest, token)
-            // tslint:disable-next-line: rxjs-no-ignored-error
             .subscribe((currentResponse: PasswordResetResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
@@ -159,7 +155,6 @@ describe('UserService', () => {
         const token = 'test';
 
         userService.activateAccount(token)
-            // tslint:disable-next-line: rxjs-no-ignored-error
             .subscribe((currentResponse: ActivationResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
@@ -179,7 +174,6 @@ describe('UserService', () => {
         const token = 'test';
 
         userService.adminActivateAccount(token)
-            // tslint:disable-next-line: rxjs-no-ignored-error
             .subscribe((currentResponse: ActivationResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });

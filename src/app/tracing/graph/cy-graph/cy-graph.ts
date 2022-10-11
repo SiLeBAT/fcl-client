@@ -43,8 +43,8 @@ export interface GraphData {
     nodePositions: PositionMap;
     layout: Layout;
     selectedElements: SelectedGraphElements;
-    propsChangedFlag: {};
-    edgeLabelChangedFlag: {};
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    propsUpdatedFlag: {};
     ghostData: GraphGhostData;
     hoverEdges: EdgeId[];
 }

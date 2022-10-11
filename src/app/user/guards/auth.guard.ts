@@ -22,21 +22,21 @@ export class AuthGuard implements CanActivate, OnDestroy {
         return this.store.pipe(
             select(fromUser.getCurrentUser),
             takeWhile(() => this.componentActive))
-        .pipe(
-              map((currentUser: TokenizedUser) => {
-                  if (currentUser) {
-                      const helper = new JwtHelperService();
-                      const isExpired = helper.isTokenExpired(currentUser.token);
+            .pipe(
+                map((currentUser: TokenizedUser) => {
+                    if (currentUser) {
+                        const helper = new JwtHelperService();
+                        const isExpired = helper.isTokenExpired(currentUser.token);
 
-                      if (isExpired) {
-                          this.alertService.error('Not authorized, please login.');
-                          this.store.dispatch(new userActions.LogoutUserMSA());
-                      }
-                      return !isExpired;
-                  }
-                  return false;
-              })
-          );
+                        if (isExpired) {
+                            this.alertService.error('Not authorized, please login.');
+                            this.store.dispatch(new userActions.LogoutUserMSA());
+                        }
+                        return !isExpired;
+                    }
+                    return false;
+                })
+            );
     }
 
     ngOnDestroy() {

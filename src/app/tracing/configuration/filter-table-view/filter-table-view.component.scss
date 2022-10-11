@@ -211,3 +211,29 @@
 .fcl-font-style-italic {
     font-style: italic;
 }
+
+.ngx-datatable.fcl-filtertable.material {
+    &.single-selection,
+    &.multi-selection,
+    &.multi-click-selection {
+        .datatable-body-row {
+            &.active,
+            &.active .datatable-row-group {
+                .datatable-body-cell-label .fcl-tree-action-icon {
+                    color: rgb(0, 0, 0);
+                }
+
+                .fcl-row-cell-invisible {
+                    .datatable-body-cell-label {
+                        color: $fcl-accent-200;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.fcl-textfilter-header-cell {
+    display: flex;
+    flex-direction: column;
+}

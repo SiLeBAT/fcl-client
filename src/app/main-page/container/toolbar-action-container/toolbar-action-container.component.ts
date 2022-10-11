@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as TracingSelectors from '@app/tracing/state/tracing.selectors';
@@ -6,7 +6,7 @@ import * as tracingActions from '@app/tracing/state/tracing.actions';
 import * as tracingIOActions from '@app/tracing/io/io.actions';
 import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
-import { FclData, GraphSettings, BasicGraphState, DataServiceData, GraphType, MapType } from '@app/tracing/data.model';
+import { FclData, GraphSettings, DataServiceData, GraphType, MapType, DataServiceInputState } from '@app/tracing/data.model';
 import { AlertService } from '@app/shared/services/alert.service';
 import { IOService } from '@app/tracing/io/io.service';
 import { DataService } from './../../../tracing/services/data.service';
@@ -14,6 +14,8 @@ import { Utils as UIUtils } from './../../../tracing/util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { Constants } from '@app/tracing/util/constants';
+import { ExampleMenuComponent } from '@app/main-page/presentation/example-menu/example-menu.component';
+import { ExampleData } from '@app/main-page/model/types';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
@@ -21,6 +23,7 @@ import { Constants } from '@app/tracing/util/constants';
     styleUrls: ['./toolbar-action-container.component.scss']
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
+    @ViewChild(ExampleMenuComponent) exampleMenuComponent: ExampleMenuComponent;
 
     tracingActive$ = this.store.pipe(
         select(TracingSelectors.getTracingActive)
@@ -31,12 +34,18 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     currentUser$ = this.store.pipe(
         select(fromUser.getCurrentUser)
     );
+    fileName$ = this.store.pipe(
+        select(TracingSelectors.selectSourceFileName)
+    );
 
     graphSettings: GraphSettings;
     hasGisInfo = false;
 
     availableMapTypes: MapType[] = [];
-    private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE, MapType.SHAPE_FILE];
+    // the following code is commented because
+    // the Black & White Map might be deactivatd only temporaryly
+    // private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE, MapType.SHAPE_FILE];
+    private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.SHAPE_FILE];
 
     private componentActive: boolean = true;
 
@@ -51,26 +60,26 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         const graphSettings$: Observable<GraphSettings> = this.store
             .pipe(
                 select(TracingSelectors.getGraphSettings)
-        );
+            );
 
-        const basicGraphData$: Observable<BasicGraphState> = this.store
+        const dataServiceInputState$: Observable<DataServiceInputState> = this.store
             .pipe(
-                select(TracingSelectors.getBasicGraphData)
-        );
+                select(TracingSelectors.selectDataServiceInputState)
+            );
 
         combineLatest([
             graphSettings$,
-            basicGraphData$
+            dataServiceInputState$
         ]).pipe(
             takeWhile(() => this.componentActive)
         ).subscribe(
-            ([graphSettings, basicGraphData]) => {
+            ([graphSettings, dataServiceInputState]) => {
                 this.availableMapTypes = this.mapTypes.filter(
                     mapType => mapType !== MapType.SHAPE_FILE || graphSettings.shapeFileData
                 );
                 this.graphSettings = graphSettings;
 
-                const dataServiceData: DataServiceData = this.dataService.getData(basicGraphData);
+                const dataServiceData: DataServiceData = this.dataService.getData(dataServiceInputState);
                 this.hasGisInfo = UIUtils.hasVisibleStationsWithGisInfo(dataServiceData.stations);
             },
             error => {
@@ -84,8 +93,8 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingIOActions.LoadFclDataMSA({ dataSource: fileList }));
     }
 
-    loadExampleData() {
-        this.ioService.getFclData(Constants.EXAMPLE_MODEL_FILE_PATH)
+    loadExampleDataFile(exampleData: ExampleData) {
+        this.ioService.getFclData(exampleData.path)
             .then((data: FclData) => {
                 this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
 

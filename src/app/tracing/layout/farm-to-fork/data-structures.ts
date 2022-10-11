@@ -10,7 +10,7 @@ export class Graph {
     }
 
     insertEdge(from: Vertex, to: Vertex) {
-        // tslint:disable-next-line
+        // eslint-disable-next-line
         const edge: Edge = new Edge(from, to, false);
         from.outEdges.push(edge);
         to.inEdges.push(edge);
@@ -45,6 +45,8 @@ export class Graph {
     }
 }
 
+export type VertexIndex = number;
+
 export class Vertex {
     index: number;
     name: string;
@@ -58,9 +60,12 @@ export class Vertex {
     typeCode: number;
     isVirtual: boolean = false;
 
-    size: number = 0;
-
-    constructor() {}
+    outerSize: number = 0;
+    innerSize: number = 0;
+    bottomPadding: number;
+    topPadding: number;
+    layerScale: number = 1;
+    innerScale: number = 1;
 }
 
 export enum CompressionType {
@@ -99,7 +104,6 @@ export class VertexCounter {
     private lastAboveIndex: number = -1;
     private lastVertexCountRequest: number = -1;
 
-    constructor() {}
     insertVertex(position: number) {
         if (this.positionCount.has(position)) {
             this.positionCount.set(position, this.positionCount.get(position) + 1);
@@ -127,8 +131,8 @@ export class VertexCounter {
 
         let index: number =
       position > this.lastPositionRequest && this.lastAboveIndex >= 0
-        ? this.lastAboveIndex
-        : 0;
+          ? this.lastAboveIndex
+          : 0;
         const n: number = this.positions.length;
         while (index < n && this.positions[index] <= position) {
             index++;

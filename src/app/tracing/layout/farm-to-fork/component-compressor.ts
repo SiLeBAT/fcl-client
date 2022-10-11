@@ -1,43 +1,51 @@
-import { Vertex, Graph, Edge, CompressedVertexGroup, CompressionType } from './farm-to-fork.model';
+import { Vertex, Graph, Edge, CompressedVertexGroup, CompressionType, VertexIndex } from './data-structures';
 import * as _ from 'lodash';
+import { getMinVertexPairSpecificDistance } from './shared';
 
 export function compressSimpleSources(graph: Graph, vertexDistance: number) {
 
-    for (const layer of graph.layers) {
-        const targetToSourceMap: Map<number, Vertex[]> = new Map();
+    for (let layerIndex = 0; layerIndex < graph.layers.length; layerIndex++) {
+        let layer = graph.layers[layerIndex];
+        const targetToSourcesMap = getTargetToSimpleSourcesMap(layer);
 
-        for (const source of layer.filter(
-            v => v.inEdges.length === 0 && v.outEdges.length === 1
-        )) {
-            if (!targetToSourceMap.has(source.outEdges[0].target.index)) {
-                targetToSourceMap.set(source.outEdges[0].target.index, [source]);
-            } else { targetToSourceMap.get(source.outEdges[0].target.index).push(source); }
-        }
-
-        targetToSourceMap.forEach((sources: Vertex[], targetIndex: number) => {
+        targetToSourcesMap.forEach((sources: Vertex[]) => {
             if (sources.length >= 2) {
                 // the target is connected to at least 2 sources
-                const target: Vertex = sources[0].outEdges[0].target;
+                const leftSource = sources[0];
+                const rightSource = sources[sources.length - 1];
+                const target: Vertex = leftSource.outEdges[0].target;
                 const vertexGroup: CompressedVertexGroup = new CompressedVertexGroup(
                     sources,
                     CompressionType.SOURCE_COMPRESSION
                 );
                 graph.insertVertex(vertexGroup);
-                vertexGroup.size = -vertexDistance;
+                vertexGroup.outerSize = 0;
                 const newEdge: Edge = new Edge(vertexGroup, target, false);
                 vertexGroup.outEdges.push(newEdge);
 
-                for (const source of sources) {
-                    vertexGroup.size += vertexDistance + source.size;
+                sources.forEach((source, memberIndex) => {
+
+                    if (memberIndex > 0) {
+                        const vertexPairDistance = getMinVertexPairSpecificDistance(sources[memberIndex - 1], source, vertexDistance);
+                        vertexGroup.outerSize += vertexPairDistance;
+                    }
+                    vertexGroup.outerSize += source.outerSize;
                     const oldEdge: Edge = source.outEdges[0];
                     newEdge.weight += oldEdge.weight;
                     target.inEdges = target.inEdges.filter(e => e !== oldEdge);
-                }
-                const newLayer: Vertex[] = layer.filter(v => sources.indexOf(v) < 0);
+                });
+
+                vertexGroup.bottomPadding = leftSource.bottomPadding;
+                vertexGroup.topPadding = rightSource.topPadding;
+                vertexGroup.innerSize = vertexGroup.outerSize - vertexGroup.topPadding - vertexGroup.bottomPadding;
+
+                const newLayer: Vertex[] = _.difference(layer, sources);
+
                 vertexGroup.indexInLayer = newLayer.length;
-                vertexGroup.layerIndex = sources[0].layerIndex;
+                vertexGroup.layerIndex = layerIndex;
                 newLayer.push(vertexGroup);
-                graph.layers[sources[0].layerIndex] = newLayer;
+                graph.layers[layerIndex] = newLayer;
+                layer = newLayer;
                 target.inEdges.push(newEdge);
             }
         });
@@ -45,44 +53,91 @@ export function compressSimpleSources(graph: Graph, vertexDistance: number) {
 }
 
 export function compressSimpleTargets(graph: Graph, vertexDistance: number) {
+    for (let layerIndex = 0; layerIndex < graph.layers.length; layerIndex++) {
 
-    for (const layer of graph.layers) {
-        const sourceToTargetMap: Map<number, Vertex[]> = new Map();
+        let layer = graph.layers[layerIndex];
+        const sourceToTargetsMap = getSourceToSimpleTargetsMap(layer);
 
-        for (const target of layer.filter(
-            v => v.outEdges.length === 0 && v.inEdges.length === 1
-        )) {
-            if (!sourceToTargetMap.has(target.inEdges[0].source.index)) {
-                sourceToTargetMap.set(target.inEdges[0].source.index, [target]);
-            } else { sourceToTargetMap.get(target.inEdges[0].source.index).push(target); }
-        }
-        sourceToTargetMap.forEach((targets: Vertex[], sourceIndex: number) => {
+        sourceToTargetsMap.forEach((targets: Vertex[]) => {
             if (targets.length >= 2) {
-                const source: Vertex = targets[0].inEdges[0].source;
+
+                const leftTarget = targets[0];
+                const rightTarget = targets[targets.length - 1];
+
+                const source: Vertex = leftTarget.inEdges[0].source;
                 const vertexGroup: CompressedVertexGroup = new CompressedVertexGroup(
                     targets,
                     CompressionType.TARGET_COMPRESSION
                 );
                 graph.insertVertex(vertexGroup);
-                vertexGroup.size = -vertexDistance;
+                vertexGroup.outerSize = 0;
                 const newEdge: Edge = new Edge(source, vertexGroup, false);
                 vertexGroup.inEdges.push(newEdge);
 
-                for (const target of targets) {
-                    vertexGroup.size += vertexDistance + target.size;
+                targets.forEach((target, memberIndex) => {
+                    if (memberIndex > 0) {
+                        const vertexPairDistance = getMinVertexPairSpecificDistance(targets[memberIndex - 1], target, vertexDistance);
+                        vertexGroup.outerSize += vertexPairDistance;
+                    }
+                    vertexGroup.outerSize += target.outerSize;
                     const oldEdge: Edge = target.inEdges[0];
                     newEdge.weight += oldEdge.weight;
                     source.outEdges = source.outEdges.filter(e => e !== oldEdge);
-                }
-                const newLayer: Vertex[] = layer.filter(v => targets.indexOf(v) < 0);
+                });
+
+                vertexGroup.bottomPadding = leftTarget.bottomPadding;
+                vertexGroup.topPadding = rightTarget.topPadding;
+                vertexGroup.innerSize = vertexGroup.outerSize - vertexGroup.bottomPadding - vertexGroup.topPadding;
+
+                const newLayer: Vertex[] = _.difference(layer, targets);
+
                 vertexGroup.indexInLayer = newLayer.length;
-                vertexGroup.layerIndex = targets[0].layerIndex;
+                vertexGroup.layerIndex = layerIndex;
                 newLayer.push(vertexGroup);
-                graph.layers[targets[0].layerIndex] = newLayer;
+                graph.layers[layerIndex] = newLayer;
+                layer = newLayer;
                 source.outEdges.push(newEdge);
             }
         });
     }
+}
+
+function getSourceToSimpleTargetsMap(layer: Vertex[]): Map<VertexIndex, Vertex[]> {
+    const sourceToTargetsMap: Map<number, Vertex[]> = new Map();
+    const simpleTargets = layer.filter(v => isSimpleTarget(v));
+    for (const target of simpleTargets) {
+        const sourceIndex = target.inEdges[0].source.index;
+        if (!sourceToTargetsMap.has(sourceIndex)) {
+            sourceToTargetsMap.set(sourceIndex, [target]);
+        } else {
+            const sourceTargets = sourceToTargetsMap.get(sourceIndex);
+            sourceTargets.push(target);
+        }
+    }
+    return sourceToTargetsMap;
+}
+
+function getTargetToSimpleSourcesMap(layer: Vertex[]): Map<VertexIndex, Vertex[]> {
+    const targetToSourcesMap: Map<number, Vertex[]> = new Map();
+    const simpleSources = layer.filter(v => isSimpleSource(v));
+    for (const source of simpleSources) {
+        const targetIndex = source.outEdges[0].target.index;
+        if (!targetToSourcesMap.has(targetIndex)) {
+            targetToSourcesMap.set(targetIndex, [source]);
+        } else {
+            const targetSources = targetToSourcesMap.get(targetIndex);
+            targetSources.push(source);
+        }
+    }
+    return targetToSourcesMap;
+}
+
+function isSimpleTarget(vertex: Vertex): boolean {
+    return vertex.outEdges.length === 0 && vertex.inEdges.length === 1;
+}
+
+function isSimpleSource(vertex: Vertex): boolean {
+    return vertex.inEdges.length === 0 && vertex.outEdges.length === 1;
 }
 
 function insertVertices(layer: Vertex[], index: number, vertices: Vertex[]) {
@@ -115,12 +170,17 @@ export function decompressSimpleSources(graph: Graph, vertexDistance: number) {
                     vertexGroup.compressedVertices
                 );
 
-                let y: number = vertex.y - vertex.size / 2;
+                let y: number = vertexGroup.y - vertexGroup.innerSize / 2 * vertexGroup.innerScale;
 
                 // set position of sources and link to target
                 for (const source of vertexGroup.compressedVertices) {
-                    source.y = y + source.size / 2;
-                    y += source.size + vertexDistance;
+
+                    if (source !== vertexGroup.compressedVertices[0]) {
+                        y += (source.topPadding + source.innerSize / 2) * vertexGroup.innerScale;
+                    }
+                    source.y = y;
+                    y += (source.innerSize / 2 + source.bottomPadding + vertexDistance) * vertexGroup.innerScale;
+
                     target.inEdges.push(source.outEdges[0]);
                 }
             }
@@ -131,8 +191,8 @@ export function decompressSimpleSources(graph: Graph, vertexDistance: number) {
 export function decompressSimpleTargets(graph: Graph, vertexDistance: number) {
     for (const layer of graph.layers) {
         for (const vertex of layer.filter(
-      v => v instanceof CompressedVertexGroup
-    )) {
+            v => v instanceof CompressedVertexGroup
+        )) {
             const vertexGroup: CompressedVertexGroup = vertex as CompressedVertexGroup;
             if (vertexGroup.compressionType === CompressionType.TARGET_COMPRESSION) {
                 const source: Vertex = vertexGroup.inEdges[0].source;
@@ -146,12 +206,17 @@ export function decompressSimpleTargets(graph: Graph, vertexDistance: number) {
                     vertexGroup.compressedVertices
                 );
 
-                let y: number = vertex.y - vertex.size / 2;
+                let y = vertex.y - vertex.innerSize / 2 * vertexGroup.innerScale;
 
                 // set position of targets and link to source
                 for (const target of vertexGroup.compressedVertices) {
-                    target.y = y + target.size / 2;
-                    y += target.size + vertexDistance;
+
+                    if (target !== vertexGroup.compressedVertices[0]) {
+                        y += (target.topPadding + target.innerSize / 2) * vertexGroup.innerScale ;
+                    }
+                    target.y = y;
+                    y += (target.innerSize / 2 + target.bottomPadding + vertexDistance) * vertexGroup.innerScale;
+
                     source.outEdges.push(target.inEdges[0]);
                 }
             }

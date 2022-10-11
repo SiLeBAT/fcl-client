@@ -1,13 +1,11 @@
 import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './farm-to-fork.model';
+import { Graph, Vertex, Edge } from './data-structures';
 import { BusinessTypeRanker } from './business-type-ranker';
 
 class CycleRemover {
 
     private isMarked: boolean[];
     private isStacked: boolean[];
-
-    constructor() {}
 
     init(graph: Graph) {
         this.isMarked = _.fill(Array(graph.vertices.length), false);
@@ -27,6 +25,7 @@ class CycleRemover {
 
         const reversedOutEdges: Set<Edge> = new Set();
 
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let iE = 0; iE < vertex.outEdges.length; iE++) {
             const outEdge: Edge = vertex.outEdges[iE];
             if (this.isStacked[outEdge.target.index]) {

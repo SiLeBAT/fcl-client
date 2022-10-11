@@ -12,25 +12,7 @@ export class ComplexFilterUtils {
     static readonly DEFAULT_JUNKTOR_TYPE = JunktorType.AND;
 
     static extractDataColumns(dataTable: DataTable): TableColumn[] {
-        return dataTable.columns.filter((tableColumn: TableColumn) => {
-            return (tableColumn.id !== 'highlightingInfo');
-        });
-    }
-
-    static extractPropToValuesMap(dataTable: DataTable, dataColumns: TableColumn[]): PropToValuesMap {
-        const propToValuesMap: PropToValuesMap = {};
-        for (const column of dataColumns) {
-            const values: string[] = _.uniq(
-                dataTable.rows
-                    .map(r => r[column.id] as (string | number | boolean))
-                    .filter(v => v !== undefined && v !== null)
-                    .map(v => typeof v === 'string' ? v : '' + v)
-                ).sort();
-            propToValuesMap[column.id] = values;
-        }
-        propToValuesMap[''] = _.uniq([].concat(...Object.values(propToValuesMap))).sort();
-
-        return propToValuesMap;
+        return dataTable.columns.filter((tableColumn: TableColumn) => (tableColumn.id !== 'highlightingInfo'));
     }
 
     static complexFilterConditionsToLogicalConditions(filterConditions: ComplexFilterCondition[]): LogicalCondition[][] {
@@ -53,11 +35,13 @@ export class ComplexFilterUtils {
             groups.push(newGroup);
         }
 
-        return groups
+        const result = groups
             .map(group => group
                 .filter(condition => ComplexFilterUtils.isConditionValid(condition))
                 .sort(ComplexFilterUtils.conditionComparator))
             .filter(group => group.length > 0);
+
+        return result.length === 0 ? [[]] : result;
     }
 
     static isConditionValid(condition: LogicalCondition): boolean {
@@ -113,16 +97,6 @@ export class ComplexFilterUtils {
                     filterConditions.push(filterCondition);
                 }
             }
-        }
-        if (filterConditions.length === 0) {
-            filterConditions.push({
-                propertyName: null,
-                operationType: null,
-                value: '',
-                junktorType: JunktorType.AND
-            });
-        } else {
-            filterConditions[filterConditions.length - 1].junktorType = JunktorType.AND;
         }
 
         return filterConditions;

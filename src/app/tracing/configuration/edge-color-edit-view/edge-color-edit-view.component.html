@@ -1,0 +1,90 @@
+<div class="fcl-edit-rule">
+    <div class="fcl-edit-rule-name-and-symbol-fields">
+        <fcl-rule-name-view
+            class="fcl-edit-rule-name-field"
+            [ruleName]="ruleName"
+            (ruleNameChange) = "onRuleNameChange($event)"
+        >
+        </fcl-rule-name-view>
+        <fcl-edge-symbol-view *ngIf="color !== null"
+            class="fcl-edit-rule-symbol"
+            [edgeColor]="color"
+        ></fcl-edge-symbol-view>
+    </div>
+    <div class="fcl-edit-rule-color-and-service-fields">
+        <div class="fcl-edit-rule-color-fields">
+            <span class="fcl-edit-rule-color-label">Colour:</span>
+            <fcl-color-selector-view
+                [color]="color"
+                (colorChange)="onColorChange($event)"
+                preferredColorPickerPosition="right"
+            ></fcl-color-selector-view>
+        </div>
+        <fcl-rule-service-view
+            (addSelection)="onAddSelection()"
+            (removeSelection)="onRemoveSelection()"
+        ></fcl-rule-service-view>
+    </div>
+
+    <fcl-complex-filter-view
+        class="fcl-edit-rule-complex-filter"
+        [conditions] = "complexFilterConditions"
+        [availableProperties] = "availableProperties"
+        [availableOperatorTypes] = "availableOperatorTypes"
+        [propToValuesMap] = "propToValuesMap"
+        (conditionsChange) = "onComplexFilterChange($event)"
+    ></fcl-complex-filter-view>
+
+    <div class="fcl-edit-rule-action-button-container">
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            [matTooltip]="applyTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onApplyRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                Apply
+            </button>
+        </div>
+
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            matTooltip="Close dialogue">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onCancelRule()"
+                >
+                <mat-icon>clear</mat-icon>
+                Cancel
+            </button>
+        </div>
+
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            [matTooltip]="okTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onOkRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                OK
+            </button>
+        </div>
+
+    </div>
+</div>

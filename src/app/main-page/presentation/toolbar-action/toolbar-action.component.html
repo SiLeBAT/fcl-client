@@ -1,4 +1,7 @@
 <div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
+    <div *ngIf="fileName !== null" class="fcl-file-name-wrapper fcl-separator mat-body">
+        <div class="fcl-file-name" [matTooltip]="fileName">File: {{ fileNameWoExt }}</div>
+    </div>
     <div class="fcl-graph-type fcl-separator mat-body">
         <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
             <mat-radio-button class="fcl-graph-type-button" [value]="'Graph'" matTooltip="Show Schematic Graph">
@@ -19,19 +22,28 @@
     </div>
 
     <button
+        class="fcl-no-shrink"
         mat-button
-        (click)="onLoadExampleData()"
         matTooltip="Load Example Data"
-        data-cy="fcl-example">
+        data-cy="fcl-load-example-button"
+        [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu">
         <mat-icon>wb_sunny</mat-icon>
         Load Example Data
+        <mat-icon>arrow_drop_down</mat-icon>
     </button>
+    <fcl-example-menu
+        #exampleMenuComponent
+        [exampleData]="exampleData"
+        (loadExampleDataFile)="onLoadExampleDataFile($event)">
+    </fcl-example-menu>
+
     <input
         id="fileInput"
         #fileInput
         type="file"
     />
     <button
+        class="fcl-no-shrink"
         mat-button
         (click)="onSelectModelFile()"
         matTooltip="Upload data">
@@ -39,7 +51,7 @@
         Upload Data
     </button>
     <button
-        class="fcl-separator"
+        class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="mainPageService.onSave()"
         matTooltip="Download data">
@@ -47,7 +59,7 @@
         Download Data
     </button>
     <button
-        class="fcl-separator"
+        class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="mainPageService.onSaveImage()"
         matTooltip="Save image">
@@ -55,7 +67,7 @@
         Save Image
     </button>
     <button
-        class="fcl-separator"
+        class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="mainPageService.onROALayout()"
         matTooltip="Generate ROA Layout">

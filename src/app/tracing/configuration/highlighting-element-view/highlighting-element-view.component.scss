@@ -1,0 +1,30 @@
+$fcl-font-size: 0.8rem;
+
+.fcl-highlighting-element-container {
+    display: grid;
+    grid-gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.fcl-font-size-08 {
+    font-size: 0.8rem;
+    color: rgb(0, 0, 0);
+}
+
+.fcl-highlighting-expansion-panels {
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.fcl-border-radius-zero {
+    border-radius: 0;
+}
+
+.fcl-rules-list-view-container {
+    display: block;
+}
+
+.fcl-edit-rule-dialog {
+    font-size: $fcl-font-size;
+}

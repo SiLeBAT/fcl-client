@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../../shared/services/alert.service';
 import * as tracingStateActions from '../state/tracing.actions';
 import * as fromTracing from '../state/tracing.reducers';
@@ -22,8 +22,7 @@ export class IOEffects {
         private store: Store<fromTracing.State>
     ) {}
 
-    @Effect()
-    loadFclDataMSA$ = this.actions$.pipe(
+    loadFclDataMSA$ = createEffect(() => this.actions$.pipe(
         ofType<ioActions.LoadFclDataMSA>(ioActions.IOActionTypes.LoadFclDataMSA),
         mergeMap(action => {
             const fileList: FileList = action.payload.dataSource;
@@ -31,15 +30,15 @@ export class IOEffects {
                 return from(this.ioService.getFclData(fileList[0])).pipe(
                     map((data: FclData) => new tracingStateActions.LoadFclDataSuccess({ fclData: data })),
                     catchError((error) => {
-                        let errorMsg = `Data cannot be uploaded.`;
+                        let errorMsg = 'Data cannot be uploaded.';
                         if (error instanceof InputEncodingError) {
-                            errorMsg += ` Please ensure to upload only data encoded in UTF-8 format.`;
+                            errorMsg += ' Please ensure to upload only data encoded in UTF-8 format.';
                         } else if (error instanceof InputFormatError) {
-                            errorMsg += ` Please select a .json file with the correct format!${error.message ? ' (' + error.message + ')' : ''}`;
+                            errorMsg += ` Please select a .json file with the correct format!${error.message ? ' ' + error.message + '' : ''}`;
                         } else if (error instanceof InputDataError) {
-                            errorMsg += ` Please select a .json file with valid data!${error.message ? ' (' + error.message + ')' : ''}`;
+                            errorMsg += ` Please select a .json file with valid data!${error.message ? ' ' + error.message + '' : ''}`;
                         } else {
-                            errorMsg += ` Error: ${error}`;
+                            errorMsg += ` Error: ${ error.message }`;
                         }
                         this.alertService.error(errorMsg);
                         return of(new tracingStateActions.LoadFclDataFailure());
@@ -50,10 +49,9 @@ export class IOEffects {
                 return of(new tracingStateActions.LoadFclDataFailure());
             }
         })
-    );
+    ));
 
-    @Effect()
-    loadShapeFileMSA$ = this.actions$.pipe(
+    loadShapeFileMSA$ = createEffect(() => this.actions$.pipe(
         ofType<ioActions.LoadShapeFileMSA>(ioActions.IOActionTypes.LoadShapeFileMSA),
         mergeMap(action => {
             const fileList: FileList = action.payload.dataSource;
@@ -61,7 +59,17 @@ export class IOEffects {
                 return from(this.ioService.getShapeFileData(fileList[0])).pipe(
                     map((data: ShapeFileData) => new tracingStateActions.LoadShapeFileSuccessSOA({ shapeFileData: data })),
                     catchError((error) => {
-                        this.alertService.error(`The file could not be loaded: ${typeof error === 'string' ? error : error.message}`);
+                        let errorMsg = 'Data cannot be loaded.';
+                        if (error instanceof InputEncodingError) {
+                            errorMsg += ' Please ensure to load only data encoded in UTF-8.';
+                        } else if (error instanceof InputFormatError) {
+                            errorMsg += ` ${ error.message ? error.message : 'Invalid .geojson format.'}`;
+                        } else if (error instanceof InputDataError) {
+                            errorMsg += ` ${ error.message ? error.message : 'Invalid data.'}`;
+                        } else {
+                            errorMsg += ` Error: ${ error.message }`;
+                        }
+                        this.alertService.error(errorMsg);
                         return of(new tracingStateActions.LoadShapeFileFailureMSA());
                     })
                 );
@@ -69,27 +77,22 @@ export class IOEffects {
                 return of(new tracingStateActions.LoadShapeFileFailureMSA());
             }
         })
-    );
+    ));
 
-    @Effect()
-    saveFclData$ = this.actions$.pipe(
-        ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
-        withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
-        mergeMap(([action, fclData]) => {
-            return from(this.ioService.getExportData(fclData)).pipe(
+    saveFclData$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
+            withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
+            mergeMap(([action, fclData]) => from(this.ioService.getExportData(fclData)).pipe(
                 mergeMap(exportData => {
                     if (exportData) {
                         const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
                         const fileName = 'data.json';
 
-                        if (window.navigator.msSaveOrOpenBlob != null) {
-                            window.navigator.msSaveOrOpenBlob(blob, fileName);
-                        } else {
-                            const url = window.URL.createObjectURL(blob);
+                        const url = window.URL.createObjectURL(blob);
 
-                            Utils.openSaveDialog(url, fileName);
-                            window.URL.revokeObjectURL(url);
-                        }
+                        Utils.openSaveDialog(url, fileName);
+                        window.URL.revokeObjectURL(url);
                     }
                     return EMPTY;
                 }),
@@ -99,28 +102,31 @@ export class IOEffects {
                     }
                     return EMPTY;
                 })
-            );
-        })
+            ))
+        ),
+        { dispatch: false }
     );
 
-    @Effect()
-    saveGraphImage$ = this.actions$.pipe(
-        ofType<ioActions.SaveGraphImageMSA>(ioActions.IOActionTypes.SaveGraphImageMSA),
-        mergeMap((action) => {
-            const canvas = action.payload.canvas;
-            const fileName = 'graph.png';
-            try {
-                if (canvas.toBlob) {
-                    canvas.toBlob((blob: any) => {
-                        Utils.openSaveBlobDialog(blob, fileName);
-                    });
-                } else {
-                    Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+    saveGraphImage$ = createEffect(
+        () => this.actions$.pipe(
+            ofType<ioActions.SaveGraphImageMSA>(ioActions.IOActionTypes.SaveGraphImageMSA),
+            mergeMap((action) => {
+                const canvas = action.payload.canvas;
+                const fileName = 'graph.png';
+                try {
+                    if (canvas.toBlob) {
+                        canvas.toBlob((blob: any) => {
+                            Utils.openSaveBlobDialog(blob, fileName);
+                        });
+                    } else {
+                        Utils.openSaveDialog(canvas.toDataURL('image/png'), fileName);
+                    }
+                } catch (error) {
+                    this.alertService.error(`Graph image could not be saved!, error: ${error}`);
                 }
-            } catch (error) {
-                this.alertService.error(`Graph image could not be saved!, error: ${error}`);
-            }
-            return EMPTY;
-        })
+                return EMPTY;
+            })
+        ),
+        { dispatch: false }
     );
 }

@@ -36,8 +36,6 @@ export class ShapeSelectorViewComponent {
         [NodeShapeType.TRIANGLE]: 'Triangle'
     };
 
-    constructor() { }
-
     getShapeLabel(type: NodeShapeType): string {
         return this.shapeLabel[type];
     }

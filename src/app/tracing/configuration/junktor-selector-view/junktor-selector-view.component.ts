@@ -10,6 +10,7 @@ import { JunktorType } from '../configuration.model';
 export class JunctorSelectorViewComponent {
 
     @Input() value: JunktorType;
+    @Input() disabled = false;
 
     @Output() valueChange = new EventEmitter<JunktorType>();
 
@@ -19,8 +20,6 @@ export class JunctorSelectorViewComponent {
         And: 'And',
         Or: 'Or'
     };
-
-    constructor() { }
 
     onValueChange(value: JunktorType): void {
         this.value = value;

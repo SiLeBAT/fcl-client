@@ -12,6 +12,7 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 })
 export class ComplexFilterViewComponent {
 
+    @Input() disabled = false;
     @Input() set availableProperties(value: TableColumn[]) {
         this.availableProperties_ = value;
     }
@@ -26,8 +27,8 @@ export class ComplexFilterViewComponent {
     @Input() set conditions(value: ComplexFilterCondition[]) {
         this.conditions_ = (
             value && value.length > 0 ?
-            value.slice() :
-            ComplexFilterUtils.createDefaultComplexFilterConditions()
+                value.slice() :
+                ComplexFilterUtils.createDefaultComplexFilterConditions()
         );
     }
 
@@ -41,8 +42,6 @@ export class ComplexFilterViewComponent {
 
     private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
 
-    constructor() { }
-
     onAddFilterCondition(index: number) {
 
         const conditions = this.conditions_.map(c => ({ ...c }));
@@ -51,8 +50,8 @@ export class ComplexFilterViewComponent {
 
         const junktorType = (
             index > 0 ?
-            conditions[index - 1].junktorType :
-            ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
+                conditions[index - 1].junktorType :
+                ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
         );
 
         conditions[index].junktorType = junktorType;
@@ -74,8 +73,8 @@ export class ComplexFilterViewComponent {
         );
         this.conditions_ = (
             conditions.length === 0 ?
-            ComplexFilterUtils.createDefaultComplexFilterConditions() :
-            conditions
+                ComplexFilterUtils.createDefaultComplexFilterConditions() :
+                conditions
         );
         this.conditionsChange.emit(conditions);
     }

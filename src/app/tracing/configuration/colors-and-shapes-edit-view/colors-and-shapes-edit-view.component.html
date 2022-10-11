@@ -16,7 +16,7 @@
         <div class="fcl-edit-rule-shape-fields">
 
             <mat-checkbox
-                class="fcl-edit-rule-color-or-shape-checkbox"
+                class="fcl-edit-rule-color-or-shape-checkbox fcl-checkbox-wo-ripple"
                 [checked]="useShape"
                 (change)="onUseShapeChange($event.checked)"
             >
@@ -32,15 +32,24 @@
         </div>
         <div class="fcl-edit-rule-color-fields">
             <mat-checkbox
-                class="fcl-edit-rule-color-or-shape-checkbox"
+                class="fcl-edit-rule-color-or-shape-checkbox fcl-checkbox-wo-ripple"
                 [checked]="useColor"
                 (change)="onUseColorChange($event.checked)"
             >
-                Use color:
+                Use colour:
             </mat-checkbox>
 
-            <fcl-color-selector-view [disabled]="color === null" [color]="color" (colorChange)="onColorChange($event)"></fcl-color-selector-view>
+            <fcl-color-selector-view
+                [disabled]="!useColor"
+                [color]="color"
+                preferredColorPickerPosition="left"
+                (colorChange)="onColorChange($event)"
+            ></fcl-color-selector-view>
         </div>
+        <fcl-rule-service-view
+            (addSelection)="onAddSelection()"
+            (removeSelection)="onRemoveSelection()"
+        ></fcl-rule-service-view>
     </div>
 
     <fcl-complex-filter-view

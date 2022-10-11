@@ -53,9 +53,8 @@ const initialFilterSettings: FilterSettings = {
 };
 
 const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings = {
-    colorsAndShapesSettings: {
-        editIndex: null
-    }
+    stationEditRules: [],
+    deliveryEditRules: []
 };
 
 const initialModelDependentState: ModelDependentState = {
@@ -79,6 +78,8 @@ const initialState: TracingState = {
     tracingActive: false,
     showConfigurationSideBar: false,
     configurationTabIndices: initialTabIndices,
+    animatingTabCount: 0,
+    isConfSideBarOpening: false,
     showGraphSettings: false
 };
 
@@ -124,6 +125,7 @@ export function createInitialFclDataState(): FclData {
             mapType: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
             ghostStation: null,
+            ghostDelivery: null,
             hoverDeliveries: []
         },
         tracingSettings: {
@@ -138,6 +140,16 @@ export function createInitialFclDataState(): FclData {
 // REDUCER
 export function reducer(state: TracingState = initialState, action: TracingActions): TracingState {
     switch (action.type) {
+        case TracingActionTypes.SetConfigurationSideBarOpenedSOA:
+            return {
+                ...state,
+                isConfSideBarOpening: false
+            };
+        case TracingActionTypes.SetTabAnimationDoneSOA:
+            return {
+                ...state,
+                animatingTabCount: Math.max(state.animatingTabCount - 1, 0)
+            };
         case TracingActionTypes.TracingActivated:
             return {
                 ...state,
@@ -175,7 +187,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.ShowConfigurationSideBarSOA:
             return {
                 ...state,
-                showConfigurationSideBar: action.payload.showConfigurationSideBar
+                showConfigurationSideBar: action.payload.showConfigurationSideBar,
+                isConfSideBarOpening: action.payload.showConfigurationSideBar
             };
 
         case TracingActionTypes.SetGraphTypeSOA:
@@ -382,6 +395,36 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+        case TracingActionTypes.SetSelectedStationsSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        selectedElements: {
+                            ...state.fclData.graphSettings.selectedElements,
+                            stations: action.payload.stationIds
+                        }
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetSelectedDeliveriesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        selectedElements: {
+                            ...state.fclData.graphSettings.selectedElements,
+                            deliveries: action.payload.deliveryIds
+                        }
+                    }
+                }
+            };
+
         case TracingActionTypes.SetStationPositionsSOA:
             return {
                 ...state,
@@ -467,15 +510,36 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetColorsAndShapesEditIndexSOA:
+        case TracingActionTypes.SetStationHighlightingEditRulesSOA:
             return {
                 ...state,
                 highlightingConfigurationSettings: {
                     ...state.highlightingConfigurationSettings,
-                    colorsAndShapesSettings: {
-                        ...state.highlightingConfigurationSettings.colorsAndShapesSettings,
-                        editIndex: action.payload.editIndex
+                    stationEditRules: action.payload.editRules
+                }
+            };
+
+        case TracingActionTypes.SetDeliveryHighlightingRulesSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        highlightingSettings: {
+                            ...state.fclData.graphSettings.highlightingSettings,
+                            deliveries: action.payload.rules
+                        }
                     }
+                }
+            };
+
+        case TracingActionTypes.SetDeliveryHighlightingEditRulesSOA:
+            return {
+                ...state,
+                highlightingConfigurationSettings: {
+                    ...state.highlightingConfigurationSettings,
+                    deliveryEditRules: action.payload.editRules
                 }
             };
 
@@ -519,33 +583,46 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        highlightingSettings: action.payload.highlightingSettings,
-                        selectedElements: action.payload.selectedElements
+                        highlightingSettings: action.payload.highlightingSettings
                     },
                     tracingSettings: action.payload.tracingSettings
                 }
             };
 
-        case TracingActionTypes.ShowGhostStationMSA:
+        case TracingActionTypes.SetGhostStationSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        ghostStation: action.payload.stationId
+                        ghostStation: action.payload.stationId,
+                        ghostDelivery: null
+                    }
+                }
+            };
+        case TracingActionTypes.SetGhostDeliverySOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        ghostStation: null,
+                        ghostDelivery: action.payload.deliveryId
                     }
                 }
             };
 
-        case TracingActionTypes.ClearGhostStationMSA:
+        case TracingActionTypes.DeleteGhostElementSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        ghostStation: null
+                        ghostStation: null,
+                        ghostDelivery: null
                     }
                 }
             };
@@ -568,7 +645,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
                     activeConfigurationTabId: action.payload.activeConfigurationTabId
-                }
+                },
+                animatingTabCount: state.animatingTabCount + 1
             };
 
         case TracingActionTypes.SetActiveFilterTabIdSOA:
@@ -577,7 +655,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
                     activeFilterTabId: action.payload.activeFilterTabId
-                }
+                },
+                animatingTabCount: state.animatingTabCount + 1
             };
 
         case TracingActionTypes.SetActiveHighlightingTabIdSOA:

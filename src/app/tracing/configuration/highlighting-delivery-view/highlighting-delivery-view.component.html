@@ -1,0 +1,113 @@
+<ng-template let-editRule="editRule" #labelEditTemplate>
+    <fcl-label-rules-edit-view
+        *ngIf="editRule !== null"
+
+        [rule]="editRule"
+        [availableProperties]="availableProperties"
+        [propToValuesMap]="propToValuesMap"
+
+        (addSelection)="onAddSelectionToRuleConditions($event)"
+        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+
+        (applyRule)="onApplyEdit($event)"
+        (cancelEdit)="onCancelEdit(editRule.id)"
+        (okRule)="onOkEdit($event)"
+    >
+    </fcl-label-rules-edit-view>
+</ng-template>
+
+<ng-template let-editRule="editRule" #colorEditTemplate>
+    <fcl-edge-color-edit-view
+        *ngIf="editRule !== null"
+
+        [rule]="editRule"
+        [availableProperties]="availableProperties"
+        [propToValuesMap]="propToValuesMap"
+
+        (addSelection)="onAddSelectionToRuleConditions($event)"
+        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+
+        (applyRule)="onApplyEdit($event)"
+        (cancelEdit)="onCancelEdit(editRule.id)"
+        (okRule)="onOkEdit($event)"
+    >
+    </fcl-edge-color-edit-view>
+</ng-template>
+
+<ng-template let-item="item" #edgeSymbolTemplate>
+    <fcl-edge-symbol-view
+        *ngIf="item.color !== null"
+        [edgeColor]="item.color"
+    ></fcl-edge-symbol-view>
+</ng-template>
+
+<ng-template
+    let-ruleType="ruleType"
+    let-title="title"
+    let-editTemplate="editTemplate"
+    let-symbolTemplate="symbolTemplate"
+    let-showInLegendTB="showInLegendTB"
+    #panelTemplate>
+    <mat-expansion-panel
+        class="fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        [expanded]="getOpenState(ruleType)"
+        (opened)="setOpenState(ruleType, true)"
+        (closed)="setOpenState(ruleType, false)">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+                {{ title }}... click  to {{ getOpenState(ruleType) ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <fcl-highlighting-rules-list-view
+            class="fcl-rules-list-view-container"
+
+            [showShowInLegendToggleButton]="showInLegendTB === undefined ? true : showInLegendTB"
+            [listItems]="getListItemsOfType(ruleType)"
+            [editTemplate]="editTemplate || null"
+            [symbolTemplate]="symbolTemplate || null"
+            [editRule]="getEditRuleOfType(ruleType)"
+
+            (deleteRule)="onDeleteRule($event)"
+            (ruleOrderChange)="onRuleOrderChange($event)"
+            (toggleRuleIsDisabled)="onToggleRuleIsDisabled($event)"
+            (toggleShowRuleInLegend)="onToggleShowRuleInLegend($event)"
+
+            (newRule)="onNewRule(ruleType)"
+            (startEdit)="onStartEdit($event)"
+        >
+        </fcl-highlighting-rules-list-view>
+
+    </mat-expansion-panel>
+</ng-template>
+
+<div class="fcl-highlighting-element-container">
+
+    <fcl-anonymous-button-view tooltip="Anonymize deliveries ... coming soon">
+    </fcl-anonymous-button-view>
+
+    <ng-container [ngTemplateOutlet]="panelTemplate"
+        [ngTemplateOutletContext] ="{ ruleType: RuleType.LABEL, title: 'Label', editTemplate: labelEditTemplate, showInLegendTB: false }">
+    </ng-container>
+
+    <mat-expansion-panel
+        class="fcl-highlighting-expansion-panels fcl-border-radius-zero"
+        (opened)="widthOpenState = true"
+        (closed)="widthOpenState = false">
+
+        <mat-expansion-panel-header>
+            <mat-panel-title class="fcl-font-size-08">
+              Delivery Width... click  to {{ widthOpenState ?  'close' : 'open' }}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        Delivery Width Configurations ... coming soon
+
+    </mat-expansion-panel>
+
+    <ng-container [ngTemplateOutlet]="panelTemplate"
+        [ngTemplateOutletContext] ="{ ruleType: RuleType.COLOR, title: 'Colours', editTemplate: colorEditTemplate, symbolTemplate: edgeSymbolTemplate }">
+    </ng-container>
+
+</div>

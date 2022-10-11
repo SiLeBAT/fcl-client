@@ -1,26 +1,39 @@
-import { Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
-import { DatatableComponent, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
+import {
+    Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter,
+    OnChanges, SimpleChanges, DoCheck, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, OnDestroy, AfterViewInit
+} from '@angular/core';
+import { DatatableComponent, SelectionType, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
 import { DataTable, NodeShapeType, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
 import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRowFilter, createOneTermForEachColumnRowFilter } from '../filter-provider';
 import { filterTableRows } from '../shared';
 import * as _ from 'lodash';
-import { VisibilityFilterState, ColumnFilterSettings } from '../configuration.model';
+import { VisibilityFilterState, ColumnFilterSettings, ActivityState } from '../configuration.model';
+import { Utils } from '@app/tracing/util/non-ui-utils';
+import { Observable, Subscription } from 'rxjs';
+
+const CLASS_DATATABLE_FOOTER = 'datatable-footer';
+
+interface AsyncTask {
+    id?: string;
+    created: number;
+    handle?: NodeJS.Timeout;
+    subscription?: Subscription;
+}
 
 interface FilterMap {
     visibilityFilter: VisibilityRowFilter;
     columnFilter: OneTermForEachColumnRowFilter;
 }
 
-const shapeTypePriorities: NodeShapeType[] = [NodeShapeType.CIRCLE, NodeShapeType.TRIANGLE];
 const shapePrioMap: { [key in NodeShapeType]: number } = {
-    [NodeShapeType.CIRCLE]: shapeTypePriorities.indexOf(NodeShapeType.CIRCLE),
-    [NodeShapeType.TRIANGLE]: shapeTypePriorities.indexOf(NodeShapeType.TRIANGLE),
-    [NodeShapeType.SQUARE]: shapeTypePriorities.indexOf(NodeShapeType.SQUARE),
-    [NodeShapeType.DIAMOND]: shapeTypePriorities.indexOf(NodeShapeType.DIAMOND),
-    [NodeShapeType.PENTAGON]: shapeTypePriorities.indexOf(NodeShapeType.PENTAGON),
-    [NodeShapeType.HEXAGON]: shapeTypePriorities.indexOf(NodeShapeType.HEXAGON),
-    [NodeShapeType.OCTAGON]: shapeTypePriorities.indexOf(NodeShapeType.OCTAGON),
-    [NodeShapeType.STAR]: shapeTypePriorities.indexOf(NodeShapeType.STAR)
+    [NodeShapeType.CIRCLE]: 0,
+    [NodeShapeType.TRIANGLE]: 1,
+    [NodeShapeType.SQUARE]: 2,
+    [NodeShapeType.DIAMOND]: 3,
+    [NodeShapeType.PENTAGON]: 4,
+    [NodeShapeType.HEXAGON]: 5,
+    [NodeShapeType.OCTAGON]: 6,
+    [NodeShapeType.STAR]: 7
 };
 
 function visibilityComparator(valueA, valueB, rowA, rowB, sortDirection): number {
@@ -73,6 +86,7 @@ function highlightingComparator(valueA, valueB, rowA, rowB, sortDirection): numb
 export interface InputData {
     dataTable: DataTable;
     columnOrder: string[];
+    selectedRowIds: string[];
     columnFilters: ColumnFilterSettings[];
     visibilityFilter: VisibilityFilterState;
 }
@@ -86,9 +100,11 @@ export interface TableFilterChange {
     selector: 'fcl-filter-table-view',
     templateUrl: './filter-table-view.component.html',
     styleUrls: ['./filter-table-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class FilterTableViewComponent {
+// eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
+export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnDestroy, AfterViewInit {
 
     get visibilityFilterState(): VisibilityFilterState {
         return this.inputData.visibilityFilter;
@@ -97,6 +113,7 @@ export class FilterTableViewComponent {
     private set filteredRows(filteredRows: TableRow[]) {
         this.filteredRows_ = filteredRows;
         this.updateTreeRows();
+        this.cdRef.markForCheck();
     }
 
     private get filteredRows(): TableRow[] {
@@ -113,14 +130,16 @@ export class FilterTableViewComponent {
     }
 
     get tableRows(): TableRow[] {
-        this.processInputIfNecessary();
         return !this.useTreeMode ?
             this.filteredRows : this.treeRows;
     }
 
     get columns(): NgxTableColumn[] {
-        this.processInputIfNecessary();
         return this.columns_;
+    }
+
+    get selectionType(): SelectionType {
+        return SelectionType.multi;
     }
 
     get showVisibleElements(): boolean {
@@ -133,13 +152,31 @@ export class FilterTableViewComponent {
         return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY;
     }
 
-    @Input() inputData: InputData;
+    get selectedRows(): TableRow[] {
+        return this.selectedRows_;
+    }
+
+    get isActive(): boolean {
+        return this.activityState_ !== ActivityState.INACTIVE;
+    }
+
+    get isOpening(): boolean {
+        return this.activityState_ === ActivityState.OPENING;
+    }
+
+    @Input() inputData: InputData | null = null;
+    @Input() activityState$: Observable<ActivityState> | null = null;
+    @Input() cycleStart$: Observable<void> | null = null;
+    @Input() checkTableSize$: Observable<number> | null = null;
+    @Input() updateTableSize$: Observable<void> | null = null;
     @Input() useTreeMode = false;
 
     @Output() selectColumns = new EventEmitter();
     @Output() mouseOverRow = new EventEmitter<TableRow | null>();
+    @Output() rowDblClick = new EventEmitter<TableRow>();
     @Output() columnOrderChange = new EventEmitter<string[]>();
     @Output() filterChange = new EventEmitter<TableFilterChange>();
+    @Output() rowSelectionChange = new EventEmitter<string[]>();
 
     @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
     @ViewChild('patternColTpl', { static: true }) patternColTpl: TemplateRef<any>;
@@ -153,43 +190,157 @@ export class FilterTableViewComponent {
     @ViewChild('table', { static: true }) table: DatatableComponent;
     @ViewChild('tableWrapper', { static: true }) tableWrapper: any;
 
-    private processedInput_: InputData;
-    private filterMap_: FilterMap;
+    private dtFooterElement: HTMLElement | null = null;
+
+    private processedInput__: InputData = null;
+    private processDataIsRequired_ = false;
+    private filterMap_: FilterMap = null;
     private columnFilterTexts_: { [key: string]: string };
     private filteredRows_: TableRow[] = [];
     private treeRows_: TableRow[] = [];
     private treeStatusCache: Record<string, TreeStatus> = {};
 
-    private triggerTableRefreshTimeoutHandle: number | null = null;
-
     private columns_: NgxTableColumn[];
 
-    private updateTreeRows(): void {
-        if (this.useTreeMode) {
-            const availableRows: Record<string, boolean> = {};
-            this.filteredRows_.forEach(row => availableRows[row.id] = true);
+    private selectedRows_: TableRow[] = [];
 
-            const missingParents: TableRow[] = [];
-            for (const row of this.filteredRows_) {
-                if (row.parentRow !== undefined && !availableRows[row.parentRowId]) {
-                    missingParents.push(row.parentRow);
-                    availableRows[row.parentRowId] = true;
-                }
-            }
-            this.treeRows =
-                missingParents.length > 0 ?
-                this.filteredRows.concat(missingParents) :
-                this.filteredRows;
+    private activityState_: ActivityState = ActivityState.INACTIVE;
+
+    private subscriptions_: Subscription[] = [];
+
+    private tableSizeUpdateIsRequired_ = false;
+    private tableSizeCheckIsRequired_ = false;
+    private positiveWrapperSizeDetectedSinceLastActivation = false;
+    private waitingForPositiveWrapperSize = false;
+    private asyncTasks_: AsyncTask[] = [];
+
+    constructor(
+        private hostElement: ElementRef,
+        private cdRef: ChangeDetectorRef
+    ) {}
+
+    // lifecycle hooks start
+
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.inputData !== undefined && changes.inputData.currentValue !== null) {
+            this.processDataIsRequired_ = true;
         }
     }
+
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
+    ngOnInit(): void {
+        if (this.activityState$ !== undefined && this.activityState$ !== null) {
+            this.subscriptions_.push(this.activityState$.subscribe(
+                (activityState) => this.setActivityState(activityState),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                () => {}
+            ));
+        }
+        if (this.checkTableSize$ !== undefined && this.checkTableSize$ !== null) {
+            this.subscriptions_.push(this.checkTableSize$.subscribe(
+                () => this.checkTableSizeOnStableWrapperSize({ stopOnOpen: false }),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                () => {}
+            ));
+        }
+        if (this.updateTableSize$ !== undefined && this.updateTableSize$ !== null) {
+            this.subscriptions_.push(this.updateTableSize$.subscribe(
+                () => {
+                    this.tableSizeUpdateIsRequired_ = true;
+                    if (this.isActive) {
+                        this.cdRef.markForCheck();
+                    }
+                },
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                () => {}
+            ));
+        }
+    }
+
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
+    ngDoCheck(): void {
+        if (this.isActive) {
+            if (this.processDataIsRequired_ || this.tableSizeUpdateIsRequired_ || this.tableSizeCheckIsRequired_) {
+                // processing of the input data is delayed
+                // to avoid input changes of the ngx-datatable
+                // otherwise the ngx-datatable would adapt its size to non positive dimensions
+                // this would cause a non visible table
+                if (!this.positiveWrapperSizeDetectedSinceLastActivation) {
+                    if (!this.waitingForPositiveWrapperSize) {
+                        this.waitForPosWrapperSizeBasedOnTick(true);
+                        if (!this.positiveWrapperSizeDetectedSinceLastActivation) {
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                } else if (this.waitingForPositiveWrapperSize) {
+                    return;
+                }
+            }
+            if (this.tableSizeCheckIsRequired_ && !(this.processDataIsRequired_ || this.tableSizeUpdateIsRequired_)) {
+                this.syncTableSizeCheck();
+            }
+
+            const oldRows = this.tableRows;
+            let rowsChanged = false;
+            if (this.processDataIsRequired_) {
+                this.processInput();
+                this.processDataIsRequired_ = false;
+                rowsChanged = oldRows !== this.tableRows;
+            }
+            if (!rowsChanged && this.tableSizeUpdateIsRequired_) {
+                this.updateTableSize();
+                rowsChanged = true;
+            }
+            if (rowsChanged) {
+                this.tableSizeUpdateIsRequired_ = false;
+                this.tableSizeCheckIsRequired_ = false;
+            }
+        }
+    }
+
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
+    ngAfterViewInit(): void {
+        this.dtFooterElement = this.hostElement.nativeElement.getElementsByClassName(CLASS_DATATABLE_FOOTER)[0];
+    }
+
+    // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
+    ngOnDestroy(): void {
+        this.subscriptions_.forEach(s => s.unsubscribe());
+        this.subscriptions_ = [];
+        this.clearAsyncJobs();
+        this.dtFooterElement = null;
+    }
+
+    // lifecycle hooks end
+
+    // template triggers start
 
     onSelectColumns(): void {
         this.selectColumns.emit();
     }
 
-    getColumnFilterText(columnId: string): string {
-        this.processInputIfNecessary();
-        return this.columnFilterTexts_[columnId] || '';
+    onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
+        const selectedRowIds = selected.map(row => row.id);
+        // dblclick events trigger 3 selection change events
+        // only the first one changes (usually) the selection
+        // we check here the selection change to emit only true selection changes
+        if (!this.areSelectedRowIdsEqual(selectedRowIds, this.processedInput__.selectedRowIds)) {
+            // no selection change
+        } else {
+            // selection change detected
+            this.processedInput__.selectedRowIds = selected.map(row => row.id);
+
+            this.selectedRows_.splice(0, this.selectedRows_.length);
+            this.selectedRows_.push(...selected);
+
+            this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
+
+            // we need this to get rid of the text selection
+            window.getSelection().removeAllRanges();
+        }
     }
 
     onSetColumnFilterText(prop: string, filterTerm: string) {
@@ -209,6 +360,12 @@ export class FilterTableViewComponent {
         this.mouseOverRow.emit(row);
     }
 
+    onRowDblClick(row: TableRow): void {
+        // we need this to get rid of the text selection
+        window.getSelection().removeAllRanges();
+        this.rowDblClick.emit(row);
+    }
+
     onTreeAction(row: TableRow) {
         if (row.treeStatus === 'collapsed') {
             row.treeStatus = 'expanded';
@@ -217,27 +374,284 @@ export class FilterTableViewComponent {
         }
         this.treeStatusCache[row.id] = row.treeStatus;
 
-        this.triggerTableRefresh();
+        this.updateTableSize();
     }
 
-    private triggerTableRefresh(): void {
+    onColumnReorder(e: { column: any; newValue: number; prevValue: number }): void {
+        if (!this.isColumnOrderOk()) {
+            this.fixColumnOrder();
+        }
+        this.columnOrderChange.emit(this.getColumnOrdering());
+    }
+    // template triggers end
+
+    private updateTreeRows(): void {
+        if (this.useTreeMode) {
+            const availableRows: Record<string, boolean> = {};
+            this.filteredRows_.forEach(row => availableRows[row.id] = true);
+
+            const missingParents: TableRow[] = [];
+            for (const row of this.filteredRows_) {
+                if (row.parentRow !== undefined && !availableRows[row.parentRowId]) {
+                    missingParents.push(row.parentRow);
+                    availableRows[row.parentRowId] = true;
+                }
+            }
+            this.treeRows =
+                missingParents.length > 0 ?
+                    this.filteredRows.concat(missingParents) :
+                    this.filteredRows;
+        }
+    }
+
+    private getWrapperSize(): Size {
+        return this.tableWrapper.nativeElement.getBoundingClientRect();
+    }
+
+    private getTableSize(): Size | null {
+        if (this.table && this.dtFooterElement) {
+            const ts = this.table.element.getBoundingClientRect();
+            const fs = this.dtFooterElement.getBoundingClientRect();
+            return { width: fs.width, height: fs.bottom - ts.top };
+        } else {
+            return null;
+        }
+    }
+
+    private isSizeDifferent(a: Size, b: Size, epsilon: number): boolean {
+        return (
+            Math.abs(a.width - b.width) > epsilon ||
+            Math.abs(a.height - b.height) > epsilon
+        );
+    }
+
+    private stopTask(id: string): void {
+        const obsoleteTasks = this.asyncTasks_.filter(t => t.id === id);
+        if (obsoleteTasks.length > 0) {
+            obsoleteTasks.forEach(task => {
+                if (task.handle !== undefined) {
+                    clearTimeout(task.handle);
+                    delete task.handle;
+                }
+                if (task.subscription !== undefined) {
+                    task.subscription.unsubscribe();
+                    delete task.subscription;
+                }
+                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== task);
+            });
+        }
+    }
+
+    private waitForPosWrapperSizeBasedOnTimeout(stopOnOpen: boolean, maxTimeSpan?: number): void {
+        this.waitingForPositiveWrapperSize = true;
+        const asyncTask: Partial<AsyncTask> = {
+            id: 'waitForPosWrapperSizeBasedOnTimeout',
+            created: (new Date()).valueOf()
+        };
+        this.stopTask(asyncTask.id);
+
+        if (this.getWrapperSize().width > 0) {
+            this.positiveWrapperSizeDetectedSinceLastActivation = true;
+            this.waitingForPositiveWrapperSize = false;
+            return;
+        }
+
+        if (maxTimeSpan === undefined) {
+            maxTimeSpan = Number.POSITIVE_INFINITY;
+        }
+        const endTime = asyncTask.created + maxTimeSpan;
+        const timeoutSpan = 10;
+
+        const callBack = () => {
+            delete asyncTask.handle;
+            if (
+                this.activityState_ !== ActivityState.INACTIVE &&
+                (!stopOnOpen || this.activityState_ === ActivityState.OPENING)
+            ) {
+                const curTime = (new Date()).valueOf();
+                if (endTime !== Number.POSITIVE_INFINITY || endTime >= curTime) {
+                    const wrapperSize = this.getWrapperSize();
+                    if (wrapperSize.width > 0) {
+                        this.positiveWrapperSizeDetectedSinceLastActivation = true;
+                    } else {
+                        asyncTask.handle = setTimeout(callBack, timeoutSpan);
+                    }
+                }
+            }
+            if (asyncTask.handle === undefined) {
+                this.waitingForPositiveWrapperSize = false;
+                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
+            }
+        };
+        asyncTask.handle = setTimeout(callBack, 0);
+        this.asyncTasks_.push(asyncTask as AsyncTask);
+    }
+
+    private waitForPosWrapperSizeBasedOnTick(stopOnOpen: boolean): void {
+        this.waitingForPositiveWrapperSize = true;
+        const asyncTask: Partial<AsyncTask> = {
+            id: 'waitForPosWrapperSizeBasedOnTick',
+            created: (new Date()).valueOf()
+        };
+        this.stopTask(asyncTask.id);
+
+        if (this.getWrapperSize().width > 0) {
+            this.positiveWrapperSizeDetectedSinceLastActivation = true;
+            this.waitingForPositiveWrapperSize = false;
+            return;
+        }
+
+        const callBack = () => {
+            let cancelTask = true;
+            if (
+                this.activityState_ !== ActivityState.INACTIVE &&
+                (!stopOnOpen || this.activityState_ === ActivityState.OPENING)
+            ) {
+                const wrapperSize = this.getWrapperSize();
+                if (wrapperSize.width > 0) {
+                    this.positiveWrapperSizeDetectedSinceLastActivation = true;
+                    this.cdRef.markForCheck();
+                } else {
+                    cancelTask = false;
+                }
+            }
+            if (cancelTask) {
+                this.waitingForPositiveWrapperSize = false;
+                asyncTask.subscription.unsubscribe();
+                delete asyncTask.subscription;
+                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
+            }
+        };
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        asyncTask.subscription = this.cycleStart$.subscribe(callBack, () => {});
+        this.asyncTasks_.push(asyncTask as AsyncTask);
+    }
+
+    private checkTableSizeOnStableWrapperSize(options: {
+        stopOnOpen?: boolean;
+        maxTimeSpan?: number;
+        timeoutSpan?: number;
+        minStableTimeSpan?: number;
+    }): void {
+        const asyncTask: Partial<AsyncTask> = {
+            id: 'checkTableSizeOnStableWrapperSize',
+            created: (new Date()).valueOf()
+        };
+        this.stopTask(asyncTask.id);
+
+        let refWrapperSize: Size | null = null;
+        const stopOnOpen = options.stopOnOpen === undefined ? false : options.stopOnOpen;
+        const maxTimeSpan = options.maxTimeSpan === undefined ? Number.POSITIVE_INFINITY : options.maxTimeSpan;
+        const endTime = asyncTask.created + maxTimeSpan;
+        const timeoutSpan = options.timeoutSpan === undefined ? 50 : options.timeoutSpan;
+        const minStableTimeSpan = options.minStableTimeSpan === undefined ? (2.5 * timeoutSpan) : options.minStableTimeSpan;
+        let lastUnmatchTime = asyncTask.created;
+
+        const callBack = () => {
+            const oldHandle = asyncTask.handle;
+            if (
+                this.activityState_ !== ActivityState.INACTIVE &&
+                (!stopOnOpen || this.activityState_ === ActivityState.OPENING)
+            ) {
+                const curTime = (new Date()).valueOf();
+                if (endTime !== Number.POSITIVE_INFINITY || endTime >= curTime) {
+                    const wrapperSize = this.getWrapperSize();
+
+                    if (refWrapperSize === null || this.isSizeDifferent(wrapperSize, refWrapperSize, 1)) {
+                        refWrapperSize = wrapperSize;
+                        lastUnmatchTime = curTime;
+                        asyncTask.handle = setTimeout(callBack, timeoutSpan);
+                    } else {
+                        if (curTime - lastUnmatchTime < minStableTimeSpan) {
+                            asyncTask.handle = setTimeout(callBack, timeoutSpan);
+                        }
+                    }
+                }
+            }
+            if (oldHandle === asyncTask.handle) {
+                this.syncTableSizeCheck();
+                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
+            }
+        };
+        asyncTask.handle = setTimeout(callBack, timeoutSpan);
+        this.asyncTasks_.push(asyncTask as AsyncTask);
+    }
+
+    private setActivityState(state: ActivityState): void {
+        if (state !== this.activityState_) {
+            const wasActive = this.activityState_ !== ActivityState.INACTIVE;
+            if (!wasActive) {
+                this.positiveWrapperSizeDetectedSinceLastActivation = false;
+            }
+            this.activityState_ = state;
+            if (state === ActivityState.INACTIVE) {
+                this.clearAsyncJobs();
+                this.waitingForPositiveWrapperSize = false;
+            } else {
+                if (this.tableSizeUpdateIsRequired_ || this.processDataIsRequired_) {
+                    this.cdRef.markForCheck();
+                } else if (state === ActivityState.OPEN || this.tableSizeCheckIsRequired_) {
+                    this.syncTableSizeCheck();
+                }
+            }
+        }
+    }
+
+    private areSelectedRowIdsEqual(rowIds1: string[], rowIds2: string[]): boolean {
+        if (rowIds1.length !== rowIds2.length) {
+            return true;
+        } else {
+            const tmp = Utils.createSimpleStringSet(rowIds1);
+            return rowIds2.some(id => !tmp[id]);
+        }
+    }
+
+    getColumnFilterText(columnId: string): string {
+        return this.columnFilterTexts_[columnId] || '';
+    }
+
+    rowIdentity(row: TableRow): string {
+        return row.id;
+    }
+
+    private clearAsyncJobs(): void {
+        this.asyncTasks_.forEach(asyncTask => {
+            if (asyncTask.handle !== undefined) {
+                clearTimeout(asyncTask.handle);
+                delete asyncTask.handle;
+            }
+            if (asyncTask.subscription !== undefined) {
+                asyncTask.subscription.unsubscribe();
+                delete asyncTask.subscription;
+            }
+        });
+        this.asyncTasks_ = [];
+    }
+
+    private updateTableSize(): void {
         // force table refresh by changing the table input
         if (this.useTreeMode) {
             this.treeRows_ = this.treeRows_.slice();
         } else {
             this.filteredRows_ = this.filteredRows_.slice();
         }
+        this.cdRef.markForCheck();
     }
 
-    onComponentResized(): void {
-        if (this.table) {
-            if (this.triggerTableRefreshTimeoutHandle !== null) {
-                clearTimeout(this.triggerTableRefreshTimeoutHandle);
+    private syncTableSizeCheck(): void {
+        const EPSILON = 1;
+        if (this.isActive && !this.tableSizeUpdateIsRequired_) {
+            const wrapperSize = this.getWrapperSize();
+            if (wrapperSize.width > 0) {
+                const tableSize = this.getTableSize();
+                if (tableSize !== null) {
+                    this.tableSizeCheckIsRequired_ = false;
+                    if (this.isSizeDifferent(wrapperSize, tableSize, EPSILON)) {
+                        this.tableSizeUpdateIsRequired_ = true;
+                        this.cdRef.markForCheck();
+                    }
+                }
             }
-            this.triggerTableRefreshTimeoutHandle = window.setTimeout(() => {
-                this.triggerTableRefreshTimeoutHandle = null;
-                this.triggerTableRefresh();
-            }, 20);
         }
     }
 
@@ -252,23 +666,18 @@ export class FilterTableViewComponent {
         }
     }
 
-    private processInputIfNecessary(): void {
-        if (this.inputData !== this.processedInput_) {
-            this.processInput();
-        }
-    }
-
     private processInput(): void {
+        this.processDataIsRequired_ = false;
         this.updateColumns();
         this.updateRows();
 
-        this.processedInput_ = this.inputData;
+        this.processedInput__ = this.inputData;
     }
 
     private updateColumns(): void {
         const newDataColumns = this.inputData.dataTable.columns;
-        const oldDataColumns = this.processedInput_ ? this.processedInput_.dataTable.columns : undefined;
-        const newColumnOrder = this.inputData.columnOrder;
+        const oldDataColumns = this.processedInput__ ? this.processedInput__.dataTable.columns : undefined;
+        const newColumnOrder = this.inputData.columnOrder.filter(prop => this.inputData.dataTable.columns.some(c => c.id === prop));
         if (newDataColumns !== oldDataColumns) {
             // new model was model
             this.columns_ = [].concat(
@@ -297,7 +706,8 @@ export class FilterTableViewComponent {
                 }
             }
         }
-        if (this.processedInput_ !== this.inputData) {}
+        // eslint-disable-next-line no-empty
+        if (this.processedInput__ !== this.inputData) {}
     }
 
     private updateTreeStatusFromCache(): void {
@@ -321,19 +731,19 @@ export class FilterTableViewComponent {
     }
 
     private updateRows(): void {
-        const oldDataRows = this.processedInput_ ? this.processedInput_.dataTable.rows : undefined;
+        const oldDataRows = this.processedInput__ ? this.processedInput__.dataTable.rows : undefined;
         const newDataRows = this.inputData.dataTable.rows;
 
         const filterMap: FilterMap = {
             visibilityFilter: (
-                !this.processedInput_ || this.processedInput_.visibilityFilter !== this.inputData.visibilityFilter ?
-                createVisibilityRowFilter(this.inputData.visibilityFilter) :
-                this.filterMap_.visibilityFilter
+                !this.processedInput__ || this.processedInput__.visibilityFilter !== this.inputData.visibilityFilter ?
+                    createVisibilityRowFilter(this.inputData.visibilityFilter) :
+                    this.filterMap_.visibilityFilter
             ),
             columnFilter: (
-                !this.processedInput_ || this.processedInput_.columnFilters !== this.inputData.columnFilters ?
-                createOneTermForEachColumnRowFilter(this.inputData.columnFilters) :
-                this.filterMap_.columnFilter
+                !this.processedInput__ || this.processedInput__.columnFilters !== this.inputData.columnFilters ?
+                    createOneTermForEachColumnRowFilter(this.inputData.columnFilters) :
+                    this.filterMap_.columnFilter
             )
         };
 
@@ -352,13 +762,20 @@ export class FilterTableViewComponent {
                 this.filteredRows_.length > 0 &&
                 this.table.bodyComponent !== undefined &&
                 this.table.bodyComponent.offsetY > 0
-             ) {
+            ) {
                 // we need to to this here because the ngx-datatable shows artefacts if the vertical scroll offset was > 0 before
                 // 'No data available'
                 this.table.bodyComponent.offsetY = 0;
                 this.table.offset = 0;
             }
             this.recalculateTable();
+        }
+        if (
+            this.processedInput__ === null ||
+            this.processedInput__.selectedRowIds !== this.inputData.selectedRowIds
+        ) {
+            const idToIsSelectedMap = Utils.createSimpleStringSet(this.inputData.selectedRowIds);
+            this.selectedRows_ = this.filteredRows_.filter(row => idToIsSelectedMap[row.id]);
         }
     }
 
@@ -374,16 +791,16 @@ export class FilterTableViewComponent {
         const dataColumn = dataColumns.find(c => c.id === prop);
         const ngxColumn = (
             !dataColumn ?
-            undefined :
-            ({
-                name: dataColumn.name,
-                prop: dataColumn.id,
-                resizeable: true,
-                draggable: true,
-                headerTemplate: this.dataColTpl,
-                cellClass: this.getCellClass,
-                cellTemplate: this.dataRowTpl
-            })
+                undefined :
+                ({
+                    name: dataColumn.name,
+                    prop: dataColumn.id,
+                    resizeable: true,
+                    draggable: true,
+                    headerTemplate: this.dataColTpl,
+                    cellClass: this.getCellClass,
+                    cellTemplate: this.dataRowTpl
+                })
         );
         return ngxColumn;
     }
@@ -441,34 +858,25 @@ export class FilterTableViewComponent {
         ];
     }
 
-    private getCellClass({ row }: { row: TableRow, column: NgxTableColumn, value: any}): any {
+    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any}): any {
         return {
             'fcl-row-cell-invisible': row['invisible'] || (row.parentRow !== undefined && row.parentRow['invisible']),
             'fcl-font-style-italic': row.parentRowId !== undefined
         };
     }
 
-    recalculateTable() {
+    private recalculateTable() {
         this.table.recalculate();
     }
 
-    recalculatePages() {
-        this.table.recalculatePages();
-    }
-
-    onColumnReorder(e: { column: any, newValue: number, prevValue: number }): void {
-        if (!this.isColumnOrderOk()) {
-            this.fixColumnOrder();
-        }
-        this.columnOrderChange.emit(this.getColumnOrdering());
-    }
-
     private getColumnOrdering(): string[] {
+        // eslint-disable-next-line no-underscore-dangle
         return this.table._internalColumns.filter(c => c.draggable).map(c => c.prop + '');
     }
 
     private isColumnOrderOk(): boolean {
         // checks whether all draggable columns are behind undraggable columns
+        // eslint-disable-next-line no-underscore-dangle
         return this.table._internalColumns.every(
             (value, index, arr) => index === 0 || !arr[index - 1].draggable || value.draggable
         );
@@ -476,17 +884,23 @@ export class FilterTableViewComponent {
 
     private fixColumnOrder(): void {
         // puts undraggable columns in front of draggable columns
+        // eslint-disable-next-line no-underscore-dangle
         this.table._internalColumns = [].concat(
+            // eslint-disable-next-line no-underscore-dangle
             this.table._internalColumns.filter(c => !c.draggable),
+            // eslint-disable-next-line no-underscore-dangle
             this.table._internalColumns.filter(c => c.draggable)
         );
     }
 
     private applyColumnOrder(newColumnOrder: string[]) {
+        // eslint-disable-next-line no-underscore-dangle
         const fixedColumns = this.table._internalColumns.filter(c => !c.draggable);
+        // eslint-disable-next-line no-underscore-dangle
         const filterColumns = this.table._internalColumns.filter(c => c.draggable);
         const orderedFilterColumns = newColumnOrder.map(p => filterColumns.find(c => c.prop === p)).filter(c => !!c);
 
+        // eslint-disable-next-line no-underscore-dangle
         this.table._internalColumns = [].concat(
             fixedColumns,
             orderedFilterColumns,

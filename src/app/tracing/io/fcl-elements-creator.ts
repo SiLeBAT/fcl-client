@@ -28,7 +28,6 @@ interface DataTable {
 class PropCollector {
     private propList: ColumnProperty[] = [];
     private props: { [key: string]: ValueType } = {};
-    constructor() {}
 
     push(id: string, type: ValueType) {
         if (!this.props[id]) {
@@ -42,9 +41,9 @@ class PropCollector {
 }
 
 export function createFclElements(fclData: FclData): {
-    stations: DataTable,
-    deliveries: DataTable,
-    deliveryRelations: DataTable
+    stations: DataTable;
+    deliveries: DataTable;
+    deliveryRelations: DataTable;
 } {
     return {
         stations: createStationTable(fclData),
@@ -111,8 +110,8 @@ function createDeliveryRelationTable(fclData: FclData): DataTable {
         data: [].concat(...(fclData.fclElements.stations.map(
             station => station.connections.map(
                 con => [
-                        { id: columnSourceId, value: con.source },
-                        { id: columnTargetId, value: con.target }
+                    { id: columnSourceId, value: con.source },
+                    { id: columnTargetId, value: con.target }
                 ]
             )
         )))

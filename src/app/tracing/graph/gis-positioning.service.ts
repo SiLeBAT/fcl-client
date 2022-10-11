@@ -11,7 +11,8 @@ interface NeighbourHood {
     neighbourWeights: Record<NodeId, number>;
 }
 
-interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface NeighbourHoodMap extends Record<NodeId, NeighbourHood> { }
 
 export interface PositioningData {
     nodePositions: PositionMap;
@@ -70,7 +71,7 @@ export class GisPositioningService {
             ghostPositions: this.ghostModelPositions,
             unknownLatLonRect: (
                 this.boundaryNodeIds.length > 0 || this.boundaryGhostNodeIds.length > 0 ?
-                this.outerBoundaryRect : null
+                    this.outerBoundaryRect : null
             ),
             unknownLatLonRectModelBorderWidth: this.modelBorderWidth
         };
@@ -119,11 +120,11 @@ export class GisPositioningService {
         } else {
             const margin =
                 this.innerBoundaryRect.width === 0 && this.innerBoundaryRect.height === 0 ?
-                ABSOLUTE_FRAME_MARGIN :
-                Math.max(
-                    this.innerBoundaryRect.width * RELATIVE_FRAME_MARGIN,
-                    this.innerBoundaryRect.height * RELATIVE_FRAME_MARGIN
-                );
+                    ABSOLUTE_FRAME_MARGIN :
+                    Math.max(
+                        this.innerBoundaryRect.width * RELATIVE_FRAME_MARGIN,
+                        this.innerBoundaryRect.height * RELATIVE_FRAME_MARGIN
+                    );
 
             this.outerBoundaryRect = {
                 left: this.innerBoundaryRect.left - margin,
@@ -179,8 +180,8 @@ export class GisPositioningService {
         const neighbourIds = new Set<NodeId>();
         nodeIds.forEach(
             nodeId => nbhMap[nodeId].neighbourIds
-                    .filter(nId => posMap[nId] === undefined)
-                    .forEach(nId => neighbourIds.add(nId))
+                .filter(nId => posMap[nId] === undefined)
+                .forEach(nId => neighbourIds.add(nId))
         );
         return neighbourIds;
     }
@@ -280,8 +281,8 @@ export class GisPositioningService {
                 const pos = posMap[n.id];
                 this.ghostModelPositions[n.id] =
                     pos !== undefined ?
-                    pos :
-                    this.createDefaultPosition();
+                        pos :
+                        this.createDefaultPosition();
             });
     }
 
@@ -332,8 +333,8 @@ export class GisPositioningService {
 
         return (
             nodePositions.length === 0 ?
-            null :
-            getEnclosingRectFromPoints(nodePositions)
+                null :
+                getEnclosingRectFromPoints(nodePositions)
         );
     }
 }

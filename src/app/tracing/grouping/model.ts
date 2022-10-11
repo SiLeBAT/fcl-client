@@ -1,5 +1,5 @@
 import {
-    StationData, BasicGraphState, GroupType, GroupData, StationTracingSettings, Position
+    StationData, GroupType, GroupData, StationTracingSettings, Position, DataServiceInputState
 } from '../data.model';
 
 export interface SetStationGroupsPayload {
@@ -15,7 +15,7 @@ export interface GroupingChange {
     removeGroups: GroupData[];
 }
 
-export interface GroupingState extends BasicGraphState {
+export interface GroupingState extends DataServiceInputState {
     stationPositions: { [key: string]: Position };
 }
 
@@ -27,7 +27,7 @@ export interface LinkGroup {
     }[];
 }
 
-export type GroupInfoFun = (linkGroup: LinkGroup, groupNumber: number) => { id: string, name: string, groupType: GroupType };
+export type GroupInfoFun = (linkGroup: LinkGroup, groupNumber: number) => { id: string; name: string; groupType: GroupType };
 
 export interface IsolatedComponent {
     ids: string[];

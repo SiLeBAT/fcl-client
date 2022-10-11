@@ -12,7 +12,7 @@ describe('ResetViewComponent', () => {
     let fixture: ComponentFixture<ResetViewComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 ResetViewComponent
@@ -27,8 +27,6 @@ describe('ResetViewComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ResetViewComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

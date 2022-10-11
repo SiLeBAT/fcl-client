@@ -13,12 +13,14 @@ import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
-import { SetSchemaGraphLayoutSOA, SetSelectedElementsSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
-import { getGraphType, getSchemaGraphData, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { SetSchemaGraphLayoutSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
+import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
 import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
+import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes } from '@app/tracing/tracing.actions';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
     selector: 'fcl-schema-graph',
@@ -37,10 +39,11 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
 
     private graphType$ = this.store.select(getGraphType);
     isGraphActive$ = this.graphType$.pipe(map(graphType => graphType === GraphType.GRAPH));
-    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$));
-    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$));
-    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$));
+    showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$, true));
+    showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$, true));
+    styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
 
+    private focusElementSubscription: Subscription;
     private graphStateSubscription: Subscription;
 
     private cachedState: SchemaGraphState | null = null;
@@ -55,6 +58,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private asyncRelayoutingDialog: MatDialogRef<DialogActionsComponent, any> | null = null;
 
     constructor(
+        private actions$: Actions,
         private store: Store<State>,
         public elementRef: ElementRef,
         private dialogService: MatDialog,
@@ -67,11 +71,19 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     ngOnInit() {
 
         this.graphStateSubscription = this.store
-            .select(getSchemaGraphData)
-            .pipe(optInGate(this.isGraphActive$))
+            .select(selectSchemaGraphState)
+            .pipe(optInGate(this.isGraphActive$, true))
             .subscribe(
                 graphState => this.applyState(graphState),
                 err => this.alertService.error(`getGisGraphData store subscription failed: ${err}`)
+            );
+
+        this.focusElementSubscription = this.actions$
+            .pipe(ofType<FocusGraphElementSSA>(TracingActionTypes.FocusGraphElementSSA))
+            .pipe(optInGate(this.isGraphActive$, false))
+            .subscribe(
+                action => this.graphViewComponent.focusElement(action.payload.elementId),
+                err => this.alertService.error(`focusElement subscription failed: ${err}`)
             );
     }
 
@@ -80,9 +92,13 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.graphStateSubscription.unsubscribe();
             this.graphStateSubscription = null;
         }
+        if (this.focusElementSubscription) {
+            this.focusElementSubscription.unsubscribe();
+            this.focusElementSubscription = null;
+        }
     }
 
-    getCanvas(): Promise<HTMLCanvasElement> {
+    async getCanvas(): Promise<HTMLCanvasElement> {
         return html2canvas(this.elementRef.nativeElement);
     }
 
@@ -92,8 +108,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.sharedGraphData,
             this.graphViewComponent.getLayoutOptions(
                 requestInfo.hoverContext.edgeId === undefined && requestInfo.hoverContext.nodeId === undefined ?
-                this.schemaGraphData.nodeData.map(n => n.id) :
-                this.contextMenuService.getContextElements(requestInfo.hoverContext, this.sharedGraphData).nodeIds
+                    this.schemaGraphData.nodeData.map(n => n.id) :
+                    this.contextMenuService.getContextElements(requestInfo.hoverContext, this.sharedGraphData).nodeIds
             )
         );
         this.contextMenu.open(requestInfo.position, menuData);
@@ -133,11 +149,10 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         if (graphDataChange.layout) {
             this.store.dispatch(new SetSchemaGraphLayoutSOA({ layout: graphDataChange.layout }));
         }
-        if (graphDataChange.selectedElements) {
-            this.store.dispatch(new SetSelectedElementsSOA({
-                selectedElements: this.graphService.convertGraphSelectionToFclSelection(
-                    graphDataChange.selectedElements, this.sharedGraphData
-                )
+        if (graphDataChange.selectionChange) {
+            this.store.dispatch(new SetSelectedGraphElementsMSA({
+                selectedElements: graphDataChange.selectionChange.selectedElements,
+                maintainOffGraphSelection: graphDataChange.selectionChange.isShiftSelection
             }));
         }
     }

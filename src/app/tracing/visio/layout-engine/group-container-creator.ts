@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
-import { VisioBox, GridCell, Polygon, CustomBoxShape,
-    VisioLabel, GraphLayer, BoxType, Position, Size } from './datatypes';
+import {
+    VisioBox, GridCell, Polygon, CustomBoxShape,
+    VisioLabel, GraphLayer, BoxType, Position, Size
+} from './datatypes';
 import { GraphSettings } from './graph-settings';
 import { Utils } from '../../util/non-ui-utils';
 import { getDifference } from '@app/tracing/util/geometry-utils';
@@ -20,9 +22,9 @@ export class GroupContainerCreator {
 
     createGroupBoxes(
         boxGrid: VisioBox[][],
-        cellGroups: {label: VisioLabel, cells: GridCell[]}[],
+        cellGroups: {label: VisioLabel; cells: GridCell[]}[],
         graphLayers: GraphLayer[]
-        ): VisioBox[] {
+    ): VisioBox[] {
 
         if (boxGrid.length === 0) {
             return [];
@@ -89,7 +91,7 @@ export class GroupContainerCreator {
         return cells.find(cell => cell.column === minColumn);
     }
 
-    private setRowAndColumnHeights(cellGroups: {label: VisioLabel, cells: GridCell[]}[], graphLayers: GraphLayer[]) {
+    private setRowAndColumnHeights(cellGroups: {label: VisioLabel; cells: GridCell[]}[], graphLayers: GraphLayer[]) {
 
         this.groupHeaderHeight = Math.max(...cellGroups.map(g => g.label.size.height)) + GraphSettings.SECTION_DISTANCE;
         this.bottomMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
@@ -131,7 +133,7 @@ export class GroupContainerCreator {
         this.markCells(matrix, transCells);
 
         const outerBoundary: CellPolygon = [{
-            row:  transCells[0].row,
+            row: transCells[0].row,
             column: transCells[0].column
         } ];
         this.parseOuterBoundary(matrix, outerBoundary);
@@ -218,7 +220,7 @@ export class GroupContainerCreator {
                     matrix[lastCell.row + 1][lastCell.column] === matrix[lastCell.row][lastCell.column]
                     // start cell, but going down is available
                 )
-             ) {
+            ) {
 
                 // check left
                 const leftCell: GridCell = {
@@ -323,12 +325,12 @@ export class GroupContainerCreator {
     private convertCellToPoint(cell: GridCell, lastMove: GridCell, nextMove: GridCell, margin: number): Position {
 
         const x: number = lastMove.row < 0 || nextMove.row < 0 ?
-                          this.columnLeft[cell.column] + margin :
-                          this.columnLeft[cell.column + 1] - margin;
+            this.columnLeft[cell.column] + margin :
+            this.columnLeft[cell.column + 1] - margin;
 
         const y: number = lastMove.column > 0 || nextMove.column > 0 ?
-                          this.rowTop[cell.row] + margin :
-                          this.rowTop[cell.row + 1] - margin;
+            this.rowTop[cell.row] + margin :
+            this.rowTop[cell.row + 1] - margin;
 
         return { x: x, y: y };
     }

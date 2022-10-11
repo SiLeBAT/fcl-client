@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { PasswordStrengthMeterModule } from 'angular-password-strength-meter';
 
 import { ResetComponent } from './reset.component';
 import { MaterialModule } from '../../../shared/material.module';
@@ -14,7 +13,7 @@ describe('ResetComponent', () => {
     let fixture: ComponentFixture<ResetComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 ResetComponent
@@ -23,8 +22,7 @@ describe('ResetComponent', () => {
                 MaterialModule,
                 SharedModule,
                 RouterTestingModule,
-                NoopAnimationsModule,
-                PasswordStrengthMeterModule
+                NoopAnimationsModule
             ]
         }).compileComponents()
             .then(() => {
@@ -82,7 +80,6 @@ describe('ResetComponent', () => {
         expect(component.resetForm.valid).toBeTruthy();
 
         let passwordRequest: NewPasswordRequestDTO;
-        // tslint:disable-next-line: rxjs-no-ignored-error
         component.reset.subscribe((value) => passwordRequest = value);
 
         component.onReset();

@@ -1,4 +1,4 @@
-import { Vertex } from './farm-to-fork.model';
+import { Vertex } from './data-structures';
 import * as _ from 'lodash';
 
 export interface LayeredComponent {
@@ -7,9 +7,9 @@ export interface LayeredComponent {
 }
 
 function traverseComponent(
-  vertex: Vertex,
-  marked: boolean[],
-  members: Vertex[]
+    vertex: Vertex,
+    marked: boolean[],
+    members: Vertex[]
 ) {
 
     if (!marked[vertex.index]) {
@@ -25,7 +25,7 @@ function traverseComponent(
 }
 
 export function splitUnconnectedComponents(
-  layers: Vertex[][]
+    layers: Vertex[][]
 ): LayeredComponent[] {
 
     const result: LayeredComponent[] = [];
@@ -86,19 +86,29 @@ export function splitUnconnectedComponents(
     return result;
 }
 
+function getMinComponentScale(layeredComponents: LayeredComponent[]): number {
+    return Math.min(...layeredComponents.map(c => Math.min(...c.layers.map(layer => layer[0].layerScale))));
+}
+
+function getComponentSize(layeredComponent: LayeredComponent): number {
+    const lastVertices = layeredComponent.layers.map(layer => layer[layer.length - 1]);
+    return Math.max(...lastVertices.map(vertex => vertex.y + vertex.topPadding * vertex.layerScale));
+}
+
 export function mergeUnconnectedComponents(
-  layeredComponents: LayeredComponent[],
-  componentDistance: number
+    layeredComponents: LayeredComponent[],
+    unscaledComponentDistance: number
 ): Vertex[][] {
 
+    const componentDistance = unscaledComponentDistance * getMinComponentScale(layeredComponents);
     const result: Vertex[][] = [];
     const nLayers: number = Math.max(
-      ...layeredComponents.map(
-        layeredComponent =>
-          layeredComponent.layerIndices[
-            layeredComponent.layerIndices.length - 1
-          ]
-      )
+        ...layeredComponents.map(
+            layeredComponent =>
+                layeredComponent.layerIndices[
+                    layeredComponent.layerIndices.length - 1
+                ]
+        )
     ) + 1;
 
     for (let iLayer: number = nLayers - 1; iLayer >= 0; iLayer--) {
@@ -108,7 +118,8 @@ export function mergeUnconnectedComponents(
     let offset: number = 0;
 
     for (const layeredComponent of layeredComponents) {
-        let maxComponentSize: number = 0;
+        const maxComponentSize = getComponentSize(layeredComponent);
+
         for (
             let iLayer: number = layeredComponent.layers.length - 1;
             iLayer >= 0;
@@ -120,10 +131,6 @@ export function mergeUnconnectedComponents(
                 layer.push(vertex);
                 vertex.y += offset;
             }
-            maxComponentSize = Math.max(
-                maxComponentSize,
-                layer[layer.length - 1].y - offset + layer[layer.length - 1].size / 2
-            );
         }
         offset += componentDistance + maxComponentSize;
     }

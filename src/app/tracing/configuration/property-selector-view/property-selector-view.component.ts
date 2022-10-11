@@ -13,12 +13,12 @@ interface Property {
 })
 export class PropertySelectorViewComponent {
 
+    @Input() label: string | null = null;
+    @Input() disabled = false;
     @Input() value: string;
     @Input() availableProperties: Property[];
 
     @Output() valueChange = new EventEmitter<string>();
-
-    constructor() { }
 
     onValueChange(value: string): void {
         this.valueChange.emit(value);

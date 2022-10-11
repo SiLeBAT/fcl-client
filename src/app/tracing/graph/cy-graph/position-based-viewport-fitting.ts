@@ -25,7 +25,7 @@ export function getPositionBasedFitViewPort(
             zoom: zoom,
             pan: {
                 x: - (rect.left - (availableSpace.width / zoom - rect.width) / 2) * zoom,
-                y:  - (rect.top - (availableSpace.height / zoom - rect.height) / 2) * zoom
+                y: - (rect.top - (availableSpace.height / zoom - rect.height) / 2) * zoom
             }
         };
         return layout;

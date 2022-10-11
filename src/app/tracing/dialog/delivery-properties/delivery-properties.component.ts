@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DeliveryData, StationData } from '../../data.model';
 import { Constants } from '../../util/constants';
@@ -26,7 +26,7 @@ interface Properties {
     templateUrl: './delivery-properties.component.html',
     styleUrls: ['./delivery-properties.component.scss']
 })
-export class DeliveryPropertiesComponent implements OnInit {
+export class DeliveryPropertiesComponent {
 
     otherPropertiesHidden = true;
     properties: Properties = {};
@@ -43,13 +43,13 @@ export class DeliveryPropertiesComponent implements OnInit {
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(this.data.delivery).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
-        .forEach(key => {
-            const value = this.data.delivery[key];
-            properties[key] = {
-                label: Constants.PROPERTIES.get(key).name,
-                value: value != null ? value + '' : ''
-            };
-        });
+            .forEach(key => {
+                const value = this.data.delivery[key];
+                properties[key] = {
+                    label: Constants.PROPERTIES.get(key).name,
+                    value: value != null ? value + '' : ''
+                };
+            });
 
         this.data.delivery.properties.forEach(prop => {
             properties[prop.name] = {
@@ -128,8 +128,4 @@ export class DeliveryPropertiesComponent implements OnInit {
     toggleOtherProperties() {
         this.otherPropertiesHidden = !this.otherPropertiesHidden;
     }
-
-    ngOnInit() {
-    }
-
 }

@@ -1,0 +1,20 @@
+<span class="fcl-header-sort-span draggable" (click)="onSort()">
+    {{ column !== null ? column.name : '' }}
+    <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
+    <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
+    <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+</span>
+<mat-form-field
+    class="fcl-column-filter-field draggable"
+    floatLabel="never"
+    appearance="outline"
+    color="accent">
+    <input
+        matInput
+        type="search"
+        tabindex="-1"
+        [ngModel] = "filterText || ''"
+        (ngModelChange)="onFilterTextChange($event)"
+    >
+    <mat-icon class="fcl-column-filter-field-icon" matSuffix>search</mat-icon>
+</mat-form-field>

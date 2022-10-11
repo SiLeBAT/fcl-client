@@ -10,8 +10,6 @@ export class RuleNameViewComponent {
     @Input() ruleName: string = '';
     @Output() ruleNameChange = new EventEmitter<string>();
 
-    constructor() { }
-
     onRuleNameChange(ruleName: string): void {
         this.ruleName = ruleName;
         this.ruleNameChange.emit(ruleName);

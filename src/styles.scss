@@ -19,6 +19,10 @@ body {
     box-sizing: border-box;
 }
 
+.mat-dialog-container {
+    font-family: #{$fcl-font-family};
+}
+
 .fcl-option-tooltip {
     font-size: 16px;
 }
@@ -51,6 +55,24 @@ body {
     color: black;
 }
 
+// improves multiline error messages
+fcl-register,
+fcl-reset {
+    mat-form-field .mat-form-field {
+        &-underline {
+            position: relative;
+            bottom: auto;
+        }
+
+        &-subscript-wrapper {
+            position: static;
+            overflow-y: visible;
+            min-height: 0.8rem;
+            margin-bottom: -1.2rem;
+        }
+    }
+}
+
 mat-form-field.less-bottom-padding {
     .mat-form-field-wrapper {
         padding-bottom: 0.5em;
@@ -75,36 +97,6 @@ mat-form-field.less-bottom-padding {
     .datatable-body-row .datatable-body-cell {
         padding-top: 0.3rem !important;
         padding-bottom: 0.3rem !important;
-    }
-}
-
-.fcl-datatable .datatable-header-cell {
-    // switch of default sort icons
-    .datatable-icon-up::before {
-        content: "";
-    }
-
-    .datatable-icon-down::before {
-        content: "";
-    }
-
-    .datatable-icon-sort-unset::before {
-        content: "";
-    }
-
-    .fcl-header-sort-span {
-        // switch on sort icons
-        .datatable-icon-up::before {
-            content: "\65";
-        }
-
-        .datatable-icon-down::before {
-            content: "\66";
-        }
-
-        .datatable-icon-sort-unset::before {
-            content: "\63";
-        }
     }
 }
 
@@ -174,4 +166,28 @@ mat-form-field.less-bottom-padding {
 
 .fcl-mat-slide-toggle.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
     background-color: $fcl-primary-500;
+}
+
+.fcl-checkbox-wo-ripple .mat-ripple {
+    display: none;
+}
+
+.fcl-color-picker .color-picker {
+    .arrow.arrow-left,
+    .arrow.arrow-right {
+        top: 165px;
+    }
+
+    .arrow.arrow-top,
+    .arrow.arrow-bottom {
+        left: 100px;
+    }
+}
+
+.fcl-color-picker.fcl-color-picker--wo-space .color-picker {
+    margin-left: 180px;
+
+    .arrow {
+        display: none;
+    }
 }

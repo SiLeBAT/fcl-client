@@ -18,6 +18,9 @@ import {
 import { DataRequestService } from '../../core/services/data-request.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GdprAgreementComponent } from '../presentation/gdpr-agreement/gdpr-agreement.component';
+import { InvalidRegistrationInput } from '../errors';
+import { catchError } from 'rxjs/operators';
+import { InvalidServerInputHttpErrorResponse } from '../../core/errors';
 
 @Injectable({
     providedIn: 'root'
@@ -42,22 +45,23 @@ export class UserService {
     ) { }
 
     register(credentials: RegistrationDetailsDTO): Observable<RegistrationRequestResponseDTO> {
-        return this.dataService.post<RegistrationRequestResponseDTO, RegistrationDetailsDTO>(this.URL.register, credentials);
+        return this.dataService.post<RegistrationRequestResponseDTO, RegistrationDetailsDTO>(this.URL.register, credentials)
+            .pipe(catchError((e) => this.handleRegistrationError(e)));
     }
 
     recoverPassword(email: ResetRequestDTO): Observable<PasswordResetRequestResponseDTO> {
         return this.dataService.put<PasswordResetRequestResponseDTO, ResetRequestDTO>(this.URL.recovery, email);
     }
 
-    resetPassword(newPw: NewPasswordRequestDTO, token: String): Observable<PasswordResetResponseDTO> {
+    resetPassword(newPw: NewPasswordRequestDTO, token: string): Observable<PasswordResetResponseDTO> {
         return this.dataService.patch<PasswordResetResponseDTO, NewPasswordRequestDTO>([this.URL.reset, token].join('/'), newPw);
     }
 
-    activateAccount(token: String): Observable<ActivationResponseDTO> {
+    activateAccount(token: string): Observable<ActivationResponseDTO> {
         return this.dataService.patch<ActivationResponseDTO, string>([this.URL.activate, token].join('/'), null);
     }
 
-    adminActivateAccount(adminToken: String): Observable<ActivationResponseDTO> {
+    adminActivateAccount(adminToken: string): Observable<ActivationResponseDTO> {
         return this.dataService.patch<ActivationResponseDTO, string>([this.URL.adminactivate, adminToken].join('/'), null);
     }
 
@@ -69,7 +73,7 @@ export class UserService {
         return this.dataService.put<TokenizedUserDTO, GdprConfirmationRequestDTO>(this.URL.gdpragreement, user);
     }
 
-    confirmNewsletterSubscription(token: String): Observable<NewsConfirmationResponseDTO> {
+    confirmNewsletterSubscription(token: string): Observable<NewsConfirmationResponseDTO> {
         return this.dataService.patch<NewsConfirmationResponseDTO, string>([this.URL.newsconfirmation, token].join('/'), null);
     }
 
@@ -101,4 +105,10 @@ export class UserService {
         return dialogRef.afterClosed();
     }
 
+    private handleRegistrationError(error: unknown): never {
+        if (error instanceof InvalidServerInputHttpErrorResponse) {
+            throw new InvalidRegistrationInput(error);
+        }
+        throw error;
+    }
 }

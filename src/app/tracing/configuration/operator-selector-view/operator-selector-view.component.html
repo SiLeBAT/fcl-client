@@ -5,6 +5,7 @@
     <mat-select
         [value]="value"
         (valueChange)="onValueChange($event)"
+        [disabled]="disabled"
         placeholder="op">
         <ng-container *ngFor="let type of availableOperatorTypes">
             <mat-option

@@ -1,9 +1,9 @@
 <button
     mat-stroked-button
     class="fcl-anonymous-button"
-    matTooltip="Anonymize stations ... coming soon"
+    [matTooltip]="tooltip"
     matTooltipPosition="above"
     color="primary"
-    (click)="anonymizeStations()">
+    (click)="onAnonymize()">
     <mat-icon>vpn_key</mat-icon>
 </button>

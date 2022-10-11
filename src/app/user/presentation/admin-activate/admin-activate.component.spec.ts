@@ -12,7 +12,7 @@ describe('AdminActivateComponent', () => {
     let fixture: ComponentFixture<AdminActivateComponent>;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 AdminActivateComponent
@@ -27,8 +27,6 @@ describe('AdminActivateComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(AdminActivateComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 

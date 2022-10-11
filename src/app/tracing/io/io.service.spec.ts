@@ -65,6 +65,7 @@ describe('IOService', () => {
                     deliveries: []
                 },
                 ghostStation: undefined,
+                ghostDelivery: null,
                 schemaLayout: { zoom: 1, pan: { x: 0.5, y: 0.5 } },
                 gisLayout: null,
                 stationPositions: {
@@ -188,10 +189,12 @@ describe('IOService', () => {
                         mergeDeliveriesType: 'NO_MERGE',
                         showMergedDeliveriesCounts: false,
                         selectedEdges: fclData.graphSettings.selectedElements.deliveries,
-                        highlightConditions: []
+                        highlightConditions: [],
+                        invisibleEdges: []
                     },
                     node: {
                         highlightConditions: [],
+                        invisibleNodes: [],
                         skipEdgelessNodes: fclData.graphSettings.skipUnconnectedStations,
                         selectedNodes: fclData.graphSettings.selectedElements.stations
                     },

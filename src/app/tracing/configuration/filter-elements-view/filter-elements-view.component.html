@@ -15,8 +15,11 @@
     <mat-expansion-panel
         class="fcl-more-filter fcl-border-radius-zero"
         color="primary"
-        (opened)="moreFilterOpenState = true"
-        (closed)="moreFilterOpenState = false">
+        [expanded]="moreFilterOpenState"
+        (opened)="onSetMoreFilterOpenState(true)"
+        (closed)="onSetMoreFilterOpenState(false)"
+        (afterCollapse)="onAfterExpansionPanelCollapseOrExpand()"
+        (afterExpand)="onAfterExpansionPanelCollapseOrExpand()">
 
         <mat-expansion-panel-header>
           <mat-panel-title class="fcl-font-size-08">
@@ -31,8 +34,11 @@
 
         <mat-expansion-panel
             class="fcl-border-radius-zero"
+            [expanded]="complexFilterOpenState"
             (opened)="complexFilterOpenState = true"
-            (closed)="complexFilterOpenState = false">
+            (closed)="complexFilterOpenState = false"
+            (afterCollapse)="onAfterExpansionPanelCollapseOrExpand()"
+            (afterExpand)="onAfterExpansionPanelCollapseOrExpand()">
 
             <mat-expansion-panel-header
                 class="fcl-expansion-panel-header">
@@ -59,11 +65,17 @@
         <fcl-filter-table-view
             class = "fcl-filter-table-view"
             [inputData] = "filterTableViewInputData"
+            [activityState$] = "activityState$"
+            [cycleStart$] = "cycleStart$"
+            [checkTableSize$] = "checkTableSize$"
+            [updateTableSize$] = "updateTableSize$"
             [useTreeMode] = "useTreeMode"
             (columnOrderChange) = "onColumnOrderChange($event)"
             (filterChange)="onTableFilterChange($event)"
             (selectColumns)="onSelectTableColumns()"
+            (rowSelectionChange)="onRowSelectionChange($event)"
             (mouseOverRow)="onMouseOverTableRow($event)"
+            (rowDblClick)="onRowDblClick($event)"
         ></fcl-filter-table-view>
     </div>
 </div>

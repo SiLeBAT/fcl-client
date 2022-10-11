@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
 import { createPreprocessedConditions } from '../configuration/complex-row-filter-provider';
 import {
     DataServiceData,
-    BasicGraphState,
     StationData,
     StationHighlightingInfo,
     DeliveryHighlightingInfo,
@@ -12,7 +12,9 @@ import {
     StationHighlightingRule,
     DeliveryHighlightingRule,
     HighlightingRule,
-    OperationType
+    OperationType,
+    DataServiceInputState,
+    HighlightingStats
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -35,7 +37,8 @@ export class HighlightingService {
     private statRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
     private delRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
 
-    applyVisibilities(state: BasicGraphState, data: DataServiceData) {
+    applyVisibilities(state: DataServiceInputState, data: DataServiceData) {
+
         data.stations.forEach(s => {
             s.invisible = false;
             s.expInvisible = false;
@@ -51,7 +54,8 @@ export class HighlightingService {
                 s.invisible = true;
                 s.expInvisible = true;
             });
-        data.statVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
+
+        const newStatVis = Utils.createSimpleStringSet(data.stations.filter(s => !s.invisible).map(s => s.id));
         data.getDelById(state.highlightingSettings.invisibleDeliveries)
             .forEach(d => {
                 d.invisible = true;
@@ -60,14 +64,21 @@ export class HighlightingService {
         data.deliveries.filter(d => !d.invisible).forEach(
             d => d.invisible = data.statMap[d.source].invisible || data.statMap[d.target].invisible
         );
-        data.delVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
+        const newDelVis = Utils.createSimpleStringSet(data.deliveries.filter(d => !d.invisible).map(d => d.id));
+
+        if (!_.isEqual(data.delVis, newDelVis)) {
+            data.delVis = newDelVis;
+        }
+        if (!_.isEqual(data.statVis, newStatVis)) {
+            data.statVis = newStatVis;
+        }
     }
 
-    hasStationVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
+    hasStationVisibilityChanged(oldState: DataServiceInputState, newState: DataServiceInputState): boolean {
         return !oldState || oldState.highlightingSettings.invisibleStations !== newState.highlightingSettings.invisibleStations;
     }
 
-    hasDeliveryVisibilityChanged(oldState: BasicGraphState, newState: BasicGraphState): boolean {
+    hasDeliveryVisibilityChanged(oldState: DataServiceInputState, newState: DataServiceInputState): boolean {
         return !oldState || oldState.highlightingSettings.invisibleDeliveries !== newState.highlightingSettings.invisibleDeliveries;
     }
 
@@ -85,7 +96,7 @@ export class HighlightingService {
         }
     }
 
-    private preprocessHighlightings(state: BasicGraphState): void {
+    private preprocessHighlightings(state: DataServiceInputState): void {
         const statRulesChanged = state.highlightingSettings.stations !== this.statHighlightingRules;
         const delRulesChanged = state.highlightingSettings.deliveries !== this.delHighlightingRules;
         if (statRulesChanged) {
@@ -110,48 +121,53 @@ export class HighlightingService {
         }
     }
 
-    applyHighlightingProps(state: BasicGraphState, data: DataServiceData): void {
+    applyHighlightingProps(state: DataServiceInputState, data: DataServiceData): void {
         this.preprocessHighlightings(state);
 
-        const ruleIdToStatCountMap: Record<RuleId, number> = {};
-        state.highlightingSettings.stations.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
-        const ruleIdToConflictCountMap: Record<RuleId, number> = {};
+        const effElementsStats: HighlightingStats = {
+            counts: {},
+            conflicts: {}
+        };
+
         data.stations
-            .filter((station: StationData) => !station.invisible)
+            .filter((station: StationData) => !station.contained)
             .forEach((station: StationData) => {
 
                 station.highlightingInfo = this.createStationHighlightingInfo(
-                    station, state, ruleIdToStatCountMap, ruleIdToConflictCountMap
+                    station, state, effElementsStats
                 );
 
             });
 
-        const ruleIdToDelCountMap: Record<RuleId, number> = {};
-        state.highlightingSettings.deliveries.forEach(rule => ruleIdToStatCountMap[rule.id] = 0);
         data.deliveries
-            .filter((delivery: DeliveryData) => !delivery.invisible)
             .forEach((delivery: DeliveryData) => {
-                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, ruleIdToDelCountMap);
+
+                delivery.highlightingInfo = this.createDeliveryHightlightingInfo(delivery, state, effElementsStats);
+
             });
 
         data.legendInfo = this.getLegendInfo(state, {
-            stations: Utils.mapRecordValues(ruleIdToStatCountMap, (x: number) => x > 0),
-            deliveries: Utils.mapRecordValues(ruleIdToDelCountMap, (x: number) => x > 0)
+            stations: this.getRuleIdToIsActiveMap(
+                state.highlightingSettings.stations.filter(r => !r.disabled),
+                effElementsStats
+            ),
+            deliveries: this.getRuleIdToIsActiveMap(
+                state.highlightingSettings.deliveries.filter(r => !r.disabled),
+                effElementsStats
+            )
         });
-        data.highlightingStats = {
-            stationRuleStats: {
-                counts: ruleIdToStatCountMap,
-                conflicts: ruleIdToConflictCountMap
-            },
-            deliveryRuleStats: {
-                counts: ruleIdToDelCountMap
-            }
-        };
+        data.highlightingStats = effElementsStats;
+    }
+
+    private getRuleIdToIsActiveMap(hrules: HighlightingRule[], effElementsStats: HighlightingStats): Record<RuleId, boolean> {
+        const result: Record<RuleId, boolean> = {};
+        hrules.forEach(rule => result[rule.id] = (effElementsStats.counts[rule.id] || 0) > 0);
+        return result;
     }
 
     private getLegendInfo(
-        state: BasicGraphState,
-        activeHighlightings: { stations: Record<RuleId, boolean>, deliveries: Record<RuleId, boolean>}
+        state: DataServiceInputState,
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean>}
     ): LegendInfo {
 
         const ruleIdToIsCommonLinkRuleMap: Record<RuleId, boolean> = {};
@@ -178,7 +194,7 @@ export class HighlightingService {
         return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
     }
 
-    private getCommonLinkEntries(state: BasicGraphState): StationHighlightingRule[] {
+    private getCommonLinkEntries(state: DataServiceInputState): StationHighlightingRule[] {
         return state.highlightingSettings.stations.filter(rule => !rule.disabled && this.isCommonLinkRule(rule));
     }
 
@@ -202,7 +218,7 @@ export class HighlightingService {
 
     private getActiveHighlightingRules<
         T extends StationOrDeliveryData,
-        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(fclElement: T, highlightingRules: K[]): K[] {
         return highlightingRules.filter(rule =>
             !rule.invisible &&
@@ -213,21 +229,24 @@ export class HighlightingService {
             )
         );
     }
-    private createDeliveryHightlightingInfo(delivery: DeliveryData, state: BasicGraphState, ruleIdToDelCountMap: Record<RuleId, number>) {
+    private createDeliveryHightlightingInfo(
+        delivery: DeliveryData,
+        state: DataServiceInputState,
+        effElementsStats: HighlightingStats
+    ) {
         const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
-        activeHighlightingRules.forEach(rule => ruleIdToDelCountMap[rule.id] = (ruleIdToDelCountMap[rule.id] || 0) + 1);
+        activeHighlightingRules.forEach(rule => effElementsStats.counts[rule.id] = (effElementsStats.counts[rule.id] || 0) + 1);
 
         return deliveryHighlightingInfo;
     }
 
     private createStationHighlightingInfo(
         station: StationData,
-        state: BasicGraphState,
-        ruleIdToStatCountMap: Record<RuleId, number>,
-        ruleIdToConflictCountMap: Record<RuleId, number>
+        state: DataServiceInputState,
+        effElementsStats: HighlightingStats
     ): StationHighlightingInfo {
 
         const activeHighlightingRules = this.getActiveHighlightingRules(station, state.highlightingSettings.stations);
@@ -235,16 +254,17 @@ export class HighlightingService {
         const activeShapeRules = activeHighlightingRules.filter(rule => rule.shape !== null);
         const shapes = activeShapeRules.map(rule => rule.shape);
 
-        activeHighlightingRules.forEach(rule => ruleIdToStatCountMap[rule.id] = (ruleIdToStatCountMap[rule.id] || 0) + 1);
+        activeHighlightingRules.forEach(rule => effElementsStats.counts[rule.id] = (effElementsStats.counts[rule.id] || 0) + 1);
         activeShapeRules.forEach((rule, index) => {
             if (index > 0) {
-                ruleIdToConflictCountMap[rule.id] = (ruleIdToConflictCountMap[rule.id] || 0) + 1;
+                effElementsStats.conflicts[rule.id] = (effElementsStats.conflicts[rule.id] || 0) + 1;
             }
         });
 
         const stationHighInfo: StationHighlightingInfo = {
             ...this.getCommonHighlightingInfo(station, activeHighlightingRules),
-            shape: shapes.length > 0 ? shapes[0] : null
+            shape: shapes.length > 0 ? shapes[0] : null,
+            size: station.score
         };
 
         return stationHighInfo;
@@ -252,11 +272,11 @@ export class HighlightingService {
 
     private getCommonHighlightingInfo<
         T extends StationData | DeliveryData,
-        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(
         fclElement: T,
         highlightingRules: K[]
-    ): { label: string[], color: number[][] } {
+    ): { label: string[]; color: number[][] } {
         const label = highlightingRules
             .filter(rule => rule.labelProperty !== null)
             .map(rule => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, rule.labelProperty)))

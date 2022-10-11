@@ -14,14 +14,14 @@ export class DataImporterV0 implements IDataImporter {
 
     async isDataFormatSupported(data: any): Promise<boolean> {
         const containsRawData =
-            data.hasOwnProperty('stations') &&
-            data.hasOwnProperty('deliveries') &&
-            data.hasOwnProperty('deliveriesRelations');
+            Object.prototype.hasOwnProperty.call(data, 'stations') &&
+            Object.prototype.hasOwnProperty.call(data, 'deliveries') &&
+            Object.prototype.hasOwnProperty.call(data, 'deliveriesRelations');
         const containsDataWithSettings =
-            data.hasOwnProperty('elements') &&
-            data.hasOwnProperty('layout') &&
-            data.hasOwnProperty('gisLayout') &&
-            data.hasOwnProperty('graphSettings');
+            Object.prototype.hasOwnProperty.call(data, 'elements') &&
+            Object.prototype.hasOwnProperty.call(data, 'layout') &&
+            Object.prototype.hasOwnProperty.call(data, 'gisLayout') &&
+            Object.prototype.hasOwnProperty.call(data, 'graphSettings');
         return containsRawData || containsDataWithSettings;
     }
 
@@ -29,9 +29,9 @@ export class DataImporterV0 implements IDataImporter {
         if (await this.isDataFormatSupported(data)) {
 
             const containsRawData =
-                data.hasOwnProperty('stations') &&
-                data.hasOwnProperty('deliveries') &&
-                data.hasOwnProperty('deliveriesRelations');
+                Object.prototype.hasOwnProperty.call(data, 'stations') &&
+                Object.prototype.hasOwnProperty.call(data, 'deliveries') &&
+                Object.prototype.hasOwnProperty.call(data, 'deliveriesRelations');
 
             if (containsRawData) {
                 this.preprocessRawData(data, fclData);
@@ -58,15 +58,29 @@ export class DataImporterV0 implements IDataImporter {
         }
 
         for (const d of data.deliveries) {
-            stationsById[d.source].outgoing.push(d.id);
-            stationsById[d.target].incoming.push(d.id);
+            const source = stationsById[d.source];
+            if (source === undefined) {
+                throw new InputDataError(`The delivery with id '${ d.id }' references a source (with id '${d.source }') which does not exist.`);
+            }
+            source.outgoing.push(d.id);
+            const target = stationsById[d.target];
+            if (target === undefined) {
+                throw new InputDataError(`The delivery with id '${ d.id }' references a target (with id '${d.target }') which does not exist.`);
+            }
+            target.incoming.push(d.id);
 
             deliveriesById[d.id] = d;
         }
 
         for (const r of data.deliveriesRelations) {
             const sourceD = deliveriesById[r.source];
+            if (sourceD === undefined) {
+                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.source }' which does not exist.`);
+            }
             const targetD = deliveriesById[r.target];
+            if (targetD === undefined) {
+                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.target }' which does not exist.`);
+            }
 
             if (sourceD.target !== targetD.source) {
                 throw new InputDataError('Invalid delivery relation: ' + JSON.stringify(r));
@@ -81,53 +95,50 @@ export class DataImporterV0 implements IDataImporter {
     private preprocessDataWithSettings(data: any, fclData: FclData): boolean {
         const graphSettings: GraphSettings = {
             ...fclData.graphSettings,
-            type:  data.graphSettings.type || fclData.graphSettings.type,
+            type: data.graphSettings.type || fclData.graphSettings.type,
             nodeSize: data.graphSettings.nodeSize || fclData.graphSettings.nodeSize,
             fontSize: data.graphSettings.fontSize || fclData.graphSettings.fontSize,
             mergeDeliveriesType: (
                 data.graphSettings.mergeDeliveries !== null && data.graphSettings.mergeDeliveries !== undefined ?
-                (data.graphSettings.mergeDeliveries ? MergeDeliveriesType.MERGE_ALL : MergeDeliveriesType.NO_MERGE) :
-                fclData.graphSettings.mergeDeliveriesType
+                    (data.graphSettings.mergeDeliveries ? MergeDeliveriesType.MERGE_ALL : MergeDeliveriesType.NO_MERGE) :
+                    fclData.graphSettings.mergeDeliveriesType
             ),
             skipUnconnectedStations:
                 data.graphSettings.skipUnconnectedStations != null ?
-                data.graphSettings.skipUnconnectedStations :
-                fclData.graphSettings.skipUnconnectedStations,
+                    data.graphSettings.skipUnconnectedStations :
+                    fclData.graphSettings.skipUnconnectedStations,
             showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : fclData.graphSettings.showLegend,
             showZoom: data.graphSettings.showZoom != null ? data.graphSettings.showZoom : fclData.graphSettings.showZoom,
             schemaLayout: data.layout,
             gisLayout: data.gisLayout
         };
 
-        fclData.graphSettings = graphSettings,
+        fclData.graphSettings = graphSettings;
         this.applyElements(data.elements.stations, data.elements.deliveries, fclData);
         return true;
     }
 
+    private checkIds(ids: (string | number)[], context: string): void {
+        const idMap: Record<string | number, boolean> = {};
+        const capContext = context[0].toUpperCase() + context.slice(1);
+        for (const id of ids) {
+            if (id === undefined) {
+                throw new InputDataError(`${ capContext } id is undefined.`);
+            }
+            if (id === null) {
+                throw new InputDataError(`${ capContext } id is null.`);
+            }
+            if (idMap[id] !== undefined) {
+                throw new InputDataError(`Duplicate ${ context } id is null.`);
+            }
+            idMap[id] = true;
+        }
+
+    }
+
     private applyElements(stationElements: any[], deliveryElements: any[], fclData: FclData) {
-        const ids: Set<string> = new Set();
-
-        for (const e of stationElements.concat(deliveryElements)) {
-            const id: string = e.id;
-
-            if (ids.has(id)) {
-                throw new InputDataError('Duplicate id: ' + id);
-            }
-
-            if (id.includes(Constants.ARROW_STRING)) {
-                throw new InputDataError('ids are not allowed to contain "' + Constants.ARROW_STRING + '"');
-            }
-
-            ids.add(id);
-        }
-
-        for (const d of deliveryElements) {
-            const lot: string = d.lot;
-
-            if (lot != null && lot.includes(Constants.ARROW_STRING)) {
-                throw new InputDataError('lots are not allowed to contain "' + Constants.ARROW_STRING + '"');
-            }
-        }
+        this.checkIds(stationElements.map(s => s.id), 'station');
+        this.checkIds(deliveryElements.map(d => d.id), 'delivery');
 
         this.applyStations(stationElements, fclData);
         this.applyDeliveries(deliveryElements, fclData);
@@ -138,7 +149,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string, value: string }[] = [];
+            const properties: { name: string; value: string }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];
@@ -207,11 +218,11 @@ export class DataImporterV0 implements IDataImporter {
         const defaultKeys: Set<string> = new Set(
             Constants.DELIVERY_PROPERTIES.toArray().map(
                 p => v1ToV0PropMap[p] !== undefined ? v1ToV0PropMap[p] : p
-        ));
+            ));
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string, value: string }[] = [];
+            const properties: { name: string; value: string }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];

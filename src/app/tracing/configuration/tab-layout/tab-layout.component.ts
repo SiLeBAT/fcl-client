@@ -1,14 +1,13 @@
 import {
     Component,
-    OnInit,
     ChangeDetectionStrategy,
     ViewEncapsulation,
     Input,
     Output,
     EventEmitter,
-    TemplateRef
+    TemplateRef,
+    ChangeDetectorRef
 } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Observable } from 'rxjs';
 
 export interface TabConfig {
@@ -23,18 +22,34 @@ export interface TabConfig {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class TabLayoutComponent implements OnInit {
+export class TabLayoutComponent {
+
+    animatingTabIndex: number | null = null;
 
     @Input() activeTabIndex$: Observable<number>;
     @Input() tabGroupId: string;
     @Input() tabConfigs: TabConfig[];
     @Output() tabGroupIndex = new EventEmitter<number>();
+    @Output() animationDone = new EventEmitter<void>();
 
-    constructor() { }
+    constructor(
+        private cdRef: ChangeDetectorRef
+    ) { }
 
-    ngOnInit() {}
+    onSelectedIndexChange(selectedIndex: number): void {
+        this.animatingTabIndex = selectedIndex;
+        this.cdRef.markForCheck();
+        this.tabGroupIndex.emit(selectedIndex);
+    }
 
-    onTabGroupClick(event: MatTabChangeEvent) {
-        this.tabGroupIndex.emit(event.index);
+    onAnimationDone(): void {
+        this.animationDone.emit();
+        this.cdRef.markForCheck();
+        // in firefox the activability of the next tab is not prevented before
+        // a active tab is ready
+        setTimeout(() => {
+            this.animatingTabIndex = null;
+            this.cdRef.markForCheck();
+        }, 50);
     }
 }

@@ -1,4 +1,8 @@
-import { ContextMenuRequestInfo, Cy, CyEdgeCollection, CyEdgeDef, CyNodeCollection, CyNodeDef, EdgeId, NodeId, SelectedGraphElements } from '../graph.model';
+import {
+    ContextMenuRequestInfo, Cy, CyEdge, CyEdgeCollection,
+    CyEdgeDef, CyNode, CyNodeCollection, CyNodeDef,
+    EdgeId, NodeId, SelectedGraphElements
+} from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
 import _ from 'lodash';
@@ -10,9 +14,12 @@ import {
 import { Utils } from '@app/tracing/util/non-ui-utils';
 import { getLayoutConfig } from './layouting-utils';
 import {
+    CSS_CLASS_HOVER,
     LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
 } from './cy.constants';
+import { BoundaryRect, getDifference, getDistance, getRectCenter } from '@app/tracing/util/geometry-utils';
+import { cropRect, getNonBlockedRect } from './shared-utils';
 
 export enum GraphEventType {
     LAYOUT_CHANGE = 'LAYOUT_CHANGE',
@@ -36,20 +43,54 @@ export interface GraphDataChange {
 }
 
 export type GraphEventListener<T extends GraphEventType> =
-    T extends GraphEventType.LAYOUT_CHANGE | GraphEventType.SELECTION_CHANGE ? () => void :
+    T extends GraphEventType.LAYOUT_CHANGE ? () => void :
+    T extends GraphEventType.SELECTION_CHANGE ? (shift: boolean) => void :
     T extends GraphEventType.CONTEXT_MENU_REQUEST ? (info: ContextMenuRequestInfo) => void :
     never;
 
 export type GraphEventListeners<T extends GraphEventType> = Record<T, GraphEventListener<T>[]>;
+
+interface NodeHProps {
+    size: number;
+    label: string;
+    stopColors: string;
+    shape: string;
+    zindex: number;
+    selected: boolean;
+}
+
+interface EdgeHProps {
+    label: string;
+    stopColors: string;
+    zindex: number;
+    selected: boolean;
+}
+
+interface HProps {
+    nodeProps: NodeHProps[];
+    edgeProps: EdgeHProps[];
+    minNodeSize: number;
+    maxNodeSize: number;
+}
+
+interface HPropsChange {
+    nodeSizeLimitsChanged: boolean;
+    edgePropsChanged: boolean;
+    nodePropsChanged: boolean;
+    edgeLabelChanged: boolean;
+}
 
 export class InteractiveCyGraph extends CyGraph {
 
     private static readonly ZOOM_FACTOR = 1.5;
     private static readonly MIN_RELAYOUTING_NODE_COUNT = 2;
     private static readonly POSITION_TOLERANCE = 1e-13;
+    private static readonly GOLDEN_RATIO = 1 / 1.618033;
 
     private listeners: GraphEventListeners<GraphEventType>;
     protected ignorePanOrZoomEvents = false;
+
+    private cachedHProps: HProps | null = null;
 
     constructor(
         htmlContainerElement: HTMLElement,
@@ -64,6 +105,7 @@ export class InteractiveCyGraph extends CyGraph {
             [GraphEventType.SELECTION_CHANGE]: [],
             [GraphEventType.CONTEXT_MENU_REQUEST]: []
         };
+        this.cacheHProps(graphData);
     }
 
     zoomToPercentage(value: number): void {
@@ -125,7 +167,7 @@ export class InteractiveCyGraph extends CyGraph {
 
     protected registerCyListeners(): void {
         if (this.cy.container()) {
-            addCySelectionListener(this.cy, () => this.onSelectionChanged());
+            addCySelectionListener(this.cy, (shift: boolean) => this.onSelectionChanged(shift));
             addCyPanListeners(this.cy, () => this.onPanOrZoom(), () => this.onPanOrZoom());
             addCyZoomListener(this.cy, () => this.onPanOrZoom());
             addCyDragListener(this.cy, () => this.onDragEnd());
@@ -152,7 +194,7 @@ export class InteractiveCyGraph extends CyGraph {
         this.onLayoutChanged();
     }
 
-    protected onSelectionChanged(): void {
+    protected onSelectionChanged(shift: boolean): void {
         this.applyGraphDataChangeBottomUp({
             selectedElements: {
                 nodes: this.cy.nodes(SELECTED_ELEMENTS_SELECTOR).map(n => n.id()),
@@ -160,7 +202,7 @@ export class InteractiveCyGraph extends CyGraph {
             }
         });
 
-        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListener<GraphEventType.SELECTION_CHANGE>) => l());
+        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListener<GraphEventType.SELECTION_CHANGE>) => l(shift));
     }
 
     private onPanOrZoom(): void {
@@ -169,8 +211,8 @@ export class InteractiveCyGraph extends CyGraph {
             (
                 this.cy.zoom() !== super.layout.zoom ||
                 !_.isEqual(this.cy.pan(), super.layout.pan
-            )
-        )) {
+                )
+            )) {
             this.applyGraphDataChangeBottomUp({
                 layout: {
                     zoom: this.cy.zoom(),
@@ -182,7 +224,7 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private onContextMenuRequest(info: ContextMenuRequestInfo): void {
-        this.listeners.CONTEXT_MENU_REQUEST.forEach(l => l(info));
+        this.listeners.CONTEXT_MENU_REQUEST.forEach((l: GraphEventListener<GraphEventType.CONTEXT_MENU_REQUEST>) => l(info));
     }
 
     private updateNodes(): void {
@@ -247,7 +289,7 @@ export class InteractiveCyGraph extends CyGraph {
         this.cy.remove('.ghost-element');
     }
 
-    private createGhostElements(): { nodes: CyNodeDef[], edges: CyEdgeDef[] } {
+    private createGhostElements(): { nodes: CyNodeDef[]; edges: CyEdgeDef[] } {
         const ghostNodes = this.createNodes(super.data.ghostData.nodeData, super.data.ghostData.posMap);
         ghostNodes.forEach(node => {
             node.selected = false;
@@ -269,8 +311,10 @@ export class InteractiveCyGraph extends CyGraph {
         const hoverEdge = Utils.createSimpleStringSet(edgeIds);
 
         this.cy.batch(() => {
-            this.cy.edges().filter(e => !hoverEdge[e.id()]).scratch('_active', false);
-            this.cy.edges().filter(e => !!hoverEdge[e.id()]).scratch('_active', true);
+            const notHoveredEdges = this.cy.edges().filter(e => !hoverEdge[e.id()]);
+            const hoveredEdges = this.cy.edges().filter(e => !!hoverEdge[e.id()]);
+            notHoveredEdges.removeClass(CSS_CLASS_HOVER);
+            hoveredEdges.addClass(CSS_CLASS_HOVER);
         });
     }
 
@@ -297,6 +341,67 @@ export class InteractiveCyGraph extends CyGraph {
 
             return this.startLayouting(layoutConfig, nodeIds);
         }
+    }
+
+    focusElement(elementId: NodeId | EdgeId): void {
+        const cyElement = this.cy.getElementById(elementId);
+        if (cyElement.isEdge()) {
+            this.focusEdge(cyElement as CyEdge);
+        } else if (cyElement.isNode()) {
+            this.focusNode(cyElement as CyNode);
+        }
+    }
+
+    protected focusEdge(cyEdge: CyEdge): void {
+        // not implemented
+    }
+
+    private focusNode(cyNode: CyNode): void {
+        const maxFocusRect = this.getMaxFocusRect();
+        // const prefFocusRect = this.getPreferredFocusRect(maxSize);
+        const focusPoint = getRectCenter(maxFocusRect);
+        const refPoint = cyNode.renderedPosition();
+
+        const panBy = getDifference(focusPoint, refPoint);
+        if (panBy.x !== 0 || panBy.y !== 0) {
+            this.cy.panBy(panBy);
+        }
+    }
+
+    protected getPreferredFocusRect(maxFocusRect: BoundaryRect): BoundaryRect {
+        const xMargin = (InteractiveCyGraph.GOLDEN_RATIO) * maxFocusRect.width / 2;
+        const yMargin = (InteractiveCyGraph.GOLDEN_RATIO) * maxFocusRect.height / 2;
+        return {
+            left: maxFocusRect.left + xMargin,
+            top: maxFocusRect.top + yMargin,
+            right: maxFocusRect.right - xMargin,
+            bottom: maxFocusRect.bottom - yMargin,
+            width: maxFocusRect.width - 2 * xMargin,
+            height: maxFocusRect.height - 2 * yMargin
+        };
+    }
+
+    protected getMaxFocusRect(): BoundaryRect {
+        const margin = this.style.fontSize;
+
+        let rect = this.getNotBlockedSpace();
+        rect = cropRect(rect, margin);
+        return rect;
+    }
+
+    protected getEdgeLength(cyEdge: CyEdge): number {
+        const mpt = cyEdge.renderedMidpoint();
+        if (Number.isNaN(mpt.x)) {
+            return 0;
+        } else {
+            const spt = cyEdge.renderedSourceEndpoint();
+            const tpt = cyEdge.renderedTargetEndpoint();
+            return getDistance(mpt, spt) + getDistance(mpt, tpt);
+        }
+    }
+
+    private getNotBlockedSpace(): BoundaryRect {
+        return getNonBlockedRect(this.cy.container(), 'fcl-right-sidenav');
     }
 
     protected getNodeContext(nodeIds: NodeId[]): Cy | CyNodeCollection {
@@ -346,6 +451,43 @@ export class InteractiveCyGraph extends CyGraph {
         this.onLayoutChanged();
     }
 
+    private cacheHProps(graphData: GraphData): void {
+        const nodeSizes = graphData.nodeData.length === 0 ? [ 0 ] : graphData.nodeData.map(n => n.size);
+        this.cachedHProps = {
+            nodeProps: graphData.nodeData.map(n => ({
+                stopColors: n.stopColors,
+                label: n.label,
+                zindex: n.zindex,
+                size: n.size,
+                shape: n.shape,
+                selected: n.selected
+            })),
+            edgeProps: graphData.edgeData.map(e => ({
+                stopColors: e.stopColors,
+                label: e.label,
+                zindex: e.zindex,
+                selected: e.selected
+            })),
+            minNodeSize: Math.min(...nodeSizes),
+            maxNodeSize: Math.max(...nodeSizes)
+        };
+    }
+
+    private getHPropsChange(oldHProps: HProps, newHProps: HProps): HPropsChange {
+        const edgeLabelChanged = !_.isEqual(
+            oldHProps.edgeProps.map(e => e.label),
+            newHProps.edgeProps.map(e => e.label)
+        );
+        return {
+            nodeSizeLimitsChanged:
+                oldHProps.maxNodeSize !== newHProps.maxNodeSize ||
+                oldHProps.minNodeSize !== newHProps.minNodeSize,
+            nodePropsChanged: !_.isEqual(oldHProps.nodeProps, newHProps.nodeProps),
+            edgePropsChanged: edgeLabelChanged || !_.isEqual(oldHProps.edgeProps, newHProps.edgeProps),
+            edgeLabelChanged: edgeLabelChanged
+        };
+    }
+
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         const oldData = super.data;
         const oldStyle = super.style;
@@ -353,21 +495,41 @@ export class InteractiveCyGraph extends CyGraph {
         super.setStyleConfig(styleConfig);
         const updateNodes = oldData.nodeData !== graphData.nodeData;
         const updateEdges = !updateNodes && oldData.edgeData !== graphData.edgeData;
-        const updateStyle = updateNodes || oldStyle !== styleConfig || oldData.propsChangedFlag !== graphData.propsChangedFlag;
+        const updateCachedHProps = updateNodes || updateEdges || graphData.propsUpdatedFlag !== oldData.propsUpdatedFlag;
+
+        let propChange: HPropsChange = {
+            nodeSizeLimitsChanged: false,
+            edgePropsChanged: false,
+            edgeLabelChanged: false,
+            nodePropsChanged: false
+        };
+        let updateStyle = !_.isEqual(oldStyle, styleConfig);
+        if (updateCachedHProps) {
+            const oldHProps = this.cachedHProps;
+            this.cacheHProps(graphData);
+            propChange = this.getHPropsChange(oldHProps, this.cachedHProps);
+            if (propChange.nodeSizeLimitsChanged) {
+                updateStyle = true;
+            }
+        }
         const updateSelection = !updateNodes && !_.isEqual(oldData.selectedElements, graphData.selectedElements);
         const updateNodePositions = !updateNodes && this.arePositionsDifferent(oldData, graphData);
         const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
-        const updateEdgeLabel = !updateNodes && !updateEdges && oldData.edgeLabelChangedFlag !== graphData.edgeLabelChangedFlag;
+        const updateEdgeLabel = !updateNodes && !updateEdges && propChange.edgeLabelChanged;
 
-        const scratchEdges = updateNodes || updateEdges || updateStyle || updateEdgeLabel || updateSelection;
-        const scratchNodes = updateNodes || updateStyle || updateSelection;
+        const scratchEdges = !updateNodes && !updateEdges && (
+            updateStyle || updateEdgeLabel || updateSelection || propChange.edgePropsChanged
+        );
 
-        const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges;
+        const scratchNodes = !updateNodes && (updateStyle || updateSelection || propChange.nodePropsChanged);
+
+        const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges || propChange.nodePropsChanged;
         const updateGhosts = oldData.ghostData !== graphData.ghostData;
 
         if (
             updateNodes || updateEdges || updateStyle || updateSelection ||
             updateNodes || updateLayout || updateEdgeLabel || updateNodePositions ||
+            scratchNodes || scratchEdges ||
             (updateGhosts && setAllEdgeLabelOffsets)
         ) {
 
@@ -397,6 +559,8 @@ export class InteractiveCyGraph extends CyGraph {
 
                 if (scratchNodes && scratchEdges) {
                     this.cy.elements().scratch(SCRATCH_UPDATE_NAMESPACE, true);
+                } else if (scratchNodes) {
+                    this.cy.nodes().scratch(SCRATCH_UPDATE_NAMESPACE, true);
                 } else if (scratchEdges) {
                     this.cy.edges().scratch(SCRATCH_UPDATE_NAMESPACE, true);
                 }

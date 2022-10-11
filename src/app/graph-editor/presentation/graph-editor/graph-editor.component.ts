@@ -33,11 +33,13 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
         const graphModel = that.graph ? that.graph.getModel() : null;
         const editorUiInit = EditorUi.prototype.init;
 
         EditorUi.prototype.init = function () {
+            // eslint-disable-next-line prefer-rest-params
             editorUiInit.apply(this, arguments);
             this.actions.get('export').setEnabled(false);
             // Updates action states which require a backend
@@ -67,7 +69,7 @@ export class GraphEditorComponent implements AfterViewInit, OnDestroy {
             // Main
             const editor = new Editor(false, themes, graphModel);
 
-            // tslint:disable-next-line
+            // eslint-disable-next-line
             this.editorUi = new EditorUi(editor, that.editorContainer.nativeElement);
             if (graphModel) {
                 graphModel.endUpdate();

@@ -1,0 +1,132 @@
+<div id="fcl-rules-list"
+    cdkDropList
+    (cdkDropListDropped)="onDrop($event)"
+>
+
+    <div
+        class="fcl-rules-list-item"
+        *ngFor="let item of listItems; let i = index"
+        [ngClass]="item.disabled ? 'fcl-rule-disabled' : ''"
+        cdkDrag [cdkDragDisabled]="isEditRuleModeActive"
+        cdkDragLockAxis="y"
+        cdkDragBoundary=".cdk-drop-list"
+    >
+
+        <div class="fcl-rules-list-drag-indicator" cdkDragHandle>
+            <mat-icon [disabled]="isEditRuleModeActive">drag_indicator</mat-icon>
+        </div>
+        <div
+            class="fcl-rules-list-item-name"
+            cdkDragHandle
+        >
+            {{ item.name }}
+        </div>
+
+        <div *ngIf="symbolTemplate"
+            class="fcl-rules-list-item-symbol">
+            <ng-container [ngTemplateOutlet]="symbolTemplate"
+                [ngTemplateOutletContext] ="{ item: item }">
+            </ng-container>
+        </div>
+
+        <div
+            *ngIf="!item.disabled"
+            class="fcl-rules-list-item-counts"
+            [matTooltip]="item.effElementsCountTooltip"
+            matTooltipPosition="above"
+            matTooltipClass="fcl-tooltip--with-linebreaks fcl-tooltip--centered"
+        >
+            <span *ngIf="item.conflictCount === 0">{{ item.effElementsCount }}</span>
+
+            <div
+                *ngIf="item.conflictCount > 0"
+                class="fcl-rules-list-item-counts-wrapper"
+            >
+                <div>{{ item.effElementsCount }}</div>
+                <div
+                    class="fcl-rules-list-item-conflict-count"
+                >
+                ({{ item.conflictCount }})
+                </div>
+            </div>
+        </div>
+
+        <mat-button-toggle
+            *ngIf="showShowInLegendToggleButton"
+            class="fcl-rules-list-item-legend-button fcl-mat-button-toggle--zero-padding"
+            [matTooltip]="isEditRuleModeActive || item.disabled ? '' : item.showInLegend ? 'Do not show in legend' : 'Show in legend'"
+            matTooltipPosition="above"
+            [checked]="item.showInLegend && !item.disabled"
+            (change)="onToggleShowRuleInLegend(item.id)"
+            [disabled]="isEditRuleModeActive || item.disabled"
+        >
+            L
+        </mat-button-toggle>
+
+        <mat-slide-toggle
+            class="fcl-rules-list-item-activated-slider fcl-mat-slide-toggle fcl-mat-slide-toggle--small"
+            [matTooltip]="isEditRuleModeActive ? '' : item.disabled ? 'Activate Highlighting Rule' : 'Deactivate Highlighting Rule'"
+            matTooltipPosition="above"
+            [checked]="!item.disabled"
+            (change)="onToggleRuleIsDisabled(item.id)"
+            [disabled]="isEditRuleModeActive"
+        ></mat-slide-toggle>
+
+        <div class="fcl-rules-list-item-edit-button-wrapper">
+            <button
+                class="fcl-rules-list-item-edit-button"
+                mat-button
+                matTooltip="Edit Highlighting Rule"
+                matTooltipPosition="above"
+                color="accent"
+                (click)="onStartEdit(item.id)"
+                [disabled]="isEditRuleModeActive || editTemplate === null"
+            >
+                <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+
+        <div class="fcl-rules-list-item-delete-button-wrapper">
+            <button
+                class="fcl-rules-list-item-delete-button"
+                mat-button
+                matTooltip="Delete Highlighting Rule"
+                matTooltipPosition="above"
+                color="warn"
+                (click)="onDeleteRule($event, item.id)"
+                [disabled]="isEditRuleModeActive"
+                >
+                <mat-icon>delete forever</mat-icon>
+            </button>
+        </div>
+
+        <div *ngIf="editRule !== null && editRule.id === item.id && editTemplate !== null"
+            class="fcl-edit-rule-dialog fcl-rules-list-edit-item">
+            <ng-container [ngTemplateOutlet]="editTemplate"
+                [ngTemplateOutletContext] ="{ editRule: editRule }">
+            </ng-container>
+        </div>
+
+    </div>
+
+</div>
+
+<button
+    *ngIf="showAddRuleButton"
+    mat-stroked-button
+    class="fcl-add-rule-button"
+    matTooltip="Add Highlighting Rule"
+    matTooltipPosition="above"
+    color="primary"
+    (click)="onNewRule()"
+    [disabled]="isEditRuleModeActive || editTemplate === null"
+>
+    <mat-icon>add</mat-icon>
+</button>
+
+<div *ngIf="showEditNewRuleDialog && editTemplate !== null"
+    class="fcl-edit-rule-dialog">
+    <ng-container [ngTemplateOutlet]="editTemplate"
+        [ngTemplateOutletContext] ="{ editRule: editRule}">
+    </ng-container>
+</div>

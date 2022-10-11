@@ -17,7 +17,7 @@ export class MergeStationsMSA implements Action {
 export class CollapseStationsMSA implements Action {
     readonly type = GroupingActionTypes.CollapseStationsMSA;
 
-    constructor(public payload: { groupType: GroupType, groupMode?: GroupMode }) {}
+    constructor(public payload: { groupType: GroupType; groupMode?: GroupMode }) {}
 }
 
 export class UncollapseStationsMSA implements Action {

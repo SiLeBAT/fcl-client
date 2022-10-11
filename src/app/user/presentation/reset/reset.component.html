@@ -1,29 +1,23 @@
-<form [formGroup]="resetForm" (ngSubmit)="onReset()">
+<form [formGroup]="resetForm" (ngSubmit)="onReset()" fclDisableSubscriptWrapperTabFocus>
     <div class="fcl-mat-card-content">
         <div class="fcl-reset-text">
             <div class="mat-subheading-2">Please enter a new password.</div>
         </div>
 
-        <div class="form-group" [ngClass]="{ error: !validateField('password1') || validatePwStrength() }">
+        <div class="form-group" [ngClass]="{ error: !validateField('password1') }">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>New password</mat-label>
                 <input matInput #message formControlName="password1" type="password" name="password1" required />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-hint align="start">
-                    At least 8 characters
-                </mat-hint>
-                <mat-hint align="end"> {{ message.value.length }} characters </mat-hint>
-                <mat-error *ngIf="!validateField('password1')">
+                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required && serverValidationErrors.length === 0">
                     Password is required
                 </mat-error>
+                <mat-hint *ngIf="serverValidationErrors.length > 0" class="mat-error">
+                    <ng-container *ngFor="let error of serverValidationErrors; let i=index">
+                        <br *ngIf="i>0"><span>{{ error.message }}</span>
+                    </ng-container>
+                </mat-hint>
             </mat-form-field>
-        </div>
-        <div class="form-group" [ngClass]="{ error: !validateField('password2') }">
-            <password-strength-meter [password]="resetForm.value.password1" (strengthChange)="doStrengthChange($event)">
-            </password-strength-meter>
-            <em *ngIf="validatePwStrength()">
-                Password to weak or to short
-            </em>
         </div>
         <div class="form-group">
             <mat-form-field class="fcl-form-field" appearance="standard">

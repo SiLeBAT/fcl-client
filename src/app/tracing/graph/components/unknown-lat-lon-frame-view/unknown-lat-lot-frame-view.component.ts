@@ -15,8 +15,6 @@ export class UnknownLatLonFrameViewComponent implements OnChanges {
     @Input() unknownLatLonRect: BoundaryRect | null = null;
     @Input() unknownLatLonRectBorderWidth: number | null = null;
 
-    constructor() {}
-
     private d_: string = '';
 
     get d(): string {

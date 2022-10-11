@@ -90,7 +90,7 @@ export class IsolatedComponentCollapser {
         const traverseStationIds: Set<string> = new Set(
             data.stations.filter(
                 s =>
-                !s.invisible &&
+                    !s.invisible &&
                 (s.contains == null || s.contains.length === 0) &&
                 !blockedIds.has(s.id) &&
                 !notIsolatedStationIds.has(s.id)
@@ -125,8 +125,8 @@ export class IsolatedComponentCollapser {
             }
         }
         const isolatedComponentsComparator = (
-          a: IsolatedComponent,
-          b: IsolatedComponent
+            a: IsolatedComponent,
+            b: IsolatedComponent
         ) => {
             if (a.support.length < b.support.length) {
                 return -1;

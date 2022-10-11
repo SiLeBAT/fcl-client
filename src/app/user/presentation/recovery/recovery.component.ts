@@ -11,8 +11,6 @@ export class RecoveryComponent implements OnInit {
     @Output() recovery = new EventEmitter();
     recoveryForm: FormGroup;
 
-    constructor() {}
-
     ngOnInit() {
         this.recoveryForm = new FormGroup({
             email: new FormControl(null, [Validators.required, Validators.email])

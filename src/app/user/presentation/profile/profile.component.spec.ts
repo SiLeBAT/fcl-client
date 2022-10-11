@@ -15,7 +15,7 @@ describe('ProfileComponent', () => {
     let debugElement: DebugElement;
 
     beforeEach(async(() => {
-        // tslint:disable-next-line: no-floating-promises
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         TestBed.configureTestingModule({
             declarations: [
                 ProfileComponent

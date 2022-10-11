@@ -1,4 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+    Component, Input, Output, EventEmitter, OnChanges, SimpleChanges,
+    ChangeDetectionStrategy} from '@angular/core';
 import {
     DataTable, TableRow, TableColumn, OperationType
 } from '@app/tracing/data.model';
@@ -10,15 +12,19 @@ import {
     getUpdatedOneTermForNColumnsRowFilter,
     getUpdatedComplexRowFilter
 } from '../filter-provider';
-import { filterTableRows } from '../shared';
-import { InputData as FilterTableViewInputData, TableFilterChange } from '../filter-table-view/filter-table-view.component';
+import { extractPropToValuesMap, filterTableRows } from '../shared';
+import {
+    InputData as FilterTableViewInputData, TableFilterChange
+} from '../filter-table-view/filter-table-view.component';
 import * as _ from 'lodash';
-import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap } from '../configuration.model';
+import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap, ActivityState } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
+import { Observable, Subject } from 'rxjs';
 
 export interface InputData {
     dataTable: DataTable;
     filterTableSettings: FilterTableSettings;
+    selectedRowIds: string[];
 }
 
 interface RowFilterMap {
@@ -29,19 +35,24 @@ interface RowFilterMap {
 @Component({
     selector: 'fcl-filter-elements-view',
     templateUrl: './filter-elements-view.component.html',
-    styleUrls: ['./filter-elements-view.component.scss']
+    styleUrls: ['./filter-elements-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FilterElementsViewComponent {
+export class FilterElementsViewComponent implements OnChanges {
 
     @Input() inputData: InputData;
     @Input() standardFilterLabel: string;
     @Input() useTreeMode = false;
+    @Input() activityState$: Observable<ActivityState> | null = null;
+    @Input() cycleStart$: Observable<void> | null = null;
 
     @Output() filterSettingsChange = new EventEmitter<FilterTableSettings>();
     @Output() clearAllFilters = new EventEmitter();
     @Output() selectTableColumns = new EventEmitter();
+    @Output() rowSelectionChange = new EventEmitter<string[]>();
     @Output() mouseOverTableRow = new EventEmitter<TableRow>();
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
+    @Output() tableRowDblClick = new EventEmitter<TableRow>();
 
     availableOperatorTypes: OperationType[] = [
         OperationType.EQUAL,
@@ -68,12 +79,10 @@ export class FilterElementsViewComponent {
     }
 
     get filterTableViewInputData(): FilterTableViewInputData {
-        this.processLastInputIfNecessary();
         return this.filterTableViewInputData_;
     }
 
     get propToValuesMap(): PropToValuesMap {
-        this.processLastInputIfNecessary();
         return this.propToValuesMap_;
     }
 
@@ -82,22 +91,43 @@ export class FilterElementsViewComponent {
     }
 
     get dataColumns(): TableColumn[] {
-        this.processLastInputIfNecessary();
         return this.dataColumns_;
     }
 
-    private processedInput_: InputData;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    get filterTableResizeFlag(): {} {
+        return this.filterTableResizeFlag_;
+    }
+
+    private processedInput__: InputData;
     private prefilteredRows_: TableRow[];
     private filterTableViewInputData_: FilterTableViewInputData;
     private propToValuesMap_: PropToValuesMap;
     private dataColumns_: TableColumn[];
-
     private filterMap_: RowFilterMap;
 
     moreFilterOpenState = false;
     complexFilterOpenState = false;
 
-    constructor() { }
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    private filterTableResizeFlag_: {} = {};
+
+    private checkTableSizeSubject_ = new Subject<number>();
+    checkTableSize$ = this.checkTableSizeSubject_.asObservable();
+    private updateTableSizeSubject_ = new Subject<void>();
+    updateTableSize$ = this.updateTableSizeSubject_.asObservable();
+
+    // lifecycle hooks start
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.inputData !== undefined && changes.inputData.currentValue !== null) {
+            this.processInputData();
+        }
+    }
+
+    // life cycle hooks end
+
+    // template triggers start
 
     onClearAllFilters(): void {
         this.clearAllFilters.emit();
@@ -142,57 +172,81 @@ export class FilterElementsViewComponent {
         this.selectTableColumns.emit();
     }
 
+    onRowSelectionChange(rowIds: string[]): void {
+        this.rowSelectionChange.emit(rowIds);
+    }
+
     onMouseOverTableRow(row: TableRow | null): void {
         this.mouseOverTableRow.emit(row);
     }
 
-    private processLastInputIfNecessary(): void {
-        if (this.inputData !== this.processedInput_ && this.inputData) {
-            this.processInputData();
-        }
+    onRowDblClick(row: TableRow): void {
+        this.tableRowDblClick.emit(row);
     }
 
+    onSetMoreFilterOpenState(open: boolean): void {
+        this.moreFilterOpenState = open;
+    }
+
+    onAfterExpansionPanelCollapseOrExpand(): void {
+        this.updateTableSizeSubject_.next();
+    }
+
+    // template triggers end
+
     private processInputData(): void {
+        if (
+            this.moreFilterOpenState === true &&
+            this.complexFilterOpenState === true &&
+            this.processedInput__ !== null &&
+            this.inputData !== null &&
+            (
+                this.processedInput__.filterTableSettings.complexFilter.conditions.length !==
+                this.inputData.filterTableSettings.complexFilter.conditions.length
+            )
+        ) {
+            this.checkTableSizeSubject_.next(200);
+        }
         this.updateFilterAndRows();
         this.updateDataColumns();
         this.updateTableInputData();
         this.updatePropValueMap();
 
-        this.processedInput_ = this.inputData;
+        this.processedInput__ = this.inputData;
     }
 
     private updateFilterAndRows(): void {
         const newSettings = this.inputData.filterTableSettings;
-        const oldSettings = this.processedInput_ ? this.processedInput_.filterTableSettings : undefined;
+        const oldSettings = this.processedInput__ ? this.processedInput__.filterTableSettings : undefined;
 
         const oldFilterMap = this.filterMap_;
         const newFilterMap: RowFilterMap = {
             predefinedFilter: (
                 !oldSettings || oldSettings.predefinedFilter !== newSettings.predefinedFilter ?
-                createPredefinedRowFilter(newSettings.predefinedFilter) :
-                oldFilterMap.predefinedFilter
+                    createPredefinedRowFilter(newSettings.predefinedFilter) :
+                    oldFilterMap.predefinedFilter
             ),
             complexFilter: (
                 !oldSettings || oldSettings.complexFilter !== newSettings.complexFilter ?
-                getUpdatedComplexRowFilter(newSettings.complexFilter, oldFilterMap ? oldFilterMap.complexFilter : undefined) :
-                oldFilterMap.complexFilter
+                    getUpdatedComplexRowFilter(newSettings.complexFilter, oldFilterMap ? oldFilterMap.complexFilter : undefined) :
+                    oldFilterMap.complexFilter
             ),
             standardFilter: (
                 !oldSettings ||
                 oldSettings.standardFilter !== newSettings.standardFilter ||
                 oldSettings.columnOrder !== newSettings.columnOrder ?
-                getUpdatedOneTermForNColumnsRowFilter(
-                    newSettings.standardFilter,
-                    newSettings.columnOrder,
-                    oldFilterMap ? oldFilterMap.standardFilter : undefined
-                ) :
-                this.filterMap_.standardFilter
+                    getUpdatedOneTermForNColumnsRowFilter(
+                        newSettings.standardFilter,
+                        newSettings.columnOrder,
+                        oldFilterMap ? oldFilterMap.standardFilter : undefined
+                    ) :
+                    this.filterMap_.standardFilter
             )
         };
 
         if (
-            !this.processedInput_ ||
-            this.inputData.dataTable.rows !== this.processedInput_.dataTable.rows ||
+            !this.processedInput__ ||
+            this.inputData.dataTable.rows !== this.processedInput__.dataTable.rows ||
             oldFilterMap.predefinedFilter !== newFilterMap.predefinedFilter ||
             oldFilterMap.standardFilter !== newFilterMap.standardFilter ||
             oldFilterMap.complexFilter !== newFilterMap.complexFilter
@@ -206,7 +260,7 @@ export class FilterElementsViewComponent {
     }
 
     private updateDataColumns(): void {
-        if (!this.dataColumns_ || this.inputData.dataTable.columns !== this.processedInput_.dataTable.columns) {
+        if (!this.dataColumns_ || this.inputData.dataTable.columns !== this.processedInput__.dataTable.columns) {
             this.dataColumns_ = ComplexFilterUtils.extractDataColumns(this.inputData.dataTable);
         }
     }
@@ -219,6 +273,7 @@ export class FilterElementsViewComponent {
                     rows: this.prefilteredRows_
                 },
                 columnOrder: this.inputData.filterTableSettings.columnOrder,
+                selectedRowIds: this.inputData.selectedRowIds,
                 visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
                 columnFilters: this.inputData.filterTableSettings.columnFilters
             };
@@ -228,11 +283,11 @@ export class FilterElementsViewComponent {
                     this.inputData.dataTable.columns !== this.filterTableViewInputData_.dataTable.columns ||
                     this.prefilteredRows_ !== this.filterTableViewInputData_.dataTable.rows
                 ) ?
-                {
-                    columns: this.inputData.dataTable.columns,
-                    rows: this.prefilteredRows_
-                } :
-                this.filterTableViewInputData_.dataTable
+                    {
+                        columns: this.inputData.dataTable.columns,
+                        rows: this.prefilteredRows_
+                    } :
+                    this.filterTableViewInputData_.dataTable
             );
 
             this.filterTableViewInputData_ = (
@@ -242,20 +297,21 @@ export class FilterElementsViewComponent {
                     this.filterTableViewInputData_.columnFilters !== this.inputData.filterTableSettings.columnFilters ||
                     this.filterTableViewInputData_.columnOrder !== this.inputData.filterTableSettings.columnOrder
                 ) ?
-                ({
-                    dataTable: dataTable,
-                    columnOrder: this.inputData.filterTableSettings.columnOrder,
-                    visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
-                    columnFilters: this.inputData.filterTableSettings.columnFilters
-                }) :
-                this.filterTableViewInputData_
+                    ({
+                        dataTable: dataTable,
+                        columnOrder: this.inputData.filterTableSettings.columnOrder,
+                        selectedRowIds: this.inputData.selectedRowIds,
+                        visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
+                        columnFilters: this.inputData.filterTableSettings.columnFilters
+                    }) :
+                    this.filterTableViewInputData_
             );
         }
     }
 
     private updatePropValueMap(): void {
-        if (!this.processedInput_ || this.processedInput_.dataTable.rows !== this.inputData.dataTable.rows) {
-            this.propToValuesMap_ = ComplexFilterUtils.extractPropToValuesMap(this.inputData.dataTable, this.dataColumns_);
+        if (!this.processedInput__ || this.processedInput__.dataTable.rows !== this.inputData.dataTable.rows) {
+            this.propToValuesMap_ = extractPropToValuesMap(this.inputData.dataTable.rows, this.dataColumns_);
         }
     }
 }

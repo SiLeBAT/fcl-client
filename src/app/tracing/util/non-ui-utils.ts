@@ -13,6 +13,14 @@ type RecordKeyType =
 
 export class Utils {
 
+    static rgbArrayToColor(color: number[]): Color {
+        return { r: color[0], g: color[1], b: color[2] };
+    }
+
+    static colorToRGBArray(color: Color): number[] {
+        return [color.r, color.g, color.b];
+    }
+
     static colorToCss(color: Color): string {
         return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
     }
@@ -132,8 +140,8 @@ export class Utils {
     static createReverseMap<X, Y>(map: Map<X, Y> | ImmutableMap<X, Y>): Map<Y, X> {
         return (
             map['asImmutable'] ?
-            Utils.getReverseMapOfImmutableMap(map as ImmutableMap<X, Y>) :
-            Utils.getReverseMapOfMap(map as Map<X, Y>)
+                Utils.getReverseMapOfImmutableMap(map as ImmutableMap<X, Y>) :
+                Utils.getReverseMapOfMap(map as Map<X, Y>)
         );
     }
 
@@ -152,13 +160,13 @@ export class Utils {
     static async getJson(filePath: string, httpClient: HttpClient): Promise<any> {
         return httpClient.get(filePath).toPromise()
             .then(response => response)
-            .catch(error => Promise.reject(error));
+            .catch(async error => Promise.reject(error));
     }
 
     static getProperty(data: any, path: string): any {
         if (data != null) {
             for (const propName of path.split('.')) {
-                if (data.hasOwnProperty(propName)) {
+                if (Object.prototype.hasOwnProperty.call(data, propName)) {
                     data = data[propName];
                 } else {
                     return null;
@@ -174,9 +182,9 @@ export class Utils {
     static setProperty(rawData: any, propPath: string, value: any) {
         let container: any = rawData;
         const propNames: string[] = propPath.split('.');
-        // tslint:disable-next-line:one-variable-per-declaration
+        // eslint-disable-next-line one-var
         for (let i = 0, iMax = propNames.length - 1; i < iMax; i++) {
-            if (!container.hasOwnProperty(propNames[i])) {
+            if (!Object.prototype.hasOwnProperty.call(container, propNames[i])) {
                 container[propNames[i]] = {};
             }
             container = container[propNames[i]];

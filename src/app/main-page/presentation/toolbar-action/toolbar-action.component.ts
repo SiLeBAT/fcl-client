@@ -1,17 +1,18 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { environment } from '@env/environment';
 import * as _ from 'lodash';
 import { MainPageService } from '../../services/main-page.service';
 import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
+import { ExampleData } from '../../model/types';
 
 @Component({
     selector: 'fcl-toolbar-action',
     templateUrl: './toolbar-action.component.html',
     styleUrls: ['./toolbar-action.component.scss']
 })
-export class ToolbarActionComponent implements OnInit {
+export class ToolbarActionComponent implements OnChanges {
 
     private _graphSettings: GraphSettings;
 
@@ -30,25 +31,39 @@ export class ToolbarActionComponent implements OnInit {
     @Input() availableMapTypes: MapType[];
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
+    @Input() fileName: string | null = null;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() loadExampleData = new EventEmitter();
+    @Output() loadExampleDataFile: EventEmitter<ExampleData> = new EventEmitter();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapType = new EventEmitter<MapType>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
+    fileNameWoExt: string | null = null;
 
     mapTypeToLabelMap: Map<MapType, string> = new Map([
         [MapType.MAPNIK, 'Mapnik'],
-        [MapType.BLACK_AND_WHITE, 'Black & White'],
+        // the following code is commented because
+        // the Black & White Map might be deactivatd only temporaryly
+        // [MapType.BLACK_AND_WHITE, 'Black & White'],
         [MapType.SHAPE_FILE, 'Shape File']
     ]);
 
+    exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
+
     constructor(private mainPageService: MainPageService) { }
 
-    ngOnInit() {}
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.fileName !== undefined) {
+            this.fileNameWoExt = (
+                this.fileName === null ?
+                    null :
+                    this.fileName.replace(/\.[^\.]+$/, '')
+            );
+        }
+    }
 
     isServerLess(): boolean {
         return environment.serverless;
@@ -64,8 +79,8 @@ export class ToolbarActionComponent implements OnInit {
         );
     }
 
-    onLoadExampleData() {
-        this.loadExampleData.emit();
+    onLoadExampleDataFile(exampleData: ExampleData) {
+        this.loadExampleDataFile.emit(exampleData);
     }
 
     setGraphType() {
