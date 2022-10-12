@@ -56,7 +56,10 @@ function groupConditions(conditions: ComplexFilterCondition[]): ComplexFilterCon
     let newGroup: ComplexFilterCondition[] = [];
 
     for (const condition of conditions) {
-        newGroup.push(condition);
+        if (condition.operationType !== null && condition.propertyName !== null) {
+            newGroup.push(condition);
+        }
+
         if (condition.junktorType === JunktorType.OR) {
             groups.push(newGroup);
             newGroup = [];
