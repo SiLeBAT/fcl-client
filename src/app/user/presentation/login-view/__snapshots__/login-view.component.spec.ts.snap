@@ -95,9 +95,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
         </mat-card>
       </div>
     </fcl-single-center-card-layout>
-    <fcl-maintenance-notification-view
-      class="fcl-maintenance-notification-box"
-    />
+    
     <fcl-funding-sources-view
       class="fcl-funding-box"
     />
