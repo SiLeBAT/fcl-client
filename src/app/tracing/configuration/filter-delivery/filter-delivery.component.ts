@@ -79,9 +79,9 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
                 type: TableType.DELIVERIES,
-                columns: this.tableService.getDeliveryColumns(this.cachedData.dataServiceData, true),
                 columnOrder: this.cachedState.filterTableState.columnOrder,
-                favoriteColumnsLength: this.tableService.favoriteDeliveryColumnsLength
+                favouriteColumns: this.cachedData.dataTable.favouriteColumns,
+                otherColumns: this.cachedData.dataTable.otherColumns
             })
         );
     }
@@ -147,7 +147,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                 cacheIsEmpty ||
                 this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
             ) {
-                dataTable = this.tableService.getDeliveryData(state.dataServiceInputState, true);
+                dataTable = this.tableService.getDeliveryTable(state.dataServiceInputState, false);
             } else if (
                 newDSData.stations !== cachedDSData.stations ||
                 newDSData.deliveries !== cachedDSData.deliveries ||
@@ -157,8 +157,8 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.delSel !== cachedDSData.delSel
             ) {
                 dataTable = {
-                    ...this.tableService.getDeliveryData(state.dataServiceInputState, true),
-                    columns: this.cachedData.dataTable.columns
+                    ...this.cachedData.dataTable,
+                    rows: this.tableService.getDeliveryTable(state.dataServiceInputState, false).rows
                 };
             }
 
@@ -183,8 +183,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
             this.filterElementsViewInputData_ = {
                 dataTable: this.cachedData.dataTable,
                 filterTableSettings: this.cachedState.filterTableState,
-                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.deliveries,
-                favoriteColumnsLength: this.tableService.favoriteDeliveryColumnsLength
+                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.deliveries
             };
         }
     }

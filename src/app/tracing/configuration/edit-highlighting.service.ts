@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
     TableColumn,
-    StationTable,
     SelectedElements,
     MakeElementsInvisibleInputState,
     SetInvisibleElementsPayload,
@@ -9,7 +8,6 @@ import {
     ClearInvisibilitiesOptions,
     SetHighlightingSettingsPayload,
     DataServiceInputState,
-    StationData,
     StationId,
     OperationType,
     DeliveryHighlightingRule,
@@ -45,9 +43,9 @@ interface UnsharedData {
 }
 
 interface PropData {
-    availableProperties: TableColumn[];
+    favouriteProperties: TableColumn[];
+    otherProperties: TableColumn[];
     propToValuesMap: PropToValuesMap;
-    favoriteColumnsLength: number;
 }
 
 interface CachedData {
@@ -76,28 +74,6 @@ export class EditHighlightingService {
         private editTracSettingsService: EditTracingSettingsService
     ) {}
 
-    getStationData(state: DataServiceInputState): StationTable {
-        const dataTable = this.tableService.getStationData(state);
-
-        return {
-            ...dataTable,
-            columns: this.filterStationColumns(dataTable.columns)
-        };
-    }
-
-    private filterColumns(columns: TableColumn[], hiddenProps: string[]): TableColumn[] {
-        return columns.filter(
-            column => hiddenProps.indexOf(column.id) < 0
-        );
-    }
-
-    private filterStationColumns(columns: TableColumn[]): TableColumn[] {
-        return this.filterColumns(columns, EditHighlightingService.hiddenStationProps);
-    }
-
-    private filterDeliveryColumns(columns: TableColumn[]): TableColumn[] {
-        return this.filterColumns(columns, EditHighlightingService.hiddenDeliveryProps);
-    }
 
     private getNewInvisibilities(oldInvIds: string[], updateInvIds: string[], invisible: boolean): string[] {
         if (updateInvIds.length === 0) {
@@ -189,11 +165,6 @@ export class EditHighlightingService {
         }
         return rules;
     }
-
-    // addSelectionToStatRuleConditions<T extends StationEditRule>(editRule: T, stations: StationData[]): T {
-    //     const selectedIds = this.getSelectedStatIds(stations);
-    //     return this.addSelectionToRuleConditions(editRule, selectedIds);
-    // }
 
     addSelectionToStationRuleConditions<T extends StationEditRule>(editRule: T, state: DataServiceInputState): T {
         const selectedIds = this.getSelectedStationIdsFromState(state);
@@ -415,24 +386,20 @@ export class EditHighlightingService {
     }
 
     private createDeliveryPropData(state: DataServiceInputState): PropData {
-        const dataTable = this.tableService.getDeliveryData(state, false);
-        const columns = this.filterDeliveryColumns(dataTable.columns);
-        const favoriteDeliveryColumnLength = this.tableService.favoriteDeliveryColumnsLength;
+        const dataTable = this.tableService.getDeliveryTable(state, true);
         return {
-            availableProperties: columns,
-            propToValuesMap: extractPropToValuesMap(dataTable.rows, columns),
-            favoriteColumnsLength: favoriteDeliveryColumnLength
+            favouriteProperties: dataTable.favouriteColumns,
+            otherProperties: dataTable.otherColumns,
+            propToValuesMap: extractPropToValuesMap(dataTable.rows, dataTable.columns)
         };
     }
 
     private createStationPropData(state: DataServiceInputState): PropData {
-        const dataTable = this.tableService.getStationData(state);
-        const columns = this.filterStationColumns(dataTable.columns);
-        const favoriteStationColumnLength = this.tableService.favoriteStationColumnsLength;
+        const dataTable = this.tableService.getStationTable(state, true);
         return {
-            availableProperties: columns,
-            propToValuesMap: extractPropToValuesMap(dataTable.rows, columns),
-            favoriteColumnsLength: favoriteStationColumnLength
+            favouriteProperties: dataTable.favouriteColumns,
+            otherProperties: dataTable.otherColumns,
+            propToValuesMap: extractPropToValuesMap(dataTable.rows, dataTable.columns)
         };
     }
 }

@@ -13,21 +13,8 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 export class ComplexFilterViewComponent {
 
     @Input() disabled = false;
-    @Input() set availableProperties(value: TableColumn[]) {
-        this.availableProperties_ = value;
-    }
-
-    get availableProperties(): TableColumn[] {
-        return this.availableProperties_;
-    }
-
-    @Input() set favoriteColumnsLength(value: number) {
-        this.favoriteColumnsLength_ = value;
-    }
-
-    get favoriteColumnsLength(): number {
-        return this.favoriteColumnsLength_;
-    }
+    @Input() favouriteProperties: TableColumn[] = [];
+    @Input() otherProperties: TableColumn[] = [];
 
     @Input() propToValuesMap: Record<string, string[]> = {};
     @Input() availableOperatorTypes: OperationType[] = [];
@@ -44,12 +31,9 @@ export class ComplexFilterViewComponent {
         return this.conditions_;
     }
 
-    private availableProperties_: TableColumn[];
-
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
     private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
-    private favoriteColumnsLength_: number;
 
     onAddFilterCondition(index: number) {
 

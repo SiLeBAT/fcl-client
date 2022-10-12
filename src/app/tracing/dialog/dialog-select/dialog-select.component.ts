@@ -1,10 +1,17 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import * as _ from 'lodash';
+
+interface Option {
+    value: string;
+    viewValue: string;
+    selected: boolean;
+}
 
 export interface DialogSelectData {
     title: string;
-    options: { value: string; viewValue: string; selected: boolean }[];
-    favoriteColumnsLength: number;
+    favouriteOptions: Option[];
+    otherOptions: Option[];
 }
 
 @Component({
@@ -14,19 +21,20 @@ export interface DialogSelectData {
 })
 export class DialogSelectComponent {
 
-    options: any[];
-    favoriteColumnsSet: any[];
-    additionalColumnsSet: any[];
+    favouriteOptions: Option[];
+    otherOptions: Option[];
 
     constructor(public dialogRef: MatDialogRef<DialogSelectComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogSelectData) {
-        this.options = JSON.parse(JSON.stringify(data.options));
-        this.favoriteColumnsSet = this.options.slice(0, data.favoriteColumnsLength);
-        this.additionalColumnsSet = this.options.slice(data.favoriteColumnsLength);
+        this.favouriteOptions = _.cloneDeep(data.favouriteOptions);
+        this.otherOptions = _.cloneDeep(data.otherOptions);
     }
 
     //noinspection JSUnusedGlobalSymbols
     close() {
-        this.dialogRef.close(this.options.filter(o => o.selected).map(o => o.value));
+        this.dialogRef.close(
+            [].concat(this.favouriteOptions, this.otherOptions)
+                .filter(o => o.selected).map(o => o.value)
+        );
     }
 
 }

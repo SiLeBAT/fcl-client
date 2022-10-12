@@ -18,8 +18,8 @@ export enum TableType {
 export type TreeStatus = 'collapsed' | 'expanded';
 
 export interface EditHighlightingServiceData {
-    availableProperties: TableColumn[];
-    favoriteColumnsLength: number;
+    favouriteProperties: TableColumn[];
+    otherProperties: TableColumn[];
     propToValuesMap: PropToValuesMap;
     ruleListItems: RuleListItem[];
 }

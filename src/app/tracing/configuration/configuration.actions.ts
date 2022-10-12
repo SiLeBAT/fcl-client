@@ -10,7 +10,7 @@ export enum ConfigurationActionTypes {
 export class SelectFilterTableColumnsMSA implements Action {
     readonly type = ConfigurationActionTypes.SelectFilterTableColumnsMSA;
 
-    constructor(public payload: { type: TableType; columns: TableColumn[]; columnOrder: string[]; favoriteColumnsLength: number }) {}
+    constructor(public payload: { type: TableType; columnOrder: string[]; favouriteColumns: TableColumn[]; otherColumns: TableColumn[] }) {}
 }
 
 export class DeleteHighlightingRuleSSA implements Action {

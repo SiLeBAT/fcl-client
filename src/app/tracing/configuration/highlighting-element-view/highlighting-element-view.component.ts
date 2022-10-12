@@ -8,9 +8,9 @@ import { EditRule, RuleId, RuleListItem, RuleType } from '../model';
 export class HighlightingElementViewComponent<T extends EditRule> implements OnChanges {
     RuleType = RuleType;
 
-    @Input() availableProperties: TableColumn[] = [];
+    @Input() favouriteProperties: TableColumn[] = [];
+    @Input() otherProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
-    @Input() favoriteColumnsLength: number = 0;
     @Input() editRules: T[] = [];
     @Input() ruleListItems: RuleListItem[] = [];
 

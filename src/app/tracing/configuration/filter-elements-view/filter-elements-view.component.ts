@@ -25,7 +25,6 @@ export interface InputData {
     dataTable: DataTable;
     filterTableSettings: FilterTableSettings;
     selectedRowIds: string[];
-    favoriteColumnsLength: number;
 }
 
 interface RowFilterMap {
@@ -79,12 +78,16 @@ export class FilterElementsViewComponent implements OnChanges {
         return this.inputData.filterTableSettings.complexFilter.conditions;
     }
 
-    get favoriteColumnsLength(): number {
-        return this.inputData.favoriteColumnsLength;
-    }
-
     get filterTableViewInputData(): FilterTableViewInputData {
         return this.filterTableViewInputData_;
+    }
+
+    get favouriteColumns(): TableColumn[] {
+        return this.inputData.dataTable.favouriteColumns;
+    }
+
+    get otherColumns(): TableColumn[] {
+        return this.inputData.dataTable.otherColumns;
     }
 
     get propToValuesMap(): PropToValuesMap {
@@ -93,10 +96,6 @@ export class FilterElementsViewComponent implements OnChanges {
 
     get dataIsAvailable(): boolean {
         return !!this.inputData;
-    }
-
-    get dataColumns(): TableColumn[] {
-        return this.dataColumns_;
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-types
@@ -274,7 +273,7 @@ export class FilterElementsViewComponent implements OnChanges {
         if (!this.filterTableViewInputData_) {
             this.filterTableViewInputData_ = {
                 dataTable: {
-                    columns: this.inputData.dataTable.columns,
+                    ...this.inputData.dataTable,
                     rows: this.prefilteredRows_
                 },
                 columnOrder: this.inputData.filterTableSettings.columnOrder,
@@ -289,7 +288,7 @@ export class FilterElementsViewComponent implements OnChanges {
                     this.prefilteredRows_ !== this.filterTableViewInputData_.dataTable.rows
                 ) ?
                     {
-                        columns: this.inputData.dataTable.columns,
+                        ...this.inputData.dataTable,
                         rows: this.prefilteredRows_
                     } :
                     this.filterTableViewInputData_.dataTable

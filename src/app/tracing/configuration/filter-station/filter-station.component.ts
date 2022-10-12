@@ -87,9 +87,9 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
                 type: TableType.STATIONS,
-                columns: this.tableService.getStationColumns(this.cachedData.dataServiceData),
                 columnOrder: this.cachedState.filterTableState.columnOrder,
-                favoriteColumnsLength: this.tableService.favoriteStationColumnsLength
+                favouriteColumns: this.cachedData.dataTable.favouriteColumns,
+                otherColumns: this.cachedData.dataTable.otherColumns
             })
         );
     }
@@ -160,7 +160,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
                 this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
             ) {
                 // new Model
-                dataTable = this.tableService.getStationData(state.dataServiceInputState);
+                dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
                 this.currentGhostStationId = null;
             } else if (
                 newDSData.stations !== cachedDSData.stations ||
@@ -170,8 +170,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.statSel !== cachedDSData.statSel
             ) {
                 dataTable = {
-                    ...this.tableService.getStationData(state.dataServiceInputState),
-                    columns: this.cachedData.dataTable.columns
+                    ...this.cachedData.dataTable,
+                    rows: this.tableService.getStationTable(state.dataServiceInputState, false).rows
                 };
             }
 
@@ -196,8 +196,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
             this.filterElementsViewInputData_ = {
                 dataTable: this.cachedData.dataTable,
                 filterTableSettings: this.cachedState.filterTableState,
-                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.stations,
-                favoriteColumnsLength: this.tableService.favoriteStationColumnsLength
+                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.stations
             };
         }
     }

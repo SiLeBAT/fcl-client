@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
 
 interface Property {
     id: string;
@@ -11,23 +11,24 @@ interface Property {
     templateUrl: './property-selector-view.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class PropertySelectorViewComponent {
+export class PropertySelectorViewComponent implements OnChanges {
 
     @Input() label: string | null = null;
     @Input() disabled = false;
-    @Input() value: string;
-    @Input() availableProperties: Property[];
-    @Input() favoriteColumnsLength: number;
-
-    get favoriteProperties(): Property[] {
-        return this.availableProperties.slice(0, this.favoriteColumnsLength);
-    }
-
-    get additionalProperties(): Property[] {
-        return this.availableProperties.slice(this.favoriteColumnsLength);
-    }
+    @Input() value: string | null = null;
+    @Input() favouriteProperties: Property[];
+    @Input() otherProperties: Property[];
 
     @Output() valueChange = new EventEmitter<string>();
+
+    isPropNotListed = false;
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.value !== undefined) {
+            this.isPropNotListed = this.value !== null &&
+                ![this.favouriteProperties, this.otherProperties].some(pA => pA.some(p => p.id === this.value));
+        }
+    }
 
     onValueChange(value: string): void {
         this.valueChange.emit(value);

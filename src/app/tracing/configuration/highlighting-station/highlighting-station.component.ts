@@ -1,4 +1,4 @@
-import { DataServiceInputState, StationHighlightingRule, TableColumn } from '../../data.model';
+import { StationHighlightingRule, TableColumn } from '../../data.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -36,16 +36,16 @@ export class HighlightingStationComponent implements OnInit, OnDestroy {
         return this.cachedState === null ? this.emptyArray_ : this.cachedState.editRules;
     }
 
-    get availableProperties(): TableColumn[] {
-        return this.cachedData === null ? this.emptyArray_ : this.cachedData.availableProperties;
+    get favouriteProperties(): TableColumn[] {
+        return this.cachedData === null ? this.emptyArray_ : this.cachedData.favouriteProperties;
+    }
+
+    get otherProperties(): TableColumn[] {
+        return this.cachedData === null ? this.emptyArray_ : this.cachedData.otherProperties;
     }
 
     get propToValuesMap(): PropToValuesMap {
         return this.cachedData === null ? this.emptyObject_ : this.cachedData.propToValuesMap;
-    }
-
-    get favoriteColumnsLength(): number {
-        return this.cachedData === null ? 0 : this.cachedData.favoriteColumnsLength;
     }
 
     private stateSubscription: Subscription | null = null;
