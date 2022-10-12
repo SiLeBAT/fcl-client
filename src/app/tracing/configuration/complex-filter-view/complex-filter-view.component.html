@@ -9,8 +9,8 @@
                 [disabled]="disabled"
                 [value]="conditions[i].propertyName"
                 (valueChange)="onPropertyChange($event, i)"
-                [availableProperties]="availableProperties"
-                [favoriteColumnsLength]="favoriteColumnsLength"
+                [favouriteProperties]="favouriteProperties"
+                [otherProperties]="otherProperties"
             ></fcl-property-selector-view>
 
             <fcl-operator-selector-view

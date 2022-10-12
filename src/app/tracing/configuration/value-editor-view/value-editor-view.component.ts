@@ -23,11 +23,18 @@ export class ValueEditorViewComponent {
     private static readonly MAX_AUTOCOMPLETE_PROPOSALS = 20;
 
     @Input() disabled = false;
-    @Input() value: string | number | boolean;
-    @Input() availableValues: ValueType[];
+    @Input() value: string | number | boolean = '';
+    @Input() set availableValues(values: ValueType[] | undefined) {
+        this.availableValues_ = values || [];
+    }
+
+    get availableValues(): ValueType[] {
+        return this.availableValues_;
+    }
 
     @Output() valueChange = new EventEmitter<ValueType>();
 
+    private availableValues_: ValueType[] = [];
     private autocompleteValues_: string[] = [];
     private availableStrValues_: string[] = [];
     private processedInput: InputData;

@@ -39,6 +39,8 @@ export interface TableColumn {
     name: string;
 }
 
+export type Property = TableColumn;
+
 export interface RowHighlightingInfo {
     color: number[][];
     shape?: NodeShapeType;
@@ -55,7 +57,12 @@ export interface TableRow {
     [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
 }
 
-export interface DataTable {
+export interface ColumnSubSets {
+    favouriteColumns: TableColumn[];
+    otherColumns: TableColumn[];
+}
+
+export interface DataTable extends ColumnSubSets{
     columns: TableColumn[];
     rows: TableRow[];
 }

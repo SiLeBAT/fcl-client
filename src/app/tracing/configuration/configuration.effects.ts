@@ -16,6 +16,7 @@ import {
 import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/dialog-yes-no.component';
 import { selectHighlightingSettings } from '../state/tracing.selectors';
 import { EditHighlightingService } from './edit-highlighting.service';
+import { TableColumn } from '../data.model';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -34,16 +35,15 @@ export class ConfigurationEffects {
 
                 const tableType = action.payload.type;
                 const oldColumnOrder = action.payload.columnOrder;
-                const columnOptions = action.payload.columns.map(c => ({
-                    value: c.id,
-                    viewValue: c.name,
-                    selected: oldColumnOrder.includes(c.id)
-                }));
-
+                const mapColumnToOption = (column: TableColumn) => ({
+                    value: column.id,
+                    viewValue: column.name,
+                    selected: oldColumnOrder.includes(column.id)
+                });
                 const dialogData: DialogSelectData = {
                     title: 'Show Columns',
-                    options: columnOptions,
-                    favoriteColumnsLength: action.payload.favoriteColumnsLength
+                    favouriteOptions: action.payload.favouriteColumns.map(mapColumnToOption),
+                    otherOptions: action.payload.otherColumns.map(mapColumnToOption)
                 };
 
                 this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()

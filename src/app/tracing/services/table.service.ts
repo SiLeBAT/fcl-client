@@ -8,7 +8,8 @@ import {
     StationTable,
     DataTable,
     NodeShapeType,
-    DataServiceInputState
+    DataServiceInputState,
+    ColumnSubSets
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
@@ -19,69 +20,33 @@ export interface ColumnOption {
     selected: boolean;
 }
 
+type ColumnSets = ColumnSubSets & Pick<DataTable, 'columns'>;
+
 @Injectable({
     providedIn: 'root'
 })
 export class TableService {
-    favoriteStationColumnsLength: number;
-    favoriteDeliveryColumnsLength: number;
 
     constructor(private dataService: DataService) {}
 
-    getDeliveryData(state: DataServiceInputState, addStationProps: boolean, deliveryIds?: string[]): DataTable {
+    getDeliveryTable(state: DataServiceInputState, forHighlighting: boolean, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
         return {
-            columns: this.getDeliveryColumns(data, addStationProps),
-            rows: this.getDeliveryRows(data, addStationProps, deliveryIds)
+            ...this.getDeliveryColumnSets(data, forHighlighting),
+            rows: this.getDeliveryRows(data, forHighlighting, deliveryIds)
         };
     }
 
-    getStationData(state: DataServiceInputState): StationTable {
+    getStationTable(state: DataServiceInputState, forHighlighting: boolean): StationTable {
         const data: DataServiceData = this.dataService.getData(state);
         return {
-            columns: this.getStationColumns(data),
-            rows: this.getStationRows(data)
+            ...this.getStationColumnSets(data, forHighlighting),
+            rows: this.getStationRows(data, forHighlighting)
         };
     }
 
-    getDeliveryColumns(data: DataServiceData, addStationProps: boolean): TableColumn[] {
-        const favoriteColumns: TableColumn[] = [
-            { id: 'id', name: 'ID' },
-            { id: 'name', name: 'Product' },
-            { id: 'lot', name: 'Lot' },
-            { id: 'amount', name: 'Amount' },
-            { id: 'dateOut', name: 'Delivery Date' },
-            { id: 'dateIn', name: 'Delivery Date Arrival' },
-            { id: 'source.name', name: 'Source' },
-            { id: 'target.name', name: 'Target' }
-        ];
-
-        this.favoriteDeliveryColumnsLength = favoriteColumns.length;
-
-        let additionalColumns: TableColumn[] = [
-            { id: 'source', name: 'Source ID' },
-            { id: 'target', name: 'Target ID' },
-            { id: 'weight', name: 'Weight' },
-            { id: 'crossContamination', name: 'Cross Contamination' },
-            { id: 'killContamination', name: 'Kill Contamination' },
-            { id: 'observed', name: 'Observed' },
-            { id: 'forward', name: 'On Forward Trace' },
-            { id: 'backward', name: 'On Backward Trace' },
-            { id: 'score', name: 'Score' },
-            { id: 'selected', name: 'Selected' },
-            { id: 'invisible', name: 'Invisible' }
-        ];
-
-        if (addStationProps === false) {
-            additionalColumns = additionalColumns.filter(c => !c.id.startsWith('source.') && !c.id.startsWith('target.'));
-        }
-        this.addColumnsForProperties(additionalColumns, data.deliveries);
-
-        return this.mergeColumns(favoriteColumns, additionalColumns);
-    }
-
-    getStationColumns(data: DataServiceData): TableColumn [] {
-        const favoriteColumns: TableColumn[] = [
+    private getFavouriteStationColumns(): TableColumn[] {
+        return [
             { id: 'id', name: 'ID' },
             { id: 'name', name: 'Name' },
             { id: 'address', name: 'Address' },
@@ -92,39 +57,92 @@ export class TableService {
             { id: 'outbreak', name: 'Outbreak' },
             { id: 'weight', name: 'Weight' }
         ];
+    }
 
-        this.favoriteStationColumnsLength = favoriteColumns.length;
+    private getFavouriteDeliveryColumns(forHighlighting: boolean): TableColumn[] {
+        const favouriteColumns: TableColumn[] = [
+            { id: 'id', name: 'ID' },
+            { id: 'name', name: 'Product' },
+            { id: 'lot', name: 'Lot' },
+            { id: 'amount', name: 'Amount' },
+            { id: 'dateOut', name: 'Delivery Date' },
+            { id: 'dateIn', name: 'Delivery Date Arrival' }
+        ];
+        if (!forHighlighting) {
+            favouriteColumns.push(
+                { id: 'source.name', name: 'Source' },
+                { id: 'target.name', name: 'Target' }
+            );
+        }
+        return favouriteColumns;
+    }
 
-        const additionalColumns: TableColumn[] = [
+    private getOtherDeliveryColumns(data: DataServiceData, forHighlighting: boolean, favouriteColumns: TableColumn[]): TableColumn[] {
+        const otherColumns: TableColumn[] = [
+            { id: 'source', name: 'Source ID' },
+            { id: 'target', name: 'Target ID' },
+            { id: 'weight', name: 'Weight' },
+            { id: 'crossContamination', name: 'Cross Contamination' },
+            { id: 'killContamination', name: 'Kill Contamination' },
+            { id: 'observed', name: 'Observed' },
+            { id: 'forward', name: 'On Forward Trace' },
+            { id: 'backward', name: 'On Backward Trace' },
+            { id: 'score', name: 'Score' },
+            forHighlighting ? null : { id: 'selected', name: 'Selected' },
+            forHighlighting ? null : { id: 'invisible', name: 'Invisible' }
+        ].filter(c => c !== null);
+
+        this.addColumnsForProperties(otherColumns, data.deliveries);
+        return this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);
+    }
+
+    getDeliveryColumnSets(data: DataServiceData, forHighlighting: boolean): ColumnSets {
+        const favouriteColumns = this.getFavouriteDeliveryColumns(forHighlighting);
+        const otherColumns = this.getOtherDeliveryColumns(data, forHighlighting, favouriteColumns);
+        return {
+            columns: [].concat(favouriteColumns, otherColumns),
+            favouriteColumns: favouriteColumns,
+            otherColumns: favouriteColumns
+        };
+    }
+
+    private getOtherStationColumns(data: DataServiceData, forHighlighting: boolean, favouriteColumns: TableColumn[]): TableColumn[] {
+        const otherColumns: TableColumn[] = [
             { id: 'forward', name: 'On Forward Trace' },
             { id: 'backward', name: 'On Backward Trace' },
             { id: 'crossContamination', name: 'Cross Contamination' },
             { id: 'killContamination', name: 'Kill Contamination' },
             { id: 'observed', name: 'Observed' },
-            { id: 'selected', name: 'Selected' },
-            { id: 'invisible', name: 'Invisible' },
+            forHighlighting ? null : { id: 'selected', name: 'Selected' },
+            forHighlighting ? null : { id: 'invisible', name: 'Invisible' },
             { id: 'lat', name: 'Latitude' },
             { id: 'lon', name: 'Longitude' },
             { id: 'isMeta', name: 'Is Meta Station' },
-            { id: 'contained', name: 'Is Meta Member' }
-        ];
+            forHighlighting ? null : { id: 'contained', name: 'Is Meta Member', canBeUsedForHighlighting: false }
+        ].filter(c => c !== null);
 
-        // the addColumnsForProperties method adds properties to the additionalColmns that are already present
-        // in the favoriteColumns which results finally in double entries
-        this.addColumnsForProperties(additionalColumns, data.stations);
-
-        // double entries are removed in the mergeColumns method
-        return this.mergeColumns(favoriteColumns, additionalColumns);
+        this.addColumnsForProperties(otherColumns, data.stations);
+        return this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);
     }
 
-    private mergeColumns(favoriteColumns: TableColumn[], additionalColumns: TableColumn[]): TableColumn[] {
-        const columns: TableColumn[] = [
-            ...favoriteColumns,
-            ..._.sortBy(additionalColumns, [(columnItem: TableColumn) => columnItem.name.toLowerCase()])
-        ];
+    getStationColumnSets(data: DataServiceData, forHighlighting: boolean): ColumnSets {
+        const favouriteColumns: TableColumn[] = this.getFavouriteStationColumns();
+        const otherColumns = this.getOtherStationColumns(data, forHighlighting, favouriteColumns);
+        return {
+            columns: [].concat(favouriteColumns, otherColumns),
+            favouriteColumns: favouriteColumns,
+            otherColumns: favouriteColumns
+        };
+    }
 
-        // uniqBy removes the double entries that were collected in the addColumnsForProperties method
-        return _.uniqBy(columns, (item: TableColumn) => item.id);
+    private sortColumns(columns: TableColumn[]): TableColumn[] {
+        return _.sortBy(columns, [(column: TableColumn) => column.name.toLowerCase()]);
+    }
+
+    private getCleanedAndSortedOtherColumns(otherColumns: TableColumn[], favouriteColumns: TableColumn[]): TableColumn[] {
+        return this.sortColumns(
+            otherColumns.filter(ac => !favouriteColumns.some(fc => fc.id === ac.id))
+        );
     }
 
     private addColumnsForProperties(columns: TableColumn[], arr: (StationData | DeliveryData)[]): void {
@@ -139,7 +157,7 @@ export class TableService {
         });
     }
 
-    private getDeliveryRows(data: DataServiceData, addStationProps: boolean, deliveryIds?: string[]): TableRow[] {
+    private getDeliveryRows(data: DataServiceData, forHighlighting: boolean, deliveryIds?: string[]): TableRow[] {
         return (
             deliveryIds ?
                 data.getDelById(deliveryIds) :
@@ -167,14 +185,14 @@ export class TableService {
                 observed: delivery.observed,
                 forward: delivery.forward,
                 backward: delivery.backward,
-                score: delivery.score,
-                selected: delivery.selected,
-                invisible: delivery.invisible
+                score: delivery.score
             };
 
-            if (addStationProps) {
+            if (!forHighlighting) {
                 row['source.name'] = data.statMap[delivery.source].name;
                 row['target.name'] = data.statMap[delivery.target].name;
+                row['selected'] = delivery.selected;
+                row['invisible'] = delivery.invisible;
             }
 
             delivery.properties.forEach(
@@ -185,7 +203,7 @@ export class TableService {
         });
     }
 
-    private getStationRows(data: DataServiceData): TableRow[] {
+    private getStationRows(data: DataServiceData, forHighlighting: boolean): TableRow[] {
         const rows = data.stations.map(station => {
             const row: TableRow = {
                 id: station.id,
@@ -201,12 +219,15 @@ export class TableService {
                 killContamination: station.killContamination,
                 observed: station.observed,
                 commonLink: station.commonLink,
-                selected: station.selected,
-                invisible: station.invisible,
                 lat: station.lat,
                 lon: station.lon,
                 highlightingInfo: station.highlightingInfo
             };
+
+            if (!forHighlighting) {
+                row['selected'] = station.selected;
+                row['invisible'] = station.invisible;
+            }
 
             station.properties.forEach(
                 prop => row[prop.name] = prop.value

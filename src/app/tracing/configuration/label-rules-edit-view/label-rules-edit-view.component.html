@@ -11,8 +11,8 @@
             label="Select property for label"
             [value]="labelProperty"
             (valueChange)="onLabelPropertyChange($event)"
-            [availableProperties]="availableProperties"
-            [favoriteColumnsLength] = "favoriteColumnsLength"
+            [favouriteProperties]="favouriteProperties"
+            [otherProperties]="otherProperties"
         ></fcl-property-selector-view>
     </div>
 
@@ -35,8 +35,8 @@
     <fcl-complex-filter-view
         class="fcl-edit-rule-complex-filter"
         [conditions] = "complexFilterConditions"
-        [availableProperties] = "availableProperties"
-        [favoriteColumnsLength] = "favoriteColumnsLength"
+        [favouriteProperties] = "favouriteProperties"
+        [otherProperties] = "otherProperties"
         [availableOperatorTypes] = "availableOperatorTypes"
         [propToValuesMap] = "propToValuesMap"
         (conditionsChange) = "onComplexFilterChange($event)"

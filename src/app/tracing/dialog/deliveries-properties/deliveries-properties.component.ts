@@ -94,14 +94,10 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
         window.getSelection().removeAllRanges();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    onActivate(event) {
-    }
-
     private applyState(state: DataServiceInputState) {
         timer(200).subscribe(
             () => {
-                const newData = this.tableService.getDeliveryData(state, true, this.deliveryIds);
+                const newData = this.tableService.getDeliveryTable(state, false, this.deliveryIds);
                 const columns: FilterColumn[] = newData.columns.map((c, i) => ({
                     id: 'c' + i,
                     prop: c.id,
