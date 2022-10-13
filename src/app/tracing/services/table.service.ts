@@ -102,7 +102,7 @@ export class TableService {
         return {
             columns: [].concat(favouriteColumns, otherColumns),
             favouriteColumns: favouriteColumns,
-            otherColumns: favouriteColumns
+            otherColumns: otherColumns
         };
     }
 
@@ -131,7 +131,7 @@ export class TableService {
         return {
             columns: [].concat(favouriteColumns, otherColumns),
             favouriteColumns: favouriteColumns,
-            otherColumns: favouriteColumns
+            otherColumns: otherColumns
         };
     }
 
