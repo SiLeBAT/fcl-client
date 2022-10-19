@@ -136,8 +136,8 @@ export class Constants {
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
     static readonly DEFAULT_MAP_TYPE = MapType.MAPNIK;
-    static readonly DEFAULT_GRAPH_NODE_SIZE = 20;
-    static readonly DEFAULT_GRAPH_FONT_SIZE = 10;
+    static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
+    static readonly DEFAULT_GRAPH_FONT_SIZE = 14;
     static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;
     static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
