@@ -1,8 +1,20 @@
-<div>
+<div class="fcl-condition-list-container" cdkVirtualScrollingElement [ngClass]="useListMode ? 'fcl-list-mode-isactive' : ''">
 
-    <div *ngFor="let condition of conditions; let i=index; index as index; trackBy: trackByIndex">
+    <div *ngIf="isUpScrollIndicatorVisible" class="fcl-condition-list-upscroll-indicator">
+        <mat-icon>keyboard_arrow_up</mat-icon>
+    </div>
 
-        <div class="fcl-complex-filter-container">
+    <cdk-virtual-scroll-viewport
+        [itemSize]="rowHeight"
+        minBufferPx="100"
+        maxBufferPx="250"
+        [ngStyle]="{'min-height.px': viewportHeight, 'height.px': viewportHeight }"
+        (scroll)="onScroll()"
+        >
+
+        <div *cdkVirtualFor="let condition of conditions; let i=index; index as index; trackBy: trackByIndex"
+            class="fcl-complex-filter-condition-container"
+            >
 
             <fcl-property-selector-view
                 class="fcl-complex-filter-form-field"
@@ -63,6 +75,10 @@
 
          </div>
 
+    </cdk-virtual-scroll-viewport>
+
+    <div *ngIf="isDownScrollIndicatorVisible" class="fcl-condition-list-downscroll-indicator">
+        <mat-icon>keyboard_arrow_down</mat-icon>
     </div>
 
 </div>
