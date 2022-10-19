@@ -1,7 +1,8 @@
 import { OperationType, TableColumn } from './../../data.model';
-import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, AfterViewChecked } from '@angular/core';
 import { ComplexFilterCondition, JunktorType } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
     selector: 'fcl-complex-filter-view',
@@ -10,7 +11,15 @@ import { ComplexFilterUtils } from '../shared/complex-filter-utils';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class ComplexFilterViewComponent {
+export class ComplexFilterViewComponent implements AfterViewChecked {
+
+    private static readonly MAX_VIEW_PORT_LENGTH = 5;
+    private static readonly ROW_HEIGHT = 38.39;
+    private static readonly MAX_VIEW_PORT_HEIGHT =
+        (ComplexFilterViewComponent.MAX_VIEW_PORT_LENGTH + 0.5) *
+        ComplexFilterViewComponent.ROW_HEIGHT;
+
+    private static readonly SCROLL_INDICATOR_TRIGGER_OFFSET = 10;
 
     @Input() disabled = false;
     @Input() favouriteProperties: TableColumn[] = [];
@@ -25,6 +34,7 @@ export class ComplexFilterViewComponent {
                 value.slice() :
                 ComplexFilterUtils.createDefaultComplexFilterConditions()
         );
+        this.updateStyleParams();
     }
 
     get conditions(): ComplexFilterCondition[] {
@@ -33,10 +43,41 @@ export class ComplexFilterViewComponent {
 
     @Output() conditionsChange = new EventEmitter<ComplexFilterCondition[]>();
 
+    @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
+
+    isDownScrollIndicatorVisible = false;
+    isUpScrollIndicatorVisible = false;
+    useListMode = false;
+
+    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT; //     38.39; // 35;
+    viewportHeight = ComplexFilterViewComponent.ROW_HEIGHT;
+
+    private scrollDown = false;
+    private updateScrollIndicatorsAfterViewChecked = false;
+
     private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
 
-    onAddFilterCondition(index: number) {
+    ngAfterViewChecked(): void {
+        if (this.scrollDown) {
+            if (this.useListMode) {
+                this.viewport.scrollToIndex(this.conditions_.length - 1);
+            }
+            this.scrollDown = false;
+        } else if (this.updateScrollIndicatorsAfterViewChecked) {
+            this.updateScrollIndicatorsAfterViewChecked = false;
+            this.updateScrollIndicators();
+        }
 
+    }
+
+    onScroll(): void {
+        this.updateScrollIndicators();
+    }
+
+    onAddFilterCondition(index: number) {
+        if (index === this.conditions.length - 1) {
+            this.scrollDown = true;
+        }
         const conditions = this.conditions_.map(c => ({ ...c }));
         const propertyName = conditions[index].propertyName;
         const operationType = conditions[index].operationType;
@@ -100,6 +141,10 @@ export class ComplexFilterViewComponent {
         });
     }
 
+    trackByIndex(index: number): number {
+        return index;
+    }
+
     private changeConditionAndEmit(index: number, newCondition: ComplexFilterCondition): void {
         const conditions = this.conditions_.map(c => ({ ...c }));
         conditions[index] = newCondition;
@@ -107,7 +152,27 @@ export class ComplexFilterViewComponent {
         this.conditionsChange.emit(conditions);
     }
 
-    trackByIndex(index: number): number {
-        return index;
+    private updateStyleParams(): void {
+        const listHeight = ComplexFilterViewComponent.ROW_HEIGHT * this.conditions.length;
+        this.viewportHeight = Math.min(
+            ComplexFilterViewComponent.MAX_VIEW_PORT_HEIGHT,
+            listHeight
+        );
+        this.useListMode = this.viewportHeight < listHeight;
+        if (!this.useListMode) {
+            this.isDownScrollIndicatorVisible = false;
+            this.isUpScrollIndicatorVisible = false;
+        } else {
+            this.updateScrollIndicatorsAfterViewChecked = true;
+        }
+    }
+
+    private updateScrollIndicators(): void {
+        this.isDownScrollIndicatorVisible = this.viewport && !(
+            this.viewport.measureScrollOffset('bottom') < ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
+        );
+        this.isUpScrollIndicatorVisible = this.viewport && !(
+            this.viewport.measureScrollOffset('top') < ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
+        );
     }
 }

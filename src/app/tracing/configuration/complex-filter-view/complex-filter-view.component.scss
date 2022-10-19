@@ -1,6 +1,42 @@
 @import '../../../../assets/sass/base';
 
-.fcl-complex-filter-container {
+.fcl-condition-list-container {
+    flex: 1;
+    width: 100%;
+}
+
+.fcl-condition-list-container.fcl-list-mode-isactive {
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: lightgray;
+}
+
+.cdk-virtual-scroll-content-wrapper {
+    width: 100%;
+}
+
+.fcl-condition-list-upscroll-indicator,
+.fcl-condition-list-downscroll-indicator {
+    height: 20px;
+    opacity: 0.3;
+    display: flex;
+    justify-content: center;
+    align-items: center; // vertical centering
+    width: 100%;
+    background: transparent;
+    pointer-events: none;
+}
+
+.fcl-condition-list-upscroll-indicator {
+    margin-bottom: -20px;
+}
+
+.fcl-condition-list-downscroll-indicator {
+    margin-top: -20px;
+}
+
+.fcl-complex-filter-condition-container {
     display: grid;
     grid-template-columns: 20% 15% 45% 15% 5%;
     grid-template-rows: auto;

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { MaterialModule } from './material.module';
 import { SpinnerLoaderComponent } from './spinner-loader/spinner-loader.component';
@@ -26,6 +27,7 @@ import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-s
         ReactiveFormsModule,
         MaterialModule,
         DragDropModule,
+        ScrollingModule,
         SpinnerLoaderComponent,
         AlertComponent,
         SingleCenterCardLayoutComponent,
