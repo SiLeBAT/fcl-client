@@ -1,4 +1,7 @@
 @import '~normalize.css/normalize.css';
+$roboto-font-path: "~roboto-fontface/fonts" !default;
+/* stylelint-disable-next-line at-rule-empty-line-before */
+@import "~roboto-fontface/css/roboto/sass/roboto-fontface";
 @import '~@swimlane/ngx-datatable/index.css';
 @import '~@swimlane/ngx-datatable/assets/icons.css';
 @import '~ol/ol.css';

@@ -33,7 +33,8 @@
                 "ignoreAtRules": [
                     "mixin",
                     "include",
-                    "extend"
+                    "extend",
+                    "use"
                 ]
             }
         ],
