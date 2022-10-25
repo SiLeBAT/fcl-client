@@ -12,27 +12,31 @@
     border-color: lightgray;
 }
 
+.cdk-virtual-scroll-viewport.fcl-hide-scrollbar {
+    scrollbar-width: none;
+}
+
 .cdk-virtual-scroll-content-wrapper {
     width: 100%;
 }
 
-.fcl-condition-list-upscroll-indicator,
-.fcl-condition-list-downscroll-indicator {
+.fcl-condition-list-scrollup-indicator,
+.fcl-condition-list-scrolldown-indicator {
     height: 20px;
     opacity: 0.3;
     display: flex;
     justify-content: center;
-    align-items: center; // vertical centering
+    align-items: center;
     width: 100%;
     background: transparent;
     pointer-events: none;
 }
 
-.fcl-condition-list-upscroll-indicator {
+.fcl-condition-list-scrollup-indicator {
     margin-bottom: -20px;
 }
 
-.fcl-condition-list-downscroll-indicator {
+.fcl-condition-list-scrolldown-indicator {
     margin-top: -20px;
 }
 
@@ -40,6 +44,7 @@
     display: grid;
     grid-template-columns: 20% 15% 45% 15% 5%;
     grid-template-rows: auto;
+    height: 39px;
 }
 
 .fcl-complex-filter-form-field {

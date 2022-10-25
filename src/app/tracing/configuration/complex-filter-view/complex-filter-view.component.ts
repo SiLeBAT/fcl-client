@@ -1,5 +1,5 @@
 import { OperationType, TableColumn } from './../../data.model';
-import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { ComplexFilterCondition, JunktorType } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
@@ -11,10 +11,10 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class ComplexFilterViewComponent implements AfterViewChecked {
+export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
 
     private static readonly MAX_VIEW_PORT_LENGTH = 5;
-    private static readonly ROW_HEIGHT = 38.39;
+    private static readonly ROW_HEIGHT = 39;
     private static readonly MAX_VIEW_PORT_HEIGHT =
         (ComplexFilterViewComponent.MAX_VIEW_PORT_LENGTH + 0.5) *
         ComplexFilterViewComponent.ROW_HEIGHT;
@@ -34,7 +34,6 @@ export class ComplexFilterViewComponent implements AfterViewChecked {
                 value.slice() :
                 ComplexFilterUtils.createDefaultComplexFilterConditions()
         );
-        this.updateStyleParams();
     }
 
     get conditions(): ComplexFilterCondition[] {
@@ -45,17 +44,30 @@ export class ComplexFilterViewComponent implements AfterViewChecked {
 
     @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport;
 
-    isDownScrollIndicatorVisible = false;
-    isUpScrollIndicatorVisible = false;
+    isScrollDownIndicatorVisible = false;
+    isScrollUpIndicatorVisible = false;
     useListMode = false;
+    // this property is used to hide the scrollbar on macosx systems
+    // then the "Show scroll bars" setting is not set to "always"
+    // In this mode the remove buttons might be covered (partially or completely) from
+    // the scrollbar, because the scrollbar does not reduce the width of the inner content.
+    // On other operating systems or if "Show scroll bars" setting is set to "always"
+    // the scrollbars are shown permanently and do reduce the width of the inner content
+    hideScrollbar = false;
 
-    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT; //     38.39; // 35;
+    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT; // 38.39;
     viewportHeight = ComplexFilterViewComponent.ROW_HEIGHT;
 
     private scrollDown = false;
     private updateScrollIndicatorsAfterViewChecked = false;
 
     private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.conditions !== undefined) {
+            this.updateStyleParams();
+        }
+    }
 
     ngAfterViewChecked(): void {
         if (this.scrollDown) {
@@ -67,7 +79,7 @@ export class ComplexFilterViewComponent implements AfterViewChecked {
             this.updateScrollIndicatorsAfterViewChecked = false;
             this.updateScrollIndicators();
         }
-
+        this.hideScrollbar = false;
     }
 
     onScroll(): void {
@@ -110,6 +122,11 @@ export class ComplexFilterViewComponent implements AfterViewChecked {
                 ComplexFilterUtils.createDefaultComplexFilterConditions() :
                 conditions
         );
+        if (this.useListMode && !this.hasViewportFixedScrollbar()) {
+            // here we hide the scrollbar, otherwise it might block the use
+            // to remove conditions in quick successioon
+            this.hideScrollbar = true;
+        }
         this.conditionsChange.emit(conditions);
     }
 
@@ -145,6 +162,18 @@ export class ComplexFilterViewComponent implements AfterViewChecked {
         return index;
     }
 
+    private hasViewportFixedScrollbar(): boolean {
+        const viewportElement = this.viewport.elementRef.nativeElement;
+        const contentWrapperElements = viewportElement.getElementsByClassName('cdk-virtual-scroll-content-wrapper');
+        if (contentWrapperElements.length > 0) {
+            const contentWrapperElement = contentWrapperElements.item(0);
+            const viewportWidth = viewportElement.getBoundingClientRect().width;
+            const contentWrapperWidth = contentWrapperElement.getBoundingClientRect().width;
+            return viewportWidth > contentWrapperWidth;
+        }
+        return false;
+    }
+
     private changeConditionAndEmit(index: number, newCondition: ComplexFilterCondition): void {
         const conditions = this.conditions_.map(c => ({ ...c }));
         conditions[index] = newCondition;
@@ -160,18 +189,18 @@ export class ComplexFilterViewComponent implements AfterViewChecked {
         );
         this.useListMode = this.viewportHeight < listHeight;
         if (!this.useListMode) {
-            this.isDownScrollIndicatorVisible = false;
-            this.isUpScrollIndicatorVisible = false;
+            this.isScrollDownIndicatorVisible = false;
+            this.isScrollUpIndicatorVisible = false;
         } else {
             this.updateScrollIndicatorsAfterViewChecked = true;
         }
     }
 
     private updateScrollIndicators(): void {
-        this.isDownScrollIndicatorVisible = this.viewport && !(
+        this.isScrollDownIndicatorVisible = this.viewport && !(
             this.viewport.measureScrollOffset('bottom') < ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
         );
-        this.isUpScrollIndicatorVisible = this.viewport && !(
+        this.isScrollUpIndicatorVisible = this.viewport && !(
             this.viewport.measureScrollOffset('top') < ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
         );
     }

@@ -1,14 +1,17 @@
-<div class="fcl-condition-list-container" cdkVirtualScrollingElement [ngClass]="useListMode ? 'fcl-list-mode-isactive' : ''">
+<div class="fcl-condition-list-container" cdkVirtualScrollingElement
+    [ngClass]="useListMode ? 'fcl-list-mode-isactive' : ''"
+    >
 
-    <div *ngIf="isUpScrollIndicatorVisible" class="fcl-condition-list-upscroll-indicator">
+    <div *ngIf="isScrollUpIndicatorVisible" class="fcl-condition-list-scrollup-indicator">
         <mat-icon>keyboard_arrow_up</mat-icon>
     </div>
 
     <cdk-virtual-scroll-viewport
         [itemSize]="rowHeight"
-        minBufferPx="100"
-        maxBufferPx="250"
+        minBufferPx="200"
+        maxBufferPx="350"
         [ngStyle]="{'min-height.px': viewportHeight, 'height.px': viewportHeight }"
+        [ngClass]="hideScrollbar ? 'fcl-hide-scrollbar' : ''"
         (scroll)="onScroll()"
         >
 
@@ -77,7 +80,7 @@
 
     </cdk-virtual-scroll-viewport>
 
-    <div *ngIf="isDownScrollIndicatorVisible" class="fcl-condition-list-downscroll-indicator">
+    <div *ngIf="isScrollDownIndicatorVisible" class="fcl-condition-list-scrolldown-indicator">
         <mat-icon>keyboard_arrow_down</mat-icon>
     </div>
 
