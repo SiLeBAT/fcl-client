@@ -32,6 +32,10 @@
 .snackbar-error {
     background-color: #c62828;
     font-weight: 500;
+
+    .mat-button-wrapper {
+        color: white;
+    }
 }
 
 .snackbar-success {
