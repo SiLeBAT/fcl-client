@@ -13,6 +13,7 @@
             #rightSidenav
             position="end"
             mode="over"
+            disableClose="true"
             [opened]="showConfigurationSideBar$ | async"
             (openedChange)="onConfigurationSideBarOpened()">
             <fcl-configuration></fcl-configuration>
