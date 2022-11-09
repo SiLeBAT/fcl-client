@@ -434,11 +434,16 @@ export class DataImporterV1 implements IDataImporter {
             viewData.gis?.node?.minSize ||
             null;
 
+        // default edge width is dependent on node size
         if (
             nodeSize !== null
         ) {
             fclData.graphSettings.nodeSize = DataMapper.NODE_SIZE_EXT_TO_INT_FUN(nodeSize);
+            // reset edge default
+            fclData.graphSettings.edgeWidth = Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(fclData.graphSettings.nodeSize);
         }
+
+        const autoEdgeWidth = fclData.graphSettings.edgeWidth;
 
         const extEdgeWidth: number | null =
             viewData.graph?.edge?.minWidth ||
@@ -453,11 +458,11 @@ export class DataImporterV1 implements IDataImporter {
         const adjustEdgeWidthToNodeSize = viewData.edge?.adjustEdgeWidthToNodeSize || null;
         if (adjustEdgeWidthToNodeSize !== null) {
             fclData.graphSettings.adjustEdgeWidthToNodeSize = adjustEdgeWidthToNodeSize;
-        }
-        if (
-            adjustEdgeWidthToNodeSize === null &&
-            fclData.graphSettings.edgeWidth === Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(fclData.graphSettings.nodeSize)) {
-            fclData.graphSettings.adjustEdgeWidthToNodeSize = true;
+            if (fclData.graphSettings.adjustEdgeWidthToNodeSize) {
+                fclData.graphSettings.edgeWidth = autoEdgeWidth;
+            }
+        } else {
+            fclData.graphSettings.adjustEdgeWidthToNodeSize = fclData.graphSettings.edgeWidth === autoEdgeWidth;
         }
 
         const fontSize = viewData.graph?.text?.fontSize ||
