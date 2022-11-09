@@ -1,4 +1,5 @@
 <div class="sidenav-elements">
+
     <mat-form-field>
         <mat-select placeholder="Node Size" [ngModel]="graphSettings.nodeSize" (ngModelChange)="setNodeSize($event)">
             <mat-option *ngFor="let nodeSize of nodeSizes" [value]="nodeSize">
@@ -6,16 +7,38 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-        <mat-form-field>
+
+    <mat-form-field>
+        <mat-select
+            placeholder="Font Size"
+            [ngModel]="graphSettings.fontSize"
+            (ngModelChange)="setFontSize($event)">
+            <mat-option *ngFor="let fontSize of fontSizes" [value]="fontSize">
+            {{fontSize}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div class="sidenav-elements-group">
+        <mat-form-field class="less-bottom-padding">
             <mat-select
-              placeholder="Font Size"
-              [ngModel]="graphSettings.fontSize"
-              (ngModelChange)="setFontSize($event)">
-              <mat-option *ngFor="let fontSize of fontSizes" [value]="fontSize">
-                {{fontSize}}
-              </mat-option>
+                placeholder="Edge Width"
+                [disabled]="graphSettings.adjustEdgeWidthToNodeSize"
+                [ngModel]="graphSettings.edgeWidth"
+                (ngModelChange)="onSetEdgeWidth($event)"
+                >
+                <mat-option *ngFor="let edgeWidth of edgeWidths" [value]="edgeWidth">
+                    {{ edgeWidth }}
+                </mat-option>
             </mat-select>
         </mat-form-field>
+
+        <mat-checkbox
+            [ngModel]="graphSettings.adjustEdgeWidthToNodeSize"
+            (ngModelChange)="onAdjustEdgeWidthToNodeSizeChanged($event)">
+            Automatically adjust edge width to node size
+        </mat-checkbox>
+    </div>
 
     <div class="sidenav-elements-group">
         <mat-form-field class="less-bottom-padding">

@@ -103,6 +103,16 @@ export const getNodeSize = createSelector(
     (graphSettings) => graphSettings.nodeSize
 );
 
+export const getAdjustEdgeWidthToNodeSize = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.adjustEdgeWidthToNodeSize
+);
+
+export const getEdgeWidth = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.edgeWidth
+);
+
 export const getFontSize = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.fontSize
@@ -222,9 +232,11 @@ export const getMapConfig = createSelector(
 
 export const getStyleConfig = createSelector(
     getNodeSize,
+    getEdgeWidth,
     getFontSize,
-    (nodeSize, fontSize) => ({
+    (nodeSize, edgeWidth, fontSize) => ({
         nodeSize: nodeSize,
+        edgeWidth: edgeWidth,
         fontSize: fontSize
     })
 );

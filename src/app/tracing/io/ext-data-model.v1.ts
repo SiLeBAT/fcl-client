@@ -1,4 +1,5 @@
-export const VERSION = '1.1.1';
+export const VERSION = '1.1.2';
+
 export interface JsonData {
     version: string;
     data: Data;
@@ -83,6 +84,7 @@ export interface EdgeViewData {
     joinEdges?: boolean;
     mergeDeliveriesType?: string;
     showMergedDeliveriesCounts?: boolean;
+    adjustEdgeWidthToNodeSize?: boolean;
     // showEdgesInMetanode: boolean;
     // hideArrowHead: boolean;
     // arrowHeadInMiddle: boolean;

@@ -18,6 +18,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
 
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
+    edgeWidths = Constants.EDGE_WIDTHS;
 
     readonly crossContTraceTypeOptions: {
         value: CrossContTraceType;
@@ -97,6 +98,18 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
     setNodeSize(nodeSize: number): void {
         this.store.dispatch(
             new tracingActions.SetNodeSizeSOA({ nodeSize: nodeSize })
+        );
+    }
+
+    onAdjustEdgeWidthToNodeSizeChanged(adjustEdgeWidthToNodeSize: boolean): void {
+        this.store.dispatch(
+            new tracingActions.SetAdjustEdgeWidthToNodeSizeSOA({ adjustEdgeWidthToNodeSize: adjustEdgeWidthToNodeSize })
+        );
+    }
+
+    onSetEdgeWidth(edgeWidth: number): void {
+        this.store.dispatch(
+            new tracingActions.SetEdgeWidthSOA({ edgeWidth: edgeWidth })
         );
     }
 

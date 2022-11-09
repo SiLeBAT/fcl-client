@@ -32,6 +32,8 @@ export enum TracingActionTypes {
     SetSchemaGraphLayoutSOA = '[Tracing] Set Schema Graph Layout',
     SetGisGraphLayoutSOA = '[Tracing] Set Gis Graph Layout',
     SetNodeSizeSOA = '[Tracing] Set Node Size',
+    SetAdjustEdgeWidthToNodeSizeSOA = '[Tracing] Set Adjust Edge Width To Node Size',
+    SetEdgeWidthSOA = '[Tracing] Set Edge Width',
     SetFontSizeSOA = '[Tracing] Set Font Size',
     SetMergeDeliveriesTypeSOA = '[Tracing] Set Merge Deliveries Type',
     ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
@@ -137,6 +139,18 @@ export class SetNodeSizeSOA implements Action {
     readonly type = TracingActionTypes.SetNodeSizeSOA;
 
     constructor(public payload: { nodeSize: number }) {}
+}
+
+export class SetEdgeWidthSOA implements Action {
+    readonly type = TracingActionTypes.SetEdgeWidthSOA;
+
+    constructor(public payload: { edgeWidth: number }) {}
+}
+
+export class SetAdjustEdgeWidthToNodeSizeSOA implements Action {
+    readonly type = TracingActionTypes.SetAdjustEdgeWidthToNodeSizeSOA;
+
+    constructor(public payload: { adjustEdgeWidthToNodeSize: boolean }) {}
 }
 
 export class SetFontSizeSOA implements Action {
@@ -376,6 +390,8 @@ export type TracingActions =
     | SetGraphTypeSOA
     | SetMapTypeSOA
     | SetNodeSizeSOA
+    | SetAdjustEdgeWidthToNodeSizeSOA
+    | SetEdgeWidthSOA
     | SetFontSizeSOA
     | SetMergeDeliveriesTypeSOA
     | ShowMergedDeliveriesCountsSOA

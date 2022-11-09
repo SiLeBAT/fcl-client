@@ -120,6 +120,8 @@ export class DataExporter {
             DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP
         ).get(fclData.graphSettings.mergeDeliveriesType);
         viewData.edge.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
+        viewData.edge.adjustEdgeWidthToNodeSize = fclData.graphSettings.adjustEdgeWidthToNodeSize;
+
 
         Utils.setProperty(viewData, ExtDataConstants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
 
@@ -130,6 +132,19 @@ export class DataExporter {
             id: key,
             position: fclData.graphSettings.stationPositions[key]
         })));
+
+        viewData.graph.node.minSize = fclData.graphSettings.nodeSize;
+        viewData.graph.edge = viewData.graph.edge || {};
+        viewData.graph.edge.minWidth = fclData.graphSettings.edgeWidth;
+        viewData.graph.text = viewData.graph.text || {};
+        viewData.graph.text.fontSize = fclData.graphSettings.fontSize;
+
+        viewData.gis.node = viewData.gis.node || {};
+        viewData.gis.node.minSize = fclData.graphSettings.nodeSize;
+        viewData.gis.edge = viewData.gis.edge || {};
+        viewData.gis.edge.minWidth = fclData.graphSettings.edgeWidth;
+        viewData.gis.text = viewData.gis.text || {};
+        viewData.gis.text.fontSize = fclData.graphSettings.fontSize;
 
         viewData.edge.selectedEdges = fclData.graphSettings.selectedElements.deliveries.slice();
         viewData.node.selectedNodes = fclData.graphSettings.selectedElements.stations.slice();

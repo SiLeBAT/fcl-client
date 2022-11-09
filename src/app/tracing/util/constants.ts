@@ -1,6 +1,8 @@
 import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.model';
 import { List, Map } from 'immutable';
 import { ExampleData } from '@app/main-page/model/types';
+import * as _ from 'lodash';
+import { Utils } from './non-ui-utils';
 
 export class Constants {
     static readonly EXAMPLE_DATA_BASE_DIR = 'assets/example-data/';
@@ -131,12 +133,29 @@ export class Constants {
     );
 
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
-    static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24);
+    static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24, 48);
     static readonly NODE_SIZES = List.of(4, 6, 10, 14, 20, 30, 50);
+    private static readonly EXPLICIT_EDGE_WIDTHS = [1, 2, 3, 5, 10, 20]; // from da
+    private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 20;
+    static readonly NODE_SIZE_TO_EDGE_WIDTH_MAP = Map<number, number>(
+        Constants.NODE_SIZES.toArray().map(nodeSize => [
+            nodeSize,
+            Number((nodeSize/Constants.NODE_SIZE_TO_EDGE_WIDTH_FACTOR).toPrecision(1)) // edgeWidth
+        ])
+    );
+
+    static readonly EDGE_WIDTHS = List<number>(_.uniq(
+        [].concat(
+            Constants.EXPLICIT_EDGE_WIDTHS,
+            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.toArray()
+        ).sort(Utils.compareNumbers)
+    ));
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
     static readonly DEFAULT_MAP_TYPE = MapType.MAPNIK;
     static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
+    static readonly DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE = true;
+    static readonly DEFAULT_GRAPH_EDGE_WIDTH = Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(Constants.DEFAULT_GRAPH_NODE_SIZE);
     static readonly DEFAULT_GRAPH_FONT_SIZE = 14;
     static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;

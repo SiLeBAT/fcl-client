@@ -27,6 +27,7 @@ import * as DataMapper from './../data-mappings/data-mappings-v1';
 import { InputFormatError, InputDataError } from '../io-errors';
 import { getCenterFromPoints, getDifference } from '../../util/geometry-utils';
 import * as _ from 'lodash';
+import { Constants } from '../../util/constants';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -429,20 +430,40 @@ export class DataImporterV1 implements IDataImporter {
 
         const viewData = jsonData.settings.view;
 
-        let nodeSize: any = this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_NODE_SIZE);
-        if (nodeSize === null) {
-            nodeSize = this.getProperty(viewData, ExtDataConstants.GISGRAPH_NODE_SIZE);
-        }
+        const nodeSize = viewData.graph?.node?.minSize ||
+            viewData.gis?.node?.minSize ||
+            null;
+
         if (
             nodeSize !== null
         ) {
             fclData.graphSettings.nodeSize = DataMapper.NODE_SIZE_EXT_TO_INT_FUN(nodeSize);
         }
 
-        let fontSize: any = this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_FONT_SIZE);
-        if (fontSize === null) {
-            fontSize = this.getProperty(viewData, ExtDataConstants.GISGRAPH_FONT_SIZE);
+        const extEdgeWidth: number | null =
+            viewData.graph?.edge?.minWidth ||
+            viewData.gis?.edge?.minWidth ||
+            null;
+        if (
+            extEdgeWidth !== null
+        ) {
+            fclData.graphSettings.edgeWidth = DataMapper.EDGE_WIDTH_EXT_TO_INT_FUN(extEdgeWidth);
         }
+
+        const adjustEdgeWidthToNodeSize = viewData.edge?.adjustEdgeWidthToNodeSize || null;
+        if (adjustEdgeWidthToNodeSize !== null) {
+            fclData.graphSettings.adjustEdgeWidthToNodeSize = adjustEdgeWidthToNodeSize;
+        }
+        if (
+            adjustEdgeWidthToNodeSize === null &&
+            fclData.graphSettings.edgeWidth === Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(fclData.graphSettings.nodeSize)) {
+            fclData.graphSettings.adjustEdgeWidthToNodeSize = true;
+        }
+
+        const fontSize = viewData.graph?.text?.fontSize ||
+            viewData.gis?.text?.fontSize ||
+            null;
+
         if (
             fontSize !== null
         ) {

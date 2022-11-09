@@ -338,7 +338,7 @@ export const GROUPTYPE_EXT_TO_INT_MAP: ImmutableMap<
     IsolatedGroup: GroupType.ISOLATED_GROUP
 });
 
-export function NODE_SIZE_EXT_TO_INT_FUN(ext: string): number {
+export function NODE_SIZE_EXT_TO_INT_FUN(ext: string | number): number {
     const extV: number = +ext;
     if (isNaN(extV)) {
         return IntDataConstants.DEFAULT_GRAPH_NODE_SIZE;
@@ -350,7 +350,18 @@ export function NODE_SIZE_EXT_TO_INT_FUN(ext: string): number {
     }
 }
 
-export function FONT_SIZE_EXT_TO_INT_FUN(ext: string): number {
+export function EDGE_WIDTH_EXT_TO_INT_FUN(extValue: number): number {
+    if (isNaN(extValue)) {
+        return IntDataConstants.DEFAULT_GRAPH_EDGE_WIDTH;
+    } else {
+        return IntDataConstants.EDGE_WIDTHS.toArray().reduce(
+            (prevV, curV) => Math.abs(prevV - extValue) > Math.abs(curV - extValue) ? curV : prevV,
+            IntDataConstants.DEFAULT_GRAPH_EDGE_WIDTH
+        );
+    }
+}
+
+export function FONT_SIZE_EXT_TO_INT_FUN(ext: string | number): number {
     const extV: number = +ext;
     if (isNaN(extV)) {
         return IntDataConstants.DEFAULT_GRAPH_FONT_SIZE;

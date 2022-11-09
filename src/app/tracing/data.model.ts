@@ -168,6 +168,8 @@ export interface GraphSettings {
     mapType: MapType;
     shapeFileData: ShapeFileData | null;
     nodeSize: number;
+    adjustEdgeWidthToNodeSize: boolean;
+    edgeWidth: number;
     fontSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;

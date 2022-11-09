@@ -104,6 +104,8 @@ export function createInitialFclDataState(): FclData {
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
+            adjustEdgeWidthToNodeSize: Constants.DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE,
+            edgeWidth: Constants.DEFAULT_GRAPH_EDGE_WIDTH,
             fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
             mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
             showMergedDeliveriesCounts: false,
@@ -238,7 +240,37 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        nodeSize: action.payload.nodeSize
+                        nodeSize: action.payload.nodeSize,
+                        edgeWidth: state.fclData.graphSettings.adjustEdgeWidthToNodeSize ?
+                            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(action.payload.nodeSize) :
+                            state.fclData.graphSettings.edgeWidth
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetAdjustEdgeWidthToNodeSizeSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        adjustEdgeWidthToNodeSize: action.payload.adjustEdgeWidthToNodeSize,
+                        edgeWidth: action.payload.adjustEdgeWidthToNodeSize ?
+                            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(state.fclData.graphSettings.nodeSize) :
+                            state.fclData.graphSettings.edgeWidth
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetEdgeWidthSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        edgeWidth: action.payload.edgeWidth
                     }
                 }
             };
