@@ -1,4 +1,4 @@
-@import '../../../assets/sass/base';
+@use '../../../assets/sass/base' as fcl;
 
-@include sidenav-elements;
-@include sidenav-elements-group;
+@include fcl.sidenav-elements;
+@include fcl.sidenav-elements-group;

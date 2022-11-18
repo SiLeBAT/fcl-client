@@ -264,6 +264,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-checkbox-background"
               >
                 <svg
+                  aria-hidden="true"
                   class="mat-checkbox-checkmark"
                   focusable="false"
                   version="1.1"
@@ -335,6 +336,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-checkbox-background"
               >
                 <svg
+                  aria-hidden="true"
                   class="mat-checkbox-checkmark"
                   focusable="false"
                   version="1.1"

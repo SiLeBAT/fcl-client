@@ -13,7 +13,9 @@
           "options": {
             "allowedCommonJsDependencies": [
               "cytoscape",
-              "zxcvbn",
+              "cytoscape-cola",
+              "cytoscape-dagre",
+              "cytoscape-spread",
               "rbush",
               "ajv",
               "css-element-queries",
@@ -24,7 +26,6 @@
               "lodash",
               "seedrandom"
             ],
-            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -66,7 +67,13 @@
               "src/assets/mxgraph-grapheditor/js/Menus.js",
               "src/assets/mxgraph-grapheditor/js/Toolbar.js",
               "src/assets/mxgraph-grapheditor/js/Dialogs.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -81,7 +88,6 @@
               "sourceMap": false,
               "extractCss": false,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -105,6 +111,14 @@
                   "with": "src/environments/environment.qa.ts"
                 }
               ]
+            },
+            "development": {
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "buildOptimizer": false,
+              "sourceMap": true,
+              "optimization": false,
+              "namedChunks": true
             },
             "serverless": {
               "budgets": [
@@ -132,7 +146,6 @@
               "sourceMap": false,
               "extractCss": false,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -143,7 +156,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -157,13 +171,17 @@
             "qa": {
               "browserTarget": "fcl-web-app:build:qa"
             },
+            "development": {
+                "browserTarget": "fcl-web-app:build:development"
+            },
             "serverless": {
               "browserTarget": "fcl-web-app:build:serverless"
             },
             "serverelessprod": {
               "browserTarget": "fcl-web-app:build:serverlessprod"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-card-action-container {
     display: flex;
@@ -9,7 +9,7 @@
 }
 
 .fcl-reset-button {
-    margin-right: $fcl-toolbar-padding * 4;
+    margin-right: fcl.$fcl-toolbar-padding * 4;
 }
 
 .fcl-reset-text,
@@ -22,5 +22,5 @@
 }
 
 em {
-    @include em-errors;
+    @include fcl.em-errors;
 }

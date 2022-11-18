@@ -1,10 +1,10 @@
-@import '~@angular/material/theming';
-@import '../../../../assets/sass/base';
+@use '~@angular/material' as mat;
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-toolbar-item {
     flex: 1;
 
-    @include mat-elevation($fcl-toolbar-elevation);
+    @include mat.elevation(fcl.$fcl-toolbar-elevation);
 }
 
 .fcl-toolbar-container {
@@ -39,14 +39,14 @@
 }
 
 .fcl-toolbar-title {
-    padding: $fcl-toolbar-padding;
+    padding: fcl.$fcl-toolbar-padding;
 }
 
 .fcl-toolbar-menu-bottom:hover,
 .fcl-toolbar-menu-bottom:active,
 .fcl-toolbar-title:hover,
 .fcl-toolbar-title:active {
-    color: $fcl-primary-hover;
+    color: fcl.$fcl-primary-hover;
 }
 
 .no-hover {

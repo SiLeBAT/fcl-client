@@ -1,4 +1,4 @@
-@import '../../../assets/sass/base';
+@use '../../../assets/sass/base' as fcl;
 
 :host {
     text-align: center;
@@ -6,6 +6,6 @@
     padding-right: 10%;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    font-family: #{$fcl-font-family};
+    font-family: #{fcl.$fcl-font-family};
     font-size: 14px;
 }

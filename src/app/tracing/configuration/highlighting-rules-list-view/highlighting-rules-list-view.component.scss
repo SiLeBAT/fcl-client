@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 $fcl-col-legend-width: 27px;
 $fcl-col-edit-width: 24px;
@@ -8,7 +8,7 @@ $fcl-font-size: 0.8rem;
 
 .fcl-rules-list-item {
     font-size: $fcl-font-size;
-    font-family: #{$fcl-font-family};
+    font-family: #{fcl.$fcl-font-family};
     display: grid;
     align-items: center;
     grid-template-areas:
@@ -84,12 +84,12 @@ $fcl-font-size: 0.8rem;
     grid-area: legend;
     width: $fcl-col-legend-width;
     height: $fcl-col-legend-width;
-    color: $fcl-primary-500;
+    color: fcl.$fcl-primary-500;
 }
 
 .fcl-rules-list-item-legend-button.mat-button-toggle-checked {
     font-weight: bold;
-    background-color: $fcl-primary-500;
+    background-color: fcl.$fcl-primary-500;
     color: rgb(255, 255, 255);
 }
 
@@ -105,7 +105,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: $fcl-primary-500;
+    background-color: fcl.$fcl-primary-500;
 }
 
 .fcl-rules-list-item-edit-button-wrapper {
@@ -144,7 +144,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-add-rule-button:hover:enabled {
-    background-color: $fcl-accent-300;
+    background-color: fcl.$fcl-accent-300;
     color: rgba(255, 255, 255, 0.9);
 }
 

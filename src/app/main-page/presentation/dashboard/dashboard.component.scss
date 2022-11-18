@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 :host {
     width: 100vw;
@@ -29,7 +29,7 @@
 
 .fcl-card-content {
     margin-top: 2rem;
-    color: $fcl-primary-color;
+    color: fcl.$fcl-primary-color;
 }
 
 .fcl-mat-card:hover {

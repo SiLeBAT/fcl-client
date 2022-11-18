@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-edit-rule {
     display: flex;
@@ -40,7 +40,6 @@
     max-width: 100%;
     overflow-x: hidden;
     height: 100%;
-    // overflow-y: visible;
 }
 
 .fcl-edit-rule-action-button {
@@ -48,7 +47,7 @@
 }
 
 .fcl-edit-rule-action-button:hover:enabled {
-    background-color: $fcl-accent-300;
+    background-color: fcl.$fcl-accent-300;
     color: rgba(255, 255, 255, 0.9);
 }
 

@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-deliveries-properties-table {
     width: 800px;
@@ -9,7 +9,7 @@
     }
 
     .datatable-icon-expand {
-        color: $fcl-accent-200;
+        color: fcl.$fcl-accent-200;
     }
 }
 

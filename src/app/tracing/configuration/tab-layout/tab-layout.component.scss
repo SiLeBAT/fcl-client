@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 #fcl-tab-group-main,
 #fcl-tab-group-filter,
@@ -22,11 +22,11 @@
 
 #fcl-tab-group-main .mat-tab-label.mat-tab-label-active {
     color: rgba(255, 255, 255, 0.8);
-    background-color: $fcl-accent-500;
+    background-color: fcl.$fcl-accent-500;
 }
 
 #fcl-tab-group-filter .mat-tab-label.mat-tab-label-active,
 #fcl-tab-group-highlighting .mat-tab-label.mat-tab-label-active {
     color: rgba(0, 0, 0, 0.8);
-    background-color: $fcl-accent-100;
+    background-color: fcl.$fcl-accent-100;
 }

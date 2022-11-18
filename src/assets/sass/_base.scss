@@ -1,7 +1,9 @@
-@import '~@angular/material/theming';
-@import './themes';
+@use '~@angular/material' as mat;
+@use './themes' as *;
 
-$fcl-typography: mat-typography-config(
+@forward './themes';
+
+$fcl-typography: mat.define-typography-config(
     $font-family: $fcl-font-family
 );
 

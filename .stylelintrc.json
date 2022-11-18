@@ -34,7 +34,8 @@
                     "mixin",
                     "include",
                     "extend",
-                    "use"
+                    "use",
+                    "forward"
                 ]
             }
         ],

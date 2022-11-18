@@ -1,4 +1,4 @@
-@import "../../../../assets/sass/base";
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-action-item {
     flex: 1;
@@ -7,7 +7,7 @@
 .fcl-action-container {
     display: flex;
     justify-content: flex-end;
-    padding-right: $fcl-toolbar-padding * 4;
+    padding-right: fcl.$fcl-toolbar-padding * 4;
     min-width: 0;
 }
 

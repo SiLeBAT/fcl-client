@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 :host {
     height: 16vh;
@@ -7,7 +7,7 @@
 .fcl-entry-page-item {
     height: 100%;
     box-sizing: border-box;
-    background-color: $fcl-bg-color-entry;
+    background-color: fcl.$fcl-bg-color-entry;
     border-bottom: 5px groove rgba(120, 109, 109, 0.5);
 }
 

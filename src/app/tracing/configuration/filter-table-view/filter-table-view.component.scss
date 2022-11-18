@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-filtertable-container {
     position: relative;
@@ -12,7 +12,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    box-shadow: $fcl-box-shadow;
+    box-shadow: fcl.$fcl-box-shadow;
 }
 
 .fcl-filtertable .datatable-header .datatable-header-inner {
@@ -58,11 +58,11 @@
 .fcl-column-filter-field .mat-form-field-outline-start,
 .fcl-column-filter-field .mat-form-field-outline-end {
     border-radius: 0;
-    border-color: $fcl-accent-100;
+    border-color: fcl.$fcl-accent-100;
 }
 
 .fcl-column-filter-field-icon {
-    color: $fcl-accent-200;
+    color: fcl.$fcl-accent-200;
     transform: scale(0.8);
 }
 
@@ -99,7 +99,7 @@
     height: 100%;
     padding: 0;
     width: 20px;
-    background-color: $fcl-accent-100 !important;
+    background-color: fcl.$fcl-accent-100 !important;
 }
 
 .fcl-more-columns-button .fcl-more-columns-icon {
@@ -107,7 +107,7 @@
 }
 
 .fcl-more-columns-button:hover {
-    background-color: $fcl-accent-300 !important;
+    background-color: fcl.$fcl-accent-300 !important;
     color: rgba(255, 255, 255, 0.9);
     cursor: pointer;
 }
@@ -127,7 +127,7 @@
 }
 
 .fcl-filtertable .datatable-icon-expand {
-    color: $fcl-accent-200;
+    color: fcl.$fcl-accent-200;
 }
 
 .fcl-filtertable .datatable-header-cell-template-wrap > span.datatable-icon-up::before,
@@ -157,12 +157,12 @@
 }
 
 .fcl-filtertable .fcl-column-visibility-header-icon.unsorted {
-    color: $fcl-accent-200;
+    color: fcl.$fcl-accent-200;
 }
 
 .fcl-filtertable .fcl-visibility-filter-button {
     height: 1.5rem;
-    border: 1px solid $fcl-accent-100;
+    border: 1px solid fcl.$fcl-accent-100;
     padding: 0;
     background-color: rgb(255, 255, 255);
     margin-top: 2px;
@@ -170,7 +170,7 @@
 }
 
 .fcl-filtertable .fcl-visibility-filter-button:hover {
-    background-color: $fcl-accent-300;
+    background-color: fcl.$fcl-accent-300;
 }
 
 .fcl-filtertable .fcl-visibility-filter-button:focus {
@@ -178,7 +178,7 @@
 }
 
 .fcl-filtertable .fcl-row-cell-invisible .datatable-body-cell-label {
-    color: $fcl-accent-200;
+    color: fcl.$fcl-accent-200;
 }
 
 .fcl-filtertable .fcl-row-symbol {
@@ -225,7 +225,7 @@
 
                 .fcl-row-cell-invisible {
                     .datatable-body-cell-label {
-                        color: $fcl-accent-200;
+                        color: fcl.$fcl-accent-200;
                     }
                 }
             }

@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 $fcl-font-family: 'Roboto, sans-serif';
 
 /*
@@ -143,12 +144,12 @@ $fcl-footer-hover: map-get($fcl-darkgrey, 700);
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$fcl-primary: mat-palette($fcl-blue);
-$fcl-accent: mat-palette($fcl-darkgrey);
+$fcl-primary: mat.define-palette($fcl-blue);
+$fcl-accent: mat.define-palette($fcl-darkgrey);
 // $fcl-app-accent:  mat-palette($fcl-lightblue);
 
 // The warn palette is optional (defaults to red).
-$fcl-warn: mat-palette($fcl-red);
+$fcl-warn: mat.define-palette($fcl-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$fcl-theme: mat-light-theme($fcl-primary, $fcl-accent, $fcl-warn);
+$fcl-theme: mat.define-light-theme($fcl-primary, $fcl-accent, $fcl-warn);
