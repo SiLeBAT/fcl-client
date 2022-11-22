@@ -7,6 +7,12 @@ import { Store, select } from '@ngrx/store';
 import { takeWhile } from 'rxjs/operators';
 import { GraphSettings, MergeDeliveriesType, CrossContTraceType, TracingSettings } from '../data.model';
 
+interface Option<T> {
+    value: T;
+    label: string;
+    toolTip: string;
+}
+
 @Component({
     selector: 'fcl-graph-settings',
     templateUrl: './graph-settings.component.html',
@@ -20,11 +26,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
     nodeSizes = Constants.NODE_SIZES;
     edgeWidths = Constants.EDGE_WIDTHS;
 
-    readonly crossContTraceTypeOptions: {
-        value: CrossContTraceType;
-        label: string;
-        toolTip: string;
-    }[] = [
+    readonly crossContTraceTypeOptions: Option<CrossContTraceType>[] = [
         {
             value: CrossContTraceType.DO_NOT_CONSIDER_DELIVERY_DATES,
             label: 'Ignore dates',
@@ -42,11 +44,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         }
     ];
 
-    readonly mergeDeliveriesOptions: {
-        value: MergeDeliveriesType;
-        label: string;
-        toolTip: string;
-    }[] = [
+    readonly mergeDeliveriesOptions: Option<MergeDeliveriesType>[] = [
         {
             value: MergeDeliveriesType.NO_MERGE,
             label: 'No',

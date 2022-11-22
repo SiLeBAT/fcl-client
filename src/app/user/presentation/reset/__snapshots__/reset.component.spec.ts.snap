@@ -2,6 +2,7 @@
 
 exports[`ResetComponent should render the component correctly 1`] = `
 <fcl-reset
+  __ngContext__={[Function LRootView]}
   elementRef={[Function ElementRef]}
   reset={[Function EventEmitter_]}
   resetForm={[Function FormGroup]}
@@ -28,7 +29,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field mat-primary"
+          class="mat-form-field fcl-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -36,8 +37,6 @@ exports[`ResetComponent should render the component correctly 1`] = `
             <div
               class="mat-form-field-flex"
             >
-              
-              
               <div
                 class="mat-form-field-infix"
               >
@@ -52,17 +51,12 @@ exports[`ResetComponent should render the component correctly 1`] = `
                 <span
                   class="mat-form-field-label-wrapper"
                 >
-                  
                 </span>
               </div>
-              
             </div>
-            
             <div
               class="mat-form-field-subscript-wrapper"
             >
-              
-              
             </div>
           </div>
         </mat-form-field>
@@ -72,7 +66,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
       >
         <mat-form-field
           appearance="standard"
-          class="fcl-form-field mat-form-field mat-primary"
+          class="mat-form-field fcl-form-field mat-primary"
         >
           <div
             class="mat-form-field-wrapper"
@@ -80,8 +74,6 @@ exports[`ResetComponent should render the component correctly 1`] = `
             <div
               class="mat-form-field-flex"
             >
-              
-              
               <div
                 class="mat-form-field-infix"
               >
@@ -96,17 +88,12 @@ exports[`ResetComponent should render the component correctly 1`] = `
                 <span
                   class="mat-form-field-label-wrapper"
                 >
-                  
                 </span>
               </div>
-              
             </div>
-            
             <div
               class="mat-form-field-subscript-wrapper"
             >
-              
-              
             </div>
           </div>
         </mat-form-field>
@@ -118,7 +105,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
           class="form-group fcl-reset-button"
         >
           <button
-            class="mat-focus-indicator mat-raised-button mat-button-base"
+            class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
             color="primary"
             mat-raised-button=""
             type="submit"
@@ -129,7 +116,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
                Recover password 
             </span>
             <span
-              class="mat-button-ripple mat-ripple"
+              class="mat-ripple mat-button-ripple"
               matripple=""
             />
             <span
@@ -148,7 +135,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
                Cancel 
             </span>
             <span
-              class="mat-button-ripple mat-ripple"
+              class="mat-ripple mat-button-ripple"
               matripple=""
             />
             <span

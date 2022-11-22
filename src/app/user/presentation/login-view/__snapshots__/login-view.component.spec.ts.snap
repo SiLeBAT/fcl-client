@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LoginViewComponent should render the component correctly 1`] = `
-<fcl-login-view>
+<fcl-login-view
+  __ngContext__={[Function LRootView]}
+>
   <div
     class="fcl-image-container"
   >
@@ -16,10 +18,10 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
       >
         <mat-card
-          class="fcl-mat-card mat-card mat-focus-indicator"
+          class="mat-card mat-focus-indicator fcl-mat-card"
         >
           <mat-card-header
-            class="fcl-mat-card__header mat-card-header"
+            class="mat-card-header fcl-mat-card__header"
           >
             <div
               class="mat-card-header-text"
@@ -30,7 +32,6 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 <div
                   class="mat-headline"
                 >
-                  
                 </div>
                 <mat-divider
                   class="mat-divider"
@@ -47,13 +48,13 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
             </fcl-mat-card-body>
           </mat-card-content>
           <mat-card-actions
-            class="fcl-mat-card-actions mat-card-actions"
+            class="mat-card-actions fcl-mat-card-actions"
           >
             <fcl-mat-card-actions
               class="fcl-mat-card__actions"
             >
               <button
-                class="mat-focus-indicator mat-button mat-button-base"
+                class="mat-focus-indicator mat-button mat-button-base mat-primary"
                 color="primary"
                 mat-button=""
                 tabindex="0"
@@ -64,7 +65,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                   Register
                 </span>
                 <span
-                  class="mat-button-ripple mat-ripple"
+                  class="mat-ripple mat-button-ripple"
                   matripple=""
                 />
                 <span
@@ -72,7 +73,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 />
               </button>
               <button
-                class="mat-focus-indicator mat-button mat-button-base"
+                class="mat-focus-indicator mat-button mat-button-base mat-primary"
                 color="primary"
                 mat-button=""
                 tabindex="0"
@@ -83,7 +84,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                   Password forgotten?
                 </span>
                 <span
-                  class="mat-button-ripple mat-ripple"
+                  class="mat-ripple mat-button-ripple"
                   matripple=""
                 />
                 <span
@@ -95,7 +96,6 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
         </mat-card>
       </div>
     </fcl-single-center-card-layout>
-    
     <fcl-funding-sources-view
       class="fcl-funding-box"
     />

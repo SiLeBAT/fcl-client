@@ -1,9 +1,5 @@
 import 'jest-canvas-mock';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global['CSS'] = null;
-
 const mock = () => {
     let storage = {};
     return {
@@ -22,6 +18,7 @@ const mock = () => {
 
 Object.defineProperty(window, 'localStorage', { value: mock() });
 Object.defineProperty(window, 'sessionStorage', { value: mock() });
+Object.defineProperty(window, 'CSS', { value: null });
 Object.defineProperty(document, 'doctype', {
     value: '<!DOCTYPE html>'
 });

@@ -346,11 +346,10 @@ export class Utils {
         return result as Record<V, K>;
     }
 
-    static mapRecordValues<
-        K extends RecordKeyType,
-        V extends any,
-        T extends any
-    >(record: Record<K, V>, mapFun: (v: V) => T): Record<K, T> {
+    static mapRecordValues<K extends RecordKeyType, V, T>(
+        record: Record<K, V>,
+        mapFun: (v: V) => T
+    ): Record<K, T> {
         const result: Record<RecordKeyType, T> = {};
         const keys: K[] = (Object.keys(record) as Array<K>);
         for (const key of keys) {

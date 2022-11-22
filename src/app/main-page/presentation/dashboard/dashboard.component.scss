@@ -27,9 +27,21 @@
     background-color: transparent;
 }
 
-.fcl-card-content {
+.mat-card-content > :first-child {
     margin-top: 2rem;
+}
+
+.fcl-card-title {
     color: fcl.$fcl-primary-color;
+}
+
+.fcl-card-image-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.mat-card-image:first-child {
+    margin-top: 0;
 }
 
 .fcl-mat-card:hover {

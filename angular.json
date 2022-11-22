@@ -86,7 +86,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -144,7 +143,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -187,51 +185,6 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "fcl-web-app:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "karmaConfig": "./karma.conf.js",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "scripts": [
-              "node_modules/hammerjs/hammer.min.js",
-              "src/assets/mxgraph-grapheditor/js/Init.js",
-              "src/assets/mxgraph-grapheditor/deflate/pako.min.js",
-              "src/assets/mxgraph-grapheditor/deflate/base64.js",
-              "src/assets/mxgraph-grapheditor/jscolor/jscolor.js",
-              "src/assets/mxgraph-grapheditor/sanitizer/sanitizer.min.js",
-              "src/assets/js/mxgraph.conf.js",
-              "node_modules/mxgraph/javascript/mxClient.js",
-              "src/assets/mxgraph-grapheditor/js/EditorUI.js",
-              "src/assets/mxgraph-grapheditor/js/Editor.js",
-              "src/assets/mxgraph-grapheditor/js/Sidebar.js",
-              "src/assets/mxgraph-grapheditor/js/Graph.js",
-              "src/assets/mxgraph-grapheditor/js/Format.js",
-              "src/assets/mxgraph-grapheditor/js/Shapes.js",
-              "src/assets/mxgraph-grapheditor/js/Actions.js",
-              "src/assets/mxgraph-grapheditor/js/Menus.js",
-              "src/assets/mxgraph-grapheditor/js/Toolbar.js",
-              "src/assets/mxgraph-grapheditor/js/Dialogs.js"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "src/assets/",
-                "output": "/assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/mxgraph/javascript/src",
-                "output": "/assets/mxgraph"
-              },
-              "src/favicon.png"
-            ]
           }
         },
         "lint": {

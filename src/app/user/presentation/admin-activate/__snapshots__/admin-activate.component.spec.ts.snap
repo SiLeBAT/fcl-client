@@ -2,6 +2,7 @@
 
 exports[`AdminActivateComponent should display admin activation failure if token is invalid 1`] = `
 <fcl-admin-activate
+  __ngContext__={[Function LRootView]}
   adminTokenValid="false"
   appName={[Function String]}
   name={[Function String]}
@@ -29,6 +30,7 @@ exports[`AdminActivateComponent should display admin activation failure if token
 
 exports[`AdminActivateComponent should display the app name and name if admin token is valid 1`] = `
 <fcl-admin-activate
+  __ngContext__={[Function LRootView]}
   adminTokenValid={[Function Boolean]}
   appName={[Function String]}
   name={[Function String]}
@@ -50,7 +52,8 @@ exports[`AdminActivateComponent should display the app name and name if admin to
 `;
 
 exports[`AdminActivateComponent should render the component correctly 1`] = `
-<fcl-admin-activate>
-  
+<fcl-admin-activate
+  __ngContext__={[Function LRootView]}
+>
 </fcl-admin-activate>
 `;
