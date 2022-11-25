@@ -169,12 +169,6 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...initialModelDependentState
             };
 
-        case TracingActionTypes.LoadFclDataFailureSOA:
-            return {
-                ...state,
-                fclData: initialData
-            };
-
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,
