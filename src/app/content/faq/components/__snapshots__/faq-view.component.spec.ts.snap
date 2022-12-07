@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FaqViewComponent should render the component correctly 1`] = `
+<fcl-faq-view
+  __ngContext__={[Function LRootView]}
+  activeFragment="null"
+  faq={[Function Object]}
+  faqSectionRefs={[Function QueryList]}
+  scrollPanel={[Function ElementRef]}
+>
+  <div
+    class="fcl-scroll-panel"
+  >
+    <div
+      class="fcl-title mat-headline"
+    >
+      Frequently Asked Questions
+    </div>
+    <div>
+      <hr />
+    </div>
+    <nav
+      class="fcl-toc"
+    >
+      <a
+        class="fcl-toc-link mat-h4"
+        href="/#sectiona"
+      >
+        Section A
+      </a>
+      <a
+        class="fcl-toc-link mat-h4"
+        href="/#sectionb"
+      >
+        Section B
+      </a>
+    </nav>
+    <div
+      class="fcl-sections"
+    >
+      <section>
+        <fcl-faq-section-view>
+          <mat-accordion
+            class="mat-accordion mat-accordion-multi"
+            multi="true"
+          >
+          </mat-accordion>
+        </fcl-faq-section-view>
+      </section>
+      <section
+        id="sectiona"
+      >
+        <fcl-faq-section-view>
+          <mat-accordion
+            class="mat-accordion mat-accordion-multi"
+            multi="true"
+          >
+            <h3
+              class="fcl-title mat-h3"
+            >
+              Section A
+            </h3>
+            <mat-expansion-panel
+              class="mat-expansion-panel _mat-animation-noopable"
+            >
+              <mat-expansion-panel-header
+                aria-disabled="false"
+                aria-expanded="false"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                collapsedheight="auto"
+                expandedheight="auto"
+                role="button"
+                style="height: auto;"
+                tabindex="0"
+              >
+                <span
+                  class="mat-content"
+                >
+                  <mat-panel-title
+                    class="mat-expansion-panel-header-title"
+                  >
+                    <div
+                      class="fcl-panel-title"
+                    >
+                      Q1
+                    </div>
+                  </mat-panel-title>
+                </span>
+                <span
+                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
+                  style="transform:rotate(0deg);0:transform;"
+                />
+              </mat-expansion-panel-header>
+              <div
+                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
+                role="region"
+                style="height:0px;visibility:hidden;0:height;1:visibility;"
+              >
+                <div
+                  class="mat-expansion-panel-body"
+                >
+                </div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel
+              class="mat-expansion-panel _mat-animation-noopable"
+            >
+              <mat-expansion-panel-header
+                aria-disabled="false"
+                aria-expanded="false"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                collapsedheight="auto"
+                expandedheight="auto"
+                role="button"
+                style="height: auto;"
+                tabindex="0"
+              >
+                <span
+                  class="mat-content"
+                >
+                  <mat-panel-title
+                    class="mat-expansion-panel-header-title"
+                  >
+                    <div
+                      class="fcl-panel-title"
+                    >
+                      Q2
+                    </div>
+                  </mat-panel-title>
+                </span>
+                <span
+                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
+                  style="transform:rotate(0deg);0:transform;"
+                />
+              </mat-expansion-panel-header>
+              <div
+                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
+                role="region"
+                style="height:0px;visibility:hidden;0:height;1:visibility;"
+              >
+                <div
+                  class="mat-expansion-panel-body"
+                >
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </fcl-faq-section-view>
+      </section>
+      <section
+        id="sectionb"
+      >
+        <fcl-faq-section-view>
+          <mat-accordion
+            class="mat-accordion mat-accordion-multi"
+            multi="true"
+          >
+            <h3
+              class="fcl-title mat-h3"
+            >
+              Section B
+            </h3>
+            <mat-expansion-panel
+              class="mat-expansion-panel _mat-animation-noopable"
+            >
+              <mat-expansion-panel-header
+                aria-disabled="false"
+                aria-expanded="false"
+                class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after _mat-animation-noopable"
+                collapsedheight="auto"
+                expandedheight="auto"
+                role="button"
+                style="height: auto;"
+                tabindex="0"
+              >
+                <span
+                  class="mat-content"
+                >
+                  <mat-panel-title
+                    class="mat-expansion-panel-header-title"
+                  >
+                    <div
+                      class="fcl-panel-title"
+                    >
+                      Q3
+                    </div>
+                  </mat-panel-title>
+                </span>
+                <span
+                  class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
+                  style="transform:rotate(0deg);0:transform;"
+                />
+              </mat-expansion-panel-header>
+              <div
+                class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
+                role="region"
+                style="height:0px;visibility:hidden;0:height;1:visibility;"
+              >
+                <div
+                  class="mat-expansion-panel-body"
+                >
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </fcl-faq-section-view>
+      </section>
+    </div>
+  </div>
+</fcl-faq-view>
+`;

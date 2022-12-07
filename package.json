@@ -15,6 +15,7 @@
     "build:production": "npm run clean && ng build --configuration=production --output-path \"public\"",
     "build:serverlessprod": "npm run clean && ng build --configuration=serverlessprod --output-path \"public\"",
     "test": "jest",
+    "test:detect-open-handles": "jest --detectOpenHandles",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
     "test:coverage": "jest --coverage",

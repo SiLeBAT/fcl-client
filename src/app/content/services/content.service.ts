@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { DataRequestService } from '../../core/services/data-request.service';
-import { GDPRDateDTO } from '../models/content.model';
+import { FaqResponseDTO, GDPRDateDTO } from '../models/content.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -10,7 +10,8 @@ import { map } from 'rxjs/operators';
 export class ContentService {
 
     private URL = {
-        gdprdate: '/v1/info/gdpr-date'
+        gdprdate: '/v1/info/gdpr-date',
+        faqs: './assets/faq.json'
     };
 
     constructor(
@@ -20,6 +21,11 @@ export class ContentService {
     getGDPRDate(): Observable<string> {
         return this.dataService.get<GDPRDateDTO>(this.URL.gdprdate).pipe(
             map((gdprDate: GDPRDateDTO) => gdprDate.gdprDate));
+    }
+
+    getFaq(): Observable<FaqResponseDTO> {
+        return this.dataService.get<FaqResponseDTO>(this.URL.faqs).pipe(
+            map((data) => data));
     }
 
 }

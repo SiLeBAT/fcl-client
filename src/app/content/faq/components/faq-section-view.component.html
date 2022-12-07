@@ -1,0 +1,13 @@
+<mat-accordion multi="true">
+    <h3 *ngIf="title" class="fcl-title mat-h3">{{title}}</h3>
+    <mat-expansion-panel *ngFor="let entry of entries">
+        <mat-expansion-panel-header collapsedHeight="auto" expandedHeight="auto">
+            <mat-panel-title>
+                <div class="fcl-panel-title" [innerHtml]="sanitize(entry.question)"></div>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+            <div class="fcl-panel-text" [innerHtml]="sanitize(entry.answer)"></div>
+        </ng-template>
+    </mat-expansion-panel>
+</mat-accordion>

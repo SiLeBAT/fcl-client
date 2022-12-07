@@ -239,7 +239,7 @@ describe('IOService', () => {
 
         };
 
-        ioService.getExportData(fclData)
+        return ioService.getExportData(fclData)
             .then(observedExportData => {
                 expect(observedExportData).toEqual(expectedExportData);
             }).catch(error => { throw error; });

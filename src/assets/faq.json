@@ -1,0 +1,100 @@
+{
+    "sections": [
+        {
+            "title": "Technical requirements",
+            "url": "technicalrequirements",
+            "faq": [
+                {
+                    "q": "The FCL web app looks strange. Some menus hide nearly the complete screen.",
+                    "a": "FCL Web has been tested with the latest versions of Google Chrome and Mozilla Firefox. With these browsers the web app should work smoothly. You can try to use the web app with Safari, Edge or Opera, but we cannot guarantee that the web app works flawless in these browsers. In addition, FCL Web works best on laptops or desktop PCs, specifically with large screens. Usability is limited on mobile phones and tablets."
+                }
+            ]
+        },
+        {
+            "title": "Security",
+            "url": "security",
+            "faq": [
+                {
+                    "q": "How is my confidential supply chain data handled in the web application?",
+                    "a": "Your supply chain data stays completely local on your computer. It is not uploaded or saved on any server. The browser is simply a tool to display your data and enable you to work. In addition, security of FCL Web was confirmed in an external websecurity audit."
+                }
+            ]
+        },
+        {
+            "title": "Register",
+            "url": "register",
+            "faq": [
+                {
+                    "q": "How can I register?",
+                    "a": "Before being able to login you need to register. On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click 'Register' and fill in the form. After you have clicked 'Submit', you will receive an email to confirm your registration. Please click on the link in this email. After this, the FoodChain-Lab team is prompted to authorise your registration. After this manual step you will receive an email informing you that you are now able to login."
+                },
+                {
+                    "q": "I have confirmed my registration. Why does the login not work?",
+                    "a": "First, the FoodChain-Lab team needs to authorise your registration manually. Afterwards, you will receive an email informing you that you are now able to login."
+                }
+            ]
+        },
+        {
+            "title": "Login",
+            "url": "login",
+            "faq": [
+                {
+                    "q": "I cannot login.",
+                    "a": "Before being able to login you need to register. On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click 'Register' and fill in the form."
+                },
+                {
+                    "q": "I forgot my password. How can I login?",
+                    "a": "On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click the button 'password forgotten?'. Enter the email address with which you have registered and wait for an email from foodrisklabs[at]bfr.berlin. This might take between one and ten minutes. Click on the button 'Reset your password' in this email (or on the link at the end of the email). On the 'Reset Passwort' page of FCL Web enter a new password."
+                }
+            ]
+        },
+        {
+            "title": "Upload",
+            "url": "upload",
+            "faq": [
+                {
+                    "q": "I cannot upload my own dataset as JSON file. A message says 'Data cannot be uploaded. Error: SyntaxError: Invalid data format'",
+                    "a": "FCL Web uses a specific JSON-based data format. You can find the JSON schema and an example file on our FoodRiskLabs website. Please compare the JSON schema/the example file with your own file and try to change your file so that its structure matches with the FCL data format."
+                }
+            ]
+        },
+        {
+            "title": "Handling",
+            "url": "handling",
+            "faq": [
+                {
+                    "q": "I am using a tablet and do not have a mouse. How can I use the FCL web app",
+                    "a": "FCL web app is built for usage on a laptop or desktop computer with mouse and keyboard. However, you can use a tap with one finger as left mouse button and a tap with two fingers as right mouse button. Tapping with two fingers on a station or delivery shows the context menu. It  appears in the tablet modus in the lower left corner. You can drag and drop stations and use most of the web app. Selecting several stations or deliveries is not yet possible."
+                },
+                {
+                    "q": "In the ROA Style I changed the layout. When I returned to the tracing graph and went back to the ROA Style all my changes were lost.",
+                    "a": "The ROA Style layout is for reports and for documentation only. If you go back to the graph all changes are discarded. This is the workflow for using the ROA Style:<ul><li>Edit your supply chain as you like. For example invisible stations are not visible in the ROA Style either.</li><li>Click on ROA Style and edit the layout as you like.</li><li>Save the flowchart as PDF.</li><li>If you would like to edit the flowchart later, save it as XML by selecting File\\Save as. Later you can reload it from your hard disk via File\\Open.</li></ul>"
+                },
+                {
+                    "q": "I have zoomed in (or out) too far and cannot find the supply chain anymore.",
+                    "a": "In the upper left part of the graph area you find the zoom controls. Click on the button above the '+' and the graph will center on your supply chain. If you cannot see the zoom controls, go to the Graph Settings in the menu and select 'Show Zoom Controls'."
+                }
+            ]
+        },
+        {
+            "title": "Report problem",
+            "url": "reportproblem",
+            "faq": [
+                {
+                    "q": "I do not know how to solve a problem and the FAQs do not help me. How do I get help?",
+                    "a": "Click on 'Report a Problem' on the lower right in the grey footer. A new email will open in your email programme. The adress of the FoodChain-Lab team is already entered. Please describe your problem and we will try to help you. In some cases a screenshot might be helpful."
+                }
+            ]
+        },
+        {
+            "title": "Logout",
+            "url": "logout",
+            "faq": [
+                {
+                    "q": "I would like to logout. Where is the button?",
+                    "a": "In the blue menu bar on the right you will find the profile button. Click this button and select 'Logout' from the dropdown menu."
+                }
+            ]
+        }
+    ]
+}
