@@ -83,4 +83,11 @@
         Show Zoom Controls
     </mat-checkbox>
 
+    <mat-checkbox
+        [ngModel]="graphSettings.fitGraphToVisibleArea"
+        (ngModelChange)="onFitGraphToVisibleAreaChange($event)"
+        matTooltip="If the menu is open, only the visible graph area will be used to arrange the stations.">
+        Fit supply chain to visible area
+    </mat-checkbox>
+
 </div>

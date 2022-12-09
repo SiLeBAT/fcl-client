@@ -161,6 +161,7 @@ export class Constants {
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;
     static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
     static readonly DEFAULT_GRAPH_SHOW_ZOOM = true;
+    static readonly DEFAULT_FIT_GRAPH_TO_VISIBLE_AREA = true;
     static readonly DEFAULT_GIS_AVOID_OVERLAY = false;
 
     static readonly DEFAULT_TABLE_WIDTH = 0.25;

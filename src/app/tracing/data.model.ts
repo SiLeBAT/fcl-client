@@ -175,6 +175,7 @@ export interface GraphSettings {
     showMergedDeliveriesCounts: boolean;
     showLegend: boolean;
     showZoom: boolean;
+    fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
     stationPositions: {[key: string]: Position};

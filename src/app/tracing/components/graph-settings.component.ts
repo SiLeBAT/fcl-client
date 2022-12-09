@@ -153,6 +153,12 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
         );
     }
 
+    onFitGraphToVisibleAreaChange(fitGraphToVisibleArea: boolean) {
+        this.store.dispatch(
+            new tracingActions.SetFitGraphToVisibleAreaSOA({ fitGraphToVisibleArea: fitGraphToVisibleArea })
+        );
+    }
+
     ngOnDestroy() {
         this.componentActive = false;
     }

@@ -55,6 +55,12 @@ export function getNonBlockedRect(container: HTMLElement, blockClass: string): B
     return unblockedRect;
 }
 
+export function reduceElementSizeToVisibleArea(container: HTMLElement): void {
+    const visRect = getNonBlockedRect(container, 'fcl-right-sidenav');
+    const newWidth = `${visRect.width}px`;
+    container.style.setProperty('max-width', newWidth);
+}
+
 function updateRect(rect: BoundaryRect, update: Partial<BoundaryRect>): BoundaryRect {
     rect = {
         ...rect,

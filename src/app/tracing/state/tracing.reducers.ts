@@ -112,6 +112,7 @@ export function createInitialFclDataState(): FclData {
             skipUnconnectedStations: Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
+            fitGraphToVisibleArea: Constants.DEFAULT_FIT_GRAPH_TO_VISIBLE_AREA,
             selectedElements: {
                 stations: [],
                 deliveries: []
@@ -325,6 +326,18 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         showZoom: action.payload
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetFitGraphToVisibleAreaSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        fitGraphToVisibleArea: action.payload.fitGraphToVisibleArea
                     }
                 }
             };

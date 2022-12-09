@@ -59,6 +59,7 @@ describe('IOService', () => {
                 fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
                 showLegend: true,
                 showZoom: true,
+                fitGraphToVisibleArea: true,
                 mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
                 showMergedDeliveriesCounts: false,
                 skipUnconnectedStations: false,

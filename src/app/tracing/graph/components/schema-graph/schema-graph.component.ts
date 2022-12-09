@@ -14,7 +14,7 @@ import { ContextMenuViewComponent } from '../context-menu/context-menu-view.comp
 import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetSchemaGraphLayoutSOA } from '@app/tracing/state/tracing.actions';
-import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig, getFitGraphToVisibleArea } from '@app/tracing/state/tracing.selectors';
 import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -42,6 +42,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$, true));
     showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$, true));
     styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
+    fitGraphToVisibleArea$ = this.store.select(getFitGraphToVisibleArea);
 
     private focusElementSubscription: Subscription;
     private graphStateSubscription: Subscription;

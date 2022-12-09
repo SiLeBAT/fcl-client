@@ -12,6 +12,7 @@ import {
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
 import { CyEdge, CyNode, CyNodeCollection, NodeId } from '../graph.model';
 import _ from 'lodash';
+import { reduceElementSizeToVisibleArea } from './shared-utils';
 
 const DEFAULT_VIEWPORT = {
     zoom: 1,
@@ -37,7 +38,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         graphData: GraphData,
         styleConfig: StyleConfig,
         layoutConfig: LayoutConfig,
-        cyConfig?: CyConfig
+        cyConfig?: CyConfig,
+        fitGraphToVisibleArea?: boolean
     ) {
         const isPresetLayout = isPresetLayoutConfig(layoutConfig);
         const fitViewPort = !isPresetLayout || layoutConfig.fit !== false;
@@ -52,6 +54,11 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             ...layoutConfig,
             fit: false
         };
+
+        const reduceContainerSize = fitGraphToVisibleArea && fitViewPort;
+        if (reduceContainerSize) {
+            reduceElementSizeToVisibleArea(htmlContainerElement);
+        }
 
         if (isPresetLayout && fitViewPort) {
             const availableSpace = getAvailableSpace(htmlContainerElement);
@@ -91,7 +98,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             superGraphData,
             styleConfig,
             superLayoutConfig,
-            superCyConfig
+            superCyConfig,
+            false
         );
 
         this.cachedGraphData = graphData;
@@ -105,13 +113,15 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 },
                 nodePositions: { ...super.data.nodePositions }
             };
-
-            this.zoomFit();
+            this.zoomFit(false);
         } else if (fitViewPort) {
             this.fitZoomFromCurrentLayout();
         }
         if (this.cy.container()) {
             addCustomZoomAdapter(this.cy, () => this.zoom, (zoom, position) => this.zoomTo(zoom, position));
+        }
+        if (reduceContainerSize) {
+            this.restoreCySize();
         }
     }
 
@@ -313,9 +323,11 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
-    zoomFit(): void {
+    zoomFit(fitGraphToVisibleArea: boolean): void {
         if (this.cachedGraphData.nodeData.length > 0) {
-
+            if (fitGraphToVisibleArea) {
+                this.reduceCySizeToVisibleArea();
+            }
             const availableSpace = this.getAvailableSpace();
 
             // Approximate initial viewport based on node positions only
@@ -346,6 +358,10 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.fitZoomFromCurrentLayout();
 
             this.onLayoutChanged();
+
+            if (fitGraphToVisibleArea) {
+                this.restoreCySize();
+            }
         }
     }
 
@@ -368,7 +384,12 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
-    protected startLayouting(layoutConfig: LayoutConfig, nodesToLayout: NodeId[]): null | (() => void) {
+    protected startLayouting(
+        layoutConfig: LayoutConfig,
+        nodesToLayout: NodeId[],
+        reduceCySizeBeforeLayouting: boolean
+    ): null | (() => void) {
+
         if (layoutConfig.animate) {
             this.cy.minZoom(this.zoomLimits.min);
             this.cy.maxZoom(this.zoomLimits.max);
@@ -377,7 +398,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             layoutConfig.fit = false;
         }
 
-        return super.startLayouting(layoutConfig, nodesToLayout);
+        return super.startLayouting(layoutConfig, nodesToLayout, reduceCySizeBeforeLayouting);
     }
 
     protected postProcessLayout(layoutedNodes: NodeId[]): void {
@@ -418,7 +439,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             }
         };
         if (wereAllNodesLayouted) {
-            this.zoomFit();
+            this.zoomFit(false);
         } else {
             this.extendViewportToIncludeSubgraph(viewportBeforeLayout, layoutedNodes);
             this.onLayoutChanged();

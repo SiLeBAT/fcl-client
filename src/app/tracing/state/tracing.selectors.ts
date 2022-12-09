@@ -128,6 +128,11 @@ export const getShowConfigurationSideBar = createSelector(
     (state) => state.showConfigurationSideBar
 );
 
+export const getFitGraphToVisibleArea = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.fitGraphToVisibleArea
+);
+
 export const selectDataServiceInputState = createSelector(
     getFclElements,
     getGroupSettings,

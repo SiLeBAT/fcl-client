@@ -39,6 +39,7 @@ export enum TracingActionTypes {
     ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
+    SetFitGraphToVisibleAreaSOA = '[Tracing] Set Fit Graph To Visible Area',
     SetSelectedElementsSOA = '[Tracing] Set Element Selection',
     SetSelectedStationsSOA = '[Tracing] Set Station Selection',
     SetSelectedDeliveriesSOA = '[Tracing] Set Delivery Selection',
@@ -181,6 +182,12 @@ export class ShowZoomSOA implements Action {
     readonly type = TracingActionTypes.ShowZoomSOA;
 
     constructor(public payload: boolean) {}
+}
+
+export class SetFitGraphToVisibleAreaSOA implements Action {
+    readonly type = TracingActionTypes.SetFitGraphToVisibleAreaSOA;
+
+    constructor(public payload: { fitGraphToVisibleArea: boolean }) {}
 }
 
 export class SetSelectedElementsSOA implements Action {
@@ -397,6 +404,7 @@ export type TracingActions =
     | ShowMergedDeliveriesCountsSOA
     | ShowLegendSOA
     | ShowZoomSOA
+    | SetFitGraphToVisibleAreaSOA
     | SetSelectedElementsSOA
     | SetSelectedStationsSOA
     | SetSelectedDeliveriesSOA

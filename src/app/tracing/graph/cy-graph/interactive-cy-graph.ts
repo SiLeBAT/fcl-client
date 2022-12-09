@@ -97,9 +97,10 @@ export class InteractiveCyGraph extends CyGraph {
         graphData: GraphData,
         styleConfig: StyleConfig,
         layoutConfig: LayoutConfig,
-        cyConfig?: CyConfig
+        cyConfig?: CyConfig,
+        fitGraphToVisibleArea?: boolean
     ) {
-        super(htmlContainerElement, graphData, styleConfig, layoutConfig, cyConfig);
+        super(htmlContainerElement, graphData, styleConfig, layoutConfig, cyConfig, fitGraphToVisibleArea);
         this.listeners = {
             [GraphEventType.LAYOUT_CHANGE]: [],
             [GraphEventType.SELECTION_CHANGE]: [],
@@ -126,8 +127,14 @@ export class InteractiveCyGraph extends CyGraph {
         this.zoomTo(this.zoom / InteractiveCyGraph.ZOOM_FACTOR);
     }
 
-    zoomFit(): void {
+    zoomFit(fitGraphToVisibleArea: boolean): void {
+        if (fitGraphToVisibleArea) {
+            this.reduceCySizeToVisibleArea();
+        }
         this.cy.fit();
+        if (fitGraphToVisibleArea) {
+            this.restoreCySize();
+        }
     }
 
     registerListener<T extends GraphEventType>(event: T, listener: GraphEventListener<T>): void {
@@ -159,9 +166,10 @@ export class InteractiveCyGraph extends CyGraph {
     protected initCy(
         htmlContainerElement: HTMLElement | undefined,
         layoutConfig: LayoutConfig,
-        cyConfig: CyConfig | undefined
+        cyConfig: CyConfig | undefined,
+        fitGraphToVisibleArea: boolean
     ): void {
-        super.initCy(htmlContainerElement, layoutConfig, cyConfig);
+        super.initCy(htmlContainerElement, layoutConfig, cyConfig, fitGraphToVisibleArea);
         this.registerCyListeners();
     }
 
@@ -335,11 +343,12 @@ export class InteractiveCyGraph extends CyGraph {
         }));
     }
 
-    runLayout(layoutName: LayoutName, nodeIds: NodeId[]): null | (() => void) {
+    runLayout(layoutName: LayoutName, nodeIds: NodeId[], fitGraphToVisibleArea: boolean): null | (() => void) {
         if (nodeIds.length >= 2) {
             const layoutConfig: LayoutConfig = getLayoutConfig(layoutName);
 
-            return this.startLayouting(layoutConfig, nodeIds);
+            const reduceCySizeBeforeLayouting = fitGraphToVisibleArea && layoutConfig.fit !== false;
+            return this.startLayouting(layoutConfig, nodeIds, reduceCySizeBeforeLayouting);
         }
     }
 
@@ -358,7 +367,6 @@ export class InteractiveCyGraph extends CyGraph {
 
     private focusNode(cyNode: CyNode): void {
         const maxFocusRect = this.getMaxFocusRect();
-        // const prefFocusRect = this.getPreferredFocusRect(maxSize);
         const focusPoint = getRectCenter(maxFocusRect);
         const refPoint = cyNode.renderedPosition();
 
@@ -413,15 +421,27 @@ export class InteractiveCyGraph extends CyGraph {
         }
     }
 
-    protected startLayouting(layoutConfig: LayoutConfig, nodesToLayout: NodeId[]): null | (() => void) {
+    protected startLayouting(
+        layoutConfig: LayoutConfig,
+        nodesToLayout: NodeId[],
+        reduceCySizeBeforeLayouting: boolean
+    ): null | (() => void) {
         const cyContext = this.getNodeContext(nodesToLayout);
         let isAsyncLayout = true;
+
+        if (reduceCySizeBeforeLayouting) {
+            this.reduceCySizeToVisibleArea();
+        }
+
         const stopFun = layoutConfig.stop;
         layoutConfig.stop = () => {
             isAsyncLayout = false;
             this.postProcessLayout(nodesToLayout);
             if (stopFun !== undefined) {
                 stopFun();
+            }
+            if (reduceCySizeBeforeLayouting) {
+                this.restoreCySize();
             }
             this.ignorePanOrZoomEvents = false;
         };
@@ -434,6 +454,9 @@ export class InteractiveCyGraph extends CyGraph {
         if (isAsyncLayout) {
             return () => layout.stop();
         } else {
+            if (reduceCySizeBeforeLayouting) {
+                this.restoreCySize();
+            }
             return null;
         }
     }

@@ -15,7 +15,7 @@ import { ContextMenuViewComponent } from '../context-menu/context-menu-view.comp
 import { ContextMenuService } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { SetGisGraphLayoutSOA } from '@app/tracing/state/tracing.actions';
-import { selectGisGraphState, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { selectGisGraphState, getGraphType, getMapConfig, getShowLegend, getShowZoom, getStyleConfig, getFitGraphToVisibleArea } from '@app/tracing/state/tracing.selectors';
 import { BoundaryRect } from '@app/tracing/util/geometry-utils';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes } from '@app/tracing/tracing.actions';
@@ -41,6 +41,8 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$, true));
     mapConfig$ = this.store.select(getMapConfig);
     styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
+    fitGraphToVisibleArea$ = this.store.select(getFitGraphToVisibleArea);
+
     unknownLatLonRectBorderWidth = GisGraphComponent.DEFAULT_SCREEN_BOUNDARY_WIDTH;
 
     private focusElementSubscription: Subscription;

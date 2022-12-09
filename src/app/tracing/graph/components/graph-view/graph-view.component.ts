@@ -42,6 +42,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     @Input() cyConfig: CyConfig = {};
 
     @Input() showZoom: boolean = false;
+    @Input() fitGraphToVisibleArea = false;
 
     @Output() graphDataChange = new EventEmitter<GraphDataChange>();
     @Output() contextMenuRequest = new EventEmitter<ContextMenuRequestInfo>();
@@ -85,7 +86,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     onZoomFit(): void {
         if (this.cyGraph_) {
-            this.cyGraph_.zoomFit();
+            this.cyGraph_.zoomFit(this.fitGraphToVisibleArea);
         }
     }
 
@@ -104,7 +105,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     runLayoutManager(layoutName: LayoutName, nodesToLayout: NodeId[]): null | (() => void) {
         return this.cyGraph_ === null ?
             null :
-            this.cyGraph_.runLayout(layoutName, nodesToLayout);
+            this.cyGraph_.runLayout(layoutName, nodesToLayout, this.fitGraphToVisibleArea);
     }
 
     getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] | null {
@@ -181,7 +182,8 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
             this.graphData,
             this.styleConfig,
             this.createLayoutConfig(),
-            this.cyConfig
+            this.cyConfig,
+            this.fitGraphToVisibleArea
         );
 
         this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
