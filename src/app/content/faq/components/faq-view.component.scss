@@ -7,11 +7,9 @@
 }
 
 .fcl-scroll-panel {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    padding-left: 25%;
-    padding-right: 25%;
+    max-width: min(50em, 50%);
+    margin-left: auto;
+    margin-right: auto;
     padding-top: 3rem;
     overflow: auto;
 }
@@ -33,12 +31,12 @@
     padding: 0 fcl.$double-space;
     text-align: center;
     text-decoration: none;
-    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "lighter");
-    color: mat.get-color-from-palette(fcl.$fcl-primary, "lighter-contrast");
+    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "default");
+    color: white;
 }
 
 .fcl-toc-link:hover {
-    color: mat.get-color-from-palette(fcl.$fcl-accent, "default");
+    color: mat.get-color-from-palette(fcl.$fcl-accent, "lighter");
 }
 
 .fcl-sections {

@@ -53,8 +53,8 @@
             "url": "upload",
             "faq": [
                 {
-                    "q": "I cannot upload my own dataset as JSON file. A message says 'Data cannot be uploaded. Error: SyntaxError: Invalid data format'",
-                    "a": "FCL Web uses a specific JSON-based data format. You can find the JSON schema and an example file on our FoodRiskLabs website. Please compare the JSON schema/the example file with your own file and try to change your file so that its structure matches with the FCL data format."
+                    "q": "I cannot upload my own dataset as JSON file. Instead, an error message is shown.",
+                    "a": "An error message can appear because of different reasons: <ul><li>The uploaded file does not seem to have the specific JSON data format FCL Web uses. You can find the JSON schema and an example file on our FoodRiskLabs website. Please compare the JSON schema/the example file with your own file and try to change your file so that its structure matches with the FCL data format.</li><li>The text encoding needs to be UTF-8.</li><li>The data is corrupted or not complete, e.g. a delivery is noted to origin from a specific station which is not part of the stations table.</li></ul>"
                 }
             ]
         },

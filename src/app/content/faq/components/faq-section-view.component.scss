@@ -4,8 +4,8 @@
 .fcl-title {
     padding: fcl.$single-space;
     margin: 0;
-    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "lighter");
-    color: mat.get-color-from-palette(fcl.$fcl-primary, "lighter-contrast");
+    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "default");
+    color: white;
     text-align: center;
 }
 
