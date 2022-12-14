@@ -698,7 +698,6 @@ BaseFormatPanel.prototype.createTitle = function(title)
 	var div = document.createElement('div');
 	div.style.padding = '0px 0px 6px 0px';
 	div.style.whiteSpace = 'nowrap';
-	div.style.overflow = 'hidden';
 	div.style.width = '200px';
 	div.style.fontWeight = 'bold';
 	mxUtils.write(div, title);
@@ -837,9 +836,7 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
 	var div = document.createElement('div');
 	div.style.padding = '6px 0px 1px 0px';
 	div.style.whiteSpace = 'nowrap';
-	div.style.overflow = 'hidden';
 	div.style.width = '200px';
-	div.style.height = (mxClient.IS_QUIRKS) ? '27px' : '18px';
 
 	var cb = document.createElement('input');
 	cb.setAttribute('type', 'checkbox');
@@ -1001,7 +998,6 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 	var div = document.createElement('div');
 	div.style.padding = '6px 0px 1px 0px';
 	div.style.whiteSpace = 'nowrap';
-	div.style.overflow = 'hidden';
 	div.style.width = '200px';
 	div.style.height = (mxClient.IS_QUIRKS) ? '27px' : '18px';
 
@@ -1413,8 +1409,8 @@ BaseFormatPanel.prototype.styleButtons = function(elts)
 		elts[i].style.paddingTop = '3px';
 		elts[i].style.paddingRight = '1px';
 		elts[i].style.margin = '1px';
-		elts[i].style.width = '24px';
-		elts[i].style.height = '20px';
+		elts[i].style.width = '30px';
+		elts[i].style.height = '27px';
 		elts[i].className += ' geColorBtn';
 	}
 };
@@ -2476,16 +2472,16 @@ TextFormatPanel.prototype.addFont = function(container)
 	colorPanel.style.paddingTop = '6px';
 	colorPanel.style.paddingBottom = '6px';
 
+    // font selector
 	var fontMenu = this.editorUi.toolbar.addMenu('Helvetica', mxResources.get('fontFamily'),
 		true, 'fontFamily', stylePanel, null, true);
 	fontMenu.style.color = 'rgb(112, 112, 112)';
-	fontMenu.style.whiteSpace = 'nowrap';
-	fontMenu.style.overflow = 'hidden';
+	fontMenu.style.whiteSpace = 'nowrap'
 	fontMenu.style.margin = '0px';
 
 	this.addArrow(fontMenu);
 	fontMenu.style.width = '192px';
-	fontMenu.style.height = '15px';
+    fontMenu.style.height = 'min-content';
 
 	// Workaround for offset in FF
 	if (mxClient.IS_FF)
@@ -2495,7 +2491,7 @@ TextFormatPanel.prototype.addFont = function(container)
 
 	var stylePanel2 = stylePanel.cloneNode(false);
 	stylePanel2.style.marginLeft = '-3px';
-	var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
+    var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
 	fontStyleItems[0].setAttribute('title', mxResources.get('bold') + ' (' + this.editorUi.actions.get('bold').shortcut + ')');
 	fontStyleItems[1].setAttribute('title', mxResources.get('italic') + ' (' + this.editorUi.actions.get('italic').shortcut + ')');
 	fontStyleItems[2].setAttribute('title', mxResources.get('underline') + ' (' + this.editorUi.actions.get('underline').shortcut + ')');
@@ -4227,6 +4223,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		addItem(menu, 75, 'dotted', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], ['1', '1 2']).setAttribute('title', mxResources.get('dotted') + ' (2)');
 		addItem(menu, 75, 'dotted', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], ['1', '1 4']).setAttribute('title', mxResources.get('dotted') + ' (3)');
 	}));
+    // pattern.style.height = '30px';
 
 	// Used for mixed selection (vertices and edges)
 	var altStylePanel = stylePanel.cloneNode(false);
@@ -4255,7 +4252,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	input.style.textAlign = 'right';
 	input.style.marginTop = '2px';
 	input.style.width = '41px';
-	input.setAttribute('title', mxResources.get('linewidth'));
+    input.setAttribute('title', mxResources.get('linewidth'));
 
 	stylePanel.appendChild(input);
 
@@ -4454,7 +4451,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 
 	this.addArrow(edgeShape, 8);
 	this.addArrow(edgeStyle);
-	this.addArrow(lineStart);
+    this.addArrow(lineStart);
 	this.addArrow(lineEnd);
 
 	var symbol = this.addArrow(pattern, 9);
@@ -4479,14 +4476,14 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	altSolid.style.marginBottom = '9px';
 	altSymbol.appendChild(altSolid);
 
-	pattern.style.height = '15px';
-	altPattern.style.height = '15px';
-	edgeShape.style.height = '15px';
-	edgeStyle.style.height = '17px';
+    pattern.style.height = '22px';
+	altPattern.style.height = '22px';
+	edgeShape.style.height = '22px';
+	edgeStyle.style.height = '22px';
 	lineStart.style.marginLeft = '3px';
-	lineStart.style.height = '17px';
+	lineStart.style.height = '22px';
 	lineEnd.style.marginLeft = '3px';
-	lineEnd.style.height = '17px';
+	lineEnd.style.height = '22px';
 
 	container.appendChild(colorPanel);
 	container.appendChild(altStylePanel);
