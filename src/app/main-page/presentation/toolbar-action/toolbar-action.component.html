@@ -7,6 +7,15 @@
             <mat-radio-button class="fcl-graph-type-button" [value]="'Graph'" matTooltip="Show Schematic Graph">
                 Graph
             </mat-radio-button>
+            <input
+                type="file"
+                class="fcl-fileinput"
+                accept=".geojson"
+                id="shapeFileInput"
+                (change)="onShapeFileInput($event)"
+                #shapeFileInput
+                data-cy="fcl-upload-shape-fileinput"
+            >
             <span class="fcl-graph-type-button">
                 <mat-radio-button [value]="'GIS'" [disabled]="!hasGisInfo" [matTooltip]="!hasGisInfo ? '': 'Show GIS Graph'">
                     GIS
@@ -15,7 +24,7 @@
                     <span *ngFor="let item of availableMapTypes">
                         <mat-option value="{{item}}" (click)="setMapType(item)">{{mapTypeToLabelMap.get(item)}}</mat-option>
                     </span>
-                    <mat-option value="" (click)="selectShapeFile($event)">Load Shape File...</mat-option>
+                    <mat-option value="" (click)="onSelectShapeFile($event)">Load Shape File...</mat-option>
                 </mat-select>
             </span>
         </mat-radio-group>
@@ -40,9 +49,10 @@
     <input
         type="file"
         accept=".json"
-        id="fileInput"
-        (change)="onFileInput($event)"
-        #fileInput
+        class="fcl-fileinput"
+        id="modelFileInput"
+        (change)="onModelFileInput($event)"
+        #modelFileInput
         data-cy="fcl-upload-model-fileinput"
     >
     <button

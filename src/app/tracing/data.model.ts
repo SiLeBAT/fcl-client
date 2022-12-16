@@ -167,6 +167,8 @@ export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
     shapeFileData: ShapeFileData | null;
+    geojsonBorderWidth: number;
+    geojsonBorderColor: Color;
     nodeSize: number;
     adjustEdgeWidthToNodeSize: boolean;
     edgeWidth: number;
@@ -185,6 +187,14 @@ export interface GraphSettings {
     ghostStation: StationId | null;
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
+}
+
+export interface MapConfig {
+    layout: Layout | null;
+    mapType: MapType;
+    shapeFileData: ShapeFileData | null;
+    lineColor: Color;
+    lineWidth: number;
 }
 
 export interface HighlightingSettings {

@@ -53,6 +53,8 @@ describe('IOService', () => {
                 type: GraphType.GRAPH,
                 mapType: MapType.MAPNIK,
                 shapeFileData: null,
+                geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
                 adjustEdgeWidthToNodeSize: true,
                 edgeWidth: Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(Constants.DEFAULT_GRAPH_NODE_SIZE),

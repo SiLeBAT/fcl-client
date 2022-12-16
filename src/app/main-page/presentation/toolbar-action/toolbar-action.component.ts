@@ -14,7 +14,9 @@ export class ToolbarActionComponent implements OnChanges {
 
     private _graphSettings: GraphSettings;
 
-    @ViewChild('fileInput') fileInput: ElementRef;
+    @ViewChild('modelFileInput') modelFileInput: ElementRef<HTMLInputElement>;
+    @ViewChild('shapeFileInput') shapeFileInput: ElementRef<HTMLInputElement>;
+
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
@@ -69,9 +71,15 @@ export class ToolbarActionComponent implements OnChanges {
         return environment.serverless;
     }
 
-    onFileInput(event: any) {
+    onModelFileInput(event: any) {
         const fileList: FileList = event.target.files;
         this.loadModelFile.emit(fileList);
+        event.target.value = null;
+    }
+
+    onShapeFileInput(event: any) {
+        const fileList: FileList = event.target.files;
+        this.loadShapeFile.emit(fileList);
         event.target.value = null;
     }
 
@@ -79,8 +87,8 @@ export class ToolbarActionComponent implements OnChanges {
         this.selectModelFile.emit();
     }
 
-    clickFileInputElement() {
-        this.fileInput.nativeElement.click();
+    clickModelFileInputElement() {
+        this.modelFileInput.nativeElement.click();
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
@@ -111,25 +119,11 @@ export class ToolbarActionComponent implements OnChanges {
         this.mapType.emit(mapType);
     }
 
-    selectShapeFile(event): void {
+    onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
         setTimeout(() => { this.selectedMapTypeOption = '' + this._graphSettings.mapType; }, 0);
 
-        this.selectInputFile(
-            '.geojson',
-            (event$) => {
-                const fileList: FileList = event$.target.files;
-                this.loadShapeFile.emit(fileList);
-            }
-        );
-    }
-
-    private selectInputFile(accept: string, changeHandler: (event$) => void): void {
-        const nativeFileInput: HTMLInputElement = this.fileInput.nativeElement;
-        nativeFileInput.value = '';
-        nativeFileInput.accept = accept;
-        nativeFileInput.onchange = changeHandler;
-        nativeFileInput.click();
+        this.shapeFileInput.nativeElement.click();
     }
 
 }

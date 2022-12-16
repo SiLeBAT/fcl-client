@@ -104,7 +104,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     onSelectModelFile() {
-        this.checkConditionsAndLoadFile(() => this.toolbarActionComponent.clickFileInputElement());
+        this.checkConditionsAndLoadFile(() => this.toolbarActionComponent.clickModelFileInputElement());
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
@@ -119,7 +119,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.SetMapTypeSOA({ mapType: mapType }));
     }
 
-    loadShapeFile(fileList: FileList) {
+    onLoadShapeFile(fileList: FileList) {
         this.store.dispatch(new tracingIOActions.LoadShapeFileMSA({ dataSource: fileList }));
     }
 

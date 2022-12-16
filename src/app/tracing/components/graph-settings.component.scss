@@ -2,3 +2,17 @@
 
 @include fcl.sidenav-elements;
 @include fcl.sidenav-elements-group;
+
+.fcl-geojson-conf-container {
+    width: 100%;
+
+    mat-form-field {
+        width: 100%;
+    }
+
+    .fcl-geojson-color-conf-container {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+    }
+}

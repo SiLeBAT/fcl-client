@@ -5,7 +5,7 @@ import * as fromTracing from '../state/tracing.reducers';
 import * as tracingActions from '../state/tracing.actions';
 import { Store, select } from '@ngrx/store';
 import { takeWhile } from 'rxjs/operators';
-import { GraphSettings, MergeDeliveriesType, CrossContTraceType, TracingSettings } from '../data.model';
+import { GraphSettings, MergeDeliveriesType, CrossContTraceType, TracingSettings, Color, MapType, GraphType } from '../data.model';
 
 interface Option<T> {
     value: T;
@@ -25,6 +25,14 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
     edgeWidths = Constants.EDGE_WIDTHS;
+    geojsonBorderWidths = Constants.GEOJSON_BORDER_WIDTHS;
+
+    get isShapeFileMapActive(): boolean {
+        return (
+            this.graphSettings.mapType === MapType.SHAPE_FILE &&
+            this.graphSettings.type === GraphType.GIS
+        );
+    }
 
     readonly crossContTraceTypeOptions: Option<CrossContTraceType>[] = [
         {
@@ -156,6 +164,18 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
     onFitGraphToVisibleAreaChange(fitGraphToVisibleArea: boolean) {
         this.store.dispatch(
             new tracingActions.SetFitGraphToVisibleAreaSOA({ fitGraphToVisibleArea: fitGraphToVisibleArea })
+        );
+    }
+
+    onGeojsonBorderColorChange(color: Color) {
+        this.store.dispatch(
+            new tracingActions.SetGeojsonBorderColorSOA({ color: color })
+        );
+    }
+
+    onGeojsonBorderWidthChange(borderWidth: number): void {
+        this.store.dispatch(
+            new tracingActions.SetGeojsonBorderWidthSOA({ width: borderWidth })
         );
     }
 

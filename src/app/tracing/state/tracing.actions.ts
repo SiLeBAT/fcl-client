@@ -9,7 +9,8 @@ import {
     SetInvisibleElementsPayload,
     StationId,
     DeliveryHighlightingRule,
-    JsonDataExtract
+    JsonDataExtract,
+    Color
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
@@ -23,6 +24,8 @@ export enum TracingActionTypes {
     LoadFclDataFailureSOA = '[Tracing] Load Fcl Data Failure',
     LoadShapeFileSuccessSOA = '[Tracing] Load Shape File Success',
     LoadShapeFileFailureMSA = '[Tracing] Load Shape File Failure',
+    SetGeojsonShapeBorderWidthSOA = '[Tracing] Set Geojson BorderWidth',
+    SetGeojsonShapeBorderColorSOA = '[Tracing] Set Geojson BorderColor',
     GenerateVisioLayoutSuccess = '[Tracing] Generate Visio Layout Success',
     ShowGraphSettingsSOA = '[Tracing] Show Graph Settings',
     ShowConfigurationSideBarSOA = '[Tracing] Show Configuration Settings',
@@ -98,6 +101,18 @@ export class LoadShapeFileSuccessSOA implements Action {
 
 export class LoadShapeFileFailureMSA implements Action {
     readonly type = TracingActionTypes.LoadShapeFileFailureMSA;
+}
+
+export class SetGeojsonBorderWidthSOA implements Action {
+    readonly type = TracingActionTypes.SetGeojsonShapeBorderWidthSOA;
+
+    constructor(public payload: { width: number }) {}
+}
+
+export class SetGeojsonBorderColorSOA implements Action {
+    readonly type = TracingActionTypes.SetGeojsonShapeBorderColorSOA;
+
+    constructor(public payload: { color: Color }) {}
 }
 
 export class GenerateVisioLayoutSuccess implements Action {
@@ -388,6 +403,8 @@ export type TracingActions =
     | LoadFclDataFailureSOA
     | LoadShapeFileSuccessSOA
     | LoadShapeFileFailureMSA
+    | SetGeojsonBorderWidthSOA
+    | SetGeojsonBorderColorSOA
     | GenerateVisioLayoutSuccess
     | ShowGraphSettingsSOA
     | ShowConfigurationSideBarSOA

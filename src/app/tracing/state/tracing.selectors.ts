@@ -224,14 +224,28 @@ export const selectGisGraphState = createSelector(
     })
 );
 
+const selectGeojsonBorderWidth = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.geojsonBorderWidth
+);
+
+const selectGeojsonBorderColor = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.geojsonBorderColor
+);
+
 export const getMapConfig = createSelector(
     selectGisGraphLayout,
     selectMapType,
     selectShapeFileData,
-    (gisLayout, mapType, shapeFileData) => ({
+    selectGeojsonBorderColor,
+    selectGeojsonBorderWidth,
+    (gisLayout, mapType, shapeFileData, borderColor, borderWidth) => ({
         layout: gisLayout,
         mapType: mapType,
-        shapeFileData: shapeFileData
+        shapeFileData: shapeFileData,
+        lineColor: borderColor,
+        lineWidth: borderWidth
     })
 );
 

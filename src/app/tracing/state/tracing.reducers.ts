@@ -128,6 +128,8 @@ export function createInitialFclDataState(): FclData {
             gisLayout: null,
             mapType: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
+            geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+            geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
             ghostStation: null,
             ghostDelivery: null,
             hoverDeliveries: []
@@ -224,6 +226,30 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_FILE,
                         shapeFileData: action.payload.shapeFileData
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetGeojsonShapeBorderWidthSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        geojsonBorderWidth: action.payload.width
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetGeojsonShapeBorderColorSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        geojsonBorderColor: action.payload.color
                     }
                 }
             };

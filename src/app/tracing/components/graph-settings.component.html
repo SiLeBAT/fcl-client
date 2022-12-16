@@ -71,6 +71,29 @@
         </mat-select>
     </mat-form-field>
 
+    <div *ngIf="isShapeFileMapActive" class="fcl-geojson-conf-container">
+        <!-- Geojson settings -->
+        <div class="fcl-geojson-color-conf-container">
+            <div>Geojson border colour:</div>
+            <fcl-color-selector-view
+                [color]="graphSettings.geojsonBorderColor"
+                preferredColorPickerPosition="top"
+                (colorChange)="onGeojsonBorderColorChange($event)"
+            ></fcl-color-selector-view>
+        </div>
+
+        <mat-form-field>
+            <mat-select
+                placeholder="Geojson border width"
+                [ngModel]="graphSettings.geojsonBorderWidth"
+                (ngModelChange)="onGeojsonBorderWidthChange($event)">
+                <mat-option *ngFor="let borderWidth of geojsonBorderWidths" [value]="borderWidth">
+                    {{ borderWidth }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
     <mat-checkbox
         [ngModel]="graphSettings.showLegend"
         (ngModelChange)="showLegend($event)">
