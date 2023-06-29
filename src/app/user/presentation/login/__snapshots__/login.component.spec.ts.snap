@@ -2,7 +2,6 @@
 
 exports[`LoginComponent should render the component correctly 1`] = `
 <fcl-login
-  __ngContext__={[Function LRootView]}
   login={[Function EventEmitter_]}
   loginForm={[Function FormGroup]}
 >

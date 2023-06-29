@@ -1,7 +1,12 @@
 import { Component, OnInit, Output, EventEmitter, Input, ElementRef } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { ValidationError } from '@app/core/model';
 import { NewPasswordRequestDTO } from '../../../user/models/user.model';
+
+interface ResetForm {
+    password1: FormControl<string | null>;
+    password2: FormControl<string | null>;
+}
 
 @Component({
     selector: 'fcl-reset',
@@ -14,16 +19,16 @@ export class ResetComponent implements OnInit {
     // eslint-disable-next-line @angular-eslint/no-output-native
     @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
 
-    resetForm: FormGroup;
+    resetForm: FormGroup<ResetForm>;
 
     constructor(public elementRef: ElementRef) {}
 
     ngOnInit() {
-        this.resetForm = new FormGroup({
-            password1: new FormControl(null, [
+        this.resetForm = new FormGroup<ResetForm>({
+            password1: new FormControl<string | null>(null, [
                 Validators.required
             ]),
-            password2: new FormControl(null)
+            password2: new FormControl<string | null>(null)
         }, this.passwordConfirmationValidator);
     }
 
@@ -39,7 +44,7 @@ export class ResetComponent implements OnInit {
         this.reset.emit(password);
     }
 
-    private passwordConfirmationValidator(fg: FormGroup) {
+    private passwordConfirmationValidator(fg: FormGroup<ResetForm>) {
         const pw1 = fg.controls.password1;
         const pw2 = fg.controls.password2;
 

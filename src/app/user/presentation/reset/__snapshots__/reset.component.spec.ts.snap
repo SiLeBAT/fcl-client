@@ -2,7 +2,6 @@
 
 exports[`ResetComponent should render the component correctly 1`] = `
 <fcl-reset
-  __ngContext__={[Function LRootView]}
   elementRef={[Function ElementRef]}
   reset={[Function EventEmitter_]}
   resetForm={[Function FormGroup]}

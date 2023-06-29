@@ -1,7 +1,12 @@
-import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 
 import { LoginCredentials } from '../../models/user.model';
+
+interface LoginForm {
+    email: FormControl<string | null>;
+    password: FormControl<string | null>;
+}
 
 @Component({
     selector: 'fcl-login',
@@ -10,12 +15,12 @@ import { LoginCredentials } from '../../models/user.model';
 })
 export class LoginComponent implements OnInit {
     @Output() login = new EventEmitter<LoginCredentials>();
-    loginForm: FormGroup;
+    loginForm: FormGroup<LoginForm>;
 
     ngOnInit() {
-        this.loginForm = new FormGroup({
-            email: new FormControl(null, [Validators.required, Validators.email]),
-            password: new FormControl(null, Validators.required)
+        this.loginForm = new FormGroup<LoginForm>({
+            email: new FormControl<string | null>(null, [Validators.required, Validators.email]),
+            password: new FormControl<string | null>(null, Validators.required)
         });
     }
 

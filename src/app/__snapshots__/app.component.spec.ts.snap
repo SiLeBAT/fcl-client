@@ -2,7 +2,6 @@
 
 exports[`AppComponent should render correctlu 1`] = `
 <fcl-root
-  __ngContext__={[Function LRootView]}
   elementRef={[Function ElementRef]}
   overlayContainer={[Function OverlayContainer]}
 >

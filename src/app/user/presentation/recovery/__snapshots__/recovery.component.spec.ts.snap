@@ -2,7 +2,6 @@
 
 exports[`RecoveryComponent should render the component correctly 1`] = `
 <fcl-recovery
-  __ngContext__={[Function LRootView]}
   recovery={[Function EventEmitter_]}
   recoveryForm={[Function FormGroup]}
 >

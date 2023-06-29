@@ -2,7 +2,6 @@
 
 exports[`FaqViewComponent should render the component correctly 1`] = `
 <fcl-faq-view
-  __ngContext__={[Function LRootView]}
   activeFragment="null"
   faq={[Function Object]}
   faqSectionRefs={[Function QueryList]}

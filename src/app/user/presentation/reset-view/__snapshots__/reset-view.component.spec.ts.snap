@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ResetViewComponent should render the component correctly 1`] = `
-<fcl-reset-view
-  __ngContext__={[Function LRootView]}
->
+<fcl-reset-view>
   <div
     class="fcl-image-container"
   >

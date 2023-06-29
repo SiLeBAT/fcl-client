@@ -2,7 +2,6 @@
 
 exports[`RegisterComponent should render the component correctly 1`] = `
 <fcl-register
-  __ngContext__={[Function LRootView]}
   register={[Function EventEmitter_]}
   registerForm={[Function FormGroup]}
   serverValidationErrors={[Function Object]}

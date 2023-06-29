@@ -170,7 +170,7 @@
               "browserTarget": "fcl-web-app:build:qa"
             },
             "development": {
-                "browserTarget": "fcl-web-app:build:development"
+              "browserTarget": "fcl-web-app:build:development"
             },
             "serverless": {
               "browserTarget": "fcl-web-app:build:serverless"
@@ -199,7 +199,6 @@
       }
     }
   },
-  "defaultProject": "fcl-web-app",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "fcl",
@@ -210,6 +209,8 @@
     }
   },
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

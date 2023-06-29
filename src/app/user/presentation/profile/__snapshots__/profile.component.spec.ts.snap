@@ -2,7 +2,6 @@
 
 exports[`ProfileComponent should display the current user 1`] = `
 <fcl-profile
-  __ngContext__={[Function LRootView]}
   currentUser={[Function Object]}
 >
   <fcl-single-center-card-layout
@@ -62,9 +61,7 @@ exports[`ProfileComponent should display the current user 1`] = `
 `;
 
 exports[`ProfileComponent should render the component correctly 1`] = `
-<fcl-profile
-  __ngContext__={[Function LRootView]}
->
+<fcl-profile>
   <fcl-single-center-card-layout
     cardtitle="User Profile"
   >

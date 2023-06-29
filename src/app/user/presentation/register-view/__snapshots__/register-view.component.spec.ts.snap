@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RegisterViewComponent should render the component correctly 1`] = `
-<fcl-register-view
-  __ngContext__={[Function LRootView]}
->
+<fcl-register-view>
   <div
     class="fcl-image-container"
   >

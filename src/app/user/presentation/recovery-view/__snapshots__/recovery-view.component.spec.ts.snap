@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RecoveryViewComponent should render the component correctly 1`] = `
-<fcl-recovery-view
-  __ngContext__={[Function LRootView]}
->
+<fcl-recovery-view>
   <div
     class="fcl-image-container"
   >

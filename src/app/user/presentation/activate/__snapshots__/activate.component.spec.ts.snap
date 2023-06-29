@@ -2,7 +2,6 @@
 
 exports[`ActivateComponent should display the app name if token is valid 1`] = `
 <fcl-activate
-  __ngContext__={[Function LRootView]}
   appName={[Function String]}
   tokenValid={[Function Boolean]}
 >
@@ -29,7 +28,6 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
 
 exports[`ActivateComponent should not display the app name if token is invalid 1`] = `
 <fcl-activate
-  __ngContext__={[Function LRootView]}
   appName={[Function String]}
   tokenValid="false"
 >
@@ -83,8 +81,6 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
 `;
 
 exports[`ActivateComponent should render the component correctly 1`] = `
-<fcl-activate
-  __ngContext__={[Function LRootView]}
->
+<fcl-activate>
 </fcl-activate>
 `;

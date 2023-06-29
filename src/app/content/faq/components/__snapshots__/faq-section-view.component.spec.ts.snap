@@ -2,7 +2,6 @@
 
 exports[`FaqSectionViewComponent should render the component correctly 1`] = `
 <fcl-faq-section-view
-  __ngContext__={[Function LRootView]}
   entries={[Function Array]}
   sanitizer={[Function Object]}
   title={[Function String]}

@@ -1,6 +1,10 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { ResetRequestDTO } from '@app/user/models/user.model';
+
+interface RecoveryForm {
+    email: FormControl<string | null>;
+}
 
 @Component({
     selector: 'fcl-recovery',
@@ -9,11 +13,11 @@ import { ResetRequestDTO } from '@app/user/models/user.model';
 })
 export class RecoveryComponent implements OnInit {
     @Output() recovery = new EventEmitter();
-    recoveryForm: FormGroup;
+    recoveryForm: FormGroup<RecoveryForm>;
 
     ngOnInit() {
-        this.recoveryForm = new FormGroup({
-            email: new FormControl(null, [Validators.required, Validators.email])
+        this.recoveryForm = new FormGroup<RecoveryForm>({
+            email: new FormControl<string | null>(null, [Validators.required, Validators.email])
         });
     }
 
