@@ -7,7 +7,7 @@
         <div class="form-group" [ngClass]="{ error: !validateField('password1') }">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>New password</mat-label>
-                <input matInput #message formControlName="password1" type="password" name="password1" required />
+                <input matInput #message formControlName="password1" type="password" name="password1" required fclFocusAfterViewInit/>
                 <mat-icon matPrefix>lock</mat-icon>
                 <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required && serverValidationErrors.length === 0">
                     Password is required

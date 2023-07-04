@@ -3,7 +3,7 @@
         <div class="form-group fcl-form-email">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Email</mat-label>
-                <input matInput formControlName="email" name="email" required />
+                <input matInput formControlName="email" name="email" required fclFocusAfterViewInit/>
                 <mat-icon matPrefix>mail</mat-icon>
                 <mat-error *ngIf="!validateField('email') && loginForm.controls.email.errors.email">
                     Not a valid email

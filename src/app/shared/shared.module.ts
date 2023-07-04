@@ -9,6 +9,7 @@ import { AlertComponent } from './alert/alert.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SingleCenterCardLayoutComponent } from './presentation/single-center-card-layout/single-center-card-layout.component';
 import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-subscript-wrapper-tab-focus';
+import { FocusAfterViewInitDirective } from './directives/focus-after-view-init';
 
 @NgModule({
     imports: [
@@ -20,7 +21,8 @@ import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-s
         SpinnerLoaderComponent,
         AlertComponent,
         SingleCenterCardLayoutComponent,
-        DisableSubscriptWrapperTabFocusDirective
+        DisableSubscriptWrapperTabFocusDirective,
+        FocusAfterViewInitDirective
     ],
     exports: [
         FormsModule,
@@ -31,7 +33,8 @@ import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-s
         SpinnerLoaderComponent,
         AlertComponent,
         SingleCenterCardLayoutComponent,
-        DisableSubscriptWrapperTabFocusDirective
+        DisableSubscriptWrapperTabFocusDirective,
+        FocusAfterViewInitDirective
     ]
 })
 export class SharedModule { }
