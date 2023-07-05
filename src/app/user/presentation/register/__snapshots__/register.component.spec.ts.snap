@@ -32,6 +32,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
               >
                 <input
                   class="mat-input-element mat-form-field-autofill-control"
+                  fclfocusafterviewinit=""
                   formcontrolname="firstName"
                   matinput=""
                   name="firstName"

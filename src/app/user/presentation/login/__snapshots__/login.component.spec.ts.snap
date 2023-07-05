@@ -29,6 +29,7 @@ exports[`LoginComponent should render the component correctly 1`] = `
               >
                 <input
                   class="mat-input-element mat-form-field-autofill-control"
+                  fclfocusafterviewinit=""
                   formcontrolname="email"
                   matinput=""
                   name="email"

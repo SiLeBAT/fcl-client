@@ -41,6 +41,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
               >
                 <input
                   class="mat-input-element mat-form-field-autofill-control"
+                  fclfocusafterviewinit=""
                   formcontrolname="password1"
                   matinput=""
                   name="password1"
