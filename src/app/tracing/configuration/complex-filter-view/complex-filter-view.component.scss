@@ -1,3 +1,9 @@
+.fcl-condition-list-container-wrapper {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
 .fcl-condition-list-container {
     flex: 1;
     width: 100%;
@@ -20,22 +26,23 @@
 
 .fcl-condition-list-scrollup-indicator,
 .fcl-condition-list-scrolldown-indicator {
+    position: absolute;
+    left: 0;
     height: 20px;
     opacity: 0.3;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    background: transparent;
     pointer-events: none;
 }
 
 .fcl-condition-list-scrollup-indicator {
-    margin-bottom: -20px;
+    top: 10px;
 }
 
 .fcl-condition-list-scrolldown-indicator {
-    margin-top: -20px;
+    bottom: 10px;
 }
 
 .fcl-complex-filter-condition-container {
