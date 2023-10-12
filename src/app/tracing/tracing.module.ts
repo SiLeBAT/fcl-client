@@ -70,6 +70,7 @@ import { NgxDatatableScrollFixDirective } from './shared/ngxdatatable-scroll-fix
 import { UnknownLatLonFrameViewComponent } from './graph/components/unknown-lat-lon-frame-view/unknown-lat-lot-frame-view.component';
 import { RuleServiceViewComponent } from './configuration/rule-service-view/rule-service-view.component';
 import { LabelRulesEditViewComponent } from './configuration/label-rules-edit-view/label-rules-edit-view.component';
+import { AnonymizationRuleEditViewComponent } from './configuration/anonymization-rule-edit-view/anonymization-rule-edit-view.component';
 import { HighlightingRulesListViewComponent } from './configuration/highlighting-rules-list-view/highlighting-rules-list-view.component';
 import { HighlightingDeliveryViewComponent } from './configuration/highlighting-delivery-view/highlighting-delivery-view.component';
 import { EdgeColorEditViewComponent } from './configuration/edge-color-edit-view/edge-color-edit-view.component';
@@ -151,6 +152,7 @@ import { SymbolHeaderCellViewComponent } from './configuration/table-cells/symbo
         UnknownLatLonFrameViewComponent,
         RuleServiceViewComponent,
         LabelRulesEditViewComponent,
+        AnonymizationRuleEditViewComponent,
         HighlightingRulesListViewComponent,
         HighlightingDeliveryViewComponent,
         EdgeColorEditViewComponent,

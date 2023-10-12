@@ -1,5 +1,9 @@
 import Ajv from 'ajv';
-import { HighlightingSettings, OperationType, ValueType, LinePatternType } from '../../data.model';
+import {
+    HighlightingSettings, OperationType, ValueType,
+    LinePatternType, StationHighlightingRule, HighlightingRule,
+    DeliveryHighlightingRule
+} from '../../data.model';
 import { InputFormatError } from '../io-errors';
 
 const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = 'SDHR';
@@ -37,355 +41,341 @@ export function checkVersionFormat(version: string): boolean {
     return version && version.trim().match('^\\d+\\.\\d+\\.\\d+$').length > 0;
 }
 
+function createDefaultHRule(): Omit<HighlightingRule, 'id' | 'name' | 'showInLegend'> {
+    return {
+        userDisabled: false,
+        autoDisabled: false,
+        color: null,
+        invisible: false,
+        adjustThickness: false,
+        labelProperty: null,
+        valueCondition: null,
+        logicalConditions: [[]]
+    };
+}
+
+function createDefaultStatHRule(): Omit<StationHighlightingRule, 'id' | 'name' | 'showInLegend'> {
+    return {
+        ...createDefaultHRule(),
+        shape: null
+    };
+}
+
+function createDefaultDelHRule(): Omit<DeliveryHighlightingRule, 'id' | 'name' | 'showInLegend'> {
+    return {
+        ...createDefaultHRule(),
+        linePattern: LinePatternType.SOLID
+    };
+}
+
+export function createDefaultStationAnonymizationLabelHRule(): StationHighlightingRule {
+    return {
+        ...createDefaultStatHRule(),
+        id: 'anoStatLabelRule',
+        name: 'Anonymisation Label',
+        showInLegend: false,
+        userDisabled: true,
+        labelPrefix: 'Station',
+        labelParts: [{
+            prefix: ' ',
+            property: 'country'
+        }, {
+            prefix: ' ',
+            property: 'typeOfBusiness'
+        }, {
+            prefix: ' ',
+            useIndex: true
+        }],
+        logicalConditions: [[]]
+    };
+}
+
+export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationHighlightingRule[] {
+    const hRules = [
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
+            name: 'Outbreak',
+            showInLegend: true,
+            color: [
+                255,
+                0,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'weight',
+                        operationType: OperationType.GREATER,
+                        value: '0'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
+            name: 'Observed',
+            showInLegend: true,
+            color: [
+                0,
+                255,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'observed',
+                        operationType: OperationType.NOT_EQUAL,
+                        value: 'none'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
+            name: 'Forward Trace',
+            showInLegend: true,
+            color: [
+                255,
+                200,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'forward',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
+            name: 'Backward Trace',
+            showInLegend: true,
+            color: [
+                255,
+                0,
+                255
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'backward',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Cross Contamination',
+            name: 'Cross Contamination',
+            showInLegend: true,
+            color: [
+                0,
+                0,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'crossContamination',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Common Link',
+            name: 'Common Link',
+            showInLegend: true,
+            color: [
+                255,
+                255,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'score',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Score',
+            name: 'Score',
+            showInLegend: false,
+            adjustThickness: true,
+            valueCondition: {
+                propertyName: 'score',
+                valueType: ValueType.VALUE,
+                useZeroAsMinimum: true
+            },
+            logicalConditions: null
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'StationLabel',
+            name: 'StationLabel',
+            showInLegend: false,
+            labelProperty: 'name',
+            logicalConditions: [
+                []
+            ]
+        },
+        {
+            ...createDefaultStatHRule(),
+            id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
+            name: 'Kill Contamination',
+            showInLegend: true,
+            color: [ 153, 153, 153 ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'killContamination',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        }
+    ];
+    if (addDefaultAnoRule) {
+        hRules.push(createDefaultStationAnonymizationLabelHRule());
+    }
+    return hRules;
+}
+
+export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
+    const hRules = [
+        {
+            ...createDefaultDelHRule(),
+            id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
+            name: 'Outbreak',
+            showInLegend: true,
+            color: [
+                255,
+                0,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'weight',
+                        operationType: OperationType.GREATER,
+                        value: '0'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultDelHRule(),
+            id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
+            name: 'Observed',
+            showInLegend: true,
+            color: [
+                0,
+                255,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'observed',
+                        operationType: OperationType.NOT_EQUAL,
+                        value: 'none'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultDelHRule(),
+            id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
+            name: 'Forward Trace',
+            showInLegend: true,
+            color: [
+                255,
+                200,
+                0
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'forward',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultDelHRule(),
+            id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
+            name: 'Backward Trace',
+            showInLegend: true,
+            color: [
+                255,
+                0,
+                255
+            ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'backward',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultDelHRule(),
+            id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
+            name: 'Kill Contamination',
+            showInLegend: true,
+            color: [ 153, 153, 153 ],
+            logicalConditions: [
+                [
+                    {
+                        propertyName: 'killContamination',
+                        operationType: OperationType.EQUAL,
+                        value: '1'
+                    }
+                ]
+            ]
+        },
+        {
+            ...createDefaultDelHRule(),
+            id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'DeliveryLabel',
+            name: 'DeliveryLabel',
+            showInLegend: false,
+            labelProperty: 'name',
+            logicalConditions: [
+                []
+            ]
+        }
+    ];
+    return hRules;
+}
+
 export function createDefaultHighlights(): HighlightingSettings {
     const defaultHighlights: HighlightingSettings = {
         invisibleStations: [],
         invisibleDeliveries: [],
-        stations: [
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
-                name: 'Outbreak',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    0,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'weight',
-                            operationType: OperationType.GREATER,
-                            value: '0'
-                        }
-                    ]
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
-                name: 'Observed',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    0,
-                    255,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'observed',
-                            operationType: OperationType.NOT_EQUAL,
-                            value: 'none'
-                        }
-                    ]
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
-                name: 'Forward Trace',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    200,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'forward',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
-                name: 'Backward Trace',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    0,
-                    255
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'backward',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Cross Contamination',
-                name: 'Cross Contamination',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    0,
-                    0,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'crossContamination',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Common Link',
-                name: 'Common Link',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    255,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'score',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Score',
-                name: 'Score',
-                showInLegend: false,
-                disabled: false,
-                color: null,
-                invisible: false,
-                adjustThickness: true,
-                labelProperty: null,
-                valueCondition: {
-                    propertyName: 'score',
-                    valueType: ValueType.VALUE,
-                    useZeroAsMinimum: true
-                },
-                logicalConditions: null,
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'StationLabel',
-                name: 'StationLabel',
-                showInLegend: false,
-                disabled: false,
-                color: null,
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: 'name',
-                valueCondition: null,
-                logicalConditions: [
-                    []
-                ],
-                shape: null
-            },
-            {
-                id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
-                name: 'Kill Contamination',
-                showInLegend: true,
-                disabled: false,
-                color: [ 153, 153, 153 ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'killContamination',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                shape: null
-            }
-        ],
-
-        deliveries: [
-            {
-                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
-                name: 'Outbreak',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    0,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'weight',
-                            operationType: OperationType.GREATER,
-                            value: '0'
-                        }
-                    ]
-                ],
-                linePattern: LinePatternType.SOLID
-            },
-            {
-                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
-                name: 'Observed',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    0,
-                    255,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'observed',
-                            operationType: OperationType.NOT_EQUAL,
-                            value: 'none'
-                        }
-                    ]
-                ],
-                linePattern: LinePatternType.SOLID
-            },
-            {
-                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
-                name: 'Forward Trace',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    200,
-                    0
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'forward',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                linePattern: LinePatternType.SOLID
-            },
-            {
-                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
-                name: 'Backward Trace',
-                showInLegend: true,
-                disabled: false,
-                color: [
-                    255,
-                    0,
-                    255
-                ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'backward',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                linePattern: LinePatternType.SOLID
-            },
-            {
-                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
-                name: 'Kill Contamination',
-                showInLegend: true,
-                disabled: false,
-                color: [ 153, 153, 153 ],
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: null,
-                valueCondition: null,
-                logicalConditions: [
-                    [
-                        {
-                            propertyName: 'killContamination',
-                            operationType: OperationType.EQUAL,
-                            value: '1'
-                        }
-                    ]
-                ],
-                linePattern: LinePatternType.SOLID
-            },
-            {
-                id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'DeliveryLabel',
-                name: 'DeliveryLabel',
-                showInLegend: false,
-                disabled: false,
-                color: null,
-                invisible: false,
-                adjustThickness: false,
-                labelProperty: 'name',
-                valueCondition: null,
-                logicalConditions: [
-                    []
-                ],
-                linePattern: LinePatternType.SOLID
-            }
-        ]
-
+        stations: createDefaultStationHRules(true),
+        deliveries: createDefaultDeliveryHRules()
     };
 
     return defaultHighlights;

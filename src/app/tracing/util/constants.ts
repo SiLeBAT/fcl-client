@@ -34,10 +34,12 @@ export class Constants {
 
     static readonly DIALOG_CANCEL = 'Cancel';
     static readonly DIALOG_OK = 'Ok';
+    static readonly DIALOG_SAVE = 'Save';
     static readonly DIALOG_DONT_SAVE = 'Don\'t save and proceed';
 
     private static readonly STATION_DATA: StationData = {
         id: null,
+        anonymizedName: null,
         name: null,
         lat: null,
         lon: null,
@@ -169,6 +171,9 @@ export class Constants {
     static readonly DEFAULT_GIS_AVOID_OVERLAY = false;
 
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
+
+    static readonly COLUMN_ANONYMIZED_NAME: keyof StationData = 'anonymizedName';
+    static readonly COLUMN_NAME: keyof StationData = 'name';
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
         'name',
         'country',
@@ -176,6 +181,24 @@ export class Constants {
         'score',
         'commonLink'
     );
+
+    static readonly FAVOURITE_STAT_COLUMNS_INCL_ANO = List.of<{ id: string; name: string }>(
+        { id: 'id', name: 'ID' },
+        { id: 'anonymizedName', name: 'Anonymized Name' },
+        { id: 'name', name: 'Name' },
+        { id: 'address', name: 'Address' },
+        { id: 'country', name: 'Country' },
+        { id: 'typeOfBusiness', name: 'Type of Business' },
+        { id: 'score', name: 'Score' },
+        { id: 'commonLink', name: 'Common Link' },
+        { id: 'outbreak', name: 'Outbreak' },
+        { id: 'weight', name: 'Weight' }
+    );
+
+    static readonly FAVOURITE_STAT_COLUMNS_EXCL_ANO = List.of<{ id: string; name: string }>(
+        ...this.FAVOURITE_STAT_COLUMNS_INCL_ANO.toArray().filter(c => c.id !== 'anonymizedName')
+    );
+
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
         'name',
         'lot',

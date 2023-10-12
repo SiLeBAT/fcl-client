@@ -17,7 +17,11 @@ $fcl-font-size: 0.8rem;
     grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 2ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
 }
 
-.fcl-rules-list-drag-indicator {
+.fcl-rules-list-item:not(.cdk-drag) .fcl-rules-list-drag-indicator {
+    display: none;
+}
+
+.cdk-drag .fcl-rules-list-item-drag-indicator {
     $fcl-drag-indicator-size-factor: 1.2;
 
     display: flex;
@@ -31,20 +35,20 @@ $fcl-font-size: 0.8rem;
     }
 }
 
-.cdk-drag-handle {
+.cdk-drag .cdk-drag-handle {
     cursor: ns-resize;
 }
 
 .cdk-drag-disabled .cdk-drag-handle {
     cursor: default;
+
+    .mat-icon {
+        opacity: $fcl-opacity--disabled;
+    }
 }
 
 .cdk-drag-placeholder {
     visibility: hidden;
-}
-
-.cdk-drag-disabled .fcl-cs-rules-list-drag-indicator {
-    opacity: $fcl-opacity--disabled;
 }
 
 /* Animate items as they're being sorted. */

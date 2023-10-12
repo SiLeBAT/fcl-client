@@ -23,6 +23,7 @@ export class ValueEditorViewComponent {
     private static readonly MAX_AUTOCOMPLETE_PROPOSALS = 20;
 
     @Input() disabled = false;
+    @Input() placeholder = 'value';
     @Input() value: string | number | boolean = '';
     @Input() set availableValues(values: ValueType[] | undefined) {
         this.availableValues_ = values || [];

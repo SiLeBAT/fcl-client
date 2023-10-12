@@ -1,0 +1,199 @@
+<div class="fcl-edit-rule">
+    <div class="fcl-label-part-list-title">Anonymization Label Composition:</div>
+    <div class="fcl-label-part-list">
+        <div class="fcl-label-part-list-header">
+            <div class="fcl-label-part-prefix">
+                Prefix
+            </div>
+
+            <div class="fcl-label-part-property">
+                Property / Index
+            </div>
+        </div>
+
+        <div
+            class="fcl-label-part fcl-label-part-label-start"
+            *ngIf="rule !== null"
+            >
+            <div class="fcl-label-part-prefix">
+                <fcl-value-editor-view
+                    class="fcl-label-part-form-field"
+                    placeholder="No prefix"
+                    [value]="rule.labelPrefix"
+                    (valueChange)="onLabelPrefixChange($event)"
+                ></fcl-value-editor-view>
+            </div>
+            <div class="fcl-label-part-prop-or-index-col">
+                Label start
+            </div>
+        </div>
+        <div class="fcl-label-part-list-body"
+            *ngIf="rule !== null"
+            cdkDropList
+            (cdkDropListDropped)="onDrop($event)"
+        >
+        <div
+            class="fcl-label-part"
+            *ngFor="let item of rule.labelParts; let i = index index as index; trackBy: trackByIndex"
+            cdkDrag
+            cdkDragLockAxis="y"
+            cdkDragBoundary=".cdk-drop-list"
+        >
+
+            <div class="fcl-label-part-drag-indicator" cdkDragHandle>
+                <mat-icon>drag_indicator</mat-icon>
+            </div>
+            <div
+                class="fcl-label-part-prefix"
+            >
+                <fcl-value-editor-view
+                    class="fcl-label-part-form-field"
+                    placeholder="No prefix"
+                    [disabled]="item.useIndex === false"
+                    [value]="item.useIndex === false ? ' ' : item.prefix"
+                    (valueChange)="onLabelPartPrefixChange($event, i)"
+                ></fcl-value-editor-view>
+            </div>
+
+                <div class="fcl-label-part-property">
+                    <fcl-property-selector-view
+                        *ngIf="item.property !== undefined"
+                        class="fcl-label-part-property-form-field"
+                        [value]="item.property"
+                        (valueChange)="onPropertyChange($event, i)"
+                        [favouriteProperties]="favouriteProperties"
+                        [otherProperties]="otherProperties"
+                    ></fcl-property-selector-view>
+                    <div
+                        *ngIf="item.useIndex !== undefined"
+                        class="fcl-useindex-checkbox-wrapper"
+                    >
+                        <mat-checkbox
+                            *ngIf="item.useIndex !== undefined"
+                            class="fcl-label-part-useindex-checkbox"
+                            [checked]="item.useIndex"
+                            (change)="onUseIndexChange($event.checked, i)"
+                        >
+                            Use index
+                        </mat-checkbox>
+                    </div>
+                </div>
+
+                <button
+                    mat-stroked-button
+                    *ngIf="item.property !== undefined"
+                    class="fcl-label-part-remove-button fcl-label-part-list-button"
+                    matTooltip="Remove Label Part"
+                    matTooltipPosition="above"
+                    color="accent"
+                    (click)="onRemoveLabelPart(i)">
+                    <mat-icon>remove</mat-icon>
+                </button>
+            </div>
+
+        </div>
+
+        <div class="fcl-label-part-list-footer">
+            <button
+                mat-stroked-button
+                class="fcl-label-part-add-button fcl-label-part-list-button"
+                matTooltip="Add Label Part"
+                matTooltipPosition="above"
+                color="accent"
+                (click)="onAddLabelPart()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="fcl-label-preview">
+        <span class="fcl-label-preview-header">Label preview:</span><br>
+        <ng-container *ngIf="rule !== null">
+            <span>{{ rule.labelPrefix }}</span>
+            <ng-container *ngFor="let item of rule.labelParts">
+                <span *ngIf="item.useIndex !== false">{{ item.prefix }}</span>
+                <span *ngIf="item.useIndex === undefined">[{{ item.property ? getPropertyName(item.property) : '?' }}]</span>
+                <span *ngIf="item.useIndex === true">[Index]</span>
+            </ng-container>
+        </ng-container>
+    </div>
+
+    <div class="fcl-edit-rule-useconditions-and-ruleservice-fields">
+        <mat-checkbox
+            class="fcl-edit-rule-useconditions-checkbox fcl-checkbox-wo-ripple"
+            [checked]="useConditions"
+            (change)="onUseConditionsChange($event.checked)"
+        >
+            Use conditions
+        </mat-checkbox>
+
+        <fcl-rule-service-view
+            (addSelection)="onAddSelection()"
+            (removeSelection)="onRemoveSelection()"
+            [disabled]="!useConditions"
+        ></fcl-rule-service-view>
+    </div>
+
+    <fcl-complex-filter-view
+        class="fcl-edit-rule-complex-filter"
+        [conditions] = "complexFilterConditions"
+        [favouriteProperties] = "favouriteProperties"
+        [otherProperties] = "otherProperties"
+        [availableOperatorTypes] = "availableOperatorTypes"
+        [propToValuesMap] = "propToValuesMap"
+        (conditionsChange) = "onComplexFilterChange($event)"
+        [disabled]="!useConditions"
+    ></fcl-complex-filter-view>
+
+    <div class="fcl-edit-rule-action-button-container">
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            [matTooltip]="applyTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onApplyRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                Apply
+            </button>
+        </div>
+
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            matTooltip="Close dialogue">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onCancelRule()"
+                >
+                <mat-icon>clear</mat-icon>
+                Cancel
+            </button>
+        </div>
+
+        <div
+            class="fcl-edit-rule-action-button-wrapper"
+            [matTooltip]="okTooltip">
+            <button
+                mat-stroked-button
+                class="fcl-edit-rule-action-button"
+
+                matTooltipPosition="above"
+                color="primary"
+                (click)="onOkRule()"
+                [disabled]="actionButtonDisabled"
+                >
+                <mat-icon>done</mat-icon>
+                OK
+            </button>
+        </div>
+
+    </div>
+</div>

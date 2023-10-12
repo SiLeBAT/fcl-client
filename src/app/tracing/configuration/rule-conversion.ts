@@ -1,18 +1,23 @@
 import { DeliveryHighlightingRule, HighlightingRule, HighlightingStats, StationHighlightingRule } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 import {
-    ColorAndShapeEditRule, ColorEditRule, DeliveryEditRule, DeliveryRuleType, EditRule, InvEditRule,
-    LabelEditRule, RuleListItem, RuleType, StationEditRule, StationRuleType
+    ColorAndShapeEditRule, ColorEditRule, ComposedLabelEditRule,
+    DeliveryEditRule, DeliveryRuleType, EditRule, EditRuleCore,
+    InvEditRule, LabelEditRule, RuleListItem, RuleType,
+    StationEditRule, StationRuleType
 } from './model';
+import { isSimpleLabelRule } from './shared';
 import { ComplexFilterUtils } from './shared/complex-filter-utils';
 
 function convertEditRuleToHRule(editRule: EditRule): HighlightingRule {
     return {
         id: editRule.id,
         name: editRule.name,
-        disabled: editRule.disabled,
+        userDisabled: editRule.userDisabled,
+        autoDisabled: false,
         logicalConditions: ComplexFilterUtils.complexFilterConditionsToLogicalConditions(editRule.complexFilterConditions),
         labelProperty: null,
+        labelParts: null,
         showInLegend: false,
         color: null,
         adjustThickness: false,
@@ -22,11 +27,16 @@ function convertEditRuleToHRule(editRule: EditRule): HighlightingRule {
 }
 
 function convertLabelEditRuleToHRule(editRule: LabelEditRule): HighlightingRule {
-    return {
-        ...convertEditRuleToHRule(editRule),
-        showInLegend: editRule.showInLegend,
-        labelProperty: editRule.labelProperty
+    const hRule: HighlightingRule = {
+        ...convertEditRuleToHRule(editRule)
     };
+    if (isSimpleLabelRule(editRule)) {
+        hRule.labelProperty = editRule.labelProperty;
+    } else {
+        hRule.labelParts = editRule.labelParts;
+        hRule.labelPrefix = editRule.labelPrefix;
+    }
+    return hRule;
 }
 
 function convertHRuleToStatHRule(rule: HighlightingRule): StationHighlightingRule {
@@ -43,7 +53,7 @@ function convertHRuleToDeliveryHRule(rule: HighlightingRule): DeliveryHighlighti
     };
 }
 
-function convertLabelEditRuleToStatHRule(editRule: LabelEditRule): StationHighlightingRule {
+function convertLabelEditRuleToStatHRule(editRule: LabelEditRule | ComposedLabelEditRule): StationHighlightingRule {
     return convertHRuleToStatHRule(convertLabelEditRuleToHRule(editRule));
 }
 
@@ -89,7 +99,7 @@ export function convertStationEditRuleToHRule(editRule: StationEditRule): Statio
         case RuleType.COLOR_AND_SHAPE:
             return convertCSEditRuleToStatHRule(editRule as ColorAndShapeEditRule);
         case RuleType.LABEL:
-            return convertLabelEditRuleToStatHRule(editRule as LabelEditRule);
+            return convertLabelEditRuleToStatHRule(editRule as LabelEditRule | ComposedLabelEditRule);
         case RuleType.INVISIBILITY:
             return convertInvEditRuleToStatHRule(editRule as InvEditRule);
         default:
@@ -110,20 +120,20 @@ export function convertDeliveryEditRuleToHRule(editRule: DeliveryEditRule): Deli
     }
 }
 
-function convertHRuleToEditRule(rule: HighlightingRule, ruleType: RuleType): EditRule {
+function convertHRuleToEditRuleCore(rule: HighlightingRule): EditRuleCore {
     return {
         id: rule.id,
         name: rule.name,
-        disabled: rule.disabled,
+        userDisabled: rule.userDisabled,
         complexFilterConditions: ComplexFilterUtils.logicalConditionsToComplexFilterConditions(rule.logicalConditions),
-        type: ruleType,
         isValid: true
     };
 }
 
 export function convertStatHRuleToCSEditRule(rule: StationHighlightingRule): ColorAndShapeEditRule {
     return {
-        ...convertHRuleToEditRule(rule, RuleType.COLOR_AND_SHAPE),
+        ...convertHRuleToEditRuleCore(rule),
+        type: RuleType.COLOR_AND_SHAPE,
         color: rule.color === null ? null : Utils.rgbArrayToColor(rule.color),
         shape: rule.shape,
         showInLegend: rule.showInLegend
@@ -132,7 +142,8 @@ export function convertStatHRuleToCSEditRule(rule: StationHighlightingRule): Col
 
 export function convertDeliveryHRuleToColorEditRule(rule: DeliveryHighlightingRule): ColorEditRule {
     return {
-        ...convertHRuleToEditRule(rule, RuleType.COLOR),
+        ...convertHRuleToEditRuleCore(rule),
+        type: RuleType.COLOR,
         color: Utils.rgbArrayToColor(rule.color),
         showInLegend: rule.showInLegend
     };
@@ -140,9 +151,25 @@ export function convertDeliveryHRuleToColorEditRule(rule: DeliveryHighlightingRu
 
 export function convertHRuleToLabelEditRule(rule: HighlightingRule): LabelEditRule {
     return {
-        ...convertHRuleToEditRule(rule, RuleType.LABEL),
-        labelProperty: rule.labelProperty,
-        showInLegend: rule.showInLegend
+        ...convertHRuleToEditRuleCore(rule),
+        type: RuleType.LABEL,
+        ...(
+            rule.labelParts ?
+                {
+                    labelParts: rule.labelParts,
+                    labelPrefix: rule.labelPrefix
+                } :
+                { labelProperty: rule.labelProperty }
+        )
+    };
+}
+
+export function convertHRuleToComposedLabelEditRule(rule: HighlightingRule): ComposedLabelEditRule {
+    return {
+        ...convertHRuleToEditRuleCore(rule),
+        type: RuleType.LABEL,
+        labelParts: rule.labelParts,
+        labelPrefix: rule.labelPrefix
     };
 }
 
@@ -155,6 +182,8 @@ export function convertStationHRuleToEditRule(rule: StationHighlightingRule): St
         return convertStatHRuleToCSEditRule(rule);
     } else if (rule.labelProperty) {
         return convertHRuleToLabelEditRule(rule);
+    } else if (rule.labelParts) {
+        return convertHRuleToComposedLabelEditRule(rule);
     } else if (rule.invisible) {
         return convertHRuleToInvEditRule(rule);
     } else {
@@ -177,7 +206,7 @@ export function convertDeliveryHRuleToEditRule(rule: DeliveryHighlightingRule): 
 export function getStatRuleType(rule: StationHighlightingRule): StationRuleType | null {
     if (rule.color || rule.shape) {
         return RuleType.COLOR_AND_SHAPE;
-    } else if (rule.labelProperty) {
+    } else if (rule.labelProperty || rule.labelParts) {
         return RuleType.LABEL;
     } else {
         return null;
@@ -201,7 +230,9 @@ function convertHRuleToRuleListItem(rule: HighlightingRule, stats: HighlightingS
         color: rule.color === null ? null : Utils.rgbArrayToColor(rule.color),
         shape: null,
         showInLegend: rule.showInLegend,
-        disabled: rule.disabled,
+        autoDisabled: rule.autoDisabled,
+        isAnonymizationRule: !!rule.labelParts,
+        disabled: rule.userDisabled || rule.autoDisabled,
         effElementsCount: stats.counts[rule.id] || 0,
         conflictCount: stats.conflicts[rule.id] || 0,
         effElementsCountTooltip: ''

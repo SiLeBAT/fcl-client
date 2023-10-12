@@ -675,11 +675,12 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private updateColumns(): void {
+        const didModelChange = this.inputData.dataTable.modelFlag !== this.processedInput__?.dataTable?.modelFlag;
         const newDataColumns = this.inputData.dataTable.columns;
-        const oldDataColumns = this.processedInput__ ? this.processedInput__.dataTable.columns : undefined;
         const newColumnOrder = this.inputData.columnOrder.filter(prop => this.inputData.dataTable.columns.some(c => c.id === prop));
-        if (newDataColumns !== oldDataColumns) {
-            // new model was model
+
+        if (didModelChange) {
+            // new model was loaded
             this.columns_ = [].concat(
                 this.createFixedColumns(),
                 newColumnOrder.map(p => this.createNgxTableDataColumn(newDataColumns, p)).filter(c => !!c)

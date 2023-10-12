@@ -176,7 +176,7 @@ export class ReportConfigurationComponent {
 
     private setInterpretAsNumberFlag(roaSettings: ROASettings): void {
         const labelElements: LabelElementInfo[][][] = Object.values(roaSettings.labelSettings);
-        const flattenedLabelElements: LabelElementInfo[] = _.flattenDepth(labelElements, 2);
+        const flattenedLabelElements = _.flattenDeep(labelElements);
         const propElements = flattenedLabelElements.filter(e => (e as PropElementInfo).prop != null) as PropElementInfo[];
         for (const propElement of propElements) {
             if (propElement.prop.match(AMOUNT_PROP_MATCHER_REGEXP)) {

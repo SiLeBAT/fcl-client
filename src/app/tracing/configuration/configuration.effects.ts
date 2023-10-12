@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { AlertService } from '../../shared/services/alert.service';
 import * as fromTracing from '../state/tracing.reducers';
 import { mergeMap, take, withLatestFrom } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
@@ -17,6 +16,8 @@ import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/d
 import { selectHighlightingSettings } from '../state/tracing.selectors';
 import { EditHighlightingService } from './edit-highlighting.service';
 import { TableColumn } from '../data.model';
+import { Utils } from '../util/non-ui-utils';
+import * as _ from 'lodash';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -24,7 +25,6 @@ export class ConfigurationEffects {
         private editHighlightingService: EditHighlightingService,
         private actions$: Actions,
         private dialogService: MatDialog,
-        private alertService: AlertService,
         private store: Store<fromTracing.State>
     ) {}
 
@@ -51,11 +51,12 @@ export class ConfigurationEffects {
                         take(1)
                     ).subscribe((selections: string[]) => {
                         if (selections != null) {
-                            // assumption, the selection is unordered
-                            const newColumnOrder = [].concat(
-                                oldColumnOrder.filter(prop => selections.includes(prop)),
-                                selections.filter(prop => !oldColumnOrder.includes(prop))
-                            );
+                            // assumption, the selection has default ordering
+                            const keepColumns = _.intersection(oldColumnOrder, selections);
+                            const newColumns = _.difference(selections, keepColumns);
+                            const defaultOrdering = selections;
+                            const newColumnOrder = Utils.insertInOrder(keepColumns, defaultOrdering, newColumns);
+
                             if (tableType === TableType.STATIONS) {
                                 this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: newColumnOrder }));
                             } else if (tableType === TableType.DELIVERIES) {

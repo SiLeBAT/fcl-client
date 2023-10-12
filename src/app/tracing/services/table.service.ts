@@ -5,7 +5,6 @@ import {
     StationData,
     TableColumn,
     TableRow,
-    StationTable,
     DataTable,
     NodeShapeType,
     DataServiceInputState,
@@ -13,11 +12,23 @@ import {
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
+import { Constants } from '../util/constants';
 
 export interface ColumnOption {
     value: string;
     viewValue: string;
     selected: boolean;
+}
+const COLUMNS_ANO_FLAG: StatColumnsFlag = 'a';
+const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = 'h';
+
+type StatColumnsFlag = 'h' | '' | 'a' | 'ah';
+type DeliveryColumnsFlag = 'h' | '';
+
+interface Cache {
+    modelFlag: Record<string, never>;
+    stationColumnSets: Partial<Record<StatColumnsFlag, ColumnSets>>;
+    deliveryColumnSets: Partial<Record<DeliveryColumnsFlag, ColumnSets>>;
 }
 
 type ColumnSets = ColumnSubSets & Pick<DataTable, 'columns'>;
@@ -27,36 +38,52 @@ type ColumnSets = ColumnSubSets & Pick<DataTable, 'columns'>;
 })
 export class TableService {
 
-    constructor(private dataService: DataService) {}
+    private cache: Cache = this.createEmptyCache();
+
+    constructor(
+        private dataService: DataService
+    ) {}
+
+    private checkCache(modelFlag: Record<string, never>): void {
+        if (this.cache.modelFlag !== modelFlag) {
+            this.cache = this.createEmptyCache(modelFlag);
+        }
+    }
+
+    private createEmptyCache(modelFlag?: Record<string, never>): Cache {
+        return {
+            modelFlag: modelFlag || {},
+            stationColumnSets: {},
+            deliveryColumnSets: {}
+        };
+    }
 
     getDeliveryTable(state: DataServiceInputState, forHighlighting: boolean, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
+
         return {
+            modelFlag: data.modelFlag,
             ...this.getDeliveryColumnSets(data, forHighlighting),
             rows: this.getDeliveryRows(data, forHighlighting, deliveryIds)
         };
     }
 
-    getStationTable(state: DataServiceInputState, forHighlighting: boolean): StationTable {
+    getStationTable(state: DataServiceInputState, forHighlighting: boolean): DataTable {
         const data: DataServiceData = this.dataService.getData(state);
+
         return {
+            modelFlag: data.modelFlag,
             ...this.getStationColumnSets(data, forHighlighting),
             rows: this.getStationRows(data, forHighlighting)
         };
     }
 
-    private getFavouriteStationColumns(): TableColumn[] {
-        return [
-            { id: 'id', name: 'ID' },
-            { id: 'name', name: 'Name' },
-            { id: 'address', name: 'Address' },
-            { id: 'country', name: 'Country' },
-            { id: 'typeOfBusiness', name: 'Type of Business' },
-            { id: 'score', name: 'Score' },
-            { id: 'commonLink', name: 'Common Link' },
-            { id: 'outbreak', name: 'Outbreak' },
-            { id: 'weight', name: 'Weight' }
-        ];
+    private getFavouriteStationColumns(data: DataServiceData, forHighlighting: boolean): TableColumn[] {
+        const favColumns = data.isStationAnonymizationActive && !forHighlighting ?
+            Constants.FAVOURITE_STAT_COLUMNS_INCL_ANO.toArray() :
+            Constants.FAVOURITE_STAT_COLUMNS_EXCL_ANO.toArray();
+
+        return favColumns;
     }
 
     private getFavouriteDeliveryColumns(forHighlighting: boolean): TableColumn[] {
@@ -97,13 +124,22 @@ export class TableService {
     }
 
     getDeliveryColumnSets(data: DataServiceData, forHighlighting: boolean): ColumnSets {
-        const favouriteColumns = this.getFavouriteDeliveryColumns(forHighlighting);
-        const otherColumns = this.getOtherDeliveryColumns(data, forHighlighting, favouriteColumns);
-        return {
-            columns: [].concat(favouriteColumns, otherColumns),
-            favouriteColumns: favouriteColumns,
-            otherColumns: otherColumns
-        };
+        this.checkCache(data.modelFlag);
+
+        const cacheFlag = forHighlighting ? 'h' : '';
+        let columnSets = this.cache.deliveryColumnSets[cacheFlag];
+
+        if (!columnSets) {
+            const favouriteColumns = this.getFavouriteDeliveryColumns(forHighlighting);
+            const otherColumns = this.getOtherDeliveryColumns(data, forHighlighting, favouriteColumns);
+            columnSets = {
+                columns: [].concat(favouriteColumns, otherColumns),
+                favouriteColumns: favouriteColumns,
+                otherColumns: otherColumns
+            };
+            this.cache.deliveryColumnSets[cacheFlag] = columnSets;
+        }
+        return columnSets;
     }
 
     private getOtherStationColumns(data: DataServiceData, forHighlighting: boolean, favouriteColumns: TableColumn[]): TableColumn[] {
@@ -126,13 +162,22 @@ export class TableService {
     }
 
     getStationColumnSets(data: DataServiceData, forHighlighting: boolean): ColumnSets {
-        const favouriteColumns: TableColumn[] = this.getFavouriteStationColumns();
-        const otherColumns = this.getOtherStationColumns(data, forHighlighting, favouriteColumns);
-        return {
-            columns: [].concat(favouriteColumns, otherColumns),
-            favouriteColumns: favouriteColumns,
-            otherColumns: otherColumns
-        };
+        this.checkCache(data.modelFlag);
+
+        const cacheFlag = (data.isStationAnonymizationActive ? 'a' : '') + (forHighlighting ? 'h' : '');
+        let columnSets = this.cache.stationColumnSets[cacheFlag];
+
+        if (!columnSets) {
+            const favouriteColumns: TableColumn[] = this.getFavouriteStationColumns(data, forHighlighting);
+            const otherColumns = this.getOtherStationColumns(data, forHighlighting, favouriteColumns);
+            columnSets = {
+                columns: [].concat(favouriteColumns, otherColumns),
+                favouriteColumns: favouriteColumns,
+                otherColumns: otherColumns
+            };
+            this.cache.stationColumnSets[cacheFlag] = columnSets;
+        }
+        return columnSets;
     }
 
     private sortColumns(columns: TableColumn[]): TableColumn[] {
@@ -227,6 +272,9 @@ export class TableService {
             if (!forHighlighting) {
                 row['selected'] = station.selected;
                 row['invisible'] = station.invisible;
+                if (data.isStationAnonymizationActive) {
+                    row['anonymizedName'] = station.anonymizedName;
+                }
             }
 
             station.properties.forEach(

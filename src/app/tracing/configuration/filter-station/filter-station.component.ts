@@ -157,7 +157,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
 
             if (
                 cacheIsEmpty ||
-                this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
+                this.cachedData.dataServiceData.modelFlag !== newDSData.modelFlag
             ) {
                 // new Model
                 dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
@@ -169,10 +169,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
                 newDSData.statSel !== cachedDSData.statSel
             ) {
-                dataTable = {
-                    ...this.cachedData.dataTable,
-                    rows: this.tableService.getStationTable(state.dataServiceInputState, false).rows
-                };
+                dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
             }
 
             this.cachedState = {

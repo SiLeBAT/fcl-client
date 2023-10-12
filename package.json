@@ -84,6 +84,7 @@
     "@types/d3-selection": "^3.0.3",
     "@types/hammerjs": "^2.0.41",
     "@types/jest": "^28.1.8",
+    "@types/lodash": "^4.14.199",
     "@types/node": "^12.20.55",
     "@types/ol": "^5.3.8",
     "@types/seedrandom": "^3.0.2",

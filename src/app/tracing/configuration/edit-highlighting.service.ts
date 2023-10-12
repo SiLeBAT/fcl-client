@@ -13,7 +13,9 @@ import {
     DeliveryHighlightingRule,
     DeliveryId,
     HighlightingRule,
-    StationHighlightingRule} from '../data.model';
+    StationHighlightingRule,
+    HighlightingStats
+} from '../data.model';
 import { DataService } from '../services/data.service';
 import { EditTracingSettingsService } from '../services/edit-tracing-settings.service';
 import { TableService } from '../services/table.service';
@@ -21,21 +23,17 @@ import { Utils } from '../util/non-ui-utils';
 import { ComplexFilterCondition, JunktorType, PropToValuesMap } from './configuration.model';
 import { EditRuleCreator } from './edit-rule-creator';
 import {
-    ColorAndShapeEditRule, ColorEditRule, DeliveryEditRule, DeliveryRuleType, EditHighlightingServiceData,
-    EditRule, InvEditRule, LabelEditRule, RuleId, RuleListItem, RuleType, StationEditRule,
-    StationRuleType
+    DeliveryEditRule, DeliveryRuleType, EditHighlightingServiceData,
+    EditRule, RuleId, RuleListItem, StationEditRule,
+    StationRuleType, EditRuleCore
 } from './model';
 import {
-    convertDeliveryEditRuleToHRule, convertDeliveryHRuleToEditRule, convertDeliveryHRuleToRuleListItem,
-    convertStationHRuleToRuleListItem, convertStationEditRuleToHRule, convertStationHRuleToEditRule
+    convertDeliveryHRuleToEditRule, convertDeliveryHRuleToRuleListItem,
+    convertStationHRuleToRuleListItem, convertStationHRuleToEditRule,
+    convertDeliveryEditRuleToHRule, convertStationEditRuleToHRule
 } from './rule-conversion';
-import { extractPropToValuesMap } from './shared';
-
-type TypeOfEditRule<T extends RuleType> =
-    T extends RuleType.LABEL ? LabelEditRule :
-    T extends RuleType.COLOR_AND_SHAPE ? ColorAndShapeEditRule :
-    T extends RuleType.COLOR ? ColorEditRule :
-    T extends RuleType.INVISIBILITY ? InvEditRule : never;
+import { EditRuleOfType, extractPropToValuesMap } from './shared';
+import * as _ from 'lodash';
 
 interface UnsharedData {
     propData: PropData;
@@ -51,10 +49,8 @@ interface PropData {
 interface CachedData {
     stationSpecificData: UnsharedData;
     deliverySpecificData: UnsharedData;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    highlightingStats: {};
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    tracingPropsUpdatedFlag: {};
+    highlightingStats: HighlightingStats;
+    tracingPropsUpdatedFlag: Record<string, never>;
 }
 
 @Injectable({
@@ -140,9 +136,9 @@ export class EditHighlightingService {
     }
 
     toggleRuleIsDisabled<T extends HighlightingRule>(ruleId: RuleId, rules: T[]): T[] {
-        const rule = this.getRuleFromId(ruleId, rules);
-        if (rule !== null) {
-            rules = this.updateRule(rule, { disabled: !rule.disabled }, rules);
+        const oldRule = this.getRuleFromId(ruleId, rules);
+        if (oldRule !== null) {
+            rules = this.updateRule(oldRule, { userDisabled: !oldRule.userDisabled }, rules);
         }
         return rules;
     }
@@ -161,7 +157,8 @@ export class EditHighlightingService {
                 ...rule,
                 ...update
             };
-            return this.applyRule(newRule, rules);
+            rules = this.applyRule(newRule, rules);
+            rules = this.updateAutoDisabledFlag(rules);
         }
         return rules;
     }
@@ -199,12 +196,12 @@ export class EditHighlightingService {
         return this.removeSelectionFromEditRuleConditions(editRule, selectedIds);
     }
 
-    removeSelectionFromDeliveryRuleConditions<T extends DeliveryEditRule>(editRule: T, state: DataServiceInputState): T {
+    removeSelectionFromDeliveryRuleConditions<T extends EditRuleCore>(editRule: T, state: DataServiceInputState): T {
         const selectedIds = this.getSelectedDeliveryIdsFromState(state);
         return this.removeSelectionFromEditRuleConditions(editRule, selectedIds);
     }
 
-    private removeSelectionFromEditRuleConditions<T extends EditRule>(editRule: T, selectedIds: string[]): T {
+    private removeSelectionFromEditRuleConditions<T extends EditRuleCore>(editRule: T, selectedIds: string[]): T {
         const newConditions = this.filterConditionsForIds(editRule.complexFilterConditions, selectedIds);
         if (newConditions.length < editRule.complexFilterConditions.length) {
             return {
@@ -280,32 +277,25 @@ export class EditHighlightingService {
 
     createEditRuleFromRuleType<
         T extends StationRuleType | DeliveryRuleType,
-        R extends TypeOfEditRule<T>
+        R extends EditRuleOfType<T>
     >(
-        ruleType: RuleType
+        ruleType: T
     ): R | null {
-        switch (ruleType) {
-            case RuleType.LABEL:
-                return EditRuleCreator.createLabelEditRule() as R;
-            case RuleType.COLOR_AND_SHAPE:
-                return EditRuleCreator.createColorAndShapeEditRule() as R;
-            case RuleType.COLOR:
-                return EditRuleCreator.createColorEditRule() as R;
-            case RuleType.INVISIBILITY:
-                return EditRuleCreator.createInvEditRule() as R;
-            default:
-                return null;
-        }
+        return EditRuleCreator.createNewEditRule(ruleType);
     }
 
     applyDeliveryRule(editRule: DeliveryEditRule, rules: DeliveryHighlightingRule[]): DeliveryHighlightingRule[] {
         const rule = convertDeliveryEditRuleToHRule(editRule);
-        return this.applyRule(rule, rules);
+        rules = this.applyRule(rule, rules);
+        rules = this.updateAutoDisabledFlag(rules);
+        return rules;
     }
 
     applyStationRule(editRule: StationEditRule, rules: StationHighlightingRule[]): StationHighlightingRule[] {
         const rule = convertStationEditRuleToHRule(editRule);
-        return this.applyRule(rule, rules);
+        rules = this.applyRule(rule, rules);
+        rules = this.updateAutoDisabledFlag(rules);
+        return rules;
     }
 
     applyRule<T extends EditRule | HighlightingRule >(rule: T, rules: T[]): T[] {
@@ -317,6 +307,31 @@ export class EditHighlightingService {
             newRules.push(rule);
         }
         return newRules;
+    }
+
+    private isLabelHRule(hRule: HighlightingRule): boolean {
+        return !!hRule.labelProperty || !!hRule.labelParts;
+    }
+
+    private isAnonymizationRule(hRule: HighlightingRule): boolean {
+        return !!hRule.labelParts;
+    }
+
+    private updateAutoDisabledFlag<T extends HighlightingRule>(rules: T[]): T[] {
+        const hasActiveAnoRule = rules.some(r => this.isAnonymizationRule(r) && !r.userDisabled);
+        let indicesOfRulesToUpdate: number[] = [];
+        const isUpdateRequiredCheckFun = hasActiveAnoRule ?
+            (r: T) => !r.autoDisabled && !this.isAnonymizationRule(r) && this.isLabelHRule(r) :
+            (r: T) => r.autoDisabled;
+        indicesOfRulesToUpdate = rules.reduce(
+            (prevResult,rule,index) => isUpdateRequiredCheckFun(rule) ? [].concat(...prevResult, index) : prevResult,
+            [] as number[]
+        );
+        if (indicesOfRulesToUpdate.length > 0) {
+            rules = rules.slice();
+            indicesOfRulesToUpdate.forEach(i => rules[i] = { ...rules[i], autoDisabled: hasActiveAnoRule });
+        }
+        return rules;
     }
 
     removeRule<T extends EditRule | HighlightingRule>(rules: T[], ruleId: RuleId): T[] {

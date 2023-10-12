@@ -3,7 +3,6 @@ import { Store, select } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
 import * as tracingSelectors from '@app/tracing/state/tracing.selectors';
 import * as tracingActions from '@app/tracing/state/tracing.actions';
-import * as tracingEffectActions from '@app/tracing/tracing.actions';
 import * as tracingIOActions from '@app/tracing/io/io.actions';
 import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
@@ -125,7 +124,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     onDownloadFile(fileName: string) {
         this.mainPageService.onSave(fileName);
-        this.store.dispatch(new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA());
     }
 
     onSaveImage() {

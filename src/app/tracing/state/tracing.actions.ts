@@ -14,7 +14,10 @@ import {
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
-import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
+import {
+    ActiveConfigurationTabId, ActiveFilterTabId,
+    ActiveHighlightingTabId, FilterTableSettings
+} from '../configuration/configuration.model';
 import { ROASettings } from '../visio/model';
 import { DeliveryEditRule, StationEditRule } from '../configuration/model';
 
