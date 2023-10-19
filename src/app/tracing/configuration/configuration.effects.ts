@@ -4,7 +4,7 @@ import * as fromTracing from '../state/tracing.reducers';
 import { mergeMap, take, withLatestFrom } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { select, Store } from '@ngrx/store';
-import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
+import { Option, DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteHighlightingRuleSSA } from './configuration.actions';
 import { TableType } from './model';
@@ -35,10 +35,12 @@ export class ConfigurationEffects {
 
                 const tableType = action.payload.type;
                 const oldColumnOrder = action.payload.columnOrder;
-                const mapColumnToOption = (column: TableColumn) => ({
+                const mapColumnToOption: (c: TableColumn) => Option = (column) => ({
                     value: column.id,
                     viewValue: column.name,
-                    selected: oldColumnOrder.includes(column.id)
+                    selected: oldColumnOrder.includes(column.id),
+                    disabled: column.unavailable,
+                    tooltip: column.unavailable ? 'Data is not available.' : ''
                 });
                 const dialogData: DialogSelectData = {
                     title: 'Show Columns',

@@ -4,6 +4,8 @@
     color="primary">
     <mat-label *ngIf="label !== null">{{ label }}</mat-label>
     <mat-select
+        [ngClass]="isPropDataUnavailable ? 'fcl-option-unsupported' : ''"
+        matTooltip="{{ isPropDataUnavailable ? 'Data is not available.' : '' }}"
         [value]="value"
         (valueChange)="onValueChange($event)"
         [disabled]="disabled"
@@ -11,6 +13,8 @@
         <ng-container *ngFor="let property of favouriteProperties">
             <mat-option
                 class="fcl-filter-select-option"
+                [ngClass]="property.unavailable ? 'fcl-option-unsupported' : ''"
+                matTooltip="{{ property.unavailable ? 'Data is not available.' : '' }}"
                 [value]="property.id">
                 {{ property.name }}
             </mat-option>
@@ -21,6 +25,8 @@
         <ng-container *ngFor="let property of otherProperties">
             <mat-option
                 class="fcl-filter-select-option"
+                [ngClass]="property.unavailable ? 'fcl-option-unsupported' : ''"
+                matTooltip="{{ property.unavailable ? 'Data is not available.' : '' }}"
                 [value]="property.id">
                 {{ property.name }}
             </mat-option>

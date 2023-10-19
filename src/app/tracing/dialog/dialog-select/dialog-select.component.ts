@@ -2,10 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
 
-interface Option {
+export interface Option {
     value: string;
     viewValue: string;
     selected: boolean;
+    disabled?: boolean | undefined;
+    tooltip?: string;
 }
 
 export interface DialogSelectData {
@@ -33,7 +35,7 @@ export class DialogSelectComponent {
     close() {
         this.dialogRef.close(
             [].concat(this.favouriteOptions, this.otherOptions)
-                .filter(o => o.selected).map(o => o.value)
+                .filter(o => o.selected && !o.disabled).map(o => o.value)
         );
     }
 

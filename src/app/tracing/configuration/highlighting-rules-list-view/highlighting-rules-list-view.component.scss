@@ -3,7 +3,6 @@
 $fcl-col-legend-width: 27px;
 $fcl-col-edit-width: 24px;
 $fcl-col-delete-width: 22px;
-$fcl-opacity--disabled: 0.38;
 $fcl-font-size: 0.8rem;
 
 .fcl-rules-list-item {
@@ -43,7 +42,7 @@ $fcl-font-size: 0.8rem;
     cursor: default;
 
     .mat-icon {
-        opacity: $fcl-opacity--disabled;
+        opacity: fcl.$fcl-opacity--disabled;
     }
 }
 
@@ -67,7 +66,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rule-disabled .fcl-rules-list-item-name {
-    opacity: $fcl-opacity--disabled;
+    opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-symbol {
@@ -81,7 +80,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rule-disabled .fcl-rules-list-item-counts {
-    opacity: $fcl-opacity--disabled;
+    opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-legend-button {
@@ -98,7 +97,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rules-list-item-legend-button.mat-button-toggle-disabled {
-    opacity: $fcl-opacity--disabled;
+    opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-activated-slider {

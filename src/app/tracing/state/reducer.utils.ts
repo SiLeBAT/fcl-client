@@ -25,7 +25,7 @@ export function addStatAnoColumnOnAnoActivation(oldHRules: HighlightingRule[], n
                 if (anoColumnMode === AnonymizedNameColumnMode.ADD) {
                     columnOrder = Utils.insertInOrder(
                         columnOrder,
-                        Constants.FAVOURITE_STAT_COLUMNS_INCL_ANO.toArray().map(c => c.id),
+                        Constants.FAVOURITE_STAT_COLUMNS.toArray().map(c => c.id),
                         [Constants.COLUMN_ANONYMIZED_NAME]
                     );
                 } else {
@@ -109,23 +109,6 @@ export function removeAnoRefsOnStatFilterActivitationWoAno(oldState: TracingStat
             newStatFilterSettings = {
                 ...newStatFilterSettings,
                 columnOrder: newColumnOrder
-            };
-        }
-        if (newStatFilterSettings.complexFilter.conditions.some(
-            c => c.propertyName === Constants.COLUMN_ANONYMIZED_NAME
-        )) {
-            newStatFilterSettings = {
-                ...newStatFilterSettings,
-                complexFilter: {
-                    ...newStatFilterSettings.complexFilter,
-                    conditions: newStatFilterSettings.complexFilter.conditions.map(
-                        c => (
-                            c.propertyName === Constants.COLUMN_ANONYMIZED_NAME ?
-                                { ...c, propertyName: null } :
-                                c
-                        )
-                    )
-                }
             };
         }
         if (newStatFilterSettings.columnFilters.some(

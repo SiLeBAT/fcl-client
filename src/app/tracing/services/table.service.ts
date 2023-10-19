@@ -14,11 +14,6 @@ import * as _ from 'lodash';
 import { DataService } from './data.service';
 import { Constants } from '../util/constants';
 
-export interface ColumnOption {
-    value: string;
-    viewValue: string;
-    selected: boolean;
-}
 const COLUMNS_ANO_FLAG: StatColumnsFlag = 'a';
 const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = 'h';
 
@@ -79,9 +74,15 @@ export class TableService {
     }
 
     private getFavouriteStationColumns(data: DataServiceData, forHighlighting: boolean): TableColumn[] {
-        const favColumns = data.isStationAnonymizationActive && !forHighlighting ?
-            Constants.FAVOURITE_STAT_COLUMNS_INCL_ANO.toArray() :
-            Constants.FAVOURITE_STAT_COLUMNS_EXCL_ANO.toArray();
+        let colDefs = Constants.FAVOURITE_STAT_COLUMNS.toArray();
+        if (forHighlighting) {
+            colDefs = colDefs.filter(c => c.availableForHighlighting !== false);
+        }
+        const favColumns = colDefs.map(c => ({ id: c.id, name: c.name })) as TableColumn[];
+
+        if (!forHighlighting && !data.isStationAnonymizationActive) {
+            favColumns.find(c => c.id === Constants.COLUMN_ANONYMIZED_NAME).unavailable = true;
+        }
 
         return favColumns;
     }
@@ -143,19 +144,12 @@ export class TableService {
     }
 
     private getOtherStationColumns(data: DataServiceData, forHighlighting: boolean, favouriteColumns: TableColumn[]): TableColumn[] {
-        const otherColumns: TableColumn[] = [
-            { id: 'forward', name: 'On Forward Trace' },
-            { id: 'backward', name: 'On Backward Trace' },
-            { id: 'crossContamination', name: 'Cross Contamination' },
-            { id: 'killContamination', name: 'Kill Contamination' },
-            { id: 'observed', name: 'Observed' },
-            forHighlighting ? null : { id: 'selected', name: 'Selected' },
-            forHighlighting ? null : { id: 'invisible', name: 'Invisible' },
-            { id: 'lat', name: 'Latitude' },
-            { id: 'lon', name: 'Longitude' },
-            { id: 'isMeta', name: 'Is Meta Station' },
-            forHighlighting ? null : { id: 'contained', name: 'Is Meta Member', canBeUsedForHighlighting: false }
-        ].filter(c => c !== null);
+        let colDefs = Constants.KNOWN_OTHER_STAT_COLUMNS.toArray();
+        if (forHighlighting) {
+            colDefs = colDefs.filter(c => c.availableForHighlighting !== false);
+        }
+
+        const otherColumns = colDefs.map(c => ({ id: c.id, name: c.name }));
 
         this.addColumnsForProperties(otherColumns, data.stations);
         return this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);

@@ -209,12 +209,16 @@ export class FilterElementsViewComponent implements OnChanges {
         ) {
             this.checkTableSizeSubject_.next(200);
         }
-        this.updateFilterAndRows();
         this.updateDataColumns();
+        this.updateFilterAndRows();
         this.updateTableInputData();
         this.updatePropValueMap();
 
         this.processedInput__ = this.inputData;
+    }
+
+    private getIgnoredProps(): string[] {
+        return this.dataColumns_.filter(c => c.unavailable).map(c => c.id);
     }
 
     private updateFilterAndRows(): void {
@@ -229,8 +233,16 @@ export class FilterElementsViewComponent implements OnChanges {
                     oldFilterMap.predefinedFilter
             ),
             complexFilter: (
-                !oldSettings || oldSettings.complexFilter !== newSettings.complexFilter ?
-                    getUpdatedComplexRowFilter(newSettings.complexFilter, oldFilterMap ? oldFilterMap.complexFilter : undefined) :
+                (
+                    !oldSettings ||
+                    oldSettings.complexFilter !== newSettings.complexFilter ||
+                    this.processedInput__.dataTable.columns !== this.inputData.dataTable.columns
+                ) ?
+                    getUpdatedComplexRowFilter(
+                        newSettings.complexFilter,
+                        this.getIgnoredProps(),
+                        oldFilterMap ? oldFilterMap.complexFilter : undefined
+                    ) :
                     oldFilterMap.complexFilter
             ),
             standardFilter: (

@@ -37,6 +37,7 @@ export interface StandardFilterSettings {
 export interface TableColumn {
     id: string;
     name: string;
+    unavailable?: boolean;
 }
 
 export type Property = TableColumn;

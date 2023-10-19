@@ -4,6 +4,12 @@ import { ExampleData } from '@app/main-page/model/types';
 import * as _ from 'lodash';
 import { Utils } from './non-ui-utils';
 
+interface ColumnDefinition {
+    id: string;
+    name: string;
+    availableForHighlighting?: boolean;
+}
+
 export class Constants {
     static readonly EXAMPLE_DATA_BASE_DIR = 'assets/example-data/';
     static readonly EXAMPLE_DATA_SUB_DIR_1 = 'baby-tea/';
@@ -182,9 +188,9 @@ export class Constants {
         'commonLink'
     );
 
-    static readonly FAVOURITE_STAT_COLUMNS_INCL_ANO = List.of<{ id: string; name: string }>(
+    static readonly FAVOURITE_STAT_COLUMNS = List.of<ColumnDefinition>(
         { id: 'id', name: 'ID' },
-        { id: 'anonymizedName', name: 'Anonymized Name' },
+        { id: 'anonymizedName', name: 'Anonymized Name', availableForHighlighting: false },
         { id: 'name', name: 'Name' },
         { id: 'address', name: 'Address' },
         { id: 'country', name: 'Country' },
@@ -195,8 +201,18 @@ export class Constants {
         { id: 'weight', name: 'Weight' }
     );
 
-    static readonly FAVOURITE_STAT_COLUMNS_EXCL_ANO = List.of<{ id: string; name: string }>(
-        ...this.FAVOURITE_STAT_COLUMNS_INCL_ANO.toArray().filter(c => c.id !== 'anonymizedName')
+    static readonly KNOWN_OTHER_STAT_COLUMNS = List.of<ColumnDefinition>(
+        { id: 'forward', name: 'On Forward Trace' },
+        { id: 'backward', name: 'On Backward Trace' },
+        { id: 'crossContamination', name: 'Cross Contamination' },
+        { id: 'killContamination', name: 'Kill Contamination' },
+        { id: 'observed', name: 'Observed' },
+        { id: 'selected', name: 'Selected', availableForHighlighting: false },
+        { id: 'invisible', name: 'Invisible', availableForHighlighting: false },
+        { id: 'lat', name: 'Latitude' },
+        { id: 'lon', name: 'Longitude' },
+        { id: 'isMeta', name: 'Is Meta Station' },
+        { id: 'contained', name: 'Is Meta Member', availableForHighlighting: false }
     );
 
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
