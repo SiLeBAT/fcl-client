@@ -82,6 +82,7 @@ import { VisibilityFilterHeaderCellViewComponent } from './configuration/table-c
 import { OpenSettingsHeaderCellViewComponent } from './configuration/table-cells/opensettings-header-cell-view/opensettings-header-cell-view.component';
 import { CollapseStatusCellViewComponent } from './configuration/table-cells/collapse-status-cell-view/collapse-status-cell-view.component';
 import { SymbolHeaderCellViewComponent } from './configuration/table-cells/symbol-header-cell-view/symbol-header-cell-view.component';
+import { PrefixEditorViewComponent } from './configuration/prefix-editor-view/prefix-editor-view.component';
 
 @NgModule({
     imports: [
@@ -163,7 +164,8 @@ import { SymbolHeaderCellViewComponent } from './configuration/table-cells/symbo
         CollapseStatusCellViewComponent,
         SymbolCellViewComponent,
         VisibilityCellViewComponent,
-        RowCellViewComponent
+        RowCellViewComponent,
+        PrefixEditorViewComponent
     ],
     exports: []
 })

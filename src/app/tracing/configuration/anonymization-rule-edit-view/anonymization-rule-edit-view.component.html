@@ -16,12 +16,11 @@
             *ngIf="rule !== null"
             >
             <div class="fcl-label-part-prefix">
-                <fcl-value-editor-view
+                <fcl-prefix-editor-view
                     class="fcl-label-part-form-field"
-                    placeholder="No prefix"
                     [value]="rule.labelPrefix"
                     (valueChange)="onLabelPrefixChange($event)"
-                ></fcl-value-editor-view>
+                ></fcl-prefix-editor-view>
             </div>
             <div class="fcl-label-part-prop-or-index-col">
                 Label start
@@ -46,13 +45,13 @@
             <div
                 class="fcl-label-part-prefix"
             >
-                <fcl-value-editor-view
+                <fcl-prefix-editor-view
                     class="fcl-label-part-form-field"
                     placeholder="No prefix"
                     [disabled]="item.useIndex === false"
                     [value]="item.useIndex === false ? ' ' : item.prefix"
                     (valueChange)="onLabelPartPrefixChange($event, i)"
-                ></fcl-value-editor-view>
+                ></fcl-prefix-editor-view>
             </div>
 
                 <div class="fcl-label-part-property">

@@ -28,8 +28,7 @@ export class CustomLabelCreator extends LabelCreator {
                     // an element can be dependent on other elements
                     // however the dependency is not matched
                     return '';
-                } else
-                if ((element as PropElementInfo).prop !== undefined) {
+                } else if ((element as PropElementInfo).prop !== undefined) {
                     const propElement = element as PropElementInfo;
 
                     let propValue = propElement.prop === null ? null : infoObj.props[propElement.prop];
@@ -42,9 +41,11 @@ export class CustomLabelCreator extends LabelCreator {
                     ) {
                         propValue = this.roundValue(propValue);
                     }
-                    return propElement.prop === null ?
-                        '' :
-                        CustomLabelCreator.getText(propValue, propElement.altText);
+                    return (
+                        propElement.prop === null ?
+                            '' :
+                            CustomLabelCreator.getText(propValue, propElement.altText)
+                    );
                 } else {
                     const textElement = element as TextElementInfo;
                     return textElement.text;
