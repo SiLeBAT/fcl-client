@@ -6,6 +6,7 @@
 @use 'assets/sass/base' as fcl;
 @use 'material-style';
 @use 'ngx-datatable-style';
+
 $roboto-font-path: '~roboto-fontface/fonts' !default;
 /* stylelint-disable-next-line at-rule-empty-line-before */
 @import '~roboto-fontface/css/roboto/sass/roboto-fontface';
@@ -136,8 +137,7 @@ mat-form-field.less-bottom-padding {
     .mat-button-toggle-button {
         flex: 1 1 100%;
         box-sizing: border-box;
-        align-items: center;
-        justify-items: center;
+        place-items: center center;
         display: flex;
 
         .mat-button-toggle-label-content {

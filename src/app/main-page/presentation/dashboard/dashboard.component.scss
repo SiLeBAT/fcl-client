@@ -14,13 +14,10 @@
 
 .fcl-dashboard-container {
     grid-area: features;
-    margin-top: 5rem;
+    margin: 5rem 1ch 1rem;
     flex: 1;
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem;
-    margin-left: 1ch;
-    margin-right: 1ch;
 }
 
 .mat-flat-button {
@@ -45,7 +42,7 @@
 }
 
 .fcl-mat-card:hover {
-    box-shadow: -1px 5px 15px 0 rgba(0, 0, 0, 0.8);
+    box-shadow: -1px 5px 15px 0 rgb(0 0 0 / 0.8);
 }
 
 .fcl-logo {

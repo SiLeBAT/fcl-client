@@ -1,7 +1,6 @@
 .fcl-flex-row {
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+    flex-flow: row nowrap;
 }
 
 .fcl-flex-baseline {
@@ -18,7 +17,7 @@
     @extend .fcl-unflex-item;
     @extend .fcl-flex-baseline;
 
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(230 230 230);
     border-width: 0;
     border-radius: 1em;
     padding: 0.5em;

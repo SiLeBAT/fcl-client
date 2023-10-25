@@ -25,8 +25,7 @@ $fcl-font-size: 0.8rem;
 
     display: flex;
     grid-area: dragcolumn;
-    justify-self: left;
-    align-self: center;
+    place-self: center left;
     max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
 
     .mat-icon {
@@ -93,7 +92,7 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-legend-button.mat-button-toggle-checked {
     font-weight: bold;
     background-color: fcl.$fcl-primary-500;
-    color: rgb(255, 255, 255);
+    color: rgb(255 255 255);
 }
 
 .fcl-rules-list-item-legend-button.mat-button-toggle-disabled {
@@ -103,8 +102,7 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-activated-slider {
     grid-area: activated;
     display: flex;
-    align-items: center;
-    justify-items: center;
+    place-items: center center;
 }
 
 .fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
@@ -114,8 +112,7 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-edit-button-wrapper {
     grid-area: edit;
     display: flex;
-    justify-content: center;
-    align-content: center;
+    place-content: center center;
     max-width: $fcl-col-edit-width;
     overflow-x: hidden;
 }
@@ -123,8 +120,7 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-delete-button-wrapper {
     display: flex;
     grid-area: delete;
-    justify-content: center;
-    align-content: center;
+    place-content: center center;
     justify-self: end;
     max-width: $fcl-col-delete-width;
     overflow-x: hidden;
@@ -141,14 +137,14 @@ $fcl-font-size: 0.8rem;
 
 .fcl-add-rule-button {
     border-radius: 5;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255 255 255);
     margin-top: 1rem;
     width: 100%;
 }
 
 .fcl-add-rule-button:hover:enabled {
     background-color: fcl.$fcl-accent-300;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255 255 255 / 0.9);
 }
 
 .fcl-rules-list-item-counts-wrapper {

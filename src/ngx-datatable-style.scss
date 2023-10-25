@@ -1,9 +1,10 @@
 @use 'node_modules/@swimlane/ngx-datatable/themes/material.scss';
 @use 'src/assets/sass/base' as fcl;
+@use 'sass:map';
 
 ngx-datatable {
-    background: rgb(255, 255, 255);
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+    background: rgb(255 255 255);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.12), 0 1px 2px 0 rgb(0 0 0 / 0.24);
     font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
@@ -54,7 +55,7 @@ ngx-datatable {
 
                 &.active:hover,
                 &.active:hover .datatable-row-group {
-                    background-color: map-get(fcl.$fcl-blue, 700);
+                    background-color: map.get(fcl.$fcl-blue, 700);
                 }
             }
         }

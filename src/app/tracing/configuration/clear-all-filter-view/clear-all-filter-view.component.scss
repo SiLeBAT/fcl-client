@@ -3,11 +3,11 @@
 
 .fcl-clear-all-filter-button {
     border-radius: 0;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255 255 255);
     box-shadow: fcl.$fcl-box-shadow;
 }
 
 .fcl-clear-all-filter-button:hover {
     background-color: fcl.$fcl-accent-300;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255 255 255 / 0.9);
 }

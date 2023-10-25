@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
 @use './themes' as *;
 @use "sass:math";
+@use 'sass:map';
 
 @forward './themes';
 
@@ -20,18 +21,18 @@ $octuple-space: $single-space * 8;
 $fcl-toolbar-padding: 5px;
 $fcl-toolbar-elevation: 4;
 $fcl-card-border-radius: 8px;
-$fcl-bg-color: rgba(255, 255, 255, 0.7);
-$fcl-bg-color-entry: rgba(125, 138, 153, 0.5);
-$fcl-accent-500: map-get($fcl-darkgrey, 500);
-$fcl-accent-300: map-get($fcl-darkgrey, 300);
-$fcl-accent-200: map-get($fcl-darkgrey, 200);
-$fcl-accent-100: map-get($fcl-darkgrey, 100);
-$fcl-primary-100: map-get($fcl-blue, 100);
-$fcl-primary-200: map-get($fcl-blue, 200);
-$fcl-primary-500: map-get($fcl-blue, 500);
-$fcl-box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$fcl-bg-color: rgb(255 255 255 / 0.7);
+$fcl-bg-color-entry: rgb(125 138 153 / 0.5);
+$fcl-accent-500: map.get($fcl-darkgrey, 500);
+$fcl-accent-300: map.get($fcl-darkgrey, 300);
+$fcl-accent-200: map.get($fcl-darkgrey, 200);
+$fcl-accent-100: map.get($fcl-darkgrey, 100);
+$fcl-primary-100: map.get($fcl-blue, 100);
+$fcl-primary-200: map.get($fcl-blue, 200);
+$fcl-primary-500: map.get($fcl-blue, 500);
+$fcl-box-shadow: 0 3px 1px -2px rgb(0 0 0 / 0.2), 0 2px 2px 0 rgb(0 0 0 / 0.14), 0 1px 5px 0 rgb(0 0 0 / 0.12);
 
-$fcl-foreground-color: rgb(0, 0, 0);
+$fcl-foreground-color: rgb(0 0 0);
 $fcl-mat-option-selected-color: #034ea2;
 $fcl-opacity--disabled: 0.38;
 $fcl-foreground-color--disabled: rgba($fcl-foreground-color, $fcl-opacity--disabled);
