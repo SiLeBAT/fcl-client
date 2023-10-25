@@ -1,0 +1,6 @@
+{
+  "GHSA-j4rv-pr9g-q8jv": {
+    "active": true,
+    "notes": "The vulnerability addresses a cross-site scripting possiblity\nby the insufficent tooltip processing in mxGraph.\nIn mxGraph the tooltip (which essentially is an user input) \nis directly used as the innerHtml for the div which is used\nto show the tooltip. The (user input) tooltip is provided by\na function getTooltipForCell in mxGraph. \nHowever, in our roa editor this function is overriden by a\nfunction (in src/assets/mggraph-editor/js/Graph.js) that sanitizes\nthe tooltip.\nHence, this vulnerability cannot be exploited here."
+  }
+}

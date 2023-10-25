@@ -4,6 +4,7 @@
   "license": "GPL v3",
   "scripts": {
     "ng": "ng",
+    "audit": "better-npm-audit audit",
     "serverlessstart": "ng serve --configuration=serverless",
     "serverlessstart:wra": "ng serve --host 0.0.0.0 --configuration=serverless",
     "start": "ng serve --proxy-config proxy.config.json",
@@ -91,6 +92,7 @@
     "@types/seedrandom": "^3.0.7",
     "@typescript-eslint/eslint-plugin": "5.43.0",
     "@typescript-eslint/parser": "5.43.0",
+    "better-npm-audit": "^3.7.3",
     "eslint": "^8.51.0",
     "eslint-plugin-rxjs": "~5.0.3",
     "jest": "^28.1.3",
