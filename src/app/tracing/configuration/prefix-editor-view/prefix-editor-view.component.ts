@@ -208,17 +208,26 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
     //#endregion template methods
 
     private processInsertDropEvent(): void {
-        const beforeSel = this._value.slice(0, this.selStart);
-        const afterSel = this._value.slice(this.selStart);
-        const rawDropText = this.displayedSelection;
-        const newValue = `${beforeSel}${rawDropText}${afterSel}`;
+        // in chrome & edge the selection starts before the drop text and
+        // ends after the drop text (so the dropped text is in the selection)
+        // in firefox the selection starts & ends after the drop text
+        // but the drop text is still in the transferdata object available
+        // so we use the selection end as reference here & extract the dropText from
+        // the input element value
+        const dropTextLength = this.inputElement.value.length - this._value.length;
+        const dropPos = this.selEnd - dropTextLength;
+        const dropText = this.inputElement.value.slice(dropPos, dropPos + dropTextLength);
+
+        const beforeInsert = this._value.slice(0, dropPos);
+        const afterInsert = this._value.slice(dropPos);
+        const newValue = `${beforeInsert}${dropText}${afterInsert}`;
         this.pendingSelectionRange = {
-            start: this.selStart,
-            end: this.selEnd
+            start: dropPos,
+            end: dropPos + dropText.length
         };
         this.recordEditOp({
-            insertText: rawDropText,
-            insertTextAt: beforeSel.length
+            insertText: dropText,
+            insertTextAt: dropPos
         }, true);
         this.setNewValue(newValue);
     }
