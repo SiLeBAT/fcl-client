@@ -170,6 +170,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.LoadFclDataSuccessSOA: {
             action.payload.fclData.graphSettings.mapType = state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData = state.fclData.graphSettings.shapeFileData;
+            action.payload.fclData.graphSettings.geojsonBorderColor = state.fclData.graphSettings.geojsonBorderColor;
+            action.payload.fclData.graphSettings.geojsonBorderWidth = state.fclData.graphSettings.geojsonBorderWidth;
 
             let newState = {
                 ...state,
@@ -236,7 +238,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_FILE,
-                        shapeFileData: action.payload.shapeFileData
+                        shapeFileData: action.payload.shapeFileData,
+                        geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                        geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR
                     }
                 }
             };
