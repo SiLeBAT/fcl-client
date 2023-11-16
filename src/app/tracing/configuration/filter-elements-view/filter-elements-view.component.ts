@@ -119,7 +119,7 @@ export class FilterElementsViewComponent implements OnChanges {
     private updateTableSizeSubject_ = new Subject<void>();
     updateTableSize$ = this.updateTableSizeSubject_.asObservable();
 
-    // lifecycle hooks start
+    //#region lifecycle hooks
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.inputData !== undefined && changes.inputData.currentValue !== null) {
@@ -127,9 +127,9 @@ export class FilterElementsViewComponent implements OnChanges {
         }
     }
 
-    // life cycle hooks end
+    //#endregion life cycle hooks
 
-    // template triggers start
+    //#region template triggers
 
     onClearAllFilters(): void {
         this.clearAllFilters.emit();
@@ -194,7 +194,7 @@ export class FilterElementsViewComponent implements OnChanges {
         this.updateTableSizeSubject_.next();
     }
 
-    // template triggers end
+    //#endregion template triggers
 
     private processInputData(): void {
         if (
@@ -280,46 +280,22 @@ export class FilterElementsViewComponent implements OnChanges {
     }
 
     private updateTableInputData(): void {
-        if (!this.filterTableViewInputData_) {
+        if (
+            !this.filterTableViewInputData_ ||
+            this.filterTableViewInputData_.dataTable !== this.inputData.dataTable ||
+            this.filterTableViewInputData_.filteredRows !== this.prefilteredRows_ ||
+            this.filterTableViewInputData_.visibilityFilter !== this.inputData.filterTableSettings.visibilityFilter ||
+            this.filterTableViewInputData_.columnFilters !== this.inputData.filterTableSettings.columnFilters ||
+            this.filterTableViewInputData_.columnOrder !== this.inputData.filterTableSettings.columnOrder
+        ) {
             this.filterTableViewInputData_ = {
-                dataTable: {
-                    ...this.inputData.dataTable,
-                    rows: this.prefilteredRows_
-                },
+                dataTable: this.inputData.dataTable,
+                filteredRows: this.prefilteredRows_,
                 columnOrder: this.inputData.filterTableSettings.columnOrder,
                 selectedRowIds: this.inputData.selectedRowIds,
                 visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
                 columnFilters: this.inputData.filterTableSettings.columnFilters
             };
-        } else {
-            const dataTable = (
-                (
-                    this.inputData.dataTable.columns !== this.filterTableViewInputData_.dataTable.columns ||
-                    this.prefilteredRows_ !== this.filterTableViewInputData_.dataTable.rows
-                ) ?
-                    {
-                        ...this.inputData.dataTable,
-                        rows: this.prefilteredRows_
-                    } :
-                    this.filterTableViewInputData_.dataTable
-            );
-
-            this.filterTableViewInputData_ = (
-                (
-                    this.filterTableViewInputData_.dataTable !== dataTable ||
-                    this.filterTableViewInputData_.visibilityFilter !== this.inputData.filterTableSettings.visibilityFilter ||
-                    this.filterTableViewInputData_.columnFilters !== this.inputData.filterTableSettings.columnFilters ||
-                    this.filterTableViewInputData_.columnOrder !== this.inputData.filterTableSettings.columnOrder
-                ) ?
-                    ({
-                        dataTable: dataTable,
-                        columnOrder: this.inputData.filterTableSettings.columnOrder,
-                        selectedRowIds: this.inputData.selectedRowIds,
-                        visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
-                        columnFilters: this.inputData.filterTableSettings.columnFilters
-                    }) :
-                    this.filterTableViewInputData_
-            );
         }
     }
 

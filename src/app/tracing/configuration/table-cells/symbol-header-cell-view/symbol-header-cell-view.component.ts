@@ -1,20 +1,11 @@
 import {
-    Component, Input, Output, EventEmitter, ChangeDetectionStrategy
+    Component, ChangeDetectionStrategy
 } from '@angular/core';
-import * as _ from 'lodash';
+import { SortableHeaderCellViewComponent } from '../../sortable-header-cell-view.component';
 
 @Component({
     selector: 'fcl-symbol-header-cell-view',
     templateUrl: './symbol-header-cell-view.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SymbolHeaderCellViewComponent {
-
-    @Input() sortDir: any = undefined;
-
-    @Output() sort = new EventEmitter<void>();
-
-    onSort(): void {
-        this.sort.emit();
-    }
-}
+export class SymbolHeaderCellViewComponent extends SortableHeaderCellViewComponent {}

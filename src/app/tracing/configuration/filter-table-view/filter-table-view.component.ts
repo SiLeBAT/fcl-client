@@ -2,14 +2,19 @@ import {
     Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter,
     OnChanges, SimpleChanges, DoCheck, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, OnDestroy, AfterViewInit
 } from '@angular/core';
-import { DatatableComponent, SelectionType, TableColumn as NgxTableColumn } from '@swimlane/ngx-datatable';
-import { DataTable, NodeShapeType, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
+import {
+    DatatableComponent, SelectionType,
+    TableColumn as NgxTableColumn,
+    SortPropDir
+} from '@swimlane/ngx-datatable';
+import { DataTable, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
 import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRowFilter, createOneTermForEachColumnRowFilter } from '../filter-provider';
 import { filterTableRows } from '../shared';
 import * as _ from 'lodash';
 import { VisibilityFilterState, ColumnFilterSettings, ActivityState } from '../configuration.model';
 import { Utils } from '@app/tracing/util/non-ui-utils';
 import { Observable, Subscription } from 'rxjs';
+import { applySorting, highlightingComparator, sortRows, visibilityComparator } from './filter-table-utils';
 
 const CLASS_DATATABLE_FOOTER = 'datatable-footer';
 
@@ -24,67 +29,9 @@ interface FilterMap {
     visibilityFilter: VisibilityRowFilter;
     columnFilter: OneTermForEachColumnRowFilter;
 }
-
-const shapePrioMap: { [key in NodeShapeType]: number } = {
-    [NodeShapeType.CIRCLE]: 0,
-    [NodeShapeType.TRIANGLE]: 1,
-    [NodeShapeType.SQUARE]: 2,
-    [NodeShapeType.DIAMOND]: 3,
-    [NodeShapeType.PENTAGON]: 4,
-    [NodeShapeType.HEXAGON]: 5,
-    [NodeShapeType.OCTAGON]: 6,
-    [NodeShapeType.STAR]: 7
-};
-
-function visibilityComparator(valueA, valueB, rowA, rowB, sortDirection): number {
-    let result: number = 0;
-
-    if (rowA['invisible'] === true && rowB['invisible'] === false) {
-        result = -1;
-    }
-    if (rowA['invisible'] === false && rowB['invisible'] === true) {
-        result = 1;
-    }
-
-    return result;
-}
-
-function highlightingComparator(valueA, valueB, rowA, rowB, sortDirection): number {
-
-    if (rowA['invisible'] !== rowB['invisible']) {
-        return rowA['invisible'] ? -1 : 1;
-    } else {
-        const hIA = rowA['highlightingInfo'];
-        const hIB = rowB['highlightingInfo'];
-        const shapeA: NodeShapeType = hIA['shape'] || NodeShapeType.CIRCLE;
-        const shapeB: NodeShapeType = hIB['shape'] || NodeShapeType.CIRCLE;
-
-        if (shapeA !== shapeB) {
-            return shapePrioMap[shapeA] - shapePrioMap[shapeB];
-        } else {
-            const colorsA = hIA['color'];
-            const colorsB = hIB['color'];
-            // todo: use color priorities instead
-            if (colorsA.length !== colorsB.length) {
-                return colorsA.length - colorsB.length;
-            } else {
-                const n = colorsA.length;
-                for (let i = 0; i < n; i++) {
-                    for (let k = 0; k < 3; k++) {
-                        if (colorsA[i][k] !== colorsB[i][k]) {
-                            return colorsB[i][k] - colorsA[i][k];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return 0;
-}
-
 export interface InputData {
     dataTable: DataTable;
+    filteredRows: TableRow[];
     columnOrder: string[];
     selectedRowIds: string[];
     columnFilters: ColumnFilterSettings[];
@@ -110,28 +57,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         return this.inputData.visibilityFilter;
     }
 
-    private set filteredRows(filteredRows: TableRow[]) {
-        this.filteredRows_ = filteredRows;
-        this.updateTreeRows();
-        this.cdRef.markForCheck();
+    get sorts(): SortPropDir[] {
+        return this.sorts_;
     }
 
-    private get filteredRows(): TableRow[] {
-        return this.filteredRows_;
-    }
-
-    private get treeRows(): TableRow[] {
-        return this.treeRows_;
-    }
-
-    private set treeRows(treeRows: TableRow[]) {
-        this.treeRows_ = treeRows;
-        this.updateTreeStatusFromCache();
-    }
 
     get tableRows(): TableRow[] {
-        return !this.useTreeMode ?
-            this.filteredRows : this.treeRows;
+        return this.tableRows_;
     }
 
     get columns(): NgxTableColumn[] {
@@ -196,13 +128,14 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     private processDataIsRequired_ = false;
     private filterMap_: FilterMap = null;
     private columnFilterTexts_: { [key: string]: string };
-    private filteredRows_: TableRow[] = [];
-    private treeRows_: TableRow[] = [];
+    private tableRows_: TableRow[] = [];
     private treeStatusCache: Record<string, TreeStatus> = {};
 
     private columns_: NgxTableColumn[];
+    private sorts_: SortPropDir[] = [];
 
     private selectedRows_: TableRow[] = [];
+    private sortedUnfilteredRows_: TableRow[] = [];
 
     private activityState_: ActivityState = ActivityState.INACTIVE;
 
@@ -383,24 +316,43 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
         this.columnOrderChange.emit(this.getColumnOrdering());
     }
+
+    onSort(event: {
+        sorts: SortPropDir[];
+        column: NgxTableColumn;
+        prevValue: SortPropDir | undefined;
+        newValue: SortPropDir;
+    }): void {
+
+        this.sorts_ = event.sorts;
+        // setting the rows triggers the resorting
+        // the sort order needed to be set before
+        this.sortedUnfilteredRows_ = sortRows(
+            this.sortedUnfilteredRows_,
+            this.sortedUnfilteredRows_,
+            this.columns_,
+            this.sorts_
+        );
+
+        const newTableRows = applySorting(this.sortedUnfilteredRows_, this.tableRows_);
+        this.tableRows_ = newTableRows;
+    }
+
     // template triggers end
 
-    private updateTreeRows(): void {
-        if (this.useTreeMode) {
-            const availableRows: Record<string, boolean> = {};
-            this.filteredRows_.forEach(row => availableRows[row.id] = true);
+    private addMissingRowParents(rows: TableRow[]): void {
+        const availableRows: Record<string, boolean> = {};
+        rows.forEach(row => availableRows[row.id] = true);
 
-            const missingParents: TableRow[] = [];
-            for (const row of this.filteredRows_) {
-                if (row.parentRow !== undefined && !availableRows[row.parentRowId]) {
-                    missingParents.push(row.parentRow);
-                    availableRows[row.parentRowId] = true;
-                }
+        const missingParents: TableRow[] = [];
+        for (const row of rows) {
+            if (row.parentRow !== undefined && !availableRows[row.parentRowId]) {
+                missingParents.push(row.parentRow);
+                availableRows[row.parentRowId] = true;
             }
-            this.treeRows =
-                missingParents.length > 0 ?
-                    this.filteredRows.concat(missingParents) :
-                    this.filteredRows;
+        }
+        if (missingParents.length > 0) {
+            rows.concat(missingParents);
         }
     }
 
@@ -630,11 +582,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private updateTableSize(): void {
         // force table refresh by changing the table input
-        if (this.useTreeMode) {
-            this.treeRows_ = this.treeRows_.slice();
-        } else {
-            this.filteredRows_ = this.filteredRows_.slice();
-        }
+        this.tableRows_ = this.tableRows_.slice();
         this.cdRef.markForCheck();
     }
 
@@ -686,6 +634,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 newColumnOrder.map(p => this.createNgxTableDataColumn(newDataColumns, p)).filter(c => !!c)
             );
             this.treeStatusCache = {};
+            this.sorts_ = [];
+            this.sortedUnfilteredRows_ = [];
         } else {
             const currentColumnOrder = this.getColumnOrdering();
             const columnVisChanged =
@@ -700,6 +650,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                         return cols.length === 1 ? cols[0] : this.createNgxTableDataColumn(newDataColumns, p);
                     }).filter(c => !!c)
                 );
+                this.adaptSortOrderToAvailableColumns();
             } else {
                 const orderChanged = !_.isEqual(currentColumnOrder, newColumnOrder);
                 if (orderChanged) {
@@ -711,15 +662,15 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         if (this.processedInput__ !== this.inputData) {}
     }
 
-    private updateTreeStatusFromCache(): void {
+    private applyTreeStatusFromCache(rows: TableRow[]): void {
         if (this.useTreeMode) {
             const hasVisibleMember: Record<string, boolean> = {};
-            for (const row of this.treeRows_) {
+            for (const row of rows) {
                 if (row.parentRowId !== undefined) {
                     hasVisibleMember[row.parentRowId] = true;
                 }
             }
-            for (const row of this.treeRows_) {
+            for (const row of rows) {
                 if (row.parentRowId === undefined) {
                     if (hasVisibleMember[row.id]) {
                         row.treeStatus = this.treeStatusCache[row.id] || 'collapsed';
@@ -731,9 +682,16 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
     }
 
+    private adaptSortOrderToAvailableColumns(): void {
+        const availableSortProps = this.sorts_.filter(s => this.columns_.some(c => c.prop === s.prop));
+        if (availableSortProps.length !== this.sorts_.length) {
+            this.sorts_ = this.sorts_.filter(s => availableSortProps.includes(s));
+        }
+    }
+
     private updateRows(): void {
-        const oldDataRows = this.processedInput__ ? this.processedInput__.dataTable.rows : undefined;
-        const newDataRows = this.inputData.dataTable.rows;
+        const oldPrefilteredRows = this.processedInput__ ? this.processedInput__.filteredRows : undefined;
+        const newPrefilteredRows = this.inputData.filteredRows;
 
         const filterMap: FilterMap = {
             visibilityFilter: (
@@ -749,18 +707,37 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         };
 
         if (
-            oldDataRows !== newDataRows ||
+            oldPrefilteredRows !== newPrefilteredRows ||
             filterMap.visibilityFilter !== this.filterMap_.visibilityFilter ||
             filterMap.columnFilter !== this.filterMap_.columnFilter
         ) {
-            const tableWasEmptyBefore = this.filteredRows_.length === 0;
+            const tableWasEmptyBefore = this.tableRows_.length === 0;
             this.filterMap_ = filterMap;
-            this.filteredRows = filterTableRows(newDataRows, [filterMap.visibilityFilter, filterMap.columnFilter]);
+
+            const unsortedFilteredRows = filterTableRows(newPrefilteredRows, [filterMap.visibilityFilter, filterMap.columnFilter]);
+            this.addMissingRowParents(unsortedFilteredRows);
+
+            const oldUnfilteredRows = this.processedInput__ ? this.processedInput__.dataTable.rows : undefined;
+            const newUnfilteredRows = this.inputData.dataTable.rows;
+
+            if (oldUnfilteredRows !== newUnfilteredRows) {
+                // sort unfiltered data
+                this.applyTreeStatusFromCache(newUnfilteredRows);
+                this.sortedUnfilteredRows_ = sortRows(
+                    newUnfilteredRows,
+                    this.sortedUnfilteredRows_,
+                    this.columns_,
+                    this.sorts_
+                );
+            }
+
+            const sortedFilteredRows = applySorting(this.sortedUnfilteredRows_, unsortedFilteredRows);
+            this.tableRows_ = sortedFilteredRows;
 
             this.updateColumnFilterTexts();
             if (
                 tableWasEmptyBefore &&
-                this.filteredRows_.length > 0 &&
+                this.tableRows_.length > 0 &&
                 this.table.bodyComponent !== undefined &&
                 this.table.bodyComponent.offsetY > 0
             ) {
@@ -776,7 +753,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             this.processedInput__.selectedRowIds !== this.inputData.selectedRowIds
         ) {
             const idToIsSelectedMap = Utils.createSimpleStringSet(this.inputData.selectedRowIds);
-            this.selectedRows_ = this.filteredRows_.filter(row => idToIsSelectedMap[row.id]);
+            this.selectedRows_ = this.tableRows_.filter(row => idToIsSelectedMap[row.id]);
         }
     }
 
