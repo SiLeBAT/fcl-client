@@ -809,7 +809,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Naturmädel: Babys Erster, Lot no. BabDE07"
+                        "value": "Naturmädel: Babys Erster"
                     },
                     {
                         "id": "Lot ID",
@@ -875,7 +875,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Naturmädel: Babys Erster, Lot no. BabDE03"
+                        "value": "Naturmädel: Babys Erster"
                     },
                     {
                         "id": "Lot ID",
@@ -941,7 +941,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Organic dried rose hip peels, Lot no. R82"
+                        "value": "Organic dried rose hip peels"
                     },
                     {
                         "id": "Lot ID",
@@ -1007,7 +1007,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Organic dried rose hip peels, Lot no. R31"
+                        "value": "Organic dried rose hip peels"
                     },
                     {
                         "id": "Lot ID",
@@ -1073,7 +1073,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Organic fennel seeds, Lot no. F103"
+                        "value": "Organic fennel seeds"
                     },
                     {
                         "id": "Lot ID",
@@ -1143,7 +1143,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Organic fennel seeds, Lot no. F287"
+                        "value": "Organic fennel seeds"
                     },
                     {
                         "id": "Lot ID",
@@ -1213,7 +1213,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Organic dried rose hip peels, Lot no. R31"
+                        "value": "Organic dried rose hip peels"
                     },
                     {
                         "id": "Lot ID",
@@ -1287,7 +1287,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Organic dried rose hip peels, Lot no. R82"
+                        "value": "Organic dried rose hip peels"
                     },
                     {
                         "id": "Lot ID",
@@ -1361,7 +1361,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Dried organic camomille flowers, Lot no. DC 17"
+                        "value": "Dried organic camomille flowers"
                     },
                     {
                         "id": "Lot ID",
@@ -1435,14 +1435,6 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Dried organic melissa leaves, Lot no. Dried organic melissa leaves"
-                    },
-                    {
-                        "id": "Lot ID",
-                        "value": "-1028704596"
-                    },
-                    {
-                        "id": "Lot Number",
                         "value": "Dried organic melissa leaves"
                     },
                     {
@@ -1509,14 +1501,6 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Dried organic melissa leaves, Lot no. Dried organic melissa leaves"
-                    },
-                    {
-                        "id": "Lot ID",
-                        "value": "-1028704596"
-                    },
-                    {
-                        "id": "Lot Number",
                         "value": "Dried organic melissa leaves"
                     },
                     {
@@ -1583,7 +1567,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Oil of caraway, Lot no. F11O1"
+                        "value": "Oil of caraway"
                     },
                     {
                         "id": "Lot ID",
@@ -1657,7 +1641,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Dried organic camomille flowers, Lot no. DC 17"
+                        "value": "Dried organic camomille flowers"
                     },
                     {
                         "id": "Lot ID",
@@ -1723,7 +1707,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Oil of camomille, Lot no. C14R3"
+                        "value": "Oil of camomille"
                     },
                     {
                         "id": "Lot ID",
@@ -1797,7 +1781,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Oil of camomille, Lot no. C14O1"
+                        "value": "Oil of camomille"
                     },
                     {
                         "id": "Lot ID",
@@ -1871,7 +1855,7 @@
                     },
                     {
                         "id": "Name",
-                        "value": "Dried organic camomille flowers, Lot no. DC 17"
+                        "value": "Dried organic camomille flowers"
                     },
                     {
                         "id": "Lot ID",
@@ -2393,41 +2377,25 @@
                         "linePattern": null
                     },
                     {
-                        "name": "Name Smart-T Womens Balance",
+                        "name": "Product name",
                         "showInLegend": false,
                         "color": null,
                         "invisible": false,
                         "adjustThickness": false,
                         "labelProperty": "Name",
                         "valueCondition": null,
-                        "logicalConditions": [
-                            [
-                                {
-                                    "propertyName": "ID",
-                                    "operationType": "EQUAL",
-                                    "value": "506035242->845543188"
-                                }
-                            ]
-                        ],
+                        "logicalConditions": [[]],
                         "linePattern": null
                     },
                     {
-                        "name": "Name 1",
+                        "name": "Lot",
                         "showInLegend": false,
                         "color": null,
                         "invisible": false,
                         "adjustThickness": false,
-                        "labelProperty": "Name",
+                        "labelProperty": "Lot Number",
                         "valueCondition": null,
-                        "logicalConditions": [
-                            [
-                                {
-                                    "propertyName": "Name",
-                                    "operationType": "NOT_EQUAL",
-                                    "value": "Smart-T: Womens balance"
-                                }
-                            ]
-                        ],
+                        "logicalConditions": [[]],
                         "linePattern": null
                     }
                 ],
@@ -2916,37 +2884,14 @@
                         "shape": null
                     },
                     {
-                        "name": "Name 1",
+                        "name": "Name",
                         "showInLegend": false,
                         "color": null,
                         "invisible": false,
                         "adjustThickness": false,
                         "labelProperty": "Name",
                         "valueCondition": null,
-                        "logicalConditions": [
-                            [
-                                {
-                                    "propertyName": "Name",
-                                    "operationType": "REGEX_NOT_EQUAL",
-                                    "value": "Consumer_.*"
-                                },
-                                {
-                                    "propertyName": "Name",
-                                    "operationType": "REGEX_NOT_EQUAL",
-                                    "value": "Le Bio .*"
-                                },
-                                {
-                                    "propertyName": "Name",
-                                    "operationType": "REGEX_NOT_EQUAL",
-                                    "value": "Natürlicher Leben .*"
-                                },
-                                {
-                                    "propertyName": "Name",
-                                    "operationType": "REGEX_NOT_EQUAL",
-                                    "value": "ECO .*"
-                                }
-                            ]
-                        ],
+                        "logicalConditions": [[]],
                         "shape": null
                     }
                 ]
