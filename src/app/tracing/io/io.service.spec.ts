@@ -53,10 +53,15 @@ describe('IOService', () => {
                 type: GraphType.GRAPH,
                 mapType: MapType.MAPNIK,
                 shapeFileData: null,
+                geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
+                adjustEdgeWidthToNodeSize: true,
+                edgeWidth: Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(Constants.DEFAULT_GRAPH_NODE_SIZE),
                 fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
                 showLegend: true,
                 showZoom: true,
+                fitGraphToVisibleArea: true,
                 mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
                 showMergedDeliveriesCounts: false,
                 skipUnconnectedStations: false,
@@ -64,7 +69,7 @@ describe('IOService', () => {
                     stations: [],
                     deliveries: []
                 },
-                ghostStation: undefined,
+                ghostStation: null,
                 ghostDelivery: null,
                 schemaLayout: { zoom: 1, pan: { x: 0.5, y: 0.5 } },
                 gisLayout: null,
@@ -186,6 +191,7 @@ describe('IOService', () => {
                     showLegend: fclData.graphSettings.showLegend,
                     edge: {
                         joinEdges: fclData.graphSettings.mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL,
+                        adjustEdgeWidthToNodeSize: true,
                         mergeDeliveriesType: 'NO_MERGE',
                         showMergedDeliveriesCounts: false,
                         selectedEdges: fclData.graphSettings.selectedElements.deliveries,
@@ -209,10 +215,26 @@ describe('IOService', () => {
                                     id: s.id,
                                     position: fclData.graphSettings.stationPositions[s.id]
                                 })
-                            )
+                            ),
+                            minSize: 14
+                        },
+                        text: {
+                            fontSize: 14
+                        },
+                        edge: {
+                            minWidth: 0.7
                         }
                     },
                     gis: {
+                        node: {
+                            minSize: 14
+                        },
+                        text: {
+                            fontSize: 14
+                        },
+                        edge: {
+                            minWidth: 0.7
+                        },
                         transformation: null
                     }
                 }
@@ -220,7 +242,7 @@ describe('IOService', () => {
 
         };
 
-        ioService.getExportData(fclData)
+        return ioService.getExportData(fclData)
             .then(observedExportData => {
                 expect(observedExportData).toEqual(expectedExportData);
             }).catch(error => { throw error; });

@@ -9,7 +9,7 @@
         <div class="form-group fcl-form-firstname">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>First Name</mat-label>
-                <input matInput formControlName="firstName" name="firstName" required/>
+                <input matInput formControlName="firstName" name="firstName" required fclFocusAfterViewInit/>
                 <mat-icon matPrefix>account_circle</mat-icon>
                 <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.required && !serverValidationErrors.firstName">
                     Required Field

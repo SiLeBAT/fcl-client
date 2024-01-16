@@ -283,7 +283,7 @@ export class GraphService {
     }
 
     private createLabel(element: DeliveryData | StationData): string {
-        return element.highlightingInfo.label.join(' / ').replace(/\s+/, ' ');
+        return element.highlightingInfo.label;
     }
 
     private createMergedLabelWoPrefix(deliveries: DeliveryData[]): string {
@@ -299,7 +299,7 @@ export class GraphService {
     private createGhostNodeData(ghostStations: StationData[], graphData: GraphServiceData): CyNodeData[] {
         return ghostStations.map((station, index) => ({
             id: 'GN' + index,
-            label: station.highlightingInfo.label.join(' / ').replace(/\s+/, ' '),
+            label: station.highlightingInfo.label,
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
             isMeta: station.contains && station.contains.length > 0,
             shape: station.highlightingInfo.shape ? station.highlightingInfo.shape : NodeShapeType.CIRCLE,
@@ -315,12 +315,12 @@ export class GraphService {
     private mapDelToEdgeData(deliveries: DeliveryData[], idSuffix: string, source: CyNodeData, target: CyNodeData) {
 
         const labels: string[] = _.uniq(
-            deliveries.map(d => (d.highlightingInfo.label.length > 0) ? d.highlightingInfo.label.join(' / ') : '')
+            deliveries.map(d => d.highlightingInfo.label ?? '')
         );
 
         const edgeData = {
             id: 'GE' + idSuffix,
-            labelWoPrefix: labels.length === 1 ? labels[0].replace(/\s+/, ' ') : '',
+            labelWoPrefix: labels.length === 1 ? labels[0] : '',
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
             source: source.id,
             target: target.id,
@@ -467,7 +467,7 @@ export class GraphService {
         } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_LOT_WISE) {
             return Utils.groupDeliveriesByLot(deliveries);
         } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_LABEL_WISE) {
-            return Utils.groupRows(deliveries, [(d: DeliveryData) => d.highlightingInfo.label.join('/')]);
+            return Utils.groupRows(deliveries, [(d: DeliveryData) => d.highlightingInfo.label]);
         } else if (mergeDeliveriesType === MergeDeliveriesType.MERGE_ALL) {
             return [deliveries];
         } else if (mergeDeliveriesType === MergeDeliveriesType.NO_MERGE) {
@@ -510,7 +510,7 @@ export class GraphService {
     private applyStationProps(data: GraphServiceData) {
         for (const node of data.nodeData) {
             const station = node.station;
-            node.label = station.highlightingInfo.label.join(' / ').replace(/\s+/, ' ');
+            node.label = station.highlightingInfo.label;
             const colorInfo = this.getColorInfo(station.highlightingInfo.color, GraphService.DEFAULT_NODE_COLOR);
             node.stopColors = colorInfo.stopColors;
             node.stopPositions = colorInfo.stopPositions;

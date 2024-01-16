@@ -13,13 +13,13 @@ import { CyConfig, GraphData } from '../../cy-graph/cy-graph';
 import { ContextMenuViewComponent } from '../context-menu/context-menu-view.component';
 import { ContextMenuService, LayoutAction, LayoutActionTypes } from '../../context-menu.service';
 import { State } from '@app/tracing/state/tracing.reducers';
-import { SetSchemaGraphLayoutSOA, SetStationPositionsAndLayoutSOA } from '@app/tracing/state/tracing.actions';
-import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig } from '@app/tracing/state/tracing.selectors';
+import { SetSchemaGraphLayoutSOA } from '@app/tracing/state/tracing.actions';
+import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig, getFitGraphToVisibleArea } from '@app/tracing/state/tracing.selectors';
 import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
-import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes } from '@app/tracing/tracing.actions';
+import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes, SetStationPositionsAndLayoutMSA } from '@app/tracing/tracing.actions';
 import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
@@ -42,6 +42,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     showZoom$ = this.store.select(getShowZoom).pipe(optInGate(this.isGraphActive$, true));
     showLegend$ = this.store.select(getShowLegend).pipe(optInGate(this.isGraphActive$, true));
     styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
+    fitGraphToVisibleArea$ = this.store.select(getFitGraphToVisibleArea);
 
     private focusElementSubscription: Subscription;
     private graphStateSubscription: Subscription;
@@ -137,7 +138,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
             this.asyncRelayoutingDialog.close();
         }
         if (graphDataChange.nodePositions) {
-            this.store.dispatch(new SetStationPositionsAndLayoutSOA({
+            this.store.dispatch(new SetStationPositionsAndLayoutMSA({
                 stationPositions: this.schemaGraphService.convertNodePosToStationPositions(
                     graphDataChange.nodePositions,
                     this.cachedState,

@@ -1,4 +1,7 @@
+import { JsonData } from './io/ext-data-model.v1';
+
 export type HighlightingRuleId = string;
+export type JsonDataExtract = Pick<JsonData, 'settings' | 'tracing'>;
 
 interface ViewData {
     selected: boolean;
@@ -34,7 +37,10 @@ export interface StandardFilterSettings {
 export interface TableColumn {
     id: string;
     name: string;
+    unavailable?: boolean;
 }
+
+export type Property = TableColumn;
 
 export interface RowHighlightingInfo {
     color: number[][];
@@ -52,16 +58,16 @@ export interface TableRow {
     [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
 }
 
-export interface DataTable {
+export interface ColumnSubSets {
+    favouriteColumns: TableColumn[];
+    otherColumns: TableColumn[];
+}
+
+export interface DataTable extends ColumnSubSets{
+    modelFlag: Record<string, never>;
     columns: TableColumn[];
     rows: TableRow[];
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StationRow extends TableRow { }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StationTable extends DataTable { }
 
 export interface FclElements {
     stations: StationStoreData[];
@@ -157,12 +163,17 @@ export interface GraphSettings {
     type: GraphType;
     mapType: MapType;
     shapeFileData: ShapeFileData | null;
+    geojsonBorderWidth: number;
+    geojsonBorderColor: Color;
     nodeSize: number;
+    adjustEdgeWidthToNodeSize: boolean;
+    edgeWidth: number;
     fontSize: number;
     mergeDeliveriesType: MergeDeliveriesType;
     showMergedDeliveriesCounts: boolean;
     showLegend: boolean;
     showZoom: boolean;
+    fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
     stationPositions: {[key: string]: Position};
@@ -172,6 +183,14 @@ export interface GraphSettings {
     ghostStation: StationId | null;
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
+}
+
+export interface MapConfig {
+    layout: Layout | null;
+    mapType: MapType;
+    shapeFileData: ShapeFileData | null;
+    lineColor: Color;
+    lineWidth: number;
 }
 
 export interface HighlightingSettings {
@@ -186,15 +205,24 @@ export interface MakeElementsInvisibleInputState {
     tracingSettings: TracingSettings;
 }
 
+export interface LabelPart {
+    property?: string;
+    prefix: string;
+    useIndex?: boolean;
+}
+
 export interface HighlightingRule {
     id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
     color: number[];
     invisible: boolean;
-    disabled: boolean;
+    userDisabled: boolean;
+    autoDisabled: boolean;
     adjustThickness: boolean;
     labelProperty: string;
+    labelPrefix?: string;
+    labelParts?: LabelPart[];
     valueCondition: ValueCondition;
     logicalConditions: LogicalCondition[][];
 }
@@ -336,8 +364,10 @@ export interface HighlightingStats {
     conflicts: Record<HighlightingRuleId, number>;
 }
 export interface DataServiceData {
+    modelFlag: Record<string, never>;
     statMap: Record<StationId, StationData>;
     stations: StationData[];
+    isStationAnonymizationActive: boolean;
     delMap: Record<DeliveryId, DeliveryData>;
     deliveries: DeliveryData[];
     statSel: Record<StationId, boolean>;
@@ -345,10 +375,8 @@ export interface DataServiceData {
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
     legendInfo: LegendInfo;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    tracingPropsUpdatedFlag: {};
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    stationAndDeliveryHighlightingUpdatedFlag: {};
+    tracingPropsUpdatedFlag: Record<string, never>;
+    stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
     highlightingStats: HighlightingStats;
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
@@ -368,13 +396,14 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
 }
 
 export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
+    anonymizedName?: string;
     isMeta: boolean;
     contained: boolean;
     highlightingInfo?: StationHighlightingInfo;
 }
 
 export interface HighlightingInfo {
-    label: string[];
+    label: string;
     color: number[][];
 }
 

@@ -80,8 +80,9 @@ export class ComplexFilterUtils {
         }
     }
 
-    static logicalConditionsToComplexFilterConditions(conditions: LogicalCondition[][]): ComplexFilterCondition[] {
+    static logicalConditionsToComplexFilterConditions(conditions: LogicalCondition[][] | null): ComplexFilterCondition[] {
 
+        conditions = conditions || [[]];
         const filterConditions: ComplexFilterCondition[] = [];
 
         for (const andConditions of conditions) {

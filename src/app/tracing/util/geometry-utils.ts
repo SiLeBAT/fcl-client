@@ -1,5 +1,3 @@
-import * as assert from 'assert';
-
 export interface Point {
     x: number;
     y: number;
@@ -64,7 +62,9 @@ export function getNearestPointOnRect(point: Point, rect: BoundaryRect): Point {
 }
 
 export function getCenterFromPoints(points: Point[]): Point {
-    assert(points.length > 0, 'Cannot get the center from no points.');
+    if (points.length === 0) {
+        throw new Error('Cannot get the center from no points.');
+    }
 
     let xSum = 0;
     let ySum = 0;

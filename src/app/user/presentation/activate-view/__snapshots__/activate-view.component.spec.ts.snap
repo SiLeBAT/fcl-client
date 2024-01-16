@@ -14,10 +14,10 @@ exports[`ActivateViewComponent should render the component correctly 1`] = `
         class="fcl-single-center-card-layout-item fcl-single-center-card-layout-container"
       >
         <mat-card
-          class="fcl-mat-card mat-card mat-focus-indicator"
+          class="mat-card mat-focus-indicator fcl-mat-card"
         >
           <mat-card-header
-            class="fcl-mat-card__header mat-card-header"
+            class="mat-card-header fcl-mat-card__header"
           >
             <div
               class="mat-card-header-text"
@@ -28,7 +28,6 @@ exports[`ActivateViewComponent should render the component correctly 1`] = `
                 <div
                   class="mat-headline"
                 >
-                  
                 </div>
                 <mat-divider
                   class="mat-divider"
@@ -45,7 +44,7 @@ exports[`ActivateViewComponent should render the component correctly 1`] = `
             </fcl-mat-card-body>
           </mat-card-content>
           <mat-card-actions
-            class="fcl-mat-card-actions mat-card-actions"
+            class="mat-card-actions fcl-mat-card-actions"
           >
             <fcl-mat-card-actions />
           </mat-card-actions>

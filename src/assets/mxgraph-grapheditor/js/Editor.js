@@ -774,8 +774,8 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll)
 	{
 		this.bg = editorUi.createDiv('background');
 		this.bg.style.position = 'absolute';
-		this.bg.style.background = Dialog.backdropColor;
-		this.bg.style.height = dh + 'px';
+        this.bg.style.background = Dialog.backdropColor;
+		this.bg.style.height = '100%';
 		this.bg.style.right = '0px';
 		this.bg.style.zIndex = this.zIndex - 2;
 
@@ -803,10 +803,15 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll)
 	left = pos.x;
 	top = pos.y;
 
-	div.style.width = w + 'px';
-	div.style.height = h + 'px';
-	div.style.left = left + 'px';
-	div.style.top = top + 'px';
+    div.style.width = 'min-content';
+    div.style.height = 'min-content';
+    div.style.left = 0;
+    div.style.top = 0;
+
+    div.style.right = 0;
+    div.style.bottom = 0;
+    div.style.margin = 'auto';
+
 	div.style.zIndex = this.zIndex;
 
 	div.appendChild(elt);
@@ -818,35 +823,9 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll)
 		elt.style.overflowY = 'auto';
 	}
 
-	if (closable)
-	{
-		var img = document.createElement('img');
-
-		img.setAttribute('src', Dialog.prototype.closeImage);
-		img.setAttribute('title', mxResources.get('close'));
-		img.className = 'geDialogClose';
-		img.style.top = (top + 14) + 'px';
-		img.style.left = (left + w + 38 - dx) + 'px';
-		img.style.zIndex = this.zIndex;
-
-		mxEvent.addListener(img, 'click', mxUtils.bind(this, function()
-		{
-			editorUi.hideDialog(true);
-		}));
-
-		document.body.appendChild(img);
-		this.dialogImg = img;
-
-		mxEvent.addGestureListeners(this.bg, null, null, mxUtils.bind(this, function(evt)
-		{
-			editorUi.hideDialog(true);
-		}));
-	}
-
 	this.resizeListener = mxUtils.bind(this, function()
 	{
 		dh = Math.max(document.body.clientHeight, document.documentElement.clientHeight);
-		this.bg.style.height = dh + 'px';
 
 		left = Math.max(1, Math.round((document.body.clientWidth - w - 64) / 2));
 		top = Math.max(1, Math.round((dh - h - editorUi.footerHeight) / 3));
@@ -856,11 +835,6 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll)
 		var pos = this.getPosition(left, top, w, h);
 		left = pos.x;
 		top = pos.y;
-
-		div.style.left = left + 'px';
-		div.style.top = top + 'px';
-		div.style.width = w + 'px';
-		div.style.height = h + 'px';
 
 		// Adds vertical scrollbars if needed
 		if (!noScroll && elt.clientHeight > div.clientHeight - 64)
@@ -989,6 +963,7 @@ PrintDialog.prototype.create = function(editorUi)
 
 	var span = document.createElement('span');
 	mxUtils.write(span, ' ' + mxResources.get('fitPage'));
+    span.style['white-space'] = 'nowrap';
 	td.appendChild(span);
 
 	mxEvent.addListener(span, 'click', function(evt)
@@ -1012,10 +987,12 @@ PrintDialog.prototype.create = function(editorUi)
 	pageCountCheckBox.setAttribute('type', 'checkbox');
 	td = document.createElement('td');
 	td.style.fontSize = '10pt';
+    td.style['white-space'] = 'nowrap';
 	td.appendChild(pageCountCheckBox);
 
 	var span = document.createElement('span');
 	mxUtils.write(span, ' ' + mxResources.get('posterPrint') + ':');
+    span.style['white-space'] = 'nowrap';
 	td.appendChild(span);
 
 	mxEvent.addListener(span, 'click', function(evt)
@@ -1039,6 +1016,7 @@ PrintDialog.prototype.create = function(editorUi)
 	td.style.fontSize = '10pt';
 	td.appendChild(pageCountInput);
 	mxUtils.write(td, ' ' + mxResources.get('pages') + ' (max)');
+    td.style['white-space'] = 'nowrap';
 	row.appendChild(td);
 	tbody.appendChild(row);
 
@@ -1060,6 +1038,7 @@ PrintDialog.prototype.create = function(editorUi)
 
 	td = document.createElement('td');
 	mxUtils.write(td, mxResources.get('pageScale') + ':');
+    td.style['white-space'] = 'nowrap';
 	row.appendChild(td);
 
 	td = document.createElement('td');
@@ -1258,7 +1237,7 @@ var PageSetupDialog = function(editorUi)
 	var row, td;
 
 	var table = document.createElement('table');
-	table.style.width = '100%';
+	table.style.width = 'min-content';
 	table.style.height = '100%';
 	var tbody = document.createElement('tbody');
 
@@ -1335,8 +1314,8 @@ var PageSetupDialog = function(editorUi)
 	var gridSizeInput = document.createElement('input');
 	gridSizeInput.setAttribute('type', 'number');
 	gridSizeInput.setAttribute('min', '0');
-	gridSizeInput.style.width = '40px';
-	gridSizeInput.style.marginLeft = '6px';
+    gridSizeInput.style.width = '50px';
+    gridSizeInput.style.marginLeft = '6px';
 
 	gridSizeInput.value = graph.getGridSize();
 	td.appendChild(gridSizeInput);

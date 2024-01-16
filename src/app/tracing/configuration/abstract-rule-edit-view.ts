@@ -12,7 +12,8 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
     private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
 
     @Input() rule: T | null = null;
-    @Input() availableProperties: TableColumn[] = [];
+    @Input() favouriteProperties: TableColumn[] = [];
+    @Input() otherProperties: TableColumn[] = [];
     @Input() propToValuesMap: PropToValuesMap = {};
 
     @Output() applyRule = new EventEmitter<T>();

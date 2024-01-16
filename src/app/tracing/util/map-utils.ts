@@ -1,4 +1,4 @@
-import { MapType, ShapeFileData } from '../data.model';
+import { MapConfig, MapType, ShapeFileData } from '../data.model';
 import { OSM } from 'ol/source';
 import * as ol from 'ol';
 import BaseLayer from 'ol/layer/Base';
@@ -9,11 +9,11 @@ import { GeoJSON } from 'ol/format';
 import { Stroke, Style } from 'ol/style';
 import _ from 'lodash';
 import { InputDataError } from '../io/io-errors';
+import { StyleLike } from 'ol/style/Style';
 
-export interface MapConfig {
-    mapType: MapType;
-    shapeFileData: ShapeFileData;
-}
+type ReducedMapConfig = Partial<Pick<MapConfig, 'layout'>> & Omit<MapConfig, 'layout'>;
+type ShapeMapConfig = Pick<MapConfig, 'lineColor' | 'lineWidth' | 'shapeFileData'>;
+type ShapeMapStyleConfig = Pick<ShapeMapConfig, 'lineColor' | 'lineWidth'>;
 
 export interface RectConfig {
     left: number;
@@ -46,7 +46,7 @@ export function getAvailableMapTypes(): MapType[] {
     return availableMapTypes;
 }
 
-export function createOpenLayerMap(mapConfig: MapConfig, target: HTMLElement): ol.Map {
+export function createOpenLayerMap(mapConfig: ReducedMapConfig, target: HTMLElement): ol.Map {
     const map = new ol.Map({
         target: target,
         layers: [
@@ -57,7 +57,7 @@ export function createOpenLayerMap(mapConfig: MapConfig, target: HTMLElement): o
     return map;
 }
 
-function createMapLayer(mapConfig: MapConfig): BaseLayer {
+function createMapLayer(mapConfig: ReducedMapConfig): BaseLayer {
     const baseLayer = (
         mapConfig.mapType !== MapType.SHAPE_FILE ?
             createTileLayer(mapConfig) :
@@ -67,7 +67,7 @@ function createMapLayer(mapConfig: MapConfig): BaseLayer {
     return baseLayer;
 }
 
-function createTileLayer(mapConfig: MapConfig): BaseLayer {
+function createTileLayer(mapConfig: Pick<ReducedMapConfig, 'mapType'>): BaseLayer {
     return new Tile({
         source: MAP_SOURCE.get(mapConfig.mapType)()
     });
@@ -90,7 +90,7 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
     return projection.getCode();
 }
 
-export function createShapeFileLayer(mapConfig: MapConfig): BaseLayer {
+export function createShapeFileLayer(mapConfig: ShapeMapConfig): BaseLayer {
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: (new GeoJSON()).readFeatures(mapConfig.shapeFileData, (
@@ -100,12 +100,8 @@ export function createShapeFileLayer(mapConfig: MapConfig): BaseLayer {
         ))
     });
 
-    const style = new Style({
-        stroke: new Stroke({
-            color: 'black',
-            width: 0.5
-        })
-    });
+    const style = createVectorLayerStyle(mapConfig);
+
     const vectorLayer = new VectorLayer({
         source: vectorSource,
         style: style
@@ -113,14 +109,36 @@ export function createShapeFileLayer(mapConfig: MapConfig): BaseLayer {
     return vectorLayer;
 }
 
-export function updateMapType(map: ol.Map, mapConfig: MapConfig): void {
-    removeLayer(map, MAP_LAYER_ID);
+function createVectorLayerStyle(styleConfig: ShapeMapStyleConfig): StyleLike {
+    return new Style({
+        stroke: new Stroke({
+            color: [styleConfig.lineColor.r, styleConfig.lineColor.g, styleConfig.lineColor.b],
+            width: styleConfig.lineWidth
+        })
+    });
+}
+
+function getMapLayer(map: ol.Map): BaseLayer | null {
+    const layers = map.getLayers().getArray().filter(layer => layer.get(LAYER_ID_KEY) === MAP_LAYER_ID);
+    return layers.length > 0 ? layers[0] : null;
+}
+
+export function updateVectorLayerStyle(map: ol.Map, styleConfig: ShapeMapStyleConfig): void {
+    const vectorLayer = getMapLayer(map);
+    if (vectorLayer instanceof VectorLayer) {
+        const style = createVectorLayerStyle(styleConfig);
+        vectorLayer.setStyle(style);
+    }
+}
+
+export function updateMapType(map: ol.Map, mapConfig: ReducedMapConfig): void {
+    removeMapLayer(map);
     map.getLayers().insertAt(0, createMapLayer(mapConfig));
 }
 
-function removeLayer(map: ol.Map, layerId: string): void {
-    const layers = map.getLayers().getArray().filter(layer => layer.get(LAYER_ID_KEY) === layerId);
-    if (layers.length > 0) {
-        map.removeLayer(layers[0]);
+function removeMapLayer(map: ol.Map) {
+    const mapLayer = getMapLayer(map);
+    if (mapLayer !== null) {
+        map.removeLayer(mapLayer);
     }
 }

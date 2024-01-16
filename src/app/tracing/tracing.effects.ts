@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AlertService } from '../shared/services/alert.service';
-
 import { DataService } from './services/data.service';
 import * as tracingStateActions from './state/tracing.actions';
 import * as tracingEffectActions from './tracing.actions';
 import * as fromTracing from './state/tracing.reducers';
 import * as tracingSelectors from './state/tracing.selectors';
-import { mergeMap, withLatestFrom } from 'rxjs/operators';
-import { EMPTY, of } from 'rxjs';
-import { DeliveryData, DeliveryId, StationData, StationId } from './data.model';
+import * as _ from 'lodash';
+import { map, mergeMap, withLatestFrom, catchError } from 'rxjs/operators';
+import { EMPTY, of, from } from 'rxjs';
+import { DeliveryData, DeliveryId, StationData, StationId, JsonDataExtract } from './data.model';
 import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
@@ -18,6 +18,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditTracingSettingsService } from './services/edit-tracing-settings.service';
 import { EditHighlightingService } from './configuration/edit-highlighting.service';
 import { GraphService } from './graph/graph.service';
+import { TableService } from './services/table.service';
+import { IOService } from './io/io.service';
 
 @Injectable()
 export class TracingEffects {
@@ -29,8 +31,10 @@ export class TracingEffects {
         private dialogService: MatDialog,
         private alertService: AlertService,
         private editHighlightingService: EditHighlightingService,
+        private tableService: TableService,
+        private ioService: IOService,
         private store: Store<fromTracing.State>
-    ) {}
+    ) { }
 
     showStationProperties$ = createEffect(
         () => this.actions$.pipe(
@@ -58,7 +62,8 @@ export class TracingEffects {
                     const dialogData: StationPropertiesData = {
                         station: station,
                         deliveries: deliveries,
-                        connectedStations: connectedStations
+                        connectedStations: connectedStations,
+                        stationColumns: this.tableService.getStationColumnSets(data, false).columns
                     };
 
                     this.dialogService.open(StationPropertiesComponent, { data: dialogData });
@@ -125,7 +130,8 @@ export class TracingEffects {
                             source: data.statMap[delivery.source],
                             target: data.statMap[delivery.target],
                             originalSource: data.statMap[delivery.originalSource],
-                            originalTarget: data.statMap[delivery.originalTarget]
+                            originalTarget: data.statMap[delivery.originalTarget],
+                            deliveryColumns: this.tableService.getDeliveryColumnSets(data, false).columns
                         };
 
                         this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });
@@ -301,4 +307,45 @@ export class TracingEffects {
             return EMPTY;
         })
     ));
+
+    setStationPositionsAndLayoutMSA$ = createEffect(() => this.actions$.pipe(
+        ofType<tracingEffectActions.SetStationPositionsAndLayoutMSA>(
+            tracingEffectActions.TracingActionTypes.SetStationPositionsAndLayoutMSA
+        ),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
+        mergeMap(([action, state]) => {
+            try {
+
+                const oldStationPositionsAreEmpty = _.isEmpty(state.graphSettings.stationPositions);
+                const payloadPositionsAreEmpty = _.isEmpty(action.payload.stationPositions);
+
+                this.store.dispatch(new tracingStateActions.SetStationPositionsAndLayoutSOA(action.payload));
+
+                if ((oldStationPositionsAreEmpty) && (!payloadPositionsAreEmpty)) {
+                    this.store.dispatch(new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA());
+                }
+            } catch (error) {
+                this.alertService.error(`Graph selection could not be set!, error: ${error}`);
+            }
+            return EMPTY;
+        })
+    ), { dispatch: false });
+
+
+    setLastUnchangedJsonDataExtractMSA$ = createEffect(() => this.actions$.pipe(
+        ofType<tracingEffectActions.SetLastUnchangedJsonDataExtractMSA>(
+            tracingEffectActions.TracingActionTypes.SetLastUnchangedJsonDataExtractMSA
+        ),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
+        mergeMap(([, fclData]) => from(this.ioService.fclDataToJsonDataExtract(fclData)).pipe(
+            map((extract: JsonDataExtract) =>
+                new tracingStateActions.SetLastUnchangedJsonDataExtractSuccessSOA({ extractData: extract })),
+            catchError((error) => {
+                const errorMsg = `Reduced Reference Copy cannot be refreshed: ${error.message}`;
+                this.alertService.error(errorMsg);
+                return EMPTY;
+            })
+        ))
+    ));
+
 }

@@ -3,7 +3,9 @@
         *ngIf="editRule !== null"
 
         [rule]="editRule"
-        [availableProperties]="availableProperties"
+
+        [favouriteProperties]="favouriteProperties"
+        [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
 
         (addSelection)="onAddSelectionToRuleConditions($event)"
@@ -21,7 +23,9 @@
         *ngIf="editRule !== null"
 
         [rule]="editRule"
-        [availableProperties]="availableProperties"
+
+        [favouriteProperties]="favouriteProperties"
+        [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
 
         (addSelection)="onAddSelectionToRuleConditions($event)"

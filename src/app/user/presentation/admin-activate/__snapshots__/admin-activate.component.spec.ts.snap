@@ -51,6 +51,5 @@ exports[`AdminActivateComponent should display the app name and name if admin to
 
 exports[`AdminActivateComponent should render the component correctly 1`] = `
 <fcl-admin-activate>
-  
 </fcl-admin-activate>
 `;

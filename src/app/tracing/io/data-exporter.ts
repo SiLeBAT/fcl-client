@@ -6,7 +6,9 @@ import {
     HighlightingRule as IntHighlightingRule,
     NodeShapeType,
     OperationType,
-    PropMap
+    PropMap,
+    LabelPart,
+    HighlightingRule
 } from '../data.model';
 import * as DataMapper from './data-mappings/data-mappings-v1';
 import * as ExtDataConstants from './ext-data-constants.v1';
@@ -16,7 +18,9 @@ import {
     VERSION, JsonData, ViewData,
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
-    HighlightingRule as ExtHighlightingRule
+    HighlightingRule as ExtHighlightingRule,
+    AnonymizationRule as ExtAnonymizationRule,
+    LabelPart as ExtLabelPart
 } from './ext-data-model.v1';
 import { createDefaultSettings } from './json-data-creator';
 
@@ -120,6 +124,8 @@ export class DataExporter {
             DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP
         ).get(fclData.graphSettings.mergeDeliveriesType);
         viewData.edge.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
+        viewData.edge.adjustEdgeWidthToNodeSize = fclData.graphSettings.adjustEdgeWidthToNodeSize;
+
 
         Utils.setProperty(viewData, ExtDataConstants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
 
@@ -130,6 +136,19 @@ export class DataExporter {
             id: key,
             position: fclData.graphSettings.stationPositions[key]
         })));
+
+        viewData.graph.node.minSize = fclData.graphSettings.nodeSize;
+        viewData.graph.edge = viewData.graph.edge || {};
+        viewData.graph.edge.minWidth = fclData.graphSettings.edgeWidth;
+        viewData.graph.text = viewData.graph.text || {};
+        viewData.graph.text.fontSize = fclData.graphSettings.fontSize;
+
+        viewData.gis.node = viewData.gis.node || {};
+        viewData.gis.node.minSize = fclData.graphSettings.nodeSize;
+        viewData.gis.edge = viewData.gis.edge || {};
+        viewData.gis.edge.minWidth = fclData.graphSettings.edgeWidth;
+        viewData.gis.text = viewData.gis.text || {};
+        viewData.gis.text.fontSize = fclData.graphSettings.fontSize;
 
         viewData.edge.selectedEdges = fclData.graphSettings.selectedElements.deliveries.slice();
         viewData.node.selectedNodes = fclData.graphSettings.selectedElements.stations.slice();
@@ -144,16 +163,46 @@ export class DataExporter {
 
         const intToExtShapeMap = Utils.createReverseMap(DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP);
         const intToExtStatPropMap = fclData.source.propMaps.stationPropMap;
-        viewData.node.highlightConditions = fclData.graphSettings.highlightingSettings.stations.map(rule => ({
+        const intStatRules = fclData.graphSettings.highlightingSettings.stations;
+        const exportableIntStatRules = intStatRules.filter(rule => !rule.labelParts);
+        viewData.node.highlightConditions = exportableIntStatRules.map(rule => ({
             ...this.mapSharedRuleProps(rule, intToExtStatPropMap, intToExtValueTypeMap, intToExtOpTypeMap),
             shape: this.mapShapeType(rule.shape, intToExtShapeMap)
         }));
 
+        const intAnoStatRule = intStatRules.filter(rule => !!rule.labelParts).pop();
+        if (intAnoStatRule) {
+            const extAnoStatRule = this.mapAnoRule(intAnoStatRule, intToExtStatPropMap, intToExtOpTypeMap);
+            viewData.node.anonymizationRule = extAnoStatRule;
+        }
         const intToExtDelPropMap = fclData.source.propMaps.deliveryPropMap;
         viewData.edge.highlightConditions = fclData.graphSettings.highlightingSettings.deliveries.map(rule => ({
             ...this.mapSharedRuleProps(rule, intToExtDelPropMap, intToExtValueTypeMap, intToExtOpTypeMap),
             linePattern: null
         }));
+    }
+
+    private static mapAnoRule(
+        intAnoRule: HighlightingRule,
+        intToExtPropMap: PropMap,
+        intToExtOpTypeMap: Map<OperationType, string>
+    ): ExtAnonymizationRule {
+        const extLabelParts: ExtLabelPart[] = intAnoRule.labelParts.map((part: LabelPart) => {
+            if (part.property) {
+                return { prefix: part.prefix, property: intToExtPropMap[part.property] };
+            } else {
+                return { prefix: part.prefix, useIndex: part.useIndex };
+            }
+        });
+
+        const extAnoRule: ExtAnonymizationRule = {
+            labelPrefix: intAnoRule.labelPrefix || '',
+            labelParts: extLabelParts,
+            disabled: intAnoRule.userDisabled,
+            logicalConditions: this.mapLogicalConditions(intAnoRule.logicalConditions, intToExtPropMap, intToExtOpTypeMap)
+        };
+
+        return extAnoRule;
     }
 
     private static mapSharedRuleProps(
@@ -165,7 +214,7 @@ export class DataExporter {
         return {
             name: rule.name,
             showInLegend: rule.showInLegend,
-            disabled: rule.disabled,
+            disabled: rule.userDisabled,
             invisible: rule.invisible,
             adjustThickness: rule.adjustThickness,
             color: rule.color,

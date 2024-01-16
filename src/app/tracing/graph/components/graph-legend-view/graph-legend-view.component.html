@@ -2,11 +2,11 @@
     <mat-card-content>
         <table>
             <tr *ngFor="let item of legend">
-                <td>{{item.name}}</td>
-                <td *ngIf="showStationColumn">
+                <td data-cy="fcl-graph-legend-rule-name">{{item.name}}</td>
+                <td *ngIf="showStationColumn" data-cy="fcl-graph-legend-rule-node-symbol">
                     <fcl-node-symbol-view *ngIf="item.shape || item.stationColor" [shapeType]="item.shape" [fillColor]="item.stationColor"></fcl-node-symbol-view>
                 </td>
-                <td *ngIf="showDeliveryColumn">
+                <td *ngIf="showDeliveryColumn" data-cy="fcl-graph-legend-rule-edge-symbol">
                     <fcl-edge-symbol-view *ngIf="item.deliveryColor" [edgeColor]="item.deliveryColor"></fcl-edge-symbol-view>
                 </td>
             </tr>

@@ -1,19 +1,25 @@
-@import '../../../../assets/sass/base';
-
 .fcl-user-info {
     display: grid;
-    grid-template-columns: 1fr 3fr;
-    grid-template-rows: 1fr 1fr;
+    align-items: center;
+    grid-template-columns: max-content max-content;
+    grid-template-rows: auto auto 8pt; // 8pt is the distance to divider
+    // if the 3rd row is ommited chrome shows for some reasons 3 grid rows,
+    // but edge, firefox and safari only 2 as intended.
+    // One solution to address the different row counts would be to choose
+    // the row height for the 3rd row to be 0
+    // but we need here the distance to the mat-divider so we chose 8 instead of 0
     grid-template-areas:
         'icon name'
-        ' . email';
-    color: rgba(0, 0, 0, 0.7);
+        'icon email';
+    color: rgb(0 0 0 / 0.7);
     font-size: smaller;
 }
 
 .fcl-icon {
     grid-area: icon;
-    padding-left: 15px;
+    margin-left: 16px;
+    margin-right: 6px;
+    box-sizing: border-box;
 }
 
 .fcl-name {

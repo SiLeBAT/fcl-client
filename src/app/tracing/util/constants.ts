@@ -1,6 +1,14 @@
 import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.model';
 import { List, Map } from 'immutable';
 import { ExampleData } from '@app/main-page/model/types';
+import * as _ from 'lodash';
+import { Utils } from './non-ui-utils';
+
+interface ColumnDefinition {
+    id: string;
+    name: string;
+    availableForHighlighting?: boolean;
+}
 
 export class Constants {
     static readonly EXAMPLE_DATA_BASE_DIR = 'assets/example-data/';
@@ -30,8 +38,14 @@ export class Constants {
         }
     ];
 
+    static readonly DIALOG_CANCEL = 'Cancel';
+    static readonly DIALOG_OK = 'Ok';
+    static readonly DIALOG_SAVE = 'Save';
+    static readonly DIALOG_DONT_SAVE = 'Don\'t save and proceed';
+
     private static readonly STATION_DATA: StationData = {
         id: null,
+        anonymizedName: null,
         name: null,
         lat: null,
         lon: null,
@@ -107,6 +121,7 @@ export class Constants {
             incoming: { name: 'Incoming', color: null },
             outgoing: { name: 'Outgoing', color: null },
             contains: { name: 'Contains', color: null },
+            isMeta: { name: 'Is Meta Station', color: null },
             forward: { name: 'Forward Trace', color: { r: 150, g: 255, b: 75 } },
             backward: { name: 'Backward Trace', color: { r: 255, g: 150, b: 75 } },
             observed: { name: 'Observed', color: { r: 75, g: 150, b: 255 } },
@@ -117,7 +132,8 @@ export class Constants {
             },
             killContamination: { name: 'Kill Contamination', color: null },
             commonLink: { name: 'Common Link', color: { r: 255, g: 255, b: 75 } },
-            score: { name: 'Score', color: null }
+            score: { name: 'Score', color: null },
+            weight: { name: 'Weight', color: { r: 255, g: 0, b: 0 } }
         }
     );
     static readonly PROPERTIES_WITH_COLORS = List(
@@ -125,30 +141,88 @@ export class Constants {
     );
 
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
-    static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24);
+    static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24, 48);
     static readonly NODE_SIZES = List.of(4, 6, 10, 14, 20, 30, 50);
+    private static readonly EXPLICIT_EDGE_WIDTHS = [1, 2, 3, 5, 10, 20]; // from da
+    private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 20;
+    static readonly NODE_SIZE_TO_EDGE_WIDTH_MAP = Map<number, number>(
+        Constants.NODE_SIZES.toArray().map(nodeSize => [
+            nodeSize,
+            Number((nodeSize/Constants.NODE_SIZE_TO_EDGE_WIDTH_FACTOR).toPrecision(1)) // edgeWidth
+        ])
+    );
+
+    static readonly EDGE_WIDTHS = List<number>(_.uniq(
+        [].concat(
+            Constants.EXPLICIT_EDGE_WIDTHS,
+            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.toArray()
+        ).sort(Utils.compareNumbers)
+    ));
+
+    static readonly GEOJSON_BORDER_WIDTHS = Constants.EDGE_WIDTHS;
+    static readonly DEFAULT_GEOJSON_BORDER_WIDTH = 0.5;
+    static readonly DEFAULT_GEOJSON_BORDER_COLOR = { r: 0, g: 0, b: 0 } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
     static readonly DEFAULT_MAP_TYPE = MapType.MAPNIK;
-    static readonly DEFAULT_GRAPH_NODE_SIZE = 20;
-    static readonly DEFAULT_GRAPH_FONT_SIZE = 10;
+    static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
+    static readonly DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE = true;
+    static readonly DEFAULT_GRAPH_EDGE_WIDTH = Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(Constants.DEFAULT_GRAPH_NODE_SIZE);
+    static readonly DEFAULT_GRAPH_FONT_SIZE = 14;
     static readonly DEFAULT_GRAPH_MERGE_DELIVERIES = false;
     static readonly DEFAULT_SKIP_UNCONNECTED_STATIONS = false;
     static readonly DEFAULT_GRAPH_SHOW_LEGEND = true;
     static readonly DEFAULT_GRAPH_SHOW_ZOOM = true;
+    static readonly DEFAULT_FIT_GRAPH_TO_VISIBLE_AREA = true;
     static readonly DEFAULT_GIS_AVOID_OVERLAY = false;
 
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
+
+    static readonly COLUMN_ANONYMIZED_NAME: keyof StationData = 'anonymizedName';
+    static readonly COLUMN_NAME: keyof StationData = 'name';
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
         'name',
         'country',
-        'typeOfBusiness'
+        'typeOfBusiness',
+        'score',
+        'commonLink'
     );
+
+    static readonly FAVOURITE_STAT_COLUMNS = List.of<ColumnDefinition>(
+        { id: 'id', name: 'ID' },
+        { id: 'anonymizedName', name: 'Anonymized Name', availableForHighlighting: false },
+        { id: 'name', name: 'Name' },
+        { id: 'address', name: 'Address' },
+        { id: 'country', name: 'Country' },
+        { id: 'typeOfBusiness', name: 'Type of Business' },
+        { id: 'score', name: 'Score' },
+        { id: 'commonLink', name: 'Common Link' },
+        { id: 'outbreak', name: 'Outbreak' },
+        { id: 'weight', name: 'Weight' }
+    );
+
+    static readonly KNOWN_OTHER_STAT_COLUMNS = List.of<ColumnDefinition>(
+        { id: 'forward', name: 'On Forward Trace' },
+        { id: 'backward', name: 'On Backward Trace' },
+        { id: 'crossContamination', name: 'Cross Contamination' },
+        { id: 'killContamination', name: 'Kill Contamination' },
+        { id: 'observed', name: 'Observed' },
+        { id: 'selected', name: 'Selected', availableForHighlighting: false },
+        { id: 'invisible', name: 'Invisible', availableForHighlighting: false },
+        { id: 'lat', name: 'Latitude' },
+        { id: 'lon', name: 'Longitude' },
+        { id: 'isMeta', name: 'Is Meta Station' },
+        { id: 'contained', name: 'Is Meta Member', availableForHighlighting: false }
+    );
+
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
-        'id',
-        'source',
-        'target',
-        'score'
+        'name',
+        'lot',
+        'amount',
+        'dateOut',
+        'dateIn',
+        'source.name',
+        'target.name'
     );
 
     static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';

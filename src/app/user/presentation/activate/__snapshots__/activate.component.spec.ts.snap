@@ -67,7 +67,7 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
              Continue to login 
           </span>
           <span
-            class="mat-button-ripple mat-ripple"
+            class="mat-ripple mat-button-ripple"
             matripple=""
           />
           <span
@@ -82,6 +82,5 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
 
 exports[`ActivateComponent should render the component correctly 1`] = `
 <fcl-activate>
-  
 </fcl-activate>
 `;

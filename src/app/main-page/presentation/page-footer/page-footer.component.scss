@@ -1,9 +1,10 @@
-@import '../../../../assets/sass/base';
+@use '@angular/material' as mat;
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-toolbar-item {
     flex: 1;
 
-    @include mat-elevation($fcl-toolbar-elevation);
+    @include mat.elevation(fcl.$fcl-toolbar-elevation);
 }
 
 .fcl-toolbar-container {

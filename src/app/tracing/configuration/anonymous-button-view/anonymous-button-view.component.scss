@@ -1,13 +1,13 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-anonymous-button {
     border-radius: 0;
-    background-color: rgb(255, 255, 255);
-    box-shadow: $fcl-box-shadow;
+    background-color: rgb(255 255 255);
+    box-shadow: fcl.$fcl-box-shadow;
     width: 100%;
 }
 
 .fcl-anonymous-button:hover {
-    background-color: $fcl-accent-300;
-    color: rgba(255, 255, 255, 0.9);
+    background-color: fcl.$fcl-accent-300;
+    color: rgb(255 255 255 / 0.9);
 }

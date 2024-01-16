@@ -1,8 +1,8 @@
 {
     "$id": "http://fcl.bfr.bund.de/schemas/schema.json",
     "type": "object",
-    "title": "FCL-JSON-Exchange-Format-Schema Version 1.1.2",
-    "description": "JSON exchange format of FoodChain-Lab app",
+    "title": "FCL-JSON-Exchange-Format-Schema Version 1.2.0",
+    "description": "JSON exchange format of FoodChain-Lab app (validates json version 1.1.2)",
     "properties": {
         "data": {
             "type": "object",
@@ -60,6 +60,7 @@
                                 "joinEdges": { "type": "boolean" },
                                 "mergeDeliveriesType": { "type": "string" },
                                 "showMergedDeliveriesCounts": { "type": "boolean" },
+                                "adjustMinWidthToMinNodeSize": { "type": "boolean" },
                                 "invisibleEdges": {
                                     "type": ["array", "null"],
                                     "description": "ids of invisible deliveries",
@@ -98,6 +99,42 @@
                                     "description": "ids of invisible stations/groups",
                                     "items": { "type": "string" }
                                 },
+                                "anonymizationRule": {
+                                    "type": ["object", "null"],
+                                    "properties": {
+                                        "labelPrefix": {
+                                            "type": "string"
+                                        },
+                                        "labelParts": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "oneOf": [
+                                                    {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "property": {
+                                                                "type": "string",
+                                                                "pattern": "\\S",
+                                                                "minLength": 1
+                                                            },
+                                                            "prefix": { "type": "string" }
+                                                        },
+                                                        "required": ["property"]
+                                                    },
+                                                    {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "useIndex": { "type": "boolean" },
+                                                            "prefix": { "type": "string" }
+                                                        },
+                                                        "required": ["useIndex"]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
                                 "highlightConditions": {
                                     "type": ["array", "null"],
                                     "description": "station highlighting definitions",
@@ -123,25 +160,36 @@
                             }
                         },
                         "graph": {
-                            "type": "object",
+                            "allOf": [ { "$ref": "#/definitions/sharedGraphSpecificProps" }],
                             "properties": {
-                                "transformation": { "$ref": "#/definitions/transformation" },
-                                "positions": {
-                                    "type": "object",
+                                "node": {
                                     "properties": {
-                                        "id": { "type": "string" },
-                                        "position": { "$ref": "#/definitions/xyPair" }
-                                    },
-                                    "required": [
-                                        "id"
-                                    ]
+                                        "positions": {
+                                            "type": "array",
+                                            "minSize": 1,
+                                            "items": {
+                                                "properties": {
+                                                    "id": { "type": "string" },
+                                                    "position": { "$ref": "#/definitions/xyPair" }
+                                                },
+                                                "required": [
+                                                    "id"
+                                                ]
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         },
                         "gis": {
-                            "type": "object",
+                            "allOf": [ { "$ref": "#/definitions/sharedGraphSpecificProps" }],
                             "properties": {
-                                "transformation": { "$ref": "#/definitions/transformation" }
+                                "node": {
+                                    "properties": {
+                                        "avoidOverlay": { "type": "boolean" }
+                                    }
+                                },
+                                "borderAlpha": { "type": "number" }
                             }
                         }
                     }
@@ -265,6 +313,34 @@
                 "minimum": 0,
                 "maximum": 255
             }
+        },
+        "sharedGraphSpecificProps": {
+            "type": ["object", "null"],
+            "properties": {
+                "transformation":  { "$ref": "#/definitions/transformation" },
+                "node":  {
+                    "type": ["object", "null"],
+                    "properties": {
+                        "minSize": { "type": "number" },
+                        "maxSize": { "type": ["number", "null"] }
+                    }
+                 },
+                 "edge":  {
+                    "type": ["object", "null"],
+                    "properties": {
+                        "minWidth": { "type": "number" },
+                        "maxWidth": { "type": ["number", "null"] }
+                    }
+                 },
+                 "text":  {
+                    "type": ["object", "null"],
+                    "properties": {
+                        "fontSize": { "type": "number" },
+                        "fontBold": { "type": "boolean" }
+                    }
+                 }
+            }
         }
+
     }
 }

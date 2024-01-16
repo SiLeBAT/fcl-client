@@ -337,6 +337,7 @@ var AboutDialog = function(editorUi)
 	div.setAttribute('align', 'center');
 	var h3 = document.createElement('h3');
 	mxUtils.write(h3, mxResources.get('about') + ' FCL-GraphEditor');
+    h3.style['white-space'] = 'nowrap';
 	div.appendChild(h3);
 	mxUtils.br(div);
 	mxUtils.write(div, 'Powered by mxGraph ' + mxClient.VERSION);
@@ -1448,7 +1449,11 @@ var EditDataDialog = function(ui, cell)
 	}
 
 	var top = document.createElement('div');
-	top.style.cssText = 'position:absolute;left:30px;right:30px;overflow-y:auto;top:30px;bottom:80px;';
+    div.style['width'] = 'min-content';
+    div.style['height'] = 'min-content';
+    top.style['max-height'] = 'max( 200px, 30vh )';
+    top.style['max-width'] = 'max( 350px, 30vw )';
+    top.style.overflow = 'auto';
 	top.appendChild(form.table);
 
 	var newProp = document.createElement('div');
@@ -1596,7 +1601,8 @@ var EditDataDialog = function(ui, cell)
 	mxEvent.addListener(nameInput, 'change', updateAddBtn);
 
 	var buttons = document.createElement('div');
-	buttons.style.cssText = 'position:absolute;left:30px;right:30px;text-align:right;bottom:30px;height:40px;'
+	buttons.style['margin-top'] = '20px';
+    buttons.style['text-align'] = 'right';
 
 	if (ui.editor.graph.getModel().isVertex(cell) || ui.editor.graph.getModel().isEdge(cell))
 	{
@@ -1661,7 +1667,7 @@ var EditDataDialog = function(ui, cell)
 	}
 
 	div.appendChild(buttons);
-	this.container = div;
+    this.container = div;
 };
 
 /**

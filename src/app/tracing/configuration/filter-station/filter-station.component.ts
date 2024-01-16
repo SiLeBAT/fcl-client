@@ -83,11 +83,13 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
 
     // template trigger start
     onSelectTableColumns(): void {
+
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
                 type: TableType.STATIONS,
-                columns: this.tableService.getStationColumns(this.cachedData.dataServiceData),
-                columnOrder: this.cachedState.filterTableState.columnOrder
+                columnOrder: this.cachedState.filterTableState.columnOrder,
+                favouriteColumns: this.cachedData.dataTable.favouriteColumns,
+                otherColumns: this.cachedData.dataTable.otherColumns
             })
         );
     }
@@ -155,10 +157,10 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
 
             if (
                 cacheIsEmpty ||
-                this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
+                this.cachedData.dataServiceData.modelFlag !== newDSData.modelFlag
             ) {
                 // new Model
-                dataTable = this.tableService.getStationData(state.dataServiceInputState);
+                dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
                 this.currentGhostStationId = null;
             } else if (
                 newDSData.stations !== cachedDSData.stations ||
@@ -167,10 +169,7 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
                 newDSData.statSel !== cachedDSData.statSel
             ) {
-                dataTable = {
-                    ...this.tableService.getStationData(state.dataServiceInputState),
-                    columns: this.cachedData.dataTable.columns
-                };
+                dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
             }
 
             this.cachedState = {

@@ -1,0 +1,19 @@
+@use "@angular/material" as mat;
+@use '../../../../assets/sass/base' as fcl;
+
+.fcl-title {
+    padding: fcl.$single-space;
+    margin: 0;
+    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "default");
+    color: white;
+    text-align: center;
+}
+
+.fcl-panel-title {
+    font-weight: 500;
+    padding: fcl.$double-space fcl.$single-space;
+}
+
+.fcl-panel-text {
+    padding: fcl.$single-space;
+}

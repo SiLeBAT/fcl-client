@@ -1,11 +1,11 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-card-action-container {
     display: flex;
 }
 
 .fcl-recover-button {
-    margin-right: $fcl-toolbar-padding * 4;
+    margin-right: fcl.$fcl-toolbar-padding * 4;
 }
 
 .fcl-recover-text,

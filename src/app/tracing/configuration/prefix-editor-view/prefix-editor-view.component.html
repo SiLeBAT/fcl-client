@@ -1,0 +1,22 @@
+<mat-form-field
+    class="fcl-complex-filter-form-field"
+    appearance="outline"
+    color="primary">
+    <input
+        #inputElement
+        type="text"
+        matInput
+        [placeholder]="placeholder"
+        autocomplete="off"
+        [value] = "displayValue"
+        (input) = "onInput($event)"
+        (beforeinput) = "onBeforeInput($event)"
+        (paste) = "onPaste($event)"
+        (copy) = "onCopy($event)"
+        (cut) = "onCut($event)"
+        (dragstart) = "onDragStart($event)"
+        (dragend) = "onDragEnd($event)"
+        (drop) = "onDrop($event)"
+        [disabled]="disabled"
+    />
+</mat-form-field>

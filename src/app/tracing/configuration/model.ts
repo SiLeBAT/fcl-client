@@ -1,4 +1,7 @@
-import { Color, DataServiceInputState, NodeShapeType, TableColumn, TableRow } from '../data.model';
+import {
+    Color, DataServiceInputState, LabelPart,
+    NodeShapeType, TableColumn, TableRow
+} from '../data.model';
 import { ComplexFilterCondition, PropToValuesMap } from './configuration.model';
 
 export interface RowFilter<T> {
@@ -18,7 +21,8 @@ export enum TableType {
 export type TreeStatus = 'collapsed' | 'expanded';
 
 export interface EditHighlightingServiceData {
-    availableProperties: TableColumn[];
+    favouriteProperties: TableColumn[];
+    otherProperties: TableColumn[];
     propToValuesMap: PropToValuesMap;
     ruleListItems: RuleListItem[];
 }
@@ -30,44 +34,60 @@ export interface RuleListItem {
     shape: NodeShapeType | null;
     showInLegend: boolean;
     disabled: boolean;
+    autoDisabled: boolean;
+    isAnonymizationRule: boolean;
     effElementsCountTooltip: string;
     effElementsCount: number;
     conflictCount: number;
     ruleType: RuleType | null;
 }
-export interface EditRule {
+
+export interface EditRuleCore {
     id: string;
     name: string;
-    disabled: boolean;
+    userDisabled: boolean;
     complexFilterConditions: ComplexFilterCondition[];
-    type: RuleType;
     isValid: boolean;
 }
+
+export type EditRule = ColorAndShapeEditRule | ColorEditRule | LabelEditRule | InvEditRule;
 
 export enum RuleType {
     INVISIBILITY, LABEL, COLOR_AND_SHAPE, COLOR
 }
 
-export interface ColorAndShapeEditRule extends EditRule {
+export interface ColorAndShapeEditRule extends EditRuleCore {
+    type: RuleType.COLOR_AND_SHAPE;
     showInLegend: boolean;
     color: Color | null;
     shape: NodeShapeType | null;
 }
 
-export interface ColorEditRule extends EditRule {
+export interface ColorEditRule extends EditRuleCore {
+    type: RuleType.COLOR;
     showInLegend: boolean;
     color: Color;
 }
 
-export interface LabelEditRule extends EditRule {
-    showInLegend: boolean;
-    labelProperty: string;
+export interface SimpleLabelEditRule extends EditRuleCore {
+    type: RuleType.LABEL;
+    labelProperty: string | null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface InvEditRule extends EditRule { }
+export interface ComposedLabelEditRule extends EditRuleCore {
+    type: RuleType.LABEL;
+    labelParts: LabelPart[];
+    labelPrefix: string;
+}
 
-export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule;
+export type LabelEditRule = SimpleLabelEditRule | ComposedLabelEditRule;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface InvEditRule extends EditRuleCore {
+    type: RuleType.INVISIBILITY;
+}
+
+export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule; //  | ComposedLabelEditRule;
 export type DeliveryEditRule = LabelEditRule | InvEditRule | ColorEditRule;
 
 export type DeliveryRuleType = RuleType.LABEL | RuleType.COLOR;

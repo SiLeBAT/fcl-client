@@ -1,9 +1,59 @@
+<ng-template let-options="options" #optionsTemplate>
+    <mat-checkbox *ngFor="let option of options"
+        [(ngModel)]="option.selected"
+        (change)="onOptionCheckedChange($event, option)"
+        [disabled]="option.disabled === true"
+        [matTooltip]="option.tooltip">
+        {{option.viewValue}}
+    </mat-checkbox>
+</ng-template>
+
 <h1 matDialogTitle>{{data.title}}</h1>
 <div mat-dialog-content>
-  <div class="checkboxes">
-    <mat-checkbox *ngFor="let option of options" [(ngModel)]="option.selected">{{option.viewValue}}</mat-checkbox>
-  </div>
+    <div class="fcl-columns-wrapper">
+        <div>
+            <b>Select:</b>
+            <div class="fcl-list">
+                <ng-container [ngTemplateOutlet]="optionsTemplate"
+                    [ngTemplateOutletContext] ="{ options: favouriteOptions }">
+                </ng-container>
+                <hr class="fcl-dialog-select-horizontal-line">
+                <ng-container [ngTemplateOutlet]="optionsTemplate"
+                    [ngTemplateOutletContext] ="{ options: otherOptions }">
+                </ng-container>
+            </div>
+        </div>
+        <ng-container *ngIf="sorting !== null">
+            <div class="fcl-separator-column"></div>
+            <div class="fcl-sort-column">
+                <b>Sort:</b>
+                <div
+                    class="fcl-list"
+                    cdkDropList
+                    (cdkDropListDropped)="onSortDrop($event)"
+                >
+                    <div
+                        *ngFor="let item of sorting; let i = index"
+                        cdkDrag
+                        cdkDragLockAxis="y"
+                        cdkDragBoundary=".cdk-drop-list"
+                        class="fcl-sort-item"
+                    >
+                        <div class="fcl-sort-item-content">
+                            <div class="fcl-list-item-drag-indicator" cdkDragHandle>
+                                <mat-icon>drag_indicator</mat-icon>
+                            </div>
+                            <div cdkDragHandle>
+                                {{ item.viewValue }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
 </div>
+
 <div mat-dialog-actions>
   <button mat-button (click)="close()">OK</button>
   <button mat-button (click)="dialogRef.close()">Cancel</button>

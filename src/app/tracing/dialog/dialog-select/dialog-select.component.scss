@@ -1,9 +1,74 @@
-.checkboxes {
+@use '../../../../assets/sass/base' as fcl;
+
+$fcl-font-size: 1rem;
+$fcl-cross-contamination-width: 174px;
+
+.fcl-columns-wrapper {
+    display: flex;
+}
+
+.fcl-separator-column {
+    width: 30px;
+}
+
+.fcl-sort-column {
+    min-width: $fcl-cross-contamination-width;
+}
+
+.fcl-list {
     padding: 10px 0;
     display: flex;
     flex-direction: column;
 }
 
+.fcl-dialog-select-horizontal-line {
+    width: 100%;
+}
+
 mat-checkbox {
     margin: 5px 0;
+}
+
+.fcl-sort-item {
+    font-size: $fcl-font-size;
+    font-family: #{fcl.$fcl-font-family};
+    margin: 5px 0;
+    line-height: 24px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.fcl-sort-item-content {
+    display: flex;
+    max-width: 100%;
+}
+
+.cdk-drag .fcl-list-item-drag-indicator {
+    $fcl-drag-indicator-size-factor: 1.2;
+
+    display: flex;
+    place-self: center left;
+    max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+
+    .mat-icon {
+        font-size: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+    }
+}
+
+.cdk-drag .cdk-drag-handle {
+    cursor: ns-resize;
+}
+
+.cdk-drag-placeholder {
+    visibility: hidden;
+}
+
+/* Animate items as they're being sorted. */
+.cdk-drop-list-dragging .cdk-drag {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animate an item that has been dropped. */
+.cdk-drag-animating {
+    transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
 }

@@ -1,4 +1,5 @@
 <div class="sidenav-elements">
+
     <mat-form-field>
         <mat-select placeholder="Node Size" [ngModel]="graphSettings.nodeSize" (ngModelChange)="setNodeSize($event)">
             <mat-option *ngFor="let nodeSize of nodeSizes" [value]="nodeSize">
@@ -6,28 +7,52 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-        <mat-form-field>
-            <mat-select
-              placeholder="Font Size"
-              [ngModel]="graphSettings.fontSize"
-              (ngModelChange)="setFontSize($event)">
-              <mat-option *ngFor="let fontSize of fontSizes" [value]="fontSize">
-                {{fontSize}}
-              </mat-option>
-            </mat-select>
-        </mat-form-field>
+
+    <mat-form-field>
+        <mat-select
+            placeholder="Font Size"
+            [ngModel]="graphSettings.fontSize"
+            (ngModelChange)="setFontSize($event)">
+            <mat-option *ngFor="let fontSize of fontSizes" [value]="fontSize">
+            {{fontSize}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 
     <div class="sidenav-elements-group">
         <mat-form-field class="less-bottom-padding">
             <mat-select
-              placeholder="Merge Deliveries"
-              [ngModel]="graphSettings.mergeDeliveriesType"
-              (ngModelChange)="setMergeDeliveriesType($event)">
-              <mat-option *ngFor="let mergeDeliveriesOption of mergeDeliveriesOptions"
-              [value]="mergeDeliveriesOption.value"
-              [matTooltip]="mergeDeliveriesOption.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="fcl-option-tooltip">
-                {{mergeDeliveriesOption.label}}
-              </mat-option>
+                placeholder="Edge Width"
+                [disabled]="graphSettings.adjustEdgeWidthToNodeSize"
+                [ngModel]="graphSettings.edgeWidth"
+                (ngModelChange)="onSetEdgeWidth($event)"
+                >
+                <mat-option *ngFor="let edgeWidth of edgeWidths" [value]="edgeWidth">
+                    {{ edgeWidth }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-checkbox
+            [ngModel]="graphSettings.adjustEdgeWidthToNodeSize"
+            (ngModelChange)="onAdjustEdgeWidthToNodeSizeChanged($event)">
+            Automatically adjust edge width to node size
+        </mat-checkbox>
+    </div>
+
+    <div class="sidenav-elements-group">
+        <mat-form-field class="less-bottom-padding">
+            <mat-select
+                placeholder="Merge Deliveries"
+                [ngModel]="graphSettings.mergeDeliveriesType"
+                (ngModelChange)="setMergeDeliveriesType($event)">
+                <mat-option *ngFor="let mergeDeliveriesOption of mergeDeliveriesOptions"
+                    [value]="mergeDeliveriesOption.value"
+                    [matTooltip]="mergeDeliveriesOption.toolTip"
+                    matTooltipPosition="right"
+                    matTooltipShowDelay="500">
+                    {{mergeDeliveriesOption.label}}
+                </mat-option>
             </mat-select>
         </mat-form-field>
 
@@ -42,11 +67,36 @@
         <mat-select placeholder="Cross Contamination Tracing" [ngModel]="tracingSettings.crossContTraceType" (ngModelChange)="setCrossContTraceType($event)">
             <mat-option *ngFor="let traceTypeOption of crossContTraceTypeOptions"
                 [value]="traceTypeOption.value"
-                [matTooltip]="traceTypeOption.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="fcl-option-tooltip">
+                [matTooltip]="traceTypeOption.toolTip"
+                matTooltipPosition="right"
+                matTooltipShowDelay="500">
                 {{ traceTypeOption.label }}
             </mat-option>
         </mat-select>
     </mat-form-field>
+
+    <div *ngIf="isShapeFileMapActive" class="fcl-geojson-conf-container">
+        <!-- Geojson settings -->
+        <div class="fcl-geojson-color-conf-container">
+            <div>Geojson border colour:</div>
+            <fcl-color-selector-view
+                [color]="graphSettings.geojsonBorderColor"
+                preferredColorPickerPosition="top"
+                (colorChange)="onGeojsonBorderColorChange($event)"
+            ></fcl-color-selector-view>
+        </div>
+
+        <mat-form-field>
+            <mat-select
+                placeholder="Geojson border width"
+                [ngModel]="graphSettings.geojsonBorderWidth"
+                (ngModelChange)="onGeojsonBorderWidthChange($event)">
+                <mat-option *ngFor="let borderWidth of geojsonBorderWidths" [value]="borderWidth">
+                    {{ borderWidth }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
 
     <mat-checkbox
         [ngModel]="graphSettings.showLegend"
@@ -58,6 +108,13 @@
         [ngModel]="graphSettings.showZoom"
         (ngModelChange)="showZoom($event)">
         Show Zoom Controls
+    </mat-checkbox>
+
+    <mat-checkbox
+        [ngModel]="graphSettings.fitGraphToVisibleArea"
+        (ngModelChange)="onFitGraphToVisibleAreaChange($event)"
+        matTooltip="If the menu is open, only the visible graph area will be used to arrange the stations.">
+        Fit supply chain to visible area
     </mat-checkbox>
 
 </div>

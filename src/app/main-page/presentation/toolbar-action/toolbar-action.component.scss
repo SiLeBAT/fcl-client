@@ -1,4 +1,4 @@
-@import "../../../../assets/sass/base";
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-action-item {
     flex: 1;
@@ -7,7 +7,7 @@
 .fcl-action-container {
     display: flex;
     justify-content: flex-end;
-    padding-right: $fcl-toolbar-padding * 4;
+    padding-right: fcl.$fcl-toolbar-padding * 4;
     min-width: 0;
 }
 
@@ -16,11 +16,11 @@
 }
 
 .fcl-separator {
-    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    border-right: 1px solid rgb(255 255 255 / 0.4);
     border-radius: 0;
 }
 
-#fileInput {
+.fcl-fileinput {
     display: none;
 }
 
@@ -79,7 +79,7 @@
     left: 0;
     bottom: 0.9em;
     line-height: 1.2em;
-    background-color: rgb(192, 0, 0);
+    background-color: rgb(192 0 0);
     color: white;
     padding-left: 0.5ch;
     padding-right: 0.5ch;

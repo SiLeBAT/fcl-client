@@ -1,7 +1,5 @@
 import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { environment } from '@env/environment';
-import * as _ from 'lodash';
-import { MainPageService } from '../../services/main-page.service';
 import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
@@ -16,7 +14,9 @@ export class ToolbarActionComponent implements OnChanges {
 
     private _graphSettings: GraphSettings;
 
-    @ViewChild('fileInput') fileInput: ElementRef;
+    @ViewChild('modelFileInput') modelFileInput: ElementRef<HTMLInputElement>;
+    @ViewChild('shapeFileInput') shapeFileInput: ElementRef<HTMLInputElement>;
+
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
@@ -35,9 +35,13 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() loadExampleDataFile: EventEmitter<ExampleData> = new EventEmitter();
+    @Output() selectModelFile = new EventEmitter();
+    @Output() saveImage = new EventEmitter();
+    @Output() openRoaLayout = new EventEmitter();
+    @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapType = new EventEmitter<MapType>();
+    @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
@@ -53,8 +57,6 @@ export class ToolbarActionComponent implements OnChanges {
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
-    constructor(private mainPageService: MainPageService) { }
-
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.fileName !== undefined) {
             this.fileNameWoExt = (
@@ -69,18 +71,44 @@ export class ToolbarActionComponent implements OnChanges {
         return environment.serverless;
     }
 
+    onModelFileInput(event: any) {
+        const fileList: FileList = event.target.files;
+        this.loadModelFile.emit(fileList);
+        event.target.value = null;
+    }
+
+    onShapeFileInput(event: any) {
+        const fileList: FileList = event.target.files;
+        this.loadShapeFile.emit(fileList);
+        event.target.value = null;
+    }
+
     onSelectModelFile() {
-        this.selectInputFile(
-            '.json',
-            (event$) => {
-                const fileList: FileList = event$.target.files;
-                this.loadModelFile.emit(fileList);
-            }
-        );
+        this.selectModelFile.emit();
+    }
+
+    clickModelFileInputElement() {
+        this.modelFileInput.nativeElement.click();
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
         this.loadExampleDataFile.emit(exampleData);
+    }
+
+    onDownloadDataFile() {
+        this.downloadFile.emit(this.fileNameWoExt);
+    }
+
+    onSaveImage() {
+        this.saveImage.emit();
+    }
+
+    onOpenRoaLayout() {
+        this.openRoaLayout.emit();
+    }
+
+    getFileNameWoExt(): string | null {
+        return this.fileNameWoExt;
     }
 
     setGraphType() {
@@ -91,24 +119,11 @@ export class ToolbarActionComponent implements OnChanges {
         this.mapType.emit(mapType);
     }
 
-    selectShapeFile(event): void {
+    onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
         setTimeout(() => { this.selectedMapTypeOption = '' + this._graphSettings.mapType; }, 0);
 
-        this.selectInputFile(
-            '.geojson',
-            (event$) => {
-                const fileList: FileList = event$.target.files;
-                this.loadShapeFile.emit(fileList);
-            }
-        );
+        this.shapeFileInput.nativeElement.click();
     }
 
-    private selectInputFile(accept: string, changeHandler: (event$) => void): void {
-        const nativeFileInput: HTMLInputElement = this.fileInput.nativeElement;
-        nativeFileInput.value = '';
-        nativeFileInput.accept = accept;
-        nativeFileInput.onchange = changeHandler;
-        nativeFileInput.click();
-    }
 }

@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GroupData } from '@app/tracing/data.model';
-import { FormControl, FormGroupDirective, NgForm, ValidationErrors, AbstractControl } from '@angular/forms';
+import { FormGroupDirective, NgForm, ValidationErrors, AbstractControl, FormControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { GroupingService } from '../grouping.service';
 import { GroupingState } from '../model';
@@ -13,7 +13,7 @@ import { Utils } from '@app/tracing/util/non-ui-utils';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
-    isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    isErrorState<T>(control: FormControl<T> | null, form: FormGroupDirective | NgForm | null): boolean {
         const isSubmitted = form && form.submitted;
         return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
     }
@@ -31,7 +31,7 @@ export interface MergeStationsDialogData {
 })
 export class MergeStationsDialogComponent {
 
-    inputFormControl: FormControl = new FormControl('', (control: AbstractControl) => this.isInputValid(control));
+    inputFormControl = new FormControl('', (control: AbstractControl) => this.isInputValid(control));
 
     validationCodeEnum = MergeStationsValidationCode;
 

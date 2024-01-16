@@ -1,4 +1,5 @@
 import cytoscape from 'cytoscape';
+import { Style } from 'ol/style';
 import { GraphElementData } from '../graph.model';
 import { CSS_CLASS_HOVER } from './cy.constants';
 
@@ -8,22 +9,23 @@ enum GraphSize {
 
 export interface StyleConfig {
     nodeSize: number;
+    edgeWidth: number;
     fontSize: number;
 }
 
 export class CyStyle {
     private static readonly NODE_SIZE_TO_BORDER_WIDTH_FACTOR = 1 / 20;
-    private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 1 / 20;
     private static readonly SELECTED_EDGE_WIDTH_FACTOR = 3;
     private static readonly META_NODE_BORDER_WIDTH_FACTOR = 2;
     private static readonly SELECTED_NODE_BORDER_WIDTH_FACTOR = 2;
-    private static readonly CONTROL_POINT_STEP_SIZE_FACTOR = 4;
     private static readonly MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
     private static readonly MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
     private static readonly SIZE_ONE_SIZE_FACTOR = 2;
     private static readonly DEFAULT_ACTIVE_OVERLAY_OPACITY = 0.5;
     private static readonly DEFAULT_ACTIVE_OVERLAY_COLOR = 'rgb(0, 0, 255)';
     private static readonly DEFAULT_ACTIVE_OVERLAY_PADDING = 10;
+    private static readonly MIN_STEP_SIZE = 20;
+    private static readonly ARROW_SCALE = 1.0;
 
     private maxSize: number;
     private minSize: number;
@@ -38,8 +40,7 @@ export class CyStyle {
         this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    createCyStyle(): {} {
+    createCyStyle(): Record<string, unknown> {
         const graphSize = this.getProperGraphSize();
         return this.createXGraphStyle(graphSize);
     }
@@ -66,8 +67,12 @@ export class CyStyle {
 
         const fontSize = this.styleConfig.fontSize;
         const nodeSize = this.styleConfig.nodeSize;
-        const edgeWidth = nodeSize * CyStyle.NODE_SIZE_TO_EDGE_WIDTH_FACTOR;
+        const edgeWidth = this.styleConfig.edgeWidth;
         const selectedEdgeWidth = edgeWidth * CyStyle.SELECTED_EDGE_WIDTH_FACTOR;
+        // usually a bad style to have magic numbers within code
+        // but here it might be more convenient in this way
+        const stepSizeWithoutLabelSpace = selectedEdgeWidth * 2 + CyStyle.MIN_STEP_SIZE;
+        const stepSizeWithLabelSpace = Math.max(selectedEdgeWidth * 1.7, 5) + fontSize * 2.0;
 
         const style = cytoscape
             .stylesheet()
@@ -119,7 +124,7 @@ export class CyStyle {
                         } :
                         {}
                 ),
-                'control-point-step-size': selectedEdgeWidth * CyStyle.CONTROL_POINT_STEP_SIZE_FACTOR,
+                'control-point-step-size': stepSizeWithoutLabelSpace,
                 'target-arrow-shape': 'triangle-cross',
                 'target-arrow-color': 'rgb(0, 0, 0)',
                 'curve-style': graphSize === GraphSize.SMALL ? 'bezier' : 'straight',
@@ -128,7 +133,7 @@ export class CyStyle {
                 'line-gradient-stop-positions': 'data(stopPositions)',
                 'z-index': 'data(zindex)',
                 'width': edgeWidth,
-                'arrow-scale': 1.4
+                'arrow-scale': CyStyle.ARROW_SCALE
             })
 
             .selector('node:selected')
@@ -162,7 +167,7 @@ export class CyStyle {
                 ...(
                     graphSize !== GraphSize.HUGE ?
                         {
-                            'control-point-step-size': fontSize * 2.5
+                            'control-point-step-size': stepSizeWithLabelSpace
                         } :
                         {}
                 )

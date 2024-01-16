@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 .fcl-single-center-card-layout-item {
     padding-top: 5rem;
@@ -10,7 +10,7 @@
 }
 
 .fcl-mat-card {
-    border-radius: $fcl-card-border-radius;
+    border-radius: fcl.$fcl-card-border-radius;
     max-width: 800px;
     min-width: 400px;
 }
@@ -22,4 +22,10 @@
 
 .fcl-mat-card__title {
     font-size: 2em;
+}
+
+.mat-divider.mat-divider-horizontal {
+    position: absolute;
+    left: 0;
+    width: 100%;
 }

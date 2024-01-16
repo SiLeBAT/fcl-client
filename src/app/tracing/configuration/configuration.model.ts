@@ -40,8 +40,14 @@ export enum VisibilityFilterState {
     SHOW_INVISIBLE_ONLY
 }
 
+export enum AnonymizedNameColumnMode {
+    REPLACE_NAME_COLUMN, ADD, DO_NOT_AUTO_SHOW
+}
+
 export interface FilterTableSettings {
     columnOrder: string[];
+
+    anonymizedNameColumnMode?: AnonymizedNameColumnMode;
 
     standardFilter: string;
     predefinedFilter: ShowType;

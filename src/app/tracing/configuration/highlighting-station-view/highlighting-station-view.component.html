@@ -1,9 +1,12 @@
 <ng-template let-editRule="editRule" #labelEditTemplate>
+
     <fcl-label-rules-edit-view
-        *ngIf="editRule !== null"
+        *ngIf="editRule !== null && !editRule.labelParts"
 
         [rule]="editRule"
-        [availableProperties]="availableProperties"
+
+        [favouriteProperties]="favouriteProperties"
+        [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
 
         (addSelection)="onAddSelectionToRuleConditions($event)"
@@ -14,6 +17,24 @@
         (okRule)="onOkEdit($event)"
     >
     </fcl-label-rules-edit-view>
+
+    <fcl-anonymization-rule-edit-view
+        *ngIf="editRule !== null && !!editRule.labelParts"
+
+        [rule]="editRule"
+
+        [favouriteProperties]="favouriteProperties"
+        [otherProperties]="otherProperties"
+        [propToValuesMap]="propToValuesMap"
+
+        (addSelection)="onAddSelectionToRuleConditions($event)"
+        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+
+        (applyRule)="onApplyEdit($event)"
+        (cancelEdit)="onCancelEdit(editRule.id)"
+        (okRule)="onOkEdit($event)"
+    >
+    </fcl-anonymization-rule-edit-view>
 </ng-template>
 
 <ng-template let-editRule="editRule" #colorShapeEditTemplate>
@@ -21,7 +42,9 @@
         *ngIf="editRule !== null"
 
         [rule]="editRule"
-        [availableProperties]="availableProperties"
+
+        [favouriteProperties]="favouriteProperties"
+        [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
 
         (addSelection)="onAddSelectionToRuleConditions($event)"
@@ -86,9 +109,6 @@
 
 
 <div class="fcl-highlighting-element-container">
-
-    <fcl-anonymous-button-view tooltip="Anonymize stations ... coming soon">
-    </fcl-anonymous-button-view>
 
     <ng-container [ngTemplateOutlet]="panelTemplate"
         [ngTemplateOutletContext] ="{ ruleType: RuleType.LABEL, title: 'Label', editTemplate: labelEditTemplate, showInLegendTB: false }">

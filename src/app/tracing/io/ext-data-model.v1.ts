@@ -1,4 +1,4 @@
-export const VERSION = '1.1.1';
+export const VERSION = '1.2.0';
 
 export interface JsonData {
     version: string;
@@ -39,7 +39,7 @@ interface TracingElementSettings {
     observed: boolean;
 }
 
-interface TracingData {
+export interface TracingData {
     version: string;
     // enforceTemporalOrder: boolean;
     nodes: TracingElementSettings[];
@@ -72,18 +72,33 @@ export interface ViewData {
     // explosions?: ExplosionViewData[];
 }
 
+export interface LabelPart {
+    prefix: string;
+    property?: string;
+    useIndex?: boolean;
+}
+
+export interface AnonymizationRule {
+    labelParts: LabelPart[];
+    labelPrefix: string;
+    disabled: boolean;
+    logicalConditions: LogicalCondition[][];
+}
+
 export interface NodeViewData {
     skipEdgelessNodes?: boolean;
     // labelPosition: string;
     selectedNodes?: string[];
     invisibleNodes?: string[] | null;
     highlightConditions?: StationHighlightingRule[];
+    anonymizationRule?: AnonymizationRule | null;
 }
 
 export interface EdgeViewData {
     joinEdges?: boolean;
     mergeDeliveriesType?: string;
     showMergedDeliveriesCounts?: boolean;
+    adjustEdgeWidthToNodeSize?: boolean;
     // showEdgesInMetanode: boolean;
     // hideArrowHead: boolean;
     // arrowHeadInMiddle: boolean;

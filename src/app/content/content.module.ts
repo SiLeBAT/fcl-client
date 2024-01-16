@@ -9,17 +9,25 @@ import { EffectsModule } from '@ngrx/effects';
 import { ContentEffects } from './state/content.effects';
 import { FundingSourcesViewComponent } from './funding-sources-view/funding-sources-view.component';
 import { MaintenanceNotificationViewComponent } from './maintenance-notification-view/maintenance-notification-view.component';
+import { FaqComponent } from './faq/components/faq.component';
+import { FaqViewComponent } from './faq/components/faq-view.component';
+import { FaqSectionViewComponent } from './faq/components/faq-section-view.component';
+import { SharedModule } from '@app/shared/shared.module';
 
 @NgModule({
     declarations: [
         DataProtectionDeclarationComponent,
         DataProtectionNoticeComponent,
         FundingSourcesViewComponent,
-        MaintenanceNotificationViewComponent
+        MaintenanceNotificationViewComponent,
+        FaqComponent,
+        FaqViewComponent,
+        FaqSectionViewComponent
     ],
     imports: [
         CommonModule,
         ContentRoutingModule,
+        SharedModule,
         StoreModule.forFeature(STATE_SLICE_NAME, reducer),
         EffectsModule.forFeature([ContentEffects])
     ],

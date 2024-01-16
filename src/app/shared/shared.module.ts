@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { MaterialModule } from './material.module';
 import { SpinnerLoaderComponent } from './spinner-loader/spinner-loader.component';
@@ -8,6 +9,7 @@ import { AlertComponent } from './alert/alert.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SingleCenterCardLayoutComponent } from './presentation/single-center-card-layout/single-center-card-layout.component';
 import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-subscript-wrapper-tab-focus';
+import { FocusAfterViewInitDirective } from './directives/focus-after-view-init';
 
 @NgModule({
     imports: [
@@ -19,17 +21,20 @@ import { DisableSubscriptWrapperTabFocusDirective } from './directives/disable-s
         SpinnerLoaderComponent,
         AlertComponent,
         SingleCenterCardLayoutComponent,
-        DisableSubscriptWrapperTabFocusDirective
+        DisableSubscriptWrapperTabFocusDirective,
+        FocusAfterViewInitDirective
     ],
     exports: [
         FormsModule,
         ReactiveFormsModule,
         MaterialModule,
         DragDropModule,
+        ScrollingModule,
         SpinnerLoaderComponent,
         AlertComponent,
         SingleCenterCardLayoutComponent,
-        DisableSubscriptWrapperTabFocusDirective
+        DisableSubscriptWrapperTabFocusDirective,
+        FocusAfterViewInitDirective
     ]
 })
 export class SharedModule { }

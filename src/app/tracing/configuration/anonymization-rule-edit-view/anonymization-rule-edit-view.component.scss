@@ -1,0 +1,166 @@
+@use '../../../../assets/sass/base' as fcl;
+
+$fcl-font-size: 0.8rem;
+$fcl-form-field-padding-left-mimic: 0.75em;
+
+.fcl-edit-rule {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    padding-top: 1rem;
+    border: 1px solid rgb(0 0 0 / 0.12);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.fcl-label-part-list-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.fcl-label-part-list {
+    margin-left: 4ch;
+}
+
+.fcl-label-part,
+.fcl-label-part-list-header,
+.fcl-label-part-list-footer {
+    $fcl-col-drag-with: 3ch;
+    $fcl-col-prefix-preferred-width: 12ch;
+    $fcl-col-property-preferred-width: 25ch;
+    $fcl-col-delete-width: 28px;
+    $fcl-cols-prefix-property-max-width: calc(calc(100% - $fcl-col-drag-with) - $fcl-col-delete-width);
+    $fcl-col-prefix-width: min($fcl-col-prefix-preferred-width, calc($fcl-cols-prefix-property-max-width * 0.3));
+    $fcl-col-property-width: min($fcl-col-property-preferred-width, calc($fcl-cols-prefix-property-max-width * 0.7));
+
+    font-size: $fcl-font-size;
+    font-family: #{fcl.$fcl-font-family};
+    display: grid;
+    grid-template-areas: "dragcolumn prefixcolumn propertycolumn deletecolumn . ";
+    grid-template-columns: 3ch $fcl-col-prefix-width $fcl-col-property-width $fcl-col-delete-width auto;
+    grid-template-rows: auto;
+    width: 100%;
+}
+
+.fcl-label-part-list-header {
+    text-align: center;
+    font-weight: bold;
+}
+
+.fcl-label-part,
+.fcl-label-part-list-footer {
+    height: 39px;
+}
+
+.fcl-label-preview {
+    margin-top: 1rem;
+    margin-bottom: 1em;
+
+    .fcl-label-preview-header {
+        font-weight: bold;
+    }
+}
+
+.fcl-label-part-drag-indicator {
+    $fcl-drag-indicator-size-factor: 1.2;
+
+    display: flex;
+    grid-area: dragcolumn;
+    place-self: center left;
+    max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+
+    .mat-icon {
+        font-size: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
+    }
+}
+
+.cdk-drag-handle {
+    cursor: ns-resize;
+}
+
+.cdk-drag-placeholder {
+    visibility: hidden;
+}
+
+/* Animate items as they're being sorted. */
+.cdk-drop-list-dragging .cdk-drag {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animate an item that has been dropped. */
+.cdk-drag-animating {
+    transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.fcl-label-part-prefix {
+    grid-area: prefixcolumn;
+}
+
+.fcl-label-part-property {
+    grid-area: propertycolumn;
+
+    .fcl-label-part-property-form-field {
+        max-width: 100%;
+    }
+}
+
+.fcl-useindex-checkbox-wrapper,
+.fcl-label-part-label-start .fcl-label-part-prop-or-index-col {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    grid-area: propertycolumn;
+}
+
+.fcl-label-part-useindex-checkbox,
+.fcl-label-part-label-start .fcl-label-part-prop-or-index-col {
+    padding-left: $fcl-form-field-padding-left-mimic;
+}
+
+.fcl-label-part-list-button {
+    padding: 0;
+}
+
+.fcl-label-part .fcl-label-part-remove-button {
+    grid-area: deletecolumn;
+    min-width: 100%;
+}
+
+.fcl-label-part-list-footer .fcl-label-part-add-button {
+    grid-column: 2/-2;
+}
+
+.fcl-edit-rule-useconditions-and-ruleservice-fields {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-right: -1ch;
+    margin-top: -0.1rem;
+    margin-bottom: -0.1rem;
+}
+
+.fcl-edit-rule-useconditions-checkbox {
+    margin-right: 1ch;
+    max-width: 100%;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+.fcl-edit-rule-action-button {
+    font-size: inherit;
+}
+
+.fcl-edit-rule-action-button:hover:enabled {
+    background-color: fcl.$fcl-accent-300;
+    color: rgb(255 255 255 / 0.9);
+}
+
+.fcl-edit-rule-complex-filter {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.fcl-edit-rule-action-button-container {
+    display: flex;
+    flex-wrap: wrap;
+}

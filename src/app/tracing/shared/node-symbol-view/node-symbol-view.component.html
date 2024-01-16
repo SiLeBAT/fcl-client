@@ -9,22 +9,22 @@
         </linearGradient>
     </defs>
 
-    <svg:circle  *ngSwitchCase="'circle'" cx="0" cy="0" r="50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:circle  *ngSwitchCase="'circle'" data-cy-shape="circle" cx="0" cy="0" r="50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
 
-    <svg:rect *ngSwitchCase="'square'" x="-50" y="-50" rx="0" ry="0" width="100" height="100" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:rect *ngSwitchCase="'square'" data-cy-shape="square" x="-50" y="-50" rx="0" ry="0" width="100" height="100" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
     <!-- triangle -->
-    <svg:polygon *ngSwitchCase="'triangle'" points="0,-50 50,50 -50,50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:polygon *ngSwitchCase="'triangle'" data-cy-shape="triangle" points="0,-50 50,50 -50,50" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
     <!-- diamond -->
-    <svg:polygon *ngSwitchCase="'diamond'" points="0,-50 50,0 0,50 -50,0" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:polygon *ngSwitchCase="'diamond'" data-cy-shape="diamond" points="0,-50 50,0 0,50 -50,0" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
     <!-- pentagon -->
-    <svg:polygon *ngSwitchCase="'pentagon'" points="0,-50 45,-11 30,49 -30,49 -45,-11" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:polygon *ngSwitchCase="'pentagon'" data-cy-shape="pentagon" points="0,-50 45,-11 30,49 -30,49 -45,-11" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
     <!-- star -->
-    <svg:polygon *ngSwitchCase="'star'" points="0,-50 12,-16 48,-15 19,6 29,40 0,20 -29,40 -19,6 -48,-15 -12,-16" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:polygon *ngSwitchCase="'star'" data-cy-shape="star" points="0,-50 12,-16 48,-15 19,6 29,40 0,20 -29,40 -19,6 -48,-15 -12,-16" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
 
     <!-- hexagon -->
-    <svg:polygon *ngSwitchCase="'hexagon'" points="-50,0 -25,-43 25,-43 50,0 25,43 -25,43" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:polygon *ngSwitchCase="'hexagon'" data-cy-shape="hexagon" points="-50,0 -25,-43 25,-43 50,0 25,43 -25,43" stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
     <!-- octagon -->
-    <svg:polygon *ngSwitchCase="'octagon'" points="19,-46 46,-19 46,19 19,46 -19,46 -46,19 -46,-19 -19,-46 " stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:polygon *ngSwitchCase="'octagon'" data-cy-shape="octagon" points="19,-46 46,-19 46,19 19,46 -19,46 -46,19 -46,-19 -19,-46 " stroke="black" stroke-width="10" [attr.fill]="getFillColor()"/>
     <!-- no shape, use klecks -->
-    <svg:circle *ngSwitchDefault cx="0" cy="0" r="50" [attr.stroke]="isFillColorNonWhite ? getFillColor() : 'rgb(211,211,211)'" stroke-width="10" [attr.fill]="getFillColor()"/>
+    <svg:circle *ngSwitchDefault data-cy-shape="noshape" cx="0" cy="0" r="50" [attr.stroke]="isFillColorNonWhite ? getFillColor() : 'rgb(211,211,211)'" stroke-width="10" [attr.fill]="getFillColor()"/>
 </svg>

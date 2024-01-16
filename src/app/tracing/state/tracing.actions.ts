@@ -8,20 +8,27 @@ import {
     StationHighlightingRule,
     SetInvisibleElementsPayload,
     StationId,
-    DeliveryHighlightingRule
+    DeliveryHighlightingRule,
+    JsonDataExtract,
+    Color
 } from '../data.model';
 import { SetStationGroupsPayload } from './../grouping/model';
 import { ActivationStatus } from '../../shared/model/types';
-import { ActiveConfigurationTabId, ActiveFilterTabId, ActiveHighlightingTabId, FilterTableSettings } from '../configuration/configuration.model';
+import {
+    ActiveConfigurationTabId, ActiveFilterTabId,
+    ActiveHighlightingTabId, FilterTableSettings
+} from '../configuration/configuration.model';
 import { ROASettings } from '../visio/model';
 import { DeliveryEditRule, StationEditRule } from '../configuration/model';
 
 export enum TracingActionTypes {
     TracingActivated = '[Tracing] Tracing active',
-    LoadFclDataSuccess = '[Tracing] Load Fcl Data Success',
-    LoadFclDataFailure = '[Tracing] Load Fcl Data Failure',
+    LoadFclDataSuccessSOA = '[Tracing] Load Fcl Data Success',
+    LoadFclDataFailureSOA = '[Tracing] Load Fcl Data Failure',
     LoadShapeFileSuccessSOA = '[Tracing] Load Shape File Success',
     LoadShapeFileFailureMSA = '[Tracing] Load Shape File Failure',
+    SetGeojsonShapeBorderWidthSOA = '[Tracing] Set Geojson BorderWidth',
+    SetGeojsonShapeBorderColorSOA = '[Tracing] Set Geojson BorderColor',
     GenerateVisioLayoutSuccess = '[Tracing] Generate Visio Layout Success',
     ShowGraphSettingsSOA = '[Tracing] Show Graph Settings',
     ShowConfigurationSideBarSOA = '[Tracing] Show Configuration Settings',
@@ -31,11 +38,14 @@ export enum TracingActionTypes {
     SetSchemaGraphLayoutSOA = '[Tracing] Set Schema Graph Layout',
     SetGisGraphLayoutSOA = '[Tracing] Set Gis Graph Layout',
     SetNodeSizeSOA = '[Tracing] Set Node Size',
+    SetAdjustEdgeWidthToNodeSizeSOA = '[Tracing] Set Adjust Edge Width To Node Size',
+    SetEdgeWidthSOA = '[Tracing] Set Edge Width',
     SetFontSizeSOA = '[Tracing] Set Font Size',
     SetMergeDeliveriesTypeSOA = '[Tracing] Set Merge Deliveries Type',
     ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
     ShowLegendSOA = '[Tracing] Show Legend',
     ShowZoomSOA = '[Tracing] Show Zoom',
+    SetFitGraphToVisibleAreaSOA = '[Tracing] Set Fit Graph To Visible Area',
     SetSelectedElementsSOA = '[Tracing] Set Element Selection',
     SetSelectedStationsSOA = '[Tracing] Set Station Selection',
     SetSelectedDeliveriesSOA = '[Tracing] Set Delivery Selection',
@@ -66,7 +76,8 @@ export enum TracingActionTypes {
     SetDeliveryHighlightingRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Rules',
     SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules',
     SetTabAnimationDoneSOA = '[Configuration] Tab animation done',
-    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened'
+    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened',
+    SetLastUnchangedJsonDataExtractSuccessSOA = '[Tracing] Refresh Last Unchanged JsonData Extract Success'
 }
 
 export class TracingActivated implements Action {
@@ -75,14 +86,14 @@ export class TracingActivated implements Action {
     constructor(public payload: ActivationStatus) {}
 }
 
-export class LoadFclDataSuccess implements Action {
-    readonly type = TracingActionTypes.LoadFclDataSuccess;
+export class LoadFclDataSuccessSOA implements Action {
+    readonly type = TracingActionTypes.LoadFclDataSuccessSOA;
 
     constructor(public payload: { fclData: FclData }) {}
 }
 
-export class LoadFclDataFailure implements Action {
-    readonly type = TracingActionTypes.LoadFclDataFailure;
+export class LoadFclDataFailureSOA implements Action {
+    readonly type = TracingActionTypes.LoadFclDataFailureSOA;
 }
 
 export class LoadShapeFileSuccessSOA implements Action {
@@ -93,6 +104,18 @@ export class LoadShapeFileSuccessSOA implements Action {
 
 export class LoadShapeFileFailureMSA implements Action {
     readonly type = TracingActionTypes.LoadShapeFileFailureMSA;
+}
+
+export class SetGeojsonBorderWidthSOA implements Action {
+    readonly type = TracingActionTypes.SetGeojsonShapeBorderWidthSOA;
+
+    constructor(public payload: { width: number }) {}
+}
+
+export class SetGeojsonBorderColorSOA implements Action {
+    readonly type = TracingActionTypes.SetGeojsonShapeBorderColorSOA;
+
+    constructor(public payload: { color: Color }) {}
 }
 
 export class GenerateVisioLayoutSuccess implements Action {
@@ -137,6 +160,18 @@ export class SetNodeSizeSOA implements Action {
     constructor(public payload: { nodeSize: number }) {}
 }
 
+export class SetEdgeWidthSOA implements Action {
+    readonly type = TracingActionTypes.SetEdgeWidthSOA;
+
+    constructor(public payload: { edgeWidth: number }) {}
+}
+
+export class SetAdjustEdgeWidthToNodeSizeSOA implements Action {
+    readonly type = TracingActionTypes.SetAdjustEdgeWidthToNodeSizeSOA;
+
+    constructor(public payload: { adjustEdgeWidthToNodeSize: boolean }) {}
+}
+
 export class SetFontSizeSOA implements Action {
     readonly type = TracingActionTypes.SetFontSizeSOA;
 
@@ -165,6 +200,12 @@ export class ShowZoomSOA implements Action {
     readonly type = TracingActionTypes.ShowZoomSOA;
 
     constructor(public payload: boolean) {}
+}
+
+export class SetFitGraphToVisibleAreaSOA implements Action {
+    readonly type = TracingActionTypes.SetFitGraphToVisibleAreaSOA;
+
+    constructor(public payload: { fitGraphToVisibleArea: boolean }) {}
 }
 
 export class SetSelectedElementsSOA implements Action {
@@ -353,12 +394,20 @@ export class SetConfigurationSideBarOpenedSOA implements Action {
     readonly type = TracingActionTypes.SetConfigurationSideBarOpenedSOA;
 }
 
+export class SetLastUnchangedJsonDataExtractSuccessSOA implements Action {
+    readonly type = TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA;
+
+    constructor(public payload: { extractData: JsonDataExtract }) {}
+}
+
 export type TracingActions =
       TracingActivated
-    | LoadFclDataSuccess
-    | LoadFclDataFailure
+    | LoadFclDataSuccessSOA
+    | LoadFclDataFailureSOA
     | LoadShapeFileSuccessSOA
     | LoadShapeFileFailureMSA
+    | SetGeojsonBorderWidthSOA
+    | SetGeojsonBorderColorSOA
     | GenerateVisioLayoutSuccess
     | ShowGraphSettingsSOA
     | ShowConfigurationSideBarSOA
@@ -368,11 +417,14 @@ export type TracingActions =
     | SetGraphTypeSOA
     | SetMapTypeSOA
     | SetNodeSizeSOA
+    | SetAdjustEdgeWidthToNodeSizeSOA
+    | SetEdgeWidthSOA
     | SetFontSizeSOA
     | SetMergeDeliveriesTypeSOA
     | ShowMergedDeliveriesCountsSOA
     | ShowLegendSOA
     | ShowZoomSOA
+    | SetFitGraphToVisibleAreaSOA
     | SetSelectedElementsSOA
     | SetSelectedStationsSOA
     | SetSelectedDeliveriesSOA
@@ -403,4 +455,5 @@ export type TracingActions =
     | SetDeliveryHighlightingRulesSOA
     | SetDeliveryHighlightingEditRulesSOA
     | SetTabAnimationDoneSOA
-    | SetConfigurationSideBarOpenedSOA;
+    | SetConfigurationSideBarOpenedSOA
+    | SetLastUnchangedJsonDataExtractSuccessSOA;

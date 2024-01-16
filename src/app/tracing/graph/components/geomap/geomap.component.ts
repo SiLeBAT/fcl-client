@@ -2,18 +2,11 @@ import { Component, ElementRef, ViewChild, Input, OnChanges, SimpleChanges, Simp
 import * as ol from 'ol';
 import { Utils as UIUtils } from '../../../util/ui-utils';
 import {
-    Layout,
     MapType,
-    ShapeFileData, Size
+    Size, MapConfig
 } from '../../../data.model';
 import _ from 'lodash';
-import { createOpenLayerMap, updateMapType } from '@app/tracing/util/map-utils';
-
-export interface MapConfig {
-    layout: Layout | null;
-    mapType: MapType;
-    shapeFileData: ShapeFileData | null;
-}
+import { createOpenLayerMap, updateMapType, updateVectorLayerStyle } from '@app/tracing/util/map-utils';
 
 interface TypedSimpleChange<T> extends SimpleChange {
     currentValue: T;
@@ -103,6 +96,13 @@ export class GeoMapComponent implements OnChanges {
             newMapConfig.shapeFileData !== oldMapConfig.shapeFileData
         ) {
             this.updateMapType(newMapConfig);
+        } else if (
+            newMapConfig.mapType === MapType.SHAPE_FILE && (
+                newMapConfig.lineColor !== oldMapConfig.lineColor ||
+                newMapConfig.lineWidth !== oldMapConfig.lineWidth
+            )
+        ) {
+            updateVectorLayerStyle(this.map, newMapConfig);
         }
         if (newMapConfig.layout !== oldMapConfig.layout) {
             this.updateMapView(newMapConfig);

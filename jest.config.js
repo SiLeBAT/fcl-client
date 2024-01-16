@@ -1,20 +1,26 @@
+/* eslint-env es6 */
+const { defaults: jestNgPreset } = require('jest-preset-angular/presets');
+
 module.exports = {
-	preset: "jest-preset-angular",
-	roots: ['src'],
-	setupFilesAfterEnv: ['./src/setup-jest.ts'],
-    transform: { '^.+\\.(ts|js|html)$': 'ts-jest' },
+    preset: "jest-preset-angular",
+    roots: ['src'],
+    setupFilesAfterEnv: ["<rootDir>/src/setup-jest.ts"],
+    transform: { '^.+.(ts|mjs|js|html)$': 'jest-preset-angular' },
     transformIgnorePatterns: [
-        "node_modules/(?!@ngrx|ol|mxgraph)"
+        "node_modules/(?!.*.mjs$|@ngrx|ol|mxgraph)"
     ],
     testPathIgnorePatterns: [
-        './node_modules/',
-        './dist/',
-        './src/test.ts'
+                './node_modules/',
+                './dist/'
     ],
+    moduleNameMapper: {
+        // to allow require('...json')
+        "^assets/(.*\\.json)$": "<rootDir>/src/assets/$1"
+    },
     globals: {
         'ts-jest': {
-            tsconfig: './src/tsconfig.spec.json',
-            stringifyContentPathRegex: '\\.html$',
+            ...jestNgPreset.globals['ts-jest'],
+            tsconfig: '<rootDir>/src/tsconfig.spec.json',
             diagnostics: {
                 exclude: /\.(spec|test)\.ts$/,
                 ignoreCodes: ['TS2349', 'TS2351', 'TS2304']

@@ -1,4 +1,4 @@
-import { DataServiceInputState, DeliveryHighlightingRule, TableColumn } from './../../data.model';
+import { DeliveryHighlightingRule, Property } from './../../data.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -10,9 +10,9 @@ import { AlertService } from '@app/shared/services/alert.service';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import { EditHighlightingService } from '../edit-highlighting.service';
 import {
-    DeliveryEditRule, DeliveryRuleType, EditHighlightingServiceData,
-    EditHighlightingState,
-    RuleId, RuleListItem, StationEditRule
+    DeliveryEditRule, DeliveryRuleType,
+    EditHighlightingServiceData, EditHighlightingState,
+    RuleId, RuleListItem
 } from '../model';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
@@ -36,8 +36,12 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
         return this.cachedState === null ? this.emptyArray_ : this.cachedState.editRules;
     }
 
-    get availableProperties(): TableColumn[] {
-        return this.cachedData === null ? this.emptyArray_ : this.cachedData.availableProperties;
+    get favouriteProperties(): Property[] {
+        return this.cachedData === null ? this.emptyArray_ : this.cachedData.favouriteProperties;
+    }
+
+    get otherProperties(): Property[] {
+        return this.cachedData === null ? this.emptyArray_ : this.cachedData.otherProperties;
     }
 
     get propToValuesMap(): PropToValuesMap {
@@ -132,7 +136,7 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
         }
     }
 
-    onRemoveSelectionFromRuleConditions(editRule: StationEditRule): void {
+    onRemoveSelectionFromRuleConditions(editRule: DeliveryEditRule): void {
         const updatedEditRule = this.editHighlightingService.removeSelectionFromDeliveryRuleConditions(
             editRule, this.cachedState.dataServiceInputState
         );

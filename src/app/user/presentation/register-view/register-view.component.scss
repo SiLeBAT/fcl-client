@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 :host {
     width: 100vw;
@@ -6,7 +6,7 @@
 
 .fcl-image-container {
     width: 100%;
-    background-color: $fcl-bg-color;
+    background-color: fcl.$fcl-bg-color;
     display: flex;
     flex-direction: column;
     padding-bottom: 1rem;

@@ -12,6 +12,11 @@ export const getFclData = createSelector(
     state => state.fclData
 );
 
+export const getLastUnchangedJsonDataExtract = createSelector(
+    selectTracingFeatureState,
+    state => state.lastUnchangedJsonDataExtract
+);
+
 export const getTracingActive = createSelector(
     selectTracingFeatureState,
     state => state.tracingActive
@@ -98,6 +103,16 @@ export const getNodeSize = createSelector(
     (graphSettings) => graphSettings.nodeSize
 );
 
+export const getAdjustEdgeWidthToNodeSize = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.adjustEdgeWidthToNodeSize
+);
+
+export const getEdgeWidth = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.edgeWidth
+);
+
 export const getFontSize = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.fontSize
@@ -111,6 +126,11 @@ export const getGraphType = createSelector(
 export const getShowConfigurationSideBar = createSelector(
     selectTracingFeatureState,
     (state) => state.showConfigurationSideBar
+);
+
+export const getFitGraphToVisibleArea = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.fitGraphToVisibleArea
 );
 
 export const selectDataServiceInputState = createSelector(
@@ -204,22 +224,38 @@ export const selectGisGraphState = createSelector(
     })
 );
 
+const selectGeojsonBorderWidth = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.geojsonBorderWidth
+);
+
+const selectGeojsonBorderColor = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.geojsonBorderColor
+);
+
 export const getMapConfig = createSelector(
     selectGisGraphLayout,
     selectMapType,
     selectShapeFileData,
-    (gisLayout, mapType, shapeFileData) => ({
+    selectGeojsonBorderColor,
+    selectGeojsonBorderWidth,
+    (gisLayout, mapType, shapeFileData, borderColor, borderWidth) => ({
         layout: gisLayout,
         mapType: mapType,
-        shapeFileData: shapeFileData
+        shapeFileData: shapeFileData,
+        lineColor: borderColor,
+        lineWidth: borderWidth
     })
 );
 
 export const getStyleConfig = createSelector(
     getNodeSize,
+    getEdgeWidth,
     getFontSize,
-    (nodeSize, fontSize) => ({
+    (nodeSize, edgeWidth, fontSize) => ({
         nodeSize: nodeSize,
+        edgeWidth: edgeWidth,
         fontSize: fontSize
     })
 );

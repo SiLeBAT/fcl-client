@@ -1,5 +1,8 @@
 import { Action } from '@ngrx/store';
-import { ClearInvisibilitiesOptions, DeliveryId, SelectedElements, ShowElementsTraceParams, StationId } from './data.model';
+import {
+    ClearInvisibilitiesOptions, DeliveryId, Layout, Position, SelectedElements,
+    ShowElementsTraceParams, StationId
+} from './data.model';
 import { EdgeId, NodeId, SelectedGraphElements } from './graph/graph.model';
 
 export enum TracingActionTypes {
@@ -16,21 +19,17 @@ export enum TracingActionTypes {
     SetSelectedGraphElementsMSA = '[Graph] Set Selected Graph Elements',
     FocusStationSSA = '[Graph] Focus Station',
     FocusDeliverySSA = '[Graph] Focus Delivery',
-    FocusGraphElementSSA = '[Graph] Focus Graph Element'
+    FocusGraphElementSSA = '[Graph] Focus Graph Element',
+    SetLastUnchangedJsonDataExtractMSA = '[Tracing] Set Last Unchanged JsonData Extract',
+    SetStationPositionsAndLayoutMSA = '[Tracing] Set Station Positions And Layout MSA',
 }
 
 export class ClearTraceMSA implements Action {
     readonly type = TracingActionTypes.ClearTraceMSA;
-
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor(public payload: {}) {}
 }
 
 export class ClearOutbreakStationsMSA implements Action {
     readonly type = TracingActionTypes.ClearOutbreakStationsMSA;
-
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor(public payload: {}) {}
 }
 
 export class ClearInvisibilitiesMSA implements Action {
@@ -105,6 +104,17 @@ export class FocusGraphElementSSA implements Action {
     constructor(public payload: { elementId: NodeId | EdgeId }) {}
 }
 
+export class SetLastUnchangedJsonDataExtractMSA implements Action {
+    readonly type = TracingActionTypes.SetLastUnchangedJsonDataExtractMSA;
+}
+
+export class SetStationPositionsAndLayoutMSA implements Action {
+    readonly type = TracingActionTypes.SetStationPositionsAndLayoutMSA;
+
+    constructor(public payload: { stationPositions: { [key: string]: Position }; layout: Layout }) {}
+}
+
+
 export type TracingActions =
       ClearTraceMSA
     | ClearOutbreakStationsMSA
@@ -117,4 +127,6 @@ export type TracingActions =
     | SetSelectedGraphElementsMSA
     | FocusStationSSA
     | FocusDeliverySSA
-    | FocusGraphElementSSA;
+    | FocusGraphElementSSA
+    | SetLastUnchangedJsonDataExtractMSA
+    | SetStationPositionsAndLayoutMSA;

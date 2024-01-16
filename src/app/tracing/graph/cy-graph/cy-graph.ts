@@ -10,6 +10,7 @@ import dagre from 'cytoscape-dagre';
 import spread from 'cytoscape-spread';
 import { FruchtermanLayout } from '@app/tracing/layout/fruchterman-reingold';
 import { FarmToForkLayout } from '@app/tracing/layout/farm-to-fork/farm-to-fork';
+import { reduceElementSizeToVisibleArea } from './shared-utils';
 
 export function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
     return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);
@@ -43,8 +44,7 @@ export interface GraphData {
     nodePositions: PositionMap;
     layout: Layout;
     selectedElements: SelectedGraphElements;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    propsUpdatedFlag: {};
+    propsUpdatedFlag: Record<string, never>;
     ghostData: GraphGhostData;
     hoverEdges: EdgeId[];
 }
@@ -67,13 +67,14 @@ export class CyGraph {
         private graphData: GraphData,
         private styleConfig: StyleConfig,
         layoutConfig: LayoutConfig,
-        cyConfig?: CyConfig
+        cyConfig?: CyConfig,
+        fitToVisibleArea?: boolean
     ) {
         if (!CyGraph.CyLayoutManagerLoaded) {
             CyGraph.addLayoutManagerToCytoScape();
             CyGraph.CyLayoutManagerLoaded = true;
         }
-        this.initCy(htmlContainerElement, layoutConfig, cyConfig);
+        this.initCy(htmlContainerElement, layoutConfig, cyConfig, fitToVisibleArea);
     }
 
     private static addLayoutManagerToCytoScape() {
@@ -161,13 +162,34 @@ export class CyGraph {
         }));
     }
 
+    protected reduceCySizeToVisibleArea(): void {
+        reduceElementSizeToVisibleArea(this.cy_.container());
+        this.cy.resize();
+    }
+
+    private restoreContainerSize(): void {
+        this.cy.container().style.setProperty('max-width', '100%');
+    }
+
+    protected restoreCySize(): void {
+        this.restoreContainerSize();
+        this.cy.resize();
+    }
+
     protected initCy(
         htmlContainerElement: HTMLElement | undefined,
         layoutConfig: LayoutConfig,
-        cyConfig: CyConfig | undefined = DEFAULT_CY_CONFIG
+        cyConfig: CyConfig | undefined = DEFAULT_CY_CONFIG,
+        fitGraphToVisibleArea: boolean
     ): void {
         this.cleanCy();
         cyConfig = cyConfig === undefined ? DEFAULT_CY_CONFIG : cyConfig;
+        const isPresetLayout = isPresetLayoutConfig(layoutConfig);
+        const fitViewPort = !isPresetLayout || layoutConfig.fit !== false;
+        const reduceContainerSize = fitGraphToVisibleArea && fitViewPort;
+        if (reduceContainerSize) {
+            reduceElementSizeToVisibleArea(htmlContainerElement);
+        }
         this.cy_ = cytoscape({
             ...cyConfig,
             container: htmlContainerElement,
@@ -196,6 +218,10 @@ export class CyGraph {
             this.graphData = { ...this.graphData,
                 layout: this.extractViewPortFromGraph()
             };
+        }
+
+        if (reduceContainerSize) {
+            this.restoreCySize();
         }
     }
 

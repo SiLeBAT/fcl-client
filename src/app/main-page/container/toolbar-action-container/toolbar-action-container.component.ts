@@ -1,21 +1,30 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as fromTracing from '@app/tracing/state/tracing.reducers';
-import * as TracingSelectors from '@app/tracing/state/tracing.selectors';
+import * as tracingSelectors from '@app/tracing/state/tracing.selectors';
 import * as tracingActions from '@app/tracing/state/tracing.actions';
 import * as tracingIOActions from '@app/tracing/io/io.actions';
 import * as fromEditor from '../../../graph-editor/state/graph-editor.reducer';
 import * as fromUser from '../../../user/state/user.reducer';
-import { FclData, GraphSettings, DataServiceData, GraphType, MapType, DataServiceInputState } from '@app/tracing/data.model';
-import { AlertService } from '@app/shared/services/alert.service';
-import { IOService } from '@app/tracing/io/io.service';
+import * as _ from 'lodash';
+import {
+    GraphSettings,
+    DataServiceData,
+    GraphType,
+    MapType,
+    DataServiceInputState
+} from '@app/tracing/data.model';
 import { DataService } from './../../../tracing/services/data.service';
 import { Utils as UIUtils } from './../../../tracing/util/ui-utils';
 import { Observable, combineLatest } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
-import { Constants } from '@app/tracing/util/constants';
-import { ExampleMenuComponent } from '@app/main-page/presentation/example-menu/example-menu.component';
+import { take, takeWhile } from 'rxjs/operators';
 import { ExampleData } from '@app/main-page/model/types';
+import { MainPageService } from '@app/main-page/services/main-page.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogOkCancelComponent, DialogOkCancelData } from '@app/tracing/dialog/dialog-ok-cancel/dialog-ok-cancel.component';
+import { Constants } from '@app/tracing/util/constants';
+import { ToolbarActionComponent } from '@app/main-page/presentation/toolbar-action/toolbar-action.component';
+import { IOService } from '@app/tracing/io/io.service';
 
 @Component({
     selector: 'fcl-toolbar-action-container',
@@ -23,10 +32,10 @@ import { ExampleData } from '@app/main-page/model/types';
     styleUrls: ['./toolbar-action-container.component.scss']
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
-    @ViewChild(ExampleMenuComponent) exampleMenuComponent: ExampleMenuComponent;
+    @ViewChild(ToolbarActionComponent) toolbarActionComponent: ToolbarActionComponent;
 
     tracingActive$ = this.store.pipe(
-        select(TracingSelectors.getTracingActive)
+        select(tracingSelectors.getTracingActive)
     );
     graphEditorActive$ = this.store.pipe(
         select(fromEditor.isActive)
@@ -35,7 +44,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         select(fromUser.getCurrentUser)
     );
     fileName$ = this.store.pipe(
-        select(TracingSelectors.selectSourceFileName)
+        select(tracingSelectors.selectSourceFileName)
     );
 
     graphSettings: GraphSettings;
@@ -51,20 +60,21 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store<fromTracing.State>,
-        private alertService: AlertService,
+        private mainPageService: MainPageService,
+        private dataService: DataService,
         private ioService: IOService,
-        private dataService: DataService
+        public dialog: MatDialog
     ) { }
 
     ngOnInit() {
         const graphSettings$: Observable<GraphSettings> = this.store
             .pipe(
-                select(TracingSelectors.getGraphSettings)
+                select(tracingSelectors.getGraphSettings)
             );
 
         const dataServiceInputState$: Observable<DataServiceInputState> = this.store
             .pipe(
-                select(TracingSelectors.selectDataServiceInputState)
+                select(tracingSelectors.selectDataServiceInputState)
             );
 
         combineLatest([
@@ -86,22 +96,18 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                 throw new Error(`error loading data: ${error}`);
             }
         );
-
     }
 
     loadModelFile(fileList: FileList) {
-        this.store.dispatch(new tracingIOActions.LoadFclDataMSA({ dataSource: fileList }));
+        this.loadFile(fileList);
     }
 
-    loadExampleDataFile(exampleData: ExampleData) {
-        this.ioService.getFclData(exampleData.path)
-            .then((data: FclData) => {
-                this.store.dispatch(new tracingActions.LoadFclDataSuccess({ fclData: data }));
+    onSelectModelFile() {
+        this.checkConditionsAndLoadFile(() => this.toolbarActionComponent.clickModelFileInputElement());
+    }
 
-            })
-            .catch(error => {
-                this.alertService.error(`error during loading of example data: ${error}`);
-            });
+    onLoadExampleDataFile(exampleData: ExampleData) {
+        this.checkConditionsAndLoadFile(() => this.loadFile(exampleData.path));
     }
 
     setGraphType(graphType: GraphType) {
@@ -112,11 +118,80 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.store.dispatch(new tracingActions.SetMapTypeSOA({ mapType: mapType }));
     }
 
-    loadShapeFile(fileList: FileList) {
+    onLoadShapeFile(fileList: FileList) {
         this.store.dispatch(new tracingIOActions.LoadShapeFileMSA({ dataSource: fileList }));
+    }
+
+    onDownloadFile(fileName: string) {
+        this.mainPageService.onSave(fileName);
+    }
+
+    onSaveImage() {
+        this.mainPageService.onSaveImage();
+    }
+
+    onOpenRoaLayout() {
+        this.mainPageService.onROALayout();
     }
 
     ngOnDestroy() {
         this.componentActive = false;
     }
+
+    private checkConditionsAndLoadFile(loadFun: () => void): void {
+        combineLatest([
+            this.store.select(tracingSelectors.getFclData),
+            this.store.select(tracingSelectors.getLastUnchangedJsonDataExtract)
+        ]).pipe(
+            take(1),
+            takeWhile(() => this.componentActive))
+            .subscribe(
+                ([fclData, lastUnchangedJsonDataExtract]) => {
+                    if (_.isEmpty(lastUnchangedJsonDataExtract)) {
+                        loadFun();
+                    } else {
+                        this.ioService.hasDataChanged(fclData, lastUnchangedJsonDataExtract)
+                            .then((dataHasChanged: boolean) => {
+                                if (dataHasChanged) {
+                                    const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.openConfirmDiscardChangesDialog();
+
+                                    if (dialogRef !== null) {
+                                        // eslint-disable-next-line rxjs/no-nested-subscribe
+                                        dialogRef.afterClosed().subscribe(result => {
+                                            if (result === Constants.DIALOG_OK) {
+                                                loadFun();
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    loadFun();
+                                }
+                            });
+                    }
+                },
+                error => {
+                    throw new Error(`error checking conditions and loading data file: ${error}`);
+                });
+    }
+
+    private loadFile(dataSource: string | FileList) {
+        this.store.dispatch(new tracingIOActions.LoadFclDataMSA({dataSource: dataSource}));
+    }
+
+    private openConfirmDiscardChangesDialog(): MatDialogRef<DialogOkCancelComponent, any> {
+        const dialogData: DialogOkCancelData = {
+            title: 'Save / Discard Data Changes?',
+            content1: `Do you want to save the changes you made to "${this.toolbarActionComponent.getFileNameWoExt()}" ?`,
+            content2: 'Your changes will be lost, if you do not save them.',
+            cancel: Constants.DIALOG_CANCEL,
+            ok: Constants.DIALOG_DONT_SAVE
+        };
+        const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.dialog.open(DialogOkCancelComponent, {
+            closeOnNavigation: true,
+            data: dialogData
+        });
+
+        return dialogRef;
+    }
+
 }

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
+
+interface GdprAgreementForm {
+    dataProtection: FormControl<boolean>;
+}
 
 @Component({
     selector: 'fcl-gdpr-agreement',
@@ -8,14 +12,14 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
     styleUrls: ['./gdpr-agreement.component.scss']
 })
 export class GdprAgreementComponent implements OnInit {
-    gdprAgreementForm: FormGroup;
+    gdprAgreementForm: FormGroup<GdprAgreementForm>;
 
     constructor(
         public dialogRef: MatDialogRef<GdprAgreementComponent>
     ) { }
 
     ngOnInit() {
-        this.gdprAgreementForm = new FormGroup({
+        this.gdprAgreementForm = new FormGroup<GdprAgreementForm>({
             dataProtection: new FormControl(false, Validators.requiredTrue)
         });
     }

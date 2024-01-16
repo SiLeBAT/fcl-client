@@ -8,6 +8,11 @@ import {
     CrossContTraceType,
     FclDataSourceInfo
 } from '../data.model';
+import {
+    addStatAnoColumnOnAnoActivation,
+    removeAnoRefsOnStatFilterActivitationWoAno,
+    updateStatAnoColumnModeOnAnoDeactivation
+} from './reducer.utils';
 
 import { ModelDependentState, TracingState } from '../state.model';
 import {
@@ -48,7 +53,7 @@ const initialFilterSettings: FilterSettings = {
     },
     deliveryFilter: {
         ...filterTableSettings,
-        columnOrder: ['name', 'lot', 'date', 'source.name', 'target.name']
+        columnOrder: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray()
     }
 };
 
@@ -61,7 +66,8 @@ const initialModelDependentState: ModelDependentState = {
     visioReport: null,
     roaSettings: null,
     filterSettings: initialFilterSettings,
-    highlightingConfigurationSettings: initialHighlightingConfigurationSettings
+    highlightingConfigurationSettings: initialHighlightingConfigurationSettings,
+    lastUnchangedJsonDataExtract: {}
 };
 
 const initialData: FclData = createInitialFclDataState();
@@ -103,12 +109,15 @@ export function createInitialFclDataState(): FclData {
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
+            adjustEdgeWidthToNodeSize: Constants.DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE,
+            edgeWidth: Constants.DEFAULT_GRAPH_EDGE_WIDTH,
             fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
             mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
             showMergedDeliveriesCounts: false,
             skipUnconnectedStations: Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
+            fitGraphToVisibleArea: Constants.DEFAULT_FIT_GRAPH_TO_VISIBLE_AREA,
             selectedElements: {
                 stations: [],
                 deliveries: []
@@ -124,6 +133,8 @@ export function createInitialFclDataState(): FclData {
             gisLayout: null,
             mapType: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
+            geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+            geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
             ghostStation: null,
             ghostDelivery: null,
             hoverDeliveries: []
@@ -156,22 +167,22 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 tracingActive: action.payload.isActivated
             };
 
-        case TracingActionTypes.LoadFclDataSuccess:
+        case TracingActionTypes.LoadFclDataSuccessSOA: {
             action.payload.fclData.graphSettings.mapType = state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData = state.fclData.graphSettings.shapeFileData;
+            action.payload.fclData.graphSettings.geojsonBorderColor = state.fclData.graphSettings.geojsonBorderColor;
+            action.payload.fclData.graphSettings.geojsonBorderWidth = state.fclData.graphSettings.geojsonBorderWidth;
 
-            return {
+            let newState = {
                 ...state,
                 fclData: action.payload.fclData,
                 ...initialModelDependentState
             };
 
-        case TracingActionTypes.LoadFclDataFailure:
-            return {
-                ...state,
-                fclData: initialData
-            };
+            newState = addStatAnoColumnOnAnoActivation([], newState);
 
+            return newState;
+        }
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,
@@ -184,13 +195,15 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 showGraphSettings: action.payload.showGraphSettings
             };
 
-        case TracingActionTypes.ShowConfigurationSideBarSOA:
-            return {
+        case TracingActionTypes.ShowConfigurationSideBarSOA: {
+            let newState = {
                 ...state,
                 showConfigurationSideBar: action.payload.showConfigurationSideBar,
                 isConfSideBarOpening: action.payload.showConfigurationSideBar
             };
-
+            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+            return newState;
+        }
         case TracingActionTypes.SetGraphTypeSOA:
             return {
                 ...state,
@@ -225,7 +238,33 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_FILE,
-                        shapeFileData: action.payload.shapeFileData
+                        shapeFileData: action.payload.shapeFileData,
+                        geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                        geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetGeojsonShapeBorderWidthSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        geojsonBorderWidth: action.payload.width
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetGeojsonShapeBorderColorSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        geojsonBorderColor: action.payload.color
                     }
                 }
             };
@@ -237,7 +276,37 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        nodeSize: action.payload.nodeSize
+                        nodeSize: action.payload.nodeSize,
+                        edgeWidth: state.fclData.graphSettings.adjustEdgeWidthToNodeSize ?
+                            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(action.payload.nodeSize) :
+                            state.fclData.graphSettings.edgeWidth
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetAdjustEdgeWidthToNodeSizeSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        adjustEdgeWidthToNodeSize: action.payload.adjustEdgeWidthToNodeSize,
+                        edgeWidth: action.payload.adjustEdgeWidthToNodeSize ?
+                            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(state.fclData.graphSettings.nodeSize) :
+                            state.fclData.graphSettings.edgeWidth
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetEdgeWidthSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        edgeWidth: action.payload.edgeWidth
                     }
                 }
             };
@@ -302,7 +371,20 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetStationFilterSOA:
+        case TracingActionTypes.SetFitGraphToVisibleAreaSOA:
+            return {
+                ...state,
+                fclData: {
+                    ...state.fclData,
+                    graphSettings: {
+                        ...state.fclData.graphSettings,
+                        fitGraphToVisibleArea: action.payload.fitGraphToVisibleArea
+                    }
+                }
+            };
+
+        case TracingActionTypes.SetStationFilterSOA: {
+
             return {
                 ...state,
                 filterSettings: {
@@ -310,7 +392,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     stationFilter: action.payload.settings
                 }
             };
-
+        }
         case TracingActionTypes.SetDeliveryFilterSOA:
             return {
                 ...state,
@@ -327,7 +409,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...initialFilterSettings,
                     stationFilter: {
                         ...filterTableSettings,
-                        columnOrder: state.filterSettings.stationFilter.columnOrder
+                        columnOrder: state.filterSettings.stationFilter.columnOrder,
+                        anonymizedNameColumnMode: state.filterSettings.stationFilter.anonymizedNameColumnMode
                     }
                 }
             };
@@ -495,8 +578,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetStationHighlightingRulesSOA:
-            return {
+        case TracingActionTypes.SetStationHighlightingRulesSOA: {
+            let newState: TracingState = {
                 ...state,
                 fclData: {
                     ...state.fclData,
@@ -510,6 +593,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+            newState = addStatAnoColumnOnAnoActivation(state.fclData.graphSettings.highlightingSettings.stations, newState);
+            newState = updateStatAnoColumnModeOnAnoDeactivation(state.fclData.graphSettings.highlightingSettings.stations, newState);
+
+            return newState;
+        }
         case TracingActionTypes.SetStationHighlightingEditRulesSOA:
             return {
                 ...state,
@@ -639,8 +727,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetActiveConfigurationTabIdSOA:
-            return {
+        case TracingActionTypes.SetActiveConfigurationTabIdSOA: {
+            let newState = {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
@@ -648,9 +736,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 },
                 animatingTabCount: state.animatingTabCount + 1
             };
-
-        case TracingActionTypes.SetActiveFilterTabIdSOA:
-            return {
+            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+            return newState;
+        }
+        case TracingActionTypes.SetActiveFilterTabIdSOA: {
+            let newState = {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
@@ -659,6 +749,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 animatingTabCount: state.animatingTabCount + 1
             };
 
+            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+
+            return newState;
+        }
         case TracingActionTypes.SetActiveHighlightingTabIdSOA:
             return {
                 ...state,
@@ -672,6 +766,12 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return {
                 ...state,
                 roaSettings: action.payload.roaSettings
+            };
+
+        case TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA:
+            return {
+                ...state,
+                lastUnchangedJsonDataExtract: action.payload.extractData
             };
 
         default:

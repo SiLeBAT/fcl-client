@@ -7,6 +7,15 @@
             <mat-radio-button class="fcl-graph-type-button" [value]="'Graph'" matTooltip="Show Schematic Graph">
                 Graph
             </mat-radio-button>
+            <input
+                type="file"
+                class="fcl-fileinput"
+                accept=".geojson"
+                id="shapeFileInput"
+                (change)="onShapeFileInput($event)"
+                #shapeFileInput
+                data-cy="fcl-upload-shape-fileinput"
+            >
             <span class="fcl-graph-type-button">
                 <mat-radio-button [value]="'GIS'" [disabled]="!hasGisInfo" [matTooltip]="!hasGisInfo ? '': 'Show GIS Graph'">
                     GIS
@@ -15,7 +24,7 @@
                     <span *ngFor="let item of availableMapTypes">
                         <mat-option value="{{item}}" (click)="setMapType(item)">{{mapTypeToLabelMap.get(item)}}</mat-option>
                     </span>
-                    <mat-option value="" (click)="selectShapeFile($event)">Load Shape File...</mat-option>
+                    <mat-option value="" (click)="onSelectShapeFile($event)">Load Shape File...</mat-option>
                 </mat-select>
             </span>
         </mat-radio-group>
@@ -38,13 +47,18 @@
     </fcl-example-menu>
 
     <input
-        id="fileInput"
-        #fileInput
         type="file"
-    />
+        accept=".json"
+        class="fcl-fileinput"
+        id="modelFileInput"
+        (change)="onModelFileInput($event)"
+        #modelFileInput
+        data-cy="fcl-upload-model-fileinput"
+    >
     <button
         class="fcl-no-shrink"
         mat-button
+        data-cy="fcl-upload-model-button"
         (click)="onSelectModelFile()"
         matTooltip="Upload data">
         <mat-icon>file_upload</mat-icon>
@@ -53,7 +67,8 @@
     <button
         class="fcl-separator fcl-no-shrink"
         mat-button
-        (click)="mainPageService.onSave()"
+        (click)="onDownloadDataFile()"
+        data-cy="fcl-download-model-button"
         matTooltip="Download data">
         <mat-icon>file_download</mat-icon>
         Download Data
@@ -61,7 +76,7 @@
     <button
         class="fcl-separator fcl-no-shrink"
         mat-button
-        (click)="mainPageService.onSaveImage()"
+        (click)="onSaveImage()"
         matTooltip="Save image">
         <mat-icon>image</mat-icon>
         Save Image
@@ -69,7 +84,7 @@
     <button
         class="fcl-separator fcl-no-shrink"
         mat-button
-        (click)="mainPageService.onROALayout()"
+        (click)="onOpenRoaLayout()"
         matTooltip="Generate ROA Layout">
         <mat-icon>grid_on</mat-icon>
         ROA Style

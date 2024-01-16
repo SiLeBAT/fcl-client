@@ -17,25 +17,27 @@ export class AlertService {
     notification$ = this.subjNotification.asObservable();
 
     success(message: string) {
-        this.publishNotification(message, ['snackbar-success']);
+        this.publishNotification(message, ['snackbar-success'], true);
     }
 
     error(message: string) {
-        this.publishNotification(message, ['snackbar-error']);
+        this.publishNotification(message, ['snackbar-error'], false);
 
     }
 
     warn(message: string) {
-        this.publishNotification(message, ['snackbar-warn']);
+        this.publishNotification(message, ['snackbar-warn'], true);
     }
 
     info(message: string) {
-        this.publishNotification(message, ['snackbar-info']);
+        this.publishNotification(message, ['snackbar-info'], true);
     }
 
-    private publishNotification(message: string, panelClass: string[]) {
+    private publishNotification(message: string, panelClass: string[], autoDismiss: boolean) {
         const config = new MatSnackBarConfig();
-        config.duration = this.duration;
+        if (autoDismiss) {
+            config.duration = this.duration;
+        }
         config.verticalPosition = this.verticalPosition;
         config.panelClass = panelClass;
 

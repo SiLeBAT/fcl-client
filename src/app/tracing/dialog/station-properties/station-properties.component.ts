@@ -2,7 +2,7 @@ import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@an
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as d3 from 'd3-selection';
 
-import { DeliveryData, StationData, DeliveryId, StationId } from '../../data.model';
+import { DeliveryData, StationData, DeliveryId, StationId, TableColumn } from '../../data.model';
 import { Constants } from '../../util/constants';
 import { Utils } from '../../util/non-ui-utils';
 import { State } from '@app/tracing/state/tracing.reducers';
@@ -13,6 +13,7 @@ export interface StationPropertiesData {
     station: StationData;
     deliveries: Map<DeliveryId, DeliveryData>;
     connectedStations: Map<StationId, StationData>;
+    stationColumns: TableColumn[];
 }
 
 type LotKey = string;
@@ -143,9 +144,14 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     otherPropertiesHidden = true;
     properties: Properties = {};
 
-    vipProperties: string[] = ['id', 'address', 'country', 'typeOfBusiness', 'score', 'outbreak', 'forward'];
+    vipProperties: string[] = ['id', 'address', 'country', 'typeOfBusiness', 'score', 'commonLink', 'outbreak', 'weight'];
+
     notListedProps: string[] = ['name', 'incoming', 'outgoing'];
     otherProperties: string[] = [];
+
+    conditionalNotListedPropsMap = new Map<string, (station: StationData) => boolean>([
+        ['contains', (station: StationData) => station.isMeta === false]
+    ]);
 
     private nodeInData: NodeDatum[];
     private nodeOutData: NodeDatum[];
@@ -170,7 +176,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData,
         private store: Store<State>
     ) {
-        this.initProperties(this.data.station);
+        this.initProperties(this.data.station, this.data.stationColumns);
 
         if (data.station.incoming.length > 0 || data.station.outgoing.length > 0) {
             const ingredientsByLotKey = this.getIngredientsByLotKey();
@@ -206,27 +212,41 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         }
     }
 
-    private initProperties(station: StationData): void {
+    private initProperties(station: StationData, columns: TableColumn[]): void {
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
+
+        this.conditionalNotListedPropsMap.forEach((isHiddenFun, propId) => hiddenProps[propId] = isHiddenFun(station));
+
         Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
             .forEach(key => {
+                const column: TableColumn = columns.find(column => column.id === key);
+                const label = column !== undefined ? column.name : Constants.PROPERTIES.get(key).name;
                 const value = station[key];
                 properties[key] = {
-                    label: Constants.PROPERTIES.get(key).name,
+                    label: label,
                     value: value != null ? value + '' : ''
                 };
             });
 
         station.properties.forEach(prop => {
+            const column: TableColumn = columns.find(column => column.id === prop.name);
+            const label = column !== undefined ? column.name : this.convertPropNameToLabel(prop.name);
             properties[prop.name] = {
-                label: this.convertPropNameToLabel(prop.name),
+                label: label,
                 value: prop.value + ''
             };
         });
 
         const vipProps = Utils.createSimpleStringSet(this.vipProperties);
-        this.otherProperties = Object.keys(properties).filter(key => !vipProps[key]).slice();
+        this.otherProperties = Object
+            .keys(properties)
+            .filter(key => !vipProps[key])
+            .slice()
+            .map(property => {
+                const column: TableColumn = columns.find(column => column.id === property);
+                return column !== undefined ? column.name : Constants.PROPERTIES.get(property).name;
+            });
         this.otherProperties.sort();
         // add default for missing props
         this.vipProperties.filter(key => !properties[key]).forEach(key => {
@@ -296,6 +316,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     toggleOtherProperties() {
         this.otherPropertiesHidden = !this.otherPropertiesHidden;
+    }
+
+    getOtherPropertiesOri() {
+        return this.otherProperties
+            .map(property => Object.keys(this.properties)
+                .find(key => this.properties[key].label === property));
     }
 
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {

@@ -1,0 +1,13 @@
+@use '../../../../assets/sass/base' as fcl;
+
+.mat-select.fcl-option-unsupported .mat-select-value {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
+.mat-select-panel .mat-option.fcl-option-unsupported {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
+.mat-select-panel .mat-option.fcl-option-unsupported.mat-selected {
+    color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
+}

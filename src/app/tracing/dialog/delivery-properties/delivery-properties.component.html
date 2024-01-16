@@ -10,7 +10,12 @@
                     <td>{{properties[prop].label}}</td>
                     <td>{{properties[prop].value}}</td>
                 </tr>
-                <tr *ngFor="let prop of (!otherPropertiesHidden ? otherProperties : [])">
+                <tr *ngIf="!otherPropertiesHidden">
+                    <td colspan="2" class="fcl-delivery-properties-horizontal-line-cell">
+                        <hr class="fcl-delivery-properties-horizontal-line">
+                    </td>
+                </tr>
+                <tr *ngFor="let prop of (!otherPropertiesHidden ? getOtherPropertiesOri() : [])">
                     <td>{{properties[prop].label}}</td>
                     <td>{{properties[prop].value}}</td>
                 </tr>

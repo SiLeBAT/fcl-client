@@ -14,7 +14,8 @@ import {
     HighlightingRule,
     OperationType,
     DataServiceInputState,
-    HighlightingStats
+    HighlightingStats,
+    LabelPart
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -32,6 +33,9 @@ export class HighlightingService {
 
     private statHighlightingRules: StationHighlightingRule[] = [];
     private delHighlightingRules: DeliveryHighlightingRule[] = [];
+
+    private enabledStatHRules: StationHighlightingRule[] = [];
+    private enabledDelHRules: DeliveryHighlightingRule[] = [];
 
     private ruleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
     private statRuleIdToEvaluatorFunMap: Record<RuleId, RuleConditionsEvaluatorFun> = {};
@@ -96,20 +100,26 @@ export class HighlightingService {
         }
     }
 
+    private getEnabledRules<T extends HighlightingRule>(rules: T[]): T[] {
+        return rules.filter(r => !r.userDisabled && !r.autoDisabled);
+    }
+
     private preprocessHighlightings(state: DataServiceInputState): void {
         const statRulesChanged = state.highlightingSettings.stations !== this.statHighlightingRules;
         const delRulesChanged = state.highlightingSettings.deliveries !== this.delHighlightingRules;
         if (statRulesChanged) {
             this.statHighlightingRules = state.highlightingSettings.stations;
+            this.enabledStatHRules = this.getEnabledRules(this.statHighlightingRules);
             this.statRuleIdToEvaluatorFunMap = {};
-            state.highlightingSettings.stations.forEach(
+            this.enabledStatHRules.forEach(
                 rule => this.statRuleIdToEvaluatorFunMap[rule.id] = this.getEvaluatorFunFromRule(rule)
             );
         }
         if (delRulesChanged) {
             this.delHighlightingRules = state.highlightingSettings.deliveries;
+            this.enabledDelHRules = this.getEnabledRules(this.delHighlightingRules);
             this.delRuleIdToEvaluatorFunMap = {};
-            state.highlightingSettings.deliveries.forEach(
+            this.enabledDelHRules.forEach(
                 rule => this.delRuleIdToEvaluatorFunMap[rule.id] = this.getEvaluatorFunFromRule(rule)
             );
         }
@@ -146,13 +156,15 @@ export class HighlightingService {
 
             });
 
+        data.isStationAnonymizationActive = this.anonymizeStationsIfApplicable(data.stations, this.enabledStatHRules, effElementsStats);
+
         data.legendInfo = this.getLegendInfo(state, {
             stations: this.getRuleIdToIsActiveMap(
-                state.highlightingSettings.stations.filter(r => !r.disabled),
+                this.enabledStatHRules,
                 effElementsStats
             ),
             deliveries: this.getRuleIdToIsActiveMap(
-                state.highlightingSettings.deliveries.filter(r => !r.disabled),
+                this.enabledDelHRules,
                 effElementsStats
             )
         });
@@ -176,13 +188,13 @@ export class HighlightingService {
         );
 
         return {
-            stations: state.highlightingSettings.stations.filter(rule =>
+            stations: this.enabledStatHRules.filter(rule =>
                 rule.showInLegend &&
                 (activeHighlightings.stations[rule.id] || ruleIdToIsCommonLinkRuleMap[rule.id])
             ).map(rule =>
                 ({ label: rule.name, color: this.mapToColor(rule.color), shape: rule.shape })
             ),
-            deliveries: state.highlightingSettings.deliveries.filter(rule =>
+            deliveries: this.enabledDelHRules.filter(rule =>
                 rule.showInLegend && (activeHighlightings.deliveries[rule.id])
             ).map(rule =>
                 ({ label: rule.name, color: this.mapToColor(rule.color), linePattern: rule.linePattern })
@@ -195,7 +207,7 @@ export class HighlightingService {
     }
 
     private getCommonLinkEntries(state: DataServiceInputState): StationHighlightingRule[] {
-        return state.highlightingSettings.stations.filter(rule => !rule.disabled && this.isCommonLinkRule(rule));
+        return this.enabledStatHRules.filter(rule => this.isCommonLinkRule(rule));
     }
 
     private isCommonLinkRule(rule: HighlightingRule): boolean {
@@ -222,19 +234,102 @@ export class HighlightingService {
     >(fclElement: T, highlightingRules: K[]): K[] {
         return highlightingRules.filter(rule =>
             !rule.invisible &&
-            !rule.disabled &&
             (
                 !rule.logicalConditions ||
                 this.ruleIdToEvaluatorFunMap[rule.id](fclElement)
             )
         );
     }
+
+    private anonymizeStationsIfApplicable<T extends StationData[]>(
+        elements: StationData[], // | DeliveryData[],
+        rules: HighlightingRule[],
+        effElementsStats: HighlightingStats
+    ): boolean {
+        const anoRules = rules.filter(r => r.labelParts);
+
+        elements.forEach(e => delete e.anonymizedName);
+
+        for (const anoRule of anoRules) {
+            const conditionsEvalFun = !anoRule.logicalConditions ? undefined : this.ruleIdToEvaluatorFunMap[anoRule.id];
+            const indexedElements = elements;
+            // const filteredElements = conditionsEvalFun ? (elements as T[0][]).filter((e) => conditionsEvalFun(e)) as T : elements;
+            effElementsStats[anoRule.id] = indexedElements.length;
+
+            const indexPartIndex = anoRule.labelParts.findIndex(p => p.useIndex);
+            if (indexPartIndex >= 0) {
+                const preIndexParts = anoRule.labelParts.slice(0, indexPartIndex);
+                const afterIndexParts = anoRule.labelParts.slice(indexPartIndex + 1);
+                const prefixCount: Record<string, number> = {};
+                const prefix2Elements: Record<string, T[0][]> = {};
+                const prefixes: string[] = [];
+
+                indexedElements.forEach((element: T[0]) => {
+                    const prefix = this.getComposedLabel(element, preIndexParts);
+                    const oldCount = prefixCount[prefix];
+                    if (oldCount === undefined) {
+                        prefixCount[prefix] = 1;
+                        prefix2Elements[prefix] = [element];
+                        prefixes.push(prefix);
+                    } else {
+                        prefixCount[prefix] = oldCount + 1;
+                        prefix2Elements[prefix].push(element);
+                    }
+                });
+
+                prefixes.forEach(prefix => {
+                    const prefixElements = prefix2Elements[prefix];
+                    const places = ('' + prefixElements.length).length;
+                    const formatIndexFun = prefixElements.length === 1 ?
+                        (i: number) => '' :
+                        (i: number) => `${anoRule.labelParts[indexPartIndex].prefix}${String(i).padStart(places, '0')}`;
+
+                    prefixElements.forEach((element, elementIndex) => {
+                        const suffix = this.getComposedLabel(element, afterIndexParts);
+                        const infix = formatIndexFun(elementIndex + 1);
+                        const anoName = `${anoRule.labelPrefix ?? ''}${prefix}${infix}${suffix}`;
+                        element.anonymizedName = anoName;
+
+                        if (conditionsEvalFun(element)) {
+                            element.highlightingInfo.label = this.getTrimmedLabel(anoName);
+                        }
+                    });
+                });
+            } else {
+                indexedElements.forEach((element: StationData) => { // DeliveryData | StationData) => {
+                    const anoName = (anoRule.labelPrefix ?? '') + this.getComposedLabel(element, anoRule.labelParts);
+                    element.anonymizedName = anoName;
+
+                    if (conditionsEvalFun(element)) {
+                        element.highlightingInfo.label = this.getTrimmedLabel(anoName);
+                    }
+                });
+            }
+        }
+        return anoRules.length > 0;
+    }
+
+    private getTrimmedLabel(label: string): string {
+        return label.trim().replace(/\s+/g, ' ');
+    }
+
+    private getComposedLabel(element: DeliveryData | StationData, labelParts: LabelPart[]): string {
+        return labelParts.map(p => {
+            if (p.property !== undefined) {
+                const label = this.mapPropertyValueToString(this.getPropertyValueFromElement(element, p.property));
+                return label && p.prefix ? `${p.prefix}${label}` : label;
+            } else {
+                return p.prefix;
+            }
+        }).join('');
+    }
+
     private createDeliveryHightlightingInfo(
         delivery: DeliveryData,
         state: DataServiceInputState,
         effElementsStats: HighlightingStats
     ) {
-        const activeHighlightingRules = this.getActiveHighlightingRules(delivery, state.highlightingSettings.deliveries);
+        const activeHighlightingRules = this.getActiveHighlightingRules(delivery, this.enabledDelHRules);
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo = this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
 
@@ -249,7 +344,7 @@ export class HighlightingService {
         effElementsStats: HighlightingStats
     ): StationHighlightingInfo {
 
-        const activeHighlightingRules = this.getActiveHighlightingRules(station, state.highlightingSettings.stations);
+        const activeHighlightingRules = this.getActiveHighlightingRules(station, this.enabledStatHRules);
 
         const activeShapeRules = activeHighlightingRules.filter(rule => rule.shape !== null);
         const shapes = activeShapeRules.map(rule => rule.shape);
@@ -276,8 +371,8 @@ export class HighlightingService {
     >(
         fclElement: T,
         highlightingRules: K[]
-    ): { label: string[]; color: number[][] } {
-        const label = highlightingRules
+    ): { label: string; color: number[][] } {
+        const labelParts = highlightingRules
             .filter(rule => rule.labelProperty !== null)
             .map(rule => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, rule.labelProperty)))
             .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
@@ -287,7 +382,7 @@ export class HighlightingService {
             .map(rule => rule.color);
 
         return {
-            label: label,
+            label: this.getTrimmedLabel(labelParts.join(' / ')),
             color: color
         };
     }

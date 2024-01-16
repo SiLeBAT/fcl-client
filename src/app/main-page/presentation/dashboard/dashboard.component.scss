@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/base';
+@use '../../../../assets/sass/base' as fcl;
 
 :host {
     width: 100vw;
@@ -14,26 +14,35 @@
 
 .fcl-dashboard-container {
     grid-area: features;
-    margin-top: 5rem;
+    margin: 5rem 1ch 1rem;
     flex: 1;
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem;
-    margin-left: 1ch;
-    margin-right: 1ch;
 }
 
 .mat-flat-button {
     background-color: transparent;
 }
 
-.fcl-card-content {
+.mat-card-content > :first-child {
     margin-top: 2rem;
-    color: $fcl-primary-color;
+}
+
+.fcl-card-title {
+    color: fcl.$fcl-primary-color;
+}
+
+.fcl-card-image-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.mat-card-image:first-child {
+    margin-top: 0;
 }
 
 .fcl-mat-card:hover {
-    box-shadow: -1px 5px 15px 0 rgba(0, 0, 0, 0.8);
+    box-shadow: -1px 5px 15px 0 rgb(0 0 0 / 0.8);
 }
 
 .fcl-logo {

@@ -253,6 +253,7 @@ export class DataService {
             this.cachedData = {
                 ...this.createStations(state),
                 ...this.createDeliveries(state),
+                modelFlag: {},
                 statSel: {},
                 delSel: {},
                 statVis: {},
@@ -260,7 +261,8 @@ export class DataService {
                 tracingPropsUpdatedFlag: {},
                 stationAndDeliveryHighlightingUpdatedFlag: {},
                 legendInfo: undefined,
-                highlightingStats: undefined
+                highlightingStats: undefined,
+                isStationAnonymizationActive: false
             };
         }
         if (options.updateGroups) {

@@ -51,12 +51,18 @@ function conditionComparator(con1: LogicalCondition, con2: LogicalCondition): nu
     }
 }
 
-function groupConditions(conditions: ComplexFilterCondition[]): ComplexFilterCondition[][] {
+function groupConditions(conditions: ComplexFilterCondition[], ignoredProps: string[]): ComplexFilterCondition[][] {
     const groups: ComplexFilterCondition[][] = [];
     let newGroup: ComplexFilterCondition[] = [];
 
     for (const condition of conditions) {
-        newGroup.push(condition);
+        if (
+            condition.operationType !== null &&
+            condition.propertyName !== null &&
+            !ignoredProps.includes(condition.propertyName)) {
+            newGroup.push(condition);
+        }
+
         if (condition.junktorType === JunktorType.OR) {
             groups.push(newGroup);
             newGroup = [];
@@ -82,8 +88,11 @@ export function createPreprocessedConditions(conditionGroups: LogicalCondition[]
     return conditionGroups.map(group => group.map(createPreprocessedCondition));
 }
 
-export function createComplexRowFilter(settings: ComplexRowFilterSettings): ComplexRowFilter {
-    const conditionGroups = groupConditions(settings.conditions);
+export function createComplexRowFilter(
+    settings: ComplexRowFilterSettings,
+    ignoredProps: string[]
+): ComplexRowFilter {
+    const conditionGroups = groupConditions(settings.conditions, ignoredProps);
     let filterFun: FilterFun;
     if (conditionGroups.length === 0) {
         filterFun = (rows: TableRow[]) => rows;
@@ -101,13 +110,14 @@ export function createComplexRowFilter(settings: ComplexRowFilterSettings): Comp
 
 export function getUpdatedComplexRowFilter(
     settings: ComplexRowFilterSettings,
+    ignoredProps: string[],
     rowFilter: ComplexRowFilter
 ): ComplexRowFilter {
     if (rowFilter) {
-        const conditionGroups = groupConditions(settings.conditions);
+        const conditionGroups = groupConditions(settings.conditions, ignoredProps);
         if (_.isEqual(conditionGroups, rowFilter.getSettings())) {
             return rowFilter;
         }
     }
-    return createComplexRowFilter(settings);
+    return createComplexRowFilter(settings, ignoredProps);
 }

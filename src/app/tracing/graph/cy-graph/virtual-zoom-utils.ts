@@ -69,13 +69,15 @@ export function createMargin(margin: number): Margin {
     };
 }
 
-function getMaxMargin(margin1: Margin, margin2: Margin): Margin {
-    return {
-        left: Math.max(margin1.left, margin2.left),
-        right: Math.max(margin1.right, margin2.right),
-        top: Math.max(margin1.top, margin2.top),
-        bottom: Math.max(margin1.bottom, margin2.bottom)
-    };
+function aggMargins(margin1: Margin, ...marginsToAdd: Margin[]): Margin {
+    const result: Margin = { ...margin1 };
+    for (const margin of marginsToAdd) {
+        result.left += margin.left;
+        result.top += margin.top;
+        result.bottom += margin.bottom;
+        result.right += margin.right;
+    }
+    return result;
 }
 
 function getSizeWithoutMargin(size: Size, margin: Margin): Size {
@@ -147,24 +149,30 @@ function pNToStr(x: number, mL = 3): string {
 export function getExtendedTargetIncludingViewPort(
     refViewPort: Layout,
     availableSpace: Size,
-    refMargin: Margin,
+    refMargin: Margin,  // default margin
     modelTargetRect: BoundaryRect,
-    targetMargin: Margin,
+    targetMargin: Margin,  // zoom dep margin (diff between node pos render rect and sub graph render rect)
     minZoom: number
 ): Layout {
+    // determine the sub graph render rect
     let rendTargetRect = getRenderedRect(modelTargetRect, targetMargin, refViewPort);
+    // this is the rect we want the sub graph rect to be inside
     let rendRefRect = createRect(0, 0, availableSpace.width, availableSpace.height);
 
     if (isRectWithinRect(rendTargetRect, rendRefRect)) {
         return refViewPort;
     } else {
         // determine zoom
-        const spaceWoMargin = getSizeWithoutMargin(availableSpace, getMaxMargin(refMargin, targetMargin));
+        const spaceWoMargin = getSizeWithoutMargin(availableSpace, aggMargins(refMargin, targetMargin));
+        // model rect, the available area (without render margin) would map to (given the ref zoom)
         const modelRefRect = getModelRect(rendRefRect, refMargin, refViewPort);
+        // union of available area (model) rect and sub graph rect (model)
         const modelUnionRect = getRectUnion(modelRefRect, modelTargetRect);
         minZoom = Math.max(minZoom, getMinSizeRatio(spaceWoMargin, modelUnionRect));
 
+        // union of available area (render) rect and sub graph rect (render)
         let rendUnionRect = getRectUnion(rendRefRect, rendTargetRect);
+        // renderBased ZoomFactor
         const zoomFactor = getMinSizeRatio(availableSpace, rendUnionRect);
         let maxZoom = refViewPort.zoom * zoomFactor;
         const viewport = { ...refViewPort, pan: { ...refViewPort.pan } };
@@ -206,6 +214,7 @@ export function getExtendedTargetIncludingViewPort(
             viewport.pan.y = -Math.max(0, modelTargetRect.bottom * viewport.zoom + targetMargin.bottom - availableSpace.height) +
                 + Math.max(0, -(modelTargetRect.top * viewport.zoom - targetMargin.top));
         }
+
         return viewport;
     }
 }

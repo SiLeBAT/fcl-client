@@ -1,9 +1,19 @@
 import {
     Component, OnInit, Output, EventEmitter,
     Input} from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidationErrors } from '@angular/forms';
+import { Validators, ValidationErrors, FormControl, FormGroup } from '@angular/forms';
 import { ValidationError } from '@app/core/model';
 import { RegistrationCredentials } from '../../models/user.model';
+
+interface RegisterForm {
+    firstName: FormControl<string | null>;
+    lastName: FormControl<string | null>;
+    email: FormControl<string | null>;
+    password1: FormControl<string | null>;
+    password2: FormControl<string | null>;
+    dataProtection: FormControl<boolean | null>;
+    newsletter: FormControl<boolean>;
+}
 
 @Component({
     selector: 'fcl-register',
@@ -16,19 +26,19 @@ export class RegisterComponent implements OnInit {
 
     @Output() register = new EventEmitter<RegistrationCredentials>();
 
-    registerForm: FormGroup;
+    registerForm: FormGroup<RegisterForm>;
 
     ngOnInit() {
-        this.registerForm = new FormGroup({
-            firstName: new FormControl(null, Validators.required),
-            lastName: new FormControl(null, Validators.required),
-            email: new FormControl(null, [
+        this.registerForm = new FormGroup<RegisterForm>({
+            firstName: new FormControl<string | null>(null, Validators.required),
+            lastName: new FormControl<string | null>(null, Validators.required),
+            email: new FormControl<string | null>(null, [
                 Validators.required,
                 Validators.email
             ]),
-            password1: new FormControl(null, Validators.required),
-            password2: new FormControl(null),
-            dataProtection: new FormControl(null, Validators.requiredTrue),
+            password1: new FormControl<string | null>(null, Validators.required),
+            password2: new FormControl<string | null>(null),
+            dataProtection: new FormControl<boolean | null>(null, Validators.requiredTrue),
             newsletter: new FormControl(false)
         }, this.passwordConfirmationValidator);
     }
@@ -53,7 +63,7 @@ export class RegisterComponent implements OnInit {
                || this.registerForm.controls[fieldName].untouched;
     }
 
-    private passwordConfirmationValidator(fg: FormGroup): ValidationErrors {
+    private passwordConfirmationValidator(fg: FormGroup<RegisterForm>): ValidationErrors {
         const pw1 = fg.controls.password1;
         const pw2 = fg.controls.password2;
 

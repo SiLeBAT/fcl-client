@@ -1,5 +1,8 @@
 {
-    "extends": "stylelint-config-standard",
+    "extends": [
+        "stylelint-config-standard",
+        "stylelint-config-standard-scss"
+    ],
     "rules": {
         "indentation": 4,
         "selector-type-no-unknown": [
@@ -33,10 +36,44 @@
                 "ignoreAtRules": [
                     "mixin",
                     "include",
-                    "extend"
+                    "extend",
+                    "use",
+                    "forward"
                 ]
             }
         ],
-        "color-hex-length": "long"
+        "color-hex-length": "long",
+        "alpha-value-notation": null,
+        "selector-class-pattern": "[a-z]+(-[a-z]+(--?[a-z]+)*)?",
+        "selector-id-pattern": "([a-z]+(-[a-z]+)*)|([a-z]+([A-Z][a-z]+)+)",
+        "scss/at-extend-no-missing-placeholder": null,
+        "declaration-block-no-redundant-longhand-properties": [
+            true,
+            { "ignoreShorthands": ["grid-template"] }
+        ],
+        "property-no-vendor-prefix": null,
+        "scss/dollar-variable-empty-line-before": [
+            "always",
+            {
+                "except": ["first-nested"],
+                "ignore": ["after-dollar-variable", "after-comment"]
+            }
+        ],
+        "scss/dollar-variable-pattern": "(fcl-)?[a-z]+(--?[a-z]+)*",
+        "at-rule-empty-line-before": [
+            "always",
+            {
+                "except": [ "after-same-name", "first-nested" ],
+                "ignoreAtRules": ["mixin"]
+            }
+        ],
+        "comment-empty-line-before": [
+            "always",
+            {
+                "except": ["first-nested"],
+                "ignore": ["after-comment", "stylelint-commands"]
+            }
+        ],
+        "max-empty-lines": 1
     }
 }

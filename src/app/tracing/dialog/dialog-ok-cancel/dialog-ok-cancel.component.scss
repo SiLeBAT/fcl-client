@@ -1,0 +1,23 @@
+.fcl-dialog-ok-cancel {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        'title'
+        'text'
+        'action';
+    padding: 1rem;
+    max-width: 500px;
+}
+
+.fcl-dialog-title {
+    grid-area: title;
+}
+
+.fcl-dialog-content {
+    grid-area: text;
+}
+
+.fcl-dialog-actions {
+    grid-area: action;
+    justify-self: center;
+}

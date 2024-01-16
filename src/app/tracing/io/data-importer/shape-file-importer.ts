@@ -24,7 +24,7 @@ export async function getShapeFileData(file: File): Promise<ShapeFileData> {
     const jsonData = await getJsonFromFile(file);
     try {
         // 1. test: can an open layer map be created
-        createOpenLayerMap({ mapType: MapType.SHAPE_FILE, shapeFileData: jsonData }, null);
+        createOpenLayerMap({ mapType: MapType.SHAPE_FILE, shapeFileData: jsonData, lineColor: { r: 0, g: 0, b: 0 }, lineWidth: 0.5 }, null);
         return jsonData;
     } catch (error) {
         // there is a problem

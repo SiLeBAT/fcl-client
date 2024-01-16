@@ -1,12 +1,23 @@
 
-import { GroupType, OperationType, ValueType, NodeShapeType, MergeDeliveriesType, Connection,
-    StationStoreData, DeliveryStoreData } from '../../data.model';
+import {
+    GroupType, OperationType, ValueType,
+    NodeShapeType, MergeDeliveriesType, Connection,
+    StationStoreData, DeliveryStoreData
+} from '../../data.model';
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import * as ExtDataConstants from './../ext-data-constants.v1';
 import { Constants as IntDataConstants } from '../../util/constants';
-import { DataTable, DataRow, JsonData, ColumnProperty, HighlightingRule as ExtHighlightingRule } from '../ext-data-model.v1';
+import {
+    DataTable, DataRow, JsonData, ColumnProperty,
+    HighlightingRule as ExtHighlightingRule,
+    LogicalCondition as ExtLogicalCondition
+} from '../ext-data-model.v1';
 import { Utils } from '../../util/non-ui-utils';
-import { STATION_PROP_TO_REQ_TYPE_MAP, DELIVERY_PROP_TO_REQ_TYPE_MAP, DEL2DEL_PROP_TO_REQ_TYPE_MAP } from '../int-data-constants';
+import {
+    STATION_PROP_TO_REQ_TYPE_MAP,
+    DELIVERY_PROP_TO_REQ_TYPE_MAP,
+    DEL2DEL_PROP_TO_REQ_TYPE_MAP
+} from '../int-data-constants';
 import { isValueTypeValid } from './shared';
 import * as _ from 'lodash';
 import { InputDataError } from '../io-errors';
@@ -129,7 +140,8 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     score: ExtDataConstants.DELIVERY_SCORE,
     observed: ExtDataConstants.DELIVERY_OBSERVED,
     dateOut: ExtDataConstants.DELIVERY_OUT_DATE,
-    dateIn: ExtDataConstants.DELIVERY_IN_DATE
+    dateIn: ExtDataConstants.DELIVERY_IN_DATE,
+    amount: ExtDataConstants.DELIVERY_AMOUNT
 });
 
 export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
@@ -247,7 +259,7 @@ function getReferencedProps(highlightingConditions: ExtHighlightingRule[]): stri
                     hCon.labelProperty,
                     ...(
                         hCon.logicalConditions ?
-                            [].concat(...hCon.logicalConditions.map(logConA => logConA.map(logCon => logCon.propertyName))) :
+                            getLogicalConditionsProps(hCon.logicalConditions) :
                             []
                     ),
                     ...hCon.valueCondition ? [hCon.valueCondition.propertyName] : []
@@ -257,19 +269,36 @@ function getReferencedProps(highlightingConditions: ExtHighlightingRule[]): stri
     );
 }
 
+function getLogicalConditionsProps(logicalConditions: ExtLogicalCondition[][]): string[] {
+    return [].concat(...logicalConditions.map(logConA => logConA.map(logCon => logCon.propertyName)));
+}
+
 export function getStationPropMap(jsonData: JsonData): PropMap {
+    let referencedProps: string[] = [];
+    if (
+        jsonData.settings &&
+        jsonData.settings.view &&
+        jsonData.settings.view.node) {
+
+        if (jsonData.settings.view.node.highlightConditions) {
+            referencedProps = getReferencedProps(jsonData.settings.view.node.highlightConditions);
+        }
+
+        const anoRule = jsonData.settings.view.node.anonymizationRule;
+        if (anoRule) {
+            const logicalConditionProps = getLogicalConditionsProps(anoRule.logicalConditions);
+            const labelPartProps = anoRule.labelParts.map(p => p.property).filter(p => p !== undefined);
+            referencedProps = [].concat(
+                referencedProps,
+                logicalConditionProps,
+                labelPartProps
+            );
+        }
+    }
+
     return getPropMap(
         jsonData.data.stations,
-        getReferencedProps(
-            (
-                jsonData.settings &&
-                jsonData.settings.view &&
-                jsonData.settings.view.node &&
-                jsonData.settings.view.node.highlightConditions
-            ) ?
-                jsonData.settings.view.node.highlightConditions :
-                []
-        ),
+        referencedProps,
         DEFAULT_STATION_PROP_INT_TO_EXT_MAP,
         STATION_PROPS_INT_TO_EXT_ALT_MAP,
         IntDataConstants.STATION_PROPERTIES.toArray()
@@ -337,7 +366,7 @@ export const GROUPTYPE_EXT_TO_INT_MAP: ImmutableMap<
     IsolatedGroup: GroupType.ISOLATED_GROUP
 });
 
-export function NODE_SIZE_EXT_TO_INT_FUN(ext: string): number {
+export function NODE_SIZE_EXT_TO_INT_FUN(ext: string | number): number {
     const extV: number = +ext;
     if (isNaN(extV)) {
         return IntDataConstants.DEFAULT_GRAPH_NODE_SIZE;
@@ -349,7 +378,18 @@ export function NODE_SIZE_EXT_TO_INT_FUN(ext: string): number {
     }
 }
 
-export function FONT_SIZE_EXT_TO_INT_FUN(ext: string): number {
+export function EDGE_WIDTH_EXT_TO_INT_FUN(extValue: number): number {
+    if (isNaN(extValue)) {
+        return IntDataConstants.DEFAULT_GRAPH_EDGE_WIDTH;
+    } else {
+        return IntDataConstants.EDGE_WIDTHS.toArray().reduce(
+            (prevV, curV) => Math.abs(prevV - extValue) > Math.abs(curV - extValue) ? curV : prevV,
+            IntDataConstants.DEFAULT_GRAPH_EDGE_WIDTH
+        );
+    }
+}
+
+export function FONT_SIZE_EXT_TO_INT_FUN(ext: string | number): number {
     const extV: number = +ext;
     if (isNaN(extV)) {
         return IntDataConstants.DEFAULT_GRAPH_FONT_SIZE;

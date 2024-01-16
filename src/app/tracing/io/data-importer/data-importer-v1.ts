@@ -1,24 +1,34 @@
 import {
-    DeliveryStoreData as DeliveryData, FclData, ObservedType, StationStoreData as StationData,
+    DeliveryStoreData as DeliveryData,
+    FclData, ObservedType,
+    StationStoreData as StationData,
     Connection, GroupType, GroupData,
     ValueCondition as IntValueCondition,
     LogicalCondition as IntLogicalCondition,
-    ValueType, OperationType, NodeShapeType, LinePatternType, MergeDeliveriesType, CrossContTraceType, StationId, DeliveryId
+    ValueType, OperationType, NodeShapeType, LinePatternType,
+    MergeDeliveriesType, CrossContTraceType, StationId, DeliveryId, HighlightingRule,
+    LabelPart as IntLabelPart,
+    StationHighlightingRule as IntStationHighlightingRule
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
 import { Utils } from '../../util/non-ui-utils';
 import * as ExtDataConstants from '../ext-data-constants.v1';
-
 import { IDataImporter } from './datatypes';
-import { isValidJson, createDefaultHighlights, checkVersionFormat, areMajorVersionsMatching } from './shared';
+import {
+    isValidJson, checkVersionFormat,
+    areMajorVersionsMatching,
+    createDefaultStationAnonymizationLabelHRule,
+    createDefaultStationHRules,
+    createDefaultDeliveryHRules
+} from './shared';
 import { importSamples } from './sample-importer-v1';
 import {
     ViewData,
-    StationHighlightingRule as ExtStationHighlightingRule,
     DeliveryHighlightingRule as ExtDeliveryHighlightingRule,
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
+    AnonymizationRule as ExtAnonymizationRule,
     JsonData,
     VERSION,
     MetaNodeData
@@ -27,6 +37,7 @@ import * as DataMapper from './../data-mappings/data-mappings-v1';
 import { InputFormatError, InputDataError } from '../io-errors';
 import { getCenterFromPoints, getDifference } from '../../util/geometry-utils';
 import * as _ from 'lodash';
+import { Constants } from '../../util/constants';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -421,28 +432,52 @@ export class DataImporterV1 implements IDataImporter {
             jsonData.settings.view === undefined ||
             jsonData.settings.view === null
         ) {
-            const defaultHS = createDefaultHighlights();
-            fclData.graphSettings.highlightingSettings.stations = defaultHS.stations;
-            fclData.graphSettings.highlightingSettings.deliveries = defaultHS.deliveries;
+            fclData.graphSettings.highlightingSettings.stations = createDefaultStationHRules(true);
+            fclData.graphSettings.highlightingSettings.deliveries = createDefaultDeliveryHRules();
             return;
         }
 
         const viewData = jsonData.settings.view;
 
-        let nodeSize: any = this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_NODE_SIZE);
-        if (nodeSize === null) {
-            nodeSize = this.getProperty(viewData, ExtDataConstants.GISGRAPH_NODE_SIZE);
-        }
+        const nodeSize = viewData.graph?.node?.minSize ||
+            viewData.gis?.node?.minSize ||
+            null;
+
+        // default edge width is dependent on node size
         if (
             nodeSize !== null
         ) {
             fclData.graphSettings.nodeSize = DataMapper.NODE_SIZE_EXT_TO_INT_FUN(nodeSize);
+            // reset edge default
+            fclData.graphSettings.edgeWidth = Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(fclData.graphSettings.nodeSize);
         }
 
-        let fontSize: any = this.getProperty(viewData, ExtDataConstants.SCHEMAGRAPH_FONT_SIZE);
-        if (fontSize === null) {
-            fontSize = this.getProperty(viewData, ExtDataConstants.GISGRAPH_FONT_SIZE);
+        const autoEdgeWidth = fclData.graphSettings.edgeWidth;
+
+        const extEdgeWidth: number | null =
+            viewData.graph?.edge?.minWidth ||
+            viewData.gis?.edge?.minWidth ||
+            null;
+        if (
+            extEdgeWidth !== null
+        ) {
+            fclData.graphSettings.edgeWidth = DataMapper.EDGE_WIDTH_EXT_TO_INT_FUN(extEdgeWidth);
         }
+
+        const adjustEdgeWidthToNodeSize = viewData.edge?.adjustEdgeWidthToNodeSize || null;
+        if (adjustEdgeWidthToNodeSize !== null) {
+            fclData.graphSettings.adjustEdgeWidthToNodeSize = adjustEdgeWidthToNodeSize;
+            if (fclData.graphSettings.adjustEdgeWidthToNodeSize) {
+                fclData.graphSettings.edgeWidth = autoEdgeWidth;
+            }
+        } else {
+            fclData.graphSettings.adjustEdgeWidthToNodeSize = fclData.graphSettings.edgeWidth === autoEdgeWidth;
+        }
+
+        const fontSize = viewData.graph?.text?.fontSize ||
+            viewData.gis?.text?.fontSize ||
+            null;
+
         if (
             fontSize !== null
         ) {
@@ -504,32 +539,46 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
-        if (viewData && viewData.node && viewData.node.highlightConditions) {
+        const extStatHighlightingRules = viewData?.node?.highlightConditions || undefined;
+        const extStatAnoRule = viewData?.node?.anonymizationRule || undefined;
+        const extToIntStatPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
 
-            const extStatHighlightingRules: ExtStationHighlightingRule[] = viewData.node.highlightConditions;
+        if (extStatHighlightingRules) {
 
             if (extStatHighlightingRules.length > 0) {
-                const extToIntPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
 
                 fclData.graphSettings.highlightingSettings.stations = extStatHighlightingRules.map((extRule, extRuleIndex) => (
                     {
                         id: 'SHR' + extRuleIndex,
                         name: extRule.name,
                         showInLegend: extRule.showInLegend === true,
-                        disabled: extRule.disabled === true,
+                        userDisabled: extRule.disabled === true,
+                        autoDisabled: false,
                         color: extRule.color,
                         invisible: extRule.invisible,
                         adjustThickness: extRule.adjustThickness,
-                        labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntPropMap),
-                        valueCondition: this.mapValueCondition(extRule.valueCondition, extToIntPropMap),
-                        logicalConditions: this.mapLogicalConditions(extRule.logicalConditions, extToIntPropMap),
+                        labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntStatPropMap),
+                        valueCondition: this.mapValueCondition(extRule.valueCondition, extToIntStatPropMap),
+                        logicalConditions: this.mapLogicalConditions(extRule.logicalConditions, extToIntStatPropMap),
                         shape: this.mapShapeType(extRule.shape)
                     }
                 ));
             }
+
         } else {
-            fclData.graphSettings.highlightingSettings.stations = createDefaultHighlights().stations;
+            fclData.graphSettings.highlightingSettings.stations = createDefaultStationHRules(false);
         }
+
+        const intStatAnoHRule: IntStationHighlightingRule = extStatAnoRule ?
+            { ...this.convertExternalAnoRule(extStatAnoRule, extToIntStatPropMap), shape: null } :
+            createDefaultStationAnonymizationLabelHRule();
+
+        if (intStatAnoHRule.userDisabled === false) {
+            fclData.graphSettings.highlightingSettings.stations.forEach(r => r.autoDisabled = true);
+        }
+
+        fclData.graphSettings.highlightingSettings.stations.push(intStatAnoHRule);
+
 
         if (viewData && viewData.edge && viewData.edge.highlightConditions) {
 
@@ -543,7 +592,9 @@ export class DataImporterV1 implements IDataImporter {
                         id: 'DHR' + extRuleIndex,
                         name: extRule.name,
                         showInLegend: extRule.showInLegend === true,
-                        disabled: extRule.disabled === true,
+                        userDisabled: extRule.disabled === true,
+                        autoDisabled: false,
+                        activationDisablesOtherRules: false,
                         color: extRule.color,
                         invisible: extRule.invisible,
                         adjustThickness: extRule.adjustThickness,
@@ -555,8 +606,38 @@ export class DataImporterV1 implements IDataImporter {
                 ));
             }
         } else {
-            fclData.graphSettings.highlightingSettings.deliveries = createDefaultHighlights().deliveries;
+            fclData.graphSettings.highlightingSettings.deliveries = createDefaultDeliveryHRules();
         }
+    }
+
+    private convertExternalAnoRule(extAnoRule: ExtAnonymizationRule, extToIntPropMap: Map<string, string>): HighlightingRule {
+        const defaultIntAnoHRule = createDefaultStationAnonymizationLabelHRule();
+        let labelParts = extAnoRule.labelParts.map(
+            p => (
+                p.property ?
+                    { prefix: p.prefix, property: extToIntPropMap.get(p.property) } :
+                    { prefix: p.prefix, useIndex: p.useIndex || false }
+            ) as IntLabelPart
+        );
+        const indexParts = labelParts.filter(p => p.useIndex !== undefined);
+        if (indexParts.length === 0) {
+            labelParts.push(...defaultIntAnoHRule.labelParts.filter(p => p.useIndex !== undefined));
+        } else if (indexParts.length > 1) {
+            labelParts = _.difference(labelParts, indexParts.slice(1));
+        }
+
+        const intAnoHRule: HighlightingRule = {
+            ...defaultIntAnoHRule,
+            labelPrefix: extAnoRule.labelPrefix,
+            userDisabled: extAnoRule.disabled,
+            labelParts: extAnoRule.labelParts.map(
+                p => p.property ?
+                    { prefix: p.prefix, property: extToIntPropMap.get(p.property) } :
+                    { prefix: p.prefix, useIndex: p.useIndex || false }
+            ),
+            logicalConditions: this.mapLogicalConditions(extAnoRule.logicalConditions, extToIntPropMap)
+        };
+        return intAnoHRule;
     }
 
     private mapLogicalConditions(

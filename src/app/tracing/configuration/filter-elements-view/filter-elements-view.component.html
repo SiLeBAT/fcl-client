@@ -51,7 +51,8 @@
                 <fcl-complex-filter-view
                     class="fcl-complex-filter"
                     [conditions] = "complexFilterSettings"
-                    [availableProperties] = "dataColumns"
+                    [favouriteProperties] = "favouriteColumns"
+                    [otherProperties] = "otherColumns"
                     [availableOperatorTypes] = "availableOperatorTypes"
                     [propToValuesMap] = "propToValuesMap"
                     (conditionsChange) = "onComplexFilterChange($event)"

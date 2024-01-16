@@ -8,8 +8,12 @@
     [currentUser]="currentUser$ | async"
     [fileName]="fileName$ | async"
     (loadModelFile)="loadModelFile($event)"
-    (loadExampleDataFile)="loadExampleDataFile($event)"
+    (selectModelFile)="onSelectModelFile()"
+    (saveImage)="onSaveImage()"
+    (openRoaLayout)="onOpenRoaLayout()"
+    (loadExampleDataFile)="onLoadExampleDataFile($event)"
     (graphType)="setGraphType($event)"
     (mapType)="setMapType($event)"
-    (loadShapeFile)="loadShapeFile($event)">
+    (loadShapeFile)="onLoadShapeFile($event)"
+    (downloadFile)="onDownloadFile($event)">
 </fcl-toolbar-action>
