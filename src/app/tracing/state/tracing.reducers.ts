@@ -8,6 +8,11 @@ import {
     CrossContTraceType,
     FclDataSourceInfo
 } from '../data.model';
+import {
+    addStatAnoColumnOnAnoActivation,
+    removeAnoRefsOnStatFilterActivitationWoAno,
+    updateStatAnoColumnModeOnAnoDeactivation
+} from './reducer.utils';
 
 import { ModelDependentState, TracingState } from '../state.model';
 import {
@@ -162,16 +167,22 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 tracingActive: action.payload.isActivated
             };
 
-        case TracingActionTypes.LoadFclDataSuccessSOA:
+        case TracingActionTypes.LoadFclDataSuccessSOA: {
             action.payload.fclData.graphSettings.mapType = state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData = state.fclData.graphSettings.shapeFileData;
+            action.payload.fclData.graphSettings.geojsonBorderColor = state.fclData.graphSettings.geojsonBorderColor;
+            action.payload.fclData.graphSettings.geojsonBorderWidth = state.fclData.graphSettings.geojsonBorderWidth;
 
-            return {
+            let newState = {
                 ...state,
                 fclData: action.payload.fclData,
                 ...initialModelDependentState
             };
 
+            newState = addStatAnoColumnOnAnoActivation([], newState);
+
+            return newState;
+        }
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,
@@ -184,13 +195,15 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 showGraphSettings: action.payload.showGraphSettings
             };
 
-        case TracingActionTypes.ShowConfigurationSideBarSOA:
-            return {
+        case TracingActionTypes.ShowConfigurationSideBarSOA: {
+            let newState = {
                 ...state,
                 showConfigurationSideBar: action.payload.showConfigurationSideBar,
                 isConfSideBarOpening: action.payload.showConfigurationSideBar
             };
-
+            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+            return newState;
+        }
         case TracingActionTypes.SetGraphTypeSOA:
             return {
                 ...state,
@@ -225,7 +238,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_FILE,
-                        shapeFileData: action.payload.shapeFileData
+                        shapeFileData: action.payload.shapeFileData,
+                        geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                        geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR
                     }
                 }
             };
@@ -368,7 +383,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetStationFilterSOA:
+        case TracingActionTypes.SetStationFilterSOA: {
+
             return {
                 ...state,
                 filterSettings: {
@@ -376,7 +392,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     stationFilter: action.payload.settings
                 }
             };
-
+        }
         case TracingActionTypes.SetDeliveryFilterSOA:
             return {
                 ...state,
@@ -393,7 +409,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...initialFilterSettings,
                     stationFilter: {
                         ...filterTableSettings,
-                        columnOrder: state.filterSettings.stationFilter.columnOrder
+                        columnOrder: state.filterSettings.stationFilter.columnOrder,
+                        anonymizedNameColumnMode: state.filterSettings.stationFilter.anonymizedNameColumnMode
                     }
                 }
             };
@@ -561,8 +578,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetStationHighlightingRulesSOA:
-            return {
+        case TracingActionTypes.SetStationHighlightingRulesSOA: {
+            let newState: TracingState = {
                 ...state,
                 fclData: {
                     ...state.fclData,
@@ -576,6 +593,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
+            newState = addStatAnoColumnOnAnoActivation(state.fclData.graphSettings.highlightingSettings.stations, newState);
+            newState = updateStatAnoColumnModeOnAnoDeactivation(state.fclData.graphSettings.highlightingSettings.stations, newState);
+
+            return newState;
+        }
         case TracingActionTypes.SetStationHighlightingEditRulesSOA:
             return {
                 ...state,
@@ -705,8 +727,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetActiveConfigurationTabIdSOA:
-            return {
+        case TracingActionTypes.SetActiveConfigurationTabIdSOA: {
+            let newState = {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
@@ -714,9 +736,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 },
                 animatingTabCount: state.animatingTabCount + 1
             };
-
-        case TracingActionTypes.SetActiveFilterTabIdSOA:
-            return {
+            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+            return newState;
+        }
+        case TracingActionTypes.SetActiveFilterTabIdSOA: {
+            let newState = {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
@@ -725,6 +749,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 animatingTabCount: state.animatingTabCount + 1
             };
 
+            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+
+            return newState;
+        }
         case TracingActionTypes.SetActiveHighlightingTabIdSOA:
             return {
                 ...state,

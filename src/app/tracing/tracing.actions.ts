@@ -1,5 +1,8 @@
 import { Action } from '@ngrx/store';
-import { ClearInvisibilitiesOptions, DeliveryId, FclData, Layout, Position, SelectedElements, ShowElementsTraceParams, StationId } from './data.model';
+import {
+    ClearInvisibilitiesOptions, DeliveryId, Layout, Position, SelectedElements,
+    ShowElementsTraceParams, StationId
+} from './data.model';
 import { EdgeId, NodeId, SelectedGraphElements } from './graph/graph.model';
 
 export enum TracingActionTypes {
@@ -23,16 +26,10 @@ export enum TracingActionTypes {
 
 export class ClearTraceMSA implements Action {
     readonly type = TracingActionTypes.ClearTraceMSA;
-
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor(public payload: {}) {}
 }
 
 export class ClearOutbreakStationsMSA implements Action {
     readonly type = TracingActionTypes.ClearOutbreakStationsMSA;
-
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor(public payload: {}) {}
 }
 
 export class ClearInvisibilitiesMSA implements Action {

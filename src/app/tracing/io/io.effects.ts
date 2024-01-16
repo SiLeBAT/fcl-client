@@ -5,7 +5,7 @@ import * as tracingStateActions from '../state/tracing.actions';
 import * as tracingEffectActions from '../tracing.actions';
 import * as fromTracing from '../state/tracing.reducers';
 import * as tracingSelectors from '../state/tracing.selectors';
-import { map, catchError, mergeMap, withLatestFrom, concatMap } from 'rxjs/operators';
+import { map, catchError, mergeMap, withLatestFrom, concatMap, take } from 'rxjs/operators';
 import { of, from, EMPTY } from 'rxjs';
 import { IOService } from './io.service';
 import { FclData, ShapeFileData } from '../data.model';
@@ -13,6 +13,10 @@ import { Store, select } from '@ngrx/store';
 import * as ioActions from './io.actions';
 import { Utils } from './../util/ui-utils';
 import { InputEncodingError, InputFormatError, InputDataError } from './io-errors';
+import { DialogOkCancelComponent, DialogOkCancelData } from '../dialog/dialog-ok-cancel/dialog-ok-cancel.component';
+import { Constants } from '../util/constants';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DataService } from '../services/data.service';
 
 @Injectable()
 export class IOEffects {
@@ -20,6 +24,8 @@ export class IOEffects {
         private actions$: Actions,
         private ioService: IOService,
         private alertService: AlertService,
+        private dialog: MatDialog,
+        private dataService: DataService,
         private store: Store<fromTracing.State>
     ) {}
 
@@ -90,9 +96,41 @@ export class IOEffects {
     saveFclData$ = createEffect(
         () => this.actions$.pipe(
             ofType<ioActions.SaveFclDataMSA>(ioActions.IOActionTypes.SaveFclDataMSA),
-            withLatestFrom(this.store.pipe(select(tracingSelectors.getFclData))),
-            mergeMap(([action, fclData]) => from(this.ioService.getExportData(fclData)).pipe(
+            withLatestFrom(
+                this.store.pipe(select(tracingSelectors.getFclData)),
+                this.store.pipe(select(tracingSelectors.selectDataServiceInputState))
+            ),
+            mergeMap(([action, fclData, dataServiceState]) => from(this.ioService.getExportData(fclData)).pipe(
                 mergeMap(exportData => {
+                    if (!action.payload.disableAnonymizationNote) {
+                        const anoIsActive = this.dataService.getData(dataServiceState).isStationAnonymizationActive;
+                        if (anoIsActive) {
+                            const dialogData: DialogOkCancelData = {
+                                title: 'Download data',
+                                content1: `You are currently displaying anonymised station names. Please note that FCL web\nsaves the original data and not the anonymised data to the JSON file.`,
+                                content2: 'Would you like to proceed?',
+                                cancel: Constants.DIALOG_CANCEL,
+                                ok: Constants.DIALOG_SAVE
+                            };
+                            const dialogRef: MatDialogRef<DialogOkCancelComponent, any> = this.dialog.open(DialogOkCancelComponent, {
+                                closeOnNavigation: true,
+                                data: dialogData
+                            });
+
+                            dialogRef.afterClosed().pipe(
+                                take(1)
+                            ).subscribe(result => {
+                                if (result === Constants.DIALOG_OK) {
+                                    this.store.dispatch(new ioActions.SaveFclDataMSA({
+                                        ...action.payload,
+                                        disableAnonymizationNote: true
+                                    }));
+                                }
+                            });
+                            return EMPTY;
+                        }
+                    }
+
                     if (exportData) {
                         const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
                         let fileName: string = 'data.json';
@@ -104,6 +142,8 @@ export class IOEffects {
 
                         Utils.openSaveDialog(url, fileName);
                         window.URL.revokeObjectURL(url);
+
+                        this.store.dispatch(new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA());
                     }
                     return EMPTY;
                 }),

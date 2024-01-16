@@ -31,7 +31,7 @@
 .fcl-filtertable .datatable-header-cell-label,
 .fcl-filtertable .datatable-header-cell-template-wrap {
     font-size: 0.9rem;
-    color: rgb(0, 0, 0);
+    color: rgb(0 0 0);
     display: flex;
     flex-direction: column;
 }
@@ -81,7 +81,7 @@
 .fcl-filtertable .datatable-body-cell-label {
     font-size: 0.8rem;
     font-weight: 500;
-    color: rgb(0, 0, 0);
+    color: rgb(0 0 0);
     display: flex;
     align-items: center;
 }
@@ -108,7 +108,7 @@
 
 .fcl-more-columns-button:hover {
     background-color: fcl.$fcl-accent-300 !important;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255 255 255 / 0.9);
     cursor: pointer;
 }
 
@@ -118,7 +118,7 @@
 
 .fcl-more-column-row-cell {
     padding: 0 !important;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255 255 255);
 }
 
 .fcl-filtertable .datatable-header-cell.fcl-more-columns-header-cell {
@@ -164,7 +164,7 @@
     height: 1.5rem;
     border: 1px solid fcl.$fcl-accent-100;
     padding: 0;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255 255 255);
     margin-top: 2px;
     justify-content: center;
 }
@@ -200,7 +200,7 @@
 .fcl-filtertable .fcl-row-symbol.fcl-invisible-data-row-cell svg circle,
 .fcl-filtertable .fcl-row-symbol.fcl-invisible-data-row-cell svg rect {
     transform: scale(0.9);
-    stroke: rgb(211, 211, 211);
+    stroke: rgb(211 211 211);
 }
 
 .fcl-tree-action-icon {
@@ -220,7 +220,7 @@
             &.active,
             &.active .datatable-row-group {
                 .datatable-body-cell-label .fcl-tree-action-icon {
-                    color: rgb(0, 0, 0);
+                    color: rgb(0 0 0);
                 }
 
                 .fcl-row-cell-invisible {

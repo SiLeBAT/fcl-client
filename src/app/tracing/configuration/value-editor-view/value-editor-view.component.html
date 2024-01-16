@@ -5,7 +5,7 @@
     <input
         type="text"
         matInput
-        placeholder="value"
+        [placeholder]="placeholder"
         autocomplete="off"
         [value] = "value"
         (input) = "onInput($event)"
@@ -13,7 +13,11 @@
         [disabled]="disabled"
     />
 
-    <mat-autocomplete #filterValues="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-autocomplete #filterValues="matAutocomplete"
+        (optionSelected)="onOptionSelected($event)"
+        (closed)="onAutocompleteClosed()"
+        (opened)="onAutocompleteOpened()"
+    >
         <ng-container *ngFor="let item of autoCompleteValues">
             <mat-option
                 class="fcl-filter-select-option"

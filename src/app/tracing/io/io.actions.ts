@@ -22,7 +22,7 @@ export class LoadShapeFileMSA implements Action {
 export class SaveFclDataMSA implements Action {
     readonly type = IOActionTypes.SaveFclDataMSA;
 
-    constructor(public payload: { fileName?: string }) {}
+    constructor(public payload: { fileName?: string; disableAnonymizationNote?: boolean }) {}
 }
 
 export class SaveGraphImageMSA implements Action {

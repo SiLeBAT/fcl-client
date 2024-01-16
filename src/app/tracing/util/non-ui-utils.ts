@@ -243,11 +243,11 @@ export class Utils {
         const result: { [key: string]: X } = {};
         if (valueMap) {
             for (const value of arr) {
-                result[keyMap(value)] = valueMap(value) as X;
+                result[keyMap(value)] = valueMap(value) as unknown as X;
             }
         } else {
             for (const value of arr) {
-                result[keyMap(value)] = value as X;
+                result[keyMap(value)] = value as unknown as X;
             }
         }
         return result;
@@ -361,5 +361,22 @@ export class Utils {
     static getStringArrayDifference(array1: string[], array2: string[]): string[] {
         const elementToDeleteMap = this.createSimpleStringSet(array2);
         return array1.filter(e => !elementToDeleteMap[e]);
+    }
+
+    static insertInOrder<T>(array: T[], defaultOrder: T[], newElements: T[]): T[] {
+        defaultOrder = defaultOrder.filter(e => array.includes(e) || newElements.includes(e));
+        newElements.forEach(newElement => {
+            const index = defaultOrder.indexOf(newElement);
+            if (index < 0) {
+                array.push(newElement);
+            } else {
+                array = [].concat(
+                    array.slice(0, index),
+                    [newElement],
+                    array.slice(index)
+                );
+            }
+        });
+        return array;
     }
 }

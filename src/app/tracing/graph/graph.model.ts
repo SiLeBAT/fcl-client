@@ -60,10 +60,8 @@ export interface Cy {
     removeAllListeners(): void;
     getElementById(id: string): CyNode | CyEdge;
     ready(callBack: () => void): void;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    style(): {};
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    setStyle(style: {}): void;
+    style(): Record<string, unknown>;
+    setStyle(style: Record<string, unknown>): void;
     width(): number;
     height(): number;
     userPanningEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
@@ -102,8 +100,7 @@ export interface CyElementCollection<E> {
     size(): number;
     allAre(a: string): number;
     map<T>(a: (b: E) => T): T[];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    style(a: {}): void;
+    style(a: Record<string, unknown>): void;
     unselect(): void;
     select(): void;
     remove(): void;
@@ -146,8 +143,9 @@ export interface CyElement {
     style<
         T extends string | {[key: string]: any} | None,
         K extends (None extends T ? None : T extends string ? number | string | boolean | None : None)
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    >(a?: T, b?: K): None extends T ? {} : (T extends string ? (None extends K ? number | string | boolean : void) : void);
+    >(a?: T, b?: K): None extends T ?
+        Record<string, unknown> :
+        (T extends string ? (None extends K ? number | string | boolean : void) : void);
     on<
         T extends string | CyCallBackFun,
         K extends (T extends string ? CyCallBackFun : None)
@@ -229,8 +227,7 @@ export interface GraphServiceData extends GraphElementData, DataServiceData {
     delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
     nodeSel: Record<NodeId, boolean>;
     edgeSel: Record<EdgeId, boolean>;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    nodeAndEdgePropsUpdatedFlag: {};
+    nodeAndEdgePropsUpdatedFlag: Record<string, never>;
     ghostElements: GraphElementData;
     hoverEdges: EdgeId[];
     selectedElements: SelectedGraphElements;

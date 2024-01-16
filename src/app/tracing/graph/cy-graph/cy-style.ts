@@ -40,8 +40,7 @@ export class CyStyle {
         this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    createCyStyle(): {} {
+    createCyStyle(): Record<string, unknown> {
         const graphSize = this.getProperGraphSize();
         return this.createXGraphStyle(graphSize);
     }

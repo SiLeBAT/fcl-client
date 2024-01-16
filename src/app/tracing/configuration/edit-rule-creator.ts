@@ -1,25 +1,33 @@
 import { COLOR_BFR_BLUE } from './constants';
-import { ColorAndShapeEditRule, ColorEditRule, EditRule, InvEditRule, LabelEditRule, RuleType } from './model';
+import {
+    ColorAndShapeEditRule, ColorEditRule, EditRuleCore,
+    InvEditRule, RuleType, SimpleLabelEditRule
+} from './model';
+import { EditRuleOfType } from './shared';
 
 export class EditRuleCreator {
     private static readonly DEFAULT_COLOR = COLOR_BFR_BLUE;
     private static ID_COUNTER = 0;
     private static ID_PREFIX = 'R';
 
-    private static createEditRule(ruleType: RuleType): EditRule {
+    private static getNextId(): string {
+        return this.ID_PREFIX + this.ID_COUNTER++;
+    }
+
+    private static createEditRuleCore(): EditRuleCore {
         return {
-            id: this.ID_PREFIX + this.ID_COUNTER++,
+            id: this.getNextId(),
             name: '',
-            disabled: false,
+            userDisabled: false,
             complexFilterConditions: [],
-            type: ruleType,
             isValid: false
         };
     }
 
     static createColorAndShapeEditRule(): ColorAndShapeEditRule {
         return {
-            ...this.createEditRule(RuleType.COLOR_AND_SHAPE),
+            ...this.createEditRuleCore(),
+            type: RuleType.COLOR_AND_SHAPE,
             showInLegend: true,
             color: this.DEFAULT_COLOR,
             shape: null
@@ -28,36 +36,40 @@ export class EditRuleCreator {
 
     static createColorEditRule(): ColorEditRule {
         return {
-            ...this.createEditRule(RuleType.COLOR),
+            ...this.createEditRuleCore(),
+            type: RuleType.COLOR,
             showInLegend: true,
             color: this.DEFAULT_COLOR
         };
     }
 
-    static createLabelEditRule(): LabelEditRule {
+    static createSimpleLabelEditRule(): SimpleLabelEditRule {
         return {
-            ...this.createEditRule(RuleType.LABEL),
-            labelProperty: null,
-            showInLegend: false
+            ...this.createEditRuleCore(),
+            type: RuleType.LABEL,
+            labelProperty: null
         };
     }
 
     static createInvEditRule(): InvEditRule {
-        return this.createEditRule(RuleType.INVISIBILITY);
+        return {
+            ...this.createEditRuleCore(),
+            type: RuleType.INVISIBILITY
+        };
     }
 
-    static createNewEditRule(ruleType: RuleType): EditRule {
+    static createNewEditRule<T extends RuleType, R extends EditRuleOfType<T>>(ruleType: RuleType): R | null {
         switch (ruleType) {
             case RuleType.COLOR_AND_SHAPE:
-                return this.createColorAndShapeEditRule();
+                return this.createColorAndShapeEditRule() as R;
             case RuleType.COLOR:
-                return this.createColorEditRule();
+                return this.createColorEditRule() as R;
             case RuleType.LABEL:
-                return this.createLabelEditRule();
+                return this.createSimpleLabelEditRule() as R;
             case RuleType.INVISIBILITY:
-                return this.createInvEditRule();
+                return this.createInvEditRule() as R;
             default:
-                throw new Error('RuleType is not supported.');
+                return null;
         }
     }
 }

@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ObservedType, StationData, GroupType, GroupMode, StationId, DeliveryId } from '../data.model';
+import {
+    ObservedType, StationData, GroupType,
+    GroupMode, StationId, DeliveryId
+} from '../data.model';
 import {
     ContextMenuRequestContext, CyEdgeData, CyNodeData,
     EdgeId,
@@ -11,7 +14,8 @@ import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
 import {
     ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA,
-    MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA, SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
+    MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA,
+    SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
     ShowStationPropertiesMSA,
     ShowElementsTraceMSA,
     MakeElementsInvisibleMSA} from '../tracing.actions';
@@ -145,12 +149,12 @@ export class ContextMenuService {
                         stations.some(s => s.observed !== ObservedType.NONE) ||
                         deliveries.some(d => d.observed !== ObservedType.NONE)
                     ),
-                    action: new ClearTraceMSA({})
+                    action: new ClearTraceMSA()
                 },
                 {
                     ...MenuItemStrings.clearOutbreakStations,
                     disabled: !stations.some(s => s.outbreak),
-                    action: new ClearOutbreakStationsMSA({})
+                    action: new ClearOutbreakStationsMSA()
                 },
                 this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),

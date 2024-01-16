@@ -1,5 +1,9 @@
 @use "material-icons/iconfont/filled";
 
+.mat-tooltip {
+    font-size: 14px !important;
+}
+
 .mat-toolbar {
     min-height: 56px !important;
 }
@@ -25,8 +29,8 @@
 
 .mat-sidenav {
     box-shadow: none !important;
-    border-left: 1px solid rgba(0, 0, 0, 0.4) !important;
-    border-right: 1px solid rgba(0, 0, 0, 0.4) !important;
+    border-left: 1px solid rgb(0 0 0 / 0.4) !important;
+    border-right: 1px solid rgb(0 0 0 / 0.4) !important;
 }
 
 .snackbar-error {

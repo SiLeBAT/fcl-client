@@ -37,6 +37,7 @@ export interface StandardFilterSettings {
 export interface TableColumn {
     id: string;
     name: string;
+    unavailable?: boolean;
 }
 
 export type Property = TableColumn;
@@ -63,15 +64,10 @@ export interface ColumnSubSets {
 }
 
 export interface DataTable extends ColumnSubSets{
+    modelFlag: Record<string, never>;
     columns: TableColumn[];
     rows: TableRow[];
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StationRow extends TableRow { }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StationTable extends DataTable { }
 
 export interface FclElements {
     stations: StationStoreData[];
@@ -209,15 +205,24 @@ export interface MakeElementsInvisibleInputState {
     tracingSettings: TracingSettings;
 }
 
+export interface LabelPart {
+    property?: string;
+    prefix: string;
+    useIndex?: boolean;
+}
+
 export interface HighlightingRule {
     id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
     color: number[];
     invisible: boolean;
-    disabled: boolean;
+    userDisabled: boolean;
+    autoDisabled: boolean;
     adjustThickness: boolean;
     labelProperty: string;
+    labelPrefix?: string;
+    labelParts?: LabelPart[];
     valueCondition: ValueCondition;
     logicalConditions: LogicalCondition[][];
 }
@@ -359,8 +364,10 @@ export interface HighlightingStats {
     conflicts: Record<HighlightingRuleId, number>;
 }
 export interface DataServiceData {
+    modelFlag: Record<string, never>;
     statMap: Record<StationId, StationData>;
     stations: StationData[];
+    isStationAnonymizationActive: boolean;
     delMap: Record<DeliveryId, DeliveryData>;
     deliveries: DeliveryData[];
     statSel: Record<StationId, boolean>;
@@ -368,10 +375,8 @@ export interface DataServiceData {
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
     legendInfo: LegendInfo;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    tracingPropsUpdatedFlag: {};
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    stationAndDeliveryHighlightingUpdatedFlag: {};
+    tracingPropsUpdatedFlag: Record<string, never>;
+    stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
     highlightingStats: HighlightingStats;
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
@@ -391,13 +396,14 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
 }
 
 export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
+    anonymizedName?: string;
     isMeta: boolean;
     contained: boolean;
     highlightingInfo?: StationHighlightingInfo;
 }
 
 export interface HighlightingInfo {
-    label: string[];
+    label: string;
     color: number[][];
 }
 

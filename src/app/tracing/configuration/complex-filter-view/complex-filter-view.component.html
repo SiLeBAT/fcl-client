@@ -1,87 +1,89 @@
-<div class="fcl-condition-list-container" cdkVirtualScrollingElement
-    [ngClass]="useListMode ? 'fcl-list-mode-isactive' : ''"
-    >
-
-    <div *ngIf="isScrollUpIndicatorVisible" class="fcl-condition-list-scrollup-indicator">
-        <mat-icon>keyboard_arrow_up</mat-icon>
-    </div>
-
-    <cdk-virtual-scroll-viewport
-        [itemSize]="rowHeight"
-        minBufferPx="200"
-        maxBufferPx="350"
-        [ngStyle]="{'min-height.px': viewportHeight, 'height.px': viewportHeight }"
-        [ngClass]="hideScrollbar ? 'fcl-hide-scrollbar' : ''"
+<div class="fcl-condition-list-container-wrapper">
+    <div class="fcl-condition-list-container" cdkVirtualScrollingElement
+        [ngClass]="useListMode ? 'fcl-list-mode-isactive' : ''"
         (scroll)="onScroll()"
         >
 
-        <div *cdkVirtualFor="let condition of conditions; let i=index; index as index; trackBy: trackByIndex"
-            class="fcl-complex-filter-condition-container"
+        <cdk-virtual-scroll-viewport
+            [itemSize]="rowHeight"
+            minBufferPx="200"
+            maxBufferPx="350"
+            [ngStyle]="{'min-height.px': viewportHeight, 'height.px': viewportHeight }"
+            [ngClass]="hideScrollbar ? 'fcl-hide-scrollbar' : ''"
             >
 
-            <fcl-property-selector-view
-                class="fcl-complex-filter-form-field"
-                [disabled]="disabled"
-                [value]="conditions[i].propertyName"
-                (valueChange)="onPropertyChange($event, i)"
-                [favouriteProperties]="favouriteProperties"
-                [otherProperties]="otherProperties"
-            ></fcl-property-selector-view>
-
-            <fcl-operator-selector-view
-                class="fcl-complex-filter-form-field"
-                [disabled]="disabled"
-                [value]="conditions[i].operationType"
-                (valueChange)="onOperatorChange($event, i)"
-                [availableOperatorTypes] = "availableOperatorTypes"
-            ></fcl-operator-selector-view>
-
-            <fcl-value-editor-view
-                class="fcl-complex-filter-form-field"
-                [disabled]="disabled"
-                [value]="conditions[i].value"
-                (valueChange)="onValueChange($event, i)"
-                [availableValues]="propToValuesMap[conditions[i].propertyName || '']"
-            ></fcl-value-editor-view>
-
-            <fcl-junktor-selector-view
-                class="fcl-complex-filter-form-field"
-                [disabled]="disabled"
-                *ngIf="i < (conditions.length - 1)"
-                [value]="conditions[i].junktorType"
-                (valueChange)="onJunktorChange($event, i)"
+            <div *cdkVirtualFor="let condition of conditions; let i=index; index as index; trackBy: trackByIndex"
+                class="fcl-complex-filter-condition-container"
                 >
-            </fcl-junktor-selector-view>
 
-            <button
-                *ngIf="i === (conditions.length - 1)"
-                mat-stroked-button
-                class="fcl-filter-condition-button"
-                [disabled]="disabled"
-                matTooltip="Add condition"
-                matTooltipPosition="above"
-                color="accent"
-                (click)="onAddFilterCondition(i)">
-                <mat-icon class="fcl-add-filter-condition-icon">add</mat-icon>
-            </button>
+                <fcl-property-selector-view
+                    class="fcl-complex-filter-form-field"
+                    [disabled]="disabled"
+                    [value]="conditions[i].propertyName"
+                    (valueChange)="onPropertyChange($event, i)"
+                    [favouriteProperties]="favouriteProperties"
+                    [otherProperties]="otherProperties"
+                ></fcl-property-selector-view>
 
-            <button
-                mat-stroked-button
-                class="fcl-filter-condition-button"
-                [disabled]="disabled"
-                matTooltip="Remove condition"
-                matTooltipPosition="above"
-                color="accent"
-                (click)="onRemoveFilterCondition(i)">
-                <mat-icon class="fcl-add-filter-condition-icon">remove</mat-icon>
-            </button>
+                <fcl-operator-selector-view
+                    class="fcl-complex-filter-form-field"
+                    [disabled]="disabled"
+                    [value]="conditions[i].operationType"
+                    (valueChange)="onOperatorChange($event, i)"
+                    [availableOperatorTypes] = "availableOperatorTypes"
+                ></fcl-operator-selector-view>
 
-         </div>
+                <fcl-value-editor-view
+                    class="fcl-complex-filter-form-field"
+                    [disabled]="disabled"
+                    [value]="conditions[i].value"
+                    (valueChange)="onValueChange($event, i)"
+                    [availableValues]="propToValuesMap[conditions[i].propertyName || '']"
+                ></fcl-value-editor-view>
 
-    </cdk-virtual-scroll-viewport>
+                <fcl-junktor-selector-view
+                    class="fcl-complex-filter-form-field"
+                    [disabled]="disabled"
+                    *ngIf="i < (conditions.length - 1)"
+                    [value]="conditions[i].junktorType"
+                    (valueChange)="onJunktorChange($event, i)"
+                    >
+                </fcl-junktor-selector-view>
 
-    <div *ngIf="isScrollDownIndicatorVisible" class="fcl-condition-list-scrolldown-indicator">
-        <mat-icon>keyboard_arrow_down</mat-icon>
+                <button
+                    *ngIf="i === (conditions.length - 1)"
+                    mat-stroked-button
+                    class="fcl-filter-condition-button"
+                    [disabled]="disabled"
+                    matTooltip="Add condition"
+                    matTooltipPosition="above"
+                    color="accent"
+                    (click)="onAddFilterCondition(i)">
+                    <mat-icon class="fcl-add-filter-condition-icon">add</mat-icon>
+                </button>
+
+                <button
+                    mat-stroked-button
+                    class="fcl-filter-condition-button"
+                    [disabled]="disabled"
+                    matTooltip="Remove condition"
+                    matTooltipPosition="above"
+                    color="accent"
+                    (click)="onRemoveFilterCondition(i)">
+                    <mat-icon class="fcl-add-filter-condition-icon">remove</mat-icon>
+                </button>
+
+            </div>
+
+        </cdk-virtual-scroll-viewport>
+
+        <div *ngIf="isScrollUpIndicatorVisible" class="fcl-condition-list-scrollup-indicator">
+            <mat-icon>keyboard_arrow_up</mat-icon>
+        </div>
+
+        <div *ngIf="isScrollDownIndicatorVisible" class="fcl-condition-list-scrolldown-indicator">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+        </div>
+
     </div>
-
 </div>

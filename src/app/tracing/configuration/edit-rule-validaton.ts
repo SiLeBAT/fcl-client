@@ -1,5 +1,9 @@
 import { ComplexFilterCondition } from './configuration.model';
-import { ColorAndShapeEditRule, ColorEditRule, EditRule, InvEditRule, LabelEditRule, RuleType } from './model';
+import {
+    ColorAndShapeEditRule, ColorEditRule, ComposedLabelEditRule,
+    EditRule, InvEditRule, RuleType, SimpleLabelEditRule
+} from './model';
+import { isSimpleLabelRule } from './shared';
 
 function isConditionComplete(condition: ComplexFilterCondition): boolean {
     return (
@@ -47,10 +51,19 @@ function isColorAndShapeEditRuleValid(editRule: ColorAndShapeEditRule): boolean 
     );
 }
 
-function isLabelEditRuleValid(editRule: LabelEditRule): boolean {
+function isSimpleLabelEditRuleValid(editRule: SimpleLabelEditRule): boolean {
     return (
         isGenericEditRuleValid(editRule) &&
         editRule.labelProperty !== null
+    );
+}
+
+function isComposedLabelEditRuleValid(editRule: ComposedLabelEditRule): boolean {
+    return (
+        isGenericEditRuleValid(editRule) &&
+        editRule.labelParts !== null && editRule.labelParts.length > 0 && editRule.labelParts.every(
+            p => typeof p.property === 'string' || p.useIndex !== undefined
+        )
     );
 }
 
@@ -61,13 +74,15 @@ function isInvEditRuleValid(editRule: InvEditRule): boolean {
 export function isEditRuleValid(editRule: EditRule): boolean {
     switch (editRule.type) {
         case RuleType.COLOR_AND_SHAPE:
-            return isColorAndShapeEditRuleValid(editRule as ColorAndShapeEditRule);
+            return isColorAndShapeEditRuleValid(editRule);
         case RuleType.COLOR:
-            return isColorEditRuleValid(editRule as ColorEditRule);
+            return isColorEditRuleValid(editRule);
         case RuleType.LABEL:
-            return isLabelEditRuleValid(editRule as LabelEditRule);
+            return isSimpleLabelRule(editRule) ?
+                isSimpleLabelEditRuleValid(editRule) :
+                isComposedLabelEditRuleValid(editRule);
         case RuleType.INVISIBILITY:
-            return isInvEditRuleValid(editRule as InvEditRule);
+            return isInvEditRuleValid(editRule);
         default:
             return false;
     }

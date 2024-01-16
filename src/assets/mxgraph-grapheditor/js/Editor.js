@@ -1314,8 +1314,8 @@ var PageSetupDialog = function(editorUi)
 	var gridSizeInput = document.createElement('input');
 	gridSizeInput.setAttribute('type', 'number');
 	gridSizeInput.setAttribute('min', '0');
-	gridSizeInput.style.width = '40px';
-	gridSizeInput.style.marginLeft = '6px';
+    gridSizeInput.style.width = '50px';
+    gridSizeInput.style.marginLeft = '6px';
 
 	gridSizeInput.value = graph.getGridSize();
 	td.appendChild(gridSizeInput);

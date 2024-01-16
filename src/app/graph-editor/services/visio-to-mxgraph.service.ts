@@ -357,11 +357,18 @@ export class VisioToMxGraphService {
             });
         });
 
+        const id2BoxPort: Record<string, BoxPort> = {};
+        this.boxes.forEach(
+            box => box.visioBox.ports.forEach(port =>
+                id2BoxPort[port.id] = { box: box, currentPort: port}
+            )
+        );
+
         // draw connectors
         _.forIn(connectors, (connector: VisioConnector) => {
-            const fromBoxPort: BoxPort = this.getMatchingBoxPort(connector.fromPort);
-            const toBoxPort: BoxPort = this.getMatchingBoxPort(connector.toPort);
-            const edge: mxCell = this.drawEdge(parent, fromBoxPort, toBoxPort);
+            const fromBoxPort = id2BoxPort[connector.fromPort];
+            const toBoxPort = id2BoxPort[connector.toPort];
+            this.drawEdge(parent, fromBoxPort, toBoxPort);
         });
 
         this.drawHeader(parent, report);
@@ -708,21 +715,5 @@ export class VisioToMxGraphService {
         };
         this.boxes.push(newBox);
 
-    }
-
-    private getMatchingBoxPort(portId: string): BoxPort {
-        const boxPort: BoxPort = _.reduce(this.boxes, (result: BoxPort, box: Box) => {
-            _.forIn(box.visioBox.ports, (currentPort: VisioPort) => {
-                if (currentPort.id === portId) {
-                    result = {
-                        box: box,
-                        currentPort: currentPort
-                    };
-                }
-            });
-            return result;
-        }, null);
-
-        return boxPort;
     }
 }

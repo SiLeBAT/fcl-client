@@ -1,5 +1,9 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterViewChecked, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, Output, QueryList, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import {
+    AfterViewChecked, ChangeDetectionStrategy, Component,
+    ElementRef, EventEmitter, Input, OnChanges, Output,
+    SimpleChanges, TemplateRef, ViewChild
+} from '@angular/core';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
 import { EditRule, RuleId, RuleListItem } from '../model';
 
@@ -30,6 +34,16 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
     private isEditRuleNew = false;
 
     private scrollEditRuleIntoViewAfterViewChecked = false;
+    private _sortableListItems: RuleListItem[] = [];
+    private _unsortableListItems: RuleListItem[] = [];
+
+    get sortableListItems(): RuleListItem[] {
+        return this._sortableListItems;
+    }
+
+    get unsortableListItems(): RuleListItem[] {
+        return this._unsortableListItems;
+    }
 
     get showAddRuleButton(): boolean {
         return this.editRule === null || this.isEditRuleNew; // this.editRule.isNew;
@@ -44,6 +58,10 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (changes.listItems !== undefined) {
+            this._sortableListItems = this.listItems.filter(item => !item.isAnonymizationRule);
+            this._unsortableListItems = this.listItems.filter(item => item.isAnonymizationRule);
+        }
         if (changes.editRule !== undefined || changes.listItems !== undefined) {
             this.isEditRuleNew = this.editRule !== null && !this.listItems.some(item => item.id === this.editRule.id);
         }
@@ -88,8 +106,10 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
 
     onDrop(event: CdkDragDrop<string[]>) {
         if (event.previousIndex !== event.currentIndex) {
-            const newRuleIdOrder = this.listItems.map(item => item.id);
-            moveItemInArray(newRuleIdOrder, event.previousIndex, event.currentIndex);
+            const newSortableRuleIdOrder = this.sortableListItems.map(item => item.id);
+            moveItemInArray(newSortableRuleIdOrder, event.previousIndex, event.currentIndex);
+            const unsortableRuleIdOrder = this.unsortableListItems.map(item => item.id);
+            const newRuleIdOrder = [].concat(...newSortableRuleIdOrder, unsortableRuleIdOrder);
             this.ruleOrderChange.emit(newRuleIdOrder);
         }
     }

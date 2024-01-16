@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
-import { LabelEditRule } from '../model';
+import { SimpleLabelEditRule } from '../model';
 import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
 import { getCompleteConditionsCount, getNonEmptyConditionCount } from '../edit-rule-validaton';
 
@@ -10,7 +10,7 @@ import { getCompleteConditionsCount, getNonEmptyConditionCount } from '../edit-r
     styleUrls: ['./label-rules-edit-view.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LabelRulesEditViewComponent extends AbstractRuleEditViewComponent<LabelEditRule> implements OnChanges {
+export class LabelRulesEditViewComponent extends AbstractRuleEditViewComponent<SimpleLabelEditRule> implements OnChanges {
 
     private static readonly DISABLED_ACTION_TOOLTIP_W_CONDITIONS = 'Please enter name and select a property as well as conditions';
     private static readonly DISABLED_ACTION_TOOLTIP_WO_CONDITIONS = 'Please enter name and select a property';

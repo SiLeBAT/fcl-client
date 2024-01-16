@@ -10,9 +10,9 @@ import { AlertService } from '@app/shared/services/alert.service';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import { EditHighlightingService } from '../edit-highlighting.service';
 import {
-    DeliveryEditRule, DeliveryRuleType, EditHighlightingServiceData,
-    EditHighlightingState,
-    RuleId, RuleListItem, StationEditRule
+    DeliveryEditRule, DeliveryRuleType,
+    EditHighlightingServiceData, EditHighlightingState,
+    RuleId, RuleListItem
 } from '../model';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 
@@ -136,7 +136,7 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
         }
     }
 
-    onRemoveSelectionFromRuleConditions(editRule: StationEditRule): void {
+    onRemoveSelectionFromRuleConditions(editRule: DeliveryEditRule): void {
         const updatedEditRule = this.editHighlightingService.removeSelectionFromDeliveryRuleConditions(
             editRule, this.cachedState.dataServiceInputState
         );

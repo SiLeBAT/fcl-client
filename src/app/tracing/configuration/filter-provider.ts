@@ -112,14 +112,19 @@ export function createPredefinedRowFilter(showType: ShowType): PredefinedRowFilt
     };
 }
 
-export function createComplexRowFilter(settings: ComplexRowFilterSettings): complexFilterProvider.ComplexRowFilter {
-    return complexFilterProvider.createComplexRowFilter(settings);
+export function createComplexRowFilter(
+    settings: ComplexRowFilterSettings,
+    ignoredProps: string[]
+): complexFilterProvider.ComplexRowFilter {
+    return complexFilterProvider.createComplexRowFilter(settings, ignoredProps);
 }
 
-export function getUpdatedComplexRowFilter(settings: ComplexRowFilterSettings,
+export function getUpdatedComplexRowFilter(
+    settings: ComplexRowFilterSettings,
+    ignoredProps: string[],
     rowFilter: complexFilterProvider.ComplexRowFilter
 ): complexFilterProvider.ComplexRowFilter {
-    return complexFilterProvider.getUpdatedComplexRowFilter(settings, rowFilter);
+    return complexFilterProvider.getUpdatedComplexRowFilter(settings, ignoredProps, rowFilter);
 }
 
 export function createVisibilityRowFilter(visibilityState: VisibilityFilterState): VisibilityRowFilter {

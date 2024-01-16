@@ -8,7 +8,8 @@
     [selectedIndex]="activeTabIndex$ | async"
     (selectedIndexChange)="onSelectedIndexChange($event)"
     (animationDone)="onAnimationDone()"
-    animationDuration="0ms">
+    animationDuration="0ms"
+    preserveContent="true">
 
     <ng-container *ngFor="let tab of tabConfigs; index as i">
         <!--

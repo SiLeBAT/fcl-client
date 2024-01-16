@@ -58,6 +58,9 @@
         #table
         class="material fcl-datatable fcl-filtertable"
         [columns]="columns"
+        [sorts]="sorts"
+        (sort)="onSort($event)"
+        externalSorting="true"
         [rows]="tableRows"
         [rowHeight]="18"
         scrollbarV="true"

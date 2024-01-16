@@ -2,13 +2,10 @@
 
 :host {
     text-align: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding: 1rem;
     font-family: #{fcl.$fcl-font-family};
     font-size: 14px;
-    border-color: rgb(244, 177, 131);
+    border-color: rgb(244 177 131);
     border-width: 3px;
     border-style: solid;
 }

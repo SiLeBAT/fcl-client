@@ -3,7 +3,6 @@
 $fcl-col-legend-width: 27px;
 $fcl-col-edit-width: 24px;
 $fcl-col-delete-width: 22px;
-$fcl-opacity--disabled: 0.38;
 $fcl-font-size: 0.8rem;
 
 .fcl-rules-list-item {
@@ -17,13 +16,16 @@ $fcl-font-size: 0.8rem;
     grid-template-columns: 3ch calc(50% - 3ch) 24px 1fr 2ch 1fr $fcl-col-legend-width 1fr 30px 1fr $fcl-col-edit-width 1fr $fcl-col-delete-width;
 }
 
-.fcl-rules-list-drag-indicator {
+.fcl-rules-list-item:not(.cdk-drag) .fcl-rules-list-drag-indicator {
+    display: none;
+}
+
+.cdk-drag .fcl-rules-list-item-drag-indicator {
     $fcl-drag-indicator-size-factor: 1.2;
 
     display: flex;
     grid-area: dragcolumn;
-    justify-self: left;
-    align-self: center;
+    place-self: center left;
     max-height: calc(#{$fcl-font-size} * #{$fcl-drag-indicator-size-factor});
 
     .mat-icon {
@@ -31,20 +33,20 @@ $fcl-font-size: 0.8rem;
     }
 }
 
-.cdk-drag-handle {
+.cdk-drag .cdk-drag-handle {
     cursor: ns-resize;
 }
 
 .cdk-drag-disabled .cdk-drag-handle {
     cursor: default;
+
+    .mat-icon {
+        opacity: fcl.$fcl-opacity--disabled;
+    }
 }
 
 .cdk-drag-placeholder {
     visibility: hidden;
-}
-
-.cdk-drag-disabled .fcl-cs-rules-list-drag-indicator {
-    opacity: $fcl-opacity--disabled;
 }
 
 /* Animate items as they're being sorted. */
@@ -63,7 +65,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rule-disabled .fcl-rules-list-item-name {
-    opacity: $fcl-opacity--disabled;
+    opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-symbol {
@@ -77,7 +79,7 @@ $fcl-font-size: 0.8rem;
 }
 
 .fcl-rule-disabled .fcl-rules-list-item-counts {
-    opacity: $fcl-opacity--disabled;
+    opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-legend-button {
@@ -90,18 +92,17 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-legend-button.mat-button-toggle-checked {
     font-weight: bold;
     background-color: fcl.$fcl-primary-500;
-    color: rgb(255, 255, 255);
+    color: rgb(255 255 255);
 }
 
 .fcl-rules-list-item-legend-button.mat-button-toggle-disabled {
-    opacity: $fcl-opacity--disabled;
+    opacity: fcl.$fcl-opacity--disabled;
 }
 
 .fcl-rules-list-item-activated-slider {
     grid-area: activated;
     display: flex;
-    align-items: center;
-    justify-items: center;
+    place-items: center center;
 }
 
 .fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
@@ -111,8 +112,7 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-edit-button-wrapper {
     grid-area: edit;
     display: flex;
-    justify-content: center;
-    align-content: center;
+    place-content: center center;
     max-width: $fcl-col-edit-width;
     overflow-x: hidden;
 }
@@ -120,8 +120,7 @@ $fcl-font-size: 0.8rem;
 .fcl-rules-list-item-delete-button-wrapper {
     display: flex;
     grid-area: delete;
-    justify-content: center;
-    align-content: center;
+    place-content: center center;
     justify-self: end;
     max-width: $fcl-col-delete-width;
     overflow-x: hidden;
@@ -138,14 +137,14 @@ $fcl-font-size: 0.8rem;
 
 .fcl-add-rule-button {
     border-radius: 5;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255 255 255);
     margin-top: 1rem;
     width: 100%;
 }
 
 .fcl-add-rule-button:hover:enabled {
     background-color: fcl.$fcl-accent-300;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255 255 255 / 0.9);
 }
 
 .fcl-rules-list-item-counts-wrapper {

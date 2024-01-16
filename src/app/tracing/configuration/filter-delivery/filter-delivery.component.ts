@@ -148,6 +148,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                 this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
             ) {
                 dataTable = this.tableService.getDeliveryTable(state.dataServiceInputState, false);
+                this.currentGhostDeliveryId = null;
             } else if (
                 newDSData.stations !== cachedDSData.stations ||
                 newDSData.deliveries !== cachedDSData.deliveries ||
@@ -156,10 +157,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                 newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
                 newDSData.delSel !== cachedDSData.delSel
             ) {
-                dataTable = {
-                    ...this.cachedData.dataTable,
-                    rows: this.tableService.getDeliveryTable(state.dataServiceInputState, false).rows
-                };
+                dataTable = this.tableService.getDeliveryTable(state.dataServiceInputState, false);
             }
 
             this.cachedState = {

@@ -5,7 +5,7 @@
     flex-direction: column;
     padding: 0.5rem;
     padding-top: 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid rgb(0 0 0 / 0.12);
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
@@ -48,7 +48,7 @@
 
 .fcl-edit-rule-action-button:hover:enabled {
     background-color: fcl.$fcl-accent-300;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255 255 255 / 0.9);
 }
 
 .fcl-edit-rule-complex-filter {

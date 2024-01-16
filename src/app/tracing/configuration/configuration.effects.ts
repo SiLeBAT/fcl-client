@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { AlertService } from '../../shared/services/alert.service';
 import * as fromTracing from '../state/tracing.reducers';
 import { mergeMap, take, withLatestFrom } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { select, Store } from '@ngrx/store';
-import { DialogSelectData, DialogSelectComponent } from '../dialog/dialog-select/dialog-select.component';
+import { Option, DialogSelectData, DialogSelectComponent, DialogResultData } from '../dialog/dialog-select/dialog-select.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteHighlightingRuleSSA } from './configuration.actions';
 import { TableType } from './model';
@@ -17,6 +16,8 @@ import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/d
 import { selectHighlightingSettings } from '../state/tracing.selectors';
 import { EditHighlightingService } from './edit-highlighting.service';
 import { TableColumn } from '../data.model';
+import { Utils } from '../util/non-ui-utils';
+import * as _ from 'lodash';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -24,7 +25,6 @@ export class ConfigurationEffects {
         private editHighlightingService: EditHighlightingService,
         private actions$: Actions,
         private dialogService: MatDialog,
-        private alertService: AlertService,
         private store: Store<fromTracing.State>
     ) {}
 
@@ -35,13 +35,17 @@ export class ConfigurationEffects {
 
                 const tableType = action.payload.type;
                 const oldColumnOrder = action.payload.columnOrder;
-                const mapColumnToOption = (column: TableColumn) => ({
+                const mapColumnToOption: (c: TableColumn) => Option = (column) => ({
                     value: column.id,
                     viewValue: column.name,
-                    selected: oldColumnOrder.includes(column.id)
+                    selected: oldColumnOrder.includes(column.id),
+                    disabled: column.unavailable,
+                    tooltip: column.unavailable ? 'Data is not available.' : ''
                 });
                 const dialogData: DialogSelectData = {
-                    title: 'Show Columns',
+                    title: tableType === TableType.STATIONS ?
+                        'Station Columns' : 'Delivery Columns',
+                    sorting: action.payload.columnOrder,
                     favouriteOptions: action.payload.favouriteColumns.map(mapColumnToOption),
                     otherOptions: action.payload.otherColumns.map(mapColumnToOption)
                 };
@@ -49,17 +53,12 @@ export class ConfigurationEffects {
                 this.dialogService.open(DialogSelectComponent, { data: dialogData }).afterClosed()
                     .pipe(
                         take(1)
-                    ).subscribe((selections: string[]) => {
-                        if (selections != null) {
-                            // assumption, the selection is unordered
-                            const newColumnOrder = [].concat(
-                                oldColumnOrder.filter(prop => selections.includes(prop)),
-                                selections.filter(prop => !oldColumnOrder.includes(prop))
-                            );
+                    ).subscribe((result: DialogResultData) => {
+                        if (result) {
                             if (tableType === TableType.STATIONS) {
-                                this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: newColumnOrder }));
+                                this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: result.sorting }));
                             } else if (tableType === TableType.DELIVERIES) {
-                                this.store.dispatch(new SetFilterDeliveryTableColumnOrderSOA({ columnOrder: newColumnOrder }));
+                                this.store.dispatch(new SetFilterDeliveryTableColumnOrderSOA({ columnOrder: result.sorting }));
                             }
                         }
                     },

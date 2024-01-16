@@ -4,6 +4,12 @@ import { ExampleData } from '@app/main-page/model/types';
 import * as _ from 'lodash';
 import { Utils } from './non-ui-utils';
 
+interface ColumnDefinition {
+    id: string;
+    name: string;
+    availableForHighlighting?: boolean;
+}
+
 export class Constants {
     static readonly EXAMPLE_DATA_BASE_DIR = 'assets/example-data/';
     static readonly EXAMPLE_DATA_SUB_DIR_1 = 'baby-tea/';
@@ -34,10 +40,12 @@ export class Constants {
 
     static readonly DIALOG_CANCEL = 'Cancel';
     static readonly DIALOG_OK = 'Ok';
+    static readonly DIALOG_SAVE = 'Save';
     static readonly DIALOG_DONT_SAVE = 'Don\'t save and proceed';
 
     private static readonly STATION_DATA: StationData = {
         id: null,
+        anonymizedName: null,
         name: null,
         lat: null,
         lon: null,
@@ -169,6 +177,9 @@ export class Constants {
     static readonly DEFAULT_GIS_AVOID_OVERLAY = false;
 
     static readonly DEFAULT_TABLE_WIDTH = 0.25;
+
+    static readonly COLUMN_ANONYMIZED_NAME: keyof StationData = 'anonymizedName';
+    static readonly COLUMN_NAME: keyof StationData = 'name';
     static readonly DEFAULT_TABLE_STATION_COLUMNS = List.of(
         'name',
         'country',
@@ -176,6 +187,34 @@ export class Constants {
         'score',
         'commonLink'
     );
+
+    static readonly FAVOURITE_STAT_COLUMNS = List.of<ColumnDefinition>(
+        { id: 'id', name: 'ID' },
+        { id: 'anonymizedName', name: 'Anonymized Name', availableForHighlighting: false },
+        { id: 'name', name: 'Name' },
+        { id: 'address', name: 'Address' },
+        { id: 'country', name: 'Country' },
+        { id: 'typeOfBusiness', name: 'Type of Business' },
+        { id: 'score', name: 'Score' },
+        { id: 'commonLink', name: 'Common Link' },
+        { id: 'outbreak', name: 'Outbreak' },
+        { id: 'weight', name: 'Weight' }
+    );
+
+    static readonly KNOWN_OTHER_STAT_COLUMNS = List.of<ColumnDefinition>(
+        { id: 'forward', name: 'On Forward Trace' },
+        { id: 'backward', name: 'On Backward Trace' },
+        { id: 'crossContamination', name: 'Cross Contamination' },
+        { id: 'killContamination', name: 'Kill Contamination' },
+        { id: 'observed', name: 'Observed' },
+        { id: 'selected', name: 'Selected', availableForHighlighting: false },
+        { id: 'invisible', name: 'Invisible', availableForHighlighting: false },
+        { id: 'lat', name: 'Latitude' },
+        { id: 'lon', name: 'Longitude' },
+        { id: 'isMeta', name: 'Is Meta Station' },
+        { id: 'contained', name: 'Is Meta Member', availableForHighlighting: false }
+    );
+
     static readonly DEFAULT_TABLE_DELIVERY_COLUMNS = List.of(
         'name',
         'lot',

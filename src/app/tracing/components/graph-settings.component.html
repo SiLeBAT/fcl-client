@@ -43,14 +43,16 @@
     <div class="sidenav-elements-group">
         <mat-form-field class="less-bottom-padding">
             <mat-select
-              placeholder="Merge Deliveries"
-              [ngModel]="graphSettings.mergeDeliveriesType"
-              (ngModelChange)="setMergeDeliveriesType($event)">
-              <mat-option *ngFor="let mergeDeliveriesOption of mergeDeliveriesOptions"
-              [value]="mergeDeliveriesOption.value"
-              [matTooltip]="mergeDeliveriesOption.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="fcl-option-tooltip">
-                {{mergeDeliveriesOption.label}}
-              </mat-option>
+                placeholder="Merge Deliveries"
+                [ngModel]="graphSettings.mergeDeliveriesType"
+                (ngModelChange)="setMergeDeliveriesType($event)">
+                <mat-option *ngFor="let mergeDeliveriesOption of mergeDeliveriesOptions"
+                    [value]="mergeDeliveriesOption.value"
+                    [matTooltip]="mergeDeliveriesOption.toolTip"
+                    matTooltipPosition="right"
+                    matTooltipShowDelay="500">
+                    {{mergeDeliveriesOption.label}}
+                </mat-option>
             </mat-select>
         </mat-form-field>
 
@@ -65,7 +67,9 @@
         <mat-select placeholder="Cross Contamination Tracing" [ngModel]="tracingSettings.crossContTraceType" (ngModelChange)="setCrossContTraceType($event)">
             <mat-option *ngFor="let traceTypeOption of crossContTraceTypeOptions"
                 [value]="traceTypeOption.value"
-                [matTooltip]="traceTypeOption.toolTip" matTooltipPosition="right" matTooltipShowDelay="500" matTooltipClass="fcl-option-tooltip">
+                [matTooltip]="traceTypeOption.toolTip"
+                matTooltipPosition="right"
+                matTooltipShowDelay="500">
                 {{ traceTypeOption.label }}
             </mat-option>
         </mat-select>
