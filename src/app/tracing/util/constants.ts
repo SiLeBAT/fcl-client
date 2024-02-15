@@ -88,6 +88,7 @@ export class Constants {
         crossContamination: null,
         killContamination: null,
         observed: null,
+        outbreak: null,
         weight: null,
         forward: null,
         backward: null,

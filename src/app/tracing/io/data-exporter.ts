@@ -1,5 +1,6 @@
 import {
-    FclData, GroupType, ObservedType, GraphType, Layout, StationTracingSettings, MergeDeliveriesType,
+    FclData, GroupType, ObservedType,
+    GraphType, Layout, MergeDeliveriesType,
     ValueType,
     ValueCondition as IntValueCondition,
     LogicalCondition as IntLogicalCondition,
@@ -8,7 +9,8 @@ import {
     OperationType,
     PropMap,
     LabelPart,
-    HighlightingRule
+    HighlightingRule,
+    StationTracingSettings
 } from '../data.model';
 import * as DataMapper from './data-mappings/data-mappings-v1';
 import * as ExtDataConstants from './ext-data-constants.v1';

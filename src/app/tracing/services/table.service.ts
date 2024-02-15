@@ -94,7 +94,8 @@ export class TableService {
             { id: 'lot', name: 'Lot' },
             { id: 'amount', name: 'Amount' },
             { id: 'dateOut', name: 'Delivery Date' },
-            { id: 'dateIn', name: 'Delivery Date Arrival' }
+            { id: 'dateIn', name: 'Delivery Date Arrival' },
+            { id: 'outbreak', name: 'Outbreak' }
         ];
         if (!forHighlighting) {
             favouriteColumns.push(

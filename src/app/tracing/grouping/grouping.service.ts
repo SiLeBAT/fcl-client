@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataService } from '../services/data.service';
 import {
-    GroupType, GroupData, StationTracingSettings, ObservedType, GroupMode, Position
+    GroupType, GroupData, ObservedType, GroupMode, Position, StationTracingSettings
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';

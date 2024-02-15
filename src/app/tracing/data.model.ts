@@ -153,6 +153,17 @@ export interface ClearInvisibilitiesOptions {
     clearDeliveryInvs: boolean;
 }
 
+export interface ClearOutbreaksOptions {
+    clearStationOutbreaks: boolean;
+    clearDeliveryOutbreaks: boolean;
+}
+
+export interface SetOutbreaksOptions {
+    stationIds?: string[];
+    deliveryIds?: string[];
+    outbreak: boolean;
+}
+
 export interface ShowElementsTraceParams {
     stationIds: StationId[];
     deliveryIds: DeliveryId[];
@@ -283,21 +294,17 @@ export enum ValueType {
     LOG_VALUE = 'Log Value'
 }
 
-interface TraceableElementSettings {
+export interface ElementTracingSettings {
     id: StationId | DeliveryId;
     observed: ObservedType;
     crossContamination: boolean;
     killContamination: boolean;
     weight: number;
-}
-
-export interface StationTracingSettings extends TraceableElementSettings {
     outbreak: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DeliveryTracingSettings extends TraceableElementSettings {
-}
+export type StationTracingSettings = ElementTracingSettings;
+export type DeliveryTracingSettings = ElementTracingSettings;
 
 export enum CrossContTraceType {
     USE_EXPLICIT_DELIVERY_DATES,

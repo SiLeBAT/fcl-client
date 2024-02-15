@@ -389,7 +389,8 @@ export class DataImporterV1 implements IDataImporter {
                 weight: element.weight,
                 crossContamination: element.crossContamination,
                 killContamination: element.killContamination,
-                observed: element.observed === true ? ObservedType.FULL : ObservedType.NONE
+                observed: element.observed === true ? ObservedType.FULL : ObservedType.NONE,
+                outbreak: element.weight > 0
             };
         }
     }
@@ -402,7 +403,8 @@ export class DataImporterV1 implements IDataImporter {
                 weight: 0,
                 observed: ObservedType.NONE,
                 crossContamination: false,
-                killContamination: false
+                killContamination: false,
+                outbreak: false
             })),
             stations: [].concat(
                 fclData.fclElements.stations.map(s => s.id),

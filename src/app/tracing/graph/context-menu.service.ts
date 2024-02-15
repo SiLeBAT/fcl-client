@@ -13,12 +13,13 @@ import _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
 import {
-    ClearInvisibilitiesMSA, ClearOutbreakStationsMSA, ClearTraceMSA,
-    MarkStationsAsOutbreakMSA, SetStationCrossContaminationMSA,
+    ClearInvisibilitiesMSA, ClearTraceMSA,
+    MarkElementsAsOutbreakMSA, SetStationCrossContaminationMSA,
     SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
     ShowStationPropertiesMSA,
     ShowElementsTraceMSA,
-    MakeElementsInvisibleMSA} from '../tracing.actions';
+    MakeElementsInvisibleMSA,
+    ClearOutbreaksMSA} from '../tracing.actions';
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
 import { Action } from '@ngrx/store';
 import { LayoutOption } from './cy-graph/interactive-cy-graph';
@@ -151,16 +152,38 @@ export class ContextMenuService {
                     ),
                     action: new ClearTraceMSA()
                 },
-                {
-                    ...MenuItemStrings.clearOutbreakStations,
-                    disabled: !stations.some(s => s.outbreak),
-                    action: new ClearOutbreakStationsMSA()
-                },
+                this.createClearOutbreaksMenuItemData(graphData),
                 this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
             ]
         );
+    }
+
+    private createClearOutbreaksMenuItemData(graphData: GraphServiceData): MenuItemData {
+        const someStationIsAnOutbreak = graphData.stations.some(s => s.outbreak);
+        const someDeliveryIsAnOutbreak = graphData.deliveries.some(d => d.outbreak);
+        return {
+            ...MenuItemStrings.clearOutbreaks,
+            disabled: !(someStationIsAnOutbreak || someDeliveryIsAnOutbreak),
+
+            children: [
+                {
+                    ...MenuItemStrings.clearOutbreakStations,
+                    disabled: !someStationIsAnOutbreak,
+                    action: new ClearOutbreaksMSA({ clearStationOutbreaks: true, clearDeliveryOutbreaks: false })
+                },
+                {
+                    ...MenuItemStrings.clearOutbreakDeliveries,
+                    disabled: !someDeliveryIsAnOutbreak,
+                    action: new ClearOutbreaksMSA({ clearStationOutbreaks: false, clearDeliveryOutbreaks: true })
+                },
+                {
+                    ...MenuItemStrings.clearAllOutbreaks,
+                    action: new ClearOutbreaksMSA({ clearStationOutbreaks: true, clearDeliveryOutbreaks: true })
+                }
+            ]
+        };
     }
 
     private createClearInvisibilitiesMenuItemData(graphData: GraphServiceData): MenuItemData {
@@ -303,6 +326,20 @@ export class ContextMenuService {
         };
     }
 
+    private createMarkAsOutbreakItemData(contextElements: ContextElements, graphData: GraphServiceData): MenuItemData {
+        const allContextStationsAreOutbreaks = graphData.getStatById(contextElements.stationIds).every(s => s.outbreak);
+        const allContextDeliveriesAreOutbreaks = graphData.getDelById(contextElements.deliveryIds).every(d => d.outbreak);
+        const allContextElementsAreOutbreaks = allContextStationsAreOutbreaks && allContextDeliveriesAreOutbreaks;
+        return {
+            ...(allContextElementsAreOutbreaks ? MenuItemStrings.unmarkOutbreaks :MenuItemStrings.markOutbreaks),
+            action: new MarkElementsAsOutbreakMSA({
+                stationIds: contextElements.stationIds,
+                deliveryIds: contextElements.deliveryIds,
+                outbreak: !allContextElementsAreOutbreaks
+            })
+        };
+    }
+
     private createStationActions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
@@ -312,7 +349,6 @@ export class ContextMenuService {
         const contextStations: StationData[] = graphData.getStatById(contextElements.stationIds);
         const multipleStationsSelected = contextStations.length > 1;
         const selectedIds = contextStations.map(s => s.id);
-        const allOutbreakStations = contextStations.every(s => s.outbreak);
         const allCrossContaminationStations = contextStations.every(s => s.crossContamination);
         const allKillContaminationStations = contextStations.every(s => s.killContamination);
         const allMetaStations = contextStations.every(s => s.contains && s.contains.length > 0);
@@ -326,10 +362,7 @@ export class ContextMenuService {
                     action: new ShowStationPropertiesMSA({ stationId: selectedIds[0] })
                 },
                 this.createTraceMenuItemData(contextElements),
-                {
-                    ...(allOutbreakStations ? MenuItemStrings.unmarkOutbreakStations : MenuItemStrings.markOutbreakStations),
-                    action: new MarkStationsAsOutbreakMSA({ stationIds: selectedIds, outbreak: !allOutbreakStations })
-                },
+                this.createMarkAsOutbreakItemData(contextElements, graphData),
                 {
                     ...(allCrossContaminationStations ?
                         MenuItemStrings.unsetStationCrossContamination :
@@ -372,6 +405,7 @@ export class ContextMenuService {
             {
                 ...this.createTraceMenuItemData(contextElements)
             },
+            this.createMarkAsOutbreakItemData(contextElements, graphData),
             this.createMakeInvisibleItemData(contextElements)
         ];
     }

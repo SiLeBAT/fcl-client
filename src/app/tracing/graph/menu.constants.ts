@@ -12,8 +12,20 @@ export class MenuItemStrings {
         displayName: 'Clear Trace'
     };
 
+    static readonly clearOutbreaks: ItemInfo = {
+        displayName: 'Clear Outbreaks'
+    };
+
     static readonly clearOutbreakStations: ItemInfo = {
         displayName: 'Clear Outbreak Stations'
+    };
+
+    static readonly clearOutbreakDeliveries: ItemInfo = {
+        displayName: 'Clear Outbreak Deliveries'
+    };
+
+    static readonly clearAllOutbreaks: ItemInfo = {
+        displayName: 'Clear All Outbreaks'
     };
 
     static readonly clearInvisibility: ItemInfo = {
@@ -76,11 +88,11 @@ export class MenuItemStrings {
         displayName: 'Show Properties'
     };
 
-    static readonly markOutbreakStations: ItemInfo = {
+    static readonly markOutbreaks: ItemInfo = {
         displayName: 'Mark as Outbreak'
     };
 
-    static readonly unmarkOutbreakStations: ItemInfo = {
+    static readonly unmarkOutbreaks: ItemInfo = {
         displayName: 'Unmark as Outbreak'
     };
 

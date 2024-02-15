@@ -3,7 +3,10 @@ import {
     SetTracingSettingsPayload,
     TracingSettings, ObservedType, DeliveryTracingSettings, StationTracingSettings,
     SelectedElements,
-    ShowElementsTraceParams
+    ShowElementsTraceParams,
+    ClearOutbreaksOptions,
+    ElementTracingSettings,
+    SetOutbreaksOptions
 } from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 
@@ -12,24 +15,52 @@ import { Utils } from '../util/non-ui-utils';
 })
 export class EditTracingSettingsService {
 
-    getClearOutbreakStationsPayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {
-        return this.getMarkStationsAsOutbreakPayload(
-            tracingSettings,
-            tracingSettings.stations.filter(s => s.outbreak).map(s => s.id),
-            false
-        );
+    private getNewElementsSettings<T extends ElementTracingSettings>(
+        oldSettings: T[],
+        updateFilterOrIds: ((x: T) => boolean) | string[],
+        updateFun: (x: T) => T
+    ): T[] {
+        if (typeof updateFilterOrIds === 'function') {
+            const updateFilter = updateFilterOrIds;
+            return oldSettings.some(updateFilter) ?
+                oldSettings.map(s => updateFilter(s) ? updateFun(s) : s) :
+                oldSettings;
+        } else {
+            const idSet = new Set(updateFilterOrIds);
+            return oldSettings.some(s => idSet.has(s.id)) ?
+                oldSettings.map(s => idSet.has(s.id) ? updateFun(s) : s) :
+                oldSettings;
+        }
     }
 
-    getMarkStationsAsOutbreakPayload(tracingSettings: TracingSettings, ids: string[], outbreak: boolean): SetTracingSettingsPayload {
-        const weight = (outbreak ? 1 : 0);
-        const idSet = Utils.createSimpleStringSet(ids);
+    getClearOutbreaksPayload(tracingSettings: TracingSettings, options: ClearOutbreaksOptions): SetTracingSettingsPayload {
+        return this.getMarkElementsAsOutbreakPayload(tracingSettings, {
+            stationIds: options.clearStationOutbreaks ? tracingSettings.stations.filter(s => s.outbreak).map(s => s.id) : undefined,
+            deliveryIds: options.clearDeliveryOutbreaks ? tracingSettings.deliveries.filter(d => d.outbreak).map(d => d.id) : undefined,
+            outbreak: false
+        });
+    }
+
+    getMarkElementsAsOutbreakPayload(
+        tracingSettings: TracingSettings,
+        options: SetOutbreaksOptions
+    ): SetTracingSettingsPayload {
+        const weight = options.outbreak ? 1 : 0;
+        const updateFun = <T extends ElementTracingSettings>(x: T) => ({ ...x, outbreak: options.outbreak, weight: weight });
+
+        const newStatSettings = options.stationIds ?
+            this.getNewElementsSettings(tracingSettings.stations, options.stationIds, updateFun) :
+            tracingSettings.stations;
+
+        const newDelSettings = options.deliveryIds ?
+            this.getNewElementsSettings(tracingSettings.deliveries, options.deliveryIds, updateFun) :
+            tracingSettings.deliveries;
+
         return {
             tracingSettings: {
                 ...tracingSettings,
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    ...(idSet[s.id] ? { outbreak: outbreak, weight: weight } : { outbreak: s.outbreak, weight: s.weight })
-                }))
+                stations: newStatSettings,
+                deliveries: newDelSettings
             }
         };
     }

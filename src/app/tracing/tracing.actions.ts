@@ -1,16 +1,17 @@
 import { Action } from '@ngrx/store';
 import {
-    ClearInvisibilitiesOptions, DeliveryId, Layout, Position, SelectedElements,
+    ClearInvisibilitiesOptions, ClearOutbreaksOptions, DeliveryId, Layout, Position, SelectedElements,
+    SetOutbreaksOptions,
     ShowElementsTraceParams, StationId
 } from './data.model';
 import { EdgeId, NodeId, SelectedGraphElements } from './graph/graph.model';
 
 export enum TracingActionTypes {
     ClearTraceMSA = '[Tracing] Clear Trace',
-    ClearOutbreakStationsMSA = '[Tracing] Clear Outbreak Stations',
     ClearInvisibilitiesMSA = '[Tracing] Clear Invisibilities',
     ShowStationPropertiesMSA = '[Tracing] Show Station Properties',
-    MarkStationsAsOutbreakMSA = '[Tracing] Mark Stations as Outbreak',
+    ClearOutbreaksMSA = '[Tracing] Clear Outbreaks',
+    MarkElementsAsOutbreakMSA = '[Tracing] Mark Elements as Outbreak',
     SetStationCrossContaminationMSA = '[Tracing] Set Station Cross Contamination',
     SetStationKillContaminationMSA = '[Tracing] Set Station Kill Contamination',
     MakeElementsInvisibleMSA = '[Tracing] Make Elements Invisible',
@@ -28,14 +29,20 @@ export class ClearTraceMSA implements Action {
     readonly type = TracingActionTypes.ClearTraceMSA;
 }
 
-export class ClearOutbreakStationsMSA implements Action {
-    readonly type = TracingActionTypes.ClearOutbreakStationsMSA;
-}
+// export class ClearOutbreakStationsMSA implements Action {
+//     readonly type = TracingActionTypes.ClearOutbreakStationsMSA;
+// }
 
 export class ClearInvisibilitiesMSA implements Action {
     readonly type = TracingActionTypes.ClearInvisibilitiesMSA;
 
     constructor(public payload: ClearInvisibilitiesOptions) {}
+}
+
+export class ClearOutbreaksMSA implements Action {
+    readonly type = TracingActionTypes.ClearOutbreaksMSA;
+
+    constructor(public payload: ClearOutbreaksOptions) {}
 }
 
 export class ShowStationPropertiesMSA implements Action {
@@ -50,10 +57,16 @@ export class ShowDeliveryPropertiesMSA implements Action {
     constructor(public payload: { deliveryIds: string[] }) {}
 }
 
-export class MarkStationsAsOutbreakMSA implements Action {
-    readonly type = TracingActionTypes.MarkStationsAsOutbreakMSA;
+// export class MarkStationsAsOutbreakMSA implements Action {
+//     readonly type = TracingActionTypes.MarkStationsAsOutbreakMSA;
 
-    constructor(public payload: { stationIds: string[]; outbreak: boolean }) {}
+//     constructor(public payload: { stationIds: string[]; outbreak: boolean }) {}
+// }
+
+export class MarkElementsAsOutbreakMSA implements Action {
+    readonly type = TracingActionTypes.MarkElementsAsOutbreakMSA;
+
+    constructor(public payload: SetOutbreaksOptions) {}
 }
 
 export class SetStationCrossContaminationMSA implements Action {
@@ -117,10 +130,12 @@ export class SetStationPositionsAndLayoutMSA implements Action {
 
 export type TracingActions =
       ClearTraceMSA
-    | ClearOutbreakStationsMSA
+    // | ClearOutbreakStationsMSA
+    | ClearOutbreaksMSA
     | ClearInvisibilitiesMSA
     | ShowStationPropertiesMSA
-    | MarkStationsAsOutbreakMSA
+    // | MarkStationsAsOutbreakMSA
+    | MarkElementsAsOutbreakMSA
     | SetStationCrossContaminationMSA
     | MakeElementsInvisibleMSA
     | ShowElementsTraceMSA

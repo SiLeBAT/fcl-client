@@ -219,19 +219,17 @@ export class TracingEffects {
         })
     ));
 
-    markStationsAsOutbreak$ = createEffect(() => this.actions$.pipe(
-        ofType<tracingEffectActions.MarkStationsAsOutbreakMSA>(tracingEffectActions.TracingActionTypes.MarkStationsAsOutbreakMSA),
+    markElementsAsOutbreak$ = createEffect(() => this.actions$.pipe(
+        ofType<tracingEffectActions.MarkElementsAsOutbreakMSA>(tracingEffectActions.TracingActionTypes.MarkElementsAsOutbreakMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
-            const stationIds = action.payload.stationIds;
-            const outbreak = action.payload.outbreak;
             try {
-                const payload = this.editTracSettingsService.getMarkStationsAsOutbreakPayload(state, stationIds, outbreak);
+                const payload = this.editTracSettingsService.getMarkElementsAsOutbreakPayload(state, action.payload);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
-                this.alertService.error(`Outbreak stations could not be set!, error: ${error}`);
+                this.alertService.error(`Outbreaks could not be set!, error: ${error}`);
             }
             return EMPTY;
         })
@@ -269,17 +267,17 @@ export class TracingEffects {
         })
     ));
 
-    clearOutbreakStations$ = createEffect(() => this.actions$.pipe(
-        ofType<tracingEffectActions.ClearOutbreakStationsMSA>(tracingEffectActions.TracingActionTypes.ClearOutbreakStationsMSA),
+    clearOutbreaks$ = createEffect(() => this.actions$.pipe(
+        ofType<tracingEffectActions.ClearOutbreaksMSA>(tracingEffectActions.TracingActionTypes.ClearOutbreaksMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
             try {
-                const payload = this.editTracSettingsService.getClearOutbreakStationsPayload(state);
+                const payload = this.editTracSettingsService.getClearOutbreaksPayload(state, action.payload);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
-                this.alertService.error(`Outbreak stations could not be set!, error: ${error}`);
+                this.alertService.error(`Outbreaks could not be cleared!, error: ${error}`);
             }
             return EMPTY;
         })

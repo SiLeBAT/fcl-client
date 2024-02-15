@@ -247,12 +247,14 @@ export class DataImporterV0 implements IDataImporter {
                 properties: e.properties != null ? e.properties : properties
             });
 
+            const weight = (e.weight ?? 0) as number;
             fclData.tracingSettings.deliveries.push({
                 id: e.id,
-                weight: e.weight != null ? e.weight : 0,
+                weight: weight,
                 observed: e.observed != null ? e.observed : ObservedType.NONE,
                 crossContamination: e.crossContamination != null ? e.crossContamination : false,
-                killContamination: e.killContamination != null ? e.killContamination : false
+                killContamination: e.killContamination != null ? e.killContamination : false,
+                outbreak: weight > 0
             });
 
             if (e.selected) {

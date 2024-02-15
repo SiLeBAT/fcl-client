@@ -63,6 +63,15 @@ export class TracingService {
             }
         });
 
+        data.deliveries.forEach(d => {
+            if (d.outbreak && !d.invisible) {
+                nOutbreaks++;
+                this.visitedStats = {};
+                this.visitedDels = {};
+                this.updateDeliveryScore(data, d.id, d.id);
+            }
+        });
+
         if (nOutbreaks !== 0) {
             data.stations.forEach(s => {
                 s.score /= nOutbreaks;

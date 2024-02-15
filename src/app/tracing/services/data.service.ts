@@ -82,6 +82,7 @@ export class DataService {
         const deliveries: DeliveryData[] = state.fclElements.deliveries.map(storeData => ({
             ...storeData,
             weight: 0,
+            outbreak: false,
             forward: false,
             backward: false,
             crossContamination: false,
@@ -209,6 +210,7 @@ export class DataService {
                 delivery.crossContamination = traceSet.crossContamination;
                 delivery.killContamination = traceSet.killContamination;
                 delivery.weight = traceSet.weight;
+                delivery.outbreak = traceSet.outbreak;
             }
         }
     }

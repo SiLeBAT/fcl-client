@@ -109,6 +109,7 @@ describe('IOService', () => {
                 deliveries: [
                     {
                         id: 'D1',
+                        outbreak: false,
                         weight: 0,
                         crossContamination: false,
                         killContamination: false,
