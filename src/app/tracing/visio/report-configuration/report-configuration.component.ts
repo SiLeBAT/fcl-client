@@ -166,7 +166,7 @@ export class ReportConfigurationComponent {
                 stationLabel: this.createLabelElementInfos(this.labelInfos.stationLabel.labelElements),
                 lotLabel: this.createLabelElementInfos(this.labelInfos.lotLabel.labelElements),
                 lotSampleLabel: this.createLabelElementInfos(this.labelInfos.lotSampleLabel.labelElements),
-                stationSampleLabel: this.createLabelElementInfos(this.labelInfos.lotSampleLabel.labelElements)
+                stationSampleLabel: this.createLabelElementInfos(this.labelInfos.stationSampleLabel.labelElements)
             },
             roundNumbers: this.roundNumbers
         };
