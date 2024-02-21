@@ -48,7 +48,7 @@ function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): 
         ports: [],
         elements: visBox.boxes,
         shape: null,
-        label: labelCreator.getLabel([visBox.label], GraphSettings.GROUP_MARGIN)
+        labels: [labelCreator.getLabel([visBox.label], GraphSettings.GROUP_MARGIN, { bold: true})]
     };
 
     visioBox.elements.forEach(b => b.relPosition = getDifference(b.position, visioBox.relPosition));

@@ -218,13 +218,14 @@ function sampleProbableStyle(forLegend = false) {
     );
 }
 
-function labelStyle() {
+function labelStyle(bold: boolean) {
     return getStyle(
         BoxStyles.StrokeOpacity(0),
         BoxStyles.FillOpacity(0),
         BoxStyles.FontColor(BoxStyles.LabelColor),
         BoxStyles.FontFamily(FontFamily.VERDANA),
-        BoxStyles.FontSize(8)
+        BoxStyles.FontSize(8),
+        BoxStyles.FontStyle(bold)
     );
 }
 
@@ -624,9 +625,7 @@ export class VisioToMxGraphService {
     private drawVisioElement(currentParent: mxCell, visioBox: VisioBox, offset?: Position): mxCell {
         const newCell: mxCell = this.drawCell(currentParent, visioBox, offset);
         this.pushToBoxes(newCell, visioBox);
-        if (visioBox.label) {
-            const newLabel: mxCell = this.drawLabel(newCell, visioBox.label);
-        }
+        visioBox.labels.forEach(label => this.drawLabel(newCell, label));
 
         return newCell;
     }
@@ -681,7 +680,7 @@ export class VisioToMxGraphService {
             label.relPosition.y,
             label.size.width,
             label.size.height,
-            labelStyle(),
+            labelStyle(label.style?.bold),
             false
         );
 

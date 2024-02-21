@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {
     VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
-    Size, StationGrouper} from './datatypes';
+    Size, StationGrouper, StyleOptions} from './datatypes';
 import { Position, StationData, DeliveryData, SampleData, StationId } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
@@ -20,6 +20,8 @@ interface FclElements {
     deliveries: DeliveryData[];
     samples: SampleData[];
 }
+
+const BOLD_FONT_SCALE_FACTOR = 1.25;
 
 export class VisioReporter {
 
@@ -88,12 +90,13 @@ export class VisioReporter {
     }
 
     private static getFontMetrics(canvas: any): FontMetrics {
-        const measureTextWidth = (text: string[]) => Math.max(1, ...text.map(t => t.length)) * 4.4;
+        const measureTextWidth = (text: string[], options?: StyleOptions) =>
+            Math.max(1, ...text.map(t => t.length)) * 4.4 * ((options && options.bold) ? BOLD_FONT_SCALE_FACTOR : 1);
         return {
             measureTextWidth: measureTextWidth,
-            measureText: (text: string[]) => ({
+            measureText: (text: string[], options?: StyleOptions) => ({
                 width: measureTextWidth(text),
-                height: 10 * text.length
+                height: 10 * text.length * ((options && options.bold) ? BOLD_FONT_SCALE_FACTOR : 1)
             })
         };
     }

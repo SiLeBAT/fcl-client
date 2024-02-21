@@ -71,7 +71,7 @@ export class GroupContainerCreator {
             elements: elements,
             size: this.getSize(shape.outerBoundary),
             ports: [],
-            label: label,
+            labels: [label],
             shape: shape
         };
     }

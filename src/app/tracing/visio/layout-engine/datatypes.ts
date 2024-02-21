@@ -49,7 +49,7 @@ export interface VisioBox {
     ports: VisioPort[];
     elements: VisioBox[];
     shape: CustomBoxShape;
-    label: VisioLabel;
+    labels: VisioLabel[];
 }
 
 export enum ConnectorType {
@@ -75,6 +75,7 @@ export interface GraphLayer {
 }
 
 export interface VisioLabel {
+    style?: StyleOptions;
     text: string[];
     relPosition: Position;
     size: Size;
@@ -160,7 +161,11 @@ export interface VisioReport {
     graphLayers: GraphLayer[];
 }
 
+export interface StyleOptions {
+    bold?: boolean;
+}
+
 export interface FontMetrics {
-    measureTextWidth(text: string[]): number;
-    measureText(text: string[]): {width: number; height: number};
+    measureTextWidth(text: string[], options?: StyleOptions): number;
+    measureText(text: string[], options?: StyleOptions): {width: number; height: number};
 }

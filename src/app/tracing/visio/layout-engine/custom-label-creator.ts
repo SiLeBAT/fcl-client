@@ -54,20 +54,24 @@ export class CustomLabelCreator extends LabelCreator {
         );
     }
 
-    getLotSampleLabel(sampleInfo: SampleInformation): VisioLabel {
-        return this.getLabel(this.getLabelTexts(sampleInfo, this.labelSettings.lotSampleLabel), GraphSettings.SAMPLE_BOX_MARGIN);
+    getLotSampleLabel(sampleInfo: SampleInformation): VisioLabel[] {
+        const labelTexts = this.getLabelTexts(sampleInfo, this.labelSettings.lotSampleLabel);
+        return [this.getLabel(labelTexts, GraphSettings.SAMPLE_BOX_MARGIN)];
     }
 
-    getStationSampleLabel(sampleInfo: StationSampleInformation): VisioLabel {
-        return this.getLabel(this.getLabelTexts(sampleInfo, this.labelSettings.stationSampleLabel), GraphSettings.SAMPLE_BOX_MARGIN);
+    getStationSampleLabel(sampleInfo: StationSampleInformation): VisioLabel[] {
+        const labelTexts = this.getLabelTexts(sampleInfo, this.labelSettings.stationSampleLabel);
+        return [this.getLabel(labelTexts, GraphSettings.SAMPLE_BOX_MARGIN)];
     }
 
-    getLotLabel(lotInfo: LotInformation): VisioLabel {
-        return this.getLabel(this.getLabelTexts(lotInfo, this.labelSettings.lotLabel), GraphSettings.LOT_BOX_MARGIN);
+    getLotLabel(lotInfo: LotInformation): VisioLabel[] {
+        const labelTexts = this.getLabelTexts(lotInfo, this.labelSettings.lotLabel);
+        return this.getLabels(labelTexts, GraphSettings.LOT_BOX_MARGIN, { firstLineIsBold: true });
     }
 
-    getStationLabel(stationInfo: StationInformation): VisioLabel {
-        return this.getLabel(this.getLabelTexts(stationInfo, this.labelSettings.stationLabel), GraphSettings.STATION_BOX_MARGIN);
+    getStationLabel(stationInfo: StationInformation): VisioLabel[] {
+        const labelTexts = this.getLabelTexts(stationInfo, this.labelSettings.stationLabel);
+        return this.getLabels(labelTexts, GraphSettings.STATION_BOX_MARGIN, { firstLineIsBold: true });
     }
 
     private roundNumberToDigits(value: number, nDigits: number): number {
