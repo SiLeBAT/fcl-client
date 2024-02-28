@@ -242,7 +242,7 @@ export class HighlightingService {
     }
 
     private anonymizeStationsIfApplicable<T extends StationData[]>(
-        elements: StationData[], // | DeliveryData[],
+        elements: StationData[],
         rules: HighlightingRule[],
         effElementsStats: HighlightingStats
     ): boolean {
@@ -253,7 +253,7 @@ export class HighlightingService {
         for (const anoRule of anoRules) {
             const conditionsEvalFun = !anoRule.logicalConditions ? undefined : this.ruleIdToEvaluatorFunMap[anoRule.id];
             const indexedElements = elements;
-            // const filteredElements = conditionsEvalFun ? (elements as T[0][]).filter((e) => conditionsEvalFun(e)) as T : elements;
+
             effElementsStats[anoRule.id] = indexedElements.length;
 
             const indexPartIndex = anoRule.labelParts.findIndex(p => p.useIndex);
@@ -296,8 +296,9 @@ export class HighlightingService {
                     });
                 });
             } else {
-                indexedElements.forEach((element: StationData) => { // DeliveryData | StationData) => {
-                    const anoName = (anoRule.labelPrefix ?? '') + this.getComposedLabel(element, anoRule.labelParts);
+                const labelPartsWoIndex = anoRule.labelParts.filter(p => p.useIndex === undefined);
+                indexedElements.forEach((element: StationData) => {
+                    const anoName = (anoRule.labelPrefix ?? '') + this.getComposedLabel(element, labelPartsWoIndex);
                     element.anonymizedName = anoName;
 
                     if (conditionsEvalFun(element)) {

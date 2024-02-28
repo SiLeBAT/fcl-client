@@ -16,10 +16,7 @@ export interface PropMap {
 export interface FclDataSourceInfo {
     name?: string;
     data?: any;
-    propMaps?: {
-        stationPropMap?: PropMap;
-        deliveryPropMap?: PropMap;
-    };
+    int2ExtPropMaps: PropMaps;
 }
 
 export interface FclData {
@@ -37,7 +34,7 @@ export interface StandardFilterSettings {
 export interface TableColumn {
     id: string;
     name: string;
-    unavailable?: boolean;
+    dataIsUnavailable?: boolean;
 }
 
 export type Property = TableColumn;
@@ -58,14 +55,14 @@ export interface TableRow {
     [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
 }
 
-export interface ColumnSubSets {
+export interface ColumnSets {
+    columns: TableColumn[];
     favouriteColumns: TableColumn[];
     otherColumns: TableColumn[];
 }
 
-export interface DataTable extends ColumnSubSets{
+export interface DataTable extends ColumnSets {
     modelFlag: Record<string, never>;
-    columns: TableColumn[];
     rows: TableRow[];
 }
 
@@ -453,7 +450,13 @@ export enum DialogAlignment {
     LEFT, CENTER, RIGHT
 }
 
+export interface PropMaps {
+    stations: Record<string, string>;
+    deliveries: Record<string, string>;
+}
+
 export interface DataServiceInputState {
+    int2ExtPropMaps: PropMaps;
     fclElements: FclElements;
     groupSettings: GroupData[];
     tracingSettings: TracingSettings;

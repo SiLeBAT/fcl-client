@@ -195,3 +195,7 @@ mat-form-field.less-bottom-padding {
 .cdk-virtual-scrollable.fcl-condition-list-container {
     contain: none;
 }
+
+.mat-checkbox.fcl-option-unsupported .mat-checkbox-label {
+    color: fcl.$fcl-foreground-color--disabled;
+}

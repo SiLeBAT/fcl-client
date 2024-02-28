@@ -203,13 +203,7 @@ export class DataImporterV0 implements IDataImporter {
             }
         }
 
-        if (fclData.source === undefined) {
-            fclData.source = {};
-        }
-        if (fclData.source.propMaps === undefined) {
-            fclData.source.propMaps = {};
-        }
-        fclData.source.propMaps.stationPropMap = propMap;
+        fclData.source.int2ExtPropMaps.stations = propMap;
     }
 
     private applyDeliveries(elements: any[], fclData: FclData) {
@@ -262,12 +256,6 @@ export class DataImporterV0 implements IDataImporter {
             }
         }
 
-        if (fclData.source === undefined) {
-            fclData.source = {};
-        }
-        if (fclData.source.propMaps === undefined) {
-            fclData.source.propMaps = {};
-        }
-        fclData.source.propMaps.deliveryPropMap = propMap;
+        fclData.source.int2ExtPropMaps.deliveries = propMap;
     }
 }

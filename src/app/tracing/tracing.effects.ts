@@ -63,7 +63,7 @@ export class TracingEffects {
                         station: station,
                         deliveries: deliveries,
                         connectedStations: connectedStations,
-                        stationColumns: this.tableService.getStationColumnSets(data, false).columns
+                        stationColumns: this.tableService.getStationColumnSets(state, data, false).columns
                     };
 
                     this.dialogService.open(StationPropertiesComponent, { data: dialogData });
@@ -131,7 +131,7 @@ export class TracingEffects {
                             target: data.statMap[delivery.target],
                             originalSource: data.statMap[delivery.originalSource],
                             originalTarget: data.statMap[delivery.originalTarget],
-                            deliveryColumns: this.tableService.getDeliveryColumnSets(data, false).columns
+                            deliveryColumns: this.tableService.getDeliveryColumnSets(state, data, false).columns
                         };
 
                         this.dialogService.open(DeliveryPropertiesComponent, { data: dialogData });

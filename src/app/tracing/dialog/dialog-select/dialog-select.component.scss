@@ -3,6 +3,10 @@
 $fcl-font-size: 1rem;
 $fcl-cross-contamination-width: 174px;
 
+.fcl-sort-item-content .fcl-option-unsupported {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
 .fcl-columns-wrapper {
     display: flex;
 }

@@ -11,6 +11,15 @@ type RecordKeyType =
     | number
     | symbol;
 
+
+export function entries<T extends string, K>(object: Record<T, K> | Partial<Record<T, K>>): [T, K][] {
+    return Object.entries(object) as [T, K][];
+}
+
+export function values<T extends string, K>(object: Record<T, K> | Partial<Record<T, K>>): K[] {
+    return Object.values(object) as K[];
+}
+
 export class Utils {
 
     static rgbArrayToColor(color: number[]): Color {

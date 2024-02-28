@@ -4,9 +4,11 @@ import { TestBed, waitForAsync } from '@angular/core/testing';
 import { DataService } from './data.service';
 import { CrossContTraceType, DataServiceInputState } from '../data.model';
 import { createDefaultHighlights } from '../io/data-importer/shared';
+import { createDefaultPropMappings } from '../state/tracing.reducers';
 
 function createDefaultInputState(): DataServiceInputState {
     return {
+        int2ExtPropMaps: createDefaultPropMappings(),
         fclElements: {
             stations: [{
                 id: 'S1',

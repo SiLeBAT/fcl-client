@@ -218,7 +218,7 @@ export class FilterElementsViewComponent implements OnChanges {
     }
 
     private getIgnoredProps(): string[] {
-        return this.dataColumns_.filter(c => c.unavailable).map(c => c.id);
+        return this.dataColumns_.filter(c => c.dataIsUnavailable).map(c => c.id);
     }
 
     private updateFilterAndRows(): void {

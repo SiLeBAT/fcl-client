@@ -9,6 +9,7 @@ export interface Option {
     value: string;
     viewValue: string;
     selected: boolean;
+    notRecommended?: boolean;
     disabled?: boolean | undefined;
     tooltip?: string;
 }

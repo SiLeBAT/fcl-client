@@ -19,7 +19,6 @@ export class IOService {
 
     private async preprocessData(data: any): Promise<FclData> {
         const fclData: FclData = createInitialFclDataState();
-        fclData.source = {};
         await DataImporter.preprocessData(data, fclData, this.httpClient);
         return fclData;
     }

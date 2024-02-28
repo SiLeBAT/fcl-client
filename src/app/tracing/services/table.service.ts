@@ -8,11 +8,12 @@ import {
     DataTable,
     NodeShapeType,
     DataServiceInputState,
-    ColumnSubSets
+    ColumnSets
 } from '../data.model';
 import * as _ from 'lodash';
 import { DataService } from './data.service';
 import { Constants } from '../util/constants';
+import { entries, values } from '../util/non-ui-utils';
 
 const COLUMNS_ANO_FLAG: StatColumnsFlag = 'a';
 const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = 'h';
@@ -20,13 +21,17 @@ const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = 'h';
 type StatColumnsFlag = 'h' | '' | 'a' | 'ah';
 type DeliveryColumnsFlag = 'h' | '';
 
+function isNullish(x: unknown): boolean {
+    return x === undefined || x === null;
+}
+
 interface Cache {
     modelFlag: Record<string, never>;
     stationColumnSets: Partial<Record<StatColumnsFlag, ColumnSets>>;
     deliveryColumnSets: Partial<Record<DeliveryColumnsFlag, ColumnSets>>;
+    availableStatProps: Set<string>;
+    availableDeliveryProps: Set<string>;
 }
-
-type ColumnSets = ColumnSubSets & Pick<DataTable, 'columns'>;
 
 @Injectable({
     providedIn: 'root'
@@ -39,9 +44,13 @@ export class TableService {
         private dataService: DataService
     ) {}
 
-    private checkCache(modelFlag: Record<string, never>): void {
-        if (this.cache.modelFlag !== modelFlag) {
-            this.cache = this.createEmptyCache(modelFlag);
+    private checkCache(data: DataServiceData): void {
+        if (this.cache.modelFlag !== data.modelFlag) {
+            this.cache = this.createEmptyCache(data.modelFlag);
+            this.cache.availableStatProps = this.getAvailableStationProps(data);
+            this.cache.availableDeliveryProps = this.getAvailableDeliveryProps(data);
+        } else {
+            this.updateColsDataAvailability(data);
         }
     }
 
@@ -49,8 +58,123 @@ export class TableService {
         return {
             modelFlag: modelFlag || {},
             stationColumnSets: {},
-            deliveryColumnSets: {}
+            deliveryColumnSets: {},
+            availableStatProps: new Set(),
+            availableDeliveryProps: new Set()
         };
+    }
+
+    private getAvailableProps<T extends StationData | DeliveryData>(
+        elements: T[], requiredProps: (keyof T)[], optProps: (keyof T)[]
+    ): Set<string> {
+        const availablePropsSet = new Set<string>();
+        if (elements.length >= 1) {
+            requiredProps.forEach(p => availablePropsSet.add(p as string));
+
+            const availableProps = optProps.filter(p => elements.some(e => !isNullish(e[p])));
+            availableProps.forEach(p => availablePropsSet.add(p as string));
+            for (const element of elements) {
+                element.properties.forEach(pe => availablePropsSet.add(pe.name));
+            }
+        }
+        return availablePropsSet;
+    }
+
+    private getAvailableStationProps(data: DataServiceData): Set<string> {
+        return this.getAvailableProps(
+            data.stations,
+            [
+                'id', 'score', 'outbreak', 'weight', 'crossContamination', 'killContamination', 'forward', 'backward', 'commonLink',
+                'observed', 'contained', 'invisible', 'isMeta', 'selected'
+            ],
+            ['name', 'anonymizedName', 'lat', 'lon']
+        );
+    }
+
+    private getAvailableDeliveryProps(data: DataServiceData): Set<string> {
+        const availableProps =  this.getAvailableProps(
+            data.deliveries,
+            [
+                'id', 'score', 'outbreak', 'weight', 'crossContamination', 'killContamination', 'forward', 'backward',
+                'observed', 'invisible', 'selected', 'dateIn', 'dateOut',
+                'originalSource', 'originalTarget', 'source', 'target'
+            ],
+            ['name', 'lot']
+        );
+        if (data.deliveries.some(d => !isNullish(data.statMap[d.source].name))) {
+            availableProps.add('source.name');
+        }
+        if (data.deliveries.some(d => !isNullish(data.statMap[d.target].name))) {
+            availableProps.add('target.name');
+        }
+        return availableProps;
+    }
+
+    private updateDelColsDataAvailability(data: DataServiceData): void {
+        const prevAvailableProps = new Set(this.cache.availableDeliveryProps);
+        const props2Check: [keyof DeliveryData, keyof StationData, string][] = [
+            ['source', 'name', 'source.name'],
+            ['target', 'name', 'target.name']
+        ];
+        props2Check.forEach(([dKey, sKey, p]) => {
+            const isDataAvailable = data.deliveries.some(d => !isNullish(data.statMap[d[dKey] as string][sKey]));
+            const isCacheUpdateRequired = isDataAvailable !== this.cache.availableDeliveryProps.has(p);
+            if (isCacheUpdateRequired) {
+                if (isDataAvailable) {
+                    this.cache.availableDeliveryProps.add(p);
+                } else {
+                    this.cache.availableDeliveryProps.delete(p);
+                }
+            }
+        });
+        this.setColumnSetsDataAvailability(this.cache.deliveryColumnSets, this.cache.availableDeliveryProps, prevAvailableProps);
+    }
+
+    private setColumnSetsDataAvailability<T extends string>(
+        flag2ColSets: Partial<Record<T, ColumnSets>>, availableProps: Set<string>, prevAvailableProps: Set<string>
+    ): void {
+        const propsWithChangedAvailabilities = new Set([].concat(
+            Array.from(prevAvailableProps).filter(p => !availableProps.has(p)),
+            Array.from(availableProps).filter(p => !prevAvailableProps.has(p))
+        ));
+
+        if (propsWithChangedAvailabilities.size > 0) {
+            for (const columnSets of values(flag2ColSets)) {
+                for (const [subSetKey, cols] of entries(columnSets)) {
+                    if (cols.some(c => propsWithChangedAvailabilities.has(c.id))) {
+                        this.setColumnDataAvailibility(cols, availableProps);
+                        columnSets[subSetKey] = cols.slice();
+                    }
+                }
+            }
+        }
+    }
+
+    private updateStatColsDataAvailability(data: DataServiceData): void {
+        const prevAvailableStatProps = new Set(this.cache.availableStatProps);
+        const props2Check: (keyof StationData)[] = ['name', 'anonymizedName'];
+        props2Check.forEach(p => {
+            const isDataAvailable = data.stations.some(s => !isNullish(s[p]));
+            const isCacheUpdateRequired = isDataAvailable !== this.cache.availableStatProps.has(p);
+            if (isCacheUpdateRequired) {
+                if (isDataAvailable) {
+                    this.cache.availableStatProps.add(p);
+                } else {
+                    this.cache.availableStatProps.delete(p);
+                }
+            }
+        });
+
+        this.setColumnSetsDataAvailability(this.cache.stationColumnSets, this.cache.availableStatProps, prevAvailableStatProps);
+    }
+
+    private updateColsDataAvailability(data: DataServiceData): void {
+        this.updateStatColsDataAvailability(data);
+        this.updateDelColsDataAvailability(data);
+    }
+
+    private setColumnDataAvailibility(columns: TableColumn[], availablePropsSet: Set<string>): void {
+        columns.forEach(c => c.dataIsUnavailable = !availablePropsSet.has(c.id));
     }
 
     getDeliveryTable(state: DataServiceInputState, forHighlighting: boolean, deliveryIds?: string[]): DataTable {
@@ -58,7 +182,7 @@ export class TableService {
 
         return {
             modelFlag: data.modelFlag,
-            ...this.getDeliveryColumnSets(data, forHighlighting),
+            ...this.getDeliveryColumnSets(state, data, forHighlighting),
             rows: this.getDeliveryRows(data, forHighlighting, deliveryIds)
         };
     }
@@ -68,7 +192,7 @@ export class TableService {
 
         return {
             modelFlag: data.modelFlag,
-            ...this.getStationColumnSets(data, forHighlighting),
+            ...this.getStationColumnSets(state, data, forHighlighting),
             rows: this.getStationRows(data, forHighlighting)
         };
     }
@@ -80,15 +204,13 @@ export class TableService {
         }
         const favColumns = colDefs.map(c => ({ id: c.id, name: c.name })) as TableColumn[];
 
-        if (!forHighlighting && !data.isStationAnonymizationActive) {
-            favColumns.find(c => c.id === Constants.COLUMN_ANONYMIZED_NAME).unavailable = true;
-        }
+        this.setColumnDataAvailibility(favColumns, this.cache.availableStatProps);
 
         return favColumns;
     }
 
     private getFavouriteDeliveryColumns(forHighlighting: boolean): TableColumn[] {
-        const favouriteColumns: TableColumn[] = [
+        const favColumns: TableColumn[] = [
             { id: 'id', name: 'ID' },
             { id: 'name', name: 'Product' },
             { id: 'lot', name: 'Lot' },
@@ -98,15 +220,23 @@ export class TableService {
             { id: 'outbreak', name: 'Outbreak' }
         ];
         if (!forHighlighting) {
-            favouriteColumns.push(
+            favColumns.push(
                 { id: 'source.name', name: 'Source' },
                 { id: 'target.name', name: 'Target' }
             );
         }
-        return favouriteColumns;
+
+        this.setColumnDataAvailibility(favColumns, this.cache.availableDeliveryProps);
+
+        return favColumns;
     }
 
-    private getOtherDeliveryColumns(data: DataServiceData, forHighlighting: boolean, favouriteColumns: TableColumn[]): TableColumn[] {
+    private getOtherDeliveryColumns(
+        state: DataServiceInputState,
+        data: DataServiceData,
+        forHighlighting: boolean,
+        favouriteColumns: TableColumn[]
+    ): TableColumn[] {
         const otherColumns: TableColumn[] = [
             { id: 'source', name: 'Source ID' },
             { id: 'target', name: 'Target ID' },
@@ -122,18 +252,24 @@ export class TableService {
         ].filter(c => c !== null);
 
         this.addColumnsForProperties(otherColumns, data.deliveries);
-        return this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);
+        this.addColumnsForOtherMappings(otherColumns, state.int2ExtPropMaps.deliveries, new Set(Constants.DELIVERY_PROPERTIES.toArray()));
+
+        const cleanedOtherColumns = this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);
+
+        this.setColumnDataAvailibility(cleanedOtherColumns, this.cache.availableDeliveryProps);
+
+        return cleanedOtherColumns;
     }
 
-    getDeliveryColumnSets(data: DataServiceData, forHighlighting: boolean): ColumnSets {
-        this.checkCache(data.modelFlag);
+    getDeliveryColumnSets(state: DataServiceInputState, data: DataServiceData, forHighlighting: boolean): ColumnSets {
+        this.checkCache(data);
 
         const cacheFlag = forHighlighting ? 'h' : '';
         let columnSets = this.cache.deliveryColumnSets[cacheFlag];
 
         if (!columnSets) {
             const favouriteColumns = this.getFavouriteDeliveryColumns(forHighlighting);
-            const otherColumns = this.getOtherDeliveryColumns(data, forHighlighting, favouriteColumns);
+            const otherColumns = this.getOtherDeliveryColumns(state, data, forHighlighting, favouriteColumns);
             columnSets = {
                 columns: [].concat(favouriteColumns, otherColumns),
                 favouriteColumns: favouriteColumns,
@@ -144,7 +280,12 @@ export class TableService {
         return columnSets;
     }
 
-    private getOtherStationColumns(data: DataServiceData, forHighlighting: boolean, favouriteColumns: TableColumn[]): TableColumn[] {
+    private getOtherStationColumns(
+        state: DataServiceInputState,
+        data: DataServiceData,
+        forHighlighting: boolean,
+        favouriteColumns: TableColumn[]
+    ): TableColumn[] {
         let colDefs = Constants.KNOWN_OTHER_STAT_COLUMNS.toArray();
         if (forHighlighting) {
             colDefs = colDefs.filter(c => c.availableForHighlighting !== false);
@@ -153,18 +294,25 @@ export class TableService {
         const otherColumns = colDefs.map(c => ({ id: c.id, name: c.name }));
 
         this.addColumnsForProperties(otherColumns, data.stations);
-        return this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);
+        this.addColumnsForOtherMappings(otherColumns, state.int2ExtPropMaps.stations, new Set(Constants.STATION_PROPERTIES.toArray()));
+
+        const cleanedOtherColumns = this.getCleanedAndSortedOtherColumns(otherColumns, favouriteColumns);
+
+        this.setColumnDataAvailibility(cleanedOtherColumns, this.cache.availableStatProps);
+
+        return cleanedOtherColumns;
     }
 
-    getStationColumnSets(data: DataServiceData, forHighlighting: boolean): ColumnSets {
-        this.checkCache(data.modelFlag);
+    getStationColumnSets(state: DataServiceInputState, data: DataServiceData, forHighlighting: boolean): ColumnSets {
+        this.checkCache(data);
 
         const cacheFlag = (data.isStationAnonymizationActive ? 'a' : '') + (forHighlighting ? 'h' : '');
         let columnSets = this.cache.stationColumnSets[cacheFlag];
 
         if (!columnSets) {
             const favouriteColumns: TableColumn[] = this.getFavouriteStationColumns(data, forHighlighting);
-            const otherColumns = this.getOtherStationColumns(data, forHighlighting, favouriteColumns);
+            const otherColumns = this.getOtherStationColumns(state, data, forHighlighting, favouriteColumns);
+
             columnSets = {
                 columns: [].concat(favouriteColumns, otherColumns),
                 favouriteColumns: favouriteColumns,
@@ -192,6 +340,22 @@ export class TableService {
                 columns.push({
                     id: prop.id,
                     name: this.decamelize(prop.id)
+                });
+            }
+        });
+    }
+
+    private addColumnsForOtherMappings(
+        columns: TableColumn[],
+        int2ExtPropMap: Record<string, string>,
+        ignoreProps: Set<string>
+    ): void {
+        const mappedProps = Object.keys(int2ExtPropMap);
+        mappedProps.forEach(prop => {
+            if (!ignoreProps.has(prop) && !columns.some(c => c.id === prop)) {
+                columns.push({
+                    id: prop,
+                    name: this.decamelize(int2ExtPropMap[prop])
                 });
             }
         });

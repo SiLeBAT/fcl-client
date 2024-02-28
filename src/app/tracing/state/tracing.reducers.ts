@@ -6,7 +6,8 @@ import {
     MapType,
     GraphType,
     CrossContTraceType,
-    FclDataSourceInfo
+    FclDataSourceInfo,
+    PropMaps
 } from '../data.model';
 import {
     addStatAnoColumnOnAnoActivation,
@@ -89,12 +90,16 @@ const initialState: TracingState = {
     showGraphSettings: false
 };
 
-function createInitialFclDataSourceInfo(): FclDataSourceInfo {
+export function createDefaultPropMappings(): PropMaps {
     return {
-        propMaps: {
-            stationPropMap: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
-            deliveryPropMap: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
-        }
+        stations: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+        deliveries: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+    };
+}
+
+export function createInitialFclDataSourceInfo(): FclDataSourceInfo {
+    return {
+        int2ExtPropMaps: createDefaultPropMappings()
     };
 }
 

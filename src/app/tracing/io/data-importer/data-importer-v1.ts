@@ -117,9 +117,10 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         fclData.fclElements.stations = intStations;
-        fclData.source.propMaps = {
-            stationPropMap: Utils.createObjectFromMap(propMapper.getPropMap())
-        };
+
+        fclData.source.int2ExtPropMaps.stations =
+            Utils.createObjectFromMap(propMapper.getPropMap());
+
         return idToStationMap;
     }
 
@@ -180,7 +181,7 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         fclData.fclElements.deliveries = intDeliveries;
-        fclData.source.propMaps.deliveryPropMap = Utils.createObjectFromMap(propMapper.getPropMap());
+        fclData.source.int2ExtPropMaps.deliveries = Utils.createObjectFromMap(propMapper.getPropMap());
         this.applyExternalDeliveryToDelivery(
             jsonData,
             idToStationMap,
@@ -543,7 +544,7 @@ export class DataImporterV1 implements IDataImporter {
     private convertExternalHighlightingSettings(viewData: ViewData, fclData: FclData): void {
         const extStatHighlightingRules = viewData?.node?.highlightConditions || undefined;
         const extStatAnoRule = viewData?.node?.anonymizationRule || undefined;
-        const extToIntStatPropMap = this.createReverseMapFromSimpleMap(fclData.source.propMaps.stationPropMap);
+        const extToIntStatPropMap = this.createReverseMapFromSimpleMap(fclData.source.int2ExtPropMaps.stations);
 
         if (extStatHighlightingRules) {
 
@@ -587,7 +588,7 @@ export class DataImporterV1 implements IDataImporter {
             const extDelHighlightingRules: ExtDeliveryHighlightingRule[] = viewData.edge.highlightConditions;
 
             if (extDelHighlightingRules.length > 0) {
-                const extToIntPropMap: Map<string, string> = this.createReverseMapFromSimpleMap(fclData.source.propMaps.deliveryPropMap);
+                const extToIntPropMap = this.createReverseMapFromSimpleMap(fclData.source.int2ExtPropMaps.deliveries);
 
                 fclData.graphSettings.highlightingSettings.deliveries = extDelHighlightingRules.map((extRule, extRuleIndex) => (
                     {

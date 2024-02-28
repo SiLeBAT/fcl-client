@@ -52,6 +52,11 @@ export const getMergeDeliveriesType = createSelector(
     (graphSettings) => graphSettings.mergeDeliveriesType
 );
 
+export const getInt2ExtPropMaps = createSelector(
+    getFclData,
+    (fclData) => fclData.source.int2ExtPropMaps
+);
+
 export const getFclElements = createSelector(
     getFclData,
     (fclData) => fclData.fclElements
@@ -134,12 +139,14 @@ export const getFitGraphToVisibleArea = createSelector(
 );
 
 export const selectDataServiceInputState = createSelector(
+    getInt2ExtPropMaps,
     getFclElements,
     getGroupSettings,
     getTracingSettings,
     selectHighlightingSettings,
     getSelectedElements,
-    (fclElements, groupSettings, tracingSettings, highlightingSettings, selectedElements) => ({
+    (int2ExtPropMaps, fclElements, groupSettings, tracingSettings, highlightingSettings, selectedElements) => ({
+        int2ExtPropMaps: int2ExtPropMaps,
         fclElements: fclElements,
         groupSettings: groupSettings,
         tracingSettings: tracingSettings,

@@ -1,6 +1,7 @@
 <ng-template let-options="options" #optionsTemplate>
     <mat-checkbox *ngFor="let option of options"
         [(ngModel)]="option.selected"
+        [ngClass]="option.notRecommended ? 'fcl-option-unsupported' : ''"
         (change)="onOptionCheckedChange($event, option)"
         [disabled]="option.disabled === true"
         [matTooltip]="option.tooltip">
@@ -43,7 +44,11 @@
                             <div class="fcl-list-item-drag-indicator" cdkDragHandle>
                                 <mat-icon>drag_indicator</mat-icon>
                             </div>
-                            <div cdkDragHandle>
+                            <div
+                                cdkDragHandle
+                                [ngClass]="item.notRecommended ? 'fcl-option-unsupported' : ''"
+                                [matTooltip]="item.tooltip"
+                            >
                                 {{ item.viewValue }}
                             </div>
                         </div>

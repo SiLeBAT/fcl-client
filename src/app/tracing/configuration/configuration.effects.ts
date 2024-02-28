@@ -16,8 +16,8 @@ import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/d
 import { selectHighlightingSettings } from '../state/tracing.selectors';
 import { EditHighlightingService } from './edit-highlighting.service';
 import { TableColumn } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
+import { Constants } from '../util/constants';
 
 @Injectable()
 export class ConfigurationEffects {
@@ -35,13 +35,17 @@ export class ConfigurationEffects {
 
                 const tableType = action.payload.type;
                 const oldColumnOrder = action.payload.columnOrder;
-                const mapColumnToOption: (c: TableColumn) => Option = (column) => ({
-                    value: column.id,
-                    viewValue: column.name,
-                    selected: oldColumnOrder.includes(column.id),
-                    disabled: column.unavailable,
-                    tooltip: column.unavailable ? 'Data is not available.' : ''
-                });
+                const mapColumnToOption: (c: TableColumn) => Option = (column) => {
+                    const isAnoColumn = column.id === Constants.COLUMN_ANONYMIZED_NAME;
+                    return {
+                        value: column.id,
+                        viewValue: column.name,
+                        selected: oldColumnOrder.includes(column.id),
+                        disabled: column.dataIsUnavailable && isAnoColumn,
+                        notRecommended: column.dataIsUnavailable,
+                        tooltip: column.dataIsUnavailable ? 'Data is not available.' : ''
+                    };
+                };
                 const dialogData: DialogSelectData = {
                     title: tableType === TableType.STATIONS ?
                         'Station Columns' : 'Delivery Columns',

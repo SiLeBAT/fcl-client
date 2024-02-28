@@ -56,7 +56,7 @@ describe('DataImporterV1', () => {
         // simulate no tracing settings in the external model
         extData.tracing = null;
         let fclData = createInitialFclDataState();
-        fclData.source = {};
+
         return dataImporterV1.preprocessData(extData, fclData)
             .then(async () => {
                 checkElementTracSettingsCompleteness(fclData);
@@ -85,7 +85,7 @@ describe('DataImporterV1', () => {
                 };
 
                 fclData = createInitialFclDataState();
-                fclData.source = {};
+
                 return dataImporterV1.preprocessData(extData, fclData);
             })
             .then(() => {

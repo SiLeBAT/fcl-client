@@ -53,7 +53,7 @@ export function createFclElements(fclData: FclData): {
 }
 
 function createStationTable(fclData: FclData): DataTable {
-    const propMap = fclData.source.propMaps.stationPropMap;
+    const propMap = fclData.source.int2ExtPropMaps.stations;
     return {
         columnProperties: collectStationProperties(fclData, propMap),
         data: fclData.fclElements.stations.map(station => {
@@ -77,7 +77,7 @@ function createStationTable(fclData: FclData): DataTable {
 }
 
 function createDeliveryTable(fclData: FclData): DataTable {
-    const propMap = fclData.source.propMaps.deliveryPropMap;
+    const propMap = fclData.source.int2ExtPropMaps.deliveries;
     return {
         columnProperties: collectDeliveryProperties(fclData, propMap),
         data: fclData.fclElements.deliveries.map(delivery => {
