@@ -1,9 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, DoCheck } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import * as storeActions from '../../state/tracing.actions';
 import * as roaActions from '../visio.actions';
-import { Utils } from '@app/tracing/util/non-ui-utils';
 import { DataServiceInputState } from '@app/tracing/data.model';
 import { take } from 'rxjs/operators';
 import * as TracingSelectors from '../../state/tracing.selectors';
@@ -32,10 +31,15 @@ export interface ReportConfigurationData {
 
 interface LabelInfo {
     title: string;
+    disabled?: boolean;
+    warning?: string;
     labelElements: LabelElementInfo[][];
     availableProps: PropInfo[];
     amountUnitPairs: AmountUnitPair[];
 }
+
+const WARNING_STATION_ANONYMIZATION_IS_ACTIVE = 'Anonymisation Label is activated. To configure the station information shown in the ROA Style, deactivate this label in the station highlighting menu.';
+const WARNING_DATA_IS_NOT_AVAILABLE = 'Some data is not available.';
 
 const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
 
@@ -44,19 +48,22 @@ const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
     templateUrl: './report-configuration.component.html',
     styleUrls: ['./report-configuration.component.scss']
 })
-export class ReportConfigurationComponent {
+export class ReportConfigurationComponent implements DoCheck {
 
-    availableProps: {
+    roundNumbers: boolean = true;
+
+    orderedLabelInfos: LabelInfo[] = [];
+
+    private isStationAnonymizationActive = false;
+
+    private labelInfos: { [key in (keyof ROALabelSettings)]: LabelInfo };
+    private labelOrder: (keyof ROALabelSettings)[] = ['stationLabel', 'lotLabel', 'lotSampleLabel', 'stationSampleLabel'];
+
+    private availableProps: {
         companyProps: PropInfo[];
         lotProps: PropInfo[];
         sampleProps: PropInfo[];
     };
-
-    roundNumbers: boolean = true;
-
-    labelInfos: { [key in (keyof ROALabelSettings)]: LabelInfo };
-
-    labelOrder: (keyof ROALabelSettings)[] = ['stationLabel', 'lotLabel', 'lotSampleLabel', 'stationSampleLabel'];
 
     constructor(
         private store: Store<State>,
@@ -65,6 +72,11 @@ export class ReportConfigurationComponent {
         @Inject(MAT_DIALOG_DATA) public data: ReportConfigurationData
     ) {
         this.init();
+    }
+
+
+    ngDoCheck(): void {
+        this.updateLabelInfoWarnings();
     }
 
     private init(): void {
@@ -88,6 +100,8 @@ export class ReportConfigurationComponent {
 
     private initAvailableProps(dataServiceInputState: DataServiceInputState): void {
         const data = this.dataService.getData(dataServiceInputState);
+        this.isStationAnonymizationActive = data.isStationAnonymizationActive;
+
         this.availableProps = {
             companyProps: sortProps(getPublicStationProperties(data.stations)),
             lotProps: sortProps(getLotProperties(data.deliveries)),
@@ -156,8 +170,22 @@ export class ReportConfigurationComponent {
                 amountUnitPairs: []
             }
         };
+        this.orderedLabelInfos = this.labelOrder.map(l => this.labelInfos[l]);
+
+        // set initial labelInfo disabled and warning values
+        this.orderedLabelInfos.forEach(labelInfo => {
+            labelInfo.disabled = labelInfo.availableProps.length === 0;
+            labelInfo.warning = labelInfo.availableProps.length === 0 ? WARNING_DATA_IS_NOT_AVAILABLE : undefined;
+        });
+
+        if (this.isStationAnonymizationActive) {
+            this.labelInfos.stationLabel.disabled = true;
+            this.labelInfos.stationLabel.warning = WARNING_STATION_ANONYMIZATION_IS_ACTIVE;
+        }
+
         this.setAmountUnitPairs();
         this.roundNumbers = roaSettings.roundNumbers;
+        this.updateLabelInfoWarnings();
     }
 
     private getROASettings(): ROASettings {
@@ -212,18 +240,23 @@ export class ReportConfigurationComponent {
         return result;
     }
 
-    showLabelWarning(label: keyof ROALabelSettings): boolean {
-        const labelInfo = this.labelInfos[label];
-        const props = Utils.createSimpleStringSet(labelInfo.availableProps.map(p => p.prop));
+    private updateLabelInfoWarnings(): void {
+        const labelInfos = Object.values(this.labelInfos);
+        const enabledLabelInfos = labelInfos.filter(x => !x.disabled);
+        labelInfoLoop: for (const labelInfo of enabledLabelInfos) {
+            const propSet = new Set(labelInfo.availableProps.map(p => p.prop));
 
-        for (const labelElementRow of labelInfo.labelElements) {
-            const propElements = labelElementRow.filter(e => (e as PropElementInfo).prop !== undefined) as PropElementInfo[];
-            const nonNullPropElements = propElements.filter(e => e.prop !== null);
-            if (nonNullPropElements.some(e => !props[e.prop])) {
-                return true;
+            for (const labelElementRow of labelInfo.labelElements) {
+                const propElements = labelElementRow.filter(e => (e as PropElementInfo).prop !== undefined) as PropElementInfo[];
+                const nonNullPropElements = propElements.filter(e => e.prop !== null);
+                if (nonNullPropElements.some(e => !propSet.has(e.prop))) {
+                    labelInfo.warning = WARNING_DATA_IS_NOT_AVAILABLE;
+                    continue labelInfoLoop;
+                }
             }
+
+            labelInfo.warning = undefined;
         }
-        return false;
     }
 
     private setDefaultLabelInfos(): void {

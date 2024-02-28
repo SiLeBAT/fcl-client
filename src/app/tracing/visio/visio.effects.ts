@@ -16,6 +16,7 @@ import { generateVisioReport } from './visio.service';
 import { Router } from '@angular/router';
 import { ReportConfigurationComponent } from './report-configuration/report-configuration.component';
 import { Position, StationId } from '../data.model';
+import { Constants } from '../util/constants';
 
 @Injectable()
 export class VisioEffects {
@@ -44,6 +45,21 @@ export class VisioEffects {
         withLatestFrom(this.store.pipe(select(tracingSelectors.getROAReportData))),
         mergeMap(([action, roaReportData]) => {
             const dataServiceData = this.dataService.getData(roaReportData.schemaGraphState);
+
+            if (dataServiceData.isStationAnonymizationActive) {
+                // replace configured station box label by anonymization label
+                roaReportData = {
+                    ...roaReportData,
+                    roaSettings: {
+                        ...roaReportData.roaSettings,
+                        labelSettings: {
+                            ...roaReportData.roaSettings.labelSettings,
+                            stationLabel: [[{ prop: Constants.COLUMN_ANONYMIZED_NAME, altText: '', isNullable: false }]]
+                        }
+                    }
+                };
+            }
+
             const fclElements = {
                 stations: dataServiceData.stations,
                 deliveries: dataServiceData.deliveries,

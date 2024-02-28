@@ -2,20 +2,20 @@
 <form>
     <div mat-dialog-content>
         <mat-accordion>
-            <mat-expansion-panel *ngFor="let labelKey of labelOrder" [disabled]="labelInfos[labelKey].availableProps.length === 0">
+            <mat-expansion-panel *ngFor="let labelInfo of orderedLabelInfos" [disabled]="labelInfo.disabled">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <div>{{labelInfos[labelKey].title}}
-                        <span *ngIf="showLabelWarning(labelKey)"><mat-icon class="fcl-warning-icon" matTooltip="Some data is not available.">warning</mat-icon></span>
+                        <div>{{labelInfo.title}}
+                        <span *ngIf="labelInfo.warning"><mat-icon class="fcl-warning-icon" [matTooltip]="labelInfo.warning">warning</mat-icon></span>
                         </div>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
 
                 <fcl-label-configuration-view
                     class="fcl-label-box"
-                    [labelElements]="labelInfos[labelKey].labelElements"
-                    [availableProps]="labelInfos[labelKey].availableProps"
-                    [amountUnitPairs]="labelInfos[labelKey].amountUnitPairs"
+                    [labelElements]="labelInfo.labelElements"
+                    [availableProps]="labelInfo.availableProps"
+                    [amountUnitPairs]="labelInfo.amountUnitPairs"
                 ></fcl-label-configuration-view>
 
             </mat-expansion-panel>
