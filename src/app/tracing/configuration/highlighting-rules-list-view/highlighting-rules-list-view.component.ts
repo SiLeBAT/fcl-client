@@ -80,6 +80,10 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
         }
     }
 
+    trackByFn(index: number, item: RuleListItem): string {
+        return item.id;
+    }
+
     onNewRule(): void {
         this.newRule.emit();
     }

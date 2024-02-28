@@ -106,7 +106,7 @@
 
     <div
         class="fcl-rules-list-item"
-        *ngFor="let item of sortableListItems; let i = index"
+        *ngFor="let item of sortableListItems; let i = index; trackBy: trackByFn"
         [ngClass]="item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''"
         cdkDrag [cdkDragDisabled]="isEditRuleModeActive"
         cdkDragLockAxis="y"
@@ -123,7 +123,7 @@
 
     <div
         class="fcl-rules-list-item"
-        *ngFor="let item of unsortableListItems; let i = index"
+        *ngFor="let item of unsortableListItems; let i = index; trackBy: trackByFn"
         [ngClass]="item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''"
     >
         <ng-container [ngTemplateOutlet]="itemContentTemplate"
