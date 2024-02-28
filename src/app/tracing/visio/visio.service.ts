@@ -3,15 +3,13 @@ import { VisioReport, VisioEngineConfiguration, StationGroupType } from './layou
 import { VisioReporter } from './layout-engine/visio-reporter';
 import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
 import { ROASettings } from './model';
+import { TempCanvas } from './layout-engine/temp-canvas';
 
 interface FclElements {
     stations: StationData[];
     deliveries: DeliveryData[];
     samples: SampleData[];
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function getFontMetricCanvas(): any { }
 
 function getStationGrouperFromType(groupType: StationGroupType) {
     switch (groupType) {
@@ -26,10 +24,11 @@ function createReport(
     engineConf: VisioEngineConfiguration
 ): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
+    const canvas = new TempCanvas();
     const report: VisioReport = VisioReporter.createReport(
-        data, stationIdToPosMap, getFontMetricCanvas, engineConf.roaSettings, stationGrouper
+        data, stationIdToPosMap, canvas.getCanvasElement(), engineConf.roaSettings, stationGrouper
     );
-
+    canvas.destroy();
     return report;
 }
 

@@ -5,6 +5,8 @@ export interface LabelingOptions {
     firstLineIsBold?: boolean;
 }
 
+const HEADER_LINE_REL_BOTTOM_SPACE = 0.25;
+
 export abstract class LabelCreator {
 
     protected constructor(protected fontMetrics: FontMetrics) {
@@ -41,7 +43,7 @@ export abstract class LabelCreator {
             }
             if (text.length > 1) {
                 labels.push(this.getLabel(text.slice(1), margin));
-                labels[1].relPosition.y = labels[0].relPosition.y + labels[0].size.height;
+                labels[1].relPosition.y = labels[0].relPosition.y + labels[0].size.height * (1 + HEADER_LINE_REL_BOTTOM_SPACE);
             }
             return labels;
         } else {

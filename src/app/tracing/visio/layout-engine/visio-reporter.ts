@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import {
-    VisioReport, VisioBox, StationInformation, GraphLayer, FontMetrics,
-    Size, StationGrouper, StyleOptions} from './datatypes';
+    VisioReport, VisioBox, StationInformation,
+    GraphLayer, Size, StationGrouper
+} from './datatypes';
 import { Position, StationData, DeliveryData, SampleData, StationId } from '../../data.model';
 import { GraphSettings } from './graph-settings';
 import { BoxCreator } from './box-creator';
@@ -14,6 +15,7 @@ import { improvePositions } from './station_positioner_lp';
 import { groupStationBoxes } from './stationbox-simple-grouper';
 import { CustomLabelCreator } from './custom-label-creator';
 import { ROASettings } from '../model';
+import { getFontMetrics } from './font-metrics';
 
 interface FclElements {
     stations: StationData[];
@@ -21,14 +23,12 @@ interface FclElements {
     samples: SampleData[];
 }
 
-const BOLD_FONT_SCALE_FACTOR = 1.25;
-
 export class VisioReporter {
 
     static createReport(
         data: FclElements,
         statIdToPosMap: Record<StationId, Position>,
-        canvas: any,
+        canvas: HTMLCanvasElement | undefined,
         roaSettings: ROASettings,
         stationGrouper: StationGrouper
     ): VisioReport {
@@ -38,7 +38,8 @@ export class VisioReporter {
         const infoProvider = new InformationProvider(data, roaSettings);
         const cellGroups = getCellGroups(stationGrid, stationGroups);
 
-        const labelCreator = new CustomLabelCreator(this.getFontMetrics(canvas), roaSettings.labelSettings, roaSettings.roundNumbers);
+        const fontMetrics = getFontMetrics(canvas);
+        const labelCreator = new CustomLabelCreator(fontMetrics, roaSettings.labelSettings, roaSettings.roundNumbers);
         const boxCreator = new BoxCreator(labelCreator, infoProvider);
 
         const infoGrid = this.mapMatrix(stationGrid, (s) => s !== null ? infoProvider.getStationInfo(s) : null);
@@ -86,18 +87,6 @@ export class VisioReporter {
             Math.min(...boxes.map(b => b.position.x)) + 2 * GraphSettings.GRID_MARGIN,
             height: Math.max(...boxes.map(b => b.position.y + b.size.height)) -
             Math.min(...boxes.map(b => b.position.y)) + 2 * GraphSettings.GRID_MARGIN
-        };
-    }
-
-    private static getFontMetrics(canvas: any): FontMetrics {
-        const measureTextWidth = (text: string[], options?: StyleOptions) =>
-            Math.max(1, ...text.map(t => t.length)) * 4.4 * ((options && options.bold) ? BOLD_FONT_SCALE_FACTOR : 1);
-        return {
-            measureTextWidth: measureTextWidth,
-            measureText: (text: string[], options?: StyleOptions) => ({
-                width: measureTextWidth(text),
-                height: 10 * text.length * ((options && options.bold) ? BOLD_FONT_SCALE_FACTOR : 1)
-            })
         };
     }
 
