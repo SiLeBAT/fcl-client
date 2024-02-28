@@ -2,7 +2,8 @@ export class GraphSettings {
     static GRID_MARGIN = 10;
     static GROUP_MARGIN = 10;
     static GROUP_HEADER_HEIGHT = 20;
-    static HEADER_PADDING_H = 10;
+    static HEADER_PADDING_H = 5;
+    static HEADER_WIDTH_MIN = 30;
     static BORDER_WITH = 1;
     static RADIUS = 2;
     static SAMPLE_BOX_MARGIN = 10;

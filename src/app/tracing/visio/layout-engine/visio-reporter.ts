@@ -69,13 +69,20 @@ export class VisioReporter {
         groupBoxes = groupStationBoxes(stationBoxGroups, labelCreator);
         this.setAbsolutePositions(groupBoxes, { x: 0, y: 0 });
 
+        const headerLabelHeights = layerInfo.map(l => fontMetrics.measureText(l.activities, { bold: true }).height);
+        const headerWidth = Math.max(
+            GraphSettings.HEADER_WIDTH_MIN,
+            Math.max(0, ...headerLabelHeights) + GraphSettings.HEADER_PADDING_H * 2
+        );
+
         const result: VisioReport = {
             graph: {
                 elements: groupBoxes,
                 connectors: connectors,
                 size: this.getSize(groupBoxes)
             },
-            graphLayers: layerInfo
+            graphLayers: layerInfo,
+            headerWidth: headerWidth
         };
 
         return result;

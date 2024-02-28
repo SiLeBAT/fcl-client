@@ -159,6 +159,7 @@ export interface VisioRowHeader {
 export interface VisioReport {
     graph: VisioGraph;
     graphLayers: GraphLayer[];
+    headerWidth: number;
 }
 
 export interface StyleOptions {

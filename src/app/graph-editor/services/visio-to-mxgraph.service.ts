@@ -53,14 +53,11 @@ const LEGEND_ENTRY_SIZE = { width: 30, height: 20 };
 const LEGEND_ENTRY_DIST = { x: 10, y: 5 };
 const LEGEND_ENTRY_TO_LABEL_DIST = 5;
 const LEGEND_RADIUS_SCALE = 1.0 / 2.0;
-const ROWHEADER_WIDTH = 30;
 const HEADER_TO_GRAPH_DISTANCE = 10;
 
 type ConstantSize = (size: number) => string;
 
 type ConstantValue = (value: string) => string;
-
-type ConstantPropSelection = (...values: boolean[]) => string;
 
 interface Constants {
     LegendEntryBoxStrokeColor: string;
@@ -82,11 +79,13 @@ interface Constants {
     FillOpacity: ConstantSize;
     HAlign: ConstantValue;
     VAlign: ConstantValue;
+    HStyle: (x?: boolean) => string;
     Rotation: ConstantSize;
     FontColor: ConstantValue;
     FontSize: ConstantSize;
     FontFamily: ConstantValue;
-    FontStyle: ConstantPropSelection;
+    FontStyle: (opt: {bold?: boolean; italic?: boolean; underline?: boolean}) => string; // ConstantPropSelection;
+    WhiteSpaceStyle: (wrap: boolean) => string;
     LineArcSize: ConstantSize;
     ExitX: ConstantSize;
     ExitY: ConstantSize;
@@ -117,10 +116,12 @@ const BoxStyles: Constants = {
     FontColor: (color: string) => `${mxConstants.STYLE_FONTCOLOR}=${color}`,
     FontSize: (pixel: number) => `${mxConstants.STYLE_FONTSIZE}=${pixel}`,
     FontFamily: (fontFamily: string) => `${mxConstants.STYLE_FONTFAMILY}=${fontFamily}`,
-    FontStyle: (bold: boolean, italic: boolean, underline: boolean) =>
-        `${mxConstants.STYLE_FONTSTYLE}=${0 + (bold ? 1 : 0) + (italic ? 2 : 0) + (underline ? 4 : 0)}`,
+    FontStyle: (opt: {bold?: boolean; italic?: boolean; underline?: boolean}) =>
+        `${mxConstants.STYLE_FONTSTYLE}=${0 + (opt.bold ? 1 : 0) + (opt.italic ? 2 : 0) + (opt.underline ? 4 : 0)}`,
+    WhiteSpaceStyle: (wrap: boolean) => `${mxConstants.STYLE_WHITE_SPACE}=${wrap ? 'wrap' : 'nowrap'}`,
     HAlign: (hAlign: HorizontalAlignment) => `${mxConstants.STYLE_ALIGN}=${hAlign}`,
     VAlign: (vAlign: VerticalAlignment) => `${mxConstants.STYLE_VERTICAL_ALIGN}=${vAlign}`,
+    HStyle: (horizontal?: boolean) => `${mxConstants.STYLE_HORIZONTAL}=${horizontal === false ? 0 : 1}`,
     Rotation: (rotation: number) => `${mxConstants.STYLE_ROTATION}=${rotation}`,
     LineArcSize: (size: number) => `${mxConstants.STYLE_ARCSIZE}=${size}`,
     ExitX: (value: number) => `${mxConstants.STYLE_EXIT_X}=${value}`,
@@ -225,7 +226,7 @@ function labelStyle(bold: boolean) {
         BoxStyles.FontColor(BoxStyles.LabelColor),
         BoxStyles.FontFamily(FontFamily.VERDANA),
         BoxStyles.FontSize(8),
-        BoxStyles.FontStyle(bold)
+        BoxStyles.FontStyle({ bold: bold })
     );
 }
 
@@ -236,7 +237,7 @@ function legendTitleStyle() {
         BoxStyles.FontColor(BoxStyles.LabelColor),
         BoxStyles.FontFamily(FontFamily.VERDANA),
         BoxStyles.FontSize(10),
-        BoxStyles.FontStyle(true, false, false),
+        BoxStyles.FontStyle({ bold: true }),
         BoxStyles.HAlign(HorizontalAlignment.LEFT)
     );
 }
@@ -269,7 +270,13 @@ function headerStyle() {
     return getStyle(
         BoxStyles.Rounded,
         BoxStyles.LineArcSize(5),
-        BoxStyles.FillColor(BoxStyles.HeaderColor)
+        BoxStyles.FillColor(BoxStyles.HeaderColor),
+        BoxStyles.HStyle(false),
+        BoxStyles.FontColor(BoxStyles.LabelColor),
+        BoxStyles.FontFamily(FontFamily.VERDANA),
+        BoxStyles.FontSize(8),
+        BoxStyles.FontStyle({ bold: true }),
+        BoxStyles.WhiteSpaceStyle(true)
     );
 }
 
@@ -283,7 +290,7 @@ function headerTextStyle() {
         BoxStyles.HAlign(HorizontalAlignment.CENTER),
         BoxStyles.VAlign(VerticalAlignment.MIDDLE),
         BoxStyles.Rotation(270),
-        BoxStyles.FontStyle(true, false, false)
+        BoxStyles.FontStyle({ bold: true })
     );
 }
 
@@ -333,7 +340,7 @@ export class VisioToMxGraphService {
 
         this.graph.getModel().beginUpdate();
 
-        const offset = { x: ROWHEADER_WIDTH + HEADER_TO_GRAPH_DISTANCE, y: 0 };
+        const offset = { x: report.headerWidth + HEADER_TO_GRAPH_DISTANCE, y: 0 };
 
         // draw grouping elements
         _.forIn(rootElements, (stationGroup: VisioBox) => {
@@ -397,36 +404,23 @@ export class VisioToMxGraphService {
     private drawHeader(parent: mxCell, report: VisioReport): Position | Size {
         let height = 0.0;
         for (const layer of report.graphLayers) {
-            this.drawLayerHeader(parent, layer, { x: 0, y: height });
+            this.drawLayerHeader(parent, layer, { x: 0, y: height }, report.headerWidth);
             height += layer.height;
         }
-        return { x: 0, y: 0, width: ROWHEADER_WIDTH, height: height };
+        return { x: 0, y: 0, width: report.headerWidth, height: height };
     }
 
-    private drawLayerHeader(parent: mxCell, layer: GraphLayer, fromPos: Position) {
+    private drawLayerHeader(parent: mxCell, layer: GraphLayer, fromPos: Position, width: number) {
         const headerBoxStyle = headerStyle();
         const boxCell: mxCell = this.graph.insertVertex(
             parent,
             null,
-            null,
+            layer.activities.join('\n'),
             fromPos.x,
             fromPos.y,
-            ROWHEADER_WIDTH,
+            width,
             layer.height,
             headerBoxStyle,
-            false
-        );
-
-        const headerLabelStyle = headerTextStyle();
-        const labelCell: mxCell = this.graph.insertVertex(
-            boxCell,
-            null,
-            layer.activities.join('/'),
-            ROWHEADER_WIDTH / 2,
-            layer.height / 2,
-            0,
-            0,
-            headerLabelStyle,
             false
         );
 
