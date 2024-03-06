@@ -25,10 +25,14 @@ function createReport(
 ): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
     const canvas = new TempCanvas();
-    const report: VisioReport = VisioReporter.createReport(
-        data, stationIdToPosMap, canvas.getCanvasElement(), engineConf.roaSettings, stationGrouper
-    );
-    canvas.destroy();
+    let report: VisioReport | undefined;
+    try {
+        report = VisioReporter.createReport(
+            data, stationIdToPosMap, canvas.getCanvasElement(), engineConf.roaSettings, stationGrouper
+        );
+    } finally {
+        canvas.destroy();
+    }
     return report;
 }
 
