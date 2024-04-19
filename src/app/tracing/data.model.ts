@@ -41,7 +41,7 @@ export type Property = TableColumn;
 
 export interface RowHighlightingInfo {
     color: number[][];
-    shape?: NodeShapeType;
+    shape?: NodeShapeType | null;
 }
 
 export type TreeStatus = 'collapsed' | 'expanded';
@@ -52,7 +52,7 @@ export interface TableRow {
     parentRow?: TableRow;
     parentRowId?: string;
     treeStatus?: TreeStatus;
-    [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
+    [key: string]: string | number | boolean | RowHighlightingInfo | TableRow | undefined;
 }
 
 export interface ColumnSets {
@@ -127,19 +127,20 @@ export interface Connection {
 }
 
 export enum SampleResultType {
-    Confirmed, Negative, Probable, Unkown
+    Confirmed, Negative, Probable, Unknown
 }
 
 export interface SampleData {
     station: string;
-    lot: string;
-    type: string;
-    material: string;
-    time: string;
-    amount: string;
-    result: string;
+    lot?: string;
+    type?: string;
+    material?: string;
+    time?: string;
+    amount?: string;
+    result?: string;
     resultType: SampleResultType;
 }
+
 export interface SelectedElements {
     stations: StationId[];
     deliveries: DeliveryId[];
@@ -204,8 +205,8 @@ export interface MapConfig {
 export interface HighlightingSettings {
     invisibleStations: StationId[];
     invisibleDeliveries: DeliveryId[];
-    stations?: StationHighlightingRule[];
-    deliveries?: DeliveryHighlightingRule[];
+    stations: StationHighlightingRule[];
+    deliveries: DeliveryHighlightingRule[];
 }
 
 export interface MakeElementsInvisibleInputState {
@@ -214,7 +215,7 @@ export interface MakeElementsInvisibleInputState {
 }
 
 export interface LabelPart {
-    property?: string;
+    property?: string | null;
     prefix: string;
     useIndex?: boolean;
 }
@@ -223,24 +224,24 @@ export interface HighlightingRule {
     id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
-    color: number[];
+    color: number[] | null;
     invisible: boolean;
     userDisabled: boolean;
     autoDisabled: boolean;
     adjustThickness: boolean;
-    labelProperty: string;
+    labelProperty: string | null;
     labelPrefix?: string;
     labelParts?: LabelPart[];
-    valueCondition: ValueCondition;
-    logicalConditions: LogicalCondition[][];
+    valueCondition: ValueCondition | null;
+    logicalConditions: LogicalCondition[][] | null;
 }
 
 export interface DeliveryHighlightingRule extends HighlightingRule {
-    linePattern: LinePatternType;
+    linePattern: LinePatternType | null;
 }
 
 export interface StationHighlightingRule extends HighlightingRule {
-    shape: NodeShapeType;
+    shape: NodeShapeType | null;
 }
 
 export enum NodeShapeType {
@@ -322,7 +323,7 @@ export interface GroupData {
     id: StationId;
     name?: string;
     contains: string[];
-    groupType: GroupType;
+    groupType?: GroupType;
 }
 
 export enum GraphType {
@@ -378,10 +379,10 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
-    legendInfo: LegendInfo;
+    legendInfo?: LegendInfo;
     tracingPropsUpdatedFlag: Record<string, never>;
     stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
-    highlightingStats: HighlightingStats;
+    highlightingStats?: HighlightingStats;
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
 }
@@ -412,7 +413,7 @@ export interface HighlightingInfo {
 }
 
 export interface StationHighlightingInfo extends HighlightingInfo {
-    shape: NodeShapeType;
+    shape: NodeShapeType | null;
     size: number;
 }
 
@@ -428,17 +429,6 @@ export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, Vi
     originalSource: StationId;
     originalTarget: StationId;
     highlightingInfo?: DeliveryHighlightingInfo;
-}
-
-export interface SampleData {
-    station: string;
-    lot: string;
-    type: string;
-    material: string;
-    time: string;
-    amount: string;
-    result: string;
-    resultType: SampleResultType;
 }
 
 export interface SelectedElements {
@@ -473,11 +463,11 @@ export interface SharedGraphState extends DataServiceInputState {
 }
 
 export interface GisGraphState extends SharedGraphState {
-    layout: Layout;
+    layout: Layout | null;
 }
 export interface SchemaGraphState extends SharedGraphState {
     stationPositions: Record<StationId, Position>;
-    layout: Layout;
+    layout: Layout | null;
 }
 
 export interface SetTracingSettingsPayload {
@@ -495,15 +485,15 @@ export interface SetInvisibleElementsPayload {
 
 interface LegendEntry {
     label: string;
-    color: Color;
+    color: Color | null;
 }
 
 interface StationLegendEntry extends LegendEntry {
-    shape: NodeShapeType;
+    shape: NodeShapeType | null;
 }
 
 export interface DeliveryLegendEntry extends LegendEntry {
-    linePattern: LinePatternType;
+    linePattern: LinePatternType | null;
 }
 
 export interface LegendInfo {

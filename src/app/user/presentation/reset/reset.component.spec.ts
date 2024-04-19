@@ -28,8 +28,6 @@ describe('ResetComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(ResetComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 
@@ -84,6 +82,6 @@ describe('ResetComponent', () => {
 
         component.onReset();
 
-        expect(passwordRequest.password).toBe(password);
+        expect(passwordRequest!.password).toBe(password);
     });
 });

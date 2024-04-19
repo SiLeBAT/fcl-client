@@ -77,8 +77,8 @@ interface Constants {
     StrokeOpacity: ConstantSize;
     StrokeWidth: ConstantSize;
     FillOpacity: ConstantSize;
-    HAlign: ConstantValue;
-    VAlign: ConstantValue;
+    HAlign: (value: HorizontalAlignment) => string;
+    VAlign: (value: VerticalAlignment) => string;
     HStyle: (x?: boolean) => string;
     Rotation: ConstantSize;
     FontColor: ConstantValue;
@@ -219,7 +219,7 @@ function sampleProbableStyle(forLegend = false) {
     );
 }
 
-function labelStyle(bold: boolean) {
+function labelStyle(bold?: boolean) {
     return getStyle(
         BoxStyles.StrokeOpacity(0),
         BoxStyles.FillOpacity(0),
@@ -343,23 +343,23 @@ export class VisioToMxGraphService {
         const offset = { x: report.headerWidth + HEADER_TO_GRAPH_DISTANCE, y: 0 };
 
         // draw grouping elements
-        _.forIn(rootElements, (stationGroup: VisioBox) => {
-            const stationGroupCell = this.drawVisioElement(parent, stationGroup, offset);
+        rootElements.forEach((stationGroupBox) => {
+            const stationGroupCell = this.drawVisioElement(parent, stationGroupBox, offset);
 
             // draw station and environmental smaple elements
-            const stationElements: VisioBox[] = stationGroup.elements;
-            _.forIn(stationElements, (station: VisioBox) => {
-                const stationCell = this.drawVisioElement(stationGroupCell, station);
+            const stationBoxes: VisioBox[] = stationGroupBox.elements;
+            stationBoxes.forEach((stationBox) => {
+                const stationCell = this.drawVisioElement(stationGroupCell, stationBox);
 
                 // draw lot elements
-                const lotElements: VisioBox[] = station.elements;
-                _.forIn(lotElements, (lot: VisioBox) => {
-                    const lotCell = this.drawVisioElement(stationCell, lot);
+                const lotBoxes: VisioBox[] = stationBox.elements;
+                lotBoxes.forEach((lotBox) => {
+                    const lotCell = this.drawVisioElement(stationCell, lotBox);
 
                     // draw sample element
-                    const sampleElements: VisioBox[] = lot.elements;
-                    _.forIn(sampleElements, (sample: VisioBox) => {
-                        const sampleCell = this.drawVisioElement(lotCell, sample);
+                    const sampleBoxes: VisioBox[] = lotBox.elements;
+                    sampleBoxes.forEach((sampleBox) => {
+                        const sampleCell = this.drawVisioElement(lotCell, sampleBox);
                     });
                 });
             });
@@ -373,7 +373,7 @@ export class VisioToMxGraphService {
         );
 
         // draw connectors
-        _.forIn(connectors, (connector: VisioConnector) => {
+        connectors.forEach((connector: VisioConnector) => {
             const fromBoxPort = id2BoxPort[connector.fromPort];
             const toBoxPort = id2BoxPort[connector.toPort];
             this.drawEdge(parent, fromBoxPort, toBoxPort);
@@ -382,7 +382,9 @@ export class VisioToMxGraphService {
         this.drawHeader(parent, report);
         const legendCell = this.drawLegend(parent, report, { x: 0, y: report.graph.size.height + 10 });
 
-        this.drawFclImage(parent, { x: 0, y: this.getLowerBound(legendCell.getGeometry()) + 5 });
+        if (legendCell) {
+            this.drawFclImage(parent, { x: 0, y: this.getLowerBound(legendCell.getGeometry()) + 5 });
+        }
 
         return this.graph;
     }
@@ -427,7 +429,7 @@ export class VisioToMxGraphService {
         return boxCell;
     }
 
-    private drawLegend(parent: mxCell, report: VisioReport, position: Position): mxCell {
+    private drawLegend(parent: mxCell, report: VisioReport, position: Position): mxCell | null {
         const legendEntries = this.getLegendEntries(report);
         const showDeliveries = report.graph.connectors.length > 0;
 

@@ -10,6 +10,7 @@ import { map, filter, exhaustMap, take, takeWhile } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, EMPTY } from 'rxjs';
 import { UserService } from '../../../user/services/user.service';
+import { isNotNullish } from '@app/tracing/util/non-ui-utils';
 
 @Component({
     selector: 'fcl-dashboard-container',
@@ -30,7 +31,8 @@ export class DashboardContainerComponent implements OnInit, OnDestroy {
     ngOnInit() {
 
         const currentUser$: Observable<TokenizedUser> = this.store.pipe(select(fromUser.getCurrentUser)).pipe(
-            filter((currentUser: TokenizedUser) => currentUser && currentUser.gdprAgreementRequested),
+            filter(isNotNullish),
+            filter(currentUser => currentUser.gdprAgreementRequested),
             take(1),
             takeWhile(() => this.componentActive)
         );

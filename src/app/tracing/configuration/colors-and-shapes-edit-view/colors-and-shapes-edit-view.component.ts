@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { ColorAndShapeEditRule } from '../model';
 import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
 import { COLOR_BFR_BLUE } from '../constants';
+import { isNullish } from '@app/tracing/util/non-ui-utils';
 
 @Component({
     selector: 'fcl-colors-and-shapes-edit-view',
@@ -29,7 +30,7 @@ export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewCompon
     }
 
     get color(): Color | null {
-        return this.rule.color;
+        return this.rule?.color ?? null;
     }
 
     get disabledActionToolTip(): string {
@@ -37,12 +38,13 @@ export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewCompon
     }
 
     get shape(): NodeShapeType | null {
-        return this.rule.shape;
+        return this.rule?.shape ?? null;
     }
 
     get isEditViewComplete(): boolean {
+        const shapeIsSet = !isNullish(this.rule?.shape);
         return (
-            this.useShape === (this.rule.shape !== null) &&
+            this.useShape === shapeIsSet &&
             super.isEditViewComplete
         );
     }
@@ -53,7 +55,8 @@ export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewCompon
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.rule !== undefined && changes.rule.isFirstChange()) {
-            this.useShape_ = this.rule.shape !== null;
+            const shapeIsSet = !isNullish(this.rule?.shape);
+            this.useShape_ = shapeIsSet;
         }
         super.ngOnChanges(changes);
     }

@@ -13,7 +13,7 @@ import {
 import * as _ from 'lodash';
 import { DataService } from './data.service';
 import { Constants } from '../util/constants';
-import { entries, values } from '../util/non-ui-utils';
+import { concat, entries, values } from '../util/non-ui-utils';
 
 const COLUMNS_ANO_FLAG: StatColumnsFlag = 'a';
 const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = 'h';
@@ -133,7 +133,7 @@ export class TableService {
     private setColumnSetsDataAvailability<T extends string>(
         flag2ColSets: Partial<Record<T, ColumnSets>>, availableProps: Set<string>, prevAvailableProps: Set<string>
     ): void {
-        const propsWithChangedAvailabilities = new Set([].concat(
+        const propsWithChangedAvailabilities = new Set(concat(
             Array.from(prevAvailableProps).filter(p => !availableProps.has(p)),
             Array.from(availableProps).filter(p => !prevAvailableProps.has(p))
         ));
@@ -247,9 +247,11 @@ export class TableService {
             { id: 'forward', name: 'On Forward Trace' },
             { id: 'backward', name: 'On Backward Trace' },
             { id: 'score', name: 'Score' },
-            forHighlighting ? null : { id: 'selected', name: 'Selected' },
-            forHighlighting ? null : { id: 'invisible', name: 'Invisible' }
-        ].filter(c => c !== null);
+            ...(forHighlighting ? [] : [
+                { id: 'selected', name: 'Selected' },
+                { id: 'invisible', name: 'Invisible' }
+            ])
+        ];
 
         this.addColumnsForProperties(otherColumns, data.deliveries);
         this.addColumnsForOtherMappings(otherColumns, state.int2ExtPropMaps.deliveries, new Set(Constants.DELIVERY_PROPERTIES.toArray()));
@@ -271,7 +273,7 @@ export class TableService {
             const favouriteColumns = this.getFavouriteDeliveryColumns(forHighlighting);
             const otherColumns = this.getOtherDeliveryColumns(state, data, forHighlighting, favouriteColumns);
             columnSets = {
-                columns: [].concat(favouriteColumns, otherColumns),
+                columns: concat(favouriteColumns, otherColumns),
                 favouriteColumns: favouriteColumns,
                 otherColumns: otherColumns
             };
@@ -314,7 +316,7 @@ export class TableService {
             const otherColumns = this.getOtherStationColumns(state, data, forHighlighting, favouriteColumns);
 
             columnSets = {
-                columns: [].concat(favouriteColumns, otherColumns),
+                columns: concat(favouriteColumns, otherColumns),
                 favouriteColumns: favouriteColumns,
                 otherColumns: otherColumns
             };
@@ -371,8 +373,8 @@ export class TableService {
                 id: delivery.id,
                 highlightingInfo: {
                     color: (
-                        delivery.highlightingInfo.color.length > 0 ?
-                            delivery.highlightingInfo.color :
+                        delivery.highlightingInfo!.color.length > 0 ?
+                            delivery.highlightingInfo!.color :
                             [[0, 0, 0]]
                     ),
                     shape: NodeShapeType.SQUARE
@@ -425,7 +427,7 @@ export class TableService {
                 commonLink: station.commonLink,
                 lat: station.lat,
                 lon: station.lon,
-                highlightingInfo: station.highlightingInfo
+                highlightingInfo: station.highlightingInfo!
             };
 
             if (!forHighlighting) {

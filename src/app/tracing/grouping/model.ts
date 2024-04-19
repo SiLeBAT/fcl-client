@@ -1,5 +1,6 @@
 import {
-    StationData, GroupType, GroupData, StationTracingSettings, Position, DataServiceInputState
+    StationData, GroupType, GroupData,
+    StationTracingSettings, Position, DataServiceInputState
 } from '../data.model';
 
 export interface SetStationGroupsPayload {

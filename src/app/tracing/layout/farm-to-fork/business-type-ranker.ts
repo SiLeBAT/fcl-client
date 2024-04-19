@@ -1,7 +1,8 @@
+import { createMatrix } from '@app/tracing/util/non-ui-utils';
 import { Vertex } from './data-structures';
 
 export class BusinessTypeRanker {
-    private indexMap: Map<string, number> = new Map();
+    private indexMap = new Map<string, number>();
     private isSink: boolean[] = [];
     private isSource: boolean[] = [];
     private rankMatrix: boolean[][] = [];
@@ -32,16 +33,9 @@ export class BusinessTypeRanker {
             if (this.isSource[i] != null) { this.isSource[i] = false; }
         }
         // init rankMatrix
-        this.rankMatrix[typeCount - 1] = [];
-        for (let i: number = typeCount - 1; i >= 0; i--) {
-            this.rankMatrix[typeCount - 1][i] = null;
-        }
-        for (let i: number = typeCount - 2; i >= 0; i--) {
-            this.rankMatrix[i] = this.rankMatrix[typeCount - 1].slice();
-        }
+        this.rankMatrix = createMatrix<boolean>(typeCount, typeCount, false);
 
-        const sinkCodes = sinkTypes.map(t => this.indexMap.get(t));
-        const sourceCodes = sourceTypes.map(t => this.indexMap.get(t));
+        const sinkCodes = sinkTypes.map(t => this.indexMap.get(t)!);
 
         for (const sinkCode of sinkCodes) {
             for (let i: number = typeCount - 1; i >= 0; i--) {
@@ -51,8 +45,8 @@ export class BusinessTypeRanker {
 
         for (const orderedChain of typeOrderings) {
             for (let i: number = orderedChain.length - 2; i > 0; i--) {
-                this.rankMatrix[this.indexMap.get(orderedChain[i])][
-                    this.indexMap.get(orderedChain[i + 1])
+                this.rankMatrix[this.indexMap.get(orderedChain[i])!][
+                    this.indexMap.get(orderedChain[i + 1])!
                 ] = true;
             }
         }
@@ -70,47 +64,47 @@ export class BusinessTypeRanker {
         }
     }
 
-    compareRankingByCode(typeA: number, typeB: number): number {
+    compareRankingByCode(typeA: number | undefined, typeB: number | undefined): number | undefined {
         if (typeA != null) {
             if (typeB != null) {
                 if (this.rankMatrix[typeA][typeB]) { return -1; }
                 if (this.rankMatrix[typeB][typeA]) { return 1; }
-                return null;
+                return undefined;
             } else {
                 // type B is unknown
                 if (this.isSink[typeA]) { return -1; }
                 if (this.isSource[typeA]) { return 1; }
-                return null;
+                return undefined;
             }
         } else if (typeB != null) {
             // typeA is unkown
             if (this.isSink[typeB]) { return 1; }
             if (this.isSource[typeB]) { return -1; }
-            return null;
+            return undefined;
         }
-        return null;
+        return undefined;
     }
 
-    compareRankingByType(typeA: string, typeB: string): number {
-        const codeA: number = this.indexMap.has(typeA)
-            ? this.indexMap.get(typeA)
-            : -1;
-        const codeB: number = this.indexMap.has(typeB)
-            ? this.indexMap.get(typeB)
-            : -1;
+    compareRankingByType(typeA: string | undefined, typeB: string | undefined): number | undefined {
+        const codeA: number | undefined = typeA && this.indexMap.has(typeA)
+            ? this.indexMap.get(typeA)!
+            : undefined;
+        const codeB: number | undefined = typeB && this.indexMap.has(typeB)
+            ? this.indexMap.get(typeB)!
+            : undefined;
         return this.compareRankingByCode(codeA, codeB);
     }
 
-    compareRanking(vertexA: Vertex, vertexB: Vertex): number {
+    compareRanking(vertexA: Vertex, vertexB: Vertex): number | undefined {
         return this.compareRankingByCode(vertexA.typeCode, vertexB.typeCode);
     }
 
-    getBusinessTypeCode(type: string): number {
-        return this.indexMap.has(type) ? this.indexMap.get(type) : null;
+    getBusinessTypeCode(type: string | undefined): number | undefined{
+        return type && this.indexMap.has(type) ? this.indexMap.get(type)! : undefined;
     }
 
     private add(type: string): number {
-        if (this.indexMap.has(type)) { return this.indexMap.get(type); }
+        if (this.indexMap.has(type)) { return this.indexMap.get(type)!; }
         const index: number = this.indexMap.size;
         this.indexMap.set(type, index);
         return index;

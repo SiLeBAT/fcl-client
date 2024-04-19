@@ -38,7 +38,7 @@ export class NodeSymbolViewComponent {
     });
 
     private svgShapeType_: string | null = null;
-    private fillColor_ = NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
+    private fillColor_: string | null = NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
     private isFillColorNonWhite_ = false;
     private gradientId_: string | null = null;
     private gradientStops_: GradientStop[] = [];
@@ -59,7 +59,7 @@ export class NodeSymbolViewComponent {
         this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
     }
 
-    getShapeType(): string {
+    getShapeType(): string | null {
         return this.svgShapeType_;
     }
 
@@ -67,7 +67,7 @@ export class NodeSymbolViewComponent {
         return this.fillColor_ || `url(#${this.gradientId_})`;
     }
 
-    get gradientId(): string {
+    get gradientId(): string | null {
         return this.gradientId_;
     }
 
@@ -86,7 +86,6 @@ export class NodeSymbolViewComponent {
     private resetColors(): void {
         this.fillColor_ = null;
         this.isFillColorNonWhite_ = true;
-        this.gradientStops_ = null;
         this.gradientStops_ = [];
     }
 
@@ -98,7 +97,7 @@ export class NodeSymbolViewComponent {
     private setFillColor(colorOrColors: Color | number[][] | null): void {
         this.resetColors();
 
-        if (colorOrColors === null) {
+        if (!colorOrColors) {
             this.setDefaultColor();
         } else {
             if (Array.isArray(colorOrColors)) {

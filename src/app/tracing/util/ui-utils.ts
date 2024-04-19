@@ -1,12 +1,10 @@
 import { StationData } from './../data.model';
-import {
-    DialogAlignment, Position
-} from '../data.model';
-import { DialogPosition } from '@angular/material/dialog';
+import { Position } from '../data.model';
 import { MatMenuTrigger } from '@angular/material/menu';
 import * as ol from 'ol';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { ElementRef } from '@angular/core';
+import { RequiredPick } from './utility-types';
 
 export class Utils {
     private static CY_TO_OL_FACTOR = 10000;
@@ -48,19 +46,6 @@ export class Utils {
             ],
             resolution: Utils.CY_TO_OL_FACTOR / zoom
         });
-    }
-
-    static getDialogPosition(alignment: DialogAlignment): DialogPosition {
-        switch (alignment) {
-            case DialogAlignment.LEFT:
-                return { left: '0px' };
-            case DialogAlignment.CENTER:
-                return {};
-            case DialogAlignment.RIGHT:
-                return { right: '0px' };
-        }
-
-        return null;
     }
 
     static openSaveDialog(url: string, fileName: string) {
@@ -106,11 +91,11 @@ export class Utils {
         return stationsWithGis.length > 0;
     }
 
-    static hasGisInfo(station: StationData): boolean {
+
+    static hasGisInfo(x: StationData): x is RequiredPick<StationData, 'lat' | 'lon'> {
         return (
-            station.lat !== undefined && station.lat !== null &&
-            station.lon !== undefined && station.lon !== null
+            x.lat !== undefined && x.lat !== null &&
+            x.lon !== undefined && x.lon !== null
         );
     }
-
 }

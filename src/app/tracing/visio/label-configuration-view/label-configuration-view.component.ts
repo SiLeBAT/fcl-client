@@ -16,7 +16,7 @@ export class LabelConfigurationViewComponent {
     onPropElementPropChange(propElement: PropElementInfo, prop: string | null): void {
         propElement.prop = prop;
         for (const pair of this.amountUnitPairs) {
-            if (pair.amount === propElement) {
+            if (pair.amount === propElement && propElement.prop !== null) {
                 pair.unit.prop = getUnitPropFromAmountProp(propElement.prop, this.availableProps);
             }
         }

@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import { GraphType, LegendInfo, SchemaGraphState } from '../../../data.model';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
@@ -44,8 +44,8 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     styleConfig$ = this.store.select(getStyleConfig).pipe(optInGate(this.isGraphActive$, true));
     fitGraphToVisibleArea$ = this.store.select(getFitGraphToVisibleArea);
 
-    private focusElementSubscription: Subscription;
-    private graphStateSubscription: Subscription;
+    private focusElementSubscription: Subscription | null = null;
+    private graphStateSubscription: Subscription | null = null;
 
     private cachedState: SchemaGraphState | null = null;
     private sharedGraphData: GraphServiceData | null = null;
@@ -104,16 +104,18 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
-        const menuData = this.contextMenuService.getMenuData(
-            requestInfo.hoverContext,
-            this.sharedGraphData,
-            this.graphViewComponent.getLayoutOptions(
-                requestInfo.hoverContext.edgeId === undefined && requestInfo.hoverContext.nodeId === undefined ?
-                    this.schemaGraphData.nodeData.map(n => n.id) :
-                    this.contextMenuService.getContextElements(requestInfo.hoverContext, this.sharedGraphData).nodeIds
-            )
-        );
-        this.contextMenu.open(requestInfo.position, menuData);
+        if (this.sharedGraphData) {
+            const menuData = this.contextMenuService.getMenuData(
+                requestInfo.hoverContext,
+                this.sharedGraphData,
+                this.graphViewComponent.getLayoutOptions(
+                    requestInfo.hoverContext.edgeId === undefined && requestInfo.hoverContext.nodeId === undefined ?
+                        this.schemaGraphData!.nodeData.map(n => n.id) :
+                        this.contextMenuService.getContextElements(requestInfo.hoverContext, this.sharedGraphData).nodeIds
+                )
+            );
+            this.contextMenu.open(requestInfo.position, menuData);
+        }
     }
 
     onContextMenuSelect(action: Action): void {
@@ -134,31 +136,33 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     }
 
     onGraphDataChange(graphDataChange: GraphDataChange): void {
-        if (this.asyncRelayoutingDialog !== null) {
-            this.asyncRelayoutingDialog.close();
-        }
-        if (graphDataChange.nodePositions) {
-            this.store.dispatch(new SetStationPositionsAndLayoutMSA({
-                stationPositions: this.schemaGraphService.convertNodePosToStationPositions(
-                    graphDataChange.nodePositions,
-                    this.cachedState,
-                    this.schemaGraphData
-                ),
-                layout: graphDataChange.layout || this.cachedState.layout
-            }));
-        }
-        if (graphDataChange.layout) {
-            this.store.dispatch(new SetSchemaGraphLayoutSOA({ layout: graphDataChange.layout }));
-        }
-        if (graphDataChange.selectionChange) {
-            this.store.dispatch(new SetSelectedGraphElementsMSA({
-                selectedElements: graphDataChange.selectionChange.selectedElements,
-                maintainOffGraphSelection: graphDataChange.selectionChange.isShiftSelection
-            }));
+        if (this.cachedState) {
+            if (this.asyncRelayoutingDialog !== null) {
+                this.asyncRelayoutingDialog.close();
+            }
+            if (graphDataChange.nodePositions) {
+                this.store.dispatch(new SetStationPositionsAndLayoutMSA({
+                    stationPositions: this.schemaGraphService.convertNodePosToStationPositions(
+                        graphDataChange.nodePositions,
+                        this.cachedState,
+                        this.schemaGraphData!
+                    ),
+                    layout: graphDataChange.layout
+                }));
+            }
+            if (graphDataChange.layout) {
+                this.store.dispatch(new SetSchemaGraphLayoutSOA({ layout: graphDataChange.layout }));
+            }
+            if (graphDataChange.selectionChange) {
+                this.store.dispatch(new SetSelectedGraphElementsMSA({
+                    selectedElements: graphDataChange.selectionChange.selectedElements,
+                    maintainOffGraphSelection: graphDataChange.selectionChange.isShiftSelection
+                }));
+            }
         }
     }
 
-    get graphData(): GraphData {
+    get graphData(): GraphData | null {
         return this.schemaGraphData;
     }
 
@@ -173,7 +177,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private applyState(newState: SchemaGraphState) {
         this.sharedGraphData = this.graphService.getData(newState);
         this.schemaGraphData = this.schemaGraphService.getData(newState);
-        this.legendInfo_ = this.sharedGraphData.legendInfo;
+        this.legendInfo_ = this.sharedGraphData.legendInfo ?? null;
         this.cachedState = newState;
     }
 

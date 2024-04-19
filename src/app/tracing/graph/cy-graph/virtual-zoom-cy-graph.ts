@@ -11,7 +11,7 @@ import {
     getZoomedGraphData, getZoomedNodePositions} from './virtual-zoom-utils';
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
 import { CyEdge, CyNode, CyNodeCollection, NodeId } from '../graph.model';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { reduceElementSizeToVisibleArea } from './shared-utils';
 
 const DEFAULT_VIEWPORT = {
@@ -108,8 +108,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.cachedGraphData = {
                 ...this.cachedGraphData,
                 layout: {
-                    zoom: super.data.layout.zoom,
-                    pan: { ...super.data.layout.pan }
+                    zoom: super.data.layout!.zoom,
+                    pan: { ...super.data.layout!.pan }
                 },
                 nodePositions: { ...super.data.nodePositions }
             };
@@ -117,8 +117,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         } else if (fitViewPort) {
             this.fitZoomFromCurrentLayout();
         }
-        if (this.cy.container()) {
-            addCustomZoomAdapter(this.cy, () => this.zoom, (zoom, position) => this.zoomTo(zoom, position));
+        if (this.cy!.container()) {
+            addCustomZoomAdapter(this.cy!, () => this.zoom, (zoom, position) => this.zoomTo(zoom, position));
         }
         if (reduceContainerSize) {
             this.restoreCySize();
@@ -127,8 +127,8 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
     protected getAvailableSpace(): Size {
         return {
-            width: this.cy.width(),
-            height: this.cy.height()
+            width: this.cy!.width(),
+            height: this.cy!.height()
         };
     }
 
@@ -137,7 +137,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     get zoom(): number {
-        return this.cachedGraphData.layout.zoom;
+        return this.cachedGraphData.layout!.zoom;
     }
 
     get minZoom(): number {
@@ -157,7 +157,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     get layout(): Layout {
-        return this.cachedGraphData.layout;
+        return this.cachedGraphData.layout!;
     }
 
     protected setViewPort(viewport: Layout): void {
@@ -198,7 +198,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             const availableSpace = this.getAvailableSpace();
 
             // reset the viewport so that the rendered graph fits and is centered
-            const graphBBox = this.cy.elements().renderedBoundingBox();
+            const graphBBox = this.cy!.elements().renderedBoundingBox();
 
             const margin = {
                 left: rendNodePosEnclosingBBox.left - graphBBox.x1,
@@ -317,14 +317,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         const panBy = getDifference(focusPoint, refPos);
 
         if (panBy.x !== 0 || panBy.y !== 0) {
-            this.cy.panBy(panBy);
+            this.cy!.panBy(panBy);
         } else if (this.layout.zoom !== oldZoom) {
             this.onLayoutChanged();
         }
     }
 
     zoomFit(fitGraphToVisibleArea: boolean): void {
-        if (this.cachedGraphData.nodeData.length > 0) {
+        if (this.cy && this.cachedGraphData.nodeData.length > 0) {
             if (fitGraphToVisibleArea) {
                 this.reduceCySizeToVisibleArea();
             }
@@ -336,7 +336,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 getActivePositions(this.cachedGraphData),
                 availableSpace,
                 { min: this.minZoom, max: this.maxZoom },
-                { ...this.cachedGraphData.layout }
+                { ...this.cachedGraphData.layout! }
             );
             posBasedFitViewPort.zoom = this.getNextFeasibleZoom(posBasedFitViewPort.zoom);
 
@@ -370,7 +370,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         const oldPan = this.pan;
         const newZoom = this.getNextFeasibleZoom(zoom);
 
-        position = position ? position : { x: this.cy.width() / 2, y: this.cy.height() / 2 };
+        position = position ? position : { x: this.cy!.width() / 2, y: this.cy!.height() / 2 };
 
         const newPan = {
             x: position.x - ((position.x - oldPan.x) * newZoom) / oldZoom,
@@ -391,9 +391,9 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     ): null | (() => void) {
 
         if (layoutConfig.animate) {
-            this.cy.minZoom(this.zoomLimits.min);
-            this.cy.maxZoom(this.zoomLimits.max);
-            this.cy.zoomingEnabled(true);
+            this.cy!.minZoom(this.zoomLimits.min);
+            this.cy!.maxZoom(this.zoomLimits.max);
+            this.cy!.zoomingEnabled(true);
         } else {
             layoutConfig.fit = false;
         }
@@ -402,30 +402,30 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     protected postProcessLayout(layoutedNodes: NodeId[]): void {
-        const viewportBeforeLayout = this.cachedGraphData.layout;
+        const viewportBeforeLayout = this.cachedGraphData.layout!;
 
-        if (this.cy.zoom() !== 1) {
+        if (this.cy!.zoom() !== 1) {
             this.ignorePanOrZoomEvents = true;
-            this.cy.zoom(1);
+            this.cy!.zoom(1);
             this.edgeLabelOffsetUpdater.update(true);
             this.ignorePanOrZoomEvents = false;
         }
-        if (this.cy.zoomingEnabled()) {
-            this.cy.minZoom(1);
-            this.cy.maxZoom(1);
-            this.cy.zoomingEnabled(false);
+        if (this.cy!.zoomingEnabled()) {
+            this.cy!.minZoom(1);
+            this.cy!.maxZoom(1);
+            this.cy!.zoomingEnabled(false);
         }
         const nodePositions = this.extractNodePositionsFromGraph();
         super.setGraphData({
             ...super.data,
             nodePositions: nodePositions,
             layout: {
-                pan: { ...this.cy.pan() },
-                zoom: this.cy.zoom()
+                pan: { ...this.cy!.pan() },
+                zoom: this.cy!.zoom()
             }
         });
         const wereAllNodesLayouted = layoutedNodes.length === this.cachedGraphData.nodeData.length;
-        const newZoom = wereAllNodesLayouted ? 1 : this.cachedGraphData.layout.zoom;
+        const newZoom = wereAllNodesLayouted ? 1 : this.cachedGraphData.layout!.zoom;
         this.cachedGraphData = {
             ...this.cachedGraphData,
             nodePositions: getZoomedNodePositions(
@@ -435,7 +435,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             ),
             layout: {
                 zoom: newZoom,
-                pan: { ...super.data.layout.pan }
+                pan: { ...super.data.layout!.pan }
             }
         };
         if (wereAllNodesLayouted) {
@@ -473,39 +473,41 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
-        const oldGraphData = this.cachedGraphData;
-        this.cachedGraphData = graphData;
+        if (this.cy) {
+            const oldGraphData = this.cachedGraphData;
+            this.cachedGraphData = graphData;
 
-        const zoomChanged = graphData.layout.zoom !== oldGraphData.layout.zoom;
-        const superNodePositions =
-            zoomChanged || graphData.nodePositions !== oldGraphData.nodePositions ?
-                getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout.zoom) :
-                super.data.nodePositions;
+            const zoomChanged = graphData.layout!.zoom !== oldGraphData.layout!.zoom;
+            const superNodePositions =
+                zoomChanged || graphData.nodePositions !== oldGraphData.nodePositions ?
+                    getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, graphData.layout!.zoom) :
+                    super.data.nodePositions;
 
-        let superGhostPositions: PositionMap | null = null;
-        if (graphData.ghostData) {
-            superGhostPositions =
-                zoomChanged ||
-                oldGraphData.ghostData === null ||
-                oldGraphData.ghostData.posMap !== graphData.ghostData.posMap ?
-                    getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout.zoom) :
-                    super.data.ghostData.posMap;
+            let superGhostPositions: PositionMap | null = null;
+            if (graphData.ghostData) {
+                superGhostPositions =
+                    zoomChanged ||
+                    oldGraphData.ghostData === null ||
+                    oldGraphData.ghostData.posMap !== graphData.ghostData.posMap ?
+                        getZoomedNodePositions(graphData.ghostData.nodeData, graphData.ghostData.posMap, graphData.layout!.zoom) :
+                        super.data.ghostData!.posMap;
+            }
+
+            super.updateGraph({
+                ...graphData,
+                nodePositions: superNodePositions,
+                layout: {
+                    zoom: 1,
+                    pan: graphData.layout!.pan
+                },
+                ghostData: graphData.ghostData === null ?
+                    null :
+                    {
+                        ...graphData.ghostData,
+                        posMap: superGhostPositions!
+                    }
+            }, styleConfig);
         }
-
-        super.updateGraph({
-            ...graphData,
-            nodePositions: superNodePositions,
-            layout: {
-                zoom: 1,
-                pan: graphData.layout.pan
-            },
-            ghostData: graphData.ghostData === null ?
-                null :
-                {
-                    ...graphData.ghostData,
-                    posMap: superGhostPositions
-                }
-        }, styleConfig);
     }
 
     protected applyGraphDataChangeBottomUp(graphDataChange: GraphDataChange): void {
@@ -513,7 +515,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         this.cachedGraphData = { ...this.cachedGraphData };
         if (graphDataChange.layout) {
             this.cachedGraphData.layout = {
-                zoom: this.cachedGraphData.layout.zoom,
+                zoom: this.cachedGraphData.layout!.zoom,
                 pan: super.pan
             };
         }

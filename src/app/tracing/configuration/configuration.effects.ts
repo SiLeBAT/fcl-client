@@ -58,7 +58,7 @@ export class ConfigurationEffects {
                     .pipe(
                         take(1)
                     ).subscribe((result: DialogResultData) => {
-                        if (result) {
+                        if (result && result.sorting) {
                             if (tableType === TableType.STATIONS) {
                                 this.store.dispatch(new SetFilterStationTableColumnOrderSOA({ columnOrder: result.sorting }));
                             } else if (tableType === TableType.DELIVERIES) {

@@ -1,3 +1,4 @@
+import { concat } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 import { Graph, Vertex, Edge, CompressedVertexGroup } from './data-structures';
 
@@ -41,13 +42,13 @@ export function scaleToSize(graph: Graph, width: number, height: number, vertexD
 }
 
 function getMaxNeighbourDistance(vertices: Vertex[]): number {
-    const vertexCount: number = vertices.length;
+    const vertexCount = vertices.length;
 
     const distances: number[] = _.fill(Array(vertexCount), 0);
     for (let iV = 0; iV < vertexCount; iV++) {
-        const vertex: Vertex = vertices[iV];
+        const vertex = vertices[iV];
 
-        const neighbours: Vertex[] = [].concat(
+        const neighbours: Vertex[] = concat(
             vertex.inEdges.map(e => getNonVirtualSource(e.source)),
             vertex.outEdges.map(e => getNonVirtualTarget(e.target))
         ).filter(v => v.index < vertexCount);

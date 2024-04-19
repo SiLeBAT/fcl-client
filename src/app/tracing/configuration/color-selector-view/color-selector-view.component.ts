@@ -34,7 +34,7 @@ export class ColorSelectorViewComponent {
     private defaultColorPickerPositions: ColorPickerPosition[] = ['left', 'right', 'top', 'bottom'];
 
     private rgbaColorStr_ = this.convertColorToRGBAStr(ColorSelectorViewComponent.DEFAULT_COLOR);
-    private rgbColorStr_ = this.convertColorToRGBStr(ColorSelectorViewComponent.DEFAULT_COLOR);
+    private rgbColorStr_: string | undefined = this.convertColorToRGBStr(ColorSelectorViewComponent.DEFAULT_COLOR);
     private colorPickerPosition: ColorPickerPosition = this.defaultColorPickerPositions[0];
     private spaceIsNotAvailable = false;
 
@@ -42,7 +42,7 @@ export class ColorSelectorViewComponent {
 
     @Input() preferredColorPickerPosition: ColorPickerPosition = this.defaultColorPickerPositions[0];
 
-    @Input() set color(color: Color) {
+    @Input() set color(color: Color | null) {
         if (color !== null) {
             this.rgbaColorStr_ = this.convertColorToRGBAStr(color);
             this.rgbColorStr_ = this.convertColorToRGBStr(color);
@@ -60,7 +60,7 @@ export class ColorSelectorViewComponent {
         return this.rgbaColorStr_;
     }
 
-    get rgbColorStr(): string {
+    get rgbColorStr(): string | undefined {
         return this.rgbColorStr_;
     }
 
@@ -84,8 +84,11 @@ export class ColorSelectorViewComponent {
 
     constructor(private changeDetectorRef: ChangeDetectorRef) { }
 
-    onColorPickerSelect(color: string) {
-        this.colorChange.emit(this.convertRGBAStrToColor(color));
+    onColorPickerSelect(rgbaColorStr: string) {
+        const color = this.convertRGBAStrToColor(rgbaColorStr);
+        if (color) {
+            this.colorChange.emit(color);
+        }
     }
 
     onClick(event: MouseEvent): void {
@@ -107,17 +110,18 @@ export class ColorSelectorViewComponent {
         this.useFirstColorPickerButton = !this.useFirstColorPickerButton;
     }
 
-    private convertRGBAStrToColor(color: string): Color {
-        const rgbArray: number[] = color
-            .match(/\((.+?)\)/)[1]
-            .split(',')
-            .map(x => parseInt(x, 10))
-            .slice(0, 3);
-        return {
-            r: rgbArray[0],
-            g: rgbArray[1],
-            b: rgbArray[2]
-        };
+    private convertRGBAStrToColor(rgbaColorStr: string): Color {
+        // e.g.: rgb(3,162,96)
+        const matchArray = rgbaColorStr.match(/^rgba?\(\s*(?<r>\d{1,3}),\s*(?<g>\d{1,3}),\s*(?<b>\d{1,3})(,[^\)]+)?\)$/);
+        if (matchArray && matchArray.length >= 4) {
+            const rgbArray = matchArray.slice(1,4).map(x => parseInt(x, 10));
+            return {
+                r: rgbArray[0],
+                g: rgbArray[1],
+                b: rgbArray[2]
+            };
+        }
+        throw new Error(`RGB Values cannot be extracted from rgb/rgba color string '${rgbaColorStr}'`);
     }
 
     private convertColorToRGBAStr(color: Color): string {

@@ -20,7 +20,7 @@ const userRoutes: Routes =
             {
                 path: 'profile',
                 component: ProfileContainerComponent,
-                canActivate: environment.serverless ? null : [AuthGuard]
+                canActivate: environment.serverless ? undefined : [AuthGuard]
             },
             {
                 path: 'login',

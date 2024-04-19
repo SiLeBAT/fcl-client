@@ -9,7 +9,7 @@
                 <mat-label>New password</mat-label>
                 <input matInput #message formControlName="password1" type="password" name="password1" required fclFocusAfterViewInit/>
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required && serverValidationErrors.length === 0">
+                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1?.errors?.required && serverValidationErrors.length === 0">
                     Password is required
                 </mat-error>
                 <mat-hint *ngIf="serverValidationErrors.length > 0" class="mat-error">
@@ -24,7 +24,7 @@
                 <mat-label>Confirm Password</mat-label>
                 <input matInput formControlName="password2" type="password" name="password2" required />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password2') && resetForm.controls.password2.errors.validatePasswordConfirm">
+                <mat-error *ngIf="!validateField('password2') && resetForm.controls.password2?.errors?.validatePasswordConfirm">
                     Passwords must match
                 </mat-error>
             </mat-form-field>

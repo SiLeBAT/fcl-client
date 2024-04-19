@@ -19,7 +19,7 @@ import {
 import { DataService } from '../services/data.service';
 import { EditTracingSettingsService } from '../services/edit-tracing-settings.service';
 import { TableService } from '../services/table.service';
-import { Utils } from '../util/non-ui-utils';
+import { concat, Utils } from '../util/non-ui-utils';
 import { ComplexFilterCondition, JunktorType, PropToValuesMap } from './configuration.model';
 import { EditRuleCreator } from './edit-rule-creator';
 import {
@@ -75,7 +75,7 @@ export class EditHighlightingService {
         if (updateInvIds.length === 0) {
             return oldInvIds;
         } else if (invisible) {
-            return [].concat(oldInvIds, updateInvIds);
+            return concat(oldInvIds, updateInvIds);
         } else {
             return Utils.getStringArrayDifference(oldInvIds, updateInvIds);
         }
@@ -84,32 +84,35 @@ export class EditHighlightingService {
     getMakeElementsInvisiblePayload(
         state: MakeElementsInvisibleInputState,
         elements: SelectedElements
-    ): SetInvisibleElementsPayload {
+    ): SetInvisibleElementsPayload | null {
 
         const tracingSettings = this.editTracSettingsService.resetObservedTypeForElements(state.tracingSettings, elements);
 
-        return {
-            tracingSettings: tracingSettings,
-            highlightingSettings: {
-                ...state.highlightingSettings,
-                invisibleStations: this.getNewInvisibilities(
-                    state.highlightingSettings.invisibleStations,
-                    elements.stations,
-                    true
-                ),
-                invisibleDeliveries: this.getNewInvisibilities(
-                    state.highlightingSettings.invisibleDeliveries,
-                    elements.deliveries,
-                    true
-                )
-            }
-        };
+        if (tracingSettings) {
+            return {
+                tracingSettings: tracingSettings,
+                highlightingSettings: {
+                    ...state.highlightingSettings,
+                    invisibleStations: this.getNewInvisibilities(
+                        state.highlightingSettings.invisibleStations,
+                        elements.stations,
+                        true
+                    ),
+                    invisibleDeliveries: this.getNewInvisibilities(
+                        state.highlightingSettings.invisibleDeliveries,
+                        elements.deliveries,
+                        true
+                    )
+                }
+            };
+        }
+        return null;
     }
 
     getClearInvisiblitiesPayload(
         state: HighlightingSettings,
         options: ClearInvisibilitiesOptions
-    ): SetHighlightingSettingsPayload {
+    ): SetHighlightingSettingsPayload | null {
         if (options.clearDeliveryInvs || options.clearStationInvs) {
             return {
                 highlightingSettings: {
@@ -179,7 +182,7 @@ export class EditHighlightingService {
         if (addIds.length > 0) {
             const addConditions = this.createConditionsForIds(addIds);
             const index = this.getLastNonEmptyConditionIndex(editRule.complexFilterConditions);
-            const newConditions = [].concat(
+            const newConditions = concat(
                 editRule.complexFilterConditions.slice(0, index + 1),
                 addConditions
             );
@@ -280,7 +283,7 @@ export class EditHighlightingService {
         R extends EditRuleOfType<T>
     >(
         ruleType: T
-    ): R | null {
+    ): R {
         return EditRuleCreator.createNewEditRule(ruleType);
     }
 
@@ -324,7 +327,7 @@ export class EditHighlightingService {
             (r: T) => !r.autoDisabled && !this.isAnonymizationRule(r) && this.isLabelHRule(r) :
             (r: T) => r.autoDisabled;
         indicesOfRulesToUpdate = rules.reduce(
-            (prevResult,rule,index) => isUpdateRequiredCheckFun(rule) ? [].concat(...prevResult, index) : prevResult,
+            (prevResult,rule,index) => isUpdateRequiredCheckFun(rule) ? [...prevResult, index] : prevResult,
             [] as number[]
         );
         if (indicesOfRulesToUpdate.length > 0) {
@@ -345,8 +348,8 @@ export class EditHighlightingService {
         this.updateCache(state);
 
         return {
-            ...this.cachedData.stationSpecificData.propData,
-            ruleListItems: this.cachedData.stationSpecificData.ruleListItems
+            ...this.cachedData!.stationSpecificData.propData,
+            ruleListItems: this.cachedData!.stationSpecificData.ruleListItems
         };
     }
 
@@ -357,8 +360,8 @@ export class EditHighlightingService {
         this.updateCache(state);
 
         return {
-            ...this.cachedData.deliverySpecificData.propData,
-            ruleListItems: this.cachedData.deliverySpecificData.ruleListItems
+            ...this.cachedData!.deliverySpecificData.propData,
+            ruleListItems: this.cachedData!.deliverySpecificData.ruleListItems
         };
     }
 
@@ -366,36 +369,36 @@ export class EditHighlightingService {
         const dataServiceData = this.dataService.getData(state);
         const cacheIsEmpty = this.cachedData === null;
 
-        let deliveryRuleListItems = cacheIsEmpty ? null : this.cachedData.deliverySpecificData.ruleListItems;
-        let stationRuleListItems = cacheIsEmpty ? null : this.cachedData.stationSpecificData.ruleListItems;
-        let deliveryPropData = cacheIsEmpty ? null : this.cachedData.deliverySpecificData.propData;
-        let stationPropData = cacheIsEmpty ? null : this.cachedData.stationSpecificData.propData;
+        let deliveryRuleListItems = cacheIsEmpty ? null : this.cachedData!.deliverySpecificData.ruleListItems;
+        let stationRuleListItems = cacheIsEmpty ? null : this.cachedData!.stationSpecificData.ruleListItems;
+        let deliveryPropData = cacheIsEmpty ? null : this.cachedData!.deliverySpecificData.propData;
+        let stationPropData = cacheIsEmpty ? null : this.cachedData!.stationSpecificData.propData;
 
-        if (cacheIsEmpty || this.cachedData.highlightingStats !== dataServiceData.highlightingStats) {
+        if (cacheIsEmpty || this.cachedData!.highlightingStats !== dataServiceData.highlightingStats) {
             // update rule lists
             deliveryRuleListItems = state.highlightingSettings.deliveries.map(
-                rule => convertDeliveryHRuleToRuleListItem(rule, dataServiceData.highlightingStats)
+                rule => convertDeliveryHRuleToRuleListItem(rule, dataServiceData.highlightingStats!)
             );
             stationRuleListItems = state.highlightingSettings.stations.map(
-                rule => convertStationHRuleToRuleListItem(rule, dataServiceData.highlightingStats)
+                rule => convertStationHRuleToRuleListItem(rule, dataServiceData.highlightingStats!)
             );
         }
 
-        if (cacheIsEmpty || this.cachedData.tracingPropsUpdatedFlag !== dataServiceData.tracingPropsUpdatedFlag) {
+        if (cacheIsEmpty || this.cachedData!.tracingPropsUpdatedFlag !== dataServiceData.tracingPropsUpdatedFlag) {
             // create propToValuesFlag
             deliveryPropData = this.createDeliveryPropData(state);
             stationPropData = this.createStationPropData(state);
         }
         this.cachedData = {
             deliverySpecificData: {
-                propData: deliveryPropData,
-                ruleListItems: deliveryRuleListItems
+                propData: deliveryPropData!,
+                ruleListItems: deliveryRuleListItems!
             },
             stationSpecificData: {
-                propData: stationPropData,
-                ruleListItems: stationRuleListItems
+                propData: stationPropData!,
+                ruleListItems: stationRuleListItems!
             },
-            highlightingStats: dataServiceData.highlightingStats,
+            highlightingStats: dataServiceData.highlightingStats!,
             tracingPropsUpdatedFlag: dataServiceData.tracingPropsUpdatedFlag
         };
     }

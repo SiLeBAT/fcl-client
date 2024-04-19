@@ -13,7 +13,7 @@ export function optInGate(gateIsOpen$: Observable<boolean>, waitingEnabled: bool
                         if (gateIsOpen && isSourceEmitWaiting) {
                             // gate was opened and source emit is waiting
                             isSourceEmitWaiting = false;
-                            subscriber.next(waitingSourceEmit);
+                            subscriber.next(waitingSourceEmit!);
                         }
                     }
                 },

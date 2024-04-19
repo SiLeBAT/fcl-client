@@ -5,7 +5,7 @@ import {
 } from '../graph.model';
 import { Layout, Position, PositionMap } from '../../data.model';
 import { StyleConfig, CyStyle } from './cy-style';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { CyGraph, CyConfig, GraphData, LayoutConfig, LayoutName } from './cy-graph';
 import {
     addCyContextMenuRequestListener, addCyZoomListener, addCyDragListener,
@@ -48,8 +48,6 @@ export type GraphEventListener<T extends GraphEventType> =
     T extends GraphEventType.CONTEXT_MENU_REQUEST ? (info: ContextMenuRequestInfo) => void :
     never;
 
-export type GraphEventListeners<T extends GraphEventType> = Record<T, GraphEventListener<T>[]>;
-
 interface NodeHProps {
     size: number;
     label: string;
@@ -87,7 +85,7 @@ export class InteractiveCyGraph extends CyGraph {
     private static readonly POSITION_TOLERANCE = 1e-13;
     private static readonly GOLDEN_RATIO = 1 / 1.618033;
 
-    private listeners: GraphEventListeners<GraphEventType>;
+    private listeners: { [key in GraphEventType]: GraphEventListener<key>[] };
     protected ignorePanOrZoomEvents = false;
 
     private cachedHProps: HProps | null = null;
@@ -110,7 +108,9 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     zoomToPercentage(value: number): void {
-        this.zoomTo(Math.exp((value / 100) * Math.log(this.maxZoom / this.minZoom)) * this.minZoom);
+        if (this.cy) {
+            this.zoomTo(Math.exp((value / 100) * Math.log(this.maxZoom / this.minZoom)) * this.minZoom);
+        }
     }
 
     get zoomPercentage(): number {
@@ -120,7 +120,9 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     zoomIn(): void {
-        this.zoomTo(this.zoom * InteractiveCyGraph.ZOOM_FACTOR);
+        if (this.cy) {
+            this.zoomTo(this.zoom * InteractiveCyGraph.ZOOM_FACTOR);
+        }
     }
 
     zoomOut(): void {
@@ -128,12 +130,14 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     zoomFit(fitGraphToVisibleArea: boolean): void {
-        if (fitGraphToVisibleArea) {
-            this.reduceCySizeToVisibleArea();
-        }
-        this.cy.fit();
-        if (fitGraphToVisibleArea) {
-            this.restoreCySize();
+        if (this.cy) {
+            if (fitGraphToVisibleArea) {
+                this.reduceCySizeToVisibleArea();
+            }
+            this.cy.fit();
+            if (fitGraphToVisibleArea) {
+                this.restoreCySize();
+            }
         }
     }
 
@@ -142,11 +146,16 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     unregisterListener<T extends GraphEventType>(event: T, listener: GraphEventListener<T>): void {
-        this.listeners[event] = this.listeners[event].filter(l => l !== listener);
+        this.listeners = {
+            ...this.listeners,
+            [event]: this.listeners[event].filter(l => l !== listener)
+        };
     }
 
     updateSize(): void {
-        this.cy.resize();
+        if (this.cy) {
+            this.cy.resize();
+        }
     }
 
     protected getNextFeasibleZoom(zoom: number): number {
@@ -155,9 +164,9 @@ export class InteractiveCyGraph extends CyGraph {
 
     protected zoomTo(zoom: number, position?: Position): void {
         const newZoom = this.getNextFeasibleZoom(zoom);
-        position = position ? position : { x: this.cy.width() / 2, y: this.cy.height() / 2 };
+        position = position ? position : { x: this.cy!.width() / 2, y: this.cy!.height() / 2 };
 
-        this.cy.zoom({
+        this.cy!.zoom({
             level: newZoom,
             renderedPosition: position
         });
@@ -174,20 +183,20 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     protected registerCyListeners(): void {
-        if (this.cy.container()) {
-            addCySelectionListener(this.cy, (shift: boolean) => this.onSelectionChanged(shift));
-            addCyPanListeners(this.cy, () => this.onPanOrZoom(), () => this.onPanOrZoom());
-            addCyZoomListener(this.cy, () => this.onPanOrZoom());
-            addCyDragListener(this.cy, () => this.onDragEnd());
+        if (this.cy!.container()) {
+            addCySelectionListener(this.cy!, (shift: boolean) => this.onSelectionChanged(shift));
+            addCyPanListeners(this.cy!, () => this.onPanOrZoom(), () => this.onPanOrZoom());
+            addCyZoomListener(this.cy!, () => this.onPanOrZoom());
+            addCyDragListener(this.cy!, () => this.onDragEnd());
             addCyContextMenuRequestListener(
-                this.cy,
+                this.cy!,
                 (info: ContextMenuRequestInfo) => this.onContextMenuRequest(info)
             );
         }
     }
 
     protected onLayoutChanged(): void {
-        this.listeners.LAYOUT_CHANGE.forEach((l: GraphEventListener<GraphEventType.LAYOUT_CHANGE>) => l());
+        this.listeners.LAYOUT_CHANGE.forEach((l) => l());
     }
 
     protected applyGraphDataChangeBottomUp(dataChange: GraphDataChange): void {
@@ -205,26 +214,26 @@ export class InteractiveCyGraph extends CyGraph {
     protected onSelectionChanged(shift: boolean): void {
         this.applyGraphDataChangeBottomUp({
             selectedElements: {
-                nodes: this.cy.nodes(SELECTED_ELEMENTS_SELECTOR).map(n => n.id()),
-                edges: this.cy.edges(SELECTED_ELEMENTS_SELECTOR).map(e => e.id())
+                nodes: this.cy!.nodes(SELECTED_ELEMENTS_SELECTOR).map(n => n.id()),
+                edges: this.cy!.edges(SELECTED_ELEMENTS_SELECTOR).map(e => e.id())
             }
         });
 
-        this.listeners.SELECTION_CHANGE.forEach((l: GraphEventListener<GraphEventType.SELECTION_CHANGE>) => l(shift));
+        this.listeners.SELECTION_CHANGE.forEach((l) => l(shift));
     }
 
     private onPanOrZoom(): void {
         if (
             !this.ignorePanOrZoomEvents &&
             (
-                this.cy.zoom() !== super.layout.zoom ||
-                !_.isEqual(this.cy.pan(), super.layout.pan
+                this.cy!.zoom() !== super.layout.zoom ||
+                !_.isEqual(this.cy!.pan(), super.layout.pan
                 )
             )) {
             this.applyGraphDataChangeBottomUp({
                 layout: {
-                    zoom: this.cy.zoom(),
-                    pan: { ...this.cy.pan() }
+                    zoom: this.cy!.zoom(),
+                    pan: { ...this.cy!.pan() }
                 }
             });
             this.onLayoutChanged();
@@ -232,48 +241,48 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private onContextMenuRequest(info: ContextMenuRequestInfo): void {
-        this.listeners.CONTEXT_MENU_REQUEST.forEach((l: GraphEventListener<GraphEventType.CONTEXT_MENU_REQUEST>) => l(info));
+        this.listeners.CONTEXT_MENU_REQUEST.forEach((l) => l(info));
     }
 
     private updateNodes(): void {
-        this.cy.elements().remove();
-        this.cy.add(this.createNodes(super.data.nodeData, super.data.nodePositions));
-        this.cy.add(this.createEdges(super.data.edgeData));
+        this.cy!.elements().remove();
+        this.cy!.add(this.createNodes(super.data.nodeData, super.data.nodePositions));
+        this.cy!.add(this.createEdges(super.data.edgeData));
     }
 
     private updateEdges(): void {
-        this.cy.edges().remove();
-        this.cy.add(this.createEdges(super.data.edgeData));
+        this.cy!.edges().remove();
+        this.cy!.add(this.createEdges(super.data.edgeData));
     }
 
     private updateStyle(): void {
-        this.cy.setStyle(new CyStyle(super.data, super.style).createCyStyle());
+        this.cy!.setStyle(new CyStyle(super.data, super.style).createCyStyle());
     }
 
     private updateSelection(): void {
-        this.cy.elements(SELECTED_ELEMENTS_WITH_UNSELECTED_DATA_SELECTOR).unselect();
-        this.cy.elements(UNSELECTED_ELEMENTS_WITH_SELECTED_DATA_SELECTOR).select();
+        this.cy!.elements(SELECTED_ELEMENTS_WITH_UNSELECTED_DATA_SELECTOR).unselect();
+        this.cy!.elements(UNSELECTED_ELEMENTS_WITH_SELECTED_DATA_SELECTOR).select();
     }
 
     private updateNodePositions(): void {
-        this.cy.nodes().positions((n) => super.nodePositions[n.id()]);
+        this.cy!.nodes().positions((n) => super.nodePositions[n.id()]);
     }
 
     private updateLayout(): void {
-        this.cy.zoom(super.zoom);
-        this.cy.pan({ ...super.pan });
+        this.cy!.zoom(super.zoom);
+        this.cy!.pan({ ...super.pan });
     }
 
     private getParallelEdgesOfGhosts(): CyEdgeCollection {
-        const edges = this.cy.edges('.ghost-element');
+        const edges = this.cy!.edges('.ghost-element');
         return edges.parallelEdges().difference(edges);
     }
 
     private updateGhostElements(updateLabel: boolean) {
         if (updateLabel) {
             const edgesToUpdateBefore = this.getParallelEdgesOfGhosts();
-            this.cy.batch(() => this.updateGhostElements(false));
-            const edgesToUpdateAfter = this.cy.edges('.ghost-element').parallelEdges();
+            this.cy!.batch(() => this.updateGhostElements(false));
+            const edgesToUpdateAfter = this.cy!.edges('.ghost-element').parallelEdges();
             this.edgeLabelOffsetUpdater.updateEdges(edgesToUpdateBefore.union(edgesToUpdateAfter));
         } else {
             this.removeGhostElements();
@@ -285,25 +294,25 @@ export class InteractiveCyGraph extends CyGraph {
         if (super.data.ghostData !== null) {
             const ghostElements = this.createGhostElements();
             if (ghostElements.nodes.length > 0) {
-                this.cy.add(ghostElements.nodes);
+                this.cy!.add(ghostElements.nodes);
             }
             if (ghostElements.edges.length > 0) {
-                this.cy.add(ghostElements.edges);
+                this.cy!.add(ghostElements.edges);
             }
         }
     }
 
     private removeGhostElements() {
-        this.cy.remove('.ghost-element');
+        this.cy!.remove('.ghost-element');
     }
 
     private createGhostElements(): { nodes: CyNodeDef[]; edges: CyEdgeDef[] } {
-        const ghostNodes = this.createNodes(super.data.ghostData.nodeData, super.data.ghostData.posMap);
+        const ghostNodes = this.createNodes(super.data.ghostData!.nodeData, super.data.ghostData!.posMap);
         ghostNodes.forEach(node => {
             node.selected = false;
             node.classes = 'ghost-element';
         });
-        const ghostEdges = this.createEdges(super.data.ghostData.edgeData);
+        const ghostEdges = this.createEdges(super.data.ghostData!.edgeData);
         ghostEdges.forEach(node => {
             node.selected = false;
             node.classes = 'top-center ghost-element';
@@ -318,9 +327,9 @@ export class InteractiveCyGraph extends CyGraph {
     private hoverEdges(edgeIds: EdgeId[]): void {
         const hoverEdge = Utils.createSimpleStringSet(edgeIds);
 
-        this.cy.batch(() => {
-            const notHoveredEdges = this.cy.edges().filter(e => !hoverEdge[e.id()]);
-            const hoveredEdges = this.cy.edges().filter(e => !!hoverEdge[e.id()]);
+        this.cy!.batch(() => {
+            const notHoveredEdges = this.cy!.edges().filter(e => !hoverEdge[e.id()]);
+            const hoveredEdges = this.cy!.edges().filter(e => !!hoverEdge[e.id()]);
             notHoveredEdges.removeClass(CSS_CLASS_HOVER);
             hoveredEdges.addClass(CSS_CLASS_HOVER);
         });
@@ -350,14 +359,17 @@ export class InteractiveCyGraph extends CyGraph {
             const reduceCySizeBeforeLayouting = fitGraphToVisibleArea && layoutConfig.fit !== false;
             return this.startLayouting(layoutConfig, nodeIds, reduceCySizeBeforeLayouting);
         }
+        return null;
     }
 
     focusElement(elementId: NodeId | EdgeId): void {
-        const cyElement = this.cy.getElementById(elementId);
-        if (cyElement.isEdge()) {
-            this.focusEdge(cyElement as CyEdge);
-        } else if (cyElement.isNode()) {
-            this.focusNode(cyElement as CyNode);
+        if (this.cy && this.cy.container()) {
+            const cyElement = this.cy.getElementById(elementId);
+            if (cyElement.isEdge()) {
+                this.focusEdge(cyElement as CyEdge);
+            } else if (cyElement.isNode()) {
+                this.focusNode(cyElement as CyNode);
+            }
         }
     }
 
@@ -372,7 +384,7 @@ export class InteractiveCyGraph extends CyGraph {
 
         const panBy = getDifference(focusPoint, refPoint);
         if (panBy.x !== 0 || panBy.y !== 0) {
-            this.cy.panBy(panBy);
+            this.cy!.panBy(panBy);
         }
     }
 
@@ -409,15 +421,32 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     private getNotBlockedSpace(): BoundaryRect {
-        return getNonBlockedRect(this.cy.container(), 'fcl-right-sidenav');
+        const container = this.cy!.container();
+        if (container) {
+            const nonBlockedSpace = getNonBlockedRect(container, 'fcl-right-sidenav');
+            if (nonBlockedSpace) {
+                return nonBlockedSpace;
+            }
+        }
+        // return default rect
+        const width = this.cy!.width();
+        const height = this.cy!.height();
+        return {
+            left: 0,
+            top: 0,
+            right: width,
+            bottom: height,
+            height: height,
+            width: width
+        };
     }
 
     protected getNodeContext(nodeIds: NodeId[]): Cy | CyNodeCollection {
-        if (nodeIds.length === this.cy.nodes().size()) {
-            return this.cy;
+        if (nodeIds.length === this.cy!.nodes().size()) {
+            return this.cy!;
         } else {
             const nodeIdSet = Utils.createSimpleStringSet(nodeIds);
-            return this.cy.nodes().filter((node) => nodeIdSet[node.id()]);
+            return this.cy!.nodes().filter((node) => nodeIdSet[node.id()]);
         }
     }
 
@@ -466,8 +495,8 @@ export class InteractiveCyGraph extends CyGraph {
             ...super.data,
             nodePositions: this.extractNodePositionsFromGraph(),
             layout: {
-                pan: { ...this.cy.pan() },
-                zoom: this.cy.zoom()
+                pan: { ...this.cy!.pan() },
+                zoom: this.cy!.zoom()
             }
         });
         this.edgeLabelOffsetUpdater.update(true);
@@ -487,7 +516,7 @@ export class InteractiveCyGraph extends CyGraph {
             })),
             edgeProps: graphData.edgeData.map(e => ({
                 stopColors: e.stopColors,
-                label: e.label,
+                label: e.label ?? '',
                 zindex: e.zindex,
                 selected: e.selected
             })),
@@ -512,93 +541,95 @@ export class InteractiveCyGraph extends CyGraph {
     }
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
-        const oldData = super.data;
-        const oldStyle = super.style;
-        super.setGraphData(graphData);
-        super.setStyleConfig(styleConfig);
-        const updateNodes = oldData.nodeData !== graphData.nodeData;
-        const updateEdges = !updateNodes && oldData.edgeData !== graphData.edgeData;
-        const updateCachedHProps = updateNodes || updateEdges || graphData.propsUpdatedFlag !== oldData.propsUpdatedFlag;
+        if (this.cy) {
+            const oldData = super.data;
+            const oldStyle = super.style;
+            super.setGraphData(graphData);
+            super.setStyleConfig(styleConfig);
+            const updateNodes = oldData.nodeData !== graphData.nodeData;
+            const updateEdges = !updateNodes && oldData.edgeData !== graphData.edgeData;
+            const updateCachedHProps = updateNodes || updateEdges || graphData.propsUpdatedFlag !== oldData.propsUpdatedFlag;
 
-        let propChange: HPropsChange = {
-            nodeSizeLimitsChanged: false,
-            edgePropsChanged: false,
-            edgeLabelChanged: false,
-            nodePropsChanged: false
-        };
-        let updateStyle = !_.isEqual(oldStyle, styleConfig);
-        if (updateCachedHProps) {
-            const oldHProps = this.cachedHProps;
-            this.cacheHProps(graphData);
-            propChange = this.getHPropsChange(oldHProps, this.cachedHProps);
-            if (propChange.nodeSizeLimitsChanged) {
-                updateStyle = true;
+            let propChange: HPropsChange = {
+                nodeSizeLimitsChanged: false,
+                edgePropsChanged: false,
+                edgeLabelChanged: false,
+                nodePropsChanged: false
+            };
+            let updateStyle = !_.isEqual(oldStyle, styleConfig);
+            if (updateCachedHProps) {
+                const oldHProps = this.cachedHProps!;
+                this.cacheHProps(graphData);
+                propChange = this.getHPropsChange(oldHProps, this.cachedHProps!);
+                if (propChange.nodeSizeLimitsChanged) {
+                    updateStyle = true;
+                }
             }
-        }
-        const updateSelection = !updateNodes && !_.isEqual(oldData.selectedElements, graphData.selectedElements);
-        const updateNodePositions = !updateNodes && this.arePositionsDifferent(oldData, graphData);
-        const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
-        const updateEdgeLabel = !updateNodes && !updateEdges && propChange.edgeLabelChanged;
+            const updateSelection = !updateNodes && !_.isEqual(oldData.selectedElements, graphData.selectedElements);
+            const updateNodePositions = !updateNodes && this.arePositionsDifferent(oldData, graphData);
+            const updateLayout = !_.isEqual(oldData.layout, graphData.layout);
+            const updateEdgeLabel = !updateNodes && !updateEdges && propChange.edgeLabelChanged;
 
-        const scratchEdges = !updateNodes && !updateEdges && (
-            updateStyle || updateEdgeLabel || updateSelection || propChange.edgePropsChanged
-        );
+            const scratchEdges = !updateNodes && !updateEdges && (
+                updateStyle || updateEdgeLabel || updateSelection || propChange.edgePropsChanged
+            );
 
-        const scratchNodes = !updateNodes && (updateStyle || updateSelection || propChange.nodePropsChanged);
+            const scratchNodes = !updateNodes && (updateStyle || updateSelection || propChange.nodePropsChanged);
 
-        const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges || propChange.nodePropsChanged;
-        const updateGhosts = oldData.ghostData !== graphData.ghostData;
+            const setAllEdgeLabelOffsets = updateNodePositions || updateNodes || updateEdges || scratchEdges || propChange.nodePropsChanged;
+            const updateGhosts = oldData.ghostData !== graphData.ghostData;
 
-        if (
-            updateNodes || updateEdges || updateStyle || updateSelection ||
-            updateNodes || updateLayout || updateEdgeLabel || updateNodePositions ||
-            scratchNodes || scratchEdges ||
-            (updateGhosts && setAllEdgeLabelOffsets)
-        ) {
+            if (
+                updateNodes || updateEdges || updateStyle || updateSelection ||
+                updateNodes || updateLayout || updateEdgeLabel || updateNodePositions ||
+                scratchNodes || scratchEdges ||
+                (updateGhosts && setAllEdgeLabelOffsets)
+            ) {
 
-            this.cy.batch(() => {
-                if (updateNodes) {
-                    this.updateNodes();
-                }
-                if (updateEdges) {
-                    this.updateEdges();
-                }
-                if (updateNodePositions) {
-                    this.updateNodePositions();
-                }
-                if (updateLayout) {
-                    this.updateLayout();
-                }
-                if (updateSelection) {
-                    this.updateSelection();
-                }
-                if (updateStyle) {
-                    this.updateStyle();
+                this.cy.batch(() => {
+                    if (updateNodes) {
+                        this.updateNodes();
+                    }
+                    if (updateEdges) {
+                        this.updateEdges();
+                    }
+                    if (updateNodePositions) {
+                        this.updateNodePositions();
+                    }
+                    if (updateLayout) {
+                        this.updateLayout();
+                    }
+                    if (updateSelection) {
+                        this.updateSelection();
+                    }
+                    if (updateStyle) {
+                        this.updateStyle();
+                    }
+
+                    if (updateGhosts) {
+                        this.updateGhostElements(false);
+                    }
+
+                    if (scratchNodes && scratchEdges) {
+                        this.cy!.elements().scratch(SCRATCH_UPDATE_NAMESPACE, true);
+                    } else if (scratchNodes) {
+                        this.cy!.nodes().scratch(SCRATCH_UPDATE_NAMESPACE, true);
+                    } else if (scratchEdges) {
+                        this.cy!.edges().scratch(SCRATCH_UPDATE_NAMESPACE, true);
+                    }
+                });
+
+                if (setAllEdgeLabelOffsets) {
+                    this.edgeLabelOffsetUpdater.update(true);
                 }
 
-                if (updateGhosts) {
-                    this.updateGhostElements(false);
-                }
-
-                if (scratchNodes && scratchEdges) {
-                    this.cy.elements().scratch(SCRATCH_UPDATE_NAMESPACE, true);
-                } else if (scratchNodes) {
-                    this.cy.nodes().scratch(SCRATCH_UPDATE_NAMESPACE, true);
-                } else if (scratchEdges) {
-                    this.cy.edges().scratch(SCRATCH_UPDATE_NAMESPACE, true);
-                }
-            });
-
-            if (setAllEdgeLabelOffsets) {
-                this.edgeLabelOffsetUpdater.update(true);
+            } else if (updateGhosts) {
+                this.updateGhostElements(true);
             }
 
-        } else if (updateGhosts) {
-            this.updateGhostElements(true);
-        }
-
-        if (oldData.hoverEdges !== graphData.hoverEdges) {
-            this.hoverEdges(graphData.hoverEdges);
+            if (oldData.hoverEdges !== graphData.hoverEdges) {
+                this.hoverEdges(graphData.hoverEdges);
+            }
         }
     }
 

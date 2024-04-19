@@ -19,7 +19,7 @@ export class GraphEditorContainerComponent extends GuardedUnloadDirective implem
 
     @ViewChild(GraphEditorComponent, { static: true }) graphEditorComponent;
 
-    graph: mxGraph;
+    graph: mxGraph | null = null;
     private componentActive = true;
 
     constructor(
@@ -34,7 +34,7 @@ export class GraphEditorContainerComponent extends GuardedUnloadDirective implem
             select(TracingSelectors.getVisioReport),
             takeWhile(() => this.componentActive)
         ).subscribe(
-            (visioReport: VisioReport) => {
+            (visioReport: VisioReport | null) => {
                 this.graph = visioReport ? this.converter.createGraph(visioReport) : null;
             },
             (error) => {

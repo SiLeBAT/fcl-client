@@ -2,7 +2,7 @@ import { Component, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { Subscription, timer } from 'rxjs';
-import { Utils } from '@app/tracing/util/non-ui-utils';
+import { concat, Utils } from '@app/tracing/util/non-ui-utils';
 import { TableService } from '@app/tracing/services/table.service';
 import { Store } from '@ngrx/store';
 import * as fromTracing from '../../state/tracing.reducers';
@@ -50,15 +50,15 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
     columns: FilterColumn[] = [];
     propToColumnMap: { [key: string]: FilterColumn } = {};
 
-    private _unfilteredRows = [];
+    private _unfilteredRows: TableRow[] = [];
 
-    filteredRows = [];
+    filteredRows: TableRow[] = [];
 
-    rootFilter: Filter = { filterText: null, filterProps: [] };
+    rootFilter: Filter = { filterText: '', filterProps: [] };
 
     private deliveryIds: string[];
 
-    stateSubscription: Subscription;
+    stateSubscription: Subscription | null = null;
 
     private readonly columnOrdering = ['id', 'name', 'lot', 'score', 'source.name', 'target.name', 'source', 'target', 'weight', 'crossContamination', 'killContamination', 'observed', 'forward', 'backward', 'selected'];
 
@@ -91,7 +91,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
         this.selectedRows_.push(...selected);
 
         // we need this to get rid of the text selection
-        window.getSelection().removeAllRanges();
+        window.getSelection()?.removeAllRanges();
     }
 
     private applyState(state: DataServiceInputState) {
@@ -102,7 +102,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
                     id: 'c' + i,
                     prop: c.id,
                     name: c.name,
-                    filterText: null as string,
+                    filterText: '',
                     filterProps: [c.id]
                 }));
                 this.orderColumns(columns);
@@ -115,7 +115,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
                 this._unfilteredRows = newData.rows;
                 this.setRowColors();
 
-                const filters = [].concat(columns, this.rootFilter);
+                const filters = concat(columns, [this.rootFilter]);
                 const filteredRows = this.filterRows(filters);
                 this.filterOptions(filteredRows, columns);
 
@@ -170,10 +170,11 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
 
     updateRowsAndOptions() {
         const tableWasEmptyBefore = this.filteredRows.length === 0;
-        const filteredRows = this.filterRows([].concat(this.columns, this.rootFilter));
+        const filters = concat<Filter>(this.columns, [this.rootFilter]);
+        const filteredRows = this.filterRows(filters);
 
         if (this.haveRowsChanged(filteredRows)) {
-            this.filterOptions(filteredRows, [].concat(this.columns, this.rootFilter));
+            this.filterOptions(filteredRows, filters);
 
             if (this.table) {
                 this.table.offset = 0;
@@ -210,7 +211,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
                     // filter is inactive
                     return true;
                 } else {
-                    const filterText: string = filter.filterText.toLowerCase();
+                    const filterText = filter.filterText.toLowerCase();
 
                     return filter.filterProps.some(p => {
                         const propValue = row[p];
@@ -228,7 +229,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
         return filteredRows;
     }
 
-    private filterOptions(rows: any[], columns: FilterColumn[]) {
+    private filterOptions(rows: any[], columns: Pick<FilterColumn, 'filterProps' | 'filteredOptions'>[]) {
         columns.forEach(column => {
             if (column.filterProps.length === 1) {
                 const prop = column.filterProps[0];

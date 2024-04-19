@@ -7,9 +7,9 @@ export class EdgeLabelOffsetUpdater {
     private grabbedNode: CyNode | null = null;
 
     private cy: Cy | null = null;
-    private dragListener: () => void | null = null;
-    private freeOnListener: () => void | null = null;
-    private grabOnListener: (e: any) => void | null = null;
+    private dragListener: (() => void) | null = null;
+    private freeOnListener: (() => void) | null = null;
+    private grabOnListener: ((e: any) => void) | null = null;
 
     private addListener(): void {
         this.addGrabOnListener();
@@ -22,12 +22,12 @@ export class EdgeLabelOffsetUpdater {
             this.addFreeOnListener();
         // eslint-disable-next-line no-extra-bind
         }).bind(this);
-        this.cy.on('grabon', this.grabOnListener);
+        this.cy!.on('grabon', this.grabOnListener!);
     }
 
     private removeGrabOnListener(): void {
         if (this.grabOnListener !== null) {
-            this.cy.removeListener('grabon', this.grabOnListener);
+            this.cy!.removeListener('grabon', this.grabOnListener);
             this.grabOnListener = null;
         }
     }
@@ -36,21 +36,21 @@ export class EdgeLabelOffsetUpdater {
         this.dragListener = (() => {
             if (this.draggedEdges === null) {
                 this.initDraggedEdges(
-                    this.grabbedNode.selected() ?
-                        this.cy.nodes(':selected').edgesWith(':unselected') :
-                        this.grabbedNode.connectedEdges(':simple')
+                    this.grabbedNode!.selected() ?
+                        this.cy!.nodes(':selected').edgesWith(':unselected') :
+                        this.grabbedNode!.connectedEdges(':simple')
                 );
-                this.switchOffEdgeLabels(this.draggedEdges);
+                this.switchOffEdgeLabels(this.draggedEdges!);
             }
         // eslint-disable-next-line no-extra-bind
         }).bind(this);
 
-        this.grabbedNode.on('drag', this.dragListener);
+        this.grabbedNode!.on('drag', this.dragListener!);
     }
 
     private removeDragListener(): void {
         if (this.dragListener !== null) {
-            this.grabbedNode.removeListener('drag', this.dragListener);
+            this.grabbedNode!.removeListener('drag', this.dragListener);
             this.dragListener = null;
         }
         if (this.draggedEdges !== null) {
@@ -66,7 +66,7 @@ export class EdgeLabelOffsetUpdater {
             this.grabbedNode = null;
         // eslint-disable-next-line no-extra-bind
         }).bind(this);
-        this.grabbedNode.on('freeon', this.freeOnListener);
+        this.grabbedNode!.on('freeon', this.freeOnListener!);
     }
 
     private switchOffEdgeLabels(edges: CyElementCollection<CyEdge>): void {
@@ -80,7 +80,7 @@ export class EdgeLabelOffsetUpdater {
 
     private removeFreeOnListener(): void {
         if (this.freeOnListener !== null) {
-            this.grabbedNode.removeListener('freeon', this.freeOnListener);
+            this.grabbedNode!.removeListener('freeon', this.freeOnListener);
             this.freeOnListener = null;
         }
     }
@@ -111,7 +111,7 @@ export class EdgeLabelOffsetUpdater {
     update(useBatch: boolean) {
         if (this.cy !== null) {
             if (useBatch) {
-                this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy.edges()));
+                this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy!.edges()));
             } else {
                 this.updateEdgeLabelOffsets(this.cy.edges());
             }
@@ -126,7 +126,7 @@ export class EdgeLabelOffsetUpdater {
 
     updateGhostEdges() {
         if (this.cy !== null) {
-            this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy.edges('.ghost-element')));
+            this.cy.batch(() => this.updateEdgeLabelOffsets(this.cy!.edges('.ghost-element')));
         }
     }
 

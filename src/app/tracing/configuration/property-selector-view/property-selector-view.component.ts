@@ -40,7 +40,7 @@ export class PropertySelectorViewComponent implements OnChanges {
                     this.otherProperties.find(p => p.id === this.value)
                 );
                 this.isPropNotListed = !prop;
-                this.isPropDataUnavailable = !prop || prop.dataIsUnavailable;
+                this.isPropDataUnavailable = !prop || prop.dataIsUnavailable === true;
             }
         }
     }

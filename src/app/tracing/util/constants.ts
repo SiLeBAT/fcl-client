@@ -1,8 +1,8 @@
-import { Color, GraphType, MapType, DeliveryData, StationData } from '../data.model';
+import { Color, GraphType, MapType, DeliveryData, StationData, GroupType, ObservedType } from '../data.model';
 import { List, Map } from 'immutable';
 import { ExampleData } from '@app/main-page/model/types';
 import * as _ from 'lodash';
-import { Utils } from './non-ui-utils';
+import { concat, Utils } from './non-ui-utils';
 
 interface ColumnDefinition {
     id: string;
@@ -44,56 +44,56 @@ export class Constants {
     static readonly DIALOG_DONT_SAVE = 'Don\'t save and proceed';
 
     private static readonly STATION_DATA: StationData = {
-        id: null,
-        anonymizedName: null,
-        name: null,
-        lat: null,
-        lon: null,
-        incoming: null,
-        outgoing: null,
-        connections: null,
-        invisible: null,
+        id: '',
+        anonymizedName: '',
+        name: '',
+        lat: NaN,
+        lon: NaN,
+        incoming: [],
+        outgoing: [],
+        connections: [],
+        invisible: false,
         expInvisible: false,
-        contained: null,
-        contains: null,
-        isMeta: null,
-        groupType: null,
-        selected: null,
-        observed: null,
-        outbreak: null,
-        crossContamination: null,
-        killContamination: null,
-        weight: null,
-        forward: null,
-        backward: null,
-        score: null,
-        commonLink: null,
-        properties: null
+        contained: false,
+        contains: [],
+        isMeta: false,
+        groupType: GroupType.SIMPLE_CHAIN,
+        selected: false,
+        observed: ObservedType.NONE,
+        outbreak: false,
+        crossContamination: false,
+        killContamination: false,
+        weight: 0,
+        forward: false,
+        backward: false,
+        score: 0,
+        commonLink: false,
+        properties: []
     };
 
     private static readonly DELIVERY_DATA: DeliveryData = {
-        id: null,
-        name: null,
-        lot: null,
-        lotKey: null,
-        dateIn: null,
-        dateOut: null,
-        source: null,
-        target: null,
-        originalSource: null,
-        originalTarget: null,
-        invisible: null,
+        id: '',
+        name: '',
+        lot: '',
+        lotKey: '',
+        dateIn: '',
+        dateOut: '',
+        source: '',
+        target: '',
+        originalSource: '',
+        originalTarget: '',
+        invisible: false,
         expInvisible: false,
-        selected: null,
-        crossContamination: null,
-        killContamination: null,
-        observed: null,
-        outbreak: null,
-        weight: null,
-        forward: null,
-        backward: null,
-        score: null,
-        properties: null
+        selected: false,
+        crossContamination: false,
+        killContamination: false,
+        observed: ObservedType.NONE,
+        outbreak: false,
+        weight: 0,
+        forward: false,
+        backward: false,
+        score: 0,
+        properties: []
     };
 
     static readonly ARROW_STRING = '->';
@@ -106,23 +106,23 @@ export class Constants {
         Object.keys(Constants.DELIVERY_DATA)
     );
 
-    static readonly PROPERTIES: Map<string, { name: string; color: Color }> = Map(
+    static readonly PROPERTIES: Map<string, { name: string; color?: Color }> = Map(
         {
-            id: { name: 'ID', color: null },
-            name: { name: 'Name', color: null },
-            lot: { name: 'Lot', color: null },
-            lat: { name: 'Latitude', color: null },
-            lon: { name: 'Longitude', color: null },
-            dateIn: { name: 'Delivery Date Arrival', color: null },
-            dateOut: { name: 'Delivery Date', color: null },
-            source: { name: 'Source', color: null },
-            target: { name: 'Target', color: null },
-            originalSource: { name: 'Original Source', color: null },
-            originalTarget: { name: 'Original Target', color: null },
-            incoming: { name: 'Incoming', color: null },
-            outgoing: { name: 'Outgoing', color: null },
-            contains: { name: 'Contains', color: null },
-            isMeta: { name: 'Is Meta Station', color: null },
+            id: { name: 'ID' },
+            name: { name: 'Name' },
+            lot: { name: 'Lot' },
+            lat: { name: 'Latitude' },
+            lon: { name: 'Longitude' },
+            dateIn: { name: 'Delivery Date Arrival' },
+            dateOut: { name: 'Delivery Date' },
+            source: { name: 'Source' },
+            target: { name: 'Target' },
+            originalSource: { name: 'Original Source' },
+            originalTarget: { name: 'Original Target' },
+            incoming: { name: 'Incoming' },
+            outgoing: { name: 'Outgoing' },
+            contains: { name: 'Contains' },
+            isMeta: { name: 'Is Meta Station' },
             forward: { name: 'Forward Trace', color: { r: 150, g: 255, b: 75 } },
             backward: { name: 'Backward Trace', color: { r: 255, g: 150, b: 75 } },
             observed: { name: 'Observed', color: { r: 75, g: 150, b: 255 } },
@@ -131,14 +131,14 @@ export class Constants {
                 name: 'Cross Contamination',
                 color: { r: 150, g: 150, b: 150 }
             },
-            killContamination: { name: 'Kill Contamination', color: null },
+            killContamination: { name: 'Kill Contamination' },
             commonLink: { name: 'Common Link', color: { r: 255, g: 255, b: 75 } },
-            score: { name: 'Score', color: null },
+            score: { name: 'Score' },
             weight: { name: 'Weight', color: { r: 255, g: 0, b: 0 } }
         }
     );
     static readonly PROPERTIES_WITH_COLORS = List(
-        Constants.PROPERTIES.filter(p => p.color != null).keys()
+        Constants.PROPERTIES.filter(p => p?.color != null).keys()
     );
 
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
@@ -154,7 +154,7 @@ export class Constants {
     );
 
     static readonly EDGE_WIDTHS = List<number>(_.uniq(
-        [].concat(
+        concat(
             Constants.EXPLICIT_EDGE_WIDTHS,
             Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.toArray()
         ).sort(Utils.compareNumbers)

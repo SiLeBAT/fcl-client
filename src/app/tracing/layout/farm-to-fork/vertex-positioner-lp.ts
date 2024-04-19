@@ -11,11 +11,11 @@ interface ScaledSpace {
     scaledSpace: number;
 }
 
-const OBJ_FUN_LINE_DISTANCE_PENALTY = 10; // 100
-const OBJ_FUN_CENTER_DISTANCE_PENALTY = 1; // 0.01
-const OBJ_FUN_MAX_SIZE_PENALTY = 1; // 0.01
+const OBJ_FUN_LINE_DISTANCE_PENALTY = 10;
+const OBJ_FUN_CENTER_DISTANCE_PENALTY = 1;
+const OBJ_FUN_MAX_SIZE_PENALTY = 1;
 
-export function positionVertices(layers: Vertex[][], vertexDistance: number, maxLayerLength: number | undefined) {
+export function positionVertices(layers: Vertex[][], vertexDistance: number, maxLayerLength?: number) {
     // eslint-disable-next-line
     const vertexPositioner: VertexPositionerLP = new VertexPositionerLP();
     vertexPositioner.positionVertices(layers, vertexDistance, maxLayerLength);
@@ -92,7 +92,7 @@ class VertexPositionerLP {
             const y: number = bottomMargin;
             if (layer.length > 0) {
                 for (const vertex of layer) {
-                    const solverValue: number = lpResult.vars.get(buildPosVarName(vertex));
+                    const solverValue: number = lpResult.vars.get(buildPosVarName(vertex))!;
                     vertex.y = solverValue;
                 }
             }

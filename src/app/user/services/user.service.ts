@@ -26,7 +26,7 @@ import { InvalidServerInputHttpErrorResponse } from '../../core/errors';
     providedIn: 'root'
 })
 export class UserService {
-    private currentUser: TokenizedUser;
+    private currentUser: TokenizedUser | null = null;
 
     private URL = {
         login: '/v1/users/login',
@@ -58,11 +58,11 @@ export class UserService {
     }
 
     activateAccount(token: string): Observable<ActivationResponseDTO> {
-        return this.dataService.patch<ActivationResponseDTO, string>([this.URL.activate, token].join('/'), null);
+        return this.dataService.patch<ActivationResponseDTO, string | null>([this.URL.activate, token].join('/'), null);
     }
 
     adminActivateAccount(adminToken: string): Observable<ActivationResponseDTO> {
-        return this.dataService.patch<ActivationResponseDTO, string>([this.URL.adminactivate, adminToken].join('/'), null);
+        return this.dataService.patch<ActivationResponseDTO, string | null>([this.URL.adminactivate, adminToken].join('/'), null);
     }
 
     login(credentials: LoginCredentials): Observable<TokenizedUserDTO> {
@@ -74,7 +74,7 @@ export class UserService {
     }
 
     confirmNewsletterSubscription(token: string): Observable<NewsConfirmationResponseDTO> {
-        return this.dataService.patch<NewsConfirmationResponseDTO, string>([this.URL.newsconfirmation, token].join('/'), null);
+        return this.dataService.patch<NewsConfirmationResponseDTO, string | null>([this.URL.newsconfirmation, token].join('/'), null);
     }
 
     logout() {
@@ -87,9 +87,12 @@ export class UserService {
         localStorage.setItem('currentUser', JSON.stringify(user));
     }
 
-    getCurrentUser(): TokenizedUser {
+    getCurrentUser(): TokenizedUser | null {
         if (!this.currentUser) {
-            this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const currentUserStr = localStorage.getItem('currentUser');
+            if (currentUserStr) {
+                this.currentUser = JSON.parse(currentUserStr);
+            }
         }
 
         return this.currentUser;

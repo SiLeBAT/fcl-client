@@ -178,8 +178,7 @@ export class DataImporterV0 implements IDataImporter {
                 fclData.groupSettings.push({
                     id: e.id,
                     name: e.name,
-                    contains: e.contains,
-                    groupType: null
+                    contains: e.contains
                 });
             }
             const weight = e.weight != null ? e.weight : (e.outbreak ? 1 : 0);
@@ -235,7 +234,7 @@ export class DataImporterV0 implements IDataImporter {
                 name: e.name != null ? e.name : e.id,
                 lot: e.lot,
                 lotKey: (e.originalSource || e.source) + '|' + (e.name || e.id) + '|' + (e.lot || e.id),
-                dateOut: Utils.dateToString(Utils.stringToDate(e.date)),
+                dateOut: Utils.dateToString(Utils.stringToDate(e.date)) ?? undefined,
                 source: e.originalSource || e.source,
                 target: e.originalTarget || e.target,
                 properties: e.properties != null ? e.properties : properties

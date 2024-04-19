@@ -14,7 +14,7 @@ const mainPageRoutes: Routes =
         {
             path: 'dashboard',
             component: DashboardContainerComponent,
-            canActivate: environment.serverless ? null : [AuthGuard]
+            canActivate: environment.serverless ? undefined : [AuthGuard]
         }
     ];
 

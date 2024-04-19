@@ -9,11 +9,9 @@ import {
     OperationType,
     PropMap,
     LabelPart,
-    HighlightingRule,
-    StationTracingSettings
+    HighlightingRule
 } from '../data.model';
 import * as DataMapper from './data-mappings/data-mappings-v1';
-import * as ExtDataConstants from './ext-data-constants.v1';
 import { Utils } from './../util/non-ui-utils';
 import { createFclElements } from './fcl-elements-creator';
 import {
@@ -22,9 +20,11 @@ import {
     LogicalCondition as ExtLogicalCondition,
     HighlightingRule as ExtHighlightingRule,
     AnonymizationRule as ExtAnonymizationRule,
-    LabelPart as ExtLabelPart
+    LabelPart as ExtLabelPart,
+    Transformation as ExtViewPort,
+    Data as ExtData
 } from './ext-data-model.v1';
-import { createDefaultSettings } from './json-data-creator';
+import * as _ from 'lodash';
 
 export class DataExporter {
 
@@ -32,18 +32,31 @@ export class DataExporter {
     private static readonly INTERNAL_OUTBREAK_ATTRIBUTE = 'outbreak';
     private static readonly INTERNAL_WEIGHT_ATTRIBUTE = 'weight';
 
-    static exportData(fclData: FclData, rawData: JsonData) {
-        rawData.version = VERSION;
-        this.setGroupData(fclData, rawData);
-        this.setTracingData(fclData, rawData);
-        this.setViewData(fclData, rawData);
-        if (!rawData.data) {
-            this.setData(fclData, rawData);
-        }
+    static exportData(fclData: FclData, oldJsonData?: JsonData): JsonData {
+        const newJsonData: JsonData = oldJsonData ?
+            {
+                // JSON.parse(JSON.stringify(oldJsonData));
+                ..._.cloneDeep(oldJsonData),
+                version: VERSION
+            } :
+            {
+                version: VERSION,
+                data: this.createExtData(fclData)
+            };
+
+        newJsonData.settings = {
+            version: VERSION,
+            metaNodes: []
+        };
+        this.setGroupData(fclData, newJsonData);
+        this.setTracingData(fclData, newJsonData);
+        this.setViewData(fclData, newJsonData);
+
+        return newJsonData;
     }
 
-    private static setData(fclData: FclData, rawData: JsonData) {
-        rawData.data = {
+    private static createExtData(fclData: FclData): ExtData {
+        return {
             version: VERSION,
             ...createFclElements(fclData)
         };
@@ -54,30 +67,14 @@ export class DataExporter {
             DataMapper.GROUPTYPE_EXT_TO_INT_MAP
         );
 
-        if (!rawData.settings) {
-            rawData.settings = createDefaultSettings();
-        }
-        rawData.settings.metaNodes = fclData.groupSettings.map(
+        rawData.settings!.metaNodes = fclData.groupSettings.map(
             s => ({
                 id: s.id,
                 name: s.name,
-                type: (intToExtGroupTypeMap.has(s.groupType) ? intToExtGroupTypeMap.get(s.groupType) : null),
+                type: (s.groupType && intToExtGroupTypeMap.has(s.groupType) ? intToExtGroupTypeMap.get(s.groupType) : null),
                 members: s.contains
             })
         );
-    }
-
-    private static getWeight(station: StationTracingSettings): number {
-        const outbreakWeight: number = (station.outbreak === null ? null : (station.outbreak ? 1.0 : 0.0));
-        if (station.weight === null) {
-            return outbreakWeight;
-        } else if (station.outbreak === null) {
-            return null;
-        } else if ((station.weight > 0) !== station.outbreak) {
-            return outbreakWeight;
-        } else {
-            return station.weight;
-        }
     }
 
     private static setTracingData(fclData: FclData, rawData: JsonData) {
@@ -85,75 +82,80 @@ export class DataExporter {
             version: VERSION,
             nodes: fclData.tracingSettings.stations.map(s => ({
                 id: s.id,
-                weight: this.getWeight(s),
+                weight: s.weight,
                 crossContamination: s.crossContamination,
                 killContamination: s.killContamination,
-                observed: s.observed === null ? null : s.observed !== ObservedType.NONE
+                observed: s.observed !== ObservedType.NONE
             })),
             deliveries: fclData.tracingSettings.deliveries.map(s => ({
                 id: s.id,
                 weight: s.weight,
                 crossContamination: s.crossContamination,
                 killContamination: s.killContamination,
-                observed: s.observed === null ? null : s.observed !== ObservedType.NONE
+                observed: s.observed !== ObservedType.NONE
             }))
         };
     }
 
     private static setViewData(fclData: FclData, jsonData: JsonData) {
-        const viewData: ViewData = jsonData.settings && jsonData.settings.view ? jsonData.settings.view : {
-            edge: undefined,
-            node: undefined
+        if (!jsonData.settings) {
+            throw new Error(`jsonData.settings nnot initialized`);
+        }
+        let viewData: ViewData | undefined = jsonData.settings.view;
+
+        viewData = {
+            ...(viewData ?? {}),
+            edge: viewData?.edge ?? { selectedEdges: [] },
+            node: viewData?.node ?? {},
+            graph: viewData?.graph ?? {},
+            gis: viewData?.gis ?? {}
         };
-        if (!viewData.edge) {
-            viewData.edge = {
-                selectedEdges: []
-            };
-        }
-        viewData.edge.invisibleEdges = fclData.graphSettings.highlightingSettings.invisibleDeliveries;
 
-        if (!viewData.node) {
-            viewData.node = {};
-        }
+        viewData.edge!.invisibleEdges = fclData.graphSettings.highlightingSettings.invisibleDeliveries;
+        viewData.node!.invisibleNodes = fclData.graphSettings.highlightingSettings.invisibleStations;
 
-        viewData.node.invisibleNodes = fclData.graphSettings.highlightingSettings.invisibleStations;
+        viewData.showLegend = fclData.graphSettings.showLegend;
+        viewData.node!.skipEdgelessNodes = fclData.graphSettings.skipUnconnectedStations;
 
-        Utils.setProperty(viewData, ExtDataConstants.SHOW_LEGEND, fclData.graphSettings.showLegend);
-        Utils.setProperty(viewData, ExtDataConstants.SKIP_UNCONNECTED_STATIONS, fclData.graphSettings.skipUnconnectedStations);
-
-        viewData.edge.joinEdges = fclData.graphSettings.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE;
-        viewData.edge.mergeDeliveriesType = Utils.createReverseMap(
+        viewData.edge!.joinEdges = fclData.graphSettings.mergeDeliveriesType !== MergeDeliveriesType.NO_MERGE;
+        viewData.edge!.mergeDeliveriesType = Utils.createReverseMap(
             DataMapper.MERGE_DEL_TYPE_EXT_TO_INT_MAP
         ).get(fclData.graphSettings.mergeDeliveriesType);
-        viewData.edge.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
-        viewData.edge.adjustEdgeWidthToNodeSize = fclData.graphSettings.adjustEdgeWidthToNodeSize;
+        viewData.edge!.showMergedDeliveriesCounts = fclData.graphSettings.showMergedDeliveriesCounts;
+        viewData.edge!.adjustEdgeWidthToNodeSize = fclData.graphSettings.adjustEdgeWidthToNodeSize;
 
 
-        Utils.setProperty(viewData, ExtDataConstants.SHOW_GIS, fclData.graphSettings.type === GraphType.GIS);
+        viewData.showGis = fclData.graphSettings.type === GraphType.GIS;
+        const gisViewPort = this.convertInt2ExtViewPort(fclData.graphSettings.gisLayout);
+        viewData.gis!.transformation = gisViewPort;
 
-        Utils.setProperty(viewData, ExtDataConstants.GISGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.gisLayout));
-        Utils.setProperty(viewData, ExtDataConstants.SCHEMAGRAPH_TRANSFORMATION, this.convertLayout(fclData.graphSettings.schemaLayout));
+        const schemaViewPort = this.convertInt2ExtViewPort(fclData.graphSettings.schemaLayout);
+        viewData.graph!.transformation = schemaViewPort;
 
-        Utils.setProperty(viewData, ExtDataConstants.NODE_POSITIONS, Object.keys(fclData.graphSettings.stationPositions).map(key => ({
+        const extNodePositions = Object.keys(fclData.graphSettings.stationPositions).map(key => ({
             id: key,
             position: fclData.graphSettings.stationPositions[key]
-        })));
+        }));
+        viewData.graph!.node = {
+            ...(viewData.graph!.node ?? {}),
+            positions: extNodePositions
+        };
 
-        viewData.graph.node.minSize = fclData.graphSettings.nodeSize;
-        viewData.graph.edge = viewData.graph.edge || {};
-        viewData.graph.edge.minWidth = fclData.graphSettings.edgeWidth;
-        viewData.graph.text = viewData.graph.text || {};
-        viewData.graph.text.fontSize = fclData.graphSettings.fontSize;
+        viewData.graph!.node.minSize = fclData.graphSettings.nodeSize;
+        viewData.graph!.edge = viewData.graph!.edge || {};
+        viewData.graph!.edge.minWidth = fclData.graphSettings.edgeWidth;
+        viewData.graph!.text = viewData.graph!.text || {};
+        viewData.graph!.text.fontSize = fclData.graphSettings.fontSize;
 
-        viewData.gis.node = viewData.gis.node || {};
-        viewData.gis.node.minSize = fclData.graphSettings.nodeSize;
-        viewData.gis.edge = viewData.gis.edge || {};
-        viewData.gis.edge.minWidth = fclData.graphSettings.edgeWidth;
-        viewData.gis.text = viewData.gis.text || {};
-        viewData.gis.text.fontSize = fclData.graphSettings.fontSize;
+        viewData.gis!.node = viewData.gis?.node || {};
+        viewData.gis!.node.minSize = fclData.graphSettings.nodeSize;
+        viewData.gis!.edge = viewData.gis?.edge || {};
+        viewData.gis!.edge.minWidth = fclData.graphSettings.edgeWidth;
+        viewData.gis!.text = viewData.gis?.text || {};
+        viewData.gis!.text.fontSize = fclData.graphSettings.fontSize;
 
-        viewData.edge.selectedEdges = fclData.graphSettings.selectedElements.deliveries.slice();
-        viewData.node.selectedNodes = fclData.graphSettings.selectedElements.stations.slice();
+        viewData.edge!.selectedEdges = fclData.graphSettings.selectedElements.deliveries.slice();
+        viewData.node!.selectedNodes = fclData.graphSettings.selectedElements.stations.slice();
 
         this.setHighlightingSettings(fclData, viewData);
         jsonData.settings.view = viewData;
@@ -178,7 +180,7 @@ export class DataExporter {
             viewData.node.anonymizationRule = extAnoStatRule;
         }
         const intToExtDelPropMap = fclData.source.int2ExtPropMaps.deliveries;
-        viewData.edge.highlightConditions = fclData.graphSettings.highlightingSettings.deliveries.map(rule => ({
+        viewData.edge!.highlightConditions = fclData.graphSettings.highlightingSettings.deliveries.map(rule => ({
             ...this.mapSharedRuleProps(rule, intToExtDelPropMap, intToExtValueTypeMap, intToExtOpTypeMap),
             linePattern: null
         }));
@@ -189,7 +191,7 @@ export class DataExporter {
         intToExtPropMap: PropMap,
         intToExtOpTypeMap: Map<OperationType, string>
     ): ExtAnonymizationRule {
-        const extLabelParts: ExtLabelPart[] = intAnoRule.labelParts.map((part: LabelPart) => {
+        const extLabelParts: ExtLabelPart[] = intAnoRule.labelParts!.map((part: LabelPart) => {
             if (part.property) {
                 return { prefix: part.prefix, property: intToExtPropMap[part.property] };
             } else {
@@ -227,18 +229,18 @@ export class DataExporter {
     }
 
     private static mapLogicalConditions(
-        intLogicalConditions: IntLogicalCondition[][],
+        intLogicalConditions: IntLogicalCondition[][] | null,
         intToExtPropMap: PropMap,
         intToExtOperationTypeMap: Map<OperationType, string>
-    ): ExtLogicalCondition[][] {
-        let extLogicalConditions: ExtLogicalCondition[][] = null;
+    ): ExtLogicalCondition[][] | null {
+        let extLogicalConditions: ExtLogicalCondition[][] | null = null;
 
         if (intLogicalConditions) {
             extLogicalConditions = intLogicalConditions.map((andConditionList: IntLogicalCondition[]) =>
                 andConditionList.map((intCondition: IntLogicalCondition) => {
 
                     let propertyName = intToExtPropMap[intCondition.propertyName];
-                    let operationType = intToExtOperationTypeMap.get(intCondition.operationType);
+                    let operationType = intToExtOperationTypeMap.get(intCondition.operationType)!;
                     let value = intCondition.value;
 
                     if (intCondition.propertyName === this.INTERNAL_OBSERVED_ATTRIBUTE) {
@@ -247,7 +249,7 @@ export class DataExporter {
                                 intCondition.value === (ObservedType.NONE + '') &&
                                 intCondition.operationType === OperationType.NOT_EQUAL
                             ) {
-                                operationType = intToExtOperationTypeMap.get(OperationType.EQUAL);
+                                operationType = intToExtOperationTypeMap.get(OperationType.EQUAL)!;
                                 value = '1';
                             } else {
                                 value = intCondition.value !== (ObservedType.NONE + '') ? '1' : '0';
@@ -263,10 +265,10 @@ export class DataExporter {
                         ) {
                             propertyName = intToExtPropMap[this.INTERNAL_WEIGHT_ATTRIBUTE];
                             if (this.isTrue(value) === (intCondition.operationType === OperationType.EQUAL)) {
-                                operationType = intToExtOperationTypeMap.get(OperationType.GREATER);
+                                operationType = intToExtOperationTypeMap.get(OperationType.GREATER)!;
                                 value = '0';
                             } else {
-                                operationType = intToExtOperationTypeMap.get(OperationType.EQUAL);
+                                operationType = intToExtOperationTypeMap.get(OperationType.EQUAL)!;
                                 value = '0';
                             }
                         } else {
@@ -309,25 +311,25 @@ export class DataExporter {
     }
 
     private static mapValueCondition(
-        intValueCondition: IntValueCondition,
+        intValueCondition: IntValueCondition | null,
         intToExtPropMap: PropMap,
         intToExtValueTypeMap: Map<ValueType, string>
-    ): ExtValueCondition {
+    ): ExtValueCondition | null {
         return intValueCondition === null ?
             null :
             {
                 propertyName: intToExtPropMap[intValueCondition.propertyName],
-                valueType: intToExtValueTypeMap.get(intValueCondition.valueType),
+                valueType: intToExtValueTypeMap.get(intValueCondition.valueType)!,
                 useZeroAsMinimum: intValueCondition.useZeroAsMinimum
             };
     }
 
-    private static mapShapeType(intShapeType: NodeShapeType, intToExtShapeMap: Map<NodeShapeType, string>): string {
-        return intShapeType === null ? null : intToExtShapeMap.get(intShapeType);
+    private static mapShapeType(intShapeType: NodeShapeType | null, intToExtShapeMap: Map<NodeShapeType, string>): string | null {
+        return intShapeType === null ? null : intToExtShapeMap.get(intShapeType)!;
     }
 
-    private static convertLayout(intLayout: Layout): any {
-        if (intLayout === null) { return null; }
+    private static convertInt2ExtViewPort(intLayout: Layout | null): ExtViewPort | undefined {
+        if (!intLayout) { return undefined; }
 
         return {
             scale: { x: intLayout.zoom, y: intLayout.zoom },

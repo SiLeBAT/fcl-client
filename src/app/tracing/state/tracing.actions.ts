@@ -235,7 +235,7 @@ export class SetStationPositionsSOA implements Action {
 export class SetStationPositionsAndLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsAndLayoutSOA;
 
-    constructor(public payload: { stationPositions: { [key: string]: Position }; layout: Layout }) {}
+    constructor(public payload: { stationPositions: { [key: string]: Position }; layout?: Layout }) {}
 }
 
 export class SetSchemaGraphLayoutSOA implements Action {

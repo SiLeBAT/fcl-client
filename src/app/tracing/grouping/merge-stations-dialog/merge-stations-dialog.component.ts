@@ -54,7 +54,7 @@ export class MergeStationsDialogComponent {
     }
 
     onOk() {
-        const payload = this.groupingService.getMergeStationsPayload(this.data.state, this.inputFormControl.value, this.data.memberIds);
+        const payload = this.groupingService.getMergeStationsPayload(this.data.state, this.inputFormControl.value ?? '', this.data.memberIds);
         if (payload) {
             this.store.dispatch(new storeActions.SetStationGroupsSOA(payload));
             this.dialogRef.close();

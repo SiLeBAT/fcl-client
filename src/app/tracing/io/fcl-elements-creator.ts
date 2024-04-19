@@ -1,4 +1,5 @@
 import { FclData } from '../data.model';
+import { concat } from '../util/non-ui-utils';
 import * as DataMapper from './data-mappings/data-mappings-v1';
 
 enum ValueType {
@@ -107,7 +108,7 @@ function createDeliveryRelationTable(fclData: FclData): DataTable {
             { id: columnSourceId, type: ValueType.STRING.toString() },
             { id: columnTargetId, type: ValueType.STRING.toString() }
         ],
-        data: [].concat(...(fclData.fclElements.stations.map(
+        data: concat(...(fclData.fclElements.stations.map(
             station => station.connections.map(
                 con => [
                     { id: columnSourceId, value: con.source },

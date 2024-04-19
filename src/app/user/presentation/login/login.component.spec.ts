@@ -24,8 +24,6 @@ describe('LoginComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(LoginComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 
@@ -111,7 +109,7 @@ describe('LoginComponent', () => {
 
         component.onLogin();
 
-        expect(credentials.email).toBe(email);
-        expect(credentials.password).toBe(password);
+        expect(credentials!.email).toBe(email);
+        expect(credentials!.password).toBe(password);
     });
 });

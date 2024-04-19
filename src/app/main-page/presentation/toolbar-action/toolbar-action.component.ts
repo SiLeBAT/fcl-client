@@ -96,7 +96,9 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onDownloadDataFile() {
-        this.downloadFile.emit(this.fileNameWoExt);
+        if (this.fileNameWoExt) {
+            this.downloadFile.emit(this.fileNameWoExt);
+        }
     }
 
     onSaveImage() {

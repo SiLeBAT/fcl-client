@@ -12,7 +12,7 @@ import {
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
-import { Utils } from '../../util/non-ui-utils';
+import { concat, isNullish, Utils } from '../../util/non-ui-utils';
 import * as ExtDataConstants from '../ext-data-constants.v1';
 import { IDataImporter } from './datatypes';
 import {
@@ -38,6 +38,7 @@ import { InputFormatError, InputDataError } from '../io-errors';
 import { getCenterFromPoints, getDifference } from '../../util/geometry-utils';
 import * as _ from 'lodash';
 import { Constants } from '../../util/constants';
+import { PartialPick } from '@app/tracing/util/utility-types';
 
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
@@ -94,23 +95,24 @@ export class DataImporterV1 implements IDataImporter {
         const propMapper = DataMapper.getStationPropMapper(jsonData);
 
         for (const stationRow of stationRows) {
-            const intStation: StationData = {
-                id: undefined,
+            const intPartStation: PartialPick<StationData, 'id'> = {
                 incoming: [],
                 outgoing: [],
                 connections: [],
                 properties: []
             };
 
-            propMapper.applyValuesFromTableRow(stationRow, intStation);
+            propMapper.applyValuesFromTableRow(stationRow, intPartStation);
 
-            if (intStation.id === undefined || intStation.id === null) {
+            if (intPartStation.id === undefined || intPartStation.id === null) {
                 throw new InputDataError('Missing station id.');
             }
 
-            if (idToStationMap.has(intStation.id)) {
-                throw new InputDataError('Duplicate station id:' + intStation.id);
+            if (idToStationMap.has(intPartStation.id)) {
+                throw new InputDataError('Duplicate station id:' + intPartStation.id);
             }
+
+            const intStation = intPartStation as StationData;
 
             intStations.push(intStation);
             idToStationMap.set(intStation.id, intStation);
@@ -138,44 +140,43 @@ export class DataImporterV1 implements IDataImporter {
 
         for (const deliveryRow of deliveryRows) {
 
-            const intDelivery: DeliveryData = {
-                id: undefined,
-                source: undefined,
-                target: undefined,
+            const intPartDelivery: PartialPick<DeliveryData, 'id' | 'source' | 'target'> = {
                 properties: []
             };
 
-            propMapper.applyValuesFromTableRow(deliveryRow, intDelivery);
+            propMapper.applyValuesFromTableRow(deliveryRow, intPartDelivery as DeliveryData);
 
-            if (intDelivery.id === undefined || intDelivery.id === null) {
+            if (intPartDelivery.id === undefined || intPartDelivery.id === null) {
                 throw new InputDataError('Missing delivery id.');
             }
 
-            if (idToDeliveryMap.has(intDelivery.id)) {
-                throw new InputDataError('Duplicate delivery id:' + intDelivery.id);
+            if (idToDeliveryMap.has(intPartDelivery.id)) {
+                throw new InputDataError('Duplicate delivery id:' + intPartDelivery.id);
             }
 
-            if (intDelivery.source === undefined || intDelivery.source === null) {
-                throw new InputDataError('Delivery source is missing for id:' + intDelivery.id);
+            if (intPartDelivery.source === undefined || intPartDelivery.source === null) {
+                throw new InputDataError('Delivery source is missing for id:' + intPartDelivery.id);
             }
 
-            if (!idToStationMap.has(intDelivery.source)) {
-                throw new InputDataError('Delivery source with id "' + intDelivery.source + '" is unkown.');
+            if (!idToStationMap.has(intPartDelivery.source)) {
+                throw new InputDataError('Delivery source with id "' + intPartDelivery.source + '" is unkown.');
             }
 
-            if (intDelivery.target === undefined || intDelivery.target === null) {
-                throw new InputDataError('Delivery target is missing for id:' + intDelivery.id);
+            if (intPartDelivery.target === undefined || intPartDelivery.target === null) {
+                throw new InputDataError('Delivery target is missing for id:' + intPartDelivery.id);
             }
 
-            if (!idToStationMap.has(intDelivery.target)) {
-                throw new InputDataError('Delivery target with id "' + intDelivery.target + '" is unkown.');
+            if (!idToStationMap.has(intPartDelivery.target)) {
+                throw new InputDataError('Delivery target with id "' + intPartDelivery.target + '" is unkown.');
             }
+
+            const intDelivery = intPartDelivery as DeliveryData;
 
             intDelivery.lotKey = intDelivery.lotKey ||
                     (intDelivery.source + '|' + (intDelivery.name || intDelivery.id) + '|' + (intDelivery.lot || intDelivery.id));
 
-            idToStationMap.get(intDelivery.source).outgoing.push(intDelivery.id);
-            idToStationMap.get(intDelivery.target).incoming.push(intDelivery.id);
+            idToStationMap.get(intDelivery.source)!.outgoing.push(intDelivery.id);
+            idToStationMap.get(intDelivery.target)!.incoming.push(intDelivery.id);
             intDeliveries.push(intDelivery);
             idToDeliveryMap.set(intDelivery.id, intDelivery);
         }
@@ -202,31 +203,30 @@ export class DataImporterV1 implements IDataImporter {
 
         for (const del2DelRow of del2DelRows) {
 
-            const connection: Connection = {
-                source: undefined,
-                target: undefined
-            };
+            const partConnection: PartialPick<Connection, 'source' | 'target'> = {};
 
-            propMapper.applyValuesFromTableRow(del2DelRow, connection);
+            propMapper.applyValuesFromTableRow(del2DelRow, partConnection);
 
-            if (connection.source === undefined || connection.source === null) {
+            if (partConnection.source === undefined || partConnection.source === null) {
                 throw new InputDataError('Missing delivery to delivery source.');
             }
 
-            if (!idToDeliveryMap.has(connection.source)) {
-                throw new InputDataError('Unkown delivery to delivery source "' + connection.source + '".');
+            if (!idToDeliveryMap.has(partConnection.source)) {
+                throw new InputDataError('Unkown delivery to delivery source "' + partConnection.source + '".');
             }
 
-            if (connection.target === undefined || connection.target === null) {
+            if (partConnection.target === undefined || partConnection.target === null) {
                 throw new InputDataError('Missing delivery to delivery target.');
             }
 
-            if (!idToDeliveryMap.has(connection.target)) {
-                throw new InputDataError('Unkown delivery to delivery target "' + connection.target + '".');
+            if (!idToDeliveryMap.has(partConnection.target)) {
+                throw new InputDataError('Unkown delivery to delivery target "' + partConnection.target + '".');
             }
 
-            const sourceDelivery: DeliveryData = idToDeliveryMap.get(connection.source);
-            const targetDelivery: DeliveryData = idToDeliveryMap.get(connection.target);
+            const connection = partConnection as Connection;
+
+            const sourceDelivery: DeliveryData = idToDeliveryMap.get(connection.source)!;
+            const targetDelivery: DeliveryData = idToDeliveryMap.get(connection.target)!;
 
             if (sourceDelivery.target !== targetDelivery.source) {
                 throw new InputDataError('Invalid delivery relation: ' + JSON.stringify(del2DelRow));
@@ -236,7 +236,7 @@ export class DataImporterV1 implements IDataImporter {
 
             if (!idToConnectionMap.has(conId)) {
                 idToConnectionMap.set(conId, connection);
-                idToStationMap.get(idToDeliveryMap.get(connection.source).target).connections.push(connection);
+                idToStationMap.get(idToDeliveryMap.get(connection.source)!.target)!.connections.push(connection);
             }
         }
     }
@@ -271,11 +271,10 @@ export class DataImporterV1 implements IDataImporter {
             const intGroup: GroupData = {
                 id: extGroup.id,
                 name: extGroup.name || extGroup.id,
-                contains: extGroup.members,
-                groupType: null
+                contains: extGroup.members
             };
 
-            if (extGroup.type !== null) {
+            if (!isNullish(extGroup.type)) {
                 if (!DataMapper.GROUPTYPE_EXT_TO_INT_MAP.has(extGroup.type)) {
                     throw new SyntaxError(
                         'Unknown metanode type "' +
@@ -377,7 +376,7 @@ export class DataImporterV1 implements IDataImporter {
                 throw new InputDataError('Tracing-data-import: Delivery id "' + element.id + '" is unknown.');
             }
 
-            const delivery: DeliveryData = idToDeliveryMap.get(element.id);
+            const delivery: DeliveryData = idToDeliveryMap.get(element.id)!;
 
             this.checkTracingProps(
                 element,
@@ -407,7 +406,7 @@ export class DataImporterV1 implements IDataImporter {
                 killContamination: false,
                 outbreak: false
             })),
-            stations: [].concat(
+            stations: concat(
                 fclData.fclElements.stations.map(s => s.id),
                 fclData.groupSettings.map(g => g.id)
             ).map(id => ({
@@ -553,7 +552,7 @@ export class DataImporterV1 implements IDataImporter {
                 fclData.graphSettings.highlightingSettings.stations = extStatHighlightingRules.map((extRule, extRuleIndex) => (
                     {
                         id: 'SHR' + extRuleIndex,
-                        name: extRule.name,
+                        name: extRule.name ?? '',
                         showInLegend: extRule.showInLegend === true,
                         userDisabled: extRule.disabled === true,
                         autoDisabled: false,
@@ -593,7 +592,7 @@ export class DataImporterV1 implements IDataImporter {
                 fclData.graphSettings.highlightingSettings.deliveries = extDelHighlightingRules.map((extRule, extRuleIndex) => (
                     {
                         id: 'DHR' + extRuleIndex,
-                        name: extRule.name,
+                        name: extRule.name ?? '',
                         showInLegend: extRule.showInLegend === true,
                         userDisabled: extRule.disabled === true,
                         autoDisabled: false,
@@ -615,7 +614,7 @@ export class DataImporterV1 implements IDataImporter {
 
     private convertExternalAnoRule(extAnoRule: ExtAnonymizationRule, extToIntPropMap: Map<string, string>): HighlightingRule {
         const defaultIntAnoHRule = createDefaultStationAnonymizationLabelHRule();
-        let labelParts = extAnoRule.labelParts.map(
+        let labelParts = (extAnoRule.labelParts ?? []).map(
             p => (
                 p.property ?
                     { prefix: p.prefix, property: extToIntPropMap.get(p.property) } :
@@ -624,7 +623,7 @@ export class DataImporterV1 implements IDataImporter {
         );
         const indexParts = labelParts.filter(p => p.useIndex !== undefined);
         if (indexParts.length === 0) {
-            labelParts.push(...defaultIntAnoHRule.labelParts.filter(p => p.useIndex !== undefined));
+            labelParts.push(...defaultIntAnoHRule.labelParts!.filter(p => p.useIndex !== undefined));
         } else if (indexParts.length > 1) {
             labelParts = _.difference(labelParts, indexParts.slice(1));
         }
@@ -632,22 +631,18 @@ export class DataImporterV1 implements IDataImporter {
         const intAnoHRule: HighlightingRule = {
             ...defaultIntAnoHRule,
             labelPrefix: extAnoRule.labelPrefix,
-            userDisabled: extAnoRule.disabled,
-            labelParts: extAnoRule.labelParts.map(
-                p => p.property ?
-                    { prefix: p.prefix, property: extToIntPropMap.get(p.property) } :
-                    { prefix: p.prefix, useIndex: p.useIndex || false }
-            ),
-            logicalConditions: this.mapLogicalConditions(extAnoRule.logicalConditions, extToIntPropMap)
+            userDisabled: extAnoRule.disabled === true,
+            labelParts: labelParts,
+            logicalConditions: this.mapLogicalConditions(extAnoRule.logicalConditions ?? null, extToIntPropMap)
         };
         return intAnoHRule;
     }
 
-    private mapLogicalConditions(
-        extLogicalConditions: ExtLogicalCondition[][],
+    private mapLogicalConditions<T extends ExtLogicalCondition[][] | null, R extends T extends null ? null : IntLogicalCondition[][]>(
+        extLogicalConditions: T,
         extToIntPropMap: Map<string, string>
-    ): IntLogicalCondition[][] {
-        let intLogicalConditions: IntLogicalCondition[][] = null;
+    ): R {
+        let intLogicalConditions: IntLogicalCondition[][] | null = null;
 
         if (extLogicalConditions) {
             intLogicalConditions = extLogicalConditions.map((andConditionList: ExtLogicalCondition[]) =>
@@ -689,30 +684,32 @@ export class DataImporterV1 implements IDataImporter {
                 }));
         }
 
-        return intLogicalConditions;
+        return intLogicalConditions as R;
     }
 
-    private mapLabelProperty(labelProperty: string, extToIntPropMap: Map<string, string>): string {
-        let newLabelProperty: string = null;
+    private mapLabelProperty<T extends string | null, R extends(T extends null ? null : string)>(
+        labelProperty: T, extToIntPropMap: Map<string, string>
+    ): R {
+        let newLabelProperty: string | null = null;
 
         if (labelProperty) {
             if (extToIntPropMap.has(labelProperty)) {
-                newLabelProperty = extToIntPropMap.get(labelProperty);
+                newLabelProperty = extToIntPropMap.get(labelProperty)!;
             } else {
                 newLabelProperty = labelProperty;
             }
         }
 
-        return newLabelProperty;
+        return newLabelProperty as R;
     }
 
-    private mapValueCondition(extValueCondition: ExtValueCondition, extToIntPropMap: Map<string, string>): IntValueCondition {
-        let intValueCondition: IntValueCondition = null;
+    private mapValueCondition(extValueCondition: ExtValueCondition | null, extToIntPropMap: Map<string, string>): IntValueCondition | null {
+        let intValueCondition: IntValueCondition | null = null;
 
         if (extValueCondition) {
             intValueCondition = {
-                propertyName: this.mapLabelProperty(extValueCondition.propertyName, extToIntPropMap),
-                valueType: this.mapValueType(extValueCondition.valueType),
+                propertyName: this.mapLabelProperty(extValueCondition.propertyName, extToIntPropMap)!,
+                valueType: this.mapValueType(extValueCondition.valueType)!,
                 useZeroAsMinimum: extValueCondition.useZeroAsMinimum
             };
         }
@@ -721,41 +718,36 @@ export class DataImporterV1 implements IDataImporter {
     }
 
     private mapValueType(extValueType: string): ValueType {
-        let intValueType: ValueType = null;
-
         if (DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.has(extValueType)) {
-            intValueType = DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
+            const intValueType = DataMapper.VALUE_TYPE_EXT_TO_INT_MAP.get(extValueType);
+            return intValueType;
         } else {
             throw new Error(`Invalid ValueCondition.valueType: ${extValueType}`);
         }
-
-        return intValueType;
     }
 
     private mapOperationType(extOperationType: string): OperationType {
-        let intOperationType: OperationType = null;
-
         if (DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.has(extOperationType)) {
-            intOperationType = DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
+            const intOperationType = DataMapper.OPERATION_TYPE_EXT_TO_INT_MAP.get(extOperationType);
+            return intOperationType;
         } else {
             throw new InputDataError(`Invalid LogicalCondition.operationType: ${extOperationType}`);
         }
-
-        return intOperationType;
     }
 
-    private mapShapeType(extShapeType: string): NodeShapeType {
-        let intShapeType: NodeShapeType = null;
-
-        if (extShapeType) {
+    private mapShapeType<T extends string | null, R extends T extends null ? null : NodeShapeType>(
+        extShapeType: T
+    ): R {
+        if (extShapeType !== null) {
             if (DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.has(extShapeType)) {
-                intShapeType = DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.get(extShapeType);
+                const intShapeType = DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP.get(extShapeType);
+                return intShapeType as R;
             } else {
                 throw new InputDataError(`Invalid shape: ${extShapeType}`);
             }
         }
 
-        return intShapeType;
+        return null as R;
     }
 
     private convertExternalPositions(
@@ -764,13 +756,13 @@ export class DataImporterV1 implements IDataImporter {
         idToStationMap: Map<string, StationData>,
         idToGroupMap: Map<string, GroupData>
     ) {
-        if (viewData.graph === null || viewData.graph.node === null || viewData.graph.node.positions === null) {
+        const extNodePositions = viewData.graph?.node?.positions;
+
+        if (!extNodePositions) {
             return;
         }
 
-        const nodePositions = viewData.graph.node.positions;
-
-        for (const nodePosition of nodePositions) {
+        for (const nodePosition of extNodePositions) {
             if (nodePosition.id == null) {
                 throw new InputDataError('Node position id is missing.');
             }

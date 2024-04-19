@@ -14,8 +14,8 @@ export class EdgeColorEditViewComponent extends AbstractRuleEditViewComponent<Co
 
     private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select colour as well as conditions';
 
-    get color(): Color {
-        return this.rule.color;
+    get color(): Color | undefined{
+        return this.rule?.color;
     }
 
     get disabledActionToolTip(): string {

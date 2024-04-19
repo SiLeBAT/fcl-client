@@ -1,7 +1,7 @@
 import { StationData, DeliveryData, StationId } from '../../data.model';
 import { extractLayersFromPositions } from './layer-extractor';
 import { assignToColumns } from './column-assigner';
-import { Utils } from './../../util/non-ui-utils';
+import { concat, Utils } from './../../util/non-ui-utils';
 import { Position } from './datatypes';
 import { setFarmToForkPositions, FoodChainOrientation, getFoodChainOrientation } from './farm-to-fork';
 
@@ -20,20 +20,20 @@ function createIndexMap<T>(arrays: T[][]): Map<T, number> {
     return result;
 }
 
-function createGrid(layers: StationData[][], columns: StationData[][]): StationData[][] {
+function createGrid(layers: StationData[][], columns: StationData[][]): (StationData | null)[][] {
     const layerMap: Map<StationData, number> = createIndexMap(layers);
     const columnMap: Map<StationData, number> = createIndexMap(columns);
 
-    const result: StationData[][] = Utils.getMatrix(layers.length, columns.length, null as StationData);
-    for (const station of [].concat(...layers)) {
-        const layerIndex = layerMap.get(station);
-        const columnIndex = columnMap.get(station);
-        if (result[layerIndex][columnIndex] !== null) {
+    const stationGrid = Utils.getMatrix<StationData | null>(layers.length, columns.length, null);
+    for (const station of concat(...layers)) {
+        const layerIndex = layerMap.get(station)!;
+        const columnIndex = columnMap.get(station)!;
+        if (stationGrid[layerIndex][columnIndex] !== null) {
             throw new Error('Non unique grid mapping detected.');
         }
-        result[layerIndex][columnIndex] = station;
+        stationGrid[layerIndex][columnIndex] = station;
     }
-    return result;
+    return stationGrid;
 }
 
 /**
@@ -86,7 +86,7 @@ function getTopDownPositions(
  * @param statIdToPosMap station id => station position
  * @return A 2D station array (first index is the layer index, 2nd index is the column index)
  */
-export function assignToGrid(data: FclElements, statIdToPosMap: Record<StationId, Position>) {
+export function assignToGrid(data: FclElements, statIdToPosMap: Record<StationId, Position>): (StationData | null)[][] {
     let orientation = getFoodChainOrientation(data, statIdToPosMap);
     if (orientation === undefined) {
         setFarmToForkPositions(data, statIdToPosMap);

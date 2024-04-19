@@ -223,12 +223,12 @@ export interface GraphElementData {
 
 export interface GraphServiceData extends GraphElementData, DataServiceData {
     statIdToNodeDataMap: Record<StationId, CyNodeData>;
-    idToNodeMap?: Record<NodeId, CyNodeData>;
+    idToNodeMap: Record<NodeId, CyNodeData>;
     delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
     nodeSel: Record<NodeId, boolean>;
     edgeSel: Record<EdgeId, boolean>;
     nodeAndEdgePropsUpdatedFlag: Record<string, never>;
-    ghostElements: GraphElementData;
+    ghostElements: GraphElementData | null;
     hoverEdges: EdgeId[];
     selectedElements: SelectedGraphElements;
 }

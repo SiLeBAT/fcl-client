@@ -77,7 +77,7 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.rule !== undefined) {
+        if (changes.rule !== undefined && this.rule) {
             this.rule = {
                 ...this.rule,
                 isValid: isEditRuleValid(this.rule)
@@ -94,15 +94,21 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
     }
 
     onAddSelection(): void {
-        this.addSelection.emit(this.rule);
+        if (this.rule) {
+            this.addSelection.emit(this.rule);
+        }
     }
 
     onRemoveSelection(): void {
-        this.removeSelection.emit(this.rule);
+        if (this.rule) {
+            this.removeSelection.emit(this.rule);
+        }
     }
 
     onApplyRule(): void {
-        this.applyRule.emit(this.rule);
+        if (this.rule) {
+            this.applyRule.emit(this.rule);
+        }
     }
 
     onCancelRule(): void {
@@ -110,12 +116,14 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
     }
 
     onOkRule(): void {
-        this.okRule.emit(this.rule);
+        if (this.rule) {
+            this.okRule.emit(this.rule);
+        }
     }
 
     protected changeRule(ruleChange: Partial<T | EditRule>): void {
         this.rule = {
-            ...this.rule,
+            ...this.rule!,
             ...ruleChange
         };
         validateEditRule(this.rule);

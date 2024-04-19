@@ -5,7 +5,7 @@ import {
     MapType,
     Size, MapConfig
 } from '../../../data.model';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { createOpenLayerMap, updateMapType, updateVectorLayerStyle } from '@app/tracing/util/map-utils';
 
 interface TypedSimpleChange<T> extends SimpleChange {
@@ -45,7 +45,7 @@ export class GeoMapComponent implements OnChanges {
             if (this.map === null) {
                 this.initMap(mapConfigChange.currentValue);
             } else {
-                this.updateMap(mapConfigChange.currentValue, mapConfigChange.previousValue);
+                this.updateMap(mapConfigChange.currentValue, mapConfigChange.previousValue!);
             }
         }
     }
@@ -69,13 +69,13 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private updateMapType(mapConfig: MapConfig): void {
-        updateMapType(this.map, mapConfig);
+        updateMapType(this.map!, mapConfig);
     }
 
     private updateMapView(mapConfig: MapConfig) {
         if (mapConfig.layout !== null) {
             const size = this.getSize();
-            this.map.setView(UIUtils.panZoomToView(
+            this.map!.setView(UIUtils.panZoomToView(
                 mapConfig.layout.pan,
                 mapConfig.layout.zoom,
                 size.width, size.height
@@ -102,7 +102,7 @@ export class GeoMapComponent implements OnChanges {
                 newMapConfig.lineWidth !== oldMapConfig.lineWidth
             )
         ) {
-            updateVectorLayerStyle(this.map, newMapConfig);
+            updateVectorLayerStyle(this.map!, newMapConfig);
         }
         if (newMapConfig.layout !== oldMapConfig.layout) {
             this.updateMapView(newMapConfig);

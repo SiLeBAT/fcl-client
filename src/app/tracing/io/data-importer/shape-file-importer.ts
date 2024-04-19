@@ -3,7 +3,6 @@ import { MapType, ShapeFileData } from '../../data.model';
 import { createOpenLayerMap, isProjectionSupported } from '../../util/map-utils';
 import { InputDataError, InputFormatError } from '../io-errors';
 import { getJsonFromFile } from '../io-utils';
-// const geojsonHintObject = require('../../../../assets/geojsonhint/object');
 import geojsonHintObject from '../../../../assets/geojsonhint/object';
 
 const ERROR_OLD_STYLE_CRS = 'old-style crs member is not recommended';
@@ -24,7 +23,12 @@ export async function getShapeFileData(file: File): Promise<ShapeFileData> {
     const jsonData = await getJsonFromFile(file);
     try {
         // 1. test: can an open layer map be created
-        createOpenLayerMap({ mapType: MapType.SHAPE_FILE, shapeFileData: jsonData, lineColor: { r: 0, g: 0, b: 0 }, lineWidth: 0.5 }, null);
+        createOpenLayerMap({
+            mapType: MapType.SHAPE_FILE,
+            shapeFileData: jsonData,
+            lineColor: { r: 0, g: 0, b: 0 },
+            lineWidth: 0.5 }
+        );
         return jsonData;
     } catch (error) {
         // there is a problem

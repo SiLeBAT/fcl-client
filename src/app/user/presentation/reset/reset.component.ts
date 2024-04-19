@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, Input, ElementRef } from '@angular/core';
-import { Validators, FormControl, FormGroup } from '@angular/forms';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Validators, FormControl, FormGroup, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { ValidationError } from '@app/core/model';
 import { NewPasswordRequestDTO } from '../../../user/models/user.model';
 
@@ -13,24 +13,18 @@ interface ResetForm {
     templateUrl: './reset.component.html',
     styleUrls: ['./reset.component.scss']
 })
-export class ResetComponent implements OnInit {
+export class ResetComponent {
 
     @Input() serverValidationErrors: ValidationError[] = [];
     // eslint-disable-next-line @angular-eslint/no-output-native
     @Output() reset = new EventEmitter<NewPasswordRequestDTO>();
 
-    resetForm: FormGroup<ResetForm>;
-
-    constructor(public elementRef: ElementRef) {}
-
-    ngOnInit() {
-        this.resetForm = new FormGroup<ResetForm>({
-            password1: new FormControl<string | null>(null, [
-                Validators.required
-            ]),
-            password2: new FormControl<string | null>(null)
-        }, this.passwordConfirmationValidator);
-    }
+    resetForm = new FormGroup<ResetForm>({
+        password1: new FormControl<string | null>(null, [
+            Validators.required
+        ]),
+        password2: new FormControl<string | null>(null)
+    }, this.passwordConfirmationValidator as ValidatorFn);
 
     validateField(fieldName: string) {
         return this.resetForm.controls[fieldName].valid
@@ -39,12 +33,12 @@ export class ResetComponent implements OnInit {
 
     onReset() {
         const password: NewPasswordRequestDTO = {
-            password: this.resetForm.value.password1
+            password: this.resetForm.value.password1 ?? ''
         };
         this.reset.emit(password);
     }
 
-    private passwordConfirmationValidator(fg: FormGroup<ResetForm>) {
+    private passwordConfirmationValidator(fg: FormGroup<ResetForm>): ValidationErrors | null {
         const pw1 = fg.controls.password1;
         const pw2 = fg.controls.password2;
 

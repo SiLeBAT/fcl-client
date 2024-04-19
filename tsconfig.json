@@ -15,14 +15,15 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
 
         // the following compiler flag are planned to be set
         // "alwaysStrict": true,
         // "noImplicitAny": true,
         // "noImplicitThis": true,
-        // "strictNullChecks": true,
+        "strictNullChecks": true,
         // "strictBindCallApply": true,
-        // "strictFunctionTypes": true,
+        "strictFunctionTypes": true,
         // "strictPropertyInitialization": true,
         // "strict": true
 

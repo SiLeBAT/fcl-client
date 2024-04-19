@@ -5,6 +5,7 @@ import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
 import { getCompleteConditionsCount, getNonEmptyConditionCount } from '../edit-rule-validaton';
 import { LabelPart } from '@app/tracing/data.model';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { concat } from '@app/tracing/util/non-ui-utils';
 
 @Component({
     selector: 'fcl-anonymization-rule-edit-view',
@@ -37,10 +38,10 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
 
     get isEditViewComplete(): boolean {
         if (this.useConditions_) {
-            const completeConditionsCount = getCompleteConditionsCount(this.rule.complexFilterConditions);
+            const completeConditionsCount = getCompleteConditionsCount(this.rule!.complexFilterConditions);
             return (
                 completeConditionsCount >= 1 &&
-                completeConditionsCount === getNonEmptyConditionCount(this.rule.complexFilterConditions) &&
+                completeConditionsCount === getNonEmptyConditionCount(this.rule!.complexFilterConditions) &&
                 super.isEditViewComplete
             );
         } else {
@@ -54,7 +55,7 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.rule !== undefined && changes.rule.isFirstChange()) {
-            this.useConditions_ = this.rule.complexFilterConditions.length > 0;
+            this.useConditions_ = this.rule!.complexFilterConditions.length > 0;
         }
         if (changes.favouriteProperties || changes.otherProperties) {
             this._propId2Name = {};
@@ -67,25 +68,29 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
     }
 
     onAddLabelPart() {
-        let labelParts = this.rule.labelParts.slice();
-        const indexOfLastPropertyPart = _.findLastIndex(labelParts, (p: LabelPart) => p.useIndex === undefined);
-        const newPartIndex = indexOfLastPropertyPart + 1;
-        const newPart: LabelPart = {
-            prefix: newPartIndex === 0 && this.rule.labelPrefix.length === 0 ? '' : ' ',
-            property: null
-        };
-        labelParts = [].concat(
-            labelParts.slice(0, newPartIndex),
-            [newPart],
-            labelParts.slice(newPartIndex)
-        );
-        this.changeRule({ labelParts: labelParts });
+        if (this.rule) {
+            let labelParts = this.rule.labelParts.slice();
+            const indexOfLastPropertyPart = _.findLastIndex(labelParts, (p: LabelPart) => p.useIndex === undefined);
+            const newPartIndex = indexOfLastPropertyPart + 1;
+            const newPart: LabelPart = {
+                prefix: newPartIndex === 0 && this.rule.labelPrefix.length === 0 ? '' : ' ',
+                property: null
+            };
+            labelParts = concat(
+                labelParts.slice(0, newPartIndex),
+                [newPart],
+                labelParts.slice(newPartIndex)
+            );
+            this.changeRule({ labelParts: labelParts });
+        }
     }
 
     onRemoveLabelPart(index: number) {
-        const labelParts = this.rule.labelParts.slice();
-        labelParts.splice(index, 1);
-        this.changeRule({ labelParts: labelParts });
+        if (this.rule) {
+            const labelParts = this.rule.labelParts.slice();
+            labelParts.splice(index, 1);
+            this.changeRule({ labelParts: labelParts });
+        }
     }
 
 
@@ -110,15 +115,17 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
     }
 
     onDrop(event: CdkDragDrop<string[]>) {
-        if (event.previousIndex !== event.currentIndex) {
-            let labelParts = this.rule.labelParts.slice();
-            const movedPart = labelParts.splice(event.previousIndex, 1)[0];
-            labelParts = [].concat(
-                labelParts.slice(0, event.currentIndex),
-                [movedPart],
-                labelParts.slice(event.currentIndex)
-            );
-            this.changeRule({ labelParts: labelParts });
+        if (this.rule) {
+            if (event.previousIndex !== event.currentIndex) {
+                let labelParts = this.rule.labelParts.slice();
+                const movedPart = labelParts.splice(event.previousIndex, 1)[0];
+                labelParts = concat(
+                    labelParts.slice(0, event.currentIndex),
+                    [movedPart],
+                    labelParts.slice(event.currentIndex)
+                );
+                this.changeRule({ labelParts: labelParts });
+            }
         }
     }
 
@@ -131,7 +138,7 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
     }
 
     private changeLabelPart(change: Partial<LabelPart>, index: number): void {
-        const labelParts = this.rule.labelParts.slice();
+        const labelParts = this.rule!.labelParts.slice();
         labelParts[index] = {
             ...labelParts[index],
             ...change

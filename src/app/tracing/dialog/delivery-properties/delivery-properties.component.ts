@@ -52,7 +52,7 @@ export class DeliveryPropertiesComponent {
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
         Object.keys(this.data.delivery).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
             .forEach(key => {
-                const column: TableColumn = columns.find(column => column.id === key);
+                const column = columns.find(column => column.id === key);
                 const label = column !== undefined ? column.name : Constants.PROPERTIES.get(key).name;
                 const value = this.data.delivery[key];
                 properties[key] = {
@@ -62,7 +62,7 @@ export class DeliveryPropertiesComponent {
             });
 
         this.data.delivery.properties.forEach(prop => {
-            const column: TableColumn = columns.find(column => column.id === prop.name);
+            const column = columns.find(column => column.id === prop.name);
             const label = column !== undefined ? column.name : this.convertPropNameToLabel(prop.name);
             properties[prop.name] = {
                 label: label,
@@ -111,7 +111,7 @@ export class DeliveryPropertiesComponent {
             };
             properties['originalSourceName'] = {
                 label: 'Original Source',
-                value: this.data.originalSource.name
+                value: this.data.originalSource.name ?? ''
             };
         }
 
@@ -122,17 +122,17 @@ export class DeliveryPropertiesComponent {
             };
             properties['originalTargetName'] = {
                 label: 'Original Target',
-                value: this.data.originalTarget.name
+                value: this.data.originalTarget.name ?? ''
             };
         }
 
         properties['sourceName'] = {
             label: 'Source',
-            value: this.data.source.name
+            value: this.data.source.name ?? ''
         };
         properties['targetName'] = {
             label: 'Target',
-            value: this.data.target.name
+            value: this.data.target.name ?? ''
         };
     }
 

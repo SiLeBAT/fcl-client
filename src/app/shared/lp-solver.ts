@@ -53,7 +53,7 @@ export class LPResult {
         this.feasible = result['feasible'];
         this.bounded = result['bounded'];
         this.objective = result['result'];
-        this.vars = new Map();
+        this.vars = new Map<string, number>();
 
         for (const variableId of lpModel.getVariableIds()) {
             this.vars.set(variableId, result[variableId]);
@@ -99,14 +99,14 @@ export class LPModel {
         optimize: LPModel.OBJECTIVE
     };
     private constraintCount: number = 0;
-    private constraintsLabelToIdMap: Map<string, string> = new Map();
-    private constraintIdToLabelMap: Map<string, string> = new Map();
+    private constraintsLabelToIdMap = new Map<string, string>();
+    private constraintIdToLabelMap = new Map<string, string>();
     private constraintIds: string[] = [];
 
     addConstraint(
         constraintLabel: string,
-        min: number,
-        max: number,
+        min: number | null,
+        max: number | null,
         term: Term
     ) {
         const constraintId: string = 'C' + (++this.constraintCount).toString();
@@ -220,12 +220,18 @@ export class LPModel {
             const checkUB = checkBounds && constraint.ub !== null;
             const lbMsg = (
                 checkLB ?
-                    this.getResidualMsg(constraint.lb, constraint.termValue) + this.getViolationMsg(constraint.lb, constraint.termValue) :
+                    (
+                        this.getResidualMsg(constraint.lb!, constraint.termValue!) +
+                        this.getViolationMsg(constraint.lb!, constraint.termValue!)
+                    ) :
                     ''
             );
             const ubMsg = (
                 checkUB ?
-                    this.getViolationMsg(constraint.termValue, constraint.ub) + this.getResidualMsg(constraint.termValue, constraint.ub) :
+                    (
+                        this.getViolationMsg(constraint.termValue!, constraint.ub!) +
+                        this.getResidualMsg(constraint.termValue!, constraint.ub!)
+                    ) :
                     ''
             );
             const text =
@@ -252,7 +258,7 @@ export class LPModel {
         console.log('Objective:\n' + objectiveText);
     }
 
-    printVars(lpResult: LPResult | null): void {
+    printVars(lpResult: LPResult): void {
         const variableIds = this.getSortedVariableIds();
         // eslint-disable-next-line no-console
         console.log('Variables:');
@@ -282,7 +288,7 @@ export class LPModel {
 
     private getSortedConstraintIds(): string[] {
         return this.getConstraintIds().sort(
-            (conId1, conId2) => this.constraintIdToLabelMap.get(conId1).localeCompare(this.constraintIdToLabelMap.get(conId2))
+            (conId1, conId2) => this.constraintIdToLabelMap.get(conId1)!.localeCompare(this.constraintIdToLabelMap.get(conId2)!)
         );
     }
 
@@ -313,7 +319,7 @@ export class LPModel {
     }
 
     private getVariableValue(variableId: VariableId, lpResult: LPResult): number {
-        return lpResult.vars.get(variableId);
+        return lpResult.vars.get(variableId)!;
     }
 
     private getDifferences(lessOrEqValue: number, greaterOrEqValue: number): Differences {
@@ -359,7 +365,7 @@ export class LPModel {
         const term = this.getTerm(constraintId);
         return {
             id: constraintId,
-            label: this.constraintIdToLabelMap.get(constraintId),
+            label: this.constraintIdToLabelMap.get(constraintId)!,
             term: term,
             lb: this.getLB(constraintId),
             ub: this.getUB(constraintId),
@@ -394,7 +400,7 @@ export class LPModel {
         const term: Term = {};
         variableIds.forEach(variableId => {
             if (this.isVariableInConstraint(variableId, id)) {
-                term[variableId] = this.getCoeff(variableId, id);
+                term[variableId] = this.getCoeff(variableId, id)!;
             }
         });
         return term;

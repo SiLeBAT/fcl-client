@@ -2,7 +2,10 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { DataService } from './data.service';
-import { CrossContTraceType, DataServiceInputState } from '../data.model';
+import {
+    CrossContTraceType, DataServiceData, DataServiceInputState,
+    DeliveryData, StationData
+} from '../data.model';
 import { createDefaultHighlights } from '../io/data-importer/shared';
 import { createDefaultPropMappings } from '../state/tracing.reducers';
 
@@ -36,10 +39,10 @@ function createDefaultInputState(): DataServiceInputState {
 
 // function createDefaultOutputData(): DataServiceData {
 //     const inState = createDefaultInputState();
-//     const stations: StationData[] = inState.fclElements.stations.map(station => {
-//         const tracSet = inState.tracingSettings.stations.filter(s => s.id === station.id)[0];
-//         return {
-//             ...station,
+//     const dataServiceStations = inState.fclElements.stations.map(stateStation => {
+//         const tracSet = inState.tracingSettings.stations.filter(s => s.id === stateStation.id)[0];
+//         const dataServiceStation: StationData = {
+//             ...stateStation,
 //             ...tracSet,
 //             isMeta: false,
 //             contained: false,
@@ -51,13 +54,42 @@ function createDefaultInputState(): DataServiceInputState {
 //             invisible: false,
 //             expInvisible: false,
 //             contains: [],
-//             groupType: null
+//             groupType: undefined
 //         };
+//         return dataServiceStation;
+//     });
+//     const dataServiceDeliveries = inState.fclElements.deliveries.map(stateDelivery => {
+//         const tracSet = inState.tracingSettings.deliveries.filter(d => d.id === stateDelivery.id)[0];
+//         const dataServiceDelivery: DeliveryData = {
+//             ...stateDelivery,
+//             ...tracSet,
+//             forward: false,
+//             backward: false,
+//             score: 0,
+//             selected: false,
+//             invisible: false,
+//             expInvisible: false,
+//             originalSource: stateDelivery.source,
+//             originalTarget: stateDelivery.target
+//         };
+//         return dataServiceDelivery;
 //     });
 //     return {
 //         ...inState,
-//         stations: stations,
-//         deliveries: deliveries
+//         stations: dataServiceStations,
+//         deliveries: dataServiceDeliveries,
+//         statMap: {},
+//         delMap: {},
+//         getStatById: (ids) => [],
+//         getDelById: (ids) => [],
+//         statSel: {},
+//         delSel: {},
+//         statVis: {},
+//         delVis: {},
+//         isStationAnonymizationActive: false,
+//         modelFlag: {},
+//         tracingPropsUpdatedFlag: {},
+//         stationAndDeliveryHighlightingUpdatedFlag: {}
 //     };
 // }
 
@@ -96,7 +128,7 @@ describe('DataService', () => {
     //         groupSettings: [{
     //             id: 'G1',
     //             contains: ['S3', 'S4'],
-    //             groupType: null
+    //             groupType: undefined
     //         }],
     //         tracingSettings: {
     //             ...defaultInputState.tracingSettings,
@@ -109,7 +141,7 @@ describe('DataService', () => {
     //                 weight: 0
     //             }]
     //         }
-    //     }
+    //     };
     //     expect(observedOutputData).toEqual(defaultOutputData);
     // });
 

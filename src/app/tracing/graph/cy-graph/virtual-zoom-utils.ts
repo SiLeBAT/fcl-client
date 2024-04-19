@@ -44,9 +44,7 @@ export function getZoomedGraphData(graphData: GraphData): GraphData {
     };
     return {
         ...graphData,
-        nodePositions: graphData.nodePositions !== undefined ?
-            getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, layout.zoom) :
-            undefined,
+        nodePositions: getZoomedNodePositions(graphData.nodeData, graphData.nodePositions, layout.zoom),
         ghostData: graphData.ghostData === null ?
             null :
             {

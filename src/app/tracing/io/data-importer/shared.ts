@@ -38,7 +38,8 @@ export function areMajorVersionsMatching(version1: string, version2: string): bo
 }
 
 export function checkVersionFormat(version: string): boolean {
-    return version && version.trim().match('^\\d+\\.\\d+\\.\\d+$').length > 0;
+    const isVersionNumber = (/^\d+\.\d+\.\d+$/).test(version.trim());
+    return isVersionNumber;
 }
 
 function createDefaultHRule(): Omit<HighlightingRule, 'id' | 'name' | 'showInLegend'> {
@@ -91,7 +92,7 @@ export function createDefaultStationAnonymizationLabelHRule(): StationHighlighti
 }
 
 export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationHighlightingRule[] {
-    const hRules = [
+    const hRules: StationHighlightingRule[] = [
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',

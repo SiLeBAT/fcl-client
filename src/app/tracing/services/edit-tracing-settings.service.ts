@@ -122,7 +122,7 @@ export class EditTracingSettingsService {
         }
     }
 
-    resetObservedTypeForElements(tracingSettings: TracingSettings, elements: SelectedElements): TracingSettings {
+    resetObservedTypeForElements(tracingSettings: TracingSettings, elements: SelectedElements): TracingSettings | null  {
         if (elements.stations.length > 0 || elements.deliveries.length > 0) {
             return {
                 ...tracingSettings,
@@ -130,6 +130,7 @@ export class EditTracingSettingsService {
                 deliveries: this.getNewTracing(tracingSettings.deliveries, elements.deliveries)
             };
         }
+        return null;
     }
 
     private setElementsObservedType<T extends(StationTracingSettings | DeliveryTracingSettings)>(

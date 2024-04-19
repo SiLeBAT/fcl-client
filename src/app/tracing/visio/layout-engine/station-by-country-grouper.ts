@@ -21,12 +21,12 @@ export class StationByCountryGrouper implements StationGrouper {
 
     getGroupLabel(station: StationData): string {
         const countryProperty = this.getCountryProperty(station);
-        return (countryProperty !== null ? countryProperty : 'Country: Unknown');
+        return (countryProperty !== undefined ? countryProperty : 'Country: Unknown');
     }
 
-    private getCountryProperty(station: StationData): string {
+    private getCountryProperty(station: StationData): string | undefined {
         const countryProperties = station.properties.filter(p => p.name.toLocaleLowerCase() === 'country');
-        return (countryProperties.length > 0 ? countryProperties[0].value as string : null);
+        return (countryProperties.length > 0 ? countryProperties[0].value as string : undefined);
     }
 
     groupStations(stations: StationData[]): StationGroup[] {
@@ -36,7 +36,7 @@ export class StationByCountryGrouper implements StationGrouper {
             const label = this.getGroupLabel(station);
 
             if (map.has(label)) {
-                map.get(label).push(station);
+                map.get(label)!.push(station);
             } else {
                 map.set(label, [station]);
             }

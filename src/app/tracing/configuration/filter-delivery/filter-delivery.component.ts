@@ -76,14 +76,16 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
     // template trigger start
 
     onSelectTableColumns(): void {
-        this.store.dispatch(
-            new SelectFilterTableColumnsMSA({
-                type: TableType.DELIVERIES,
-                columnOrder: this.cachedState.filterTableState.columnOrder,
-                favouriteColumns: this.cachedData.dataTable.favouriteColumns,
-                otherColumns: this.cachedData.dataTable.otherColumns
-            })
-        );
+        if (this.cachedData && this.cachedState) {
+            this.store.dispatch(
+                new SelectFilterTableColumnsMSA({
+                    type: TableType.DELIVERIES,
+                    columnOrder: this.cachedState.filterTableState.columnOrder,
+                    favouriteColumns: this.cachedData.dataTable.favouriteColumns,
+                    otherColumns: this.cachedData.dataTable.otherColumns
+                })
+            );
+        }
     }
 
     onFilterSettingsChange(settings: FilterTableSettings): void {
@@ -99,19 +101,21 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     onMouseOverTableRow(row: TableRow | null): void {
-        let newGhostDeliveryId: string | null = null;
-        if (row !== null) {
-            const delivery = this.cachedData.dataServiceData.delMap[row.id];
-            if (delivery.invisible) {
-                newGhostDeliveryId = delivery.id;
+        if (this.cachedData) {
+            let newGhostDeliveryId: string | null = null;
+            if (row !== null) {
+                const delivery = this.cachedData.dataServiceData.delMap[row.id];
+                if (delivery.invisible) {
+                    newGhostDeliveryId = delivery.id;
+                }
             }
-        }
-        if (newGhostDeliveryId !== this.currentGhostDeliveryId) {
-            this.currentGhostDeliveryId = newGhostDeliveryId;
-            if (newGhostDeliveryId === null) {
-                this.store.dispatch(new tracingActions.DeleteGhostElementSOA());
-            } else {
-                this.store.dispatch(new tracingActions.SetGhostDeliverySOA({ deliveryId: newGhostDeliveryId }));
+            if (newGhostDeliveryId !== this.currentGhostDeliveryId) {
+                this.currentGhostDeliveryId = newGhostDeliveryId;
+                if (newGhostDeliveryId === null) {
+                    this.store.dispatch(new tracingActions.DeleteGhostElementSOA());
+                } else {
+                    this.store.dispatch(new tracingActions.SetGhostDeliverySOA({ deliveryId: newGhostDeliveryId }));
+                }
             }
         }
     }
@@ -121,9 +125,11 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     onTableRowDblClick(row: TableRow): void {
-        const delivery = this.cachedData.dataServiceData.delMap[row.id];
-        if (!delivery.invisible) {
-            this.store.dispatch(new FocusDeliverySSA({ deliveryId: delivery.id }));
+        if (this.cachedData) {
+            const delivery = this.cachedData.dataServiceData.delMap[row.id];
+            if (!delivery.invisible) {
+                this.store.dispatch(new FocusDeliverySSA({ deliveryId: delivery.id }));
+            }
         }
     }
 
@@ -140,22 +146,22 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
         if (state.activityState !== ActivityState.INACTIVE) {
             const cacheIsEmpty = this.cachedData === null;
 
-            let dataTable: DataTable = !cacheIsEmpty ? this.cachedData.dataTable : undefined;
-            const cachedDSData = cacheIsEmpty ? null : this.cachedData.dataServiceData;
+            let dataTable = !cacheIsEmpty ? this.cachedData!.dataTable : undefined;
+            const cachedDSData = cacheIsEmpty ? null : this.cachedData!.dataServiceData;
             const newDSData = this.dataService.getData(state.dataServiceInputState);
             if (
                 cacheIsEmpty ||
-                this.cachedState.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
+                this.cachedState!.dataServiceInputState.fclElements !== state.dataServiceInputState.fclElements
             ) {
                 dataTable = this.tableService.getDeliveryTable(state.dataServiceInputState, false);
                 this.currentGhostDeliveryId = null;
             } else if (
-                newDSData.stations !== cachedDSData.stations ||
-                newDSData.deliveries !== cachedDSData.deliveries ||
-                newDSData.delVis !== cachedDSData.delVis ||
-                newDSData.tracingPropsUpdatedFlag !== cachedDSData.tracingPropsUpdatedFlag ||
-                newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData.stationAndDeliveryHighlightingUpdatedFlag ||
-                newDSData.delSel !== cachedDSData.delSel
+                newDSData.stations !== cachedDSData!.stations ||
+                newDSData.deliveries !== cachedDSData!.deliveries ||
+                newDSData.delVis !== cachedDSData!.delVis ||
+                newDSData.tracingPropsUpdatedFlag !== cachedDSData!.tracingPropsUpdatedFlag ||
+                newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData!.stationAndDeliveryHighlightingUpdatedFlag ||
+                newDSData.delSel !== cachedDSData!.delSel
             ) {
                 dataTable = this.tableService.getDeliveryTable(state.dataServiceInputState, false);
             }
@@ -164,7 +170,7 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
                 ...state
             };
             this.cachedData = {
-                dataTable: dataTable,
+                dataTable: dataTable!,
                 dataServiceData: newDSData
             };
             this.updateFilterElementsViewInputData();
@@ -175,13 +181,13 @@ export class FilterDeliveryComponent implements OnInit, OnDestroy, DoCheck {
     private updateFilterElementsViewInputData(): void {
         if (
             this.filterElementsViewInputData_ === null ||
-            this.cachedData.dataTable !== this.filterElementsViewInputData_.dataTable ||
-            this.cachedState.filterTableState !== this.filterElementsViewInputData_.filterTableSettings
+            this.cachedData!.dataTable !== this.filterElementsViewInputData_.dataTable ||
+            this.cachedState!.filterTableState !== this.filterElementsViewInputData_.filterTableSettings
         ) {
             this.filterElementsViewInputData_ = {
-                dataTable: this.cachedData.dataTable,
-                filterTableSettings: this.cachedState.filterTableState,
-                selectedRowIds: this.cachedState.dataServiceInputState.selectedElements.deliveries
+                dataTable: this.cachedData!.dataTable,
+                filterTableSettings: this.cachedState!.filterTableState,
+                selectedRowIds: this.cachedState!.dataServiceInputState.selectedElements.deliveries
             };
         }
     }

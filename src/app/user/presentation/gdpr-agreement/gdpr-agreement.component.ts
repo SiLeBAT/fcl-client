@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
 
 interface GdprAgreementForm {
-    dataProtection: FormControl<boolean>;
+    dataProtection: FormControl<boolean | null>;
 }
 
 @Component({
@@ -11,18 +11,14 @@ interface GdprAgreementForm {
     templateUrl: './gdpr-agreement.component.html',
     styleUrls: ['./gdpr-agreement.component.scss']
 })
-export class GdprAgreementComponent implements OnInit {
-    gdprAgreementForm: FormGroup<GdprAgreementForm>;
+export class GdprAgreementComponent {
+    gdprAgreementForm = new FormGroup<GdprAgreementForm>({
+        dataProtection: new FormControl(false as boolean, Validators.requiredTrue)
+    });
 
     constructor(
         public dialogRef: MatDialogRef<GdprAgreementComponent>
     ) { }
-
-    ngOnInit() {
-        this.gdprAgreementForm = new FormGroup<GdprAgreementForm>({
-            dataProtection: new FormControl(false, Validators.requiredTrue)
-        });
-    }
 
     closeDialog() {
         this.dialogRef.close(this.gdprAgreementForm.value.dataProtection);

@@ -76,31 +76,41 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
     }
 
     onRuleOrderChange(ruleIds: RuleId[]): void {
-        const newRules = this.editHighlightingService.applyRuleOrderChange(
-            ruleIds, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
-        );
-        this.emitNewRules(newRules);
+        if (this.cachedState) {
+            const newRules = this.editHighlightingService.applyRuleOrderChange(
+                ruleIds, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
+            );
+            this.emitNewRules(newRules);
+        }
     }
 
     onToggleRuleIsDisabled(ruleId: RuleId): void {
-        const newRules = this.editHighlightingService.toggleRuleIsDisabled(
-            ruleId, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
-        );
-        this.emitNewRules(newRules);
+        if (this.cachedState) {
+            const newRules = this.editHighlightingService.toggleRuleIsDisabled(
+                ruleId, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
+            );
+            this.emitNewRules(newRules);
+        }
     }
 
     onToggleShowRuleInLegend(ruleId: RuleId): void {
-        const newRules = this.editHighlightingService.toggleShowRuleInLegend(
-            ruleId, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
-        );
-        this.emitNewRules(newRules);
+        if (this.cachedState) {
+            const newRules = this.editHighlightingService.toggleShowRuleInLegend(
+                ruleId, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
+            );
+            this.emitNewRules(newRules);
+        }
     }
 
     onStartEdit(ruleId: RuleId): void {
-        const newEditRule = this.editHighlightingService.createEditRuleFromDeliveryRule(
-            ruleId, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
-        );
-        this.writeEditRuleToStore(newEditRule);
+        if (this.cachedState) {
+            const newEditRule = this.editHighlightingService.createEditRuleFromDeliveryRule(
+                ruleId, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
+            );
+            if (newEditRule) {
+                this.writeEditRuleToStore(newEditRule);
+            }
+        }
     }
 
     onNewRule(ruleType: DeliveryRuleType): void {
@@ -128,20 +138,24 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
     }
 
     onAddSelectionToRuleConditions(editRule: DeliveryEditRule): void {
-        const updatedEditRule = this.editHighlightingService.addSelectionToDeliveryRuleConditions(
-            editRule, this.cachedState.dataServiceInputState
-        );
-        if (updatedEditRule !== editRule) {
-            this.writeEditRuleToStore(updatedEditRule);
+        if (this.cachedState) {
+            const updatedEditRule = this.editHighlightingService.addSelectionToDeliveryRuleConditions(
+                editRule, this.cachedState.dataServiceInputState
+            );
+            if (updatedEditRule !== editRule) {
+                this.writeEditRuleToStore(updatedEditRule);
+            }
         }
     }
 
     onRemoveSelectionFromRuleConditions(editRule: DeliveryEditRule): void {
-        const updatedEditRule = this.editHighlightingService.removeSelectionFromDeliveryRuleConditions(
-            editRule, this.cachedState.dataServiceInputState
-        );
-        if (updatedEditRule !== editRule) {
-            this.writeEditRuleToStore(updatedEditRule);
+        if (this.cachedState) {
+            const updatedEditRule = this.editHighlightingService.removeSelectionFromDeliveryRuleConditions(
+                editRule, this.cachedState.dataServiceInputState
+            );
+            if (updatedEditRule !== editRule) {
+                this.writeEditRuleToStore(updatedEditRule);
+            }
         }
     }
 
@@ -155,19 +169,19 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
 
     private saveRule(editRule: DeliveryEditRule): void {
         const newRules = this.editHighlightingService.applyDeliveryRule(
-            editRule, this.cachedState.dataServiceInputState.highlightingSettings.deliveries
+            editRule, this.cachedState!.dataServiceInputState.highlightingSettings.deliveries
         );
         this.emitNewRules(newRules);
         this.writeEditRuleToStore(editRule);
     }
 
     private writeEditRuleToStore(editRule: DeliveryEditRule): void {
-        const newEditRules = this.editHighlightingService.applyRule(editRule, this.cachedState.editRules);
+        const newEditRules = this.editHighlightingService.applyRule(editRule, this.cachedState!.editRules);
         this.emitNewEditRules(newEditRules);
     }
 
     private cancelEdit(ruleId: RuleId): void {
-        const newEditRules = this.editHighlightingService.removeRule(this.cachedState.editRules, ruleId);
+        const newEditRules = this.editHighlightingService.removeRule(this.cachedState!.editRules, ruleId);
         this.emitNewEditRules(newEditRules);
     }
 

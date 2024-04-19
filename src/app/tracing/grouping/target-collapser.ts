@@ -3,6 +3,7 @@ import { DataService } from '../services/data.service';
 import { LinkGroup, GroupingState, GroupingChange } from './model';
 import * as _ from 'lodash';
 import { extractNewGroups } from './shared';
+import { concat } from '../util/non-ui-utils';
 
 export class TargetCollapser {
 
@@ -11,10 +12,10 @@ export class TargetCollapser {
     getGroupingChange(
         state: GroupingState,
         groupMode: GroupMode
-    ): GroupingChange {
+    ): GroupingChange | undefined {
 
         const oldGroups = state.groupSettings.filter(g => g.groupType === GroupType.SOURCE_GROUP);
-        const ignoreMemberIdSet: Set<string> = new Set([].concat(...oldGroups.map(g => g.contains)));
+        const ignoreMemberIdSet = new Set<string>(concat(...oldGroups.map(g => g.contains)));
         const data = this.dataService.getData(state);
 
         const targetStationCandidates: StationData[] = data.stations.filter(s =>
@@ -69,7 +70,7 @@ export class TargetCollapser {
                         });
                     }
 
-                    sourceIdToLinkGroupMap.get(sourceStations[0].id).linkedStations.push({
+                    sourceIdToLinkGroupMap.get(sourceStations[0].id)!.linkedStations.push({
                         linkedStation: target,
                         linkKeys: sourceKeys
                     });

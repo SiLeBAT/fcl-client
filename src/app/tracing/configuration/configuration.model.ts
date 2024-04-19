@@ -19,8 +19,8 @@ export interface ConfigurationTabIndex {
     activeHighlightingTabId: ActiveHighlightingTabId;
 }
 export interface ComplexFilterCondition {
-    propertyName: string | null;
-    operationType: OperationType | null;
+    propertyName?: string;
+    operationType?: OperationType;
     value: string;
     junktorType: JunktorType;
 }

@@ -3,11 +3,12 @@ import { SampleData } from '../../data.model';
 import { StationInformation, LotInformation,
     SampleInformation, InSampleInformation, StationSampleInformation } from './datatypes';
 import { Utils } from '../../util/non-ui-utils';
+import { PartialPick, RequiredPick } from '@app/tracing/util/utility-types';
 
 interface MappedSample {
     sampleStation: StationInformation;
-    sourceStation: StationInformation;
-    lotInfo: LotInformation;
+    sourceStation?: StationInformation;
+    lotInfo?: LotInformation;
     plausible: boolean;
     sample: SampleData;
 }
@@ -24,7 +25,7 @@ export function addSampleInformation(
 
 function addSamples(mapped_samples: MappedSample[], stationsInfo: StationInformation[], sampleProps: string[]) {
     mapped_samples.filter(s => s.plausible).forEach(mappedSample => {
-        if (mappedSample.lotInfo === null) {
+        if (!mappedSample.lotInfo) {
             mappedSample.sampleStation.samples.push(createStationSample(mappedSample.sample, sampleProps));
         } else if (mappedSample.sampleStation === mappedSample.sourceStation) {
             mappedSample.lotInfo.samples.push(createLotSample(mappedSample.sample, sampleProps));
@@ -58,7 +59,7 @@ function createLotSample(sample: SampleData, sampleProps: string[]): SampleInfor
 
 function createInSample(mappedSample: MappedSample, sampleProps: string[]): InSampleInformation {
     return {
-        lotId: mappedSample.lotInfo.id,
+        lotId: mappedSample.lotInfo!.id,
         samples: [createLotSample(mappedSample.sample, sampleProps)]
     };
 }
@@ -78,28 +79,26 @@ function mergeInSamples(stationsInfo: StationInformation[]) {
 
 function mapSamples(samples: SampleData[], stationsInfo: StationInformation[]): MappedSample[] {
 
-    const mapped_samples: MappedSample[] = samples.map(s => ({
-        sampleStation: null,
-        sourceStation: null,
-        lotInfo: null,
+    const mapped_samples: PartialPick<MappedSample,'sampleStation'>[] = samples.map(s => ({
         plausible: false,
         sample: s
     }));
 
-    assignSampleStation(mapped_samples.filter(s => s.sample.station != null), stationsInfo);
-    assignSourceStationAndLot(mapped_samples.filter(s => s.sampleStation != null), stationsInfo);
+    const mappedSamplesWithStation = assignSampleStation(mapped_samples, stationsInfo);
+    assignSourceStationAndLot(mappedSamplesWithStation, stationsInfo);
+    checkPlausibility(mappedSamplesWithStation);
 
-    checkPlausibility(mapped_samples);
-    return mapped_samples;
+    return mappedSamplesWithStation;
 }
 
-function assignSampleStation(mappedSamples: MappedSample[], stationsInfo: StationInformation[]) {
+function assignSampleStation(mappedSamples: PartialPick<MappedSample, 'sampleStation'>[], stationsInfo: StationInformation[]): MappedSample[] {
     const filtered_samples = mappedSamples.filter(ms => ms.sample.station != null);
     const stationKeyToStationMap: Map<string, StationInformation> = Utils.arrayToMap(stationsInfo, (s) => s.id);
 
     filtered_samples.forEach(ms => {
         ms.sampleStation = stationKeyToStationMap.get(ms.sample.station);
     });
+    return filtered_samples.filter(s => s.sampleStation) as MappedSample[];
 }
 
 function assignSourceStationAndLot(mappedSamples: MappedSample[], stationsInfo: StationInformation[]) {
@@ -116,8 +115,8 @@ function assignSourceStationAndLot(mappedSamples: MappedSample[], stationsInfo: 
         )
     );
     filtered_samples.forEach(s => {
-        s.sourceStation = lotKeyToStationMap.get(s.sample.lot);
-        s.lotInfo = lotKeyToLotMap.get(s.sample.lot);
+        s.sourceStation = lotKeyToStationMap.get(s.sample.lot!);
+        s.lotInfo = lotKeyToLotMap.get(s.sample.lot!);
     });
 }
 
@@ -126,13 +125,13 @@ function checkPlausibility(mappedSamples: MappedSample[]) {
         if (mappedSample.sampleStation != null) {
             if (mappedSample.sample.lot != null) {
                 // lot sample
-                if (mappedSample.lotInfo != null) {
+                if (mappedSample.lotInfo) {
                     if (mappedSample.sampleStation === mappedSample.sourceStation) {
                         // out sample
                         mappedSample.plausible = true;
                     } else {
                         // inSample
-                        mappedSample.plausible = isInSamplePlausible(mappedSample);
+                        mappedSample.plausible = isInSamplePlausible(mappedSample as RequiredPick<MappedSample, 'lotInfo'>);
                     }
                 }
             } else {
@@ -143,6 +142,6 @@ function checkPlausibility(mappedSamples: MappedSample[]) {
     }
 }
 
-function isInSamplePlausible(mappedSample: MappedSample) {
+function isInSamplePlausible(mappedSample: RequiredPick<MappedSample, 'lotInfo'>) {
     return mappedSample.lotInfo.deliveries.map(d => d.target).indexOf(mappedSample.sampleStation.id) >= 0;
 }

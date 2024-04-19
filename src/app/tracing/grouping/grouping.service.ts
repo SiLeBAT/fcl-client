@@ -3,7 +3,7 @@ import { DataService } from '../services/data.service';
 import {
     GroupType, GroupData, ObservedType, GroupMode, Position, StationTracingSettings
 } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
+import { concat, removeNullish, Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 import { GroupingState, GroupingChange, SetStationGroupsPayload } from './model';
 import { SourceCollapser } from './source-collapser';
@@ -25,7 +25,7 @@ export class GroupingService {
     constructor(private dataService: DataService) {
     }
 
-    getMergeStationsPayload(state: GroupingState, groupName: string, memberIds: string[]): SetStationGroupsPayload {
+    getMergeStationsPayload(state: GroupingState, groupName: string, memberIds: string[]): SetStationGroupsPayload | null {
         if (this.validateMergeStationsCmd(state, groupName, memberIds) !== MergeStationsValidationCode.OK) {
             return null;
         }
@@ -33,8 +33,7 @@ export class GroupingService {
             addGroups: [{
                 id: groupName,
                 name: groupName,
-                contains: this.explodeIds(state, memberIds),
-                groupType: null
+                contains: this.explodeIds(state, memberIds)
             }],
             removeGroups: []
         }));
@@ -48,22 +47,25 @@ export class GroupingService {
                 addGroups: [{
                     id: groupName,
                     name: groupName,
-                    contains: this.explodeIds(state, memberIds),
-                    groupType: null
+                    contains: this.explodeIds(state, memberIds)
                 }],
                 removeGroups: []
             });
 
             const removeGrpMap = Utils.createObjectFromArray(effChange.removeGroups, g => g.id);
             const remainingGrps = state.groupSettings.filter(g => !removeGrpMap[g.id]);
-            const reservedIds = Utils.createSimpleStringSet([].concat(
-                ...state.fclElements.stations.map(s => s.id),
-                ...remainingGrps.map(g => g.id)
+            const reservedIds = Utils.createSimpleStringSet(concat(
+                state.fclElements.stations.map(s => s.id),
+                remainingGrps.map(g => g.id)
             ));
-            const reservedNames = Utils.createSimpleStringSet([].concat(
-                ...state.fclElements.stations.map(s => s.name),
-                ...remainingGrps.map(g => g.name)
-            ).filter(name => name !== undefined && name !== null));
+            const reservedNames = Utils.createSimpleStringSet(
+                removeNullish(
+                    concat(
+                        state.fclElements.stations.map(s => s.name),
+                        remainingGrps.map(g => g.name)
+                    )
+                )
+            );
 
             if (reservedIds[groupName]) {
                 return MergeStationsValidationCode.ID_IS_NOT_UNIQUE;
@@ -77,19 +79,23 @@ export class GroupingService {
 
     private explodeIds(state: GroupingState, memberIds: string[]): string[] {
         const grpMap = Utils.createObjectFromArray(state.groupSettings, g => g.id);
-        return [].concat(
+        return concat(
             ...memberIds.map(id => grpMap[id] ? grpMap[id].contains : [id])
         );
     }
 
-    getCollapseStationsPayload(state: GroupingState, groupType: GroupType, groupMode: GroupMode): SetStationGroupsPayload {
-        let groupChange: GroupingChange;
+    getCollapseStationsPayload(state: GroupingState, groupType: GroupType, groupMode?: GroupMode): SetStationGroupsPayload | null {
+        let groupChange: GroupingChange | undefined;
         switch (groupType) {
             case GroupType.SOURCE_GROUP:
-                groupChange = new SourceCollapser(this.dataService).getGroupingChange(state, groupMode);
+                if (groupMode !== undefined) {
+                    groupChange = new SourceCollapser(this.dataService).getGroupingChange(state, groupMode);
+                }
                 break;
             case GroupType.TARGET_GROUP:
-                groupChange = new TargetCollapser(this.dataService).getGroupingChange(state, groupMode);
+                if (groupMode !== undefined) {
+                    groupChange = new TargetCollapser(this.dataService).getGroupingChange(state, groupMode);
+                }
                 break;
             case GroupType.SIMPLE_CHAIN:
                 groupChange = new SimpleChainCollapser(this.dataService).getGroupingChange(state);
@@ -101,10 +107,13 @@ export class GroupingService {
                 return null;
         }
 
+        if (!groupChange) {
+            return null;
+        }
         return this.getNewGroupingState(state, this.getEffectiveGroupingChange(state, groupChange));
     }
 
-    getUncollapseStationsPayload(state: GroupingState, groupType: GroupType): SetStationGroupsPayload {
+    getUncollapseStationsPayload(state: GroupingState, groupType: GroupType): SetStationGroupsPayload | null {
         const removeGroups = state.groupSettings.filter(g => g.groupType === groupType);
 
         if (removeGroups.length > 0) {
@@ -113,7 +122,7 @@ export class GroupingService {
         return null;
     }
 
-    getExpandStationsPayload(state: GroupingState, stationIds: string[]): SetStationGroupsPayload {
+    getExpandStationsPayload(state: GroupingState, stationIds: string[]): SetStationGroupsPayload | null {
         const idSet = Utils.createSimpleStringSet(stationIds);
         const removeGroups = state.groupSettings.filter(g => !!idSet[g.id]);
 
@@ -147,13 +156,13 @@ export class GroupingService {
     private getUpdatedTracingSettings(state: GroupingState, groupingChange: GroupingChange): StationTracingSettings[] {
         const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
         const idToSettingMap = Utils.createObjectFromArray(state.tracingSettings.stations, (s) => s.id);
-        return [].concat(
+        return concat(
             state.tracingSettings.stations.filter(s => !removeIds[s.id]),
             groupingChange.addGroups.map(group => {
                 let weight = 0;
                 let crossContamination = true;
                 let killContamination = true;
-                let observed: ObservedType;
+                let observed: ObservedType | undefined;
                 for (const stationId of group.contains) {
                     const setting = idToSettingMap[stationId];
                     weight += setting.weight;
@@ -166,7 +175,7 @@ export class GroupingService {
                     weight: weight,
                     killContamination: killContamination,
                     crossContamination: crossContamination,
-                    observed: observed,
+                    observed: observed ?? ObservedType.NONE,
                     outbreak: weight > 0
                 };
             })
@@ -176,13 +185,13 @@ export class GroupingService {
     private getUpdatedGroupSettings(state: GroupingState, groupingChange: GroupingChange): GroupData[] {
         const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
         const remainingGroups = state.groupSettings.filter(g => !removeIds[g.id]);
-        const reservedIds = Utils.createSimpleStringSet([].concat(
+        const reservedIds = Utils.createSimpleStringSet(concat(
             state.fclElements.stations.map(s => s.id),
             remainingGroups.map(g => g.id)
         ));
         const newGroups = groupingChange.addGroups.slice();
         for (const group of newGroups) {
-            let id = group.id || group.name;
+            let id = group.id ?? group.name;
             let i = 1;
             while (reservedIds[id]) {
                 i++;
@@ -190,7 +199,7 @@ export class GroupingService {
             }
             group.id = id;
         }
-        return [].concat(
+        return concat(
             remainingGroups,
             newGroups
         );
@@ -257,9 +266,9 @@ export class GroupingService {
 
         const effAddGroups = groupChange.addGroups.filter(g => addGroupMap[g.id]);
         const effRemoveGroupsMap = Utils.createObjectFromArray(effRemoveGroups, g => g.id);
-        const newMembersMap = Utils.createSimpleStringSet([].concat(...effAddGroups.map(g => g.contains)));
+        const newMembersMap = Utils.createSimpleStringSet(concat(...effAddGroups.map(g => g.contains)));
 
-        effRemoveGroups = [].concat(
+        effRemoveGroups = concat(
             effRemoveGroups,
             state.groupSettings.filter(g => !effRemoveGroupsMap[g.id] && g.contains.some(mId => newMembersMap[mId]))
         );

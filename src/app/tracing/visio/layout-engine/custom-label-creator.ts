@@ -10,7 +10,7 @@ export class CustomLabelCreator extends LabelCreator {
         super(fontMetrics);
     }
 
-    static getText(value: string|number|boolean, alternativeText: string): string {
+    static getText(value: string|number|boolean|undefined|null, alternativeText: string): string {
         if (value === undefined || value === null) {
             return alternativeText;
         } else {

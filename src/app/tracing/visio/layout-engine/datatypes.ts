@@ -43,12 +43,12 @@ export enum BoxType {
 
 export interface VisioBox {
     type: BoxType;
-    position: Position;
+    position?: Position;
     relPosition: Position;
     size: Size;
     ports: VisioPort[];
     elements: VisioBox[];
-    shape: CustomBoxShape;
+    shape?: CustomBoxShape;
     labels: VisioLabel[];
 }
 
@@ -90,7 +90,7 @@ export interface StationGrouper {
 export interface DeliveryInformation {
     forward: boolean;
     backward: boolean;
-    date: string;
+    date?: string;
     target: string;
 }
 
@@ -133,7 +133,7 @@ export interface StationSampleInformation extends SampleInformation {
 export interface StationInformation {
     id: string;
     data: StationData;
-    ctno: string;
+    ctno?: string;
     props: { [key: string]: string | number | boolean };
     activities: string | null; // - Activities / step in the food chain
     samples: StationSampleInformation[];

@@ -2,7 +2,6 @@
 
 exports[`ResetComponent should render the component correctly 1`] = `
 <fcl-reset
-  elementRef={[Function ElementRef]}
   reset={[Function EventEmitter_]}
   resetForm={[Function FormGroup]}
   serverValidationErrors={[Function Array]}

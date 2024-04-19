@@ -4,7 +4,7 @@ import { ROASettings } from './model';
 const LCASE_AMOUNT_PROP_SUFFIX = 'amount';
 const LCASE_UNIT_PROP_SUFFIX = 'unit';
 
-export function getUnitPropFromAmountProp(amountProp: string, availableProps: PropInfo[]): string | null {
+export function getUnitPropFromAmountProp(amountProp: string | null, availableProps: PropInfo[]): string | null {
     if (amountProp !== null) {
         const lCaseAmountProp = amountProp.toLowerCase();
         if (lCaseAmountProp.endsWith(LCASE_AMOUNT_PROP_SUFFIX)) {

@@ -5,7 +5,6 @@ import { createInitialFclDataState } from '../state/tracing.reducers';
 import { DataImporter } from './data-importer/data-importer';
 import { DataExporter } from './data-exporter';
 import { DataImporterV1 } from './data-importer/data-importer-v1';
-import { createEmptyJson } from './json-data-creator';
 import * as shapeFileImporter from './data-importer/shape-file-importer';
 import { getJsonFromFile } from './io-utils';
 import { JsonData } from './ext-data-model.v1';
@@ -58,7 +57,7 @@ export class IOService {
     }
 
     private getFileName(filePath: string): string {
-        return filePath.split('/').pop().split('\\').pop();
+        return filePath.split('/').pop()!.split('\\').pop()!;
     }
 
     async getShapeFileData(dataSource: File): Promise<ShapeFileData> {
@@ -69,24 +68,20 @@ export class IOService {
         }
     }
 
-    async getExportData(data: FclData): Promise<any> {
-        if (data.source && data.source.data) {
+    async getExportData(fclData: FclData): Promise<any> {
+        const oldExtData = fclData.source.data;
+        if (oldExtData) {
             const dataImporter = new DataImporterV1(this.httpClient);
-            return dataImporter.isDataFormatSupported(data.source.data).then(
+
+            return dataImporter.isDataFormatSupported(oldExtData).then(
                 isSupported => {
-                    const exportData: any = (
-                        isSupported ?
-                            JSON.parse(JSON.stringify(data.source.data)) :
-                            createEmptyJson()
-                    );
-                    DataExporter.exportData(data, exportData);
+                    const exportData = DataExporter.exportData(fclData, isSupported ? oldExtData : undefined);
                     return exportData;
                 }
             );
         } else {
             return new Promise(resolve => {
-                const exportData = createEmptyJson() ;
-                DataExporter.exportData(data, exportData);
+                const exportData = DataExporter.exportData(fclData);
                 resolve(exportData);
             });
         }

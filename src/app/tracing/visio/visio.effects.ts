@@ -51,9 +51,9 @@ export class VisioEffects {
                 roaReportData = {
                     ...roaReportData,
                     roaSettings: {
-                        ...roaReportData.roaSettings,
+                        ...roaReportData.roaSettings!,
                         labelSettings: {
-                            ...roaReportData.roaSettings.labelSettings,
+                            ...roaReportData.roaSettings!.labelSettings,
                             stationLabel: [[{ prop: Constants.COLUMN_ANONYMIZED_NAME, altText: '', isNullable: false }]]
                         }
                     }
@@ -73,7 +73,7 @@ export class VisioEffects {
             );
 
             try {
-                const roaReport = generateVisioReport(fclElements, stationIdToPosMap, roaReportData.roaSettings);
+                const roaReport = generateVisioReport(fclElements, stationIdToPosMap, roaReportData.roaSettings!);
                 if (roaReport !== null) {
                     this.router.navigate(['/graph-editor']).catch(err => {
                         this.alertService.error(`Unable to navigate to graph editor: ${err}`);

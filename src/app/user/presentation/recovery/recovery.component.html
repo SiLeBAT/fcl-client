@@ -9,10 +9,10 @@
                 <mat-label>Email</mat-label>
                 <input matInput formControlName="email" name="email" required fclFocusAfterViewInit/>
                 <mat-icon matPrefix>mail</mat-icon>
-                <mat-error *ngIf="!validateField('email') && recoveryForm.controls.email.errors.email">
+                <mat-error *ngIf="!validateField('email') && recoveryForm.controls.email.errors?.email">
                     Not a valid email
                 </mat-error>
-                <mat-error *ngIf="!validateField('email') && recoveryForm.controls.email.errors.required">
+                <mat-error *ngIf="!validateField('email') && recoveryForm.controls.email.errors?.required">
                     You must enter a valid email
                 </mat-error>
             </mat-form-field>

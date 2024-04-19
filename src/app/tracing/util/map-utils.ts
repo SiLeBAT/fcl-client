@@ -7,12 +7,13 @@ import { Tile } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
 import { Stroke, Style } from 'ol/style';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { InputDataError } from '../io/io-errors';
 import { StyleLike } from 'ol/style/Style';
+import { NotNullish, NotNullishPick } from './utility-types';
 
-type ReducedMapConfig = Partial<Pick<MapConfig, 'layout'>> & Omit<MapConfig, 'layout'>;
-type ShapeMapConfig = Pick<MapConfig, 'lineColor' | 'lineWidth' | 'shapeFileData'>;
+type MapConfigWithOptLayout = Partial<Pick<MapConfig, 'layout'>> & Omit<MapConfig, 'layout'>;
+type ShapeMapConfig = NotNullish<Pick<MapConfig, 'lineColor' | 'lineWidth' | 'shapeFileData'>>;
 type ShapeMapStyleConfig = Pick<ShapeMapConfig, 'lineColor' | 'lineWidth'>;
 
 export interface RectConfig {
@@ -46,7 +47,7 @@ export function getAvailableMapTypes(): MapType[] {
     return availableMapTypes;
 }
 
-export function createOpenLayerMap(mapConfig: ReducedMapConfig, target: HTMLElement): ol.Map {
+export function createOpenLayerMap(mapConfig: MapConfigWithOptLayout, target?: HTMLElement): ol.Map {
     const map = new ol.Map({
         target: target,
         layers: [
@@ -57,19 +58,19 @@ export function createOpenLayerMap(mapConfig: ReducedMapConfig, target: HTMLElem
     return map;
 }
 
-function createMapLayer(mapConfig: ReducedMapConfig): BaseLayer {
+function createMapLayer(mapConfig: MapConfigWithOptLayout): BaseLayer {
     const baseLayer = (
         mapConfig.mapType !== MapType.SHAPE_FILE ?
             createTileLayer(mapConfig) :
-            createShapeFileLayer(mapConfig)
+            createShapeFileLayer(mapConfig as ShapeMapConfig)
     );
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
     return baseLayer;
 }
 
-function createTileLayer(mapConfig: Pick<ReducedMapConfig, 'mapType'>): BaseLayer {
+function createTileLayer(mapConfig: Pick<MapConfigWithOptLayout, 'mapType'>): BaseLayer {
     return new Tile({
-        source: MAP_SOURCE.get(mapConfig.mapType)()
+        source: MAP_SOURCE.get(mapConfig.mapType)!()
     });
 }
 
@@ -90,7 +91,7 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
     return projection.getCode();
 }
 
-export function createShapeFileLayer(mapConfig: ShapeMapConfig): BaseLayer {
+export function createShapeFileLayer(mapConfig: NotNullishPick<ShapeMapConfig, 'shapeFileData'>): BaseLayer {
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: (new GeoJSON()).readFeatures(mapConfig.shapeFileData, (
@@ -131,7 +132,7 @@ export function updateVectorLayerStyle(map: ol.Map, styleConfig: ShapeMapStyleCo
     }
 }
 
-export function updateMapType(map: ol.Map, mapConfig: ReducedMapConfig): void {
+export function updateMapType(map: ol.Map, mapConfig: MapConfigWithOptLayout): void {
     removeMapLayer(map);
     map.getLayers().insertAt(0, createMapLayer(mapConfig));
 }

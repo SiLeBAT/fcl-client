@@ -11,7 +11,7 @@
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName" name="firstName" required fclFocusAfterViewInit/>
                 <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName.errors.required && !serverValidationErrors.firstName">
+                <mat-error *ngIf="!validateField('firstName') && registerForm.controls.firstName?.errors?.required && !serverValidationErrors.firstName">
                     Required Field
                 </mat-error>
                 <mat-hint *ngIf="serverValidationErrors.firstName" class="mat-error">
@@ -27,7 +27,7 @@
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName" name="lastName" required/>
                 <mat-icon matPrefix>account_circle</mat-icon>
-                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName.errors.required && !serverValidationErrors.lastName">
+                <mat-error *ngIf="!validateField('lastName') && registerForm.controls.lastName?.errors?.required && !serverValidationErrors.lastName">
                     Required Field
                 </mat-error>
                 <mat-hint *ngIf="serverValidationErrors.lastName" class="mat-error">
@@ -43,10 +43,10 @@
                 <mat-label>Email</mat-label>
                 <input matInput formControlName="email" name="email" required/>
                 <mat-icon matPrefix>mail</mat-icon>
-                <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.required">
+                <mat-error *ngIf="!validateField('email') && registerForm.controls.email?.errors?.required">
                     Required field
                 </mat-error>
-                <mat-error *ngIf="!validateField('email') && registerForm.controls.email.errors.email">
+                <mat-error *ngIf="!validateField('email') && registerForm.controls.email?.errors?.email">
                     Not a valid email
                 </mat-error>
                 <mat-hint *ngIf="serverValidationErrors.email" class="mat-error">
@@ -62,7 +62,7 @@
                 <mat-label>Password</mat-label>
                 <input matInput #message formControlName="password1" type="password" name="password1" required/>
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1.errors.required && !serverValidationErrors.password">
+                <mat-error *ngIf="!validateField('password1') && registerForm.controls.password1?.errors?.required && !serverValidationErrors.password">
                     Required field
                 </mat-error>
                 <mat-hint *ngIf="serverValidationErrors.password" class="mat-error">
@@ -77,7 +77,7 @@
                 <mat-label>Confirm Password</mat-label>
                 <input matInput formControlName="password2" type="password" name="password2" required />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password2') && registerForm.controls.password2.errors.validatePasswordConfirm">
+                <mat-error *ngIf="!validateField('password2') && registerForm.controls.password2?.errors?.validatePasswordConfirm">
                     Passwords must match
                 </mat-error>
             </mat-form-field>

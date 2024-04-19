@@ -9,30 +9,30 @@ export function isPosMapEmpty(posMap: PositionMap): boolean {
     return true;
 }
 
-export function getNonBlockedRect(container: HTMLElement, blockClass: string): BoundaryRect {
+export function getNonBlockedRect(container: HTMLElement, blockClass: string): BoundaryRect | null {
     const containerRect = container.getBoundingClientRect();
     const elements = document.getElementsByClassName(blockClass);
     let blockingRects: BoundaryRect[] = [];
     for (let i = 0; i < elements.length; i++) {
-        const element = elements.item(i);
+        const element = elements.item(i)!;
         const rect = element.getBoundingClientRect();
         if (doRectsIntersect(containerRect, rect)) {
-            const intersection = getRectIntersection(containerRect, rect);
+            const intersection = getRectIntersection(containerRect, rect)!;
             if (intersection.width * intersection.height > 0) {
-                blockingRects.push(getRectIntersection(containerRect, rect));
+                blockingRects.push(intersection);
             }
         }
     }
 
-    let unblockedRect = createRect(containerRect.left, containerRect.top, containerRect.right, containerRect.bottom);
+    let unblockedRect: BoundaryRect | null = createRect(containerRect.left, containerRect.top, containerRect.right, containerRect.bottom);
 
     while (blockingRects.length > 0) {
-        blockingRects = blockingRects.filter(br => doRectsIntersect(unblockedRect, br));
-        blockingRects = blockingRects.map(br => getRectIntersection(unblockedRect, br));
+        blockingRects = blockingRects.filter(br => doRectsIntersect(unblockedRect!, br));
+        blockingRects = blockingRects.map(br => getRectIntersection(unblockedRect!, br)!);
         blockingRects = blockingRects.filter(br => br.width * br.height > 0);
         const blockEffects = blockingRects.map(blockingRect => {
-            const remainingRect = getBiggestUnblockedEnclosedRect(unblockedRect, blockingRect);
-            const area = remainingRect.width * remainingRect.height;
+            const remainingRect = getBiggestUnblockedEnclosedRect(unblockedRect!, blockingRect);
+            const area = remainingRect ? remainingRect.width * remainingRect.height : 0;
             return {
                 blockingRect: blockingRect,
                 remainingRect: remainingRect,
@@ -41,7 +41,10 @@ export function getNonBlockedRect(container: HTMLElement, blockClass: string): B
         });
         blockEffects.sort((br1, br2) => br2.remainingArea - br1.remainingArea);
         if (blockEffects.length > 0) {
-            unblockedRect = blockEffects.pop().remainingRect;
+            unblockedRect = blockEffects.pop()!.remainingRect;
+            if (!unblockedRect) {
+                return null;
+            }
         } else {
             break;
         }
@@ -57,8 +60,10 @@ export function getNonBlockedRect(container: HTMLElement, blockClass: string): B
 
 export function reduceElementSizeToVisibleArea(container: HTMLElement): void {
     const visRect = getNonBlockedRect(container, 'fcl-right-sidenav');
-    const newWidth = `${visRect.width}px`;
-    container.style.setProperty('max-width', newWidth);
+    if (visRect) {
+        const newWidth = `${visRect.width}px`;
+        container.style.setProperty('max-width', newWidth);
+    }
 }
 
 function updateRect(rect: BoundaryRect, update: Partial<BoundaryRect>): BoundaryRect {

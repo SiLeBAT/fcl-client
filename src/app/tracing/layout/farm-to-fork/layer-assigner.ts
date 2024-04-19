@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Graph, Vertex, Edge } from './data-structures';
-import { BusinessTypeRanker } from './business-type-ranker';
 
 class LayerAssignment {
     private vertexOutEdgeCounts: number[];
@@ -29,7 +28,7 @@ class LayerAssignment {
         }
     }
 
-    assignLayers(graph: Graph, typeRanker: BusinessTypeRanker): Vertex[][] {
+    assignLayers(graph: Graph): Vertex[][] {
 
         this.init(graph);
 
@@ -64,7 +63,7 @@ class LayerAssignment {
     }
 }
 
-export function assignLayers(graph: Graph, typeRanker): Vertex[][] {
+export function assignLayers(graph: Graph): Vertex[][] {
     const layerAssignment = new LayerAssignment();
-    return layerAssignment.assignLayers(graph, typeRanker);
+    return layerAssignment.assignLayers(graph);
 }

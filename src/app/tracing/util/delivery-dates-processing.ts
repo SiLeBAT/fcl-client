@@ -29,8 +29,8 @@ interface InternalDeliveryData {
     id: string;
     expDates: ProcessedDeliveryDates;
     compDates?: ProcessedDeliveryDates;
-    forwardDels?: InternalDeliveryData[];
-    backwardDels?: InternalDeliveryData[];
+    forwardDels: InternalDeliveryData[];
+    backwardDels: InternalDeliveryData[];
     inplausibleIn?: boolean;
     inplausibleOut?: boolean;
     traversed?: boolean;
@@ -44,7 +44,7 @@ function createFreeDateRange(): Range {
     return { min: MIN_DATE_NUMBER, max: MAX_DATE_NUMBER };
 }
 
-function stringDateToRange(date: string): Range {
+function stringDateToRange(date: string | undefined): Range {
     if (date) {
         const mom = moment(date, DATE_PARSE_STRINGS, true);
         if (mom.isValid()) {
@@ -120,8 +120,8 @@ function propagateDateForward(delivery: InternalDeliveryData, idToDelMap: Intern
     if (!delivery.traversed) {
         delivery.traversed = true;
         for (const targetDel of delivery.forwardDels) {
-            targetDel.compDates.outRange.min = Math.max(delivery.compDates.inRange.min, targetDel.compDates.outRange.min);
-            targetDel.compDates.inRange.min = Math.max(delivery.compDates.inRange.min, targetDel.compDates.inRange.min);
+            targetDel.compDates!.outRange.min = Math.max(delivery.compDates!.inRange.min, targetDel.compDates!.outRange.min);
+            targetDel.compDates!.inRange.min = Math.max(delivery.compDates!.inRange.min, targetDel.compDates!.inRange.min);
             propagateDateForward(targetDel, idToDelMap);
         }
     }
@@ -131,8 +131,8 @@ function propagateDateBackward(delivery: InternalDeliveryData, idToDelMap: Inter
     if (!delivery.traversed) {
         delivery.traversed = true;
         for (const sourceDel of delivery.backwardDels) {
-            sourceDel.compDates.inRange.max = Math.min(delivery.compDates.outRange.max, sourceDel.compDates.inRange.max);
-            sourceDel.compDates.outRange.max = Math.min(delivery.compDates.outRange.max, sourceDel.compDates.outRange.max);
+            sourceDel.compDates!.inRange.max = Math.min(delivery.compDates!.outRange.max, sourceDel.compDates!.inRange.max);
+            sourceDel.compDates!.outRange.max = Math.min(delivery.compDates!.outRange.max, sourceDel.compDates!.outRange.max);
             propagateDateBackward(sourceDel, idToDelMap);
         }
     }
@@ -141,7 +141,7 @@ function propagateDateBackward(delivery: InternalDeliveryData, idToDelMap: Inter
 function propagateDateLimits(intDels: InternalDeliveryData[], idToDelMap: InternalDeliveryDataMap) {
     const descendingMinInDels = intDels
         .filter(d => !d.inplausibleIn)
-        .sort((d1, d2) => d2.compDates.inRange.min - d1.compDates.inRange.min);
+        .sort((d1, d2) => d2.compDates!.inRange.min - d1.compDates!.inRange.min);
 
     resetTraversedFlag(intDels);
     for (const delivery of descendingMinInDels) {
@@ -150,7 +150,7 @@ function propagateDateLimits(intDels: InternalDeliveryData[], idToDelMap: Intern
 
     const ascendingMaxOutDels = intDels
         .filter(d => !d.inplausibleOut)
-        .sort((d1, d2) => d1.compDates.outRange.max - d2.compDates.outRange.max);
+        .sort((d1, d2) => d1.compDates!.outRange.max - d2.compDates!.outRange.max);
 
     resetTraversedFlag(intDels);
     for (const delivery of ascendingMaxOutDels) {
@@ -164,8 +164,8 @@ function testForAndMarkInplausibleInterDeliveryDates(intDels: InternalDeliveryDa
         if (
             !delivery.inplausibleOut &&
             (
-                delivery.expDates.outRange.min > delivery.compDates.outRange.max ||
-                delivery.expDates.outRange.max < delivery.compDates.outRange.min
+                delivery.expDates.outRange.min > delivery.compDates!.outRange.max ||
+                delivery.expDates.outRange.max < delivery.compDates!.outRange.min
             )
         ) {
             inplausiblitiesFound = true;
@@ -175,8 +175,8 @@ function testForAndMarkInplausibleInterDeliveryDates(intDels: InternalDeliveryDa
         if (
             !delivery.inplausibleIn &&
             (
-                delivery.expDates.inRange.min > delivery.compDates.inRange.max ||
-                delivery.expDates.inRange.max < delivery.compDates.inRange.min
+                delivery.expDates.inRange.min > delivery.compDates!.inRange.max ||
+                delivery.expDates.inRange.max < delivery.compDates!.inRange.min
             )
         ) {
             inplausiblitiesFound = true;

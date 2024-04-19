@@ -58,7 +58,7 @@ export class EditRuleCreator {
         };
     }
 
-    static createNewEditRule<T extends RuleType, R extends EditRuleOfType<T>>(ruleType: RuleType): R | null {
+    static createNewEditRule<T extends RuleType, R extends EditRuleOfType<T>>(ruleType: RuleType): R {
         switch (ruleType) {
             case RuleType.COLOR_AND_SHAPE:
                 return this.createColorAndShapeEditRule() as R;
@@ -69,7 +69,7 @@ export class EditRuleCreator {
             case RuleType.INVISIBILITY:
                 return this.createInvEditRule() as R;
             default:
-                return null;
+                throw new Error(`Cannot create edit rule for rule type '${RuleType[ruleType]} (Rule type is not supported yet)'.`);
         }
     }
 }

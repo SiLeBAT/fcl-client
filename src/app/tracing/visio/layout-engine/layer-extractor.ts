@@ -30,7 +30,7 @@ function getLayerIndices(y: number[]): number[] {
         if (noLayer) {
             layers.push({
                 y: y[i],
-                index: null
+                index: -1
             });
             iToLayer[i] = layers[layers.length - 1];
         }
@@ -57,7 +57,7 @@ export function extractLayersFromPositions(
 
     const stations: StationData[] = data.stations.filter(s => stationToPositionMap.has(s));
     const layers: StationData[][] = [];
-    const iToLayerIndex: number[] = getLayerIndices(stations.map(s => stationToPositionMap.get(s).y));
+    const iToLayerIndex: number[] = getLayerIndices(stations.map(s => stationToPositionMap.get(s)!.y));
     for (let i = Math.max(...iToLayerIndex); i >= 0; i--) {
         layers[i] = [];
     }
@@ -65,7 +65,7 @@ export function extractLayersFromPositions(
         layers[iToLayerIndex[i]].push(stations[i]);
     }
     for (const layer of layers) {
-        layer.sort((station1, station2) => stationToPositionMap.get(station1).x - stationToPositionMap.get(station2).x);
+        layer.sort((station1, station2) => stationToPositionMap.get(station1)!.x - stationToPositionMap.get(station2)!.x);
     }
 
     return layers;

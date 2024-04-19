@@ -19,9 +19,10 @@ FarmToForkLayout.prototype.run = function () {
 };
 
 export class FarmToForkLayouter {
-    constructor(private graph: Graph, private typeRanker: BusinessTypeRanker, availableSpace: Size) {}
 
-    layout(vertexDistance: number, availableSpace: Size, timeLimit?: number) {
+    constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {}
+
+    layout(vertexDistance: number, availableSpace?: Size, timeLimit?: number) {
         if (timeLimit === undefined) {
             timeLimit = Number.POSITIVE_INFINITY;
         }
@@ -31,9 +32,9 @@ export class FarmToForkLayouter {
         this.correctEdges();
         this.simplifyGraph();
 
-        removeCycles(this.graph, this.typeRanker);
+        removeCycles(this.graph);
         this.simplifyGraph();
-        assignLayers(this.graph, this.typeRanker);
+        assignLayers(this.graph);
         sortAndPosition(this.graph, vertexDistance, timeLimit - (new Date().getTime() - startTime), availableSpace);
     }
 
@@ -69,7 +70,8 @@ export class FarmToForkLayouter {
         const edgesToInvert: Edge[] = [];
         for (const vertex of this.graph.vertices) {
             for (const edge of vertex.outEdges) {
-                if (this.typeRanker.compareRanking(vertex, edge.target) > 0) {
+                const comparison = this.typeRanker.compareRanking(vertex, edge.target);
+                if (comparison !== undefined && comparison > 0) {
                     edgesToInvert.push(edge);
                 }
             }
@@ -134,21 +136,22 @@ class FarmToForkLayoutClass {
         }
 
         cy.edges().forEach(edge => graph.insertEdge(
-            vertices.get(edge.source().id()),
-            vertices.get(edge.target().id())
+            vertices.get(edge.source().id())!,
+            vertices.get(edge.target().id())!
         ));
 
         const availableSpace = {
             width: width,
             height: height
         };
-        const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker, availableSpace);
+
+        const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker);
 
         layoutManager.layout(vertexDistance, availableSpace, timelimit);
         scaleToSize(graph, width - maxLeftPadding - maxRightPadding, height, vertexDistance);
 
         cy.nodes().layoutPositions(this.layout, this.options, node => {
-            const vertex = vertices.get(node.id());
+            const vertex = vertices.get(node.id())!;
 
             return {
                 x: vertex.x,

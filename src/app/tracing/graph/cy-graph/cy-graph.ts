@@ -2,7 +2,7 @@ import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef, SelectedGraphElements
 import { Layout, Position, PositionMap } from '../../data.model';
 import cytoscape from 'cytoscape';
 import { StyleConfig, CyStyle } from './cy-style';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 import { EDGE_GROUP, NODE_GROUP, PRESET_LAYOUT_NAME } from './cy.constants';
 import cola from 'cytoscape-cola';
@@ -13,7 +13,7 @@ import { FarmToForkLayout } from '@app/tracing/layout/farm-to-fork/farm-to-fork'
 import { reduceElementSizeToVisibleArea } from './shared-utils';
 
 export function isPresetLayoutConfig(layoutConfig: LayoutConfig): boolean {
-    return layoutConfig.name && !!layoutConfig.name.match(PRESET_LAYOUT_NAME);
+    return layoutConfig.name === PRESET_LAYOUT_NAME;
 }
 
 const DEFAULT_CY_CONFIG = {};
@@ -42,10 +42,10 @@ export interface GraphData {
     nodeData: CyNodeData[];
     edgeData: CyEdgeData[];
     nodePositions: PositionMap;
-    layout: Layout;
+    layout: Layout | null;
     selectedElements: SelectedGraphElements;
     propsUpdatedFlag: Record<string, never>;
-    ghostData: GraphGhostData;
+    ghostData: GraphGhostData | null;
     hoverEdges: EdgeId[];
 }
 
@@ -56,7 +56,7 @@ export class CyGraph {
     protected static readonly WHEEL_SENSITIVITY = 0.5;
     private static CyLayoutManagerLoaded = false;
 
-    private cy_: Cy;
+    private cy_: Cy | null = null;
     private minZoom_: number = CyGraph.DEFAULT_MIN_ZOOM;
     private maxZoom_: number = CyGraph.DEFAULT_MAX_ZOOM;
 
@@ -74,7 +74,7 @@ export class CyGraph {
             CyGraph.addLayoutManagerToCytoScape();
             CyGraph.CyLayoutManagerLoaded = true;
         }
-        this.initCy(htmlContainerElement, layoutConfig, cyConfig, fitToVisibleArea);
+        this.initCy(htmlContainerElement, layoutConfig, cyConfig, fitToVisibleArea === true);
     }
 
     private static addLayoutManagerToCytoScape() {
@@ -85,16 +85,16 @@ export class CyGraph {
         cytoscape('layout', 'farm_to_fork', FarmToForkLayout);
     }
 
-    protected get cy(): Cy {
+    protected get cy(): Cy | null {
         return this.cy_;
     }
 
     get zoom(): number {
-        return this.graphData.layout.zoom;
+        return this.graphData.layout!.zoom;
     }
 
     get pan(): Position {
-        return this.graphData.layout.pan;
+        return this.graphData.layout!.pan;
     }
 
     get minZoom(): number {
@@ -106,7 +106,7 @@ export class CyGraph {
     }
 
     get layout(): Layout {
-        return this.graphData.layout;
+        return this.graphData.layout!;
     }
 
     get style(): StyleConfig {
@@ -163,17 +163,17 @@ export class CyGraph {
     }
 
     protected reduceCySizeToVisibleArea(): void {
-        reduceElementSizeToVisibleArea(this.cy_.container());
-        this.cy.resize();
+        reduceElementSizeToVisibleArea(this.cy_!.container()!);
+        this.cy!.resize();
     }
 
     private restoreContainerSize(): void {
-        this.cy.container().style.setProperty('max-width', '100%');
+        this.cy!.container()!.style.setProperty('max-width', '100%');
     }
 
     protected restoreCySize(): void {
         this.restoreContainerSize();
-        this.cy.resize();
+        this.cy!.resize();
     }
 
     protected initCy(
@@ -187,7 +187,7 @@ export class CyGraph {
         const isPresetLayout = isPresetLayoutConfig(layoutConfig);
         const fitViewPort = !isPresetLayout || layoutConfig.fit !== false;
         const reduceContainerSize = fitGraphToVisibleArea && fitViewPort;
-        if (reduceContainerSize) {
+        if (reduceContainerSize && htmlContainerElement) {
             reduceElementSizeToVisibleArea(htmlContainerElement);
         }
         this.cy_ = cytoscape({
@@ -207,7 +207,7 @@ export class CyGraph {
             zoomingEnabled: cyConfig.zoomingEnabled
         });
 
-        this.edgeLabelOffsetUpdater.connectTo(this.cy);
+        this.edgeLabelOffsetUpdater.connectTo(this.cy!);
 
         if (!isPresetLayoutConfig(layoutConfig)) {
             this.graphData = { ...this.graphData,
@@ -227,14 +227,14 @@ export class CyGraph {
 
     private extractViewPortFromGraph(): Layout {
         return {
-            zoom: this.cy.zoom(),
-            pan: { ...this.cy.pan() }
+            zoom: this.cy!.zoom(),
+            pan: { ...this.cy!.pan() }
         };
     }
 
     protected extractNodePositionsFromGraph(): PositionMap {
         const posMap: PositionMap = { ...this.graphData.nodePositions };
-        this.cy.nodes().forEach(n => posMap[n.id()] = { ...n.position() });
+        this.cy!.nodes().forEach(n => posMap[n.id()] = { ...n.position() });
         return posMap;
     }
 }

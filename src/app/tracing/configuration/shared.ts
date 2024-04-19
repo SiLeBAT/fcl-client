@@ -8,6 +8,8 @@ import {
     LabelEditRule, RowFilter, RuleType, SimpleLabelEditRule
 } from './model';
 import * as _ from 'lodash';
+import { NotNullishPick } from '../util/utility-types';
+import { concat, isNotNullish } from '../util/non-ui-utils';
 
 export type EditRuleOfType<T extends RuleType> =
     T extends RuleType.LABEL ? LabelEditRule :
@@ -35,13 +37,17 @@ export function extractPropToValuesMap(tableRows: TableRow[], tableColumns: Tabl
         propToValuesMap[column.id] = values;
     }
 
-    propToValuesMap[''] = _.uniq([].concat(...Object.values(propToValuesMap))).sort();
+    propToValuesMap[''] = _.uniq(concat(...Object.values(propToValuesMap))).sort();
 
     return propToValuesMap;
 }
 
 export function isSimpleLabelRule(editRule: LabelEditRule): editRule is SimpleLabelEditRule {
     return (editRule as SimpleLabelEditRule).labelProperty !== undefined;
+}
+
+export function isSimpleLabelHRule(hRule: HighlightingRule): hRule is NotNullishPick<HighlightingRule, 'labelProperty'> {
+    return isNotNullish(hRule.labelProperty);
 }
 
 export function createDefaultHRule(): Omit<HighlightingRule, 'id' | 'name'> {

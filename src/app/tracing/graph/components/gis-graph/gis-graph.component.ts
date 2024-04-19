@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import { GraphType, Layout, LegendInfo, GisGraphState } from '../../../data.model';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
@@ -45,7 +45,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
 
     unknownLatLonRectBorderWidth = GisGraphComponent.DEFAULT_SCREEN_BOUNDARY_WIDTH;
 
-    private focusElementSubscription: Subscription;
+    private focusElementSubscription: Subscription | null = null;
     private graphStateSubscription: Subscription | null = null;
 
     private sharedGraphData: GraphServiceData | null = null;
@@ -103,8 +103,10 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     }
 
     onContextMenuRequest(requestInfo: ContextMenuRequestInfo): void {
-        const menuData = this.contextMenuService.getMenuData(requestInfo.hoverContext, this.sharedGraphData, null);
-        this.contextMenu.open(requestInfo.position, menuData);
+        if (this.sharedGraphData) {
+            const menuData = this.contextMenuService.getMenuData(requestInfo.hoverContext, this.sharedGraphData, null);
+            this.contextMenu.open(requestInfo.position, menuData);
+        }
     }
 
     onContextMenuSelect(action: Action): void {
@@ -125,7 +127,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         }
     }
 
-    get graphData(): GraphData {
+    get graphData(): GraphData | null {
         return this.graphData_;
     }
 
@@ -141,7 +143,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return this.unknownLatLonRect !== null;
     }
 
-    get viewport(): Layout {
+    get viewport(): Layout | null {
         return this.graphData_ === null ? null : this.graphData_.layout;
     }
 
@@ -153,7 +155,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         this.sharedGraphData = this.graphService.getData(newState);
         const posData = this.gisPositioningService.getPositioningData(this.sharedGraphData);
         this.unknownLatLonRect_ = posData.unknownLatLonRect;
-        this.legendInfo_ = this.sharedGraphData.legendInfo;
+        this.legendInfo_ = this.sharedGraphData.legendInfo!;
         this.unknownLatLonRectBorderWidth = Math.max(
             posData.unknownLatLonRectModelBorderWidth * (newState.layout !== null ? newState.layout.zoom : 0),
             GisGraphComponent.DEFAULT_SCREEN_BOUNDARY_WIDTH
@@ -171,7 +173,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
                     null :
                     ({
                         ...this.sharedGraphData.ghostElements,
-                        posMap: posData.ghostPositions
+                        posMap: posData.ghostPositions!
                     }),
             hoverEdges: this.sharedGraphData.hoverEdges
         };

@@ -1,4 +1,7 @@
-import { DeliveryHighlightingRule, HighlightingRule, HighlightingStats, StationHighlightingRule } from '../data.model';
+import {
+    DeliveryHighlightingRule, HighlightingRule, HighlightingStats,
+    LinePatternType, StationHighlightingRule
+} from '../data.model';
 import { Utils } from '../util/non-ui-utils';
 import {
     ColorAndShapeEditRule, ColorEditRule, ComposedLabelEditRule,
@@ -17,7 +20,7 @@ function convertEditRuleToHRule(editRule: EditRule): HighlightingRule {
         autoDisabled: false,
         logicalConditions: ComplexFilterUtils.complexFilterConditionsToLogicalConditions(editRule.complexFilterConditions),
         labelProperty: null,
-        labelParts: null,
+        labelParts: undefined,
         showInLegend: false,
         color: null,
         adjustThickness: false,
@@ -49,7 +52,7 @@ function convertHRuleToStatHRule(rule: HighlightingRule): StationHighlightingRul
 function convertHRuleToDeliveryHRule(rule: HighlightingRule): DeliveryHighlightingRule {
     return {
         ...rule,
-        linePattern: null
+        linePattern: LinePatternType.SOLID
     };
 }
 
@@ -144,7 +147,7 @@ export function convertDeliveryHRuleToColorEditRule(rule: DeliveryHighlightingRu
     return {
         ...convertHRuleToEditRuleCore(rule),
         type: RuleType.COLOR,
-        color: Utils.rgbArrayToColor(rule.color),
+        color: Utils.rgbArrayToColor(rule.color!),
         showInLegend: rule.showInLegend
     };
 }
@@ -157,7 +160,7 @@ export function convertHRuleToLabelEditRule(rule: HighlightingRule): LabelEditRu
             rule.labelParts ?
                 {
                     labelParts: rule.labelParts,
-                    labelPrefix: rule.labelPrefix
+                    labelPrefix: rule.labelPrefix ?? ''
                 } :
                 { labelProperty: rule.labelProperty }
         )
@@ -168,8 +171,8 @@ export function convertHRuleToComposedLabelEditRule(rule: HighlightingRule): Com
     return {
         ...convertHRuleToEditRuleCore(rule),
         type: RuleType.LABEL,
-        labelParts: rule.labelParts,
-        labelPrefix: rule.labelPrefix
+        labelParts: rule.labelParts!,
+        labelPrefix: rule.labelPrefix ?? ''
     };
 }
 

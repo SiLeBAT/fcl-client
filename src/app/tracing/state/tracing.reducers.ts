@@ -532,7 +532,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         stationPositions: action.payload.stationPositions,
-                        schemaLayout: action.payload.layout
+                        schemaLayout: action.payload.layout ?? state.fclData.graphSettings.schemaLayout
                     }
                 }
             };

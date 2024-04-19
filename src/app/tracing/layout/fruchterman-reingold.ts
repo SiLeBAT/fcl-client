@@ -148,7 +148,7 @@ class ForceDirectedVertexLayout {
                 const stack: Vertex[] = [v];
 
                 while (stack.length > 0) {
-                    const u = stack.pop();
+                    const u = stack.pop()!;
 
                     component.push(u);
                     u.visited = true;
@@ -234,7 +234,7 @@ class FruchtermanLayoutClass {
         });
 
         cy.edges().forEach(edge => {
-            graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+            graph.insertEdge(vertices.get(edge.source().id())!, vertices.get(edge.target().id())!);
         });
 
         const layoutManager = new ForceDirectedVertexLayout(graph);
@@ -242,7 +242,7 @@ class FruchtermanLayoutClass {
         layoutManager.layout(width, height, 100);
 
         cy.nodes().layoutPositions(this.layout, this.options, node => {
-            const vertex = vertices.get(node.id());
+            const vertex = vertices.get(node.id())!;
 
             return {
                 x: vertex.x,

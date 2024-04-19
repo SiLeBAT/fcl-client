@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate, OnDestroy {
             select(fromUser.getCurrentUser),
             takeWhile(() => this.componentActive))
             .pipe(
-                map((currentUser: TokenizedUser) => {
+                map((currentUser: TokenizedUser | null) => {
                     if (currentUser) {
                         const helper = new JwtHelperService();
                         const isExpired = helper.isTokenExpired(currentUser.token);

@@ -46,7 +46,7 @@ function getFarmToForkGroups(stations: StationData[], deliveries: DeliveryData[]
 
 function getStationGroupXPosRanges(stationGroup: StationData[], statIdToPosMap: Record<StationId, Position>): Range {
     if (stationGroup.length === 0) {
-        return undefined;
+        return { min: Number.NEGATIVE_INFINITY, max: Number.POSITIVE_INFINITY};
     } else {
         const pos = stationGroup.map(s => statIdToPosMap[s.id].x);
         return {
@@ -148,16 +148,16 @@ export function isFarmToForkLayout(data: FclElements, statIdToPosMap: Record<Sta
  */
 export function setFarmToForkPositions(data: FclElements, statIdToPosMap: Record<StationId, Position>) {
     const graph = new Graph();
-    const vertices: Map<string, Vertex> = new Map();
+    const vertices = new Map<string, Vertex>();
     const typeRanker: BusinessTypeRanker = new BusinessTypeRanker([], [], []);
     const visibleStations = data.stations.filter(s => statIdToPosMap[s.id] !== undefined);
-    const idToStationMap: Map<string, StationData> = Utils.arrayToMap(visibleStations, (s) => s.id);
+    const idToStationMap = Utils.arrayToMap(visibleStations, (s) => s.id);
 
     const stationSize = 20;
     const vertexDistance = stationSize;
 
     for (const station of visibleStations) {
-        const v: Vertex = new Vertex();
+        const v = new Vertex();
         const properties = station.properties.filter(p => p.name === 'typeOfBusiness');
         if (properties.length > 0) {
             v.typeCode = typeRanker.getBusinessTypeCode(properties[0].value as string);
@@ -175,23 +175,15 @@ export function setFarmToForkPositions(data: FclElements, statIdToPosMap: Record
         d => !d.invisible && idToStationMap.has(d.source) && idToStationMap.has(d.target)
     ).forEach(d => {
         graph.insertEdge(
-            vertices.get(d.source),
-            vertices.get(d.target)
+            vertices.get(d.source)!,
+            vertices.get(d.target)!
         );
     });
 
-    const availableSpace = {
-        width: undefined,
-        height: undefined
-    };
     // eslint-disable-next-line
-    const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
-        graph,
-        typeRanker,
-        availableSpace
-    );
+    const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker);
 
-    layoutManager.layout(vertexDistance, availableSpace);
+    layoutManager.layout(vertexDistance);
     for (let i = visibleStations.length - 1; i >= 0; i--) {
         statIdToPosMap[visibleStations[i].id] = {
             // primary producers are supposed to be in the last layer

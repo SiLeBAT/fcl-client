@@ -12,7 +12,7 @@ import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRow
 import { filterTableRows } from '../shared';
 import * as _ from 'lodash';
 import { VisibilityFilterState, ColumnFilterSettings, ActivityState } from '../configuration.model';
-import { Utils } from '@app/tracing/util/non-ui-utils';
+import { concat, removeNullish, Utils } from '@app/tracing/util/non-ui-utils';
 import { Observable, Subscription } from 'rxjs';
 import { applySorting, highlightingComparator, sortRows, visibilityComparator } from './filter-table-utils';
 
@@ -53,8 +53,8 @@ export interface TableFilterChange {
 // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
 export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnDestroy, AfterViewInit {
 
-    get visibilityFilterState(): VisibilityFilterState {
-        return this.inputData.visibilityFilter;
+    get visibilityFilterState(): VisibilityFilterState | undefined {
+        return this.inputData?.visibilityFilter;
     }
 
     get sorts(): SortPropDir[] {
@@ -75,12 +75,12 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     get showVisibleElements(): boolean {
-        const visState = this.inputData.visibilityFilter;
+        const visState = this.inputData?.visibilityFilter;
         return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_VISIBLE_ONLY;
     }
 
     get showInvisibleElements(): boolean {
-        const visState = this.inputData.visibilityFilter;
+        const visState = this.inputData?.visibilityFilter;
         return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY;
     }
 
@@ -124,9 +124,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private dtFooterElement: HTMLElement | null = null;
 
-    private processedInput__: InputData = null;
+    private processedInput__: InputData | null = null;
     private processDataIsRequired_ = false;
-    private filterMap_: FilterMap = null;
+    private filterMap_: FilterMap | null = null;
     private columnFilterTexts_: { [key: string]: string };
     private tableRows_: TableRow[] = [];
     private treeStatusCache: Record<string, TreeStatus> = {};
@@ -201,7 +201,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 // this would cause a non visible table
                 if (!this.positiveWrapperSizeDetectedSinceLastActivation) {
                     if (!this.waitingForPositiveWrapperSize) {
-                        this.waitForPosWrapperSizeBasedOnTick(true);
+                        this.waitForPosWrapperSize(true);
+
                         if (!this.positiveWrapperSizeDetectedSinceLastActivation) {
                             return;
                         }
@@ -256,37 +257,43 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
-        const selectedRowIds = selected.map(row => row.id);
-        // dblclick events trigger 3 selection change events
-        // only the first one changes (usually) the selection
-        // we check here the selection change to emit only true selection changes
-        if (!this.areSelectedRowIdsEqual(selectedRowIds, this.processedInput__.selectedRowIds)) {
-            // no selection change
-        } else {
-            // selection change detected
-            this.processedInput__.selectedRowIds = selected.map(row => row.id);
+        if (this.processedInput__) {
+            const selectedRowIds = selected.map(row => row.id);
+            // dblclick events trigger 3 selection change events
+            // only the first one changes (usually) the selection
+            // we check here the selection change to emit only true selection changes
+            if (this.areSelectedRowIdsEqual(selectedRowIds, this.processedInput__.selectedRowIds)) {
+                // no selection change
+            } else {
+                // selection change detected
+                this.processedInput__.selectedRowIds = selected.map(row => row.id);
 
-            this.selectedRows_.splice(0, this.selectedRows_.length);
-            this.selectedRows_.push(...selected);
+                this.selectedRows_.splice(0, this.selectedRows_.length);
+                this.selectedRows_.push(...selected);
 
-            this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
+                this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
 
-            // we need this to get rid of the text selection
-            window.getSelection().removeAllRanges();
+                // we need this to get rid of the text selection
+                window.getSelection()?.removeAllRanges();
+            }
         }
     }
 
     onSetColumnFilterText(prop: string, filterTerm: string) {
-        this.columnFilterTexts_[prop] = filterTerm;
-        this.filterChange.emit({
-            columnFilters: this.inputData.columnOrder
-                .map(p => ({ filterProp: p, filterTerm: this.columnFilterTexts_[p] }))
-                .filter(f => f.filterTerm)
-        });
+        if (this.inputData) {
+            this.columnFilterTexts_[prop] = filterTerm;
+            this.filterChange.emit({
+                columnFilters: this.inputData.columnOrder
+                    .map(p => ({ filterProp: p, filterTerm: this.columnFilterTexts_[p] }))
+                    .filter(f => f.filterTerm)
+            });
+        }
     }
 
     onToggleVisibilityFilterState(): void {
-        this.filterChange.emit({ visibilityFilter: this.getToggledVisibilityState(this.visibilityFilterState) });
+        if (this.visibilityFilterState !== undefined) {
+            this.filterChange.emit({ visibilityFilter: this.getToggledVisibilityState(this.visibilityFilterState) });
+        }
     }
 
     onRowOver(row: TableRow | null): void {
@@ -295,7 +302,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     onRowDblClick(row: TableRow): void {
         // we need this to get rid of the text selection
-        window.getSelection().removeAllRanges();
+        window.getSelection()?.removeAllRanges();
         this.rowDblClick.emit(row);
     }
 
@@ -346,9 +353,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
         const missingParents: TableRow[] = [];
         for (const row of rows) {
-            if (row.parentRow !== undefined && !availableRows[row.parentRowId]) {
+            if (row.parentRow !== undefined && !availableRows[row.parentRowId!]) {
                 missingParents.push(row.parentRow);
-                availableRows[row.parentRowId] = true;
+                availableRows[row.parentRowId!] = true;
             }
         }
         if (missingParents.length > 0) {
@@ -394,13 +401,21 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
     }
 
+    private waitForPosWrapperSize(stopOnOpen: boolean): void {
+        if (this.cycleStart$) {
+            this.waitForPosWrapperSizeBasedOnTick(stopOnOpen);
+        } else {
+            this.waitForPosWrapperSizeBasedOnTimeout(stopOnOpen);
+        }
+    }
+
     private waitForPosWrapperSizeBasedOnTimeout(stopOnOpen: boolean, maxTimeSpan?: number): void {
         this.waitingForPositiveWrapperSize = true;
         const asyncTask: Partial<AsyncTask> = {
             id: 'waitForPosWrapperSizeBasedOnTimeout',
             created: (new Date()).valueOf()
         };
-        this.stopTask(asyncTask.id);
+        this.stopTask(asyncTask.id!);
 
         if (this.getWrapperSize().width > 0) {
             this.positiveWrapperSizeDetectedSinceLastActivation = true;
@@ -411,7 +426,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         if (maxTimeSpan === undefined) {
             maxTimeSpan = Number.POSITIVE_INFINITY;
         }
-        const endTime = asyncTask.created + maxTimeSpan;
+        const endTime = asyncTask.created! + maxTimeSpan;
         const timeoutSpan = 10;
 
         const callBack = () => {
@@ -441,11 +456,11 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private waitForPosWrapperSizeBasedOnTick(stopOnOpen: boolean): void {
         this.waitingForPositiveWrapperSize = true;
-        const asyncTask: Partial<AsyncTask> = {
+        const asyncTask: AsyncTask = {
             id: 'waitForPosWrapperSizeBasedOnTick',
             created: (new Date()).valueOf()
         };
-        this.stopTask(asyncTask.id);
+        this.stopTask(asyncTask.id!);
 
         if (this.getWrapperSize().width > 0) {
             this.positiveWrapperSizeDetectedSinceLastActivation = true;
@@ -469,13 +484,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
             if (cancelTask) {
                 this.waitingForPositiveWrapperSize = false;
-                asyncTask.subscription.unsubscribe();
+                asyncTask.subscription!.unsubscribe();
                 delete asyncTask.subscription;
                 this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
             }
         };
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        asyncTask.subscription = this.cycleStart$.subscribe(callBack, () => {});
+        asyncTask.subscription = this.cycleStart$!.subscribe(callBack, () => {});
         this.asyncTasks_.push(asyncTask as AsyncTask);
     }
 
@@ -485,11 +500,11 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         timeoutSpan?: number;
         minStableTimeSpan?: number;
     }): void {
-        const asyncTask: Partial<AsyncTask> = {
+        const asyncTask: AsyncTask = {
             id: 'checkTableSizeOnStableWrapperSize',
             created: (new Date()).valueOf()
         };
-        this.stopTask(asyncTask.id);
+        this.stopTask(asyncTask.id!);
 
         let refWrapperSize: Size | null = null;
         const stopOnOpen = options.stopOnOpen === undefined ? false : options.stopOnOpen;
@@ -551,10 +566,10 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private areSelectedRowIdsEqual(rowIds1: string[], rowIds2: string[]): boolean {
         if (rowIds1.length !== rowIds2.length) {
-            return true;
+            return false;
         } else {
-            const tmp = Utils.createSimpleStringSet(rowIds1);
-            return rowIds2.some(id => !tmp[id]);
+            const idSet1 = new Set<string>(rowIds1);
+            return rowIds2.every(id => idSet1.has(id));
         }
     }
 
@@ -623,15 +638,17 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private updateColumns(): void {
-        const didModelChange = this.inputData.dataTable.modelFlag !== this.processedInput__?.dataTable?.modelFlag;
-        const newDataColumns = this.inputData.dataTable.columns;
-        const newColumnOrder = this.inputData.columnOrder.filter(prop => this.inputData.dataTable.columns.some(c => c.id === prop));
+        const didModelChange = this.inputData!.dataTable.modelFlag !== this.processedInput__?.dataTable?.modelFlag;
+        const newDataColumns = this.inputData!.dataTable.columns;
+        const newColumnOrder = this.inputData!.columnOrder.filter(prop => this.inputData!.dataTable.columns.some(c => c.id === prop));
 
         if (didModelChange) {
             // new model was loaded
-            this.columns_ = [].concat(
+            this.columns_ = concat(
                 this.createFixedColumns(),
-                newColumnOrder.map(p => this.createNgxTableDataColumn(newDataColumns, p)).filter(c => !!c)
+                removeNullish(
+                    newColumnOrder.map(p => this.createNgxTableDataColumn(newDataColumns, p))
+                )
             );
             this.treeStatusCache = {};
             this.sorts_ = [];
@@ -643,12 +660,14 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 !currentColumnOrder.every(p => newColumnOrder.includes(p));
 
             if (columnVisChanged) {
-                this.columns_ = [].concat(
+                this.columns_ = concat(
                     this.createFixedColumns(),
-                    newColumnOrder.map(p => {
-                        const cols = this.columns_.filter(c => c.prop === p);
-                        return cols.length === 1 ? cols[0] : this.createNgxTableDataColumn(newDataColumns, p);
-                    }).filter(c => !!c)
+                    removeNullish(
+                        newColumnOrder.map(p => {
+                            const cols = this.columns_.filter(c => c.prop === p);
+                            return cols.length === 1 ? cols[0] : this.createNgxTableDataColumn(newDataColumns, p);
+                        })
+                    )
                 );
                 this.adaptSortOrderToAvailableColumns();
             } else {
@@ -691,25 +710,25 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private updateRows(): void {
         const oldPrefilteredRows = this.processedInput__ ? this.processedInput__.filteredRows : undefined;
-        const newPrefilteredRows = this.inputData.filteredRows;
+        const newPrefilteredRows = this.inputData!.filteredRows;
 
         const filterMap: FilterMap = {
             visibilityFilter: (
-                !this.processedInput__ || this.processedInput__.visibilityFilter !== this.inputData.visibilityFilter ?
-                    createVisibilityRowFilter(this.inputData.visibilityFilter) :
-                    this.filterMap_.visibilityFilter
+                !this.processedInput__ || this.processedInput__.visibilityFilter !== this.inputData!.visibilityFilter ?
+                    createVisibilityRowFilter(this.inputData!.visibilityFilter) :
+                    this.filterMap_!.visibilityFilter
             ),
             columnFilter: (
-                !this.processedInput__ || this.processedInput__.columnFilters !== this.inputData.columnFilters ?
-                    createOneTermForEachColumnRowFilter(this.inputData.columnFilters) :
-                    this.filterMap_.columnFilter
+                !this.processedInput__ || this.processedInput__.columnFilters !== this.inputData!.columnFilters ?
+                    createOneTermForEachColumnRowFilter(this.inputData!.columnFilters) :
+                    this.filterMap_!.columnFilter
             )
         };
 
         if (
             oldPrefilteredRows !== newPrefilteredRows ||
-            filterMap.visibilityFilter !== this.filterMap_.visibilityFilter ||
-            filterMap.columnFilter !== this.filterMap_.columnFilter
+            filterMap.visibilityFilter !== this.filterMap_?.visibilityFilter ||
+            filterMap.columnFilter !== this.filterMap_?.columnFilter
         ) {
             const tableWasEmptyBefore = this.tableRows_.length === 0;
             this.filterMap_ = filterMap;
@@ -718,7 +737,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             this.addMissingRowParents(unsortedFilteredRows);
 
             const oldUnfilteredRows = this.processedInput__ ? this.processedInput__.dataTable.rows : undefined;
-            const newUnfilteredRows = this.inputData.dataTable.rows;
+            const newUnfilteredRows = this.inputData!.dataTable.rows;
 
             if (oldUnfilteredRows !== newUnfilteredRows) {
                 // sort unfiltered data
@@ -750,22 +769,22 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
         if (
             this.processedInput__ === null ||
-            this.processedInput__.selectedRowIds !== this.inputData.selectedRowIds
+            this.processedInput__.selectedRowIds !== this.inputData!.selectedRowIds
         ) {
-            const idToIsSelectedMap = Utils.createSimpleStringSet(this.inputData.selectedRowIds);
+            const idToIsSelectedMap = Utils.createSimpleStringSet(this.inputData!.selectedRowIds);
             this.selectedRows_ = this.tableRows_.filter(row => idToIsSelectedMap[row.id]);
         }
     }
 
     private updateColumnFilterTexts(): void {
         const newTexts: { [key: string]: string } = {};
-        for (const filter of this.inputData.columnFilters) {
+        for (const filter of this.inputData!.columnFilters) {
             newTexts[filter.filterProp] = filter.filterTerm;
         }
         this.columnFilterTexts_ = newTexts;
     }
 
-    private createNgxTableDataColumn(dataColumns: TableColumn[], prop: string): NgxTableColumn {
+    private createNgxTableDataColumn(dataColumns: TableColumn[], prop: string): NgxTableColumn | undefined {
         const dataColumn = dataColumns.find(c => c.id === prop);
         const ngxColumn = (
             !dataColumn ?
@@ -863,7 +882,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     private fixColumnOrder(): void {
         // puts undraggable columns in front of draggable columns
         // eslint-disable-next-line no-underscore-dangle
-        this.table._internalColumns = [].concat(
+        this.table._internalColumns = concat(
             // eslint-disable-next-line no-underscore-dangle
             this.table._internalColumns.filter(c => !c.draggable),
             // eslint-disable-next-line no-underscore-dangle
@@ -876,10 +895,12 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         const fixedColumns = this.table._internalColumns.filter(c => !c.draggable);
         // eslint-disable-next-line no-underscore-dangle
         const filterColumns = this.table._internalColumns.filter(c => c.draggable);
-        const orderedFilterColumns = newColumnOrder.map(p => filterColumns.find(c => c.prop === p)).filter(c => !!c);
+        const orderedFilterColumns = removeNullish(
+            newColumnOrder.map(p => filterColumns.find(c => c.prop === p))
+        );
 
         // eslint-disable-next-line no-underscore-dangle
-        this.table._internalColumns = [].concat(
+        this.table._internalColumns = concat(
             fixedColumns,
             orderedFilterColumns,
             filterColumns.filter(c => !orderedFilterColumns.includes(c))

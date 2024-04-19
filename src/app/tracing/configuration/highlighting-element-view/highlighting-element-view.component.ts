@@ -3,6 +3,7 @@ import { TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
 import * as _ from 'lodash';
 import { EditRule, RuleId, RuleListItem, RuleType } from '../model';
+import { removeNullishPick } from '@app/tracing/util/non-ui-utils';
 
 @Component({ template: '' })
 export class HighlightingElementViewComponent<T extends EditRule> implements OnChanges {
@@ -105,8 +106,9 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
 
     private updateTypeToListItemsMap(): void {
         this.typeToListItemsMap_ = {} as Record<RuleType, RuleListItem[]>;
-        this.ruleListItems.filter(item => item.ruleType !== null).forEach(item => {
-            const list = this.typeToListItemsMap_[item.ruleType];
+        const ruleListItemsWithRuleType = removeNullishPick(this.ruleListItems, 'ruleType');
+        ruleListItemsWithRuleType.forEach(item => {
+            const list = this.typeToListItemsMap_[item.ruleType!];
             if (list === undefined) {
                 this.typeToListItemsMap_[item.ruleType] = [item];
             } else {

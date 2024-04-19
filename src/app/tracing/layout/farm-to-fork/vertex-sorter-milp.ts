@@ -2,14 +2,15 @@ import * as _ from 'lodash';
 import { Graph, Vertex } from './data-structures';
 import { lpSolve, LPModel, LPResult } from './../../../shared/lp-solver';
 import { createVirtualVertices } from './shared';
+import { concat } from '@app/tracing/util/non-ui-utils';
 
 function sortVerticesAccordingToResult(graph: Graph, lpResult: LPResult) {
 
     for (const layer of graph.layers) {
         layer.sort((a, b) => (
             a.indexInLayer < b.indexInLayer ?
-                (lpResult.vars.get(buildXVarName(a, b)) > 0.5 ? -1 : 1) :
-                (lpResult.vars.get(buildXVarName(b, a)) > 0.5 ? 1 : -1)
+                (lpResult.vars.get(buildXVarName(a, b))! > 0.5 ? -1 : 1) :
+                (lpResult.vars.get(buildXVarName(b, a))! > 0.5 ? 1 : -1)
         ));
 
         for (let i: number = layer.length - 1; i >= 0; i--) { layer[i].indexInLayer = i; }
@@ -92,7 +93,7 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
                 const sourcesFromTargetI: Vertex[] = targetI.inEdges.map(e => e.source);
                 const sourcesFromTargetK: Vertex[] = targetK.inEdges.map(e => e.source);
 
-                const varXik = buildXVarName(targetI, targetK); //
+                const varXik = buildXVarName(targetI, targetK);
 
                 for (const sourceJ of sourcesFromTargetI) {
                     for (const sourceL of sourcesFromTargetK) {
@@ -144,7 +145,7 @@ function addConstraintsAndObjective(layers: Vertex[][], lpModel) {
     for (const varC of crossingVars) { objective[varC] = 1; }
     for (const varN of neighbourVars) { objective[varN] = -1 / neighbourVars.length / 2; }
     lpModel.setObjective('min', objective);
-    lpModel.setBinaryVariables([].concat(crossingVars, pathVars));
+    lpModel.setBinaryVariables(concat(crossingVars, pathVars));
 }
 
 export function sortVerticesInLayers(graph: Graph, timeLimit?: number) {

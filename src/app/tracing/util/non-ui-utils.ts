@@ -1,9 +1,10 @@
 import {
-    DeliveryData, Color
+    DeliveryData, Color, HighlightingRule
 } from '../data.model';
 import { HttpClient } from '@angular/common/http';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
+import { RequiredPick } from './utility-types';
 
 type USwitch<A, B> = (A | unknown extends A ? B : A) & A;
 type RecordKeyType =
@@ -11,6 +12,13 @@ type RecordKeyType =
     | number
     | symbol;
 
+export function concat<T>(...args: (T[] | ConcatArray<T>)[]): T[] {
+    return ([] as T[]).concat(...args);
+}
+
+export function filter<T, K extends T>(array: T[], fun: (x: T) => x is K): K[] {
+    return array.filter(fun);
+}
 
 export function entries<T extends string, K>(object: Record<T, K> | Partial<Record<T, K>>): [T, K][] {
     return Object.entries(object) as [T, K][];
@@ -18,6 +26,65 @@ export function entries<T extends string, K>(object: Record<T, K> | Partial<Reco
 
 export function values<T extends string, K>(object: Record<T, K> | Partial<Record<T, K>>): K[] {
     return Object.values(object) as K[];
+}
+
+export function isNullish(x: any): x is undefined | null {
+    return x === null || x === undefined;
+}
+
+export function isNotNullish<T>(x: T): x is Exclude<T, undefined | null> {
+    return x !== null && x !== undefined;
+}
+
+export function removeNullish<T>(arr: T[]): Exclude<T, undefined | null>[] {
+    return arr.filter(isNotNullish);
+}
+
+export function removeNull<T>(arr: T[]): Exclude<T, null>[] {
+    return arr.filter(x => x !== null) as Exclude<T, null>[];
+}
+
+export function removeUndefined<T>(arr: T[]): Exclude<T, undefined>[] {
+    return arr.filter(x => x !== undefined) as Exclude<T, undefined>[];
+}
+
+export function removeNullishPick<
+    T,
+    K extends keyof T,
+    R extends(Omit<T, K> & { [Property in K]: Exclude<T[Property], null | undefined> })>(
+    arr: T[], key: K
+): R[] {
+    return arr.filter(x => x[key] != null) as unknown[] as R[];
+}
+
+export function mapColumns<T, K>(m: T[][], fun: (col: (T | undefined)[]) => K): K[] {
+    if (m.length === 0) {
+        return [];
+    } else {
+        const columnCount = Math.max(...m.map(r => r.length));
+        const mapping = Array<K>(columnCount);
+        for (let c = 0; c < columnCount; c++) {
+            const column = m.map(r => r[c]);
+            mapping[c] = fun(column);
+        }
+        return mapping;
+    }
+}
+
+export function isAnoRule(rule: HighlightingRule): rule is RequiredPick<HighlightingRule, 'labelParts'> {
+    return !isNullish(rule.labelParts);
+}
+
+export function createMatrix<T>(rowCount: number, columnCount: number, value: T): T[][] {
+    const result: T[][] = [];
+    for (let r = rowCount - 1; r >= 0; r--) {
+        result[r] = new Array<T>(columnCount).fill(value);
+    }
+    return result;
+}
+
+export function isNotEmpty(x: string | null | undefined): x is Exclude<string, ''> {
+    return (x ?? '') !== '';
 }
 
 export class Utils {
@@ -92,29 +159,7 @@ export class Utils {
         };
     }
 
-    static getAllCombinations(values: any[]): any[][] {
-        const n = Math.pow(2, values.length);
-        const combinations = [];
-
-        for (let i = 1; i < n; i++) {
-            const bits = i.toString(2).split('').reverse().join('');
-            const combination = [];
-
-            for (let j = 0; j < values.length; j++) {
-                if (bits[j] === '1') {
-                    combination.push(values[j]);
-                }
-            }
-
-            combinations.push(combination);
-        }
-
-        combinations.sort((c1, c2) => c1.length - c2.length);
-
-        return combinations;
-    }
-
-    static stringToDate(dateString: string): Date {
+    static stringToDate(dateString: string | null | undefined): Date | null {
         if (dateString != null) {
             const date = new Date(dateString);
 
@@ -128,7 +173,7 @@ export class Utils {
         }
     }
 
-    static dateToString(date: Date): string {
+    static dateToString(date: Date | null | undefined): string | null {
         if (date != null) {
             const isoString = date.toISOString();
 
@@ -160,9 +205,9 @@ export class Utils {
         );
     }
 
-    private static getReverseMapOfImmutableMap<X, Y>(map: ImmutableMap<X, Y>): Map<Y, X> {
-        const result: Map<Y, X> = new Map();
-        map.forEach((value: Y, key: X) => result.set(value, key));
+    private static getReverseMapOfImmutableMap<K, V>(map: ImmutableMap<K, V>): Map<V, K> {
+        const result = new Map<V, K>();
+        map.forEach((value?: V, key?: K) => result.set(value as V, key as K));
         return result;
     }
 
@@ -224,11 +269,12 @@ export class Utils {
      * @param keyFn element to element key mapping
      */
     static getGroups<T>(elements: T[], keyFn: (t: T) => string): Map<string, T[]> {
-        const result: Map<string, T[]> = new Map();
+        const result = new Map<string, T[]>();
         elements.forEach(e => {
             const key: string = keyFn(e);
-            if (result.has(key)) {
-                result.get(key).push(e);
+            const keyElements = result.get(key);
+            if (keyElements) {
+                keyElements.push(e);
             } else {
                 result.set(key, [e]);
             }
@@ -379,7 +425,7 @@ export class Utils {
             if (index < 0) {
                 array.push(newElement);
             } else {
-                array = [].concat(
+                array = ([] as T[]).concat(
                     array.slice(0, index),
                     [newElement],
                     array.slice(index)

@@ -1,8 +1,8 @@
 {
     "$id": "http://fcl.bfr.bund.de/schemas/schema.json",
     "type": "object",
-    "title": "FCL-JSON-Exchange-Format-Schema Version 1.2.0",
-    "description": "JSON exchange format of FoodChain-Lab app (validates json version 1.1.2)",
+    "title": "FCL-JSON-Exchange-Format-Schema Version 1.2.1",
+    "description": "JSON exchange format of FoodChain-Lab app (validates json version >=1.1.2)",
     "properties": {
         "data": {
             "type": "object",
@@ -132,7 +132,9 @@
                                                     }
                                                 ]
                                             }
-                                        }
+                                        },
+                                        "logicalConditions": { "$ref": "#/definitions/logicalConditions" },
+                                        "disabled": { "type": "boolean" }
                                     }
                                 },
                                 "highlightConditions": {
@@ -193,11 +195,33 @@
                             }
                         }
                     }
+                },
+                "version": {
+                    "type": "string"
                 }
             },
             "required": [
                 "metaNodes"
             ]
+        },
+        "samples": {
+            "type": ["array", "null"],
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sampleStation": { "type": "string" },
+                    "sampledLot": { "type": ["string", "null"] },
+                    "result": { "type": ["string", "null"] },
+                    "resultType": { "type": ["string", "null"] },
+                    "time": { "type": ["string", "null"] },
+                    "amount": { "type": ["string", "null"] },
+                    "type": { "type": ["string", "null"] },
+                    "material": { "type": ["string", "null"] }
+                },
+                "required": [
+                    "sampleStation"
+                ]
+            }
         }
     },
     "required": ["data"],

@@ -2,7 +2,7 @@ import { OperationType } from '../data.model';
 
 type SimpleValueType = string | number | boolean | undefined | null;
 type OperatorFun = (value: SimpleValueType) => boolean;
-type OperatorFunCreatorFun = (value: SimpleValueType) => OperatorFun;
+type OperatorFunCreatorFun = (value: string) => OperatorFun;
 
 function valueToStr(value: SimpleValueType): string {
     if (value === undefined || value === null) {
@@ -16,7 +16,7 @@ function valueToStr(value: SimpleValueType): string {
     }
 }
 
-const operatorMap: { [key in OperationType]: OperatorFunCreatorFun } = {
+const operatorMap: Record<OperationType, OperatorFunCreatorFun> = {
     [OperationType.LESS]: createLessOpFun,
     [OperationType.GREATER]: createGreaterOpFun,
     [OperationType.EQUAL]: createEqualOpFun,
@@ -135,39 +135,39 @@ export function createContainsOpFun(refValue: SimpleValueType): OperatorFun {
     return (x: SimpleValueType) => valueToStr(x).toLowerCase().includes(strRef);
 }
 
-function createRegExp(pattern: string, ignoreCase?: boolean): RegExp {
+function createRegExp(pattern: string, ignoreCase?: boolean): RegExp | undefined {
     try {
         return new RegExp(pattern, ignoreCase ? 'i' : undefined);
     // eslint-disable-next-line no-empty
     } catch (e) {}
 
-    return null;
+    return undefined;
 }
 
 export function createRegexEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const regex = createRegExp(valueToStr(refValue));
 
-    return (x: SimpleValueType) => regex && regex.test(valueToStr(x));
+    return (x: SimpleValueType) => regex !== undefined && regex.test(valueToStr(x));
 }
 
 export function createRegexNotEqualOpFun(refValue: SimpleValueType): OperatorFun {
     const regex = createRegExp(valueToStr(refValue));
 
-    return (x: SimpleValueType) => regex && !regex.test(valueToStr(x));
+    return (x: SimpleValueType) => regex !== undefined && !regex.test(valueToStr(x));
 }
 
 export function createRegexEqualICOpFun(refValue: SimpleValueType): OperatorFun {
     const regex = createRegExp(valueToStr(refValue), true);
 
-    return (x: SimpleValueType) => regex && regex.test(valueToStr(x));
+    return (x: SimpleValueType) => regex !== undefined && regex.test(valueToStr(x));
 }
 
 export function createRegexNotEqualICOpFun(refValue: SimpleValueType): OperatorFun {
     const regex = createRegExp(valueToStr(refValue), true);
 
-    return (x: SimpleValueType) => regex && !regex.test(valueToStr(x));
+    return (x: SimpleValueType) => regex !== undefined && !regex.test(valueToStr(x));
 }
 
-export function createOperatorFun(operatorType: OperationType, refValue: SimpleValueType): OperatorFun {
+export function createOperatorFun(operatorType: OperationType, refValue: string): OperatorFun {
     return operatorMap[operatorType](refValue);
 }

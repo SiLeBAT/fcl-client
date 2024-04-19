@@ -29,10 +29,6 @@ export class ClearTraceMSA implements Action {
     readonly type = TracingActionTypes.ClearTraceMSA;
 }
 
-// export class ClearOutbreakStationsMSA implements Action {
-//     readonly type = TracingActionTypes.ClearOutbreakStationsMSA;
-// }
-
 export class ClearInvisibilitiesMSA implements Action {
     readonly type = TracingActionTypes.ClearInvisibilitiesMSA;
 
@@ -56,12 +52,6 @@ export class ShowDeliveryPropertiesMSA implements Action {
 
     constructor(public payload: { deliveryIds: string[] }) {}
 }
-
-// export class MarkStationsAsOutbreakMSA implements Action {
-//     readonly type = TracingActionTypes.MarkStationsAsOutbreakMSA;
-
-//     constructor(public payload: { stationIds: string[]; outbreak: boolean }) {}
-// }
 
 export class MarkElementsAsOutbreakMSA implements Action {
     readonly type = TracingActionTypes.MarkElementsAsOutbreakMSA;
@@ -124,17 +114,15 @@ export class SetLastUnchangedJsonDataExtractMSA implements Action {
 export class SetStationPositionsAndLayoutMSA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsAndLayoutMSA;
 
-    constructor(public payload: { stationPositions: { [key: string]: Position }; layout: Layout }) {}
+    constructor(public payload: { stationPositions: { [key: string]: Position }; layout?: Layout }) {}
 }
 
 
 export type TracingActions =
       ClearTraceMSA
-    // | ClearOutbreakStationsMSA
     | ClearOutbreaksMSA
     | ClearInvisibilitiesMSA
     | ShowStationPropertiesMSA
-    // | MarkStationsAsOutbreakMSA
     | MarkElementsAsOutbreakMSA
     | SetStationCrossContaminationMSA
     | MakeElementsInvisibleMSA

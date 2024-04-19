@@ -56,7 +56,7 @@ export function getNonOverlayPositions(
                 }
             }
 
-            newPosMap[node1.id] = bestPoint;
+            newPosMap[node1.id] = bestPoint!;
         }
     }
 

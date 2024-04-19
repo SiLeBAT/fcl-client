@@ -47,7 +47,7 @@ function createBoxPorts(stationBox: VisioBox): { id: string; port: BoxPort }[] {
 function createBoxToGroupIndexMap(stationBoxToBoxMap: Map<VisioBox, Box>, groups: {label: string; boxes: VisioBox[]}[]): Map<Box, number> {
     const result: Map<Box, number> = new Map();
     groups.forEach((group, groupIndex) => {
-        group.boxes.forEach(stationBox => result.set(stationBoxToBoxMap.get(stationBox), groupIndex));
+        group.boxes.forEach(stationBox => result.set(stationBoxToBoxMap.get(stationBox)!, groupIndex));
     });
     return result;
 }
@@ -59,8 +59,8 @@ function createLinks(idToPortMap: Map<string, BoxPort>, connectors: VisioConnect
     for (let i = 0; i < connectors.length; i++) {
         result.push({
             id: 'L' + id++,
-            from: idToPortMap.get(connectors[i].fromPort),
-            to: idToPortMap.get(connectors[i].toPort)
+            from: idToPortMap.get(connectors[i].fromPort)!,
+            to: idToPortMap.get(connectors[i].toPort)!
         });
     }
     return result;
@@ -136,7 +136,7 @@ function addNeighbourConstraints(boxModel: BoxModel, lpModel: LPModel, intraGrou
             lpModel.addConstraint(
                 'NC' + rowIndex + '.' + (i - 1),
                 minDistance + boxRow[i - 1].size,
-                undefined,
+                null,
                 {
                     [boxRow[i].id]: 1,
                     [boxRow[i - 1].id]: -1
@@ -153,7 +153,7 @@ function addBoundaryContraints(boxModel: BoxModel, lpModel: LPModel, varNameWidt
             lpModel.addConstraint(
                 'BCL' + rowIndex,
                 0,
-                undefined,
+                null,
                 {
                     [boxRow[0].id]: 1
                 }
@@ -162,7 +162,7 @@ function addBoundaryContraints(boxModel: BoxModel, lpModel: LPModel, varNameWidt
             lpModel.addConstraint(
                 'BCR' + rowIndex,
                 boxRow[boxRow.length - 1].size,
-                undefined,
+                null,
                 {
                     [varNameWidth]: 1,
                     [boxRow[boxRow.length - 1].id]: -1
@@ -175,8 +175,8 @@ function addBoundaryContraints(boxModel: BoxModel, lpModel: LPModel, varNameWidt
 
 function addLinkConstraints(boxModel: BoxModel, lpModel: LPModel) {
     boxModel.links.forEach(link => {
-        const portFromBox = boxModel.portToBoxMap.get(link.from);
-        const portToBox = boxModel.portToBoxMap.get(link.to);
+        const portFromBox = boxModel.portToBoxMap.get(link.from)!;
+        const portToBox = boxModel.portToBoxMap.get(link.to)!;
         // |((BoxFrom + PortFromOffset) - (BoxTo + PortToOffset)| - Link <= 0
         // Case 1: |((BoxFrom + PortFromOffset) - (BoxTo + PortToOffset)| >= 0
         // -> ((BoxFrom + PortFromOffset) - (BoxTo + PortToOffset) - Link <= 0
@@ -184,7 +184,7 @@ function addLinkConstraints(boxModel: BoxModel, lpModel: LPModel) {
         // BoxFrom - BoxTto - Link <= PortToOffset - PortFromOffset
         lpModel.addConstraint(
             'LC_' + link.id + '_F-T-L>=0',
-            undefined,
+            null,
             link.to.x - link.from.x,
             {
                 [portFromBox.id]: 1,
@@ -198,7 +198,7 @@ function addLinkConstraints(boxModel: BoxModel, lpModel: LPModel) {
         // BoxTo - BoxFrom - Link <= PortFromOffset - PortToOffset
         lpModel.addConstraint(
             'LC_' + link.id + '_T-F-L>=0',
-            undefined,
+            null,
             link.from.x - link.to.x,
             {
                 [portToBox.id]: 1,
@@ -224,9 +224,9 @@ export function improvePositions(
 
     for (let r = 0; r < stationBoxes.length; r++) {
         for (let c = 0; c < stationBoxes[r].length; c++) {
-            stationBoxes[r][c].relPosition.x = lpResult.vars.get(boxModel.boxes[r][c].id);
-            stationBoxes[r][c].relPosition.y = stationBoxes[r][c].position.y;
-            stationBoxes[r][c].position.x = lpResult.vars.get(boxModel.boxes[r][c].id);
+            stationBoxes[r][c].relPosition.x = lpResult.vars.get(boxModel.boxes[r][c].id)!;
+            stationBoxes[r][c].relPosition.y = stationBoxes[r][c].position!.y;
+            stationBoxes[r][c].position!.x = lpResult.vars.get(boxModel.boxes[r][c].id)!;
         }
     }
 }

@@ -17,7 +17,7 @@ import {
     HighlightingStats,
     LabelPart
 } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
+import { removeNullish, Utils } from '../util/non-ui-utils';
 
 type PropertyValueType = (number | string | boolean);
 type RuleId = string;
@@ -202,7 +202,7 @@ export class HighlightingService {
         };
     }
 
-    private mapToColor(color: number[]): Color {
+    private mapToColor(color: number[] | null): Color | null {
         return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
     }
 
@@ -256,10 +256,10 @@ export class HighlightingService {
 
             effElementsStats[anoRule.id] = indexedElements.length;
 
-            const indexPartIndex = anoRule.labelParts.findIndex(p => p.useIndex);
+            const indexPartIndex = anoRule.labelParts!.findIndex(p => p.useIndex);
             if (indexPartIndex >= 0) {
-                const preIndexParts = anoRule.labelParts.slice(0, indexPartIndex);
-                const afterIndexParts = anoRule.labelParts.slice(indexPartIndex + 1);
+                const preIndexParts = anoRule.labelParts!.slice(0, indexPartIndex);
+                const afterIndexParts = anoRule.labelParts!.slice(indexPartIndex + 1);
                 const prefixCount: Record<string, number> = {};
                 const prefix2Elements: Record<string, T[0][]> = {};
                 const prefixes: string[] = [];
@@ -282,7 +282,7 @@ export class HighlightingService {
                     const places = ('' + prefixElements.length).length;
                     const formatIndexFun = prefixElements.length === 1 ?
                         (i: number) => '' :
-                        (i: number) => `${anoRule.labelParts[indexPartIndex].prefix}${String(i).padStart(places, '0')}`;
+                        (i: number) => `${anoRule.labelParts![indexPartIndex].prefix}${String(i).padStart(places, '0')}`;
 
                     prefixElements.forEach((element, elementIndex) => {
                         const suffix = this.getComposedLabel(element, afterIndexParts);
@@ -290,19 +290,19 @@ export class HighlightingService {
                         const anoName = `${anoRule.labelPrefix ?? ''}${prefix}${infix}${suffix}`;
                         element.anonymizedName = anoName;
 
-                        if (conditionsEvalFun(element)) {
-                            element.highlightingInfo.label = this.getTrimmedLabel(anoName);
+                        if (conditionsEvalFun && conditionsEvalFun(element)) {
+                            element.highlightingInfo!.label = this.getTrimmedLabel(anoName);
                         }
                     });
                 });
             } else {
-                const labelPartsWoIndex = anoRule.labelParts.filter(p => p.useIndex === undefined);
+                const labelPartsWoIndex = anoRule.labelParts!.filter(p => p.useIndex === undefined);
                 indexedElements.forEach((element: StationData) => {
                     const anoName = (anoRule.labelPrefix ?? '') + this.getComposedLabel(element, labelPartsWoIndex);
                     element.anonymizedName = anoName;
 
-                    if (conditionsEvalFun(element)) {
-                        element.highlightingInfo.label = this.getTrimmedLabel(anoName);
+                    if (conditionsEvalFun && conditionsEvalFun(element)) {
+                        element.highlightingInfo!.label = this.getTrimmedLabel(anoName);
                     }
                 });
             }
@@ -317,8 +317,8 @@ export class HighlightingService {
     private getComposedLabel(element: DeliveryData | StationData, labelParts: LabelPart[]): string {
         return labelParts.map(p => {
             if (p.property !== undefined) {
-                const label = this.mapPropertyValueToString(this.getPropertyValueFromElement(element, p.property));
-                return label && p.prefix ? `${p.prefix}${label}` : label;
+                const label = this.mapPropertyValueToString(this.getPropertyValueFromElement(element, p.property!));
+                return `${p.prefix ?? ''}${label ?? ''}`;
             } else {
                 return p.prefix;
             }
@@ -373,14 +373,23 @@ export class HighlightingService {
         fclElement: T,
         highlightingRules: K[]
     ): { label: string; color: number[][] } {
-        const labelParts = highlightingRules
-            .filter(rule => rule.labelProperty !== null)
-            .map(rule => this.mapPropertyValueToString(this.getPropertyValueFromElement(fclElement, rule.labelProperty)))
-            .filter(labelValue => (labelValue !== undefined) && (labelValue !== null));
 
-        const color = highlightingRules
-            .filter(rule => rule.color !== null)
-            .map(rule => rule.color);
+        const labelParts: string[] = [];
+        for (const rule of highlightingRules) {
+            if (rule.labelProperty) {
+                const propertyValue = this.getPropertyValueFromElement(fclElement, rule.labelProperty);
+                if (propertyValue !== undefined) {
+                    const labelValue = this.mapPropertyValueToString(propertyValue);
+                    if (labelValue !== undefined) {
+                        labelParts.push(labelValue);
+                    }
+                }
+            }
+        }
+
+        const color = removeNullish(
+            highlightingRules.map(rule => rule.color)
+        );
 
         return {
             label: this.getTrimmedLabel(labelParts.join(' / ')),
@@ -388,7 +397,7 @@ export class HighlightingService {
         };
     }
 
-    private getPropertyValueFromElement(element: StationData | DeliveryData, propertyName: string): PropertyValueType {
+    private getPropertyValueFromElement(element: StationData | DeliveryData, propertyName: string): PropertyValueType | undefined {
         let propertyValue = element[propertyName];
 
         if (propertyValue === undefined) {
@@ -402,8 +411,8 @@ export class HighlightingService {
         return propertyValue;
     }
 
-    private mapPropertyValueToString(propertyValue: PropertyValueType): string {
-        let newPropertyValue: string = null;
+    private mapPropertyValueToString(propertyValue: PropertyValueType | undefined): string | undefined {
+        let newPropertyValue: string | undefined;
 
         if (propertyValue !== undefined && propertyValue !== null) {
             newPropertyValue = propertyValue.toString();

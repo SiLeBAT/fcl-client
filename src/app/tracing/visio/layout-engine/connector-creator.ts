@@ -16,9 +16,9 @@ export class ConnectorCreator {
 
     createConnector(delivery: DeliveryInformation): VisioConnector {
         const lotInfo = this.infoProvider.getDeliverySource(delivery);
-        const lotBox = this.boxCreator.getLotBox(lotInfo);
+        const lotBox = this.boxCreator.getLotBox(lotInfo)!;
         const stationInfo = this.infoProvider.getDeliveryTarget(delivery);
-        const stationBox = this.boxCreator.getStationBox(stationInfo);
+        const stationBox = this.boxCreator.getStationBox(stationInfo)!;
 
         return {
             id: 'c' + this.connectorCounter++,

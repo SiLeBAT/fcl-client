@@ -2,6 +2,7 @@ import { DataService } from '../services/data.service';
 import { GroupType, GroupData } from '../data.model';
 import { IsolatedComponent, GroupingState, GroupingChange } from './model';
 import * as _ from 'lodash';
+import { concat, removeUndefined } from '../util/non-ui-utils';
 
 export class IsolatedComponentCollapser {
 
@@ -27,7 +28,7 @@ export class IsolatedComponentCollapser {
         );
 
         const blockedIds: Set<string> = new Set([
-            ...[].concat(
+            ...concat(
                 ...data.stations.filter(s =>
                     s.contains != null &&
                     s.contains.length > 0 &&
@@ -41,8 +42,8 @@ export class IsolatedComponentCollapser {
             ).map(s => s.id)
         ]);
 
-        const inNodes: Map<string, string[]> = new Map();
-        const outNodes: Map<string, string[]> = new Map();
+        const inNodes = new Map<string, string[]>();
+        const outNodes = new Map<string, string[]>();
 
         for (const delivery of data.deliveries.filter(d => !d.invisible)) {
             const target: string = blockedIds.has(delivery.originalTarget) ? delivery.target : delivery.originalTarget;
@@ -54,12 +55,12 @@ export class IsolatedComponentCollapser {
                 !invisibleStationIds.has(source)
             ) {
                 if (inNodes.has(target)) {
-                    inNodes.get(target).push(source);
+                    inNodes.get(target)!.push(source);
                 } else {
                     inNodes.set(target, [source]);
                 }
                 if (outNodes.has(source)) {
-                    outNodes.get(source).push(target);
+                    outNodes.get(source)!.push(target);
                 } else {
                     outNodes.set(source, [target]);
                 }
@@ -81,7 +82,9 @@ export class IsolatedComponentCollapser {
         while (currentStations.length > 0) {
 
             currentStations = _.uniq(
-                [].concat(...currentStations.map(id => inNodes.get(id))).filter(id => id != null)
+                concat(...removeUndefined(
+                    currentStations.map(id => inNodes.get(id))
+                ))
             ).filter(id => !notIsolatedStationIds.has(id));
 
             currentStations.forEach(id => notIsolatedStationIds.add(id));
@@ -198,7 +201,7 @@ export class IsolatedComponentCollapser {
             componentIds.push(id);
 
             const f = (a: string[]) => (a == null ? [] : a);
-            for (const linkId of _.uniq(f(inNodes.get(id)).concat(f(outNodes.get(id))))) {
+            for (const linkId of _.uniq(f(inNodes.get(id)!).concat(f(outNodes.get(id)!)))) {
                 if (supportIds.has(linkId)) {
                     componentSupportIds.push(linkId);
                 } else {

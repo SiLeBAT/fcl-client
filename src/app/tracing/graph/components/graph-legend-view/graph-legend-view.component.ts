@@ -52,20 +52,20 @@ export class GraphLegendViewComponent {
             legendInfo.stations.forEach((stationLegendInfo, index) => {
                 newLegend.push({
                     name: stationLegendInfo.label,
-                    stationColor: stationLegendInfo.color,
-                    shape: stationLegendInfo.shape
+                    stationColor: stationLegendInfo.color ?? undefined,
+                    shape: stationLegendInfo.shape ?? undefined
                 });
             });
             const entryMap = Utils.createObjectFromArray(newLegend, (e) => e.name);
             legendInfo.deliveries.forEach((deliveryLegendInfo, index) => {
                 const entry = entryMap[deliveryLegendInfo.label];
                 if (entry) {
-                    entry.deliveryColor = deliveryLegendInfo.color;
+                    entry.deliveryColor = deliveryLegendInfo.color ?? undefined;
                     entry.deliveryIndex = index;
                 } else {
                     const newEntry: LegendEntryWithIndices = {
                         name: deliveryLegendInfo.label,
-                        deliveryColor: deliveryLegendInfo.color,
+                        deliveryColor: deliveryLegendInfo.color ?? undefined,
                         deliveryIndex: index
                     };
                     const beforeIndex = newLegend.findIndex(e => e.deliveryIndex !== undefined && e.deliveryIndex > index);

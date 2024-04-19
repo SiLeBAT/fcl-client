@@ -16,7 +16,7 @@ export class LoadFclDataMSA implements Action {
 export class LoadShapeFileMSA implements Action {
     readonly type = IOActionTypes.LoadShapeFileMSA;
 
-    constructor(public payload: { dataSource: FileList | null }) {}
+    constructor(public payload: { dataSource: FileList }) {}
 }
 
 export class SaveFclDataMSA implements Action {

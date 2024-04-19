@@ -23,7 +23,7 @@ class CellGrouper {
     private stationGroups: StationGroup[];
     private visGroupToLogicalGroupIndex: number[];
 
-    groupCells(stationGrid: StationData[][], stationGroups: StationGroup[]): CellGroup[] {
+    groupCells(stationGrid: (StationData | null)[][], stationGroups: StationGroup[]): CellGroup[] {
 
         this.rowCount = stationGrid.length;
         this.columnCount = stationGrid.length === 0 ? 0 : stationGrid[0].length;
@@ -47,16 +47,17 @@ class CellGrouper {
         return this.createGroups();
     }
 
-    private initStationToGroupMap(stationGrid: StationData[][]) {
-        const stationToLogicalGroupIndexMap: Map<StationData, number> = new Map();
+    private initStationToGroupMap(stationGrid: (StationData | null)[][]): void {
+        const stationToLogicalGroupIndexMap = new Map<StationData, number>();
         this.visGroupToLogicalGroupIndex = [];
         this.stationGroups.forEach((value, index) => value.stations.forEach(s => stationToLogicalGroupIndexMap.set(s, index)));
 
         this.logGroupAssignment = Utils.getMatrix(this.rowCount, this.columnCount, -1);
         for (let r = 0; r < this.rowCount; r++) {
             for (let c = 0; c < this.columnCount; c++) {
-                if (stationGrid[r][c] !== null) {
-                    this.logGroupAssignment[r][c] = stationToLogicalGroupIndexMap.get(stationGrid[r][c]);
+                const station = stationGrid[r][c];
+                if (station !== null) {
+                    this.logGroupAssignment[r][c] = stationToLogicalGroupIndexMap.get(station)!;
                 }
             }
         }
@@ -115,7 +116,7 @@ class CellGrouper {
 }
 
 export function getCellGroups(
-    stationGrid: StationData[][],
+    stationGrid: (StationData | null)[][],
     stationGroups: StationGroup[]
 ): {label: string; cells: GridCell[]}[] {
 

@@ -36,7 +36,7 @@ export class AlertComponent implements OnInit {
     private dismissSnackBarOnOutsideSnackBarClick(snackBarRef: MatSnackBarRef<TextOnlySnackBar>): void {
         const snackBarContainers = document.getElementsByClassName('mat-snack-bar-container');
         if (snackBarContainers.length > 0) {
-            const snackBarContainer = snackBarContainers.item(snackBarContainers.length - 1);
+            const snackBarContainer = snackBarContainers.item(snackBarContainers.length - 1)!;
             const fun = (e: any) => {
                 if (!snackBarContainer.contains(e.target)) {
                     // Clicked outside the snackbar box
@@ -47,7 +47,10 @@ export class AlertComponent implements OnInit {
             let subscription: Subscription | null = null;
             const dismissed = () => {
                 window.removeEventListener('click', fun);
-                subscription.unsubscribe();
+                if (subscription) {
+                    subscription.unsubscribe();
+                    subscription = null;
+                }
             };
             subscription = snackBarRef.afterDismissed().subscribe(dismissed);
 

@@ -15,8 +15,8 @@ export class TextElementViewComponent {
 
     @Output() valueChange = new EventEmitter<string>();
 
-    private lastInput: string = undefined;
-    initialValue: string = undefined;
+    private lastInput: string | undefined;
+    initialValue: string | undefined;
 
     onKeyDown(e: KeyboardEvent): boolean {
         // filter out Enter
@@ -27,7 +27,7 @@ export class TextElementViewComponent {
         // cancel default paste
         e.preventDefault();
         // get text representation of clipboard
-        const text = e.clipboardData.getData('text/plain');
+        const text = e.clipboardData!.getData('text/plain');
 
         if (text !== undefined && text !== null) {
             // remove linebreaks and insert text manually
@@ -37,7 +37,7 @@ export class TextElementViewComponent {
 
     onInput(e: Event): void {
         const textBox = (e.target as HTMLDivElement);
-        const textContent = textBox.textContent;
+        const textContent = textBox.textContent ?? undefined;
         this.lastInput = textContent;
         this.valueChange.emit(textContent);
     }

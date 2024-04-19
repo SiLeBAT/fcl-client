@@ -87,7 +87,7 @@ export interface InvEditRule extends EditRuleCore {
     type: RuleType.INVISIBILITY;
 }
 
-export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule; //  | ComposedLabelEditRule;
+export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule;
 export type DeliveryEditRule = LabelEditRule | InvEditRule | ColorEditRule;
 
 export type DeliveryRuleType = RuleType.LABEL | RuleType.COLOR;

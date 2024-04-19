@@ -4,12 +4,12 @@ export class CtNoAssigner {
     private static readonly minCharCode = 'A'.charCodeAt(0);
     private static readonly charCount = 'Z'.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
 
-    static assingCtNos(infoGrid: StationInformation[][]) {
+    static assingCtNos(infoGrid: (StationInformation | null)[][]) {
         let code = -1;
         for (let r = 0, rowCount = infoGrid.length; r < rowCount; r++) {
             for (let c = 0, columnCount = infoGrid[r].length; c < columnCount; c++) {
                 if (infoGrid[r][c] !== null) {
-                    infoGrid[r][c].ctno = this.codeToNo(++code);
+                    infoGrid[r][c]!.ctno = this.codeToNo(++code);
                 }
             }
         }

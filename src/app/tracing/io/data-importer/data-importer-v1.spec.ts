@@ -8,7 +8,7 @@ import { JsonData, VERSION } from '../ext-data-model.v1';
 import { DataImporterV1 } from './data-importer-v1';
 
 function getAggregatedIds(...idArrays: string[][]): string[] {
-    return _.uniq([].concat(...idArrays)).sort();
+    return _.uniq(([] as string[]).concat(...idArrays)).sort();
 }
 
 function checkElementTracSettingsCompleteness(fclData: FclData): void {
@@ -61,7 +61,7 @@ describe('DataImporterV1', () => {
             .then(async () => {
                 checkElementTracSettingsCompleteness(fclData);
 
-                const allStatIds = [].concat(
+                const allStatIds = ([] as string[]).concat(
                     fclData.fclElements.stations.map(s => s.id),
                     fclData.groupSettings.map(g => g.id)
                 );

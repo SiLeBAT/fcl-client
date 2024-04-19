@@ -12,7 +12,7 @@ import {
     HighlightingRule as ExtHighlightingRule,
     LogicalCondition as ExtLogicalCondition
 } from '../ext-data-model.v1';
-import { Utils } from '../../util/non-ui-utils';
+import { concat, removeNullish, Utils } from '../../util/non-ui-utils';
 import {
     STATION_PROP_TO_REQ_TYPE_MAP,
     DELIVERY_PROP_TO_REQ_TYPE_MAP,
@@ -113,9 +113,7 @@ const DEL2DEL_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
     }
 ]);
 
-const STATION_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
-    { [key: string]: string | RegExp }
-> = ImmutableList([
+const STATION_PROPS_INT_TO_EXT_ALT_MAP = ImmutableList<{ [key: string]: string | RegExp }>([
     {
         lat: ExtDataConstants.STATION_GLAT_REGEX,
         lon: ExtDataConstants.STATION_GLON_REGEX
@@ -154,9 +152,7 @@ export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     }
 ));
 
-const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
-    { [key: string]: string | RegExp }
-> = ImmutableList([
+const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP = ImmutableList<{ [key: string]: string | RegExp }>([
     {
         // supposed to target all other outputs
         // destiller does not provider lot number
@@ -179,7 +175,7 @@ const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP: ImmutableList<
     }
 ]);
 
-function getMatchingProp(availableProps: string[], key: string | RegExp): string {
+function getMatchingProp(availableProps: string[], key: string | RegExp): string | undefined {
     if (typeof key === 'string') {
         if (availableProps.includes(key)) {
             return key;
@@ -216,8 +212,8 @@ function getPropMap(
         }
     }
     // look for alternative mappings
-    altMapList.forEach((propSet: AltPropMap) => {
-        const intProps = Object.keys(propSet);
+    altMapList.forEach((propSet: AltPropMap| undefined) => {
+        const intProps = Object.keys(propSet!);
         // Check whether all (internal) props of the propSet are already mapped to an available external prop
         if (intProps.some(intProp => availableExtPropsSet[propMap[intProp]] === undefined)) {
             // At least one internal prop of the propSet is not mapped to an available external prop yet
@@ -225,13 +221,13 @@ function getPropMap(
             const altPropMap = Utils.createObjectFromArray(
                 intProps,
                 intProp => intProp,
-                intProp => getMatchingProp(availableExtProps, propSet[intProp])
+                intProp => getMatchingProp(availableExtProps, propSet![intProp])
             );
             // are all alternative mappings for all props in the set available
             if (intProps.every(intProp => altPropMap[intProp] !== undefined)) {
                 // yes, apply alternative mappings
                 intProps.forEach(intProp => {
-                    propMap[intProp] = altPropMap[intProp];
+                    propMap[intProp] = altPropMap[intProp]!;
                 });
             }
         }
@@ -252,25 +248,32 @@ function getPropMap(
 
 // retrieves all props referenced in HighlightingData
 function getReferencedProps(highlightingConditions: ExtHighlightingRule[]): string[] {
-    return (
-        highlightingConditions ?
-            [].concat(...highlightingConditions.map(
-                hCon => [
-                    hCon.labelProperty,
-                    ...(
-                        hCon.logicalConditions ?
-                            getLogicalConditionsProps(hCon.logicalConditions) :
-                            []
-                    ),
-                    ...hCon.valueCondition ? [hCon.valueCondition.propertyName] : []
-                ]
-            )).filter(prop => prop !== undefined && prop !== null) :
-            []
-    );
+    if (highlightingConditions) {
+        const propSet = new Set<string>();
+        for (const hCon of highlightingConditions) {
+            if (hCon.labelProperty) {
+                propSet.add(hCon.labelProperty);
+            }
+            if (hCon.logicalConditions) {
+                getLogicalConditionsProps(hCon.logicalConditions).forEach(p => propSet.add(p));
+            }
+            if (hCon.valueCondition) {
+                propSet.add(hCon.valueCondition.propertyName);
+            }
+        }
+        return Array.from(propSet);
+    }
+    return [];
 }
 
 function getLogicalConditionsProps(logicalConditions: ExtLogicalCondition[][]): string[] {
-    return [].concat(...logicalConditions.map(logConA => logConA.map(logCon => logCon.propertyName)));
+    const propSet = new Set<string>();
+    for (const conditionArray of logicalConditions) {
+        for (const condition of conditionArray) {
+            propSet.add(condition.propertyName);
+        }
+    }
+    return Array.from(propSet);
 }
 
 export function getStationPropMap(jsonData: JsonData): PropMap {
@@ -286,12 +289,13 @@ export function getStationPropMap(jsonData: JsonData): PropMap {
 
         const anoRule = jsonData.settings.view.node.anonymizationRule;
         if (anoRule) {
-            const logicalConditionProps = getLogicalConditionsProps(anoRule.logicalConditions);
-            const labelPartProps = anoRule.labelParts.map(p => p.property).filter(p => p !== undefined);
-            referencedProps = [].concat(
+            const logicalConditionProps = anoRule.logicalConditions ? getLogicalConditionsProps(anoRule.logicalConditions) : [];
+            const labelPartProps = (anoRule.labelParts || []).map(p => p.property);
+            const nonNullishLabelPartProps = removeNullish(labelPartProps);
+            referencedProps = concat(
                 referencedProps,
                 logicalConditionProps,
-                labelPartProps
+                nonNullishLabelPartProps
             );
         }
     }
@@ -455,11 +459,11 @@ export class PropMapper {
         this.directProps = new Set(directProps);
     }
 
-    applyValuesFromTableRow(fromRow: DataRow, toObj: Connection | StationStoreData | DeliveryStoreData): void {
+    applyValuesFromTableRow(fromRow: DataRow, toObj: Partial<Connection | StationStoreData | DeliveryStoreData>): void {
         for (const property of fromRow) {
             if (!this.dontApplyExtProps[property.id]) {
                 if (this.extToIntPropMap.has(property.id)) {
-                    const intProp = this.extToIntPropMap.get(property.id);
+                    const intProp = this.extToIntPropMap.get(property.id)!;
                     const reqType = this.propToTypeMap.get(intProp);
                     if (reqType && !isValueTypeValid(property.value, reqType)) {
                         throw new InputDataError(

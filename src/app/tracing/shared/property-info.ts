@@ -3,7 +3,7 @@ import {
     StationData,
     DeliveryData
 } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
+import { concat, Utils } from '../util/non-ui-utils';
 
 export type PropId = string;
 type PropValue = number | boolean | string;
@@ -40,7 +40,7 @@ function getPublicProperties(fclItems: StationData[] | DeliveryData[], publicPro
             otherProps[propEntry.name] = true;
         }
     }
-    return [].concat(props, Object.keys(otherProps));
+    return concat(props, Object.keys(otherProps));
 }
 
 export function getPublicStationProperties(stations: StationData[]): PropInfo[] {

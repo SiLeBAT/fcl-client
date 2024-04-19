@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { Validators, FormControl, FormGroup } from '@angular/forms';
 
 import { LoginCredentials } from '../../models/user.model';
@@ -13,21 +13,19 @@ interface LoginForm {
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
-    @Output() login = new EventEmitter<LoginCredentials>();
-    loginForm: FormGroup<LoginForm>;
+export class LoginComponent {
 
-    ngOnInit() {
-        this.loginForm = new FormGroup<LoginForm>({
-            email: new FormControl<string | null>(null, [Validators.required, Validators.email]),
-            password: new FormControl<string | null>(null, Validators.required)
-        });
-    }
+    @Output() login = new EventEmitter<LoginCredentials>();
+
+    loginForm = new FormGroup<LoginForm>({
+        email: new FormControl<string | null>(null, [Validators.required, Validators.email]),
+        password: new FormControl<string | null>(null, Validators.required)
+    });
 
     onLogin() {
         const credentials: LoginCredentials = {
-            email: this.loginForm.value.email,
-            password: this.loginForm.value.password
+            email: this.loginForm.value.email ?? '',
+            password: this.loginForm.value.password ?? ''
         };
         this.login.emit(credentials);
         this.loginForm.reset();

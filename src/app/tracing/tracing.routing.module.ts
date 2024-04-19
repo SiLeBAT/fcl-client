@@ -10,7 +10,7 @@ const tracingRoutes: Routes = [
     {
         path: 'tracing',
         component: MainTracingComponent,
-        canActivate: environment.serverless ? null : [AuthGuard]
+        canActivate: environment.serverless ? undefined : [AuthGuard]
     }
 ];
 

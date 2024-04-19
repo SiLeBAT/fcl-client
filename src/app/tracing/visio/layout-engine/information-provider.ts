@@ -3,7 +3,7 @@ import {
     StationInformation, LotInformation, ProductInformation, DeliveryInformation
 } from './datatypes';
 import { StationData, DeliveryData, SampleData, PropertyEntry } from '../../data.model';
-import { Utils } from '../../util/non-ui-utils';
+import { concat, removeNullish, Utils } from '../../util/non-ui-utils';
 import { addSampleInformation } from './sample-information-provider';
 import { LabelElementInfo, PropElementInfo, ROASettings } from '../model';
 
@@ -23,6 +23,7 @@ export class InformationProvider {
     private static readonly STATION_PROPERTY_ACTIVITY = 'typeOfBusiness';
 
     private lotCounter: number = 0;
+    private prodCounter: number = 0;
 
     private idToDeliveryMap: Map<string, DeliveryData>;
     private idToStationMap: Map<string, StationData>;
@@ -48,7 +49,7 @@ export class InformationProvider {
         return {
             stationProps: this.getLabelProps(roaSettings.labelSettings.stationLabel),
             lotProps: this.getLabelProps(roaSettings.labelSettings.lotLabel),
-            sampleProps: _.uniq([].concat(
+            sampleProps: _.uniq(concat(
                 this.getLabelProps(roaSettings.labelSettings.lotSampleLabel),
                 this.getLabelProps(roaSettings.labelSettings.stationSampleLabel)
             ))
@@ -56,9 +57,10 @@ export class InformationProvider {
     }
 
     private getLabelProps(labelElements: LabelElementInfo[][]): string[] {
-        return [].concat(...labelElements.map(
-            elementRow => elementRow.filter(e => (e as PropElementInfo).prop !== undefined).map(e => (e as PropElementInfo).prop)
-        ));
+        const props = labelElements.map(
+            elementRow => removeNullish(elementRow.map((e: LabelElementInfo) => (e as PropElementInfo).prop))
+        );
+        return concat(...props);
     }
 
     private init() {
@@ -86,10 +88,9 @@ export class InformationProvider {
     }
 
     private createStationInfo(station: StationData): StationInformation {
-        const stationInfo = {
+        const stationInfo: StationInformation = {
             id: station.id,
             data: station,
-            ctno: null,
             props: this.getProps(station, this.viProps.stationProps),
             activities: this.getProperty(station.properties, InformationProvider.STATION_PROPERTY_ACTIVITY),
             samples: [],
@@ -122,7 +123,6 @@ export class InformationProvider {
         return value;
     }
 
-    // private getProperty(propList: PropertyEntry[], propName: string): string {
     private getProperty(propList: PropertyEntry[], propName: string): string | null {
         const index: number = propList.findIndex((p) => p.name.localeCompare(propName) === 0);
         if (index >= 0) {
@@ -134,41 +134,47 @@ export class InformationProvider {
     }
 
     private createProductInformation(deliveries: DeliveryData[]): ProductInformation[] {
-        const productToDeliveriesMap = Utils.getGroups(deliveries, (d) => d.name);
+        const productKeyFun = (d: DeliveryData) => d.name ? `P:${d.name}` : `P:${d.id}`;
+        const productToDeliveriesMap = Utils.getGroups(deliveries, productKeyFun);
         return Array.from(productToDeliveriesMap).map(([, productDeliveries]) => ({
-            id: null,
+            id: this.prodCounter++,
             lots: this.createLotInformation(productDeliveries)
         }));
     }
 
     private createLotInformation(deliveries: DeliveryData[]): LotInformation[] {
-        const lotToDeliveriesMap = Utils.getGroups(deliveries, (d) => d.lot);
-        return Array.from(lotToDeliveriesMap).map(([, lotDeliveries]) => ({
-            id: 'L' + this.lotCounter++,
-            props: this.getProps(lotDeliveries[0], this.viProps.lotProps),
-            key: lotDeliveries[0].lotKey,
-            samples: [],
-            deliveries: lotDeliveries.map(d => this.createDeliveryInformation(d))
-        }));
+        const lotKeyFun = (d: DeliveryData) => d.name && d.lot ?
+            `L:${d.name}||${d.lot}` : `D:${d.id}`;
+        const lotToDeliveriesMap = Utils.getGroups(deliveries, lotKeyFun);
+        return Array.from(lotToDeliveriesMap).map(([, lotDeliveries]) => {
+            const id = 'L' + this.lotCounter++;
+            return {
+                id: id,
+                props: this.getProps(lotDeliveries[0], this.viProps.lotProps),
+                key: lotDeliveries[0].lotKey ?? id,
+                samples: [],
+                deliveries: lotDeliveries.map(d => this.createDeliveryInformation(d))
+            };
+        });
     }
 
     private getStationOutDeliveries(station: StationData): DeliveryData[] {
         return station.outgoing.map(
-            delId => this.idToDeliveryMap.get(delId)
+            delId => this.idToDeliveryMap.get(delId)!
         ).filter(
             d =>
                 !d.invisible &&
-            !this.idToStationMap.get(d.source).invisible &&
-            !this.idToStationMap.get(d.target).invisible
+            !this.idToStationMap.get(d.source)!.invisible &&
+            !this.idToStationMap.get(d.target)!.invisible
         );
     }
 
     getStationInfo(station: StationData): StationInformation {
-        return this.stationIdToInfoMap.get(station.id);
+        return this.stationIdToInfoMap.get(station.id)!;
     }
 
     getLotInfo(id: string): LotInformation {
-        return this.idToLotMap.get(id);
+        return this.idToLotMap.get(id)!;
     }
 
     createDeliveryInformation(delivery: DeliveryData): DeliveryInformation {
@@ -185,11 +191,11 @@ export class InformationProvider {
     }
 
     getDeliverySource(deliveryInfo: DeliveryInformation): LotInformation {
-        return this.deliveryToSourceMap.get(deliveryInfo);
+        return this.deliveryToSourceMap.get(deliveryInfo)!;
     }
 
     getDeliveryTarget(deliveryInfo: DeliveryInformation): StationInformation {
-        return this.stationIdToInfoMap.get(deliveryInfo.target);
+        return this.stationIdToInfoMap.get(deliveryInfo.target)!;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function

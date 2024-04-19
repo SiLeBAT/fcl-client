@@ -4,7 +4,7 @@ import {
     VisioLabel, GraphLayer, BoxType, Position, Size
 } from './datatypes';
 import { GraphSettings } from './graph-settings';
-import { Utils } from '../../util/non-ui-utils';
+import { mapColumns, Utils } from '../../util/non-ui-utils';
 import { getDifference } from '@app/tracing/util/geometry-utils';
 
 type CellPolygon = GridCell[];
@@ -15,13 +15,13 @@ export class GroupContainerCreator {
     private columnLeft: number[];
     private columnWidth: number[];
     private groupHeaderHeight: number;
-    private boxGrid: VisioBox[][];
+    private boxGrid: (VisioBox | null)[][];
     private xMargin: number;
     private topMargin: number;
     private bottomMargin: number;
 
     createGroupBoxes(
-        boxGrid: VisioBox[][],
+        boxGrid: (VisioBox | null)[][],
         cellGroups: {label: VisioLabel; cells: GridCell[]}[],
         graphLayers: GraphLayer[]
     ): VisioBox[] {
@@ -41,15 +41,17 @@ export class GroupContainerCreator {
 
         const labelCell = this.getLabelCell(cells, minRow);
 
-        cells.filter(c => this.boxGrid[c.row][c.column] !== null).forEach(cell => {
+        cells.forEach(cell => {
             const box = this.boxGrid[cell.row][cell.column];
-            box.relPosition = {
-                x: this.columnLeft[cell.column] - this.columnLeft[minColumn] +
-                    (this.columnWidth[cell.column] - GraphSettings.GRID_MARGIN - box.size.width) / 2,
-                y: this.rowTop[cell.row] - this.rowTop[minRow] +
-                    GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT
-            };
-            elements.push(box);
+            if (box) {
+                box.relPosition = {
+                    x: this.columnLeft[cell.column] - this.columnLeft[minColumn] +
+                        (this.columnWidth[cell.column] - GraphSettings.GRID_MARGIN - box.size.width) / 2,
+                    y: this.rowTop[cell.row] - this.rowTop[minRow] +
+                        GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT
+                };
+                elements.push(box);
+            }
         });
 
         label.relPosition = {
@@ -67,7 +69,6 @@ export class GroupContainerCreator {
         return {
             type: BoxType.StationGroup,
             relPosition: position,
-            position: null,
             elements: elements,
             size: this.getSize(shape.outerBoundary),
             ports: [],
@@ -88,7 +89,7 @@ export class GroupContainerCreator {
     private getLabelCell(cells: GridCell[], minRow: number): GridCell {
         cells = cells.filter(cell => cell.row === minRow);
         const minColumn = Math.min(...cells.map(cell => cell.column));
-        return cells.find(cell => cell.column === minColumn);
+        return cells.find(cell => cell.column === minColumn)!;
     }
 
     private setRowAndColumnHeights(cellGroups: {label: VisioLabel; cells: GridCell[]}[], graphLayers: GraphLayer[]) {
@@ -98,21 +99,19 @@ export class GroupContainerCreator {
         this.topMargin = this.bottomMargin + this.groupHeaderHeight;
         this.xMargin = GraphSettings.GRID_MARGIN + GraphSettings.GROUP_MARGIN;
 
-        const rowHeight: number[] = this.boxGrid.map(r =>
-            Math.max(...r.map(c => (c === null ? 0 : c.size.height))) + this.topMargin + this.bottomMargin
+        const rowHeight: number[] = this.boxGrid.map(boxRow =>
+            Math.max(...boxRow.map(box => (box === null ? 0 : box.size.height))) + this.topMargin + this.bottomMargin
         );
 
-        this.columnWidth = this.boxGrid[0].map((r, i) =>
-            Math.max(...this.boxGrid.map(r2 => (r2[i] === null ? 0 : r2[i].size.width))) + 2 * this.xMargin);
+        this.columnWidth = mapColumns(
+            this.boxGrid,
+            (boxColumn) => Math.max(
+                ...boxColumn.map(box => box ? box.size.width : 0)
+            ) + 2 * this.xMargin
+        );
 
-        this.rowTop = [].concat(
-            [0],
-            this.aggValues(rowHeight)
-        );
-        this.columnLeft = [].concat(
-            [0],
-            this.aggValues(this.columnWidth)
-        );
+        this.rowTop = [0].concat(this.aggValues(rowHeight));
+        this.columnLeft = [0].concat(this.aggValues(this.columnWidth));
 
         graphLayers.forEach((gL, index) => gL.height = rowHeight[index]);
     }
@@ -163,7 +162,7 @@ export class GroupContainerCreator {
             for (let c = 0; c < columnCount; c++) {
                 if (!matrix[r][c]) {
                     holes.push([{ row: r, column: c }]);
-                    this.parseOuterBoundary(matrix, _.last(holes));
+                    this.parseOuterBoundary(matrix, _.last(holes)!);
                 }
             }
         }

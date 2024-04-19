@@ -33,13 +33,13 @@ describe('IOService', () => {
             source: createInitialFclDataSourceInfo(),
             fclElements: {
                 stations: [
-                    { id: 'S1', name: 'Station 1', lat: null, lon: null, incoming: [], outgoing: ['D1'], connections: [], properties: [] },
-                    { id: 'S2', name: 'Station 2', lat: null, lon: null, incoming: ['D2'], outgoing: [], connections: [], properties: [] }
+                    { id: 'S1', name: 'Station 1', lat: undefined, lon: undefined, incoming: [], outgoing: ['D1'], connections: [], properties: [] },
+                    { id: 'S2', name: 'Station 2', lat: undefined, lon: undefined, incoming: ['D2'], outgoing: [], connections: [], properties: [] }
                 ],
                 deliveries: [
                     {
-                        id: 'D1', source: 'S1', target: 'S2', name: 'Product P', lot: 'Lot 1', lotKey: null,
-                        dateIn: null, dateOut: null, properties: []
+                        id: 'D1', source: 'S1', target: 'S2', name: 'Product P', lot: 'Lot 1', lotKey: undefined,
+                        dateIn: undefined, dateOut: undefined, properties: []
                     }
                 ],
                 samples: []
@@ -121,9 +121,7 @@ describe('IOService', () => {
                 stations: {
                     columnProperties: [
                         { id: 'ID', type: 'string' },
-                        { id: 'Name', type: 'string' },
-                        { id: 'Latitude', type: 'double' },
-                        { id: 'Longitude', type: 'double' }
+                        { id: 'Name', type: 'string' }
                     ],
                     data: [
                         [
@@ -202,8 +200,8 @@ describe('IOService', () => {
                     },
                     graph: {
                         transformation: {
-                            scale: { x: fclData.graphSettings.schemaLayout.zoom, y: fclData.graphSettings.schemaLayout.zoom },
-                            translation: fclData.graphSettings.schemaLayout.pan
+                            scale: { x: fclData.graphSettings.schemaLayout!.zoom, y: fclData.graphSettings.schemaLayout!.zoom },
+                            translation: fclData.graphSettings.schemaLayout!.pan
                         },
                         node: {
                             positions: fclData.fclElements.stations.map(
@@ -231,7 +229,7 @@ describe('IOService', () => {
                         edge: {
                             minWidth: 0.7
                         },
-                        transformation: null
+                        transformation: undefined
                     }
                 }
             }

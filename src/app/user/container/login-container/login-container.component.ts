@@ -24,7 +24,7 @@ export class LoginContainerComponent implements OnInit, OnDestroy {
                 select(fromUser.getCurrentUser),
                 takeWhile(() => this.componentActive)
             )
-            .subscribe((currentUser: TokenizedUser) => {
+            .subscribe((currentUser: TokenizedUser | null) => {
                 if (currentUser) {
                     this.router.navigate(['/dashboard']).catch(err => {
                         throw new Error(`Unable to navigate: ${err}`);

@@ -71,7 +71,7 @@ export function compressSimpleTargets(graph: Graph, vertexDistance: number) {
                 );
                 graph.insertVertex(vertexGroup);
                 vertexGroup.outerSize = 0;
-                const newEdge: Edge = new Edge(source, vertexGroup, false);
+                const newEdge = new Edge(source, vertexGroup, false);
                 vertexGroup.inEdges.push(newEdge);
 
                 targets.forEach((target, memberIndex) => {
@@ -110,7 +110,7 @@ function getSourceToSimpleTargetsMap(layer: Vertex[]): Map<VertexIndex, Vertex[]
         if (!sourceToTargetsMap.has(sourceIndex)) {
             sourceToTargetsMap.set(sourceIndex, [target]);
         } else {
-            const sourceTargets = sourceToTargetsMap.get(sourceIndex);
+            const sourceTargets = sourceToTargetsMap.get(sourceIndex)!;
             sourceTargets.push(target);
         }
     }
@@ -125,7 +125,7 @@ function getTargetToSimpleSourcesMap(layer: Vertex[]): Map<VertexIndex, Vertex[]
         if (!targetToSourcesMap.has(targetIndex)) {
             targetToSourcesMap.set(targetIndex, [source]);
         } else {
-            const targetSources = targetToSourcesMap.get(targetIndex);
+            const targetSources = targetToSourcesMap.get(targetIndex)!;
             targetSources.push(source);
         }
     }

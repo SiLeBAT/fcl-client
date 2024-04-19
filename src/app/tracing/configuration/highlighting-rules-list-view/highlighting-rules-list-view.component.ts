@@ -4,6 +4,7 @@ import {
     ElementRef, EventEmitter, Input, OnChanges, Output,
     SimpleChanges, TemplateRef, ViewChild
 } from '@angular/core';
+import { concat } from '@app/tracing/util/non-ui-utils';
 import { HighlightingRuleDeleteRequestData } from '../configuration.model';
 import { EditRule, RuleId, RuleListItem } from '../model';
 
@@ -46,11 +47,11 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
     }
 
     get showAddRuleButton(): boolean {
-        return this.editRule === null || this.isEditRuleNew; // this.editRule.isNew;
+        return this.editRule === null || this.isEditRuleNew;
     }
 
     get showEditNewRuleDialog(): boolean {
-        return this.editRule !== null && this.isEditRuleNew; // this.editRule.isNew;
+        return this.editRule !== null && this.isEditRuleNew;
     }
 
     get isEditRuleModeActive(): boolean {
@@ -63,7 +64,7 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
             this._unsortableListItems = this.listItems.filter(item => item.isAnonymizationRule);
         }
         if (changes.editRule !== undefined || changes.listItems !== undefined) {
-            this.isEditRuleNew = this.editRule !== null && !this.listItems.some(item => item.id === this.editRule.id);
+            this.isEditRuleNew = this.editRule !== null && !this.listItems.some(item => item.id === this.editRule!.id);
         }
         if (changes.editRule !== undefined && this.editRule !== null) {
             const prevEditRule = (changes.editRule.previousValue as EditRule | null);
@@ -113,7 +114,7 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
             const newSortableRuleIdOrder = this.sortableListItems.map(item => item.id);
             moveItemInArray(newSortableRuleIdOrder, event.previousIndex, event.currentIndex);
             const unsortableRuleIdOrder = this.unsortableListItems.map(item => item.id);
-            const newRuleIdOrder = [].concat(...newSortableRuleIdOrder, unsortableRuleIdOrder);
+            const newRuleIdOrder = concat(newSortableRuleIdOrder, unsortableRuleIdOrder);
             this.ruleOrderChange.emit(newRuleIdOrder);
         }
     }
@@ -123,18 +124,20 @@ export class HighlightingRulesListViewComponent <T extends EditRule> implements 
         if (element) {
             const htmlElement = element.nativeElement as HTMLElement;
             const boundingElement = htmlElement.closest('.mat-tab-body-content');
-            const boundingRect = boundingElement.getBoundingClientRect();
-            const elementRect = htmlElement.getBoundingClientRect();
-            const topDist = elementRect.top - boundingRect.top;
-            const bottomDist = boundingRect.bottom - elementRect.bottom;
-            const scrollBy = (
-                topDist < 0 ? topDist :
-                    bottomDist < 0 ? Math.min(topDist, -bottomDist) :
-                        0
-            );
+            if (boundingElement) {
+                const boundingRect = boundingElement.getBoundingClientRect();
+                const elementRect = htmlElement.getBoundingClientRect();
+                const topDist = elementRect.top - boundingRect.top;
+                const bottomDist = boundingRect.bottom - elementRect.bottom;
+                const scrollBy = (
+                    topDist < 0 ? topDist :
+                        bottomDist < 0 ? Math.min(topDist, -bottomDist) :
+                            0
+                );
 
-            if (scrollBy !== 0) {
-                boundingElement.scrollBy(0, scrollBy);
+                if (scrollBy !== 0) {
+                    boundingElement.scrollBy(0, scrollBy);
+                }
             }
             this.scrollEditRuleIntoViewAfterViewChecked = false;
         }

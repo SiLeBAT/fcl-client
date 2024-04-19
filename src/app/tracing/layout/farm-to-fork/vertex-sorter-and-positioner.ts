@@ -7,10 +7,11 @@ import { positionVertices } from './vertex-positioner-lp';
 import { createVirtualVertices, getRequiredLayerSpace } from './shared';
 import * as _ from 'lodash';
 import { Size } from '@app/tracing/data.model';
+import { concat } from '@app/tracing/util/non-ui-utils';
 
 const INTER_COMPONENT_SPACE_FACTOR = 2;
 
-export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit: number, availableSpace: Size) {
+export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit: number, availableSpace?: Size) {
     if (timeLimit === undefined) {
         timeLimit = Number.POSITIVE_INFINITY;
     } else {
@@ -29,14 +30,16 @@ export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit:
         sortVertices(graph, timeLimit - (new Date().getTime() - startTime));
     }
 
-    const availableSpacesForComponents = getAvailableSpacesForComponents(graph, layeredComponents, availableSpace, vertexDistance);
+    const availableSpacesForComponents = availableSpace ?
+        getAvailableSpacesForComponents(graph, layeredComponents, availableSpace, vertexDistance) :
+        undefined;
 
     layeredComponents.forEach((layeredComponent, i) => {
 
         graph.layers = layeredComponent.layers;
 
         positionVerticesInLayers(
-            graph, vertexDistance, availableSpacesForComponents[i]
+            graph, vertexDistance, availableSpacesForComponents ? availableSpacesForComponents[i] : undefined
         );
 
         decompressSimpleSources(graph, vertexDistance);
@@ -48,7 +51,7 @@ export function sortAndPosition(graph: Graph, vertexDistance: number, timeLimit:
 
 // debug method
 function printPositions(layers: Vertex[][]): void {
-    const positions = [].concat(
+    const positions = concat(
         ...layers.map(layer => layer.filter(v => !v.isVirtual).map(v => 'p' + v.index + '_' + v.name + ': ' + v.y))
     );
     // eslint-disable-next-line no-console
@@ -57,7 +60,7 @@ function printPositions(layers: Vertex[][]): void {
     console.log(positions.join('\n'));
 }
 
-function positionVerticesInLayers(graph: Graph, vertexDistance: number, maxLayerLength: number) {
+function positionVerticesInLayers(graph: Graph, vertexDistance: number, maxLayerLength?: number) {
     positionVertices(graph.layers, vertexDistance, maxLayerLength);
 }
 

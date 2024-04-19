@@ -3,6 +3,7 @@ import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetect
 import { ComplexFilterCondition, JunktorType } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { concat } from '@app/tracing/util/non-ui-utils';
 
 @Component({
     selector: 'fcl-complex-filter-view',
@@ -55,7 +56,7 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     // the scrollbars are shown permanently and do reduce the width of the inner content
     hideScrollbar = false;
 
-    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT; // 38.39;
+    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT;
     viewportHeight = ComplexFilterViewComponent.ROW_HEIGHT;
 
     private scrollDown = false;
@@ -113,7 +114,7 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     }
 
     onRemoveFilterCondition(index: number) {
-        const conditions = [].concat(
+        const conditions = concat(
             this.conditions_.slice(0, index),
             this.conditions_.slice(index + 1)
         );
@@ -166,7 +167,7 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
         const viewportElement = this.viewport.elementRef.nativeElement;
         const contentWrapperElements = viewportElement.getElementsByClassName('cdk-virtual-scroll-content-wrapper');
         if (contentWrapperElements.length > 0) {
-            const contentWrapperElement = contentWrapperElements.item(0);
+            const contentWrapperElement = contentWrapperElements.item(0)!;
             const viewportWidth = viewportElement.getBoundingClientRect().width;
             const contentWrapperWidth = contentWrapperElement.getBoundingClientRect().width;
             return viewportWidth > contentWrapperWidth;

@@ -57,7 +57,7 @@ export function createOneTermForNColumnsRowFilter(filterTerm: string, filterProp
 export function getUpdatedOneTermForNColumnsRowFilter(
     filterTerm: string,
     filterProps: string[],
-    rowFilter: OneTermForNColumnsRowFilter
+    rowFilter?: OneTermForNColumnsRowFilter
 ): OneTermForNColumnsRowFilter {
 
     if (rowFilter) {
@@ -122,7 +122,7 @@ export function createComplexRowFilter(
 export function getUpdatedComplexRowFilter(
     settings: ComplexRowFilterSettings,
     ignoredProps: string[],
-    rowFilter: complexFilterProvider.ComplexRowFilter
+    rowFilter?: complexFilterProvider.ComplexRowFilter
 ): complexFilterProvider.ComplexRowFilter {
     return complexFilterProvider.getUpdatedComplexRowFilter(settings, ignoredProps, rowFilter);
 }

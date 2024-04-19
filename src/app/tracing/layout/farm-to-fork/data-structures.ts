@@ -49,7 +49,7 @@ export type VertexIndex = number;
 
 export class Vertex {
     index: number;
-    name: string;
+    name?: string;
     x: number;
     y: number;
     inEdges: Edge[] = [];
@@ -57,7 +57,7 @@ export class Vertex {
     layerIndex: number;
     weight: number;
     indexInLayer: number;
-    typeCode: number;
+    typeCode?: number;
     isVirtual: boolean = false;
 
     outerSize: number = 0;
@@ -98,7 +98,7 @@ export class Edge {
 }
 
 export class VertexCounter {
-    private positionCount: Map<number, number> = new Map();
+    private positionCount = new Map<number, number>();
     private positions: number[] = [];
     private lastPositionRequest: number = -1;
     private lastAboveIndex: number = -1;
@@ -106,7 +106,7 @@ export class VertexCounter {
 
     insertVertex(position: number) {
         if (this.positionCount.has(position)) {
-            this.positionCount.set(position, this.positionCount.get(position) + 1);
+            this.positionCount.set(position, this.positionCount.get(position)! + 1);
         } else {
             let index: number = this.positions.findIndex(x => x > position);
             if (index < 0) {
@@ -140,7 +140,7 @@ export class VertexCounter {
 
         let result: number = 0;
         for (let i: number = n - 1; i >= index; i--) {
-            result += this.positionCount.get(this.positions[i]);
+            result += this.positionCount.get(this.positions[i])!;
         }
 
         this.lastPositionRequest = position;

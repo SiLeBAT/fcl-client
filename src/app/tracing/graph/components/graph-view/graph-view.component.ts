@@ -3,7 +3,7 @@ import {
     EventEmitter, OnChanges, ChangeDetectionStrategy, SimpleChanges
 } from '@angular/core';
 import { Size, Layout, PositionMap } from '../../../data.model';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { ContextMenuRequestInfo, EdgeId, NodeId, SelectedGraphElements } from '../../graph.model';
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
@@ -33,7 +33,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     private static readonly MAX_FARM_TO_FORK_NODE_COUNT = 100;
 
-    private cyGraph_: InteractiveCyGraph = null;
+    private cyGraph_: InteractiveCyGraph | null = null;
 
     @ViewChild('graph', { static: true }) graphElement: ElementRef;
 
@@ -113,7 +113,9 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     }
 
     focusElement(elementId: NodeId | EdgeId): void {
-        this.cyGraph_.focusElement(elementId);
+        if (this.cyGraph_) {
+            this.cyGraph_.focusElement(elementId);
+        }
     }
 
     private isSizePositive(): boolean {
@@ -132,22 +134,22 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     private onGraphDataChange(): void {
         this.graphDataChange.emit({
             layout:
-                this.graphData.layout !== this.cyGraph_.layout ?
-                    this.cyGraph_.layout :
+                this.graphData!.layout !== this.cyGraph_!.layout ?
+                    this.cyGraph_!.layout :
                     undefined
             ,
             nodePositions:
-                this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
-                    this.cyGraph_.nodePositions :
+                this.graphData!.nodePositions !== this.cyGraph_!.nodePositions ?
+                    this.cyGraph_!.nodePositions :
                     undefined
         });
     }
 
     private onGraphSelectionChange(isShiftSelection: boolean): void {
-        if (this.graphData.selectedElements !== this.cyGraph_.selectedElements) {
+        if (this.graphData!.selectedElements !== this.cyGraph_!.selectedElements) {
             this.graphDataChange.emit({
                 selectionChange: {
-                    selectedElements: this.cyGraph_.selectedElements,
+                    selectedElements: this.cyGraph_!.selectedElements,
                     isShiftSelection: isShiftSelection
                 }
             });
@@ -166,22 +168,22 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         };
     }
 
-    private createLayoutConfig(): LayoutConfig {
-        if (isPosMapEmpty(this.graphData.nodePositions)) {
-            return this.graphData.nodeData.length > GraphViewComponent.MAX_FARM_TO_FORK_NODE_COUNT ?
+    private createLayoutConfig(graphData: GraphData): LayoutConfig {
+        if (isPosMapEmpty(graphData.nodePositions)) {
+            return graphData.nodeData.length > GraphViewComponent.MAX_FARM_TO_FORK_NODE_COUNT ?
                 getLayoutConfig(LAYOUT_FRUCHTERMAN) :
                 getLayoutConfig(LAYOUT_FARM_TO_FORK);
         } else {
-            return this.createPresetLayoutConfig(this.graphData.layout);
+            return this.createPresetLayoutConfig(graphData.layout);
         }
     }
 
-    private createCyGraph(): void {
+    private createCyGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         this.cyGraph_ = new VirtualZoomCyGraph(
             this.graphElement.nativeElement,
-            this.graphData,
-            this.styleConfig,
-            this.createLayoutConfig(),
+            graphData,
+            styleConfig,
+            this.createLayoutConfig(graphData),
             this.cyConfig,
             this.fitGraphToVisibleArea
         );
@@ -205,7 +207,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
                 this.cleanCyGraph();
             }
             if (!this.cyGraph_) {
-                this.createCyGraph();
+                this.createCyGraph(this.graphData, this.styleConfig);
             } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
                 this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
             }

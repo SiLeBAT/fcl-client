@@ -28,8 +28,6 @@ describe('RegisterComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(RegisterComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 
@@ -117,9 +115,9 @@ describe('RegisterComponent', () => {
 
         component.onRegister();
 
-        expect(registerRequest.email).toBe(email);
-        expect(registerRequest.password).toBe(password);
-        expect(registerRequest.firstName).toBe(firstName);
-        expect(registerRequest.lastName).toBe(lastName);
+        expect(registerRequest!.email).toBe(email);
+        expect(registerRequest!.password).toBe(password);
+        expect(registerRequest!.firstName).toBe(firstName);
+        expect(registerRequest!.lastName).toBe(lastName);
     });
 });

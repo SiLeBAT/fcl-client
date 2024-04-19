@@ -63,7 +63,7 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
 
     ngOnInit() {
         this.dtBodyElement = this.hostElement.nativeElement.getElementsByClassName(CLASS_DATATABLE_BODY)[0];
-        this.dtBodyElement.addEventListener(
+        this.dtBodyElement!.addEventListener(
             EVENT_SCROLL,
             () => {
                 this.captureScrollState();
@@ -71,8 +71,8 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
                     // 'No data available.' placeholder is shown
                     // this event is sent to sync column and row offset
                     this.host.onBodyScroll({
-                        offsetX: this.dtBodyElement.scrollLeft,
-                        offsetY: this.dtBodyElement.scrollTop
+                        offsetX: this.dtBodyElement!.scrollLeft,
+                        offsetY: this.dtBodyElement!.scrollTop
                     } as any);
                 }
             }
@@ -177,14 +177,14 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
 
     private captureScrollState(): void {
         this.lastBodyScrollPosition = {
-            top: this.dtBodyElement.scrollTop,
-            left: this.dtBodyElement.scrollLeft
+            top: this.dtBodyElement!.scrollTop,
+            left: this.dtBodyElement!.scrollLeft
         };
     }
 
     private restoreScrollPos(): void {
         this.restoreScrollPosOnPosWidth = false;
-        this.dtBodyElement.scrollTo(this.lastBodyScrollPosition.left, this.lastBodyScrollPosition.top);
+        this.dtBodyElement!.scrollTo(this.lastBodyScrollPosition.left, this.lastBodyScrollPosition.top);
     }
 
     private unsetElementRefs(): void {
@@ -207,15 +207,15 @@ export class NgxDatatableScrollFixDirective implements OnInit, AfterViewChecked,
         const dtHeaders = this.hostElement.nativeElement.getElementsByClassName(CLASS_DATATABLE_HEADER);
         if (dtHeaders[0] !== undefined) {
             this.dtHeaderElement = dtHeaders[0];
-            this.dtHeaderElement.addEventListener(
+            this.dtHeaderElement!.addEventListener(
                 EVENT_SCROLL,
                 () => {
-                    const scrollLeft = this.dtHeaderElement.scrollLeft;
+                    const scrollLeft = this.dtHeaderElement!.scrollLeft;
                     if (scrollLeft !== 0) {
-                        this.dtHeaderElement.scrollTo(0, this.dtHeaderElement.scrollTop);
-                        this.dtBodyElement.scrollTo(
-                            this.dtBodyElement.scrollLeft + scrollLeft,
-                            this.dtBodyElement.scrollTop
+                        this.dtHeaderElement!.scrollTo(0, this.dtHeaderElement!.scrollTop);
+                        this.dtBodyElement!.scrollTo(
+                            this.dtBodyElement!.scrollLeft + scrollLeft,
+                            this.dtBodyElement!.scrollTop
                         );
                     }
                 }

@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Graph, Vertex, Edge } from './data-structures';
-import { BusinessTypeRanker } from './business-type-ranker';
 
 class CycleRemover {
 
@@ -12,7 +11,7 @@ class CycleRemover {
         this.isStacked = _.fill(Array(graph.vertices.length), false);
     }
 
-    removeCycles(graph: Graph, typeRanker: BusinessTypeRanker) {
+    removeCycles(graph: Graph) {
         this.init(graph);
         for (const vertex of graph.vertices) { this.dfsRemove(vertex); }
     }
@@ -54,7 +53,7 @@ class CycleRemover {
     }
 }
 
-export function removeCycles(graph: Graph, typeRanker: BusinessTypeRanker) {
+export function removeCycles(graph: Graph) {
     const cycleRemover: CycleRemover = new CycleRemover();
-    cycleRemover.removeCycles(graph, typeRanker);
+    cycleRemover.removeCycles(graph);
 }

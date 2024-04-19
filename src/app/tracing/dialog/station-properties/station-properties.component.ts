@@ -4,7 +4,7 @@ import * as d3 from 'd3-selection';
 
 import { DeliveryData, StationData, DeliveryId, StationId, TableColumn } from '../../data.model';
 import { Constants } from '../../util/constants';
-import { Utils } from '../../util/non-ui-utils';
+import { concat, Utils } from '../../util/non-ui-utils';
 import { State } from '@app/tracing/state/tracing.reducers';
 import { Store } from '@ngrx/store';
 import { SetHoverDeliveriesSOA } from '@app/tracing/state/tracing.actions';
@@ -29,11 +29,11 @@ interface Properties {
 
 interface NodeDatum {
     id: DeliveryId | LotKey;
-    name: string;
-    station: string;
+    name?: string;
+    station?: string;
     deliveryIds: DeliveryId[];
-    lot: string;
-    date: string;
+    lot?: string;
+    date?: string;
     x: number;
     y: number;
 }
@@ -67,8 +67,8 @@ class DataOptimizer {
         }
 
         for (const e of edgeData) {
-            this.inConnections.get(e.source.id).push(e.target.id);
-            this.outConnections.get(e.target.id).push(e.source.id);
+            this.inConnections.get(e.source.id)!.push(e.target.id);
+            this.outConnections.get(e.target.id)!.push(e.source.id);
         }
     }
 
@@ -76,8 +76,8 @@ class DataOptimizer {
         this.step(this.inIds, this.inConnections, this.outIds);
         this.step(this.outIds, this.outConnections, this.inIds);
 
-        const nodesInById: Map<string, NodeDatum> = new Map();
-        const nodesOutById: Map<string, NodeDatum> = new Map();
+        const nodesInById = new Map<string, NodeDatum>();
+        const nodesOutById = new Map<string, NodeDatum>();
 
         for (const n of this.nodeInData) {
             nodesInById.set(n.id, n);
@@ -88,27 +88,27 @@ class DataOptimizer {
         }
 
         this.inIds.forEach((id, index) => {
-            this.nodeInData[index] = nodesInById.get(id);
+            this.nodeInData[index] = nodesInById.get(id)!;
         });
 
         this.outIds.forEach((id, index) => {
-            this.nodeOutData[index] = nodesOutById.get(id);
+            this.nodeOutData[index] = nodesOutById.get(id)!;
         });
     }
 
     private step(ids1: string[], connections1: Map<string, string[]>, ids2: string[]) {
-        const indices2: Map<string, number> = new Map();
+        const indices2 = new Map<string, number>();
 
         ids2.forEach((id, index) => indices2.set(id, index));
 
-        const centers1: Map<string, number> = new Map();
+        const centers1 = new Map<string, number>();
 
         for (const id of ids1) {
-            const connections = connections1.get(id);
+            const connections = connections1.get(id)!;
             let sum = 0;
 
             for (const c of connections) {
-                sum += indices2.get(c);
+                sum += indices2.get(c)!;
             }
 
             centers1.set(id, connections.length > 0 ? sum / connections.length : Infinity);
@@ -184,7 +184,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             this.lotBased = ingredientsByLotKey != null;
 
             if (this.lotBased) {
-                this.initLotBasedData(ingredientsByLotKey);
+                this.initLotBasedData(ingredientsByLotKey!);
             } else {
                 this.initDeliveryBasedData();
             }
@@ -220,7 +220,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
             .forEach(key => {
-                const column: TableColumn = columns.find(column => column.id === key);
+                const column = columns.find(column => column.id === key);
                 const label = column !== undefined ? column.name : Constants.PROPERTIES.get(key).name;
                 const value = station[key];
                 properties[key] = {
@@ -230,7 +230,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             });
 
         station.properties.forEach(prop => {
-            const column: TableColumn = columns.find(column => column.id === prop.name);
+            const column = columns.find(column => column.id === prop.name);
             const label = column !== undefined ? column.name : this.convertPropNameToLabel(prop.name);
             properties[prop.name] = {
                 label: label,
@@ -244,7 +244,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             .filter(key => !vipProps[key])
             .slice()
             .map(property => {
-                const column: TableColumn = columns.find(column => column.id === property);
+                const column = columns.find(column => column.id === property);
                 return column !== undefined ? column.name : Constants.PROPERTIES.get(property).name;
             });
         this.otherProperties.sort();
@@ -325,8 +325,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
-        const delivery = this.data.deliveries.get(deliveryId);
-        const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target);
+        const delivery = this.data.deliveries.get(deliveryId)!;
+        const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target)!;
 
         return {
             id: deliveryId,
@@ -335,8 +335,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             lot: delivery.lot,
             deliveryIds: [deliveryId],
             date: delivery.dateOut,
-            x: null,
-            y: null
+            x: 0,
+            y: 0
         };
     }
 
@@ -344,7 +344,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         return JSON.stringify([ delivery.originalSource, delivery.name || delivery.id, delivery.lot || delivery.id ]);
     }
 
-    private getIngredientsByLotKey(): Map<LotKey, Set<DeliveryId>> {
+    private getIngredientsByLotKey(): Map<LotKey, Set<DeliveryId>> | null {
         const ingredientsByDelivery: Map<DeliveryId, Set<DeliveryId>> = new Map();
 
         for (const deliveryId of this.data.station.outgoing) {
@@ -352,14 +352,14 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         }
 
         for (const connection of this.data.station.connections) {
-            ingredientsByDelivery.get(connection.target).add(connection.source);
+            ingredientsByDelivery.get(connection.target)!.add(connection.source);
         }
 
         const ingredientsByLotKey: Map<LotKey, Set<DeliveryId>> = new Map();
         let valid = true;
 
         ingredientsByDelivery.forEach((ingredientsIds, deliveryId) => {
-            const delivery = this.data.deliveries.get(deliveryId);
+            const delivery = this.data.deliveries.get(deliveryId)!;
 
             if (delivery.lot == null || delivery.name == null) {
                 valid = false;
@@ -368,7 +368,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 if (!ingredientsByLotKey.has(lotKey)) {
                     ingredientsByLotKey.set(lotKey, ingredientsIds);
                 } else {
-                    const expectedIngredientsIds = ingredientsByLotKey.get(lotKey);
+                    const expectedIngredientsIds = ingredientsByLotKey.get(lotKey)!;
                     const areEqual =
                         ingredientsIds.size === expectedIngredientsIds.size &&
                         Array.from(ingredientsIds).find(id => !expectedIngredientsIds.has(id)) == null;
@@ -384,8 +384,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private initDeliveryBasedData() {
-        const nodeInMap: Map<DeliveryId, NodeDatum> = new Map();
-        const nodeOutMap: Map<DeliveryId, NodeDatum> = new Map();
+        const nodeInMap = new Map<DeliveryId, NodeDatum>();
+        const nodeOutMap = new Map<DeliveryId, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
             nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
@@ -401,8 +401,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         for (const connection of this.data.station.connections) {
             this.edgeData.push({
-                source: nodeInMap.get(connection.source),
-                target: nodeOutMap.get(connection.target)
+                source: nodeInMap.get(connection.source)!,
+                target: nodeOutMap.get(connection.target)!
             });
         }
     }
@@ -412,15 +412,16 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         this.data.deliveries.forEach(delivery => {
             const lotKey = this.getInternalLotKey(delivery);
+
             if (this.deliveriesByLotKey.has(lotKey)) {
-                this.deliveriesByLotKey.get(lotKey).push(delivery.id);
+                this.deliveriesByLotKey.get(lotKey)!.push(delivery.id);
             } else {
                 this.deliveriesByLotKey.set(lotKey, [delivery.id]);
             }
         });
 
-        const nodeInMap: Map<DeliveryId, NodeDatum> = new Map();
-        const nodeOutMap: Map<LotKey, NodeDatum> = new Map();
+        const nodeInMap = new Map<DeliveryId, NodeDatum>();
+        const nodeOutMap = new Map<LotKey, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
             nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
@@ -432,25 +433,23 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         ingredientsByLotKey.forEach((ingredientsIds, lotKey) => {
             const names: Set<string> = new Set();
 
-            const lotDeliveryIds = this.deliveriesByLotKey.get(lotKey);
+            const lotDeliveryIds = this.deliveriesByLotKey.get(lotKey)!;
             for (const deliveryId of lotDeliveryIds) {
-                names.add(this.data.deliveries.get(deliveryId).name);
+                names.add(this.data.deliveries.get(deliveryId)!.name ?? '');
             }
 
             nodeOutMap.set(lotKey, {
                 id: lotKey,
                 name: Array.from(names).join('/'),
-                station: null,
-                lot: this.data.deliveries.get(Array.from(lotDeliveryIds)[0]).lot,
+                lot: this.data.deliveries.get(Array.from(lotDeliveryIds)[0])!.lot,
                 deliveryIds: lotDeliveryIds,
-                date: null,
-                x: null,
-                y: null
+                x: 0,
+                y: 0
             });
             ingredientsIds.forEach(ingredientId => {
                 this.edgeData.push({
-                    source: nodeInMap.get(ingredientId),
-                    target: nodeOutMap.get(lotKey)
+                    source: nodeInMap.get(ingredientId)!,
+                    target: nodeOutMap.get(lotKey)!
                 });
             });
         });
@@ -497,12 +496,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             const text = nodes.append('text').attr('text-anchor', 'left');
 
             text.append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING).attr('dy', 15).attr('font-size', '14px')
-                .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name);
+                .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name ?? '');
             text.filter(d => d.station != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
                 .attr('dy', 15).attr('font-size', '14px')
                 .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
             text.filter(d => d.date != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
-                .attr('dy', 15).attr('font-size', '12px').text(d => d.date);
+                .attr('dy', 15).attr('font-size', '12px').text(d => d.date ?? '');
         };
 
         const newNodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter()
@@ -552,10 +551,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             if (this.selected == null) {
                 updateColor(d3.select(event.currentTarget), true);
                 this.hoverDeliveries(
-                    [].concat(
+                    concat(
                         edge.source.deliveryIds,
                         edge.target.deliveryIds
-                    ));
+                    )
+                );
             }
         }).on('mouseout', (event) => {
             updateColor(d3.select(event.currentTarget), false);

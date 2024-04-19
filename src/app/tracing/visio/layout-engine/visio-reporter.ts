@@ -16,6 +16,7 @@ import { groupStationBoxes } from './stationbox-simple-grouper';
 import { CustomLabelCreator } from './custom-label-creator';
 import { ROASettings } from '../model';
 import { getFontMetrics } from './font-metrics';
+import { concat, removeNull } from '@app/tracing/util/non-ui-utils';
 
 interface FclElements {
     stations: StationData[];
@@ -34,7 +35,11 @@ export class VisioReporter {
     ): VisioReport {
 
         const stationGrid = assignToGrid(data, statIdToPosMap);
-        const stationGroups = stationGrouper.groupStations([].concat(...stationGrid).filter(s => s !== null));
+        const stationGroups = stationGrouper.groupStations(
+            removeNull(
+                concat(...stationGrid)
+            )
+        );
         const infoProvider = new InformationProvider(data, roaSettings);
         const cellGroups = getCellGroups(stationGrid, stationGroups);
 
@@ -42,7 +47,7 @@ export class VisioReporter {
         const labelCreator = new CustomLabelCreator(fontMetrics, roaSettings.labelSettings, roaSettings.roundNumbers);
         const boxCreator = new BoxCreator(labelCreator, infoProvider);
 
-        const infoGrid = this.mapMatrix(stationGrid, (s) => s !== null ? infoProvider.getStationInfo(s) : null);
+        const infoGrid = this.mapMatrix(stationGrid, (s) => s ? infoProvider.getStationInfo(s) : null);
         CtNoAssigner.assingCtNos(infoGrid);
         const boxGrid = this.mapMatrix(infoGrid, (info) => info !== null ? boxCreator.createStationBox(info) : null);
 
@@ -56,10 +61,10 @@ export class VisioReporter {
 
         const stationBoxGroups = stationGroups.map(sg => ({
             'label': sg.label,
-            'boxes': sg.stations.map(s => boxCreator.getStationBox(infoProvider.getStationInfo(s)))
+            'boxes': sg.stations.map(s => boxCreator.getStationBox(infoProvider.getStationInfo(s))!)
         }));
         improvePositions(
-            boxGrid.map(row => row.filter(b => b != null)),
+            boxGrid.map(row => removeNull(row)),
             stationBoxGroups,
             connectors,
             2 * GraphSettings.GRID_MARGIN,
@@ -90,10 +95,10 @@ export class VisioReporter {
 
     private static getSize(boxes: VisioBox[]): Size {
         return {
-            width: Math.max(...boxes.map(b => b.position.x + b.size.width)) -
-            Math.min(...boxes.map(b => b.position.x)) + 2 * GraphSettings.GRID_MARGIN,
-            height: Math.max(...boxes.map(b => b.position.y + b.size.height)) -
-            Math.min(...boxes.map(b => b.position.y)) + 2 * GraphSettings.GRID_MARGIN
+            width: Math.max(...boxes.map(b => b.position!.x + b.size.width)) -
+            Math.min(...boxes.map(b => b.position!.x)) + 2 * GraphSettings.GRID_MARGIN,
+            height: Math.max(...boxes.map(b => b.position!.y + b.size.height)) -
+            Math.min(...boxes.map(b => b.position!.y)) + 2 * GraphSettings.GRID_MARGIN
         };
     }
 
@@ -101,11 +106,15 @@ export class VisioReporter {
         return matrix.map(array => array.map(element => fn(element)));
     }
 
-    private static getLayerInformation(infoGrid: StationInformation[][]): GraphLayer[] {
+    private static getLayerInformation(infoGrid: (StationInformation | null)[][]): GraphLayer[] {
         return infoGrid.map(
             layer => ({
-                activities: _.uniq(layer.map(info => info !== null ? info.activities : null).filter(t => t !== null)),
-                height: null
+                activities: _.uniq(
+                    removeNull(
+                        layer.map(info => info !== null ? info.activities : null)
+                    )
+                ),
+                height: 0
             }));
     }
 

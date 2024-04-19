@@ -32,16 +32,19 @@ export class LabelRulesEditViewComponent extends AbstractRuleEditViewComponent<S
     }
 
     get isEditViewComplete(): boolean {
-        if (this.useConditions_) {
-            const completeConditionsCount = getCompleteConditionsCount(this.rule.complexFilterConditions);
-            return (
-                completeConditionsCount >= 1 &&
-                completeConditionsCount === getNonEmptyConditionCount(this.rule.complexFilterConditions) &&
-                super.isEditViewComplete
-            );
-        } else {
-            return super.isEditViewComplete;
+        if (this.rule) {
+            if (this.useConditions_) {
+                const completeConditionsCount = getCompleteConditionsCount(this.rule.complexFilterConditions);
+                return (
+                    completeConditionsCount >= 1 &&
+                    completeConditionsCount === getNonEmptyConditionCount(this.rule.complexFilterConditions) &&
+                    super.isEditViewComplete
+                );
+            } else {
+                return super.isEditViewComplete;
+            }
         }
+        return false;
     }
 
     constructor() {
@@ -50,7 +53,7 @@ export class LabelRulesEditViewComponent extends AbstractRuleEditViewComponent<S
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.rule !== undefined && changes.rule.isFirstChange()) {
-            this.useConditions_ = this.rule.complexFilterConditions.length > 0;
+            this.useConditions_ = this.rule!.complexFilterConditions.length > 0;
         }
         super.ngOnChanges(changes);
     }

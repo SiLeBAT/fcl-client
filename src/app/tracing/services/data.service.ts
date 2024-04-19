@@ -5,7 +5,7 @@ import {
 import * as _ from 'lodash';
 import { TracingService } from './tracing.service';
 import { HighlightingService } from './highlighting.service';
-import { Utils } from '../util/non-ui-utils';
+import { concat, Utils } from '../util/non-ui-utils';
 
 interface CacheUpdateOptions {
     updateAll: boolean;
@@ -31,7 +31,7 @@ export class DataService {
 
     getData(state: DataServiceInputState): DataServiceData {
         this.applyState(state);
-        return { ...this.cachedData };
+        return { ...this.cachedData! };
     }
 
     private createStations(state: DataServiceInputState): {
@@ -56,7 +56,6 @@ export class DataService {
             invisible: false,
             expInvisible: false,
             contains: [],
-            groupType: null,
             incoming: storeData.incoming.slice(),
             outgoing: storeData.outgoing.slice(),
             connections: storeData.connections.slice(),
@@ -134,8 +133,8 @@ export class DataService {
             const lon = lat !== null ? _.mean(lons) : null;
             const group: StationData = {
                 ...groupSet,
-                lat: lat,
-                lon: lon,
+                lat: lat ?? undefined,
+                lon: lon ?? undefined,
                 isMeta: true,
                 contained: false,
                 contains: groupSet.contains.slice(),
@@ -151,9 +150,9 @@ export class DataService {
                 killContamination: false,
                 commonLink: false,
                 score: 0,
-                incoming: [].concat(...members.map(m => m.incoming)),
-                outgoing: [].concat(...members.map(m => m.outgoing)),
-                connections: [].concat(...members.map(m => m.connections)),
+                incoming: concat(...members.map(m => m.incoming)),
+                outgoing: concat(...members.map(m => m.outgoing)),
+                connections: concat(...members.map(m => m.connections)),
                 properties: []
             };
 
@@ -228,13 +227,13 @@ export class DataService {
 
     private getFullCacheUpdateOptions(options: Partial<CacheUpdateOptions>): CacheUpdateOptions {
         const updateAll = options.updateAll === true;
-        const updateGroups = updateAll || options.updateGroups;
-        const updateTraceSet = updateGroups || options.updateTraceSet;
-        const updateVisibilities = updateTraceSet || options.updateVisibilities;
-        const updateScore = updateVisibilities || options.updateScore;
-        const updateTrace = updateVisibilities || options.updateTrace;
-        const updateHighlighting = updateVisibilities || updateScore || updateTrace || options.updateHighlighting;
-        const updateSelection = updateGroups || updateVisibilities || options.updateSelection;
+        const updateGroups = updateAll || options.updateGroups === true;
+        const updateTraceSet = updateGroups || options.updateTraceSet === true;
+        const updateVisibilities = updateTraceSet || options.updateVisibilities === true;
+        const updateScore = updateVisibilities || options.updateScore === true;
+        const updateTrace = updateVisibilities || options.updateTrace === true;
+        const updateHighlighting = updateVisibilities || updateScore || updateTrace || options.updateHighlighting === true;
+        const updateSelection = updateGroups || updateVisibilities || options.updateSelection === true;
 
         return {
             updateAll: updateAll,
@@ -262,39 +261,37 @@ export class DataService {
                 delVis: {},
                 tracingPropsUpdatedFlag: {},
                 stationAndDeliveryHighlightingUpdatedFlag: {},
-                legendInfo: undefined,
-                highlightingStats: undefined,
                 isStationAnonymizationActive: false
             };
         }
         if (options.updateGroups) {
-            this.applyGroupSettings(state, this.cachedData);
+            this.applyGroupSettings(state, this.cachedData!);
         }
         if (options.updateTraceSet) {
-            this.applyTracingSettingsToStations(state, this.cachedData);
-            this.applyTracingSettingsToDeliveries(state, this.cachedData);
+            this.applyTracingSettingsToStations(state, this.cachedData!);
+            this.applyTracingSettingsToDeliveries(state, this.cachedData!);
         }
 
         if (options.updateVisibilities) {
-            this.higlightingService.applyVisibilities(state, this.cachedData);
+            this.higlightingService.applyVisibilities(state, this.cachedData!);
         }
 
         if (options.updateScore) {
-            this.tracingService.updateScores(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
+            this.tracingService.updateScores(this.cachedData!, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
         if (options.updateTrace) {
-            this.tracingService.updateTrace(this.cachedData, { crossContTraceType: state.tracingSettings.crossContTraceType });
+            this.tracingService.updateTrace(this.cachedData!, { crossContTraceType: state.tracingSettings.crossContTraceType });
         }
         if (options.updateHighlighting) {
-            this.higlightingService.applyHighlightingProps(state, this.cachedData);
-            this.cachedData.stationAndDeliveryHighlightingUpdatedFlag = {};
+            this.higlightingService.applyHighlightingProps(state, this.cachedData!);
+            this.cachedData!.stationAndDeliveryHighlightingUpdatedFlag = {};
         }
         if (options.updateSelection) {
-            this.applySelection(state, this.cachedData);
+            this.applySelection(state, this.cachedData!);
         }
 
         if (options.updateTrace || options.updateScore || options.updateTraceSet) {
-            this.cachedData.tracingPropsUpdatedFlag = {};
+            this.cachedData!.tracingPropsUpdatedFlag = {};
         }
     }
 

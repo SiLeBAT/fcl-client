@@ -1,3 +1,4 @@
+import { concat } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 import { StationData } from '../../data.model';
 import { Position } from './datatypes';
@@ -24,11 +25,11 @@ class ColumnAssigner {
     ): StationData[][] {
 
         this.stationToLayerIndexMap = ColumnAssigner.getStationToLayerIndexMap(layers);
-        this.stations = [].concat(...layers);
+        this.stations = concat(...layers);
         if (this.stations.length === 0) {
             return [];
         }
-        this.stations.sort((s1, s2) => stationToPositionMap.get(s1).x - stationToPositionMap.get(s2).x);
+        this.stations.sort((s1, s2) => stationToPositionMap.get(s1)!.x - stationToPositionMap.get(s2)!.x);
         this.setSwitches();
 
         return this.createColumns();
@@ -40,11 +41,11 @@ class ColumnAssigner {
     }
 
     private insertLevelNeighbourSwitch() {
-        const layerIndexSet: Set<number> = new Set();
-        layerIndexSet.add(this.stationToLayerIndexMap.get(this.stations[0]));
+        const layerIndexSet = new Set<number>();
+        layerIndexSet.add(this.stationToLayerIndexMap.get(this.stations[0])!);
 
         for (let i = 1, n = this.stations.length; i < n ; i++) {
-            const layerIndex = this.stationToLayerIndexMap.get(this.stations[i]);
+            const layerIndex = this.stationToLayerIndexMap.get(this.stations[i])!;
 
             this.columnSwitch[i - 1] = layerIndexSet.has(layerIndex);
             if (this.columnSwitch[i - 1]) {

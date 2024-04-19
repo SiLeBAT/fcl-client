@@ -22,7 +22,7 @@ export class SchemaGraphService {
 
     getData(state: SchemaGraphState): GraphData {
         this.applyState(state);
-        return { ...this.cachedData };
+        return { ...this.cachedData! };
     }
 
     private applyState(state: SchemaGraphState) {
@@ -39,16 +39,20 @@ export class SchemaGraphService {
         const ghostPositions: Record<NodeId, Position> =
             (
                 state.ghostStation === null &&
-                (state.ghostDelivery === null || sharedGraphData.ghostElements.nodeData.length === 0)
+                (state.ghostDelivery === null || sharedGraphData.ghostElements!.nodeData.length === 0)
             ) ?
+                // no ghost nodes
                 {} :
-                this.cachedState === null ||
-            this.cachedState.stationPositions !== state.stationPositions ||
-            this.cachedState.ghostStation !== state.ghostStation ||
-            this.cachedData.ghostData === null && sharedGraphData.ghostElements.nodeData.length > 0 ||
-            this.cachedData.ghostData.nodeData !== sharedGraphData.ghostElements.nodeData ?
-                    this.createNodePositions(state.stationPositions, sharedGraphData.ghostElements.nodeData, true) :
-                    this.cachedData.ghostData.posMap;
+                // ghost nodes exist
+                (
+                    this.cachedState === null ||
+                    this.cachedState.stationPositions !== state.stationPositions ||
+                    this.cachedState.ghostStation !== state.ghostStation ||
+                    this.cachedData!.ghostData === null && sharedGraphData.ghostElements!.nodeData.length > 0 ||
+                    this.cachedData!.ghostData!.nodeData !== sharedGraphData.ghostElements!.nodeData
+                ) ?
+                    this.createNodePositions(state.stationPositions, sharedGraphData.ghostElements!.nodeData, true) :
+                    this.cachedData!.ghostData!.posMap;
 
         const schemaGraphData: GraphData = {
             nodeData: sharedGraphData.nodeData,

@@ -8,11 +8,17 @@ import { take } from 'rxjs/operators';
 import * as TracingSelectors from '../../state/tracing.selectors';
 import { State } from '@app/tracing/state/tracing.reducers';
 import * as _ from 'lodash';
-import { getPublicStationProperties, getLotProperties, getSampleProperties, PropInfo } from '@app/tracing/shared/property-info';
+import {
+    getPublicStationProperties, getLotProperties, getSampleProperties,
+    PropInfo
+} from '@app/tracing/shared/property-info';
 import { DataService } from '@app/tracing/services/data.service';
 import { combineLatest } from 'rxjs';
 import { createDefaultROASettings, getUnitPropFromAmountProp } from '../shared';
-import { AmountUnitPair, LabelElementInfo, PropElementInfo, ROALabelSettings, ROASettings, TextElementInfo } from '../model';
+import {
+    AmountUnitPair, LabelElementInfo, PropElementInfo,
+    ROALabelSettings, ROASettings, TextElementInfo
+} from '../model';
 
 function propCompare(propA: PropInfo, propB: PropInfo): number {
     const textA = propA.label !== undefined ? propA.label : propA.prop;
@@ -136,7 +142,7 @@ export class ReportConfigurationComponent implements DoCheck {
                     const startIndex = labelElements.indexOf(amountUnitPair.amount);
                     const endIndex = labelElements.indexOf(amountUnitPair.unit);
                     for (let i = startIndex + 1; i <= endIndex; i++) {
-                        labelElements[i].dependendOnProp = amountUnitPair.amount.prop;
+                        labelElements[i].dependendOnProp = amountUnitPair.amount.prop ?? undefined;
                     }
                 }
             });
@@ -207,10 +213,11 @@ export class ReportConfigurationComponent implements DoCheck {
         const flattenedLabelElements = _.flattenDeep(labelElements);
         const propElements = flattenedLabelElements.filter(e => (e as PropElementInfo).prop != null) as PropElementInfo[];
         for (const propElement of propElements) {
-            if (propElement.prop.match(AMOUNT_PROP_MATCHER_REGEXP)) {
+            if (propElement.prop!.match(AMOUNT_PROP_MATCHER_REGEXP)) {
                 propElement.interpretAsNumber = true;
             }
         }
+
         const expectedAmountPropElement = roaSettings.labelSettings.lotSampleLabel[2].find(e => (e as PropElementInfo).prop != null);
         if (expectedAmountPropElement !== undefined) {
             (expectedAmountPropElement as PropElementInfo).interpretAsNumber = true;
@@ -249,7 +256,7 @@ export class ReportConfigurationComponent implements DoCheck {
             for (const labelElementRow of labelInfo.labelElements) {
                 const propElements = labelElementRow.filter(e => (e as PropElementInfo).prop !== undefined) as PropElementInfo[];
                 const nonNullPropElements = propElements.filter(e => e.prop !== null);
-                if (nonNullPropElements.some(e => !propSet.has(e.prop))) {
+                if (nonNullPropElements.some(e => !propSet.has(e.prop!))) {
                     labelInfo.warning = WARNING_DATA_IS_NOT_AVAILABLE;
                     continue labelInfoLoop;
                 }
@@ -269,7 +276,7 @@ export class ReportConfigurationComponent implements DoCheck {
         for (const labelKey of Object.keys(this.labelInfos)) {
             const labelInfo: LabelInfo = this.labelInfos[labelKey];
             labelInfo.amountUnitPairs.forEach(amountUnitPair => {
-                const unit = getUnitPropFromAmountProp(amountUnitPair.amount.prop, labelInfo.availableProps);
+                const unit = getUnitPropFromAmountProp(amountUnitPair.amount.prop!, labelInfo.availableProps);
                 amountUnitPair.unit.prop = unit;
             });
         }

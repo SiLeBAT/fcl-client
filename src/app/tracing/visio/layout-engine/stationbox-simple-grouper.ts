@@ -3,6 +3,7 @@ import { VisioBox, Position, Size, BoxType } from './datatypes';
 import { LabelCreator } from './label-creator';
 import { GraphSettings } from './graph-settings';
 import { getDifference } from '@app/tracing/util/geometry-utils';
+import { concat } from '@app/tracing/util/non-ui-utils';
 
 interface BoxGroup {
     label: string;
@@ -18,15 +19,15 @@ interface VisualBoxGroup {
 }
 
 export function groupStationBoxes(logicalBoxGroups: BoxGroup[], labelCreator: LabelCreator): VisioBox[] {
-    addTopAndLeftMargin([].concat(...logicalBoxGroups.map(g => g.boxes)));
+    addTopAndLeftMargin(concat(...logicalBoxGroups.map(g => g.boxes)));
     let visGroups = initVisualGroups(logicalBoxGroups);
     visGroups = aggregateVisualGroups(visGroups);
     return visGroups.map(g => convertToVisioBox(g, labelCreator));
 }
 
 function addTopAndLeftMargin(boxes: VisioBox[]) {
-    const left = Math.min(...boxes.map(b => b.position.x)) - GraphSettings.GRID_MARGIN - GraphSettings.GROUP_MARGIN;
-    boxes.forEach(b => b.position = getDifference(b.position, { x: left, y: 0 }));
+    const left = Math.min(...boxes.map(b => b.position!.x)) - GraphSettings.GRID_MARGIN - GraphSettings.GROUP_MARGIN;
+    boxes.forEach(b => b.position = getDifference(b.position!, { x: left, y: 0 }));
 }
 
 function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): VisioBox {
@@ -44,14 +45,12 @@ function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): 
             width: visBox.size.width + LEFTMARGIN + RIGHTMARGIN,
             height: visBox.size.height + TOPMARGIN + BOTTOMMARGIN
         },
-        position: null,
         ports: [],
         elements: visBox.boxes,
-        shape: null,
         labels: [labelCreator.getLabel([visBox.label], GraphSettings.GROUP_MARGIN, { bold: true})]
     };
 
-    visioBox.elements.forEach(b => b.relPosition = getDifference(b.position, visioBox.relPosition));
+    visioBox.elements.forEach(b => b.relPosition = getDifference(b.position!, visioBox.relPosition));
 
     return visioBox;
 }
@@ -61,7 +60,7 @@ function initVisualGroups(logicalBoxGroups: BoxGroup[]): VisualBoxGroup[] {
     logicalBoxGroups.forEach((logBoxGroup, groupIndex) =>
         logBoxGroup.boxes.forEach(box => {
             result.push({
-                position: { ...box.position },
+                position: { ...box.position! },
                 size: { ...box.size },
                 logicalGroupIndex: groupIndex,
                 label: logBoxGroup.label,
@@ -157,6 +156,6 @@ function mergeGroups(groups: VisualBoxGroup[]): VisualBoxGroup {
         },
         logicalGroupIndex: groups[0].logicalGroupIndex,
         label: groups[0].label,
-        boxes: [].concat(...groups.map(g => g.boxes))
+        boxes: concat(...groups.map(g => g.boxes))
     };
 }

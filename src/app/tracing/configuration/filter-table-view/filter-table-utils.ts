@@ -101,7 +101,11 @@ function getMergedRowComparator(rowOnlyComparators: RowOnlyComparator[]): (rA: T
 
 function getActiveRowOnlyComparators(columns: NgxTableColumn[], sorts: SortPropDir[]): RowOnlyComparator[] {
     const prop2Comparator: Record<string, RowComparator> = {};
-    columns.filter(c => c.comparator).forEach(c => prop2Comparator[c.prop] = c.comparator);
+    columns.filter(c => c.comparator).forEach(c => {
+        if (c.prop) {
+            prop2Comparator[c.prop] = c.comparator;
+        }
+    });
     const activeRowOnlyComparators = sorts.map(s => {
         const comparator = prop2Comparator[s.prop];
 

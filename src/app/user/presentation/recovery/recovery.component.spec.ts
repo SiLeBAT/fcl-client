@@ -26,8 +26,6 @@ describe('RecoveryComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(RecoveryComponent);
                 component = fixture.componentInstance;
-
-                component.ngOnInit();
             });
     }));
 
@@ -89,6 +87,6 @@ describe('RecoveryComponent', () => {
 
         component.onRecovery();
 
-        expect(emailRequest.email).toBe(email);
+        expect(emailRequest!.email).toBe(email);
     });
 });

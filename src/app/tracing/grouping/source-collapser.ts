@@ -3,15 +3,16 @@ import { DataService } from '../services/data.service';
 import { LinkGroup, GroupingState, GroupingChange } from './model';
 import * as _ from 'lodash';
 import { extractNewGroups } from './shared';
+import { concat } from '../util/non-ui-utils';
 
 export class SourceCollapser {
 
     constructor(private dataService: DataService) {}
 
-    getGroupingChange(state: GroupingState, groupMode: GroupMode): GroupingChange {
+    getGroupingChange(state: GroupingState, groupMode: GroupMode): GroupingChange | undefined {
         const oldGroups = state.groupSettings.filter(g => g.groupType === GroupType.SOURCE_GROUP);
 
-        const ignoreMemberIdSet: Set<string> = new Set([].concat(...oldGroups.map(g => g.contains)));
+        const ignoreMemberIdSet = new Set<string>(concat(...oldGroups.map(g => g.contains)));
 
         const data = this.dataService.getData(state);
         const sourceStationCandidates: StationData[] = data.stations.filter(
@@ -72,7 +73,7 @@ export class SourceCollapser {
                         });
                     }
 
-                    targetIdToLinkGroupMap.get(targetStations[0].id).linkedStations.push({
+                    targetIdToLinkGroupMap.get(targetStations[0].id)!.linkedStations.push({
                         linkedStation: source,
                         linkKeys: targetKeys
                     });

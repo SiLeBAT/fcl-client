@@ -54,8 +54,10 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
     }
 
     ngOnDestroy(): void {
-        this.tableActivateSubscription$.unsubscribe();
-        this.tableActivateSubscription$ = null;
+        if (this.tableActivateSubscription$) {
+            this.tableActivateSubscription$.unsubscribe();
+            this.tableActivateSubscription$ = null;
+        }
         if (this.rowElementBelowMouse !== null) {
             this.clearRowReferences();
         }
@@ -71,13 +73,13 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
         const lastRow = this.rowBelowMouse;
         setTimeout(() => {
             if (lastRow === this.rowBelowMouse) {
-                this.rowOver.emit(this.rowBelowMouse);
+                this.rowOver.emit(this.rowBelowMouse!);
             }
         }, 0);
     }
 
     private clearRowReferences(): void {
-        this.rowElementBelowMouse.removeEventListener(EVENT_MOUSE_LEAVE, this.rowLeaveListener);
+        this.rowElementBelowMouse!.removeEventListener(EVENT_MOUSE_LEAVE, this.rowLeaveListener);
         this.rowElementBelowMouse = null;
         this.rowBelowMouse = null;
     }

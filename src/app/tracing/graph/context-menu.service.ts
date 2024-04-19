@@ -9,7 +9,7 @@ import {
     GraphServiceData,
     NodeId
 } from './graph.model';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
 import {
@@ -28,12 +28,13 @@ import {
     LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
     LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
 } from './cy-graph/cy.constants';
+import { concat } from '../util/non-ui-utils';
 
 interface ContextElements {
     refNodeId: NodeId | undefined;
     refEdgeId: EdgeId | undefined;
     refStationId: StationId | undefined;
-    refDeliveryIds: DeliveryId[];
+    refDeliveryIds: DeliveryId[] | undefined;
     nodeIds: string[];
     edgeIds: string[];
     stationIds: string[];
@@ -76,12 +77,12 @@ export class ContextMenuService {
 
         const nodes: CyNodeData[] =
             isContextElementSelected ? graphData.nodeData.filter(n => n.selected) :
-                context.nodeId ? [graphData.nodeData.find(n => n.id === context.nodeId)] :
+                context.nodeId ? [graphData.nodeData.find(n => n.id === context.nodeId)!] :
                     [];
 
         const edges: CyEdgeData[] =
             isContextElementSelected ? graphData.edgeData.filter(e => e.selected) :
-                context.edgeId ? [graphData.edgeData.find(e => e.id === context.edgeId)] :
+                context.edgeId ? [graphData.edgeData.find(e => e.id === context.edgeId)!] :
                     [];
 
         return {
@@ -91,20 +92,20 @@ export class ContextMenuService {
                 graphData.idToNodeMap[context.nodeId].station.id,
             refDeliveryIds:
                 context.edgeId === undefined ? undefined :
-                    graphData.edgeData.find(d => d.id === context.edgeId).deliveries.map(d => d.id),
+                    graphData.edgeData.find(d => d.id === context.edgeId)!.deliveries.map(d => d.id),
             nodeIds: nodes.map(n => n.id),
             edgeIds: edges.map(e => e.id),
             stationIds: nodes.map(n => n.station.id),
             deliveryIds: isContextElementSelected ?
-                [].concat(...edges.map(e => e.deliveries.filter(d => d.selected).map(d => d.id))) :
-                [].concat(...edges.map(e => e.deliveries.map(d => d.id)))
+                concat(...edges.map(e => e.deliveries.filter(d => d.selected).map(d => d.id))) :
+                concat(...edges.map(e => e.deliveries.map(d => d.id)))
         };
     }
 
     getMenuData(
         context: ContextMenuRequestContext,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[]
+        layoutOptions: LayoutOption[] | null
     ): MenuItemData[] {
         const contextElements = this.getContextElements(context, graphData);
 
@@ -141,7 +142,7 @@ export class ContextMenuService {
         );
         const stations = graphData.stations.filter(s => !s.invisible);
 
-        return [].concat(
+        return concat(
             layoutOptions !== null ? this.createLayoutMenuData(layoutOptions, graphData.nodeData.map(n => n.id)) : [],
             [
                 {
@@ -353,7 +354,7 @@ export class ContextMenuService {
         const allKillContaminationStations = contextStations.every(s => s.killContamination);
         const allMetaStations = contextStations.every(s => s.contains && s.contains.length > 0);
 
-        return [].concat(
+        return concat(
             layoutOptions !== null ? this.createLayoutMenuData(layoutOptions, contextElements.nodeIds) : [],
             [
                 {
@@ -422,15 +423,15 @@ export class ContextMenuService {
             children: [
                 {
                     ...MenuItemStrings.forwardTrace,
-                    action: getAction === null ? null : getAction(ObservedType.FORWARD)
+                    action: getAction === null ? undefined : getAction(ObservedType.FORWARD)
                 },
                 {
                     ...MenuItemStrings.backwardTrace,
-                    action: getAction === null ? null : getAction(ObservedType.BACKWARD)
+                    action: getAction === null ? undefined : getAction(ObservedType.BACKWARD)
                 },
                 {
                     ...MenuItemStrings.fullTrace,
-                    action: getAction === null ? null : getAction(ObservedType.FULL)
+                    action: getAction === null ? undefined : getAction(ObservedType.FULL)
                 }
             ]
         };

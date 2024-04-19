@@ -31,11 +31,11 @@ export class UnknownLatLonFrameViewComponent implements OnChanges {
     }
 
     private updatePathCommands(): void {
-        const boundaryWidthHalf = this.unknownLatLonRectBorderWidth / 2;
+        const boundaryWidthHalf = this.unknownLatLonRectBorderWidth! / 2;
         const radius = Math.min(UnknownLatLonFrameViewComponent.BORDER_RADIUS, boundaryWidthHalf);
 
-        const outerRect = getRenderedRect(this.unknownLatLonRect, createMargin(boundaryWidthHalf), this.viewport);
-        const innerRect = getRenderedRect(this.unknownLatLonRect, createMargin(-boundaryWidthHalf), this.viewport);
+        const outerRect = getRenderedRect(this.unknownLatLonRect!, createMargin(boundaryWidthHalf), this.viewport!);
+        const innerRect = getRenderedRect(this.unknownLatLonRect!, createMargin(-boundaryWidthHalf), this.viewport!);
 
         const cmdAprefix = `A ${radius} ${radius}, 0, 0, 1,`;
         const cmdHSuffix = `${outerRect.width - 2 * radius}`;

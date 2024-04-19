@@ -51,7 +51,7 @@ export class GisPositioningService {
         } else if (oldGraphData.ghostElements !== graphData.ghostElements) {
             this.updateGhostPositions();
         }
-        return this.cachedPositioningData;
+        return this.cachedPositioningData!;
     }
 
     private setPositioningData(): void {
@@ -84,12 +84,12 @@ export class GisPositioningService {
     private initKnownStationModelPositions(): void {
         this.stationModelPositions = {};
 
-        for (const station of this.graphData.stations
-            .filter(s => UIUtils.hasGisInfo(s))
+        for (const station of this.graphData!.stations
+            .filter(UIUtils.hasGisInfo)
         ) {
             this.stationModelPositions[station.id] = UIUtils.latLonToPosition(station.lat, station.lon, REF_ZOOM);
         }
-        for (const stationGroup of this.graphData.stations
+        for (const stationGroup of this.graphData!.stations
             .filter(s => s.contains.length > 0)
             .filter(s => !this.stationModelPositions[s.id])
         ) {
@@ -107,7 +107,7 @@ export class GisPositioningService {
         this.ghostModelPositions = {};
         this.boundaryNodeIds = [];
         this.boundaryGhostNodeIds = [];
-        this.setKnownNodePos(this.graphData.nodeData, this.nodeModelPositions, this.boundaryNodeIds);
+        this.setKnownNodePos(this.graphData!.nodeData, this.nodeModelPositions, this.boundaryNodeIds);
     }
 
     private setInnerBoundaryRect(): void {
@@ -139,26 +139,26 @@ export class GisPositioningService {
 
     private createDefaultPosition(): Position {
         return {
-            x: this.outerBoundaryRect.left,
-            y: (this.outerBoundaryRect.top + this.outerBoundaryRect.bottom) / 2
+            x: this.outerBoundaryRect!.left,
+            y: (this.outerBoundaryRect!.top + this.outerBoundaryRect!.bottom) / 2
         };
     }
 
     private setUnknownNodeModelPositions(): void {
         // to compute the unknown positions we create a map
         // which gives as easy access to node neighbours
-        const nbhMap = this.createNeighbourHoodMap(this.graphData);
+        const nbhMap = this.createNeighbourHoodMap(this.graphData!);
 
         // to compute the unkown positions we iteratively
         // get the nodes without positions which are connected to at least one node with a known position
         // an unkown node position is set to a point on the outerBoundaryRect which has minimal distance
         // to the weighted (number of links) center of the connected nodes with positions
 
-        const idsOfConnectedNodesWOPos = this.getNodesWoPosConnectedWithNodeWPos(this.graphData.edgeData, this.nodeModelPositions);
+        const idsOfConnectedNodesWOPos = this.getNodesWoPosConnectedWithNodeWPos(this.graphData!.edgeData, this.nodeModelPositions);
 
         this.setConnectedPositions(idsOfConnectedNodesWOPos, nbhMap, this.nodeModelPositions);
 
-        this.graphData.nodeData
+        this.graphData!.nodeData
             .filter(n => this.nodeModelPositions[n.id] === undefined)
             .forEach(n => this.nodeModelPositions[n.id] = this.createDefaultPosition());
     }
@@ -231,10 +231,10 @@ export class GisPositioningService {
     }
 
     private updateGhostPositions(): void {
-        if (this.graphData.ghostElements) {
+        if (this.graphData!.ghostElements) {
             this.ghostModelPositions = {};
             this.boundaryGhostNodeIds = [];
-            this.setKnownNodePos(this.graphData.ghostElements.nodeData, this.ghostModelPositions, this.boundaryGhostNodeIds);
+            this.setKnownNodePos(this.graphData!.ghostElements.nodeData, this.ghostModelPositions, this.boundaryGhostNodeIds);
 
             if (this.boundaryGhostNodeIds.length > 0) {
                 this.setUnknownGhostPositions();
@@ -267,19 +267,19 @@ export class GisPositioningService {
         Object.assign(posMap, this.nodeModelPositions);
 
         const idsOfConnectedNodesWOPos = this.getNodesWoPosConnectedWithNodeWPos(
-            this.graphData.ghostElements.edgeData,
+            this.graphData!.ghostElements!.edgeData,
             posMap
         );
 
-        const nbhMap: NeighbourHoodMap = this.createNeighbourHoodMap(this.graphData.ghostElements);
+        const nbhMap: NeighbourHoodMap = this.createNeighbourHoodMap(this.graphData!.ghostElements!);
 
         this.setConnectedPositions(idsOfConnectedNodesWOPos, nbhMap, posMap);
 
-        this.graphData.ghostElements.nodeData
-            .filter(n => this.ghostModelPositions[n.id] === undefined)
+        this.graphData!.ghostElements!.nodeData
+            .filter(n => this.ghostModelPositions![n.id] === undefined)
             .forEach(n => {
                 const pos = posMap[n.id];
-                this.ghostModelPositions[n.id] =
+                this.ghostModelPositions![n.id] =
                     pos !== undefined ?
                         pos :
                         this.createDefaultPosition();
@@ -292,7 +292,7 @@ export class GisPositioningService {
 
             idsOfConnectedNodesWOPos.forEach(nodeId => {
                 const weightedCenter = this.getGetWeightedNeighbourCenter(nodeId, nbhMap, posMap);
-                newPosMap[nodeId] = getNearestPointOnRect(weightedCenter, this.outerBoundaryRect);
+                newPosMap[nodeId] = getNearestPointOnRect(weightedCenter, this.outerBoundaryRect!);
             });
 
             Object.assign(posMap, newPosMap);
@@ -303,13 +303,13 @@ export class GisPositioningService {
 
     private repositionBoundaryNodesToAvoidOverlay(): void {
         if (this.boundaryNodeIds.length > 0) {
-            const boundaryNodes = this.boundaryNodeIds.map(nodeId => this.graphData.idToNodeMap[nodeId]);
+            const boundaryNodes = this.boundaryNodeIds.map(nodeId => this.graphData!.idToNodeMap[nodeId]);
 
-            const nodesRect = this.getModelPositionsIncludingRect();
+            const nodesRect = this.getModelPositionsIncludingRect()!;
 
             const estimatedZoomFit = Math.min(
-                GisPositioningService.REF_MAP_SIZE.width / (nodesRect.width > 0 ? nodesRect.width : this.outerBoundaryRect.width),
-                GisPositioningService.REF_MAP_SIZE.height / (nodesRect.height > 0 ? nodesRect.height : this.outerBoundaryRect.height)
+                GisPositioningService.REF_MAP_SIZE.width / (nodesRect.width > 0 ? nodesRect.width : this.outerBoundaryRect!.width),
+                GisPositioningService.REF_MAP_SIZE.height / (nodesRect.height > 0 ? nodesRect.height : this.outerBoundaryRect!.height)
             );
 
             this.nodeModelPositions = getNonOverlayPositions(
@@ -320,7 +320,7 @@ export class GisPositioningService {
             );
             const nodeDistances = this.boundaryNodeIds.map(nodeId => {
                 const point = this.nodeModelPositions[nodeId];
-                const pointOnRect = getNearestPointOnRect(point, this.outerBoundaryRect);
+                const pointOnRect = getNearestPointOnRect(point, this.outerBoundaryRect!);
                 return Math.max(Math.abs(pointOnRect.x - point.x), Math.abs(pointOnRect.y - point.y));
             });
             const maxNodeDist = Math.max(...nodeDistances);

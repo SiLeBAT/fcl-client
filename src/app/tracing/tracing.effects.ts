@@ -46,8 +46,8 @@ export class TracingEffects {
                 const station = data.statMap[stationId];
 
                 if (station) {
-                    const deliveries: Map<DeliveryId, DeliveryData> = new Map();
-                    const connectedStations: Map<StationId, StationData> = new Map();
+                    const deliveries = new Map<DeliveryId, DeliveryData>();
+                    const connectedStations = new Map<StationId, StationData>();
 
                     for (const delivery of data.getDelById(station.incoming)) {
                         deliveries.set(delivery.id, delivery);

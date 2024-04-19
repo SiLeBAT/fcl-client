@@ -50,7 +50,7 @@ export class FilterElementsViewComponent implements OnChanges {
     @Output() clearAllFilters = new EventEmitter();
     @Output() selectTableColumns = new EventEmitter();
     @Output() rowSelectionChange = new EventEmitter<string[]>();
-    @Output() mouseOverTableRow = new EventEmitter<TableRow>();
+    @Output() mouseOverTableRow = new EventEmitter<TableRow | null>();
     @Output() mouseLeaveTableRow = new EventEmitter<TableRow>();
     @Output() tableRowDblClick = new EventEmitter<TableRow>();
 
