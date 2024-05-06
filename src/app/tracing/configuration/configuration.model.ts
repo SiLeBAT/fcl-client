@@ -40,14 +40,8 @@ export enum VisibilityFilterState {
     SHOW_INVISIBLE_ONLY
 }
 
-export enum AnonymizedNameColumnMode {
-    REPLACE_NAME_COLUMN, ADD, DO_NOT_AUTO_SHOW
-}
-
 export interface FilterTableSettings {
     columnOrder: string[];
-
-    anonymizedNameColumnMode?: AnonymizedNameColumnMode;
 
     standardFilter: string;
     predefinedFilter: ShowType;
@@ -57,9 +51,18 @@ export interface FilterTableSettings {
     columnFilters: ColumnFilterSettings[];
 }
 
+interface FilterTableAutoSettings {
+    lastActiveAnoColumnOrder?: string[];
+    lastInactiveAnoColumnOrder?: string[];
+    wasAnoActiveOnLastColumnSet?: boolean;
+}
+
+export type StationFilterSettings = FilterTableSettings & FilterTableAutoSettings;
+export type DeliveryFilterSettings = FilterTableSettings;
+
 export interface FilterSettings {
-    stationFilter: FilterTableSettings;
-    deliveryFilter: FilterTableSettings;
+    stationFilter: StationFilterSettings;
+    deliveryFilter: DeliveryFilterSettings;
 }
 
 export enum ActivityState {

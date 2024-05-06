@@ -10,9 +10,9 @@ import {
     PropMaps
 } from '../data.model';
 import {
-    addStatAnoColumnOnAnoActivation,
-    removeAnoRefsOnStatFilterActivitationWoAno,
-    updateStatAnoColumnModeOnAnoDeactivation
+    updateColumnFilters,
+    updateStationAutoColumnSettings,
+    updateStationAutoColumnsIfRequired
 } from './reducer.utils';
 
 import { ModelDependentState, TracingState } from '../state.model';
@@ -23,7 +23,9 @@ import {
     VisibilityFilterState,
     FilterSettings,
     ConfigurationTabIndex,
-    HighlightingConfigurationSettings
+    HighlightingConfigurationSettings,
+    StationFilterSettings,
+    DeliveryFilterSettings
 } from '../configuration/configuration.model';
 import { FilterTabId, StationsTabId } from '../configuration/configuration.constants';
 import { DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP, DENOVO_STATION_PROP_INT_TO_EXT_MAP } from '../io/data-mappings/data-mappings-v1';
@@ -178,13 +180,13 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             action.payload.fclData.graphSettings.geojsonBorderColor = state.fclData.graphSettings.geojsonBorderColor;
             action.payload.fclData.graphSettings.geojsonBorderWidth = state.fclData.graphSettings.geojsonBorderWidth;
 
-            let newState = {
+            let newState: TracingState = {
                 ...state,
                 fclData: action.payload.fclData,
                 ...initialModelDependentState
             };
 
-            newState = addStatAnoColumnOnAnoActivation([], newState);
+            newState = updateStationAutoColumnsIfRequired(newState);
 
             return newState;
         }
@@ -201,12 +203,14 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             };
 
         case TracingActionTypes.ShowConfigurationSideBarSOA: {
-            let newState = {
+            let newState: TracingState = {
                 ...state,
                 showConfigurationSideBar: action.payload.showConfigurationSideBar,
                 isConfSideBarOpening: action.payload.showConfigurationSideBar
             };
-            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+
+            newState = updateStationAutoColumnsIfRequired(newState);
+
             return newState;
         }
         case TracingActionTypes.SetGraphTypeSOA:
@@ -407,18 +411,22 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.ResetAllStationFiltersSOA:
+        case TracingActionTypes.ResetAllStationFiltersSOA: {
+            const oldStationFilter = state.filterSettings.stationFilter;
             return {
                 ...state,
                 filterSettings: {
                     ...initialFilterSettings,
                     stationFilter: {
                         ...filterTableSettings,
-                        columnOrder: state.filterSettings.stationFilter.columnOrder,
-                        anonymizedNameColumnMode: state.filterSettings.stationFilter.anonymizedNameColumnMode
+                        columnOrder: oldStationFilter.columnOrder,
+                        wasAnoActiveOnLastColumnSet: oldStationFilter.wasAnoActiveOnLastColumnSet,
+                        lastActiveAnoColumnOrder: oldStationFilter.lastActiveAnoColumnOrder,
+                        lastInactiveAnoColumnOrder: oldStationFilter.lastInactiveAnoColumnOrder
                     }
                 }
             };
+        }
 
         case TracingActionTypes.ResetAllDeliveryFiltersSOA:
             return {
@@ -436,39 +444,42 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             return initialState;
 
         case TracingActionTypes.SetFilterStationTableColumnOrderSOA: {
-            const newColumnOrder = action.payload.columnOrder;
-            const oldColumnFilters = state.filterSettings.stationFilter.columnFilters;
-            const newColumnFilters = oldColumnFilters.filter(f => newColumnOrder.includes(f.filterProp));
+            let stationFilter: StationFilterSettings = {
+                ...state.filterSettings.stationFilter,
+                columnOrder: action.payload.columnOrder
+            };
+            stationFilter = updateColumnFilters(stationFilter);
 
-            return {
+            let newState: TracingState = {
                 ...state,
                 filterSettings: {
                     ...state.filterSettings,
-                    stationFilter: {
-                        ...state.filterSettings.stationFilter,
-                        columnOrder: newColumnOrder,
-                        columnFilters: oldColumnFilters.length === newColumnOrder.length ? oldColumnFilters : newColumnFilters
-                    }
+                    stationFilter: stationFilter
                 }
             };
+
+            newState = updateStationAutoColumnsIfRequired(newState);
+            newState = updateStationAutoColumnSettings(newState);
+
+            return newState;
         }
 
         case TracingActionTypes.SetFilterDeliveryTableColumnOrderSOA: {
-            const newColumnOrder = action.payload.columnOrder;
-            const oldColumnFilters = state.filterSettings.deliveryFilter.columnFilters;
-            const newColumnFilters = oldColumnFilters.filter(f => newColumnOrder.includes(f.filterProp));
+            let deliveryFilter: DeliveryFilterSettings = {
+                ...state.filterSettings.deliveryFilter,
+                columnOrder: action.payload.columnOrder
+            };
+            deliveryFilter = updateColumnFilters(deliveryFilter);
 
-            return {
+            const newState: TracingState = {
                 ...state,
                 filterSettings: {
                     ...state.filterSettings,
-                    deliveryFilter: {
-                        ...state.filterSettings.deliveryFilter,
-                        columnOrder: newColumnOrder,
-                        columnFilters: oldColumnFilters.length === newColumnOrder.length ? oldColumnFilters : newColumnFilters
-                    }
+                    deliveryFilter: deliveryFilter
                 }
             };
+
+            return newState;
         }
 
         case TracingActionTypes.SetSelectedElementsSOA:
@@ -598,8 +609,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-            newState = addStatAnoColumnOnAnoActivation(state.fclData.graphSettings.highlightingSettings.stations, newState);
-            newState = updateStatAnoColumnModeOnAnoDeactivation(state.fclData.graphSettings.highlightingSettings.stations, newState);
+            newState = updateStationAutoColumnsIfRequired(newState);
 
             return newState;
         }
@@ -657,8 +667,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 }
             };
 
-        case TracingActionTypes.SetHighlightingSettingsSOA:
-            return {
+        case TracingActionTypes.SetHighlightingSettingsSOA: {
+            let newState: TracingState = {
                 ...state,
                 fclData: {
                     ...state.fclData,
@@ -668,6 +678,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     }
                 }
             };
+
+            newState = updateStationAutoColumnsIfRequired(newState);
+
+            return newState;
+        }
 
         case TracingActionTypes.SetInvisibleElementsSOA:
             return {
@@ -733,7 +748,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
             };
 
         case TracingActionTypes.SetActiveConfigurationTabIdSOA: {
-            let newState = {
+            let newState: TracingState = {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
@@ -741,11 +756,13 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 },
                 animatingTabCount: state.animatingTabCount + 1
             };
-            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+
+            newState = updateStationAutoColumnsIfRequired(newState);
+
             return newState;
         }
         case TracingActionTypes.SetActiveFilterTabIdSOA: {
-            let newState = {
+            let newState: TracingState = {
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
@@ -754,7 +771,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 animatingTabCount: state.animatingTabCount + 1
             };
 
-            newState = removeAnoRefsOnStatFilterActivitationWoAno(state, newState);
+            newState = updateStationAutoColumnsIfRequired(newState);
 
             return newState;
         }
