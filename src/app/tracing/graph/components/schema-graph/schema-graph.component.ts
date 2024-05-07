@@ -17,7 +17,7 @@ import { SetSchemaGraphLayoutSOA } from '@app/tracing/state/tracing.actions';
 import { getGraphType, selectSchemaGraphState, getShowLegend, getShowZoom, getStyleConfig, getFitGraphToVisibleArea } from '@app/tracing/state/tracing.selectors';
 import { SchemaGraphService } from '../../schema-graph.service';
 import { DialogActionsComponent, DialogActionsData } from '@app/tracing/dialog/dialog-actions/dialog-actions.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { optInGate } from '@app/tracing/shared/rxjs-operators';
 import { FocusGraphElementSSA, SetSelectedGraphElementsMSA, TracingActionTypes, SetStationPositionsAndLayoutMSA } from '@app/tracing/tracing.actions';
 import { Actions, ofType } from '@ngrx/effects';

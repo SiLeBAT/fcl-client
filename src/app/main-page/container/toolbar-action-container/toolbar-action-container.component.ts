@@ -20,7 +20,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { take, takeWhile } from 'rxjs/operators';
 import { ExampleData } from '@app/main-page/model/types';
 import { MainPageService } from '@app/main-page/services/main-page.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogOkCancelComponent, DialogOkCancelData } from '@app/tracing/dialog/dialog-ok-cancel/dialog-ok-cancel.component';
 import { Constants } from '@app/tracing/util/constants';
 import { ToolbarActionComponent } from '@app/main-page/presentation/toolbar-action/toolbar-action.component';

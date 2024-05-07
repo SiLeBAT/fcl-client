@@ -14,7 +14,7 @@ import { Store, select } from '@ngrx/store';
 import { StationPropertiesComponent, StationPropertiesData } from './dialog/station-properties/station-properties.component';
 import { DeliveryPropertiesComponent, DeliveryPropertiesData } from './dialog/delivery-properties/delivery-properties.component';
 import { DeliveriesPropertiesComponent } from './dialog/deliveries-properties/deliveries-properties.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { EditTracingSettingsService } from './services/edit-tracing-settings.service';
 import { EditHighlightingService } from './configuration/edit-highlighting.service';
 import { GraphService } from './graph/graph.service';

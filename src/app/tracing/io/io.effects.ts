@@ -15,7 +15,7 @@ import { Utils } from './../util/ui-utils';
 import { InputEncodingError, InputFormatError, InputDataError } from './io-errors';
 import { DialogOkCancelComponent, DialogOkCancelData } from '../dialog/dialog-ok-cancel/dialog-ok-cancel.component';
 import { Constants } from '../util/constants';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DataService } from '../services/data.service';
 
 @Injectable()

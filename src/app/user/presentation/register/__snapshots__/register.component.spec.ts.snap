@@ -31,7 +31,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   fclfocusafterviewinit=""
                   formcontrolname="firstName"
                   matinput=""
@@ -68,7 +68,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   formcontrolname="lastName"
                   matinput=""
                   name="lastName"
@@ -104,7 +104,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   formcontrolname="email"
                   matinput=""
                   name="email"
@@ -140,7 +140,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   formcontrolname="password1"
                   matinput=""
                   name="password1"
@@ -177,7 +177,7 @@ exports[`RegisterComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   formcontrolname="password2"
                   matinput=""
                   name="password2"

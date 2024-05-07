@@ -5,7 +5,7 @@ import { mergeMap, take, withLatestFrom } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { Option, DialogSelectData, DialogSelectComponent, DialogResultData } from '../dialog/dialog-select/dialog-select.component';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { SelectFilterTableColumnsMSA, ConfigurationActionTypes, DeleteHighlightingRuleSSA } from './configuration.actions';
 import { TableType } from './model';
 import {

@@ -1,5 +1,5 @@
 import { Component, Output, Input, ViewChild, EventEmitter } from '@angular/core';
-import { MatSlider } from '@angular/material/slider';
+import { MatLegacySlider as MatSlider } from '@angular/material/legacy-slider';
 
 @Component({
     selector: 'fcl-zoom-view',

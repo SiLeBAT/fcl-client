@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import * as d3 from 'd3-selection';
 
 import { DeliveryData, StationData, DeliveryId, StationId, TableColumn } from '../../data.model';

@@ -3,7 +3,7 @@ import {
     EventEmitter, ChangeDetectionStrategy, OnDestroy,
     ElementRef, ViewChild
 } from '@angular/core';
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent, MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete';
 
 type ValueType = string | number | boolean;
 

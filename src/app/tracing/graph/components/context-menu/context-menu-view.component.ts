@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { Action } from '@ngrx/store';
 import { Position } from '../../../data.model';
 import { MenuItemData } from '../../menu-item-data.model';

@@ -37,7 +37,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   fclfocusafterviewinit=""
                   formcontrolname="email"
                   matinput=""

@@ -1,6 +1,6 @@
 import { StationData } from './../data.model';
 import { Position } from '../data.model';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import * as ol from 'ol';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { ElementRef } from '@angular/core';

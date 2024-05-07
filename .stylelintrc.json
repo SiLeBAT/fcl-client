@@ -64,7 +64,8 @@
             "always",
             {
                 "except": [ "after-same-name", "first-nested" ],
-                "ignoreAtRules": ["mixin"]
+                "ignoreAtRules": ["mixin"],
+                "ignore": [ "after-comment" ]
             }
         ],
         "comment-empty-line-before": [

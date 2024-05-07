@@ -1,5 +1,5 @@
 import { Component, ViewChild, EventEmitter, Output } from '@angular/core';
-import { MatMenu } from '@angular/material/menu';
+import { MatLegacyMenu as MatMenu } from '@angular/material/legacy-menu';
 import { MenuItemData } from '../../menu-item-data.model';
 import { Action } from '@ngrx/store';
 

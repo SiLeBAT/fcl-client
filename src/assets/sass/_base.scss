@@ -5,7 +5,7 @@
 
 @forward './themes';
 
-$fcl-typography: mat.define-typography-config(
+$fcl-typography: mat.define-legacy-typography-config(
     $font-family: $fcl-font-family
 );
 

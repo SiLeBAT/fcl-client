@@ -8,7 +8,7 @@ import * as fromTracing from './../state/tracing.reducers';
 import * as tracingSelectors from './../state/tracing.selectors';
 
 import { mergeMap, withLatestFrom } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { of, EMPTY } from 'rxjs';
 import { GroupingService } from './grouping.service';
 import { Store, select } from '@ngrx/store';
