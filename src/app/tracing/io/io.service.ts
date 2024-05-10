@@ -6,9 +6,10 @@ import { DataImporter } from './data-importer/data-importer';
 import { DataExporter } from './data-exporter';
 import { DataImporterV1 } from './data-importer/data-importer-v1';
 import * as shapeFileImporter from './data-importer/shape-file-importer';
-import { getJsonFromFile } from './io-utils';
+import { getJsonFromFile, isExcelFileType, isJsonFileType } from './io-utils';
 import { JsonData } from './ext-data-model.v1';
 import * as _ from 'lodash';
+import { importAllInOneTemplate } from './data-importer/xlsx-all-in-one-importer';
 
 
 @Injectable({
@@ -26,6 +27,19 @@ export class IOService {
         private httpClient: HttpClient
     ) { }
 
+    private async getFclDataFromFile(file: File): Promise<FclData> {
+        let fclData: FclData;
+        if (isJsonFileType(file)) {
+            const jsonData = await getJsonFromFile(file);
+            fclData = await this.preprocessData(jsonData);
+
+        } else {
+            fclData = await importAllInOneTemplate(file);
+        }
+        fclData.source.name = file.name;
+        return fclData;
+    }
+
     async getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === 'string') {
             return this.httpClient.get(dataSource)
@@ -40,16 +54,20 @@ export class IOService {
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
-                getJsonFromFile(file)
-                    .then(jsonData => {
-                        this.preprocessData(jsonData)
-                            .then(data => {
-                                data.source.name = file.name;
-                                resolve(data);
-                            })
-                            .catch(e => reject(e));
-                    })
+                this.getFclDataFromFile(file)
+                    .then(fclData => resolve(fclData))
                     .catch(e => reject(e));
+                // isJsonFileType(file) ?
+                //     getJsonFromFile(file)
+                //         .then(jsonData => {
+                //             this.preprocessData(jsonData)
+                //                 .then(data => {
+                //                     data.source.name = file.name;
+                //                     resolve(data);
+                //                 })
+                //                 .catch(e => reject(e));
+                //         })
+                //         .catch(e => reject(e));
             });
         } else {
             throw new Error('No data source specified.');

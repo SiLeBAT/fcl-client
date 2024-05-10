@@ -3,7 +3,18 @@ import { environment } from '@env/environment';
 import { User } from '@app/user/models/user.model';
 import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
 import { Constants } from './../../../tracing/util/constants';
-import { ExampleData } from '../../model/types';
+import { ExampleData, ModelFileType } from '../../model/types';
+
+const modelFileType2Accept: Record<ModelFileType, string> = {
+    'json-fcl': 'application/json,.json', // 'FCL file (.json)',
+    'xlsx-all-in-one': '.xlsx' // 'FCL All-in-one template (.xlsx)'
+};
+
+function getModelFileTypeFromAccept(accept: string): ModelFileType | undefined {
+    const types = Object.keys(modelFileType2Accept) as ModelFileType[];
+    const filterTypes = types.filter(t => modelFileType2Accept[t] === accept);
+    return filterTypes.length === 1 ? filterTypes[0] : undefined;
+}
 
 @Component({
     selector: 'fcl-toolbar-action',
@@ -35,7 +46,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() selectModelFile = new EventEmitter();
+    @Output() selectModelFile = new EventEmitter<ModelFileType>();
     @Output() saveImage = new EventEmitter();
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
@@ -73,6 +84,7 @@ export class ToolbarActionComponent implements OnChanges {
 
     onModelFileInput(event: any) {
         const fileList: FileList = event.target.files;
+        const type = getModelFileTypeFromAccept(event.target.accept);
         this.loadModelFile.emit(fileList);
         event.target.value = null;
     }
@@ -83,13 +95,18 @@ export class ToolbarActionComponent implements OnChanges {
         event.target.value = null;
     }
 
-    onSelectModelFile() {
-        this.selectModelFile.emit();
+    onSelectModelFile(type: ModelFileType) {
+        this.selectModelFile.emit(type);
     }
 
-    clickModelFileInputElement() {
+    prepareAndClickModelFileInputElement(type: ModelFileType) {
+        this.modelFileInput.nativeElement.accept = modelFileType2Accept[type];
         this.modelFileInput.nativeElement.click();
     }
+
+    // clickModelFileInputElement() {
+    //     this.modelFileInput.nativeElement.click();
+    // }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
         this.loadExampleDataFile.emit(exampleData);

@@ -3,3 +3,5 @@ export interface ExampleData {
     path: string;
     children?: ExampleData[];
 }
+
+export type ModelFileType = 'json-fcl' | 'xlsx-all-in-one';

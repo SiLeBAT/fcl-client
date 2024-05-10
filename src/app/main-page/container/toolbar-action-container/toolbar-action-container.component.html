@@ -8,7 +8,7 @@
     [currentUser]="currentUser$ | async"
     [fileName]="fileName$ | async"
     (loadModelFile)="loadModelFile($event)"
-    (selectModelFile)="onSelectModelFile()"
+    (selectModelFile)="onSelectModelFile($event)"
     (saveImage)="onSaveImage()"
     (openRoaLayout)="onOpenRoaLayout()"
     (loadExampleDataFile)="onLoadExampleDataFile($event)"
