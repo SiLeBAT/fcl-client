@@ -1,212 +1,69 @@
-import { DeliveryStoreData, FclData, PropertyEntry, StationStoreData } from '@app/tracing/data.model';
-import { createInitialFclDataState } from '@app/tracing/state/tracing.reducers';
-import { expectedColumnConfiguration, sheetNameMapping, wbColumnMapping } from './xlsx-all-in-one-import-const';
-import { ColumnsConfiguration, SheetRefName, WBColumnMapping } from './xlsx-all-in-one-import-model';
+import { JsonData } from '../ext-data-model.v1';
+import { expectedColumns, sheetNameMapping, SHEET_REFS } from './xlsx-all-in-one-import-const';
+import { ColumnLabelMapping, ColumnLabelRef, ColumnRef, LabelGroupRef, LabelMapping, SheetRef, HeaderConf as RefHeaderConf } from './xlsx-all-in-one-import-model';
 import { readExcelFile } from './xlsx-importer';
-import { ColumnTree, Row as WSRow, Worksheet} from './xlsx-model';
+import { ColumnHeader, HeaderConf, Row as WSRow, Worksheet} from './xlsx-model';
+import { concat } from '@app/tracing/util/non-ui-utils';
+import { LABEL_MAPPING } from './xlsx-all-in-one-import-const-en';
 
-// const REQUIRED_INT_SHEET_NAMES: IntSheetName[] = ['stations'];
-// const internal_sheet_names = Object.keys(sheetNameMapping) as IntSheetName[];
-
-// function getIntSheetName(extSheetName: string, sheetNameMapping: SheetNameMapping): IntSheetName | undefined {
-//     return internal_sheet_names.find(intName => sheetNameMapping[intName] === extSheetName);
-// }
-
-type ColumnRefs<T extends SheetRefName> = keyof WBColumnMapping[T];
-// type StationColumnRefs = ColumnRefs<'stations'>;
-// type DeliveryColumnRefs = ColumnRefs<'deliveries'>;
-type Ref2Index<T extends SheetRefName> = Partial<Record<ColumnRefs<T>, number>>;
-
-
-class PropAccessor<T extends SheetRefName>{
-    constructor(
-        private ref2Column: Record<ColumnRefs<T>, ColumnTree>,
-        private columnMapping: Record<ColumnRefs<T>, string>) {
-    }
-
-    popValue<
-        M extends boolean,
-        X extends 'string' | 'number' | 'boolean',
-        Y extends(X extends 'string' ? string : X extends 'number' ? number : boolean),
-        R extends(M extends true ? Y: Y | undefined)
-    >(row: WSRow, key: ColumnRefs<T>, reqType: X, required: M): R {
-        const column = this.ref2Column[key];
-        if (column === undefined) {
-            if (required === true) {
-                throw new Error(`Column ${this.columnMapping[key]} is missing.`);
-            } else {
-                return undefined as R;
-            }
-        }
-        const value = row[column.index];
-        if (value === undefined) {
-            if (required === true) {
-                throw new Error(`Value in column ${column.letter} is missing.`);
-            } else {
-                return undefined as R;
-            }
-        }
-
-        delete row[column.index];
-        const obsType = typeof value;
-        if (obsType === reqType) {
-            return value as R;
-        } else if (reqType === 'string') {
-            return `${value}` as R;
-        } else {
-            throw new Error(`Value in column '${column.letter}' is not of type '${reqType}'.`)
-        }
-    }
-
-    popString<
-        M extends boolean,
-        R extends(M extends true ? string: string | undefined)
-    >(row: WSRow, key: ColumnRefs<T>, required: M): R {
-        return this.popValue(row, key, 'string', required);
-    }
-
-    popNumber<
-        M extends boolean,
-        R extends(M extends true ? number: number | undefined)
-    >(row: WSRow, key: ColumnRefs<T>, required: M): R {
-        return this.popValue(row, key, 'number', required);
-    }
-
-    // popString<
-    //     M extends boolean,
-    //     R extends(M extends true ? string: string | undefined)
-    // >(row: IntRow, key: ColumnRefs<T>, required: M): R {
-    //     const column = this.ref2Column[key];
-    //     if (column === undefined) {
-    //         if (required === true) {
-    //             throw new Error(`Column ${this.columnMapping[key]} is missing.`);
-    //         } else {
-    //             return undefined as R;
-    //         }
-    //     }
-    //     const value = row[column.index];
-    //     if (value === undefined) {
-    //         if (required === true) {
-    //             throw new Error(`Value in column ${column.letter} is missing.`);
-    //         } else {
-    //             return undefined as R;
-    //         }
-    //     }
-
-    //     delete row[column.index];
-    //     if (typeof value === 'string') {
-    //         return value as R;
-    //     } else {
-    //         return `${value}` as R;
-    //     }
-    // }
+interface Property {
+    id: string;
+    name: string;
+    type: string;
 }
 
-// function popStringValue<
-//     M extends boolean,
-//     R extends(M extends true ? string: string | undefined)
-// >(row: IntRow, prop: number, required: M): R {
-//     const value = row[prop];
-//     if (value === undefined) {
-//         if (required === true) {
-//             throw new Error(`Value in column ${prop} is missing.`);
-//         } else {
-//             return undefined as R;
-//         }
-//     }
+type AllInOneSheets = Record<SheetRef, Worksheet>;
 
-//     delete row[prop];
-//     if (typeof value === 'string') {
-//         return value as R;
-//     } else {
-//         return `${value}` as R;
-//     }
-// }
-
-// function popStringValue<
-//     M extends boolean,
-//     R extends(M extends true ? string: string | undefined)
-// >(row: IntRow, prop: number, required: M): R {
-//     const value = row[prop];
-//     if (value === undefined) {
-//         if (required === true) {
-//             throw new Error(`Value in column ${prop} is missing.`);
-//         } else {
-//             return undefined as R;
-//         }
-//     }
-
-//     delete row[prop];
-//     if (typeof value === 'string') {
-//         return value as R;
-//     } else {
-//         return `${value}` as R;
-//     }
-// }
-
-// function popNumberValue<
-//     M extends boolean,
-//     R extends(M extends true ? number : number | undefined)
-// >(row: IntRow, prop: number, required: M): R {
-//     const value = row[prop];
-//     if (value === undefined) {
-//         if (required === true) {
-//             throw new Error(`Value in column ${prop} is missing.`);
-//         } else {
-//             return undefined as R;
-//         }
-//     }
-
-//     delete row[prop];
-//     if (typeof value === 'number') {
-//         return value as R;
-//     } else {
-//         throw new Error(`Value in column ${prop} is nnot a number.`);
-//     }
-// }
-
-
-// function createStation(
-//     row: IntRow,
-//     idSet: Set<string>,
-//     colRef2ColIndex: Ref2Index<'stations'>
-// ): StationStoreData {
-//     const columnMapping = wbColumnMapping['stations'];
-//     const station: StationStoreData = {
-//         id: popStringValue(row, colRef2ColIndex.id!, true),
-//         name: colRef2ColIndex.name ? popStringValue(row, colRef2ColIndex.name, false) : undefined,
-//         incoming: [],
-//         outgoing: [],
-//         connections: [],
-//         properties: []
-//     };
-//     if (idSet.has(station.id)) {
-//         throw new Error(`The ${columnMapping.id} '${station.id}' is not unique.`);
-//     }
-//     idSet.add(station.id);
-//     return station;
-// }
-
-function createStation(
-    row: IntRow,
-    idSet: Set<string>,
-    propAccessor: PropAccessor<'stations'>
-    // colRef2ColIndex: Ref2Index<'stations'>
-): StationStoreData {
-    const columnMapping = wbColumnMapping['stations'];
-    const station: StationStoreData = {
-        id: propAccessor.popString(row, 'id', true),
-        name: propAccessor.popString(row, 'name', false),
-        incoming: [],
-        outgoing: [],
-        connections: [],
-        properties: []
-    };
-    if (idSet.has(station.id)) {
-        throw new Error(`The ${columnMapping.id} '${station.id}' is not unique.`);
+function getPropValue<
+    M extends boolean,
+    X extends 'string' | 'number' | 'boolean',
+    Y extends(X extends 'string' ? string : X extends 'number' ? number : boolean),
+    R extends(M extends true ? Y: Y | undefined)
+>(row: WSRow, index: string | number, reqType: X, required?: M): R {
+    const value = row[index];
+    if (value === undefined) {
+        if (required === true) {
+            throw new Error(`Value in column ${index} is missing.`);
+        } else {
+            return undefined as R;
+        }
     }
-    idSet.add(station.id);
-    return station;
+
+    const obsType = typeof value;
+    if (obsType === reqType) {
+        return value as R;
+    // } else if (reqType === 'string') {
+    //     return `${value}` as R;
+    } else {
+        throw new Error(`Value in column '${index}' is not of type '${reqType}'.`);
+    }
+}
+
+function getStringValue<
+    M extends boolean,
+    R extends(M extends true ? string: string | undefined)
+>(row: WSRow, index: number | string, required?: M): R {
+    return this.popValue(row, index, 'string', required);
+}
+
+function getNumberValue<
+    M extends boolean,
+    R extends(M extends true ? number: number | undefined)
+>(row: WSRow, index: number | string, required?: M): R {
+    return getPropValue(row, index, 'number', required);
+}
+
+function hashCode(text: string): number {
+    let h = 0;
+    const l = text.length;
+    let i = 0;
+    if (l > 0) {
+        while (i < l) {
+            // eslint-disable-next-line no-bitwise
+            h = (h << 5) - h + text.charCodeAt(i++) | 0;
+        }
+    }
+    return h;
 }
 
 function createDatePart(x: number | undefined, length: number): string {
@@ -222,119 +79,22 @@ function createDate(year: number | undefined, month: number | undefined, day: nu
                 undefined;
 }
 
-// function createDelivery(
-//     row: IntRow,
-//     idSet: Set<string>,
-//     stationIdSet: Set<string>,
-//     colRef2ColIndex: Ref2Index<'deliveries'>
-// ): DeliveryStoreData {
-//     const columnMapping = wbColumnMapping['deliveries'];
-
-//     const delivery: DeliveryStoreData = {
-//         id: popStringValue(row, colRef2ColIndex.id!, true),
-//         name: colRef2ColIndex.name !== undefined ? popStringValue(row, colRef2ColIndex.name, false) : undefined,
-//         source: popStringValue(row, colRef2ColIndex.source!, true),
-//         target: popStringValue(row, colRef2ColIndex.target!, true),
-//         dateOut: createDate(
-//             colRef2ColIndex.departureDateYear !== undefined ? popNumberValue(row, colRef2ColIndex.departureDateYear, false) : undefined,
-
-//         )
-//         properties: []
-//     };
-//     if (idSet.has(delivery.id)) {
-//         throw new Error(`The ${columnMapping.id} '${delivery.id}' is not unique.`);
-//     }
-//     if (!stationIdSet.has(delivery.source)) {
-//         throw new Error(`The value '${delivery.source}' in column '${columnMapping.source}' refers to an unknown station.`);
-//     }
-//     if (!stationIdSet.has(delivery.target)) {
-//         throw new Error(`The value '${delivery.target}' in column '${columnMapping.target}' refers to an unknown station.`);
-//     }
-//     idSet.add(delivery.id);
-//     return delivery;
-// }
-
-function addProperties<T extends SheetRefName>(element: { properties: PropertyEntry[] }, row: WSRow): void {
-    const indices = Object.keys(row).map(Number) as (keyof WSRow)[];
-
+function getLinearColumns(columns: ColumnHeader[]): ColumnHeader[] {
+    const linearColumns = columns.map(c => c.children ? [c].concat(getLinearColumns(c.children)) : [c]);
+    return concat(...linearColumns);
 }
 
-function createDelivery(
-    row: WSRow,
-    idSet: Set<string>,
-    stationIdSet: Set<string>,
-    propAccessor: PropAccessor<'deliveries'>
-    //colRef2ColIndex: Ref2Index<'deliveries'>
-): DeliveryStoreData {
-    const columnMapping = wbColumnMapping['deliveries'];
-
-    const delivery: DeliveryStoreData = {
-        id: propAccessor.popString(row, 'id', true),
-        name: propAccessor.popString(row, 'name', false),
-        source: propAccessor.popString(row, 'source', true),
-        target: propAccessor.popString(row, 'target', true),
-        dateOut: createDate(
-            propAccessor.popNumber(row, 'departureDateYear', false),
-            propAccessor.popNumber(row, 'departureDateMonth', false),
-            propAccessor.popNumber(row, 'departureDateDay', false)
-        ),
-        dateIn: createDate(
-            propAccessor.popNumber(row, 'arrivalDateYear', false),
-            propAccessor.popNumber(row, 'arrivalDateMonth', false),
-            propAccessor.popNumber(row, 'arrivalDateDay', false),
-        ),
-        lot: propAccessor.popString(row, 'lot', false),
-        properties: []
-    };
-
-    if (idSet.has(delivery.id)) {
-        throw new Error(`The ${columnMapping.id} '${delivery.id}' is not unique.`);
-    }
-    if (!stationIdSet.has(delivery.source)) {
-        throw new Error(`The value '${delivery.source}' in column '${columnMapping.source}' refers to an unknown station.`);
-    }
-    if (!stationIdSet.has(delivery.target)) {
-        throw new Error(`The value '${delivery.target}' in column '${columnMapping.target}' refers to an unknown station.`);
-    }
-    idSet.add(delivery.id);
-    return delivery;
+function getLeaveColumns(columns: ColumnHeader[]): ColumnHeader[] {
+    const leaveColumns = columns.map(c => c.children ? getLeaveColumns(c.children) : [c]);
+    return concat(...leaveColumns);
 }
 
-// function isColumnGroup(conf: {} | { subColumns: unknown[] }): conf is { subColumns: unknown[] } {
-function isColumnGroup(conf: any): conf is { subColumns: unknown[] } {
-    return (conf as any).subColumns !== undefined;
+function getColumnLabel(column: ColumnHeader): string[] {
+    const label = column.parent ? getColumnLabel(column.parent).concat(column.label!) : [column.label!];
+    return label;
 }
 
-function getColRef2ColIndexMapping<T extends SheetRefName>(
-    obsColumns: Worksheet['columns'],
-    expColumns: ColumnsConfiguration<T>,
-    columnMapping: Record<ColumnRefs<T>, string>
-): Partial<Record<ColumnRefs<T>, number>> {
-    const extColName2ColConf: Record<string,Worksheet['columns'][0]> = {};
-    let colRef2ColIndex: Partial<Record<ColumnRefs<T>, number>> = {};
-    obsColumns.forEach(c => {
-        if (c.name !== undefined) {
-            extColName2ColConf[c.name] = c;
-        }
-    });
-    for (const expColumn of expColumns) {
-        const obsColumn = extColName2ColConf[columnMapping[expColumn.ref]];
-        if (obsColumn) {
-            if (isColumnGroup(obsColumn) && isColumnGroup(expColumn)) {
-                colRef2ColIndex = {
-                    ...colRef2ColIndex,
-                    ...getColRef2ColIndexMapping(obsColumn.subColumns, expColumn.subColumns, columnMapping)
-                };
-            } else {
-                colRef2ColIndex[expColumn.ref] = obsColumn.index;
-            }
-            colRef2ColIndex[expColumn.ref] = obsColumn.index;
-        }
-    }
-    return colRef2ColIndex;
-}
-
-export async function importAllInOneTemplate(file: File): Promise<FclData> {
+export async function importAllInOneTemplate(file: File): Promise<JsonData> {
 
     const intWB = await readExcelFile(
         file
@@ -345,47 +105,281 @@ export async function importAllInOneTemplate(file: File): Promise<FclData> {
         // }
     );
 
-    const stationsWS = intWB.sheets[sheetNameMapping['stations']];
-    const deliveriesWS = intWB.sheets[sheetNameMapping['deliveries']];
-    const dels2DelsWS = intWB.sheets[sheetNameMapping['dels2Dels']];
-    const stationIdSet = new Set<string>();
-    const deliveryIdSet = new Set<string>();
+    const importedWSs: AllInOneSheets = {
+        stations: intWB.sheets[sheetNameMapping.stations],
+        deliveries: intWB.sheets[sheetNameMapping.deliveries],
+        dels2Dels: intWB.sheets[sheetNameMapping.dels2Dels]
+    };
 
-    const stationColRefs2ColIndex = getColRef2ColIndexMapping(
-        stationsWS.columns,
-        expectedColumnConfiguration.stations,
-        wbColumnMapping.stations
-    );
-    const stations = stationsWS.rows.map((row, rowIndex) => {
-        try {
-            return createStation(row, stationIdSet, stationColRefs2ColIndex);
-        } catch (ex) {
-            throw new Error(`The station in row ${rowIndex + 2} in sheet '${stationsWS.name}' could not be imported. ${ex.message}`);
+    const jsonData: JsonData = {
+        version: '',
+        data: {
+            version: '',
+            stations: stationsTable,
+            deliveries: deliveriesTable,
+            deliveryRelations: dels2DelsTable
         }
-    });
-
-    const deliveryColRefs2ColIndex = getColRef2ColIndexMapping(
-        deliveriesWS.columns,
-        expectedColumnConfiguration.deliveries,
-        wbColumnMapping.deliveries
-    );
-    const deliveries = deliveriesWS.rows.map((row, rowIndex) => {
-        try {
-            return createDelivery(row, deliveryIdSet, stationIdSet, deliveryColRefs2ColIndex);
-        } catch (ex) {
-            throw new Error(`The delivery in row ${rowIndex + 2} in sheet '${deliveriesWS.name}' could not be imported. ${ex.message}`);
-        }
-    });
-
-    const fclData = createInitialFclDataState();
-    return fclData;
-    // return {
-    //     stations: [],
-    //     deliveries: [],
-    //     samples: []
-    // };
-    // if (stationsWS.rows.length === 0) {
-    //     throw new Error(`Sheet '${sheetNameMapping['stations']}' does not contain any station.`);
-    // }
-
+    };
+    return jsonData;
 }
+
+function createRevRecord<X extends string, Y extends string>(record: Record<X, Y>): Record<Y, X> {
+    const revRecord: Record<Y, X> = Object.fromEntries(Object.entries(record).map(([x, y]) => [y, x]));
+    return revRecord;
+}
+
+function createColumnRef<T extends SheetRef>(ref: ColumnLabelRef<T>, subRefs: ColumnLabelRef<'shared'>[]): ColumnRef<T> {
+    return [ref,...subRefs].join('.') as ColumnRef<T>;
+}
+
+function createColumnRef2RowKeyMap<T extends SheetRef>(
+    leaveColumns: ColumnHeader[],
+    revSheetColumnLabelMapping: Record<string, ColumnLabelRef<T>>,
+    revSharedLabelMapping: Record<string, ColumnLabelRef<'shared'>>
+): Record<ColumnRef<T>, number> {
+    const ref2RowKeyMap: Partial<Record<ColumnRef<T>, number>> = {};
+    leaveColumns.forEach(c => {
+        const label = getColumnLabel(c);
+        const headRef = revSheetColumnLabelMapping[c.label ?? ''];
+        const subRefs = label.slice(1).map(x => revSharedLabelMapping[x]);
+        if (headRef !== undefined && subRefs.every(r => r !== undefined)) {
+            const columnRef = createColumnRef(headRef, subRefs);
+            ref2RowKeyMap[columnRef] = c.columnIndex;
+        }
+    });
+    return ref2RowKeyMap;
+}
+function createLocalizedHeaderConf(labelMapping: LabelMapping): Record<SheetRef, HeaderConf[]> {
+    const t = expectedColumns.stations.map(hC => typeof hC === 'string' ?
+        labelMapping.stations[hC] :
+        [labelMapping.stations[hC[0]], hC[1].map(k => labelMapping.shared[k])]
+    );
+    const locColumnHeader: Partial<Record<SheetRef, HeaderConf[]>> = {};
+    for (const sheetRef of SHEET_REFS) {
+        locColumnHeader[sheetRef] = expectedColumns[sheetRef].map(
+            (hC: RefHeaderConf<SheetRef>) => typeof hC === 'string' ?
+                labelMapping[sheetRef][hC] :
+                [labelMapping[sheetRef][hC[0]], hC[1].map(k => labelMapping.shared[k])]
+        )
+    }
+    return locColumnHeader as Record<SheetRef, HeaderConf[]>;
+}
+
+class AllInOneImporter {
+    private importedWSs: Record<SheetRef, Worksheet> | undefined;
+    private columnRefs: { [key in SheetRef]: Record<ColumnRef<key>, number> } | undefined;
+    // private columnRefs: { [key in SheetRef]: Record<ColumnRef<key>, number> } | undefined;
+    private properties: Record<SheetRef, Property[]> | undefined;
+    private extId2StationRow: Map<string, WSRow> | undefined = undefined;
+    private extId2DeliveryRow: Map<string, WSRow> | undefined = undefined;
+
+    async importTemplate(file: File): Promise<JsonData> {
+        const expectedColumnHeader = createLocalizedHeaderConf(LABEL_MAPPING);
+
+        const intWB = await readExcelFile(
+            file,
+            {
+                mandatorySheets: SHEET_REFS,
+                filterSheets: SHEET_REFS,
+                matchColumnHeaders
+            }
+        );
+
+        this.importedWSs = {
+            stations: intWB.sheets[sheetNameMapping.stations],
+            deliveries: intWB.sheets[sheetNameMapping.deliveries],
+            dels2Dels: intWB.sheets[sheetNameMapping.dels2Dels]
+        };
+
+        this.initColumnRefs(EXT_COL_NAMES);
+        this.validateDeliveries();
+        this.validateDels2Dels();
+        this.postProcessStations();
+        this.postProcessDeliveries();
+
+        const jsonData: JsonData = {
+            version: '',
+            data: {
+                version: '',
+                stations: stationsTable,
+                deliveries: deliveriesTable,
+                deliveryRelations: dels2DelsTable
+            }
+        };
+        return undefined as jsonData;
+    }
+
+
+    private initColumnRefs(columnLabelMapping: ColumnLabelMapping): void {
+        const revMaps = {
+            stations: createRevRecord(columnLabelMapping.stations),
+            deliveries: createRevRecord(columnLabelMapping.deliveries),
+            dels2Dels: createRevRecord(columnLabelMapping.dels2Dels),
+            shared: createRevRecord(columnLabelMapping.shared)
+        };
+        this.columnRefs = {
+            stations: createColumnRef2RowKeyMap(this.importedWSs!.stations.columnHeaders, revMaps.stations, revMaps.shared),
+            deliveries: createColumnRef2RowKeyMap(this.importedWSs!.deliveries.columnHeaders, revMaps.deliveries, revMaps.shared),
+            dels2Dels: createColumnRef2RowKeyMap(this.importedWSs!.dels2Dels.columnHeaders, revMaps.dels2Dels, revMaps.shared),
+        };
+    }
+
+    private initStationMap(): void {
+        const id2StationRow = new Map<string, WSRow>();
+        this.importedWSs!.stations.rows.forEach(row => {
+            const extId = row[this.columnRefs!.stations.extId] as string;
+            id2StationRow[extId] = row;
+        });
+        this.extId2StationRow = id2StationRow;
+    }
+
+    private initDeliveryMap(): void {
+        const id2DeliveryRow = new Map<string, WSRow>();
+        this.importedWSs!.deliveries.rows.forEach(row => {
+            const extId = row[this.columnRefs!.deliveries.extId] as string;
+            id2DeliveryRow[extId] = row;
+        });
+        this.extId2DeliveryRow = id2DeliveryRow;
+    }
+
+    private validateDeliveries(): void {
+        this.initStationMap();
+        // verify fk refs
+        this.importedWSs!.deliveries.rows.forEach(row => {
+            const extSourceId = row[this.columnRefs!.deliveries.source] as string;
+            if (this.extId2StationRow!.has(extSourceId)) {
+                throw new Error(`Station reference '${extSourceId}' is unknown.`);
+            }
+            const extTargetId = row[this.columnRefs!.deliveries.target] as string;
+            if (this.extId2StationRow!.has(extTargetId)) {
+                throw new Error(`Station reference '${extTargetId}' is unknown.`);
+            }
+        });
+    }
+
+    private validateDels2Dels(): void {
+        this.initDeliveryMap();
+        // verify fk refs
+        const fromKey = this.columnRefs!.dels2Dels.from;
+        const toKey = this.columnRefs!.dels2Dels.to;
+        this.importedWSs!.deliveries.rows.forEach(row => {
+            const extFromId = row[fromKey] as string;
+            if (this.extId2DeliveryRow!.has(extFromId)) {
+                throw new Error(`Delivery reference '${extFromId}' is unknown.`);
+            }
+            const extToId = row[toKey] as string;
+            if (this.extId2StationRow!.has(extToId)) {
+                throw new Error(`Station reference '${extToId}' is unknown.`);
+            }
+        });
+    }
+
+    private assignNewStationIds(): void {
+        const hashRefKeys: ColumnRef<'stations'>[] = ['name', 'street', 'streetNo', 'city', 'district', 'state', 'country'];
+        const hashRowKeys = hashRefKeys.map(k => this.columnRefs!.stations[k]);
+        const oldIdKey = this.columnRefs!.stations.extId;
+        const sourceKey = this.columnRefs!.deliveries.source;
+        const targetKey = this.columnRefs!.deliveries.target;
+        const newIdKey = 'newId';
+        const newIds = new Set<string>();
+        const old2NewId = new Map<string, string>();
+        this.importedWSs!.stations.rows.forEach(row => {
+            const hashValues = hashRowKeys.map(k => row[k] ?? '');
+            const newId = `${hashCode(JSON.stringify(hashValues))}`;
+            if (newIds.has(newId)) {
+                // newId might be not unique do to lossy projection or due to
+                // identical attribute values
+                throw new Error(`Generated station id '${newId}' is not unqiue.`);
+            }
+            row[newIdKey] = newId;
+            const oldId = row[oldIdKey] as string;
+            old2NewId.set(oldId, newId);
+            newIds.add(newId);
+        });
+        this.importedWSs!.deliveries.rows.forEach(row => {
+            {
+                const oldSourceId = row[sourceKey] as string;
+                const newSourceId = old2NewId.get(oldSourceId)!;
+                row[sourceKey] = newSourceId;
+            }
+            {
+                const oldTargetId = row[targetKey] as string;
+                const newTargetId = old2NewId.get(oldTargetId)!;
+                row[targetKey] = newTargetId;
+            }
+        });
+    }
+
+    private assignNewDeliveryIds(): void {
+        const hashColRefs: ColumnRef<'deliveries'>[] = [
+            'name', 'lot', 'source', 'target',
+            'dateOut_day', 'dateOut_month', 'dateOut_year',
+            'dateIn_day', 'dateIn_month', 'dateIn_year',
+            'unitAmount_quantity', 'unitAmount_unit'
+        ];
+        const hashPropKeys = hashColRefs.map(ref => this.columnRefs!.deliveries[ref]);
+        const oldIdKey = this.columnRefs!.deliveries.extId;
+        const fromKey = this.columnRefs!.dels2Dels.from;
+        const toKey = this.columnRefs!.dels2Dels.to;
+        const newIdKey = 'newId';
+        const newIds = new Set<string>();
+        const old2NewId = new Map<string, string>();
+        this.importedWSs!.deliveries.rows.forEach(row => {
+            const hashValues = hashPropKeys.map(k => row[k] ?? '');
+            const newId = `${hashCode(JSON.stringify(hashValues))}`;
+            if (newIds.has(newId)) {
+                // newId might be not unique do to lossy projection or due to
+                // identical attribute values
+                throw new Error(`Generated delivery id '${newId}' is not unqiue.`);
+            }
+            row[newIdKey] = newId;
+            const oldId = row[oldIdKey] as string;
+            old2NewId.set(oldId, newId);
+            newIds.add(newId);
+        });
+        this.importedWSs!.dels2Dels.rows.forEach(row => {
+            {
+                const oldFromId = row[fromKey] as string;
+                const newFromId = old2NewId.get(oldFromId)!;
+                row[fromKey] = newFromId;
+            }
+            {
+                const oldToId = row[toKey] as string;
+                const newToId = old2NewId.get(oldToId)!;
+                row[toKey] = newToId;
+            }
+        });
+    }
+
+    private postProcessDeliveries(): void {
+        this.assignNewDeliveryIds();
+        // agg date
+        const delColRefs = this.columnRefs!.deliveries;
+        this.importedWSs!.deliveries.rows.forEach(row => {
+            row[delColRefs.dateIn] = createDate(
+                getNumberValue(row, delColRefs.dateIn_year),
+                getNumberValue(row, delColRefs.dateIn_month),
+                getNumberValue(row, delColRefs.dateIn_day)
+            );
+            row[delColRefs.dateOut] = createDate(
+                getNumberValue(row, delColRefs.dateOut_year),
+                getNumberValue(row, delColRefs.dateOut_month),
+                getNumberValue(row, delColRefs.dateOut_day)
+            );
+        });
+    }
+
+    private postProcessStations(): void {
+        this.assignNewStationIds();
+    }
+}
+
+// desktop app del id generation
+// private String getNewSerial(Lot l, Delivery d) {
+// 	String newSerial = (l.getProduct() != null && l.getProduct().getStation() != null ?
+// l.getProduct().getStation().getId() + ";" + l.getProduct().getName() : "null") + ";" + l.getNumber() + ";" +
+// 			d.getDepartureDay() + ";" + d.getDepartureMonth() + ";" + d.getDepartureYear() + ";" +
+// 			d.getArrivalDay() + ";" + d.getArrivalMonth() + ";" + d.getArrivalYear() + ";" +
+// 			d.getUnitNumber() + ";" + d.getUnitUnit() + ";" + d.getReceiver().getId();
+// 	return newSerial;
+// }

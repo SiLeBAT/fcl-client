@@ -1,31 +1,23 @@
-import { NonEmptyArray } from '@app/tracing/util/utility-types';
+import { ArrayWith2OrMoreElements, NonEmptyArray } from '@app/tracing/util/utility-types';
 
 export type Row =  Record<number, string | number | boolean>;
 
-export interface ColumnConf {
-    name?: string;
-    index: number;
-}
-
-export type SingleColumn = ColumnConf;
-// export type ColumnTree = SingleColumn | ColumnGroupConf;
-
-export interface ColumnTree {
-    name?: string;
-    index: number;
-    subColumns?: NonEmptyArray<ColumnTree>;
-}
-
-export interface ColumnGroupConf {
-    name?: string;
-    index: number;
-    subColumns: NonEmptyArray<ColumnConf | ColumnGroupConf>
+export type HeaderConf = string | [string, ArrayWith2OrMoreElements<HeaderConf>];
+export interface ColumnHeader {
+    label?: string;
+    id: string;
+    columnLetter: string;
+    columnIndex: number;
+    columnCount: number;
+    rowCount: number;
+    children?: NonEmptyArray<ColumnHeader>;
+    parent?: ColumnHeader;
 }
 
 export interface Worksheet {
     name: string;
-    columns: (ColumnConf | ColumnGroupConf)[];
-    // columnTypes: ('string' | 'number')[];
+    columnHeaders: ColumnHeader[];
+    columnCount: number;
     rows: Row[];
 }
 

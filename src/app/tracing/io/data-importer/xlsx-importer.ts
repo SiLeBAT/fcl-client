@@ -2,63 +2,70 @@ import { isNotNullish } from '@app/tracing/util/non-ui-utils';
 import { NonEmptyArray } from '@app/tracing/util/utility-types';
 import * as Excel from 'exceljs';
 import * as _ from 'lodash';
-import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, ColumnTree} from './xlsx-model';
+import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, ColumnHeader} from './xlsx-model';
+
+type SheetName = string;
+type CellValue = string | boolean | number | bigint;
+
+type RecursiveLabel = string | [string, RecursiveLabel[]];
+export interface ColumnConstraints {
+    isMandatory?: boolean; // default: false
+    isUnique?: boolean; // default: false
+    transformer?: <T, K>(value: T) => K;
+}
 
 export interface Options {
-    firstRowIsHeader?: boolean;
+    // firstRowIsHeader?: boolean;
+    // expectedColumnConf
     filterSheets?: string[];
     mandatorySheets?: string[];
-    mandatoryColumns?: Record<string, string[]>;
-    mandatoryValues?: Record<string, string[]>;
+    matchColumnHeaders?: Record<string, RecursiveLabel>;
+    columnConstraints?: Record<string, Record<number, ColumnConstraints>>;
+    // mandatoryColumns?: Record<SheetName, string[]>;
+    // requiredTypes?: Record<string,
 }
 
-function getColumnCount(columnTree: ColumnTree): number {
-    return columnTree.subColumns ?
-        _.sum(columnTree.subColumns.map(t => getColumnCount(t))) :
-        1;
-}
-
-function getColumnTreeHeight(columnTree: ColumnTree): number {
-    return columnTree.subColumns ?
-        (1 + Math.max(...columnTree.subColumns.map(t => getColumnTreeHeight(t)))) :
-        1;
-}
-
-function getColumnTrees(row: Excel.Row, colStartIndex: number, colEndIndex: number): NonEmptyArray<ColumnTree> {
+function getColumnHeaderChildren(row: Excel.Row, colStartIndex: number, colEndIndex: number): NonEmptyArray<ColumnHeader> {
     let colIndex = colStartIndex;
-    const columnTrees: ColumnTree[] = [];
+    const childHeaders: ColumnHeader[] = [];
     while (colIndex <= colEndIndex) {
-        const columnTree = getColumnTree(row, colIndex);
-        colIndex += getColumnCount(columnTree);
+        const childHeader = getColumnHeader(row, colIndex);
+        colIndex += childHeader.columnCount;
         if (colIndex > colEndIndex + 1) {
             throw new Error(`A table haeder could not be parsed`);
         }
-        columnTrees.push(columnTree);
+        childHeaders.push(childHeader);
     }
-    return columnTrees as NonEmptyArray<ColumnTree>;
+    return childHeaders as NonEmptyArray<ColumnHeader>;
 }
 
-function getColumnTree(row: Excel.Row, colStartIndex: number): ColumnTree {
+function getColumnHeader(row: Excel.Row, colStartIndex: number): ColumnHeader {
     let colEndIndex = colStartIndex;
     const refMaster = row.getCell(colStartIndex);
     while (row.getCell(colEndIndex + 1).isMergedTo(refMaster)) {
         colEndIndex++;
     }
     const colSpan = colEndIndex - colStartIndex + 1;
-    const columnTree: ColumnTree = {
-        name: refMaster.text,
-        index: colStartIndex
+    const columnHeader: ColumnHeader = {
+        label: refMaster.text,
+        id: `c${colStartIndex}`,
+        columnIndex: colStartIndex,
+        columnCount: colSpan,
+        rowCount: 1,
+        columnLetter: row.worksheet.getColumn(colStartIndex).letter
     };
     if (colSpan > 1) {
         const nextRow = row.worksheet.getRow(row.number + 1);
-        columnTree.subColumns = getColumnTrees(nextRow, colStartIndex, colEndIndex);
+        columnHeader.id = `c${colStartIndex}-${colStartIndex + colSpan - 1}`;
+        columnHeader.children = getColumnHeaderChildren(nextRow, colStartIndex, colEndIndex);
+        columnHeader.rowCount = Math.max(...columnHeader.children.map(c => c.rowCount));
     }
-    return columnTree;
+    return columnHeader;
 }
 
-function getHeader(ws: Excel.Worksheet): { columns: ColumnTree[] } {
+function getColumnHeaders(ws: Excel.Worksheet): ColumnHeader[] {
     const excelRow = ws.getRow(1);
-    const columnTrees: ColumnTree[] = [];
+    const columnHeaders: ColumnHeader[] = [];
 
     let c = 1;
     while (c <= excelRow.cellCount) {
@@ -67,13 +74,13 @@ function getHeader(ws: Excel.Worksheet): { columns: ColumnTree[] } {
             break;
         }
 
-        const columnTree = getColumnTree(excelRow, c);
+        const columnHeader = getColumnHeader(excelRow, c);
 
-        columnTrees.push(columnTree);
-        c += getColumnCount(columnTree);
+        columnHeaders.push(columnHeader);
+        c += columnHeader.columnCount;
     }
 
-    return { columns: columnTrees };
+    return columnHeaders;
 }
 
 async function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
@@ -108,15 +115,17 @@ export async function readExcelFile(file: File, options?: Options): Promise<IntW
         sheets: {}
     };
     for (const excelWS of excelWB.worksheets) {
-        const header = getHeader(excelWS);
-        const headerHeight = Math.max(0, ...header.columns.map(t => getColumnTreeHeight(t)));
-        const columnCount = _.sum(header.columns.map(t => getColumnCount(t)));
+        const columnHeaders = getColumnHeaders(excelWS);
+        const headerRowCount = Math.max(0, ...columnHeaders.map(h => h.rowCount));
+        const columnCount = Math.max(0, ...columnHeaders.map(h => h.rowCount));
+
         const intWS: IntWorksheet = {
             name: excelWS.name,
-            columns: header.columns,
+            columnHeaders: columnHeaders,
+            columnCount: columnCount,
             rows: []
         };
-        let r = headerHeight + 1;
+        let r = headerRowCount + 1;
         const aRC = excelWS.actualRowCount;
         const aCC = excelWS.actualColumnCount;
         let bolEmpty = true;

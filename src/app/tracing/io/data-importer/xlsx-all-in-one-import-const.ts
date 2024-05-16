@@ -1,50 +1,45 @@
-import { ColumnConf, ColumnGroupConf, SheetNameMapping, SheetRefName, WBColumnMapping } from './xlsx-all-in-one-import-model';
+import { ColumnLabelRef, ExtJsonNames, HeaderConf, SheetNameMapping, SheetRef } from './xlsx-all-in-one-import-model';
 
-const ADDITIONAL_FIELDS_COLUMN = 'Additional Fields ->';
+export const GeneratedIdPropRef = 'genId';
+export const SHEET_REFS: SheetRef[] = ['stations', 'deliveries', 'dels2Dels'];
 
-export const expectedColumnConfiguration: { [key in SheetRefName]: (ColumnConf<key> | ColumnGroupConf<key>)[] } = {
+function createDateColumnConf<T extends SheetRef>(ref: ColumnLabelRef<T>): HeaderConf<T> {
+    return [ref, ['day','month','year']];
+}
+
+function createAmountColumnConf<T extends SheetRef>(ref: ColumnLabelRef<T>): HeaderConf<T> {
+    return [ref, ['quantity', 'unit']];
+}
+
+export const expectedColumns: { [key in SheetRef]: HeaderConf<key>[] } = {
     stations: [
-        { ref: 'id' },
-        { ref: 'name' },
-        { ref: 'street' },
-        { ref: 'streetNo' },
-        { ref: 'zip' },
-        { ref: 'city' },
-        { ref: 'district' },
-        { ref: 'state' },
-        { ref: 'country' },
-        { ref: 'typeOfBusiness' },
-        { ref: 'addCols' }
+        'extId',
+        'name',
+        'street',
+        'streetNo',
+        'zip',
+        'city',
+        'district',
+        'state',
+        'country',
+        'typeOfBusiness',
+        'addCols'
     ],
     deliveries: [
-        { ref: 'id' },
-        { ref: 'source' },
-        { ref: 'name' },
-        { ref: 'lot' },
-        { ref: 'lotAmount', subColumns: [
-            { ref: 'lotAmountNumber' },
-            { ref: 'lotAmountUnit' }
-        ] },
-        { ref: 'departureDate', subColumns: [
-            { ref: 'departureDateDay' },
-            { ref: 'departureDateMonth' },
-            { ref: 'departureDateYear' }
-        ] },
-        { ref: 'arrivalDate', subColumns: [
-            { ref: 'arrivalDateDay' },
-            { ref: 'arrivalDateMonth' },
-            { ref: 'arrivalDateYear' }
-        ] },
-        { ref: 'unitAmount', subColumns: [
-            { ref: 'unitAmountNumber' },
-            { ref: 'unitAmountUnit' }
-        ] },
-        { ref: 'target' },
-        { ref: 'addCols' }
+        'extId',
+        'source',
+        'name',
+        'lot',
+        createAmountColumnConf<'deliveries'>('lotAmount'),
+        createDateColumnConf<'deliveries'>('dateOut'),
+        createDateColumnConf<'deliveries'>('dateIn'),
+        createAmountColumnConf<'deliveries'>('unitAmount'),
+        'target',
+        'addCols'
     ],
     dels2Dels: [
-        { ref: 'from' },
-        { ref: 'to' }
+        'from',
+        'to'
     ]
 };
 
@@ -55,51 +50,16 @@ export const sheetNameMapping: Readonly<SheetNameMapping> = {
 };
 Object.freeze(sheetNameMapping);
 
-export const wbColumnMapping: WBColumnMapping = {
+export const EXT_JSON_NAMES: ExtJsonNames = {
     stations: {
-        id: 'Company_ID',
-        name: 'Name',
-        street: 'Street',
-        streetNo: 'Street Number',
-        zip: 'Postal Code',
-        city: 'City',
-        district: 'District',
-        state: 'State',
-        country: 'Country',
-        typeOfBusiness: 'Type of business',
-        addCols: ADDITIONAL_FIELDS_COLUMN,
-        lat: 'Latitude',
-        lon: 'Longitude'
+        ...EXT_COL_NAMES
+        id: 'ID'
     },
     deliveries: {
-        id: 'DeliveryID',
-        name: 'Product Name',
-        lot: 'Lot Number',
-        source: 'Station',
-        target: 'Recipient',
-        departureDate: 'Delivery Date Departure',
-        departureDateDay: 'Day',
-        departureDateMonth: 'Month',
-        departureDateYear: 'Year',
-        arrivalDate: 'Delivery Date Arrival',
-        arrivalDateDay: 'Day',
-        arrivalDateMonth: 'Month',
-        arrivalDateYear: 'Year',
-        lotAmount: 'Lot size',
-        lotAmountNumber: 'Quantity',
-        lotAmountUnit: 'Type / Unit',
-        unitAmount: 'Unit weigt/vol./pck.',
-        unitAmountNumber: 'Quantity',
-        unitAmountUnit: 'Type / Unit',
-        addCols: ADDITIONAL_FIELDS_COLUMN,
-        // additional columns
-        deliveryAmountNumber: 'Delivery_Amount',
-        deliveryAmountUnit: 'Delivery_Unit',
-        bestBeforeDate: 'Best before date',
-        prodDate: 'Production date'
+        id: 'ID'
     },
     dels2Dels: {
-        from: 'From DeliveryID',
-        to: 'Into DeliveryID'
+        from: 'from',
+        to: 'to'
     }
 };
