@@ -1,11 +1,35 @@
-import { JsonData } from '../ext-data-model.v1';
+import { DataTable, JsonData } from '../ext-data-model.v1';
 import { expectedColumns, sheetNameMapping, SHEET_REFS } from './xlsx-all-in-one-import-const';
 import { ColumnLabelMapping, ColumnLabelRef, ColumnRef, LabelGroupRef, LabelMapping, SheetRef, HeaderConf as RefHeaderConf } from './xlsx-all-in-one-import-model';
-import { readExcelFile } from './xlsx-importer';
+import { Options, readExcelFile, XlsxImporter } from './xlsx-importer';
 import { ColumnHeader, HeaderConf, Row as WSRow, Worksheet} from './xlsx-model';
 import { concat } from '@app/tracing/util/non-ui-utils';
 import { LABEL_MAPPING } from './xlsx-all-in-one-import-const-en';
+import * as Excel from 'exceljs';
 
+
+
+interface TableColumn {
+    id: string;
+    name: string;
+}
+
+type TableRow = Record<string, number | string | boolean>;
+interface Table {
+    columns: TableColumn[];
+    row: TableRow[];
+}
+
+interface DeliveryRow {
+    id: string;
+    source: string;
+    target: string;
+    productName?: string;
+    lotNo?: string;
+    dateIn?: string;
+    dateOut?: string;
+    addProps: Record<string, number | string | boolean>;
+}
 interface Property {
     id: string;
     name: string;
@@ -66,6 +90,13 @@ function hashCode(text: string): number {
     return h;
 }
 
+function createEmptyDataTable(): DataTable {
+    return {
+        columnProperties: [],
+        data: []
+    };
+}
+
 function createDatePart(x: number | undefined, length: number): string {
     return x === undefined ? '?'.repeat(length) : String(x).padStart(length, '0');
 }
@@ -95,32 +126,8 @@ function getColumnLabel(column: ColumnHeader): string[] {
 }
 
 export async function importAllInOneTemplate(file: File): Promise<JsonData> {
-
-    const intWB = await readExcelFile(
-        file
-        // ,
-        // {
-        //     mandatorySheets: ['stations'],
-        //     filterSheets: ['stations', 'deliveries', 'dels2Dels']
-        // }
-    );
-
-    const importedWSs: AllInOneSheets = {
-        stations: intWB.sheets[sheetNameMapping.stations],
-        deliveries: intWB.sheets[sheetNameMapping.deliveries],
-        dels2Dels: intWB.sheets[sheetNameMapping.dels2Dels]
-    };
-
-    const jsonData: JsonData = {
-        version: '',
-        data: {
-            version: '',
-            stations: stationsTable,
-            deliveries: deliveriesTable,
-            deliveryRelations: dels2DelsTable
-        }
-    };
-    return jsonData;
+    const importer = new AllInOneImporter();
+    return importer.importTemplate(file);
 }
 
 function createRevRecord<X extends string, Y extends string>(record: Record<X, Y>): Record<Y, X> {
@@ -147,25 +154,22 @@ function createColumnRef2RowKeyMap<T extends SheetRef>(
             ref2RowKeyMap[columnRef] = c.columnIndex;
         }
     });
-    return ref2RowKeyMap;
+    return ref2RowKeyMap as Record<ColumnRef<T>, number>;
 }
-function createLocalizedHeaderConf(labelMapping: LabelMapping): Record<SheetRef, HeaderConf[]> {
-    const t = expectedColumns.stations.map(hC => typeof hC === 'string' ?
-        labelMapping.stations[hC] :
-        [labelMapping.stations[hC[0]], hC[1].map(k => labelMapping.shared[k])]
-    );
-    const locColumnHeader: Partial<Record<SheetRef, HeaderConf[]>> = {};
+
+function createLocalizedHeaderConf(labelMapping: LabelMapping): Record<string, HeaderConf[]> {
+    const locColumnHeader: Record<string, HeaderConf[]> = {};
     for (const sheetRef of SHEET_REFS) {
-        locColumnHeader[sheetRef] = expectedColumns[sheetRef].map(
+        locColumnHeader[labelMapping.sheets[sheetRef]] = expectedColumns[sheetRef].map(
             (hC: RefHeaderConf<SheetRef>) => typeof hC === 'string' ?
                 labelMapping[sheetRef][hC] :
                 [labelMapping[sheetRef][hC[0]], hC[1].map(k => labelMapping.shared[k])]
-        )
+        );
     }
-    return locColumnHeader as Record<SheetRef, HeaderConf[]>;
+    return locColumnHeader;
 }
 
-class AllInOneImporter {
+class AllInOneImporter extends XlsxImporter {
     private importedWSs: Record<SheetRef, Worksheet> | undefined;
     private columnRefs: { [key in SheetRef]: Record<ColumnRef<key>, number> } | undefined;
     // private columnRefs: { [key in SheetRef]: Record<ColumnRef<key>, number> } | undefined;
@@ -174,15 +178,18 @@ class AllInOneImporter {
     private extId2DeliveryRow: Map<string, WSRow> | undefined = undefined;
 
     async importTemplate(file: File): Promise<JsonData> {
+
         const expectedColumnHeader = createLocalizedHeaderConf(LABEL_MAPPING);
+        const sheetNames = Object.keys(expectedColumnHeader);
+        const options: Options = {
+            mandatorySheets: sheetNames,
+            filterSheets: sheetNames,
+            matchColumnHeaders: expectedColumnHeader
+        };
 
         const intWB = await readExcelFile(
             file,
-            {
-                mandatorySheets: SHEET_REFS,
-                filterSheets: SHEET_REFS,
-                matchColumnHeaders
-            }
+            options
         );
 
         this.importedWSs = {
@@ -191,7 +198,7 @@ class AllInOneImporter {
             dels2Dels: intWB.sheets[sheetNameMapping.dels2Dels]
         };
 
-        this.initColumnRefs(EXT_COL_NAMES);
+        this.initColumnRefs(LABEL_MAPPING);
         this.validateDeliveries();
         this.validateDels2Dels();
         this.postProcessStations();
@@ -201,12 +208,12 @@ class AllInOneImporter {
             version: '',
             data: {
                 version: '',
-                stations: stationsTable,
-                deliveries: deliveriesTable,
-                deliveryRelations: dels2DelsTable
+                stations: createEmptyDataTable(),
+                deliveries: createEmptyDataTable(),
+                deliveryRelations: createEmptyDataTable()
             }
         };
-        return undefined as jsonData;
+        return jsonData;
     }
 
 
@@ -220,7 +227,7 @@ class AllInOneImporter {
         this.columnRefs = {
             stations: createColumnRef2RowKeyMap(this.importedWSs!.stations.columnHeaders, revMaps.stations, revMaps.shared),
             deliveries: createColumnRef2RowKeyMap(this.importedWSs!.deliveries.columnHeaders, revMaps.deliveries, revMaps.shared),
-            dels2Dels: createColumnRef2RowKeyMap(this.importedWSs!.dels2Dels.columnHeaders, revMaps.dels2Dels, revMaps.shared),
+            dels2Dels: createColumnRef2RowKeyMap(this.importedWSs!.dels2Dels.columnHeaders, revMaps.dels2Dels, revMaps.shared)
         };
     }
 
@@ -383,3 +390,38 @@ class AllInOneImporter {
 // 			d.getUnitNumber() + ";" + d.getUnitUnit() + ";" + d.getReceiver().getId();
 // 	return newSerial;
 // }
+
+interface ImportOptions {
+
+}
+
+function readColumnConf(ws: Excel.Worksheet): ColumnConf[] {
+    throw new Error(`To implement`);
+}
+
+function getColumns(columnGroups: ColumnConf[]): ColumnConf[] {
+
+}
+
+function importStationTable(ws: Excel.Worksheet, mana): Table {
+    ws.eachRow(row )
+}
+
+function matchWSColumnHeaders(ws: Excel.Worksheet, ColumnConf: HeaderConf[], rowIndex?: number, colIndex?: number, silent?: boolean): boolean {
+    rowIndex = rowIndex ?? 1;
+    colIndex = colIndex ?? 0;
+    silent = silent ?? false;
+    const row = ws.getRow(rowIndex);
+    for (const colConf of ColumnConf) {
+        colIndex++;
+        const obsLabel = row.getCell(colIndex).text.trim();
+        const expLabel = typeof colConf === 'string' ? colConf : colConf[0];
+        if (obsLabel !== expLabel) {
+            if (!silent) {
+                throw new Error(`Invalid column label in sheet '${ws.name}'. Value in cell (${colIndex}, ${rowIndex}) should be '${expLabel}' but is '${obsLabel}'.`);
+            }
+            return false;
+        }
+        if ()
+    }
+}

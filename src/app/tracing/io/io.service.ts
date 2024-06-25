@@ -9,7 +9,7 @@ import * as shapeFileImporter from './data-importer/shape-file-importer';
 import { getJsonFromFile, isExcelFileType, isJsonFileType } from './io-utils';
 import { JsonData } from './ext-data-model.v1';
 import * as _ from 'lodash';
-import { importAllInOneTemplate } from './data-importer/xlsx-all-in-one-importer';
+import { importAllInOneTemplate } from './data-importer/xlsx-all-in-one-importer-explicit';
 
 
 @Injectable({
@@ -34,7 +34,8 @@ export class IOService {
             fclData = await this.preprocessData(jsonData);
 
         } else {
-            fclData = await importAllInOneTemplate(file);
+            const jsonData = await importAllInOneTemplate(file);
+            fclData = await this.preprocessData(jsonData);
         }
         fclData.source.name = file.name;
         return fclData;

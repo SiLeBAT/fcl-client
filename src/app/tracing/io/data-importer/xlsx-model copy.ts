@@ -57,36 +57,19 @@ export interface DatePartCols {
     monthCol: number;
     dayCol: number;
 }
-
-// export type TypeString = 'string' | 'nonneg:number' | 'number' | 'year' | 'month';
-export type AggTypeString = 'date';
-
-type DateInput<R extends string | number> = { y: R, m: R, d: R };
-type AggTypeString2InputType<T extends AggTypeString, R extends string | number> = T extends 'date' ? DateInput<R> : never;
-
-
-export type TypeString = 'string' | 'nonneg:number' | 'number' | 'year' | 'month' | 'never' | 'lat' | 'lon';
-export type TypeString2Type<T extends TypeString | undefined | unknown> = T extends 'nonneg:number' | 'number' | 'year' | 'month' ? number : string;
-
-// type TypeStr2Type<T extends TypeString | undefined> = T extends 'nonneg:number' | 'number' | 'year' | 'month' ? number : string;
-
-type AggField< R extends string | number, AR extends string, ATS extends AggTypeString> = { ref: AR; type: ATS; input: AggTypeString2InputType<ATS, R>}
-export interface ReadTableOptions<R extends string | number, AR extends string> {
+export interface ReadTableOptions {
     offset: {
         row: number;
         col: number;
     };
-    aliases: Record<Exclude<R, number>, number | undefined>;
-    mandatoryValues: Readonly<R[]>;
-    uniqueValues?: R[];
-    controlledValues?: Partial<Record<R, Set<any>>>;
-    enforceTypes?: Partial<Record<R, TypeString>>;
-    aggValues: AggField<R, AR, AggTypeString>[];
-    // enforceTextType?: number[];
-    // enforceFkRelations?: Record<number, Set<any>>;
-    // enforceNonNegNumberType?: number[];
+    mandatoryValues?: number[];
+    alaia
+    uniqueValues?: number[];
+    enforceTextType?: number[];
+    enforceFkRelations?: Record<number, Set<any>>;
+    enforceNonNegNumberType?: number[];
     // enforceYearMonthDayType?: DatePartCols[];
-    ignoreValues: R[];
+    ignoreValues?: number[];
     // columnValueConstraints?: Record<number, ColumnValueConstraints>;
     readHeader?: boolean; // default: true
     eachRowCb?: (row: Row, index: number, warnings: ImportWarning[]) => void;

@@ -1,48 +1,13 @@
 import { TableRow } from '@app/tracing/data.model';
 import { concat, isNotNullish } from '@app/tracing/util/non-ui-utils';
-import { ArrayWith2OrMoreElements, NonEmptyArray, RequiredPick } from '@app/tracing/util/utility-types';
+import { ArrayWith2OrMoreElements, NonEmptyArray } from '@app/tracing/util/utility-types';
 import * as Excel from 'exceljs';
 import * as _ from 'lodash';
-import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Table, CheckColumnHeaderOptions, Row, TableHeader, CellSpecs, TypeString} from './xlsx-model';
+import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Table, CheckColumnHeaderOptions, Row, TableHeader, CellSpecs} from './xlsx-model';
 
 type SheetName = string;
 type CellValue = string | boolean | number | bigint;
 
-//type TypeString = 'string' | 'nonneg:number' | 'number' | 'year' | 'month';
-type TypeString2Type<T extends TypeString | undefined | unknown> = T extends 'nonneg:number' | 'number' | 'year' | 'month' ? number : string;
-type ArrayElement<A> = A extends readonly (infer T)[] ? T : never
-type AliasMap<A extends string> = Record<A, number>
-type TableKeys<R extends string | number, T extends ReadTableOptions<R>> = Exclude<(keyof T['aliases'] | keyof T['enforceTypes'] | ArrayElement<T['mandatoryValues']>), symbol>;
-// type Tmp<A extends string, R extends A, T extends ReadTableOptions<A, R>> = keyof T['enforceTypes'];
-type TypeStringOfProp<R extends string | number, T extends ReadTableOptions<R>, P> = P extends keyof T['enforceTypes'] ? T['enforceTypes'][P] : undefined;
-type ImportedTableRow<R extends string | number, T extends ReadTableOptions<R>> = RequiredPick<
-    Partial<{
-        [key in TableKeys<R, T>]: TypeString2Type<TypeStringOfProp<R, T, key>>
-    }>,
-    TableKeys<R, T> & ArrayElement<T['mandatoryValues']>
-> & Row
-
-type EachRowOptions<R extends string | number> = Omit<ReadTableOptions<R>, 'eachRowCb'>;
-
-const o = {
-    offset: { row: 1, col: 1 },
-    aliases: {
-        a: 1,
-        b: 2
-    },
-    enforceTypes: {
-        3: 'string',
-        a: 'year'
-    },
-    ignoreValues: [],
-    mandatoryValues: [1, 2, 3]
-};
-
-type InferType<obj> = obj extends ReadTableOptions<infer A, infer R> ? ReadTableOptions<infer A, infer R> : never;
-
-function test<A extends string, R extends A | number, T extends ReadTableOptions<A, R>>(o: T): TableKeys<A, R, T> {}
-
-const tmpy = test(o as any);
 // type ColumnHeader = string | [string, ArrayWith2OrMoreElements<ColumnHeader>];
 
 export interface ColumnConstraints {
@@ -140,11 +105,6 @@ async function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
 function isCellValueOk(value: Excel.CellValue): value is string | boolean | number | Date {
     const type = typeof value;
     return type === 'string' || type === 'number' || type === 'boolean' || value instanceof Date;
-}
-
-function createRevRecord<X extends string | number, Y extends string | number>(record: Partial<Record<X, Y>>): Record<Y, X> {
-    const revRecord: Record<Y, X> = Object.fromEntries(Object.entries(record).map(([x, y]) => [y, x]));
-    return revRecord;
 }
 
 export class XlsxImporter {
@@ -346,65 +306,7 @@ export class XlsxImporter {
     //     // } )
     // }
 
+    eachRow(sheetName: string, startRow: number, cb: (row: TableRow) => void): void {
 
-
-    eachRow<R extends string | number, T extends EachRowOptions<R>>(sheetName: string, cb: (row: ImportedTableRow<R, T>) => void, options: T): void {
-        // const tableRows: Row[] = [];
-        const index2Alias = createRevRecord(options.aliases);
-        const index2UValues = new Map<number, Set<any>>();
-        options.uniqueValues?.forEach(ref => {
-            const index: number | undefined = typeof ref === 'string' ? options.aliases[ref as Exclude<R, number>] : ref;
-            if (index !== undefined) {
-                index2UValues.set(index, new Set());
-            }
-        })
-        // const uniqueFieldSets: [number | string, Set<any>][] = Object.entries(columnValueConstraints)
-        //     .filter(c => c[1].isUnique)
-        //     .map(c => [c[0], new Set<any>()]);
-        const mandatoryFields = options.mandatoryValues.map(x => index2Alias[x as any] ?? x);
-
-        // const mandatoryFields: (number | string)[] = Object.entries(columnValueConstraints)
-        //     .filter(c => c[1].isMandatory)
-        //     .map(c => c[0]);
-        const ws = this.getWorksheet(sheetName);
-        const startIndex = options.offset.row;
-
-        ws.eachRow((wsRow, rowIndex) => {
-            if (rowIndex >= startIndex) {
-                const tableRow = {} as ImportedTableRow<R, T>;
-                let isRowEmpty = true;
-                wsRow.eachCell(wsCell => {
-                    const cellValue = wsCell.value;
-                    if (isNotNullish(cellValue)) {
-                        isRowEmpty = false;
-
-                        if (isCellValueOk(cellValue)) {
-                            if (cellValue instanceof Date) {
-                                tableRow[wsCell.col] = cellValue.toISOString();
-                            } else {
-                                tableRow[wsCell.col] = cellValue;
-                            }
-                        } else {
-                            throw new Error(`Value in cell (r: ${wsRow.number}, c: ${wsCell.col}) is not valid.`);
-                        }
-                    }
-                });
-                mandatoryFields.forEach(field => {
-                    if (tableRow[field as any] === undefined) {
-                        throw new Error(`Value in cell (r: ${wsRow.number}, c: ${field}) is missing.`);
-                    }
-                });
-                index2UValues.forEach(([field, uniqueSet]) => {
-                    const value = tableRow[field];
-                    if (value !== undefined) {
-                        if (uniqueSet.has(value)) {
-                            throw new Error(`Value in cell (r: ${wsRow.number}, c: ${field}) is not unique.`);
-                        }
-                    }
-                });
-
-                cb(tableRow);
-            }
-        });
     }
 }

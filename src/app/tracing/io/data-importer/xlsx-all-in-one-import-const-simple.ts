@@ -1,13 +1,8 @@
-import { DeepReadonly, NonEmptyArray } from '@app/tracing/util/utility-types';
+import { DeepReadonly } from '@app/tracing/util/utility-types';
 import { DEL2DEL_FROM, DEL2DEL_TO, DELIVERY_FROM, DELIVERY_ID, DELIVERY_IN_DATE, DELIVERY_LOT_NUMBER, DELIVERY_NAME, DELIVERY_OUT_DATE, DELIVERY_TO, STATION_ADDRESS, STATION_COUNTRY, STATION_ID, STATION_LAT, STATION_LON, STATION_NAME, STATION_TYPE_OF_BUSINESS_DA } from '../ext-data-constants.v1';
-import { LABEL_MAPPING as LABEL_MAPPING_EN } from './xlsx-all-in-one-import-const-en';
-import { ColumnRef, HeaderConf, LabelGroupMapping, LabelGroupRef, LabelMapping, LabelRef, LocalizedHeaderConf, SheetNameMapping, SheetRef } from './xlsx-all-in-one-import-model';
-import { CellSpecs, TypeString } from './xlsx-model';
+import { ColumnLabelRef, HeaderConf, SheetNameMapping, SheetRef } from './xlsx-all-in-one-import-model';
 
 export const GeneratedIdPropRef = 'genId';
-export const STATION_SHEET_REF = 'stations' as const;
-export const DEL_SHEET_REF = 'deliveries' as const;
-export const DEL2DEL_SHEET_REF = 'dels2Dels' as const;
 export const SHEET_REFS: SheetRef[] = ['stations', 'deliveries', 'dels2Dels'];
 
 type Aw2EoM<T> = [T, T, ...T[]];
@@ -36,10 +31,10 @@ const amountColumns = ['quantity', 'unit'] as const;
 //     return [ref as const, ['quantity', 'unit']];
 // }
 
-export const mandatoryColumnGroups = {
+export const mandatoryColumnConf = {
     stations: [
-        'extId',
-        'name',
+        ['extId', 'extId'],
+        ['name', 'name'],
         'street',
         'streetNo',
         'zip',
@@ -67,7 +62,6 @@ export const mandatoryColumnGroups = {
         'to'
     ]
 } as const satisfies DeepReadonly<{ [key in SheetRef]: HeaderConf<key>[] }>;
-const mandatoryTableHeaderConfs = mandatoryColumnGroups as unknown as { [key in SheetRef]: HeaderConf<key>[] };
 
 export const additionColumnGroups = {
     stations: [
@@ -78,7 +72,7 @@ export const additionColumnGroups = {
         'delAmountQuantity',
         'delAmountUnit',
         'itemNumber',
-        'subUnits',
+        ['subUnits', dateColumns],
         'bestBeforeDate',
         'productionTreatment',
         'sampling',
@@ -88,7 +82,6 @@ export const additionColumnGroups = {
     ] as const,
     dels2Dels: []
 } as const satisfies DeepReadonly<{ [key in SheetRef]: HeaderConf<key>[] }>;
-const optionalTableHeaderConfs = additionColumnGroups as unknown as { [key in SheetRef]: HeaderConf<key>[] };
 
 
 export const sheetNameMapping: Readonly<SheetNameMapping> = {
@@ -185,116 +178,4 @@ export const OTHER_PROP_REFS = {
         dateIn: 'dateIn',
         dateOut: 'dateOut'
     }
-} as const;
-
-type SheetColRefs<T extends SheetRef> = MandatorySheetColRefs<T> | AdditionalSheetColRefs<T>;
-export type CustomRefs<T extends SheetRef> = Exclude<keyof typeof EXT_JSON_NAMES[T], SheetColRefs<T>>;
-
-export type ColRef2IndexMap<T extends SheetRef> =
-| Record<MandatorySheetColRefs<T>, number> & Partial<Record<AdditionalSheetColRefs<T>, number>>;
-
-export type Ref2FieldIndexMap<T extends SheetRef> =
-    | Record<MandatorySheetColRefs<T>, number> & Partial<Record<AdditionalSheetColRefs<T>, number>> & { [key in CustomRefs<T>]: key };
-
-// localized info
-export type OptionalSheetHeaders<T extends SheetRef> =  { labels: string[]; ref: AdditionalColRefs[T] }[];
-// Cell Info
-export interface LocalizedWBSpecs {
-    sheetLabels: Record<SheetRef, string>;
-    mandatorySheetCells?: CellSpecs[];
-    mandatorySheetHeader?: Record<SheetRef, LocalizedHeaderConf[]>;
-    optionalSheetHeaders?: { [key in SheetRef]: OptionalSheetHeaders<key> };
-    //optionalHeaderConf: { [sheetRef in SheetRef]: Record<AdditionalColRefs[sheetRef], string[]> };
-
-}
-
-function getLocalizedSheetLabels(labelMapping: LabelMapping): Record<SheetRef, string> {
-    const sheetLabels = {} as Record<typeof SHEET_REFS[number], string>;
-    SHEET_REFS.forEach(sheetRef => sheetLabels[sheetRef] = labelMapping.sheets[sheetRef]);
-    return sheetLabels;
-}
-
-function getLocalizedMandatoryTableHeaders(labelMapping: LabelMapping): Record<SheetRef, LocalizedHeaderConf[]> {
-    const tableHeader = {} as Record<typeof SHEET_REFS[number], LocalizedHeaderConf[]>;
-    SHEET_REFS.forEach(sheetRef => {
-        tableHeader[sheetRef] = mandatoryColumnGroups[sheetRef].map(
-            (hC: DeepReadonly<HeaderConf<SheetRef>>) => typeof hC === 'string' ?
-                labelMapping[sheetRef][hC] :
-                [labelMapping[sheetRef][hC[0]], hC[1].map(k => labelMapping.shared[k])]
-        );
-    });
-    return tableHeader;
-}
-
-function getLocalizedLabelText<T extends LabelGroupRef>(labelMapping: LabelMapping, groupRef: T, labelRef: LabelRef<T>): string {
-    return labelMapping[groupRef][labelRef];
-}
-
-function getLocalizedOptionalTableColumnLabels<T extends SheetRef>(
-    labelMapping: LabelMapping
-): Record<SheetRef, Record<AdditionalColRefs[T], string[]>> {
-    const optionalColumnLabels = {} as Record<typeof SHEET_REFS[number], Record<AdditionalColRefs[T], string[]>>;
-    SHEET_REFS.forEach(sheetRef => {
-        const sheetColumnLabels = {} as Record<AdditionalColRefs[T], string[]>;
-        const optionalTableHeaderConf = optionalTableHeaderConfs[sheetRef] as HeaderConf<T>[];
-        optionalTableHeaderConf.forEach(hC => {
-            const primaryLabelRef = (Array.isArray(hC) ? hC[0] : hC); //  as ColumnLabelRef<T>;
-            const primaryLabelText = getLocalizedLabelText(labelMapping, sheetRef, primaryLabelRef);
-            if (Array.isArray(hC)) {
-                const secondaryLabelRefs = hC[1];
-                secondaryLabelRefs.forEach(ref => {
-                    const columnRef = `${primaryLabelRef}_${ref}` as AdditionalColRefs[T];
-                    const columnLabels = [primaryLabelText, getLocalizedLabelText(labelMapping, 'shared', ref)];
-                    sheetColumnLabels[columnRef] = columnLabels;
-                });
-            } else {
-                sheetColumnLabels[primaryLabelRef as unknown as AdditionalColRefs[T]] = [primaryLabelText];
-            }
-        });
-        optionalColumnLabels[sheetRef] = sheetColumnLabels;
-    });
-    return optionalColumnLabels;
-}
-
-function getLocalizedWBSpecs(labelMapping: LabelMapping): LocalizedWBSpecs {
-    return {
-        sheetLabels: getLocalizedSheetLabels(labelMapping),
-        mandatorySheetHeader: getLocalizedMandatoryTableHeaders(labelMapping),
-        // mandatorySheetCells: getLocalizedMandatorySheetCells(labelMapping),
-        optionalSheetHeaders: getLocalizedOptionalTableColumnLabels(labelMapping)
-    };
-}
-
-const tmp: OptionalSheetHeaders<'stations'> = getLocalizedOptionalTableColumnLabels(LABEL_MAPPING_EN);
-
-export const LOCALIZED_WB_SPECS: ({ lang: string; wbSpecs: LocalizedWBSpecs })[] = [
-    {
-        lang: 'en',
-        wbSpecs: getLocalizedWBSpecs(LABEL_MAPPING_EN)
-    }
-];
-
-const COL_TYPES = {
-    [STATION_SHEET_REF]: {
-        extId: 'string',
-        name: 'string',
-        typeOfBusiness: 'string',
-        street: 'string',
-        streetNo: 'string',
-        zip: 'string',
-        city: 'string',
-        district: 'string',
-        state: 'string',
-        country: 'string',
-        addCols: 'never',
-        lat: 'lat',
-        lon: 'lon'
-    },
-    [DEL_SHEET_REF]: {
-        extId: 'string',
-        name: 'string',
-    },
-    [DEL2DEL_SHEET_REF]: {}
-} as const satisfies DeepReadonly<{ [key in SheetRef]: Record<ColumnRef<key>, TypeString> }>;
-
-type ProcessedTableRow<T extends SheetRef> = never;
+};

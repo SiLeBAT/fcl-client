@@ -1,4 +1,4 @@
-import { ArrayWith2OrMoreElements } from '@app/tracing/util/utility-types';
+import { ArrayWith2OrMoreElements, NonEmptyArray } from '@app/tracing/util/utility-types';
 
 // type Tmp = (keyof typeof ESheetRef) & string;
 
@@ -9,19 +9,28 @@ type MyExtract<X, Y extends X> = Extract<X, Y>;
 
 // export type GeneratedIdPropRef = 'genId';
 
+export const DEL_DATE_IN = 'dateIn';
+type DelDateIn = typeof DEL_DATE_IN;
+
 type StationSheetRef = 'stations';
 type DeliverySheetRef = 'deliveries';
 type Del2DelSheetRef = 'dels2Dels';
 
+type SheetLabelGroupRef = 'sheets';
+
 type SubColLabelGroupRef = 'shared';
+type SharedLabelGroupRef = 'shared';
 
 export type SheetRef = StationSheetRef | DeliverySheetRef | Del2DelSheetRef;
-export type LabelGroupRef = SheetRef | SubColLabelGroupRef;
+export type LabelGroupRef = SheetRef | SubColLabelGroupRef | SheetLabelGroupRef;
 export type SheetNameMapping = Record<SheetRef, string>;
 
+// export type HeaderConf<T extends SheetRef> =
+//     | ColumnLabelRef<T>
+//     | [ColumnLabelRef<T>, ArrayWith2OrMoreElements<ColumnLabelRef<SubColLabelGroupRef>>];
 export type HeaderConf<T extends SheetRef> =
-    | ColumnLabelRef<T>
-    | [ColumnLabelRef<T>, ArrayWith2OrMoreElements<ColumnLabelRef<SubColLabelGroupRef>>];
+    | LabelRef<T>
+    | [LabelRef<T>, ArrayWith2OrMoreElements<LabelRef<SubColLabelGroupRef>>];
 
 type DatePartColRef = 'day' | 'month' | 'year';
 type AmountPartColRef = 'quantity' | 'unit';
@@ -32,7 +41,7 @@ type RequiredStationRootColRef =
     | 'extId' | 'name' | 'typeOfBusiness'
     | 'street' | 'streetNo' | 'zip' | 'city' | 'district' | 'state' | 'country'
     | 'addCols';
-type AdditionalStationRootColRef =
+export type AdditionalStationRootColRef =
     | 'lat' | 'lon';
 
 type StationRootColRef = RequiredStationRootColRef | AdditionalStationRootColRef;
@@ -41,13 +50,13 @@ type StationColumnRef = StationRootColRef;
 // type OtherStationPropRef = GeneratedIdPropRef | 'address';
 
 type RequiredDeliveryRootColRef =
-    | 'extId' | 'name' | 'lot'
+    | 'extId' | 'name' | 'lotNo'
     | 'source' | 'target'
     | 'dateOut' | 'dateIn' | 'lotAmount' | 'unitAmount'
     | 'addCols';
 
-type AdditionalDeliveryRootColRef =
-    | 'delAmount' | 'delUnit'
+export type AdditionalDeliveryRootColRef =
+    | 'delAmountQuantity' | 'delAmountUnit'
     | 'itemNumber' | 'subUnits'
     | 'bestBeforeDate'
     | 'productionTreatment'
@@ -74,11 +83,18 @@ type Del2DelRootColRef =
 
 type Del2DelColumnRef = Del2DelRootColRef;
 
-export type ColumnLabelRef<T extends SheetRef | 'shared'> =
+// export type ColumnLabelRef<T extends SheetRef | 'shared'> =
+//     T extends 'stations' ? StationRootColRef :
+//     T extends 'deliveries' ? DeliveryRootColRef :
+//     T extends 'dels2Dels' ? Del2DelRootColRef :
+//     T extends 'shared' ? SubColRef :
+//     never;
+export type LabelRef<T extends LabelGroupRef> =
     T extends 'stations' ? StationRootColRef :
     T extends 'deliveries' ? DeliveryRootColRef :
     T extends 'dels2Dels' ? Del2DelRootColRef :
     T extends 'shared' ? SubColRef :
+    T extends 'sheets' ? SheetRef :
     never;
 
 export type ColumnRef<T extends SheetRef>  =
@@ -87,21 +103,29 @@ export type ColumnRef<T extends SheetRef>  =
     T extends 'dels2Dels' ? Del2DelColumnRef :
     never;
 
-export type ColumnLabelMapping = {
-    [key in LabelGroupRef]: Record<ColumnLabelRef<key>, string>
-};
+// export type ColumnLabelMapping = {
+//     [key in LabelGroupRef]: Record<ColumnLabelRef<key>, string>
+// };
 
-type PropRefRecord<ColRef extends string, AdditionalRootColRef extends string, OtherPropRef extends string> =
+type PropRefRecord<ColRef extends string, AdditionalRootColRef extends string> = //, OtherPropRef extends string> =
         Record<Exclude<ColRef, AdditionalRootColRef>, number> &
-        Partial<Record<AdditionalRootColRef, number>> &
-        Record<OtherPropRef, OtherPropRef>;
+        Partial<Record<AdditionalRootColRef, number>>;
+        // Record<OtherPropRef, OtherPropRef>;
 
 export type PropRefs<T extends SheetRef> =
-    T extends 'stations' ? PropRefRecord<StationColumnRef, AdditionalStationRootColRef, OtherStationPropRef> :
-    T extends 'deliveries' ?  PropRefRecord<DeliveryColumnRef, AdditionalDeliveryRootColRef, OtherDeliveryPropRef> :
+    T extends 'stations' ? PropRefRecord<StationColumnRef, AdditionalStationRootColRef> : // , OtherStationPropRef> :
+    T extends 'deliveries' ?  PropRefRecord<DeliveryColumnRef, AdditionalDeliveryRootColRef> : //, OtherDeliveryPropRef> :
     T extends 'dels2Dels' ? Record<Del2DelColumnRef, number> :
     never;
 
-export type LabelMapping = {
-    sheets: SheetNameMapping;
-} & ColumnLabelMapping;
+export type ColumnRefs<T extends SheetRef> = PropRefs<T>;
+
+// export type LabelMapping = {
+//     sheets: SheetNameMapping;
+// } & ColumnLabelMapping;
+export type LabelGroupMapping<T extends LabelGroupRef> = Record<LabelRef<T>, string>;
+export type LabelMapping = { [T in LabelGroupRef]: LabelGroupMapping<T> };
+
+export type ColumnLabel = string | [string, ArrayWith2OrMoreElements<ColumnLabel>];
+
+export type LocalizedHeaderConf = string | [string, NonEmptyArray<LocalizedHeaderConf>];

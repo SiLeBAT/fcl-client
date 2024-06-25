@@ -30,7 +30,7 @@ export const LABEL_MAPPING: LabelMapping = {
     deliveries: {
         extId: 'DeliveryID',
         name: 'Product Name',
-        lot: 'Lot Number',
+        lotNo: 'Lot Number',
         source: 'Station',
         target: 'Recipient',
         dateOut: 'Delivery Date Departure',
@@ -39,8 +39,8 @@ export const LABEL_MAPPING: LabelMapping = {
         unitAmount: 'Unit weigt/vol./pck.',
         addCols: ADDITIONAL_FIELDS_COLUMN,
         // additional columns
-        delAmount: 'Delivery_Amount',
-        delUnit: 'Delivery_Unit',
+        delAmountQuantity: 'Delivery_Amount',
+        delAmountUnit: 'Delivery_Unit',
         itemNumber: 'Item Number',
         subUnits: 'Subunits',
         bestBeforeDate: 'Best before date',

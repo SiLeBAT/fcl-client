@@ -1,13 +1,10 @@
 import { DeepReadonly, NonEmptyArray } from '@app/tracing/util/utility-types';
 import { DEL2DEL_FROM, DEL2DEL_TO, DELIVERY_FROM, DELIVERY_ID, DELIVERY_IN_DATE, DELIVERY_LOT_NUMBER, DELIVERY_NAME, DELIVERY_OUT_DATE, DELIVERY_TO, STATION_ADDRESS, STATION_COUNTRY, STATION_ID, STATION_LAT, STATION_LON, STATION_NAME, STATION_TYPE_OF_BUSINESS_DA } from '../ext-data-constants.v1';
 import { LABEL_MAPPING as LABEL_MAPPING_EN } from './xlsx-all-in-one-import-const-en';
-import { ColumnRef, HeaderConf, LabelGroupMapping, LabelGroupRef, LabelMapping, LabelRef, LocalizedHeaderConf, SheetNameMapping, SheetRef } from './xlsx-all-in-one-import-model';
-import { CellSpecs, TypeString } from './xlsx-model';
+import { HeaderConf, LabelGroupMapping, LabelGroupRef, LabelMapping, LabelRef, LocalizedHeaderConf, SheetNameMapping, SheetRef } from './xlsx-all-in-one-import-model';
+import { CellSpecs } from './xlsx-model';
 
 export const GeneratedIdPropRef = 'genId';
-export const STATION_SHEET_REF = 'stations' as const;
-export const DEL_SHEET_REF = 'deliveries' as const;
-export const DEL2DEL_SHEET_REF = 'dels2Dels' as const;
 export const SHEET_REFS: SheetRef[] = ['stations', 'deliveries', 'dels2Dels'];
 
 type Aw2EoM<T> = [T, T, ...T[]];
@@ -273,28 +270,3 @@ export const LOCALIZED_WB_SPECS: ({ lang: string; wbSpecs: LocalizedWBSpecs })[]
         wbSpecs: getLocalizedWBSpecs(LABEL_MAPPING_EN)
     }
 ];
-
-const COL_TYPES = {
-    [STATION_SHEET_REF]: {
-        extId: 'string',
-        name: 'string',
-        typeOfBusiness: 'string',
-        street: 'string',
-        streetNo: 'string',
-        zip: 'string',
-        city: 'string',
-        district: 'string',
-        state: 'string',
-        country: 'string',
-        addCols: 'never',
-        lat: 'lat',
-        lon: 'lon'
-    },
-    [DEL_SHEET_REF]: {
-        extId: 'string',
-        name: 'string',
-    },
-    [DEL2DEL_SHEET_REF]: {}
-} as const satisfies DeepReadonly<{ [key in SheetRef]: Record<ColumnRef<key>, TypeString> }>;
-
-type ProcessedTableRow<T extends SheetRef> = never;
