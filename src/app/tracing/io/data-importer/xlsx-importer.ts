@@ -12,7 +12,8 @@ type CellValue = string | boolean | number | bigint;
 type TypeString2Type<T extends TypeString | undefined | unknown> = T extends 'nonneg:number' | 'number' | 'year' | 'month' ? number : string;
 type ArrayElement<A> = A extends readonly (infer T)[] ? T : never
 type AliasMap<A extends string> = Record<A, number>
-type TableKeys<R extends string | number, T extends ReadTableOptions<R>> = Exclude<(keyof T['aliases'] | keyof T['enforceTypes'] | ArrayElement<T['mandatoryValues']>), symbol>;
+type ColKeys<R extends string | number, AR extends string, T extends ReadTableOptions<R, AR>> = Exclude<(keyof T['aliases'] | keyof T['enforceTypes'] | ArrayElement<T['mandatoryValues']> | ArrayElement<T['aggValues']>['ref']), symbol>;
+type TableKeys<R extends string | number, AR extends string, T extends ReadTableOptions<R, AR>> = Exclude<(keyof T['aliases'] | keyof T['enforceTypes'] | ArrayElement<T['mandatoryValues']> | ArrayElement<T['aggValues']>['ref']), symbol>;
 // type Tmp<A extends string, R extends A, T extends ReadTableOptions<A, R>> = keyof T['enforceTypes'];
 type TypeStringOfProp<R extends string | number, T extends ReadTableOptions<R>, P> = P extends keyof T['enforceTypes'] ? T['enforceTypes'][P] : undefined;
 type ImportedTableRow<R extends string | number, T extends ReadTableOptions<R>> = RequiredPick<
@@ -348,7 +349,7 @@ export class XlsxImporter {
 
 
 
-    eachRow<R extends string | number, T extends EachRowOptions<R>>(sheetName: string, cb: (row: ImportedTableRow<R, T>) => void, options: T): void {
+    eachRow<R extends string | number, AR extends string, T extends EachRowOptions<R>>(sheetName: string, cb: (row: ImportedTableRow<R, T>) => void, options: T): void {
         // const tableRows: Row[] = [];
         const index2Alias = createRevRecord(options.aliases);
         const index2UValues = new Map<number, Set<any>>();
