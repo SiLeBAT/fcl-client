@@ -23,6 +23,16 @@ import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/m
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import {
+    MatTooltipDefaultOptions,
+    MAT_TOOLTIP_DEFAULT_OPTIONS,
+    MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY
+} from '@angular/material/tooltip';
+
+export const tooltipOptions: MatTooltipDefaultOptions = {
+    ...MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY(),
+    disableTooltipInteractivity: true
+};
 
 @NgModule({
     imports: [],
@@ -54,6 +64,9 @@ import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-l
     providers: [{
         provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
         useValue: { float: 'auto' }
+    },{
+        provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+        useValue: tooltipOptions
     }]
 })
 export class MaterialModule {}
