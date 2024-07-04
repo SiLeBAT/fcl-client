@@ -2,7 +2,7 @@ import { NonEmptyArray, PartialPick } from '@app/tracing/util/utility-types';
 import { ColumnProperty, DataTable, JsonData } from '../ext-data-model.v1';
 import { expectedColumnHeaders, EXT_COL_NAMES, sheetNameMapping } from './xlsx-all-in-one-import-const';
 import { ColumnRef, ColumnsConfiguration, SheetRefName, WBColumnMapping } from './xlsx-all-in-one-import-model';
-import { readExcelFile } from './xlsx-importer';
+import { readExcelFile } from './xlsx-importer-v0';
 import { ColumnHeader, Row as WSRow, Worksheet} from './xlsx-model';
 import * as crypto from 'crypto';
 import { concat } from '@app/tracing/util/non-ui-utils';

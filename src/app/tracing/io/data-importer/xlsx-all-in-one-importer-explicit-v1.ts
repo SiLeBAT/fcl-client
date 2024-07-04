@@ -1,11 +1,13 @@
 import { DataTable as ExtDataTable, JsonData } from '../ext-data-model.v1';
 import { AdditionalColRefs, CustomRefs, EXT_JSON_NAMES, LocalizedWBSpecs, LOCALIZED_WB_SPECS, MANDATORY_COL_INDEXES, OptionalSheetHeaders, OTHER_PROP_REFS, Ref2FieldIndexMap, sheetNameMapping, SHEET_REFS } from './xlsx-all-in-one-import-const';
-import { ColumnRefs, SheetRef } from './xlsx-all-in-one-import-model';
-import { XlsxImporter } from './xlsx-importer-v0';
-import { ColumnHeader, DatePartCols, ImportWarning, Row, Row as WSRow, TableHeader} from './xlsx-model';
+import { ColumnRef, ColumnRefs, SheetRef } from './xlsx-all-in-one-import-model';
+import { XlsxImporter } from './xlsx-importer-v1';
+import { ColumnHeader, ImportWarning, ReadTableOptions, Row, Row as WSRow, TableHeader} from './xlsx-model-v1';
 import { concat, removeUndefined } from '@app/tracing/util/non-ui-utils';
 
 import * as _ from 'lodash';
+import { ColumnIndices } from './xlsx-all-in-one-import-model-v1';
+import { DeepReadonly } from '@app/tracing/util/utility-types';
 
 const LATITUDE_LIMITS = {
     min: -90,
@@ -17,11 +19,10 @@ const LONGITUDE_LIMITS = {
     max: 180
 } as const;
 
-interface Property {
-    id: string;
-    name: string;
-    type: string;
-}
+const EmptyDataTable: ExtDataTable = {
+    columnProperties: [],
+    data: []
+};
 
 interface TableColumn {
     id: string | number;
@@ -94,7 +95,7 @@ function getNumberValue<
     return getPropValue(row, index, 'number', required);
 }
 
-function hashCode(text: string): number {
+function getHashCode(text: string): number {
     let h = 0;
     const l = text.length;
     let i = 0;
@@ -106,19 +107,6 @@ function hashCode(text: string): number {
     }
     return h;
 }
-
-function createDatePart(x: number | undefined, length: number): string {
-    return x === undefined ? '?'.repeat(length) : String(x).padStart(length, '0');
-}
-
-// function createDate(year: number | undefined, month: number | undefined, day: number | undefined): string | undefined {
-//     const strMonth = createDatePart(month, 2);
-//     const strYear = createDatePart(year, 4);
-//     return day !== undefined ? `${strYear}-${strMonth}-${createDatePart(day, 2)}` :
-//         month !== undefined ? `${strYear}-${strMonth}` :
-//             year !== undefined ? strYear :
-//                 undefined;
-// }
 
 function isInRange(value: number, min: number, max: number): boolean {
     return value >= min && value <= max;
@@ -210,32 +198,9 @@ function importStrDate<T extends object>(
     }
 }
 
-function checkDay(day: any, month?: number | undefined, year?: number | undefined): boolean {
-    const dayType = typeof day;
-    const numDay = dayType === 'number' ? day : dayType === 'string' ? Number(day) : undefined;
-    if (Number.isInteger(numDay) && numDay >= 1 && numDay <= 31) {
-
-    }
-}
-
-function getLinearColumns(columns: ColumnHeader[]): ColumnHeader[] {
-    const linearColumns = columns.map(c => c.children ? [c].concat(getLinearColumns(c.children)) : [c]);
-    return concat(...linearColumns);
-}
-
-function getLeaveColumns(columns: ColumnHeader[]): ColumnHeader[] {
-    const leaveColumns = columns.map(c => c.children ? getLeaveColumns(c.children) : [c]);
-    return concat(...leaveColumns);
-}
-
-function getColumnLabel(column: ColumnHeader): string[] {
-    const label = column.parent ? getColumnLabel(column.parent).concat(column.label!) : [column.label!];
-    return label;
-}
-
 export async function importAllInOneTemplate(file: File): Promise<JsonData> {
     const xlsxImporter = new XlsxImporter();
-    xlsxImporter.loadFile(file);
+    await xlsxImporter.loadFile(file);
     // is this excel file an all in one template ?
     let matchingWbSpecs = LOCALIZED_WB_SPECS;
     matchingWbSpecs = matchingWbSpecs.filter(
@@ -259,17 +224,33 @@ export async function importAllInOneTemplate(file: File): Promise<JsonData> {
     const wbSpec = matchingWbSpecs[0].wbSpecs;
 
     const stationTable = importStationTable(xlsxImporter, wbSpec);
-    const deliveryTable = importDeliveryRows(xlsxImporter, wbSpec);
-    const del2DelTable = importDel2DelRows(xlsxImporter, wbSpec);
+    const ext2NewStatPkMap = new Map<string, string>(
+        removeUndefined(
+            stationTable.rows.map(r => r.extId ? [r.extId as string, r.id as string] : undefined)
+        )
+    );
+    const deliveryTable = importDeliveryRows(xlsxImporter, wbSpec, ext2NewStatPkMap);
+    const ext2NewDelPkMap = new Map<string, string>(
+        removeUndefined(
+            deliveryTable.rows.map(r => r.extId ? [r.extId as string, r.id as string] : undefined)
+        )
+    );
 
-    const old2NewStationPkMap = addNewPks2StationRows(stationTable.rows, );
-    applyNewFks(deliveryTable.rows, old2NewStatPkMap, MANDATORY_COL_INDEXES.deliveries.source);
-    applyNewFks(deliveryTable.rows, old2NewStatPkMap, MANDATORY_COL_INDEXES.deliveries.target);
+    const extStatTable = createExtTable(stationTable);
+    const extDelTable = createExtTable(deliveryTable);
+    const extDel2DelTable = xlsxImporter.sheetNames.includes(wbSpec.sheetLabels.dels2Dels) ?
+        createExtTable(importDel2DelRows(xlsxImporter, wbSpec, ext2NewDelPkMap)) :
+        EmptyDataTable;
 
-    const old2NewDeliveryPkMap = addNewPks2DeliveryRows(stationTable.rows, );
-    applyNewFks(del2DelTable.rows, old2NewDeliveryPkMap, MANDATORY_COL_INDEXES.dels2Dels.from);
-    applyNewFks(del2DelTable.rows, old2NewDeliveryPkMap, MANDATORY_COL_INDEXES.dels2Dels.to);
-
+    return {
+        version: '',
+        data: {
+            version: '',
+            stations: extStatTable,
+            deliveries: extDelTable,
+            deliveryRelations: extDel2DelTable
+        }
+    };
 }
 
 // desktop app del id generation
@@ -282,6 +263,20 @@ export async function importAllInOneTemplate(file: File): Promise<JsonData> {
 // 	return newSerial;
 // }
 
+function createDeliveryId(row: DeliveryRow, colIndices: ColumnRefs<'deliveries'>): string {
+    const hashCode = getHashCode([
+        row[colIndices.source] ?? '',
+        row[colIndices.name] ?? '',
+        row[colIndices.lotNo] ?? '',
+        row.dateOut ?? '',
+        row.dateIn ?? '',
+        row[colIndices.unitAmount_quantity] ?? '',
+        row[colIndices.unitAmount_unit] ?? '',
+        row[colIndices.target]
+    ].join(';'));
+    return `${hashCode}`;
+}
+
 
 function isValidLat(lat: any): boolean {
     return typeof lat === 'number' && !Number.isNaN(lat) && lat >= LATITUDE_LIMITS.min && lat <= LATITUDE_LIMITS.max;
@@ -291,16 +286,9 @@ function isValidLon(lon: any): boolean {
     return typeof lon === 'number' && !Number.isNaN(lon) && lon >= LONGITUDE_LIMITS.min && lon <= LONGITUDE_LIMITS.max;
 }
 
-// function getColHeaderBasedJsonName(columnHeader: ColumnHeader): string {
-//     return columnHeader.parent ?
-//         `${getColHeaderBasedJsonName(columnHeader.parent)}_${columnHeader.label}`:
-//         columnHeader.label ?? '';
-// }
-
 function getColHeaderBasedJsonName(columnHeader: ColumnHeader): string {
     return columnHeader.label.join('_');
 }
-
 
 function createAdditionalColumns<T extends SheetRef>(
     columns: ColumnHeader[],
@@ -312,8 +300,8 @@ function createAdditionalColumns<T extends SheetRef>(
     const tableColumns: TableColumn[] = columns.map(
         column => {
             const ref = revColIndices[column.colIndex];
-            const defaultExtName = `${defaultPrefix}` + getColHeaderBasedJsonName(column),
-            const explicitExtName = ref ? ref2ExtName[ref] : undefined,
+            const defaultExtName = `${defaultPrefix}` + getColHeaderBasedJsonName(column);
+            const explicitExtName = ref ? ref2ExtName[ref] : undefined;
             return {
                 id: column.colIndex,
                 name: explicitExtName ?? defaultExtName
@@ -323,30 +311,7 @@ function createAdditionalColumns<T extends SheetRef>(
     return tableColumns;
 }
 
-// function createDefaultStatColumns(): TableColumn[] {
-//     const tableColumns: TableColumn[] = [
-//         {
-//             name: EXT_JSON_NAMES.stations.id,
-//             id: MANDATORY_COL_INDEXES.stations.id
-//         },{
-//             name: EXT_JSON_NAMES.stations.name,
-//             id: MANDATORY_COL_INDEXES.stations.name
-//         },
-//         {
-//             name: EXT_JSON_NAMES.stations.address,
-//             id: 'address'
-//         }, {
-//             name: EXT_JSON_NAMES.stations.country,
-//             id: MANDATORY_COL_INDEXES.stations.country
-//         }, {
-//             name: EXT_JSON_NAMES.stations.typeOfBusiness,
-//             id: MANDATORY_COL_INDEXES.stations.typeOfBusiness
-//         },
-//     ];
-//     return tableColumns;
-// }
-
-function createDefaultStationColumns2(columns: ColumnHeader[], colIndices: ColumnRefs<'stations'>): TableColumn[] {
+function createDefaultStationColumns(columns: ColumnHeader[], colIndices: ColumnRefs<'stations'>): TableColumn[] {
     const revColIndices = createRevRecord(colIndices);
 
     let sortedIndices: (keyof TypedStationRow | number)[] = [
@@ -354,7 +319,6 @@ function createDefaultStationColumns2(columns: ColumnHeader[], colIndices: Colum
     ];
     sortedIndices = sortedIndices.concat(_.difference(columns.map(c => c.colIndex)), sortedIndices);
 
-    const ref2ExtLabel = EXT_JSON_NAMES.stations;
     const tableColumns = sortedIndices.map(index => {
         const ref = typeof index === 'number' ? revColIndices[index] : index;
         const extLabel = EXT_JSON_NAMES.stations[ref];
@@ -363,7 +327,7 @@ function createDefaultStationColumns2(columns: ColumnHeader[], colIndices: Colum
     return removeUndefined(tableColumns);
 }
 
-function createDefaultDeliveryColumns2(columns: ColumnHeader[], colIndices: ColumnRefs<'deliveries'>): TableColumn[] {
+function createDefaultDeliveryColumns(columns: ColumnHeader[], colIndices: ColumnRefs<'deliveries'>): TableColumn[] {
     const revColIndices = createRevRecord(colIndices);
 
     let sortedIndices: (keyof TypedDeliveryRow | number)[] = [
@@ -378,24 +342,6 @@ function createDefaultDeliveryColumns2(columns: ColumnHeader[], colIndices: Colu
     });
     return removeUndefined(tableColumns);
 }
-
-// function createAdditionalStationColumns(columns: ColumnHeader[], colIndices: ColumnRefs<'stations'>): TableColumn[] {
-//     const revColIndices = createRevRecord(colIndices);
-
-//     let sortedIndices: (keyof TypedStationRow | number)[] = [
-//         'id', colIndices.name, 'address'
-//     ];
-//     sortedIndices = sortedIndices.concat(_.difference(columns.map(c => c.colIndex)), sortedIndices);
-
-//     const ref2ExtLabel = EXT_JSON_NAMES.stations;
-//     const tableColumns = sortedIndices.map(index => {
-//         const ref = typeof index === 'number' ? revColIndices[index] : index;
-//         const extLabel = EXT_JSON_NAMES.stations[ref];
-//         return extLabel === undefined ? undefined : { id: index, name: extLabel };
-//     });
-//     return removeUndefined(tableColumns);
-// }
-
 
 function createRevRecord<X extends string | number, Y extends string | number>(record: Partial<Record<X,Y>>): Record<Y, X> {
     const revRecord = {} as Record<Y,X>;
@@ -433,53 +379,7 @@ function createDeliveryColumns(observedColumns: ColumnHeader[], colIndices: Colu
     return tableColumns;
 }
 
-function createDefaultDeliveryColumns(): TableColumn[] {
-    const tableColumns: TableColumn[] = [
-        {
-            name: EXT_JSON_NAMES.deliveries.id,
-            id: MANDATORY_COL_INDEXES.deliveries.id
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.source,
-            id: MANDATORY_COL_INDEXES.deliveries.source
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.target,
-            id: MANDATORY_COL_INDEXES.deliveries.target
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.name,
-            id: MANDATORY_COL_INDEXES.deliveries.name
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.lotNo,
-            id: MANDATORY_COL_INDEXES.deliveries.lotNo
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.lotAmountQuantity,
-            id: MANDATORY_COL_INDEXES.deliveries.lotAmount_quantity
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.lotAmountUnit,
-            id: MANDATORY_COL_INDEXES.deliveries.lotAmount_unit
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.dateOut,
-            id: 'dateOut'
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.dateIn,
-            id: 'dateIn'
-        },
-        {
-            name: EXT_JSON_NAMES.deliveries.unitAmount,
-            id: 'unitAmount'
-        },
-    ];
-    return tableColumns;
-}
-
-function createDefaultDel2DelColumns(): TableColumn[] {
+function createDel2DelColumns(): TableColumn[] {
     const tableColumns: TableColumn[] = [
         {
             name: EXT_JSON_NAMES.dels2Dels.from,
@@ -492,21 +392,6 @@ function createDefaultDel2DelColumns(): TableColumn[] {
     ];
     return tableColumns;
 }
-/*
-// the Armin way
-private String generateAddress(Station s) {
-    String ad = s.getStreet()==null?"":s.getStreet();
-    ad += (ad.isEmpty() ? "" : " ") + (s.getNumber()==null?"":s.getNumber());
-    ad = ad.trim();
-    ad += (ad.isEmpty() ? "" : ", ") + (s.getZip()==null?"":s.getZip());
-    ad = ad.trim();
-    ad += (ad.isEmpty() ? "" : " ") + (s.getCity()==null?"":s.getCity());
-    ad = ad.trim();
-    if (ad.endsWith(",")) ad.substring(0, ad.length() - 1).trim();
-    if (ad.isEmpty()) ad = null;
-    return ad;
-}
-*/
 
 function conditionalConcat(arr: (string | number | boolean | undefined)[], sep: string): string | undefined {
     arr = removeUndefined(arr);
@@ -520,35 +405,42 @@ function createStationAddress(row: StationRow): string | undefined {
     const streetWithNo = conditionalConcat([street, streetNo], ' ');
     const zip = getStringValue(row, MANDATORY_COL_INDEXES.stations.street);
     const city = getStringValue(row, MANDATORY_COL_INDEXES.stations.city);
-    // const zipWithCity = zip !== undefined ? (city !== undefined ? `${zip} ${city}` : city) : zip;
-    // const zipWithCity = zip !== undefined && city !== undefined ? `${zip} ${city}` : zip ?? city;
     const zipWithCity = conditionalConcat([zip, city], ' ');
     const address = conditionalConcat([streetWithNo, zipWithCity], ', ');
     return address;
 }
 
-function createStationId(row: TableRow): string {
-
-}
-
-function toString<T>(x: T): string {
-    return typeof x === 'string' ? x : `${x}`;
+function createStationId(row: Partial<StationRow>): string {
+    const hashCode = getHashCode([row.name ?? '', row.address ?? '', row.country ?? ''].join(';'));
+    return `${hashCode}`;
 }
 
 function createRandomId(): string {
+    const numBytes = 5;
+    const bytes = crypto.getRandomValues(new Uint8Array(numBytes));
+    const array = Array.from(bytes);
+    const hexPairs = array.map(b => b.toString(16).padStart(2, '0'));
+    return hexPairs.join('');
+}
 
+function createUniqueRandomId(ignoreIds: Set<string>): string {
+    let id = createRandomId();
+    while (ignoreIds.has(id)) {
+        id = createRandomId();
+    }
+    return id;
 }
 
 function getOptionalColIndices<T extends SheetRef>(
     observedTableHeader: TableHeader,
     optionalSheetHeaders: OptionalSheetHeaders<T>
-): Partial<Record<AdditionalColRefs[T], number>> {
-    const ref2Index: Partial<Record<AdditionalColRefs[T], number>> = {};
+): Record<AdditionalColRefs[T], number | undefined> {
+    const ref2Index = {} as Record<AdditionalColRefs[T], number | undefined> ;
     optionalSheetHeaders.forEach(x => {
         const column = observedTableHeader.columnHeader.find(c => _.isEqual(c.label, x.labels));
-        if (column) {
-            ref2Index[x.ref] = column.colIndex;
-        }
+        //if (column) {
+        ref2Index[x.ref] = column?.colIndex;
+        //}
     });
     return ref2Index;
 }
@@ -557,13 +449,7 @@ function getOptionalColIndices<T extends SheetRef>(
 function importStationTable(
     xlsxImporter: XlsxImporter,
     wbSpecs: LocalizedWBSpecs
-    // expectedHeader: HeaderConf[],
-    // additionalHeaderConf: HeaderConf[]
 ): Table {
-    // const expHeader =
-    // const optionalHeaderConf = localizeHeaderConf('stations', labelMapping, additionColumnGroups.stations);
-
-    // xlsxImporter.matchSheetColumnHeader(sheetNameMapping.stations, expectedHeader);
     const observedTableHeader = xlsxImporter.readTableHeaderFromSheet(wbSpecs.sheetLabels.stations);
     const addColsIndices = getOptionalColIndices(observedTableHeader, wbSpecs.optionalSheetHeaders!['stations']);
 
@@ -571,6 +457,8 @@ function importStationTable(
         ...MANDATORY_COL_INDEXES.stations,
         ...addColsIndices
     };
+
+    const idSet = new Set<string>();
 
     const table = xlsxImporter.readTableFromSheet(sheetNameMapping.stations, {
         offset: { row: observedTableHeader.rowCount + 1, col: 1 },
@@ -593,6 +481,11 @@ function importStationTable(
         eachRowCb: (row: Row, index: number, warnings: ImportWarning[]) => {
             const stationRow = row as unknown as StationRow;
             stationRow.address = createStationAddress(stationRow);
+            stationRow.id = createStationId(stationRow);
+            if (idSet.has(stationRow.id)) {
+                stationRow.id = createUniqueRandomId(idSet);
+                idSet.add(stationRow.id);
+            }
             if (colIndices.lat) {
                 if (row[colIndices.lat] !== undefined && !isValidLat(row[colIndices.lat])) {
                     warnings.push({ col: colIndices.lat, row: index, warning: `Value is invalid and will not be imported.` });
@@ -616,47 +509,10 @@ function importStationTable(
     };
 }
 
-function addNewPks<T extends TableRow>(
-    rows: T[], oldPkIndex: number,
-    newPkIndex: number | keyof T,
-    genFun: (row: T) => string
-): Map<string, string> {
-    const pkSet = new Set<string>();
-    const old2NewPkMap = new Map<string, string>();
-    rows.forEach(row => {
-        const oldPk = row[oldPkIndex] as string;
-        let newPk = genFun(row);
-        while (pkSet.has(newPk)) {
-            newPk = `R${createRandomId()}`;
-        }
-        pkSet.add(newPk);
-        old2NewPkMap.set(oldPk, newPk);
-    });
-    return old2NewPkMap;
-}
-
-function applyNewFks(rows: Row[], old2NewFks: Map<string, string>, fkFieldIndex: number): void {
-    rows.forEach(row => {
-        const oldFk = row[fkFieldIndex];
-        if (typeof oldFk === 'string') {
-            row[fkFieldIndex] = old2NewFks.get(oldFk)!;
-        }
-    });
-}
-
-function addNewPks2StationRows(rows: StationRow[], fieldIndices: Ref2FieldIndexMap<'stations'>): Map<string, string> {
-    const old2NewPkMap = addNewPks(rows, fieldIndices.extId, fieldIndices.id, (row) => createStationId(row));
-    return old2NewPkMap;
-}
-
-function addNewPks2DeliveryRows(rows: Row[], fieldIndices: Ref2FieldIndexMap<'deliveries'>): Map<string, string> {
-    const old2NewPkMap = addNewPks(rows, fieldIndices.extId, fieldIndices.id, (row) => createDeliveryId(row));
-    return old2NewPkMap;
-}
-
-function importDeliveryRows(
+function _importDeliveryRows(
     xlsxImporter: XlsxImporter,
-    wbSpecs: LocalizedWBSpecs
+    wbSpecs: LocalizedWBSpecs,
+    old2NewStatIdMap: Map<string, string>
 ): Table {
 
     const observedTableHeader = xlsxImporter.readTableHeaderFromSheet(sheetNameMapping.deliveries);
@@ -667,17 +523,25 @@ function importDeliveryRows(
         ...addColsIndices
     };
 
+    const availableStatIds = new Set(old2NewStatIdMap.keys());
+
+    const idSet = new Set<string>();
+
     const table = xlsxImporter.readTableFromSheet(sheetNameMapping.deliveries, {
         offset: { row: observedTableHeader.rowCount + 1, col: 1 },
         readHeader: false,
         mandatoryValues: [
-            colIndices.extId,
+            // colIndices.extId,
             colIndices.source,
             colIndices.target
         ],
         uniqueValues: [
             colIndices.extId
         ],
+        enforceFkRelations: {
+            [colIndices.source]: availableStatIds,
+            [colIndices.target]: availableStatIds
+        },
         ignoreValues: [
             colIndices.addCols
         ],
@@ -721,7 +585,98 @@ function importDeliveryRows(
                     deliveryRow[colIndices.unitAmount_quantity],
                     deliveryRow[colIndices.unitAmount_unit]
                 ], ' ');
+            deliveryRow.id = createDeliveryId(deliveryRow, colIndices);
+            if (idSet.has(deliveryRow.id)) {
+                deliveryRow.id = createUniqueRandomId(idSet);
+                idSet.add(deliveryRow.id);
+            }
         }
+    });
+    const tableColumns = createDeliveryColumns(observedTableHeader.columnHeader, colIndices);
+
+    // table.columns.forEach(column => {
+    //     if (column.valueTypes.size > 1) {
+    //         table.rows.forEach(row => {
+    //             if (row[column.columnIndex] !== undefined) {
+    //                 row[column.columnIndex] = `${row[column.columnIndex]}`;
+    //             }
+    //         });
+    //         column.valueTypes.clear();
+    //         column.valueTypes.add('string');
+    //     }
+    // });
+
+    return {
+        columns: tableColumns,
+        rows: table.rows
+    };
+}
+
+function importDeliveryRows(
+    xlsxImporter: XlsxImporter,
+    wbSpecs: LocalizedWBSpecs,
+    old2NewStatIdMap: Map<string, string>
+): Table {
+
+    const observedTableHeader = xlsxImporter.readTableHeaderFromSheet(sheetNameMapping.deliveries);
+    const addColsIndices = getOptionalColIndices(observedTableHeader, wbSpecs.optionalSheetHeaders!['deliveries']);
+
+    const colIndices: Readonly<ColumnIndices<'deliveries'>> = {
+        ...MANDATORY_COL_INDEXES.deliveries,
+        ...addColsIndices
+    };
+
+    const aliases = colIndices as { [key in ColumnRef<'deliveries'>]: number };
+
+    const availableStatIds = new Set(old2NewStatIdMap.keys());
+
+    const idSet = new Set<string>();
+
+    const rows = xlsxImporter.readRowsFromSheet(
+        sheetNameMapping.deliveries,
+        // 3, // , )
+
+        // sheetNameMapping.deliveries,
+        // // cb
+        // (row) => {
+        //     const delRow: DeliveryRow = {
+        //         ...row,
+        //         id: createUniqueRandomId(idSet)
+        //     };
+        // },
+        {
+            offset: { row: observedTableHeader.rowCount + 1, col: 1 },
+            readHeader: false,
+            aliases: aliases, // as Record<ColumnRef<'deliveries'>, number>,
+            enforceType: {
+                assd: 'lat'
+            },
+            // mandatoryValues: [
+            // // colIndices.extId,
+            //     colIndices.source,
+            //     colIndices.target
+            // ],
+        // uniqueValues: [
+        //     colIndices.extId
+        // ],
+        // enforceFkRelations: {
+        //     [colIndices.source]: availableStatIds,
+        //     [colIndices.target]: availableStatIds
+        // },
+        ignoreValues: [
+            colIndices.addCols
+        ],
+        // enforceTextType: [
+        //     colIndices.extId,
+        //     colIndices.source,
+        //     colIndices.target,
+        //     colIndices.name,
+        //     colIndices.lotNo
+        // ],
+        enforceNonNegNumberType: [
+            colIndices.lotAmount_quantity,
+            colIndices.unitAmount_quantity
+        ]
     });
     const tableColumns = createDeliveryColumns(observedTableHeader.columnHeader, colIndices);
 
@@ -745,7 +700,8 @@ function importDeliveryRows(
 
 function importDel2DelRows(
     xlsxImporter: XlsxImporter,
-    wbSpecs: LocalizedWBSpecs
+    wbSpecs: LocalizedWBSpecs,
+    ext2NewDelIdMap: Map<string, string>
 ): Table {
     // const observedTableHeader = xlsxImporter.readTableHeaderFromSheet(sheetNameMapping.dels2Dels);
     // const addColsIndices = getOptionalColIndices(observedTableHeader, wbSpecs.optionalSheetHeaders!['deliveries']);
@@ -754,10 +710,20 @@ function importDel2DelRows(
         ...MANDATORY_COL_INDEXES.dels2Dels
     };
 
+    const availableDelIds = new Set(ext2NewDelIdMap.keys());
+
     const table = xlsxImporter.readTableFromSheet(sheetNameMapping.dels2Dels, {
         offset: { col: 1, row: 1 },
         mandatoryValues: [colIndices.from, colIndices.to],
-        enforceTextType: [colIndices.from, colIndices.to]
+        enforceFkRelations: {
+            [colIndices.from]: availableDelIds,
+            [colIndices.to]: availableDelIds
+        },
+        // enforceTextType: [colIndices.from, colIndices.to]
+        eachRowCb: (row, rowIndex, warnings) => {
+            row[colIndices.from] = ext2NewDelIdMap.get(row[colIndices.from] as string)!;
+            row[colIndices.to] = ext2NewDelIdMap.get(row[colIndices.to] as string)!;
+        }
     });
 
     const tableColumns = createDefaultDel2DelColumns();
@@ -769,9 +735,9 @@ function importDel2DelRows(
     };
 }
 
-function table2ExtJsonTable(table: Table): ExtDataTable | undefined {
+function createExtTable(table: Table): ExtDataTable {
     if (table.rows.length > 0) {
-        // const idsWithValues = new Set<string | number>();
+
         const id2Type = new Map<string | number, string>();
         for (const column of table.columns) {
             for (const row of table.rows) {
@@ -795,5 +761,5 @@ function table2ExtJsonTable(table: Table): ExtDataTable | undefined {
         };
         return extTable;
     }
-    return undefined;
+    return EmptyDataTable;
 }

@@ -1,7 +1,7 @@
 import { DataTable as ExtDataTable, JsonData } from '../ext-data-model.v1';
 import { AdditionalColRefs, CustomRefs, EXT_JSON_NAMES, LocalizedWBSpecs, LOCALIZED_WB_SPECS, MANDATORY_COL_INDEXES, OptionalSheetHeaders, OTHER_PROP_REFS, Ref2FieldIndexMap, sheetNameMapping, SHEET_REFS } from './xlsx-all-in-one-import-const';
 import { ColumnRefs, SheetRef } from './xlsx-all-in-one-import-model';
-import { XlsxImporter } from './xlsx-importer';
+import { XlsxImporter } from './xlsx-importer-v0';
 import { ColumnHeader, DatePartCols, ImportWarning, Row, Row as WSRow, TableHeader} from './xlsx-model';
 import { concat, removeUndefined } from '@app/tracing/util/non-ui-utils';
 

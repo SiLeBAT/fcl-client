@@ -3,65 +3,9 @@ import { concat, isNotNullish } from '@app/tracing/util/non-ui-utils';
 import { ArrayWith2OrMoreElements, NonEmptyArray, RequiredPick } from '@app/tracing/util/utility-types';
 import * as Excel from 'exceljs';
 import * as _ from 'lodash';
-import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Table, CheckColumnHeaderOptions, Row, TableHeader, CellSpecs, TypeString} from './xlsx-model';
+import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Table, Row, TableHeader, CellSpecs, TypeString, EachRowOptions} from './xlsx-model-vL';
+import { CellValue } from './xlsx-model-v0';
 
-type SheetName = string;
-type CellValue = string | boolean | number | bigint;
-
-//type TypeString = 'string' | 'nonneg:number' | 'number' | 'year' | 'month';
-type TypeString2Type<T extends TypeString | undefined | unknown> = T extends 'nonneg:number' | 'number' | 'year' | 'month' ? number : string;
-type ArrayElement<A> = A extends readonly (infer T)[] ? T : never
-type AliasMap<A extends string> = Record<A, number>
-type ColKeys<R extends string | number, AR extends string, T extends ReadTableOptions<R, AR>> = Exclude<(keyof T['aliases'] | keyof T['enforceTypes'] | ArrayElement<T['mandatoryValues']> | ArrayElement<T['aggValues']>['ref']), symbol>;
-type TableKeys<R extends string | number, AR extends string, T extends ReadTableOptions<R, AR>> = Exclude<(keyof T['aliases'] | keyof T['enforceTypes'] | ArrayElement<T['mandatoryValues']> | ArrayElement<T['aggValues']>['ref']), symbol>;
-// type Tmp<A extends string, R extends A, T extends ReadTableOptions<A, R>> = keyof T['enforceTypes'];
-type TypeStringOfProp<R extends string | number, T extends ReadTableOptions<R>, P> = P extends keyof T['enforceTypes'] ? T['enforceTypes'][P] : undefined;
-type ImportedTableRow<R extends string | number, T extends ReadTableOptions<R>> = RequiredPick<
-    Partial<{
-        [key in TableKeys<R, T>]: TypeString2Type<TypeStringOfProp<R, T, key>>
-    }>,
-    TableKeys<R, T> & ArrayElement<T['mandatoryValues']>
-> & Row
-
-type EachRowOptions<R extends string | number> = Omit<ReadTableOptions<R>, 'eachRowCb'>;
-
-const o = {
-    offset: { row: 1, col: 1 },
-    aliases: {
-        a: 1,
-        b: 2
-    },
-    enforceTypes: {
-        3: 'string',
-        a: 'year'
-    },
-    ignoreValues: [],
-    mandatoryValues: [1, 2, 3]
-};
-
-type InferType<obj> = obj extends ReadTableOptions<infer A, infer R> ? ReadTableOptions<infer A, infer R> : never;
-
-function test<A extends string, R extends A | number, T extends ReadTableOptions<A, R>>(o: T): TableKeys<A, R, T> {}
-
-const tmpy = test(o as any);
-// type ColumnHeader = string | [string, ArrayWith2OrMoreElements<ColumnHeader>];
-
-export interface ColumnConstraints {
-    isMandatory?: boolean; // default: false
-    isUnique?: boolean; // default: false
-    transformer?: <T, K>(value: T) => K;
-}
-
-export interface Options {
-    // firstRowIsHeader?: boolean;
-    // expectedColumnConf
-    filterSheets?: string[];
-    mandatorySheets?: string[];
-    matchColumnHeaders?: Record<string, HeaderConf[]>;
-    // columnConstraints?: Record<string, Record<number, ColumnConstraints>>;
-    // mandatoryColumns?: Record<SheetName, string[]>;
-    // requiredTypes?: Record<string,
-}
 
 function getColumnHeaderChildren(row: Excel.Row, colStartIndex: number, colEndIndex: number): NonEmptyArray<ColumnHeader> {
     let colIndex = colStartIndex;
@@ -147,6 +91,8 @@ function createRevRecord<X extends string | number, Y extends string | number>(r
     const revRecord: Record<Y, X> = Object.fromEntries(Object.entries(record).map(([x, y]) => [y, x]));
     return revRecord;
 }
+
+type getCellValue(number: column):
 
 export class XlsxImporter {
     private wb: Excel.Workbook | undefined;
@@ -238,7 +184,8 @@ export class XlsxImporter {
         const ws = this.getWorksheet(sheetName);
         return cellSpecs.every(specs => {
             const cell = ws.getCell(specs.row, specs.col);
-            if ()
+            // if ()
+            throw new Error(`Not implemented yet.`);
         });
     }
 
@@ -348,10 +295,10 @@ export class XlsxImporter {
     // }
 
 
-
-    eachRow<R extends string | number, AR extends string, T extends EachRowOptions<R>>(sheetName: string, cb: (row: ImportedTableRow<R, T>) => void, options: T): void {
+    eachRow(sheetName: string, cb: (rowIndex: number, row: Row) => void, options: ReadTableOptions): void {
         // const tableRows: Row[] = [];
-        const index2Alias = createRevRecord(options.aliases);
+        const
+        const index2Alias = createRevRecord(options.aliases ?? {});
         const index2UValues = new Map<number, Set<any>>();
         options.uniqueValues?.forEach(ref => {
             const index: number | undefined = typeof ref === 'string' ? options.aliases[ref as Exclude<R, number>] : ref;

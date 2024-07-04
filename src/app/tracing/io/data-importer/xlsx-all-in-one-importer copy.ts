@@ -2,7 +2,7 @@ import { DeliveryStoreData, FclData, PropertyEntry, StationStoreData } from '@ap
 import { createInitialFclDataState } from '@app/tracing/state/tracing.reducers';
 import { expectedColumnConfiguration, sheetNameMapping, wbColumnMapping } from './xlsx-all-in-one-import-const';
 import { ColumnsConfiguration, SheetRefName, WBColumnMapping } from './xlsx-all-in-one-import-model';
-import { readExcelFile } from './xlsx-importer';
+import { readExcelFile } from './xlsx-importer-v0';
 import { ColumnTree, Row as WSRow, Worksheet} from './xlsx-model';
 
 // const REQUIRED_INT_SHEET_NAMES: IntSheetName[] = ['stations'];

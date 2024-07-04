@@ -1,7 +1,7 @@
 import { DataTable as ExtDataTable, JsonData } from '../ext-data-model.v1';
 import { EXT_JSON_NAMES, mandatoryColumnGroups, MANDATORY_COL_INDEXES, OTHER_PROP_REFS, sheetNameMapping, SHEET_REFS } from './xlsx-all-in-one-import-const';
 import { ColumnLabelMapping, ColumnLabelRef, ColumnRef, LabelGroupRef, LabelMapping, SheetRef, HeaderConf as RefHeaderConf, ColumnLabel, AdditionalStationRootColRef } from './xlsx-all-in-one-import-model';
-import { Options, XlsxImporter } from './xlsx-importer';
+import { Options, XlsxImporter } from './xlsx-importer-v0';
 import { ColumnHeader, HeaderConf, ImportWarning, Row, Row as WSRow, Table as ImportTable, Worksheet} from './xlsx-model';
 import { concat, removeUndefined } from '@app/tracing/util/non-ui-utils';
 import { LABEL_MAPPING } from './xlsx-all-in-one-import-const-en';
