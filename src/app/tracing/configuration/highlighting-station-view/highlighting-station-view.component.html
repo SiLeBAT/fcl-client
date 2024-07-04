@@ -114,21 +114,6 @@
         [ngTemplateOutletContext] ="{ ruleType: RuleType.LABEL, title: 'Label', editTemplate: labelEditTemplate, showInLegendTB: false }">
     </ng-container>
 
-    <mat-expansion-panel
-        class="fcl-highlighting-stationsize-config fcl-highlighting-expansion-panels fcl-border-radius-zero"
-        (opened)="sizeOpenState = true"
-        (closed)="sizeOpenState = false">
-
-        <mat-expansion-panel-header>
-            <mat-panel-title class="fcl-font-size-08">
-              Station Size... click  to {{ sizeOpenState ?  'close' : 'open' }}
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        Station Size Configurations ... coming soon
-
-    </mat-expansion-panel>
-
     <ng-container [ngTemplateOutlet]="panelTemplate"
         [ngTemplateOutletContext] ="{ ruleType: RuleType.COLOR_AND_SHAPE, title: 'Colours and Shapes', editTemplate: colorShapeEditTemplate, symbolTemplate: colorShapeSymbolTemplate }">
     </ng-container>
