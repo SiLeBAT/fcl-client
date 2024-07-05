@@ -104,11 +104,11 @@ export class MenuItemStrings {
         displayName: 'Set Cross Contamination'
     };
 
-    static readonly unsetStationKillContamination: ItemInfo = {
+    static readonly unsetKillContamination: ItemInfo = {
         displayName: 'Unset Kill Contamination'
     };
 
-    static readonly setStationKillContamination: ItemInfo = {
+    static readonly setKillContamination: ItemInfo = {
         displayName: 'Set Kill Contamination'
     };
 

@@ -15,7 +15,8 @@ import { MenuItemStrings } from './menu.constants';
 import {
     ClearInvisibilitiesMSA, ClearTraceMSA,
     MarkElementsAsOutbreakMSA, SetStationCrossContaminationMSA,
-    SetStationKillContaminationMSA, ShowDeliveryPropertiesMSA,
+    SetKillContaminationMSA,
+    ShowDeliveryPropertiesMSA,
     ShowStationPropertiesMSA,
     ShowElementsTraceMSA,
     MakeElementsInvisibleMSA,
@@ -341,6 +342,20 @@ export class ContextMenuService {
         };
     }
 
+    private createSetKillContaminationItemData(contextElements: ContextElements, graphData: GraphServiceData): MenuItemData {
+        const allContextStationsHaveKillCon = graphData.getStatById(contextElements.stationIds).every(s => s.killContamination);
+        const allContextDeliveriesHaveKillCon = graphData.getDelById(contextElements.deliveryIds).every(d => d.killContamination);
+        const allContextElementsHaveKillCon = allContextStationsHaveKillCon && allContextDeliveriesHaveKillCon;
+        return {
+            ...(allContextElementsHaveKillCon ? MenuItemStrings.unsetKillContamination :MenuItemStrings.setKillContamination),
+            action: new SetKillContaminationMSA({
+                stationIds: contextElements.stationIds,
+                deliveryIds: contextElements.deliveryIds,
+                killContamination: !allContextElementsHaveKillCon
+            })
+        };
+    }
+
     private createStationActions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
@@ -373,15 +388,7 @@ export class ContextMenuService {
                         crossContamination: !allCrossContaminationStations
                     })
                 },
-                {
-                    ...(allKillContaminationStations ?
-                        MenuItemStrings.unsetStationKillContamination :
-                        MenuItemStrings.setStationKillContamination),
-                    action: new SetStationKillContaminationMSA({
-                        stationIds: selectedIds,
-                        killContamination: !allKillContaminationStations
-                    })
-                },
+                this.createSetKillContaminationItemData(contextElements, graphData),
                 this.createMakeInvisibleItemData(contextElements),
                 {
                     ...MenuItemStrings.mergeStations,
@@ -407,6 +414,7 @@ export class ContextMenuService {
                 ...this.createTraceMenuItemData(contextElements)
             },
             this.createMarkAsOutbreakItemData(contextElements, graphData),
+            this.createSetKillContaminationItemData(contextElements, graphData),
             this.createMakeInvisibleItemData(contextElements)
         ];
     }

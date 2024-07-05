@@ -162,6 +162,12 @@ export interface SetOutbreaksOptions {
     outbreak: boolean;
 }
 
+export interface SetKillContaminationOptions {
+    stationIds?: string[];
+    deliveryIds?: string[];
+    killContamination: boolean;
+}
+
 export interface ShowElementsTraceParams {
     stationIds: StationId[];
     deliveryIds: DeliveryId[];

@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import {
     ClearInvisibilitiesOptions, ClearOutbreaksOptions, DeliveryId, Layout, Position, SelectedElements,
+    SetKillContaminationOptions,
     SetOutbreaksOptions,
     ShowElementsTraceParams, StationId
 } from './data.model';
@@ -12,8 +13,8 @@ export enum TracingActionTypes {
     ShowStationPropertiesMSA = '[Tracing] Show Station Properties',
     ClearOutbreaksMSA = '[Tracing] Clear Outbreaks',
     MarkElementsAsOutbreakMSA = '[Tracing] Mark Elements as Outbreak',
+    SetKillContaminationMSA = '[Tracing] Set Kill Contamination',
     SetStationCrossContaminationMSA = '[Tracing] Set Station Cross Contamination',
-    SetStationKillContaminationMSA = '[Tracing] Set Station Kill Contamination',
     MakeElementsInvisibleMSA = '[Tracing] Make Elements Invisible',
     ShowDeliveryPropertiesMSA = '[Tracing] Show Delivery Properties',
     ShowElementsTraceMSA = '[Tracing] Show Elements Trace',
@@ -59,16 +60,16 @@ export class MarkElementsAsOutbreakMSA implements Action {
     constructor(public payload: SetOutbreaksOptions) {}
 }
 
+export class SetKillContaminationMSA implements Action {
+    readonly type = TracingActionTypes.SetKillContaminationMSA;
+
+    constructor(public payload: SetKillContaminationOptions) {}
+}
+
 export class SetStationCrossContaminationMSA implements Action {
     readonly type = TracingActionTypes.SetStationCrossContaminationMSA;
 
     constructor(public payload: { stationIds: string[]; crossContamination: boolean }) {}
-}
-
-export class SetStationKillContaminationMSA implements Action {
-    readonly type = TracingActionTypes.SetStationKillContaminationMSA;
-
-    constructor(public payload: { stationIds: string[]; killContamination: boolean }) {}
 }
 
 export class MakeElementsInvisibleMSA implements Action {
@@ -124,6 +125,7 @@ export type TracingActions =
     | ClearInvisibilitiesMSA
     | ShowStationPropertiesMSA
     | MarkElementsAsOutbreakMSA
+    | SetKillContaminationMSA
     | SetStationCrossContaminationMSA
     | MakeElementsInvisibleMSA
     | ShowElementsTraceMSA

@@ -157,7 +157,7 @@ export class TracingEffects {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
-                this.alertService.error(`Station trace could not be set!, error: ${error}`);
+                this.alertService.error(`Element(s) trace could not be set!, error: ${error}`);
             }
             return EMPTY;
         })
@@ -199,21 +199,19 @@ export class TracingEffects {
         })
     ));
 
-    setStationKillContamination$ = createEffect(() => this.actions$.pipe(
-        ofType<tracingEffectActions.SetStationKillContaminationMSA>(
-            tracingEffectActions.TracingActionTypes.SetStationKillContaminationMSA
+    setKillContamination$ = createEffect(() => this.actions$.pipe(
+        ofType<tracingEffectActions.SetKillContaminationMSA>(
+            tracingEffectActions.TracingActionTypes.SetKillContaminationMSA
         ),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
         mergeMap(([action, state]) => {
-            const stationIds = action.payload.stationIds;
-            const killContamination = action.payload.killContamination;
             try {
-                const payload = this.editTracSettingsService.getSetStationKillContPayload(state, stationIds, killContamination);
+                const payload = this.editTracSettingsService.getSetKillContaminationPayload(state, action.payload);
                 if (payload) {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
-                this.alertService.error(`Station kill contamination could not be set!, error: ${error}`);
+                this.alertService.error(`Kill contamination could not be (un)set!, error: ${error}`);
             }
             return EMPTY;
         })

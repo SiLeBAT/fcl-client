@@ -6,9 +6,10 @@ import {
     ShowElementsTraceParams,
     ClearOutbreaksOptions,
     ElementTracingSettings,
-    SetOutbreaksOptions
+    SetOutbreaksOptions,
+    SetKillContaminationOptions
 } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
+import { getUpdatedObject, Utils } from '../util/non-ui-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -78,18 +79,30 @@ export class EditTracingSettingsService {
         };
     }
 
-    getSetStationKillContPayload(tracingSettings: TracingSettings, ids: string[], killContamination: boolean): SetTracingSettingsPayload {
-        const idSet = Utils.createSimpleStringSet(ids);
-        return {
-            tracingSettings: {
-                ...tracingSettings,
-                stations: tracingSettings.stations.map(s => ({
-                    ...s,
-                    crossContamination: (idSet[s.id] && killContamination ? false : s.crossContamination),
-                    killContamination: (idSet[s.id] ? killContamination : s.killContamination)
-                }))
-            }
-        };
+    getSetKillContaminationPayload(
+        tracingSettings: TracingSettings,
+        options: SetKillContaminationOptions
+    ): SetTracingSettingsPayload {
+
+        const newTracingSettings = { ...tracingSettings };
+
+        if (options.stationIds) {
+            const statIds = new Set(options.stationIds);
+            const updateFilter = (s: StationTracingSettings) => statIds.has(s.id) && s.killContamination !== options.killContamination;
+            const updateFun = (s: StationTracingSettings) => getUpdatedObject(s, {
+                killContamination: options.killContamination,
+                crossContamination: s.crossContamination && !options.killContamination
+            });
+            newTracingSettings.stations = this.getNewElementsSettings(tracingSettings.stations, updateFilter, updateFun);
+        }
+        if (options.deliveryIds) {
+            const delIds = new Set(options.deliveryIds);
+            const updateFilter = (s: DeliveryTracingSettings) => delIds.has(s.id) && s.killContamination !== options.killContamination;
+            const updateFun = (s: DeliveryTracingSettings) => getUpdatedObject(s, { killContamination: options.killContamination });
+            newTracingSettings.deliveries = this.getNewElementsSettings(tracingSettings.deliveries, updateFilter, updateFun);
+        }
+
+        return { tracingSettings: newTracingSettings };
     }
 
     getClearTracePayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {

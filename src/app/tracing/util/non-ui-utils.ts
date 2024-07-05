@@ -87,6 +87,18 @@ export function isNotEmpty(x: string | null | undefined): x is Exclude<string, '
     return (x ?? '') !== '';
 }
 
+/**
+ * This method is used to update an object in a type safe manner.
+ *
+ * @param obj Object to update
+ * @param update Updated information of obj
+ * @returns Updated Object
+ *
+ */
+export function getUpdatedObject<T>(obj: T, update: Partial<T>): T {
+    return {...obj, ...update};
+}
+
 export class Utils {
 
     static rgbArrayToColor(color: number[]): Color {
