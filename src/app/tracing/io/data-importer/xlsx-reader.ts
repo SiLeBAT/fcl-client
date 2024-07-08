@@ -3,25 +3,9 @@ import { concat, isNotNullish } from '@app/tracing/util/non-ui-utils';
 import { ArrayWith2OrMoreElements, NonEmptyArray, RequiredPick } from '@app/tracing/util/utility-types';
 import * as Excel from 'exceljs';
 import * as _ from 'lodash';
-import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Table, Row, TableHeader, CellSpecs, TypeString, EachRowOptions} from './xlsx-model-vL';
+import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Row, TableHeader, CellSpecs, TypeString, EachRowOptions} from './xlsx-model-vL';
 import { CellValue } from './xlsx-model-v0';
-import { XlsxReader } from './xlsx-reader';
-import { JsonData } from '../ext-data-model.v1';
 
-interface XlsxImport {
-    source: string;
-
-}
-interface ImportedJsonData {
-    jsonData: JsonData;
-    issues: ImportIssue[];
-}
-
-export async function importXlsxFile(file: File): Promise<JsonData> {
-    const xlsxReader = new XlsxReader();
-    await xlsxReader.loadFile(file);
-
-}
 
 function getColumnHeaderChildren(row: Excel.Row, colStartIndex: number, colEndIndex: number): NonEmptyArray<ColumnHeader> {
     let colIndex = colStartIndex;
@@ -108,9 +92,35 @@ function createRevRecord<X extends string | number, Y extends string | number>(r
     return revRecord;
 }
 
-type getCellValue(number: column):
+// type getCellValue(number: column):
 
-export class XlsxImporter {
+export interface TableHeader {
+    columns: ColumnHeader[],
+    rowCount: number;
+}
+
+export interface ColumnInfo {
+    types: Set<string>;
+    columnIndex: number;
+}
+
+export interface Table {
+    header: TableHeader;
+    columns: ColumnInfo[];
+    rows: Row[];
+}
+
+export class XlsxSheetReader {
+    constructor(private ws: Excel.Worksheet) {}
+
+    readTableHeaderFromSheet(options?: Pick<ReadTableOptions, 'offset'>): TableHeader {
+        const offset = options ? options.offset : { row: 1, col: 1 };
+        const columnGroups = getColumnHeaders(this.ws);
+    }
+
+}
+
+export class XlsxReader {
     private wb: Excel.Workbook | undefined;
     // private columnGroups:
 
@@ -126,12 +136,17 @@ export class XlsxImporter {
         this.wb = excelWB;
     }
 
-    getWorksheet(sheetName: string): Excel.Worksheet {
+    private getWorksheet(sheetName: string): Excel.Worksheet {
         const ws = this.wb?.getWorksheet(sheetName);
         if (!ws) {
             throw new Error(`Sheet '${sheetName}' does not exist.`);
         }
         return ws;
+    }
+
+    getSheetReader(sheetName: string): Excel.Worksheet {
+        const sheetReader = new XlsxSheetReader(this.getWorksheet(sheetName));
+        return sheetReader;
     }
 
     private getHeaderSpan(headerGroups: HeaderConf[]): { colSpan: number; rowSpan: number } {
@@ -252,12 +267,11 @@ export class XlsxImporter {
         });
     }
 
-    readTableFromSheet(sheetName: string, options?: ReadTableOptions): Table {
-        options = options ?? {};
-        options = {
-            readHeader: true,
-            ...options
-        };
+    readTableFromSheet(sheetName: string, options: ReadTableOptions): Table {
+        // options = options ?? {};
+        // options = {
+        //     ...options
+        // };
         const ws = this.getWorksheet(sheetName);
         const columnGroups = getColumnHeaders(ws);
         const columns = getLeaveColumns(columnGroups);

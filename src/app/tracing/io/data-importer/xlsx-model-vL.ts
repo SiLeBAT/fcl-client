@@ -32,3 +32,14 @@ export interface CellSpecs {
     colSpan: number;
     minRowSpan?: number;
 }
+
+
+export interface ColumnInfo {
+    extJsonId?: string;
+    columnIndex?: number;
+}
+export interface Table<T = Row> {
+    header: TableHeader;
+    columns: ColumnInfo[];
+    rows: T[];
+}

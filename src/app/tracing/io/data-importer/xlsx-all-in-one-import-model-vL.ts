@@ -130,6 +130,55 @@ export type ColumnLabel = string | [string, ArrayWith2OrMoreElements<ColumnLabel
 
 export type LocalizedHeaderConf = string | [string, NonEmptyArray<LocalizedHeaderConf>];
 
+export interface StationRow {
+    id: string;
+    extId?: string;
+    name?: string;
+    street?: string;
+    streetNo?: string;
+    zip?: string;
+    city?: string;
+    district?: string;
+    state?: string;
+    country?: string;
+    typeOfBusiness?: string;
+    // -- additional columns
+    lat?: number;
+    lon?: number;
+}
+
 export interface DeliveryRow {
     id: string;
+    extId?: string;
+    source: string;
+    productName?: string;
+    lotNo?: string;
+    lotAmount_number?: number;
+    lotAmount_unit?: string;
+    dateOut_year?: number;
+    dateOut_month?: number;
+    dateOut_day?: number;
+    dateIn_year?: number;
+    dateIn_month?: number;
+    dateIn_day?: number;
+    unitAmount?: string; // ??
+    unitAmount_number?: number;
+    unitAmount_unit?: string;
+    target: string;
+    // -- additional columns
+    delAmountQuantity?: number; //??
+    delAmountUnit?: string;
+    itemNumber?: string;
+    subUnits?: number;
+    bestBeforeDate?: string;
+    productionTreatment?: string;
+    sampling?: string;
+    value?: string;
+    productionDate?: string;
+    indicator?: string
+}
+
+export interface Del2DelRow {
+    from: string;
+    to: string;
 }

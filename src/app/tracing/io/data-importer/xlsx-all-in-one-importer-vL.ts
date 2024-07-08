@@ -6,6 +6,7 @@ import { ColumnHeader, DatePartCols, ImportWarning, Row, Row as WSRow, TableHead
 import { concat, removeUndefined } from '@app/tracing/util/non-ui-utils';
 
 import * as _ from 'lodash';
+import { XlsxReader } from './xlsx-reader';
 
 const LATITUDE_LIMITS = {
     min: -90,
@@ -611,12 +612,12 @@ function _importDeliveryRows(
 }
 
 function importDeliveryRows(
-    xlsxImporter: XlsxImporter,
+    xlsxReader: XlsxReader,
     wbSpecs: LocalizedWBSpecs,
     old2NewStatIdMap: Map<string, string>
 ): Table {
 
-    const observedTableHeader = xlsxImporter.readTableHeaderFromSheet(sheetNameMapping.deliveries);
+    const observedTableHeader = xlsxReader.readTableHeaderFromSheet(sheetNameMapping.deliveries);
     const addColsIndices = getOptionalColIndices(observedTableHeader, wbSpecs.optionalSheetHeaders!['deliveries']);
 
     const colIndices = {
@@ -628,85 +629,97 @@ function importDeliveryRows(
 
     const idSet = new Set<string>();
 
-    const table = xlsxImporter.eachRow<ColumnRef<'deliveries'>,'dataIn'>(
-        sheetNameMapping.deliveries,
-        // cb
-        (row) => {
+    const table = xlsxReader.readTableFromSheet(sheetNameMapping.deliveries, { offset: { row: 1, col: 1 } });
+
+    const importedTable = {
+        rows: table.rows.map(row => {
             const delRow: DeliveryRow = {
-                ...row,
-                id: createUniqueRandomId(idSet)
-            };
-        },
-        {
-        offset: { row: observedTableHeader.rowCount + 1, col: 1 },
-        readHeader: false,
-        aliases: colIndices,
-        mandatoryValues: [
-            // colIndices.extId,
-            colIndices.source,
-            colIndices.target
-        ],
-        uniqueValues: [
-            colIndices.extId
-        ],
-        enforceFkRelations: {
-            [colIndices.source]: availableStatIds,
-            [colIndices.target]: availableStatIds
-        },
-        ignoreValues: [
-            colIndices.addCols
-        ],
-        aggValues: [
-            { ref: 'date', type: 'sdsd', input: {}}
-        ]
-        // enforceTextType: [
-        //     colIndices.extId,
-        //     colIndices.source,
-        //     colIndices.target,
-        //     colIndices.name,
-        //     colIndices.lotNo
-        // ],
-        enforceNonNegNumberType: [
-            colIndices.lotAmount_quantity,
-            colIndices.unitAmount_quantity
-        ],
+                id: '',
 
-        eachRowCb: (row: Row, rowIndex: number, warnings: ImportWarning[]) => {
-
-            const deliveryRow = row as DeliveryRow;
-            importStrDate<TypedDeliveryRow>(
-                deliveryRow,
-                rowIndex, {
-                    yearIndex: colIndices.dateOut_year,
-                    monthIndex: colIndices.dateOut_month,
-                    dayIndex: colIndices.dateOut_day
-                },
-                'dateOut',
-                warnings
-            );
-            importStrDate<TypedDeliveryRow>(
-                deliveryRow,
-                rowIndex, {
-                    yearIndex: colIndices.dateIn_year,
-                    monthIndex: colIndices.dateIn_month,
-                    dayIndex: colIndices.dateIn_day
-                },
-                'dateIn',
-                warnings
-            );
-            deliveryRow.amount = conditionalConcat(
-                [
-                    deliveryRow[colIndices.unitAmount_quantity],
-                    deliveryRow[colIndices.unitAmount_unit]
-                ], ' ');
-            deliveryRow.id = createDeliveryId(deliveryRow, colIndices);
-            if (idSet.has(deliveryRow.id)) {
-                deliveryRow.id = createUniqueRandomId(idSet);
-                idSet.add(deliveryRow.id);
             }
-        }
-    });
-    const tableColumns = createDeliveryColumns(observedTableHeader.columnHeader, colIndices);
+        })
+    }
+
+
+    // const table = xlsxImporter.eachRow<ColumnRef<'deliveries'>,'dataIn'>(
+    //     sheetNameMapping.deliveries,
+    //     // cb
+    //     (row) => {
+    //         const delRow: DeliveryRow = {
+    //             ...row,
+    //             id: createUniqueRandomId(idSet)
+    //         };
+    //     },
+    //     {
+    //     offset: { row: observedTableHeader.rowCount + 1, col: 1 },
+    //     readHeader: false,
+    //     aliases: colIndices,
+    //     mandatoryValues: [
+    //         // colIndices.extId,
+    //         colIndices.source,
+    //         colIndices.target
+    //     ],
+    //     uniqueValues: [
+    //         colIndices.extId
+    //     ],
+    //     enforceFkRelations: {
+    //         [colIndices.source]: availableStatIds,
+    //         [colIndices.target]: availableStatIds
+    //     },
+    //     ignoreValues: [
+    //         colIndices.addCols
+    //     ],
+    //     aggValues: [
+    //         { ref: 'date', type: 'sdsd', input: {}}
+    //     ]
+    //     // enforceTextType: [
+    //     //     colIndices.extId,
+    //     //     colIndices.source,
+    //     //     colIndices.target,
+    //     //     colIndices.name,
+    //     //     colIndices.lotNo
+    //     // ],
+    //     enforceNonNegNumberType: [
+    //         colIndices.lotAmount_quantity,
+    //         colIndices.unitAmount_quantity
+    //     ],
+
+    //     eachRowCb: (row: Row, rowIndex: number, warnings: ImportWarning[]) => {
+
+    //         const deliveryRow = row as DeliveryRow;
+    //         importStrDate<TypedDeliveryRow>(
+    //             deliveryRow,
+    //             rowIndex, {
+    //                 yearIndex: colIndices.dateOut_year,
+    //                 monthIndex: colIndices.dateOut_month,
+    //                 dayIndex: colIndices.dateOut_day
+    //             },
+    //             'dateOut',
+    //             warnings
+    //         );
+    //         importStrDate<TypedDeliveryRow>(
+    //             deliveryRow,
+    //             rowIndex, {
+    //                 yearIndex: colIndices.dateIn_year,
+    //                 monthIndex: colIndices.dateIn_month,
+    //                 dayIndex: colIndices.dateIn_day
+    //             },
+    //             'dateIn',
+    //             warnings
+    //         );
+    //         deliveryRow.amount = conditionalConcat(
+    //             [
+    //                 deliveryRow[colIndices.unitAmount_quantity],
+    //                 deliveryRow[colIndices.unitAmount_unit]
+    //             ], ' ');
+    //         deliveryRow.id = createDeliveryId(deliveryRow, colIndices);
+    //         if (idSet.has(deliveryRow.id)) {
+    //             deliveryRow.id = createUniqueRandomId(idSet);
+    //             idSet.add(deliveryRow.id);
+    //         }
+    //     }
+    // });
+    // const tableColumns = createDeliveryColumns(observedTableHeader.columnHeader, colIndices);
 
     // table.columns.forEach(column => {
     //     if (column.valueTypes.size > 1) {
