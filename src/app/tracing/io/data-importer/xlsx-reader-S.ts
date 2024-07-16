@@ -3,25 +3,24 @@ import { concat, isNotNullish } from '@app/tracing/util/non-ui-utils';
 import { ArrayWith2OrMoreElements, NonEmptyArray, RequiredPick } from '@app/tracing/util/utility-types';
 import * as Excel from 'exceljs';
 import * as _ from 'lodash';
-import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Table, Row, TableHeader, CellSpecs, TypeString, EachRowOptions} from './xlsx-model-vL';
-import { CellValue } from './xlsx-model-v0';
-import { XlsxReader } from './xlsx-reader-S';
-import { JsonData } from '../ext-data-model.v1';
+import { CellSpecs, HeaderConf, IXlsxSheetReader, NGReadTableOptions, ReadTableOptions, Table, TableContent } from './xlsx-reader-model-S';
 
-interface XlsxImport {
-    source: string;
+// export type CellValue = string | number | boolean;
+// export type Row =  Record<number, CellValue>;
 
-}
-interface ImportedJsonData {
-    jsonData: JsonData;
-    issues: ImportIssue[];
-}
+// export type TypeString = 'string' | 'nonneg:number' | 'number' | 'year' | 'month' | 'day' | 'never' | 'lat' | 'lon' | 'auto';
+// export type TypeString2Type<T extends TypeString | undefined | unknown> = T extends 'nonneg:number' | 'number' | 'year' | 'month' ? number : T extends undefined ? CellValue : string;
 
-export async function importXlsxFile(file: File): Promise<JsonData> {
-    const xlsxReader = new XlsxReader();
-    await xlsxReader.loadFile(file);
+// type GetTypeString<TM, TR> = TM extends {} ? TR extends keyof TM ? TM[TR] extends TypeString ? TM[TR] : 'auto' : 'auto' : 'auto';
+// type GetMandatoryFields<T> = T extends ReadTableOptions<infer A, infer TR, infer MR> ? (T['mandatoryValues'] extends Array<infer X> ? (X extends A ? X : never) : never) : never;
+// type TypedRow<T> = T extends ReadTableOptions<infer A, infer TR, infer MR> ? RequiredPick<{ [key in A]?: TypeString2Type<GetTypeString<T['enforceType'],key>> }, GetMandatoryFields<T>> : Row;
 
-}
+
+// type GetTypeString<TM, TR> = TM extends {} ? TR extends keyof TM ? TM[TR] extends TypeString ? TM[TR] : 'auto' : 'auto' : 'auto';
+// type GetMandatoryFields<T> = T extends ReadTableOptions<infer A, infer TR, infer MR> ? (T['mandatoryValues'] extends Array<infer X> ? (X extends A ? X : never) : never) : never;
+// type TypedRow<T> = T extends ReadTableOptions<infer A, infer TR, infer MR> ? RequiredPick<{ [key in A]?: TypeString2Type<GetTypeString<T['enforceType'],key>> }, GetMandatoryFields<T>> : Row;
+// type GetObjectType<T> = T extends {} ? { [key in keyof T]: TypeString2Type<GetTypeString<T[key]>> }: {};
+// type TypedRow<T>
 
 function getColumnHeaderChildren(row: Excel.Row, colStartIndex: number, colEndIndex: number): NonEmptyArray<ColumnHeader> {
     let colIndex = colStartIndex;
@@ -108,9 +107,41 @@ function createRevRecord<X extends string | number, Y extends string | number>(r
     return revRecord;
 }
 
-type getCellValue(number: column):
+export class XlsxSheetReader implements IXlsxSheetReader {
+    constructor(private ws: Excel.Worksheet) {}
 
-export class XlsxImporter {
+    readTableHeader(options?: NGReadTableOptions): TableHeader {
+        const offset = options ? options.offset : { row: 1, col: 1 };
+        const columnGroups = getColumnHeaders(this.ws);
+    }
+
+    readTableRows<
+        A extends string,
+        TR extends string,
+        MR extends string,
+        T extends ReadTableOptions<A, TR, MR>
+    >(options: T): TableContent<T> {
+        const offset = options ? options.offset : { row: 1, col: 1 };
+        const columnGroups = getColumnHeaders(this.ws);
+
+        return {} as TableContent<T>;
+    }
+
+    readTable<
+        A extends string,
+        TR extends string,
+        MR extends string,
+        T extends ReadTableOptions<A, TR, MR>
+    >(options: T): Table<T> {
+        const offset = options ? options.offset : { row: 1, col: 1 };
+        const columnGroups = getColumnHeaders(this.ws);
+        throw new Error(`Not implemented yet!`);
+
+        return {} as Table<T>;
+    }
+}
+
+export class XlsxReader implements IXlsxSheetReader {
     private wb: Excel.Workbook | undefined;
     // private columnGroups:
 
@@ -126,12 +157,17 @@ export class XlsxImporter {
         this.wb = excelWB;
     }
 
-    getWorksheet(sheetName: string): Excel.Worksheet {
+    private getWorksheet(sheetName: string): Excel.Worksheet {
         const ws = this.wb?.getWorksheet(sheetName);
         if (!ws) {
             throw new Error(`Sheet '${sheetName}' does not exist.`);
         }
         return ws;
+    }
+
+    getSheetReader(sheetName: string): XlsxSheetReader {
+        const sheetReader = new XlsxSheetReader(this.getWorksheet(sheetName));
+        return sheetReader;
     }
 
     private getHeaderSpan(headerGroups: HeaderConf[]): { colSpan: number; rowSpan: number } {
@@ -252,12 +288,11 @@ export class XlsxImporter {
         });
     }
 
-    readTableFromSheet(sheetName: string, options?: ReadTableOptions): Table {
-        options = options ?? {};
-        options = {
-            readHeader: true,
-            ...options
-        };
+    readTableFromSheet(sheetName: string, options: ReadTableOptions): Table {
+        // options = options ?? {};
+        // options = {
+        //     ...options
+        // };
         const ws = this.getWorksheet(sheetName);
         const columnGroups = getColumnHeaders(ws);
         const columns = getLeaveColumns(columnGroups);

@@ -1,6 +1,9 @@
 export type CellValue = number | string | boolean;
 
-export type Row =  Record<number, CellValue>;
+export type Row = {
+    rowIndex: number;
+    [x: number]: CellValue;
+}
 
 export interface ImportWarning {
     col?: number;

@@ -1,4 +1,4 @@
-import { XlsxReader } from "./xlsx-reader";
+import { XlsxReader } from "./xlsx-reader-S";
 
 interface ValidationIssue {
 
@@ -9,8 +9,11 @@ interface ValidationResult {
     issues: ValidationIssue[];
 }
 
-interface ImportIssue {
-
+export interface ImportIssue {
+    col?: number;
+    row?: number;
+    type: 'warn' | 'info' | 'error';
+    msg: string;
 }
 
 interface ImportResult {

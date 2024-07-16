@@ -149,21 +149,25 @@ export interface StationRow {
 
 export interface DeliveryRow {
     id: string;
+    inputIdentFP: string;
+    ppIdentFP: string;
+    inputDataFP: string;
+    ppDataFP: string;
+
+    dataFP: string;
+    dataHash: string;
+
     extId?: string;
     source: string;
     productName?: string;
     lotNo?: string;
     lotAmount_number?: number;
     lotAmount_unit?: string;
-    dateOut_year?: number;
-    dateOut_month?: number;
-    dateOut_day?: number;
-    dateIn_year?: number;
-    dateIn_month?: number;
-    dateIn_day?: number;
+    dateOut?: string;
+    dateIn?: string;
     unitAmount?: string; // ??
-    unitAmount_number?: number;
-    unitAmount_unit?: string;
+    // unitAmount_number?: number;
+    // unitAmount_unit?: string;
     target: string;
     // -- additional columns
     delAmountQuantity?: number; //??
