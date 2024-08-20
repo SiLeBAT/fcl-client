@@ -148,6 +148,7 @@ export interface StationRow {
 }
 
 export interface DeliveryRow {
+    rowIndex: number;
     id: string;
     inputIdentFP: string;
     ppIdentFP: string;

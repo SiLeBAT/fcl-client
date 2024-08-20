@@ -107,6 +107,7 @@ export interface ColumnInfo {
 export interface Table {
     header: TableHeader;
     columns: ColumnInfo[];
+    columnTypes: Record<number, Set<string>>;
     rows: Row[];
 }
 

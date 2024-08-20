@@ -1,3 +1,4 @@
+import { ImportIssue } from "./xlsx-import-model-vL";
 import { CellValue } from "./xlsx-model-vL";
 
 type TypeString = 'number' | 'lat' | 'lon' | 'nonneg:number' | 'string';
@@ -8,6 +9,32 @@ type TypeString2Type<T extends TypeString> =
 interface Row {
     rowIndex: number;
     [key: number]: CellValue
+}
+
+interface TableColumn {
+    outId?: string;
+    id?: string;
+    ref?: string;
+    type: string;
+}
+
+interface ImportTable<T extends {}> {
+    issues: ImportIssue[];
+    columns: TableColumn[];
+    rows: T;
+}
+
+interface ImportSource {
+    type: ImportSourceType;
+    name: string;
+    stations: ImportTable<StationRow>;
+    deliveries: ImportTable<DeliveryRow>;
+    del2Dels: ImportTable<Del2DelRow>;
+}
+
+interface Del2DelRow {
+    from: string;
+    to: string;
 }
 
 
@@ -23,6 +50,16 @@ export class InvalidFKReferenceError extends Error {
     }
 }
 
+export interface RowDiff<T> {
+    conflictingFields: T[];
+    missingFields: T[];
+}
+
+export interface RowComparisonOptions<T> {
+    compareFields?: T[];
+    ignoreFields?: T[];
+}
+
 interface StationRow {
     id: string;
     name?: string;
@@ -34,6 +71,7 @@ interface StationRow {
 }
 
 export interface TypedDeliveryRow {
+    rowIndex: number;
     id: string;
     inputIdentFP: string;
     ppIdentFP: string;

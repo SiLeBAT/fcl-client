@@ -1,7 +1,7 @@
 import { removeUndefined } from "@app/tracing/util/non-ui-utils";
 import { ImportIssue } from "./xlsx-import-model-vL";
 import { DELIVERY_IDENT_FIELDS } from "./xlsx-import-shared-const-vL";
-import { InvalidFKReferenceError, TypedDeliveryRow } from "./xlsx-import-shared-model-vL";
+import { InvalidFKReferenceError, RowComparisonOptions, RowDiff, TypedDeliveryRow } from "./xlsx-import-shared-model-vL";
 import { CellValue } from "./xlsx-model-vL";
 
 type TypeString = 'number' | 'lat' | 'lon' | 'nonneg:number' | 'string';
@@ -342,4 +342,31 @@ function getHashCode(text: string): number {
 export function createDeliveryId(delRow: TypedDeliveryRow): string {
     const hashCode = Math.abs(getHashCode(createDeliveryPPIdentFP(delRow)));
     return `${hashCode}`;
+}
+
+export function compareRows<T extends {}, K extends (keyof T) & (string | number)>(row1: T, row2: T, options?: RowComparisonOptions<K>): RowDiff<K> {
+    const compareFields = new Set(options?.compareFields ?? Object.keys(row1).concat(Object.keys(row2)) as K[]);
+    const ignoreFields = new Set(options?.ignoreFields ?? []);
+    const conflictingFields: K[] = [];
+    const missingFields: K[] = [];
+    compareFields.forEach(f => {
+        const v1 = row1[f];
+        const v2 = row2[f];
+        if (v1 === undefined) {
+            if (v2 !== undefined) {
+                missingFields.push(f);
+            }
+        } else {
+            if (v2 === undefined) {
+                missingFields.push(f);
+            } else if (v1 !== v2) {
+                conflictingFields.push(f);
+            }
+        }
+    });
+    return {
+        conflictingFields: conflictingFields,
+        missingFields: missingFields
+    };
+
 }

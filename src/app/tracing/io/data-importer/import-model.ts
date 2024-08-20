@@ -2,10 +2,14 @@ type ImportSourceType = 'all-in-one' | 'fw' | 'bw';
 
 
 interface TableColumn {
-
+    outId?: string;
+    id?: string;
+    ref?: string;
+    type: string;
 }
 
 interface ImportTable<T extends {}> {
+    issues: ImportIssue[];
     columns: TableColumn[];
     rows: T;
 }

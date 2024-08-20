@@ -5,7 +5,7 @@ import { concat, removeUndefined } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 import { DeliveryRow } from './xlsx-all-in-one-import-model-vL';
 import { ImportIssue } from './xlsx-import-model-vL';
-import { createDeliveryId, createDeliveryPPIdentFP, importAddColValue, importAggAmount, importFkString, importStrDate, importUniqueString, importValue } from './xlsx-import-shared-vL';
+import { compareRows, createDeliveryId, createDeliveryPPIdentFP, importAddColValue, importAggAmount, importFkString, importStrDate, importUniqueString, importValue } from './xlsx-import-shared-vL';
 import { PartialPick } from '@app/tracing/util/utility-types';
 import { CellValue, Row } from './xlsx-model-vL';
 import { XlsxReader } from './xlsx-reader-L';
@@ -330,9 +330,13 @@ function getDefaultExtDeliveryName(label: string[]): string {
     return `_Lieferungen.${label.join('_')}`;
 }
 
-type DeliveryComparisonResult = 'D1 extends D2' | 'match' | 'D2 extends D1' | string[];
 
-function compareDeliveries(delRow1: DeliveryRow, delRow2: DeliveryRow): DeliveryComparisonResult {
+
+function compareDeliveries<T>(delRow1: DeliveryRow, delRow2: DeliveryRow, options?: RowComparisonOptions): DeliveryDiff {
+
+}
+
+function cleanRows<T>(table: Table): Table {
 
 }
 
@@ -342,17 +346,20 @@ function importDeliveryRows(
     old2NewStatIdMap: Map<string, string>
 ): ImportTable {
 
-    const observedTableHeader = xlsxReader.readTableHeaderFromSheet(sheetNameMapping.deliveries);
-    const knownAdditionalColsIndices = getOptionalColIndices(observedTableHeader, wbSpecs.optionalSheetHeaders!['deliveries']);
-    const additionalCols = observedTableHeader.columnHeader.filter(h => h.colIndex > colIndices.addCols);
+    // const observedTableHeader = xlsxReader.readTableHeaderFromSheet(sheetNameMapping.deliveries);
+    const table = xlsxReader.readTableFromSheet(sheetNameMapping.deliveries, { offset: { col: 1, row: 1 }});
+    // const knownAdditionalColsIndices = getOptionalColIndices(observedTableHeader, wbSpecs.optionalSheetHeaders!['deliveries']);
+    const knownAdditionalColsIndices = getOptionalColIndices(table.header, wbSpecs.optionalSheetHeaders!['deliveries']);
+    // const additionalCols = observedTableHeader.columnHeader.filter(h => h.colIndex > colIndices.addCols);
+    const additionalCols = table.header.columnHeader.filter(h => h.colIndex > colIndices.addCols);
     // const additionalColIndices = observedTableHeader
     // const knownAdditionalCols = Object.entries(additionalColsIndices).filter(([key, index]))
-
 
     const colIndices = {
         ...MANDATORY_COL_INDEXES.deliveries,
         ...knownAdditionalColsIndices
     };
+
     const index2Ref = createRevRecord(colIndices);
 
     const availableStatIds = new Set(old2NewStatIdMap.keys());
@@ -360,11 +367,16 @@ function importDeliveryRows(
     const extIdSet = new Set<string>();
     const idSet = new Set<string>();
     const identFP2Del = new Map<string, DeliveryRow>();
+    const ignoredIds = new Set<string>();
+    const old2NewId = new Map<string, string>();
 
-    const table = xlsxReader.readTableFromSheet(sheetNameMapping.deliveries, { offset: { row: 1, col: 1 } });
+    // const table = xlsxReader.readTableFromSheet(sheetNameMapping.deliveries, { offset: { row: 1, col: 1 } });
 
     const importIssues: ImportIssue[] = [];
     const rows: DeliveryRow[] = [];
+
+    // const explicedTypedColumns = [Object.keys(MANDATORY_COL_INDEXES)];
+    const columnsToReset = new Set(table.columns.filter(c => c.types.size > 2).map(c => c.columnIndex));
 
     table.rows.forEach(row => {
 
@@ -378,6 +390,7 @@ function importDeliveryRows(
                         // | 'delAmountQuantity' | 'delAmountUnit'
                     // >
                     = {
+                    rowIndex: row.rowIndex,
                     id: '',
                     extId: importUniqueString(row, colIndices.extId, extIdSet, importIssues),
                     lotNo: importValue(row, colIndices.lotNo, 'string', importIssues),
@@ -396,23 +409,57 @@ function importDeliveryRows(
                 additionalCols.forEach(c => {
                     const ref = index2Ref[c.colIndex];
                     const id = ref ?? getDefaultExtDeliveryName(c.label);
-                    row[id] = row[c.colIndex];
+                    let value = row[c.colIndex];
+                    if (columnsToReset.has(c.colIndex) && value !== undefined) {
+                        value = `${value}`;
+                    }
+                    delRow[id] = value;
                 });
 
                 // delRow.inputIdentFP = createDeliveryInputIdentFP(delRow);
                 delRow.ppIdentFP = createDeliveryPPIdentFP(delRow);
                 const existingDel = identFP2Del.get(delRow.ppIdentFP);
                 if (existingDel) {
-
+                    const delRowsDiff = compareRows(delRow, existingDel, {ignoreFields: ['extId', 'id']});
+                    if (delRowsDiff.conflictingFields.length > 0) {
+                        importIssues.push({
+                            row: delRow.rowIndex,
+                            type: 'warn',
+                            msg: `Ignoring delivery in row ${delRow.rowIndex} because of conflicts with row ${existingDel.rowIndex}.`
+                        });
+                        if (delRow.extId !== undefined) {
+                            ignoredIds.add(delRow.extId);
+                        }
+                    } else if (delRowsDiff.missingFields.length > 0) {
+                        importIssues.push({
+                            row: delRow.rowIndex,
+                            type: 'warn',
+                            msg: `Merging delivery in row ${delRow.rowIndex} with delivery in row ${existingDel.rowIndex}.`
+                        });
+                        delRowsDiff.missingFields.forEach(f => {
+                            existingDel[f as any] = existingDel[f] ?? delRow[f];
+                        });
+                        if (delRow.extId !== undefined) {
+                            old2NewId.set(delRow.extId, existingDel.id);
+                        }
+                    } else {
+                        importIssues.push({
+                            row: delRow.rowIndex,
+                            type: 'warn',
+                            msg: `Ignoring delivery in row ${delRow.rowIndex} because it is a duplicate of row ${existingDel.rowIndex}.`
+                        });
+                        if (delRow.extId !== undefined) {
+                            ignoredIds.add(delRow.extId);
+                        }
+                    }
+                } else {
+                    delRow.id = createDeliveryId(delRow);
+                    idSet.add(delRow.id);
+                    rows.push(delRow);
                 }
-
-                delRow.id = createDeliveryId(delRow);
-                idSet.add(delRow.id);
-                rows.push(delRow);
             } catch(err: Error) {
 
             }
-
         })
     }
 
