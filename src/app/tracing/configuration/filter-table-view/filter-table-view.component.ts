@@ -150,7 +150,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     constructor(
         private hostElement: ElementRef,
         private cdRef: ChangeDetectorRef
-    ) {}
+    ) { }
 
     // lifecycle hooks start
 
@@ -167,14 +167,14 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             this.subscriptions_.push(this.activityState$.subscribe(
                 (activityState) => this.setActivityState(activityState),
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => {}
+                () => { }
             ));
         }
         if (this.checkTableSize$ !== undefined && this.checkTableSize$ !== null) {
             this.subscriptions_.push(this.checkTableSize$.subscribe(
                 () => this.checkTableSizeOnStableWrapperSize({ stopOnOpen: false }),
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => {}
+                () => { }
             ));
         }
         if (this.updateTableSize$ !== undefined && this.updateTableSize$ !== null) {
@@ -186,7 +186,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                     }
                 },
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => {}
+                () => { }
             ));
         }
     }
@@ -257,7 +257,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
-        if (this.processedInput__ && selected) {
+        if (this.processedInput__) {
             const selectedRowIds = selected.map(row => row.id);
             // dblclick events trigger 3 selection change events
             // only the first one changes (usually) the selection
@@ -490,7 +490,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
         };
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        asyncTask.subscription = this.cycleStart$!.subscribe(callBack, () => {});
+        asyncTask.subscription = this.cycleStart$!.subscribe(callBack, () => { });
         this.asyncTasks_.push(asyncTask as AsyncTask);
     }
 
@@ -678,7 +678,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
         }
         // eslint-disable-next-line no-empty
-        if (this.processedInput__ !== this.inputData) {}
+        if (this.processedInput__ !== this.inputData) { }
     }
 
     private applyTreeStatusFromCache(rows: TableRow[]): void {
@@ -855,7 +855,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         ];
     }
 
-    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any}): any {
+    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any }): any {
         return {
             'fcl-row-cell-invisible': row['invisible'] || (row.parentRow !== undefined && row.parentRow['invisible']),
             'fcl-font-style-italic': row.parentRowId !== undefined
