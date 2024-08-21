@@ -257,7 +257,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
-        if (this.processedInput__) {
+        if (this.processedInput__ && selected) {
             const selectedRowIds = selected.map(row => row.id);
             // dblclick events trigger 3 selection change events
             // only the first one changes (usually) the selection

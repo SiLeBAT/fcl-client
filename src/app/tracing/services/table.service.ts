@@ -42,7 +42,7 @@ export class TableService {
 
     constructor(
         private dataService: DataService
-    ) {}
+    ) { }
 
     private checkCache(data: DataServiceData): void {
         if (this.cache.modelFlag !== data.modelFlag) {
@@ -92,7 +92,7 @@ export class TableService {
     }
 
     private getAvailableDeliveryProps(data: DataServiceData): Set<string> {
-        const availableProps =  this.getAvailableProps(
+        const availableProps = this.getAvailableProps(
             data.deliveries,
             [
                 'id', 'score', 'outbreak', 'weight', 'crossContamination', 'killContamination', 'forward', 'backward',
@@ -179,7 +179,7 @@ export class TableService {
 
     getDeliveryTable(state: DataServiceInputState, forHighlighting: boolean, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
-
+        
         return {
             modelFlag: data.modelFlag,
             ...this.getDeliveryColumnSets(state, data, forHighlighting),
@@ -391,7 +391,8 @@ export class TableService {
                 observed: delivery.observed,
                 forward: delivery.forward,
                 backward: delivery.backward,
-                score: delivery.score
+                score: delivery.score,
+                outbreak: delivery.outbreak,
             };
 
             if (!forHighlighting) {
@@ -482,7 +483,7 @@ export class TableService {
 
     private collectProps(arr: (StationData | DeliveryData)[]): { id: string; type: string }[] {
         const result: { id: string; type: string }[] = [];
-        const props: { [key: string ]: string } = {};
+        const props: { [key: string]: string } = {};
         arr.forEach(item => item.properties.filter(
             prop => prop.value !== undefined || prop.value !== null
         ).forEach(
