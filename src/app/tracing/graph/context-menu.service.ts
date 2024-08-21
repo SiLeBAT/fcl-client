@@ -155,6 +155,7 @@ export class ContextMenuService {
                     action: new ClearTraceMSA()
                 },
                 this.createClearOutbreaksMenuItemData(graphData),
+                this.createClearCrossContaminationsMenuItemData(graphData),
                 this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
@@ -185,6 +186,15 @@ export class ContextMenuService {
                     action: new ClearOutbreaksMSA({ clearStationOutbreaks: true, clearDeliveryOutbreaks: true })
                 }
             ]
+        };
+    }
+
+    private createClearCrossContaminationsMenuItemData(graphdata: GraphServiceData): MenuItemData{
+        const someStationIsCrossContamination = graphdata.stations.some(s => s.crossContamination);
+
+        return{
+            ...MenuItemStrings.clearCrossContaminations,
+            disabled: !someStationIsCrossContamination,
         };
     }
 

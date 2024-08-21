@@ -28,6 +28,10 @@ export class MenuItemStrings {
         displayName: 'Clear All Outbreaks'
     };
 
+    static readonly clearCrossContaminations: ItemInfo = {
+        displayName: 'Clear Cross Contaminations'
+    }
+
     static readonly clearInvisibility: ItemInfo = {
         displayName: 'Clear Invisibility'
     };
