@@ -20,7 +20,9 @@ import {
     ShowStationPropertiesMSA,
     ShowElementsTraceMSA,
     MakeElementsInvisibleMSA,
-    ClearOutbreaksMSA} from '../tracing.actions';
+    ClearOutbreaksMSA,
+    ClearCrossContaminationMSA
+} from '../tracing.actions';
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
 import { Action } from '@ngrx/store';
 import { LayoutOption } from './cy-graph/interactive-cy-graph';
@@ -49,7 +51,7 @@ export enum LayoutActionTypes {
 export class LayoutAction implements Action {
     readonly type = LayoutActionTypes.LayoutAction;
 
-    constructor(public payload: { layoutName: LayoutName; nodeIds: string[] }) {}
+    constructor(public payload: { layoutName: LayoutName; nodeIds: string[] }) { }
 }
 
 @Injectable({
@@ -74,7 +76,7 @@ export class ContextMenuService {
         const isContextElementSelected =
             (context.nodeId && graphData.nodeSel[context.nodeId]) ||
             (context.edgeId && graphData.edgeSel[context.edgeId])
-        ;
+            ;
 
         const nodes: CyNodeData[] =
             isContextElementSelected ? graphData.nodeData.filter(n => n.selected) :
@@ -155,6 +157,7 @@ export class ContextMenuService {
                     action: new ClearTraceMSA()
                 },
                 this.createClearOutbreaksMenuItemData(graphData),
+                this.createClearCrossContaminationsMenuItemData(graphData),
                 this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
@@ -185,6 +188,16 @@ export class ContextMenuService {
                     action: new ClearOutbreaksMSA({ clearStationOutbreaks: true, clearDeliveryOutbreaks: true })
                 }
             ]
+        };
+    }
+
+    private createClearCrossContaminationsMenuItemData(graphdata: GraphServiceData): MenuItemData {
+        const crossContaminationStationIds = graphdata.stations.filter(s => s.crossContamination).map(s => s.id);
+
+        return {
+            ...MenuItemStrings.clearCrossContaminations,
+            disabled: !crossContaminationStationIds.length ?? crossContaminationStationIds.length > 0,
+            action: new ClearCrossContaminationMSA()
         };
     }
 
@@ -228,22 +241,22 @@ export class ContextMenuService {
             children: [
                 {
                     ...MenuItemStrings.uncollapseSources,
-                    action : new UncollapseStationsMSA({ groupType: GroupType.SOURCE_GROUP }),
+                    action: new UncollapseStationsMSA({ groupType: GroupType.SOURCE_GROUP }),
                     disabled: !isSourceGroupAvailable
                 },
                 {
                     ...MenuItemStrings.uncollapseTargets,
-                    action : new UncollapseStationsMSA({ groupType: GroupType.TARGET_GROUP }),
+                    action: new UncollapseStationsMSA({ groupType: GroupType.TARGET_GROUP }),
                     disabled: !isTargetGroupAvailable
                 },
                 {
                     ...MenuItemStrings.uncollapseSimpleChains,
-                    action : new UncollapseStationsMSA({ groupType: GroupType.SIMPLE_CHAIN }),
+                    action: new UncollapseStationsMSA({ groupType: GroupType.SIMPLE_CHAIN }),
                     disabled: !isSimpleChainAvailable
                 },
                 {
                     ...MenuItemStrings.uncollapseIsolatedClouds,
-                    action : new UncollapseStationsMSA({ groupType: GroupType.ISOLATED_GROUP }),
+                    action: new UncollapseStationsMSA({ groupType: GroupType.ISOLATED_GROUP }),
                     disabled: !isIsolatedGroupAvailable
                 }
             ]
@@ -259,21 +272,21 @@ export class ContextMenuService {
                     children: [
                         {
                             ...MenuItemStrings.collapseSourcesWeightOnly,
-                            action : new CollapseStationsMSA({
+                            action: new CollapseStationsMSA({
                                 groupType: GroupType.SOURCE_GROUP,
                                 groupMode: GroupMode.WEIGHT_ONLY
                             })
                         },
                         {
                             ...MenuItemStrings.collapseSourcesProductAndWeight,
-                            action : new CollapseStationsMSA({
+                            action: new CollapseStationsMSA({
                                 groupType: GroupType.SOURCE_GROUP,
                                 groupMode: GroupMode.PRODUCT_AND_WEIGHT
                             })
                         },
                         {
                             ...MenuItemStrings.collapseSourcesLotAndWeight,
-                            action : new CollapseStationsMSA({
+                            action: new CollapseStationsMSA({
                                 groupType: GroupType.SOURCE_GROUP,
                                 groupMode: GroupMode.LOT_AND_WEIGHT
                             })
@@ -285,21 +298,21 @@ export class ContextMenuService {
                     children: [
                         {
                             ...MenuItemStrings.collapseTargetsWeightOnly,
-                            action : new CollapseStationsMSA({
+                            action: new CollapseStationsMSA({
                                 groupType: GroupType.TARGET_GROUP,
                                 groupMode: GroupMode.WEIGHT_ONLY
                             })
                         },
                         {
                             ...MenuItemStrings.collapseTargetsProductAndWeight,
-                            action : new CollapseStationsMSA({
+                            action: new CollapseStationsMSA({
                                 groupType: GroupType.TARGET_GROUP,
                                 groupMode: GroupMode.PRODUCT_AND_WEIGHT
                             })
                         },
                         {
                             ...MenuItemStrings.collapseTargetsLotAndWeight,
-                            action : new CollapseStationsMSA({
+                            action: new CollapseStationsMSA({
                                 groupType: GroupType.TARGET_GROUP,
                                 groupMode: GroupMode.LOT_AND_WEIGHT
                             })
@@ -308,11 +321,11 @@ export class ContextMenuService {
                 },
                 {
                     ...MenuItemStrings.collapseSimpleChains,
-                    action : new CollapseStationsMSA({ groupType: GroupType.SIMPLE_CHAIN })
+                    action: new CollapseStationsMSA({ groupType: GroupType.SIMPLE_CHAIN })
                 },
                 {
                     ...MenuItemStrings.collapseIsolatedClouds,
-                    action : new CollapseStationsMSA({ groupType: GroupType.ISOLATED_GROUP })
+                    action: new CollapseStationsMSA({ groupType: GroupType.ISOLATED_GROUP })
                 }
             ]
         };
@@ -333,7 +346,7 @@ export class ContextMenuService {
         const allContextDeliveriesAreOutbreaks = graphData.getDelById(contextElements.deliveryIds).every(d => d.outbreak);
         const allContextElementsAreOutbreaks = allContextStationsAreOutbreaks && allContextDeliveriesAreOutbreaks;
         return {
-            ...(allContextElementsAreOutbreaks ? MenuItemStrings.unmarkOutbreaks :MenuItemStrings.markOutbreaks),
+            ...(allContextElementsAreOutbreaks ? MenuItemStrings.unmarkOutbreaks : MenuItemStrings.markOutbreaks),
             action: new MarkElementsAsOutbreakMSA({
                 stationIds: contextElements.stationIds,
                 deliveryIds: contextElements.deliveryIds,
@@ -347,7 +360,7 @@ export class ContextMenuService {
         const allContextDeliveriesHaveKillCon = graphData.getDelById(contextElements.deliveryIds).every(d => d.killContamination);
         const allContextElementsHaveKillCon = allContextStationsHaveKillCon && allContextDeliveriesHaveKillCon;
         return {
-            ...(allContextElementsHaveKillCon ? MenuItemStrings.unsetKillContamination :MenuItemStrings.setKillContamination),
+            ...(allContextElementsHaveKillCon ? MenuItemStrings.unsetKillContamination : MenuItemStrings.setKillContamination),
             action: new SetKillContaminationMSA({
                 stationIds: contextElements.stationIds,
                 deliveryIds: contextElements.deliveryIds,

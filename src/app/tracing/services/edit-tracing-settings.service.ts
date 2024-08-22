@@ -66,6 +66,15 @@ export class EditTracingSettingsService {
         };
     }
 
+    getClearCrossContaminationPayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {
+        return this.getSetStationCrossContPayload(
+            tracingSettings,
+            tracingSettings.stations.filter(s => s.crossContamination).map(s => s.id),
+            false
+        );
+    }
+
+
     getSetStationCrossContPayload(tracingSettings: TracingSettings, ids: string[], crossContamination: boolean): SetTracingSettingsPayload {
         const idSet = Utils.createSimpleStringSet(ids);
         return {
@@ -135,7 +144,7 @@ export class EditTracingSettingsService {
         }
     }
 
-    resetObservedTypeForElements(tracingSettings: TracingSettings, elements: SelectedElements): TracingSettings | null  {
+    resetObservedTypeForElements(tracingSettings: TracingSettings, elements: SelectedElements): TracingSettings | null {
         if (elements.stations.length > 0 || elements.deliveries.length > 0) {
             return {
                 ...tracingSettings,
