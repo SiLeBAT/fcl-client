@@ -256,27 +256,49 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.selectColumns.emit();
     }
 
-    onRowSelectionChange({ selected }: { selected: TableRow[] }): void {
-        if (this.processedInput__) {
-            const selectedRowIds = selected.map(row => row.id);
-            // dblclick events trigger 3 selection change events
-            // only the first one changes (usually) the selection
-            // we check here the selection change to emit only true selection changes
-            if (this.areSelectedRowIdsEqual(selectedRowIds, this.processedInput__.selectedRowIds)) {
-                // no selection change
-            } else {
-                // selection change detected
-                this.processedInput__.selectedRowIds = selected.map(row => row.id);
+    isTableRowArray(toInspect: TableRow[] | { selected: TableRow[] } | any): toInspect is TableRow[] {
+        return (toInspect as TableRow[]).length !== undefined;
+    }
 
-                this.selectedRows_.splice(0, this.selectedRows_.length);
-                this.selectedRows_.push(...selected);
+    isTableRowObject(toInspect: TableRow[] | { selected: TableRow[] } | any): toInspect is { selected: TableRow[] } {
+        return (toInspect as { selected: TableRow[] }).selected !== undefined;
+    }
 
-                this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
-
-                // we need this to get rid of the text selection
-                window.getSelection()?.removeAllRanges();
-            }
+    onRowSelectionChange(eventIn: { selected: TableRow[] } | TableRow[] | any): void {
+        // Early Return in case we are not ready to work on this yet.
+        if (!this.processedInput__) {
+            return;
         }
+
+        // Typeguards to ensure that rows is TableRow[] in following code
+        let rows: TableRow[] = [];
+        if (this.isTableRowObject(eventIn)) {
+            rows = eventIn.selected;
+        } else if (this.isTableRowArray(eventIn)) {
+            rows = eventIn;
+        } else {
+            // If eventIn is neither an object containing a selected property with TableRows,
+            // nor an array of TableRows, then we do not change our selection.
+            return;
+        }
+
+        const selectedRowIds = rows.map(row => row.id);
+
+        // dblclick events trigger 3 selection change events
+        // only the first one changes (usually) the selection
+        // we check here the selection change to emit only true selection changes
+        if (this.areSelectedRowIdsEqual(selectedRowIds, this.processedInput__.selectedRowIds)) {
+            // early return in case of no selection change
+            return;
+        }
+
+        // selection change detected
+        this.processedInput__.selectedRowIds = selectedRowIds;
+
+        this.selectedRows_.splice(0, this.selectedRows_.length);
+        this.selectedRows_.push(...rows);
+
+        this.rowSelectionChange.emit(this.processedInput__.selectedRowIds);
     }
 
     onSetColumnFilterText(prop: string, filterTerm: string) {
