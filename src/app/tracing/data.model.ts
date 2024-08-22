@@ -487,6 +487,7 @@ export interface SetInvisibleElementsPayload {
 interface LegendEntry {
     label: string;
     color: Color | null;
+    index: number;
 }
 
 interface StationLegendEntry extends LegendEntry {

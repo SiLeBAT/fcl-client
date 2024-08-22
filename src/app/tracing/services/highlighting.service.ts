@@ -158,7 +158,7 @@ export class HighlightingService {
 
         data.isStationAnonymizationActive = this.anonymizeStationsIfApplicable(data.stations, this.enabledStatHRules, effElementsStats);
 
-        data.legendInfo = this.getLegendInfo(state, {
+        data.legendInfo = this.getLegendInfo({
             stations: this.getRuleIdToIsActiveMap(
                 this.enabledStatHRules,
                 effElementsStats
@@ -178,36 +178,35 @@ export class HighlightingService {
     }
 
     private getLegendInfo(
-        state: DataServiceInputState,
-        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean>}
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean> }
     ): LegendInfo {
-
-        const ruleIdToIsCommonLinkRuleMap: Record<RuleId, boolean> = {};
-        this.getCommonLinkEntries(state).forEach(
-            commonLinkRule => ruleIdToIsCommonLinkRuleMap[commonLinkRule.id] = true
-        );
-
         return {
             stations: this.enabledStatHRules.filter(rule =>
                 rule.showInLegend &&
-                (activeHighlightings.stations[rule.id] || ruleIdToIsCommonLinkRuleMap[rule.id])
-            ).map(rule =>
-                ({ label: rule.name, color: this.mapToColor(rule.color), shape: rule.shape })
+                (activeHighlightings.stations[rule.id] || this.isCommonLinkRule(rule))
+            ).map((rule) =>
+                ({
+                    label: rule.name,
+                    color: this.mapToColor(rule.color),
+                    shape: rule.shape,
+                    index: this.statHighlightingRules.findIndex(comp => comp.id === rule.id)
+                })
             ),
             deliveries: this.enabledDelHRules.filter(rule =>
                 rule.showInLegend && (activeHighlightings.deliveries[rule.id])
             ).map(rule =>
-                ({ label: rule.name, color: this.mapToColor(rule.color), linePattern: rule.linePattern })
+                ({
+                    label: rule.name,
+                    color: this.mapToColor(rule.color),
+                    linePattern: rule.linePattern,
+                    index: this.delHighlightingRules.findIndex(comp => comp.id === rule.id)
+                })
             )
         };
     }
 
     private mapToColor(color: number[] | null): Color | null {
         return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
-    }
-
-    private getCommonLinkEntries(state: DataServiceInputState): StationHighlightingRule[] {
-        return this.enabledStatHRules.filter(rule => this.isCommonLinkRule(rule));
     }
 
     private isCommonLinkRule(rule: HighlightingRule): boolean {

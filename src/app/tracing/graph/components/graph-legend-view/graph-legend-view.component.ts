@@ -1,15 +1,14 @@
 import { Component, Input } from '@angular/core';
-import { Utils } from '../../../util/non-ui-utils';
 import { LegendInfo, Color, NodeShapeType } from '@app/tracing/data.model';
 
-interface LegendEntry {
+interface LegendDisplayEntry {
     name: string;
     stationColor?: Color;
     deliveryColor?: Color;
     shape?: NodeShapeType;
 }
-interface LegendEntryWithIndices extends LegendEntry {
-    deliveryIndex?: number;
+interface LegendDisplayEntryWithIndex extends LegendDisplayEntry {
+    index: number;
 }
 
 @Component({
@@ -32,7 +31,7 @@ export class GraphLegendViewComponent {
         }
     }
 
-    legend: LegendEntry[] = [];
+    legend: LegendDisplayEntry[] = [];
 
     get showStationColumn(): boolean {
         return this.showStationColumn_;
@@ -46,47 +45,67 @@ export class GraphLegendViewComponent {
         return this.legend.length === 0;
     }
 
+
     private updateLegend(legendInfo: LegendInfo) {
-        const newLegend: LegendEntryWithIndices[] = [];
-        if (legendInfo) {
-            legendInfo.stations.forEach((stationLegendInfo, index) => {
-                newLegend.push({
-                    name: stationLegendInfo.label,
-                    stationColor: stationLegendInfo.color ?? undefined,
-                    shape: stationLegendInfo.shape ?? undefined
-                });
-            });
-            const entryMap = Utils.createObjectFromArray(newLegend, (e) => e.name);
-            legendInfo.deliveries.forEach((deliveryLegendInfo, index) => {
-                const entry = entryMap[deliveryLegendInfo.label];
-                if (entry) {
-                    entry.deliveryColor = deliveryLegendInfo.color ?? undefined;
-                    entry.deliveryIndex = index;
-                } else {
-                    const newEntry: LegendEntryWithIndices = {
-                        name: deliveryLegendInfo.label,
-                        deliveryColor: deliveryLegendInfo.color ?? undefined,
-                        deliveryIndex: index
-                    };
-                    const beforeIndex = newLegend.findIndex(e => e.deliveryIndex !== undefined && e.deliveryIndex > index);
+        // Early Return if no legendinfo
+        if (!legendInfo) { return; }
 
-                    if (beforeIndex >= 0) {
-                        newLegend.splice(beforeIndex, 0, newEntry);
+        this.legend = legendInfo.stations.map(
+            (stationEntry): LegendDisplayEntryWithIndex =>
+                ({
+                    name: stationEntry.label,
+                    index: stationEntry.index,
+                    stationColor: stationEntry.color ?? undefined,
+                    shape: stationEntry.shape ?? undefined,
+                    deliveryColor: undefined
+                })
+        )
+            .concat(
+                legendInfo.deliveries
+                    .map(
+                        (deliveryEntry): LegendDisplayEntryWithIndex => ({
+                            name: deliveryEntry.label,
+                            index: deliveryEntry.index,
+                            stationColor: undefined,
+                            shape: undefined,
+                            deliveryColor: deliveryEntry.color ?? undefined
+                        })
+                    )
+            )
+            //Should use toSorted once we update to a newer TS version.
+            .sort(
+                ((entryA, entryB) => entryA.index - entryB.index)
+            )
+            .reduce(
+                (legend: LegendDisplayEntry[], currentEntry: LegendDisplayEntryWithIndex) => {
+                    const index = legend.findIndex((entry) => entry.name === currentEntry.name);
+                    if (index >= 0) {
+                        //Should use legend.with(index,{newObj}) once we update to a newer TS version.
+                        const newArray = legend;
+                        newArray[index] = {
+                            name: currentEntry.name,
+                            stationColor: legend[index]?.stationColor ?? currentEntry?.stationColor,
+                            deliveryColor: legend[index]?.deliveryColor ?? currentEntry?.deliveryColor,
+                            shape: legend[index]?.shape ?? currentEntry?.shape
+                        };
+                        return newArray;
                     } else {
-                        newLegend.push(newEntry);
+                        return [...legend,
+                            {
+                                name: currentEntry.name,
+                                stationColor: legend[index]?.stationColor ?? currentEntry?.stationColor,
+                                deliveryColor: legend[index]?.deliveryColor ?? currentEntry?.deliveryColor,
+                                shape: legend[index]?.shape ?? currentEntry?.shape
+                            }
+                        ];
                     }
-                }
-            });
-        }
+                },
+                []
+            );
 
-        this.legend = newLegend.map(e => ({
-            name: e.name,
-            stationColor: e.stationColor,
-            deliveryColor: e.deliveryColor,
-            shape: e.shape
-        }));
         this.showStationColumn_ = this.legend.some(e => !!e.shape || !!e.stationColor);
         this.showDeliveryColumn_ = this.legend.some(e => !!e.deliveryColor);
+
     }
 
 }
