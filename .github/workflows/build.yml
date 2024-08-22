@@ -9,6 +9,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+      - run: npm ci
       - run: npm run ng build
   test:
     runs-on: ubuntu-latest
@@ -17,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+      - run: npm ci
       - run: npm run test
   lint:
     runs-on: ubuntu-latest
@@ -25,4 +27,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+      - run: npm ci
       - run: npm run lint
