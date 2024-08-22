@@ -30,7 +30,7 @@ export class MenuItemStrings {
 
     static readonly clearCrossContaminations: ItemInfo = {
         displayName: 'Clear Cross Contaminations'
-    }
+    };
 
     static readonly clearInvisibility: ItemInfo = {
         displayName: 'Clear Invisibility'

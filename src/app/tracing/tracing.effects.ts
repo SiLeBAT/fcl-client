@@ -291,7 +291,7 @@ export class TracingEffects {
                     return of(new tracingStateActions.SetTracingSettingsSOA(payload));
                 }
             } catch (error) {
-                this.alertService.error(`Cross Contaminations could not be cleared!, error: ${error}`)
+                this.alertService.error(`Cross Contaminations could not be cleared!, error: ${error}`);
             }
             return EMPTY;
         })

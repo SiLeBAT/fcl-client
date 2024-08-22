@@ -67,7 +67,11 @@ export class EditTracingSettingsService {
     }
 
     getClearCrossContaminationPayload(tracingSettings: TracingSettings): SetTracingSettingsPayload {
-        return this.getSetStationCrossContPayload(tracingSettings, tracingSettings.stations.filter(s => s.crossContamination).map(s => s.id), false)
+        return this.getSetStationCrossContPayload(
+            tracingSettings,
+            tracingSettings.stations.filter(s => s.crossContamination).map(s => s.id),
+            false
+        );
     }
 
 
@@ -126,7 +130,7 @@ export class EditTracingSettingsService {
         };
     }
 
-    private getNewTracing<T extends (StationTracingSettings | DeliveryTracingSettings)>(
+    private getNewTracing<T extends(StationTracingSettings | DeliveryTracingSettings)>(
         oldTracing: T[], newInvIds: string[]
     ): T[] {
         if (newInvIds.length === 0) {
@@ -151,7 +155,7 @@ export class EditTracingSettingsService {
         return null;
     }
 
-    private setElementsObservedType<T extends (StationTracingSettings | DeliveryTracingSettings)>(
+    private setElementsObservedType<T extends(StationTracingSettings | DeliveryTracingSettings)>(
         elements: T[],
         ids: string[],
         observedType: ObservedType
