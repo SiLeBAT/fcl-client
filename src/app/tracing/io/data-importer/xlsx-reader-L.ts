@@ -6,6 +6,9 @@ import * as _ from 'lodash';
 import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Row, TableHeader, CellSpecs, TypeString, EachRowOptions} from './xlsx-model-vL';
 import { CellValue } from './xlsx-model-v0';
 
+type RowTextPart<T extends number> = { [key in T]?: string };
+type RowAmountPart<T extends number> = { [key in T]?: number };
+
 
 function getColumnHeaderChildren(row: Excel.Row, colStartIndex: number, colEndIndex: number): NonEmptyArray<ColumnHeader> {
     let colIndex = colStartIndex;
@@ -221,21 +224,22 @@ export class XlsxReader {
         });
     }
 
-    private readRows(ws: Excel.Worksheet, startIndex: number, columnValueConstraints: Record<number, ColumnConstraints>): Row[] {
+    private readRows(ws: Excel.Worksheet, startIndex: number):  { //   columnValueConstraints: Record<number, ColumnConstraints>): Row[] {
         const tableRows: Row[] = [];
-        const uniqueFieldSets: [number | string, Set<any>][] = Object.entries(columnValueConstraints)
-            .filter(c => c[1].isUnique)
-            .map(c => [c[0], new Set<any>()]);
+        // const uniqueFieldSets: [number | string, Set<any>][] = Object.entries(columnValueConstraints)
+        //     .filter(c => c[1].isUnique)
+        //     .map(c => [c[0], new Set<any>()]);
 
-        const mandatoryFields: (number | string)[] = Object.entries(columnValueConstraints)
-            .filter(c => c[1].isMandatory)
-            .map(c => c[0]);
+        // const mandatoryFields: (number | string)[] = Object.entries(columnValueConstraints)
+        //     .filter(c => c[1].isMandatory)
+        //     .map(c => c[0]);
 
         ws.eachRow((wsRow, rowIndex) => {
             if (rowIndex >= startIndex) {
                 const tableRow: Row = {};
                 let isRowEmpty = true;
                 wsRow.eachCell(wsCell => {
+
                     const cellValue = wsCell.value;
                     if (isNotNullish(cellValue)) {
                         isRowEmpty = false;
@@ -268,7 +272,7 @@ export class XlsxReader {
         });
     }
 
-    readTableFromSheet(sheetName: string, options: ReadTableOptions): Table {
+    readTableFromSheet<TCI extends number>(sheetName: string, options: ReadTableOptions): Table {
         // options = options ?? {};
         // options = {
         //     ...options

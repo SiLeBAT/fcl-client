@@ -381,20 +381,14 @@ function importDeliveryRows(
     table.rows.forEach(row => {
 
             try {
-                const delRow :
-                    // PartialPick<
-                        // Required<
-                            DeliveryRow
-                        // >,
-                        // | 'dateIn' | 'dateOut' | 'unitAmount'
-                        // | 'delAmountQuantity' | 'delAmountUnit'
-                    // >
-                    = {
+                const delRow: DeliveryRow = {
                     rowIndex: row.rowIndex,
                     id: '',
-                    extId: importUniqueString(row, colIndices.extId, extIdSet, importIssues),
-                    lotNo: importValue(row, colIndices.lotNo, 'string', importIssues),
-                    source: importFkString(row, colIndices.source, availableStatIds, importIssues, 'station'),
+                    // extId: importUniqueString(row, colIndices.extId, extIdSet, importIssues),
+                    extId: importString(row, colIndices.extId, 'string', importIssues, true), // should be unique, only if required as ref
+                    productName: importValue(row, colIndices.name, 'string', importIssues),
+                    lotNo: importValue(row, colIndices.lotNo, 'string', importIssues), // recommended
+                    source: importFkString(row, colIndices.source, availableStatIds, importIssues, 'station'), // required
                     target: importFkString(row, colIndices.target, availableStatIds, importIssues, 'station'),
                     dateOut: importStrDate(row, { y: colIndices.dateOut_year, m: colIndices.dateOut_month, d: colIndices.dateOut_day}, importIssues),
                     dateIn: importStrDate(row, { y: colIndices.dateIn_year, m: colIndices.dateIn_month, d: colIndices.dateIn_day}, importIssues),
@@ -420,7 +414,7 @@ function importDeliveryRows(
                 delRow.ppIdentFP = createDeliveryPPIdentFP(delRow);
                 const existingDel = identFP2Del.get(delRow.ppIdentFP);
                 if (existingDel) {
-                    const delRowsDiff = compareRows(delRow, existingDel, {ignoreFields: ['extId', 'id']});
+                    const delRowsDiff = compareRows(delRow, existingDel, { ignoreFields: ['extId', 'id'] });
                     if (delRowsDiff.conflictingFields.length > 0) {
                         importIssues.push({
                             row: delRow.rowIndex,

@@ -11,11 +11,14 @@ export interface ImportWarning {
     warning: string;
 }
 
-export interface ReadTableOptions {
+export interface ReadTableOptions<TCI extends number, MCI extends number>  {
     offset: {
         row: number;
         col: number;
     };
+    textColIndices?: TCI[];
+    mandatoryColIndices?: MCI[];
+    allowedColValues?: Record<number, Set<string | number>>;
 }
 
 export interface ColumnHeader {

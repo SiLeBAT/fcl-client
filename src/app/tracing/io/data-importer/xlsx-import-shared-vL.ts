@@ -52,7 +52,7 @@ const LONGITUDE_LIMITS = {
     max: 180
 } as const;
 
-export function getCleanedString(value: CellValue | undefined): CellValue | undefined {
+export function getCleanedString(value: CellValue | undefined): string | undefined {
     if (typeof value === 'string') {
         value = value.trim();
         if (value === '') {
@@ -123,6 +123,32 @@ export function importValue<
     R extends(M extends true ? Y: Y | undefined)
 >(row: Row, index: number, reqType: X, issues: ImportIssue[], required?: M): R {
     const inputValue = getCleanedInput(row[index]);
+    if (inputValue === undefined) {
+        if (required === true) {
+            issues.push({
+                row: row.rowIndex,
+                col: index,
+                type: 'error',
+                msg: `Mandatory value in column ${index} is missing.`
+            })
+            throw new MissingMandatoryValueError(`Value in column ${index} is missing.`);
+        } else {
+            return undefined as R;
+        }
+    }
+    const value = TYPESTRING_2_FUN[reqType](inputValue);
+    if (value !== undefined) {
+        return value as R;
+    } else {
+        throw new Error(`Value in column '${index}' is not of type '${TYPESTRING_2_LABEL[reqType]}'.`);
+    }
+}
+
+export function importString<
+    M extends boolean
+    R extends(M extends true ? string: string | undefined)
+>(row: Row, index: number, issues: ImportIssue[], required?: M): R {
+    const inputValue = getCleanedString(row[index]);
     if (inputValue === undefined) {
         if (required === true) {
             issues.push({
