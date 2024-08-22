@@ -179,7 +179,7 @@ export class TableService {
 
     getDeliveryTable(state: DataServiceInputState, forHighlighting: boolean, deliveryIds?: string[]): DataTable {
         const data = this.dataService.getData(state);
-        
+
         return {
             modelFlag: data.modelFlag,
             ...this.getDeliveryColumnSets(state, data, forHighlighting),
@@ -392,7 +392,7 @@ export class TableService {
                 forward: delivery.forward,
                 backward: delivery.backward,
                 score: delivery.score,
-                outbreak: delivery.outbreak,
+                outbreak: delivery.outbreak
             };
 
             if (!forHighlighting) {
