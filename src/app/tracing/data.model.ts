@@ -146,14 +146,9 @@ export interface SelectedElements {
     deliveries: DeliveryId[];
 }
 
-export interface ClearInvisibilitiesOptions {
-    clearStationInvs: boolean;
-    clearDeliveryInvs: boolean;
-}
-
-export interface ClearOutbreaksOptions {
-    clearStationOutbreaks: boolean;
-    clearDeliveryOutbreaks: boolean;
+export interface FoodChainElementTypeSelection {
+    stations: boolean;
+    deliveries: boolean;
 }
 
 export interface SetOutbreaksOptions {

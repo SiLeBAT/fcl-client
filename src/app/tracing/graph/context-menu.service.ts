@@ -21,7 +21,8 @@ import {
     ShowElementsTraceMSA,
     MakeElementsInvisibleMSA,
     ClearOutbreaksMSA,
-    ClearCrossContaminationMSA
+    ClearCrossContaminationMSA,
+    ClearKillContaminationsMSA
 } from '../tracing.actions';
 import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
 import { Action } from '@ngrx/store';
@@ -158,6 +159,7 @@ export class ContextMenuService {
                 },
                 this.createClearOutbreaksMenuItemData(graphData),
                 this.createClearCrossContaminationsMenuItemData(graphData),
+                this.createClearKillContaminationsMenuItemData(graphData),
                 this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),
                 this.createUncollapseStationsMenuItem(graphData)
@@ -176,16 +178,16 @@ export class ContextMenuService {
                 {
                     ...MenuItemStrings.clearOutbreakStations,
                     disabled: !someStationIsAnOutbreak,
-                    action: new ClearOutbreaksMSA({ clearStationOutbreaks: true, clearDeliveryOutbreaks: false })
+                    action: new ClearOutbreaksMSA({ stations: true, deliveries: false })
                 },
                 {
                     ...MenuItemStrings.clearOutbreakDeliveries,
                     disabled: !someDeliveryIsAnOutbreak,
-                    action: new ClearOutbreaksMSA({ clearStationOutbreaks: false, clearDeliveryOutbreaks: true })
+                    action: new ClearOutbreaksMSA({ stations: false, deliveries: true })
                 },
                 {
                     ...MenuItemStrings.clearAllOutbreaks,
-                    action: new ClearOutbreaksMSA({ clearStationOutbreaks: true, clearDeliveryOutbreaks: true })
+                    action: new ClearOutbreaksMSA({ stations: true, deliveries: true })
                 }
             ]
         };
@@ -201,6 +203,32 @@ export class ContextMenuService {
         };
     }
 
+    private createClearKillContaminationsMenuItemData(graphData: GraphServiceData): MenuItemData {
+        const someStationHasKillCont = graphData.stations.some(s => s.killContamination);
+        const someDeliveryHasKillCont = graphData.deliveries.some(d => d.killContamination);
+        return {
+            ...MenuItemStrings.clearKillContaminations,
+            disabled: !(someStationHasKillCont || someDeliveryHasKillCont),
+
+            children: [
+                {
+                    ...MenuItemStrings.clearKillContaminationStations,
+                    disabled: !someStationHasKillCont,
+                    action: new ClearKillContaminationsMSA({ stations: true, deliveries: false })
+                },
+                {
+                    ...MenuItemStrings.clearKillContaminationDeliveries,
+                    disabled: !someDeliveryHasKillCont,
+                    action: new ClearKillContaminationsMSA({ stations: false, deliveries: true })
+                },
+                {
+                    ...MenuItemStrings.clearAllKillContaminations,
+                    action: new ClearKillContaminationsMSA({ stations: true, deliveries: true })
+                }
+            ]
+        };
+    }
+
     private createClearInvisibilitiesMenuItemData(graphData: GraphServiceData): MenuItemData {
         const someStationIsExpInvisible = graphData.stations.some(s => s.expInvisible);
         const someDeliveryIsExpInvisible = graphData.deliveries.some(d => d.expInvisible);
@@ -212,16 +240,16 @@ export class ContextMenuService {
                 {
                     ...MenuItemStrings.clearInvisibleStations,
                     disabled: !someStationIsExpInvisible,
-                    action: new ClearInvisibilitiesMSA({ clearStationInvs: true, clearDeliveryInvs: false })
+                    action: new ClearInvisibilitiesMSA({ stations: true, deliveries: false })
                 },
                 {
                     ...MenuItemStrings.clearInvisibleDeliveries,
                     disabled: !someDeliveryIsExpInvisible,
-                    action: new ClearInvisibilitiesMSA({ clearStationInvs: false, clearDeliveryInvs: true })
+                    action: new ClearInvisibilitiesMSA({ stations: false, deliveries: true })
                 },
                 {
                     ...MenuItemStrings.clearInvisibleElements,
-                    action: new ClearInvisibilitiesMSA({ clearStationInvs: true, clearDeliveryInvs: true })
+                    action: new ClearInvisibilitiesMSA({ stations: true, deliveries: true })
                 }
             ]
         };
