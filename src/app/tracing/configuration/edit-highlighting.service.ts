@@ -5,7 +5,6 @@ import {
     MakeElementsInvisibleInputState,
     SetInvisibleElementsPayload,
     HighlightingSettings,
-    ClearInvisibilitiesOptions,
     SetHighlightingSettingsPayload,
     DataServiceInputState,
     StationId,
@@ -14,7 +13,8 @@ import {
     DeliveryId,
     HighlightingRule,
     StationHighlightingRule,
-    HighlightingStats
+    HighlightingStats,
+    FoodChainElementTypeSelection
 } from '../data.model';
 import { DataService } from '../services/data.service';
 import { EditTracingSettingsService } from '../services/edit-tracing-settings.service';
@@ -111,14 +111,14 @@ export class EditHighlightingService {
 
     getClearInvisiblitiesPayload(
         state: HighlightingSettings,
-        options: ClearInvisibilitiesOptions
+        options: FoodChainElementTypeSelection
     ): SetHighlightingSettingsPayload | null {
-        if (options.clearDeliveryInvs || options.clearStationInvs) {
+        if (options.stations || options.deliveries) {
             return {
                 highlightingSettings: {
                     ...state,
-                    invisibleStations: options.clearStationInvs ? [] : state.invisibleStations,
-                    invisibleDeliveries: options.clearDeliveryInvs ? [] : state.invisibleDeliveries
+                    invisibleStations: options.stations ? [] : state.invisibleStations,
+                    invisibleDeliveries: options.deliveries ? [] : state.invisibleDeliveries
                 }
             };
         }

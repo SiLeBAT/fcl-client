@@ -281,6 +281,22 @@ export class TracingEffects {
         })
     ));
 
+    clearKillContaminations$ = createEffect(() => this.actions$.pipe(
+        ofType<tracingEffectActions.ClearKillContaminationsMSA>(tracingEffectActions.TracingActionTypes.ClearKillContaminationsMSA),
+        withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),
+        mergeMap(([action, state]) => {
+            try {
+                const payload = this.editTracSettingsService.getClearKillContaminationsPayload(state, action.payload);
+                if (payload) {
+                    return of(new tracingStateActions.SetTracingSettingsSOA(payload));
+                }
+            } catch (error) {
+                this.alertService.error(`Kill Contaminations could not be cleared!, error: ${error}`);
+            }
+            return EMPTY;
+        })
+    ));
+
     clearCrossContaminations$ = createEffect(() => this.actions$.pipe(
         ofType<tracingEffectActions.ClearCrossContaminationMSA>(tracingEffectActions.TracingActionTypes.ClearCrossContaminationMSA),
         withLatestFrom(this.store.pipe(select(tracingSelectors.getTracingSettings))),

@@ -4,10 +4,10 @@ import {
     TracingSettings, ObservedType, DeliveryTracingSettings, StationTracingSettings,
     SelectedElements,
     ShowElementsTraceParams,
-    ClearOutbreaksOptions,
     ElementTracingSettings,
     SetOutbreaksOptions,
-    SetKillContaminationOptions
+    SetKillContaminationOptions,
+    FoodChainElementTypeSelection
 } from '../data.model';
 import { getUpdatedObject, Utils } from '../util/non-ui-utils';
 
@@ -34,12 +34,30 @@ export class EditTracingSettingsService {
         }
     }
 
-    getClearOutbreaksPayload(tracingSettings: TracingSettings, options: ClearOutbreaksOptions): SetTracingSettingsPayload {
+    getClearOutbreaksPayload(tracingSettings: TracingSettings, options: FoodChainElementTypeSelection): SetTracingSettingsPayload {
         return this.getMarkElementsAsOutbreakPayload(tracingSettings, {
-            stationIds: options.clearStationOutbreaks ? tracingSettings.stations.filter(s => s.outbreak).map(s => s.id) : undefined,
-            deliveryIds: options.clearDeliveryOutbreaks ? tracingSettings.deliveries.filter(d => d.outbreak).map(d => d.id) : undefined,
+            stationIds: options.stations ? tracingSettings.stations.filter(s => s.outbreak).map(s => s.id) : undefined,
+            deliveryIds: options.deliveries ? tracingSettings.deliveries.filter(d => d.outbreak).map(d => d.id) : undefined,
             outbreak: false
         });
+    }
+
+    getClearKillContaminationsPayload(
+        tracingSettings: TracingSettings,
+        options: FoodChainElementTypeSelection
+    ): SetTracingSettingsPayload {
+
+        const updateFun = <T extends ElementTracingSettings>(x: T) => ({ ...x, killContamination: false });
+
+        tracingSettings = { ...tracingSettings };
+        if (options.stations) {
+            tracingSettings.stations = tracingSettings.stations.map(updateFun);
+        }
+        if (options.deliveries) {
+            tracingSettings.deliveries = tracingSettings.deliveries.map(updateFun);
+        }
+
+        return { tracingSettings: tracingSettings };
     }
 
     getMarkElementsAsOutbreakPayload(

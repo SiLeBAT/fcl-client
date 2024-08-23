@@ -12,6 +12,22 @@ export class MenuItemStrings {
         displayName: 'Clear Trace'
     };
 
+    static readonly clearKillContaminations: ItemInfo = {
+        displayName: 'Clear Kill Contaminations'
+    };
+
+    static readonly clearKillContaminationStations: ItemInfo = {
+        displayName: 'Clear Kill Contamination Stations'
+    };
+
+    static readonly clearKillContaminationDeliveries: ItemInfo = {
+        displayName: 'Clear Kill Contamination Deliveries'
+    };
+
+    static readonly clearAllKillContaminations: ItemInfo = {
+        displayName: 'Clear All Kill Contaminations'
+    };
+
     static readonly clearOutbreaks: ItemInfo = {
         displayName: 'Clear Outbreaks'
     };

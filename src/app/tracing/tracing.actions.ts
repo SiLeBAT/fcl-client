@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import {
-    ClearInvisibilitiesOptions, ClearOutbreaksOptions, DeliveryId, Layout, Position, SelectedElements,
+    FoodChainElementTypeSelection,
+    DeliveryId, Layout, Position, SelectedElements,
     SetKillContaminationOptions,
     SetOutbreaksOptions,
     ShowElementsTraceParams, StationId
@@ -11,6 +12,7 @@ export enum TracingActionTypes {
     ClearTraceMSA = '[Tracing] Clear Trace',
     ClearInvisibilitiesMSA = '[Tracing] Clear Invisibilities',
     ShowStationPropertiesMSA = '[Tracing] Show Station Properties',
+    ClearKillContaminationsMSA = '[Tracing] Clear Kill Contaminations',
     ClearOutbreaksMSA = '[Tracing] Clear Outbreaks',
     MarkElementsAsOutbreakMSA = '[Tracing] Mark Elements as Outbreak',
     SetKillContaminationMSA = '[Tracing] Set Kill Contamination',
@@ -34,13 +36,19 @@ export class ClearTraceMSA implements Action {
 export class ClearInvisibilitiesMSA implements Action {
     readonly type = TracingActionTypes.ClearInvisibilitiesMSA;
 
-    constructor(public payload: ClearInvisibilitiesOptions) {}
+    constructor(public payload: FoodChainElementTypeSelection) {}
+}
+
+export class ClearKillContaminationsMSA implements Action {
+    readonly type = TracingActionTypes.ClearKillContaminationsMSA;
+
+    constructor(public payload: FoodChainElementTypeSelection) {}
 }
 
 export class ClearOutbreaksMSA implements Action {
     readonly type = TracingActionTypes.ClearOutbreaksMSA;
 
-    constructor(public payload: ClearOutbreaksOptions) {}
+    constructor(public payload: FoodChainElementTypeSelection) {}
 }
 
 export class ClearCrossContaminationMSA implements Action {
@@ -126,6 +134,7 @@ export class SetStationPositionsAndLayoutMSA implements Action {
 
 export type TracingActions =
       ClearTraceMSA
+    | ClearKillContaminationsMSA
     | ClearOutbreaksMSA
     | ClearInvisibilitiesMSA
     | ShowStationPropertiesMSA
