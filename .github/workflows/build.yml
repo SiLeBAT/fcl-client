@@ -10,7 +10,7 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: npm run ng build
+      - run: npm run build:qa
   test:
     runs-on: ubuntu-latest
     steps:
