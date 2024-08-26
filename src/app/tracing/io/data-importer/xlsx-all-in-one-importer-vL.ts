@@ -5,8 +5,8 @@ import { concat, removeUndefined } from '@app/tracing/util/non-ui-utils';
 import * as _ from 'lodash';
 import { DeliveryRow } from './xlsx-all-in-one-import-model-vL';
 import { ImportIssue } from './xlsx-import-model-vL';
-import { compareRows, createDeliveryId, createDeliveryPPIdentFP, importAddColValue, importAggAmount, importFkString, importStrDate, importUniqueString, importValue } from './xlsx-import-shared-vL';
-import { PartialPick } from '@app/tracing/util/utility-types';
+import { compareRows, createDeliveryId, createDeliveryPPIdentFP, getCleanedString, getCleanedStringOrUndefined, importAddColValue, importAggAmount, importFkString, importStrDate, importUniqueString, importValue } from './xlsx-import-shared-vL';
+import { PartialPick, RequiredPick } from '@app/tracing/util/utility-types';
 import { CellValue, Row } from './xlsx-model-vL';
 import { XlsxReader } from './xlsx-reader-L';
 
@@ -36,6 +36,13 @@ interface TypedStationRow {
     lat?: number;
     lon?: number;
 }
+
+type GetInterfaceFromIndex2TypeMap<TM> = TM extends {} ? { [key in Extract<keyof TM, number>]?: TM[key] } : {};
+type MPick<T,A> = T extends {} ? A extends Array<infer MI> ? RequiredPick<T, Extract<MI, keyof T>> : T : T;
+// type GetInterfaceFromIndex2TypeMap<TM> = TM extends { [key in (infer TI)]: (infer V) } ? K extends keyof T['enforceType'] & (string | number) ? T['enforceType'][K] : undefined : undefined : undefined;
+type GetMandatoryFields<T> = T extends ReadTableOptions<infer A, infer N, infer TR, infer MR> ? T['mandatoryValues'] extends Array<infer X> ? X extends A | N ? X : never : never : never;
+type ImportedRow<T> = T extends ReadTableOptions<infer A, infer N, infer TR, infer MR> ? RequiredPick<{ [key in A | N]?: TypeString2Type<GetEnforcedTypeString<T, key>> }, GetMandatoryFields<T>> : Row;
+
 
 export async function importAllInOneTemplate(file: File): Promise<JsonData> {
     const xlsxImporter = new XlsxImporter();
@@ -340,6 +347,10 @@ function cleanRows<T>(table: Table): Table {
 
 }
 
+type TypedRow<TI extends number, MI extends number, M extends <>> =
+
+function getTypedRows(table: Table, ):
+
 function importDeliveryRows(
     xlsxReader: XlsxReader,
     wbSpecs: LocalizedWBSpecs,
@@ -378,10 +389,46 @@ function importDeliveryRows(
     // const explicedTypedColumns = [Object.keys(MANDATORY_COL_INDEXES)];
     const columnsToReset = new Set(table.columns.filter(c => c.types.size > 2).map(c => c.columnIndex));
 
+    // v1
     table.rows.forEach(row => {
 
+        row
+        const delRow: RequiredPick<Partial<DeliveryRow>, 'rowIndex'> = {
+        };
+        try {
+            const extId =
+        }
+        catch {}
+
+        const Row: RequiredPick<Partial<DeliveryRow>, 'rowIndex'> = {
+            rowIndex: row.rowIndex,
+            extId: ,
+            source: getCleanedStringOrUndefined(row[colIndices.source]),
+            target: getCleanedStringOrUndefined(row[colIndices.target])
+        };
+    }
+
+    table.rows.forEach(row => {
+
+            const tmpRow: RequiredPick<Partial<DeliveryRow>, 'rowIndex'> = {
+                rowIndex: row.rowIndex,
+                extId: getCleanedStringOrUndefined(row[colIndices.extId]),
+                source: getCleanedStringOrUndefined(row[colIndices.source]),
+                target: getCleanedStringOrUndefined(row[colIndices.target])
+            };
+
+            if (tmpRow.extId === undefined) {
+                importIssues.push({
+                    col: colIndices.extId,
+                    row: row.rowIndex,
+                    msg: 'Missing. Ignoring '
+                })
+            }
+
+
+
             try {
-                const delRow: DeliveryRow = {
+                const delRow: PartialDeliveryRow = {
                     rowIndex: row.rowIndex,
                     id: '',
                     // extId: importUniqueString(row, colIndices.extId, extIdSet, importIssues),

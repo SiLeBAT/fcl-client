@@ -1,3 +1,5 @@
+import { TypeString } from "./xlsx-model";
+
 export type CellValue = number | string | boolean;
 
 export type Row = {
@@ -11,14 +13,15 @@ export interface ImportWarning {
     warning: string;
 }
 
-export interface ReadTableOptions<TCI extends number, MCI extends number>  {
+export interface ReadTableOptions<I extends number, M extends number>  {
     offset: {
         row: number;
         col: number;
     };
-    textColIndices?: TCI[];
-    mandatoryColIndices?: MCI[];
-    allowedColValues?: Record<number, Set<string | number>>;
+    refColumnIndex: number;
+    enforceTypes: Record<I, TypeString>;
+    mandatoryColumnsIndices?: MCI[];
+    allowedColumnValues?: Record<number, Set<string | number>>;
 }
 
 export interface ColumnHeader {

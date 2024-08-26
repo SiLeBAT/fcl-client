@@ -2,7 +2,7 @@ import { removeUndefined } from "@app/tracing/util/non-ui-utils";
 import { ImportIssue } from "./xlsx-import-model-vL";
 import { DELIVERY_IDENT_FIELDS } from "./xlsx-import-shared-const-vL";
 import { InvalidFKReferenceError, RowComparisonOptions, RowDiff, TypedDeliveryRow } from "./xlsx-import-shared-model-vL";
-import { CellValue } from "./xlsx-model-vL";
+import { CellValue, Table } from "./xlsx-model-vL";
 
 type TypeString = 'number' | 'lat' | 'lon' | 'nonneg:number' | 'string';
 type TypeString2Type<T extends TypeString> =
@@ -52,7 +52,11 @@ const LONGITUDE_LIMITS = {
     max: 180
 } as const;
 
-export function getCleanedString(value: CellValue | undefined): string | undefined {
+export function importMandatoryString(row: Row, table: Table, colIndex: number): string {
+
+}
+
+export function getCleanedStringOrUndefined(value: CellValue | undefined): string | undefined {
     if (typeof value === 'string') {
         value = value.trim();
         if (value === '') {

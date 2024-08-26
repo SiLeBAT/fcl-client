@@ -3,7 +3,7 @@ import { concat, isNotNullish } from '@app/tracing/util/non-ui-utils';
 import { ArrayWith2OrMoreElements, NonEmptyArray, RequiredPick } from '@app/tracing/util/utility-types';
 import * as Excel from 'exceljs';
 import * as _ from 'lodash';
-import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Row, TableHeader, CellSpecs, TypeString, EachRowOptions} from './xlsx-model-vL';
+import { Workbook as IntWorkbook, Worksheet as IntWorksheet, Row as WSRow, HeaderConf, ColumnHeader, ReadTableOptions, Row, TableHeader, CellSpecs} from './xlsx-model-vL';
 import { CellValue } from './xlsx-model-v0';
 
 type RowTextPart<T extends number> = { [key in T]?: string };
@@ -224,7 +224,7 @@ export class XlsxReader {
         });
     }
 
-    private readRows(ws: Excel.Worksheet, startIndex: number):  { //   columnValueConstraints: Record<number, ColumnConstraints>): Row[] {
+    private readRows<TCI extends number, MCI extends number>(ws: Excel.Worksheet, startIndex: number):  { //   columnValueConstraints: Record<number, ColumnConstraints>): Row[] {
         const tableRows: Row[] = [];
         // const uniqueFieldSets: [number | string, Set<any>][] = Object.entries(columnValueConstraints)
         //     .filter(c => c[1].isUnique)
@@ -272,7 +272,7 @@ export class XlsxReader {
         });
     }
 
-    readTableFromSheet<TCI extends number>(sheetName: string, options: ReadTableOptions): Table {
+    readTableFromSheet<TCI extends number, MCI extends number>(sheetName: string, options: ReadTableOptions): Table {
         // options = options ?? {};
         // options = {
         //     ...options
