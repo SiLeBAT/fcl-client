@@ -18,6 +18,7 @@ import { applySorting, highlightingComparator, sortRows, visibilityComparator } 
 
 const CLASS_DATATABLE_FOOTER = 'datatable-footer';
 
+type TableSelctionEvent = TableRow[] | { selected: TableRow[] } | Event;
 interface AsyncTask {
     id?: string;
     created: number;
@@ -29,6 +30,7 @@ interface FilterMap {
     visibilityFilter: VisibilityRowFilter;
     columnFilter: OneTermForEachColumnRowFilter;
 }
+
 export interface InputData {
     dataTable: DataTable;
     filteredRows: TableRow[];
@@ -256,15 +258,12 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.selectColumns.emit();
     }
 
-    isTableRowArray(toInspect: TableRow[] | { selected: TableRow[] } | any): toInspect is TableRow[] {
-        return (toInspect as TableRow[]).length !== undefined;
-    }
 
-    isTableRowObject(toInspect: TableRow[] | { selected: TableRow[] } | any): toInspect is { selected: TableRow[] } {
+    isTableRowObject(toInspect: TableSelctionEvent): toInspect is { selected: TableRow[] } {
         return (toInspect as { selected: TableRow[] }).selected !== undefined;
     }
 
-    onRowSelectionChange(eventIn: { selected: TableRow[] } | TableRow[] | any): void {
+    onRowSelectionChange(eventIn: TableSelctionEvent): void {
         // Early Return in case we are not ready to work on this yet.
         if (!this.processedInput__) {
             return;
@@ -274,7 +273,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         let rows: TableRow[] = [];
         if (this.isTableRowObject(eventIn)) {
             rows = eventIn.selected;
-        } else if (this.isTableRowArray(eventIn)) {
+        } else if (Array.isArray(eventIn)) {
             rows = eventIn;
         } else {
             // If eventIn is neither an object containing a selected property with TableRows,
