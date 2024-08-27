@@ -181,8 +181,8 @@ export class HighlightingService {
         return {
             name: rule.name,
             deliveryColor: this.mapToColor(rule.color),
-            stationColor: null,
-            shape: null
+            stationColor: undefined,
+            shape: undefined
 
         };
     }
@@ -190,15 +190,15 @@ export class HighlightingService {
     private stationRuleToDisplayEntry(rule: StationHighlightingRule): LegendDisplayEntry {
         return {
             name: rule.name,
-            deliveryColor: null,
+            deliveryColor: undefined,
             stationColor: this.mapToColor(rule.color),
-            shape: rule.shape
+            shape: rule.shape ?? undefined
 
         };
     }
 
     private getLegendInfo(
-        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean> }
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean>; }
     ): LegendDisplayEntry[] {
 
         const stationRulesToDisplay = this.enabledStatHRules.filter(rule =>
@@ -208,34 +208,26 @@ export class HighlightingService {
         const deliveryRulesToDisplay = this.enabledDelHRules.filter(rule =>
             rule.showInLegend && (activeHighlightings.deliveries[rule.id])
         );
-
+        console.log("stations", this.statHighlightingRules);
+        console.log("deliveries", this.delHighlightingRules);
         return this.statHighlightingRules
             .map(rule => this.stationRuleToDisplayEntry(rule))
             .concat(this.delHighlightingRules
                 .map(rule => this.deliveryRuleToDisplayEntry(rule))
             )
             .reduce(
-                (array: LegendDisplayEntry[], current) => {
-                    const index = array.findIndex((entry) => entry.name === current.name);
+                (acc: LegendDisplayEntry[], current) => {
+                    const index = acc.findIndex((entry) => entry.name === current.name);
                     if (index >= 0) {
                         //Should use legend.with(index,{newObj}) once we update to a newer TS version.
-                        const newArray = array;
+                        const newArray = acc;
                         newArray[index] = {
-                            name: current.name,
-                            stationColor: array[index]?.stationColor ?? current?.stationColor,
-                            deliveryColor: array[index]?.deliveryColor ?? current?.deliveryColor,
-                            shape: array[index]?.shape ?? current?.shape
+                            ...acc[index],
+                            ...current
                         };
                         return newArray;
                     } else {
-                        return [...array,
-                            {
-                                name: current.name,
-                                stationColor: array[index]?.stationColor ?? current?.stationColor,
-                                deliveryColor: array[index]?.deliveryColor ?? current?.deliveryColor,
-                                shape: array[index]?.shape ?? current?.shape
-                            }
-                        ];
+                        return [...acc, current];
                     }
                 },
                 []
@@ -249,12 +241,12 @@ export class HighlightingService {
                 ? rule
                 : { ...rule, deliveryColor: undefined }
             )
-            .filter(rule => rule.deliveryColor || rule.shape || rule.stationColor);
+            .filter(rule => rule.deliveryColor || (rule.shape !== undefined) || rule.stationColor);
     }
 
 
-    private mapToColor(color: number[] | null): Color | null {
-        return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
+    private mapToColor(color: number[] | null): Color | undefined {
+        return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : undefined;
     }
 
     private isCommonLinkRule(rule: HighlightingRule): boolean {
@@ -277,7 +269,7 @@ export class HighlightingService {
 
     private getActiveHighlightingRules<
         T extends StationOrDeliveryData,
-        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(fclElement: T, highlightingRules: K[]): K[] {
         return highlightingRules.filter(rule =>
             !rule.invisible &&
@@ -415,11 +407,11 @@ export class HighlightingService {
 
     private getCommonHighlightingInfo<
         T extends StationData | DeliveryData,
-        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(
         fclElement: T,
         highlightingRules: K[]
-    ): { label: string; color: number[][] } {
+    ): { label: string; color: number[][]; } {
 
         const labelParts: string[] = [];
         for (const rule of highlightingRules) {

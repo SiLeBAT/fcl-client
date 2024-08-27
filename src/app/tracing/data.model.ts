@@ -186,7 +186,7 @@ export interface GraphSettings {
     fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
-    stationPositions: { [key: string]: Position };
+    stationPositions: { [key: string]: Position; };
     highlightingSettings: HighlightingSettings;
     schemaLayout: Layout | null;
     gisLayout: Layout | null;
@@ -484,25 +484,6 @@ export interface SetInvisibleElementsPayload {
     tracingSettings: TracingSettings;
 }
 
-interface LegendEntry {
-    label: string;
-    color: Color | null;
-    index: number;
-}
-
-interface StationLegendEntry extends LegendEntry {
-    shape: NodeShapeType | null;
-}
-
-export interface DeliveryLegendEntry extends LegendEntry {
-    linePattern: LinePatternType | null;
-}
-
-export interface LegendInfo {
-    stations: StationLegendEntry[];
-    deliveries: DeliveryLegendEntry[];
-}
-
 export interface Size {
     width: number;
     height: number;
@@ -515,8 +496,8 @@ export interface Range {
 
 export interface LegendDisplayEntry {
     name: string;
-    stationColor?: Color | null;
-    deliveryColor?: Color | null;
-    shape?: NodeShapeType | null;
+    stationColor?: Color;
+    deliveryColor?: Color;
+    shape?: NodeShapeType;
 }
 

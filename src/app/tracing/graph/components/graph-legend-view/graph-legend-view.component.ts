@@ -44,6 +44,8 @@ export class GraphLegendViewComponent {
         // Early Return if no legendinfo
         if (!legend) { return; }
 
+        console.log("legend", legend);
+
         this.legend = legend;
         this.showStationColumn_ = this.legend.some(e => !!e.shape || !!e.stationColor);
         this.showDeliveryColumn_ = this.legend.some(e => !!e.deliveryColor);
