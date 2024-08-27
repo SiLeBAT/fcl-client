@@ -7,7 +7,6 @@ import {
     StationHighlightingInfo,
     DeliveryHighlightingInfo,
     DeliveryData,
-    LegendInfo,
     Color,
     StationHighlightingRule,
     DeliveryHighlightingRule,
@@ -15,7 +14,8 @@ import {
     OperationType,
     DataServiceInputState,
     HighlightingStats,
-    LabelPart
+    LabelPart,
+    LegendDisplayEntry
 } from '../data.model';
 import { removeNullish, Utils } from '../util/non-ui-utils';
 
@@ -177,33 +177,81 @@ export class HighlightingService {
         return result;
     }
 
-    private getLegendInfo(
-        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean> }
-    ): LegendInfo {
+    private deliveryRuleToDisplayEntry(rule: DeliveryHighlightingRule): LegendDisplayEntry {
         return {
-            stations: this.enabledStatHRules.filter(rule =>
-                rule.showInLegend &&
-                (activeHighlightings.stations[rule.id] || this.isCommonLinkRule(rule))
-            ).map((rule) =>
-                ({
-                    label: rule.name,
-                    color: this.mapToColor(rule.color),
-                    shape: rule.shape,
-                    index: this.statHighlightingRules.findIndex(comp => comp.id === rule.id)
-                })
-            ),
-            deliveries: this.enabledDelHRules.filter(rule =>
-                rule.showInLegend && (activeHighlightings.deliveries[rule.id])
-            ).map(rule =>
-                ({
-                    label: rule.name,
-                    color: this.mapToColor(rule.color),
-                    linePattern: rule.linePattern,
-                    index: this.delHighlightingRules.findIndex(comp => comp.id === rule.id)
-                })
-            )
+            name: rule.name,
+            deliveryColor: this.mapToColor(rule.color),
+            stationColor: null,
+            shape: null
+
         };
     }
+
+    private stationRuleToDisplayEntry(rule: StationHighlightingRule): LegendDisplayEntry {
+        return {
+            name: rule.name,
+            deliveryColor: null,
+            stationColor: this.mapToColor(rule.color),
+            shape: rule.shape
+
+        };
+    }
+
+    private getLegendInfo(
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean> }
+    ): LegendDisplayEntry[] {
+
+        const stationRulesToDisplay = this.enabledStatHRules.filter(rule =>
+            rule.showInLegend &&
+            (activeHighlightings.stations[rule.id] || this.isCommonLinkRule(rule))
+        );
+        const deliveryRulesToDisplay = this.enabledDelHRules.filter(rule =>
+            rule.showInLegend && (activeHighlightings.deliveries[rule.id])
+        );
+
+        return this.statHighlightingRules
+            .map(rule => this.stationRuleToDisplayEntry(rule))
+            .concat(this.delHighlightingRules
+                .map(rule => this.deliveryRuleToDisplayEntry(rule))
+            )
+            .reduce(
+                (array: LegendDisplayEntry[], current) => {
+                    const index = array.findIndex((entry) => entry.name === current.name);
+                    if (index >= 0) {
+                        //Should use legend.with(index,{newObj}) once we update to a newer TS version.
+                        const newArray = array;
+                        newArray[index] = {
+                            name: current.name,
+                            stationColor: array[index]?.stationColor ?? current?.stationColor,
+                            deliveryColor: array[index]?.deliveryColor ?? current?.deliveryColor,
+                            shape: array[index]?.shape ?? current?.shape
+                        };
+                        return newArray;
+                    } else {
+                        return [...array,
+                            {
+                                name: current.name,
+                                stationColor: array[index]?.stationColor ?? current?.stationColor,
+                                deliveryColor: array[index]?.deliveryColor ?? current?.deliveryColor,
+                                shape: array[index]?.shape ?? current?.shape
+                            }
+                        ];
+                    }
+                },
+                []
+            )
+            .map(rule => stationRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
+                ? rule
+                : { ...rule, stationColor: undefined, shape: undefined }
+
+            )
+            .map(rule => deliveryRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
+                ? rule
+                : { ...rule, deliveryColor: undefined }
+            )
+            .filter(rule => rule.deliveryColor || rule.shape || rule.stationColor);
+    }
+
 
     private mapToColor(color: number[] | null): Color | null {
         return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;

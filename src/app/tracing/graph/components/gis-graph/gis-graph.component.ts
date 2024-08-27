@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
-import { GraphType, Layout, LegendInfo, GisGraphState } from '../../../data.model';
+import { GraphType, Layout, GisGraphState, LegendDisplayEntry } from '../../../data.model';
 import * as _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
@@ -51,7 +51,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     private sharedGraphData: GraphServiceData | null = null;
     private graphData_: GraphData | null = null;
     private unknownLatLonRect_: BoundaryRect | null = null;
-    private legendInfo_: LegendInfo | null = null;
+    private legendInfo_: LegendDisplayEntry[] | null = null;
     private cyConfig_: CyConfig = {
         minZoom: GisGraphComponent.MIN_ZOOM,
         maxZoom: GisGraphComponent.MAX_ZOOM,
@@ -66,7 +66,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         private gisPositioningService: GisPositioningService,
         private contextMenuService: ContextMenuService,
         private alertService: AlertService
-    ) {}
+    ) { }
 
     ngOnInit() {
 
@@ -131,7 +131,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
         return this.graphData_;
     }
 
-    get legendInfo(): LegendInfo | null {
+    get legendInfo(): LegendDisplayEntry[] | null {
         return this.legendInfo_;
     }
 

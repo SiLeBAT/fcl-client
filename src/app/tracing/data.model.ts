@@ -186,7 +186,7 @@ export interface GraphSettings {
     fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
-    stationPositions: {[key: string]: Position};
+    stationPositions: { [key: string]: Position };
     highlightingSettings: HighlightingSettings;
     schemaLayout: Layout | null;
     gisLayout: Layout | null;
@@ -380,7 +380,7 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
-    legendInfo?: LegendInfo;
+    legendInfo?: LegendDisplayEntry[] | null;
     tracingPropsUpdatedFlag: Record<string, never>;
     stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
     highlightingStats?: HighlightingStats;
@@ -512,3 +512,11 @@ export interface Range {
     min: number;
     max: number;
 }
+
+export interface LegendDisplayEntry {
+    name: string;
+    stationColor?: Color | null;
+    deliveryColor?: Color | null;
+    shape?: NodeShapeType | null;
+}
+

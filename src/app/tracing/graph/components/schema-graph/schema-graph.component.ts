@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
-import { GraphType, LegendInfo, SchemaGraphState } from '../../../data.model';
+import { GraphType, LegendDisplayEntry, SchemaGraphState } from '../../../data.model';
 import * as _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
@@ -50,7 +50,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     private cachedState: SchemaGraphState | null = null;
     private sharedGraphData: GraphServiceData | null = null;
     private schemaGraphData: GraphData | null = null;
-    private legendInfo_: LegendInfo | null = null;
+    private legendInfo_: LegendDisplayEntry[] | null = null;
     private cyConfig_: CyConfig = {
         minZoom: SchemaGraphComponent.MIN_ZOOM,
         maxZoom: SchemaGraphComponent.MAX_ZOOM
@@ -67,7 +67,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         private schemaGraphService: SchemaGraphService,
         private contextMenuService: ContextMenuService,
         private alertService: AlertService
-    ) {}
+    ) { }
 
     ngOnInit() {
 
@@ -166,7 +166,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
         return this.schemaGraphData;
     }
 
-    get legendInfo(): LegendInfo | null {
+    get legendInfo(): LegendDisplayEntry[] | null {
         return this.legendInfo_;
     }
 

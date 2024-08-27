@@ -1,12 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { LegendInfo, Color, NodeShapeType } from '@app/tracing/data.model';
+import { LegendDisplayEntry } from '@app/tracing/data.model';
 
-interface LegendDisplayEntry {
-    name: string;
-    stationColor?: Color;
-    deliveryColor?: Color;
-    shape?: NodeShapeType;
-}
 interface LegendDisplayEntryWithIndex extends LegendDisplayEntry {
     index: number;
 }
@@ -18,13 +12,13 @@ interface LegendDisplayEntryWithIndex extends LegendDisplayEntry {
 })
 export class GraphLegendViewComponent {
 
-    private legendInfo_: LegendInfo | null = null;
+    private legendInfo_: LegendDisplayEntry[] | null = null;
     private showStationColumn_ = false;
     private showDeliveryColumn_ = false;
 
     @Input() showMissingGisInfoEntry: boolean;
 
-    @Input() set legendInfo(legendInfo: LegendInfo) {
+    @Input() set legendInfo(legendInfo: LegendDisplayEntry[]) {
         if (this.legendInfo_ !== legendInfo) {
             this.updateLegend(legendInfo);
             this.legendInfo_ = legendInfo;
@@ -46,63 +40,11 @@ export class GraphLegendViewComponent {
     }
 
 
-    private updateLegend(legendInfo: LegendInfo) {
+    private updateLegend(legend: LegendDisplayEntry[]) {
         // Early Return if no legendinfo
-        if (!legendInfo) { return; }
+        if (!legend) { return; }
 
-        this.legend = legendInfo.stations.map(
-            (stationEntry): LegendDisplayEntryWithIndex =>
-                ({
-                    name: stationEntry.label,
-                    index: stationEntry.index,
-                    stationColor: stationEntry.color ?? undefined,
-                    shape: stationEntry.shape ?? undefined,
-                    deliveryColor: undefined
-                })
-        )
-            .concat(
-                legendInfo.deliveries
-                    .map(
-                        (deliveryEntry): LegendDisplayEntryWithIndex => ({
-                            name: deliveryEntry.label,
-                            index: deliveryEntry.index,
-                            stationColor: undefined,
-                            shape: undefined,
-                            deliveryColor: deliveryEntry.color ?? undefined
-                        })
-                    )
-            )
-            //Should use toSorted once we update to a newer TS version.
-            .sort(
-                ((entryA, entryB) => entryA.index - entryB.index)
-            )
-            .reduce(
-                (legend: LegendDisplayEntry[], currentEntry: LegendDisplayEntryWithIndex) => {
-                    const index = legend.findIndex((entry) => entry.name === currentEntry.name);
-                    if (index >= 0) {
-                        //Should use legend.with(index,{newObj}) once we update to a newer TS version.
-                        const newArray = legend;
-                        newArray[index] = {
-                            name: currentEntry.name,
-                            stationColor: legend[index]?.stationColor ?? currentEntry?.stationColor,
-                            deliveryColor: legend[index]?.deliveryColor ?? currentEntry?.deliveryColor,
-                            shape: legend[index]?.shape ?? currentEntry?.shape
-                        };
-                        return newArray;
-                    } else {
-                        return [...legend,
-                            {
-                                name: currentEntry.name,
-                                stationColor: legend[index]?.stationColor ?? currentEntry?.stationColor,
-                                deliveryColor: legend[index]?.deliveryColor ?? currentEntry?.deliveryColor,
-                                shape: legend[index]?.shape ?? currentEntry?.shape
-                            }
-                        ];
-                    }
-                },
-                []
-            );
-
+        this.legend = legend;
         this.showStationColumn_ = this.legend.some(e => !!e.shape || !!e.stationColor);
         this.showDeliveryColumn_ = this.legend.some(e => !!e.deliveryColor);
 
