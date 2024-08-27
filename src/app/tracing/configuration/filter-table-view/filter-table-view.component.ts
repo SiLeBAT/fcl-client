@@ -18,7 +18,7 @@ import { applySorting, highlightingComparator, sortRows, visibilityComparator } 
 
 const CLASS_DATATABLE_FOOTER = 'datatable-footer';
 
-type TableSelctionEvent = TableRow[] | { selected: TableRow[] } | Event;
+type TableSelectionEvent = TableRow[] | { selected: TableRow[] } | Event;
 interface AsyncTask {
     id?: string;
     created: number;
@@ -259,11 +259,11 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
 
-    isTableRowObject(toInspect: TableSelctionEvent): toInspect is { selected: TableRow[] } {
+    isTableRowObject(toInspect: TableSelectionEvent): toInspect is { selected: TableRow[] } {
         return (toInspect as { selected: TableRow[] }).selected !== undefined;
     }
 
-    onRowSelectionChange(eventIn: TableSelctionEvent): void {
+    onRowSelectionChange(eventIn: TableSelectionEvent): void {
         // Early Return in case we are not ready to work on this yet.
         if (!this.processedInput__) {
             return;
