@@ -602,7 +602,7 @@ export class GraphService {
     }
 
     private updateHoverEdges(state: SharedGraphState, newData: GraphServiceData): void {
-        newData.hoverEdges = state.hoverDeliveries.map(delId => newData.delIdToEdgeDataMap[delId].id);
+        newData.hoverEdges = state.hoverDeliveries.map(delId => newData.delIdToEdgeDataMap[delId]?.id);
     }
 
     private updateCache(state: SharedGraphState, dataServiceData: DataServiceData, options: Partial<CacheUpdateOptions>): void {
