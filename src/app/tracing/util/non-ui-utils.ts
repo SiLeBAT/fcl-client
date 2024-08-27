@@ -87,6 +87,11 @@ export function isNotEmpty(x: string | null | undefined): x is Exclude<string, '
     return (x ?? '') !== '';
 }
 
+export function findIndexOrUndefined<T>(predicate: (value: T, index: number, obj: T[]) => unknown, array: any[]): number | undefined {
+    const foundIndex = array.findIndex(predicate);
+    return foundIndex >= 0 ? foundIndex : undefined;
+}
+
 /**
  * This method is used to update an object in a type safe manner.
  *
@@ -96,7 +101,7 @@ export function isNotEmpty(x: string | null | undefined): x is Exclude<string, '
  *
  */
 export function getUpdatedObject<T>(obj: T, update: Partial<T>): T {
-    return {...obj, ...update};
+    return { ...obj, ...update };
 }
 
 export class Utils {
@@ -328,15 +333,15 @@ export class Utils {
         return new Map(Array.from(map.entries()).map(([k, v]) => [keyMapper(k, v), valueMapper(k, v)]));
     }
 
-    static createSimpleStringSet(arr: string[]): {[key: string]: boolean} {
-        const result: {[key: string]: boolean} = {};
+    static createSimpleStringSet(arr: string[]): { [key: string]: boolean } {
+        const result: { [key: string]: boolean } = {};
         for (const value of arr) {
             result[value] = true;
         }
         return result;
     }
 
-    static arrayFromSimpleStringSet(obj: {[key: string]: boolean}): string[] {
+    static arrayFromSimpleStringSet(obj: { [key: string]: boolean }): string[] {
         return Object.keys(obj).filter(s => obj[s]);
     }
 
@@ -395,7 +400,7 @@ export class Utils {
             if (deliveryPGroup.length === 1) {
                 result.push(deliveryPGroup);
             } else {
-                result.push(...this.groupRows(deliveryPGroup, [ (d) => d.lot || d.id ]));
+                result.push(...this.groupRows(deliveryPGroup, [(d) => d.lot || d.id]));
             }
         }
         return result;
