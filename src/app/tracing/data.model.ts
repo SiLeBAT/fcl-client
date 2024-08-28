@@ -186,7 +186,7 @@ export interface GraphSettings {
     fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
-    stationPositions: { [key: string]: Position; };
+    stationPositions: { [key: string]: Position };
     highlightingSettings: HighlightingSettings;
     schemaLayout: Layout | null;
     gisLayout: Layout | null;

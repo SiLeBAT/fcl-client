@@ -198,7 +198,7 @@ export class HighlightingService {
     }
 
     private getLegendInfo(
-        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean>; }
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean> }
     ): LegendDisplayEntry[] {
 
         const stationRulesToDisplay = this.enabledStatHRules.filter(rule =>
@@ -208,8 +208,6 @@ export class HighlightingService {
         const deliveryRulesToDisplay = this.enabledDelHRules.filter(rule =>
             rule.showInLegend && (activeHighlightings.deliveries[rule.id])
         );
-        console.log("stations", this.statHighlightingRules);
-        console.log("deliveries", this.delHighlightingRules);
         return this.statHighlightingRules
             .map(rule => this.stationRuleToDisplayEntry(rule))
             .concat(this.delHighlightingRules
@@ -269,7 +267,7 @@ export class HighlightingService {
 
     private getActiveHighlightingRules<
         T extends StationOrDeliveryData,
-        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(fclElement: T, highlightingRules: K[]): K[] {
         return highlightingRules.filter(rule =>
             !rule.invisible &&
@@ -407,11 +405,11 @@ export class HighlightingService {
 
     private getCommonHighlightingInfo<
         T extends StationData | DeliveryData,
-        K extends (T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
+        K extends(T extends StationData ? StationHighlightingRule : DeliveryHighlightingRule)
     >(
         fclElement: T,
         highlightingRules: K[]
-    ): { label: string; color: number[][]; } {
+    ): { label: string; color: number[][] } {
 
         const labelParts: string[] = [];
         for (const rule of highlightingRules) {
