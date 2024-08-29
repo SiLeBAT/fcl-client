@@ -208,33 +208,31 @@ export class HighlightingService {
         const deliveryRulesToDisplay = this.enabledDelHRules.filter(rule =>
             rule.showInLegend && (activeHighlightings.deliveries[rule.id])
         );
-        return this.statHighlightingRules
+
+        const allDisplayEntries = this.statHighlightingRules
             .map(rule => this.stationRuleToDisplayEntry(rule))
             .concat(this.delHighlightingRules
                 .map(rule => this.deliveryRuleToDisplayEntry(rule))
-            )
-            .reduce(
-                (acc: LegendDisplayEntry[], current) => {
-                    const index = acc.findIndex((entry) => entry.name === current.name);
-                    if (index >= 0) {
-                        //Should use legend.with(index,{newObj}) once we update to a newer TS version.
-                        const newArray = acc;
-                        newArray[index] = {
-                            ...acc[index],
-                            ...current
-                        };
-                        return newArray;
-                    } else {
-                        return [...acc, current];
-                    }
-                },
-                []
-            )
-            .map(rule => stationRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
-                ? rule
-                : { ...rule, stationColor: undefined, shape: undefined }
+            );
 
-            )
+        const uniqueDisplayEntries: LegendDisplayEntry[] = [];
+        allDisplayEntries.forEach((entry) => {
+            const index = uniqueDisplayEntries.findIndex((entry) => entry.name === entry.name);
+            if (index >= 0) {
+                uniqueDisplayEntries[index] = {
+                    ...uniqueDisplayEntries[index],
+                    ...entry
+                };
+            } else {
+                return uniqueDisplayEntries.push(entry);
+            }
+        });
+
+        return uniqueDisplayEntries.map(rule => stationRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
+            ? rule
+            : { ...rule, stationColor: undefined, shape: undefined }
+
+        )
             .map(rule => deliveryRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
                 ? rule
                 : { ...rule, deliveryColor: undefined }
