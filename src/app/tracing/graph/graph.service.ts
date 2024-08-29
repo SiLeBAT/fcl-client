@@ -9,14 +9,14 @@ import { concat, Utils } from '../util/non-ui-utils';
 import * as _ from 'lodash';
 
 interface CyDataNodes {
-    statIdToNodeDataMap: {[key: string]: CyNodeData };
+    statIdToNodeDataMap: { [key: string]: CyNodeData };
     nodeData: CyNodeData[];
     nodeSel: { [key: string]: boolean };
     idToNodeMap: { [key: string]: CyNodeData };
 }
 
 interface CyDataEdges {
-    delIdToEdgeDataMap: {[key: string]: CyEdgeData };
+    delIdToEdgeDataMap: { [key: string]: CyEdgeData };
     edgeData: CyEdgeData[];
     edgeSel: { [key: string]: boolean };
 }
@@ -98,7 +98,7 @@ export class GraphService {
 
     constructor(
         private dataService: DataService
-    ) {}
+    ) { }
 
     getData(state: SharedGraphState): GraphServiceData {
         this.applyState(state);
@@ -169,7 +169,7 @@ export class GraphService {
 
         const edgeData: CyEdgeData[] = [];
 
-        const sourceTargetDelMap: { [key: string]: { [key: string]: DeliveryData[] }} = {};
+        const sourceTargetDelMap: { [key: string]: { [key: string]: DeliveryData[] } } = {};
 
         const statMap = cyDataNodes.statIdToNodeDataMap;
         const selDel = Utils.createSimpleStringSet(state.selectedElements.deliveries);
@@ -261,7 +261,7 @@ export class GraphService {
             }
         }
 
-        const map: {[key: string]: CyEdgeData } = {};
+        const map: { [key: string]: CyEdgeData } = {};
 
         cyDataNodes.nodeData.forEach(node => node.degree = 0);
         for (const eData of edgeData) {
@@ -602,7 +602,9 @@ export class GraphService {
     }
 
     private updateHoverEdges(state: SharedGraphState, newData: GraphServiceData): void {
-        newData.hoverEdges = state.hoverDeliveries.map(delId => newData.delIdToEdgeDataMap[delId].id);
+        newData.hoverEdges = state.hoverDeliveries
+            .filter(delId => delId in newData.delIdToEdgeDataMap)
+            .map(delId => newData.delIdToEdgeDataMap[delId].id);
     }
 
     private updateCache(state: SharedGraphState, dataServiceData: DataServiceData, options: Partial<CacheUpdateOptions>): void {
