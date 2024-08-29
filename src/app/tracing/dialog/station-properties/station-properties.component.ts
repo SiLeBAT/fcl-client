@@ -157,7 +157,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private nodeOutData: NodeDatum[];
     private edgeData: EdgeDatum[];
     private lotBased: boolean;
-    private deliveriesByLotKey: Map<LotKey, DeliveryId[]>;
     private height: number;
     private selected: NodeDatum;
 
@@ -188,7 +187,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             } else {
                 this.initDeliveryBasedData();
             }
-
+            console.log('preOptimize', this.nodeInData, this.nodeOutData, this.edgeData);
             const optimizer = new DataOptimizer(this.nodeInData, this.nodeOutData, this.edgeData);
 
             optimizer.optimize();
@@ -324,6 +323,13 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 .find(key => this.properties[key].label === property));
     }
 
+    private shouldDeliveryBeVisible(deliveryId: DeliveryId): boolean {
+        const delivery = this.data.deliveries.get(deliveryId)!;
+        const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target)!;
+
+        return !otherStation.invisible;
+    }
+
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
         const delivery = this.data.deliveries.get(deliveryId)!;
         const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target)!;
@@ -341,7 +347,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private getInternalLotKey(delivery: DeliveryData): LotKey {
-        return JSON.stringify([ delivery.originalSource, delivery.name || delivery.id, delivery.lot || delivery.id ]);
+        return JSON.stringify([delivery.originalSource, delivery.name || delivery.id, delivery.lot || delivery.id]);
     }
 
     private getIngredientsByLotKey(): Map<LotKey, Set<DeliveryId>> | null {
@@ -388,11 +394,15 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const nodeOutMap = new Map<DeliveryId, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
-            nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
+            if (this.shouldDeliveryBeVisible(deliveryId)) {
+                nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
+            }
         }
 
         for (const deliveryId of this.data.station.outgoing) {
-            nodeOutMap.set(deliveryId, this.createDeliveryNode(deliveryId));
+            if (this.shouldDeliveryBeVisible(deliveryId)) {
+                nodeOutMap.set(deliveryId, this.createDeliveryNode(deliveryId));
+            }
         }
 
         this.nodeInData = Array.from(nodeInMap.values());
@@ -405,18 +415,22 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 target: nodeOutMap.get(connection.target)!
             });
         }
+        console.log('DeliveryBased, nodeIn', this.nodeInData);
+        console.log('DeliveryBased, nodeOut', this.nodeOutData);
     }
 
     private initLotBasedData(ingredientsByLotKey: Map<LotKey, Set<DeliveryId>>) {
-        this.deliveriesByLotKey = new Map();
+        const deliveriesByLotKey: Map<LotKey, DeliveryId[]> = new Map();
 
         this.data.deliveries.forEach(delivery => {
-            const lotKey = this.getInternalLotKey(delivery);
+            if (this.shouldDeliveryBeVisible(delivery.id)) {
+                const lotKey = this.getInternalLotKey(delivery);
 
-            if (this.deliveriesByLotKey.has(lotKey)) {
-                this.deliveriesByLotKey.get(lotKey)!.push(delivery.id);
-            } else {
-                this.deliveriesByLotKey.set(lotKey, [delivery.id]);
+                if (deliveriesByLotKey.has(lotKey)) {
+                    deliveriesByLotKey.get(lotKey)!.push(delivery.id);
+                } else {
+                    deliveriesByLotKey.set(lotKey, [delivery.id]);
+                }
             }
         });
 
@@ -424,7 +438,9 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const nodeOutMap = new Map<LotKey, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
-            nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
+            if (this.shouldDeliveryBeVisible(deliveryId)) {
+                nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
+            }
         }
 
         this.nodeInData = Array.from(nodeInMap.values());
@@ -432,29 +448,37 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         ingredientsByLotKey.forEach((ingredientsIds, lotKey) => {
             const names: Set<string> = new Set();
-
-            const lotDeliveryIds = this.deliveriesByLotKey.get(lotKey)!;
-            for (const deliveryId of lotDeliveryIds) {
-                names.add(this.data.deliveries.get(deliveryId)!.name ?? '');
-            }
-
-            nodeOutMap.set(lotKey, {
-                id: lotKey,
-                name: Array.from(names).join('/'),
-                lot: this.data.deliveries.get(Array.from(lotDeliveryIds)[0])!.lot,
-                deliveryIds: lotDeliveryIds,
-                x: 0,
-                y: 0
-            });
-            ingredientsIds.forEach(ingredientId => {
-                this.edgeData.push({
-                    source: nodeInMap.get(ingredientId)!,
-                    target: nodeOutMap.get(lotKey)!
+            const lotDeliveryIds = deliveriesByLotKey.get(lotKey);
+            if (lotDeliveryIds) {
+                for (const deliveryId of lotDeliveryIds) {
+                    names.add(this.data.deliveries.get(deliveryId)!.name ?? '');
+                }
+                nodeOutMap.set(lotKey, {
+                    id: lotKey,
+                    name: Array.from(names).join('/'),
+                    lot: this.data.deliveries.get(Array.from(lotDeliveryIds)[0])!.lot,
+                    deliveryIds: lotDeliveryIds,
+                    x: 0,
+                    y: 0
                 });
-            });
-        });
+
+                ingredientsIds.forEach(ingredientId => {
+                    const source = nodeInMap.get(ingredientId);
+                    const target = nodeOutMap.get(lotKey);
+                    if (source && target) {
+                        this.edgeData.push({
+                            source: source,
+                            target: target
+                        });
+                    }
+                });
+            }
+        }
+        );
 
         this.nodeOutData = Array.from(nodeOutMap.values());
+        console.log('LotBased, nodeIn', this.nodeInData);
+        console.log('LotBased, nodeOut', this.nodeOutData);
     }
 
     private addNodesHeader(): void {
