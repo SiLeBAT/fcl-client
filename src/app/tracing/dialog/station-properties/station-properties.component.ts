@@ -187,9 +187,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             } else {
                 this.initDeliveryBasedData();
             }
-            console.log('preOptimize', this.nodeInData, this.nodeOutData, this.edgeData);
-            const optimizer = new DataOptimizer(this.nodeInData, this.nodeOutData, this.edgeData);
 
+            const optimizer = new DataOptimizer(this.nodeInData, this.nodeOutData, this.edgeData);
             optimizer.optimize();
 
             let yIn = 1 + StationPropertiesComponent.DELIVERIES_HEADER_HEIGHT + StationPropertiesComponent.NODE_PADDING;
@@ -415,8 +414,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 target: nodeOutMap.get(connection.target)!
             });
         }
-        console.log('DeliveryBased, nodeIn', this.nodeInData);
-        console.log('DeliveryBased, nodeOut', this.nodeOutData);
     }
 
     private initLotBasedData(ingredientsByLotKey: Map<LotKey, Set<DeliveryId>>) {
@@ -477,8 +474,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         );
 
         this.nodeOutData = Array.from(nodeOutMap.values());
-        console.log('LotBased, nodeIn', this.nodeInData);
-        console.log('LotBased, nodeOut', this.nodeOutData);
     }
 
     private addNodesHeader(): void {
