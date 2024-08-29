@@ -65,7 +65,7 @@ export interface ImportResult {
     source: string;
     sourceType: string;
     issues: ImportIssue[];
-    data:
+    data: ImportData;
 }
 
 export interface XlsxImporter {

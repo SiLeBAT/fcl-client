@@ -369,10 +369,35 @@ type GetMandatoryKeys<T extends ColumnsDefinition> =  { [key in keyof T]: T[key]
 type GetInterfaceFromDefinition<
     T extends ColumnsDefinition
 > = T extends { [key in (infer K)]: ColumnDefinition } ?
-    RequiredPick<{ [key in K]?: GetTypeFromColumnDefinition<T[key]> }, GetMKeys<C> & K> :
+    RequiredPick<{ [key in K]?: GetTypeFromColumnDefinition<T[key]> }, GetMandatoryKeys<T> & K> :
     never;
 
-function getTypedRows<T extends ColumnsDefinition>(table: Table, importIssues: ImportIssue[], cc: T): GetInterfaceFromDefinition
+function getTypedRows<T extends ColumnsDefinition, R extends GetInterfaceFromDefinition<T>>(table: Table, importIssues: ImportIssue[], colDefs: T): R[] {
+    // const typedRows: Partial<GetInterfaceFromDefinition<T>>[] = [];
+    const colDefinitions = Object.entries(colDefs).map((entry, index) => ({ ref: entry[0] as keyof R, definition: entry[1], index: index }));
+    const typedRows = table.rows.map(row => {
+        const typedRow: Partial<R> = {};
+        colDefinitions.forEach(colDef => {
+            typedRow[colDef.ref] = importValue(row, colDef.index, colDef.definition.type!, importIssues);
+        })
+    })
+}
+
+function impDels(table: Table): DeliveryRow[] {
+    table.rows.forEach(inRow => {
+        if (inRow[1] !== undefined) {
+
+        }
+    });
+}
+
+// function checkMandatoryFields<T extends Partial<DeliveryRow>, M>(row: T, requireimportIssues: ImportIssue[]):
+
+//function applyTypedValue(row: Row, )
+// function r2R(table: Table, gRow)
+
+
+
 
 function importDeliveryRows(
     xlsxReader: XlsxReader,
