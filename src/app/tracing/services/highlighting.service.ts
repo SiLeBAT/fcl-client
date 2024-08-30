@@ -7,7 +7,6 @@ import {
     StationHighlightingInfo,
     DeliveryHighlightingInfo,
     DeliveryData,
-    LegendInfo,
     Color,
     StationHighlightingRule,
     DeliveryHighlightingRule,
@@ -15,7 +14,8 @@ import {
     OperationType,
     DataServiceInputState,
     HighlightingStats,
-    LabelPart
+    LabelPart,
+    LegendDisplayEntry
 } from '../data.model';
 import { removeNullish, Utils } from '../util/non-ui-utils';
 
@@ -158,7 +158,7 @@ export class HighlightingService {
 
         data.isStationAnonymizationActive = this.anonymizeStationsIfApplicable(data.stations, this.enabledStatHRules, effElementsStats);
 
-        data.legendInfo = this.getLegendInfo(state, {
+        data.legendInfo = this.getLegendInfo({
             stations: this.getRuleIdToIsActiveMap(
                 this.enabledStatHRules,
                 effElementsStats
@@ -177,37 +177,67 @@ export class HighlightingService {
         return result;
     }
 
-    private getLegendInfo(
-        state: DataServiceInputState,
-        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean>}
-    ): LegendInfo {
-
-        const ruleIdToIsCommonLinkRuleMap: Record<RuleId, boolean> = {};
-        this.getCommonLinkEntries(state).forEach(
-            commonLinkRule => ruleIdToIsCommonLinkRuleMap[commonLinkRule.id] = true
-        );
-
+    private deliveryRuleToDisplayEntry(rule: DeliveryHighlightingRule): LegendDisplayEntry {
         return {
-            stations: this.enabledStatHRules.filter(rule =>
-                rule.showInLegend &&
-                (activeHighlightings.stations[rule.id] || ruleIdToIsCommonLinkRuleMap[rule.id])
-            ).map(rule =>
-                ({ label: rule.name, color: this.mapToColor(rule.color), shape: rule.shape })
-            ),
-            deliveries: this.enabledDelHRules.filter(rule =>
-                rule.showInLegend && (activeHighlightings.deliveries[rule.id])
-            ).map(rule =>
-                ({ label: rule.name, color: this.mapToColor(rule.color), linePattern: rule.linePattern })
-            )
+            name: rule.name,
+            deliveryColor: this.mapToColor(rule.color)
         };
     }
 
-    private mapToColor(color: number[] | null): Color | null {
-        return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : null;
+    private stationRuleToDisplayEntry(rule: StationHighlightingRule): LegendDisplayEntry {
+        return {
+            name: rule.name,
+            stationColor: this.mapToColor(rule.color),
+            shape: rule.shape ?? undefined
+        };
     }
 
-    private getCommonLinkEntries(state: DataServiceInputState): StationHighlightingRule[] {
-        return this.enabledStatHRules.filter(rule => this.isCommonLinkRule(rule));
+    private getLegendInfo(
+        activeHighlightings: { stations: Record<RuleId, boolean>; deliveries: Record<RuleId, boolean> }
+    ): LegendDisplayEntry[] {
+
+        const stationRulesToDisplay = this.enabledStatHRules.filter(rule =>
+            rule.showInLegend &&
+            (activeHighlightings.stations[rule.id] || this.isCommonLinkRule(rule))
+        );
+        const deliveryRulesToDisplay = this.enabledDelHRules.filter(rule =>
+            rule.showInLegend && (activeHighlightings.deliveries[rule.id])
+        );
+
+        const allDisplayEntries = this.statHighlightingRules
+            .map(rule => this.stationRuleToDisplayEntry(rule))
+            .concat(this.delHighlightingRules
+                .map(rule => this.deliveryRuleToDisplayEntry(rule))
+            );
+
+        const uniqueDisplayEntries: LegendDisplayEntry[] = [];
+        allDisplayEntries.forEach((entry) => {
+            const index = uniqueDisplayEntries.findIndex((toCompare) => entry.name === toCompare.name);
+            if (index >= 0) {
+                uniqueDisplayEntries[index] = {
+                    ...entry,
+                    ...uniqueDisplayEntries[index]
+                };
+            } else {
+                uniqueDisplayEntries.push(entry);
+            }
+        });
+
+        return uniqueDisplayEntries.map(rule => stationRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
+            ? rule
+            : { ...rule, stationColor: undefined, shape: undefined }
+
+        )
+            .map(rule => deliveryRulesToDisplay.some(enabledRule => enabledRule.name === rule.name)
+                ? rule
+                : { ...rule, deliveryColor: undefined }
+            )
+            .filter(rule => rule.deliveryColor || (rule.shape !== undefined) || rule.stationColor);
+    }
+
+
+    private mapToColor(color: number[] | null): Color | undefined {
+        return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : undefined;
     }
 
     private isCommonLinkRule(rule: HighlightingRule): boolean {
