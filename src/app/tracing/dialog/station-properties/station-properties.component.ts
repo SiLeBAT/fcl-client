@@ -324,9 +324,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     private shouldDeliveryBeVisible(deliveryId: DeliveryId): boolean {
         const delivery = this.data.deliveries.get(deliveryId)!;
-        const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target)!;
-
-        return !otherStation.invisible;
+        return !delivery.invisible;
     }
 
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
@@ -420,7 +418,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const deliveriesByLotKey: Map<LotKey, DeliveryId[]> = new Map();
 
         this.data.deliveries.forEach(delivery => {
-            if (this.shouldDeliveryBeVisible(delivery.id)) {
+            if (!delivery.invisible) {
                 const lotKey = this.getInternalLotKey(delivery);
 
                 if (deliveriesByLotKey.has(lotKey)) {
