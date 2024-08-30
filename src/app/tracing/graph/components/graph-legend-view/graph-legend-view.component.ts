@@ -1,10 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { LegendDisplayEntry } from '@app/tracing/data.model';
 
-interface LegendDisplayEntryWithIndex extends LegendDisplayEntry {
-    index: number;
-}
-
 @Component({
     selector: 'fcl-graph-legend-view',
     templateUrl: './graph-legend-view.component.html',
@@ -41,11 +37,9 @@ export class GraphLegendViewComponent {
 
 
     private updateLegend(legend: LegendDisplayEntry[]) {
-        if (!legend) { return; }
         this.legend = legend;
         this.showStationColumn_ = this.legend.some(e => !!e.shape || !!e.stationColor);
         this.showDeliveryColumn_ = this.legend.some(e => !!e.deliveryColor);
-
     }
 
 }
