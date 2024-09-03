@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
     DeliveryData, DataServiceData, NodeShapeType, MergeDeliveriesType, StationData,
-    SharedGraphState, SelectedElements, DeliveryId, StationId
+    SharedGraphState, SelectedElements, DeliveryId, StationId,
+    Color
 } from '../data.model';
 import { DataService } from '../services/data.service';
 import { CyNodeData, CyEdgeData, GraphServiceData, GraphElementData, EdgeId, SelectedGraphElements, NodeId } from './graph.model';
@@ -44,9 +45,9 @@ interface EdgeLinking extends Pick<CyEdgeData, 'id' | 'source' | 'target'> {
 })
 export class GraphService {
 
-    private static readonly DEFAULT_EDGE_COLOR = [0, 0, 0];
-    private static readonly DEFAULT_NODE_COLOR = [255, 255, 255];
-    private static readonly DEFAULT_GHOST_COLOR = [179, 179, 179];
+    private static readonly DEFAULT_EDGE_COLOR = { r: 0, g: 0, b: 0 };
+    private static readonly DEFAULT_NODE_COLOR = { r: 255, g: 255, b: 255 };
+    private static readonly DEFAULT_GHOST_COLOR = { r: 179, g: 179, b: 179 };
 
     private cachedState: SharedGraphState | null = null;
 
@@ -481,17 +482,17 @@ export class GraphService {
         }
     }
 
-    private mergeColors(edgeColors: number[][][]): number[][] {
+    private mergeColors(edgeColors: Color[][]): Color[] {
         const addDefaultColor = edgeColors.some(deliveryColors => deliveryColors.length === 0);
         if (addDefaultColor) {
             edgeColors = concat([[GraphService.DEFAULT_EDGE_COLOR]], edgeColors);
         }
         return _.uniqWith(concat(...edgeColors),
-            (c1: number[], c2: number[]) => c1[0] === c2[0] && c1[1] === c2[1] && c1[2] === c2[2]
+            (c1: Color, c2: Color) => c1.r === c2.r && c1.b === c2.b && c1.g === c2.g
         );
     }
 
-    private getColorInfo(colors: number[][], defaultColor: number[]): {
+    private getColorInfo(colors: Color[], defaultColor: Color): {
         stopColors: string;
         stopPositions: string;
     } {
@@ -509,8 +510,8 @@ export class GraphService {
         };
     }
 
-    private mapColor(color: number[]): string {
-        return `rgb(${color[0]},${color[1]},${color[2]})`;
+    private mapColor(color: Color): string {
+        return `rgb(${color.r},${color.g},${color.b})`;
     }
 
     private applyStationProps(data: GraphServiceData) {

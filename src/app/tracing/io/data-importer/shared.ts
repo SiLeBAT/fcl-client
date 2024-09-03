@@ -98,11 +98,11 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
             name: 'Outbreak',
             showInLegend: true,
-            color: [
-                255,
-                0,
-                0
-            ],
+            color: {
+                r: 255,
+                b: 0,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -118,11 +118,11 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
             name: 'Observed',
             showInLegend: true,
-            color: [
-                0,
-                255,
-                0
-            ],
+            color: {
+                r: 0,
+                b: 255,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -138,11 +138,11 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
             name: 'Forward Trace',
             showInLegend: true,
-            color: [
-                255,
-                200,
-                0
-            ],
+            color: {
+                r: 255,
+                b: 200,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -158,11 +158,11 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
             name: 'Backward Trace',
             showInLegend: true,
-            color: [
-                255,
-                0,
-                255
-            ],
+            color: {
+                r: 255,
+                b: 0,
+                g: 255
+            },
             logicalConditions: [
                 [
                     {
@@ -178,11 +178,11 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Cross Contamination',
             name: 'Cross Contamination',
             showInLegend: true,
-            color: [
-                0,
-                0,
-                0
-            ],
+            color: {
+                r: 0,
+                b: 0,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -198,11 +198,11 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Common Link',
             name: 'Common Link',
             showInLegend: true,
-            color: [
-                255,
-                255,
-                0
-            ],
+            color: {
+                r: 255,
+                b: 255,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -241,7 +241,7 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
             name: 'Kill Contamination',
             showInLegend: true,
-            color: [ 153, 153, 153 ],
+            color: { r: 153, b: 153, g: 153 },
             logicalConditions: [
                 [
                     {
@@ -266,11 +266,11 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Outbreak',
             name: 'Outbreak',
             showInLegend: true,
-            color: [
-                255,
-                0,
-                0
-            ],
+            color: {
+                r: 255,
+                b: 0,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -286,11 +286,11 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Observed',
             name: 'Observed',
             showInLegend: true,
-            color: [
-                0,
-                255,
-                0
-            ],
+            color: {
+                r: 0,
+                b: 255,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -306,11 +306,11 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Forward Trace',
             name: 'Forward Trace',
             showInLegend: true,
-            color: [
-                255,
-                200,
-                0
-            ],
+            color: {
+                r: 255,
+                b: 200,
+                g: 0
+            },
             logicalConditions: [
                 [
                     {
@@ -326,11 +326,11 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Backward Trace',
             name: 'Backward Trace',
             showInLegend: true,
-            color: [
-                255,
-                0,
-                255
-            ],
+            color: {
+                r: 255,
+                b: 0,
+                g: 255
+            },
             logicalConditions: [
                 [
                     {
@@ -346,7 +346,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
             name: 'Kill Contamination',
             showInLegend: true,
-            color: [ 153, 153, 153 ],
+            color: { r: 153, b: 153, g: 153 },
             logicalConditions: [
                 [
                     {

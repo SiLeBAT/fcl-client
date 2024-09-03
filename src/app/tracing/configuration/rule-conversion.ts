@@ -82,7 +82,7 @@ function convertInvEditRuleToDeliveryHRule(editRule: InvEditRule): DeliveryHighl
 function convertCSEditRuleToStatHRule(editRule: ColorAndShapeEditRule): StationHighlightingRule {
     return {
         ...convertEditRuleToHRule(editRule),
-        color: editRule.color === null ? null : Utils.colorToRGBArray(editRule.color),
+        color: editRule.color,
         shape: editRule.shape,
         showInLegend: editRule.showInLegend
     };
@@ -91,7 +91,7 @@ function convertCSEditRuleToStatHRule(editRule: ColorAndShapeEditRule): StationH
 function convertColorEditRuleToDeliveryHRule(editRule: ColorEditRule): DeliveryHighlightingRule {
     return {
         ...convertEditRuleToHRule(editRule),
-        color: Utils.colorToRGBArray(editRule.color),
+        color: editRule.color,
         showInLegend: editRule.showInLegend,
         linePattern: null
     };
@@ -137,7 +137,7 @@ export function convertStatHRuleToCSEditRule(rule: StationHighlightingRule): Col
     return {
         ...convertHRuleToEditRuleCore(rule),
         type: RuleType.COLOR_AND_SHAPE,
-        color: rule.color === null ? null : Utils.rgbArrayToColor(rule.color),
+        color: rule.color,
         shape: rule.shape,
         showInLegend: rule.showInLegend
     };
@@ -147,7 +147,7 @@ export function convertDeliveryHRuleToColorEditRule(rule: DeliveryHighlightingRu
     return {
         ...convertHRuleToEditRuleCore(rule),
         type: RuleType.COLOR,
-        color: Utils.rgbArrayToColor(rule.color!),
+        color: rule.color!,
         showInLegend: rule.showInLegend
     };
 }
@@ -230,7 +230,7 @@ function convertHRuleToRuleListItem(rule: HighlightingRule, stats: HighlightingS
     return {
         id: rule.id,
         name: rule.name,
-        color: rule.color === null ? null : Utils.rgbArrayToColor(rule.color),
+        color: rule.color,
         shape: null,
         showInLegend: rule.showInLegend,
         autoDisabled: rule.autoDisabled,

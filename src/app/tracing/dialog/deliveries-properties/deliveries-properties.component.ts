@@ -9,7 +9,7 @@ import * as fromTracing from '../../state/tracing.reducers';
 import * as tracingSelectors from '../../state/tracing.selectors';
 import { AlertService } from '@app/shared/services/alert.service';
 import { SetSelectedElementsSOA } from '@app/tracing/state/tracing.actions';
-import { DataServiceInputState, TableRow } from '@app/tracing/data.model';
+import { Color, DataServiceInputState, TableRow } from '@app/tracing/data.model';
 
 interface DeliveriesPropertiesData {
     deliveryIds: string[];
@@ -29,7 +29,7 @@ interface Filter {
     filterProps: string[];
 }
 
-interface FilterColumn extends Column, Filter {}
+interface FilterColumn extends Column, Filter { }
 
 @Component({
     selector: 'fcl-deliveries-properties',
@@ -140,18 +140,18 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
     private setRowColors() {
         this._unfilteredRows.forEach(
             row => {
-                const colors = row.highlightingInfo.color.length === 0 ? [[0, 0, 0]] : row.highlightingInfo.color;
+                const colors = row.highlightingInfo.color.length === 0 ? [{ r: 0, b: 0, g: 0 }] : row.highlightingInfo.color;
 
                 row.hColor = `${this.colorToBackgroundString(colors)}`;
             }
         );
     }
 
-    private colorToCss(color: number[]): string {
-        return `rgb(${color[0]},${color[1]},${color[2]})`;
+    private colorToCss(color: Color): string {
+        return `rgb(${color.r},${color.b},${color.g})`;
     }
 
-    private colorToBackgroundString(colors: number[][]): string {
+    private colorToBackgroundString(colors: Color[]): string {
         const nColors = colors.length;
         if (nColors === 1) {
             return this.colorToCss(colors[0]);
@@ -260,7 +260,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
             }
             return (
                 (typeof values[0] === 'string') ?
-                values as string[] :
+                    values as string[] :
                     values.map(x => x.toString())
             );
         } else {

@@ -221,7 +221,7 @@ export class DataExporter {
             disabled: rule.userDisabled,
             invisible: rule.invisible,
             adjustThickness: rule.adjustThickness,
-            color: rule.color,
+            color: rule.color ? Utils.colorToRGBArray(rule.color) : null,
             labelProperty: rule.labelProperty === null ? null : intToExtPropMap[rule.labelProperty],
             valueCondition: this.mapValueCondition(rule.valueCondition, intToExtPropMap, intToExtValueTypeMap),
             logicalConditions: this.mapLogicalConditions(rule.logicalConditions, intToExtPropMap, intToExtOpTypeMap)
