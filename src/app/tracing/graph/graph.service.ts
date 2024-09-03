@@ -488,7 +488,7 @@ export class GraphService {
             edgeColors = concat([[GraphService.DEFAULT_EDGE_COLOR]], edgeColors);
         }
         return _.uniqWith(concat(...edgeColors),
-            (c1: Color, c2: Color) => c1.r === c2.r && c1.b === c2.b && c1.g === c2.g
+            (c1: Color, c2: Color) => c1.r === c2.r && c1.g === c2.g && c1.b === c2.b
         );
     }
 

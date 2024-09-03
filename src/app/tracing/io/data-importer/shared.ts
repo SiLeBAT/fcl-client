@@ -100,8 +100,8 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             showInLegend: true,
             color: {
                 r: 255,
-                b: 0,
-                g: 0
+                g: 0,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -120,8 +120,8 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             showInLegend: true,
             color: {
                 r: 0,
-                b: 255,
-                g: 0
+                g: 255,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -140,8 +140,8 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             showInLegend: true,
             color: {
                 r: 255,
-                b: 200,
-                g: 0
+                g: 200,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -160,8 +160,8 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             showInLegend: true,
             color: {
                 r: 255,
-                b: 0,
-                g: 255
+                g: 0,
+                b: 255
             },
             logicalConditions: [
                 [
@@ -180,8 +180,8 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             showInLegend: true,
             color: {
                 r: 0,
-                b: 0,
-                g: 0
+                g: 0,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -200,8 +200,8 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             showInLegend: true,
             color: {
                 r: 255,
-                b: 255,
-                g: 0
+                g: 255,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -241,7 +241,7 @@ export function createDefaultStationHRules(addDefaultAnoRule: boolean): StationH
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
             name: 'Kill Contamination',
             showInLegend: true,
-            color: { r: 153, b: 153, g: 153 },
+            color: { r: 153, g: 153, b: 153 },
             logicalConditions: [
                 [
                     {
@@ -268,8 +268,8 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             showInLegend: true,
             color: {
                 r: 255,
-                b: 0,
-                g: 0
+                g: 0,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -288,8 +288,8 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             showInLegend: true,
             color: {
                 r: 0,
-                b: 255,
-                g: 0
+                g: 255,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -308,8 +308,8 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             showInLegend: true,
             color: {
                 r: 255,
-                b: 200,
-                g: 0
+                g: 200,
+                b: 0
             },
             logicalConditions: [
                 [
@@ -328,8 +328,8 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             showInLegend: true,
             color: {
                 r: 255,
-                b: 0,
-                g: 255
+                g: 0,
+                b: 255
             },
             logicalConditions: [
                 [
@@ -346,7 +346,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + 'Kill Contamination',
             name: 'Kill Contamination',
             showInLegend: true,
-            color: { r: 153, b: 153, g: 153 },
+            color: { r: 153, g: 153, b: 153 },
             logicalConditions: [
                 [
                     {

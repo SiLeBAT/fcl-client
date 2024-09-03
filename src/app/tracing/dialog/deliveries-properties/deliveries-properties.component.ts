@@ -140,7 +140,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
     private setRowColors() {
         this._unfilteredRows.forEach(
             row => {
-                const colors = row.highlightingInfo.color.length === 0 ? [{ r: 0, b: 0, g: 0 }] : row.highlightingInfo.color;
+                const colors = row.highlightingInfo.color.length === 0 ? [{ r: 0, g: 0, b: 0 }] : row.highlightingInfo.color;
 
                 row.hColor = `${this.colorToBackgroundString(colors)}`;
             }
@@ -148,7 +148,7 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
     }
 
     private colorToCss(color: Color): string {
-        return `rgb(${color.r},${color.b},${color.g})`;
+        return `rgb(${color.r},${color.g},${color.b})`;
     }
 
     private colorToBackgroundString(colors: Color[]): string {

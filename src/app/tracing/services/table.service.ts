@@ -375,7 +375,7 @@ export class TableService {
                     color: (
                         delivery.highlightingInfo!.color.length > 0 ?
                             delivery.highlightingInfo!.color :
-                            [{ r: 0, b: 0, g: 0 }]
+                            [{ r: 0, g: 0, b: 0 }]
                     ),
                     shape: NodeShapeType.SQUARE
                 },

@@ -612,8 +612,8 @@ export class DataImporterV1 implements IDataImporter {
         }
     }
 
-    private colorFromArray(colorArray: number[] | null): { r: number; b: number; g: number } | null {
-        return colorArray && colorArray.length === 3 ? { r: colorArray[0], b: colorArray[1], g: colorArray[2] } : null;
+    private colorFromArray(colorArray: number[] | null): { r: number; g: number; b: number } | null {
+        return colorArray && colorArray.length === 3 ? { r: colorArray[0], g: colorArray[1], b: colorArray[2] } : null;
     }
 
     private convertExternalAnoRule(extAnoRule: ExtAnonymizationRule, extToIntPropMap: Map<string, string>): HighlightingRule {
