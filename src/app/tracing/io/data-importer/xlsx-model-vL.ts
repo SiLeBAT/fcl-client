@@ -1,4 +1,5 @@
 import { TypeString } from "./xlsx-model";
+import { XlsxReader } from "./xlsx-reader-wo-tc";
 
 export type CellValue = number | string | boolean;
 
@@ -51,4 +52,9 @@ export interface Table<T = Row> {
     header: TableHeader;
     columns: ColumnInfo[];
     rows: T[];
+}
+
+export interface XlsxImporter {
+    isXlsxFileSupported(reader: XlsxReader): boolean;
+    import(reader: XlsxReader): Import
 }
