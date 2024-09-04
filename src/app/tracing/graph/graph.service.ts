@@ -500,7 +500,7 @@ export class GraphService {
             colors = [defaultColor];
         }
         const repeat = (s: string) => s + ' ' + s;
-        const stopColors = colors.map(c => repeat(this.mapColor(c))).join(' ');
+        const stopColors = colors.map(c => repeat(Utils.colorToCss(c))).join(' ');
         const n = colors.length;
         const stopPositions = colors.map((c, i) => `${100 * i / n}% ${100 * (i + 1) / n}%`).join(' ');
 
@@ -508,10 +508,6 @@ export class GraphService {
             stopColors: stopColors,
             stopPositions: stopPositions
         };
-    }
-
-    private mapColor(color: Color): string {
-        return `rgb(${color.r},${color.g},${color.b})`;
     }
 
     private applyStationProps(data: GraphServiceData) {

@@ -8,7 +8,8 @@ import {
     ValueType, OperationType, NodeShapeType, LinePatternType,
     MergeDeliveriesType, CrossContTraceType, StationId, DeliveryId, HighlightingRule,
     LabelPart as IntLabelPart,
-    StationHighlightingRule as IntStationHighlightingRule
+    StationHighlightingRule as IntStationHighlightingRule,
+    Color
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -612,7 +613,7 @@ export class DataImporterV1 implements IDataImporter {
         }
     }
 
-    private colorFromArray(colorArray: number[] | null): { r: number; g: number; b: number } | null {
+    private colorFromArray(colorArray: number[] | null): Color | null {
         return colorArray && colorArray.length === 3 ? { r: colorArray[0], g: colorArray[1], b: colorArray[2] } : null;
     }
 
