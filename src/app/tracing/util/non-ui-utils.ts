@@ -110,7 +110,7 @@ export class Utils {
     }
 
     static colorToCss(color: Color): string {
-        return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
+        return `rgb(${color.r},${color.g},${color.b})`;
     }
 
     static rgbToHsl(r, g, b) {

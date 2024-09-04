@@ -147,17 +147,13 @@ export class DeliveriesPropertiesComponent implements OnDestroy {
         );
     }
 
-    private colorToCss(color: Color): string {
-        return `rgb(${color.r},${color.g},${color.b})`;
-    }
-
     private colorToBackgroundString(colors: Color[]): string {
         const nColors = colors.length;
         if (nColors === 1) {
-            return this.colorToCss(colors[0]);
+            return Utils.colorToCss(colors[0]);
         } else {
             return 'linear-gradient(to right, ' + colors
-                .map(color => this.colorToCss(color))
+                .map(color => Utils.colorToCss(color))
                 .map((cssColor, index) => `${cssColor} ${index / nColors * 100}%, ${cssColor} ${(index + 1) / nColors * 100}%`)
                 .join(', ')
                 + ')';
