@@ -40,7 +40,7 @@ export interface TableColumn {
 export type Property = TableColumn;
 
 export interface RowHighlightingInfo {
-    color: number[][];
+    color: Color[];
     shape?: NodeShapeType | null;
 }
 
@@ -225,7 +225,7 @@ export interface HighlightingRule {
     id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
-    color: number[] | null;
+    color: Color | null;
     invisible: boolean;
     userDisabled: boolean;
     autoDisabled: boolean;
@@ -410,7 +410,7 @@ export interface StationData extends StationStoreData, StationTracingData, ViewD
 
 export interface HighlightingInfo {
     label: string;
-    color: number[][];
+    color: Color[];
 }
 
 export interface StationHighlightingInfo extends HighlightingInfo {

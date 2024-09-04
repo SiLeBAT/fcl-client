@@ -180,14 +180,14 @@ export class HighlightingService {
     private deliveryRuleToDisplayEntry(rule: DeliveryHighlightingRule): LegendDisplayEntry {
         return {
             name: rule.name,
-            deliveryColor: this.mapToColor(rule.color)
+            deliveryColor: rule.color ?? undefined
         };
     }
 
     private stationRuleToDisplayEntry(rule: StationHighlightingRule): LegendDisplayEntry {
         return {
             name: rule.name,
-            stationColor: this.mapToColor(rule.color),
+            stationColor: rule.color ?? undefined,
             shape: rule.shape ?? undefined
         };
     }
@@ -233,11 +233,6 @@ export class HighlightingService {
                 : { ...rule, deliveryColor: undefined }
             )
             .filter(rule => rule.deliveryColor || (rule.shape !== undefined) || rule.stationColor);
-    }
-
-
-    private mapToColor(color: number[] | null): Color | undefined {
-        return (color && color.length === 3) ? { r: color[0], g: color[1], b: color[2] } : undefined;
     }
 
     private isCommonLinkRule(rule: HighlightingRule): boolean {
@@ -402,7 +397,7 @@ export class HighlightingService {
     >(
         fclElement: T,
         highlightingRules: K[]
-    ): { label: string; color: number[][] } {
+    ): { label: string; color: Color[] } {
 
         const labelParts: string[] = [];
         for (const rule of highlightingRules) {

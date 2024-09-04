@@ -8,7 +8,8 @@ import {
     ValueType, OperationType, NodeShapeType, LinePatternType,
     MergeDeliveriesType, CrossContTraceType, StationId, DeliveryId, HighlightingRule,
     LabelPart as IntLabelPart,
-    StationHighlightingRule as IntStationHighlightingRule
+    StationHighlightingRule as IntStationHighlightingRule,
+    Color
 } from '../../data.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -43,7 +44,7 @@ import { PartialPick } from '@app/tracing/util/utility-types';
 const JSON_SCHEMA_FILE = '../../../../assets/schema/schema-v1.json';
 
 export class DataImporterV1 implements IDataImporter {
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient) { }
 
     async isDataFormatSupported(data: any): Promise<boolean> {
         if (
@@ -173,7 +174,7 @@ export class DataImporterV1 implements IDataImporter {
             const intDelivery = intPartDelivery as DeliveryData;
 
             intDelivery.lotKey = intDelivery.lotKey ||
-                    (intDelivery.source + '|' + (intDelivery.name || intDelivery.id) + '|' + (intDelivery.lot || intDelivery.id));
+                (intDelivery.source + '|' + (intDelivery.name || intDelivery.id) + '|' + (intDelivery.lot || intDelivery.id));
 
             idToStationMap.get(intDelivery.source)!.outgoing.push(intDelivery.id);
             idToStationMap.get(intDelivery.target)!.incoming.push(intDelivery.id);
@@ -556,7 +557,7 @@ export class DataImporterV1 implements IDataImporter {
                         showInLegend: extRule.showInLegend === true,
                         userDisabled: extRule.disabled === true,
                         autoDisabled: false,
-                        color: extRule.color,
+                        color: this.colorFromArray(extRule.color),
                         invisible: extRule.invisible,
                         adjustThickness: extRule.adjustThickness,
                         labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntStatPropMap),
@@ -597,7 +598,7 @@ export class DataImporterV1 implements IDataImporter {
                         userDisabled: extRule.disabled === true,
                         autoDisabled: false,
                         activationDisablesOtherRules: false,
-                        color: extRule.color,
+                        color: this.colorFromArray(extRule.color),
                         invisible: extRule.invisible,
                         adjustThickness: extRule.adjustThickness,
                         labelProperty: this.mapLabelProperty(extRule.labelProperty, extToIntPropMap),
@@ -610,6 +611,10 @@ export class DataImporterV1 implements IDataImporter {
         } else {
             fclData.graphSettings.highlightingSettings.deliveries = createDefaultDeliveryHRules();
         }
+    }
+
+    private colorFromArray(colorArray: number[] | null): Color | null {
+        return colorArray && colorArray.length === 3 ? { r: colorArray[0], g: colorArray[1], b: colorArray[2] } : null;
     }
 
     private convertExternalAnoRule(extAnoRule: ExtAnonymizationRule, extToIntPropMap: Map<string, string>): HighlightingRule {
