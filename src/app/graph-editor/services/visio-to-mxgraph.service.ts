@@ -399,7 +399,7 @@ export class VisioToMxGraphService {
             null,
             '',
             position.x, position.y, 220, 20,
-            'shape=image;image=' + '../../assets/CreatedWithFCL_Banner.png',
+            'shape=image;image=' + '../../assets/CreatedWithFCL_Banner.svg',
             false);
     }
 
