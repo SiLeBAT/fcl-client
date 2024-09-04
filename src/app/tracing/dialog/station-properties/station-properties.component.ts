@@ -34,6 +34,7 @@ interface NodeDatum {
     deliveryIds: DeliveryId[];
     lot?: string;
     date?: string;
+    invisible: boolean;
     x: number;
     y: number;
 }
@@ -41,6 +42,7 @@ interface NodeDatum {
 interface EdgeDatum {
     source: NodeDatum;
     target: NodeDatum;
+    invisible: boolean;
 }
 
 class DataOptimizer {
@@ -138,6 +140,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private static readonly INCOMING_HEADER = 'Incoming Deliveries:';
     private static readonly OUTGOING_HEADER = 'Outgoing Deliveries:';
     private static readonly DELIVERIES_HEADER_HEIGHT = 14;
+    private static readonly CONTAINER_PADDING = 1;
 
     @ViewChild('inOutConnector', { static: true }) inOutConnector: ElementRef;
 
@@ -191,22 +194,29 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             const optimizer = new DataOptimizer(this.nodeInData, this.nodeOutData, this.edgeData);
             optimizer.optimize();
 
-            let yIn = 1 + StationPropertiesComponent.DELIVERIES_HEADER_HEIGHT + StationPropertiesComponent.NODE_PADDING;
-            let yOut = yIn;
+            let currentYPositionIncoming =
+                StationPropertiesComponent.CONTAINER_PADDING
+                + StationPropertiesComponent.DELIVERIES_HEADER_HEIGHT
+                + StationPropertiesComponent.NODE_PADDING;
+            let currentYPositionOutgoing = currentYPositionIncoming;
 
-            for (const n of this.nodeInData) {
-                n.x = 1;
-                n.y = yIn;
-                yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+            for (const node of this.nodeInData) {
+                node.x = StationPropertiesComponent.CONTAINER_PADDING;
+                node.y = currentYPositionIncoming;
+                currentYPositionIncoming += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
             }
 
-            for (const n of this.nodeOutData) {
-                n.x = StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH - 1;
-                n.y = yOut;
-                yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+            for (const node of this.nodeOutData) {
+                node.x = StationPropertiesComponent.SVG_WIDTH
+                    - StationPropertiesComponent.NODE_WIDTH
+                    - StationPropertiesComponent.CONTAINER_PADDING;
+                node.y = currentYPositionOutgoing;
+                currentYPositionOutgoing += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
             }
 
-            this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_PADDING + 1;
+            this.height = Math.max(currentYPositionIncoming, currentYPositionOutgoing)
+                - StationPropertiesComponent.NODE_PADDING
+                + StationPropertiesComponent.CONTAINER_PADDING;
         }
     }
 
@@ -291,10 +301,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 .attr('orient', 'auto')
                 .append('path')
                 .attr('d', 'M0,-5L10,0L0,5')
-                .attr('fill', 'rgb(0, 0, 0)');
+                .attr('fill', Utils.colorToCss(Constants.DEFAULT_STROKE_COLOR));
 
             this.connectLine = g.append<SVGElement>('path').attr('marker-end', 'url(#end-arrow)').attr('visibility', 'hidden')
-                .attr('fill', 'none').attr('stroke', 'rgb(0, 0, 0)').attr('stroke-width', '6px').attr('cursor', 'default');
+                .attr('fill', 'none').attr('stroke', Utils.colorToCss(Constants.DEFAULT_STROKE_COLOR)).attr('stroke-width', '6px').attr('cursor', 'default');
             this.edgesG = g.append<SVGElement>('g');
             this.nodesInG = g.append<SVGElement>('g');
             this.nodesOutG = g.append<SVGElement>('g');
@@ -322,11 +332,6 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 .find(key => this.properties[key].label === property));
     }
 
-    private shouldDeliveryBeVisible(deliveryId: DeliveryId): boolean {
-        const delivery = this.data.deliveries.get(deliveryId)!;
-        return !delivery.invisible;
-    }
-
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
         const delivery = this.data.deliveries.get(deliveryId)!;
         const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target)!;
@@ -338,6 +343,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             lot: delivery.lot,
             deliveryIds: [deliveryId],
             date: delivery.dateOut,
+            invisible: delivery.invisible,
             x: 0,
             y: 0
         };
@@ -391,15 +397,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const nodeOutMap = new Map<DeliveryId, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
-            if (this.shouldDeliveryBeVisible(deliveryId)) {
-                nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
-            }
+            nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
         }
 
         for (const deliveryId of this.data.station.outgoing) {
-            if (this.shouldDeliveryBeVisible(deliveryId)) {
-                nodeOutMap.set(deliveryId, this.createDeliveryNode(deliveryId));
-            }
+            nodeOutMap.set(deliveryId, this.createDeliveryNode(deliveryId));
         }
 
         this.nodeInData = Array.from(nodeInMap.values());
@@ -407,9 +409,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         this.edgeData = [];
 
         for (const connection of this.data.station.connections) {
+            const source = nodeInMap.get(connection.source)!;
+            const target = nodeOutMap.get(connection.target)!;
             this.edgeData.push({
-                source: nodeInMap.get(connection.source)!,
-                target: nodeOutMap.get(connection.target)!
+                source: source,
+                target: target,
+                invisible: source.invisible || target.invisible
             });
         }
     }
@@ -418,14 +423,12 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const deliveriesByLotKey: Map<LotKey, DeliveryId[]> = new Map();
 
         this.data.deliveries.forEach(delivery => {
-            if (!delivery.invisible) {
-                const lotKey = this.getInternalLotKey(delivery);
+            const lotKey = this.getInternalLotKey(delivery);
 
-                if (deliveriesByLotKey.has(lotKey)) {
-                    deliveriesByLotKey.get(lotKey)!.push(delivery.id);
-                } else {
-                    deliveriesByLotKey.set(lotKey, [delivery.id]);
-                }
+            if (deliveriesByLotKey.has(lotKey)) {
+                deliveriesByLotKey.get(lotKey)!.push(delivery.id);
+            } else {
+                deliveriesByLotKey.set(lotKey, [delivery.id]);
             }
         });
 
@@ -433,9 +436,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const nodeOutMap = new Map<LotKey, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
-            if (this.shouldDeliveryBeVisible(deliveryId)) {
-                nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
-            }
+            nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
         }
 
         this.nodeInData = Array.from(nodeInMap.values());
@@ -445,14 +446,17 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             const names: Set<string> = new Set();
             const lotDeliveryIds = deliveriesByLotKey.get(lotKey);
             if (lotDeliveryIds) {
-                for (const deliveryId of lotDeliveryIds) {
-                    names.add(this.data.deliveries.get(deliveryId)!.name ?? '');
+                const lotDeliveries = lotDeliveryIds.map(deliveryId => this.data.deliveries.get(deliveryId));
+                for (const delivery of lotDeliveries) {
+                    names.add(delivery!.name ?? '');
                 }
+
                 nodeOutMap.set(lotKey, {
                     id: lotKey,
                     name: Array.from(names).join('/'),
-                    lot: this.data.deliveries.get(Array.from(lotDeliveryIds)[0])!.lot,
+                    lot: lotDeliveries[0]!.lot,
                     deliveryIds: lotDeliveryIds,
+                    invisible: lotDeliveries.every(delivery => delivery?.invisible),
                     x: 0,
                     y: 0
                 });
@@ -463,7 +467,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     if (source && target) {
                         this.edgeData.push({
                             source: source,
-                            target: target
+                            target: target,
+                            invisible: source.invisible || target.invisible
                         });
                     }
                 });
@@ -498,17 +503,28 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private addNodes() {
-        const updateColor = (nodes: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
+        const updateColor = (nodes: d3.Selection<SVGElement, any, any, any>, hovered: boolean, invisible: boolean) => {
             nodes.selectAll('rect')
-                .attr('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
-                .attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
+                .attr('fill', Utils.colorToCss(hovered ? Constants.HOVER_FILL_COLOR : Constants.DEFAULT_FILL_COLOR))
+                .attr('stroke', Utils.colorToCss(
+                    hovered
+                        ? Constants.HOVER_STROKE_COLOR
+                        : invisible
+                            ? Constants.INVISIBLE_STROKE_COLOR
+                            : Constants.DEFAULT_STROKE_COLOR));
         };
         const initRectAndText = (nodes: d3.Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
             nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
             nodes.append('rect').attr('stroke-width', '2px')
-                .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
-
-            updateColor(nodes, false);
+                .attr('width', StationPropertiesComponent.NODE_WIDTH)
+                .attr('height', StationPropertiesComponent.NODE_HEIGHT)
+                .attr('fill', Utils.colorToCss(Constants.DEFAULT_FILL_COLOR))
+                .attr('stroke',
+                    datum => Utils.colorToCss(
+                        datum.invisible
+                            ? Constants.INVISIBLE_STROKE_COLOR
+                            : Constants.DEFAULT_STROKE_COLOR
+                    ));
 
             const text = nodes.append('text').attr('text-anchor', 'left');
 
@@ -530,43 +546,54 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         initRectAndText(newNodesOut, false);
 
         newNodesIn.on('mouseover', (event, inNode: NodeDatum) => {
-            updateColor(d3.select(event.currentTarget), true);
+            updateColor(d3.select(event.currentTarget), true, inNode.invisible);
             this.hoverDeliveries(inNode.deliveryIds);
-        }).on('mouseout', (event) => {
-            updateColor(d3.select(event.currentTarget), false);
+        }).on('mouseout', (event, inNode) => {
+            updateColor(d3.select(event.currentTarget), false, inNode.invisible);
             this.hoverDeliveries([]);
         });
 
         newNodesOut.on('mouseover', (event, outNode: NodeDatum) => {
-            updateColor(d3.select(event.currentTarget), true);
+            updateColor(d3.select(event.currentTarget), true, outNode.invisible);
             this.hoverDeliveries(outNode.deliveryIds);
-        }).on('mouseout', (event) => {
-            updateColor(d3.select(event.currentTarget), false);
+        }).on('mouseout', (event, outNode) => {
+            updateColor(d3.select(event.currentTarget), false, outNode.invisible);
             this.hoverDeliveries([]);
         });
     }
 
     private updateEdges() {
         // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
-        const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
-            edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
+        const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean, invisible: boolean) => {
+            edges.attr('stroke',
+                Utils.colorToCss(
+                    hovered
+                        ? Constants.HOVER_STROKE_COLOR
+                        : invisible
+                            ? Constants.INVISIBLE_STROKE_COLOR
+                            : Constants.DEFAULT_STROKE_COLOR
+                ));
         };
 
         const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
             .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
-        const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => StationPropertiesComponent.line(
-            d.source.x + StationPropertiesComponent.NODE_WIDTH,
-            d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-            d.target.x,
-            d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
-        )).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
+        const newEdges = edges.enter().append<SVGElement>('path').attr('d', edgeDatum => StationPropertiesComponent.line(
+            edgeDatum.source.x + StationPropertiesComponent.NODE_WIDTH,
+            edgeDatum.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
+            edgeDatum.target.x,
+            edgeDatum.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
+        )).attr('stroke', edgeDatum => Utils.colorToCss(
+            edgeDatum.invisible
+                ? Constants.INVISIBLE_STROKE_COLOR
+                : Constants.DEFAULT_STROKE_COLOR
+        )
+        ).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
 
-        updateColor(newEdges, false);
         edges.exit().remove();
 
         newEdges.on('mouseover', (event, edge: EdgeDatum) => {
             if (this.selected == null) {
-                updateColor(d3.select(event.currentTarget), true);
+                updateColor(d3.select(event.currentTarget), true, edge.invisible);
                 this.hoverDeliveries(
                     concat(
                         edge.source.deliveryIds,
@@ -574,8 +601,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     )
                 );
             }
-        }).on('mouseout', (event) => {
-            updateColor(d3.select(event.currentTarget), false);
+        }).on('mouseout', (event, edge) => {
+            updateColor(d3.select(event.currentTarget), false, edge.invisible);
             this.hoverDeliveries([]);
         });
     }

@@ -16,7 +16,7 @@ export class Constants {
     static readonly EXAMPLE_DATA_FILE_STRUCTURE: ExampleData[] = [
         {
             name: 'Example Data',
-            path:  Constants.EXAMPLE_DATA_BASE_DIR + 'ExampleData.json'
+            path: Constants.EXAMPLE_DATA_BASE_DIR + 'ExampleData.json'
         },
         {
             name: 'Babytea',
@@ -24,15 +24,15 @@ export class Constants {
             children: [
                 {
                     name: 'Scenario 1',
-                    path:  Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_1_Outbreak-Baby-Tea.json'
+                    path: Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_1_Outbreak-Baby-Tea.json'
                 },
                 {
                     name: 'Scenario 2',
-                    path:  Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_2_LaSource.json'
+                    path: Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_2_LaSource.json'
                 },
                 {
                     name: 'Scenario 3',
-                    path:  Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_3_All-Stations.json'
+                    path: Constants.EXAMPLE_DATA_BASE_DIR + Constants.EXAMPLE_DATA_SUB_DIR_1 + 'Scenario_3_All-Stations.json'
                 }
             ]
         }
@@ -149,7 +149,7 @@ export class Constants {
     static readonly NODE_SIZE_TO_EDGE_WIDTH_MAP = Map<number, number>(
         Constants.NODE_SIZES.toArray().map(nodeSize => [
             nodeSize,
-            Number((nodeSize/Constants.NODE_SIZE_TO_EDGE_WIDTH_FACTOR).toPrecision(1)) // edgeWidth
+            Number((nodeSize / Constants.NODE_SIZE_TO_EDGE_WIDTH_FACTOR).toPrecision(1)) // edgeWidth
         ])
     );
 
@@ -227,4 +227,14 @@ export class Constants {
     );
 
     static readonly DELIVERYTABLE_LOTKEYCOLUMN = 'Product_k';
+
+    static readonly COLOR_BLACK: Color = { r: 0, g: 0, b: 0 };
+    static readonly COLOR_WHITE: Color = { r: 255, g: 255, b: 255 };
+
+
+    static readonly DEFAULT_FILL_COLOR = this.COLOR_WHITE;
+    static readonly DEFAULT_STROKE_COLOR = this.COLOR_BLACK;
+    static readonly HOVER_FILL_COLOR: Color = { r: 128, g: 128, b: 255 };
+    static readonly HOVER_STROKE_COLOR: Color = { r: 0, g: 0, b: 255 };
+    static readonly INVISIBLE_STROKE_COLOR: Color = { r: 211, g: 211, b: 211 };
 }
