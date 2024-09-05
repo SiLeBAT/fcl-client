@@ -60,12 +60,12 @@ export class DataImporterV0 implements IDataImporter {
         for (const d of data.deliveries) {
             const source = stationsById[d.source];
             if (source === undefined) {
-                throw new InputDataError(`The delivery with id '${ d.id }' references a source (with id '${d.source }') which does not exist.`);
+                throw new InputDataError(`The delivery with id '${d.id}' references a source (with id '${d.source}') which does not exist.`);
             }
             source.outgoing.push(d.id);
             const target = stationsById[d.target];
             if (target === undefined) {
-                throw new InputDataError(`The delivery with id '${ d.id }' references a target (with id '${d.target }') which does not exist.`);
+                throw new InputDataError(`The delivery with id '${d.id}' references a target (with id '${d.target}') which does not exist.`);
             }
             target.incoming.push(d.id);
 
@@ -75,11 +75,11 @@ export class DataImporterV0 implements IDataImporter {
         for (const r of data.deliveriesRelations) {
             const sourceD = deliveriesById[r.source];
             if (sourceD === undefined) {
-                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.source }' which does not exist.`);
+                throw new InputDataError(`A delivery relation references a delivery (with id '${r.source}' which does not exist.`);
             }
             const targetD = deliveriesById[r.target];
             if (targetD === undefined) {
-                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.target }' which does not exist.`);
+                throw new InputDataError(`A delivery relation references a delivery (with id '${r.target}' which does not exist.`);
             }
 
             if (sourceD.target !== targetD.source) {
@@ -121,13 +121,13 @@ export class DataImporterV0 implements IDataImporter {
         const capContext = context[0].toUpperCase() + context.slice(1);
         for (const id of ids) {
             if (id === undefined) {
-                throw new InputDataError(`${ capContext } id is undefined.`);
+                throw new InputDataError(`${capContext} id is undefined.`);
             }
             if (id === null) {
-                throw new InputDataError(`${ capContext } id is null.`);
+                throw new InputDataError(`${capContext} id is null.`);
             }
             if (idMap[id] !== undefined) {
-                throw new InputDataError(`Duplicate ${ context } id is null.`);
+                throw new InputDataError(`Duplicate ${context} id is null.`);
             }
             idMap[id] = true;
         }
@@ -147,7 +147,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string; value: string }[] = [];
+            const properties: { name: string; value: string; }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];
@@ -179,7 +179,7 @@ export class DataImporterV0 implements IDataImporter {
                     contains: e.contains
                 });
             }
-            const weight = e.weight ?? e.outbreak ? 1 : 0;
+            const weight = e.weight ?? (e.outbreak ? 1 : 0);
             fclData.tracingSettings.stations.push({
                 id: e.id,
                 weight: weight,
@@ -213,7 +213,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string; value: string }[] = [];
+            const properties: { name: string; value: string; }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];
