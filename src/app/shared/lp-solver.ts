@@ -26,9 +26,7 @@ interface Differences {
     relDiff: number;
 }
 
-function getRoundedValue(coeff: number, minMantissaLength?: 3, epsilon?: 1e-6): number {
-    minMantissaLength = minMantissaLength || 3;
-    epsilon = epsilon || 1e-6;
+function getRoundedValue(coeff: number, minMantissaLength = 3, epsilon = 1e-6): number {
     const absCoeff = Math.abs(coeff);
     const integerRoundBound = Math.pow(10, minMantissaLength - 1);
     if (Math.abs(coeff) >= integerRoundBound) {
