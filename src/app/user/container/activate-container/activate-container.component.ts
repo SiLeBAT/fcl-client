@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 
 import { UserService } from '../../services/user.service';

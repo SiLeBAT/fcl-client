@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { StationId, Position, SchemaGraphState } from '../data.model';
 import { GraphService } from './graph.service';
 import { CyNodeData, NodeId } from './graph.model';
-import * as _ from 'lodash';
 import { GraphData } from './cy-graph/cy-graph';
 
 @Injectable({

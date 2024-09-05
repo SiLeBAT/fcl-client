@@ -5,7 +5,6 @@ import {
     MapType,
     Size, MapConfig
 } from '../../../data.model';
-import * as _ from 'lodash';
 import { createOpenLayerMap, updateMapType, updateVectorLayerStyle } from '@app/tracing/util/map-utils';
 
 interface TypedSimpleChange<T> extends SimpleChange {

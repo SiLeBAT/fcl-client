@@ -1,5 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
-
 export const STATION_ADDRESS = 'Address';
 export const STATION_COUNTRY = 'Country';
 export const STATION_FORWARD = 'Forward';

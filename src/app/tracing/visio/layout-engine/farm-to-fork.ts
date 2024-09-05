@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { StationData, DeliveryData, StationId, DeliveryId, Range } from '../../data.model';
 import { Graph, Vertex } from '../../layout/farm-to-fork/data-structures';
 import { FarmToForkLayouter } from '../../layout/farm-to-fork/farm-to-fork';

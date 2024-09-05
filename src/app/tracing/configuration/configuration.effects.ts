@@ -16,7 +16,6 @@ import { DialogYesNoComponent, DialogYesNoData } from '../dialog/dialog-yes-no/d
 import { selectHighlightingSettings } from '../state/tracing.selectors';
 import { EditHighlightingService } from './edit-highlighting.service';
 import { TableColumn } from '../data.model';
-import * as _ from 'lodash';
 
 @Injectable()
 export class ConfigurationEffects {

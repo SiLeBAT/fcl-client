@@ -33,7 +33,6 @@ import {
     convertDeliveryEditRuleToHRule, convertStationEditRuleToHRule
 } from './rule-conversion';
 import { EditRuleOfType, extractPropToValuesMap } from './shared';
-import * as _ from 'lodash';
 
 interface UnsharedData {
     propData: PropData;

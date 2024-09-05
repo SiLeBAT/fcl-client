@@ -11,7 +11,6 @@ import {
     Position,
     GraphLayer
 } from '../../tracing/visio/layout-engine/datatypes';
-import * as _ from 'lodash';
 
 declare const mxConstants: any;
 

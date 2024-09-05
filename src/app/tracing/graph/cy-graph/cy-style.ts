@@ -1,5 +1,4 @@
 import cytoscape from 'cytoscape';
-import { Style } from 'ol/style';
 import { GraphElementData } from '../graph.model';
 import { CSS_CLASS_HOVER } from './cy.constants';
 

@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { TreeStatus } from '@app/tracing/data.model';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-collapse-status-cell-view',

@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
-import { TokenizedUser } from '../../models/user.model';
 import * as fromUser from '../../../user/state/user.reducer';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-profile-container',

@@ -2,7 +2,6 @@ import { CyNodeData, CyEdgeData, Cy, CyNodeDef, CyEdgeDef, SelectedGraphElements
 import { Layout, Position, PositionMap } from '../../data.model';
 import cytoscape from 'cytoscape';
 import { StyleConfig, CyStyle } from './cy-style';
-import * as _ from 'lodash';
 import { EdgeLabelOffsetUpdater } from '../edge-label-offset-updater';
 import { EDGE_GROUP, NODE_GROUP, PRESET_LAYOUT_NAME } from './cy.constants';
 import cola from 'cytoscape-cola';

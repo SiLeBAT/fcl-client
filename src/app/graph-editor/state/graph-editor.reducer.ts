@@ -1,6 +1,5 @@
-import * as fromRoot from '../../state/app.state';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { GraphEditorActions, GraphEditorActionTypes, GraphEditorActivated } from './graph-editor.actions';
+import { GraphEditorActions, GraphEditorActionTypes } from './graph-editor.actions';
 
 export const STATE_SLICE_NAME = 'graphEditor';
 

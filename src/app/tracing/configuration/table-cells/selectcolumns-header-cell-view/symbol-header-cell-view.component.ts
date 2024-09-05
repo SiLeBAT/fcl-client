@@ -1,7 +1,6 @@
 import {
     Component, Input, Output, EventEmitter, ChangeDetectionStrategy
 } from '@angular/core';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-symbol-header-cell-view',

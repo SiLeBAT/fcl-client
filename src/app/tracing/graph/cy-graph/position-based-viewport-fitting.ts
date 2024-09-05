@@ -1,6 +1,5 @@
 import { getEnclosingRectFromPoints } from '@app/tracing/util/geometry-utils';
 import { Layout, Size, Range, Position } from '../../data.model';
-import _ from 'lodash';
 
 const DEFAULT_VIEWPORT = { zoom: 1, pan: { x: 0, y: 0 } };
 

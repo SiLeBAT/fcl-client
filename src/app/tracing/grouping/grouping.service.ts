@@ -4,7 +4,6 @@ import {
     GroupType, GroupData, ObservedType, GroupMode, Position, StationTracingSettings
 } from '../data.model';
 import { concat, removeNullish, Utils } from '../util/non-ui-utils';
-import * as _ from 'lodash';
 import { GroupingState, GroupingChange, SetStationGroupsPayload } from './model';
 import { SourceCollapser } from './source-collapser';
 import { TargetCollapser } from './target-collapser';

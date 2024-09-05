@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TableColumn } from '@app/tracing/data.model';
 import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
-import * as _ from 'lodash';
 import { EditRule, RuleId, RuleListItem, RuleType } from '../model';
 import { removeNullishPick } from '@app/tracing/util/non-ui-utils';
 

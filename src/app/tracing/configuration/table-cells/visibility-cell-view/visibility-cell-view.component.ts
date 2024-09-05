@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { TableRow } from '@app/tracing/data.model';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-visibility-cell-view',

@@ -1,6 +1,5 @@
 import { SampleData as IntSampleData, FclData, SampleResultType } from '../../data.model';
 import { JsonData } from '../ext-data-model.v1';
-import * as Constants from './../ext-data-constants.v1';
 
 export function importSamples(rawData: any, fclData: FclData) {
     fclData.fclElements.samples = convertRawSamples(rawData);

@@ -7,7 +7,6 @@ import { Tile } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
 import { Stroke, Style } from 'ol/style';
-import * as _ from 'lodash';
 import { InputDataError } from '../io/io-errors';
 import { StyleLike } from 'ol/style/Style';
 import { NotNullish, NotNullishPick } from './utility-types';

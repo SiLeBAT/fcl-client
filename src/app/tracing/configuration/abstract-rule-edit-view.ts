@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { OperationType, TableColumn } from '@app/tracing/data.model';
 import { ComplexFilterCondition, PropToValuesMap } from './configuration.model';
-import * as _ from 'lodash';
 import { EditRule } from './model';
 import { isEditRuleValid, validateEditRule } from './edit-rule-validaton';
 

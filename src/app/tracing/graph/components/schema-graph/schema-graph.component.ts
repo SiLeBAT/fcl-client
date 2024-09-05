@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/co
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import { GraphType, LegendDisplayEntry, SchemaGraphState } from '../../../data.model';
-import * as _ from 'lodash';
 import { Action, Store } from '@ngrx/store';
 import { ContextMenuRequestInfo, GraphServiceData } from '../../graph.model';
 import { GraphService } from '../../graph.service';
