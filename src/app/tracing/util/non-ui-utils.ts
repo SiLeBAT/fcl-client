@@ -395,7 +395,7 @@ export class Utils {
             if (deliveryPGroup.length === 1) {
                 result.push(deliveryPGroup);
             } else {
-                result.push(...this.groupRows(deliveryPGroup, [ (d) => d.lot || d.id ]));
+                result.push(...this.groupRows(deliveryPGroup, [ (d) => d.lot ?? d.id ]));
             }
         }
         return result;

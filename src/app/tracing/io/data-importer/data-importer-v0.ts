@@ -60,12 +60,12 @@ export class DataImporterV0 implements IDataImporter {
         for (const d of data.deliveries) {
             const source = stationsById[d.source];
             if (source === undefined) {
-                throw new InputDataError(`The delivery with id '${ d.id }' references a source (with id '${d.source }') which does not exist.`);
+                throw new InputDataError(`The delivery with id '${d.id}' references a source (with id '${d.source}') which does not exist.`);
             }
             source.outgoing.push(d.id);
             const target = stationsById[d.target];
             if (target === undefined) {
-                throw new InputDataError(`The delivery with id '${ d.id }' references a target (with id '${d.target }') which does not exist.`);
+                throw new InputDataError(`The delivery with id '${d.id}' references a target (with id '${d.target}') which does not exist.`);
             }
             target.incoming.push(d.id);
 
@@ -75,11 +75,11 @@ export class DataImporterV0 implements IDataImporter {
         for (const r of data.deliveriesRelations) {
             const sourceD = deliveriesById[r.source];
             if (sourceD === undefined) {
-                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.source }' which does not exist.`);
+                throw new InputDataError(`A delivery relation references a delivery (with id '${r.source}' which does not exist.`);
             }
             const targetD = deliveriesById[r.target];
             if (targetD === undefined) {
-                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.target }' which does not exist.`);
+                throw new InputDataError(`A delivery relation references a delivery (with id '${r.target}' which does not exist.`);
             }
 
             if (sourceD.target !== targetD.source) {
@@ -104,11 +104,9 @@ export class DataImporterV0 implements IDataImporter {
                     fclData.graphSettings.mergeDeliveriesType
             ),
             skipUnconnectedStations:
-                data.graphSettings.skipUnconnectedStations != null ?
-                    data.graphSettings.skipUnconnectedStations :
-                    fclData.graphSettings.skipUnconnectedStations,
-            showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : fclData.graphSettings.showLegend,
-            showZoom: data.graphSettings.showZoom != null ? data.graphSettings.showZoom : fclData.graphSettings.showZoom,
+                data.graphSettings.skipUnconnectedStations ?? fclData.graphSettings.skipUnconnectedStations,
+            showLegend: data.graphSettings.showLegend ?? fclData.graphSettings.showLegend,
+            showZoom: data.graphSettings.showZoom ?? fclData.graphSettings.showZoom,
             schemaLayout: data.layout,
             gisLayout: data.gisLayout
         };
@@ -123,13 +121,13 @@ export class DataImporterV0 implements IDataImporter {
         const capContext = context[0].toUpperCase() + context.slice(1);
         for (const id of ids) {
             if (id === undefined) {
-                throw new InputDataError(`${ capContext } id is undefined.`);
+                throw new InputDataError(`${capContext} id is undefined.`);
             }
             if (id === null) {
-                throw new InputDataError(`${ capContext } id is null.`);
+                throw new InputDataError(`${capContext} id is null.`);
             }
             if (idMap[id] !== undefined) {
-                throw new InputDataError(`Duplicate ${ context } id is null.`);
+                throw new InputDataError(`Duplicate ${context} id is null.`);
             }
             idMap[id] = true;
         }
@@ -172,7 +170,7 @@ export class DataImporterV0 implements IDataImporter {
                     incoming: e.incoming,
                     outgoing: e.outgoing,
                     connections: e.connections,
-                    properties: e.properties != null ? e.properties : properties
+                    properties: e.properties ?? properties
                 });
             } else {
                 fclData.groupSettings.push({
@@ -181,14 +179,14 @@ export class DataImporterV0 implements IDataImporter {
                     contains: e.contains
                 });
             }
-            const weight = e.weight != null ? e.weight : (e.outbreak ? 1 : 0);
+            const weight = e.weight ?? (e.outbreak ? 1 : 0);
             fclData.tracingSettings.stations.push({
                 id: e.id,
                 weight: weight,
                 outbreak: weight > 0,
-                observed: e.observed != null ? e.observed : ObservedType.NONE,
-                crossContamination: e.crossContamination != null ? e.crossContamination : false,
-                killContamination: e.killContamination != null ? e.killContamination : false
+                observed: e.observed ?? ObservedType.NONE,
+                crossContamination: e.crossContamination ?? false,
+                killContamination: e.killContamination ?? false
             });
 
             if (e.invisible) {
@@ -210,7 +208,7 @@ export class DataImporterV0 implements IDataImporter {
         const v1ToV0PropMap = Utils.getReversedRecord(v0ToV1PropMap);
         const defaultKeys: Set<string> = new Set(
             Constants.DELIVERY_PROPERTIES.toArray().map(
-                p => v1ToV0PropMap[p] !== undefined ? v1ToV0PropMap[p] : p
+                p => v1ToV0PropMap[p] ?? p
             ));
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
@@ -231,22 +229,22 @@ export class DataImporterV0 implements IDataImporter {
 
             fclData.fclElements.deliveries.push({
                 id: e.id,
-                name: e.name != null ? e.name : e.id,
+                name: e.name ?? e.id,
                 lot: e.lot,
                 lotKey: (e.originalSource || e.source) + '|' + (e.name || e.id) + '|' + (e.lot || e.id),
                 dateOut: Utils.dateToString(Utils.stringToDate(e.date)) ?? undefined,
                 source: e.originalSource || e.source,
                 target: e.originalTarget || e.target,
-                properties: e.properties != null ? e.properties : properties
+                properties: e.properties ?? properties
             });
 
             const weight = (e.weight ?? 0) as number;
             fclData.tracingSettings.deliveries.push({
                 id: e.id,
                 weight: weight,
-                observed: e.observed != null ? e.observed : ObservedType.NONE,
-                crossContamination: e.crossContamination != null ? e.crossContamination : false,
-                killContamination: e.killContamination != null ? e.killContamination : false,
+                observed: e.observed ?? ObservedType.NONE,
+                crossContamination: e.crossContamination ?? false,
+                killContamination: e.killContamination ?? false,
                 outbreak: weight > 0
             });
 

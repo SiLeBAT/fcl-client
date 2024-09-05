@@ -350,7 +350,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private getInternalLotKey(delivery: DeliveryData): LotKey {
-        return JSON.stringify([delivery.originalSource, delivery.name || delivery.id, delivery.lot || delivery.id]);
+        return JSON.stringify([ delivery.originalSource, delivery.name ?? delivery.id, delivery.lot ?? delivery.id ]);
     }
 
     private getIngredientsByLotKey(): Map<LotKey, Set<DeliveryId>> | null {

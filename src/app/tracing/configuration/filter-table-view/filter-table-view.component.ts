@@ -528,11 +528,11 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.stopTask(asyncTask.id!);
 
         let refWrapperSize: Size | null = null;
-        const stopOnOpen = options.stopOnOpen === undefined ? false : options.stopOnOpen;
-        const maxTimeSpan = options.maxTimeSpan === undefined ? Number.POSITIVE_INFINITY : options.maxTimeSpan;
+        const stopOnOpen = options.stopOnOpen ?? false;
+        const maxTimeSpan = options.maxTimeSpan ?? Number.POSITIVE_INFINITY;
         const endTime = asyncTask.created + maxTimeSpan;
-        const timeoutSpan = options.timeoutSpan === undefined ? 50 : options.timeoutSpan;
-        const minStableTimeSpan = options.minStableTimeSpan === undefined ? (2.5 * timeoutSpan) : options.minStableTimeSpan;
+        const timeoutSpan = options.timeoutSpan ?? 50;
+        const minStableTimeSpan = options.minStableTimeSpan ?? 2.5 * timeoutSpan;
         let lastUnmatchTime = asyncTask.created;
 
         const callBack = () => {

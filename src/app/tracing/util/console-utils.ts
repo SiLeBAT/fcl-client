@@ -22,8 +22,8 @@ export function createColoredConsoleMsg(msg: string, textColor?: ConsoleTextColo
     if (textColor === undefined && bgColor === undefined) {
         return msg;
     } else {
-        let startFlag = textColor === undefined ? '' : textColor;
-        startFlag += bgColor === undefined ? '' : bgColor;
+        let startFlag = textColor ?? '';
+        startFlag += bgColor ?? '';
         return startFlag + msg + RESET_CONSOLE_STYLE_FLAG;
     }
 }

@@ -183,7 +183,7 @@ export class CyGraph {
         fitGraphToVisibleArea: boolean
     ): void {
         this.cleanCy();
-        cyConfig = cyConfig === undefined ? DEFAULT_CY_CONFIG : cyConfig;
+        cyConfig = cyConfig ?? DEFAULT_CY_CONFIG;
         const isPresetLayout = isPresetLayoutConfig(layoutConfig);
         const fitViewPort = !isPresetLayout || layoutConfig.fit !== false;
         const reduceContainerSize = fitGraphToVisibleArea && fitViewPort;

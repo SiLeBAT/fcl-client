@@ -280,9 +280,7 @@ export class GisPositioningService {
             .forEach(n => {
                 const pos = posMap[n.id];
                 this.ghostModelPositions![n.id] =
-                    pos !== undefined ?
-                        pos :
-                        this.createDefaultPosition();
+                    pos ?? this.createDefaultPosition();
             });
     }
 

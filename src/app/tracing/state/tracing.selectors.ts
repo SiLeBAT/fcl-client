@@ -84,7 +84,7 @@ export const getSelectedElements = createSelector(
 
 export const selectSourceFileName = createSelector(
     getFclData,
-    (fclData) => fclData.source ? fclData.source.name || null : null
+    (fclData) => fclData?.source?.name ?? null
 );
 
 export const getMakeElementsInvisibleInputState = createSelector(

@@ -200,7 +200,7 @@ export class IsolatedComponentCollapser {
             traverseIds.delete(id);
             componentIds.push(id);
 
-            const f = (a: string[]) => (a == null ? [] : a);
+            const f = (a: string[]) => (a ?? []);
             for (const linkId of _.uniq(f(inNodes.get(id)!).concat(f(outNodes.get(id)!)))) {
                 if (supportIds.has(linkId)) {
                     componentSupportIds.push(linkId);

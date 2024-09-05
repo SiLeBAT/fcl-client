@@ -173,8 +173,8 @@ export class DataImporterV1 implements IDataImporter {
 
             const intDelivery = intPartDelivery as DeliveryData;
 
-            intDelivery.lotKey = intDelivery.lotKey ||
-                (intDelivery.source + '|' + (intDelivery.name || intDelivery.id) + '|' + (intDelivery.lot || intDelivery.id));
+            intDelivery.lotKey = intDelivery.lotKey ??
+                (intDelivery.source + '|' + (intDelivery.name ?? intDelivery.id) + '|' + (intDelivery.lot ?? intDelivery.id));
 
             idToStationMap.get(intDelivery.source)!.outgoing.push(intDelivery.id);
             idToStationMap.get(intDelivery.target)!.incoming.push(intDelivery.id);
@@ -271,7 +271,7 @@ export class DataImporterV1 implements IDataImporter {
 
             const intGroup: GroupData = {
                 id: extGroup.id,
-                name: extGroup.name || extGroup.id,
+                name: extGroup.name ?? extGroup.id,
                 contains: extGroup.members
             };
 
@@ -442,8 +442,8 @@ export class DataImporterV1 implements IDataImporter {
 
         const viewData = jsonData.settings.view;
 
-        const nodeSize = viewData.graph?.node?.minSize ||
-            viewData.gis?.node?.minSize ||
+        const nodeSize = (viewData.graph?.node?.minSize ??
+            viewData.gis?.node?.minSize) ??
             null;
 
         // default edge width is dependent on node size
@@ -458,8 +458,8 @@ export class DataImporterV1 implements IDataImporter {
         const autoEdgeWidth = fclData.graphSettings.edgeWidth;
 
         const extEdgeWidth: number | null =
-            viewData.graph?.edge?.minWidth ||
-            viewData.gis?.edge?.minWidth ||
+            (viewData.graph?.edge?.minWidth ??
+            viewData.gis?.edge?.minWidth) ??
             null;
         if (
             extEdgeWidth !== null
@@ -477,8 +477,8 @@ export class DataImporterV1 implements IDataImporter {
             fclData.graphSettings.adjustEdgeWidthToNodeSize = fclData.graphSettings.edgeWidth === autoEdgeWidth;
         }
 
-        const fontSize = viewData.graph?.text?.fontSize ||
-            viewData.gis?.text?.fontSize ||
+        const fontSize = (viewData.graph?.text?.fontSize ??
+            viewData.gis?.text?.fontSize) ??
             null;
 
         if (

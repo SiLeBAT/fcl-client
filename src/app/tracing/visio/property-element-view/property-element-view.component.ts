@@ -24,7 +24,7 @@ export class PropertyElementViewComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.propWrapper_ = this.prop || '';
+        this.propWrapper_ = this.prop ?? '';
     }
 
     isActivePropAvailable(): boolean {

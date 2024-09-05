@@ -286,8 +286,8 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
     }
 
     private getRawTextParts(startLength?: number, endLength?: number): { start: string; middle: string; end: string } {
-        startLength = startLength !== undefined ? startLength : this.selStart!;
-        endLength = endLength !== undefined ? endLength : (this.inputElement.value.length - this.selEnd!);
+        startLength = startLength ?? this.selStart!;
+        endLength = endLength ?? this.inputElement.value.length - this.selEnd!;
 
         const endStart = this._value.length - endLength;
         const rawTextStart = this._value.slice(0, startLength);
