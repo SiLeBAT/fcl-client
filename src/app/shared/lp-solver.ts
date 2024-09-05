@@ -300,12 +300,12 @@ export class LPModel {
 
     private getLB(constraintId: ConstraintId): number | null {
         const lb = this.model[LPModel.CONSTRAINTS][constraintId][LPModel.OPTYPE_MIN];
-        return lb === null || lb === undefined ? null : lb;
+        return lb ?? null;
     }
 
     private getUB(constraintId: ConstraintId): number | null {
         const ub = this.model[LPModel.CONSTRAINTS][constraintId][LPModel.OPTYPE_MAX];
-        return ub === null || ub === undefined ? null : ub;
+        return ub ?? null;
     }
 
     private getTermValue(term: Term, lpResult: LPResult): number {
