@@ -52,8 +52,8 @@ export function highlightingComparator(
     } else {
         const hIA = rowA['highlightingInfo'];
         const hIB = rowB['highlightingInfo'];
-        const shapeA: NodeShapeType = hIA['shape'] || NodeShapeType.CIRCLE;
-        const shapeB: NodeShapeType = hIB['shape'] || NodeShapeType.CIRCLE;
+        const shapeA: NodeShapeType = hIA['shape'] ?? NodeShapeType.CIRCLE;
+        const shapeB: NodeShapeType = hIB['shape'] ?? NodeShapeType.CIRCLE;
 
         if (shapeA !== shapeB) {
             return shapePrioMap[shapeA] - shapePrioMap[shapeB];
