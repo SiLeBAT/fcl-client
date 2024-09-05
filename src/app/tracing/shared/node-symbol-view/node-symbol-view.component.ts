@@ -64,7 +64,7 @@ export class NodeSymbolViewComponent {
     }
 
     getFillColor(): string {
-        return this.fillColor_ || `url(#${this.gradientId_})`;
+        return this.fillColor_ ?? `url(#${this.gradientId_})`;
     }
 
     get gradientId(): string | null {
