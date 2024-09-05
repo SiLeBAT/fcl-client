@@ -18,7 +18,7 @@ import { applySorting, highlightingComparator, sortRows, visibilityComparator } 
 
 const CLASS_DATATABLE_FOOTER = 'datatable-footer';
 
-type TableSelectionEvent = TableRow[] | { selected: TableRow[] } | Event;
+type TableSelectionEvent = TableRow[] | { selected: TableRow[]; } | Event;
 interface AsyncTask {
     id?: string;
     created: number;
@@ -129,7 +129,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     private processedInput__: InputData | null = null;
     private processDataIsRequired_ = false;
     private filterMap_: FilterMap | null = null;
-    private columnFilterTexts_: { [key: string]: string };
+    private columnFilterTexts_: { [key: string]: string; };
     private tableRows_: TableRow[] = [];
     private treeStatusCache: Record<string, TreeStatus> = {};
 
@@ -259,8 +259,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
 
-    isTableRowObject(toInspect: TableSelectionEvent): toInspect is { selected: TableRow[] } {
-        return (toInspect as { selected: TableRow[] }).selected !== undefined;
+    isTableRowObject(toInspect: TableSelectionEvent): toInspect is { selected: TableRow[]; } {
+        return (toInspect as { selected: TableRow[]; }).selected !== undefined;
     }
 
     onRowSelectionChange(eventIn: TableSelectionEvent): void {
@@ -338,7 +338,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.updateTableSize();
     }
 
-    onColumnReorder(e: { column: any; newValue: number; prevValue: number }): void {
+    onColumnReorder(e: { column: any; newValue: number; prevValue: number; }): void {
         if (!this.isColumnOrderOk()) {
             this.fixColumnOrder();
         }
@@ -528,11 +528,11 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.stopTask(asyncTask.id!);
 
         let refWrapperSize: Size | null = null;
-        const stopOnOpen = options.stopOnOpen === undefined ? false : options.stopOnOpen;
-        const maxTimeSpan = options.maxTimeSpan === undefined ? Number.POSITIVE_INFINITY : options.maxTimeSpan;
+        const stopOnOpen = options.stopOnOpen ?? false;
+        const maxTimeSpan = options.maxTimeSpan ?? Number.POSITIVE_INFINITY;
         const endTime = asyncTask.created + maxTimeSpan;
-        const timeoutSpan = options.timeoutSpan === undefined ? 50 : options.timeoutSpan;
-        const minStableTimeSpan = options.minStableTimeSpan === undefined ? (2.5 * timeoutSpan) : options.minStableTimeSpan;
+        const timeoutSpan = options.timeoutSpan ?? 50;
+        const minStableTimeSpan = options.minStableTimeSpan ?? 2.5 * timeoutSpan;
         let lastUnmatchTime = asyncTask.created;
 
         const callBack = () => {
@@ -798,7 +798,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private updateColumnFilterTexts(): void {
-        const newTexts: { [key: string]: string } = {};
+        const newTexts: { [key: string]: string; } = {};
         for (const filter of this.inputData!.columnFilters) {
             newTexts[filter.filterProp] = filter.filterTerm;
         }
@@ -876,7 +876,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         ];
     }
 
-    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any }): any {
+    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any; }): any {
         return {
             'fcl-row-cell-invisible': row['invisible'] || (row.parentRow !== undefined && row.parentRow['invisible']),
             'fcl-font-style-italic': row.parentRowId !== undefined
