@@ -328,8 +328,7 @@ export class LPModel {
         };
     }
 
-    private getViolationMsg(lessOrEqValue: number, greaterOrEqValue: number, violationTreshold?: number): string {
-        violationTreshold = violationTreshold || 1e-6;
+    private getViolationMsg(lessOrEqValue: number, greaterOrEqValue: number, violationTreshold = 1e-6): string {
         if (lessOrEqValue <= greaterOrEqValue) {
             return '';
         } else {
@@ -343,8 +342,7 @@ export class LPModel {
         }
     }
 
-    private getResidualMsg(lessOrEqValue: number, greaterOrEqValue: number, residualTreshold?: number): string {
-        residualTreshold = residualTreshold || 1e-6;
+    private getResidualMsg(lessOrEqValue: number, greaterOrEqValue: number, residualTreshold = 1e-6): string {
         if (lessOrEqValue >= greaterOrEqValue) {
             return '';
         } else {
@@ -394,7 +392,7 @@ export class LPModel {
     }
 
     private getTerm(id: string, variableIds?: VariableId[]): Term {
-        variableIds = variableIds !== undefined ? variableIds : this.getVariableIds();
+        variableIds = variableIds ?? this.getVariableIds();
         const term: Term = {};
         variableIds.forEach(variableId => {
             if (this.isVariableInConstraint(variableId, id)) {
