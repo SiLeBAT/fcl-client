@@ -16,6 +16,6 @@ export class FaqSectionViewComponent {
     constructor(private sanitizer: DomSanitizer) { }
 
     sanitize(input: string): SafeHtml {
-        return this.sanitizer.sanitize(SecurityContext.HTML, input) || '';
+        return this.sanitizer.sanitize(SecurityContext.HTML, input) ?? '';
     }
 }
