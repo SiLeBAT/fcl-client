@@ -147,7 +147,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string; value: string; }[] = [];
+            const properties: { name: string; value: string }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];
@@ -213,7 +213,7 @@ export class DataImporterV0 implements IDataImporter {
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
-            const properties: { name: string; value: string; }[] = [];
+            const properties: { name: string; value: string }[] = [];
 
             for (const key of Object.keys(e)) {
                 const value = e[key];
