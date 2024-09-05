@@ -21,7 +21,7 @@ export class StationByCountryGrouper implements StationGrouper {
 
     getGroupLabel(station: StationData): string {
         const countryProperty = this.getCountryProperty(station);
-        return (countryProperty !== undefined ? countryProperty : 'Country: Unknown');
+        return (countryProperty ?? 'Country: Unknown');
     }
 
     private getCountryProperty(station: StationData): string | undefined {

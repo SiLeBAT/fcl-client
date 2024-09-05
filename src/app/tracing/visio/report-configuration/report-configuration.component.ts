@@ -21,8 +21,8 @@ import {
 } from '../model';
 
 function propCompare(propA: PropInfo, propB: PropInfo): number {
-    const textA = propA.label !== undefined ? propA.label : propA.prop;
-    const textB = propB.label !== undefined ? propB.label : propB.prop;
+    const textA = propA.label ?? propA.prop;
+    const textB = propB.label ?? propB.prop;
     return textA.toUpperCase().localeCompare(textB.toUpperCase());
 }
 

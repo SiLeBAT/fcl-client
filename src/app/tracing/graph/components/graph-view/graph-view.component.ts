@@ -162,7 +162,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     private createPresetLayoutConfig(viewport: Layout | null): LayoutConfig {
         return {
-            ...(viewport === null ? {} : viewport),
+            ...(viewport ?? {}),
             name: LAYOUT_PRESET,
             fit: viewport === null
         };
