@@ -510,7 +510,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     hovered
                         ? Constants.HOVER_STROKE_COLOR
                         : invisible
-                            ? Constants.INVISIBLE_STROKE_COLOR
+                            ? Constants.INVISIBLE_COLOR
                             : Constants.DEFAULT_STROKE_COLOR));
         };
         const initRectAndText = (nodes: d3.Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
@@ -522,7 +522,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 .attr('stroke',
                     datum => Utils.colorToCss(
                         datum.invisible
-                            ? Constants.INVISIBLE_STROKE_COLOR
+                            ? Constants.INVISIBLE_COLOR
                             : Constants.DEFAULT_STROKE_COLOR
                     ));
 
@@ -570,7 +570,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     hovered
                         ? Constants.HOVER_STROKE_COLOR
                         : invisible
-                            ? Constants.INVISIBLE_STROKE_COLOR
+                            ? Constants.INVISIBLE_COLOR
                             : Constants.DEFAULT_STROKE_COLOR
                 ));
         };
@@ -584,7 +584,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             edgeDatum.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
         )).attr('stroke', edgeDatum => Utils.colorToCss(
             edgeDatum.invisible
-                ? Constants.INVISIBLE_STROKE_COLOR
+                ? Constants.INVISIBLE_COLOR
                 : Constants.DEFAULT_STROKE_COLOR
         )
         ).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');

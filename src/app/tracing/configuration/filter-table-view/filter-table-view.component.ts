@@ -512,7 +512,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         };
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         asyncTask.subscription = this.cycleStart$!.subscribe(callBack, () => { });
-        this.asyncTasks_.push(asyncTask as AsyncTask);
+        this.asyncTasks_.push(asyncTask);
     }
 
     private checkTableSizeOnStableWrapperSize(options: {
@@ -549,10 +549,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                         refWrapperSize = wrapperSize;
                         lastUnmatchTime = curTime;
                         asyncTask.handle = setTimeout(callBack, timeoutSpan);
-                    } else {
-                        if (curTime - lastUnmatchTime < minStableTimeSpan) {
-                            asyncTask.handle = setTimeout(callBack, timeoutSpan);
-                        }
+                    } else if (curTime - lastUnmatchTime < minStableTimeSpan) {
+                        asyncTask.handle = setTimeout(callBack, timeoutSpan);
                     }
                 }
             }
@@ -562,7 +560,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
         };
         asyncTask.handle = setTimeout(callBack, timeoutSpan);
-        this.asyncTasks_.push(asyncTask as AsyncTask);
+        this.asyncTasks_.push(asyncTask);
     }
 
     private setActivityState(state: ActivityState): void {
@@ -575,12 +573,10 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             if (state === ActivityState.INACTIVE) {
                 this.clearAsyncJobs();
                 this.waitingForPositiveWrapperSize = false;
-            } else {
-                if (this.tableSizeUpdateIsRequired_ || this.processDataIsRequired_) {
-                    this.cdRef.markForCheck();
-                } else if (state === ActivityState.OPEN || this.tableSizeCheckIsRequired_) {
-                    this.syncTableSizeCheck();
-                }
+            } else if (this.tableSizeUpdateIsRequired_ || this.processDataIsRequired_) {
+                this.cdRef.markForCheck();
+            } else if (state === ActivityState.OPEN || this.tableSizeCheckIsRequired_) {
+                this.syncTableSizeCheck();
             }
         }
     }
@@ -698,8 +694,6 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 }
             }
         }
-        // eslint-disable-next-line no-empty
-        if (this.processedInput__ !== this.inputData) { }
     }
 
     private applyTreeStatusFromCache(rows: TableRow[]): void {

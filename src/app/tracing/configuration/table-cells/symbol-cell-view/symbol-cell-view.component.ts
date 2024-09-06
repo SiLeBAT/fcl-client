@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { TableRow } from '@app/tracing/data.model';
+import { Constants } from '@app/tracing/util/constants';
 import * as _ from 'lodash';
 
 @Component({
@@ -10,5 +11,7 @@ import * as _ from 'lodash';
 export class SymbolCellViewComponent {
 
     @Input() row: TableRow | null = null;
+
+    readonly invisibleColor = Constants.INVISIBLE_COLOR;
 
 }

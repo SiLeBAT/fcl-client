@@ -236,5 +236,5 @@ export class Constants {
     static readonly DEFAULT_STROKE_COLOR = this.COLOR_BLACK;
     static readonly HOVER_FILL_COLOR: Color = { r: 128, g: 128, b: 255 };
     static readonly HOVER_STROKE_COLOR: Color = { r: 0, g: 0, b: 255 };
-    static readonly INVISIBLE_STROKE_COLOR: Color = { r: 211, g: 211, b: 211 };
+    static readonly INVISIBLE_COLOR: Color = { r: 211, g: 211, b: 211 };
 }
