@@ -1,6 +1,13 @@
-<ng-template let-item="item" #itemContentTemplate>
-    <div *ngIf="!item.isAnonymizationRule" class="fcl-rules-list-item-drag-indicator" cdkDragHandle>
-        <mat-icon [disabled]="isEditRuleModeActive">drag_indicator</mat-icon>
+<ng-template
+    let-item="item"
+    #itemContentTemplate
+>
+    <div
+        *ngIf="!item.isAnonymizationRule"
+        class="fcl-rules-list-item-drag-indicator"
+        cdkDragHandle
+    >
+        <mat-icon [ngClass]="{'disable':isEditRuleModeActive}">drag_indicator</mat-icon>
     </div>
     <div
         class="fcl-rules-list-item-name"
@@ -9,10 +16,14 @@
         {{ item.name }}
     </div>
 
-    <div *ngIf="symbolTemplate"
-        class="fcl-rules-list-item-symbol">
-        <ng-container [ngTemplateOutlet]="symbolTemplate"
-            [ngTemplateOutletContext] ="{ item: item }">
+    <div
+        *ngIf="symbolTemplate"
+        class="fcl-rules-list-item-symbol"
+    >
+        <ng-container
+            [ngTemplateOutlet]="symbolTemplate"
+            [ngTemplateOutletContext]="{ item: item }"
+        >
         </ng-container>
     </div>
 
@@ -30,10 +41,8 @@
             class="fcl-rules-list-item-counts-wrapper"
         >
             <div>{{ item.effElementsCount }}</div>
-            <div
-                class="fcl-rules-list-item-conflict-count"
-            >
-            ({{ item.conflictCount }})
+            <div class="fcl-rules-list-item-conflict-count">
+                ({{ item.conflictCount }})
             </div>
         </div>
     </div>
@@ -75,7 +84,8 @@
 
     <div
         *ngIf="!item.isAnonymizationRule"
-        class="fcl-rules-list-item-delete-button-wrapper">
+        class="fcl-rules-list-item-delete-button-wrapper"
+    >
         <button
             class="fcl-rules-list-item-delete-button"
             mat-button
@@ -84,22 +94,27 @@
             color="warn"
             (click)="onDeleteRule($event, item.id)"
             [disabled]="isEditRuleModeActive"
-            >
+        >
             <mat-icon>delete forever</mat-icon>
         </button>
     </div>
 
-    <div *ngIf="editRule !== null && editRule.id === item.id && editTemplate !== null"
+    <div
+        *ngIf="editRule !== null && editRule.id === item.id && editTemplate !== null"
         class="fcl-edit-rule-dialog fcl-rules-list-edit-item"
-        #editRuleElement>
-        <ng-container [ngTemplateOutlet]="editTemplate"
-            [ngTemplateOutletContext] ="{ editRule: editRule }">
+        #editRuleElement
+    >
+        <ng-container
+            [ngTemplateOutlet]="editTemplate"
+            [ngTemplateOutletContext]="{ editRule: editRule }"
+        >
         </ng-container>
     </div>
 </ng-template>
 <!-- Templates end-->
 
-<div class="fcl-rules-list"
+<div
+    class="fcl-rules-list"
     cdkDropList
     (cdkDropListDropped)="onDrop($event)"
 >
@@ -108,12 +123,15 @@
         class="fcl-rules-list-item"
         *ngFor="let item of sortableListItems; let i = index; trackBy: trackByFn"
         [ngClass]="item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''"
-        cdkDrag [cdkDragDisabled]="isEditRuleModeActive"
+        cdkDrag
+        [cdkDragDisabled]="isEditRuleModeActive"
         cdkDragLockAxis="y"
         cdkDragBoundary=".cdk-drop-list"
     >
-        <ng-container [ngTemplateOutlet]="itemContentTemplate"
-            [ngTemplateOutletContext] ="{ item: item, showDeleteButton: true }">
+        <ng-container
+            [ngTemplateOutlet]="itemContentTemplate"
+            [ngTemplateOutletContext]="{ item: item, showDeleteButton: true }"
+        >
         </ng-container>
     </div>
 
@@ -126,8 +144,10 @@
         *ngFor="let item of unsortableListItems; let i = index; trackBy: trackByFn"
         [ngClass]="item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''"
     >
-        <ng-container [ngTemplateOutlet]="itemContentTemplate"
-            [ngTemplateOutletContext] ="{ item: item, showDeleteButton: false }">
+        <ng-container
+            [ngTemplateOutlet]="itemContentTemplate"
+            [ngTemplateOutletContext]="{ item: item, showDeleteButton: false }"
+        >
         </ng-container>
     </div>
 
@@ -146,10 +166,14 @@
     <mat-icon>add</mat-icon>
 </button>
 
-<div *ngIf="showEditNewRuleDialog && editTemplate !== null"
+<div
+    *ngIf="showEditNewRuleDialog && editTemplate !== null"
     class="fcl-edit-rule-dialog"
-    #newRuleElement>
-    <ng-container [ngTemplateOutlet]="editTemplate"
-        [ngTemplateOutletContext] ="{ editRule: editRule }">
+    #newRuleElement
+>
+    <ng-container
+        [ngTemplateOutlet]="editTemplate"
+        [ngTemplateOutletContext]="{ editRule: editRule }"
+    >
     </ng-container>
 </div>

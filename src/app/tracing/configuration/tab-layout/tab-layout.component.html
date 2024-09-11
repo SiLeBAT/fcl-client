@@ -17,7 +17,7 @@
             in firefox the user can otherwise switch in fast succession tabs and the system may become
             inresponsive for a short time due to procession of the different tab activations for big models
         -->
-        <mat-tab [label]="tab.tabLabel" [disabled]="animatingTabIndex !== null && i !== animatingTabIndex" (click)="onTabClick($event)">
+        <mat-tab [label]="tab.tabLabel" [disabled]="animatingTabIndex !== null && i !== animatingTabIndex">
             <ng-container [ngTemplateOutlet]="tab.tabTemplate">
             </ng-container>
         </mat-tab>
