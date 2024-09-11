@@ -1,4 +1,4 @@
-@use '../../../../assets/sass/base' as fcl;
+@use "../../../../assets/sass/base" as fcl;
 
 .mat-select.fcl-option-unsupported .mat-select-value {
     color: fcl.$fcl-foreground-color--disabled;

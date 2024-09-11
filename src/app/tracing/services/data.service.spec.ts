@@ -1,37 +1,39 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { DataService } from './data.service';
-import {
-    CrossContTraceType, DataServiceInputState} from '../data.model';
-import { createDefaultHighlights } from '../io/data-importer/shared';
-import { createDefaultPropMappings } from '../state/tracing.reducers';
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { DataService } from "./data.service";
+import { CrossContTraceType, DataServiceInputState } from "../data.model";
+import { createDefaultHighlights } from "../io/data-importer/shared";
+import { createDefaultPropMappings } from "../state/tracing.reducers";
 
 function createDefaultInputState(): DataServiceInputState {
     return {
         int2ExtPropMaps: createDefaultPropMappings(),
         fclElements: {
-            stations: [{
-                id: 'S1',
-                incoming: [],
-                outgoing: [],
-                connections: [],
-                properties: []
-            }],
+            stations: [
+                {
+                    id: "S1",
+                    incoming: [],
+                    outgoing: [],
+                    connections: [],
+                    properties: [],
+                },
+            ],
             deliveries: [],
-            samples: []
+            samples: [],
         },
         groupSettings: [],
         tracingSettings: {
             stations: [],
             deliveries: [],
-            crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS
+            crossContTraceType:
+                CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
         },
         highlightingSettings: createDefaultHighlights(),
         selectedElements: {
             stations: [],
-            deliveries: []
-        }
+            deliveries: [],
+        },
     };
 }
 
@@ -91,26 +93,21 @@ function createDefaultInputState(): DataServiceInputState {
 //     };
 // }
 
-describe('DataService', () => {
-
+describe("DataService", () => {
     let dataService: DataService;
     const defaultInputState: DataServiceInputState = createDefaultInputState();
     // const defaultOutputData: DataServiceData = createDefaultOutputData();
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule
-            ],
-            providers: [
-                DataService
-            ]
+            imports: [HttpClientTestingModule],
+            providers: [DataService],
         });
 
         dataService = TestBed.inject(DataService);
     }));
 
-    it('should instantiate the data service', () => {
+    it("should instantiate the data service", () => {
         expect(dataService).toBeTruthy();
     });
 
@@ -142,7 +139,6 @@ describe('DataService', () => {
     //     };
     //     expect(observedOutputData).toEqual(defaultOutputData);
     // });
-
 
     // add grouping check
     // add vis check

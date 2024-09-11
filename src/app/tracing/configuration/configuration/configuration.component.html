@@ -10,11 +10,11 @@
     <fcl-graph-settings></fcl-graph-settings>
 </ng-template>
 
-
 <fcl-tab-layout
     [activeTabIndex$]="activeTabIndex$"
     [tabGroupId]="tabGroupId"
     [tabConfigs]="tabConfigs"
     (tabGroupIndex)="onTabChange($event)"
-    (animationDone)="onTabAnimationDone()">
+    (animationDone)="onTabAnimationDone()"
+>
 </fcl-tab-layout>

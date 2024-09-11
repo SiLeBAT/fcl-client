@@ -1,11 +1,9 @@
 <div class="fcl-graph-container">
-
-    <fcl-geomap
-        [mapConfig]="mapConfig$ | async"
-        class="fcl-graph-map">
+    <fcl-geomap [mapConfig]="mapConfig$ | async" class="fcl-graph-map">
     </fcl-geomap>
 
-    <fcl-unknown-lat-lon-frame-view *ngIf="viewport !== null && unknownLatLonRect !== null"
+    <fcl-unknown-lat-lon-frame-view
+        *ngIf="viewport !== null && unknownLatLonRect !== null"
         [viewport]="viewport"
         [unknownLatLonRect]="unknownLatLonRect"
         [unknownLatLonRectBorderWidth]="unknownLatLonRectBorderWidth"
@@ -26,13 +24,15 @@
 
     <fcl-graph-legend-view
         class="fcl-graph-legend"
-        *ngIf="(showLegend$ | async) && (legendInfo !== null)"
+        *ngIf="(showLegend$ | async) && legendInfo !== null"
         [legendInfo]="legendInfo"
         [showMissingGisInfoEntry]="showMissingGisInfoEntry"
     ></fcl-graph-legend-view>
 
     <fcl-geomap-licref-view class="fcl-osm-reference"></fcl-geomap-licref-view>
-
 </div>
 
-<fcl-context-menu-view (itemSelected)="onContextMenuSelect($event)" #contextMenu></fcl-context-menu-view>
+<fcl-context-menu-view
+    (itemSelected)="onContextMenuSelect($event)"
+    #contextMenu
+></fcl-context-menu-view>

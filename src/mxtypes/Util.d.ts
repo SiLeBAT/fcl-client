@@ -1,14 +1,11 @@
-
 /******************      Util      **************/
 
 /** Common interfaces for Utils */
 declare namespace Util {
-
-  /** Common handler for addListener of EventSource */
-  interface EventHandler {
-      (sender: any, state: any);
-  }
-
+    /** Common handler for addListener of EventSource */
+    interface EventHandler {
+        (sender: any, state: any);
+    }
 }
 
 /**
@@ -18,16 +15,16 @@ declare namespace Util {
 declare class mxEventObject {
     constructor(name: string);
 
-  /** Holds the name. */
+    /** Holds the name. */
     name: string;
 
-  /** Holds the properties as an associative array. */
+    /** Holds the properties as an associative array. */
     properties: any;
 
-  /** Returns name */
+    /** Returns name */
     getName: () => string;
 
-  /** Returns the property for the given key. */
+    /** Returns the property for the given key. */
     getProperty: (key: string) => any;
 }
 
@@ -36,26 +33,25 @@ declare class mxEventObject {
  * turn object keys into strings.
  */
 declare class mxDictionary {
-
-  /** Stores the (key, value) pairs in this dictionary. */
+    /** Stores the (key, value) pairs in this dictionary. */
     map: any;
 
-  /**
-   * Returns the value for the given key.
-   * @param key
-   */
+    /**
+     * Returns the value for the given key.
+     * @param key
+     */
     get: (key: any) => any;
 
-  /**
-   * Stores the value under the given key and returns the previous value for that key.
-   * @param key
-   * @param value
-   */
+    /**
+     * Stores the value under the given key and returns the previous value for that key.
+     * @param key
+     * @param value
+     */
     put: (key: any, value: any) => any;
 
-  /** Returns all keys as an array. */
+    /** Returns all keys as an array. */
     getKeys: () => string[];
-  /** Returns all values as an array. */
+    /** Returns all values as an array. */
     getValues: () => string[];
 }
 
@@ -63,24 +59,20 @@ declare class mxDictionary {
  * Base class for objects that dispatch named events.  To create a subclass that inherits from mxEventSource, the following code is used.
  */
 declare class mxEventSource {
-
-  /**
-   * Binds the specified function to the given event name.  If no event name is given, then the listener
-   * is registered for all events.
-   * The parameters of the listener are the sender and an mxEventObject.
-   */
+    /**
+     * Binds the specified function to the given event name.  If no event name is given, then the listener
+     * is registered for all events.
+     * The parameters of the listener are the sender and an mxEventObject.
+     */
     addListener(name: any, func: Util.EventHandler);
-
 }
 
 /**
  * Encapsulates the URL, width and height of an image.
  */
 declare class mxImage {
-
-  /** Encapsulates the URL, width and height of an image. */
+    /** Encapsulates the URL, width and height of an image. */
     constructor(src: string, width: number, height: number);
-
 }
 
 /**
@@ -112,21 +104,19 @@ declare class mxMouseEvent {
 }
 
 declare class mxPoint {
-
-  /** Constructs a new point for the optional x and y coordinates.  If no coordinates are given, then the default values for x and y are used. */
+    /** Constructs a new point for the optional x and y coordinates.  If no coordinates are given, then the default values for x and y are used. */
     constructor(x: number, y: number);
 
     x: number;
     y: number;
 
-  /**
-   * Returns true if the given object equals this point.
-   * @param obj
-   */
+    /**
+     * Returns true if the given object equals this point.
+     * @param obj
+     */
     equals(obj: any): boolean;
 
     clone();
-
 }
 
 declare class mxRectangle extends mxPoint {
@@ -165,13 +155,18 @@ declare class mxRectangle extends mxPoint {
      * Adds the given rectangle to this rectangle.
      * @param rect
      */
-    add(rect: {x: number, y: number, width: number, height: number}): void;
+    add(rect: { x: number; y: number; width: number; height: number }): void;
 
     /**
      * Changes this rectangle to where it overlaps with the given rectangle.
      * @param rect
      */
-    intersect(rect: {x: number, y: number, width: number, height: number}): void;
+    intersect(rect: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    }): void;
 
     /**
      * Grows the rectangle by the given amount, that is, this method subtracts the given amount
@@ -200,7 +195,12 @@ declare class mxRectangle extends mxPoint {
      * Returns a new mxRectangle which is a copy of the given rectangle.
      * @param rect
      */
-    static fromRectangle(rect: {x: number, y: number, width: number, height: number}): mxRectangle;
+    static fromRectangle(rect: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    }): mxRectangle;
 }
 
 /******************      Util end      **************/

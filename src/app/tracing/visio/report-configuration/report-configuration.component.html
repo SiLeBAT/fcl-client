@@ -2,11 +2,21 @@
 <form>
     <div mat-dialog-content>
         <mat-accordion>
-            <mat-expansion-panel *ngFor="let labelInfo of orderedLabelInfos" [disabled]="labelInfo.disabled">
+            <mat-expansion-panel
+                *ngFor="let labelInfo of orderedLabelInfos"
+                [disabled]="labelInfo.disabled"
+            >
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <div>{{labelInfo.title}}
-                        <span *ngIf="labelInfo.warning"><mat-icon class="fcl-warning-icon" [matTooltip]="labelInfo.warning">warning</mat-icon></span>
+                        <div>
+                            {{ labelInfo.title }}
+                            <span *ngIf="labelInfo.warning"
+                                ><mat-icon
+                                    class="fcl-warning-icon"
+                                    [matTooltip]="labelInfo.warning"
+                                    >warning</mat-icon
+                                ></span
+                            >
                         </div>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -17,14 +27,10 @@
                     [availableProps]="labelInfo.availableProps"
                     [amountUnitPairs]="labelInfo.amountUnitPairs"
                 ></fcl-label-configuration-view>
-
             </mat-expansion-panel>
-
         </mat-accordion>
         <div class="fcl-round-numbers-cb-wrapper">
-            <mat-checkbox
-                [(ngModel)]="roundNumbers"
-                name="roundNumbersCB">
+            <mat-checkbox [(ngModel)]="roundNumbers" name="roundNumbersCB">
                 Display rounded numbers (three digits)
             </mat-checkbox>
         </div>
@@ -32,7 +38,9 @@
 
     <div mat-dialog-actions>
         <button mat-button (click)="onGenerateReport()">Generate Report</button>
-        <button mat-button (click)="onRestoreDefaults()">Restore Defaults</button>
+        <button mat-button (click)="onRestoreDefaults()">
+            Restore Defaults
+        </button>
         <button mat-button (click)="dialogRef.close()">Cancel</button>
     </div>
 </form>

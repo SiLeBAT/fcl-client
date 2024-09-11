@@ -1,8 +1,5 @@
 {
-    "extends": [
-        "stylelint-config-standard",
-        "stylelint-config-standard-scss"
-    ],
+    "extends": ["stylelint-config-standard", "stylelint-config-standard-scss"],
     "rules": {
         "indentation": 4,
         "selector-type-no-unknown": [
@@ -25,9 +22,7 @@
         "selector-pseudo-element-no-unknown": [
             true,
             {
-                "ignorePseudoElements": [
-                    "ng-deep"
-                ]
+                "ignorePseudoElements": ["ng-deep"]
             }
         ],
         "at-rule-no-unknown": [
@@ -63,9 +58,9 @@
         "at-rule-empty-line-before": [
             "always",
             {
-                "except": [ "after-same-name", "first-nested" ],
+                "except": ["after-same-name", "first-nested"],
                 "ignoreAtRules": ["mixin"],
-                "ignore": [ "after-comment" ]
+                "ignore": ["after-comment"]
             }
         ],
         "comment-empty-line-before": [

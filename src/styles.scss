@@ -1,15 +1,15 @@
-@use '@angular/material' as mat;
-@use 'node_modules/normalize.css/normalize.css';
-@use 'node_modules/@swimlane/ngx-datatable/index.css';
-@use 'node_modules/@swimlane/ngx-datatable/assets/icons.css';
-@use 'node_modules/ol/ol.css';
-@use 'assets/sass/base' as fcl;
-@use 'material-style';
-@use 'ngx-datatable-style';
+@use "@angular/material" as mat;
+@use "node_modules/normalize.css/normalize.css";
+@use "node_modules/@swimlane/ngx-datatable/index.css";
+@use "node_modules/@swimlane/ngx-datatable/assets/icons.css";
+@use "node_modules/ol/ol.css";
+@use "assets/sass/base" as fcl;
+@use "material-style";
+@use "ngx-datatable-style";
 
-$roboto-font-path: '~roboto-fontface/fonts' !default;
+$roboto-font-path: "~roboto-fontface/fonts" !default;
 /* stylelint-disable-next-line at-rule-empty-line-before */
-@import 'roboto-fontface/css/roboto/sass/roboto-fontface';
+@import "roboto-fontface/css/roboto/sass/roboto-fontface";
 
 // TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
 //  The following line adds:
@@ -123,11 +123,15 @@ mat-form-field.less-bottom-padding {
     border-color: white;
 }
 
-.fcl-toolbar-item .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-outer-circle {
+.fcl-toolbar-item
+    .mat-radio-button.mat-radio-disabled.mat-accent
+    .mat-radio-outer-circle {
     opacity: 0.5;
 }
 
-.fcl-toolbar-item .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-label-content {
+.fcl-toolbar-item
+    .mat-radio-button.mat-radio-disabled.mat-accent
+    .mat-radio-label-content {
     color: white;
     opacity: 0.5;
 }

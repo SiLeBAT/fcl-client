@@ -1,2 +1,8 @@
-<div [matMenuTriggerFor]="nestedMatMenu.matMenu" #graphMenuTrigger="matMenuTrigger"></div>
-<fcl-nested-mat-menu-view #nestedMatMenu (actionSelected)="onItemSelected($event)"></fcl-nested-mat-menu-view>
+<div
+    [matMenuTriggerFor]="nestedMatMenu.matMenu"
+    #graphMenuTrigger="matMenuTrigger"
+></div>
+<fcl-nested-mat-menu-view
+    #nestedMatMenu
+    (actionSelected)="onItemSelected($event)"
+></fcl-nested-mat-menu-view>

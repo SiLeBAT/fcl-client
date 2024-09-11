@@ -1,20 +1,38 @@
-import { DataTable, LogicalCondition, TableColumn } from '@app/tracing/data.model';
-import { ComplexFilterCondition, JunktorType } from '../configuration.model';
-import { RequiredPick } from '@app/tracing/util/utility-types';
+import {
+    DataTable,
+    LogicalCondition,
+    TableColumn,
+} from "@app/tracing/data.model";
+import { ComplexFilterCondition, JunktorType } from "../configuration.model";
+import { RequiredPick } from "@app/tracing/util/utility-types";
 
 type SimpleValueType = string | number | boolean | undefined | null;
 
-export function isConditionValid(condition: Partial<LogicalCondition>): condition is LogicalCondition;
-export function isConditionValid(condition: ComplexFilterCondition): condition is RequiredPick<ComplexFilterCondition, 'operationType' | 'value' | 'propertyName'>;
-export function isConditionValid(condition: Partial<LogicalCondition>): boolean {
+export function isConditionValid(
+    condition: Partial<LogicalCondition>,
+): condition is LogicalCondition;
+export function isConditionValid(
+    condition: ComplexFilterCondition,
+): condition is RequiredPick<
+    ComplexFilterCondition,
+    "operationType" | "value" | "propertyName"
+>;
+export function isConditionValid(
+    condition: Partial<LogicalCondition>,
+): boolean {
     return (
         condition.propertyName != null &&
         condition.operationType != null &&
-        condition.value !== null && condition.value !== undefined && condition.value !== ''
+        condition.value !== null &&
+        condition.value !== undefined &&
+        condition.value !== ""
     );
 }
 
-export function conditionComparator(con1: LogicalCondition, con2: LogicalCondition): number {
+export function conditionComparator(
+    con1: LogicalCondition,
+    con2: LogicalCondition,
+): number {
     if (con1.propertyName !== con2.propertyName) {
         return con1.propertyName.localeCompare(con2.propertyName);
     } else if (con1.operationType !== con2.operationType) {
@@ -29,14 +47,17 @@ export function conditionComparator(con1: LogicalCondition, con2: LogicalConditi
 }
 
 export class ComplexFilterUtils {
-
     static readonly DEFAULT_JUNKTOR_TYPE = JunktorType.AND;
 
     static extractDataColumns(dataTable: DataTable): TableColumn[] {
-        return dataTable.columns.filter((tableColumn: TableColumn) => (tableColumn.id !== 'highlightingInfo'));
+        return dataTable.columns.filter(
+            (tableColumn: TableColumn) => tableColumn.id !== "highlightingInfo",
+        );
     }
 
-    static complexFilterConditionsToLogicalConditions(filterConditions: ComplexFilterCondition[]): LogicalCondition[][] {
+    static complexFilterConditionsToLogicalConditions(
+        filterConditions: ComplexFilterCondition[],
+    ): LogicalCondition[][] {
         const groups: Partial<LogicalCondition>[][] = [];
         let newGroup: Partial<LogicalCondition>[] = [];
 
@@ -44,7 +65,7 @@ export class ComplexFilterUtils {
             const logicalCondition: Partial<LogicalCondition> = {
                 propertyName: filterCondition.propertyName,
                 operationType: filterCondition.operationType,
-                value: filterCondition.value
+                value: filterCondition.value,
             };
             newGroup.push(logicalCondition);
             if (filterCondition.junktorType === JunktorType.OR) {
@@ -57,28 +78,27 @@ export class ComplexFilterUtils {
         }
 
         const result = groups
-            .map(group => group
-                .filter<LogicalCondition>(isConditionValid)
-                .sort(conditionComparator))
-            .filter(group => group.length > 0);
+            .map((group) =>
+                group
+                    .filter<LogicalCondition>(isConditionValid)
+                    .sort(conditionComparator),
+            )
+            .filter((group) => group.length > 0);
 
         return result.length === 0 ? [[]] : result;
     }
 
     static valueToStr(value: SimpleValueType): string {
         if (value === undefined || value === null) {
-            return '';
+            return "";
         } else {
-            return (
-                typeof value === 'string'
-                    ? value
-                    : value.toString()
-            );
+            return typeof value === "string" ? value : value.toString();
         }
     }
 
-    static logicalConditionsToComplexFilterConditions(conditions: LogicalCondition[][] | null): ComplexFilterCondition[] {
-
+    static logicalConditionsToComplexFilterConditions(
+        conditions: LogicalCondition[][] | null,
+    ): ComplexFilterCondition[] {
         conditions = conditions || [[]];
         const filterConditions: ComplexFilterCondition[] = [];
 
@@ -87,9 +107,11 @@ export class ComplexFilterUtils {
                 for (const andCondition of andConditions) {
                     const filterCondition: ComplexFilterCondition = {
                         ...andCondition,
-                        junktorType: JunktorType.AND
+                        junktorType: JunktorType.AND,
                     };
-                    if (andCondition === andConditions[andConditions.length - 1]) {
+                    if (
+                        andCondition === andConditions[andConditions.length - 1]
+                    ) {
                         filterCondition.junktorType = JunktorType.OR;
                     }
                     filterConditions.push(filterCondition);
@@ -98,13 +120,14 @@ export class ComplexFilterUtils {
         }
 
         return filterConditions;
-
     }
 
     static createDefaultComplexFilterConditions(): ComplexFilterCondition[] {
-        return [{
-            value: '',
-            junktorType: this.DEFAULT_JUNKTOR_TYPE
-        }];
+        return [
+            {
+                value: "",
+                junktorType: this.DEFAULT_JUNKTOR_TYPE,
+            },
+        ];
     }
 }

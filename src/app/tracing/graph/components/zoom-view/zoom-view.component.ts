@@ -1,13 +1,18 @@
-import { Component, Output, Input, ViewChild, EventEmitter } from '@angular/core';
-import { MatLegacySlider as MatSlider } from '@angular/material/legacy-slider';
+import {
+    Component,
+    Output,
+    Input,
+    ViewChild,
+    EventEmitter,
+} from "@angular/core";
+import { MatLegacySlider as MatSlider } from "@angular/material/legacy-slider";
 
 @Component({
-    selector: 'fcl-zoom-view',
-    templateUrl: './zoom-view.component.html',
-    styleUrls: ['./zoom-view.component.scss']
+    selector: "fcl-zoom-view",
+    templateUrl: "./zoom-view.component.html",
+    styleUrls: ["./zoom-view.component.scss"],
 })
 export class ZoomViewComponent {
-
     @Input() zoomValue: number;
 
     @Output() zoomReset = new EventEmitter();
@@ -16,7 +21,7 @@ export class ZoomViewComponent {
     @Output() zoomSlide = new EventEmitter();
     @Output() zoomSlided = new EventEmitter();
 
-    @ViewChild('slider', { static: true }) slider: MatSlider;
+    @ViewChild("slider", { static: true }) slider: MatSlider;
 
     slide() {
         this.zoomSlide.emit(this.slider.value.toString());

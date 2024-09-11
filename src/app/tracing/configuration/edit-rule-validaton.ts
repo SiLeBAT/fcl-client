@@ -1,9 +1,14 @@
-import { ComplexFilterCondition } from './configuration.model';
+import { ComplexFilterCondition } from "./configuration.model";
 import {
-    ColorAndShapeEditRule, ColorEditRule, ComposedLabelEditRule,
-    EditRule, InvEditRule, RuleType, SimpleLabelEditRule
-} from './model';
-import { isSimpleLabelRule } from './shared';
+    ColorAndShapeEditRule,
+    ColorEditRule,
+    ComposedLabelEditRule,
+    EditRule,
+    InvEditRule,
+    RuleType,
+    SimpleLabelEditRule,
+} from "./model";
+import { isSimpleLabelRule } from "./shared";
 
 function isConditionComplete(condition: ComplexFilterCondition): boolean {
     return (
@@ -14,36 +19,40 @@ function isConditionComplete(condition: ComplexFilterCondition): boolean {
 }
 
 function isConditionEmpty(condition: ComplexFilterCondition): boolean {
-    return (
-        condition.propertyName === null &&
-        condition.value.length === 0
-    );
+    return condition.propertyName === null && condition.value.length === 0;
 }
 
-export function getCompleteConditionsCount(conditions: ComplexFilterCondition[]): number {
-    return conditions.filter(c => isConditionComplete(c)).length;
+export function getCompleteConditionsCount(
+    conditions: ComplexFilterCondition[],
+): number {
+    return conditions.filter((c) => isConditionComplete(c)).length;
 }
 
-export function getNonEmptyConditionCount(conditions: ComplexFilterCondition[]): number {
-    return conditions.filter(c => !isConditionEmpty(c)).length;
+export function getNonEmptyConditionCount(
+    conditions: ComplexFilterCondition[],
+): number {
+    return conditions.filter((c) => !isConditionEmpty(c)).length;
 }
 
 function isGenericEditRuleValid(editRule: EditRule): boolean {
     return (
         editRule.name.length > 0 &&
-        getCompleteConditionsCount(editRule.complexFilterConditions) === getNonEmptyConditionCount(editRule.complexFilterConditions)
+        getCompleteConditionsCount(editRule.complexFilterConditions) ===
+            getNonEmptyConditionCount(editRule.complexFilterConditions)
     );
 }
 
 function isColorEditRuleValid(editRule: ColorEditRule): boolean {
     return (
         isGenericEditRuleValid(editRule) &&
-        (editRule.color !== null) &&
+        editRule.color !== null &&
         getCompleteConditionsCount(editRule.complexFilterConditions) >= 1
     );
 }
 
-function isColorAndShapeEditRuleValid(editRule: ColorAndShapeEditRule): boolean {
+function isColorAndShapeEditRuleValid(
+    editRule: ColorAndShapeEditRule,
+): boolean {
     return (
         isGenericEditRuleValid(editRule) &&
         (editRule.color !== null || editRule.shape !== null) &&
@@ -52,17 +61,18 @@ function isColorAndShapeEditRuleValid(editRule: ColorAndShapeEditRule): boolean 
 }
 
 function isSimpleLabelEditRuleValid(editRule: SimpleLabelEditRule): boolean {
-    return (
-        isGenericEditRuleValid(editRule) &&
-        editRule.labelProperty !== null
-    );
+    return isGenericEditRuleValid(editRule) && editRule.labelProperty !== null;
 }
 
-function isComposedLabelEditRuleValid(editRule: ComposedLabelEditRule): boolean {
+function isComposedLabelEditRuleValid(
+    editRule: ComposedLabelEditRule,
+): boolean {
     return (
         isGenericEditRuleValid(editRule) &&
-        editRule.labelParts !== null && editRule.labelParts.length > 0 && editRule.labelParts.every(
-            p => typeof p.property === 'string' || p.useIndex !== undefined
+        editRule.labelParts !== null &&
+        editRule.labelParts.length > 0 &&
+        editRule.labelParts.every(
+            (p) => typeof p.property === "string" || p.useIndex !== undefined,
         )
     );
 }
@@ -78,9 +88,9 @@ export function isEditRuleValid(editRule: EditRule): boolean {
         case RuleType.COLOR:
             return isColorEditRuleValid(editRule);
         case RuleType.LABEL:
-            return isSimpleLabelRule(editRule) ?
-                isSimpleLabelEditRuleValid(editRule) :
-                isComposedLabelEditRuleValid(editRule);
+            return isSimpleLabelRule(editRule)
+                ? isSimpleLabelEditRuleValid(editRule)
+                : isComposedLabelEditRuleValid(editRule);
         case RuleType.INVISIBILITY:
             return isInvEditRuleValid(editRule);
         default:

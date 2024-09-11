@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
     VisioReport,
     VisioGraph,
@@ -9,43 +9,43 @@ import {
     BoxType,
     VisioPort,
     Position,
-    GraphLayer
-} from '../../tracing/visio/layout-engine/datatypes';
+    GraphLayer,
+} from "../../tracing/visio/layout-engine/datatypes";
 
 declare const mxConstants: any;
 
 const enum FontFamily {
-  ARIAL = 'Arial',
-  DIALOG = 'Dialog',
-  VERDANA = 'Verdana',
-  TIMES_NEW_ROMAN = 'Times New Roman'
+    ARIAL = "Arial",
+    DIALOG = "Dialog",
+    VERDANA = "Verdana",
+    TIMES_NEW_ROMAN = "Times New Roman",
 }
 
 const enum ElementColor {
-    LEGEND_ENTRY_BOX_STROKE_COLOR = 'black',
-    LEGEND_STROKE_COLOR = 'black',
-    LEGEND_COLOR = 'white',
-    REGION_COLOR = 'lightgrey',
-    STATION_COLOR = 'white',
-    HEADER_COLOR = '#ffff99',
-    LOT_COLOR = '#bbdefb',
-    SAMPLE_NEGATIVE_COLOR = '#b3ffb3',
-    SAMPLE_CONFIRMED_COLOR = '#ff6666',
-    SAMPLE_PROBABLE_COLOR = '#ffb74d',
-    LABEL_COLOR = 'black',
-    CONNECTOR_COLOR = 'black'
+    LEGEND_ENTRY_BOX_STROKE_COLOR = "black",
+    LEGEND_STROKE_COLOR = "black",
+    LEGEND_COLOR = "white",
+    REGION_COLOR = "lightgrey",
+    STATION_COLOR = "white",
+    HEADER_COLOR = "#ffff99",
+    LOT_COLOR = "#bbdefb",
+    SAMPLE_NEGATIVE_COLOR = "#b3ffb3",
+    SAMPLE_CONFIRMED_COLOR = "#ff6666",
+    SAMPLE_PROBABLE_COLOR = "#ffb74d",
+    LABEL_COLOR = "black",
+    CONNECTOR_COLOR = "black",
 }
 
 const enum HorizontalAlignment {
-    LEFT = 'left',
-    CENTER = 'center',
-    RIGHT = 'right'
+    LEFT = "left",
+    CENTER = "center",
+    RIGHT = "right",
 }
 
 const enum VerticalAlignment {
-    TOP = 'top',
-    MIDDLE = 'middle',
-    BOTTOM = 'bottom'
+    TOP = "top",
+    MIDDLE = "middle",
+    BOTTOM = "bottom",
 }
 
 const LEGEND_ENTRY_SIZE = { width: 30, height: 20 };
@@ -83,7 +83,11 @@ interface Constants {
     FontColor: ConstantValue;
     FontSize: ConstantSize;
     FontFamily: ConstantValue;
-    FontStyle: (opt: {bold?: boolean; italic?: boolean; underline?: boolean}) => string; // ConstantPropSelection;
+    FontStyle: (opt: {
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
+    }) => string; // ConstantPropSelection;
     WhiteSpaceStyle: (wrap: boolean) => string;
     LineArcSize: ConstantSize;
     ExitX: ConstantSize;
@@ -106,29 +110,41 @@ const BoxStyles: Constants = {
     SampleConfirmedColor: ElementColor.SAMPLE_CONFIRMED_COLOR,
     SampleProbableColor: ElementColor.SAMPLE_PROBABLE_COLOR,
     LabelColor: ElementColor.LABEL_COLOR,
-    Rounded: 'rounded=1',
+    Rounded: "rounded=1",
     FillColor: (color: string) => `${mxConstants.STYLE_FILLCOLOR}=${color}`,
     StrokeColor: (color: string) => `${mxConstants.STYLE_STROKECOLOR}=${color}`,
-    StrokeOpacity: (size: number) => `${mxConstants.STYLE_STROKE_OPACITY}=${size}`,
+    StrokeOpacity: (size: number) =>
+        `${mxConstants.STYLE_STROKE_OPACITY}=${size}`,
     StrokeWidth: (width: number) => `${mxConstants.STYLE_STROKEWIDTH}=${width}`,
     FillOpacity: (size: number) => `${mxConstants.STYLE_FILL_OPACITY}=${size}`,
     FontColor: (color: string) => `${mxConstants.STYLE_FONTCOLOR}=${color}`,
     FontSize: (pixel: number) => `${mxConstants.STYLE_FONTSIZE}=${pixel}`,
-    FontFamily: (fontFamily: string) => `${mxConstants.STYLE_FONTFAMILY}=${fontFamily}`,
-    FontStyle: (opt: {bold?: boolean; italic?: boolean; underline?: boolean}) =>
+    FontFamily: (fontFamily: string) =>
+        `${mxConstants.STYLE_FONTFAMILY}=${fontFamily}`,
+    FontStyle: (opt: {
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
+    }) =>
         `${mxConstants.STYLE_FONTSTYLE}=${0 + (opt.bold ? 1 : 0) + (opt.italic ? 2 : 0) + (opt.underline ? 4 : 0)}`,
-    WhiteSpaceStyle: (wrap: boolean) => `${mxConstants.STYLE_WHITE_SPACE}=${wrap ? 'wrap' : 'nowrap'}`,
-    HAlign: (hAlign: HorizontalAlignment) => `${mxConstants.STYLE_ALIGN}=${hAlign}`,
-    VAlign: (vAlign: VerticalAlignment) => `${mxConstants.STYLE_VERTICAL_ALIGN}=${vAlign}`,
-    HStyle: (horizontal?: boolean) => `${mxConstants.STYLE_HORIZONTAL}=${horizontal === false ? 0 : 1}`,
+    WhiteSpaceStyle: (wrap: boolean) =>
+        `${mxConstants.STYLE_WHITE_SPACE}=${wrap ? "wrap" : "nowrap"}`,
+    HAlign: (hAlign: HorizontalAlignment) =>
+        `${mxConstants.STYLE_ALIGN}=${hAlign}`,
+    VAlign: (vAlign: VerticalAlignment) =>
+        `${mxConstants.STYLE_VERTICAL_ALIGN}=${vAlign}`,
+    HStyle: (horizontal?: boolean) =>
+        `${mxConstants.STYLE_HORIZONTAL}=${horizontal === false ? 0 : 1}`,
     Rotation: (rotation: number) => `${mxConstants.STYLE_ROTATION}=${rotation}`,
     LineArcSize: (size: number) => `${mxConstants.STYLE_ARCSIZE}=${size}`,
     ExitX: (value: number) => `${mxConstants.STYLE_EXIT_X}=${value}`,
     ExitY: (value: number) => `${mxConstants.STYLE_EXIT_Y}=${value}`,
     EntryX: (value: number) => `${mxConstants.STYLE_ENTRY_X}=${value}`,
     EntryY: (value: number) => `${mxConstants.STYLE_ENTRY_Y}=${value}`,
-    EndArrow: (arrowStyle: string) => `${mxConstants.STYLE_ENDARROW}=${arrowStyle}`,
-    ConnectorColor: (color: string) => `${mxConstants.STYLE_STROKECOLOR}=${color}`
+    EndArrow: (arrowStyle: string) =>
+        `${mxConstants.STYLE_ENDARROW}=${arrowStyle}`,
+    ConnectorColor: (color: string) =>
+        `${mxConstants.STYLE_STROKECOLOR}=${color}`,
 };
 
 interface Box {
@@ -147,15 +163,17 @@ interface LegendEntryInfo {
 }
 
 function getStyle(...styles): string {
-    return styles.filter(s => s !== null && s !== undefined).join(';');
+    return styles.filter((s) => s !== null && s !== undefined).join(";");
 }
 
 function regionStyle(forLegend = false) {
     return getStyle(
         BoxStyles.FillColor(BoxStyles.RegionColor),
-        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor)),
+        !forLegend
+            ? BoxStyles.StrokeOpacity(0)
+            : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor),
         BoxStyles.Rounded,
-        BoxStyles.LineArcSize(1 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0))
+        BoxStyles.LineArcSize(1 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
     );
 }
 
@@ -165,15 +183,12 @@ function legendStyle() {
         BoxStyles.LineArcSize(5),
         BoxStyles.FillColor(BoxStyles.LegendColor),
         BoxStyles.StrokeColor(BoxStyles.LegendStrokeColor),
-        BoxStyles.StrokeWidth(2)
+        BoxStyles.StrokeWidth(2),
     );
 }
 
 function legendEntryStyle() {
-    return getStyle(
-        BoxStyles.StrokeOpacity(0),
-        BoxStyles.FillOpacity(0)
-    );
+    return getStyle(BoxStyles.StrokeOpacity(0), BoxStyles.FillOpacity(0));
 }
 
 function stationStyle(forLegend = false) {
@@ -181,7 +196,9 @@ function stationStyle(forLegend = false) {
         BoxStyles.Rounded,
         BoxStyles.LineArcSize(5 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
         BoxStyles.FillColor(BoxStyles.StationColor),
-        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        !forLegend
+            ? BoxStyles.StrokeOpacity(0)
+            : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor),
     );
 }
 
@@ -190,7 +207,9 @@ function lotStyle(forLegend = false) {
         BoxStyles.Rounded,
         BoxStyles.LineArcSize(3 * (forLegend ? LEGEND_RADIUS_SCALE : 1.0)),
         BoxStyles.FillColor(BoxStyles.LotColor),
-        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        !forLegend
+            ? BoxStyles.StrokeOpacity(0)
+            : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor),
     );
 }
 
@@ -198,7 +217,9 @@ function sampleNegativeStyle(forLegend = false) {
     return getStyle(
         BoxStyles.Rounded,
         BoxStyles.FillColor(BoxStyles.SampleNegativeColor),
-        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        !forLegend
+            ? BoxStyles.StrokeOpacity(0)
+            : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor),
     );
 }
 
@@ -206,7 +227,9 @@ function sampleConfirmedStyle(forLegend = false) {
     return getStyle(
         BoxStyles.Rounded,
         BoxStyles.FillColor(BoxStyles.SampleConfirmedColor),
-        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        !forLegend
+            ? BoxStyles.StrokeOpacity(0)
+            : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor),
     );
 }
 
@@ -214,7 +237,9 @@ function sampleProbableStyle(forLegend = false) {
     return getStyle(
         BoxStyles.Rounded,
         BoxStyles.FillColor(BoxStyles.SampleProbableColor),
-        (!forLegend ? BoxStyles.StrokeOpacity(0) : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor))
+        !forLegend
+            ? BoxStyles.StrokeOpacity(0)
+            : BoxStyles.StrokeColor(BoxStyles.LegendEntryBoxStrokeColor),
     );
 }
 
@@ -225,7 +250,7 @@ function labelStyle(bold?: boolean) {
         BoxStyles.FontColor(BoxStyles.LabelColor),
         BoxStyles.FontFamily(FontFamily.VERDANA),
         BoxStyles.FontSize(8),
-        BoxStyles.FontStyle({ bold: bold })
+        BoxStyles.FontStyle({ bold: bold }),
     );
 }
 
@@ -237,7 +262,7 @@ function legendTitleStyle() {
         BoxStyles.FontFamily(FontFamily.VERDANA),
         BoxStyles.FontSize(10),
         BoxStyles.FontStyle({ bold: true }),
-        BoxStyles.HAlign(HorizontalAlignment.LEFT)
+        BoxStyles.HAlign(HorizontalAlignment.LEFT),
     );
 }
 
@@ -249,11 +274,16 @@ function legendEntryLabelStyle() {
         BoxStyles.FontFamily(FontFamily.VERDANA),
         BoxStyles.FontSize(8),
         BoxStyles.HAlign(HorizontalAlignment.LEFT),
-        BoxStyles.VAlign(VerticalAlignment.MIDDLE)
+        BoxStyles.VAlign(VerticalAlignment.MIDDLE),
     );
 }
 
-function connectorStyle(exitX: number = 0.5, exitY: number = 1, entryX: number = 0.5, entryY: number = 0) {
+function connectorStyle(
+    exitX: number = 0.5,
+    exitY: number = 1,
+    entryX: number = 0.5,
+    entryY: number = 0,
+) {
     return getStyle(
         BoxStyles.ExitX(exitX),
         BoxStyles.ExitY(exitY),
@@ -261,7 +291,7 @@ function connectorStyle(exitX: number = 0.5, exitY: number = 1, entryX: number =
         BoxStyles.EntryY(entryY),
         BoxStyles.EndArrow(mxConstants.ARROW_OPEN),
         BoxStyles.FillColor(BoxStyles.LabelColor),
-        BoxStyles.ConnectorColor(ElementColor.CONNECTOR_COLOR)
+        BoxStyles.ConnectorColor(ElementColor.CONNECTOR_COLOR),
     );
 }
 
@@ -275,7 +305,7 @@ function headerStyle() {
         BoxStyles.FontFamily(FontFamily.VERDANA),
         BoxStyles.FontSize(8),
         BoxStyles.FontStyle({ bold: true }),
-        BoxStyles.WhiteSpaceStyle(true)
+        BoxStyles.WhiteSpaceStyle(true),
     );
 }
 
@@ -289,46 +319,45 @@ function headerTextStyle() {
         BoxStyles.HAlign(HorizontalAlignment.CENTER),
         BoxStyles.VAlign(VerticalAlignment.MIDDLE),
         BoxStyles.Rotation(270),
-        BoxStyles.FontStyle({ bold: true })
+        BoxStyles.FontStyle({ bold: true }),
     );
 }
 
 const BoxTypeToLegendEntryInfo: { [key: string]: LegendEntryInfo } = {
     [BoxType.StationGroup]: {
-        label: 'State',
-        style: regionStyle(true)
+        label: "State",
+        style: regionStyle(true),
     },
     [BoxType.Station]: {
-        label: 'Establishment/ FBO/ station',
-        style: stationStyle(true)
+        label: "Establishment/ FBO/ station",
+        style: stationStyle(true),
     },
     [BoxType.Lot]: {
-        label: 'Food /feed product',
-        style: lotStyle(true)
+        label: "Food /feed product",
+        style: lotStyle(true),
     },
     [BoxType.SampleNegative]: {
-        label: 'Analytical results negative',
-        style: sampleNegativeStyle(true)
+        label: "Analytical results negative",
+        style: sampleNegativeStyle(true),
     },
     [BoxType.SampleConfirmed]: {
-        label: 'Analytical results positive',
-        style: sampleConfirmedStyle(true)
+        label: "Analytical results positive",
+        style: sampleConfirmedStyle(true),
     },
     [BoxType.SampleProbable]: {
-        label: 'Analytical results ambiguous',
-        style: sampleProbableStyle(true)
-    }
+        label: "Analytical results ambiguous",
+        style: sampleProbableStyle(true),
+    },
 };
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class VisioToMxGraphService {
     private graph: mxGraph;
     private boxes: Box[] = [];
 
     createGraph(report: VisioReport) {
-
         this.graph = new mxGraph(null);
         const parent: mxCell = this.graph.getDefaultParent();
 
@@ -339,16 +368,26 @@ export class VisioToMxGraphService {
 
         this.graph.getModel().beginUpdate();
 
-        const offset = { x: report.headerWidth + HEADER_TO_GRAPH_DISTANCE, y: 0 };
+        const offset = {
+            x: report.headerWidth + HEADER_TO_GRAPH_DISTANCE,
+            y: 0,
+        };
 
         // draw grouping elements
         rootElements.forEach((stationGroupBox) => {
-            const stationGroupCell = this.drawVisioElement(parent, stationGroupBox, offset);
+            const stationGroupCell = this.drawVisioElement(
+                parent,
+                stationGroupBox,
+                offset,
+            );
 
             // draw station and environmental smaple elements
             const stationBoxes: VisioBox[] = stationGroupBox.elements;
             stationBoxes.forEach((stationBox) => {
-                const stationCell = this.drawVisioElement(stationGroupCell, stationBox);
+                const stationCell = this.drawVisioElement(
+                    stationGroupCell,
+                    stationBox,
+                );
 
                 // draw lot elements
                 const lotBoxes: VisioBox[] = stationBox.elements;
@@ -358,17 +397,21 @@ export class VisioToMxGraphService {
                     // draw sample element
                     const sampleBoxes: VisioBox[] = lotBox.elements;
                     sampleBoxes.forEach((sampleBox) => {
-                        const sampleCell = this.drawVisioElement(lotCell, sampleBox);
+                        const sampleCell = this.drawVisioElement(
+                            lotCell,
+                            sampleBox,
+                        );
                     });
                 });
             });
         });
 
         const id2BoxPort: Record<string, BoxPort> = {};
-        this.boxes.forEach(
-            box => box.visioBox.ports.forEach(port =>
-                id2BoxPort[port.id] = { box: box, currentPort: port}
-            )
+        this.boxes.forEach((box) =>
+            box.visioBox.ports.forEach(
+                (port) =>
+                    (id2BoxPort[port.id] = { box: box, currentPort: port }),
+            ),
         );
 
         // draw connectors
@@ -379,10 +422,16 @@ export class VisioToMxGraphService {
         });
 
         this.drawHeader(parent, report);
-        const legendCell = this.drawLegend(parent, report, { x: 0, y: report.graph.size.height + 10 });
+        const legendCell = this.drawLegend(parent, report, {
+            x: 0,
+            y: report.graph.size.height + 10,
+        });
 
         if (legendCell) {
-            this.drawFclImage(parent, { x: 0, y: this.getLowerBound(legendCell.getGeometry()) + 5 });
+            this.drawFclImage(parent, {
+                x: 0,
+                y: this.getLowerBound(legendCell.getGeometry()) + 5,
+            });
         }
 
         return this.graph;
@@ -396,58 +445,91 @@ export class VisioToMxGraphService {
         return this.graph.insertVertex(
             parent,
             null,
-            '',
-            position.x, position.y, 220, 20,
-            'shape=image;image=' + '../../assets/CreatedWithFCL_Banner.svg',
-            false);
+            "",
+            position.x,
+            position.y,
+            220,
+            20,
+            "shape=image;image=" + "../../assets/CreatedWithFCL_Banner.svg",
+            false,
+        );
     }
 
     private drawHeader(parent: mxCell, report: VisioReport): Position | Size {
         let height = 0.0;
         for (const layer of report.graphLayers) {
-            this.drawLayerHeader(parent, layer, { x: 0, y: height }, report.headerWidth);
+            this.drawLayerHeader(
+                parent,
+                layer,
+                { x: 0, y: height },
+                report.headerWidth,
+            );
             height += layer.height;
         }
         return { x: 0, y: 0, width: report.headerWidth, height: height };
     }
 
-    private drawLayerHeader(parent: mxCell, layer: GraphLayer, fromPos: Position, width: number) {
+    private drawLayerHeader(
+        parent: mxCell,
+        layer: GraphLayer,
+        fromPos: Position,
+        width: number,
+    ) {
         const headerBoxStyle = headerStyle();
         const boxCell: mxCell = this.graph.insertVertex(
             parent,
             null,
-            layer.activities.join('\n'),
+            layer.activities.join("\n"),
             fromPos.x,
             fromPos.y,
             width,
             layer.height,
             headerBoxStyle,
-            false
+            false,
         );
 
         return boxCell;
     }
 
-    private drawLegend(parent: mxCell, report: VisioReport, position: Position): mxCell | null {
+    private drawLegend(
+        parent: mxCell,
+        report: VisioReport,
+        position: Position,
+    ): mxCell | null {
         const legendEntries = this.getLegendEntries(report);
         const showDeliveries = report.graph.connectors.length > 0;
 
-        const nEntries = Object.keys(legendEntries).filter(key => legendEntries[key]).length + (showDeliveries ? 1 : 0);
+        const nEntries =
+            Object.keys(legendEntries).filter((key) => legendEntries[key])
+                .length + (showDeliveries ? 1 : 0);
         if (!nEntries) {
             return null;
         }
-        const legendCell: mxCell = this.drawLegendCell(parent, { x: position.x + 1, y: position.y + 0 });
+        const legendCell: mxCell = this.drawLegendCell(parent, {
+            x: position.x + 1,
+            y: position.y + 0,
+        });
 
-        const titleCell: mxCell = this.drawLegendTitleCell(legendCell, { x: 5, y: 10 });
+        const titleCell: mxCell = this.drawLegendTitleCell(legendCell, {
+            x: 5,
+            y: 10,
+        });
 
-        const legendEntryInfos =
-            [BoxType.StationGroup, BoxType.Station, BoxType.Lot, BoxType.SampleNegative, BoxType.SampleConfirmed, BoxType.SampleProbable]
-                .filter(t => legendEntries[t]).map(t => BoxTypeToLegendEntryInfo[t]);
+        const legendEntryInfos = [
+            BoxType.StationGroup,
+            BoxType.Station,
+            BoxType.Lot,
+            BoxType.SampleNegative,
+            BoxType.SampleConfirmed,
+            BoxType.SampleProbable,
+        ]
+            .filter((t) => legendEntries[t])
+            .map((t) => BoxTypeToLegendEntryInfo[t]);
         if (showDeliveries) {
             legendEntryInfos.push({
-                label: 'Deliveries',
+                label: "Deliveries",
                 style: this.drawEdge,
-                isEdge: true
+                isEdge: true,
             });
         }
         const legendEntryMatrix: LegendEntryInfo[][] = [];
@@ -461,12 +543,20 @@ export class VisioToMxGraphService {
 
         let xPos = startX;
         legendEntryMatrix.forEach((legendColumnEntries) => {
-            const columnCells = legendColumnEntries.map((legendEntry, rowIndex) => this.drawLegendEntry(
-                legendCell,
-                legendEntry,
-                { x: xPos, y: startY + rowIndex * (LEGEND_ENTRY_SIZE.height + LEGEND_ENTRY_DIST.y) }
-            ));
-            xPos += Math.max(...columnCells.map(c => c.getGeometry().width)) + LEGEND_ENTRY_DIST.x;
+            const columnCells = legendColumnEntries.map(
+                (legendEntry, rowIndex) =>
+                    this.drawLegendEntry(legendCell, legendEntry, {
+                        x: xPos,
+                        y:
+                            startY +
+                            rowIndex *
+                                (LEGEND_ENTRY_SIZE.height +
+                                    LEGEND_ENTRY_DIST.y),
+                    }),
+            );
+            xPos +=
+                Math.max(...columnCells.map((c) => c.getGeometry().width)) +
+                LEGEND_ENTRY_DIST.x;
         });
         // add right margin (equal to leftMargin)
         const geometry = legendCell.getGeometry();
@@ -476,7 +566,11 @@ export class VisioToMxGraphService {
         return legendCell;
     }
 
-    private drawLegendEntry(parent: mxCell, legendEntry: LegendEntryInfo, position: Position): mxCell {
+    private drawLegendEntry(
+        parent: mxCell,
+        legendEntry: LegendEntryInfo,
+        position: Position,
+    ): mxCell {
         const entryCell = this.graph.insertVertex(
             parent,
             null,
@@ -486,7 +580,7 @@ export class VisioToMxGraphService {
             100,
             LEGEND_ENTRY_SIZE.height,
             legendEntryStyle(),
-            false
+            false,
         );
         if (!legendEntry.isEdge) {
             const boxCell: mxCell = this.graph.insertVertex(
@@ -498,7 +592,7 @@ export class VisioToMxGraphService {
                 LEGEND_ENTRY_SIZE.width,
                 LEGEND_ENTRY_SIZE.height,
                 legendEntry.style,
-                false
+                false,
             );
             const labelCell: mxCell = this.graph.insertVertex(
                 entryCell,
@@ -509,14 +603,13 @@ export class VisioToMxGraphService {
                 50,
                 LEGEND_ENTRY_SIZE.height,
                 legendEntryLabelStyle(),
-                false
+                false,
             );
             const geo1 = labelCell.getGeometry();
 
             this.graph.updateCellSize(labelCell, false);
             const geo2 = labelCell.getGeometry();
         } else {
-
             const fromCell: mxCell = this.graph.insertVertex(
                 entryCell,
                 null,
@@ -526,7 +619,7 @@ export class VisioToMxGraphService {
                 0,
                 0,
                 null,
-                false
+                false,
             );
 
             const toCell: mxCell = this.graph.insertVertex(
@@ -538,15 +631,10 @@ export class VisioToMxGraphService {
                 0,
                 0,
                 null,
-                false
+                false,
             );
 
-            const style = connectorStyle(
-                0,
-                0,
-                0,
-                0
-            );
+            const style = connectorStyle(0, 0, 0, 0);
 
             const newEdge: mxCell = this.graph.insertEdge(
                 entryCell,
@@ -554,7 +642,7 @@ export class VisioToMxGraphService {
                 null,
                 fromCell,
                 toCell,
-                style
+                style,
             );
 
             const labelCell: mxCell = this.graph.insertVertex(
@@ -566,7 +654,7 @@ export class VisioToMxGraphService {
                 50,
                 LEGEND_ENTRY_SIZE.height,
                 legendEntryLabelStyle(),
-                false
+                false,
             );
         }
 
@@ -583,7 +671,7 @@ export class VisioToMxGraphService {
             200,
             100,
             legendStyle(),
-            false
+            false,
         );
     }
 
@@ -591,13 +679,13 @@ export class VisioToMxGraphService {
         return this.graph.insertVertex(
             parent,
             null,
-            'Legend',
+            "Legend",
             position.x,
             position.y,
             100,
             10,
             legendTitleStyle(),
-            false
+            false,
         );
     }
 
@@ -605,7 +693,7 @@ export class VisioToMxGraphService {
         const legendEntries: { [key: string]: boolean } = {};
 
         const travElements = (visioBoxes: VisioBox[]) => {
-            visioBoxes.forEach(visioBox => {
+            visioBoxes.forEach((visioBox) => {
                 legendEntries[visioBox.type] = true;
                 if (visioBox.elements) {
                     travElements(visioBox.elements);
@@ -617,16 +705,20 @@ export class VisioToMxGraphService {
         return legendEntries;
     }
 
-    private drawVisioElement(currentParent: mxCell, visioBox: VisioBox, offset?: Position): mxCell {
+    private drawVisioElement(
+        currentParent: mxCell,
+        visioBox: VisioBox,
+        offset?: Position,
+    ): mxCell {
         const newCell: mxCell = this.drawCell(currentParent, visioBox, offset);
         this.pushToBoxes(newCell, visioBox);
-        visioBox.labels.forEach(label => this.drawLabel(newCell, label));
+        visioBox.labels.forEach((label) => this.drawLabel(newCell, label));
 
         return newCell;
     }
 
     private drawCell(parent: mxCell, box: VisioBox, offset?: Position): mxCell {
-        let cellStyle: string = '';
+        let cellStyle: string = "";
         switch (box.type) {
             case BoxType.StationGroup:
                 cellStyle = regionStyle();
@@ -647,7 +739,7 @@ export class VisioToMxGraphService {
                 cellStyle = sampleProbableStyle();
                 break;
             default:
-                cellStyle = '';
+                cellStyle = "";
         }
 
         const newCell: mxCell = this.graph.insertVertex(
@@ -659,14 +751,14 @@ export class VisioToMxGraphService {
             box.size.width,
             box.size.height,
             cellStyle,
-            false
+            false,
         );
 
         return newCell;
     }
 
     private drawLabel(parent: mxCell, label: VisioLabel) {
-        const labelText: string = label.text.join('\n');
+        const labelText: string = label.text.join("\n");
         const newLabel: mxCell = this.graph.insertVertex(
             parent,
             null,
@@ -676,7 +768,7 @@ export class VisioToMxGraphService {
             label.size.width,
             label.size.height,
             labelStyle(label.style?.bold),
-            false
+            false,
         );
 
         return newLabel;
@@ -687,7 +779,7 @@ export class VisioToMxGraphService {
             fromBox.currentPort.normalizedPosition.x,
             fromBox.currentPort.normalizedPosition.y,
             toBox.currentPort.normalizedPosition.x,
-            toBox.currentPort.normalizedPosition.y
+            toBox.currentPort.normalizedPosition.y,
         );
 
         const newEdge: mxCell = this.graph.insertEdge(
@@ -696,7 +788,7 @@ export class VisioToMxGraphService {
             null,
             fromBox.box.cell,
             toBox.box.cell,
-            style
+            style,
         );
 
         return newEdge;
@@ -705,9 +797,8 @@ export class VisioToMxGraphService {
     private pushToBoxes(cell: mxCell, box: VisioBox) {
         const newBox: Box = {
             cell: cell,
-            visioBox: box
+            visioBox: box,
         };
         this.boxes.push(newBox);
-
     }
 }

@@ -29,15 +29,21 @@ export function getEnclosingRectFromPoints(points: Point[]): BoundaryRect {
         top: yMin,
         bottom: yMax,
         width: xMax - xMin,
-        height: yMax - yMin
+        height: yMax - yMin,
     };
 }
 
 export function getNearestPointOnRect(point: Point, rect: BoundaryRect): Point {
     if (point.x <= rect.left) {
-        return { x: rect.left, y: Math.min(rect.bottom, Math.max(rect.top, point.y)) };
+        return {
+            x: rect.left,
+            y: Math.min(rect.bottom, Math.max(rect.top, point.y)),
+        };
     } else if (point.x >= rect.right) {
-        return { x: rect.right, y: Math.min(rect.bottom, Math.max(rect.top, point.y)) };
+        return {
+            x: rect.right,
+            y: Math.min(rect.bottom, Math.max(rect.top, point.y)),
+        };
     } else if (point.y <= rect.top) {
         return { x: point.x, y: rect.top };
     } else if (point.y >= rect.bottom) {
@@ -63,7 +69,7 @@ export function getNearestPointOnRect(point: Point, rect: BoundaryRect): Point {
 
 export function getCenterFromPoints(points: Point[]): Point {
     if (points.length === 0) {
-        throw new Error('Cannot get the center from no points.');
+        throw new Error("Cannot get the center from no points.");
     }
 
     let xSum = 0;
@@ -76,21 +82,21 @@ export function getCenterFromPoints(points: Point[]): Point {
 
     return {
         x: xSum / points.length,
-        y: ySum / points.length
+        y: ySum / points.length,
     };
 }
 
 export function getSum(point1: Point, point2: Point): Point {
     return {
         x: point1.x + point2.x,
-        y: point1.y + point2.y
+        y: point1.y + point2.y,
     };
 }
 
 export function getDifference(point1: Point, point2: Point): Point {
     return {
         x: point1.x - point2.x,
-        y: point1.y - point2.y
+        y: point1.y - point2.y,
     };
 }
 
@@ -100,7 +106,10 @@ export function getDistance(point1: Point, point2: Point): number {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
-export function getRectUnion(rect1: BoundaryRect, rect2: BoundaryRect): BoundaryRect {
+export function getRectUnion(
+    rect1: BoundaryRect,
+    rect2: BoundaryRect,
+): BoundaryRect {
     const left = Math.min(rect1.left, rect2.left);
     const right = Math.max(rect1.right, rect2.right);
     const top = Math.min(rect1.top, rect2.top);
@@ -111,18 +120,26 @@ export function getRectUnion(rect1: BoundaryRect, rect2: BoundaryRect): Boundary
         top: top,
         bottom: bottom,
         width: right - left,
-        height: bottom - top
+        height: bottom - top,
     };
 }
 
-export function doRectsIntersect(rect1: BoundaryRect, rect2: BoundaryRect): boolean {
-    return !(rect2.left > rect1.right ||
-             rect2.right < rect1.left ||
-             rect2.top > rect1.bottom ||
-             rect2.bottom < rect1.top);
+export function doRectsIntersect(
+    rect1: BoundaryRect,
+    rect2: BoundaryRect,
+): boolean {
+    return !(
+        rect2.left > rect1.right ||
+        rect2.right < rect1.left ||
+        rect2.top > rect1.bottom ||
+        rect2.bottom < rect1.top
+    );
 }
 
-export function getRectIntersection(rect1: BoundaryRect, rect2: BoundaryRect): BoundaryRect | null {
+export function getRectIntersection(
+    rect1: BoundaryRect,
+    rect2: BoundaryRect,
+): BoundaryRect | null {
     if (!doRectsIntersect(rect1, rect2)) {
         return null;
     } else {
@@ -136,32 +153,42 @@ export function getRectIntersection(rect1: BoundaryRect, rect2: BoundaryRect): B
             top: top,
             bottom: bottom,
             width: right - left,
-            height: bottom - top
+            height: bottom - top,
         };
     }
 }
 
-export function createRect(left: number, top: number, right: number, bottom: number): BoundaryRect {
+export function createRect(
+    left: number,
+    top: number,
+    right: number,
+    bottom: number,
+): BoundaryRect {
     return {
         left: left,
         right: right,
         top: top,
         bottom: bottom,
         width: right - left,
-        height: bottom - top
+        height: bottom - top,
     };
 }
 
-export function isRectWithinRect(innerRect: BoundaryRect, outerRect: BoundaryRect): boolean {
-    return innerRect.left >= outerRect.left &&
+export function isRectWithinRect(
+    innerRect: BoundaryRect,
+    outerRect: BoundaryRect,
+): boolean {
+    return (
+        innerRect.left >= outerRect.left &&
         innerRect.right <= outerRect.right &&
         innerRect.top >= outerRect.top &&
-        innerRect.bottom <= outerRect.bottom;
+        innerRect.bottom <= outerRect.bottom
+    );
 }
 
 export function getRectCenter(rect: BoundaryRect): Point {
     return {
         x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
+        y: rect.top + rect.height / 2,
     };
 }

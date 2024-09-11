@@ -1,10 +1,15 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+    Component,
+    Output,
+    EventEmitter,
+    ChangeDetectionStrategy,
+} from "@angular/core";
 
 @Component({
-    selector: 'fcl-clear-all-filter-view',
-    templateUrl: './clear-all-filter-view.component.html',
-    styleUrls: ['./clear-all-filter-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-clear-all-filter-view",
+    templateUrl: "./clear-all-filter-view.component.html",
+    styleUrls: ["./clear-all-filter-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClearAllFilterViewComponent {
     @Output() clearFilter = new EventEmitter();
@@ -12,5 +17,4 @@ export class ClearAllFilterViewComponent {
     clearAllFilter() {
         this.clearFilter.emit();
     }
-
 }

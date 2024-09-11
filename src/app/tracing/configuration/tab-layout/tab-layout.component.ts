@@ -6,9 +6,9 @@ import {
     Output,
     EventEmitter,
     TemplateRef,
-    ChangeDetectorRef
-} from '@angular/core';
-import { Observable } from 'rxjs';
+    ChangeDetectorRef,
+} from "@angular/core";
+import { Observable } from "rxjs";
 
 export interface TabConfig {
     tabLabel: string;
@@ -16,14 +16,13 @@ export interface TabConfig {
 }
 
 @Component({
-    selector: 'fcl-tab-layout',
-    templateUrl: './tab-layout.component.html',
-    styleUrls: ['./tab-layout.component.scss'],
+    selector: "fcl-tab-layout",
+    templateUrl: "./tab-layout.component.html",
+    styleUrls: ["./tab-layout.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class TabLayoutComponent {
-
     animatingTabIndex: number | null = null;
 
     @Input() activeTabIndex$: Observable<number>;
@@ -32,9 +31,7 @@ export class TabLayoutComponent {
     @Output() tabGroupIndex = new EventEmitter<number>();
     @Output() animationDone = new EventEmitter<void>();
 
-    constructor(
-        private cdRef: ChangeDetectorRef
-    ) { }
+    constructor(private cdRef: ChangeDetectorRef) {}
 
     onSelectedIndexChange(selectedIndex: number): void {
         this.animatingTabIndex = selectedIndex;

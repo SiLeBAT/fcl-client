@@ -1,26 +1,27 @@
-import { GraphEditorState, reducer } from './graph-editor.reducer';
-import { GraphEditorActivated } from './graph-editor.actions';
-import { ActivationStatus } from '../../shared/model/types';
+import { GraphEditorState, reducer } from "./graph-editor.reducer";
+import { GraphEditorActivated } from "./graph-editor.actions";
+import { ActivationStatus } from "../../shared/model/types";
 
-describe('main-page reducer', () => {
-
+describe("main-page reducer", () => {
     let currentState: GraphEditorState;
 
     beforeEach(() => {
         currentState = {
-            active: false
+            active: false,
         };
     });
 
-    it('should have valid state after GraphEditorActivated action', () => {
+    it("should have valid state after GraphEditorActivated action", () => {
         const activationStatus: ActivationStatus = {
-            isActivated: true
+            isActivated: true,
         };
 
-        const currentAction: GraphEditorActivated = new GraphEditorActivated(activationStatus);
+        const currentAction: GraphEditorActivated = new GraphEditorActivated(
+            activationStatus,
+        );
 
         const expectedState: GraphEditorState = {
-            active: true
+            active: true,
         };
 
         const result: GraphEditorState = reducer(currentState, currentAction);

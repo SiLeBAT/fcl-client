@@ -1,69 +1,105 @@
-import { Injectable } from '@angular/core';
-import { DataService } from '../services/data.service';
+import { Injectable } from "@angular/core";
+import { DataService } from "../services/data.service";
 import {
-    GroupType, GroupData, ObservedType, GroupMode, Position, StationTracingSettings
-} from '../data.model';
-import { concat, removeNullish, Utils } from '../util/non-ui-utils';
-import { GroupingState, GroupingChange, SetStationGroupsPayload } from './model';
-import { SourceCollapser } from './source-collapser';
-import { TargetCollapser } from './target-collapser';
-import { SimpleChainCollapser } from './simple-chain-collapser';
-import { IsolatedComponentCollapser } from './isolated-component-collapser';
-import { MergeStationsValidationCode } from './validation-codes';
-import { getSum, getCenterFromPoints, getDifference } from '../util/geometry-utils';
+    GroupType,
+    GroupData,
+    ObservedType,
+    GroupMode,
+    Position,
+    StationTracingSettings,
+} from "../data.model";
+import { concat, removeNullish, Utils } from "../util/non-ui-utils";
+import {
+    GroupingState,
+    GroupingChange,
+    SetStationGroupsPayload,
+} from "./model";
+import { SourceCollapser } from "./source-collapser";
+import { TargetCollapser } from "./target-collapser";
+import { SimpleChainCollapser } from "./simple-chain-collapser";
+import { IsolatedComponentCollapser } from "./isolated-component-collapser";
+import { MergeStationsValidationCode } from "./validation-codes";
+import {
+    getSum,
+    getCenterFromPoints,
+    getDifference,
+} from "../util/geometry-utils";
 
 interface EffectiveGroupingChange extends GroupingChange {
     unchangedGroups: GroupData[];
 }
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class GroupingService {
+    constructor(private dataService: DataService) {}
 
-    constructor(private dataService: DataService) {
-    }
-
-    getMergeStationsPayload(state: GroupingState, groupName: string, memberIds: string[]): SetStationGroupsPayload | null {
-        if (this.validateMergeStationsCmd(state, groupName, memberIds) !== MergeStationsValidationCode.OK) {
+    getMergeStationsPayload(
+        state: GroupingState,
+        groupName: string,
+        memberIds: string[],
+    ): SetStationGroupsPayload | null {
+        if (
+            this.validateMergeStationsCmd(state, groupName, memberIds) !==
+            MergeStationsValidationCode.OK
+        ) {
             return null;
         }
-        return this.getNewGroupingState(state, this.getEffectiveGroupingChange(state, {
-            addGroups: [{
-                id: groupName,
-                name: groupName,
-                contains: this.explodeIds(state, memberIds)
-            }],
-            removeGroups: []
-        }));
+        return this.getNewGroupingState(
+            state,
+            this.getEffectiveGroupingChange(state, {
+                addGroups: [
+                    {
+                        id: groupName,
+                        name: groupName,
+                        contains: this.explodeIds(state, memberIds),
+                    },
+                ],
+                removeGroups: [],
+            }),
+        );
     }
 
-    validateMergeStationsCmd(state: GroupingState, groupName: string, memberIds: string[]): MergeStationsValidationCode {
+    validateMergeStationsCmd(
+        state: GroupingState,
+        groupName: string,
+        memberIds: string[],
+    ): MergeStationsValidationCode {
         if (!groupName || groupName.length === 0) {
             return MergeStationsValidationCode.NAME_OR_ID_MAY_NOT_BE_EMPTY;
         } else {
             const effChange = this.getEffectiveGroupingChange(state, {
-                addGroups: [{
-                    id: groupName,
-                    name: groupName,
-                    contains: this.explodeIds(state, memberIds)
-                }],
-                removeGroups: []
+                addGroups: [
+                    {
+                        id: groupName,
+                        name: groupName,
+                        contains: this.explodeIds(state, memberIds),
+                    },
+                ],
+                removeGroups: [],
             });
 
-            const removeGrpMap = Utils.createObjectFromArray(effChange.removeGroups, g => g.id);
-            const remainingGrps = state.groupSettings.filter(g => !removeGrpMap[g.id]);
-            const reservedIds = Utils.createSimpleStringSet(concat(
-                state.fclElements.stations.map(s => s.id),
-                remainingGrps.map(g => g.id)
-            ));
+            const removeGrpMap = Utils.createObjectFromArray(
+                effChange.removeGroups,
+                (g) => g.id,
+            );
+            const remainingGrps = state.groupSettings.filter(
+                (g) => !removeGrpMap[g.id],
+            );
+            const reservedIds = Utils.createSimpleStringSet(
+                concat(
+                    state.fclElements.stations.map((s) => s.id),
+                    remainingGrps.map((g) => g.id),
+                ),
+            );
             const reservedNames = Utils.createSimpleStringSet(
                 removeNullish(
                     concat(
-                        state.fclElements.stations.map(s => s.name),
-                        remainingGrps.map(g => g.name)
-                    )
-                )
+                        state.fclElements.stations.map((s) => s.name),
+                        remainingGrps.map((g) => g.name),
+                    ),
+                ),
             );
 
             if (reservedIds[groupName]) {
@@ -77,30 +113,45 @@ export class GroupingService {
     }
 
     private explodeIds(state: GroupingState, memberIds: string[]): string[] {
-        const grpMap = Utils.createObjectFromArray(state.groupSettings, g => g.id);
+        const grpMap = Utils.createObjectFromArray(
+            state.groupSettings,
+            (g) => g.id,
+        );
         return concat(
-            ...memberIds.map(id => grpMap[id] ? grpMap[id].contains : [id])
+            ...memberIds.map((id) => (grpMap[id] ? grpMap[id].contains : [id])),
         );
     }
 
-    getCollapseStationsPayload(state: GroupingState, groupType: GroupType, groupMode?: GroupMode): SetStationGroupsPayload | null {
+    getCollapseStationsPayload(
+        state: GroupingState,
+        groupType: GroupType,
+        groupMode?: GroupMode,
+    ): SetStationGroupsPayload | null {
         let groupChange: GroupingChange | undefined;
         switch (groupType) {
             case GroupType.SOURCE_GROUP:
                 if (groupMode !== undefined) {
-                    groupChange = new SourceCollapser(this.dataService).getGroupingChange(state, groupMode);
+                    groupChange = new SourceCollapser(
+                        this.dataService,
+                    ).getGroupingChange(state, groupMode);
                 }
                 break;
             case GroupType.TARGET_GROUP:
                 if (groupMode !== undefined) {
-                    groupChange = new TargetCollapser(this.dataService).getGroupingChange(state, groupMode);
+                    groupChange = new TargetCollapser(
+                        this.dataService,
+                    ).getGroupingChange(state, groupMode);
                 }
                 break;
             case GroupType.SIMPLE_CHAIN:
-                groupChange = new SimpleChainCollapser(this.dataService).getGroupingChange(state);
+                groupChange = new SimpleChainCollapser(
+                    this.dataService,
+                ).getGroupingChange(state);
                 break;
             case GroupType.ISOLATED_GROUP:
-                groupChange = new IsolatedComponentCollapser(this.dataService).getGroupingChange(state);
+                groupChange = new IsolatedComponentCollapser(
+                    this.dataService,
+                ).getGroupingChange(state);
                 break;
             default:
                 return null;
@@ -109,55 +160,89 @@ export class GroupingService {
         if (!groupChange) {
             return null;
         }
-        return this.getNewGroupingState(state, this.getEffectiveGroupingChange(state, groupChange));
+        return this.getNewGroupingState(
+            state,
+            this.getEffectiveGroupingChange(state, groupChange),
+        );
     }
 
-    getUncollapseStationsPayload(state: GroupingState, groupType: GroupType): SetStationGroupsPayload | null {
-        const removeGroups = state.groupSettings.filter(g => g.groupType === groupType);
+    getUncollapseStationsPayload(
+        state: GroupingState,
+        groupType: GroupType,
+    ): SetStationGroupsPayload | null {
+        const removeGroups = state.groupSettings.filter(
+            (g) => g.groupType === groupType,
+        );
 
         if (removeGroups.length > 0) {
-            return this.getNewGroupingState(state, { addGroups: [], removeGroups: removeGroups });
+            return this.getNewGroupingState(state, {
+                addGroups: [],
+                removeGroups: removeGroups,
+            });
         }
         return null;
     }
 
-    getExpandStationsPayload(state: GroupingState, stationIds: string[]): SetStationGroupsPayload | null {
+    getExpandStationsPayload(
+        state: GroupingState,
+        stationIds: string[],
+    ): SetStationGroupsPayload | null {
         const idSet = Utils.createSimpleStringSet(stationIds);
-        const removeGroups = state.groupSettings.filter(g => !!idSet[g.id]);
+        const removeGroups = state.groupSettings.filter((g) => !!idSet[g.id]);
 
         if (removeGroups.length > 0) {
-            return this.getNewGroupingState(state, { addGroups: [], removeGroups: removeGroups });
+            return this.getNewGroupingState(state, {
+                addGroups: [],
+                removeGroups: removeGroups,
+            });
         }
         return null;
     }
 
-    private getUpdatedPositions(state: GroupingState, groupingChange: GroupingChange): { [key: string]: Position } {
+    private getUpdatedPositions(
+        state: GroupingState,
+        groupingChange: GroupingChange,
+    ): { [key: string]: Position } {
         const stationPositions = Object.assign({}, state.stationPositions);
         for (const group of groupingChange.removeGroups) {
             const pos = stationPositions[group.id];
             for (const stationId of group.contains) {
-                stationPositions[stationId] = getSum(pos, stationPositions[stationId]);
+                stationPositions[stationId] = getSum(
+                    pos,
+                    stationPositions[stationId],
+                );
             }
             delete stationPositions[group.id];
         }
         for (const group of groupingChange.addGroups) {
             const pos = getCenterFromPoints(
-                group.contains.map(stationId => stationPositions[stationId])
+                group.contains.map((stationId) => stationPositions[stationId]),
             );
             for (const stationId of group.contains) {
-                stationPositions[stationId] = getDifference(stationPositions[stationId], pos);
+                stationPositions[stationId] = getDifference(
+                    stationPositions[stationId],
+                    pos,
+                );
             }
             stationPositions[group.id] = pos;
         }
         return stationPositions;
     }
 
-    private getUpdatedTracingSettings(state: GroupingState, groupingChange: GroupingChange): StationTracingSettings[] {
-        const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
-        const idToSettingMap = Utils.createObjectFromArray(state.tracingSettings.stations, (s) => s.id);
+    private getUpdatedTracingSettings(
+        state: GroupingState,
+        groupingChange: GroupingChange,
+    ): StationTracingSettings[] {
+        const removeIds = Utils.createSimpleStringSet(
+            groupingChange.removeGroups.map((g) => g.id),
+        );
+        const idToSettingMap = Utils.createObjectFromArray(
+            state.tracingSettings.stations,
+            (s) => s.id,
+        );
         return concat(
-            state.tracingSettings.stations.filter(s => !removeIds[s.id]),
-            groupingChange.addGroups.map(group => {
+            state.tracingSettings.stations.filter((s) => !removeIds[s.id]),
+            groupingChange.addGroups.map((group) => {
                 let weight = 0;
                 let crossContamination = true;
                 let killContamination = true;
@@ -165,9 +250,14 @@ export class GroupingService {
                 for (const stationId of group.contains) {
                     const setting = idToSettingMap[stationId];
                     weight += setting.weight;
-                    crossContamination = crossContamination && setting.crossContamination;
-                    killContamination = killContamination && setting.killContamination;
-                    observed = (!observed || setting.observed === observed ? setting.observed : ObservedType.NONE);
+                    crossContamination =
+                        crossContamination && setting.crossContamination;
+                    killContamination =
+                        killContamination && setting.killContamination;
+                    observed =
+                        !observed || setting.observed === observed
+                            ? setting.observed
+                            : ObservedType.NONE;
                 }
                 return {
                     id: group.id,
@@ -175,37 +265,48 @@ export class GroupingService {
                     killContamination: killContamination,
                     crossContamination: crossContamination,
                     observed: observed ?? ObservedType.NONE,
-                    outbreak: weight > 0
+                    outbreak: weight > 0,
                 };
-            })
+            }),
         );
     }
 
-    private getUpdatedGroupSettings(state: GroupingState, groupingChange: GroupingChange): GroupData[] {
-        const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
-        const remainingGroups = state.groupSettings.filter(g => !removeIds[g.id]);
-        const reservedIds = Utils.createSimpleStringSet(concat(
-            state.fclElements.stations.map(s => s.id),
-            remainingGroups.map(g => g.id)
-        ));
+    private getUpdatedGroupSettings(
+        state: GroupingState,
+        groupingChange: GroupingChange,
+    ): GroupData[] {
+        const removeIds = Utils.createSimpleStringSet(
+            groupingChange.removeGroups.map((g) => g.id),
+        );
+        const remainingGroups = state.groupSettings.filter(
+            (g) => !removeIds[g.id],
+        );
+        const reservedIds = Utils.createSimpleStringSet(
+            concat(
+                state.fclElements.stations.map((s) => s.id),
+                remainingGroups.map((g) => g.id),
+            ),
+        );
         const newGroups = groupingChange.addGroups.slice();
         for (const group of newGroups) {
             let id = group.id ?? group.name;
             let i = 1;
             while (reservedIds[id]) {
                 i++;
-                id = (group.id || group.name) + '(' + i + ')';
+                id = (group.id || group.name) + "(" + i + ")";
             }
             group.id = id;
         }
-        return concat(
-            remainingGroups,
-            newGroups
-        );
+        return concat(remainingGroups, newGroups);
     }
 
-    private getUpdatedSelection(state: GroupingState, groupingChange: GroupingChange): string[] {
-        const selectedStationIds = Utils.createSimpleStringSet(state.selectedElements.stations);
+    private getUpdatedSelection(
+        state: GroupingState,
+        groupingChange: GroupingChange,
+    ): string[] {
+        const selectedStationIds = Utils.createSimpleStringSet(
+            state.selectedElements.stations,
+        );
         for (const group of groupingChange.removeGroups) {
             if (selectedStationIds[group.id]) {
                 for (const stationId of group.contains) {
@@ -225,24 +326,45 @@ export class GroupingService {
         return Object.keys(selectedStationIds);
     }
 
-    private getUpdatedInvisibilities(state: GroupingState, groupingChange: GroupingChange): string[] {
-        const removeIds = Utils.createSimpleStringSet(groupingChange.removeGroups.map(g => g.id));
-        return state.highlightingSettings.invisibleStations.filter(id => !removeIds[id]);
+    private getUpdatedInvisibilities(
+        state: GroupingState,
+        groupingChange: GroupingChange,
+    ): string[] {
+        const removeIds = Utils.createSimpleStringSet(
+            groupingChange.removeGroups.map((g) => g.id),
+        );
+        return state.highlightingSettings.invisibleStations.filter(
+            (id) => !removeIds[id],
+        );
     }
 
-    private getNewGroupingState(state: GroupingState, groupingChange: GroupingChange): SetStationGroupsPayload {
+    private getNewGroupingState(
+        state: GroupingState,
+        groupingChange: GroupingChange,
+    ): SetStationGroupsPayload {
         return {
             groupSettings: this.getUpdatedGroupSettings(state, groupingChange),
-            stationTracingSettings: this.getUpdatedTracingSettings(state, groupingChange),
+            stationTracingSettings: this.getUpdatedTracingSettings(
+                state,
+                groupingChange,
+            ),
             stationPositions: this.getUpdatedPositions(state, groupingChange),
             selectedStations: this.getUpdatedSelection(state, groupingChange),
-            invisibleStations: this.getUpdatedInvisibilities(state, groupingChange)
+            invisibleStations: this.getUpdatedInvisibilities(
+                state,
+                groupingChange,
+            ),
         };
     }
 
-    private getEffectiveGroupingChange(state: GroupingState, groupChange: GroupingChange): EffectiveGroupingChange {
-
-        const addGroupMap = Utils.createObjectFromArray(groupChange.addGroups, g => g.id);
+    private getEffectiveGroupingChange(
+        state: GroupingState,
+        groupChange: GroupingChange,
+    ): EffectiveGroupingChange {
+        const addGroupMap = Utils.createObjectFromArray(
+            groupChange.addGroups,
+            (g) => g.id,
+        );
         let effRemoveGroups: GroupData[] = [];
         const unchangedGroups: GroupData[] = [];
 
@@ -253,7 +375,9 @@ export class GroupingService {
                 addGroup &&
                 addGroup.name === removeGroup.name &&
                 addGroup.groupType === removeGroup.groupType &&
-                addGroup.contains.every(id => removeGroup.contains.indexOf(id) !== -1)
+                addGroup.contains.every(
+                    (id) => removeGroup.contains.indexOf(id) !== -1,
+                )
             ) {
                 // no effective change here (addGroup is identical to removeGroup)
                 unchangedGroups.push(addGroup);
@@ -263,26 +387,37 @@ export class GroupingService {
             }
         }
 
-        const effAddGroups = groupChange.addGroups.filter(g => addGroupMap[g.id]);
-        const effRemoveGroupsMap = Utils.createObjectFromArray(effRemoveGroups, g => g.id);
-        const newMembersMap = Utils.createSimpleStringSet(concat(...effAddGroups.map(g => g.contains)));
+        const effAddGroups = groupChange.addGroups.filter(
+            (g) => addGroupMap[g.id],
+        );
+        const effRemoveGroupsMap = Utils.createObjectFromArray(
+            effRemoveGroups,
+            (g) => g.id,
+        );
+        const newMembersMap = Utils.createSimpleStringSet(
+            concat(...effAddGroups.map((g) => g.contains)),
+        );
 
         effRemoveGroups = concat(
             effRemoveGroups,
-            state.groupSettings.filter(g => !effRemoveGroupsMap[g.id] && g.contains.some(mId => newMembersMap[mId]))
+            state.groupSettings.filter(
+                (g) =>
+                    !effRemoveGroupsMap[g.id] &&
+                    g.contains.some((mId) => newMembersMap[mId]),
+            ),
         );
 
         return {
             addGroups: effAddGroups,
             removeGroups: effRemoveGroups,
-            unchangedGroups: unchangedGroups
+            unchangedGroups: unchangedGroups,
         };
     }
 
-    hasGroupingChanged(oldState: GroupingState, newState: GroupingState): boolean {
-        return (
-            !oldState ||
-            oldState.groupSettings !== newState.groupSettings
-        );
+    hasGroupingChanged(
+        oldState: GroupingState,
+        newState: GroupingState,
+    ): boolean {
+        return !oldState || oldState.groupSettings !== newState.groupSettings;
     }
 }

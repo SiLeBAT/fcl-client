@@ -1,15 +1,20 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { NodeShapeType } from '@app/tracing/data.model';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    ChangeDetectionStrategy,
+} from "@angular/core";
+import { NodeShapeType } from "@app/tracing/data.model";
 
 @Component({
-    selector: 'fcl-shape-selector-view',
-    templateUrl: './shape-selector-view.component.html',
-    styleUrls: ['./shape-selector-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-shape-selector-view",
+    templateUrl: "./shape-selector-view.component.html",
+    styleUrls: ["./shape-selector-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShapeSelectorViewComponent {
-
-    @Input() value: (NodeShapeType | null);
+    @Input() value: NodeShapeType | null;
     @Input() disabled = false;
 
     availableShapeTypes: NodeShapeType[] = [
@@ -20,20 +25,20 @@ export class ShapeSelectorViewComponent {
         NodeShapeType.PENTAGON,
         NodeShapeType.SQUARE,
         NodeShapeType.STAR,
-        NodeShapeType.TRIANGLE
+        NodeShapeType.TRIANGLE,
     ];
 
     @Output() valueChange = new EventEmitter<NodeShapeType>();
 
     private shapeLabel: Record<NodeShapeType, string> = {
-        [NodeShapeType.CIRCLE]: 'Circle',
-        [NodeShapeType.DIAMOND]: 'Diamond',
-        [NodeShapeType.HEXAGON]: 'Hexagon',
-        [NodeShapeType.OCTAGON]: 'Octagon',
-        [NodeShapeType.PENTAGON]: 'Pentagon',
-        [NodeShapeType.SQUARE]: 'Square',
-        [NodeShapeType.STAR]: 'Star',
-        [NodeShapeType.TRIANGLE]: 'Triangle'
+        [NodeShapeType.CIRCLE]: "Circle",
+        [NodeShapeType.DIAMOND]: "Diamond",
+        [NodeShapeType.HEXAGON]: "Hexagon",
+        [NodeShapeType.OCTAGON]: "Octagon",
+        [NodeShapeType.PENTAGON]: "Pentagon",
+        [NodeShapeType.SQUARE]: "Square",
+        [NodeShapeType.STAR]: "Star",
+        [NodeShapeType.TRIANGLE]: "Triangle",
     };
 
     getShapeLabel(type: NodeShapeType): string {

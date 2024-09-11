@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { NodeShapeType, Color } from '@app/tracing/data.model';
-import { Map as ImmutableMap } from 'immutable';
-import { Utils } from '@app/tracing/util/non-ui-utils';
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { NodeShapeType, Color } from "@app/tracing/data.model";
+import { Map as ImmutableMap } from "immutable";
+import { Utils } from "@app/tracing/util/non-ui-utils";
 
 interface GradientStop {
     offset: string;
@@ -13,28 +13,31 @@ function isColorWhite(color: Color): boolean {
 }
 
 @Component({
-    selector: 'fcl-node-symbol-view',
-    templateUrl: './node-symbol-view.component.html',
-    styleUrls: ['./node-symbol-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-node-symbol-view",
+    templateUrl: "./node-symbol-view.component.html",
+    styleUrls: ["./node-symbol-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NodeSymbolViewComponent {
+    private static readonly DEFAULT_COLOR_WHITE = "rgb(255, 255, 255)";
 
-    private static readonly DEFAULT_COLOR_WHITE = 'rgb(255, 255, 255)';
-
-    private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<string, string>({
-        [NodeShapeType.CIRCLE]: 'circle',
-        [NodeShapeType.SQUARE]: 'square',
-        [NodeShapeType.TRIANGLE]: 'triangle',
-        [NodeShapeType.DIAMOND]: 'diamond',
-        [NodeShapeType.PENTAGON]: 'pentagon',
-        [NodeShapeType.HEXAGON]: 'hexagon',
-        [NodeShapeType.OCTAGON]: 'octagon',
-        [NodeShapeType.STAR]: 'star'
+    private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<
+        string,
+        string
+    >({
+        [NodeShapeType.CIRCLE]: "circle",
+        [NodeShapeType.SQUARE]: "square",
+        [NodeShapeType.TRIANGLE]: "triangle",
+        [NodeShapeType.DIAMOND]: "diamond",
+        [NodeShapeType.PENTAGON]: "pentagon",
+        [NodeShapeType.HEXAGON]: "hexagon",
+        [NodeShapeType.OCTAGON]: "octagon",
+        [NodeShapeType.STAR]: "star",
     });
 
     private svgShapeType_: string | null = null;
-    private fillColor_: string | null = NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
+    private fillColor_: string | null =
+        NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
     private isFillColorNonWhite_ = false;
     private gradientId_: string | null = null;
     private gradientStops_: GradientStop[] = [];
@@ -52,7 +55,9 @@ export class NodeSymbolViewComponent {
     }
 
     @Input() set dataTableShapeType(shape: NodeShapeType | undefined | null) {
-        this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
+        this.svgShapeType_ = shape
+            ? this.ShapeMap.get(shape)
+            : this.ShapeMap.get(NodeShapeType.CIRCLE);
     }
 
     getShapeType(): string | null {
@@ -115,7 +120,7 @@ export class NodeSymbolViewComponent {
     }
 
     private setGradientFillColor(colors: Color[]): void {
-        let gradientId: string = 'col';
+        let gradientId: string = "col";
         let gradientStops: GradientStop[] = [];
 
         const percent = 100 / colors.length;
@@ -125,12 +130,12 @@ export class NodeSymbolViewComponent {
             return [
                 {
                     offset: `${index * percent}%`,
-                    style: `rgb(${c.r}, ${c.g}, ${c.b})`
+                    style: `rgb(${c.r}, ${c.g}, ${c.b})`,
                 },
                 {
                     offset: `${(index + 1) * percent}%`,
-                    style: `rgb(${c.r}, ${c.g}, ${c.b})`
-                }
+                    style: `rgb(${c.r}, ${c.g}, ${c.b})`,
+                },
             ];
         });
         this.isFillColorNonWhite_ = true;

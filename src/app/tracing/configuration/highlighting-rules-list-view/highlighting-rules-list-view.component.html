@@ -1,25 +1,18 @@
-<ng-template
-    let-item="item"
-    #itemContentTemplate
->
+<ng-template let-item="item" #itemContentTemplate>
     <div
         *ngIf="!item.isAnonymizationRule"
         class="fcl-rules-list-item-drag-indicator"
         cdkDragHandle
     >
-        <mat-icon [ngClass]="{'disable':isEditRuleModeActive}">drag_indicator</mat-icon>
+        <mat-icon [ngClass]="{ disable: isEditRuleModeActive }"
+            >drag_indicator</mat-icon
+        >
     </div>
-    <div
-        class="fcl-rules-list-item-name"
-        cdkDragHandle
-    >
+    <div class="fcl-rules-list-item-name" cdkDragHandle>
         {{ item.name }}
     </div>
 
-    <div
-        *ngIf="symbolTemplate"
-        class="fcl-rules-list-item-symbol"
-    >
+    <div *ngIf="symbolTemplate" class="fcl-rules-list-item-symbol">
         <ng-container
             [ngTemplateOutlet]="symbolTemplate"
             [ngTemplateOutletContext]="{ item: item }"
@@ -34,7 +27,9 @@
         matTooltipPosition="above"
         matTooltipClass="fcl-tooltip--with-linebreaks fcl-tooltip--centered"
     >
-        <span *ngIf="item.conflictCount === 0">{{ item.effElementsCount }}</span>
+        <span *ngIf="item.conflictCount === 0">{{
+            item.effElementsCount
+        }}</span>
 
         <div
             *ngIf="item.conflictCount > 0"
@@ -50,7 +45,13 @@
     <mat-button-toggle
         *ngIf="showShowInLegendToggleButton"
         class="fcl-rules-list-item-legend-button fcl-mat-button-toggle--zero-padding"
-        [matTooltip]="isEditRuleModeActive || item.disabled || item.autoDisabled ? '' : item.showInLegend ? 'Do not show in legend' : 'Show in legend'"
+        [matTooltip]="
+            isEditRuleModeActive || item.disabled || item.autoDisabled
+                ? ''
+                : item.showInLegend
+                  ? 'Do not show in legend'
+                  : 'Show in legend'
+        "
         matTooltipPosition="above"
         [checked]="item.showInLegend && !(item.disabled || item.autoDisabled)"
         (change)="onToggleShowRuleInLegend(item.id)"
@@ -61,7 +62,15 @@
 
     <mat-slide-toggle
         class="fcl-rules-list-item-activated-slider fcl-mat-slide-toggle fcl-mat-slide-toggle--small"
-        [matTooltip]="isEditRuleModeActive ? '' : item.autoDisabled ? 'Highlighting Rule is auto inactivated' : item.disabled ? 'Activate Highlighting Rule' : 'Deactivate Highlighting Rule'"
+        [matTooltip]="
+            isEditRuleModeActive
+                ? ''
+                : item.autoDisabled
+                  ? 'Highlighting Rule is auto inactivated'
+                  : item.disabled
+                    ? 'Activate Highlighting Rule'
+                    : 'Deactivate Highlighting Rule'
+        "
         matTooltipPosition="above"
         [checked]="!item.disabled"
         (change)="onToggleRuleIsDisabled(item.id)"
@@ -100,7 +109,11 @@
     </div>
 
     <div
-        *ngIf="editRule !== null && editRule.id === item.id && editTemplate !== null"
+        *ngIf="
+            editRule !== null &&
+            editRule.id === item.id &&
+            editTemplate !== null
+        "
         class="fcl-edit-rule-dialog fcl-rules-list-edit-item"
         #editRuleElement
     >
@@ -113,16 +126,17 @@
 </ng-template>
 <!-- Templates end-->
 
-<div
-    class="fcl-rules-list"
-    cdkDropList
-    (cdkDropListDropped)="onDrop($event)"
->
-
+<div class="fcl-rules-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
     <div
         class="fcl-rules-list-item"
-        *ngFor="let item of sortableListItems; let i = index; trackBy: trackByFn"
-        [ngClass]="item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''"
+        *ngFor="
+            let item of sortableListItems;
+            let i = index;
+            trackBy: trackByFn
+        "
+        [ngClass]="
+            item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''
+        "
         cdkDrag
         [cdkDragDisabled]="isEditRuleModeActive"
         cdkDragLockAxis="y"
@@ -134,15 +148,19 @@
         >
         </ng-container>
     </div>
-
 </div>
 
 <div class="fcl-rules-list">
-
     <div
         class="fcl-rules-list-item"
-        *ngFor="let item of unsortableListItems; let i = index; trackBy: trackByFn"
-        [ngClass]="item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''"
+        *ngFor="
+            let item of unsortableListItems;
+            let i = index;
+            trackBy: trackByFn
+        "
+        [ngClass]="
+            item.disabled || item.autoDisabled ? 'fcl-rule-disabled' : ''
+        "
     >
         <ng-container
             [ngTemplateOutlet]="itemContentTemplate"
@@ -150,7 +168,6 @@
         >
         </ng-container>
     </div>
-
 </div>
 
 <button

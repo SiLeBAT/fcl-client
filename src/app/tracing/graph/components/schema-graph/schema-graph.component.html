@@ -1,5 +1,4 @@
 <div class="fcl-graph-container">
-
     <fcl-graph-view
         class="fcl-graph"
         [fitGraphToVisibleArea]="fitGraphToVisibleArea$ | async"
@@ -14,10 +13,12 @@
 
     <fcl-graph-legend-view
         class="fcl-graph-legend"
-        *ngIf="(showLegend$ | async) && (legendInfo !== null)"
+        *ngIf="(showLegend$ | async) && legendInfo !== null"
         [legendInfo]="legendInfo"
     ></fcl-graph-legend-view>
-
 </div>
 
-<fcl-context-menu-view (itemSelected)="onContextMenuSelect($event)" #contextMenu></fcl-context-menu-view>
+<fcl-context-menu-view
+    (itemSelected)="onContextMenuSelect($event)"
+    #contextMenu
+></fcl-context-menu-view>

@@ -1,48 +1,62 @@
-import { FilterTableSettings } from '../configuration/configuration.model';
-import { TracingState } from '../state.model';
-import { Constants } from '../util/constants';
+import { FilterTableSettings } from "../configuration/configuration.model";
+import { TracingState } from "../state.model";
+import { Constants } from "../util/constants";
 
 export function isAnoRuleActive(state: TracingState): boolean {
-    return state.fclData.graphSettings.highlightingSettings.stations.some(r => !r.userDisabled && !!r.labelParts);
+    return state.fclData.graphSettings.highlightingSettings.stations.some(
+        (r) => !r.userDisabled && !!r.labelParts,
+    );
 }
 
 export function isStatFilterTabActive(state: TracingState): boolean {
     return (
         state.showConfigurationSideBar &&
-        state.configurationTabIndices.activeConfigurationTabId === 'filterTab' &&
-        state.configurationTabIndices.activeFilterTabId === 'stationsTab'
+        state.configurationTabIndices.activeConfigurationTabId ===
+            "filterTab" &&
+        state.configurationTabIndices.activeFilterTabId === "stationsTab"
     );
 }
 
-export function updateColumnFilters<T extends FilterTableSettings >(filterTableSettings: T): T {
+export function updateColumnFilters<T extends FilterTableSettings>(
+    filterTableSettings: T,
+): T {
     const oldColumnFilters = filterTableSettings.columnFilters;
     const colSet = new Set(filterTableSettings.columnOrder);
-    const newColumnFilters = oldColumnFilters.filter(f => colSet.has(f.filterProp));
+    const newColumnFilters = oldColumnFilters.filter((f) =>
+        colSet.has(f.filterProp),
+    );
     if (oldColumnFilters.length !== newColumnFilters.length) {
         filterTableSettings = {
             ...filterTableSettings,
-            columnFilters: newColumnFilters
+            columnFilters: newColumnFilters,
         };
     }
     return filterTableSettings;
 }
 
-export function updateStationAutoColumnSettings(state: TracingState): TracingState {
+export function updateStationAutoColumnSettings(
+    state: TracingState,
+): TracingState {
     const anoIsActive = isAnoRuleActive(state);
     let stationFilter = state.filterSettings.stationFilter;
 
     if (anoIsActive) {
-        if (stationFilter.lastActiveAnoColumnOrder !== stationFilter.columnOrder) {
+        if (
+            stationFilter.lastActiveAnoColumnOrder !== stationFilter.columnOrder
+        ) {
             stationFilter = {
                 ...stationFilter,
-                lastActiveAnoColumnOrder: stationFilter.columnOrder
+                lastActiveAnoColumnOrder: stationFilter.columnOrder,
             };
         }
     } else {
-        if (stationFilter.lastInactiveAnoColumnOrder !== stationFilter.columnOrder) {
+        if (
+            stationFilter.lastInactiveAnoColumnOrder !==
+            stationFilter.columnOrder
+        ) {
             stationFilter = {
                 ...stationFilter,
-                lastInactiveAnoColumnOrder: stationFilter.columnOrder
+                lastInactiveAnoColumnOrder: stationFilter.columnOrder,
             };
         }
     }
@@ -51,8 +65,8 @@ export function updateStationAutoColumnSettings(state: TracingState): TracingSta
             ...state,
             filterSettings: {
                 ...state.filterSettings,
-                stationFilter: stationFilter
-            }
+                stationFilter: stationFilter,
+            },
         };
     }
 
@@ -60,11 +74,11 @@ export function updateStationAutoColumnSettings(state: TracingState): TracingSta
 }
 
 function getAnoColumnIndex(arr: string[]): number {
-    return arr.findIndex(x => x === Constants.COLUMN_ANONYMIZED_NAME);
+    return arr.findIndex((x) => x === Constants.COLUMN_ANONYMIZED_NAME);
 }
 
 function getNameColumnIndex(arr: string[]): number {
-    return arr.findIndex(x => x === Constants.COLUMN_NAME);
+    return arr.findIndex((x) => x === Constants.COLUMN_NAME);
 }
 
 export function updateStationAutoColumns(state: TracingState): TracingState {
@@ -75,8 +89,11 @@ export function updateStationAutoColumns(state: TracingState): TracingState {
     if (anoIsActive) {
         if (anoColIndex < 0) {
             // ano col is not present
-            const lastActiveAnoColumnOrder = state.filterSettings.stationFilter.lastActiveAnoColumnOrder;
-            const wasAnoColPresent = lastActiveAnoColumnOrder ? getAnoColumnIndex(lastActiveAnoColumnOrder) >= 0 : undefined;
+            const lastActiveAnoColumnOrder =
+                state.filterSettings.stationFilter.lastActiveAnoColumnOrder;
+            const wasAnoColPresent = lastActiveAnoColumnOrder
+                ? getAnoColumnIndex(lastActiveAnoColumnOrder) >= 0
+                : undefined;
             if (wasAnoColPresent === false) {
                 // do nothing ano col is not welcome
             } else {
@@ -88,20 +105,25 @@ export function updateStationAutoColumns(state: TracingState): TracingState {
                         // first activation with active ano
                         // default replace name with ano col
                         columnOrder = columnOrder.slice();
-                        columnOrder[nameColIndex] = Constants.COLUMN_ANONYMIZED_NAME;
+                        columnOrder[nameColIndex] =
+                            Constants.COLUMN_ANONYMIZED_NAME;
                     } else {
-                        const wasNameColPresent = lastActiveAnoColumnOrder!.includes(Constants.COLUMN_NAME);
+                        const wasNameColPresent =
+                            lastActiveAnoColumnOrder!.includes(
+                                Constants.COLUMN_NAME,
+                            );
                         if (wasNameColPresent) {
                             // add ano column
                             columnOrder = [
                                 ...columnOrder.slice(0, nameColIndex),
                                 Constants.COLUMN_ANONYMIZED_NAME,
-                                ...columnOrder.slice(nameColIndex)
+                                ...columnOrder.slice(nameColIndex),
                             ];
                         } else {
                             // replace name with ano column
                             columnOrder = columnOrder.slice();
-                            columnOrder[nameColIndex] = Constants.COLUMN_ANONYMIZED_NAME;
+                            columnOrder[nameColIndex] =
+                                Constants.COLUMN_ANONYMIZED_NAME;
                         }
                     }
                 }
@@ -111,9 +133,12 @@ export function updateStationAutoColumns(state: TracingState): TracingState {
         // ano is inactive
         if (anoColIndex >= 0) {
             // ano col is present
-            const lastInactiveAnoColumnOrder = state.filterSettings.stationFilter.lastInactiveAnoColumnOrder;
+            const lastInactiveAnoColumnOrder =
+                state.filterSettings.stationFilter.lastInactiveAnoColumnOrder;
             // const nameColIndex = lastActiveAnoColumnOrder ? getNameColumnIndex(lastActiveAnoColumnOrder) : -1;
-            const wasAnoColPresent = lastInactiveAnoColumnOrder ? getAnoColumnIndex(lastInactiveAnoColumnOrder) >= 0 : undefined;
+            const wasAnoColPresent = lastInactiveAnoColumnOrder
+                ? getAnoColumnIndex(lastInactiveAnoColumnOrder) >= 0
+                : undefined;
             if (wasAnoColPresent === true) {
                 // do nothing ano col shall stay
             } else {
@@ -133,7 +158,7 @@ export function updateStationAutoColumns(state: TracingState): TracingState {
         let stationFilter = {
             ...state.filterSettings.stationFilter,
             columnOrder: columnOrder,
-            wasAnoActiveOnLastColumnSet: anoIsActive
+            wasAnoActiveOnLastColumnSet: anoIsActive,
         };
         if (anoIsActive) {
             stationFilter.lastActiveAnoColumnOrder = columnOrder;
@@ -147,19 +172,22 @@ export function updateStationAutoColumns(state: TracingState): TracingState {
             ...state,
             filterSettings: {
                 ...state.filterSettings,
-                stationFilter: stationFilter
-            }
+                stationFilter: stationFilter,
+            },
         };
     }
 
     return state;
 }
 
-export function updateStationAutoColumnsIfRequired(state: TracingState): TracingState {
+export function updateStationAutoColumnsIfRequired(
+    state: TracingState,
+): TracingState {
     const anoIsActive = isAnoRuleActive(state);
     if (
         isStatFilterTabActive(state) &&
-        state.filterSettings.stationFilter.wasAnoActiveOnLastColumnSet !== anoIsActive
+        state.filterSettings.stationFilter.wasAnoActiveOnLastColumnSet !==
+            anoIsActive
     ) {
         state = updateStationAutoColumns(state);
     }

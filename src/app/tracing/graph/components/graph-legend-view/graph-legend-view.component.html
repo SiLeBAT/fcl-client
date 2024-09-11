@@ -1,20 +1,49 @@
-<mat-card class="fcl-legend" *ngIf="legend.length > 0 || showMissingGisInfoEntry">
+<mat-card
+    class="fcl-legend"
+    *ngIf="legend.length > 0 || showMissingGisInfoEntry"
+>
     <mat-card-content>
         <table>
             <tr *ngFor="let item of legend">
-                <td data-cy="fcl-graph-legend-rule-name">{{item.name}}</td>
-                <td *ngIf="showStationColumn" data-cy="fcl-graph-legend-rule-node-symbol">
-                    <fcl-node-symbol-view *ngIf="item.shape || item.stationColor" [shapeType]="item.shape" [fillColor]="item.stationColor"></fcl-node-symbol-view>
+                <td data-cy="fcl-graph-legend-rule-name">{{ item.name }}</td>
+                <td
+                    *ngIf="showStationColumn"
+                    data-cy="fcl-graph-legend-rule-node-symbol"
+                >
+                    <fcl-node-symbol-view
+                        *ngIf="item.shape || item.stationColor"
+                        [shapeType]="item.shape"
+                        [fillColor]="item.stationColor"
+                    ></fcl-node-symbol-view>
                 </td>
-                <td *ngIf="showDeliveryColumn" data-cy="fcl-graph-legend-rule-edge-symbol">
-                    <fcl-edge-symbol-view *ngIf="item.deliveryColor" [edgeColor]="item.deliveryColor"></fcl-edge-symbol-view>
+                <td
+                    *ngIf="showDeliveryColumn"
+                    data-cy="fcl-graph-legend-rule-edge-symbol"
+                >
+                    <fcl-edge-symbol-view
+                        *ngIf="item.deliveryColor"
+                        [edgeColor]="item.deliveryColor"
+                    ></fcl-edge-symbol-view>
                 </td>
             </tr>
             <tr *ngIf="showMissingGisInfoEntry">
                 <td>Missing GIS information</td>
-                <td [attr.colspan]="showStationColumn && showDeliveryColumn ? 2 : 1">
+                <td
+                    [attr.colspan]="
+                        showStationColumn && showDeliveryColumn ? 2 : 1
+                    "
+                >
                     <svg viewBox="0 0 200 200" height="20" width="20">
-                        <svg:rect x="0" y="50" rx="20" ry="20" width="200" height="100" stroke="none" fill="rgba(255, 0, 0, 0.3)"/>
+                        <svg:rect
+                            x="0"
+                            y="50"
+                            rx="20"
+                            ry="20"
+                            width="200"
+                            height="100"
+                            stroke="none"
+                            fill="rgba(255, 0, 0, 0.3)"
+                        />
                     </svg>
                 </td>
             </tr>

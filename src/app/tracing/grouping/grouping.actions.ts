@@ -1,11 +1,11 @@
-import { Action } from '@ngrx/store';
-import { GroupType, GroupMode } from '../data.model';
+import { Action } from "@ngrx/store";
+import { GroupType, GroupMode } from "../data.model";
 
 export enum GroupingActionTypes {
-    MergeStationsMSA = '[Tracing] Merge Stations',
-    CollapseStationsMSA = '[Tracing] Collapse Stations',
-    UncollapseStationsMSA = '[Tracing] Uncollapse Stations',
-    ExpandStationsMSA = '[Tracing] Expand Stations'
+    MergeStationsMSA = "[Tracing] Merge Stations",
+    CollapseStationsMSA = "[Tracing] Collapse Stations",
+    UncollapseStationsMSA = "[Tracing] Uncollapse Stations",
+    ExpandStationsMSA = "[Tracing] Expand Stations",
 }
 
 export class MergeStationsMSA implements Action {
@@ -17,7 +17,9 @@ export class MergeStationsMSA implements Action {
 export class CollapseStationsMSA implements Action {
     readonly type = GroupingActionTypes.CollapseStationsMSA;
 
-    constructor(public payload: { groupType: GroupType; groupMode?: GroupMode }) {}
+    constructor(
+        public payload: { groupType: GroupType; groupMode?: GroupMode },
+    ) {}
 }
 
 export class UncollapseStationsMSA implements Action {
@@ -33,7 +35,7 @@ export class ExpandStationsMSA implements Action {
 }
 
 export type GroupingActions =
-      MergeStationsMSA
+    | MergeStationsMSA
     | CollapseStationsMSA
     | UncollapseStationsMSA
     | MergeStationsMSA

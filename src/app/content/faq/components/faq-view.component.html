@@ -1,27 +1,36 @@
 <div #scrollPanel class="fcl-scroll-panel">
-
     <div class="fcl-title mat-headline">Frequently Asked Questions</div>
 
-    <div><hr></div>
+    <div><hr /></div>
 
     <!-- Faq navigation bar-->
     <nav class="fcl-toc">
         <ng-container *ngFor="let section of faq.sections">
-            <a class="fcl-toc-link mat-h4"
+            <a
+                class="fcl-toc-link mat-h4"
                 [routerLink]="['.']"
                 [fragment]="section.urlFragment"
-            >{{section.title}}</a>
+                >{{ section.title }}</a
+            >
         </ng-container>
     </nav>
 
     <div class="fcl-sections">
         <section>
-            <fcl-faq-section-view [entries]="faq.topEntries"></fcl-faq-section-view>
+            <fcl-faq-section-view
+                [entries]="faq.topEntries"
+            ></fcl-faq-section-view>
         </section>
 
-        <section #faqSection *ngFor="let section of faq.sections" [id]="section.urlFragment">
-            <fcl-faq-section-view [entries]="section.entries" [title]="section.title"></fcl-faq-section-view>
+        <section
+            #faqSection
+            *ngFor="let section of faq.sections"
+            [id]="section.urlFragment"
+        >
+            <fcl-faq-section-view
+                [entries]="section.entries"
+                [title]="section.title"
+            ></fcl-faq-section-view>
         </section>
     </div>
-
 </div>

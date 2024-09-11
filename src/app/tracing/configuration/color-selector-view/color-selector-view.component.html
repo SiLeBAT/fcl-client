@@ -2,7 +2,8 @@
     #colorpicker
     class="fcl-color-picker"
     [ngClass]="ngClass"
-    [matTooltip]="'Choose Colour'">
+    [matTooltip]="'Choose Colour'"
+>
     <!--
         Here 2 identical color picker buttons are used.
         This mechanism is required, because color picker doesn't updates
@@ -32,7 +33,9 @@
         (colorPickerSelect)="onColorPickerSelect($event)"
         (click)="onClick($event)"
         [ngStyle]="style"
-    >&nbsp;</button>
+    >
+        &nbsp;
+    </button>
     <button
         *ngIf="!useFirstColorPickerButton"
         class="fcl-color-view"
@@ -53,5 +56,7 @@
         (colorPickerSelect)="onColorPickerSelect($event)"
         (click)="onClick($event)"
         [ngStyle]="style"
-    >&nbsp;</button>
+    >
+        &nbsp;
+    </button>
 </div>

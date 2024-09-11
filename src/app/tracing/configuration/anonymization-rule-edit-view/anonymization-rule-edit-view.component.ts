@@ -1,25 +1,37 @@
-import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
-import * as _ from 'lodash';
-import { ComposedLabelEditRule } from '../model';
-import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
-import { getCompleteConditionsCount, getNonEmptyConditionCount } from '../edit-rule-validaton';
-import { LabelPart } from '@app/tracing/data.model';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { concat } from '@app/tracing/util/non-ui-utils';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnChanges,
+    SimpleChanges,
+} from "@angular/core";
+import * as _ from "lodash";
+import { ComposedLabelEditRule } from "../model";
+import { AbstractRuleEditViewComponent } from "../abstract-rule-edit-view";
+import {
+    getCompleteConditionsCount,
+    getNonEmptyConditionCount,
+} from "../edit-rule-validaton";
+import { LabelPart } from "@app/tracing/data.model";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { concat } from "@app/tracing/util/non-ui-utils";
 
 @Component({
-    selector: 'fcl-anonymization-rule-edit-view',
-    templateUrl: './anonymization-rule-edit-view.component.html',
-    styleUrls: ['./anonymization-rule-edit-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-anonymization-rule-edit-view",
+    templateUrl: "./anonymization-rule-edit-view.component.html",
+    styleUrls: ["./anonymization-rule-edit-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComponent<ComposedLabelEditRule> implements OnChanges {
-
-    private static readonly DISABLED_ACTION_TOOLTIP_W_CONDITIONS = 'Please choose at least one label part as well as conditions';
-    private static readonly DISABLED_ACTION_TOOLTIP_WO_CONDITIONS = 'Please choose at least one label part';
+export class AnonymizationRuleEditViewComponent
+    extends AbstractRuleEditViewComponent<ComposedLabelEditRule>
+    implements OnChanges
+{
+    private static readonly DISABLED_ACTION_TOOLTIP_W_CONDITIONS =
+        "Please choose at least one label part as well as conditions";
+    private static readonly DISABLED_ACTION_TOOLTIP_WO_CONDITIONS =
+        "Please choose at least one label part";
 
     private useConditions_ = false;
-    private _labelPreview = '';
+    private _labelPreview = "";
     private _propId2Name: Record<string, string> = {};
 
     get labelPreview(): string {
@@ -31,17 +43,22 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
     }
 
     get disabledActionToolTip(): string {
-        return this.useConditions_ ?
-            AnonymizationRuleEditViewComponent.DISABLED_ACTION_TOOLTIP_W_CONDITIONS :
-            AnonymizationRuleEditViewComponent.DISABLED_ACTION_TOOLTIP_WO_CONDITIONS;
+        return this.useConditions_
+            ? AnonymizationRuleEditViewComponent.DISABLED_ACTION_TOOLTIP_W_CONDITIONS
+            : AnonymizationRuleEditViewComponent.DISABLED_ACTION_TOOLTIP_WO_CONDITIONS;
     }
 
     get isEditViewComplete(): boolean {
         if (this.useConditions_) {
-            const completeConditionsCount = getCompleteConditionsCount(this.rule!.complexFilterConditions);
+            const completeConditionsCount = getCompleteConditionsCount(
+                this.rule!.complexFilterConditions,
+            );
             return (
                 completeConditionsCount >= 1 &&
-                completeConditionsCount === getNonEmptyConditionCount(this.rule!.complexFilterConditions) &&
+                completeConditionsCount ===
+                    getNonEmptyConditionCount(
+                        this.rule!.complexFilterConditions,
+                    ) &&
                 super.isEditViewComplete
             );
         } else {
@@ -59,8 +76,8 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
         }
         if (changes.favouriteProperties || changes.otherProperties) {
             this._propId2Name = {};
-            [this.favouriteProperties, this.otherProperties].forEach(
-                props => props.forEach(p => this._propId2Name[p.id] = p.name)
+            [this.favouriteProperties, this.otherProperties].forEach((props) =>
+                props.forEach((p) => (this._propId2Name[p.id] = p.name)),
             );
         }
 
@@ -70,16 +87,22 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
     onAddLabelPart() {
         if (this.rule) {
             let labelParts = this.rule.labelParts.slice();
-            const indexOfLastPropertyPart = _.findLastIndex(labelParts, (p: LabelPart) => p.useIndex === undefined);
+            const indexOfLastPropertyPart = _.findLastIndex(
+                labelParts,
+                (p: LabelPart) => p.useIndex === undefined,
+            );
             const newPartIndex = indexOfLastPropertyPart + 1;
             const newPart: LabelPart = {
-                prefix: newPartIndex === 0 && this.rule.labelPrefix.length === 0 ? '' : ' ',
-                property: null
+                prefix:
+                    newPartIndex === 0 && this.rule.labelPrefix.length === 0
+                        ? ""
+                        : " ",
+                property: null,
             };
             labelParts = concat(
                 labelParts.slice(0, newPartIndex),
                 [newPart],
-                labelParts.slice(newPartIndex)
+                labelParts.slice(newPartIndex),
             );
             this.changeRule({ labelParts: labelParts });
         }
@@ -92,7 +115,6 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
             this.changeRule({ labelParts: labelParts });
         }
     }
-
 
     onPropertyChange(propertyName: string, index: number) {
         this.changeLabelPart({ property: propertyName }, index);
@@ -122,7 +144,7 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
                 labelParts = concat(
                     labelParts.slice(0, event.currentIndex),
                     [movedPart],
-                    labelParts.slice(event.currentIndex)
+                    labelParts.slice(event.currentIndex),
                 );
                 this.changeRule({ labelParts: labelParts });
             }
@@ -141,7 +163,7 @@ export class AnonymizationRuleEditViewComponent extends AbstractRuleEditViewComp
         const labelParts = this.rule!.labelParts.slice();
         labelParts[index] = {
             ...labelParts[index],
-            ...change
+            ...change,
         };
         this.changeRule({ labelParts: labelParts });
     }

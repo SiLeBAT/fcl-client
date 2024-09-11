@@ -1,15 +1,15 @@
-<mat-form-field class="fcl-predefined-filter-view-field" appearance="outline" color="primary">
-
+<mat-form-field
+    class="fcl-predefined-filter-view-field"
+    appearance="outline"
+    color="primary"
+>
     <mat-label>Pre-defined Filters</mat-label>
 
-    <mat-select
-        [value]="showType"
-        (valueChange)="onSetShowType($event)">
+    <mat-select [value]="showType" (valueChange)="onSetShowType($event)">
         <ng-container *ngFor="let type of showTypes">
             <mat-option class="fcl-filter-select-option" [value]="type">
                 {{ showTypeLabelMap[type] }}
             </mat-option>
         </ng-container>
     </mat-select>
-
 </mat-form-field>

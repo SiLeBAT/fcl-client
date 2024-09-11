@@ -2,16 +2,15 @@
     class="fcl-new-highlighting-rule-form-field"
     appearance="outline"
     color="primary"
-    >
+>
     <mat-select
         [disabled]="disabled"
         [value]="value"
         (valueChange)="onValueChange($event)"
-        placeholder="Shape">
+        placeholder="Shape"
+    >
         <ng-container *ngFor="let type of availableShapeTypes">
-            <mat-option
-                class="fcl-filter-select-option"
-                [value]="type">
+            <mat-option class="fcl-filter-select-option" [value]="type">
                 {{ getShapeLabel(type) }}
             </mat-option>
         </ng-container>

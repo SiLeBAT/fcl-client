@@ -1,5 +1,5 @@
-import { TracingActions, TracingActionTypes } from './tracing.actions';
-import { Constants } from '../util/constants';
+import { TracingActions, TracingActionTypes } from "./tracing.actions";
+import { Constants } from "../util/constants";
 import {
     FclData,
     MergeDeliveriesType,
@@ -7,15 +7,15 @@ import {
     GraphType,
     CrossContTraceType,
     FclDataSourceInfo,
-    PropMaps
-} from '../data.model';
+    PropMaps,
+} from "../data.model";
 import {
     updateColumnFilters,
     updateStationAutoColumnSettings,
-    updateStationAutoColumnsIfRequired
-} from './reducer.utils';
+    updateStationAutoColumnsIfRequired,
+} from "./reducer.utils";
 
-import { ModelDependentState, TracingState } from '../state.model';
+import { ModelDependentState, TracingState } from "../state.model";
 import {
     ComplexRowFilterSettings,
     FilterTableSettings,
@@ -25,52 +25,59 @@ import {
     ConfigurationTabIndex,
     HighlightingConfigurationSettings,
     StationFilterSettings,
-    DeliveryFilterSettings
-} from '../configuration/configuration.model';
-import { FilterTabId, StationsTabId } from '../configuration/configuration.constants';
-import { DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP, DENOVO_STATION_PROP_INT_TO_EXT_MAP } from '../io/data-mappings/data-mappings-v1';
+    DeliveryFilterSettings,
+} from "../configuration/configuration.model";
+import {
+    FilterTabId,
+    StationsTabId,
+} from "../configuration/configuration.constants";
+import {
+    DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP,
+    DENOVO_STATION_PROP_INT_TO_EXT_MAP,
+} from "../io/data-mappings/data-mappings-v1";
 
-export const STATE_SLICE_NAME = 'tracing';
+export const STATE_SLICE_NAME = "tracing";
 
 export interface State {
     tracing: TracingState;
 }
 
 export const complexFilterSettings: ComplexRowFilterSettings = {
-    conditions: []
+    conditions: [],
 };
 
 const filterTableSettings: FilterTableSettings = {
     columnOrder: [],
-    standardFilter: '',
+    standardFilter: "",
     complexFilter: complexFilterSettings,
     predefinedFilter: ShowType.ALL,
     visibilityFilter: VisibilityFilterState.SHOW_ALL,
-    columnFilters: []
+    columnFilters: [],
 };
 
 const initialFilterSettings: FilterSettings = {
     stationFilter: {
         ...filterTableSettings,
-        columnOrder: Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray()
+        columnOrder: Constants.DEFAULT_TABLE_STATION_COLUMNS.toArray(),
     },
     deliveryFilter: {
         ...filterTableSettings,
-        columnOrder: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray()
-    }
+        columnOrder: Constants.DEFAULT_TABLE_DELIVERY_COLUMNS.toArray(),
+    },
 };
 
-const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings = {
-    stationEditRules: [],
-    deliveryEditRules: []
-};
+const initialHighlightingConfigurationSettings: HighlightingConfigurationSettings =
+    {
+        stationEditRules: [],
+        deliveryEditRules: [],
+    };
 
 const initialModelDependentState: ModelDependentState = {
     visioReport: null,
     roaSettings: null,
     filterSettings: initialFilterSettings,
     highlightingConfigurationSettings: initialHighlightingConfigurationSettings,
-    lastUnchangedJsonDataExtract: {}
+    lastUnchangedJsonDataExtract: {},
 };
 
 const initialData: FclData = createInitialFclDataState();
@@ -78,7 +85,7 @@ const initialData: FclData = createInitialFclDataState();
 const initialTabIndices: ConfigurationTabIndex = {
     activeConfigurationTabId: FilterTabId,
     activeFilterTabId: StationsTabId,
-    activeHighlightingTabId: StationsTabId
+    activeHighlightingTabId: StationsTabId,
 };
 
 const initialState: TracingState = {
@@ -89,19 +96,19 @@ const initialState: TracingState = {
     configurationTabIndices: initialTabIndices,
     animatingTabCount: 0,
     isConfSideBarOpening: false,
-    showGraphSettings: false
+    showGraphSettings: false,
 };
 
 export function createDefaultPropMappings(): PropMaps {
     return {
         stations: DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject(),
-        deliveries: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject()
+        deliveries: DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject(),
     };
 }
 
 export function createInitialFclDataSourceInfo(): FclDataSourceInfo {
     return {
-        int2ExtPropMaps: createDefaultPropMappings()
+        int2ExtPropMaps: createDefaultPropMappings(),
     };
 }
 
@@ -111,30 +118,32 @@ export function createInitialFclDataState(): FclData {
         fclElements: {
             stations: [],
             deliveries: [],
-            samples: []
+            samples: [],
         },
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
-            adjustEdgeWidthToNodeSize: Constants.DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE,
+            adjustEdgeWidthToNodeSize:
+                Constants.DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE,
             edgeWidth: Constants.DEFAULT_GRAPH_EDGE_WIDTH,
             fontSize: Constants.DEFAULT_GRAPH_FONT_SIZE,
             mergeDeliveriesType: MergeDeliveriesType.NO_MERGE,
             showMergedDeliveriesCounts: false,
-            skipUnconnectedStations: Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
+            skipUnconnectedStations:
+                Constants.DEFAULT_SKIP_UNCONNECTED_STATIONS,
             showLegend: Constants.DEFAULT_GRAPH_SHOW_LEGEND,
             showZoom: Constants.DEFAULT_GRAPH_SHOW_ZOOM,
             fitGraphToVisibleArea: Constants.DEFAULT_FIT_GRAPH_TO_VISIBLE_AREA,
             selectedElements: {
                 stations: [],
-                deliveries: []
+                deliveries: [],
             },
             stationPositions: {},
             highlightingSettings: {
                 invisibleStations: [],
                 invisibleDeliveries: [],
                 stations: [],
-                deliveries: []
+                deliveries: [],
             },
             schemaLayout: null,
             gisLayout: null,
@@ -144,46 +153,54 @@ export function createInitialFclDataState(): FclData {
             geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
             ghostStation: null,
             ghostDelivery: null,
-            hoverDeliveries: []
+            hoverDeliveries: [],
         },
         tracingSettings: {
-            crossContTraceType: CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
+            crossContTraceType:
+                CrossContTraceType.USE_INFERED_DELIVERY_DATES_LIMITS,
             stations: [],
-            deliveries: []
+            deliveries: [],
         },
-        groupSettings: []
+        groupSettings: [],
     };
 }
 
 // REDUCER
-export function reducer(state: TracingState = initialState, action: TracingActions): TracingState {
+export function reducer(
+    state: TracingState = initialState,
+    action: TracingActions,
+): TracingState {
     switch (action.type) {
         case TracingActionTypes.SetConfigurationSideBarOpenedSOA:
             return {
                 ...state,
-                isConfSideBarOpening: false
+                isConfSideBarOpening: false,
             };
         case TracingActionTypes.SetTabAnimationDoneSOA:
             return {
                 ...state,
-                animatingTabCount: Math.max(state.animatingTabCount - 1, 0)
+                animatingTabCount: Math.max(state.animatingTabCount - 1, 0),
             };
         case TracingActionTypes.TracingActivated:
             return {
                 ...state,
-                tracingActive: action.payload.isActivated
+                tracingActive: action.payload.isActivated,
             };
 
         case TracingActionTypes.LoadFclDataSuccessSOA: {
-            action.payload.fclData.graphSettings.mapType = state.fclData.graphSettings.mapType;
-            action.payload.fclData.graphSettings.shapeFileData = state.fclData.graphSettings.shapeFileData;
-            action.payload.fclData.graphSettings.geojsonBorderColor = state.fclData.graphSettings.geojsonBorderColor;
-            action.payload.fclData.graphSettings.geojsonBorderWidth = state.fclData.graphSettings.geojsonBorderWidth;
+            action.payload.fclData.graphSettings.mapType =
+                state.fclData.graphSettings.mapType;
+            action.payload.fclData.graphSettings.shapeFileData =
+                state.fclData.graphSettings.shapeFileData;
+            action.payload.fclData.graphSettings.geojsonBorderColor =
+                state.fclData.graphSettings.geojsonBorderColor;
+            action.payload.fclData.graphSettings.geojsonBorderWidth =
+                state.fclData.graphSettings.geojsonBorderWidth;
 
             let newState: TracingState = {
                 ...state,
                 fclData: action.payload.fclData,
-                ...initialModelDependentState
+                ...initialModelDependentState,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -193,20 +210,21 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,
-                visioReport: action.payload
+                visioReport: action.payload,
             };
 
         case TracingActionTypes.ShowGraphSettingsSOA:
             return {
                 ...state,
-                showGraphSettings: action.payload.showGraphSettings
+                showGraphSettings: action.payload.showGraphSettings,
             };
 
         case TracingActionTypes.ShowConfigurationSideBarSOA: {
             let newState: TracingState = {
                 ...state,
-                showConfigurationSideBar: action.payload.showConfigurationSideBar,
-                isConfSideBarOpening: action.payload.showConfigurationSideBar
+                showConfigurationSideBar:
+                    action.payload.showConfigurationSideBar,
+                isConfSideBarOpening: action.payload.showConfigurationSideBar,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -220,9 +238,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        type: action.payload.graphType
-                    }
-                }
+                        type: action.payload.graphType,
+                    },
+                },
             };
 
         case TracingActionTypes.SetMapTypeSOA:
@@ -233,9 +251,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: action.payload.mapType
-                    }
-                }
+                        mapType: action.payload.mapType,
+                    },
+                },
             };
 
         case TracingActionTypes.LoadShapeFileSuccessSOA:
@@ -248,10 +266,12 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_FILE,
                         shapeFileData: action.payload.shapeFileData,
-                        geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
-                        geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR
-                    }
-                }
+                        geojsonBorderWidth:
+                            Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                        geojsonBorderColor:
+                            Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+                    },
+                },
             };
 
         case TracingActionTypes.SetGeojsonShapeBorderWidthSOA:
@@ -261,9 +281,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        geojsonBorderWidth: action.payload.width
-                    }
-                }
+                        geojsonBorderWidth: action.payload.width,
+                    },
+                },
             };
 
         case TracingActionTypes.SetGeojsonShapeBorderColorSOA:
@@ -273,9 +293,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        geojsonBorderColor: action.payload.color
-                    }
-                }
+                        geojsonBorderColor: action.payload.color,
+                    },
+                },
             };
 
         case TracingActionTypes.SetNodeSizeSOA:
@@ -286,11 +306,14 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         nodeSize: action.payload.nodeSize,
-                        edgeWidth: state.fclData.graphSettings.adjustEdgeWidthToNodeSize ?
-                            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(action.payload.nodeSize) :
-                            state.fclData.graphSettings.edgeWidth
-                    }
-                }
+                        edgeWidth: state.fclData.graphSettings
+                            .adjustEdgeWidthToNodeSize
+                            ? Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
+                                  action.payload.nodeSize,
+                              )
+                            : state.fclData.graphSettings.edgeWidth,
+                    },
+                },
             };
 
         case TracingActionTypes.SetAdjustEdgeWidthToNodeSizeSOA:
@@ -300,12 +323,15 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        adjustEdgeWidthToNodeSize: action.payload.adjustEdgeWidthToNodeSize,
-                        edgeWidth: action.payload.adjustEdgeWidthToNodeSize ?
-                            Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(state.fclData.graphSettings.nodeSize) :
-                            state.fclData.graphSettings.edgeWidth
-                    }
-                }
+                        adjustEdgeWidthToNodeSize:
+                            action.payload.adjustEdgeWidthToNodeSize,
+                        edgeWidth: action.payload.adjustEdgeWidthToNodeSize
+                            ? Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
+                                  state.fclData.graphSettings.nodeSize,
+                              )
+                            : state.fclData.graphSettings.edgeWidth,
+                    },
+                },
             };
 
         case TracingActionTypes.SetEdgeWidthSOA:
@@ -315,9 +341,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        edgeWidth: action.payload.edgeWidth
-                    }
-                }
+                        edgeWidth: action.payload.edgeWidth,
+                    },
+                },
             };
 
         case TracingActionTypes.SetFontSizeSOA:
@@ -327,9 +353,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        fontSize: action.payload.fontSize
-                    }
-                }
+                        fontSize: action.payload.fontSize,
+                    },
+                },
             };
 
         case TracingActionTypes.SetMergeDeliveriesTypeSOA:
@@ -339,9 +365,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        mergeDeliveriesType: action.payload.mergeDeliveriesType
-                    }
-                }
+                        mergeDeliveriesType: action.payload.mergeDeliveriesType,
+                    },
+                },
             };
 
         case TracingActionTypes.ShowMergedDeliveriesCountsSOA:
@@ -351,9 +377,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        showMergedDeliveriesCounts: action.payload.showMergedDeliveriesCounts
-                    }
-                }
+                        showMergedDeliveriesCounts:
+                            action.payload.showMergedDeliveriesCounts,
+                    },
+                },
             };
 
         case TracingActionTypes.ShowLegendSOA:
@@ -363,9 +390,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        showLegend: action.payload
-                    }
-                }
+                        showLegend: action.payload,
+                    },
+                },
             };
 
         case TracingActionTypes.ShowZoomSOA:
@@ -375,9 +402,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        showZoom: action.payload
-                    }
-                }
+                        showZoom: action.payload,
+                    },
+                },
             };
 
         case TracingActionTypes.SetFitGraphToVisibleAreaSOA:
@@ -387,19 +414,19 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        fitGraphToVisibleArea: action.payload.fitGraphToVisibleArea
-                    }
-                }
+                        fitGraphToVisibleArea:
+                            action.payload.fitGraphToVisibleArea,
+                    },
+                },
             };
 
         case TracingActionTypes.SetStationFilterSOA: {
-
             return {
                 ...state,
                 filterSettings: {
                     ...state.filterSettings,
-                    stationFilter: action.payload.settings
-                }
+                    stationFilter: action.payload.settings,
+                },
             };
         }
         case TracingActionTypes.SetDeliveryFilterSOA:
@@ -407,8 +434,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 filterSettings: {
                     ...state.filterSettings,
-                    deliveryFilter: action.payload.settings
-                }
+                    deliveryFilter: action.payload.settings,
+                },
             };
 
         case TracingActionTypes.ResetAllStationFiltersSOA: {
@@ -420,11 +447,14 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     stationFilter: {
                         ...filterTableSettings,
                         columnOrder: oldStationFilter.columnOrder,
-                        wasAnoActiveOnLastColumnSet: oldStationFilter.wasAnoActiveOnLastColumnSet,
-                        lastActiveAnoColumnOrder: oldStationFilter.lastActiveAnoColumnOrder,
-                        lastInactiveAnoColumnOrder: oldStationFilter.lastInactiveAnoColumnOrder
-                    }
-                }
+                        wasAnoActiveOnLastColumnSet:
+                            oldStationFilter.wasAnoActiveOnLastColumnSet,
+                        lastActiveAnoColumnOrder:
+                            oldStationFilter.lastActiveAnoColumnOrder,
+                        lastInactiveAnoColumnOrder:
+                            oldStationFilter.lastInactiveAnoColumnOrder,
+                    },
+                },
             };
         }
 
@@ -435,9 +465,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...initialFilterSettings,
                     deliveryFilter: {
                         ...filterTableSettings,
-                        columnOrder: state.filterSettings.deliveryFilter.columnOrder
-                    }
-                }
+                        columnOrder:
+                            state.filterSettings.deliveryFilter.columnOrder,
+                    },
+                },
             };
 
         case TracingActionTypes.ResetTracingStateSOA:
@@ -446,7 +477,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.SetFilterStationTableColumnOrderSOA: {
             let stationFilter: StationFilterSettings = {
                 ...state.filterSettings.stationFilter,
-                columnOrder: action.payload.columnOrder
+                columnOrder: action.payload.columnOrder,
             };
             stationFilter = updateColumnFilters(stationFilter);
 
@@ -454,8 +485,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 filterSettings: {
                     ...state.filterSettings,
-                    stationFilter: stationFilter
-                }
+                    stationFilter: stationFilter,
+                },
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -467,7 +498,7 @@ export function reducer(state: TracingState = initialState, action: TracingActio
         case TracingActionTypes.SetFilterDeliveryTableColumnOrderSOA: {
             let deliveryFilter: DeliveryFilterSettings = {
                 ...state.filterSettings.deliveryFilter,
-                columnOrder: action.payload.columnOrder
+                columnOrder: action.payload.columnOrder,
             };
             deliveryFilter = updateColumnFilters(deliveryFilter);
 
@@ -475,8 +506,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 filterSettings: {
                     ...state.filterSettings,
-                    deliveryFilter: deliveryFilter
-                }
+                    deliveryFilter: deliveryFilter,
+                },
             };
 
             return newState;
@@ -489,9 +520,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        selectedElements: action.payload.selectedElements
-                    }
-                }
+                        selectedElements: action.payload.selectedElements,
+                    },
+                },
             };
 
         case TracingActionTypes.SetSelectedStationsSOA:
@@ -503,10 +534,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         selectedElements: {
                             ...state.fclData.graphSettings.selectedElements,
-                            stations: action.payload.stationIds
-                        }
-                    }
-                }
+                            stations: action.payload.stationIds,
+                        },
+                    },
+                },
             };
 
         case TracingActionTypes.SetSelectedDeliveriesSOA:
@@ -518,10 +549,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         selectedElements: {
                             ...state.fclData.graphSettings.selectedElements,
-                            deliveries: action.payload.deliveryIds
-                        }
-                    }
-                }
+                            deliveries: action.payload.deliveryIds,
+                        },
+                    },
+                },
             };
 
         case TracingActionTypes.SetStationPositionsSOA:
@@ -531,9 +562,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        stationPositions: action.payload.stationPositions
-                    }
-                }
+                        stationPositions: action.payload.stationPositions,
+                    },
+                },
             };
         case TracingActionTypes.SetStationPositionsAndLayoutSOA:
             return {
@@ -543,9 +574,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         stationPositions: action.payload.stationPositions,
-                        schemaLayout: action.payload.layout ?? state.fclData.graphSettings.schemaLayout
-                    }
-                }
+                        schemaLayout:
+                            action.payload.layout ??
+                            state.fclData.graphSettings.schemaLayout,
+                    },
+                },
             };
         case TracingActionTypes.SetSchemaGraphLayoutSOA:
             return {
@@ -554,9 +587,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        schemaLayout: action.payload.layout
-                    }
-                }
+                        schemaLayout: action.payload.layout,
+                    },
+                },
             };
         case TracingActionTypes.SetGisGraphLayoutSOA:
             return {
@@ -565,9 +598,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        gisLayout: action.payload.layout
-                    }
-                }
+                        gisLayout: action.payload.layout,
+                    },
+                },
             };
         case TracingActionTypes.SetStationGroupsSOA:
             return {
@@ -577,21 +610,21 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     groupSettings: action.payload.groupSettings,
                     tracingSettings: {
                         ...state.fclData.tracingSettings,
-                        stations: action.payload.stationTracingSettings
+                        stations: action.payload.stationTracingSettings,
                     },
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         selectedElements: {
                             ...state.fclData.graphSettings.selectedElements,
-                            stations: action.payload.selectedStations
+                            stations: action.payload.selectedStations,
                         },
                         highlightingSettings: {
                             ...state.fclData.graphSettings.highlightingSettings,
-                            invisibleStations: action.payload.invisibleStations
+                            invisibleStations: action.payload.invisibleStations,
                         },
-                        stationPositions: action.payload.stationPositions
-                    }
-                }
+                        stationPositions: action.payload.stationPositions,
+                    },
+                },
             };
 
         case TracingActionTypes.SetStationHighlightingRulesSOA: {
@@ -603,10 +636,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         highlightingSettings: {
                             ...state.fclData.graphSettings.highlightingSettings,
-                            stations: action.payload.rules
-                        }
-                    }
-                }
+                            stations: action.payload.rules,
+                        },
+                    },
+                },
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -618,8 +651,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 highlightingConfigurationSettings: {
                     ...state.highlightingConfigurationSettings,
-                    stationEditRules: action.payload.editRules
-                }
+                    stationEditRules: action.payload.editRules,
+                },
             };
 
         case TracingActionTypes.SetDeliveryHighlightingRulesSOA:
@@ -631,10 +664,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                         ...state.fclData.graphSettings,
                         highlightingSettings: {
                             ...state.fclData.graphSettings.highlightingSettings,
-                            deliveries: action.payload.rules
-                        }
-                    }
-                }
+                            deliveries: action.payload.rules,
+                        },
+                    },
+                },
             };
 
         case TracingActionTypes.SetDeliveryHighlightingEditRulesSOA:
@@ -642,8 +675,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 highlightingConfigurationSettings: {
                     ...state.highlightingConfigurationSettings,
-                    deliveryEditRules: action.payload.editRules
-                }
+                    deliveryEditRules: action.payload.editRules,
+                },
             };
 
         case TracingActionTypes.SetTracingSettingsSOA:
@@ -651,8 +684,8 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 fclData: {
                     ...state.fclData,
-                    tracingSettings: action.payload.tracingSettings
-                }
+                    tracingSettings: action.payload.tracingSettings,
+                },
             };
 
         case TracingActionTypes.SetCrossContTraceTypeSOA:
@@ -662,9 +695,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     tracingSettings: {
                         ...state.fclData.tracingSettings,
-                        crossContTraceType: action.payload.crossContTraceType
-                    }
-                }
+                        crossContTraceType: action.payload.crossContTraceType,
+                    },
+                },
             };
 
         case TracingActionTypes.SetHighlightingSettingsSOA: {
@@ -674,9 +707,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        highlightingSettings: action.payload.highlightingSettings
-                    }
-                }
+                        highlightingSettings:
+                            action.payload.highlightingSettings,
+                    },
+                },
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -691,10 +725,11 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        highlightingSettings: action.payload.highlightingSettings
+                        highlightingSettings:
+                            action.payload.highlightingSettings,
                     },
-                    tracingSettings: action.payload.tracingSettings
-                }
+                    tracingSettings: action.payload.tracingSettings,
+                },
             };
 
         case TracingActionTypes.SetGhostStationSOA:
@@ -705,9 +740,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         ghostStation: action.payload.stationId,
-                        ghostDelivery: null
-                    }
-                }
+                        ghostDelivery: null,
+                    },
+                },
             };
         case TracingActionTypes.SetGhostDeliverySOA:
             return {
@@ -717,9 +752,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         ghostStation: null,
-                        ghostDelivery: action.payload.deliveryId
-                    }
-                }
+                        ghostDelivery: action.payload.deliveryId,
+                    },
+                },
             };
 
         case TracingActionTypes.DeleteGhostElementSOA:
@@ -730,9 +765,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         ghostStation: null,
-                        ghostDelivery: null
-                    }
-                }
+                        ghostDelivery: null,
+                    },
+                },
             };
 
         case TracingActionTypes.SetHoverDeliveriesSOA:
@@ -742,9 +777,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        hoverDeliveries: action.payload.deliveryIds
-                    }
-                }
+                        hoverDeliveries: action.payload.deliveryIds,
+                    },
+                },
             };
 
         case TracingActionTypes.SetActiveConfigurationTabIdSOA: {
@@ -752,9 +787,10 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
-                    activeConfigurationTabId: action.payload.activeConfigurationTabId
+                    activeConfigurationTabId:
+                        action.payload.activeConfigurationTabId,
                 },
-                animatingTabCount: state.animatingTabCount + 1
+                animatingTabCount: state.animatingTabCount + 1,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -766,9 +802,9 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
-                    activeFilterTabId: action.payload.activeFilterTabId
+                    activeFilterTabId: action.payload.activeFilterTabId,
                 },
-                animatingTabCount: state.animatingTabCount + 1
+                animatingTabCount: state.animatingTabCount + 1,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
@@ -780,20 +816,21 @@ export function reducer(state: TracingState = initialState, action: TracingActio
                 ...state,
                 configurationTabIndices: {
                     ...state.configurationTabIndices,
-                    activeHighlightingTabId: action.payload.activeHighlightingTabId
-                }
+                    activeHighlightingTabId:
+                        action.payload.activeHighlightingTabId,
+                },
             };
 
         case TracingActionTypes.SetROAReportSettingsSOA:
             return {
                 ...state,
-                roaSettings: action.payload.roaSettings
+                roaSettings: action.payload.roaSettings,
             };
 
         case TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA:
             return {
                 ...state,
-                lastUnchangedJsonDataExtract: action.payload.extractData
+                lastUnchangedJsonDataExtract: action.payload.extractData,
             };
 
         default:
