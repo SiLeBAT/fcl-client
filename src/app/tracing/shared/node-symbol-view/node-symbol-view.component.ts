@@ -8,10 +8,6 @@ interface GradientStop {
     style: string;
 }
 
-function arrayToColor(color: number[]): Color {
-    return { r: color[0], g: color[1], b: color[2] };
-}
-
 function isColorWhite(color: Color): boolean {
     return color.r === 255 && color.b === 255 && color.g === 255;
 }
@@ -51,11 +47,11 @@ export class NodeSymbolViewComponent {
         this.setFillColor(color);
     }
 
-    @Input() set mapStationColor(colors: number[][]) {
+    @Input() set mapStationColor(colors: Color[]) {
         this.setFillColor(colors);
     }
 
-    @Input() set dataTableShapeType(shape: NodeShapeType) {
+    @Input() set dataTableShapeType(shape: NodeShapeType | undefined | null) {
         this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
     }
 
@@ -94,25 +90,22 @@ export class NodeSymbolViewComponent {
         this.isFillColorNonWhite_ = false;
     }
 
-    private setFillColor(colorOrColors: Color | number[][] | null): void {
+    private setFillColor(colorOrColors: Color | Color[] | null): void {
         this.resetColors();
 
         if (!colorOrColors) {
             this.setDefaultColor();
-        } else {
-            if (Array.isArray(colorOrColors)) {
-                const colors: number[][] = colorOrColors;
-                if (colors.length === 0) {
-                    this.setDefaultColor();
-                } else if (colors.length === 1) {
-                    this.setSimpleFillColor(arrayToColor(colors[0]));
-                } else {
-                    this.setGradientFillColor(colors);
-                }
+        } else if (Array.isArray(colorOrColors)) {
+            if (colorOrColors.length === 0) {
+                this.setDefaultColor();
+            } else if (colorOrColors.length === 1) {
+                this.setSimpleFillColor(colorOrColors[0]);
             } else {
-                const color: Color = colorOrColors;
-                this.setSimpleFillColor(color);
+                this.setGradientFillColor(colorOrColors);
             }
+        } else {
+            const color: Color = colorOrColors;
+            this.setSimpleFillColor(color);
         }
     }
 
@@ -121,22 +114,22 @@ export class NodeSymbolViewComponent {
         this.isFillColorNonWhite_ = !isColorWhite(color);
     }
 
-    private setGradientFillColor(colors: number[][]): void {
+    private setGradientFillColor(colors: Color[]): void {
         let gradientId: string = 'col';
         let gradientStops: GradientStop[] = [];
 
         const percent = 100 / colors.length;
-        gradientStops = colors.flatMap((c: number[], index) => {
-            gradientId += `r${c[0]}g${c[1]}b${c[2]}`;
+        gradientStops = colors.flatMap((c: Color, index) => {
+            gradientId += `r${c.r}g${c.g}b${c.b}`;
 
             return [
                 {
                     offset: `${index * percent}%`,
-                    style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                    style: `rgb(${c.r}, ${c.g}, ${c.b})`
                 },
                 {
                     offset: `${(index + 1) * percent}%`,
-                    style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                    style: `rgb(${c.r}, ${c.g}, ${c.b})`
                 }
             ];
         });
