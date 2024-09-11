@@ -16,7 +16,6 @@ import { extractPropToValuesMap, filterTableRows } from '../shared';
 import {
     InputData as FilterTableViewInputData, TableFilterChange
 } from '../filter-table-view/filter-table-view.component';
-import * as _ from 'lodash';
 import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap, ActivityState } from '../configuration.model';
 import { ComplexFilterUtils } from '../shared/complex-filter-utils';
 import { Observable, Subject } from 'rxjs';

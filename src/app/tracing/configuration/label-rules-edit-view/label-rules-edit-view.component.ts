@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
-import * as _ from 'lodash';
 import { SimpleLabelEditRule } from '../model';
 import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
 import { getCompleteConditionsCount, getNonEmptyConditionCount } from '../edit-rule-validaton';

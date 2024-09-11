@@ -1,7 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { TableRow } from '@app/tracing/data.model';
 import { Constants } from '@app/tracing/util/constants';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-symbol-cell-view',

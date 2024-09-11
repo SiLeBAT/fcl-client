@@ -3,9 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { DataService } from './data.service';
 import {
-    CrossContTraceType, DataServiceData, DataServiceInputState,
-    DeliveryData, StationData
-} from '../data.model';
+    CrossContTraceType, DataServiceInputState} from '../data.model';
 import { createDefaultHighlights } from '../io/data-importer/shared';
 import { createDefaultPropMappings } from '../state/tracing.reducers';
 

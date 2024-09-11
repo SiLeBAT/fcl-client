@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { VisioBox, StationInformation, LotInformation, GraphLayer, GridCell,
     StationSampleInformation, SampleInformation, BoxType, Size,
     VisioConnector, VisioPort, InSampleInformation } from './datatypes';

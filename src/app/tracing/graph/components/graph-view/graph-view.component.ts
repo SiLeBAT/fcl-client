@@ -3,7 +3,6 @@ import {
     EventEmitter, OnChanges, ChangeDetectionStrategy, SimpleChanges
 } from '@angular/core';
 import { Size, Layout, PositionMap } from '../../../data.model';
-import * as _ from 'lodash';
 import { ContextMenuRequestInfo, EdgeId, NodeId, SelectedGraphElements } from '../../graph.model';
 import { StyleConfig } from '../../cy-graph/cy-style';
 import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';

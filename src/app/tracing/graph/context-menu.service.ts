@@ -9,7 +9,6 @@ import {
     GraphServiceData,
     NodeId
 } from './graph.model';
-import * as _ from 'lodash';
 import { MenuItemData } from './menu-item-data.model';
 import { MenuItemStrings } from './menu.constants';
 import {

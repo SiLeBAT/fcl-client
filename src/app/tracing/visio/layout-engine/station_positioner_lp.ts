@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { lpSolve, LPModel } from './../../../shared/lp-solver';
 import { VisioBox, VisioConnector } from './datatypes';
 

@@ -6,7 +6,6 @@ import { ProfileComponent } from './profile.component';
 import { MaterialModule } from '../../../shared/material.module';
 import { SharedModule } from '../../../shared/shared.module';
 import { TokenizedUser } from '../../models/user.model';
-import { By } from '@angular/platform-browser';
 
 describe('ProfileComponent', () => {
 

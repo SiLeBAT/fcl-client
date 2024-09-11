@@ -2,7 +2,6 @@ import {
     DeliveryHighlightingRule, HighlightingRule, HighlightingStats,
     LinePatternType, StationHighlightingRule
 } from '../data.model';
-import { Utils } from '../util/non-ui-utils';
 import {
     ColorAndShapeEditRule, ColorEditRule, ComposedLabelEditRule,
     DeliveryEditRule, DeliveryRuleType, EditRule, EditRuleCore,

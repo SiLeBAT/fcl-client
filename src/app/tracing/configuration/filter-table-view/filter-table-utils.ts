@@ -5,7 +5,6 @@ import {
     orderByComparator
 } from '@swimlane/ngx-datatable';
 import { NodeShapeType, TableRow } from '@app/tracing/data.model';
-import * as _ from 'lodash';
 
 type SortableColumn = Pick<NgxTableColumn, 'prop' | 'comparator'>;
 type RowComparator = (vA: any, vB: any, rA: TableRow, rB: TableRow, sortDir?: SortDirection) => number;

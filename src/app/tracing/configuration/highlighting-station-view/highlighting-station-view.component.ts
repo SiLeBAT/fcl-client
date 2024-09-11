@@ -1,5 +1,4 @@
 import { Component, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
-import * as _ from 'lodash';
 import { RuleType, StationEditRule } from '../model';
 import { HighlightingElementViewComponent } from '../highlighting-element-view/highlighting-element-view.component';
 

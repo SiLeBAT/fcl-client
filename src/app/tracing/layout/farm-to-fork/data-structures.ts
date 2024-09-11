@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 export class Graph {
     vertices: Vertex[] = [];
     layers: Vertex[][];

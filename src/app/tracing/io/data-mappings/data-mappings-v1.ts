@@ -19,7 +19,6 @@ import {
     DEL2DEL_PROP_TO_REQ_TYPE_MAP
 } from '../int-data-constants';
 import { isValueTypeValid } from './shared';
-import * as _ from 'lodash';
 import { InputDataError } from '../io-errors';
 
 export interface ColumnInfo {

@@ -1,6 +1,5 @@
 import { DataTable, LogicalCondition, TableColumn } from '@app/tracing/data.model';
 import { ComplexFilterCondition, JunktorType } from '../configuration.model';
-import * as _ from 'lodash';
 import { RequiredPick } from '@app/tracing/util/utility-types';
 
 type SimpleValueType = string | number | boolean | undefined | null;

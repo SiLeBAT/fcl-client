@@ -1,7 +1,6 @@
 import {
     Component, Input, ChangeDetectionStrategy
 } from '@angular/core';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-row-cell-view',

@@ -1,7 +1,6 @@
 import {
     Component, ChangeDetectionStrategy
 } from '@angular/core';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'fcl-opensettings-header-cell-view',

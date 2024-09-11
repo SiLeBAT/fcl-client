@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
 import { Color, NodeShapeType } from '@app/tracing/data.model';
-import * as _ from 'lodash';
 import { ColorAndShapeEditRule } from '../model';
 import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
 import { COLOR_BFR_BLUE } from '../constants';
