@@ -1,3 +1,34 @@
 {
-  "extends": "./node_modules/gts/"
+  "parserOptions": {
+    "project": [
+      "tsconfig.json"
+    ],
+    "createDefaultProgram": true
+  },
+  "extends": [
+    "./node_modules/gts/",
+    "plugin:rxjs/recommended",
+    "plugin:@angular-eslint/recommended",
+    "plugin:@angular-eslint/recommended--extra",
+    "plugin:@angular-eslint/template/process-inline-templates"
+  ],
+  "rules": {
+    "rxjs/no-subject-value": "error",
+    "@angular-eslint/component-selector": [
+      "error",
+      {
+        "type": "element",
+        "prefix": "fcl",
+        "style": "kebab-case"
+      }
+    ],
+    "@angular-eslint/directive-selector": [
+      "error",
+      {
+        "type": "attribute",
+        "prefix": "fcl",
+        "style": "camelCase"
+      }
+    ]
+  }
 }
