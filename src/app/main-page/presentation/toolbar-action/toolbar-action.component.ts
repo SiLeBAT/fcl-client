@@ -1,26 +1,38 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { environment } from '@env/environment';
-import { User } from '@app/user/models/user.model';
-import { GraphSettings, GraphType, MapType } from './../../../tracing/data.model';
-import { Constants } from './../../../tracing/util/constants';
-import { ExampleData } from '../../model/types';
+import {
+    Component,
+    Output,
+    EventEmitter,
+    ViewChild,
+    ElementRef,
+    Input,
+    OnChanges,
+    SimpleChanges,
+} from "@angular/core";
+import { environment } from "@env/environment";
+import { User } from "@app/user/models/user.model";
+import {
+    GraphSettings,
+    GraphType,
+    MapType,
+} from "./../../../tracing/data.model";
+import { Constants } from "./../../../tracing/util/constants";
+import { ExampleData } from "../../model/types";
 
 @Component({
-    selector: 'fcl-toolbar-action',
-    templateUrl: './toolbar-action.component.html',
-    styleUrls: ['./toolbar-action.component.scss']
+    selector: "fcl-toolbar-action",
+    templateUrl: "./toolbar-action.component.html",
+    styleUrls: ["./toolbar-action.component.scss"],
 })
 export class ToolbarActionComponent implements OnChanges {
-
     private _graphSettings: GraphSettings;
 
-    @ViewChild('modelFileInput') modelFileInput: ElementRef<HTMLInputElement>;
-    @ViewChild('shapeFileInput') shapeFileInput: ElementRef<HTMLInputElement>;
+    @ViewChild("modelFileInput") modelFileInput: ElementRef<HTMLInputElement>;
+    @ViewChild("shapeFileInput") shapeFileInput: ElementRef<HTMLInputElement>;
 
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
-        this.selectedMapTypeOption = '' + value.mapType;
+        this.selectedMapTypeOption = "" + value.mapType;
         this._graphSettings = value;
     }
     get graphSettings(): GraphSettings {
@@ -48,22 +60,21 @@ export class ToolbarActionComponent implements OnChanges {
     fileNameWoExt: string | null = null;
 
     mapTypeToLabelMap: Map<MapType, string> = new Map([
-        [MapType.MAPNIK, 'Mapnik'],
+        [MapType.MAPNIK, "Mapnik"],
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporaryly
         // [MapType.BLACK_AND_WHITE, 'Black & White'],
-        [MapType.SHAPE_FILE, 'Shape File']
+        [MapType.SHAPE_FILE, "Shape File"],
     ]);
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.fileName !== undefined) {
-            this.fileNameWoExt = (
-                this.fileName === null ?
-                    null :
-                    this.fileName.replace(/\.[^\.]+$/, '')
-            );
+            this.fileNameWoExt =
+                this.fileName === null
+                    ? null
+                    : this.fileName.replace(/\.[^\.]+$/, "");
         }
     }
 
@@ -123,9 +134,10 @@ export class ToolbarActionComponent implements OnChanges {
 
     onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
-        setTimeout(() => { this.selectedMapTypeOption = '' + this._graphSettings.mapType; }, 0);
+        setTimeout(() => {
+            this.selectedMapTypeOption = "" + this._graphSettings.mapType;
+        }, 0);
 
         this.shapeFileInput.nativeElement.click();
     }
-
 }

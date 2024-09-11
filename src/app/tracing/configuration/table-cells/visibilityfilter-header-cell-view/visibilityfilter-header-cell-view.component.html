@@ -1,10 +1,21 @@
 <span class="fcl-header-sort-span" (click)="onSort()">
-    <span class="material-icons fcl-column-visibility-header-sort-icon pointable">
+    <span
+        class="material-icons fcl-column-visibility-header-sort-icon pointable"
+    >
         visibility
     </span>
-    <span *ngIf="sortDir!=='asc' && sortDir!=='desc'" class="sort-btn datatable-icon-expand"></span>
-    <span *ngIf="sortDir==='asc'" class="sort-btn sort-asc datatable-icon-up"></span>
-    <span *ngIf="sortDir==='desc'" class="sort-btn sort-desc datatable-icon-down"></span>
+    <span
+        *ngIf="sortDir !== 'asc' && sortDir !== 'desc'"
+        class="sort-btn datatable-icon-expand"
+    ></span>
+    <span
+        *ngIf="sortDir === 'asc'"
+        class="sort-btn sort-asc datatable-icon-up"
+    ></span>
+    <span
+        *ngIf="sortDir === 'desc'"
+        class="sort-btn sort-desc datatable-icon-down"
+    ></span>
 </span>
 
 <button
@@ -12,17 +23,19 @@
     matTooltipPosition="above"
     tabindex="-1"
     class="fcl-visibility-filter-button"
-    (click)="onToggleFilterState()">
+    (click)="onToggleFilterState()"
+>
     <span
         *ngIf="showVisibleElements"
         class="material-icons fcl-column-visibility-header-icon pointable"
-        [ngClass]="{'unsorted' : showVisibleElements && showInvisibleElements}">
+        [ngClass]="{ unsorted: showVisibleElements && showInvisibleElements }"
+    >
         visibility
     </span>
     <span
         *ngIf="showInvisibleElements && !showVisibleElements"
-        class="material-icons fcl-column-visibility-header-icon pointable">
+        class="material-icons fcl-column-visibility-header-icon pointable"
+    >
         visibility_off
     </span>
-
 </button>

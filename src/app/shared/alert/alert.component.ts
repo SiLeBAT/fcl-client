@@ -1,42 +1,60 @@
-import { Component, OnInit } from '@angular/core';
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig, MatLegacySnackBarRef as MatSnackBarRef, LegacyTextOnlySnackBar as TextOnlySnackBar } from '@angular/material/legacy-snack-bar';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import {
+    MatLegacySnackBar as MatSnackBar,
+    MatLegacySnackBarConfig as MatSnackBarConfig,
+    MatLegacySnackBarRef as MatSnackBarRef,
+    LegacyTextOnlySnackBar as TextOnlySnackBar,
+} from "@angular/material/legacy-snack-bar";
+import { Subscription } from "rxjs";
 
-import { AlertService, INotification } from '../services/alert.service';
+import { AlertService, INotification } from "../services/alert.service";
 
 @Component({
-    selector: 'fcl-alert',
-    templateUrl: './alert.component.html'
+    selector: "fcl-alert",
+    templateUrl: "./alert.component.html",
 })
 export class AlertComponent implements OnInit {
-
-    constructor(private alertService: AlertService,
-                private snackBar: MatSnackBar) { }
+    constructor(
+        private alertService: AlertService,
+        private snackBar: MatSnackBar,
+    ) {}
 
     ngOnInit() {
-        this.alertService.notification$.subscribe(notification => {
-            this.showToaster(notification);
-        },
-        (error => {
-            throw new Error(`error showing toaster: ${error}`);
-        }));
+        this.alertService.notification$.subscribe(
+            (notification) => {
+                this.showToaster(notification);
+            },
+            (error) => {
+                throw new Error(`error showing toaster: ${error}`);
+            },
+        );
     }
 
     showToaster(notification: INotification) {
         const text = notification.text;
         const config: MatSnackBarConfig = notification.config;
         const autoDismiss = !!config.duration;
-        const snackBarRef = this.snackBar.open(text, !autoDismiss ? 'Ok' : '', config);
+        const snackBarRef = this.snackBar.open(
+            text,
+            !autoDismiss ? "Ok" : "",
+            config,
+        );
 
         if (!autoDismiss) {
             this.dismissSnackBarOnOutsideSnackBarClick(snackBarRef);
         }
     }
 
-    private dismissSnackBarOnOutsideSnackBarClick(snackBarRef: MatSnackBarRef<TextOnlySnackBar>): void {
-        const snackBarContainers = document.getElementsByClassName('mat-snack-bar-container');
+    private dismissSnackBarOnOutsideSnackBarClick(
+        snackBarRef: MatSnackBarRef<TextOnlySnackBar>,
+    ): void {
+        const snackBarContainers = document.getElementsByClassName(
+            "mat-snack-bar-container",
+        );
         if (snackBarContainers.length > 0) {
-            const snackBarContainer = snackBarContainers.item(snackBarContainers.length - 1)!;
+            const snackBarContainer = snackBarContainers.item(
+                snackBarContainers.length - 1,
+            )!;
             const fun = (e: any) => {
                 if (!snackBarContainer.contains(e.target)) {
                     // Clicked outside the snackbar box
@@ -46,7 +64,7 @@ export class AlertComponent implements OnInit {
 
             let subscription: Subscription | null = null;
             const dismissed = () => {
-                window.removeEventListener('click', fun);
+                window.removeEventListener("click", fun);
                 if (subscription) {
                     subscription.unsubscribe();
                     subscription = null;
@@ -54,7 +72,7 @@ export class AlertComponent implements OnInit {
             };
             subscription = snackBarRef.afterDismissed().subscribe(dismissed);
 
-            window.addEventListener('click', fun);
+            window.addEventListener("click", fun);
         }
     }
 }

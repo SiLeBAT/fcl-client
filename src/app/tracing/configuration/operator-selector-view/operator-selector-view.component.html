@@ -1,16 +1,16 @@
 <mat-form-field
     class="fcl-complex-filter-form-field"
     appearance="outline"
-    color="primary">
+    color="primary"
+>
     <mat-select
         [value]="value"
         (valueChange)="onValueChange($event)"
         [disabled]="disabled"
-        placeholder="op">
+        placeholder="op"
+    >
         <ng-container *ngFor="let type of availableOperatorTypes">
-            <mat-option
-                class="fcl-filter-select-option"
-                [value]="type">
+            <mat-option class="fcl-filter-select-option" [value]="type">
                 {{ getOperatorLabel(type) }}
             </mat-option>
         </ng-container>

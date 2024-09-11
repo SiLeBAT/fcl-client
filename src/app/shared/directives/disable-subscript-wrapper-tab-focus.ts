@@ -1,6 +1,4 @@
-import {
-    Directive, ElementRef, AfterViewInit
-} from '@angular/core';
+import { Directive, ElementRef, AfterViewInit } from "@angular/core";
 
 /**
  * This directive fixes a firefox issue.
@@ -8,13 +6,10 @@ import {
  * see ticket #619
  */
 @Directive({
-    selector: '[fclDisableSubscriptWrapperTabFocus]'
+    selector: "[fclDisableSubscriptWrapperTabFocus]",
 })
 export class DisableSubscriptWrapperTabFocusDirective implements AfterViewInit {
-
-    constructor(
-        private hostElement: ElementRef
-    ) {}
+    constructor(private hostElement: ElementRef) {}
 
     // lifecycle hooks start
 
@@ -24,7 +19,10 @@ export class DisableSubscriptWrapperTabFocusDirective implements AfterViewInit {
     // lifecycle hooks end
 
     private disableSubscriptWrapperTabFocus() {
-        const children: HTMLDivElement[] = this.hostElement.nativeElement.querySelectorAll('.mat-form-field-subscript-wrapper');
-        children.forEach(child => child.tabIndex = -1);
+        const children: HTMLDivElement[] =
+            this.hostElement.nativeElement.querySelectorAll(
+                ".mat-form-field-subscript-wrapper",
+            );
+        children.forEach((child) => (child.tabIndex = -1));
     }
 }

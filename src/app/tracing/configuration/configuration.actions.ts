@@ -1,24 +1,35 @@
-import { Action } from '@ngrx/store';
-import { TableType } from './model';
-import { TableColumn } from '../data.model';
-import { HighlightingRuleDeleteRequestData } from './configuration.model';
+import { Action } from "@ngrx/store";
+import { TableType } from "./model";
+import { TableColumn } from "../data.model";
+import { HighlightingRuleDeleteRequestData } from "./configuration.model";
 
 export enum ConfigurationActionTypes {
-    SelectFilterTableColumnsMSA = '[Tracing][Configuration] Choose Filter Table Columns',
-    DeleteHighlightingRuleSSA = '[Tracing][Configuration][HighlightingList] Delete Highlighting Rule'
+    SelectFilterTableColumnsMSA = "[Tracing][Configuration] Choose Filter Table Columns",
+    DeleteHighlightingRuleSSA = "[Tracing][Configuration][HighlightingList] Delete Highlighting Rule",
 }
 export class SelectFilterTableColumnsMSA implements Action {
     readonly type = ConfigurationActionTypes.SelectFilterTableColumnsMSA;
 
-    constructor(public payload: { type: TableType; columnOrder: string[]; favouriteColumns: TableColumn[]; otherColumns: TableColumn[] }) {}
+    constructor(
+        public payload: {
+            type: TableType;
+            columnOrder: string[];
+            favouriteColumns: TableColumn[];
+            otherColumns: TableColumn[];
+        },
+    ) {}
 }
 
 export class DeleteHighlightingRuleSSA implements Action {
     readonly type = ConfigurationActionTypes.DeleteHighlightingRuleSSA;
 
-    constructor(public payload: { deleteRequestData: HighlightingRuleDeleteRequestData }) {}
+    constructor(
+        public payload: {
+            deleteRequestData: HighlightingRuleDeleteRequestData;
+        },
+    ) {}
 }
 
 export type ConfigurationActions =
-      SelectFilterTableColumnsMSA
+    | SelectFilterTableColumnsMSA
     | DeleteHighlightingRuleSSA;

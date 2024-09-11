@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 
-import { LoaderState } from '../spinner-loader/spinner-loader.component';
+import { LoaderState } from "../spinner-loader/spinner-loader.component";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class SpinnerLoaderService {
     private loaderSubject = new Subject<LoaderState>();

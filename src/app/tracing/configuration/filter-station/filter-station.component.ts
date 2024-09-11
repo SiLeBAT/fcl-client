@@ -1,18 +1,27 @@
-import * as fromTracing from '../../state/tracing.reducers';
-import * as tracingSelectors from '../../state/tracing.selectors';
-import * as tracingActions from '../../state/tracing.actions';
-import { TableRow, DataTable, DataServiceData, StationId } from '@app/tracing/data.model';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { TableService } from '@app/tracing/services/table.service';
-import { AlertService } from '@app/shared/services/alert.service';
-import { DataService } from '@app/tracing/services/data.service';
-import { InputData as FilterElementsViewInputData } from '../filter-elements-view/filter-elements-view.component';
-import { ActivityState, FilterTableSettings, FilterTableState } from '../configuration.model';
-import { TableType } from '../model';
-import { SelectFilterTableColumnsMSA } from '../configuration.actions';
-import { FocusStationSSA } from '@app/tracing/tracing.actions';
+import * as fromTracing from "../../state/tracing.reducers";
+import * as tracingSelectors from "../../state/tracing.selectors";
+import * as tracingActions from "../../state/tracing.actions";
+import {
+    TableRow,
+    DataTable,
+    DataServiceData,
+    StationId,
+} from "@app/tracing/data.model";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
+import { Component, OnInit, OnDestroy, DoCheck } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { TableService } from "@app/tracing/services/table.service";
+import { AlertService } from "@app/shared/services/alert.service";
+import { DataService } from "@app/tracing/services/data.service";
+import { InputData as FilterElementsViewInputData } from "../filter-elements-view/filter-elements-view.component";
+import {
+    ActivityState,
+    FilterTableSettings,
+    FilterTableState,
+} from "../configuration.model";
+import { TableType } from "../model";
+import { SelectFilterTableColumnsMSA } from "../configuration.actions";
+import { FocusStationSSA } from "@app/tracing/tracing.actions";
 
 interface CachedData {
     dataTable: DataTable;
@@ -20,12 +29,11 @@ interface CachedData {
 }
 
 @Component({
-    selector: 'fcl-filter-station',
-    templateUrl: './filter-station.component.html',
-    styleUrls: ['./filter-station.component.scss']
+    selector: "fcl-filter-station",
+    templateUrl: "./filter-station.component.html",
+    styleUrls: ["./filter-station.component.scss"],
 })
 export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
-
     private stateSubscription: Subscription | null = null;
 
     private cachedData: CachedData | null = null;
@@ -37,7 +45,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     private cycleStartSubject_ = new Subject<void>();
     cycleStart$ = this.cycleStartSubject_.asObservable();
 
-    private filterElementsViewInputData_: FilterElementsViewInputData | null = null;
+    private filterElementsViewInputData_: FilterElementsViewInputData | null =
+        null;
     private currentGhostStationId: StationId | null = null;
 
     get filterElementsViewInputData(): FilterElementsViewInputData | null {
@@ -48,8 +57,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
         private tableService: TableService,
         private dataService: DataService,
         private store: Store<fromTracing.State>,
-        private alertService: AlertService
-    ) { }
+        private alertService: AlertService,
+    ) {}
 
     private setActivityState(state: ActivityState): void {
         if (state !== this.activityState_) {
@@ -61,10 +70,15 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     // lifecycle hooks start
 
     ngOnInit(): void {
-        const stationFilterState$ = this.store.select(tracingSelectors.selectStationFilterState);
+        const stationFilterState$ = this.store.select(
+            tracingSelectors.selectStationFilterState,
+        );
         this.stateSubscription = stationFilterState$.subscribe(
             (state) => this.applyState(state),
-            err => this.alertService.error(`getStationFilterData store subscription failed: ${err}`)
+            (err) =>
+                this.alertService.error(
+                    `getStationFilterData store subscription failed: ${err}`,
+                ),
         );
     }
 
@@ -83,23 +97,28 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
 
     // template trigger start
     onSelectTableColumns(): void {
-
         this.store.dispatch(
             new SelectFilterTableColumnsMSA({
                 type: TableType.STATIONS,
                 columnOrder: this.cachedState!.filterTableState.columnOrder,
                 favouriteColumns: this.cachedData!.dataTable.favouriteColumns,
-                otherColumns: this.cachedData!.dataTable.otherColumns
-            })
+                otherColumns: this.cachedData!.dataTable.otherColumns,
+            }),
         );
     }
 
     onFilterSettingsChange(settings: FilterTableSettings): void {
-        this.store.dispatch(new tracingActions.SetStationFilterSOA({ settings: settings }));
+        this.store.dispatch(
+            new tracingActions.SetStationFilterSOA({ settings: settings }),
+        );
     }
 
     onRowSelectionChange(stationIds: StationId[]): void {
-        this.store.dispatch(new tracingActions.SetSelectedStationsSOA({ stationIds: stationIds }));
+        this.store.dispatch(
+            new tracingActions.SetSelectedStationsSOA({
+                stationIds: stationIds,
+            }),
+        );
     }
 
     onClearAllFilters(): void {
@@ -111,7 +130,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
         if (row !== null) {
             const station = this.cachedData!.dataServiceData.statMap[row.id];
             if (station.contained) {
-                const group = this.cachedData!.dataServiceData.statMap[row.parentRowId!];
+                const group =
+                    this.cachedData!.dataServiceData.statMap[row.parentRowId!];
                 if (group.invisible) {
                     newGhostStationId = group.id;
                 }
@@ -124,7 +144,11 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
             if (newGhostStationId === null) {
                 this.store.dispatch(new tracingActions.DeleteGhostElementSOA());
             } else {
-                this.store.dispatch(new tracingActions.SetGhostStationSOA({ stationId: newGhostStationId }));
+                this.store.dispatch(
+                    new tracingActions.SetGhostStationSOA({
+                        stationId: newGhostStationId,
+                    }),
+                );
             }
         }
     }
@@ -134,7 +158,8 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
 
         const station = this.cachedData!.dataServiceData.statMap[row.id];
         if (station.contained) {
-            const group = this.cachedData!.dataServiceData.statMap[row.parentRowId!];
+            const group =
+                this.cachedData!.dataServiceData.statMap[row.parentRowId!];
             if (!group.invisible) {
                 focusStationId = group.id;
             }
@@ -142,7 +167,9 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
             focusStationId = station.id;
         }
         if (focusStationId !== null) {
-            this.store.dispatch(new FocusStationSSA({ stationId: focusStationId }));
+            this.store.dispatch(
+                new FocusStationSSA({ stationId: focusStationId }),
+            );
         }
     }
 
@@ -151,33 +178,48 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     private applyState(state: FilterTableState) {
         if (state.activityState !== ActivityState.INACTIVE) {
             const cacheIsEmpty = this.cachedState === null;
-            let dataTable = !cacheIsEmpty ? this.cachedData!.dataTable : undefined;
-            const cachedDSData = cacheIsEmpty ? null : this.cachedData!.dataServiceData;
-            const newDSData = this.dataService.getData(state.dataServiceInputState);
+            let dataTable = !cacheIsEmpty
+                ? this.cachedData!.dataTable
+                : undefined;
+            const cachedDSData = cacheIsEmpty
+                ? null
+                : this.cachedData!.dataServiceData;
+            const newDSData = this.dataService.getData(
+                state.dataServiceInputState,
+            );
 
             if (
                 cacheIsEmpty ||
-                this.cachedData!.dataServiceData.modelFlag !== newDSData.modelFlag
+                this.cachedData!.dataServiceData.modelFlag !==
+                    newDSData.modelFlag
             ) {
                 // new Model
-                dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
+                dataTable = this.tableService.getStationTable(
+                    state.dataServiceInputState,
+                    false,
+                );
                 this.currentGhostStationId = null;
             } else if (
                 newDSData.stations !== cachedDSData!.stations ||
                 newDSData.statVis !== cachedDSData!.statVis ||
-                newDSData.tracingPropsUpdatedFlag !== cachedDSData!.tracingPropsUpdatedFlag ||
-                newDSData.stationAndDeliveryHighlightingUpdatedFlag !== cachedDSData!.stationAndDeliveryHighlightingUpdatedFlag ||
+                newDSData.tracingPropsUpdatedFlag !==
+                    cachedDSData!.tracingPropsUpdatedFlag ||
+                newDSData.stationAndDeliveryHighlightingUpdatedFlag !==
+                    cachedDSData!.stationAndDeliveryHighlightingUpdatedFlag ||
                 newDSData.statSel !== cachedDSData!.statSel
             ) {
-                dataTable = this.tableService.getStationTable(state.dataServiceInputState, false);
+                dataTable = this.tableService.getStationTable(
+                    state.dataServiceInputState,
+                    false,
+                );
             }
 
             this.cachedState = {
-                ...state
+                ...state,
             };
             this.cachedData = {
                 dataTable: dataTable!,
-                dataServiceData: newDSData
+                dataServiceData: newDSData,
             };
             this.updateFilterElementsViewInputData();
         }
@@ -187,13 +229,17 @@ export class FilterStationComponent implements OnInit, OnDestroy, DoCheck {
     private updateFilterElementsViewInputData(): void {
         if (
             this.filterElementsViewInputData_ === null ||
-            this.cachedData!.dataTable !== this.filterElementsViewInputData_.dataTable ||
-            this.cachedState!.filterTableState !== this.filterElementsViewInputData_.filterTableSettings
+            this.cachedData!.dataTable !==
+                this.filterElementsViewInputData_.dataTable ||
+            this.cachedState!.filterTableState !==
+                this.filterElementsViewInputData_.filterTableSettings
         ) {
             this.filterElementsViewInputData_ = {
                 dataTable: this.cachedData!.dataTable,
                 filterTableSettings: this.cachedState!.filterTableState,
-                selectedRowIds: this.cachedState!.dataServiceInputState.selectedElements.stations
+                selectedRowIds:
+                    this.cachedState!.dataServiceInputState.selectedElements
+                        .stations,
             };
         }
     }

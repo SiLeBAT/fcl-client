@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { User } from '../../../user/models/user.model';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { User } from "../../../user/models/user.model";
 
 @Component({
-    selector: 'fcl-avatar',
-    templateUrl: './avatar.component.html',
-    styleUrls: ['./avatar.component.scss']
+    selector: "fcl-avatar",
+    templateUrl: "./avatar.component.html",
+    styleUrls: ["./avatar.component.scss"],
 })
 export class AvatarComponent {
     @Input() currentUser: User | null;

@@ -1,7 +1,6 @@
 export class InputEncodingError extends Error {
     // eslint-disable-next-line
     constructor(...args: any[]) {
-
         // Calling parent constructor of base Error class.
         super(...args);
         Object.setPrototypeOf(this, InputEncodingError.prototype);
@@ -18,7 +17,6 @@ export class InputEncodingError extends Error {
 export class InputFormatError extends Error {
     // eslint-disable-next-line
     constructor(...args: any[]) {
-
         // Calling parent constructor of base Error class.
         super(...args);
         Object.setPrototypeOf(this, InputFormatError.prototype);
@@ -29,14 +27,12 @@ export class InputFormatError extends Error {
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, this.constructor);
         }
-
     }
 }
 
 export class InputDataError extends Error {
     // eslint-disable-next-line
     constructor(...args: any[]) {
-
         // Calling parent constructor of base Error class.
         super(...args);
         Object.setPrototypeOf(this, InputDataError.prototype);
@@ -47,6 +43,5 @@ export class InputDataError extends Error {
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, this.constructor);
         }
-
     }
 }

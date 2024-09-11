@@ -1,4 +1,4 @@
-@use '../../../../assets/sass/base' as fcl;
+@use "../../../../assets/sass/base" as fcl;
 
 .fcl-predefined-filter-view-field {
     width: 100%;
@@ -7,7 +7,9 @@
     color: rgb(0 0 0);
 }
 
-.fcl-predefined-filter-view .mat-form-field-appearance-outline .mat-form-field-outline {
+.fcl-predefined-filter-view
+    .mat-form-field-appearance-outline
+    .mat-form-field-outline {
     color: white;
     background-color: white;
     box-shadow: fcl.$fcl-box-shadow;

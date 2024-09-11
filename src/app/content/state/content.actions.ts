@@ -1,8 +1,8 @@
-import { Action } from '@ngrx/store';
+import { Action } from "@ngrx/store";
 
 export enum ContentActionTypes {
-    LoadGDPRDateSSA = '[Data Protection Declaration] Request GDPR Date',
-    UpdateGDPRDateSOA = '[Data Protection Declaration] Update GDPR Date'
+    LoadGDPRDateSSA = "[Data Protection Declaration] Request GDPR Date",
+    UpdateGDPRDateSOA = "[Data Protection Declaration] Update GDPR Date",
 }
 
 export class LoadGDPRDateSSA implements Action {
@@ -15,6 +15,4 @@ export class UpdateGDPRDateSOA implements Action {
     constructor(public payload: { gdprDate: string }) {}
 }
 
-export type ContentActions =
-      LoadGDPRDateSSA
-    | UpdateGDPRDateSOA;
+export type ContentActions = LoadGDPRDateSSA | UpdateGDPRDateSOA;

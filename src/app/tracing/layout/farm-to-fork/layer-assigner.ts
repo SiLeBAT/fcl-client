@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './data-structures';
+import * as _ from "lodash";
+import { Graph, Vertex, Edge } from "./data-structures";
 
 class LayerAssignment {
     private vertexOutEdgeCounts: number[];
@@ -12,13 +12,15 @@ class LayerAssignment {
             i < n;
             ++i
         ) {
-            if (this.vertexOutEdgeCounts[i] < 1) { result.push(graph.vertices[i]); }
+            if (this.vertexOutEdgeCounts[i] < 1) {
+                result.push(graph.vertices[i]);
+            }
         }
         return result;
     }
 
     getIncomingEdges(vertices: Vertex[]): Edge[] {
-        return _.flatten(vertices.map(v => v.inEdges));
+        return _.flatten(vertices.map((v) => v.inEdges));
     }
 
     init(graph: Graph) {
@@ -29,7 +31,6 @@ class LayerAssignment {
     }
 
     assignLayers(graph: Graph): Vertex[][] {
-
         this.init(graph);
 
         const layers: Vertex[][] = [];

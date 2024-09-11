@@ -1,11 +1,17 @@
 <ng-template #buttonColTpl let-column="column">
     <fcl-opensettings-header-cell-view
         class="fcl-more-columns-button"
-        (click)="onSelectColumns()">
+        (click)="onSelectColumns()"
+    >
     </fcl-opensettings-header-cell-view>
 </ng-template>
 
-<ng-template #patternColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+<ng-template
+    #patternColTpl
+    let-column="column"
+    let-sort="sortFn"
+    let-sortDir="sortDir"
+>
     <fcl-symbol-header-cell-view
         class="fcl-textfilter-header-cell"
         [sortDir]="sortDir"
@@ -13,7 +19,12 @@
     ></fcl-symbol-header-cell-view>
 </ng-template>
 
-<ng-template #visibilityColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+<ng-template
+    #visibilityColTpl
+    let-column="column"
+    let-sort="sortFn"
+    let-sortDir="sortDir"
+>
     <fcl-visibilityfilter-header-cell-view
         class="fcl-textfilter-header-cell"
         [sortDir]="sortDir"
@@ -24,19 +35,28 @@
     ></fcl-visibilityfilter-header-cell-view>
 </ng-template>
 
-<ng-template #dataColTpl let-column="column" let-sort="sortFn" let-sortDir="sortDir">
+<ng-template
+    #dataColTpl
+    let-column="column"
+    let-sort="sortFn"
+    let-sortDir="sortDir"
+>
     <fcl-textfilter-header-cell-view
         class="fcl-textfilter-header-cell"
         [column]="column"
         [sortDir]="sortDir"
         [filterText]="getColumnFilterText(column.prop)"
         (sort)="sort()"
-        (filterChange)="onSetColumnFilterText(column.prop, $event)">
+        (filterChange)="onSetColumnFilterText(column.prop, $event)"
+    >
     </fcl-textfilter-header-cell-view>
 </ng-template>
 
 <ng-template #treeRowTpl let-row="row" let-value="value">
-    <fcl-collapse-status-cell-view [status]="row.treeStatus" (toggleStatus)="onTreeAction(row)"></fcl-collapse-status-cell-view>
+    <fcl-collapse-status-cell-view
+        [status]="row.treeStatus"
+        (toggleStatus)="onTreeAction(row)"
+    ></fcl-collapse-status-cell-view>
 </ng-template>
 
 <ng-template #patternRowTpl let-row="row" let-value="value">
@@ -47,14 +67,25 @@
     <fcl-visibility-cell-view [row]="row"></fcl-visibility-cell-view>
 </ng-template>
 
-<ng-template #dataRowTpl let-row="row" let-column="column" let-value="value" let-i="index" let-prop="prop">
+<ng-template
+    #dataRowTpl
+    let-row="row"
+    let-column="column"
+    let-value="value"
+    let-i="index"
+    let-prop="prop"
+>
     <fcl-row-cell-view [value]="value"></fcl-row-cell-view>
 </ng-template>
 
 <div class="fcl-filtertable-container" #tableWrapper>
     <ngx-datatable
-        fclNgxDatatableRowEventProvider (rowOver)="onRowOver($event)" (rowDblClick)="onRowDblClick($event)"
-        fclNgxDatatableScrollFix [activityState$]="activityState$" [cycleStart$]="cycleStart$"
+        fclNgxDatatableRowEventProvider
+        (rowOver)="onRowOver($event)"
+        (rowDblClick)="onRowDblClick($event)"
+        fclNgxDatatableScrollFix
+        [activityState$]="activityState$"
+        [cycleStart$]="cycleStart$"
         #table
         class="material fcl-datatable fcl-filtertable"
         [columns]="columns"

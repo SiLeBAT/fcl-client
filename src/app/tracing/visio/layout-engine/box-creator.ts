@@ -1,14 +1,25 @@
-import { VisioBox, StationInformation, LotInformation, GraphLayer, GridCell,
-    StationSampleInformation, SampleInformation, BoxType, Size,
-    VisioConnector, VisioPort, InSampleInformation } from './datatypes';
-import { Position, SampleResultType } from '../../data.model';
-import { GraphSettings } from './graph-settings';
-import { LabelCreator } from './label-creator';
-import { GroupContainerCreator } from './group-container-creator';
-import { LotBoxSorter } from './lotbox_sorter';
-import { InformationProvider } from './information-provider';
-import { isArray } from 'lodash';
-import { concat } from '@app/tracing/util/non-ui-utils';
+import {
+    VisioBox,
+    StationInformation,
+    LotInformation,
+    GraphLayer,
+    GridCell,
+    StationSampleInformation,
+    SampleInformation,
+    BoxType,
+    Size,
+    VisioConnector,
+    VisioPort,
+    InSampleInformation,
+} from "./datatypes";
+import { Position, SampleResultType } from "../../data.model";
+import { GraphSettings } from "./graph-settings";
+import { LabelCreator } from "./label-creator";
+import { GroupContainerCreator } from "./group-container-creator";
+import { LotBoxSorter } from "./lotbox_sorter";
+import { InformationProvider } from "./information-provider";
+import { isArray } from "lodash";
+import { concat } from "@app/tracing/util/non-ui-utils";
 
 interface IWithSizeAdRelPos {
     relPosition: Position;
@@ -16,7 +27,6 @@ interface IWithSizeAdRelPos {
 }
 
 export class BoxCreator {
-
     private stationIdToBoxMap: Map<string, VisioBox>;
     private lotIdToBoxMap: Map<string, VisioBox>;
     private stationLots: Map<VisioBox, VisioBox[]>;
@@ -34,79 +44,91 @@ export class BoxCreator {
         }
     }
 
-    private static getRight(object: {relPosition: Position; size: Size}): number {
+    private static getRight(object: {
+        relPosition: Position;
+        size: Size;
+    }): number {
         return object.relPosition.x + object.size.width;
     }
 
-    private static getBottom<T extends {relPosition: Position; size: Size}>(arrOrObj: T | T[]): number {
+    private static getBottom<T extends { relPosition: Position; size: Size }>(
+        arrOrObj: T | T[],
+    ): number {
         if (isArray(arrOrObj)) {
-            return Math.max(...arrOrObj.map(o => BoxCreator.getBottom(o)));
+            return Math.max(...arrOrObj.map((o) => BoxCreator.getBottom(o)));
         } else {
             return arrOrObj.relPosition.y + arrOrObj.size.height;
         }
     }
 
-    private static vAlign(boxes: VisioBox[], start: Position, distance: number): Size {
+    private static vAlign(
+        boxes: VisioBox[],
+        start: Position,
+        distance: number,
+    ): Size {
         if (boxes.length > 0) {
-
             boxes[0].relPosition = Object.assign({}, start);
 
             for (let i = 1, n = boxes.length; i < n; i++) {
                 boxes[i].relPosition = {
                     x: boxes[0].relPosition.x,
-                    y: BoxCreator.getBottom(boxes[i - 1]) + distance
+                    y: BoxCreator.getBottom(boxes[i - 1]) + distance,
                 };
             }
 
             return {
-                width: Math.max(...boxes.map(b => b.size.width)),
-                height: BoxCreator.getBottom(boxes[boxes.length - 1]) - start.y
+                width: Math.max(...boxes.map((b) => b.size.width)),
+                height: BoxCreator.getBottom(boxes[boxes.length - 1]) - start.y,
             };
-
         } else {
             return {
                 width: 0,
-                height: 0
+                height: 0,
             };
         }
     }
 
-    private static hAlign(boxes: VisioBox[], start: Position, distance: number): Size {
+    private static hAlign(
+        boxes: VisioBox[],
+        start: Position,
+        distance: number,
+    ): Size {
         if (boxes.length > 0) {
-
             boxes[0].relPosition = Object.assign({}, start);
 
             for (let i = 1, n = boxes.length; i < n; i++) {
                 boxes[i].relPosition = {
                     x: BoxCreator.getRight(boxes[i - 1]) + distance,
-                    y: boxes[0].relPosition.y
+                    y: boxes[0].relPosition.y,
                 };
             }
 
             return {
                 width: BoxCreator.getRight(boxes[boxes.length - 1]) - start.x,
-                height: Math.max(...boxes.map(b => b.size.height))
+                height: Math.max(...boxes.map((b) => b.size.height)),
             };
-
         } else {
             return {
                 width: 0,
-                height: 0
+                height: 0,
             };
         }
     }
 
-    private static hcAlign(boxes: { size: Size; relPosition: Position }[][], margin: number) {
+    private static hcAlign(
+        boxes: { size: Size; relPosition: Position }[][],
+        margin: number,
+    ) {
         if (boxes.length > 0) {
-
-            const widths = boxes.map(row => this.getSize(row, 0).width);
+            const widths = boxes.map((row) => this.getSize(row, 0).width);
             const maxWidth = Math.max(0, ...widths);
 
             boxes.forEach((row, index) => {
                 if (row.length > 0) {
                     const startPos = row[0].relPosition.x;
-                    const delta = (maxWidth - widths[index]) / 2 + margin - startPos;
-                    row.forEach(box => box.relPosition.x += delta);
+                    const delta =
+                        (maxWidth - widths[index]) / 2 + margin - startPos;
+                    row.forEach((box) => (box.relPosition.x += delta));
                 }
             });
         }
@@ -117,36 +139,47 @@ export class BoxCreator {
      * @param elements
      * @param centerX
      */
-    private static cAlign(elements: { size: Size; relPosition: Position }[], centerX: number) {
-        elements.forEach(el => el.relPosition.x = centerX - el.size.width / 2);
+    private static cAlign(
+        elements: { size: Size; relPosition: Position }[],
+        centerX: number,
+    ) {
+        elements.forEach(
+            (el) => (el.relPosition.x = centerX - el.size.width / 2),
+        );
     }
 
-    private static getSize(boxes: {relPosition: Position; size: Size}[], margin: number): Size {
+    private static getSize(
+        boxes: { relPosition: Position; size: Size }[],
+        margin: number,
+    ): Size {
         margin *= 2;
 
         if (boxes.length === 0) {
-
             return { width: margin, height: margin };
-
         } else {
+            const minX = Math.min(...boxes.map((b) => b.relPosition.x));
+            const minY = Math.min(...boxes.map((b) => b.relPosition.y));
+            const maxX = Math.max(...boxes.map((b) => BoxCreator.getRight(b)));
+            const maxY = Math.max(...boxes.map((b) => BoxCreator.getBottom(b)));
 
-            const minX = Math.min(...boxes.map(b => b.relPosition.x));
-            const minY = Math.min(...boxes.map(b => b.relPosition.y));
-            const maxX = Math.max(...boxes.map(b => BoxCreator.getRight(b)));
-            const maxY = Math.max(...boxes.map(b => BoxCreator.getBottom(b)));
-
-            return { width: maxX - minX + margin, height: maxY - minY + margin };
+            return {
+                width: maxX - minX + margin,
+                height: maxY - minY + margin,
+            };
         }
     }
 
     private static move(boxes: VisioBox[], move: Position) {
-        boxes.forEach(b => {
+        boxes.forEach((b) => {
             b.relPosition.x += move.x;
             b.relPosition.y += move.y;
         });
     }
 
-    constructor(private labelCreator: LabelCreator, private infoProvider: InformationProvider) {
+    constructor(
+        private labelCreator: LabelCreator,
+        private infoProvider: InformationProvider,
+    ) {
         this.stationIdToBoxMap = new Map();
         this.lotIdToBoxMap = new Map();
         this.stationLots = new Map();
@@ -154,7 +187,9 @@ export class BoxCreator {
     }
 
     createInLotBox(inSample: InSampleInformation) {
-        const lotInfo: LotInformation = this.infoProvider.getLotInfo(inSample.lotId);
+        const lotInfo: LotInformation = this.infoProvider.getLotInfo(
+            inSample.lotId,
+        );
         const lotBox: VisioBox = this.createLotBox(lotInfo, inSample.samples);
         lotBox.ports = [];
         return lotBox;
@@ -168,37 +203,51 @@ export class BoxCreator {
         const lotBox: VisioBox = this.createLotBox(lotInfo, lotInfo.samples);
 
         this.lotIdToBoxMap.set(lotInfo.id, lotBox);
-        lotBox.ports.forEach(p => {
+        lotBox.ports.forEach((p) => {
             this.portToBox.set(p, lotBox);
         });
         this.lotIdToBoxMap.get(lotInfo.id);
         return lotBox;
     }
 
-    createLotBox(lotInfo: LotInformation, samples: SampleInformation[]): VisioBox {
+    createLotBox(
+        lotInfo: LotInformation,
+        samples: SampleInformation[],
+    ): VisioBox {
         const labels = this.labelCreator.getLotLabel(lotInfo);
         const labelBottom = BoxCreator.getBottom(labels);
 
-        const sampleBoxes: VisioBox[] = samples.map(s => this.createLotSampleBox(s));
+        const sampleBoxes: VisioBox[] = samples.map((s) =>
+            this.createLotSampleBox(s),
+        );
         const sampleAreaStart: Position = {
             x: GraphSettings.LOT_BOX_MARGIN,
-            y: labelBottom + GraphSettings.SECTION_DISTANCE
+            y: labelBottom + GraphSettings.SECTION_DISTANCE,
         };
-        BoxCreator.vAlign(sampleBoxes, sampleAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
+        BoxCreator.vAlign(
+            sampleBoxes,
+            sampleAreaStart,
+            GraphSettings.SAMPLE_BOX_DISTANCE,
+        );
 
         const lotBox: VisioBox = {
             type: BoxType.Lot,
             labels: labels,
-            size: BoxCreator.getSize(concat<IWithSizeAdRelPos>(labels, sampleBoxes), GraphSettings.LOT_BOX_MARGIN),
+            size: BoxCreator.getSize(
+                concat<IWithSizeAdRelPos>(labels, sampleBoxes),
+                GraphSettings.LOT_BOX_MARGIN,
+            ),
             relPosition: { x: 0, y: 0 },
-            ports: [{
-                id: 'p' + this.portCounter++,
-                normalizedPosition: {
-                    x: 0.5,
-                    y: 1
-                }
-            }],
-            elements: sampleBoxes
+            ports: [
+                {
+                    id: "p" + this.portCounter++,
+                    normalizedPosition: {
+                        x: 0.5,
+                        y: 1,
+                    },
+                },
+            ],
+            elements: sampleBoxes,
         };
 
         // center align label
@@ -219,48 +268,82 @@ export class BoxCreator {
 
         const boxAreaStart: Position = {
             x: GraphSettings.STATION_BOX_MARGIN,
-            y: BoxCreator.getBottom(labels) + GraphSettings.SECTION_DISTANCE
+            y: BoxCreator.getBottom(labels) + GraphSettings.SECTION_DISTANCE,
         };
 
-        const inLotBoxes = stationInfo.inSamples.map(is => this.createInLotBox(is));
+        const inLotBoxes = stationInfo.inSamples.map((is) =>
+            this.createInLotBox(is),
+        );
         if (inLotBoxes.length > 0) {
-            BoxCreator.hAlign(inLotBoxes, boxAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
-            boxAreaStart.y = Math.max(...inLotBoxes.map(b => BoxCreator.getBottom(b))) + GraphSettings.SECTION_DISTANCE;
+            BoxCreator.hAlign(
+                inLotBoxes,
+                boxAreaStart,
+                GraphSettings.SAMPLE_BOX_DISTANCE,
+            );
+            boxAreaStart.y =
+                Math.max(...inLotBoxes.map((b) => BoxCreator.getBottom(b))) +
+                GraphSettings.SECTION_DISTANCE;
         }
 
-        const sampleBoxes = stationInfo.samples.map(sample => this.createStationSampleBox(sample));
+        const sampleBoxes = stationInfo.samples.map((sample) =>
+            this.createStationSampleBox(sample),
+        );
         if (sampleBoxes.length > 0) {
-            BoxCreator.hAlign(sampleBoxes, boxAreaStart, GraphSettings.SAMPLE_BOX_DISTANCE);
-            boxAreaStart.y = Math.max(...sampleBoxes.map(b => BoxCreator.getBottom(b))) + GraphSettings.SECTION_DISTANCE;
+            BoxCreator.hAlign(
+                sampleBoxes,
+                boxAreaStart,
+                GraphSettings.SAMPLE_BOX_DISTANCE,
+            );
+            boxAreaStart.y =
+                Math.max(...sampleBoxes.map((b) => BoxCreator.getBottom(b))) +
+                GraphSettings.SECTION_DISTANCE;
         }
 
-        const lotBoxes = concat(...stationInfo.products.map(p => p.lots.map(lot => this.createProdLotBox(lot))));
+        const lotBoxes = concat(
+            ...stationInfo.products.map((p) =>
+                p.lots.map((lot) => this.createProdLotBox(lot)),
+            ),
+        );
         if (lotBoxes.length > 0) {
-            BoxCreator.hAlign(lotBoxes, boxAreaStart, GraphSettings.LOT_BOX_DISTANCE);
+            BoxCreator.hAlign(
+                lotBoxes,
+                boxAreaStart,
+                GraphSettings.LOT_BOX_DISTANCE,
+            );
         }
 
         const stationBox: VisioBox = {
             type: BoxType.Station,
             labels: labels,
             size: BoxCreator.getSize(
-                concat<IWithSizeAdRelPos>(labels, inLotBoxes, sampleBoxes, lotBoxes),
-                GraphSettings.STATION_BOX_MARGIN
+                concat<IWithSizeAdRelPos>(
+                    labels,
+                    inLotBoxes,
+                    sampleBoxes,
+                    lotBoxes,
+                ),
+                GraphSettings.STATION_BOX_MARGIN,
             ),
             relPosition: { x: 0, y: 0 },
-            ports: [{
-                id: 'p' + this.portCounter++,
-                normalizedPosition: {
-                    x: 0.5,
-                    y: 0
-                }
-            }],
-            elements: concat(inLotBoxes, sampleBoxes, lotBoxes)
+            ports: [
+                {
+                    id: "p" + this.portCounter++,
+                    normalizedPosition: {
+                        x: 0.5,
+                        y: 0,
+                    },
+                },
+            ],
+            elements: concat(inLotBoxes, sampleBoxes, lotBoxes),
         };
 
-        BoxCreator.hcAlign([labels, inLotBoxes, sampleBoxes, lotBoxes], GraphSettings.STATION_BOX_MARGIN);
+        BoxCreator.hcAlign(
+            [labels, inLotBoxes, sampleBoxes, lotBoxes],
+            GraphSettings.STATION_BOX_MARGIN,
+        );
 
         this.stationIdToBoxMap.set(stationInfo.id, stationBox);
-        stationBox.ports.forEach(p => {
+        stationBox.ports.forEach((p) => {
             this.portToBox.set(p, stationBox);
         });
         this.stationLots.set(stationBox, lotBoxes);
@@ -270,7 +353,10 @@ export class BoxCreator {
 
     createLotSampleBox(sampleInfo: SampleInformation): VisioBox {
         const labels = this.labelCreator.getLotSampleLabel(sampleInfo);
-        const boxSize = BoxCreator.getSize(labels, GraphSettings.SAMPLE_BOX_MARGIN);
+        const boxSize = BoxCreator.getSize(
+            labels,
+            GraphSettings.SAMPLE_BOX_MARGIN,
+        );
 
         return {
             type: BoxCreator.getSampleType(sampleInfo),
@@ -278,13 +364,16 @@ export class BoxCreator {
             ports: [],
             size: boxSize,
             labels: labels,
-            elements: []
+            elements: [],
         };
     }
 
     createStationSampleBox(sampleInfo: StationSampleInformation): VisioBox {
         const labels = this.labelCreator.getStationSampleLabel(sampleInfo);
-        const boxSize = BoxCreator.getSize(labels, GraphSettings.SAMPLE_BOX_MARGIN);
+        const boxSize = BoxCreator.getSize(
+            labels,
+            GraphSettings.SAMPLE_BOX_MARGIN,
+        );
 
         return {
             type: BoxCreator.getSampleType(sampleInfo),
@@ -292,21 +381,23 @@ export class BoxCreator {
             ports: [],
             size: boxSize,
             labels: labels,
-            elements: []
+            elements: [],
         };
     }
 
     createGroupBoxes(
         boxGrid: (VisioBox | null)[][],
         cellGroups: { label: string; cells: GridCell[] }[],
-        graphLayers: GraphLayer[]
+        graphLayers: GraphLayer[],
     ): VisioBox[] {
-
         const groupCreator = new GroupContainerCreator();
         return groupCreator.createGroupBoxes(
             boxGrid,
-            cellGroups.map(g => ({ label: this.labelCreator.getLabel([g.label], 0, { bold: true }), cells: g.cells })),
-            graphLayers
+            cellGroups.map((g) => ({
+                label: this.labelCreator.getLabel([g.label], 0, { bold: true }),
+                cells: g.cells,
+            })),
+            graphLayers,
         );
     }
 
@@ -316,15 +407,18 @@ export class BoxCreator {
             if (lots.length > 1) {
                 const startPosition = lots[0].relPosition;
                 lotBoxSorter.sortLotBoxes(lots);
-                BoxCreator.hAlign(lots, startPosition, GraphSettings.LOT_BOX_DISTANCE);
-                lots.forEach(
-                    lot => {
-                        lot.position = {
-                            x: station.position!.x + lot.relPosition.x,
-                            y: station.position!.y + lot.relPosition.y
-                        };
-                        this.resetSubElementAbsPositions(lot);
-                    });
+                BoxCreator.hAlign(
+                    lots,
+                    startPosition,
+                    GraphSettings.LOT_BOX_DISTANCE,
+                );
+                lots.forEach((lot) => {
+                    lot.position = {
+                        x: station.position!.x + lot.relPosition.x,
+                        y: station.position!.y + lot.relPosition.y,
+                    };
+                    this.resetSubElementAbsPositions(lot);
+                });
             }
         });
     }
@@ -333,7 +427,7 @@ export class BoxCreator {
         for (const element of box.elements) {
             element.position = {
                 x: box.position!.x + element.relPosition.x,
-                y: box.position!.y + element.relPosition.y
+                y: box.position!.y + element.relPosition.y,
             };
         }
     }

@@ -1,12 +1,15 @@
-import { DataServiceInputState, DataTable, OperationType } from '../data.model';
-import { DeliveryEditRule, RuleId, StationEditRule } from './model';
+import { DataServiceInputState, DataTable, OperationType } from "../data.model";
+import { DeliveryEditRule, RuleId, StationEditRule } from "./model";
 
-export type FilterTabId = 'filterTab';
-export type HighlightingTabId = 'highlightingTab';
-export type SettingsTabId = 'settingsTab';
-export type StationsTabId = 'stationsTab';
-export type DeliveriesTabId = 'deliveriesTab';
-export type ActiveConfigurationTabId = FilterTabId | HighlightingTabId | SettingsTabId;
+export type FilterTabId = "filterTab";
+export type HighlightingTabId = "highlightingTab";
+export type SettingsTabId = "settingsTab";
+export type StationsTabId = "stationsTab";
+export type DeliveriesTabId = "deliveriesTab";
+export type ActiveConfigurationTabId =
+    | FilterTabId
+    | HighlightingTabId
+    | SettingsTabId;
 type DeliveriesOrStationsTabId = StationsTabId | DeliveriesTabId;
 export type ActiveFilterTabId = DeliveriesOrStationsTabId;
 export type ActiveHighlightingTabId = DeliveriesOrStationsTabId;
@@ -37,7 +40,7 @@ export interface ColumnFilterSettings {
 export enum VisibilityFilterState {
     SHOW_ALL,
     SHOW_VISIBLE_ONLY,
-    SHOW_INVISIBLE_ONLY
+    SHOW_INVISIBLE_ONLY,
 }
 
 export interface FilterTableSettings {
@@ -57,7 +60,8 @@ interface FilterTableAutoSettings {
     wasAnoActiveOnLastColumnSet?: boolean;
 }
 
-export type StationFilterSettings = FilterTableSettings & FilterTableAutoSettings;
+export type StationFilterSettings = FilterTableSettings &
+    FilterTableAutoSettings;
 export type DeliveryFilterSettings = FilterTableSettings;
 
 export interface FilterSettings {
@@ -66,9 +70,9 @@ export interface FilterSettings {
 }
 
 export enum ActivityState {
-    OPENING = 'opening',
-    OPEN = 'open',
-    INACTIVE = 'inactive'
+    OPENING = "opening",
+    OPEN = "open",
+    INACTIVE = "inactive",
 }
 
 export interface FilterTableState {
@@ -99,12 +103,12 @@ export interface HighlightingRuleDeleteRequestData {
 }
 
 export enum ShowType {
-    ALL = 'Show all' as any,
-    SELECTED_ONLY = 'Show only selected' as any,
-    TRACE_ONLY = 'Show only traced' as any
+    ALL = "Show all" as any,
+    SELECTED_ONLY = "Show only selected" as any,
+    TRACE_ONLY = "Show only traced" as any,
 }
 
 export enum JunktorType {
-    AND = 'And',
-    OR = 'Or'
+    AND = "And",
+    OR = "Or",
 }

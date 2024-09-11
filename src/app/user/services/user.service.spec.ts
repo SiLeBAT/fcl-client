@@ -1,6 +1,9 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { UserService } from './user.service';
+import {
+    HttpClientTestingModule,
+    HttpTestingController,
+} from "@angular/common/http/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { UserService } from "./user.service";
 import {
     LoginCredentials,
     TokenizedUser,
@@ -11,24 +14,18 @@ import {
     NewPasswordRequestDTO,
     PasswordResetResponseDTO,
     ActivationResponseDTO,
-    TokenizedUserDTO
-} from '../models/user.model';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+    TokenizedUserDTO,
+} from "../models/user.model";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 
-describe('UserService', () => {
-
+describe("UserService", () => {
     let userService: UserService;
     let httpTestingController: HttpTestingController;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule
-            ],
-            providers: [
-                { provide: MatDialog, useValue: {} },
-                UserService
-            ]
+            imports: [HttpClientTestingModule],
+            providers: [{ provide: MatDialog, useValue: {} }, UserService],
         });
         userService = TestBed.inject(UserService);
         httpTestingController = TestBed.inject(HttpTestingController);
@@ -40,176 +37,192 @@ describe('UserService', () => {
         }
     });
 
-    it('should instantiate the user service', () => {
+    it("should instantiate the user service", () => {
         expect(userService).toBeTruthy();
     });
 
-    it('should instantiate the httpTestingController', () => {
+    it("should instantiate the httpTestingController", () => {
         expect(httpTestingController).toBeTruthy();
     });
 
-    it('should login correctly', () => {
+    it("should login correctly", () => {
         const expectedResponse: TokenizedUserDTO = {
-            email: 'test',
-            firstName: 'test',
-            lastName: 'test',
-            instituteId: 'test',
-            token: 'test',
-            gdprAgreementRequested: false
+            email: "test",
+            firstName: "test",
+            lastName: "test",
+            instituteId: "test",
+            token: "test",
+            gdprAgreementRequested: false,
         };
 
         const loginCredentials: LoginCredentials = {
-            email: 'test',
-            password: 'test'
+            email: "test",
+            password: "test",
         };
-        userService.login(loginCredentials)
+        userService
+            .login(loginCredentials)
             .subscribe((currentResponse: TokenizedUserDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne('/v1/users/login');
+        const request = httpTestingController.expectOne("/v1/users/login");
 
-        expect(request.request.method).toEqual('POST');
+        expect(request.request.method).toEqual("POST");
 
         request.flush(expectedResponse);
     });
 
-    it('should register correctly', () => {
+    it("should register correctly", () => {
         const expectedResponse: RegistrationRequestResponseDTO = {
             registerRequest: true,
-            email: 'test'
+            email: "test",
         };
 
         const registrationCredentials: RegistrationDetailsDTO = {
-            email: 'test',
-            password: 'test',
-            firstName: 'test',
-            lastName: 'test',
-            instituteId: 'test',
+            email: "test",
+            password: "test",
+            firstName: "test",
+            lastName: "test",
+            instituteId: "test",
             dataProtectionAgreed: true,
             newsRegAgreed: true,
-            newsMailAgreed: true
+            newsMailAgreed: true,
         };
 
-        userService.register(registrationCredentials)
+        userService
+            .register(registrationCredentials)
             .subscribe((currentResponse: RegistrationRequestResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne('/v1/users/registration');
+        const request = httpTestingController.expectOne(
+            "/v1/users/registration",
+        );
 
-        expect(request.request.method).toEqual('POST');
+        expect(request.request.method).toEqual("POST");
 
         request.flush(expectedResponse);
     });
 
-    it('should recover the password correctly', () => {
+    it("should recover the password correctly", () => {
         const expectedResponse: PasswordResetRequestResponseDTO = {
             passwordResetRequest: true,
-            email: 'test'
+            email: "test",
         };
 
         const resetRequest: ResetRequestDTO = {
-            email: 'test'
+            email: "test",
         };
 
-        userService.recoverPassword(resetRequest)
+        userService
+            .recoverPassword(resetRequest)
             .subscribe((currentResponse: PasswordResetRequestResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne('/v1/users/reset-password-request');
+        const request = httpTestingController.expectOne(
+            "/v1/users/reset-password-request",
+        );
 
-        expect(request.request.method).toEqual('PUT');
+        expect(request.request.method).toEqual("PUT");
 
         request.flush(expectedResponse);
     });
 
-    it('should reset the password correctly', () => {
+    it("should reset the password correctly", () => {
         const expectedResponse: PasswordResetResponseDTO = {
-            passwordReset: true
+            passwordReset: true,
         };
-        const token = 'test';
+        const token = "test";
 
         const resetRequest: NewPasswordRequestDTO = {
-            password: 'test'
+            password: "test",
         };
 
-        userService.resetPassword(resetRequest, token)
+        userService
+            .resetPassword(resetRequest, token)
             .subscribe((currentResponse: PasswordResetResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne(['/v1/users/reset-password', token].join('/'));
+        const request = httpTestingController.expectOne(
+            ["/v1/users/reset-password", token].join("/"),
+        );
 
-        expect(request.request.method).toEqual('PATCH');
+        expect(request.request.method).toEqual("PATCH");
 
         request.flush(expectedResponse);
     });
 
-    it('should activate the account correctly', () => {
+    it("should activate the account correctly", () => {
         const expectedResponse: ActivationResponseDTO = {
             activation: true,
-            username: 'test'
+            username: "test",
         };
-        const token = 'test';
+        const token = "test";
 
-        userService.activateAccount(token)
+        userService
+            .activateAccount(token)
             .subscribe((currentResponse: ActivationResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne(['/v1/users/verification', token].join('/'));
+        const request = httpTestingController.expectOne(
+            ["/v1/users/verification", token].join("/"),
+        );
 
-        expect(request.request.method).toEqual('PATCH');
+        expect(request.request.method).toEqual("PATCH");
 
         request.flush(expectedResponse);
     });
 
-    it('should admin activate the account correctly', () => {
+    it("should admin activate the account correctly", () => {
         const expectedResponse: ActivationResponseDTO = {
             activation: true,
-            username: 'test'
+            username: "test",
         };
-        const token = 'test';
+        const token = "test";
 
-        userService.adminActivateAccount(token)
+        userService
+            .adminActivateAccount(token)
             .subscribe((currentResponse: ActivationResponseDTO) => {
                 expect(currentResponse).toMatchObject(expectedResponse);
             });
 
-        const request = httpTestingController.expectOne(['/v1/users/activation', token].join('/'));
+        const request = httpTestingController.expectOne(
+            ["/v1/users/activation", token].join("/"),
+        );
 
-        expect(request.request.method).toEqual('PATCH');
+        expect(request.request.method).toEqual("PATCH");
 
         request.flush(expectedResponse);
     });
 
-    it('should logout the user', () => {
+    it("should logout the user", () => {
         const mockUser: TokenizedUser = {
-            firstName: 'test',
-            lastName: 'test',
-            email: 'test',
-            token: 'test',
-            gdprAgreementRequested: false
+            firstName: "test",
+            lastName: "test",
+            email: "test",
+            token: "test",
+            gdprAgreementRequested: false,
         };
-        localStorage.setItem('currentUser', JSON.stringify(mockUser));
+        localStorage.setItem("currentUser", JSON.stringify(mockUser));
 
-        expect(localStorage.getItem('currentUser')).not.toBeNull();
+        expect(localStorage.getItem("currentUser")).not.toBeNull();
 
         userService.logout();
-        const result = localStorage.getItem('currentUser');
+        const result = localStorage.getItem("currentUser");
 
         expect(result).toBeNull();
     });
 
-    it('should set and get the current user', () => {
+    it("should set and get the current user", () => {
         const mockUser: TokenizedUser = {
-            firstName: 'test',
-            lastName: 'test',
-            email: 'test',
-            token: 'test',
-            gdprAgreementRequested: false
+            firstName: "test",
+            lastName: "test",
+            email: "test",
+            token: "test",
+            gdprAgreementRequested: false,
         };
         userService.setCurrentUser(mockUser);
         const result = userService.getCurrentUser();

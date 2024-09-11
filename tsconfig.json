@@ -1,57 +1,45 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "downlevelIteration": true,
-    "importHelpers": true,
-    "outDir": "./dist/out-tsc",
-    "baseUrl": "src",
-    "paths": {
-      "@app/*": [
-        "app/*"
-      ],
-      "@env/*": [
-        "environments/*"
-      ]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "downlevelIteration": true,
+        "importHelpers": true,
+        "outDir": "./dist/out-tsc",
+        "baseUrl": "src",
+        "paths": {
+            "@app/*": ["app/*"],
+            "@env/*": ["environments/*"]
+        },
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        // the following compiler flag are planned to be set
+        // "alwaysStrict": true,
+        // "noImplicitAny": true,
+        // "noImplicitThis": true,
+        "strictNullChecks": true,
+        // "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        // "strictPropertyInitialization": true,
+        // "strict": true
+        // "noImplicitReturns": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "target": "ES2022",
+        "typeRoots": ["node_modules/@types", "src/typings.d.ts"],
+        "lib": ["es2019", "dom"],
+        "module": "es2020",
+        "useDefineForClassFields": false
     },
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    // the following compiler flag are planned to be set
-    // "alwaysStrict": true,
-    // "noImplicitAny": true,
-    // "noImplicitThis": true,
-    "strictNullChecks": true,
-    // "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    // "strictPropertyInitialization": true,
-    // "strict": true
-    // "noImplicitReturns": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    "target": "ES2022",
-    "typeRoots": [
-      "node_modules/@types",
-      "src/typings.d.ts"
-    ],
-    "lib": [
-      "es2019",
-      "dom"
-    ],
-    "module": "es2020",
-    "useDefineForClassFields": false
-  },
-  "angularCompilerOptions": {
-    //We are currently still using fullTemplateTypeCheck, 
-    //but should aim to use strictTemplates instead, 
-    //as fullTemplateTypeCheck is deprecated.
-    "fullTemplateTypeCheck": true,
-    //"strictTemplates": true,
-  },
-  "exclude": [
-    "**/*.spec.ts"
-  ]
+    "angularCompilerOptions": {
+        //We are currently still using fullTemplateTypeCheck,
+        //but should aim to use strictTemplates instead,
+        //as fullTemplateTypeCheck is deprecated.
+        "fullTemplateTypeCheck": true
+        //"strictTemplates": true,
+    },
+    "exclude": ["**/*.spec.ts"]
 }

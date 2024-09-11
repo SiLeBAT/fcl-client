@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class DialogService {
     confirm(message?: string): Observable<boolean> {

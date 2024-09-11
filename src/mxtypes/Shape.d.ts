@@ -1,12 +1,7 @@
-﻿
-/******************      Shape             **************/
+﻿/******************      Shape             **************/
 
-declare class mxRectangleShape {
+declare class mxRectangleShape {}
 
-}
-
-declare class mxShape {
-
-}
+declare class mxShape {}
 
 /******************      Shape  end        **************/

@@ -1,7 +1,7 @@
-import { JsonData } from './io/ext-data-model.v1';
+import { JsonData } from "./io/ext-data-model.v1";
 
 export type HighlightingRuleId = string;
-export type JsonDataExtract = Pick<JsonData, 'settings' | 'tracing'>;
+export type JsonDataExtract = Pick<JsonData, "settings" | "tracing">;
 
 interface ViewData {
     selected: boolean;
@@ -44,7 +44,7 @@ export interface RowHighlightingInfo {
     shape?: NodeShapeType | null;
 }
 
-export type TreeStatus = 'collapsed' | 'expanded';
+export type TreeStatus = "collapsed" | "expanded";
 
 export interface TableRow {
     id: string;
@@ -52,7 +52,13 @@ export interface TableRow {
     parentRow?: TableRow;
     parentRowId?: string;
     treeStatus?: TreeStatus;
-    [key: string]: string | number | boolean | RowHighlightingInfo | TableRow | undefined;
+    [key: string]:
+        | string
+        | number
+        | boolean
+        | RowHighlightingInfo
+        | TableRow
+        | undefined;
 }
 
 export interface ColumnSets {
@@ -127,7 +133,10 @@ export interface Connection {
 }
 
 export enum SampleResultType {
-    Confirmed, Negative, Probable, Unknown
+    Confirmed,
+    Negative,
+    Probable,
+    Unknown,
 }
 
 export interface SampleData {
@@ -246,14 +255,14 @@ export interface StationHighlightingRule extends HighlightingRule {
 }
 
 export enum NodeShapeType {
-    CIRCLE = 'ellipse',
-    SQUARE = 'rectangle',
-    TRIANGLE = 'triangle',
-    PENTAGON = 'pentagon',
-    HEXAGON = 'hexagon',
-    OCTAGON = 'octagon',
-    STAR = 'star',
-    DIAMOND = 'diamond'
+    CIRCLE = "ellipse",
+    SQUARE = "rectangle",
+    TRIANGLE = "triangle",
+    PENTAGON = "pentagon",
+    HEXAGON = "hexagon",
+    OCTAGON = "octagon",
+    STAR = "star",
+    DIAMOND = "diamond",
 }
 
 export enum MergeDeliveriesType {
@@ -261,7 +270,7 @@ export enum MergeDeliveriesType {
     MERGE_LOT_WISE,
     MERGE_PRODUCT_WISE,
     MERGE_LABEL_WISE,
-    NO_MERGE
+    NO_MERGE,
 }
 
 export interface LogicalCondition {
@@ -271,15 +280,15 @@ export interface LogicalCondition {
 }
 
 export enum OperationType {
-    EQUAL = '==',
-    CONTAINS = 'contains',
-    GREATER = '>',
-    NOT_EQUAL = '!=',
-    LESS = '<',
-    REGEX_EQUAL = '== (Regex)',
-    REGEX_NOT_EQUAL = '!= (Regex)',
-    REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
-    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
+    EQUAL = "==",
+    CONTAINS = "contains",
+    GREATER = ">",
+    NOT_EQUAL = "!=",
+    LESS = "<",
+    REGEX_EQUAL = "== (Regex)",
+    REGEX_NOT_EQUAL = "!= (Regex)",
+    REGEX_EQUAL_IGNORE_CASE = "== (Regex Ignore Case)",
+    REGEX_NOT_EQUAL_IGNORE_CASE = "!= (Regex Ignore Case)",
 }
 
 export interface ValueCondition {
@@ -289,8 +298,8 @@ export interface ValueCondition {
 }
 
 export enum ValueType {
-    VALUE = 'Value',
-    LOG_VALUE = 'Log Value'
+    VALUE = "Value",
+    LOG_VALUE = "Log Value",
 }
 
 export interface ElementTracingSettings {
@@ -308,7 +317,7 @@ export type DeliveryTracingSettings = ElementTracingSettings;
 export enum CrossContTraceType {
     USE_EXPLICIT_DELIVERY_DATES,
     USE_INFERED_DELIVERY_DATES_LIMITS,
-    DO_NOT_CONSIDER_DELIVERY_DATES
+    DO_NOT_CONSIDER_DELIVERY_DATES,
 }
 
 export interface GlobalTracingSettings {
@@ -328,8 +337,8 @@ export interface GroupData {
 }
 
 export enum GraphType {
-    GRAPH = 'Graph' as any,
-    GIS = 'GIS' as any
+    GRAPH = "Graph" as any,
+    GIS = "GIS" as any,
 }
 
 export enum MapType {
@@ -337,27 +346,27 @@ export enum MapType {
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporaryly
     // BLACK_AND_WHITE,
-    MAPNIK
+    MAPNIK,
 }
 
 export enum GroupMode {
-    WEIGHT_ONLY = 'Weight only' as any,
-    PRODUCT_AND_WEIGHT = 'Product name and weight' as any,
-    LOT_AND_WEIGHT = 'Lot and weight' as any
+    WEIGHT_ONLY = "Weight only" as any,
+    PRODUCT_AND_WEIGHT = "Product name and weight" as any,
+    LOT_AND_WEIGHT = "Lot and weight" as any,
 }
 
 export enum GroupType {
-    SOURCE_GROUP = 'Source group' as any,
-    TARGET_GROUP = 'Target group' as any,
-    ISOLATED_GROUP = 'Isolated subgraph' as any,
-    SIMPLE_CHAIN = 'Simple chain' as any
+    SOURCE_GROUP = "Source group" as any,
+    TARGET_GROUP = "Target group" as any,
+    ISOLATED_GROUP = "Isolated subgraph" as any,
+    SIMPLE_CHAIN = "Simple chain" as any,
 }
 
 export enum ObservedType {
-    NONE = 'none' as any,
-    FULL = 'full' as any,
-    FORWARD = 'forward' as any,
-    BACKWARD = 'backward' as any
+    NONE = "none" as any,
+    FULL = "full" as any,
+    FORWARD = "forward" as any,
+    BACKWARD = "backward" as any,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -401,7 +410,11 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
     score: number;
 }
 
-export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
+export interface StationData
+    extends StationStoreData,
+        StationTracingData,
+        ViewData,
+        GroupData {
     anonymizedName?: string;
     isMeta: boolean;
     contained: boolean;
@@ -423,10 +436,13 @@ export interface DeliveryHighlightingInfo extends HighlightingInfo {
 }
 
 export enum LinePatternType {
-    SOLID
+    SOLID,
 }
 
-export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, ViewData {
+export interface DeliveryData
+    extends DeliveryStoreData,
+        DeliveryTracingData,
+        ViewData {
     originalSource: StationId;
     originalTarget: StationId;
     highlightingInfo?: DeliveryHighlightingInfo;
@@ -438,7 +454,9 @@ export interface SelectedElements {
 }
 
 export enum DialogAlignment {
-    LEFT, CENTER, RIGHT
+    LEFT,
+    CENTER,
+    RIGHT,
 }
 
 export interface PropMaps {
@@ -500,4 +518,3 @@ export interface LegendDisplayEntry {
     deliveryColor?: Color;
     shape?: NodeShapeType;
 }
-

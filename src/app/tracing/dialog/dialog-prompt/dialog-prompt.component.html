@@ -1,11 +1,15 @@
-<h1 matDialogTitle>{{data.title}}</h1>
+<h1 matDialogTitle>{{ data.title }}</h1>
 <div mat-dialog-content>
-  <span>{{data.message}}</span>
-  <mat-form-field>
-    <input matInput placeholder="{{data.placeholder}}" [(ngModel)]="value">
-  </mat-form-field>
+    <span>{{ data.message }}</span>
+    <mat-form-field>
+        <input
+            matInput
+            placeholder="{{ data.placeholder }}"
+            [(ngModel)]="value"
+        />
+    </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="dialogRef.close(value)">OK</button>
-  <button mat-button (click)="dialogRef.close()">Cancel</button>
+    <button mat-button (click)="dialogRef.close(value)">OK</button>
+    <button mat-button (click)="dialogRef.close()">Cancel</button>
 </div>

@@ -1,10 +1,10 @@
-import { DataServiceData } from '../data.model';
-import { Utils } from './non-ui-utils';
-import * as moment from 'moment';
+import { DataServiceData } from "../data.model";
+import { Utils } from "./non-ui-utils";
+import * as moment from "moment";
 
 const MIN_DATE_NUMBER = Number.NEGATIVE_INFINITY;
 const MAX_DATE_NUMBER = Number.POSITIVE_INFINITY;
-const DATE_PARSE_STRINGS = ['YYYY-MM-DD', 'DD.MM.YYYY'];
+const DATE_PARSE_STRINGS = ["YYYY-MM-DD", "DD.MM.YYYY"];
 
 interface Range {
     min: number;
@@ -54,94 +54,144 @@ function stringDateToRange(date: string | undefined): Range {
     return createFreeDateRange();
 }
 
-function getInitialInternalDeliveryData(data: DataServiceData): InternalDeliveryData[] {
-    return data.deliveries.map(
-        d => ({
-            id: d.id,
-            expDates: {
-                outRange: stringDateToRange(d.dateOut),
-                inRange: stringDateToRange(d.dateIn)
-            },
-            forwardDels: [],
-            backwardDels: []
-        })
-    );
+function getInitialInternalDeliveryData(
+    data: DataServiceData,
+): InternalDeliveryData[] {
+    return data.deliveries.map((d) => ({
+        id: d.id,
+        expDates: {
+            outRange: stringDateToRange(d.dateOut),
+            inRange: stringDateToRange(d.dateIn),
+        },
+        forwardDels: [],
+        backwardDels: [],
+    }));
 }
 
-function markInplausibleIntraDeliveryDates(deliveries: InternalDeliveryData[]): void {
+function markInplausibleIntraDeliveryDates(
+    deliveries: InternalDeliveryData[],
+): void {
     for (const delivery of deliveries) {
-        delivery.inplausibleIn = delivery.expDates.outRange.min > delivery.expDates.inRange.max;
+        delivery.inplausibleIn =
+            delivery.expDates.outRange.min > delivery.expDates.inRange.max;
         delivery.inplausibleOut = delivery.inplausibleIn;
     }
 }
 
-function setInitialComputedFromExplicitDates(intDels: InternalDeliveryData[]): void {
+function setInitialComputedFromExplicitDates(
+    intDels: InternalDeliveryData[],
+): void {
     for (const delivery of intDels) {
         delivery.compDates = {
             outRange: {
-                min: delivery.inplausibleOut ? MIN_DATE_NUMBER : delivery.expDates.outRange.min,
+                min: delivery.inplausibleOut
+                    ? MIN_DATE_NUMBER
+                    : delivery.expDates.outRange.min,
                 max: Math.min(
-                    delivery.inplausibleOut ? MAX_DATE_NUMBER : delivery.expDates.outRange.max,
-                    delivery.inplausibleIn ? MAX_DATE_NUMBER : delivery.expDates.inRange.max
-                )
+                    delivery.inplausibleOut
+                        ? MAX_DATE_NUMBER
+                        : delivery.expDates.outRange.max,
+                    delivery.inplausibleIn
+                        ? MAX_DATE_NUMBER
+                        : delivery.expDates.inRange.max,
+                ),
             },
             inRange: {
                 min: Math.max(
-                    delivery.inplausibleOut ? MIN_DATE_NUMBER : delivery.expDates.outRange.min,
-                    delivery.inplausibleIn ? MIN_DATE_NUMBER : delivery.expDates.inRange.min
+                    delivery.inplausibleOut
+                        ? MIN_DATE_NUMBER
+                        : delivery.expDates.outRange.min,
+                    delivery.inplausibleIn
+                        ? MIN_DATE_NUMBER
+                        : delivery.expDates.inRange.min,
                 ),
-                max: delivery.inplausibleIn ? MAX_DATE_NUMBER : delivery.expDates.inRange.max
-            }
+                max: delivery.inplausibleIn
+                    ? MAX_DATE_NUMBER
+                    : delivery.expDates.inRange.max,
+            },
         };
     }
 }
 
-function addForwardDeliveries(data: DataServiceData, idToDelMap: InternalDeliveryDataMap): void {
+function addForwardDeliveries(
+    data: DataServiceData,
+    idToDelMap: InternalDeliveryDataMap,
+): void {
     for (const station of data.stations) {
         for (const connection of station.connections) {
-            idToDelMap[connection.source].forwardDels.push(idToDelMap[connection.target]);
+            idToDelMap[connection.source].forwardDels.push(
+                idToDelMap[connection.target],
+            );
         }
     }
 }
 
-function addBackwardDeliveries(data: DataServiceData, idToDelMap: InternalDeliveryDataMap): void {
+function addBackwardDeliveries(
+    data: DataServiceData,
+    idToDelMap: InternalDeliveryDataMap,
+): void {
     for (const station of data.stations) {
         for (const connection of station.connections) {
-            idToDelMap[connection.target].backwardDels.push(idToDelMap[connection.source]);
+            idToDelMap[connection.target].backwardDels.push(
+                idToDelMap[connection.source],
+            );
         }
     }
 }
 
 function resetTraversedFlag(intDels: InternalDeliveryData[]): void {
-    intDels.forEach(d => d.traversed = false);
+    intDels.forEach((d) => (d.traversed = false));
 }
 
-function propagateDateForward(delivery: InternalDeliveryData, idToDelMap: InternalDeliveryDataMap): void {
+function propagateDateForward(
+    delivery: InternalDeliveryData,
+    idToDelMap: InternalDeliveryDataMap,
+): void {
     if (!delivery.traversed) {
         delivery.traversed = true;
         for (const targetDel of delivery.forwardDels) {
-            targetDel.compDates!.outRange.min = Math.max(delivery.compDates!.inRange.min, targetDel.compDates!.outRange.min);
-            targetDel.compDates!.inRange.min = Math.max(delivery.compDates!.inRange.min, targetDel.compDates!.inRange.min);
+            targetDel.compDates!.outRange.min = Math.max(
+                delivery.compDates!.inRange.min,
+                targetDel.compDates!.outRange.min,
+            );
+            targetDel.compDates!.inRange.min = Math.max(
+                delivery.compDates!.inRange.min,
+                targetDel.compDates!.inRange.min,
+            );
             propagateDateForward(targetDel, idToDelMap);
         }
     }
 }
 
-function propagateDateBackward(delivery: InternalDeliveryData, idToDelMap: InternalDeliveryDataMap): void {
+function propagateDateBackward(
+    delivery: InternalDeliveryData,
+    idToDelMap: InternalDeliveryDataMap,
+): void {
     if (!delivery.traversed) {
         delivery.traversed = true;
         for (const sourceDel of delivery.backwardDels) {
-            sourceDel.compDates!.inRange.max = Math.min(delivery.compDates!.outRange.max, sourceDel.compDates!.inRange.max);
-            sourceDel.compDates!.outRange.max = Math.min(delivery.compDates!.outRange.max, sourceDel.compDates!.outRange.max);
+            sourceDel.compDates!.inRange.max = Math.min(
+                delivery.compDates!.outRange.max,
+                sourceDel.compDates!.inRange.max,
+            );
+            sourceDel.compDates!.outRange.max = Math.min(
+                delivery.compDates!.outRange.max,
+                sourceDel.compDates!.outRange.max,
+            );
             propagateDateBackward(sourceDel, idToDelMap);
         }
     }
 }
 
-function propagateDateLimits(intDels: InternalDeliveryData[], idToDelMap: InternalDeliveryDataMap) {
+function propagateDateLimits(
+    intDels: InternalDeliveryData[],
+    idToDelMap: InternalDeliveryDataMap,
+) {
     const descendingMinInDels = intDels
-        .filter(d => !d.inplausibleIn)
-        .sort((d1, d2) => d2.compDates!.inRange.min - d1.compDates!.inRange.min);
+        .filter((d) => !d.inplausibleIn)
+        .sort(
+            (d1, d2) => d2.compDates!.inRange.min - d1.compDates!.inRange.min,
+        );
 
     resetTraversedFlag(intDels);
     for (const delivery of descendingMinInDels) {
@@ -149,8 +199,10 @@ function propagateDateLimits(intDels: InternalDeliveryData[], idToDelMap: Intern
     }
 
     const ascendingMaxOutDels = intDels
-        .filter(d => !d.inplausibleOut)
-        .sort((d1, d2) => d1.compDates!.outRange.max - d2.compDates!.outRange.max);
+        .filter((d) => !d.inplausibleOut)
+        .sort(
+            (d1, d2) => d1.compDates!.outRange.max - d2.compDates!.outRange.max,
+        );
 
     resetTraversedFlag(intDels);
     for (const delivery of ascendingMaxOutDels) {
@@ -158,15 +210,17 @@ function propagateDateLimits(intDels: InternalDeliveryData[], idToDelMap: Intern
     }
 }
 
-function testForAndMarkInplausibleInterDeliveryDates(intDels: InternalDeliveryData[]): boolean {
+function testForAndMarkInplausibleInterDeliveryDates(
+    intDels: InternalDeliveryData[],
+): boolean {
     let inplausiblitiesFound = false;
     for (const delivery of intDels) {
         if (
             !delivery.inplausibleOut &&
-            (
-                delivery.expDates.outRange.min > delivery.compDates!.outRange.max ||
-                delivery.expDates.outRange.max < delivery.compDates!.outRange.min
-            )
+            (delivery.expDates.outRange.min >
+                delivery.compDates!.outRange.max ||
+                delivery.expDates.outRange.max <
+                    delivery.compDates!.outRange.min)
         ) {
             inplausiblitiesFound = true;
             delivery.inplausibleOut = true;
@@ -174,30 +228,32 @@ function testForAndMarkInplausibleInterDeliveryDates(intDels: InternalDeliveryDa
 
         if (
             !delivery.inplausibleIn &&
-            (
-                delivery.expDates.inRange.min > delivery.compDates!.inRange.max ||
-                delivery.expDates.inRange.max < delivery.compDates!.inRange.min
-            )
+            (delivery.expDates.inRange.min > delivery.compDates!.inRange.max ||
+                delivery.expDates.inRange.max < delivery.compDates!.inRange.min)
         ) {
             inplausiblitiesFound = true;
             delivery.inplausibleIn = true;
         }
-
     }
     return inplausiblitiesFound;
 }
 
-function deriveComputedFromExplicitDates(intDels: InternalDeliveryData[], idToDelMap: InternalDeliveryDataMap): void {
+function deriveComputedFromExplicitDates(
+    intDels: InternalDeliveryData[],
+    idToDelMap: InternalDeliveryDataMap,
+): void {
     setInitialComputedFromExplicitDates(intDels);
     propagateDateLimits(intDels, idToDelMap);
 }
 
-export function processDeliveryDates(data: DataServiceData): ProcessedDeliveryDatesSetMap {
+export function processDeliveryDates(
+    data: DataServiceData,
+): ProcessedDeliveryDatesSetMap {
     const intDels = getInitialInternalDeliveryData(data);
     const idToDelMap: InternalDeliveryDataMap = Utils.createObjectFromArray(
         intDels,
         (d: InternalDeliveryData) => d.id,
-        (d: InternalDeliveryData) => d
+        (d: InternalDeliveryData) => d,
     );
     addForwardDeliveries(data, idToDelMap);
     addBackwardDeliveries(data, idToDelMap);
@@ -213,7 +269,7 @@ export function processDeliveryDates(data: DataServiceData): ProcessedDeliveryDa
         (d: InternalDeliveryData) => d.id,
         (d: InternalDeliveryData) => ({
             expDates: d.expDates,
-            compDates: d.compDates
-        })
+            compDates: d.compDates,
+        }),
     );
 }

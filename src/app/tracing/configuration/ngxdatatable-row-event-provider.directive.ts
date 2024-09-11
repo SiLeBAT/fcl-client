@@ -1,27 +1,33 @@
-import { Directive, OnInit, AfterViewChecked, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { Subscription } from 'rxjs';
-import { TableRow } from '../data.model';
+import {
+    Directive,
+    OnInit,
+    AfterViewChecked,
+    OnDestroy,
+    EventEmitter,
+    Output,
+} from "@angular/core";
+import { DatatableComponent } from "@swimlane/ngx-datatable";
+import { Subscription } from "rxjs";
+import { TableRow } from "../data.model";
 
-const EVENT_MOUSE_LEAVE = 'mouseleave';
-const EVENT_DBLCLICK = 'dblclick';
-const EVENT_MOUSE_ENTER = 'mouseenter';
+const EVENT_MOUSE_LEAVE = "mouseleave";
+const EVENT_DBLCLICK = "dblclick";
+const EVENT_MOUSE_ENTER = "mouseenter";
 
 interface ActivateEvent {
-    type: 'mouseenter' | 'keyboard' | 'dblclick';
+    type: "mouseenter" | "keyboard" | "dblclick";
     event: any;
     row: TableRow;
     rowElement: any;
 }
 
 @Directive({
-    selector: '[fclNgxDatatableRowEventProvider]'
+    selector: "[fclNgxDatatableRowEventProvider]",
 })
-export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewChecked, OnDestroy {
-
-    constructor(
-        private host: DatatableComponent
-    ) {}
+export class NgxDatatableRowEventProviderDirective
+    implements OnInit, AfterViewChecked, OnDestroy
+{
+    constructor(private host: DatatableComponent) {}
 
     @Output() rowDblClick = new EventEmitter<TableRow>();
     @Output() rowEnter = new EventEmitter<TableRow>();
@@ -40,7 +46,7 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
             (event: ActivateEvent) => this.onCellActivate(event),
             (error: any) => {
                 throw new Error(`error on table activate: ${error}`);
-            }
+            },
         );
     }
 
@@ -79,7 +85,10 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
     }
 
     private clearRowReferences(): void {
-        this.rowElementBelowMouse!.removeEventListener(EVENT_MOUSE_LEAVE, this.rowLeaveListener);
+        this.rowElementBelowMouse!.removeEventListener(
+            EVENT_MOUSE_LEAVE,
+            this.rowLeaveListener,
+        );
         this.rowElementBelowMouse = null;
         this.rowBelowMouse = null;
     }
@@ -91,7 +100,10 @@ export class NgxDatatableRowEventProviderDirective implements OnInit, AfterViewC
         }
         this.rowBelowMouse = row;
         this.rowElementBelowMouse = rowElement;
-        this.rowElementBelowMouse.addEventListener(EVENT_MOUSE_LEAVE, this.rowLeaveListener);
+        this.rowElementBelowMouse.addEventListener(
+            EVENT_MOUSE_LEAVE,
+            this.rowLeaveListener,
+        );
         this.rowEnter.emit(row);
         this.triggerRowOverEventIfNecessary();
     }

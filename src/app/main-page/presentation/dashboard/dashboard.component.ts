@@ -1,9 +1,9 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from "@angular/core";
 
 @Component({
-    selector: 'fcl-dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss']
+    selector: "fcl-dashboard",
+    templateUrl: "./dashboard.component.html",
+    styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent {
     // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -12,5 +12,4 @@ export class DashboardComponent {
     tracingView() {
         this.onTracingView.emit();
     }
-
 }

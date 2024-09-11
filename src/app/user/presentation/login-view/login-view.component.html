@@ -1,17 +1,35 @@
 <div class="fcl-image-container">
-
-    <fcl-main-entry-header class="fcl-main-entry-header"></fcl-main-entry-header>
+    <fcl-main-entry-header
+        class="fcl-main-entry-header"
+    ></fcl-main-entry-header>
 
     <fcl-single-center-card-layout cardtitle="Login" class="fcl-login-card">
         <fcl-mat-card-body>
             <fcl-login-container></fcl-login-container>
         </fcl-mat-card-body>
         <fcl-mat-card-actions class="fcl-mat-card__actions">
-            <button mat-button [routerLink]="['/users/register']" color="primary">Register</button>
-            <button mat-button [routerLink]="['/users/recovery']" color="primary">Password forgotten?</button>
+            <button
+                mat-button
+                [routerLink]="['/users/register']"
+                color="primary"
+            >
+                Register
+            </button>
+            <button
+                mat-button
+                [routerLink]="['/users/recovery']"
+                color="primary"
+            >
+                Password forgotten?
+            </button>
         </fcl-mat-card-actions>
     </fcl-single-center-card-layout>
 
-    <fcl-maintenance-notification-view *ngIf="false" class="fcl-maintenance-notification-box"></fcl-maintenance-notification-view>
-    <fcl-funding-sources-view class="fcl-funding-box"></fcl-funding-sources-view>
+    <fcl-maintenance-notification-view
+        *ngIf="false"
+        class="fcl-maintenance-notification-box"
+    ></fcl-maintenance-notification-view>
+    <fcl-funding-sources-view
+        class="fcl-funding-box"
+    ></fcl-funding-sources-view>
 </div>

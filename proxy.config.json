@@ -1,12 +1,12 @@
 {
-  "/v1/*": {
-    "target": "http://localhost:3000",
-    "secure": false,
-    "logLevel": "debug"
-  },
-  "/api-docs/*": {
-    "target": "http://localhost:3000",
-    "secure": false,
-    "logLevel": "debug"
-  }
+    "/v1/*": {
+        "target": "http://localhost:3000",
+        "secure": false,
+        "logLevel": "debug"
+    },
+    "/api-docs/*": {
+        "target": "http://localhost:3000",
+        "secure": false,
+        "logLevel": "debug"
+    }
 }

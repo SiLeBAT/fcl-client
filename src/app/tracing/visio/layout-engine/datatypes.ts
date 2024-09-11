@@ -1,5 +1,5 @@
-import { StationData, SampleResultType } from '../../data.model';
-import { ROASettings } from '../model';
+import { StationData, SampleResultType } from "../../data.model";
+import { ROASettings } from "../model";
 
 export interface Position {
     x: number;
@@ -38,7 +38,13 @@ export interface CustomBoxShape {
 }
 
 export enum BoxType {
-    Station, Lot, StationGroup, SampleNegative, SampleConfirmed, SampleProbable, SampleUnknown
+    Station,
+    Lot,
+    StationGroup,
+    SampleNegative,
+    SampleConfirmed,
+    SampleProbable,
+    SampleUnknown,
 }
 
 export interface VisioBox {
@@ -53,7 +59,8 @@ export interface VisioBox {
 }
 
 export enum ConnectorType {
-    DeliveryForward, DeliveryBackward
+    DeliveryForward,
+    DeliveryBackward,
 }
 
 export interface VisioConnector {
@@ -84,7 +91,9 @@ export interface VisioLabel {
 export interface StationGrouper {
     areStationsInTheSameGroup(s1: StationData, s2: StationData): boolean;
     getGroupLabel(stations: StationData);
-    groupStations(stations: StationData[]): {label: string; stations: StationData[]}[];
+    groupStations(
+        stations: StationData[],
+    ): { label: string; stations: StationData[] }[];
 }
 
 export interface DeliveryInformation {
@@ -100,7 +109,7 @@ export interface InSampleInformation {
 }
 
 export interface SampleInformation {
-    props: { [key: string]: string|number|boolean };
+    props: { [key: string]: string | number | boolean };
     resultType: SampleResultType;
 }
 
@@ -110,7 +119,7 @@ export interface ProductInformation {
 }
 
 export enum StationGroupType {
-    Country
+    Country,
 }
 
 export interface VisioEngineConfiguration {
@@ -121,14 +130,13 @@ export interface VisioEngineConfiguration {
 export interface LotInformation {
     id: string; // internal id
     key: string; // this key is for sample assignment only
-    props: { [key: string]: string|number|boolean };
+    props: { [key: string]: string | number | boolean };
     samples: SampleInformation[];
     deliveries: DeliveryInformation[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StationSampleInformation extends SampleInformation {
-}
+export interface StationSampleInformation extends SampleInformation {}
 
 export interface StationInformation {
     id: string;
@@ -142,7 +150,7 @@ export interface StationInformation {
 }
 
 export interface CaseInformation {
-    props: { [key: string]: string|number|boolean };
+    props: { [key: string]: string | number | boolean };
 }
 
 export interface GroupInformation {
@@ -168,5 +176,8 @@ export interface StyleOptions {
 
 export interface FontMetrics {
     measureTextWidth(text: string[], options?: StyleOptions): number;
-    measureText(text: string[], options?: StyleOptions): {width: number; height: number};
+    measureText(
+        text: string[],
+        options?: StyleOptions,
+    ): { width: number; height: number };
 }
