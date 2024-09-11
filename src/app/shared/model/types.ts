@@ -1,3 +1,3 @@
 export interface ActivationStatus {
-    isActivated: boolean;
+  isActivated: boolean;
 }

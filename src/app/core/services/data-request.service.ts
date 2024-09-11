@@ -1,48 +1,48 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { InvalidServerInputHttpErrorResponse } from '../errors';
-import { fromErrorExtractInvalidDataErrorDTO, isErrorWithInvalidDataErrorDTO } from '../server-response-mapping';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {catchError} from 'rxjs/operators';
+import {InvalidServerInputHttpErrorResponse} from '../errors';
+import {
+  fromErrorExtractInvalidDataErrorDTO,
+  isErrorWithInvalidDataErrorDTO,
+} from '../server-response-mapping';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class DataRequestService {
+  constructor(private httpClient: HttpClient) {}
 
-    constructor(private httpClient: HttpClient) { }
+  post<T, S>(url: string, body: S): Observable<T> {
+    return this.httpClient
+      .post<T>(url, body)
+      .pipe(catchError(e => this.handleError(e)));
+  }
 
-    post<T, S>(url: string, body: S): Observable<T> {
-        return this.httpClient.post<T>(url, body)
-            .pipe(
-                catchError((e) => this.handleError(e))
-            );
-    }
+  patch<T, S>(url: string, body: S): Observable<T> {
+    return this.httpClient
+      .patch<T>(url, body)
+      .pipe(catchError(e => this.handleError(e)));
+  }
+  put<T, S>(url: string, body: S): Observable<T> {
+    return this.httpClient
+      .put<T>(url, body)
+      .pipe(catchError(e => this.handleError(e)));
+  }
 
-    patch<T, S>(url: string, body: S): Observable<T> {
-        return this.httpClient.patch<T>(url, body)
-            .pipe(
-                catchError((e) => this.handleError(e))
-            );
-    }
-    put<T, S>(url: string, body: S): Observable<T> {
-        return this.httpClient.put<T>(url, body)
-            .pipe(
-                catchError((e) => this.handleError(e))
-            );
-    }
+  get<T>(url: string): Observable<T> {
+    return this.httpClient.get<T>(url);
+  }
 
-    get<T>(url: string): Observable<T> {
-        return this.httpClient.get<T>(url);
+  private handleError(error: unknown): never {
+    if (isErrorWithInvalidDataErrorDTO(error)) {
+      const invDataErrDTO = fromErrorExtractInvalidDataErrorDTO(error);
+      throw new InvalidServerInputHttpErrorResponse(
+        invDataErrDTO.message,
+        invDataErrDTO.errors
+      );
     }
-
-    private handleError(error: unknown): never {
-        if (isErrorWithInvalidDataErrorDTO(error)) {
-            const invDataErrDTO = fromErrorExtractInvalidDataErrorDTO(error);
-            throw new InvalidServerInputHttpErrorResponse(
-                invDataErrDTO.message, invDataErrDTO.errors
-            );
-        }
-        throw error;
-    }
+    throw error;
+  }
 }

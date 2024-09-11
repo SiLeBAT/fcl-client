@@ -1,172 +1,183 @@
-import { StationData, SampleResultType } from '../../data.model';
-import { ROASettings } from '../model';
+import {StationData, SampleResultType} from '../../data.model';
+import {ROASettings} from '../model';
 
 export interface Position {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 }
 
 export interface Size {
-    width: number;
-    height: number;
+  width: number;
+  height: number;
 }
 
 export interface NodeLayoutInfo {
-    size: number;
-    position: Position;
-    extent: {
-        top: number;
-        bottom: number;
-    };
+  size: number;
+  position: Position;
+  extent: {
+    top: number;
+    bottom: number;
+  };
 }
 
 export interface VisioPort {
-    id: string;
-    normalizedPosition: Position;
+  id: string;
+  normalizedPosition: Position;
 }
 
 export interface GridCell {
-    row: number;
-    column: number;
+  row: number;
+  column: number;
 }
 
 export type Polygon = Position[];
 
 export interface CustomBoxShape {
-    outerBoundary: Polygon;
-    holes: Polygon[];
+  outerBoundary: Polygon;
+  holes: Polygon[];
 }
 
 export enum BoxType {
-    Station, Lot, StationGroup, SampleNegative, SampleConfirmed, SampleProbable, SampleUnknown
+  Station,
+  Lot,
+  StationGroup,
+  SampleNegative,
+  SampleConfirmed,
+  SampleProbable,
+  SampleUnknown,
 }
 
 export interface VisioBox {
-    type: BoxType;
-    position?: Position;
-    relPosition: Position;
-    size: Size;
-    ports: VisioPort[];
-    elements: VisioBox[];
-    shape?: CustomBoxShape;
-    labels: VisioLabel[];
+  type: BoxType;
+  position?: Position;
+  relPosition: Position;
+  size: Size;
+  ports: VisioPort[];
+  elements: VisioBox[];
+  shape?: CustomBoxShape;
+  labels: VisioLabel[];
 }
 
 export enum ConnectorType {
-    DeliveryForward, DeliveryBackward
+  DeliveryForward,
+  DeliveryBackward,
 }
 
 export interface VisioConnector {
-    id: string;
-    type: ConnectorType;
-    fromPort: string;
-    toPort: string;
+  id: string;
+  type: ConnectorType;
+  fromPort: string;
+  toPort: string;
 }
 
 export interface VisioGraph {
-    elements: VisioBox[];
-    connectors: VisioConnector[];
-    size: Size;
+  elements: VisioBox[];
+  connectors: VisioConnector[];
+  size: Size;
 }
 
 export interface GraphLayer {
-    activities: string[];
-    height: number;
+  activities: string[];
+  height: number;
 }
 
 export interface VisioLabel {
-    style?: StyleOptions;
-    text: string[];
-    relPosition: Position;
-    size: Size;
+  style?: StyleOptions;
+  text: string[];
+  relPosition: Position;
+  size: Size;
 }
 
 export interface StationGrouper {
-    areStationsInTheSameGroup(s1: StationData, s2: StationData): boolean;
-    getGroupLabel(stations: StationData);
-    groupStations(stations: StationData[]): {label: string; stations: StationData[]}[];
+  areStationsInTheSameGroup(s1: StationData, s2: StationData): boolean;
+  getGroupLabel(stations: StationData);
+  groupStations(
+    stations: StationData[]
+  ): {label: string; stations: StationData[]}[];
 }
 
 export interface DeliveryInformation {
-    forward: boolean;
-    backward: boolean;
-    date?: string;
-    target: string;
+  forward: boolean;
+  backward: boolean;
+  date?: string;
+  target: string;
 }
 
 export interface InSampleInformation {
-    lotId: string;
-    samples: SampleInformation[];
+  lotId: string;
+  samples: SampleInformation[];
 }
 
 export interface SampleInformation {
-    props: { [key: string]: string|number|boolean };
-    resultType: SampleResultType;
+  props: {[key: string]: string | number | boolean};
+  resultType: SampleResultType;
 }
 
 export interface ProductInformation {
-    id: number;
-    lots: LotInformation[];
+  id: number;
+  lots: LotInformation[];
 }
 
 export enum StationGroupType {
-    Country
+  Country,
 }
 
 export interface VisioEngineConfiguration {
-    roaSettings: ROASettings;
-    groupType: StationGroupType;
+  roaSettings: ROASettings;
+  groupType: StationGroupType;
 }
 
 export interface LotInformation {
-    id: string; // internal id
-    key: string; // this key is for sample assignment only
-    props: { [key: string]: string|number|boolean };
-    samples: SampleInformation[];
-    deliveries: DeliveryInformation[];
+  id: string; // internal id
+  key: string; // this key is for sample assignment only
+  props: {[key: string]: string | number | boolean};
+  samples: SampleInformation[];
+  deliveries: DeliveryInformation[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface StationSampleInformation extends SampleInformation {
-}
+export interface StationSampleInformation extends SampleInformation {}
 
 export interface StationInformation {
-    id: string;
-    data: StationData;
-    ctno?: string;
-    props: { [key: string]: string | number | boolean };
-    activities: string | null; // - Activities / step in the food chain
-    samples: StationSampleInformation[];
-    inSamples: InSampleInformation[];
-    products: ProductInformation[];
+  id: string;
+  data: StationData;
+  ctno?: string;
+  props: {[key: string]: string | number | boolean};
+  activities: string | null; // - Activities / step in the food chain
+  samples: StationSampleInformation[];
+  inSamples: InSampleInformation[];
+  products: ProductInformation[];
 }
 
 export interface CaseInformation {
-    props: { [key: string]: string|number|boolean };
+  props: {[key: string]: string | number | boolean};
 }
 
 export interface GroupInformation {
-    label: string;
-    stations: StationInformation[];
+  label: string;
+  stations: StationInformation[];
 }
 
 export interface InformationGraph {
-    groups: GroupInformation[];
+  groups: GroupInformation[];
 }
 export interface VisioRowHeader {
-    label: string;
+  label: string;
 }
 export interface VisioReport {
-    graph: VisioGraph;
-    graphLayers: GraphLayer[];
-    headerWidth: number;
+  graph: VisioGraph;
+  graphLayers: GraphLayer[];
+  headerWidth: number;
 }
 
 export interface StyleOptions {
-    bold?: boolean;
+  bold?: boolean;
 }
 
 export interface FontMetrics {
-    measureTextWidth(text: string[], options?: StyleOptions): number;
-    measureText(text: string[], options?: StyleOptions): {width: number; height: number};
+  measureTextWidth(text: string[], options?: StyleOptions): number;
+  measureText(
+    text: string[],
+    options?: StyleOptions
+  ): {width: number; height: number};
 }

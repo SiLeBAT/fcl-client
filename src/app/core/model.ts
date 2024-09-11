@@ -1,4 +1,4 @@
 export interface ValidationError {
-    code: string;
-    message: string;
+  code: string;
+  message: string;
 }

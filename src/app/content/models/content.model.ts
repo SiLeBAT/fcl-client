@@ -1,19 +1,19 @@
 export interface GDPRDateDTO {
-    readonly gdprDate: string;
+  readonly gdprDate: string;
 }
 
 export interface FaqEntryDTO {
-    q: string;
-    a: string;
+  q: string;
+  a: string;
 }
 
 export interface FaqSectionDTO {
-    title: string;
-    url: string;
-    faq: FaqEntryDTO[];
+  title: string;
+  url: string;
+  faq: FaqEntryDTO[];
 }
 
 export interface FaqResponseDTO {
-    topFaq: FaqEntryDTO[];
-    sections: FaqSectionDTO[];
+  topFaq: FaqEntryDTO[];
+  sections: FaqSectionDTO[];
 }

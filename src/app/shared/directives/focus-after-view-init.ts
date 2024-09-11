@@ -1,20 +1,15 @@
-import {
-    Directive, ElementRef, AfterViewInit
-} from '@angular/core';
+import {Directive, ElementRef, AfterViewInit} from '@angular/core';
 
 @Directive({
-    selector: '[fclFocusAfterViewInit]'
+  selector: '[fclFocusAfterViewInit]',
 })
 export class FocusAfterViewInitDirective implements AfterViewInit {
+  constructor(private hostElement: ElementRef) {}
 
-    constructor(
-        private hostElement: ElementRef
-    ) {}
+  // lifecycle hooks start
 
-    // lifecycle hooks start
-
-    ngAfterViewInit(): void {
-        setTimeout(() => this.hostElement.nativeElement.focus(), 0);
-    }
-    // lifecycle hooks end
+  ngAfterViewInit(): void {
+    setTimeout(() => this.hostElement.nativeElement.focus(), 0);
+  }
+  // lifecycle hooks end
 }

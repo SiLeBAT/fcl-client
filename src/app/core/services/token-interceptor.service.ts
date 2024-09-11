@@ -1,37 +1,42 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-    intercept(req: HttpRequest<any>,
-        next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    const token = this.getToken();
 
-        const token = this.getToken();
-
-        if (token) {
-            req = req.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-        }
-
-        return next.handle(req);
+    if (token) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     }
 
-    private getToken() {
-        const currentUserJson = localStorage.getItem('currentUser');
+    return next.handle(req);
+  }
 
-        if (currentUserJson) {
-            const currentUser = JSON.parse(currentUserJson);
+  private getToken() {
+    const currentUserJson = localStorage.getItem('currentUser');
 
-            if (currentUser && currentUser.token) {
-                return currentUser.token;
-            }
-        }
+    if (currentUserJson) {
+      const currentUser = JSON.parse(currentUserJson);
 
-        return null;
+      if (currentUser && currentUser.token) {
+        return currentUser.token;
+      }
     }
 
+    return null;
+  }
 }

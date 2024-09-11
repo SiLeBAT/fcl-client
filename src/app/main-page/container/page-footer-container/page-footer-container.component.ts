@@ -1,16 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import {Component, OnInit} from '@angular/core';
+import {environment} from '../../../../environments/environment';
 
 @Component({
-    selector: 'fcl-page-footer-container',
-    templateUrl: './page-footer-container.component.html',
-    styleUrls: ['./page-footer-container.component.scss']
+  selector: 'fcl-page-footer-container',
+  templateUrl: './page-footer-container.component.html',
+  styleUrls: ['./page-footer-container.component.scss'],
 })
 export class PageFooterContainerComponent implements OnInit {
-    supportContact: string;
+  supportContact: string;
 
-    ngOnInit() {
-        this.supportContact = environment.supportContact;
-    }
-
+  ngOnInit() {
+    this.supportContact = environment.supportContact;
+  }
 }

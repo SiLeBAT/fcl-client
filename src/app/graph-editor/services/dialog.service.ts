@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable, of} from 'rxjs';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class DialogService {
-    confirm(message?: string): Observable<boolean> {
-        const confirmation = window.confirm(message);
+  confirm(message?: string): Observable<boolean> {
+    const confirmation = window.confirm(message);
 
-        return of(confirmation);
-    }
+    return of(confirmation);
+  }
 }

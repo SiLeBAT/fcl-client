@@ -1,125 +1,143 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { TableColumn } from '@app/tracing/data.model';
-import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
-import { EditRule, RuleId, RuleListItem, RuleType } from '../model';
-import { removeNullishPick } from '@app/tracing/util/non-ui-utils';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import {TableColumn} from '@app/tracing/data.model';
+import {
+  HighlightingRuleDeleteRequestData,
+  PropToValuesMap,
+} from '../configuration.model';
+import {EditRule, RuleId, RuleListItem, RuleType} from '../model';
+import {removeNullishPick} from '@app/tracing/util/non-ui-utils';
 
-@Component({ template: '' })
-export class HighlightingElementViewComponent<T extends EditRule> implements OnChanges {
-    RuleType = RuleType;
+@Component({template: ''})
+export class HighlightingElementViewComponent<T extends EditRule>
+  implements OnChanges
+{
+  RuleType = RuleType;
 
-    @Input() favouriteProperties: TableColumn[] = [];
-    @Input() otherProperties: TableColumn[] = [];
-    @Input() propToValuesMap: PropToValuesMap = {};
-    @Input() editRules: T[] = [];
-    @Input() ruleListItems: RuleListItem[] = [];
+  @Input() favouriteProperties: TableColumn[] = [];
+  @Input() otherProperties: TableColumn[] = [];
+  @Input() propToValuesMap: PropToValuesMap = {};
+  @Input() editRules: T[] = [];
+  @Input() ruleListItems: RuleListItem[] = [];
 
-    @Output() ruleOrderChange = new EventEmitter<RuleId[]>();
-    @Output() toggleRuleIsDisabled = new EventEmitter<RuleId>();
-    @Output() toggleShowRuleInLegend = new EventEmitter<RuleId>();
-    @Output() deleteRule = new EventEmitter<HighlightingRuleDeleteRequestData>();
+  @Output() ruleOrderChange = new EventEmitter<RuleId[]>();
+  @Output() toggleRuleIsDisabled = new EventEmitter<RuleId>();
+  @Output() toggleShowRuleInLegend = new EventEmitter<RuleId>();
+  @Output() deleteRule = new EventEmitter<HighlightingRuleDeleteRequestData>();
 
-    @Output() newRule = new EventEmitter<RuleType>();
-    @Output() startEdit = new EventEmitter<RuleId>();
-    @Output() cancelEdit = new EventEmitter<RuleId>();
-    @Output() applyEdit = new EventEmitter<EditRule>();
-    @Output() okEdit = new EventEmitter<T>();
+  @Output() newRule = new EventEmitter<RuleType>();
+  @Output() startEdit = new EventEmitter<RuleId>();
+  @Output() cancelEdit = new EventEmitter<RuleId>();
+  @Output() applyEdit = new EventEmitter<EditRule>();
+  @Output() okEdit = new EventEmitter<T>();
 
-    @Output() addSelectionToRuleConditions = new EventEmitter<T>();
-    @Output() removeSelectionFromRuleConditions = new EventEmitter<T>();
+  @Output() addSelectionToRuleConditions = new EventEmitter<T>();
+  @Output() removeSelectionFromRuleConditions = new EventEmitter<T>();
 
-    private openState_: Record<string, boolean> = {};
-    private typeToListItemsMap_: Record<RuleType, RuleListItem[]> = {} as Record<RuleType, RuleListItem[]>;
-    private typeToEditRuleMap_: Record<RuleType, T> = {} as Record<RuleType, T>;
-    private emptyArray = [];
+  private openState_: Record<string, boolean> = {};
+  private typeToListItemsMap_: Record<RuleType, RuleListItem[]> = {} as Record<
+    RuleType,
+    RuleListItem[]
+  >;
+  private typeToEditRuleMap_: Record<RuleType, T> = {} as Record<RuleType, T>;
+  private emptyArray = [];
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.ruleListItems !== undefined) {
-            this.updateTypeToListItemsMap();
-        }
-        if (changes.editRules !== undefined) {
-            this.updateTypeToEditRuleMap();
-        }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.ruleListItems !== undefined) {
+      this.updateTypeToListItemsMap();
     }
-
-    onDeleteRule(deleteRuleRequestData: HighlightingRuleDeleteRequestData): void {
-        this.deleteRule.emit(deleteRuleRequestData);
+    if (changes.editRules !== undefined) {
+      this.updateTypeToEditRuleMap();
     }
+  }
 
-    onApplyEdit(editRule: T): void {
-        this.applyEdit.emit(editRule);
-    }
+  onDeleteRule(deleteRuleRequestData: HighlightingRuleDeleteRequestData): void {
+    this.deleteRule.emit(deleteRuleRequestData);
+  }
 
-    onCancelEdit(ruleId: RuleId): void {
-        this.cancelEdit.emit(ruleId);
-    }
+  onApplyEdit(editRule: T): void {
+    this.applyEdit.emit(editRule);
+  }
 
-    onOkEdit(editRule: T): void {
-        this.okEdit.emit(editRule);
-    }
+  onCancelEdit(ruleId: RuleId): void {
+    this.cancelEdit.emit(ruleId);
+  }
 
-    onToggleRuleIsDisabled(ruleId: RuleId): void {
-        this.toggleRuleIsDisabled.emit(ruleId);
-    }
+  onOkEdit(editRule: T): void {
+    this.okEdit.emit(editRule);
+  }
 
-    onToggleShowRuleInLegend(ruleId: RuleId): void {
-        this.toggleShowRuleInLegend.emit(ruleId);
-    }
+  onToggleRuleIsDisabled(ruleId: RuleId): void {
+    this.toggleRuleIsDisabled.emit(ruleId);
+  }
 
-    onRuleOrderChange(ruleIds: RuleId[]): void {
-        this.ruleOrderChange.emit(ruleIds);
-    }
+  onToggleShowRuleInLegend(ruleId: RuleId): void {
+    this.toggleShowRuleInLegend.emit(ruleId);
+  }
 
-    onNewRule(ruleType: RuleType): void {
-        this.newRule.emit(ruleType);
-    }
+  onRuleOrderChange(ruleIds: RuleId[]): void {
+    this.ruleOrderChange.emit(ruleIds);
+  }
 
-    onStartEdit(ruleId: RuleId): void {
-        this.startEdit.emit(ruleId);
-    }
+  onNewRule(ruleType: RuleType): void {
+    this.newRule.emit(ruleType);
+  }
 
-    onAddSelectionToRuleConditions(editRule: T): void {
-        this.addSelectionToRuleConditions.emit(editRule);
-    }
+  onStartEdit(ruleId: RuleId): void {
+    this.startEdit.emit(ruleId);
+  }
 
-    onRemoveSelectionFromRuleConditions(editRule: T): void {
-        this.removeSelectionFromRuleConditions.emit(editRule);
-    }
+  onAddSelectionToRuleConditions(editRule: T): void {
+    this.addSelectionToRuleConditions.emit(editRule);
+  }
 
-    setOpenState(ruleType: RuleType, openState: boolean): void {
-        this.openState_[ruleType] = openState;
-    }
+  onRemoveSelectionFromRuleConditions(editRule: T): void {
+    this.removeSelectionFromRuleConditions.emit(editRule);
+  }
 
-    getOpenState(ruleType: RuleType): boolean {
-        const openState = this.openState_[ruleType];
-        return openState === undefined ? false : true;
-    }
+  setOpenState(ruleType: RuleType, openState: boolean): void {
+    this.openState_[ruleType] = openState;
+  }
 
-    getListItemsOfType(ruleType: RuleType): RuleListItem[] {
-        return this.typeToListItemsMap_[ruleType] || this.emptyArray;
-    }
+  getOpenState(ruleType: RuleType): boolean {
+    const openState = this.openState_[ruleType];
+    return openState === undefined ? false : true;
+  }
 
-    getEditRuleOfType(ruleType: RuleType): T | null {
-        return this.typeToEditRuleMap_[ruleType] || null;
-    }
+  getListItemsOfType(ruleType: RuleType): RuleListItem[] {
+    return this.typeToListItemsMap_[ruleType] || this.emptyArray;
+  }
 
-    private updateTypeToListItemsMap(): void {
-        this.typeToListItemsMap_ = {} as Record<RuleType, RuleListItem[]>;
-        const ruleListItemsWithRuleType = removeNullishPick(this.ruleListItems, 'ruleType');
-        ruleListItemsWithRuleType.forEach(item => {
-            const list = this.typeToListItemsMap_[item.ruleType!];
-            if (list === undefined) {
-                this.typeToListItemsMap_[item.ruleType] = [item];
-            } else {
-                list.push(item);
-            }
-        });
-    }
+  getEditRuleOfType(ruleType: RuleType): T | null {
+    return this.typeToEditRuleMap_[ruleType] || null;
+  }
 
-    private updateTypeToEditRuleMap(): void {
-        this.typeToEditRuleMap_ = {} as Record<RuleType, T>;
-        this.editRules.forEach(rule => {
-            this.typeToEditRuleMap_[rule.type] = rule;
-        });
-    }
+  private updateTypeToListItemsMap(): void {
+    this.typeToListItemsMap_ = {} as Record<RuleType, RuleListItem[]>;
+    const ruleListItemsWithRuleType = removeNullishPick(
+      this.ruleListItems,
+      'ruleType'
+    );
+    ruleListItemsWithRuleType.forEach(item => {
+      const list = this.typeToListItemsMap_[item.ruleType!];
+      if (list === undefined) {
+        this.typeToListItemsMap_[item.ruleType] = [item];
+      } else {
+        list.push(item);
+      }
+    });
+  }
+
+  private updateTypeToEditRuleMap(): void {
+    this.typeToEditRuleMap_ = {} as Record<RuleType, T>;
+    this.editRules.forEach(rule => {
+      this.typeToEditRuleMap_[rule.type] = rule;
+    });
+  }
 }

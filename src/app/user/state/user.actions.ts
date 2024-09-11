@@ -1,38 +1,38 @@
-import { LoginCredentials, TokenizedUser } from '../models/user.model';
-import { Action } from '@ngrx/store';
-import { ActivationStatus } from '../../shared/model/types';
+import {LoginCredentials, TokenizedUser} from '../models/user.model';
+import {Action} from '@ngrx/store';
+import {ActivationStatus} from '../../shared/model/types';
 
 export enum UserActionTypes {
-    LoginUserSSA = '[User] Login User',
-    UpdateUserSOA = '[User] Update User',
-    LogoutUserMSA = '[User] Logout User',
-    LoginActivatedSOA = '[User] Login active'
+  LoginUserSSA = '[User] Login User',
+  UpdateUserSOA = '[User] Update User',
+  LogoutUserMSA = '[User] Logout User',
+  LoginActivatedSOA = '[User] Login active',
 }
 
 export class LoginUserSSA implements Action {
-    readonly type = UserActionTypes.LoginUserSSA;
+  readonly type = UserActionTypes.LoginUserSSA;
 
-    constructor(public payload: LoginCredentials) { }
+  constructor(public payload: LoginCredentials) {}
 }
 
 export class UpdateUserSOA implements Action {
-    readonly type = UserActionTypes.UpdateUserSOA;
+  readonly type = UserActionTypes.UpdateUserSOA;
 
-    constructor(public payload: { currentUser: TokenizedUser | null }) { }
+  constructor(public payload: {currentUser: TokenizedUser | null}) {}
 }
 
 export class LogoutUserMSA implements Action {
-    readonly type = UserActionTypes.LogoutUserMSA;
+  readonly type = UserActionTypes.LogoutUserMSA;
 }
 
 export class LoginActivatedSOA implements Action {
-    readonly type = UserActionTypes.LoginActivatedSOA;
+  readonly type = UserActionTypes.LoginActivatedSOA;
 
-    constructor(public payload: ActivationStatus) {}
+  constructor(public payload: ActivationStatus) {}
 }
 
 export type UserActions =
-      LoginUserSSA
-    | UpdateUserSOA
-    | LogoutUserMSA
-    | LoginActivatedSOA;
+  | LoginUserSSA
+  | UpdateUserSOA
+  | LogoutUserMSA
+  | LoginActivatedSOA;
