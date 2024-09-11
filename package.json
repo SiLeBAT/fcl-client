@@ -21,13 +21,18 @@
     "test:ci": "jest --runInBand",
     "test:coverage": "jest --coverage",
     "test:update-snapshot": "jest --updateSnapshot",
-    "lint": "npm run lint:code && npm run lint:styles",
+    "lint": "gts lint",
     "lint:code": "npx ng lint",
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "lint:styles:fix": "stylelint --fix \"src/**/*.scss\"",
     "gh-pages": "ng build --configuration=production --bh /fcl-client/",
     "cloud9": "ng serve --host $IP --port $PORT",
-    "clean": "npx rimraf public/*"
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
   },
   "private": true,
   "dependencies": {
@@ -87,7 +92,7 @@
     "@types/hammerjs": "^2.0.43",
     "@types/jest": "^28.1.8",
     "@types/lodash": "^4.14.200",
-    "@types/node": "^12.20.55",
+    "@types/node": "20.12.7",
     "@types/ol": "^5.3.8",
     "@types/seedrandom": "^3.0.7",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
@@ -107,7 +112,8 @@
     "stylelint-config-standard-scss": "^11.0.0",
     "ts-node": "^8.10.2",
     "tsutils": "^3.21.0",
-    "typescript": "4.8.4"
+    "typescript": "^5.4.3",
+    "gts": "^5.3.1"
   },
   "fclConfig": {
     "lastChange": "2019-06-12 11:25:17 +0200"
