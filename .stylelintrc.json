@@ -1,7 +1,6 @@
 {
     "extends": ["stylelint-config-standard", "stylelint-config-standard-scss"],
     "rules": {
-        "indentation": 4,
         "selector-type-no-unknown": [
             true,
             {
@@ -69,7 +68,6 @@
                 "except": ["first-nested"],
                 "ignore": ["after-comment", "stylelint-commands"]
             }
-        ],
-        "max-empty-lines": 1
+        ]
     }
 }
