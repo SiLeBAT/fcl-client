@@ -24,16 +24,14 @@ export class ContentEffects {
                 withLatestFrom(this.store$.select(fromContent.getGDPRDate)),
                 filter(([_, loaded]) => loaded === ""),
                 exhaustMap(() =>
-                    this.contentService
-                        .getGDPRDate()
-                        .pipe(
-                            map(
-                                (gdprDate: string) =>
-                                    new contentActions.UpdateGDPRDateSOA({
-                                        gdprDate: gdprDate,
-                                    }),
-                            ),
+                    this.contentService.getGDPRDate().pipe(
+                        map(
+                            (gdprDate: string) =>
+                                new contentActions.UpdateGDPRDateSOA({
+                                    gdprDate: gdprDate,
+                                }),
                         ),
+                    ),
                 ),
             ),
         );
