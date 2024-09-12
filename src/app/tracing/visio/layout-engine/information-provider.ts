@@ -130,8 +130,8 @@ export class InformationProvider {
         return stationInfo;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
     private getProps(
+        // eslint-disable-next-line @typescript-eslint/ban-types
         dataObj: {},
         properties: string[],
     ): { [key: string]: string | number | boolean } {
