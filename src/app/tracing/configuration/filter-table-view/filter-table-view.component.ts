@@ -621,10 +621,8 @@ export class FilterTableViewComponent
                 );
             }
         };
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         asyncTask.subscription = this.cycleStart$!.subscribe(
             callBack,
-            () => {},
         );
         this.asyncTasks_.push(asyncTask);
     }

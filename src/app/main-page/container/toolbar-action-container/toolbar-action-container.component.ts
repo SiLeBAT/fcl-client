@@ -173,9 +173,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                                     > = this.openConfirmDiscardChangesDialog();
 
                                     if (dialogRef !== null) {
-                                        // eslint-disable-next-line rxjs/no-nested-subscribe
                                         dialogRef
                                             .afterClosed()
+                                            // eslint-disable-next-line rxjs/no-nested-subscribe
                                             .subscribe((result) => {
                                                 if (
                                                     result ===
