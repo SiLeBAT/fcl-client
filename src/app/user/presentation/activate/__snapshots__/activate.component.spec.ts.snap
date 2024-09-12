@@ -14,7 +14,7 @@ exports[`ActivateComponent should display the app name if token is valid 1`] = `
       <p
         class="mat-subheading-1"
       >
-        You have activated your test account.
+         You have activated your test account. 
       </p>
       <p
         class="mat-subheading-1"
@@ -40,7 +40,7 @@ exports[`ActivateComponent should not display the app name if token is invalid 1
       <p
         class="mat-subheading-1"
       >
-         Your account activation failed. 
+        Your account activation failed.
       </p>
       <p
         class="mat-subheading-1"
