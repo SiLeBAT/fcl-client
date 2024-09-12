@@ -621,9 +621,7 @@ export class FilterTableViewComponent
                 );
             }
         };
-        asyncTask.subscription = this.cycleStart$!.subscribe(
-            callBack,
-        );
+        asyncTask.subscription = this.cycleStart$!.subscribe(callBack);
         this.asyncTasks_.push(asyncTask);
     }
 
