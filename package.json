@@ -107,7 +107,7 @@
     "stylelint-config-standard-scss": "^11.0.0",
     "ts-node": "^8.10.2",
     "tsutils": "^3.21.0",
-    "typescript": "4.8.4"
+    "typescript": "4.9"
   },
   "fclConfig": {
     "lastChange": "2019-06-12 11:25:17 +0200"
