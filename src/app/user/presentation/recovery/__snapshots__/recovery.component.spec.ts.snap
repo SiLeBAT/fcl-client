@@ -17,7 +17,7 @@ exports[`RecoveryComponent should render the component correctly 1`] = `
         <div
           class="mat-subheading-2"
         >
-          Please enter the email address you used to register.
+           Please enter the email address you used to register. 
         </div>
       </div>
       <div
