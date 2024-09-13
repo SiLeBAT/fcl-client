@@ -1,19 +1,27 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
-    ObservedType, StationData, GroupType,
-    GroupMode, StationId, DeliveryId
-} from '../data.model';
+    ObservedType,
+    StationData,
+    GroupType,
+    GroupMode,
+    StationId,
+    DeliveryId,
+} from "../data.model";
 import {
-    ContextMenuRequestContext, CyEdgeData, CyNodeData,
+    ContextMenuRequestContext,
+    CyEdgeData,
+    CyNodeData,
     EdgeId,
     GraphServiceData,
-    NodeId
-} from './graph.model';
-import { MenuItemData } from './menu-item-data.model';
-import { MenuItemStrings } from './menu.constants';
+    NodeId,
+} from "./graph.model";
+import { MenuItemData } from "./menu-item-data.model";
+import { MenuItemStrings } from "./menu.constants";
 import {
-    ClearInvisibilitiesMSA, ClearTraceMSA,
-    MarkElementsAsOutbreakMSA, SetStationCrossContaminationMSA,
+    ClearInvisibilitiesMSA,
+    ClearTraceMSA,
+    MarkElementsAsOutbreakMSA,
+    SetStationCrossContaminationMSA,
     SetKillContaminationMSA,
     ShowDeliveryPropertiesMSA,
     ShowStationPropertiesMSA,
@@ -21,17 +29,30 @@ import {
     MakeElementsInvisibleMSA,
     ClearOutbreaksMSA,
     ClearCrossContaminationMSA,
-    ClearKillContaminationsMSA
-} from '../tracing.actions';
-import { CollapseStationsMSA, ExpandStationsMSA, MergeStationsMSA, UncollapseStationsMSA } from '../grouping/grouping.actions';
-import { Action } from '@ngrx/store';
-import { LayoutOption } from './cy-graph/interactive-cy-graph';
-import { LayoutName } from './cy-graph/cy-graph';
+    ClearKillContaminationsMSA,
+} from "../tracing.actions";
 import {
-    LAYOUT_BREADTH_FIRST, LAYOUT_CIRCLE, LAYOUT_CONCENTRIC, LAYOUT_CONSTRAINT_BASED, LAYOUT_DAG, LAYOUT_FARM_TO_FORK,
-    LAYOUT_FRUCHTERMAN, LAYOUT_GRID, LAYOUT_RANDOM, LAYOUT_SPREAD
-} from './cy-graph/cy.constants';
-import { concat } from '../util/non-ui-utils';
+    CollapseStationsMSA,
+    ExpandStationsMSA,
+    MergeStationsMSA,
+    UncollapseStationsMSA,
+} from "../grouping/grouping.actions";
+import { Action } from "@ngrx/store";
+import { LayoutOption } from "./cy-graph/interactive-cy-graph";
+import { LayoutName } from "./cy-graph/cy-graph";
+import {
+    LAYOUT_BREADTH_FIRST,
+    LAYOUT_CIRCLE,
+    LAYOUT_CONCENTRIC,
+    LAYOUT_CONSTRAINT_BASED,
+    LAYOUT_DAG,
+    LAYOUT_FARM_TO_FORK,
+    LAYOUT_FRUCHTERMAN,
+    LAYOUT_GRID,
+    LAYOUT_RANDOM,
+    LAYOUT_SPREAD,
+} from "./cy-graph/cy.constants";
+import { concat } from "../util/non-ui-utils";
 
 interface ContextElements {
     refNodeId: NodeId | undefined;
@@ -45,77 +66,99 @@ interface ContextElements {
 }
 
 export enum LayoutActionTypes {
-    LayoutAction = '[Tracing] Layout'
+    LayoutAction = "[Tracing] Layout",
 }
 
 export class LayoutAction implements Action {
     readonly type = LayoutActionTypes.LayoutAction;
 
-    constructor(public payload: { layoutName: LayoutName; nodeIds: string[] }) { }
+    constructor(
+        public payload: { layoutName: LayoutName; nodeIds: string[] },
+    ) {}
 }
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class ContextMenuService {
-
     private static readonly LayoutManagerLabel: Record<LayoutName, string> = {
-        [LAYOUT_FRUCHTERMAN]: 'Fruchterman-Reingold',
-        [LAYOUT_FARM_TO_FORK]: 'Farm-to-fork',
-        [LAYOUT_CONSTRAINT_BASED]: 'Constraint-Based',
-        [LAYOUT_RANDOM]: 'Random',
-        [LAYOUT_GRID]: 'Grid',
-        [LAYOUT_CIRCLE]: 'Circle',
-        [LAYOUT_CONCENTRIC]: 'Concentric',
-        [LAYOUT_BREADTH_FIRST]: 'Breadth-first',
-        [LAYOUT_SPREAD]: 'Spread',
-        [LAYOUT_DAG]: 'Directed acyclic graph'
+        [LAYOUT_FRUCHTERMAN]: "Fruchterman-Reingold",
+        [LAYOUT_FARM_TO_FORK]: "Farm-to-fork",
+        [LAYOUT_CONSTRAINT_BASED]: "Constraint-Based",
+        [LAYOUT_RANDOM]: "Random",
+        [LAYOUT_GRID]: "Grid",
+        [LAYOUT_CIRCLE]: "Circle",
+        [LAYOUT_CONCENTRIC]: "Concentric",
+        [LAYOUT_BREADTH_FIRST]: "Breadth-first",
+        [LAYOUT_SPREAD]: "Spread",
+        [LAYOUT_DAG]: "Directed acyclic graph",
     };
 
-    getContextElements(context: ContextMenuRequestContext, graphData: GraphServiceData): ContextElements {
+    getContextElements(
+        context: ContextMenuRequestContext,
+        graphData: GraphServiceData,
+    ): ContextElements {
         const isContextElementSelected =
             (context.nodeId && graphData.nodeSel[context.nodeId]) ||
-            (context.edgeId && graphData.edgeSel[context.edgeId])
-            ;
+            (context.edgeId && graphData.edgeSel[context.edgeId]);
+        const nodes: CyNodeData[] = isContextElementSelected
+            ? graphData.nodeData.filter((n) => n.selected)
+            : context.nodeId
+              ? [graphData.nodeData.find((n) => n.id === context.nodeId)!]
+              : [];
 
-        const nodes: CyNodeData[] =
-            isContextElementSelected ? graphData.nodeData.filter(n => n.selected) :
-                context.nodeId ? [graphData.nodeData.find(n => n.id === context.nodeId)!] :
-                    [];
-
-        const edges: CyEdgeData[] =
-            isContextElementSelected ? graphData.edgeData.filter(e => e.selected) :
-                context.edgeId ? [graphData.edgeData.find(e => e.id === context.edgeId)!] :
-                    [];
+        const edges: CyEdgeData[] = isContextElementSelected
+            ? graphData.edgeData.filter((e) => e.selected)
+            : context.edgeId
+              ? [graphData.edgeData.find((e) => e.id === context.edgeId)!]
+              : [];
 
         return {
             refNodeId: context.nodeId,
             refEdgeId: context.edgeId,
-            refStationId: context.nodeId === undefined ? undefined :
-                graphData.idToNodeMap[context.nodeId].station.id,
+            refStationId:
+                context.nodeId === undefined
+                    ? undefined
+                    : graphData.idToNodeMap[context.nodeId].station.id,
             refDeliveryIds:
-                context.edgeId === undefined ? undefined :
-                    graphData.edgeData.find(d => d.id === context.edgeId)!.deliveries.map(d => d.id),
-            nodeIds: nodes.map(n => n.id),
-            edgeIds: edges.map(e => e.id),
-            stationIds: nodes.map(n => n.station.id),
-            deliveryIds: isContextElementSelected ?
-                concat(...edges.map(e => e.deliveries.filter(d => d.selected).map(d => d.id))) :
-                concat(...edges.map(e => e.deliveries.map(d => d.id)))
+                context.edgeId === undefined
+                    ? undefined
+                    : graphData.edgeData
+                          .find((d) => d.id === context.edgeId)!
+                          .deliveries.map((d) => d.id),
+            nodeIds: nodes.map((n) => n.id),
+            edgeIds: edges.map((e) => e.id),
+            stationIds: nodes.map((n) => n.station.id),
+            deliveryIds: isContextElementSelected
+                ? concat(
+                      ...edges.map((e) =>
+                          e.deliveries
+                              .filter((d) => d.selected)
+                              .map((d) => d.id),
+                      ),
+                  )
+                : concat(...edges.map((e) => e.deliveries.map((d) => d.id))),
         };
     }
 
     getMenuData(
         context: ContextMenuRequestContext,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null
+        layoutOptions: LayoutOption[] | null,
     ): MenuItemData[] {
         const contextElements = this.getContextElements(context, graphData);
 
-        if (contextElements.nodeIds.length === 0 && contextElements.edgeIds.length === 0) {
+        if (
+            contextElements.nodeIds.length === 0 &&
+            contextElements.edgeIds.length === 0
+        ) {
             return this.createGraphMenuData(graphData, layoutOptions);
         } else if (context.nodeId !== undefined) {
-            return this.createStationActions(contextElements, graphData, layoutOptions);
+            return this.createStationActions(
+                contextElements,
+                graphData,
+                layoutOptions,
+            );
         } else if (context.edgeId !== undefined) {
             return this.createDeliveryActions(contextElements, graphData);
         } else {
@@ -123,52 +166,80 @@ export class ContextMenuService {
         }
     }
 
-    private createLayoutMenuData(layoutOptions: LayoutOption[], nodesToLayout: NodeId[]): MenuItemData[] {
-        const layoutIsEnabled = layoutOptions.some(options => !options.disabled);
+    private createLayoutMenuData(
+        layoutOptions: LayoutOption[],
+        nodesToLayout: NodeId[],
+    ): MenuItemData[] {
+        const layoutIsEnabled = layoutOptions.some(
+            (options) => !options.disabled,
+        );
 
-        return [{
-            ...MenuItemStrings.applyLayout,
-            disabled: !layoutIsEnabled,
-            children: layoutOptions.map(options => ({
-                ...options,
-                displayName: ContextMenuService.LayoutManagerLabel[options.name],
-                action: new LayoutAction({ layoutName: options.name, nodeIds: nodesToLayout })
-            }))
-        }];
+        return [
+            {
+                ...MenuItemStrings.applyLayout,
+                disabled: !layoutIsEnabled,
+                children: layoutOptions.map((options) => ({
+                    ...options,
+                    displayName:
+                        ContextMenuService.LayoutManagerLabel[options.name],
+                    action: new LayoutAction({
+                        layoutName: options.name,
+                        nodeIds: nodesToLayout,
+                    }),
+                })),
+            },
+        ];
     }
 
-    private createGraphMenuData(graphData: GraphServiceData, layoutOptions: LayoutOption[] | null): MenuItemData[] {
-        const deliveries = graphData.deliveries.filter(d =>
-            !d.invisible &&
-            !graphData.statMap[d.source].invisible &&
-            !graphData.statMap[d.target].invisible
+    private createGraphMenuData(
+        graphData: GraphServiceData,
+        layoutOptions: LayoutOption[] | null,
+    ): MenuItemData[] {
+        const deliveries = graphData.deliveries.filter(
+            (d) =>
+                !d.invisible &&
+                !graphData.statMap[d.source].invisible &&
+                !graphData.statMap[d.target].invisible,
         );
-        const stations = graphData.stations.filter(s => !s.invisible);
+        const stations = graphData.stations.filter((s) => !s.invisible);
 
         return concat(
-            layoutOptions !== null ? this.createLayoutMenuData(layoutOptions, graphData.nodeData.map(n => n.id)) : [],
+            layoutOptions !== null
+                ? this.createLayoutMenuData(
+                      layoutOptions,
+                      graphData.nodeData.map((n) => n.id),
+                  )
+                : [],
             [
                 {
                     ...MenuItemStrings.clearTrace,
                     disabled: !(
-                        stations.some(s => s.observed !== ObservedType.NONE) ||
-                        deliveries.some(d => d.observed !== ObservedType.NONE)
+                        stations.some(
+                            (s) => s.observed !== ObservedType.NONE,
+                        ) ||
+                        deliveries.some((d) => d.observed !== ObservedType.NONE)
                     ),
-                    action: new ClearTraceMSA()
+                    action: new ClearTraceMSA(),
                 },
                 this.createClearOutbreaksMenuItemData(graphData),
                 this.createClearCrossContaminationsMenuItemData(graphData),
                 this.createClearKillContaminationsMenuItemData(graphData),
                 this.createClearInvisibilitiesMenuItemData(graphData),
                 this.createCollapseStationsMenuItem(),
-                this.createUncollapseStationsMenuItem(graphData)
-            ]
+                this.createUncollapseStationsMenuItem(graphData),
+            ],
         );
     }
 
-    private createClearOutbreaksMenuItemData(graphData: GraphServiceData): MenuItemData {
-        const someStationIsAnOutbreak = graphData.stations.some(s => s.outbreak);
-        const someDeliveryIsAnOutbreak = graphData.deliveries.some(d => d.outbreak);
+    private createClearOutbreaksMenuItemData(
+        graphData: GraphServiceData,
+    ): MenuItemData {
+        const someStationIsAnOutbreak = graphData.stations.some(
+            (s) => s.outbreak,
+        );
+        const someDeliveryIsAnOutbreak = graphData.deliveries.some(
+            (d) => d.outbreak,
+        );
         return {
             ...MenuItemStrings.clearOutbreaks,
             disabled: !(someStationIsAnOutbreak || someDeliveryIsAnOutbreak),
@@ -177,34 +248,55 @@ export class ContextMenuService {
                 {
                     ...MenuItemStrings.clearOutbreakStations,
                     disabled: !someStationIsAnOutbreak,
-                    action: new ClearOutbreaksMSA({ stations: true, deliveries: false })
+                    action: new ClearOutbreaksMSA({
+                        stations: true,
+                        deliveries: false,
+                    }),
                 },
                 {
                     ...MenuItemStrings.clearOutbreakDeliveries,
                     disabled: !someDeliveryIsAnOutbreak,
-                    action: new ClearOutbreaksMSA({ stations: false, deliveries: true })
+                    action: new ClearOutbreaksMSA({
+                        stations: false,
+                        deliveries: true,
+                    }),
                 },
                 {
                     ...MenuItemStrings.clearAllOutbreaks,
-                    action: new ClearOutbreaksMSA({ stations: true, deliveries: true })
-                }
-            ]
+                    action: new ClearOutbreaksMSA({
+                        stations: true,
+                        deliveries: true,
+                    }),
+                },
+            ],
         };
     }
 
-    private createClearCrossContaminationsMenuItemData(graphdata: GraphServiceData): MenuItemData {
-        const crossContaminationStationIds = graphdata.stations.filter(s => s.crossContamination).map(s => s.id);
+    private createClearCrossContaminationsMenuItemData(
+        graphdata: GraphServiceData,
+    ): MenuItemData {
+        const crossContaminationStationIds = graphdata.stations
+            .filter((s) => s.crossContamination)
+            .map((s) => s.id);
 
         return {
             ...MenuItemStrings.clearCrossContaminations,
-            disabled: !crossContaminationStationIds.length ?? crossContaminationStationIds.length > 0,
-            action: new ClearCrossContaminationMSA()
+            disabled:
+                !crossContaminationStationIds.length ??
+                crossContaminationStationIds.length > 0,
+            action: new ClearCrossContaminationMSA(),
         };
     }
 
-    private createClearKillContaminationsMenuItemData(graphData: GraphServiceData): MenuItemData {
-        const someStationHasKillCont = graphData.stations.some(s => s.killContamination);
-        const someDeliveryHasKillCont = graphData.deliveries.some(d => d.killContamination);
+    private createClearKillContaminationsMenuItemData(
+        graphData: GraphServiceData,
+    ): MenuItemData {
+        const someStationHasKillCont = graphData.stations.some(
+            (s) => s.killContamination,
+        );
+        const someDeliveryHasKillCont = graphData.deliveries.some(
+            (d) => d.killContamination,
+        );
         return {
             ...MenuItemStrings.clearKillContaminations,
             disabled: !(someStationHasKillCont || someDeliveryHasKillCont),
@@ -213,80 +305,126 @@ export class ContextMenuService {
                 {
                     ...MenuItemStrings.clearKillContaminationStations,
                     disabled: !someStationHasKillCont,
-                    action: new ClearKillContaminationsMSA({ stations: true, deliveries: false })
+                    action: new ClearKillContaminationsMSA({
+                        stations: true,
+                        deliveries: false,
+                    }),
                 },
                 {
                     ...MenuItemStrings.clearKillContaminationDeliveries,
                     disabled: !someDeliveryHasKillCont,
-                    action: new ClearKillContaminationsMSA({ stations: false, deliveries: true })
+                    action: new ClearKillContaminationsMSA({
+                        stations: false,
+                        deliveries: true,
+                    }),
                 },
                 {
                     ...MenuItemStrings.clearAllKillContaminations,
-                    action: new ClearKillContaminationsMSA({ stations: true, deliveries: true })
-                }
-            ]
+                    action: new ClearKillContaminationsMSA({
+                        stations: true,
+                        deliveries: true,
+                    }),
+                },
+            ],
         };
     }
 
-    private createClearInvisibilitiesMenuItemData(graphData: GraphServiceData): MenuItemData {
-        const someStationIsExpInvisible = graphData.stations.some(s => s.expInvisible);
-        const someDeliveryIsExpInvisible = graphData.deliveries.some(d => d.expInvisible);
+    private createClearInvisibilitiesMenuItemData(
+        graphData: GraphServiceData,
+    ): MenuItemData {
+        const someStationIsExpInvisible = graphData.stations.some(
+            (s) => s.expInvisible,
+        );
+        const someDeliveryIsExpInvisible = graphData.deliveries.some(
+            (d) => d.expInvisible,
+        );
         return {
             ...MenuItemStrings.clearInvisibility,
-            disabled: !(someStationIsExpInvisible || someDeliveryIsExpInvisible),
+            disabled: !(
+                someStationIsExpInvisible || someDeliveryIsExpInvisible
+            ),
 
             children: [
                 {
                     ...MenuItemStrings.clearInvisibleStations,
                     disabled: !someStationIsExpInvisible,
-                    action: new ClearInvisibilitiesMSA({ stations: true, deliveries: false })
+                    action: new ClearInvisibilitiesMSA({
+                        stations: true,
+                        deliveries: false,
+                    }),
                 },
                 {
                     ...MenuItemStrings.clearInvisibleDeliveries,
                     disabled: !someDeliveryIsExpInvisible,
-                    action: new ClearInvisibilitiesMSA({ stations: false, deliveries: true })
+                    action: new ClearInvisibilitiesMSA({
+                        stations: false,
+                        deliveries: true,
+                    }),
                 },
                 {
                     ...MenuItemStrings.clearInvisibleElements,
-                    action: new ClearInvisibilitiesMSA({ stations: true, deliveries: true })
-                }
-            ]
+                    action: new ClearInvisibilitiesMSA({
+                        stations: true,
+                        deliveries: true,
+                    }),
+                },
+            ],
         };
     }
 
-    private createUncollapseStationsMenuItem(graphData: GraphServiceData): MenuItemData {
-        const isSourceGroupAvailable = graphData.stations.some(s => s.groupType === GroupType.SOURCE_GROUP);
-        const isTargetGroupAvailable = graphData.stations.some(s => s.groupType === GroupType.TARGET_GROUP);
-        const isSimpleChainAvailable = graphData.stations.some(s => s.groupType === GroupType.SIMPLE_CHAIN);
-        const isIsolatedGroupAvailable = graphData.stations.some(s => s.groupType === GroupType.ISOLATED_GROUP);
+    private createUncollapseStationsMenuItem(
+        graphData: GraphServiceData,
+    ): MenuItemData {
+        const isSourceGroupAvailable = graphData.stations.some(
+            (s) => s.groupType === GroupType.SOURCE_GROUP,
+        );
+        const isTargetGroupAvailable = graphData.stations.some(
+            (s) => s.groupType === GroupType.TARGET_GROUP,
+        );
+        const isSimpleChainAvailable = graphData.stations.some(
+            (s) => s.groupType === GroupType.SIMPLE_CHAIN,
+        );
+        const isIsolatedGroupAvailable = graphData.stations.some(
+            (s) => s.groupType === GroupType.ISOLATED_GROUP,
+        );
         return {
             ...MenuItemStrings.uncollapseStations,
             disabled: !(
-                isSourceGroupAvailable || isTargetGroupAvailable || isSimpleChainAvailable ||
+                isSourceGroupAvailable ||
+                isTargetGroupAvailable ||
+                isSimpleChainAvailable ||
                 isIsolatedGroupAvailable
             ),
             children: [
                 {
                     ...MenuItemStrings.uncollapseSources,
-                    action: new UncollapseStationsMSA({ groupType: GroupType.SOURCE_GROUP }),
-                    disabled: !isSourceGroupAvailable
+                    action: new UncollapseStationsMSA({
+                        groupType: GroupType.SOURCE_GROUP,
+                    }),
+                    disabled: !isSourceGroupAvailable,
                 },
                 {
                     ...MenuItemStrings.uncollapseTargets,
-                    action: new UncollapseStationsMSA({ groupType: GroupType.TARGET_GROUP }),
-                    disabled: !isTargetGroupAvailable
+                    action: new UncollapseStationsMSA({
+                        groupType: GroupType.TARGET_GROUP,
+                    }),
+                    disabled: !isTargetGroupAvailable,
                 },
                 {
                     ...MenuItemStrings.uncollapseSimpleChains,
-                    action: new UncollapseStationsMSA({ groupType: GroupType.SIMPLE_CHAIN }),
-                    disabled: !isSimpleChainAvailable
+                    action: new UncollapseStationsMSA({
+                        groupType: GroupType.SIMPLE_CHAIN,
+                    }),
+                    disabled: !isSimpleChainAvailable,
                 },
                 {
                     ...MenuItemStrings.uncollapseIsolatedClouds,
-                    action: new UncollapseStationsMSA({ groupType: GroupType.ISOLATED_GROUP }),
-                    disabled: !isIsolatedGroupAvailable
-                }
-            ]
+                    action: new UncollapseStationsMSA({
+                        groupType: GroupType.ISOLATED_GROUP,
+                    }),
+                    disabled: !isIsolatedGroupAvailable,
+                },
+            ],
         };
     }
 
@@ -301,24 +439,24 @@ export class ContextMenuService {
                             ...MenuItemStrings.collapseSourcesWeightOnly,
                             action: new CollapseStationsMSA({
                                 groupType: GroupType.SOURCE_GROUP,
-                                groupMode: GroupMode.WEIGHT_ONLY
-                            })
+                                groupMode: GroupMode.WEIGHT_ONLY,
+                            }),
                         },
                         {
                             ...MenuItemStrings.collapseSourcesProductAndWeight,
                             action: new CollapseStationsMSA({
                                 groupType: GroupType.SOURCE_GROUP,
-                                groupMode: GroupMode.PRODUCT_AND_WEIGHT
-                            })
+                                groupMode: GroupMode.PRODUCT_AND_WEIGHT,
+                            }),
                         },
                         {
                             ...MenuItemStrings.collapseSourcesLotAndWeight,
                             action: new CollapseStationsMSA({
                                 groupType: GroupType.SOURCE_GROUP,
-                                groupMode: GroupMode.LOT_AND_WEIGHT
-                            })
-                        }
-                    ]
+                                groupMode: GroupMode.LOT_AND_WEIGHT,
+                            }),
+                        },
+                    ],
                 },
                 {
                     ...MenuItemStrings.collapseTargets,
@@ -327,161 +465,221 @@ export class ContextMenuService {
                             ...MenuItemStrings.collapseTargetsWeightOnly,
                             action: new CollapseStationsMSA({
                                 groupType: GroupType.TARGET_GROUP,
-                                groupMode: GroupMode.WEIGHT_ONLY
-                            })
+                                groupMode: GroupMode.WEIGHT_ONLY,
+                            }),
                         },
                         {
                             ...MenuItemStrings.collapseTargetsProductAndWeight,
                             action: new CollapseStationsMSA({
                                 groupType: GroupType.TARGET_GROUP,
-                                groupMode: GroupMode.PRODUCT_AND_WEIGHT
-                            })
+                                groupMode: GroupMode.PRODUCT_AND_WEIGHT,
+                            }),
                         },
                         {
                             ...MenuItemStrings.collapseTargetsLotAndWeight,
                             action: new CollapseStationsMSA({
                                 groupType: GroupType.TARGET_GROUP,
-                                groupMode: GroupMode.LOT_AND_WEIGHT
-                            })
-                        }
-                    ]
+                                groupMode: GroupMode.LOT_AND_WEIGHT,
+                            }),
+                        },
+                    ],
                 },
                 {
                     ...MenuItemStrings.collapseSimpleChains,
-                    action: new CollapseStationsMSA({ groupType: GroupType.SIMPLE_CHAIN })
+                    action: new CollapseStationsMSA({
+                        groupType: GroupType.SIMPLE_CHAIN,
+                    }),
                 },
                 {
                     ...MenuItemStrings.collapseIsolatedClouds,
-                    action: new CollapseStationsMSA({ groupType: GroupType.ISOLATED_GROUP })
-                }
-            ]
+                    action: new CollapseStationsMSA({
+                        groupType: GroupType.ISOLATED_GROUP,
+                    }),
+                },
+            ],
         };
     }
 
-    private createMakeInvisibleItemData(contextElements: ContextElements): MenuItemData {
+    private createMakeInvisibleItemData(
+        contextElements: ContextElements,
+    ): MenuItemData {
         return {
             ...MenuItemStrings.makeElementsInvisible,
             action: new MakeElementsInvisibleMSA({
                 stations: contextElements.stationIds,
-                deliveries: contextElements.deliveryIds
-            })
+                deliveries: contextElements.deliveryIds,
+            }),
         };
     }
 
-    private createMarkAsOutbreakItemData(contextElements: ContextElements, graphData: GraphServiceData): MenuItemData {
-        const allContextStationsAreOutbreaks = graphData.getStatById(contextElements.stationIds).every(s => s.outbreak);
-        const allContextDeliveriesAreOutbreaks = graphData.getDelById(contextElements.deliveryIds).every(d => d.outbreak);
-        const allContextElementsAreOutbreaks = allContextStationsAreOutbreaks && allContextDeliveriesAreOutbreaks;
+    private createMarkAsOutbreakItemData(
+        contextElements: ContextElements,
+        graphData: GraphServiceData,
+    ): MenuItemData {
+        const allContextStationsAreOutbreaks = graphData
+            .getStatById(contextElements.stationIds)
+            .every((s) => s.outbreak);
+        const allContextDeliveriesAreOutbreaks = graphData
+            .getDelById(contextElements.deliveryIds)
+            .every((d) => d.outbreak);
+        const allContextElementsAreOutbreaks =
+            allContextStationsAreOutbreaks && allContextDeliveriesAreOutbreaks;
         return {
-            ...(allContextElementsAreOutbreaks ? MenuItemStrings.unmarkOutbreaks : MenuItemStrings.markOutbreaks),
+            ...(allContextElementsAreOutbreaks
+                ? MenuItemStrings.unmarkOutbreaks
+                : MenuItemStrings.markOutbreaks),
             action: new MarkElementsAsOutbreakMSA({
                 stationIds: contextElements.stationIds,
                 deliveryIds: contextElements.deliveryIds,
-                outbreak: !allContextElementsAreOutbreaks
-            })
+                outbreak: !allContextElementsAreOutbreaks,
+            }),
         };
     }
 
-    private createSetKillContaminationItemData(contextElements: ContextElements, graphData: GraphServiceData): MenuItemData {
-        const allContextStationsHaveKillCon = graphData.getStatById(contextElements.stationIds).every(s => s.killContamination);
-        const allContextDeliveriesHaveKillCon = graphData.getDelById(contextElements.deliveryIds).every(d => d.killContamination);
-        const allContextElementsHaveKillCon = allContextStationsHaveKillCon && allContextDeliveriesHaveKillCon;
+    private createSetKillContaminationItemData(
+        contextElements: ContextElements,
+        graphData: GraphServiceData,
+    ): MenuItemData {
+        const allContextStationsHaveKillCon = graphData
+            .getStatById(contextElements.stationIds)
+            .every((s) => s.killContamination);
+        const allContextDeliveriesHaveKillCon = graphData
+            .getDelById(contextElements.deliveryIds)
+            .every((d) => d.killContamination);
+        const allContextElementsHaveKillCon =
+            allContextStationsHaveKillCon && allContextDeliveriesHaveKillCon;
         return {
-            ...(allContextElementsHaveKillCon ? MenuItemStrings.unsetKillContamination : MenuItemStrings.setKillContamination),
+            ...(allContextElementsHaveKillCon
+                ? MenuItemStrings.unsetKillContamination
+                : MenuItemStrings.setKillContamination),
             action: new SetKillContaminationMSA({
                 stationIds: contextElements.stationIds,
                 deliveryIds: contextElements.deliveryIds,
-                killContamination: !allContextElementsHaveKillCon
-            })
+                killContamination: !allContextElementsHaveKillCon,
+            }),
         };
     }
 
     private createStationActions(
         contextElements: ContextElements,
         graphData: GraphServiceData,
-        layoutOptions: LayoutOption[] | null
+        layoutOptions: LayoutOption[] | null,
     ): MenuItemData[] {
-
-        const contextStations: StationData[] = graphData.getStatById(contextElements.stationIds);
+        const contextStations: StationData[] = graphData.getStatById(
+            contextElements.stationIds,
+        );
         const multipleStationsSelected = contextStations.length > 1;
-        const selectedIds = contextStations.map(s => s.id);
-        const allCrossContaminationStations = contextStations.every(s => s.crossContamination);
-        const allKillContaminationStations = contextStations.every(s => s.killContamination);
-        const allMetaStations = contextStations.every(s => s.contains && s.contains.length > 0);
+        const selectedIds = contextStations.map((s) => s.id);
+        const allCrossContaminationStations = contextStations.every(
+            (s) => s.crossContamination,
+        );
+        const allKillContaminationStations = contextStations.every(
+            (s) => s.killContamination,
+        );
+        const allMetaStations = contextStations.every(
+            (s) => s.contains && s.contains.length > 0,
+        );
 
         return concat(
-            layoutOptions !== null ? this.createLayoutMenuData(layoutOptions, contextElements.nodeIds) : [],
+            layoutOptions !== null
+                ? this.createLayoutMenuData(
+                      layoutOptions,
+                      contextElements.nodeIds,
+                  )
+                : [],
             [
                 {
                     ...MenuItemStrings.showProperties,
                     disabled: multipleStationsSelected,
-                    action: new ShowStationPropertiesMSA({ stationId: selectedIds[0] })
+                    action: new ShowStationPropertiesMSA({
+                        stationId: selectedIds[0],
+                    }),
                 },
                 this.createTraceMenuItemData(contextElements),
                 this.createMarkAsOutbreakItemData(contextElements, graphData),
                 {
-                    ...(allCrossContaminationStations ?
-                        MenuItemStrings.unsetStationCrossContamination :
-                        MenuItemStrings.setStationCrossContamination),
+                    ...(allCrossContaminationStations
+                        ? MenuItemStrings.unsetStationCrossContamination
+                        : MenuItemStrings.setStationCrossContamination),
                     action: new SetStationCrossContaminationMSA({
                         stationIds: selectedIds,
-                        crossContamination: !allCrossContaminationStations
-                    })
+                        crossContamination: !allCrossContaminationStations,
+                    }),
                 },
-                this.createSetKillContaminationItemData(contextElements, graphData),
+                this.createSetKillContaminationItemData(
+                    contextElements,
+                    graphData,
+                ),
                 this.createMakeInvisibleItemData(contextElements),
                 {
                     ...MenuItemStrings.mergeStations,
                     disabled: !multipleStationsSelected,
-                    action: new MergeStationsMSA({ memberIds: selectedIds })
+                    action: new MergeStationsMSA({ memberIds: selectedIds }),
                 },
                 {
                     ...MenuItemStrings.expandStations,
                     disabled: !allMetaStations,
-                    action: new ExpandStationsMSA({ stationIds: selectedIds })
-                }
-            ]
+                    action: new ExpandStationsMSA({ stationIds: selectedIds }),
+                },
+            ],
         );
     }
 
-    private createDeliveryActions(contextElements: ContextElements, graphData: GraphServiceData): MenuItemData[] {
+    private createDeliveryActions(
+        contextElements: ContextElements,
+        graphData: GraphServiceData,
+    ): MenuItemData[] {
         return [
             {
                 ...MenuItemStrings.showProperties,
-                action: new ShowDeliveryPropertiesMSA({ deliveryIds: contextElements.deliveryIds })
+                action: new ShowDeliveryPropertiesMSA({
+                    deliveryIds: contextElements.deliveryIds,
+                }),
             },
             {
-                ...this.createTraceMenuItemData(contextElements)
+                ...this.createTraceMenuItemData(contextElements),
             },
             this.createMarkAsOutbreakItemData(contextElements, graphData),
             this.createSetKillContaminationItemData(contextElements, graphData),
-            this.createMakeInvisibleItemData(contextElements)
+            this.createMakeInvisibleItemData(contextElements),
         ];
     }
 
-    private createTraceMenuItemData(contextElements: ContextElements): MenuItemData {
-        const getAction = (type: ObservedType) => new ShowElementsTraceMSA({
-            stationIds: contextElements.stationIds,
-            deliveryIds: contextElements.deliveryIds,
-            observedType: type
-        });
+    private createTraceMenuItemData(
+        contextElements: ContextElements,
+    ): MenuItemData {
+        const getAction = (type: ObservedType) =>
+            new ShowElementsTraceMSA({
+                stationIds: contextElements.stationIds,
+                deliveryIds: contextElements.deliveryIds,
+                observedType: type,
+            });
 
         return {
             ...MenuItemStrings.setTrace,
             children: [
                 {
                     ...MenuItemStrings.forwardTrace,
-                    action: getAction === null ? undefined : getAction(ObservedType.FORWARD)
+                    action:
+                        getAction === null
+                            ? undefined
+                            : getAction(ObservedType.FORWARD),
                 },
                 {
                     ...MenuItemStrings.backwardTrace,
-                    action: getAction === null ? undefined : getAction(ObservedType.BACKWARD)
+                    action:
+                        getAction === null
+                            ? undefined
+                            : getAction(ObservedType.BACKWARD),
                 },
                 {
                     ...MenuItemStrings.fullTrace,
-                    action: getAction === null ? undefined : getAction(ObservedType.FULL)
-                }
-            ]
+                    action:
+                        getAction === null
+                            ? undefined
+                            : getAction(ObservedType.FULL),
+                },
+            ],
         };
     }
 }

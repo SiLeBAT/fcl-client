@@ -1,22 +1,57 @@
 import {
-    Component, ViewEncapsulation, Input, ViewChild, TemplateRef, Output, EventEmitter,
-    OnChanges, SimpleChanges, DoCheck, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, OnDestroy, AfterViewInit
-} from '@angular/core';
+    Component,
+    ViewEncapsulation,
+    Input,
+    ViewChild,
+    TemplateRef,
+    Output,
+    EventEmitter,
+    OnChanges,
+    SimpleChanges,
+    DoCheck,
+    OnInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    ElementRef,
+    OnDestroy,
+    AfterViewInit,
+} from "@angular/core";
 import {
-    DatatableComponent, SelectionType,
+    DatatableComponent,
+    SelectionType,
     TableColumn as NgxTableColumn,
-    SortPropDir
-} from '@swimlane/ngx-datatable';
-import { DataTable, TableRow, TableColumn, Size, TreeStatus } from '@app/tracing/data.model';
-import { createVisibilityRowFilter, VisibilityRowFilter, OneTermForEachColumnRowFilter, createOneTermForEachColumnRowFilter } from '../filter-provider';
-import { filterTableRows } from '../shared';
-import * as _ from 'lodash';
-import { VisibilityFilterState, ColumnFilterSettings, ActivityState } from '../configuration.model';
-import { concat, removeNullish, Utils } from '@app/tracing/util/non-ui-utils';
-import { Observable, Subscription } from 'rxjs';
-import { applySorting, highlightingComparator, sortRows, visibilityComparator } from './filter-table-utils';
+    SortPropDir,
+} from "@swimlane/ngx-datatable";
+import {
+    DataTable,
+    TableRow,
+    TableColumn,
+    Size,
+    TreeStatus,
+} from "@app/tracing/data.model";
+import {
+    createVisibilityRowFilter,
+    VisibilityRowFilter,
+    OneTermForEachColumnRowFilter,
+    createOneTermForEachColumnRowFilter,
+} from "../filter-provider";
+import { filterTableRows } from "../shared";
+import * as _ from "lodash";
+import {
+    VisibilityFilterState,
+    ColumnFilterSettings,
+    ActivityState,
+} from "../configuration.model";
+import { concat, removeNullish, Utils } from "@app/tracing/util/non-ui-utils";
+import { Observable, Subscription } from "rxjs";
+import {
+    applySorting,
+    highlightingComparator,
+    sortRows,
+    visibilityComparator,
+} from "./filter-table-utils";
 
-const CLASS_DATATABLE_FOOTER = 'datatable-footer';
+const CLASS_DATATABLE_FOOTER = "datatable-footer";
 
 type TableSelectionEvent = TableRow[] | { selected: TableRow[] } | Event;
 interface AsyncTask {
@@ -46,15 +81,16 @@ export interface TableFilterChange {
 }
 
 @Component({
-    selector: 'fcl-filter-table-view',
-    templateUrl: './filter-table-view.component.html',
-    styleUrls: ['./filter-table-view.component.scss'],
+    selector: "fcl-filter-table-view",
+    templateUrl: "./filter-table-view.component.html",
+    styleUrls: ["./filter-table-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
-export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnDestroy, AfterViewInit {
-
+export class FilterTableViewComponent
+    implements OnChanges, DoCheck, OnInit, OnDestroy, AfterViewInit
+{
     get visibilityFilterState(): VisibilityFilterState | undefined {
         return this.inputData?.visibilityFilter;
     }
@@ -62,7 +98,6 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     get sorts(): SortPropDir[] {
         return this.sorts_;
     }
-
 
     get tableRows(): TableRow[] {
         return this.tableRows_;
@@ -78,12 +113,18 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     get showVisibleElements(): boolean {
         const visState = this.inputData?.visibilityFilter;
-        return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_VISIBLE_ONLY;
+        return (
+            visState === VisibilityFilterState.SHOW_ALL ||
+            visState === VisibilityFilterState.SHOW_VISIBLE_ONLY
+        );
     }
 
     get showInvisibleElements(): boolean {
         const visState = this.inputData?.visibilityFilter;
-        return visState === VisibilityFilterState.SHOW_ALL || visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY;
+        return (
+            visState === VisibilityFilterState.SHOW_ALL ||
+            visState === VisibilityFilterState.SHOW_INVISIBLE_ONLY
+        );
     }
 
     get selectedRows(): TableRow[] {
@@ -112,17 +153,21 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     @Output() filterChange = new EventEmitter<TableFilterChange>();
     @Output() rowSelectionChange = new EventEmitter<string[]>();
 
-    @ViewChild('buttonColTpl', { static: true }) buttonColTpl: TemplateRef<any>;
-    @ViewChild('patternColTpl', { static: true }) patternColTpl: TemplateRef<any>;
-    @ViewChild('visibilityColTpl', { static: true }) visibilityColTpl: TemplateRef<any>;
-    @ViewChild('treeColTpl', { static: true }) treeColTpl: TemplateRef<any>;
-    @ViewChild('dataColTpl', { static: true }) dataColTpl: TemplateRef<any>;
-    @ViewChild('patternRowTpl', { static: true }) patternRowTpl: TemplateRef<any>;
-    @ViewChild('visibilityRowTpl', { static: true }) visibilityRowTpl: TemplateRef<any>;
-    @ViewChild('dataRowTpl', { static: true }) dataRowTpl: TemplateRef<any>;
-    @ViewChild('treeRowTpl', { static: true }) treeRowTpl: TemplateRef<any>;
-    @ViewChild('table', { static: true }) table: DatatableComponent;
-    @ViewChild('tableWrapper', { static: true }) tableWrapper: any;
+    @ViewChild("buttonColTpl", { static: true }) buttonColTpl: TemplateRef<any>;
+    @ViewChild("patternColTpl", { static: true })
+    patternColTpl: TemplateRef<any>;
+    @ViewChild("visibilityColTpl", { static: true })
+    visibilityColTpl: TemplateRef<any>;
+    @ViewChild("treeColTpl", { static: true }) treeColTpl: TemplateRef<any>;
+    @ViewChild("dataColTpl", { static: true }) dataColTpl: TemplateRef<any>;
+    @ViewChild("patternRowTpl", { static: true })
+    patternRowTpl: TemplateRef<any>;
+    @ViewChild("visibilityRowTpl", { static: true })
+    visibilityRowTpl: TemplateRef<any>;
+    @ViewChild("dataRowTpl", { static: true }) dataRowTpl: TemplateRef<any>;
+    @ViewChild("treeRowTpl", { static: true }) treeRowTpl: TemplateRef<any>;
+    @ViewChild("table", { static: true }) table: DatatableComponent;
+    @ViewChild("tableWrapper", { static: true }) tableWrapper: any;
 
     private dtFooterElement: HTMLElement | null = null;
 
@@ -151,14 +196,17 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     constructor(
         private hostElement: ElementRef,
-        private cdRef: ChangeDetectorRef
-    ) { }
+        private cdRef: ChangeDetectorRef,
+    ) {}
 
     // lifecycle hooks start
 
     // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.inputData !== undefined && changes.inputData.currentValue !== null) {
+        if (
+            changes.inputData !== undefined &&
+            changes.inputData.currentValue !== null
+        ) {
             this.processDataIsRequired_ = true;
         }
     }
@@ -166,37 +214,56 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngOnInit(): void {
         if (this.activityState$ !== undefined && this.activityState$ !== null) {
-            this.subscriptions_.push(this.activityState$.subscribe(
-                (activityState) => this.setActivityState(activityState),
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => { }
-            ));
+            this.subscriptions_.push(
+                this.activityState$.subscribe(
+                    (activityState) => this.setActivityState(activityState),
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    () => {},
+                ),
+            );
         }
-        if (this.checkTableSize$ !== undefined && this.checkTableSize$ !== null) {
-            this.subscriptions_.push(this.checkTableSize$.subscribe(
-                () => this.checkTableSizeOnStableWrapperSize({ stopOnOpen: false }),
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => { }
-            ));
+        if (
+            this.checkTableSize$ !== undefined &&
+            this.checkTableSize$ !== null
+        ) {
+            this.subscriptions_.push(
+                this.checkTableSize$.subscribe(
+                    () =>
+                        this.checkTableSizeOnStableWrapperSize({
+                            stopOnOpen: false,
+                        }),
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    () => {},
+                ),
+            );
         }
-        if (this.updateTableSize$ !== undefined && this.updateTableSize$ !== null) {
-            this.subscriptions_.push(this.updateTableSize$.subscribe(
-                () => {
-                    this.tableSizeUpdateIsRequired_ = true;
-                    if (this.isActive) {
-                        this.cdRef.markForCheck();
-                    }
-                },
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                () => { }
-            ));
+        if (
+            this.updateTableSize$ !== undefined &&
+            this.updateTableSize$ !== null
+        ) {
+            this.subscriptions_.push(
+                this.updateTableSize$.subscribe(
+                    () => {
+                        this.tableSizeUpdateIsRequired_ = true;
+                        if (this.isActive) {
+                            this.cdRef.markForCheck();
+                        }
+                    },
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    () => {},
+                ),
+            );
         }
     }
 
     // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngDoCheck(): void {
         if (this.isActive) {
-            if (this.processDataIsRequired_ || this.tableSizeUpdateIsRequired_ || this.tableSizeCheckIsRequired_) {
+            if (
+                this.processDataIsRequired_ ||
+                this.tableSizeUpdateIsRequired_ ||
+                this.tableSizeCheckIsRequired_
+            ) {
                 // processing of the input data is delayed
                 // to avoid input changes of the ngx-datatable
                 // otherwise the ngx-datatable would adapt its size to non positive dimensions
@@ -205,7 +272,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                     if (!this.waitingForPositiveWrapperSize) {
                         this.waitForPosWrapperSize(true);
 
-                        if (!this.positiveWrapperSizeDetectedSinceLastActivation) {
+                        if (
+                            !this.positiveWrapperSizeDetectedSinceLastActivation
+                        ) {
                             return;
                         }
                     } else {
@@ -215,7 +284,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                     return;
                 }
             }
-            if (this.tableSizeCheckIsRequired_ && !(this.processDataIsRequired_ || this.tableSizeUpdateIsRequired_)) {
+            if (
+                this.tableSizeCheckIsRequired_ &&
+                !(
+                    this.processDataIsRequired_ ||
+                    this.tableSizeUpdateIsRequired_
+                )
+            ) {
                 this.syncTableSizeCheck();
             }
 
@@ -239,12 +314,15 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngAfterViewInit(): void {
-        this.dtFooterElement = this.hostElement.nativeElement.getElementsByClassName(CLASS_DATATABLE_FOOTER)[0];
+        this.dtFooterElement =
+            this.hostElement.nativeElement.getElementsByClassName(
+                CLASS_DATATABLE_FOOTER,
+            )[0];
     }
 
     // eslint-disable-next-line @angular-eslint/no-conflicting-lifecycle
     ngOnDestroy(): void {
-        this.subscriptions_.forEach(s => s.unsubscribe());
+        this.subscriptions_.forEach((s) => s.unsubscribe());
         this.subscriptions_ = [];
         this.clearAsyncJobs();
         this.dtFooterElement = null;
@@ -258,8 +336,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.selectColumns.emit();
     }
 
-
-    isTableRowObject(toInspect: TableSelectionEvent): toInspect is { selected: TableRow[] } {
+    isTableRowObject(
+        toInspect: TableSelectionEvent,
+    ): toInspect is { selected: TableRow[] } {
         return (toInspect as { selected: TableRow[] }).selected !== undefined;
     }
 
@@ -281,12 +360,17 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             return;
         }
 
-        const selectedRowIds = rows.map(row => row.id);
+        const selectedRowIds = rows.map((row) => row.id);
 
         // dblclick events trigger 3 selection change events
         // only the first one changes (usually) the selection
         // we check here the selection change to emit only true selection changes
-        if (this.areSelectedRowIdsEqual(selectedRowIds, this.processedInput__.selectedRowIds)) {
+        if (
+            this.areSelectedRowIdsEqual(
+                selectedRowIds,
+                this.processedInput__.selectedRowIds,
+            )
+        ) {
             // early return in case of no selection change
             return;
         }
@@ -305,15 +389,22 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             this.columnFilterTexts_[prop] = filterTerm;
             this.filterChange.emit({
                 columnFilters: this.inputData.columnOrder
-                    .map(p => ({ filterProp: p, filterTerm: this.columnFilterTexts_[p] }))
-                    .filter(f => f.filterTerm)
+                    .map((p) => ({
+                        filterProp: p,
+                        filterTerm: this.columnFilterTexts_[p],
+                    }))
+                    .filter((f) => f.filterTerm),
             });
         }
     }
 
     onToggleVisibilityFilterState(): void {
         if (this.visibilityFilterState !== undefined) {
-            this.filterChange.emit({ visibilityFilter: this.getToggledVisibilityState(this.visibilityFilterState) });
+            this.filterChange.emit({
+                visibilityFilter: this.getToggledVisibilityState(
+                    this.visibilityFilterState,
+                ),
+            });
         }
     }
 
@@ -328,17 +419,21 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     onTreeAction(row: TableRow) {
-        if (row.treeStatus === 'collapsed') {
-            row.treeStatus = 'expanded';
+        if (row.treeStatus === "collapsed") {
+            row.treeStatus = "expanded";
         } else {
-            row.treeStatus = 'collapsed';
+            row.treeStatus = "collapsed";
         }
         this.treeStatusCache[row.id] = row.treeStatus;
 
         this.updateTableSize();
     }
 
-    onColumnReorder(e: { column: any; newValue: number; prevValue: number }): void {
+    onColumnReorder(e: {
+        column: any;
+        newValue: number;
+        prevValue: number;
+    }): void {
         if (!this.isColumnOrderOk()) {
             this.fixColumnOrder();
         }
@@ -351,7 +446,6 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         prevValue: SortPropDir | undefined;
         newValue: SortPropDir;
     }): void {
-
         this.sorts_ = event.sorts;
         // setting the rows triggers the resorting
         // the sort order needed to be set before
@@ -359,10 +453,13 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             this.sortedUnfilteredRows_,
             this.sortedUnfilteredRows_,
             this.columns_,
-            this.sorts_
+            this.sorts_,
         );
 
-        const newTableRows = applySorting(this.sortedUnfilteredRows_, this.tableRows_);
+        const newTableRows = applySorting(
+            this.sortedUnfilteredRows_,
+            this.tableRows_,
+        );
         this.tableRows_ = newTableRows;
     }
 
@@ -370,11 +467,14 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private addMissingRowParents(rows: TableRow[]): void {
         const availableRows: Record<string, boolean> = {};
-        rows.forEach(row => availableRows[row.id] = true);
+        rows.forEach((row) => (availableRows[row.id] = true));
 
         const missingParents: TableRow[] = [];
         for (const row of rows) {
-            if (row.parentRow !== undefined && !availableRows[row.parentRowId!]) {
+            if (
+                row.parentRow !== undefined &&
+                !availableRows[row.parentRowId!]
+            ) {
                 missingParents.push(row.parentRow);
                 availableRows[row.parentRowId!] = true;
             }
@@ -406,9 +506,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private stopTask(id: string): void {
-        const obsoleteTasks = this.asyncTasks_.filter(t => t.id === id);
+        const obsoleteTasks = this.asyncTasks_.filter((t) => t.id === id);
         if (obsoleteTasks.length > 0) {
-            obsoleteTasks.forEach(task => {
+            obsoleteTasks.forEach((task) => {
                 if (task.handle !== undefined) {
                     clearTimeout(task.handle);
                     delete task.handle;
@@ -417,7 +517,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                     task.subscription.unsubscribe();
                     delete task.subscription;
                 }
-                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== task);
+                this.asyncTasks_ = this.asyncTasks_.filter((t) => t !== task);
             });
         }
     }
@@ -430,11 +530,14 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
     }
 
-    private waitForPosWrapperSizeBasedOnTimeout(stopOnOpen: boolean, maxTimeSpan?: number): void {
+    private waitForPosWrapperSizeBasedOnTimeout(
+        stopOnOpen: boolean,
+        maxTimeSpan?: number,
+    ): void {
         this.waitingForPositiveWrapperSize = true;
         const asyncTask: Partial<AsyncTask> = {
-            id: 'waitForPosWrapperSizeBasedOnTimeout',
-            created: (new Date()).valueOf()
+            id: "waitForPosWrapperSizeBasedOnTimeout",
+            created: new Date().valueOf(),
         };
         this.stopTask(asyncTask.id!);
 
@@ -456,11 +559,15 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 this.activityState_ !== ActivityState.INACTIVE &&
                 (!stopOnOpen || this.activityState_ === ActivityState.OPENING)
             ) {
-                const curTime = (new Date()).valueOf();
-                if (endTime !== Number.POSITIVE_INFINITY || endTime >= curTime) {
+                const curTime = new Date().valueOf();
+                if (
+                    endTime !== Number.POSITIVE_INFINITY ||
+                    endTime >= curTime
+                ) {
                     const wrapperSize = this.getWrapperSize();
                     if (wrapperSize.width > 0) {
-                        this.positiveWrapperSizeDetectedSinceLastActivation = true;
+                        this.positiveWrapperSizeDetectedSinceLastActivation =
+                            true;
                     } else {
                         asyncTask.handle = setTimeout(callBack, timeoutSpan);
                     }
@@ -468,7 +575,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
             if (asyncTask.handle === undefined) {
                 this.waitingForPositiveWrapperSize = false;
-                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
+                this.asyncTasks_ = this.asyncTasks_.filter(
+                    (t) => t !== asyncTask,
+                );
             }
         };
         asyncTask.handle = setTimeout(callBack, 0);
@@ -478,8 +587,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     private waitForPosWrapperSizeBasedOnTick(stopOnOpen: boolean): void {
         this.waitingForPositiveWrapperSize = true;
         const asyncTask: AsyncTask = {
-            id: 'waitForPosWrapperSizeBasedOnTick',
-            created: (new Date()).valueOf()
+            id: "waitForPosWrapperSizeBasedOnTick",
+            created: new Date().valueOf(),
         };
         this.stopTask(asyncTask.id!);
 
@@ -507,11 +616,12 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 this.waitingForPositiveWrapperSize = false;
                 asyncTask.subscription!.unsubscribe();
                 delete asyncTask.subscription;
-                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
+                this.asyncTasks_ = this.asyncTasks_.filter(
+                    (t) => t !== asyncTask,
+                );
             }
         };
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        asyncTask.subscription = this.cycleStart$!.subscribe(callBack, () => { });
+        asyncTask.subscription = this.cycleStart$!.subscribe(callBack);
         this.asyncTasks_.push(asyncTask);
     }
 
@@ -522,8 +632,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         minStableTimeSpan?: number;
     }): void {
         const asyncTask: AsyncTask = {
-            id: 'checkTableSizeOnStableWrapperSize',
-            created: (new Date()).valueOf()
+            id: "checkTableSizeOnStableWrapperSize",
+            created: new Date().valueOf(),
         };
         this.stopTask(asyncTask.id!);
 
@@ -532,7 +642,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         const maxTimeSpan = options.maxTimeSpan ?? Number.POSITIVE_INFINITY;
         const endTime = asyncTask.created + maxTimeSpan;
         const timeoutSpan = options.timeoutSpan ?? 50;
-        const minStableTimeSpan = options.minStableTimeSpan ?? 2.5 * timeoutSpan;
+        const minStableTimeSpan =
+            options.minStableTimeSpan ?? 2.5 * timeoutSpan;
         let lastUnmatchTime = asyncTask.created;
 
         const callBack = () => {
@@ -541,11 +652,17 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                 this.activityState_ !== ActivityState.INACTIVE &&
                 (!stopOnOpen || this.activityState_ === ActivityState.OPENING)
             ) {
-                const curTime = (new Date()).valueOf();
-                if (endTime !== Number.POSITIVE_INFINITY || endTime >= curTime) {
+                const curTime = new Date().valueOf();
+                if (
+                    endTime !== Number.POSITIVE_INFINITY ||
+                    endTime >= curTime
+                ) {
                     const wrapperSize = this.getWrapperSize();
 
-                    if (refWrapperSize === null || this.isSizeDifferent(wrapperSize, refWrapperSize, 1)) {
+                    if (
+                        refWrapperSize === null ||
+                        this.isSizeDifferent(wrapperSize, refWrapperSize, 1)
+                    ) {
                         refWrapperSize = wrapperSize;
                         lastUnmatchTime = curTime;
                         asyncTask.handle = setTimeout(callBack, timeoutSpan);
@@ -556,7 +673,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             }
             if (oldHandle === asyncTask.handle) {
                 this.syncTableSizeCheck();
-                this.asyncTasks_ = this.asyncTasks_.filter(t => t !== asyncTask);
+                this.asyncTasks_ = this.asyncTasks_.filter(
+                    (t) => t !== asyncTask,
+                );
             }
         };
         asyncTask.handle = setTimeout(callBack, timeoutSpan);
@@ -573,25 +692,34 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             if (state === ActivityState.INACTIVE) {
                 this.clearAsyncJobs();
                 this.waitingForPositiveWrapperSize = false;
-            } else if (this.tableSizeUpdateIsRequired_ || this.processDataIsRequired_) {
+            } else if (
+                this.tableSizeUpdateIsRequired_ ||
+                this.processDataIsRequired_
+            ) {
                 this.cdRef.markForCheck();
-            } else if (state === ActivityState.OPEN || this.tableSizeCheckIsRequired_) {
+            } else if (
+                state === ActivityState.OPEN ||
+                this.tableSizeCheckIsRequired_
+            ) {
                 this.syncTableSizeCheck();
             }
         }
     }
 
-    private areSelectedRowIdsEqual(rowIds1: string[], rowIds2: string[]): boolean {
+    private areSelectedRowIdsEqual(
+        rowIds1: string[],
+        rowIds2: string[],
+    ): boolean {
         if (rowIds1.length !== rowIds2.length) {
             return false;
         } else {
             const idSet1 = new Set<string>(rowIds1);
-            return rowIds2.every(id => idSet1.has(id));
+            return rowIds2.every((id) => idSet1.has(id));
         }
     }
 
     getColumnFilterText(columnId: string): string {
-        return this.columnFilterTexts_[columnId] || '';
+        return this.columnFilterTexts_[columnId] || "";
     }
 
     rowIdentity(row: TableRow): string {
@@ -599,7 +727,7 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private clearAsyncJobs(): void {
-        this.asyncTasks_.forEach(asyncTask => {
+        this.asyncTasks_.forEach((asyncTask) => {
             if (asyncTask.handle !== undefined) {
                 clearTimeout(asyncTask.handle);
                 delete asyncTask.handle;
@@ -635,7 +763,9 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
     }
 
-    private getToggledVisibilityState(state: VisibilityFilterState): VisibilityFilterState {
+    private getToggledVisibilityState(
+        state: VisibilityFilterState,
+    ): VisibilityFilterState {
         switch (state) {
             case VisibilityFilterState.SHOW_ALL:
                 return VisibilityFilterState.SHOW_VISIBLE_ONLY;
@@ -655,17 +785,23 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private updateColumns(): void {
-        const didModelChange = this.inputData!.dataTable.modelFlag !== this.processedInput__?.dataTable?.modelFlag;
+        const didModelChange =
+            this.inputData!.dataTable.modelFlag !==
+            this.processedInput__?.dataTable?.modelFlag;
         const newDataColumns = this.inputData!.dataTable.columns;
-        const newColumnOrder = this.inputData!.columnOrder.filter(prop => this.inputData!.dataTable.columns.some(c => c.id === prop));
+        const newColumnOrder = this.inputData!.columnOrder.filter((prop) =>
+            this.inputData!.dataTable.columns.some((c) => c.id === prop),
+        );
 
         if (didModelChange) {
             // new model was loaded
             this.columns_ = concat(
                 this.createFixedColumns(),
                 removeNullish(
-                    newColumnOrder.map(p => this.createNgxTableDataColumn(newDataColumns, p))
-                )
+                    newColumnOrder.map((p) =>
+                        this.createNgxTableDataColumn(newDataColumns, p),
+                    ),
+                ),
             );
             this.treeStatusCache = {};
             this.sorts_ = [];
@@ -674,21 +810,31 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             const currentColumnOrder = this.getColumnOrdering();
             const columnVisChanged =
                 currentColumnOrder.length !== newColumnOrder.length ||
-                !currentColumnOrder.every(p => newColumnOrder.includes(p));
+                !currentColumnOrder.every((p) => newColumnOrder.includes(p));
 
             if (columnVisChanged) {
                 this.columns_ = concat(
                     this.createFixedColumns(),
                     removeNullish(
-                        newColumnOrder.map(p => {
-                            const cols = this.columns_.filter(c => c.prop === p);
-                            return cols.length === 1 ? cols[0] : this.createNgxTableDataColumn(newDataColumns, p);
-                        })
-                    )
+                        newColumnOrder.map((p) => {
+                            const cols = this.columns_.filter(
+                                (c) => c.prop === p,
+                            );
+                            return cols.length === 1
+                                ? cols[0]
+                                : this.createNgxTableDataColumn(
+                                      newDataColumns,
+                                      p,
+                                  );
+                        }),
+                    ),
                 );
                 this.adaptSortOrderToAvailableColumns();
             } else {
-                const orderChanged = !_.isEqual(currentColumnOrder, newColumnOrder);
+                const orderChanged = !_.isEqual(
+                    currentColumnOrder,
+                    newColumnOrder,
+                );
                 if (orderChanged) {
                     this.applyColumnOrder(newColumnOrder);
                 }
@@ -707,7 +853,8 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             for (const row of rows) {
                 if (row.parentRowId === undefined) {
                     if (hasVisibleMember[row.id]) {
-                        row.treeStatus = this.treeStatusCache[row.id] || 'collapsed';
+                        row.treeStatus =
+                            this.treeStatusCache[row.id] || "collapsed";
                     } else {
                         row.treeStatus = undefined;
                     }
@@ -717,27 +864,39 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
     }
 
     private adaptSortOrderToAvailableColumns(): void {
-        const availableSortProps = this.sorts_.filter(s => this.columns_.some(c => c.prop === s.prop));
+        const availableSortProps = this.sorts_.filter((s) =>
+            this.columns_.some((c) => c.prop === s.prop),
+        );
         if (availableSortProps.length !== this.sorts_.length) {
-            this.sorts_ = this.sorts_.filter(s => availableSortProps.includes(s));
+            this.sorts_ = this.sorts_.filter((s) =>
+                availableSortProps.includes(s),
+            );
         }
     }
 
     private updateRows(): void {
-        const oldPrefilteredRows = this.processedInput__ ? this.processedInput__.filteredRows : undefined;
+        const oldPrefilteredRows = this.processedInput__
+            ? this.processedInput__.filteredRows
+            : undefined;
         const newPrefilteredRows = this.inputData!.filteredRows;
 
         const filterMap: FilterMap = {
-            visibilityFilter: (
-                !this.processedInput__ || this.processedInput__.visibilityFilter !== this.inputData!.visibilityFilter ?
-                    createVisibilityRowFilter(this.inputData!.visibilityFilter) :
-                    this.filterMap_!.visibilityFilter
-            ),
-            columnFilter: (
-                !this.processedInput__ || this.processedInput__.columnFilters !== this.inputData!.columnFilters ?
-                    createOneTermForEachColumnRowFilter(this.inputData!.columnFilters) :
-                    this.filterMap_!.columnFilter
-            )
+            visibilityFilter:
+                !this.processedInput__ ||
+                this.processedInput__.visibilityFilter !==
+                    this.inputData!.visibilityFilter
+                    ? createVisibilityRowFilter(
+                          this.inputData!.visibilityFilter,
+                      )
+                    : this.filterMap_!.visibilityFilter,
+            columnFilter:
+                !this.processedInput__ ||
+                this.processedInput__.columnFilters !==
+                    this.inputData!.columnFilters
+                    ? createOneTermForEachColumnRowFilter(
+                          this.inputData!.columnFilters,
+                      )
+                    : this.filterMap_!.columnFilter,
         };
 
         if (
@@ -748,10 +907,15 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
             const tableWasEmptyBefore = this.tableRows_.length === 0;
             this.filterMap_ = filterMap;
 
-            const unsortedFilteredRows = filterTableRows(newPrefilteredRows, [filterMap.visibilityFilter, filterMap.columnFilter]);
+            const unsortedFilteredRows = filterTableRows(newPrefilteredRows, [
+                filterMap.visibilityFilter,
+                filterMap.columnFilter,
+            ]);
             this.addMissingRowParents(unsortedFilteredRows);
 
-            const oldUnfilteredRows = this.processedInput__ ? this.processedInput__.dataTable.rows : undefined;
+            const oldUnfilteredRows = this.processedInput__
+                ? this.processedInput__.dataTable.rows
+                : undefined;
             const newUnfilteredRows = this.inputData!.dataTable.rows;
 
             if (oldUnfilteredRows !== newUnfilteredRows) {
@@ -761,11 +925,14 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
                     newUnfilteredRows,
                     this.sortedUnfilteredRows_,
                     this.columns_,
-                    this.sorts_
+                    this.sorts_,
                 );
             }
 
-            const sortedFilteredRows = applySorting(this.sortedUnfilteredRows_, unsortedFilteredRows);
+            const sortedFilteredRows = applySorting(
+                this.sortedUnfilteredRows_,
+                unsortedFilteredRows,
+            );
             this.tableRows_ = sortedFilteredRows;
 
             this.updateColumnFilterTexts();
@@ -784,10 +951,15 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         }
         if (
             this.processedInput__ === null ||
-            this.processedInput__.selectedRowIds !== this.inputData!.selectedRowIds
+            this.processedInput__.selectedRowIds !==
+                this.inputData!.selectedRowIds
         ) {
-            const idToIsSelectedMap = Utils.createSimpleStringSet(this.inputData!.selectedRowIds);
-            this.selectedRows_ = this.tableRows_.filter(row => idToIsSelectedMap[row.id]);
+            const idToIsSelectedMap = Utils.createSimpleStringSet(
+                this.inputData!.selectedRowIds,
+            );
+            this.selectedRows_ = this.tableRows_.filter(
+                (row) => idToIsSelectedMap[row.id],
+            );
         }
     }
 
@@ -799,66 +971,67 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         this.columnFilterTexts_ = newTexts;
     }
 
-    private createNgxTableDataColumn(dataColumns: TableColumn[], prop: string): NgxTableColumn | undefined {
-        const dataColumn = dataColumns.find(c => c.id === prop);
-        const ngxColumn = (
-            !dataColumn ?
-                undefined :
-                ({
-                    name: dataColumn.name,
-                    prop: dataColumn.id,
-                    resizeable: true,
-                    draggable: true,
-                    headerTemplate: this.dataColTpl,
-                    cellClass: this.getCellClass,
-                    cellTemplate: this.dataRowTpl
-                })
-        );
+    private createNgxTableDataColumn(
+        dataColumns: TableColumn[],
+        prop: string,
+    ): NgxTableColumn | undefined {
+        const dataColumn = dataColumns.find((c) => c.id === prop);
+        const ngxColumn = !dataColumn
+            ? undefined
+            : {
+                  name: dataColumn.name,
+                  prop: dataColumn.id,
+                  resizeable: true,
+                  draggable: true,
+                  headerTemplate: this.dataColTpl,
+                  cellClass: this.getCellClass,
+                  cellTemplate: this.dataRowTpl,
+              };
         return ngxColumn;
     }
 
     private createButtonColumn(): NgxTableColumn {
         return {
-            name: ' ',
-            prop: 'moreCol',
+            name: " ",
+            prop: "moreCol",
             resizeable: false,
             draggable: false,
             width: 20,
             headerTemplate: this.buttonColTpl,
             cellTemplate: this.treeRowTpl,
-            headerClass: 'fcl-more-columns-header-cell',
-            cellClass: 'fcl-more-column-row-cell',
-            frozenLeft: true
+            headerClass: "fcl-more-columns-header-cell",
+            cellClass: "fcl-more-column-row-cell",
+            frozenLeft: true,
         };
     }
 
     private createSymbolColumn(): NgxTableColumn {
         return {
-            name: ' ',
-            prop: 'patternCol',
+            name: " ",
+            prop: "patternCol",
             resizeable: false,
             draggable: false,
             width: 30,
             headerTemplate: this.patternColTpl,
             cellTemplate: this.patternRowTpl,
-            headerClass: 'fcl-visibility-column-header-cell',
-            cellClass: 'fcl-visibility-column-row-cell',
-            comparator: highlightingComparator.bind(this)
+            headerClass: "fcl-visibility-column-header-cell",
+            cellClass: "fcl-visibility-column-row-cell",
+            comparator: highlightingComparator.bind(this),
         };
     }
 
     private createVisibilityColumn(): NgxTableColumn {
         return {
-            name: ' ',
-            prop: 'visCol',
+            name: " ",
+            prop: "visCol",
             resizeable: false,
             draggable: false,
             width: 30,
             headerTemplate: this.visibilityColTpl,
             cellTemplate: this.visibilityRowTpl,
-            headerClass: 'fcl-visibility-column-header-cell',
-            cellClass: 'fcl-visibility-column-row-cell',
-            comparator: visibilityComparator
+            headerClass: "fcl-visibility-column-header-cell",
+            cellClass: "fcl-visibility-column-row-cell",
+            comparator: visibilityComparator,
         };
     }
 
@@ -866,14 +1039,22 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         return [
             this.createButtonColumn(),
             this.createSymbolColumn(),
-            this.createVisibilityColumn()
+            this.createVisibilityColumn(),
         ];
     }
 
-    private getCellClass({ row }: { row: TableRow; column: NgxTableColumn; value: any }): any {
+    private getCellClass({
+        row,
+    }: {
+        row: TableRow;
+        column: NgxTableColumn;
+        value: any;
+    }): any {
         return {
-            'fcl-row-cell-invisible': row['invisible'] || (row.parentRow !== undefined && row.parentRow['invisible']),
-            'fcl-font-style-italic': row.parentRowId !== undefined
+            "fcl-row-cell-invisible":
+                row["invisible"] ||
+                (row.parentRow !== undefined && row.parentRow["invisible"]),
+            "fcl-font-style-italic": row.parentRowId !== undefined,
         };
     }
 
@@ -883,14 +1064,17 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
 
     private getColumnOrdering(): string[] {
         // eslint-disable-next-line no-underscore-dangle
-        return this.table._internalColumns.filter(c => c.draggable).map(c => c.prop + '');
+        return this.table._internalColumns
+            .filter((c) => c.draggable)
+            .map((c) => c.prop + "");
     }
 
     private isColumnOrderOk(): boolean {
         // checks whether all draggable columns are behind undraggable columns
         // eslint-disable-next-line no-underscore-dangle
         return this.table._internalColumns.every(
-            (value, index, arr) => index === 0 || !arr[index - 1].draggable || value.draggable
+            (value, index, arr) =>
+                index === 0 || !arr[index - 1].draggable || value.draggable,
         );
     }
 
@@ -899,26 +1083,30 @@ export class FilterTableViewComponent implements OnChanges, DoCheck, OnInit, OnD
         // eslint-disable-next-line no-underscore-dangle
         this.table._internalColumns = concat(
             // eslint-disable-next-line no-underscore-dangle
-            this.table._internalColumns.filter(c => !c.draggable),
+            this.table._internalColumns.filter((c) => !c.draggable),
             // eslint-disable-next-line no-underscore-dangle
-            this.table._internalColumns.filter(c => c.draggable)
+            this.table._internalColumns.filter((c) => c.draggable),
         );
     }
 
     private applyColumnOrder(newColumnOrder: string[]) {
         // eslint-disable-next-line no-underscore-dangle
-        const fixedColumns = this.table._internalColumns.filter(c => !c.draggable);
+        const fixedColumns = this.table._internalColumns.filter(
+            (c) => !c.draggable,
+        );
         // eslint-disable-next-line no-underscore-dangle
-        const filterColumns = this.table._internalColumns.filter(c => c.draggable);
+        const filterColumns = this.table._internalColumns.filter(
+            (c) => c.draggable,
+        );
         const orderedFilterColumns = removeNullish(
-            newColumnOrder.map(p => filterColumns.find(c => c.prop === p))
+            newColumnOrder.map((p) => filterColumns.find((c) => c.prop === p)),
         );
 
         // eslint-disable-next-line no-underscore-dangle
         this.table._internalColumns = concat(
             fixedColumns,
             orderedFilterColumns,
-            filterColumns.filter(c => !orderedFilterColumns.includes(c))
+            filterColumns.filter((c) => !orderedFilterColumns.includes(c)),
         );
     }
 }

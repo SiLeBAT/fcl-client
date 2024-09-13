@@ -1,11 +1,16 @@
 <div mat-menu *ngIf="currentUser; else anonymous">
-    <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Show Account Options">
+    <button
+        mat-icon-button
+        [matMenuTriggerFor]="menu"
+        matTooltip="Show Account Options"
+    >
         <mat-icon>account_circle</mat-icon>
     </button>
     <mat-menu #menu="matMenu" [overlapTrigger]="false">
         <div class="fcl-user-info">
             <mat-icon class="fcl-icon">face</mat-icon>
-            <span class="fcl-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span
+            <span class="fcl-name"
+                >{{ currentUser.firstName }} {{ currentUser.lastName }}</span
             ><br />
             <span class="fcl-email">{{ currentUser.email }}</span>
         </div>

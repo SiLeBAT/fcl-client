@@ -1,5 +1,5 @@
-import { Vertex } from './data-structures';
-import * as _ from 'lodash';
+import { Vertex } from "./data-structures";
+import * as _ from "lodash";
 
 export interface LayeredComponent {
     layerIndices: number[];
@@ -9,9 +9,8 @@ export interface LayeredComponent {
 function traverseComponent(
     vertex: Vertex,
     marked: boolean[],
-    members: Vertex[]
+    members: Vertex[],
 ) {
-
     if (!marked[vertex.index]) {
         marked[vertex.index] = true;
         members.push(vertex);
@@ -25,12 +24,13 @@ function traverseComponent(
 }
 
 export function splitUnconnectedComponents(
-    layers: Vertex[][]
+    layers: Vertex[][],
 ): LayeredComponent[] {
-
     const result: LayeredComponent[] = [];
     const marked: boolean[] = [];
-    const maxLayerSize: number = Math.max(...layers.map(layer => layer.length));
+    const maxLayerSize: number = Math.max(
+        ...layers.map((layer) => layer.length),
+    );
     for (const layer of layers) {
         for (const vertex of layer) {
             marked[vertex.index] = false;
@@ -43,12 +43,16 @@ export function splitUnconnectedComponents(
 
                 traverseComponent(vertex, marked, componentMembers);
 
-                const layerIndices: number[] = _.uniq(componentMembers.map(v => v.layerIndex));
-                layerIndices.sort((a: number, b: number) => a < b ? -1 : (b < a ? 1 : 0));
+                const layerIndices: number[] = _.uniq(
+                    componentMembers.map((v) => v.layerIndex),
+                );
+                layerIndices.sort((a: number, b: number) =>
+                    a < b ? -1 : b < a ? 1 : 0,
+                );
 
                 const layeredComponent: LayeredComponent = {
                     layerIndices: layerIndices,
-                    layers: []
+                    layers: [],
                 };
 
                 const oldIndexToNewIndexMap: number[] = [];
@@ -58,7 +62,9 @@ export function splitUnconnectedComponents(
                 }
 
                 for (const memberVertex of componentMembers) {
-                    layeredComponent.layers[oldIndexToNewIndexMap[memberVertex.layerIndex]].push(memberVertex);
+                    layeredComponent.layers[
+                        oldIndexToNewIndexMap[memberVertex.layerIndex]
+                    ].push(memberVertex);
                 }
 
                 result.push(layeredComponent);
@@ -70,7 +76,8 @@ export function splitUnconnectedComponents(
                     iLayer >= 0;
                     iLayer--
                 ) {
-                    const componentLayer: Vertex[] = layeredComponent.layers[iLayer];
+                    const componentLayer: Vertex[] =
+                        layeredComponent.layers[iLayer];
                     for (
                         let iVertex: number = componentLayer.length - 1;
                         iVertex >= 0;
@@ -87,29 +94,40 @@ export function splitUnconnectedComponents(
 }
 
 function getMinComponentScale(layeredComponents: LayeredComponent[]): number {
-    return Math.min(...layeredComponents.map(c => Math.min(...c.layers.map(layer => layer[0].layerScale))));
+    return Math.min(
+        ...layeredComponents.map((c) =>
+            Math.min(...c.layers.map((layer) => layer[0].layerScale)),
+        ),
+    );
 }
 
 function getComponentSize(layeredComponent: LayeredComponent): number {
-    const lastVertices = layeredComponent.layers.map(layer => layer[layer.length - 1]);
-    return Math.max(...lastVertices.map(vertex => vertex.y + vertex.topPadding * vertex.layerScale));
+    const lastVertices = layeredComponent.layers.map(
+        (layer) => layer[layer.length - 1],
+    );
+    return Math.max(
+        ...lastVertices.map(
+            (vertex) => vertex.y + vertex.topPadding * vertex.layerScale,
+        ),
+    );
 }
 
 export function mergeUnconnectedComponents(
     layeredComponents: LayeredComponent[],
-    unscaledComponentDistance: number
+    unscaledComponentDistance: number,
 ): Vertex[][] {
-
-    const componentDistance = unscaledComponentDistance * getMinComponentScale(layeredComponents);
+    const componentDistance =
+        unscaledComponentDistance * getMinComponentScale(layeredComponents);
     const result: Vertex[][] = [];
-    const nLayers: number = Math.max(
-        ...layeredComponents.map(
-            layeredComponent =>
-                layeredComponent.layerIndices[
-                    layeredComponent.layerIndices.length - 1
-                ]
-        )
-    ) + 1;
+    const nLayers: number =
+        Math.max(
+            ...layeredComponents.map(
+                (layeredComponent) =>
+                    layeredComponent.layerIndices[
+                        layeredComponent.layerIndices.length - 1
+                    ],
+            ),
+        ) + 1;
 
     for (let iLayer: number = nLayers - 1; iLayer >= 0; iLayer--) {
         result[iLayer] = [];
@@ -125,7 +143,8 @@ export function mergeUnconnectedComponents(
             iLayer >= 0;
             iLayer--
         ) {
-            const layer: Vertex[] = result[layeredComponent.layerIndices[iLayer]];
+            const layer: Vertex[] =
+                result[layeredComponent.layerIndices[iLayer]];
 
             for (const vertex of layeredComponent.layers[iLayer]) {
                 layer.push(vertex);

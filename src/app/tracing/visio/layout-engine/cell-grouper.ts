@@ -1,7 +1,7 @@
-import { GridCell } from './datatypes';
-import { StationData } from '../../data.model';
-import { Utils } from './../../util/non-ui-utils';
-import { CellGapCloser } from './cellgap-closer';
+import { GridCell } from "./datatypes";
+import { StationData } from "../../data.model";
+import { Utils } from "./../../util/non-ui-utils";
+import { CellGapCloser } from "./cellgap-closer";
 
 interface CellGroup {
     label: string;
@@ -14,7 +14,6 @@ interface StationGroup {
 }
 
 class CellGrouper {
-
     private rowCount: number;
     private columnCount: number;
     private visGroupAssignment: number[][];
@@ -22,22 +21,32 @@ class CellGrouper {
     private stationGroups: StationGroup[];
     private visGroupToLogicalGroupIndex: number[];
 
-    groupCells(stationGrid: (StationData | null)[][], stationGroups: StationGroup[]): CellGroup[] {
-
+    groupCells(
+        stationGrid: (StationData | null)[][],
+        stationGroups: StationGroup[],
+    ): CellGroup[] {
         this.rowCount = stationGrid.length;
         this.columnCount = stationGrid.length === 0 ? 0 : stationGrid[0].length;
         this.stationGroups = stationGroups;
         this.initStationToGroupMap(stationGrid);
 
-        this.visGroupAssignment = Utils.getMatrix(this.rowCount, this.columnCount, -1);
+        this.visGroupAssignment = Utils.getMatrix(
+            this.rowCount,
+            this.columnCount,
+            -1,
+        );
 
         let groupIndex = -1;
 
         for (let r = 0; r < this.rowCount; r++) {
             for (let c = 0; c < this.columnCount; c++) {
-                if (this.logGroupAssignment[r][c] >= 0 && this.visGroupAssignment[r][c] < 0) {
+                if (
+                    this.logGroupAssignment[r][c] >= 0 &&
+                    this.visGroupAssignment[r][c] < 0
+                ) {
                     this.visGroupAssignment[r][c] = ++groupIndex;
-                    this.visGroupToLogicalGroupIndex[groupIndex] = this.logGroupAssignment[r][c];
+                    this.visGroupToLogicalGroupIndex[groupIndex] =
+                        this.logGroupAssignment[r][c];
                     this.extendGroup(r, c);
                 }
             }
@@ -49,76 +58,107 @@ class CellGrouper {
     private initStationToGroupMap(stationGrid: (StationData | null)[][]): void {
         const stationToLogicalGroupIndexMap = new Map<StationData, number>();
         this.visGroupToLogicalGroupIndex = [];
-        this.stationGroups.forEach((value, index) => value.stations.forEach(s => stationToLogicalGroupIndexMap.set(s, index)));
+        this.stationGroups.forEach((value, index) =>
+            value.stations.forEach((s) =>
+                stationToLogicalGroupIndexMap.set(s, index),
+            ),
+        );
 
-        this.logGroupAssignment = Utils.getMatrix(this.rowCount, this.columnCount, -1);
+        this.logGroupAssignment = Utils.getMatrix(
+            this.rowCount,
+            this.columnCount,
+            -1,
+        );
         for (let r = 0; r < this.rowCount; r++) {
             for (let c = 0; c < this.columnCount; c++) {
                 const station = stationGrid[r][c];
                 if (station !== null) {
-                    this.logGroupAssignment[r][c] = stationToLogicalGroupIndexMap.get(station)!;
+                    this.logGroupAssignment[r][c] =
+                        stationToLogicalGroupIndexMap.get(station)!;
                 }
             }
         }
-        this.logGroupAssignment = CellGapCloser.closeGaps(this.logGroupAssignment);
+        this.logGroupAssignment = CellGapCloser.closeGaps(
+            this.logGroupAssignment,
+        );
     }
 
     private extendGroup(row: number, column: number) {
-        if (row > 0 &&
+        if (
+            row > 0 &&
             this.visGroupAssignment[row - 1][column] < 0 &&
-            this.logGroupAssignment[row - 1][column] === this.logGroupAssignment[row][column]) {
-            this.visGroupAssignment[row - 1][column] = this.visGroupAssignment[row][column];
+            this.logGroupAssignment[row - 1][column] ===
+                this.logGroupAssignment[row][column]
+        ) {
+            this.visGroupAssignment[row - 1][column] =
+                this.visGroupAssignment[row][column];
             this.extendGroup(row - 1, column);
         }
-        if (column < this.columnCount - 1 &&
+        if (
+            column < this.columnCount - 1 &&
             this.visGroupAssignment[row][column + 1] < 0 &&
-            this.logGroupAssignment[row][column + 1] === this.logGroupAssignment[row][column]) {
-            this.visGroupAssignment[row][column + 1] = this.visGroupAssignment[row][column];
+            this.logGroupAssignment[row][column + 1] ===
+                this.logGroupAssignment[row][column]
+        ) {
+            this.visGroupAssignment[row][column + 1] =
+                this.visGroupAssignment[row][column];
             this.extendGroup(row, column + 1);
         }
-        if (row < this.rowCount - 1 &&
+        if (
+            row < this.rowCount - 1 &&
             this.visGroupAssignment[row + 1][column] < 0 &&
-            this.logGroupAssignment[row + 1][column] === this.logGroupAssignment[row][column]) {
-            this.visGroupAssignment[row + 1][column] = this.visGroupAssignment[row][column];
+            this.logGroupAssignment[row + 1][column] ===
+                this.logGroupAssignment[row][column]
+        ) {
+            this.visGroupAssignment[row + 1][column] =
+                this.visGroupAssignment[row][column];
             this.extendGroup(row + 1, column);
         }
-        if (column > 0 &&
+        if (
+            column > 0 &&
             this.visGroupAssignment[row][column - 1] < 0 &&
-            this.logGroupAssignment[row][column - 1] === this.logGroupAssignment[row][column]) {
-            this.visGroupAssignment[row][column - 1] = this.visGroupAssignment[row][column];
+            this.logGroupAssignment[row][column - 1] ===
+                this.logGroupAssignment[row][column]
+        ) {
+            this.visGroupAssignment[row][column - 1] =
+                this.visGroupAssignment[row][column];
             this.extendGroup(row, column - 1);
         }
     }
 
     private createGroups(): CellGroup[] {
         const groups: CellGroup[] = [];
-        const maxGroupIndex = Math.max(...this.visGroupAssignment.map(r => Math.max(...r)));
+        const maxGroupIndex = Math.max(
+            ...this.visGroupAssignment.map((r) => Math.max(...r)),
+        );
 
         for (let i = maxGroupIndex; i >= 0; i--) {
             groups[i] = {
-                label: this.stationGroups[this.visGroupToLogicalGroupIndex[i]].label,
-                cells: []
+                label: this.stationGroups[this.visGroupToLogicalGroupIndex[i]]
+                    .label,
+                cells: [],
             };
         }
 
         for (let r = 0; r < this.rowCount; r++) {
             for (let c = 0; c < this.columnCount; c++) {
                 if (this.visGroupAssignment[r][c] >= 0) {
-                    groups[this.visGroupAssignment[r][c]].cells.push({ row: r, column: c });
+                    groups[this.visGroupAssignment[r][c]].cells.push({
+                        row: r,
+                        column: c,
+                    });
                 }
             }
         }
 
-        return groups.filter(g => g.cells.length > 0);
+        return groups.filter((g) => g.cells.length > 0);
     }
-
 }
 
 export function getCellGroups(
     stationGrid: (StationData | null)[][],
-    stationGroups: StationGroup[]
-): {label: string; cells: GridCell[]}[] {
-
+    stationGroups: StationGroup[],
+): { label: string; cells: GridCell[] }[] {
     const cellGrouping = new CellGrouper();
     return cellGrouping.groupCells(stationGrid, stationGroups);
 }

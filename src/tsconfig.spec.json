@@ -1,20 +1,12 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "allowJs": true,
-    "outDir": "../out-tsc/spec",
-    "baseUrl": "",
-    "types": [
-      "jest",
-      "node"
-    ]
-  },
-  "files": [
-    "polyfills.ts"
-  ],
-  "include": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
-  ]
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "allowJs": true,
+        "outDir": "../out-tsc/spec",
+        "baseUrl": "",
+        "types": ["jest", "node"]
+    },
+    "files": ["polyfills.ts"],
+    "include": ["**/*.spec.ts", "**/*.d.ts"]
 }

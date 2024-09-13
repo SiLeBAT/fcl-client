@@ -1,27 +1,27 @@
 <mat-form-field
     class="fcl-complex-filter-form-field"
     appearance="outline"
-    color="primary">
+    color="primary"
+>
     <input
         type="text"
         matInput
         [placeholder]="placeholder"
         autocomplete="off"
-        [value] = "value"
-        (input) = "onInput($event)"
+        [value]="value"
+        (input)="onInput($event)"
         [matAutocomplete]="filterValues"
         [disabled]="disabled"
     />
 
-    <mat-autocomplete #filterValues="matAutocomplete"
+    <mat-autocomplete
+        #filterValues="matAutocomplete"
         (optionSelected)="onOptionSelected($event)"
         (closed)="onAutocompleteClosed()"
         (opened)="onAutocompleteOpened()"
     >
         <ng-container *ngFor="let item of autoCompleteValues">
-            <mat-option
-                class="fcl-filter-select-option"
-                [value]="item">
+            <mat-option class="fcl-filter-select-option" [value]="item">
                 {{ item }}
             </mat-option>
         </ng-container>

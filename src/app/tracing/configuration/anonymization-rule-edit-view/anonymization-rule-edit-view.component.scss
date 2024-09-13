@@ -1,4 +1,4 @@
-@use '../../../../assets/sass/base' as fcl;
+@use "../../../../assets/sass/base" as fcl;
 
 $fcl-font-size: 0.8rem;
 $fcl-form-field-padding-left-mimic: 0.75em;
@@ -29,9 +29,17 @@ $fcl-form-field-padding-left-mimic: 0.75em;
     $fcl-col-prefix-preferred-width: 12ch;
     $fcl-col-property-preferred-width: 25ch;
     $fcl-col-delete-width: 28px;
-    $fcl-cols-prefix-property-max-width: calc(calc(100% - $fcl-col-drag-with) - $fcl-col-delete-width);
-    $fcl-col-prefix-width: min($fcl-col-prefix-preferred-width, calc($fcl-cols-prefix-property-max-width * 0.3));
-    $fcl-col-property-width: min($fcl-col-property-preferred-width, calc($fcl-cols-prefix-property-max-width * 0.7));
+    $fcl-cols-prefix-property-max-width: calc(
+        calc(100% - $fcl-col-drag-with) - $fcl-col-delete-width
+    );
+    $fcl-col-prefix-width: min(
+        $fcl-col-prefix-preferred-width,
+        calc($fcl-cols-prefix-property-max-width * 0.3)
+    );
+    $fcl-col-property-width: min(
+        $fcl-col-property-preferred-width,
+        calc($fcl-cols-prefix-property-max-width * 0.7)
+    );
 
     font-size: $fcl-font-size;
     font-family: #{fcl.$fcl-font-family};

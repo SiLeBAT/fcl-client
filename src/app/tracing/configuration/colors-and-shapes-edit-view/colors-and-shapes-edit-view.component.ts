@@ -1,23 +1,32 @@
-import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges } from '@angular/core';
-import { Color, NodeShapeType } from '@app/tracing/data.model';
-import { ColorAndShapeEditRule } from '../model';
-import { AbstractRuleEditViewComponent } from '../abstract-rule-edit-view';
-import { COLOR_BFR_BLUE } from '../constants';
-import { isNullish } from '@app/tracing/util/non-ui-utils';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnChanges,
+    SimpleChanges,
+} from "@angular/core";
+import { Color, NodeShapeType } from "@app/tracing/data.model";
+import { ColorAndShapeEditRule } from "../model";
+import { AbstractRuleEditViewComponent } from "../abstract-rule-edit-view";
+import { COLOR_BFR_BLUE } from "../constants";
+import { isNullish } from "@app/tracing/util/non-ui-utils";
 
 @Component({
-    selector: 'fcl-colors-and-shapes-edit-view',
-    templateUrl: './colors-and-shapes-edit-view.component.html',
-    styleUrls: ['./colors-and-shapes-edit-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-colors-and-shapes-edit-view",
+    templateUrl: "./colors-and-shapes-edit-view.component.html",
+    styleUrls: ["./colors-and-shapes-edit-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewComponent<ColorAndShapeEditRule> implements OnChanges {
-
+export class ColorsAndShapesEditViewComponent
+    extends AbstractRuleEditViewComponent<ColorAndShapeEditRule>
+    implements OnChanges
+{
     private static readonly DEFAULT_COLOR = COLOR_BFR_BLUE;
-    private static readonly DISABLED_ACTION_TOOLTIP = 'Please enter name, select colour and/or shape as well as conditions';
+    private static readonly DISABLED_ACTION_TOOLTIP =
+        "Please enter name, select colour and/or shape as well as conditions";
 
     private useShape_ = false;
-    private lastActiveColor: Color = ColorsAndShapesEditViewComponent.DEFAULT_COLOR;
+    private lastActiveColor: Color =
+        ColorsAndShapesEditViewComponent.DEFAULT_COLOR;
     private lastActiveShape: NodeShapeType | null = null;
 
     get useShape(): boolean {
@@ -42,10 +51,7 @@ export class ColorsAndShapesEditViewComponent extends AbstractRuleEditViewCompon
 
     get isEditViewComplete(): boolean {
         const shapeIsSet = !isNullish(this.rule?.shape);
-        return (
-            this.useShape === shapeIsSet &&
-            super.isEditViewComplete
-        );
+        return this.useShape === shapeIsSet && super.isEditViewComplete;
     }
 
     constructor() {

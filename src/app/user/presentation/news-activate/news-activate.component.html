@@ -1,15 +1,23 @@
 <div class="fcl-mat-card-content" *ngIf="tokenValid">
     <div class="fcl-newsactivate-text">
-        <p class="mat-subheading-1">You have subscribed to {{ appName }} newsletter.</p>
         <p class="mat-subheading-1">
-            You can unsubscribe from our newsletters at any time. Please write an e-mail to {{ supportContact }} to unsubscribe.
-            You will need the e-mail address that you gave when you registered.
+            You have subscribed to {{ appName }} newsletter.
+        </p>
+        <p class="mat-subheading-1">
+            You can unsubscribe from our newsletters at any time. Please write
+            an e-mail to {{ supportContact }} to unsubscribe. You will need the
+            e-mail address that you gave when you registered.
         </p>
     </div>
 
     <div class="fcl-card-action fcl-card-action-container">
         <div class="form-group fcl-continue-button">
-            <button mat-raised-button color="primary" type="submit" [routerLink]="['/users/login']">
+            <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [routerLink]="['/users/login']"
+            >
                 Continue
             </button>
         </div>
@@ -28,7 +36,12 @@
 
     <div class="fcl-card-action fcl-card-action-container">
         <div class="form-group fcl-continue-button">
-            <button mat-raised-button color="primary" type="submit" [routerLink]="['/users/login']">
+            <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [routerLink]="['/users/login']"
+            >
                 Continue
             </button>
         </div>

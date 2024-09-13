@@ -2,25 +2,38 @@
     <mat-card class="mat-card">
         <!--suppress HtmlUnknownTag -->
         <mat-card-title>
-            <span>{{data.delivery.name}}</span>
+            <span>{{ data.delivery.name }}</span>
         </mat-card-title>
         <mat-card-content>
             <table class="property-table">
                 <tr *ngFor="let prop of vipProperties">
-                    <td>{{properties[prop].label}}</td>
-                    <td>{{properties[prop].value}}</td>
+                    <td>{{ properties[prop].label }}</td>
+                    <td>{{ properties[prop].value }}</td>
                 </tr>
                 <tr *ngIf="!otherPropertiesHidden">
-                    <td colspan="2" class="fcl-delivery-properties-horizontal-line-cell">
-                        <hr class="fcl-delivery-properties-horizontal-line">
+                    <td
+                        colspan="2"
+                        class="fcl-delivery-properties-horizontal-line-cell"
+                    >
+                        <hr class="fcl-delivery-properties-horizontal-line" />
                     </td>
                 </tr>
-                <tr *ngFor="let prop of (!otherPropertiesHidden ? getOtherPropertiesOri() : [])">
-                    <td>{{properties[prop].label}}</td>
-                    <td>{{properties[prop].value}}</td>
+                <tr
+                    *ngFor="
+                        let prop of !otherPropertiesHidden
+                            ? getOtherPropertiesOri()
+                            : []
+                    "
+                >
+                    <td>{{ properties[prop].label }}</td>
+                    <td>{{ properties[prop].value }}</td>
                 </tr>
             </table>
-            <button mat-button *ngIf="otherProperties.length > 0" (click)="toggleOtherProperties()">
+            <button
+                mat-button
+                *ngIf="otherProperties.length > 0"
+                (click)="toggleOtherProperties()"
+            >
                 <span *ngIf="otherPropertiesHidden">More properties</span>
                 <span *ngIf="!otherPropertiesHidden">Less properties</span>
             </button>

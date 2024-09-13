@@ -1,19 +1,11 @@
 {
     "root": true,
-    "ignorePatterns": [
-        "projects/**/*",
-        "src/mxtypes.d.ts",
-        "src/mxtypes/**"
-    ],
+    "ignorePatterns": ["projects/**/*", "src/mxtypes.d.ts", "src/mxtypes/**"],
     "overrides": [
         {
-            "files": [
-                "*.ts"
-            ],
+            "files": ["*.ts"],
             "parserOptions": {
-                "project": [
-                    "tsconfig.json"
-                ],
+                "project": ["tsconfig.json"],
                 "createDefaultProgram": true
             },
             "extends": [
@@ -22,17 +14,15 @@
                 "plugin:rxjs/recommended",
                 "plugin:@angular-eslint/recommended",
                 "plugin:@angular-eslint/recommended--extra",
-                "plugin:@angular-eslint/template/process-inline-templates"
+                "plugin:@angular-eslint/template/process-inline-templates",
+                "prettier"
             ],
             "rules": {
                 "no-duplicate-imports": "error",
                 "no-useless-escape": "off",
                 "arrow-body-style": "error",
                 "curly": "error",
-                "eqeqeq": [
-                    "error",
-                    "smart"
-                ],
+                "eqeqeq": ["error", "smart"],
                 "guard-for-in": "error",
                 "id-match": "error",
                 "no-bitwise": "error",
@@ -42,10 +32,7 @@
                 "no-extra-bind": "error",
                 "no-new-func": "error",
                 "no-new-wrappers": "error",
-                "no-restricted-syntax": [
-                    "error",
-                    "ForInStatement"
-                ],
+                "no-restricted-syntax": ["error", "ForInStatement"],
                 "no-return-await": "error",
                 "no-throw-literal": "error",
                 "no-undef-init": "error",
@@ -62,40 +49,10 @@
                 "no-useless-constructor": "off",
                 "no-var": "error",
                 "no-void": "error",
-                "object-shorthand": [
-                    "error",
-                    "never"
-                ],
-                "one-var": [
-                    "error",
-                    "never"
-                ],
+                "object-shorthand": ["error", "never"],
+                "one-var": ["error", "never"],
                 "prefer-const": "error",
-                "quote-props": [
-                    "error",
-                    "consistent",
-                    {
-                        "keywords": true,
-                        "numbers": true
-                    }
-                ],
                 "radix": "error",
-                "indent": [
-                    "error",
-                    4,
-                    {
-                        "SwitchCase": 1
-                    }
-                ],
-                "brace-style": [
-                    "error",
-                    "1tbs",
-                    {
-                        "allowSingleLine": true
-                    }
-                ],
-                "comma-dangle": "error",
-                "eol-last": "error",
                 "max-len": [
                     "error",
                     {
@@ -104,21 +61,6 @@
                         "ignoreTemplateLiterals": true,
                         "ignoreRegExpLiterals": true
                     }
-                ],
-                "new-parens": "error",
-                "no-multiple-empty-lines": "error",
-                "no-trailing-spaces": "error",
-                "space-before-function-paren": [
-                    "error",
-                    {
-                        "anonymous": "always",
-                        "named": "never",
-                        "asyncArrow": "always"
-                    }
-                ],
-                "space-in-parens": [
-                    "error",
-                    "never"
                 ],
                 "@typescript-eslint/consistent-type-assertions": "error",
                 "@typescript-eslint/consistent-type-definitions": "error",
@@ -129,7 +71,6 @@
                     }
                 ],
                 "@typescript-eslint/explicit-module-boundary-types": "off",
-                "@typescript-eslint/member-delimiter-style": "error",
                 "@typescript-eslint/naming-convention": "off",
                 "@typescript-eslint/no-explicit-any": "off",
                 "@typescript-eslint/no-inferrable-types": "off",
@@ -143,25 +84,12 @@
                 "@typescript-eslint/prefer-function-type": "error",
                 "@typescript-eslint/promise-function-async": "error",
                 "@typescript-eslint/restrict-template-expressions": "off",
-                "@typescript-eslint/type-annotation-spacing": "error",
                 "@typescript-eslint/unbound-method": "off",
                 "@typescript-eslint/unified-signatures": "error",
                 "quotes": "off",
-                "@typescript-eslint/quotes": [
-                    "error",
-                    "single",
-                    {
-                        "allowTemplateLiterals": true
-                    }
-                ],
                 "no-unused-expressions": "off",
                 "@typescript-eslint/no-unused-expressions": "error",
                 "@typescript-eslint/no-unused-vars": "off",
-                "semi": "off",
-                "@typescript-eslint/semi": [
-                    "error",
-                    "always"
-                ],
                 "rxjs/no-ignored-takewhile-value": "off",
                 "rxjs/no-implicit-any-catch": "off",
                 "rxjs/no-subject-value": "error",
@@ -184,37 +112,25 @@
             }
         },
         {
-            "files": [
-                "*.html"
-            ],
-            "extends": [
-                "plugin:@angular-eslint/template/recommended"
-            ],
+            "files": ["*.html"],
+            "extends": ["plugin:@angular-eslint/template/recommended"],
             "rules": {}
         },
         {
-            "files": [
-                "*.js"
-            ],
+            "files": ["*.js"],
             "parserOptions": {
                 "ecmaVersion": "latest"
             },
             "env": {
                 "es6": true
             },
-            "extends": [
-                "eslint:recommended",
-                "plugin:rxjs/recommended"
-            ],
+            "extends": ["eslint:recommended", "plugin:rxjs/recommended"],
             "rules": {
                 "no-duplicate-imports": "error",
                 "no-useless-escape": "off",
                 "arrow-body-style": "error",
                 "curly": "error",
-                "eqeqeq": [
-                    "error",
-                    "smart"
-                ],
+                "eqeqeq": ["error", "smart"],
                 "guard-for-in": "error",
                 "id-match": "error",
                 "no-bitwise": "error",
@@ -224,10 +140,7 @@
                 "no-extra-bind": "error",
                 "no-new-func": "error",
                 "no-new-wrappers": "error",
-                "no-restricted-syntax": [
-                    "error",
-                    "ForInStatement"
-                ],
+                "no-restricted-syntax": ["error", "ForInStatement"],
                 "no-return-await": "error",
                 "no-throw-literal": "error",
                 "no-undef-init": "error",
@@ -244,72 +157,10 @@
                 "no-useless-constructor": "off",
                 "no-var": "error",
                 "no-void": "error",
-                "object-shorthand": [
-                    "error",
-                    "never"
-                ],
-                "one-var": [
-                    "error",
-                    "never"
-                ],
+                "object-shorthand": ["error", "never"],
+                "one-var": ["error", "never"],
                 "prefer-const": "error",
-                "quote-props": [
-                    "error",
-                    "consistent",
-                    {
-                        "keywords": true,
-                        "numbers": true
-                    }
-                ],
                 "radix": "error",
-                "indent": [
-                    "error",
-                    4,
-                    {
-                        "SwitchCase": 1
-                    }
-                ],
-                "brace-style": [
-                    "error",
-                    "1tbs",
-                    {
-                        "allowSingleLine": true
-                    }
-                ],
-                "comma-dangle": "error",
-                "eol-last": "error",
-                "max-len": [
-                    "error",
-                    {
-                        "code": 140,
-                        "ignoreStrings": true,
-                        "ignoreTemplateLiterals": true,
-                        "ignoreRegExpLiterals": true
-                    }
-                ],
-                "new-parens": "error",
-                "no-multiple-empty-lines": "error",
-                "no-trailing-spaces": "error",
-                "space-before-function-paren": [
-                    "error",
-                    {
-                        "anonymous": "always",
-                        "named": "never",
-                        "asyncArrow": "always"
-                    }
-                ],
-                "space-in-parens": [
-                    "error",
-                    "never"
-                ],
-                "quotes": "off",
-                "@typescript-eslint/quotes": [
-                    "error",
-                    "single",
-                    {
-                        "allowTemplateLiterals": true
-                    }
-                ],
                 "no-unused-expressions": "off",
                 "semi": "off",
                 "rxjs/no-ignored-takewhile-value": "off",

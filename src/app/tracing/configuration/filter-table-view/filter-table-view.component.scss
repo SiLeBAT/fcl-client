@@ -1,4 +1,4 @@
-@use '../../../../assets/sass/base' as fcl;
+@use "../../../../assets/sass/base" as fcl;
 
 .fcl-filtertable-container {
     position: relative;
@@ -36,7 +36,10 @@
     flex-direction: column;
 }
 
-.fcl-filtertable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap {
+.fcl-filtertable
+    .datatable-row-center
+    .datatable-header-cell
+    .datatable-header-cell-template-wrap {
     height: 100% !important;
 }
 
@@ -66,7 +69,11 @@
     transform: scale(0.8);
 }
 
-.fcl-filtertable .datatable-row-center .datatable-header-cell .datatable-header-cell-template-wrap .fcl-column-filter-field {
+.fcl-filtertable
+    .datatable-row-center
+    .datatable-header-cell
+    .datatable-header-cell-template-wrap
+    .fcl-column-filter-field {
     font-size: 0.8rem;
 }
 
@@ -130,8 +137,12 @@
     color: fcl.$fcl-accent-200;
 }
 
-.fcl-filtertable .datatable-header-cell-template-wrap > span.datatable-icon-up::before,
-.fcl-filtertable .datatable-header-cell-template-wrap > span.datatable-icon-down::before {
+.fcl-filtertable
+    .datatable-header-cell-template-wrap
+    > span.datatable-icon-up::before,
+.fcl-filtertable
+    .datatable-header-cell-template-wrap
+    > span.datatable-icon-down::before {
     display: none;
 }
 

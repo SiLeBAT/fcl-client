@@ -2,13 +2,14 @@
     <ng-container *ngIf="row.parentRowId === undefined">
         <span
             *ngIf="!row.invisible"
-            class="material-icons fcl-column-visibility-header-icon">
+            class="material-icons fcl-column-visibility-header-icon"
+        >
             visibility
         </span>
         <span
             *ngIf="row.invisible"
             class="material-icons fcl-column-visibility-header-icon unsorted pointable"
-            >
+        >
             visibility_off
         </span>
     </ng-container>

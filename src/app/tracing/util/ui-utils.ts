@@ -1,10 +1,10 @@
-import { StationData } from './../data.model';
-import { Position } from '../data.model';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
-import * as ol from 'ol';
-import { fromLonLat, toLonLat } from 'ol/proj';
-import { ElementRef } from '@angular/core';
-import { RequiredPick } from './utility-types';
+import { StationData } from "./../data.model";
+import { Position } from "../data.model";
+import { MatLegacyMenuTrigger as MatMenuTrigger } from "@angular/material/legacy-menu";
+import * as ol from "ol";
+import { fromLonLat, toLonLat } from "ol/proj";
+import { ElementRef } from "@angular/core";
+import { RequiredPick } from "./utility-types";
 
 export class Utils {
     private static CY_TO_OL_FACTOR = 10000;
@@ -20,14 +20,14 @@ export class Utils {
     static olCoordsToPosition(x: number, y: number, zoom: number): Position {
         return {
             x: (x / Utils.CY_TO_OL_FACTOR) * zoom,
-            y: (-y / Utils.CY_TO_OL_FACTOR) * zoom
+            y: (-y / Utils.CY_TO_OL_FACTOR) * zoom,
         };
     }
 
     static positionToOlCoords(x: number, y: number, zoom: number): Position {
         return {
             x: (x * Utils.CY_TO_OL_FACTOR) / zoom,
-            y: (-y * Utils.CY_TO_OL_FACTOR) / zoom
+            y: (-y * Utils.CY_TO_OL_FACTOR) / zoom,
         };
     }
 
@@ -35,24 +35,28 @@ export class Utils {
         const p = Utils.latLonToOlCoords(lat, lon);
 
         return Utils.olCoordsToPosition(p[0], p[1], zoom);
-
     }
 
-    static panZoomToView(pan: Position, zoom: number, width: number, height: number): ol.View {
+    static panZoomToView(
+        pan: Position,
+        zoom: number,
+        width: number,
+        height: number,
+    ): ol.View {
         return new ol.View({
             center: [
                 ((width / 2 - pan.x) / zoom) * Utils.CY_TO_OL_FACTOR,
-                (-(height / 2 - pan.y) / zoom) * Utils.CY_TO_OL_FACTOR
+                (-(height / 2 - pan.y) / zoom) * Utils.CY_TO_OL_FACTOR,
             ],
-            resolution: Utils.CY_TO_OL_FACTOR / zoom
+            resolution: Utils.CY_TO_OL_FACTOR / zoom,
         });
     }
 
     static openSaveDialog(url: string, fileName: string) {
-        const a = document.createElement('a');
+        const a = document.createElement("a");
 
-        a.style.display = 'none';
-        a.target = '_blank';
+        a.style.display = "none";
+        a.target = "_blank";
         a.href = url;
         a.download = fileName;
         document.body.appendChild(a);
@@ -61,11 +65,11 @@ export class Utils {
     }
 
     static openSaveBlobDialog(blob: any, fileName: string) {
-        const a = document.createElement('a');
+        const a = document.createElement("a");
 
         const url = window.URL.createObjectURL(blob);
-        a.style.display = 'none';
-        a.target = '_blank';
+        a.style.display = "none";
+        a.target = "_blank";
         a.href = url;
         a.download = fileName;
         document.body.appendChild(a);
@@ -74,12 +78,16 @@ export class Utils {
         a.remove();
     }
 
-    static openMenu(trigger: MatMenuTrigger, triggerElement: ElementRef, pos: Position) {
+    static openMenu(
+        trigger: MatMenuTrigger,
+        triggerElement: ElementRef,
+        pos: Position,
+    ) {
         const style = (triggerElement.nativeElement as HTMLElement).style;
 
-        style.position = 'fixed';
-        style.left = pos.x + 'px';
-        style.top = pos.y + 'px';
+        style.position = "fixed";
+        style.left = pos.x + "px";
+        style.top = pos.y + "px";
         trigger.openMenu();
     }
 
@@ -91,11 +99,14 @@ export class Utils {
         return stationsWithGis.length > 0;
     }
 
-
-    static hasGisInfo(x: StationData): x is RequiredPick<StationData, 'lat' | 'lon'> {
+    static hasGisInfo(
+        x: StationData,
+    ): x is RequiredPick<StationData, "lat" | "lon"> {
         return (
-            x.lat !== undefined && x.lat !== null &&
-            x.lon !== undefined && x.lon !== null
+            x.lat !== undefined &&
+            x.lat !== null &&
+            x.lon !== undefined &&
+            x.lon !== null
         );
     }
 }

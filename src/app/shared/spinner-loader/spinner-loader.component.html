@@ -1,10 +1,7 @@
 <div [class.loader-hidden]="!show">
     <div class="loader-overlay">
         <div>
-            <mat-spinner
-                strokeWidth="15"
-                [diameter]="130"
-                *ngIf="show">
+            <mat-spinner strokeWidth="15" [diameter]="130" *ngIf="show">
             </mat-spinner>
         </div>
     </div>

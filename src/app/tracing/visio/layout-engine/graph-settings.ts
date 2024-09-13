@@ -10,7 +10,7 @@ export class GraphSettings {
     static LOT_BOX_MARGIN = 10;
     static STATION_BOX_MARGIN = 10;
     static FONT_SIZE = 8;
-    static FONT_NAME = 'Verdana';
+    static FONT_NAME = "Verdana";
     static SECTION_DISTANCE = 9;
     static SAMPLE_BOX_DISTANCE = 5;
     static LOT_BOX_DISTANCE = 5;

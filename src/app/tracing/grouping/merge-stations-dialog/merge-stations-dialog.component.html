@@ -1,14 +1,29 @@
 <h1 matDialogTitle>Merge Stations</h1>
 <form>
     <div mat-dialog-content>
-        <span class="warning" *ngIf="containedGroups.length>0">
-            Warning: At least one selected station is already a meta station. The selected meta<br>station(s) will be removed and its members will be assigned to the new station.<br><br>
+        <span class="warning" *ngIf="containedGroups.length > 0">
+            Warning: At least one selected station is already a meta station.
+            The selected meta<br />station(s) will be removed and its members
+            will be assigned to the new station.<br /><br />
         </span>
         <span>Please specify name/id of meta station: </span>
         <mat-form-field>
-            <input matInput placeholder="Name/Id" [formControl]="inputFormControl" [errorStateMatcher]="matcher" required>
-            <mat-error *ngIf="inputFormControl.dirty && inputFormControl.errors" [ngSwitch]="inputFormControl.errors.validationError">
-                <span *ngSwitchCase="validationCodeEnum.NAME_OR_ID_MAY_NOT_BE_EMPTY">
+            <input
+                matInput
+                placeholder="Name/Id"
+                [formControl]="inputFormControl"
+                [errorStateMatcher]="matcher"
+                required
+            />
+            <mat-error
+                *ngIf="inputFormControl.dirty && inputFormControl.errors"
+                [ngSwitch]="inputFormControl.errors.validationError"
+            >
+                <span
+                    *ngSwitchCase="
+                        validationCodeEnum.NAME_OR_ID_MAY_NOT_BE_EMPTY
+                    "
+                >
                     Name/Id is missing.
                 </span>
                 <span *ngSwitchCase="validationCodeEnum.ID_IS_NOT_UNIQUE">
@@ -18,13 +33,20 @@
                     Name is not unique.
                 </span>
                 <span *ngSwitchDefault>
-                    The Name/Id is invalid (error: {{inputFormControl.errors.validationError}}).
+                    The Name/Id is invalid (error:
+                    {{ inputFormControl.errors.validationError }}).
                 </span>
             </mat-error>
         </mat-form-field>
     </div>
     <div mat-dialog-actions>
-        <button mat-button (click)="onOk()" [disabled]="!inputFormControl.valid">OK</button>
+        <button
+            mat-button
+            (click)="onOk()"
+            [disabled]="!inputFormControl.valid"
+        >
+            OK
+        </button>
         <button mat-button (click)="dialogRef.close()">Cancel</button>
     </div>
 </form>

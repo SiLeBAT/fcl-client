@@ -1,13 +1,13 @@
 // implementation according to:
 // according to http://publications.lib.chalmers.se/records/fulltext/161388.pdf
-import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './data-structures';
-import { removeCycles } from './cycle-remover';
-import { assignLayers } from './layer-assigner';
-import { BusinessTypeRanker } from './business-type-ranker';
-import { scaleToSize } from './shared';
-import { sortAndPosition } from './vertex-sorter-and-positioner';
-import { Size } from '@app/tracing/data.model';
+import * as _ from "lodash";
+import { Graph, Vertex, Edge } from "./data-structures";
+import { removeCycles } from "./cycle-remover";
+import { assignLayers } from "./layer-assigner";
+import { BusinessTypeRanker } from "./business-type-ranker";
+import { scaleToSize } from "./shared";
+import { sortAndPosition } from "./vertex-sorter-and-positioner";
+import { Size } from "@app/tracing/data.model";
 
 export function FarmToForkLayout(options) {
     this.options = options;
@@ -19,8 +19,10 @@ FarmToForkLayout.prototype.run = function () {
 };
 
 export class FarmToForkLayouter {
-
-    constructor(private graph: Graph, private typeRanker: BusinessTypeRanker) {}
+    constructor(
+        private graph: Graph,
+        private typeRanker: BusinessTypeRanker,
+    ) {}
 
     layout(vertexDistance: number, availableSpace?: Size, timeLimit?: number) {
         if (timeLimit === undefined) {
@@ -35,7 +37,12 @@ export class FarmToForkLayouter {
         removeCycles(this.graph);
         this.simplifyGraph();
         assignLayers(this.graph);
-        sortAndPosition(this.graph, vertexDistance, timeLimit - (new Date().getTime() - startTime), availableSpace);
+        sortAndPosition(
+            this.graph,
+            vertexDistance,
+            timeLimit - (new Date().getTime() - startTime),
+            availableSpace,
+        );
     }
 
     simplifyGraph() {
@@ -43,16 +50,16 @@ export class FarmToForkLayouter {
             vertex.inEdges = [];
         }
         for (const vertex of this.graph.vertices) {
-            const targets = _.uniq(vertex.outEdges.map(e => e.target.index)).filter(
-                i => i !== vertex.index
-            );
+            const targets = _.uniq(
+                vertex.outEdges.map((e) => e.target.index),
+            ).filter((i) => i !== vertex.index);
             const oldEdges: Edge[] = vertex.outEdges;
             vertex.outEdges = [];
             for (const iTarget of targets) {
                 const newEdge: Edge = new Edge(
                     vertex,
                     this.graph.vertices[iTarget],
-                    false
+                    false,
                 );
                 newEdge.weight = 0;
                 for (const edge of oldEdges) {
@@ -70,7 +77,10 @@ export class FarmToForkLayouter {
         const edgesToInvert: Edge[] = [];
         for (const vertex of this.graph.vertices) {
             for (const edge of vertex.outEdges) {
-                const comparison = this.typeRanker.compareRanking(vertex, edge.target);
+                const comparison = this.typeRanker.compareRanking(
+                    vertex,
+                    edge.target,
+                );
                 if (comparison !== undefined && comparison > 0) {
                     edgesToInvert.push(edge);
                 }
@@ -83,7 +93,7 @@ export class FarmToForkLayouter {
 class FarmToForkLayoutClass {
     private static DEFAULTS = {
         fit: true,
-        padding: 40
+        padding: 40,
     };
 
     private layout: any;
@@ -106,12 +116,17 @@ class FarmToForkLayoutClass {
 
     run() {
         const cy = this.options.cy;
-        const timelimit: number = this.options.timelimit || Number.POSITIVE_INFINITY;
+        const timelimit: number =
+            this.options.timelimit || Number.POSITIVE_INFINITY;
         const width: number = cy.width();
         const height: number = cy.height();
         const graph = new Graph();
         const vertices: Map<string, Vertex> = new Map();
-        const typeRanker: BusinessTypeRanker = new BusinessTypeRanker([], [], []);
+        const typeRanker: BusinessTypeRanker = new BusinessTypeRanker(
+            [],
+            [],
+            [],
+        );
 
         let vertexDistance = Number.POSITIVE_INFINITY;
         let maxRightPadding = 0;
@@ -119,43 +134,61 @@ class FarmToForkLayoutClass {
 
         for (const node of cy.nodes()) {
             const v: Vertex = new Vertex();
-            v.typeCode = typeRanker.getBusinessTypeCode(node['data']['typeOfBusiness']);
+            v.typeCode = typeRanker.getBusinessTypeCode(
+                node["data"]["typeOfBusiness"],
+            );
             const nodeHeight = node.layoutDimensions().h;
             const renderedBoundingBox = node.renderedBoundingBox();
             const renderedPosition = node.renderedPosition();
-            maxLeftPadding = Math.max(maxLeftPadding, renderedPosition.x - renderedBoundingBox.x1);
-            maxRightPadding = Math.max(maxRightPadding, renderedBoundingBox.x2 - renderedPosition.x);
+            maxLeftPadding = Math.max(
+                maxLeftPadding,
+                renderedPosition.x - renderedBoundingBox.x1,
+            );
+            maxRightPadding = Math.max(
+                maxRightPadding,
+                renderedBoundingBox.x2 - renderedPosition.x,
+            );
             v.bottomPadding = renderedBoundingBox.y2 - renderedPosition.y;
             v.topPadding = renderedPosition.y - renderedBoundingBox.y1;
             v.outerSize = v.bottomPadding + v.topPadding;
             v.innerSize = 0;
-            v.name = node.data('label');
+            v.name = node.data("label");
             vertexDistance = Math.min(vertexDistance, nodeHeight);
             vertices.set(node.id(), v);
             graph.insertVertex(v);
         }
 
-        cy.edges().forEach(edge => graph.insertEdge(
-            vertices.get(edge.source().id())!,
-            vertices.get(edge.target().id())!
-        ));
+        cy.edges().forEach((edge) =>
+            graph.insertEdge(
+                vertices.get(edge.source().id())!,
+                vertices.get(edge.target().id())!,
+            ),
+        );
 
         const availableSpace = {
             width: width,
-            height: height
+            height: height,
         };
 
-        const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(graph, typeRanker);
+        const layoutManager: FarmToForkLayouter = new FarmToForkLayouter(
+            graph,
+            typeRanker,
+        );
 
         layoutManager.layout(vertexDistance, availableSpace, timelimit);
-        scaleToSize(graph, width - maxLeftPadding - maxRightPadding, height, vertexDistance);
+        scaleToSize(
+            graph,
+            width - maxLeftPadding - maxRightPadding,
+            height,
+            vertexDistance,
+        );
 
-        cy.nodes().layoutPositions(this.layout, this.options, node => {
+        cy.nodes().layoutPositions(this.layout, this.options, (node) => {
             const vertex = vertices.get(node.id())!;
 
             return {
                 x: vertex.x,
-                y: vertex.y
+                y: vertex.y,
             };
         });
     }

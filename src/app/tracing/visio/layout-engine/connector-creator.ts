@@ -1,17 +1,24 @@
-import { VisioConnector, DeliveryInformation, ConnectorType } from './datatypes';
-import { BoxCreator } from './box-creator';
-import { InformationProvider } from './information-provider';
+import {
+    VisioConnector,
+    DeliveryInformation,
+    ConnectorType,
+} from "./datatypes";
+import { BoxCreator } from "./box-creator";
+import { InformationProvider } from "./information-provider";
 
 export class ConnectorCreator {
     private connectorCounter = 0;
 
-    constructor(private boxCreator: BoxCreator, private infoProvider: InformationProvider) {
-
-    }
+    constructor(
+        private boxCreator: BoxCreator,
+        private infoProvider: InformationProvider,
+    ) {}
 
     createConnectors(): VisioConnector[] {
         this.connectorCounter = 0;
-        return this.infoProvider.getDeliveries().map(delivery => this.createConnector(delivery));
+        return this.infoProvider
+            .getDeliveries()
+            .map((delivery) => this.createConnector(delivery));
     }
 
     createConnector(delivery: DeliveryInformation): VisioConnector {
@@ -21,10 +28,10 @@ export class ConnectorCreator {
         const stationBox = this.boxCreator.getStationBox(stationInfo)!;
 
         return {
-            id: 'c' + this.connectorCounter++,
+            id: "c" + this.connectorCounter++,
             type: this.getConnectorType(delivery),
             fromPort: lotBox.ports[0].id,
-            toPort: stationBox.ports[0].id
+            toPort: stationBox.ports[0].id,
         };
     }
 
@@ -35,5 +42,4 @@ export class ConnectorCreator {
             return ConnectorType.DeliveryForward;
         }
     }
-
 }

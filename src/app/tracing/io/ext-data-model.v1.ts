@@ -1,4 +1,4 @@
-export const VERSION = '1.2.0';
+export const VERSION = "1.2.0";
 
 export interface JsonData {
     version: string;
@@ -183,9 +183,7 @@ export interface ValueCondition {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ExplosionViewData {
-
-}
+interface ExplosionViewData {}
 
 interface DateData {
     year: number;

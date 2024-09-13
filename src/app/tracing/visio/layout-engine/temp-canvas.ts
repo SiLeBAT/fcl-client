@@ -1,6 +1,4 @@
-
 export class TempCanvas {
-
     private canvas_: HTMLCanvasElement | undefined;
 
     constructor() {
@@ -16,9 +14,9 @@ export class TempCanvas {
     }
 
     private createCanvas(): void {
-        const canvas = document.createElement('canvas');
-        canvas.style.position = 'absolute';
-        canvas.style.visibility = 'hidden';
+        const canvas = document.createElement("canvas");
+        canvas.style.position = "absolute";
+        canvas.style.visibility = "hidden";
         this.getBody().appendChild(canvas);
         this.canvas_ = canvas;
     }
@@ -31,6 +29,6 @@ export class TempCanvas {
     }
 
     private getBody(): HTMLBodyElement {
-        return document.getElementsByTagName('body')[0];
+        return document.getElementsByTagName("body")[0];
     }
 }

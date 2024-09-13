@@ -1,13 +1,12 @@
-import { Component, Input } from '@angular/core';
-import { LegendDisplayEntry } from '@app/tracing/data.model';
+import { Component, Input } from "@angular/core";
+import { LegendDisplayEntry } from "@app/tracing/data.model";
 
 @Component({
-    selector: 'fcl-graph-legend-view',
-    templateUrl: './graph-legend-view.component.html',
-    styleUrls: ['./graph-legend-view.component.scss']
+    selector: "fcl-graph-legend-view",
+    templateUrl: "./graph-legend-view.component.html",
+    styleUrls: ["./graph-legend-view.component.scss"],
 })
 export class GraphLegendViewComponent {
-
     private legendInfo_: LegendDisplayEntry[] | null = null;
     private showStationColumn_ = false;
     private showDeliveryColumn_ = false;
@@ -35,11 +34,11 @@ export class GraphLegendViewComponent {
         return this.legend.length === 0;
     }
 
-
     private updateLegend(legend: LegendDisplayEntry[]) {
         this.legend = legend;
-        this.showStationColumn_ = this.legend.some(e => !!e.shape || !!e.stationColor);
-        this.showDeliveryColumn_ = this.legend.some(e => !!e.deliveryColor);
+        this.showStationColumn_ = this.legend.some(
+            (e) => !!e.shape || !!e.stationColor,
+        );
+        this.showDeliveryColumn_ = this.legend.some((e) => !!e.deliveryColor);
     }
-
 }

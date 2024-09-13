@@ -1,8 +1,8 @@
-import { Action } from '@ngrx/store';
-import { ActivationStatus } from '../../shared/model/types';
+import { Action } from "@ngrx/store";
+import { ActivationStatus } from "../../shared/model/types";
 
 export enum GraphEditorActionTypes {
-    GraphEditorActivated = '[Graph-Editor] Set activation state'
+    GraphEditorActivated = "[Graph-Editor] Set activation state",
 }
 
 export class GraphEditorActivated implements Action {
@@ -11,5 +11,4 @@ export class GraphEditorActivated implements Action {
     constructor(public payload: ActivationStatus) {}
 }
 
-export type GraphEditorActions =
-    GraphEditorActivated;
+export type GraphEditorActions = GraphEditorActivated;

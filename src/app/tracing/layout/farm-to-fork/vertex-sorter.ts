@@ -1,14 +1,13 @@
-import { Graph, Vertex, Edge, VertexCounter } from './data-structures';
+import { Graph, Vertex, Edge, VertexCounter } from "./data-structures";
 
 class VertexSorter {
-
     sortVertices(graph: Graph, timeLimit: number) {
         if (timeLimit === undefined) {
             timeLimit = Number.POSITIVE_INFINITY;
         }
         const startTime = new Date().getTime();
         this.createVirtualVertices(graph);
-        if (Math.max(...graph.layers.map(l => l.length)) <= 1) {
+        if (Math.max(...graph.layers.map((l) => l.length)) <= 1) {
             return;
         }
 
@@ -18,7 +17,7 @@ class VertexSorter {
             const layerBackup: Vertex[][] = [];
             let i: number = arr.length;
             while (i--) {
-                layerBackup[i] = arr[i].map(v => v);
+                layerBackup[i] = arr[i].map((v) => v);
             }
             return layerBackup;
         };
@@ -50,7 +49,7 @@ class VertexSorter {
                 bestSolution = layerCopy(layers);
                 bestCrossing = currentCrossing;
             }
-            if ((timeLimit - (new Date().getTime() - startTime)) < 0) {
+            if (timeLimit - (new Date().getTime() - startTime) < 0) {
                 break;
             }
         }
@@ -92,14 +91,14 @@ class VertexSorter {
     }
 
     private pairCrossing(v: Vertex, w: Vertex): number {
-
         let crossCount: number = 0;
 
-        const numberComparator = (a: number, b: number) => a < b ? -1 : (b < a ? 1 : 0);
+        const numberComparator = (a: number, b: number) =>
+            a < b ? -1 : b < a ? 1 : 0;
 
         const fA: ((a: Vertex) => number[])[] = [
-            a => a.inEdges.map(e => e.source.indexInLayer),
-            a => a.outEdges.map(e => e.target.indexInLayer)
+            (a) => a.inEdges.map((e) => e.source.indexInLayer),
+            (a) => a.outEdges.map((e) => e.target.indexInLayer),
         ];
         for (const f of fA) {
             const vNeighbourIndices = f(v);
@@ -112,10 +111,16 @@ class VertexSorter {
             vNeighbourIndices.sort(numberComparator); // ToDo: make faster by preventing this step
             wNeighbourIndices.sort(numberComparator); // ToDo: make faster by preventing this step
             while (iV < nV && iW < nW) {
-                while (iV < nV && wNeighbourIndices[iW] >= vNeighbourIndices[iV]) {
+                while (
+                    iV < nV &&
+                    wNeighbourIndices[iW] >= vNeighbourIndices[iV]
+                ) {
                     iV++;
                 }
-                while (iW < nW && wNeighbourIndices[iW] < vNeighbourIndices[iV]) {
+                while (
+                    iW < nW &&
+                    wNeighbourIndices[iW] < vNeighbourIndices[iV]
+                ) {
                     crossCount += nV - iV;
                     iW++;
                 }
@@ -125,7 +130,6 @@ class VertexSorter {
     }
 
     private layerCrossing(layers: Vertex[][]): number {
-
         let totalCrossing: number = 0;
 
         // eslint-disable-next-line one-var
@@ -133,7 +137,9 @@ class VertexSorter {
             const vertexCounter = new VertexCounter();
             for (const vertex of layers[iL]) {
                 for (const edge of vertex.inEdges) {
-                    totalCrossing += vertexCounter.getVertexCountAbovePosition(edge.source.indexInLayer);
+                    totalCrossing += vertexCounter.getVertexCountAbovePosition(
+                        edge.source.indexInLayer,
+                    );
                 }
                 for (const edge of vertex.inEdges) {
                     vertexCounter.insertVertex(edge.source.indexInLayer);
@@ -144,8 +150,8 @@ class VertexSorter {
     }
 
     sortVerticesInLayers(layers: Vertex[][], iIteration: number) {
-
-        const compareNumbers = (a: number, b: number) => a < b ? -1 : a === b ? 0 : 1;
+        const compareNumbers = (a: number, b: number) =>
+            a < b ? -1 : a === b ? 0 : 1;
 
         if (iIteration % 2 === 0) {
             // eslint-disable-next-line one-var
@@ -153,15 +159,18 @@ class VertexSorter {
                 for (const vertex of layers[iL]) {
                     vertex.weight = this.getWeight(vertex, iL - 1);
                 }
-                layers[iL] = layers[iL].sort((a, b) => compareNumbers(a.weight, b.weight));
+                layers[iL] = layers[iL].sort((a, b) =>
+                    compareNumbers(a.weight, b.weight),
+                );
             }
         } else {
-
             for (let iL: number = layers.length - 2; iL >= 0; iL--) {
                 for (const vertex of layers[iL]) {
                     vertex.weight = this.getWeight(vertex, iL + 1);
                 }
-                layers[iL] = layers[iL].sort((a, b) => compareNumbers(a.weight, b.weight));
+                layers[iL] = layers[iL].sort((a, b) =>
+                    compareNumbers(a.weight, b.weight),
+                );
             }
         }
         for (const layer of layers) {
@@ -173,11 +182,10 @@ class VertexSorter {
     }
 
     getWeight(vertex: Vertex, rank: number): number {
-
         const adjacentPositions: number[] =
             rank < vertex.layerIndex
-                ? vertex.outEdges.map(e => e.target.indexInLayer)
-                : vertex.inEdges.map(e => e.source.indexInLayer);
+                ? vertex.outEdges.map((e) => e.target.indexInLayer)
+                : vertex.inEdges.map((e) => e.source.indexInLayer);
         const pCount = adjacentPositions.length;
 
         if (pCount === 0) {
@@ -188,10 +196,14 @@ class VertexSorter {
             return (adjacentPositions[0] + adjacentPositions[1]) / 2;
         } else {
             const halfCount: number = pCount / 2;
-            const left: number = adjacentPositions[halfCount - 1] - adjacentPositions[0];
-            const right: number = adjacentPositions[pCount - 1] - adjacentPositions[halfCount];
+            const left: number =
+                adjacentPositions[halfCount - 1] - adjacentPositions[0];
+            const right: number =
+                adjacentPositions[pCount - 1] - adjacentPositions[halfCount];
             return (
-                (adjacentPositions[halfCount - 1] * right + adjacentPositions[halfCount] * left) / (left - right)
+                (adjacentPositions[halfCount - 1] * right +
+                    adjacentPositions[halfCount] * left) /
+                (left - right)
             );
         }
     }
@@ -200,7 +212,11 @@ class VertexSorter {
         for (const layer of graph.layers) {
             for (const vertex of layer) {
                 for (const edge of vertex.inEdges) {
-                    if (Math.abs(edge.source.layerIndex - edge.target.layerIndex) > 1) {
+                    if (
+                        Math.abs(
+                            edge.source.layerIndex - edge.target.layerIndex,
+                        ) > 1
+                    ) {
                         this.splitEdge(graph, edge);
                     }
                 }
@@ -225,34 +241,45 @@ class VertexSorter {
             vertex.layerIndex = iL;
         }
 
-        const edgeOutIndex: number = edge.source.outEdges.findIndex(e => e.target.index === edge.target.index);
-        const edgeInIndex: number = edge.target.inEdges.findIndex(e => e.source.index === edge.source.index);
+        const edgeOutIndex: number = edge.source.outEdges.findIndex(
+            (e) => e.target.index === edge.target.index,
+        );
+        const edgeInIndex: number = edge.target.inEdges.findIndex(
+            (e) => e.source.index === edge.source.index,
+        );
         const newSpanStartEdge: Edge = new Edge(
             graph.vertices[edge.source.index],
             graph.vertices[maxVertexIndex + 1],
-            true
+            true,
         );
         newSpanStartEdge.weight = edge.weight;
-        graph.vertices[edge.source.index].outEdges[edgeOutIndex] = newSpanStartEdge; // replacing old edge
+        graph.vertices[edge.source.index].outEdges[edgeOutIndex] =
+            newSpanStartEdge; // replacing old edge
         graph.vertices[maxVertexIndex + 1].inEdges = [newSpanStartEdge];
         const newSpanEndEdge: Edge = new Edge(
             graph.vertices[maxVertexIndex + layerSpan - 1],
             graph.vertices[edge.target.index],
-            true
+            true,
         );
         newSpanEndEdge.weight = edge.weight;
         graph.vertices[edge.target.index].inEdges[edgeInIndex] = newSpanEndEdge;
-        graph.vertices[maxVertexIndex + layerSpan - 1].outEdges = [newSpanEndEdge];
+        graph.vertices[maxVertexIndex + layerSpan - 1].outEdges = [
+            newSpanEndEdge,
+        ];
 
         for (let i: number = 1; i < layerSpan - 1; ++i) {
             const newSpanInBetweenEdge: Edge = new Edge(
                 graph.vertices[maxVertexIndex + i],
                 graph.vertices[maxVertexIndex + i + 1],
-                true
+                true,
             );
             newSpanInBetweenEdge.weight = edge.weight;
-            graph.vertices[maxVertexIndex + i].outEdges = [newSpanInBetweenEdge];
-            graph.vertices[maxVertexIndex + i + 1].inEdges = [newSpanInBetweenEdge];
+            graph.vertices[maxVertexIndex + i].outEdges = [
+                newSpanInBetweenEdge,
+            ];
+            graph.vertices[maxVertexIndex + i + 1].inEdges = [
+                newSpanInBetweenEdge,
+            ];
         }
     }
 }

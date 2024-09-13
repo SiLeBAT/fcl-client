@@ -1,7 +1,6 @@
-import { Vertex } from './data-structures';
+import { Vertex } from "./data-structures";
 
 class VertexPositionerSimple {
-
     positionVertices(layers: Vertex[][], vertexDistance: number) {
         const nLayers: number = layers.length;
         const layerDistance: number = 1;
@@ -22,6 +21,7 @@ class VertexPositionerSimple {
 }
 
 export function positionVertices(layers: Vertex[][], vertexDistance: number) {
-    const vertexPositioner: VertexPositionerSimple = new VertexPositionerSimple();
+    const vertexPositioner: VertexPositionerSimple =
+        new VertexPositionerSimple();
     vertexPositioner.positionVertices(layers, vertexDistance);
 }

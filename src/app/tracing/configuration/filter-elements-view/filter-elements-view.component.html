@@ -1,15 +1,16 @@
 <div *ngIf="dataIsAvailable" class="fcl-filter-elements-container">
-
     <fcl-standard-filter-view
         class="fcl-standard-filter-view"
-        [filterTerm] = "standardFilterSettings"
-        (filterTermChange) = "onStandardFilterChange($event)"
-        [filterLabel]="standardFilterLabel">
+        [filterTerm]="standardFilterSettings"
+        (filterTermChange)="onStandardFilterChange($event)"
+        [filterLabel]="standardFilterLabel"
+    >
     </fcl-standard-filter-view>
 
     <fcl-clear-all-filter-view
         class="fcl-clear-all-filter-view"
-        (clearFilter)="onClearAllFilters()">
+        (clearFilter)="onClearAllFilters()"
+    >
     </fcl-clear-all-filter-view>
 
     <mat-expansion-panel
@@ -19,17 +20,18 @@
         (opened)="onSetMoreFilterOpenState(true)"
         (closed)="onSetMoreFilterOpenState(false)"
         (afterCollapse)="onAfterExpansionPanelCollapseOrExpand()"
-        (afterExpand)="onAfterExpansionPanelCollapseOrExpand()">
-
+        (afterExpand)="onAfterExpansionPanelCollapseOrExpand()"
+    >
         <mat-expansion-panel-header>
-          <mat-panel-title class="fcl-font-size-08">
-            More Filters... click  to {{ moreFilterOpenState ?  'close' : 'open' }}
-          </mat-panel-title>
+            <mat-panel-title class="fcl-font-size-08">
+                More Filters... click to
+                {{ moreFilterOpenState ? "close" : "open" }}
+            </mat-panel-title>
         </mat-expansion-panel-header>
 
         <fcl-predefined-filter-view
-            [showType] = "predefinedFilterSettings"
-            (showTypeChange) = "onPredefinedFilterChange($event)"
+            [showType]="predefinedFilterSettings"
+            (showTypeChange)="onPredefinedFilterChange($event)"
         ></fcl-predefined-filter-view>
 
         <mat-expansion-panel
@@ -38,40 +40,39 @@
             (opened)="complexFilterOpenState = true"
             (closed)="complexFilterOpenState = false"
             (afterCollapse)="onAfterExpansionPanelCollapseOrExpand()"
-            (afterExpand)="onAfterExpansionPanelCollapseOrExpand()">
-
-            <mat-expansion-panel-header
-                class="fcl-expansion-panel-header">
+            (afterExpand)="onAfterExpansionPanelCollapseOrExpand()"
+        >
+            <mat-expansion-panel-header class="fcl-expansion-panel-header">
                 <mat-panel-title class="fcl-font-size-08">
-                    Complex Filters... click  to {{ complexFilterOpenState ?  'close' : 'open' }}
+                    Complex Filters... click to
+                    {{ complexFilterOpenState ? "close" : "open" }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
             <div class="fcl-complex-filter-div">
                 <fcl-complex-filter-view
                     class="fcl-complex-filter"
-                    [conditions] = "complexFilterSettings"
-                    [favouriteProperties] = "favouriteColumns"
-                    [otherProperties] = "otherColumns"
-                    [availableOperatorTypes] = "availableOperatorTypes"
-                    [propToValuesMap] = "propToValuesMap"
-                    (conditionsChange) = "onComplexFilterChange($event)"
+                    [conditions]="complexFilterSettings"
+                    [favouriteProperties]="favouriteColumns"
+                    [otherProperties]="otherColumns"
+                    [availableOperatorTypes]="availableOperatorTypes"
+                    [propToValuesMap]="propToValuesMap"
+                    (conditionsChange)="onComplexFilterChange($event)"
                 ></fcl-complex-filter-view>
             </div>
         </mat-expansion-panel>
-
     </mat-expansion-panel>
 
     <div class="fcl-filter-table-view-container">
         <fcl-filter-table-view
-            class = "fcl-filter-table-view"
-            [inputData] = "filterTableViewInputData"
-            [activityState$] = "activityState$"
-            [cycleStart$] = "cycleStart$"
-            [checkTableSize$] = "checkTableSize$"
-            [updateTableSize$] = "updateTableSize$"
-            [useTreeMode] = "useTreeMode"
-            (columnOrderChange) = "onColumnOrderChange($event)"
+            class="fcl-filter-table-view"
+            [inputData]="filterTableViewInputData"
+            [activityState$]="activityState$"
+            [cycleStart$]="cycleStart$"
+            [checkTableSize$]="checkTableSize$"
+            [updateTableSize$]="updateTableSize$"
+            [useTreeMode]="useTreeMode"
+            (columnOrderChange)="onColumnOrderChange($event)"
             (filterChange)="onTableFilterChange($event)"
             (selectColumns)="onSelectTableColumns()"
             (rowSelectionChange)="onRowSelectionChange($event)"

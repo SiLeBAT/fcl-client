@@ -1,17 +1,23 @@
 import {
-    Component, Input, ViewEncapsulation, Output,
-    EventEmitter, ChangeDetectionStrategy,
-    ViewChild, ElementRef, AfterViewChecked
-} from '@angular/core';
+    Component,
+    Input,
+    ViewEncapsulation,
+    Output,
+    EventEmitter,
+    ChangeDetectionStrategy,
+    ViewChild,
+    ElementRef,
+    AfterViewChecked,
+} from "@angular/core";
 
-const MASK_CHARACTER = '∙';
-const INPUT_TYPE_INSERT_TEXT = 'insertText';
-const INPUT_TYPE_INSERT_FROM_DROP = 'insertFromDrop';
-const INPUT_TYPE_DELETE_BY_DRAG = 'deleteByDrag';
-const INPUT_TYPE_DELETE_PREFIX = 'delete';
-const INPUT_TYPE_UNDO = 'historyUndo';
-const INPUT_TYPE_REDO = 'historyRedo';
-const FORMAT_TYPE_TEXT_PLAIN = 'text/plain';
+const MASK_CHARACTER = "∙";
+const INPUT_TYPE_INSERT_TEXT = "insertText";
+const INPUT_TYPE_INSERT_FROM_DROP = "insertFromDrop";
+const INPUT_TYPE_DELETE_BY_DRAG = "deleteByDrag";
+const INPUT_TYPE_DELETE_PREFIX = "delete";
+const INPUT_TYPE_UNDO = "historyUndo";
+const INPUT_TYPE_REDO = "historyRedo";
+const FORMAT_TYPE_TEXT_PLAIN = "text/plain";
 
 interface EditOp {
     deleteText?: string;
@@ -21,15 +27,14 @@ interface EditOp {
 }
 
 @Component({
-    selector: 'fcl-prefix-editor-view',
+    selector: "fcl-prefix-editor-view",
     changeDetection: ChangeDetectionStrategy.OnPush,
-    templateUrl: './prefix-editor-view.component.html',
-    encapsulation: ViewEncapsulation.None
+    templateUrl: "./prefix-editor-view.component.html",
+    encapsulation: ViewEncapsulation.None,
 })
 export class PrefixEditorViewComponent implements AfterViewChecked {
-
     @Input() disabled = false;
-    @Input() placeholder = 'no prefix';
+    @Input() placeholder = "no prefix";
     @Input() set value(value: string) {
         if (value !== this._value) {
             this._value = this.preprocessValue(value);
@@ -42,19 +47,18 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
 
     @Output() valueChange = new EventEmitter<string>();
 
-    @ViewChild('inputElement') inputElementRef: ElementRef<HTMLInputElement>;
+    @ViewChild("inputElement") inputElementRef: ElementRef<HTMLInputElement>;
 
     get displayValue(): string {
         return this._displayValue;
     }
 
-    private _value: string = '';
+    private _value: string = "";
     private undoOps: EditOp[] = [];
     private redoOps: EditOp[] = [];
     private dragStarted = false;
-    private _displayValue: string = '';
+    private _displayValue: string = "";
     private pendingSelectionRange: { start: number; end: number } | null = null;
-
 
     private get inputElement(): HTMLInputElement {
         return this.inputElementRef.nativeElement;
@@ -64,7 +68,7 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         if (this.selStart !== null && this.selEnd !== null) {
             return this._value.slice(this.selStart, this.selEnd);
         } else {
-            return '';
+            return "";
         }
     }
 
@@ -72,7 +76,7 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         if (this.selStart !== null && this.selEnd !== null) {
             return this.inputElement.value.slice(this.selStart, this.selEnd);
         } else {
-            return '';
+            return "";
         }
     }
 
@@ -92,7 +96,7 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
                 this.inputElement.setSelectionRange(
                     this.pendingSelectionRange.start,
                     this.pendingSelectionRange.end,
-                    'none'
+                    "none",
                 );
             }
             this.pendingSelectionRange = null;
@@ -133,7 +137,6 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         return !cancelInput;
     }
 
-
     onInput(event: InputEvent): void {
         if (event.inputType === INPUT_TYPE_INSERT_FROM_DROP) {
             this.processInsertDropEvent();
@@ -146,7 +149,9 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
     }
 
     onPaste(event: ClipboardEvent): boolean | void {
-        const clipboardText = this.preprocessValue(event.clipboardData!.getData(FORMAT_TYPE_TEXT_PLAIN));
+        const clipboardText = this.preprocessValue(
+            event.clipboardData!.getData(FORMAT_TYPE_TEXT_PLAIN),
+        );
 
         if (clipboardText.length > 0) {
             const rawParts = this.getRawTextParts();
@@ -157,13 +162,13 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
                 const newCursorIndex = this.selStart! + clipboardText.length;
                 this.pendingSelectionRange = {
                     start: newCursorIndex,
-                    end: newCursorIndex
+                    end: newCursorIndex,
                 };
                 this.recordEditOp({
                     deleteText: rawParts.middle,
                     deleteTextAt: rawParts.start.length,
                     insertText: clipboardText,
-                    insertTextAt: rawParts.start.length
+                    insertTextAt: rawParts.start.length,
                 });
                 this.setNewValue(newValue);
                 return false;
@@ -177,7 +182,10 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
 
         if (selectedRawText !== clipboardText) {
             event.preventDefault();
-            event.clipboardData!.setData(FORMAT_TYPE_TEXT_PLAIN, selectedRawText);
+            event.clipboardData!.setData(
+                FORMAT_TYPE_TEXT_PLAIN,
+                selectedRawText,
+            );
         }
     }
 
@@ -186,12 +194,17 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         const selectedRawText = this.rawSelection;
 
         if (selectedRawText !== clipboardText) {
-            event.clipboardData!.setData(FORMAT_TYPE_TEXT_PLAIN, selectedRawText);
+            event.clipboardData!.setData(
+                FORMAT_TYPE_TEXT_PLAIN,
+                selectedRawText,
+            );
         }
     }
 
     onDragStart(event: DragEvent): void {
-        const dragDisplayText = event.dataTransfer!.getData(FORMAT_TYPE_TEXT_PLAIN);
+        const dragDisplayText = event.dataTransfer!.getData(
+            FORMAT_TYPE_TEXT_PLAIN,
+        );
         const dragRawText = this.rawSelection;
 
         if (dragDisplayText !== dragRawText) {
@@ -205,11 +218,16 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
     }
 
     onDrop(event: DragEvent): void {
-        const unprocessedDropText = event.dataTransfer!.getData(FORMAT_TYPE_TEXT_PLAIN);
+        const unprocessedDropText = event.dataTransfer!.getData(
+            FORMAT_TYPE_TEXT_PLAIN,
+        );
         const preprocessedDropText = this.preprocessValue(unprocessedDropText);
 
         if (unprocessedDropText !== preprocessedDropText) {
-            event.dataTransfer!.setData(FORMAT_TYPE_TEXT_PLAIN, preprocessedDropText);
+            event.dataTransfer!.setData(
+                FORMAT_TYPE_TEXT_PLAIN,
+                preprocessedDropText,
+            );
         }
     }
 
@@ -222,21 +240,28 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         // but the drop text is still in the transferdata object available
         // so we use the selection end as reference here & extract the dropText from
         // the input element value
-        const dropTextLength = this.inputElement.value.length - this._value.length;
+        const dropTextLength =
+            this.inputElement.value.length - this._value.length;
         const dropPos = this.selEnd! - dropTextLength;
-        const dropText = this.inputElement.value.slice(dropPos, dropPos + dropTextLength);
+        const dropText = this.inputElement.value.slice(
+            dropPos,
+            dropPos + dropTextLength,
+        );
 
         const beforeInsert = this._value.slice(0, dropPos);
         const afterInsert = this._value.slice(dropPos);
         const newValue = `${beforeInsert}${dropText}${afterInsert}`;
         this.pendingSelectionRange = {
             start: dropPos,
-            end: dropPos + dropText.length
+            end: dropPos + dropText.length,
         };
-        this.recordEditOp({
-            insertText: dropText,
-            insertTextAt: dropPos
-        }, true);
+        this.recordEditOp(
+            {
+                insertText: dropText,
+                insertTextAt: dropPos,
+            },
+            true,
+        );
         this.setNewValue(newValue);
     }
 
@@ -248,12 +273,12 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
             const newCursorPos = this.selStart!;
             this.pendingSelectionRange = {
                 start: newCursorPos,
-                end: newCursorPos
+                end: newCursorPos,
             };
         }
         this.recordEditOp({
             deleteText: rawParts.middle,
-            deleteTextAt: rawParts.start.length
+            deleteTextAt: rawParts.start.length,
         });
         this.setNewValue(newValue);
     }
@@ -264,13 +289,13 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
 
         this.pendingSelectionRange = {
             start: this.selStart!,
-            end: this.selStart!
+            end: this.selStart!,
         };
         this.recordEditOp({
             deleteText: rawParts.middle,
             deleteTextAt: rawParts.start.length,
             insertText: character,
-            insertTextAt: rawParts.start.length
+            insertTextAt: rawParts.start.length,
         });
         this.setNewValue(newValue);
     }
@@ -285,7 +310,10 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         return text.replace(/ /g, MASK_CHARACTER);
     }
 
-    private getRawTextParts(startLength?: number, endLength?: number): { start: string; middle: string; end: string } {
+    private getRawTextParts(
+        startLength?: number,
+        endLength?: number,
+    ): { start: string; middle: string; end: string } {
         startLength = startLength ?? this.selStart!;
         endLength = endLength ?? this.inputElement.value.length - this.selEnd!;
 
@@ -296,7 +324,7 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         return {
             start: rawTextStart,
             middle: this._value.slice(startLength, endStart),
-            end: rawTextEnd
+            end: rawTextEnd,
         };
     }
 
@@ -304,11 +332,13 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         let newValue = this._value;
         if (editOp.insertText) {
             const beforeInsert = newValue.slice(0, editOp.insertTextAt);
-            const afterInsert = newValue.slice(editOp.insertTextAt! + editOp.insertText.length);
+            const afterInsert = newValue.slice(
+                editOp.insertTextAt! + editOp.insertText.length,
+            );
             newValue = `${beforeInsert}${afterInsert}`;
             this.pendingSelectionRange = {
                 start: editOp.insertTextAt!,
-                end: editOp.insertTextAt!
+                end: editOp.insertTextAt!,
             };
         }
         if (editOp.deleteText) {
@@ -317,7 +347,7 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
             newValue = `${beforeDelete}${editOp.deleteText}${afterDelete}`;
             this.pendingSelectionRange = {
                 start: editOp.deleteTextAt!,
-                end: editOp.deleteTextAt! + editOp.deleteText.length
+                end: editOp.deleteTextAt! + editOp.deleteText.length,
             };
         }
         this.setNewValue(newValue);
@@ -327,11 +357,13 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
         let newValue = this._value;
         if (editOp.deleteText) {
             const beforeDelete = newValue.slice(0, editOp.deleteTextAt);
-            const afterDelete = newValue.slice(editOp.deleteTextAt! + editOp.deleteText.length);
+            const afterDelete = newValue.slice(
+                editOp.deleteTextAt! + editOp.deleteText.length,
+            );
             newValue = `${beforeDelete}${afterDelete}`;
             this.pendingSelectionRange = {
                 start: editOp.deleteTextAt!,
-                end: editOp.deleteTextAt!
+                end: editOp.deleteTextAt!,
             };
         }
         if (editOp.insertText) {
@@ -340,7 +372,7 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
             newValue = `${beforeInsert}${editOp.insertText}${afterInsert}`;
             this.pendingSelectionRange = {
                 start: editOp.insertTextAt!,
-                end: editOp.insertTextAt! + editOp.insertText.length
+                end: editOp.insertTextAt! + editOp.insertText.length,
             };
         }
 
@@ -348,14 +380,10 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
     }
 
     private recordEditOp(editOp: EditOp, isInsertDrop?: boolean): void {
-        if (
-            isInsertDrop &&
-            this.undoOps.length > 0 &&
-            this.dragStarted
-        ) {
+        if (isInsertDrop && this.undoOps.length > 0 && this.dragStarted) {
             this.undoOps.push({
                 ...this.undoOps.pop(),
-                ...editOp
+                ...editOp,
             });
         } else {
             this.undoOps.push(editOp);
@@ -364,6 +392,6 @@ export class PrefixEditorViewComponent implements AfterViewChecked {
     }
 
     private preprocessValue(text: string): string {
-        return text.replace(/[\n\t]/g, ' ');
+        return text.replace(/[\n\t]/g, " ");
     }
 }

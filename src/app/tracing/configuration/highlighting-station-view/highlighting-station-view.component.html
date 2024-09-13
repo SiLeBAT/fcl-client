@@ -1,17 +1,12 @@
 <ng-template let-editRule="editRule" #labelEditTemplate>
-
     <fcl-label-rules-edit-view
         *ngIf="editRule !== null && !editRule.labelParts"
-
         [rule]="editRule"
-
         [favouriteProperties]="favouriteProperties"
         [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
-
         (addSelection)="onAddSelectionToRuleConditions($event)"
         (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-
         (applyRule)="onApplyEdit($event)"
         (cancelEdit)="onCancelEdit(editRule.id)"
         (okRule)="onOkEdit($event)"
@@ -20,16 +15,12 @@
 
     <fcl-anonymization-rule-edit-view
         *ngIf="editRule !== null && !!editRule.labelParts"
-
         [rule]="editRule"
-
         [favouriteProperties]="favouriteProperties"
         [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
-
         (addSelection)="onAddSelectionToRuleConditions($event)"
         (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-
         (applyRule)="onApplyEdit($event)"
         (cancelEdit)="onCancelEdit(editRule.id)"
         (okRule)="onOkEdit($event)"
@@ -40,16 +31,12 @@
 <ng-template let-editRule="editRule" #colorShapeEditTemplate>
     <fcl-colors-and-shapes-edit-view
         *ngIf="editRule !== null"
-
         [rule]="editRule"
-
         [favouriteProperties]="favouriteProperties"
         [otherProperties]="otherProperties"
         [propToValuesMap]="propToValuesMap"
-
         (addSelection)="onAddSelectionToRuleConditions($event)"
         (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
-
         (applyRule)="onApplyEdit($event)"
         (cancelEdit)="onCancelEdit(editRule.id)"
         (okRule)="onOkEdit($event)"
@@ -71,51 +58,61 @@
     let-editTemplate="editTemplate"
     let-symbolTemplate="symbolTemplate"
     let-showInLegendTB="showInLegendTB"
-    #panelTemplate>
+    #panelTemplate
+>
     <mat-expansion-panel
         class="fcl-highlighting-expansion-panels fcl-border-radius-zero"
         [expanded]="getOpenState(ruleType)"
         (opened)="setOpenState(ruleType, true)"
-        (closed)="setOpenState(ruleType, false)">
-
+        (closed)="setOpenState(ruleType, false)"
+    >
         <mat-expansion-panel-header>
             <mat-panel-title class="fcl-font-size-08">
-                {{ title }}... click  to {{ getOpenState(ruleType) ?  'close' : 'open' }}
+                {{ title }}... click to
+                {{ getOpenState(ruleType) ? "close" : "open" }}
             </mat-panel-title>
         </mat-expansion-panel-header>
 
         <fcl-highlighting-rules-list-view
             class="fcl-rules-list-view-container"
-
-            [showShowInLegendToggleButton]="showInLegendTB === undefined ? true : showInLegendTB"
+            [showShowInLegendToggleButton]="
+                showInLegendTB === undefined ? true : showInLegendTB
+            "
             [listItems]="getListItemsOfType(ruleType)"
             [editTemplate]="editTemplate || null"
             [symbolTemplate]="symbolTemplate || null"
             [editRule]="getEditRuleOfType(ruleType)"
-
             (deleteRule)="onDeleteRule($event)"
             (ruleOrderChange)="onRuleOrderChange($event)"
             (toggleRuleIsDisabled)="onToggleRuleIsDisabled($event)"
             (toggleShowRuleInLegend)="onToggleShowRuleInLegend($event)"
-
             (newRule)="onNewRule(ruleType)"
             (startEdit)="onStartEdit($event)"
         >
         </fcl-highlighting-rules-list-view>
-
     </mat-expansion-panel>
 </ng-template>
 
-
-
 <div class="fcl-highlighting-element-container">
-
-    <ng-container [ngTemplateOutlet]="panelTemplate"
-        [ngTemplateOutletContext] ="{ ruleType: RuleType.LABEL, title: 'Label', editTemplate: labelEditTemplate, showInLegendTB: false }">
+    <ng-container
+        [ngTemplateOutlet]="panelTemplate"
+        [ngTemplateOutletContext]="{
+            ruleType: RuleType.LABEL,
+            title: 'Label',
+            editTemplate: labelEditTemplate,
+            showInLegendTB: false,
+        }"
+    >
     </ng-container>
 
-    <ng-container [ngTemplateOutlet]="panelTemplate"
-        [ngTemplateOutletContext] ="{ ruleType: RuleType.COLOR_AND_SHAPE, title: 'Colours and Shapes', editTemplate: colorShapeEditTemplate, symbolTemplate: colorShapeSymbolTemplate }">
+    <ng-container
+        [ngTemplateOutlet]="panelTemplate"
+        [ngTemplateOutletContext]="{
+            ruleType: RuleType.COLOR_AND_SHAPE,
+            title: 'Colours and Shapes',
+            editTemplate: colorShapeEditTemplate,
+            symbolTemplate: colorShapeSymbolTemplate,
+        }"
+    >
     </ng-container>
-
 </div>

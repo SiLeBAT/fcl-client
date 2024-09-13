@@ -1,8 +1,16 @@
-import { Action } from '@ngrx/store';
-import { VisioReport } from '../visio/layout-engine/datatypes';
+import { Action } from "@ngrx/store";
+import { VisioReport } from "../visio/layout-engine/datatypes";
 import {
-    GraphType, FclData, SelectedElements, Position,
-    SetTracingSettingsPayload, SetHighlightingSettingsPayload, Layout, MergeDeliveriesType, MapType, ShapeFileData,
+    GraphType,
+    FclData,
+    SelectedElements,
+    Position,
+    SetTracingSettingsPayload,
+    SetHighlightingSettingsPayload,
+    Layout,
+    MergeDeliveriesType,
+    MapType,
+    ShapeFileData,
     CrossContTraceType,
     DeliveryId,
     StationHighlightingRule,
@@ -10,74 +18,76 @@ import {
     StationId,
     DeliveryHighlightingRule,
     JsonDataExtract,
-    Color
-} from '../data.model';
-import { SetStationGroupsPayload } from './../grouping/model';
-import { ActivationStatus } from '../../shared/model/types';
+    Color,
+} from "../data.model";
+import { SetStationGroupsPayload } from "./../grouping/model";
+import { ActivationStatus } from "../../shared/model/types";
 import {
-    ActiveConfigurationTabId, ActiveFilterTabId,
-    ActiveHighlightingTabId, FilterTableSettings
-} from '../configuration/configuration.model';
-import { ROASettings } from '../visio/model';
-import { DeliveryEditRule, StationEditRule } from '../configuration/model';
+    ActiveConfigurationTabId,
+    ActiveFilterTabId,
+    ActiveHighlightingTabId,
+    FilterTableSettings,
+} from "../configuration/configuration.model";
+import { ROASettings } from "../visio/model";
+import { DeliveryEditRule, StationEditRule } from "../configuration/model";
 
 export enum TracingActionTypes {
-    TracingActivated = '[Tracing] Tracing active',
-    LoadFclDataSuccessSOA = '[Tracing] Load Fcl Data Success',
-    LoadFclDataFailureSOA = '[Tracing] Load Fcl Data Failure',
-    LoadShapeFileSuccessSOA = '[Tracing] Load Shape File Success',
-    LoadShapeFileFailureMSA = '[Tracing] Load Shape File Failure',
-    SetGeojsonShapeBorderWidthSOA = '[Tracing] Set Geojson BorderWidth',
-    SetGeojsonShapeBorderColorSOA = '[Tracing] Set Geojson BorderColor',
-    GenerateVisioLayoutSuccess = '[Tracing] Generate Visio Layout Success',
-    ShowGraphSettingsSOA = '[Tracing] Show Graph Settings',
-    ShowConfigurationSideBarSOA = '[Tracing] Show Configuration Settings',
-    ShowTableSettingsSOA = '[Tracing] Show Table Settings',
-    SetGraphTypeSOA = '[Tracing] Set Graph Type',
-    SetMapTypeSOA = '[Tracing] Set Map Type',
-    SetSchemaGraphLayoutSOA = '[Tracing] Set Schema Graph Layout',
-    SetGisGraphLayoutSOA = '[Tracing] Set Gis Graph Layout',
-    SetNodeSizeSOA = '[Tracing] Set Node Size',
-    SetAdjustEdgeWidthToNodeSizeSOA = '[Tracing] Set Adjust Edge Width To Node Size',
-    SetEdgeWidthSOA = '[Tracing] Set Edge Width',
-    SetFontSizeSOA = '[Tracing] Set Font Size',
-    SetMergeDeliveriesTypeSOA = '[Tracing] Set Merge Deliveries Type',
-    ShowMergedDeliveriesCountsSOA = '[Tracing] Show Merged Deliveries Counts',
-    ShowLegendSOA = '[Tracing] Show Legend',
-    ShowZoomSOA = '[Tracing] Show Zoom',
-    SetFitGraphToVisibleAreaSOA = '[Tracing] Set Fit Graph To Visible Area',
-    SetSelectedElementsSOA = '[Tracing] Set Element Selection',
-    SetSelectedStationsSOA = '[Tracing] Set Station Selection',
-    SetSelectedDeliveriesSOA = '[Tracing] Set Delivery Selection',
-    SetStationPositionsSOA = '[Tracing] Set Station Positions',
-    SetStationPositionsAndLayoutSOA = '[Tracing] Set Station Positions And Layout',
-    SetStationGroupsSOA = '[Tracing] Set Station Groups',
-    SetTracingSettingsSOA = '[Tracing] Set Tracing Settings',
-    SetCrossContTraceTypeSOA = '[Tracing] Set Cross Contamination Trace Type',
-    SetHighlightingSettingsSOA = '[Tracing] Set Highlighting Settings',
-    SetInvisibleElementsSOA = '[Tracing] Set Invisible Elements',
-    SetActiveConfigurationTabIdSOA = '[Configuration Layout] Set Active Configuration Tab Id',
-    SetActiveFilterTabIdSOA = '[Configuration Layout] Set Active Filter Tab Id',
-    SetActiveHighlightingTabIdSOA = '[Configuration Layout] Set Active Highlighting Tab Id',
-    SetStationFilterSOA = '[Configuration Layout] Set Station Filter Settings',
-    ResetAllStationFiltersSOA = '[Configuration Layout] Reset All Station Filters',
-    SetFilterStationTableColumnOrderSOA = '[Configuration Layout] Set Station Table Column Order',
-    SetDeliveryFilterSOA = '[Configuration Layout] Set Delivery Filter Settings',
-    ResetAllDeliveryFiltersSOA = '[Configuration Layout] Reset All Delivery Filters',
-    SetFilterDeliveryTableColumnOrderSOA = '[Configuration Layout] Set Delivery Table Column Order',
-    SetGhostStationSOA = '[Station Table] Show Ghost Station',
-    SetGhostDeliverySOA = '[Delivery Table] Show Ghost Delivery',
-    DeleteGhostElementSOA = '[Filter Table] Delete Ghost Element',
-    SetHoverDeliveriesSOA = '[Station Properties] Hover Deliveries',
-    SetROAReportSettingsSOA = '[ROA Report] Set ROA Report Settings',
-    ResetTracingStateSOA = '[Tracing] Reset Tracing State',
-    SetStationHighlightingRulesSOA = '[Station Highlighting] Set Station Highlighting Rules',
-    SetStationHighlightingEditRulesSOA = '[Station Highlighting] Set Station Highlighting Edit Rules',
-    SetDeliveryHighlightingRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Rules',
-    SetDeliveryHighlightingEditRulesSOA = '[Delivery Highlighting] Set Delivery Highlighting Edit Rules',
-    SetTabAnimationDoneSOA = '[Configuration] Tab animation done',
-    SetConfigurationSideBarOpenedSOA = '[Configuration] Configuration sidebar opened',
-    SetLastUnchangedJsonDataExtractSuccessSOA = '[Tracing] Refresh Last Unchanged JsonData Extract Success'
+    TracingActivated = "[Tracing] Tracing active",
+    LoadFclDataSuccessSOA = "[Tracing] Load Fcl Data Success",
+    LoadFclDataFailureSOA = "[Tracing] Load Fcl Data Failure",
+    LoadShapeFileSuccessSOA = "[Tracing] Load Shape File Success",
+    LoadShapeFileFailureMSA = "[Tracing] Load Shape File Failure",
+    SetGeojsonShapeBorderWidthSOA = "[Tracing] Set Geojson BorderWidth",
+    SetGeojsonShapeBorderColorSOA = "[Tracing] Set Geojson BorderColor",
+    GenerateVisioLayoutSuccess = "[Tracing] Generate Visio Layout Success",
+    ShowGraphSettingsSOA = "[Tracing] Show Graph Settings",
+    ShowConfigurationSideBarSOA = "[Tracing] Show Configuration Settings",
+    ShowTableSettingsSOA = "[Tracing] Show Table Settings",
+    SetGraphTypeSOA = "[Tracing] Set Graph Type",
+    SetMapTypeSOA = "[Tracing] Set Map Type",
+    SetSchemaGraphLayoutSOA = "[Tracing] Set Schema Graph Layout",
+    SetGisGraphLayoutSOA = "[Tracing] Set Gis Graph Layout",
+    SetNodeSizeSOA = "[Tracing] Set Node Size",
+    SetAdjustEdgeWidthToNodeSizeSOA = "[Tracing] Set Adjust Edge Width To Node Size",
+    SetEdgeWidthSOA = "[Tracing] Set Edge Width",
+    SetFontSizeSOA = "[Tracing] Set Font Size",
+    SetMergeDeliveriesTypeSOA = "[Tracing] Set Merge Deliveries Type",
+    ShowMergedDeliveriesCountsSOA = "[Tracing] Show Merged Deliveries Counts",
+    ShowLegendSOA = "[Tracing] Show Legend",
+    ShowZoomSOA = "[Tracing] Show Zoom",
+    SetFitGraphToVisibleAreaSOA = "[Tracing] Set Fit Graph To Visible Area",
+    SetSelectedElementsSOA = "[Tracing] Set Element Selection",
+    SetSelectedStationsSOA = "[Tracing] Set Station Selection",
+    SetSelectedDeliveriesSOA = "[Tracing] Set Delivery Selection",
+    SetStationPositionsSOA = "[Tracing] Set Station Positions",
+    SetStationPositionsAndLayoutSOA = "[Tracing] Set Station Positions And Layout",
+    SetStationGroupsSOA = "[Tracing] Set Station Groups",
+    SetTracingSettingsSOA = "[Tracing] Set Tracing Settings",
+    SetCrossContTraceTypeSOA = "[Tracing] Set Cross Contamination Trace Type",
+    SetHighlightingSettingsSOA = "[Tracing] Set Highlighting Settings",
+    SetInvisibleElementsSOA = "[Tracing] Set Invisible Elements",
+    SetActiveConfigurationTabIdSOA = "[Configuration Layout] Set Active Configuration Tab Id",
+    SetActiveFilterTabIdSOA = "[Configuration Layout] Set Active Filter Tab Id",
+    SetActiveHighlightingTabIdSOA = "[Configuration Layout] Set Active Highlighting Tab Id",
+    SetStationFilterSOA = "[Configuration Layout] Set Station Filter Settings",
+    ResetAllStationFiltersSOA = "[Configuration Layout] Reset All Station Filters",
+    SetFilterStationTableColumnOrderSOA = "[Configuration Layout] Set Station Table Column Order",
+    SetDeliveryFilterSOA = "[Configuration Layout] Set Delivery Filter Settings",
+    ResetAllDeliveryFiltersSOA = "[Configuration Layout] Reset All Delivery Filters",
+    SetFilterDeliveryTableColumnOrderSOA = "[Configuration Layout] Set Delivery Table Column Order",
+    SetGhostStationSOA = "[Station Table] Show Ghost Station",
+    SetGhostDeliverySOA = "[Delivery Table] Show Ghost Delivery",
+    DeleteGhostElementSOA = "[Filter Table] Delete Ghost Element",
+    SetHoverDeliveriesSOA = "[Station Properties] Hover Deliveries",
+    SetROAReportSettingsSOA = "[ROA Report] Set ROA Report Settings",
+    ResetTracingStateSOA = "[Tracing] Reset Tracing State",
+    SetStationHighlightingRulesSOA = "[Station Highlighting] Set Station Highlighting Rules",
+    SetStationHighlightingEditRulesSOA = "[Station Highlighting] Set Station Highlighting Edit Rules",
+    SetDeliveryHighlightingRulesSOA = "[Delivery Highlighting] Set Delivery Highlighting Rules",
+    SetDeliveryHighlightingEditRulesSOA = "[Delivery Highlighting] Set Delivery Highlighting Edit Rules",
+    SetTabAnimationDoneSOA = "[Configuration] Tab animation done",
+    SetConfigurationSideBarOpenedSOA = "[Configuration] Configuration sidebar opened",
+    SetLastUnchangedJsonDataExtractSuccessSOA = "[Tracing] Refresh Last Unchanged JsonData Extract Success",
 }
 
 export class TracingActivated implements Action {
@@ -211,7 +221,7 @@ export class SetFitGraphToVisibleAreaSOA implements Action {
 export class SetSelectedElementsSOA implements Action {
     readonly type = TracingActionTypes.SetSelectedElementsSOA;
 
-    constructor(public payload: { selectedElements: SelectedElements}) {}
+    constructor(public payload: { selectedElements: SelectedElements }) {}
 }
 
 export class SetSelectedStationsSOA implements Action {
@@ -229,13 +239,20 @@ export class SetSelectedDeliveriesSOA implements Action {
 export class SetStationPositionsSOA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsSOA;
 
-    constructor(public payload: { stationPositions: { [key: string]: Position }}) {}
+    constructor(
+        public payload: { stationPositions: { [key: string]: Position } },
+    ) {}
 }
 
 export class SetStationPositionsAndLayoutSOA implements Action {
     readonly type = TracingActionTypes.SetStationPositionsAndLayoutSOA;
 
-    constructor(public payload: { stationPositions: { [key: string]: Position }; layout?: Layout }) {}
+    constructor(
+        public payload: {
+            stationPositions: { [key: string]: Position };
+            layout?: Layout;
+        },
+    ) {}
 }
 
 export class SetSchemaGraphLayoutSOA implements Action {
@@ -283,7 +300,9 @@ export class SetInvisibleElementsSOA implements Action {
 export class SetActiveConfigurationTabIdSOA implements Action {
     readonly type = TracingActionTypes.SetActiveConfigurationTabIdSOA;
 
-    constructor(public payload: { activeConfigurationTabId: ActiveConfigurationTabId }) {}
+    constructor(
+        public payload: { activeConfigurationTabId: ActiveConfigurationTabId },
+    ) {}
 }
 
 export class SetActiveFilterTabIdSOA implements Action {
@@ -295,7 +314,9 @@ export class SetActiveFilterTabIdSOA implements Action {
 export class SetActiveHighlightingTabIdSOA implements Action {
     readonly type = TracingActionTypes.SetActiveHighlightingTabIdSOA;
 
-    constructor(public payload: { activeHighlightingTabId: ActiveHighlightingTabId }) {}
+    constructor(
+        public payload: { activeHighlightingTabId: ActiveHighlightingTabId },
+    ) {}
 }
 
 export class SetFilterStationTableColumnOrderSOA implements Action {
@@ -395,13 +416,14 @@ export class SetConfigurationSideBarOpenedSOA implements Action {
 }
 
 export class SetLastUnchangedJsonDataExtractSuccessSOA implements Action {
-    readonly type = TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA;
+    readonly type =
+        TracingActionTypes.SetLastUnchangedJsonDataExtractSuccessSOA;
 
     constructor(public payload: { extractData: JsonDataExtract }) {}
 }
 
 export type TracingActions =
-      TracingActivated
+    | TracingActivated
     | LoadFclDataSuccessSOA
     | LoadFclDataFailureSOA
     | LoadShapeFileSuccessSOA

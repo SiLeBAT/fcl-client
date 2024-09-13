@@ -1,24 +1,40 @@
 import {
-    Component, Input, Output, EventEmitter, OnChanges, SimpleChanges,
-    ChangeDetectionStrategy} from '@angular/core';
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    OnChanges,
+    SimpleChanges,
+    ChangeDetectionStrategy,
+} from "@angular/core";
 import {
-    DataTable, TableRow, TableColumn, OperationType
-} from '@app/tracing/data.model';
+    DataTable,
+    TableRow,
+    TableColumn,
+    OperationType,
+} from "@app/tracing/data.model";
 import {
     createPredefinedRowFilter,
     PredefinedRowFilter,
     ComplexRowFilter,
     OneTermForNColumnsRowFilter,
     getUpdatedOneTermForNColumnsRowFilter,
-    getUpdatedComplexRowFilter
-} from '../filter-provider';
-import { extractPropToValuesMap, filterTableRows } from '../shared';
+    getUpdatedComplexRowFilter,
+} from "../filter-provider";
+import { extractPropToValuesMap, filterTableRows } from "../shared";
 import {
-    InputData as FilterTableViewInputData, TableFilterChange
-} from '../filter-table-view/filter-table-view.component';
-import { FilterTableSettings, ShowType, ComplexFilterCondition, PropToValuesMap, ActivityState } from '../configuration.model';
-import { ComplexFilterUtils } from '../shared/complex-filter-utils';
-import { Observable, Subject } from 'rxjs';
+    InputData as FilterTableViewInputData,
+    TableFilterChange,
+} from "../filter-table-view/filter-table-view.component";
+import {
+    FilterTableSettings,
+    ShowType,
+    ComplexFilterCondition,
+    PropToValuesMap,
+    ActivityState,
+} from "../configuration.model";
+import { ComplexFilterUtils } from "../shared/complex-filter-utils";
+import { Observable, Subject } from "rxjs";
 
 export interface InputData {
     dataTable: DataTable;
@@ -32,13 +48,12 @@ interface RowFilterMap {
     standardFilter: OneTermForNColumnsRowFilter;
 }
 @Component({
-    selector: 'fcl-filter-elements-view',
-    templateUrl: './filter-elements-view.component.html',
-    styleUrls: ['./filter-elements-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-filter-elements-view",
+    templateUrl: "./filter-elements-view.component.html",
+    styleUrls: ["./filter-elements-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterElementsViewComponent implements OnChanges {
-
     @Input() inputData: InputData;
     @Input() standardFilterLabel: string;
     @Input() useTreeMode = false;
@@ -62,7 +77,7 @@ export class FilterElementsViewComponent implements OnChanges {
         OperationType.REGEX_EQUAL,
         OperationType.REGEX_NOT_EQUAL,
         OperationType.REGEX_EQUAL_IGNORE_CASE,
-        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE,
     ];
 
     get standardFilterSettings(): string {
@@ -121,7 +136,10 @@ export class FilterElementsViewComponent implements OnChanges {
     //#region lifecycle hooks
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.inputData !== undefined && changes.inputData.currentValue !== null) {
+        if (
+            changes.inputData !== undefined &&
+            changes.inputData.currentValue !== null
+        ) {
             this.processInputData();
         }
     }
@@ -137,35 +155,35 @@ export class FilterElementsViewComponent implements OnChanges {
     onStandardFilterChange(filterTerm: string): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
-            standardFilter: filterTerm
+            standardFilter: filterTerm,
         });
     }
 
     onPredefinedFilterChange(showType: ShowType): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
-            predefinedFilter: showType
+            predefinedFilter: showType,
         });
     }
 
     onComplexFilterChange(conditions: ComplexFilterCondition[]): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
-            complexFilter: { conditions: conditions }
+            complexFilter: { conditions: conditions },
         });
     }
 
     onTableFilterChange(change: TableFilterChange): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
-            ...change
+            ...change,
         });
     }
 
     onColumnOrderChange(columnOrder: string[]): void {
         this.filterSettingsChange.emit({
             ...this.inputData.filterTableSettings,
-            columnOrder: columnOrder
+            columnOrder: columnOrder,
         });
     }
 
@@ -201,10 +219,10 @@ export class FilterElementsViewComponent implements OnChanges {
             this.complexFilterOpenState === true &&
             this.processedInput__ !== null &&
             this.inputData !== null &&
-            (
-                this.processedInput__.filterTableSettings.complexFilter.conditions.length !==
-                this.inputData.filterTableSettings.complexFilter.conditions.length
-            )
+            this.processedInput__.filterTableSettings.complexFilter.conditions
+                .length !==
+                this.inputData.filterTableSettings.complexFilter.conditions
+                    .length
         ) {
             this.checkTableSizeSubject_.next(200);
         }
@@ -217,90 +235,117 @@ export class FilterElementsViewComponent implements OnChanges {
     }
 
     private getIgnoredProps(): string[] {
-        return this.dataColumns_.filter(c => c.dataIsUnavailable).map(c => c.id);
+        return this.dataColumns_
+            .filter((c) => c.dataIsUnavailable)
+            .map((c) => c.id);
     }
 
     private updateFilterAndRows(): void {
         const newSettings = this.inputData.filterTableSettings;
-        const oldSettings = this.processedInput__ ? this.processedInput__.filterTableSettings : undefined;
+        const oldSettings = this.processedInput__
+            ? this.processedInput__.filterTableSettings
+            : undefined;
 
         const oldFilterMap = this.filterMap_;
         const newFilterMap: RowFilterMap = {
-            predefinedFilter: (
-                !oldSettings || oldSettings.predefinedFilter !== newSettings.predefinedFilter ?
-                    createPredefinedRowFilter(newSettings.predefinedFilter) :
-                    oldFilterMap.predefinedFilter
-            ),
-            complexFilter: (
-                (
-                    !oldSettings ||
-                    oldSettings.complexFilter !== newSettings.complexFilter ||
-                    this.processedInput__.dataTable.columns !== this.inputData.dataTable.columns
-                ) ?
-                    getUpdatedComplexRowFilter(
-                        newSettings.complexFilter,
-                        this.getIgnoredProps(),
-                        oldFilterMap ? oldFilterMap.complexFilter : undefined
-                    ) :
-                    oldFilterMap.complexFilter
-            ),
-            standardFilter: (
+            predefinedFilter:
+                !oldSettings ||
+                oldSettings.predefinedFilter !== newSettings.predefinedFilter
+                    ? createPredefinedRowFilter(newSettings.predefinedFilter)
+                    : oldFilterMap.predefinedFilter,
+            complexFilter:
+                !oldSettings ||
+                oldSettings.complexFilter !== newSettings.complexFilter ||
+                this.processedInput__.dataTable.columns !==
+                    this.inputData.dataTable.columns
+                    ? getUpdatedComplexRowFilter(
+                          newSettings.complexFilter,
+                          this.getIgnoredProps(),
+                          oldFilterMap ? oldFilterMap.complexFilter : undefined,
+                      )
+                    : oldFilterMap.complexFilter,
+            standardFilter:
                 !oldSettings ||
                 oldSettings.standardFilter !== newSettings.standardFilter ||
-                oldSettings.columnOrder !== newSettings.columnOrder ?
-                    getUpdatedOneTermForNColumnsRowFilter(
-                        newSettings.standardFilter,
-                        newSettings.columnOrder,
-                        oldFilterMap ? oldFilterMap.standardFilter : undefined
-                    ) :
-                    this.filterMap_.standardFilter
-            )
+                oldSettings.columnOrder !== newSettings.columnOrder
+                    ? getUpdatedOneTermForNColumnsRowFilter(
+                          newSettings.standardFilter,
+                          newSettings.columnOrder,
+                          oldFilterMap
+                              ? oldFilterMap.standardFilter
+                              : undefined,
+                      )
+                    : this.filterMap_.standardFilter,
         };
 
         if (
             !this.processedInput__ ||
-            this.inputData.dataTable.rows !== this.processedInput__.dataTable.rows ||
+            this.inputData.dataTable.rows !==
+                this.processedInput__.dataTable.rows ||
             oldFilterMap.predefinedFilter !== newFilterMap.predefinedFilter ||
             oldFilterMap.standardFilter !== newFilterMap.standardFilter ||
             oldFilterMap.complexFilter !== newFilterMap.complexFilter
         ) {
             this.prefilteredRows_ = filterTableRows(
                 this.inputData.dataTable.rows,
-                [newFilterMap.predefinedFilter, newFilterMap.standardFilter, newFilterMap.complexFilter]
+                [
+                    newFilterMap.predefinedFilter,
+                    newFilterMap.standardFilter,
+                    newFilterMap.complexFilter,
+                ],
             );
             this.filterMap_ = newFilterMap;
         }
     }
 
     private updateDataColumns(): void {
-        if (!this.dataColumns_ || this.inputData.dataTable.columns !== this.processedInput__.dataTable.columns) {
-            this.dataColumns_ = ComplexFilterUtils.extractDataColumns(this.inputData.dataTable);
+        if (
+            !this.dataColumns_ ||
+            this.inputData.dataTable.columns !==
+                this.processedInput__.dataTable.columns
+        ) {
+            this.dataColumns_ = ComplexFilterUtils.extractDataColumns(
+                this.inputData.dataTable,
+            );
         }
     }
 
     private updateTableInputData(): void {
         if (
             !this.filterTableViewInputData_ ||
-            this.filterTableViewInputData_.dataTable !== this.inputData.dataTable ||
-            this.filterTableViewInputData_.filteredRows !== this.prefilteredRows_ ||
-            this.filterTableViewInputData_.visibilityFilter !== this.inputData.filterTableSettings.visibilityFilter ||
-            this.filterTableViewInputData_.columnFilters !== this.inputData.filterTableSettings.columnFilters ||
-            this.filterTableViewInputData_.columnOrder !== this.inputData.filterTableSettings.columnOrder
+            this.filterTableViewInputData_.dataTable !==
+                this.inputData.dataTable ||
+            this.filterTableViewInputData_.filteredRows !==
+                this.prefilteredRows_ ||
+            this.filterTableViewInputData_.visibilityFilter !==
+                this.inputData.filterTableSettings.visibilityFilter ||
+            this.filterTableViewInputData_.columnFilters !==
+                this.inputData.filterTableSettings.columnFilters ||
+            this.filterTableViewInputData_.columnOrder !==
+                this.inputData.filterTableSettings.columnOrder
         ) {
             this.filterTableViewInputData_ = {
                 dataTable: this.inputData.dataTable,
                 filteredRows: this.prefilteredRows_,
                 columnOrder: this.inputData.filterTableSettings.columnOrder,
                 selectedRowIds: this.inputData.selectedRowIds,
-                visibilityFilter: this.inputData.filterTableSettings.visibilityFilter,
-                columnFilters: this.inputData.filterTableSettings.columnFilters
+                visibilityFilter:
+                    this.inputData.filterTableSettings.visibilityFilter,
+                columnFilters: this.inputData.filterTableSettings.columnFilters,
             };
         }
     }
 
     private updatePropValueMap(): void {
-        if (!this.processedInput__ || this.processedInput__.dataTable.rows !== this.inputData.dataTable.rows) {
-            this.propToValuesMap_ = extractPropToValuesMap(this.inputData.dataTable.rows, this.dataColumns_);
+        if (
+            !this.processedInput__ ||
+            this.processedInput__.dataTable.rows !==
+                this.inputData.dataTable.rows
+        ) {
+            this.propToValuesMap_ = extractPropToValuesMap(
+                this.inputData.dataTable.rows,
+                this.dataColumns_,
+            );
         }
     }
 }

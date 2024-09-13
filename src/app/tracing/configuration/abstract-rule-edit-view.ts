@@ -1,14 +1,23 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { OperationType, TableColumn } from '@app/tracing/data.model';
-import { ComplexFilterCondition, PropToValuesMap } from './configuration.model';
-import { EditRule } from './model';
-import { isEditRuleValid, validateEditRule } from './edit-rule-validaton';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from "@angular/core";
+import { OperationType, TableColumn } from "@app/tracing/data.model";
+import { ComplexFilterCondition, PropToValuesMap } from "./configuration.model";
+import { EditRule } from "./model";
+import { isEditRuleValid, validateEditRule } from "./edit-rule-validaton";
 
-@Component({ template: '' })
-export abstract class AbstractRuleEditViewComponent<T extends EditRule> implements OnChanges {
-
-    private static readonly ENABLED_APPLY_TOOLTIP = 'Apply Highlighting Rule';
-    private static readonly ENABLED_OK_TOOLTIP = 'Apply Highlighting Rule and close dialogue';
+@Component({ template: "" })
+export abstract class AbstractRuleEditViewComponent<T extends EditRule>
+    implements OnChanges
+{
+    private static readonly ENABLED_APPLY_TOOLTIP = "Apply Highlighting Rule";
+    private static readonly ENABLED_OK_TOOLTIP =
+        "Apply Highlighting Rule and close dialogue";
 
     @Input() rule: T | null = null;
     @Input() favouriteProperties: TableColumn[] = [];
@@ -30,7 +39,7 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
         OperationType.REGEX_EQUAL,
         OperationType.REGEX_NOT_EQUAL,
         OperationType.REGEX_EQUAL_IGNORE_CASE,
-        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE
+        OperationType.REGEX_NOT_EQUAL_IGNORE_CASE,
     ];
 
     get complexFilterConditions(): ComplexFilterCondition[] {
@@ -60,26 +69,26 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
     }
 
     get applyTooltip(): string {
-        return this.actionButtonDisabled ?
-            this.disabledActionToolTip :
-            this.enabledApplyToolTip;
+        return this.actionButtonDisabled
+            ? this.disabledActionToolTip
+            : this.enabledApplyToolTip;
     }
 
     get okTooltip(): string {
-        return this.actionButtonDisabled ?
-            this.disabledActionToolTip :
-            this.enabledOkToolTip;
+        return this.actionButtonDisabled
+            ? this.disabledActionToolTip
+            : this.enabledOkToolTip;
     }
 
     get ruleName(): string {
-        return this.rule === null ? '' : this.rule.name;
+        return this.rule === null ? "" : this.rule.name;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.rule !== undefined && this.rule) {
             this.rule = {
                 ...this.rule,
-                isValid: isEditRuleValid(this.rule)
+                isValid: isEditRuleValid(this.rule),
             };
         }
     }
@@ -88,7 +97,9 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
         this.changeRule({ name: ruleName });
     }
 
-    onComplexFilterChange(complexFilterConditions: ComplexFilterCondition[]): void {
+    onComplexFilterChange(
+        complexFilterConditions: ComplexFilterCondition[],
+    ): void {
         this.changeRule({ complexFilterConditions: complexFilterConditions });
     }
 
@@ -123,7 +134,7 @@ export abstract class AbstractRuleEditViewComponent<T extends EditRule> implemen
     protected changeRule(ruleChange: Partial<T | EditRule>): void {
         this.rule = {
             ...this.rule!,
-            ...ruleChange
+            ...ruleChange,
         };
         validateEditRule(this.rule);
     }

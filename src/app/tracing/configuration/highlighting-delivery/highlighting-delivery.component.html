@@ -1,21 +1,20 @@
 <fcl-highlighting-delivery-view
-    [favouriteProperties] = "favouriteProperties"
-    [otherProperties] = "otherProperties"
-    [propToValuesMap] = "propToValuesMap"
-    [ruleListItems] = "ruleListItems"
-    [editRules] = "editRules"
-
-    (ruleOrderChange) = "onRuleOrderChange($event)"
-    (toggleRuleIsDisabled) = "onToggleRuleIsDisabled($event)"
-    (toggleShowRuleInLegend) = "onToggleShowRuleInLegend($event)"
-    (deleteRule) = "onDeleteRule($event)"
-
-    (newRule) = "onNewRule($event)"
-    (startEdit) = "onStartEdit($event)"
-    (applyEdit) = "onApplyEdit($event)"
-    (okEdit) = "onOkEdit($event)"
-    (cancelEdit) = "onCancelEdit($event)"
-
+    [favouriteProperties]="favouriteProperties"
+    [otherProperties]="otherProperties"
+    [propToValuesMap]="propToValuesMap"
+    [ruleListItems]="ruleListItems"
+    [editRules]="editRules"
+    (ruleOrderChange)="onRuleOrderChange($event)"
+    (toggleRuleIsDisabled)="onToggleRuleIsDisabled($event)"
+    (toggleShowRuleInLegend)="onToggleShowRuleInLegend($event)"
+    (deleteRule)="onDeleteRule($event)"
+    (newRule)="onNewRule($event)"
+    (startEdit)="onStartEdit($event)"
+    (applyEdit)="onApplyEdit($event)"
+    (okEdit)="onOkEdit($event)"
+    (cancelEdit)="onCancelEdit($event)"
     (addSelectionToRuleConditions)="onAddSelectionToRuleConditions($event)"
-    (removeSelectionFromRuleConditions)="onRemoveSelectionFromRuleConditions($event)"
+    (removeSelectionFromRuleConditions)="
+        onRemoveSelectionFromRuleConditions($event)
+    "
 ></fcl-highlighting-delivery-view>
