@@ -221,6 +221,11 @@ const selectGisGraphLayout = createSelector(
     (graphSettings) => graphSettings.gisLayout,
 );
 
+const selectTileServer = createSelector(
+    getGraphSettings,
+    (graphSettings) => graphSettings.tileServer,
+);
+
 const selectMapType = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.mapType,
@@ -236,10 +241,12 @@ export const selectGisGraphState = createSelector(
     selectGisGraphLayout,
     selectMapType,
     selectShapeFileData,
-    (sharedGraphState, layout, mapType, shapeFileData) => ({
+    selectTileServer,
+    (sharedGraphState, layout, mapType, shapeFileData, tileServer) => ({
         ...sharedGraphState,
         layout: layout,
         mapType: mapType,
+        tileServer: tileServer,
         shapeFileData: shapeFileData,
     }),
 );
@@ -260,12 +267,21 @@ export const getMapConfig = createSelector(
     selectShapeFileData,
     selectGeojsonBorderColor,
     selectGeojsonBorderWidth,
-    (gisLayout, mapType, shapeFileData, borderColor, borderWidth) => ({
+    selectTileServer,
+    (
+        gisLayout,
+        mapType,
+        shapeFileData,
+        borderColor,
+        borderWidth,
+        tileServer,
+    ) => ({
         layout: gisLayout,
         mapType: mapType,
+        tileServer: tileServer,
         shapeFileData: shapeFileData,
-        lineColor: borderColor,
-        lineWidth: borderWidth,
+        geojsonBorderColor: borderColor,
+        geojsonBorderWidth: borderWidth,
     }),
 );
 

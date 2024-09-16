@@ -1,22 +1,25 @@
-import { MapConfig, MapType, ShapeFileData } from "../data.model";
+import {
+    MapType,
+    TileServer,
+    ShapeFileData,
+    MapViewConfig,
+    ShapeFileSettings,
+    ShapeStyleSettings,
+    MapSettings,
+} from "../data.model";
 import { OSM } from "ol/source";
 import * as ol from "ol";
 import BaseLayer from "ol/layer/Base";
+import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import { Tile } from "ol/layer";
+// import { Tile } from "ol/layer";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
 import { Stroke, Style } from "ol/style";
 import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
-import { NotNullish, NotNullishPick } from "./utility-types";
-
-type MapConfigWithOptLayout = Partial<Pick<MapConfig, "layout">> &
-    Omit<MapConfig, "layout">;
-type ShapeMapConfig = NotNullish<
-    Pick<MapConfig, "lineColor" | "lineWidth" | "shapeFileData">
->;
-type ShapeMapStyleConfig = Pick<ShapeMapConfig, "lineColor" | "lineWidth">;
+import { NotNullish } from "./utility-types";
+import * as _ from "lodash";
 
 export interface RectConfig {
     left: number;
@@ -26,55 +29,59 @@ export interface RectConfig {
     borderWidth: number;
 }
 
-const LAYER_ID_KEY = "layerId";
-const MAP_LAYER_ID = "MapLayer";
-
-const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
-    [MapType.MAPNIK, () => new OSM()],
+const MAP_SOURCE: Map<TileServer, () => OSM> = new Map([
+    [TileServer.MAPNIK, () => new OSM()],
     // the following code is commented because
-    // the Black & White Map might be deactivatd only temporaryly
-    // ,
-    // [MapType.BLACK_AND_WHITE, () => new OSM({
+    // the Black & White Map might be deactivatd only temporarily
+    // [TileServer.BLACK_AND_WHITE, () => new OSM({
     //     url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
     //     crossOrigin: null
     // })]
 ]);
 
-// the following code is commented because
-// the Black & White Map might be deactivatd only temporaryly
-// const availableMapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE ];
-const availableMapTypes: MapType[] = [MapType.MAPNIK];
-
-export function getAvailableMapTypes(): MapType[] {
-    return availableMapTypes;
-}
+const LAYER_VISIBILITY: Record<
+    MapType,
+    Partial<{ showTiles: boolean; showShape: boolean }>
+> = {
+    [MapType.TILES_ONLY]: { showTiles: true },
+    [MapType.TILES_AND_SHAPE]: { showTiles: true, showShape: true },
+    [MapType.SHAPE_ONLY]: { showShape: true },
+};
 
 export function createOpenLayerMap(
-    mapConfig: MapConfigWithOptLayout,
+    mapConfig: MapViewConfig,
     target?: HTMLElement,
 ): ol.Map {
     const map = new ol.Map({
         target: target,
-        layers: [createMapLayer(mapConfig)],
+        layers: createMapLayers(mapConfig),
         controls: [],
     });
     return map;
 }
 
-function createMapLayer(mapConfig: MapConfigWithOptLayout): BaseLayer {
-    const baseLayer =
-        mapConfig.mapType !== MapType.SHAPE_FILE
-            ? createTileLayer(mapConfig)
-            : createShapeFileLayer(mapConfig as ShapeMapConfig);
-    baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
-    return baseLayer;
+export function createMapLayers(mapConfig: MapViewConfig): Array<BaseLayer> {
+    const layers: BaseLayer[] = [];
+    if (LAYER_VISIBILITY[mapConfig.mapType].showTiles) {
+        layers.push(createTileLayer(mapConfig));
+    }
+    if (LAYER_VISIBILITY[mapConfig.mapType].showShape) {
+        const shapeLayer = createShapeFileLayer(
+            mapConfig as NotNullish<ShapeFileSettings>,
+        );
+        layers.push(shapeLayer);
+    }
+
+    return layers;
 }
 
 function createTileLayer(
-    mapConfig: Pick<MapConfigWithOptLayout, "mapType">,
-): BaseLayer {
-    return new Tile({
-        source: MAP_SOURCE.get(mapConfig.mapType)!(),
+    mapConfig: Pick<MapSettings, "tileServer">,
+): TileLayer {
+    const { tileServer } = mapConfig;
+
+    return new TileLayer({
+        source: MAP_SOURCE.get(tileServer)!(),
     });
 }
 
@@ -98,8 +105,8 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
 }
 
 export function createShapeFileLayer(
-    mapConfig: NotNullishPick<ShapeMapConfig, "shapeFileData">,
-): BaseLayer {
+    mapConfig: NotNullish<ShapeFileSettings>,
+): VectorLayer {
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(
@@ -119,49 +126,126 @@ export function createShapeFileLayer(
     return vectorLayer;
 }
 
-function createVectorLayerStyle(styleConfig: ShapeMapStyleConfig): StyleLike {
+function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
     return new Style({
         stroke: new Stroke({
             color: [
-                styleConfig.lineColor.r,
-                styleConfig.lineColor.g,
-                styleConfig.lineColor.b,
+                styleConfig.geojsonBorderColor.r,
+                styleConfig.geojsonBorderColor.g,
+                styleConfig.geojsonBorderColor.b,
             ],
-            width: styleConfig.lineWidth,
+            width: styleConfig.geojsonBorderWidth,
         }),
     });
 }
 
-function getMapLayer(map: ol.Map): BaseLayer | null {
-    const layers = map
-        .getLayers()
-        .getArray()
-        .filter((layer) => layer.get(LAYER_ID_KEY) === MAP_LAYER_ID);
-    return layers.length > 0 ? layers[0] : null;
+function isVectorLayer(layer: BaseLayer): layer is VectorLayer {
+    return layer instanceof VectorLayer;
+}
+
+function isTileLayer(layer: BaseLayer): layer is TileLayer {
+    return layer instanceof TileLayer;
+}
+
+function getMapLayers<T extends BaseLayer>(
+    map: ol.Map,
+    layerTypePredicate: (layer: BaseLayer) => layer is T,
+): Array<T> {
+    return map.getLayers().getArray().filter(layerTypePredicate);
 }
 
 export function updateVectorLayerStyle(
     map: ol.Map,
-    styleConfig: ShapeMapStyleConfig,
+    styleConfig: ShapeFileSettings,
 ): void {
-    const vectorLayer = getMapLayer(map);
-    if (vectorLayer instanceof VectorLayer) {
+    const vectorLayers = getMapLayers(map, isVectorLayer);
+
+    vectorLayers.forEach((layer) => {
         const style = createVectorLayerStyle(styleConfig);
-        vectorLayer.setStyle(style);
-    }
+        layer.setStyle(style);
+    });
 }
 
-export function updateMapType(
+export const insertLayer = (map: ol.Map, layer: BaseLayer) => {
+    // make sure, shape layer is always the last element in the array,
+    // so user can see the shape layer on top of the map layer when both layers are visible
+    const mapLayers = map.getLayers();
+    const index = layer instanceof VectorLayer ? mapLayers.getLength() : 0;
+    mapLayers.insertAt(index, layer);
+};
+
+function setLayersVisibility(layers: Array<BaseLayer>, visible: boolean): void {
+    layers.forEach((layer) => layer.setVisible(visible));
+}
+
+function updateTileLayer(
     map: ol.Map,
-    mapConfig: MapConfigWithOptLayout,
+    newMapConfig: MapViewConfig,
+    oldMapConfig: MapViewConfig,
 ): void {
-    removeMapLayer(map);
-    map.getLayers().insertAt(0, createMapLayer(mapConfig));
+    let tileLayers = getMapLayers(map, isTileLayer);
+    if (newMapConfig.tileServer !== oldMapConfig.tileServer) {
+        tileLayers.forEach((layer) => map.removeLayer(layer));
+        tileLayers = [];
+    }
+    if (LAYER_VISIBILITY[newMapConfig.mapType].showTiles) {
+        if (tileLayers.length === 0) {
+            insertLayer(map, createTileLayer(newMapConfig));
+        } else {
+            setLayersVisibility(tileLayers, true);
+        }
+    } else {
+        setLayersVisibility(tileLayers, false);
+    }
 }
 
-function removeMapLayer(map: ol.Map) {
-    const mapLayer = getMapLayer(map);
-    if (mapLayer !== null) {
-        map.removeLayer(mapLayer);
+function wasStyleChanged(
+    newStyle: ShapeStyleSettings,
+    oldStyle: ShapeStyleSettings,
+): boolean {
+    return (
+        newStyle.geojsonBorderColor !== oldStyle.geojsonBorderColor ||
+        newStyle.geojsonBorderWidth !== oldStyle.geojsonBorderWidth
+    );
+}
+
+function updateShapeLayer(
+    map: ol.Map,
+    newMapConfig: MapViewConfig,
+    oldMapConfig: MapViewConfig,
+): void {
+    let shapeLayers = getMapLayers(map, isVectorLayer);
+    if (newMapConfig.shapeFileData !== oldMapConfig.shapeFileData) {
+        shapeLayers.forEach((layer) => map.removeLayer(layer));
+        shapeLayers = [];
     }
+    if (LAYER_VISIBILITY[newMapConfig.mapType].showShape) {
+        if (shapeLayers.length === 0) {
+            insertLayer(
+                map,
+                createShapeFileLayer(
+                    newMapConfig as NotNullish<ShapeFileSettings>,
+                ),
+            );
+        } else {
+            if (wasStyleChanged(newMapConfig, oldMapConfig)) {
+                updateVectorLayerStyle(map, newMapConfig);
+            }
+            setLayersVisibility(shapeLayers, true);
+        }
+    } else {
+        setLayersVisibility(shapeLayers, false);
+        if (wasStyleChanged(newMapConfig, oldMapConfig)) {
+            updateVectorLayerStyle(map, newMapConfig);
+        }
+    }
+}
+
+export function updateMapLayers(
+    map: ol.Map,
+    newMapConfig: MapViewConfig,
+    oldMapConfig: MapViewConfig,
+): void {
+    updateTileLayer(map, newMapConfig, oldMapConfig);
+    updateShapeLayer(map, newMapConfig, oldMapConfig);
 }

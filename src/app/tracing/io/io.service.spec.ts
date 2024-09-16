@@ -7,12 +7,12 @@ import {
     GraphType,
     ObservedType,
     MergeDeliveriesType,
-    MapType,
     CrossContTraceType,
 } from "../data.model";
 import { JsonData, VERSION } from "./ext-data-model.v1";
 import { Constants } from "../util/constants";
 import { createInitialFclDataSourceInfo } from "../state/tracing.reducers";
+import { MAP_CONSTANTS } from "../util/map-constants";
 
 describe("IOService", () => {
     let ioService: IOService;
@@ -73,10 +73,11 @@ describe("IOService", () => {
             },
             graphSettings: {
                 type: GraphType.GRAPH,
-                mapType: MapType.MAPNIK,
+                mapType: MAP_CONSTANTS.defaults.mapType,
+                tileServer: MAP_CONSTANTS.defaults.tileServer,
                 shapeFileData: null,
-                geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
-                geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+                geojsonBorderWidth: MAP_CONSTANTS.defaults.geojsonBorderWidth,
+                geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
                 adjustEdgeWidthToNodeSize: true,
                 edgeWidth: Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(
