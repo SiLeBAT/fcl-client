@@ -53,7 +53,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporaryly
     // private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE, MapType.SHAPE_FILE];
-    private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.SHAPE_FILE, MapType.SHAPE_FILE_ON_MAPNIK];
+    private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.SHAPE_FILE];
 
     private componentActive: boolean = true;
 
@@ -83,7 +83,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         ).subscribe(
             ([graphSettings, dataServiceInputState]) => {
                 this.availableMapTypes = this.mapTypes.filter(
-                    mapType => ((mapType !== MapType.SHAPE_FILE) && (mapType !== MapType.SHAPE_FILE_ON_MAPNIK)) || graphSettings.shapeFileData
+                    mapType => mapType !== MapType.SHAPE_FILE || graphSettings.shapeFileData
                 );
                 this.graphSettings = graphSettings;
 
