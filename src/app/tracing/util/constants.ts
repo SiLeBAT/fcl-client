@@ -11,6 +11,7 @@ import { List, Map } from "immutable";
 import { ExampleData } from "@app/main-page/model/types";
 import * as _ from "lodash";
 import { concat, Utils } from "./non-ui-utils";
+import { LABELS } from "./labels";
 
 interface ColumnDefinition {
     id: string;
@@ -127,43 +128,47 @@ export class Constants {
 
     static readonly PROPERTIES: Map<string, { name: string; color?: Color }> =
         Map({
-            id: { name: "ID" },
-            name: { name: "Name" },
-            lot: { name: "Lot" },
-            lat: { name: "Latitude" },
-            lon: { name: "Longitude" },
-            dateIn: { name: "Delivery Date Arrival" },
-            dateOut: { name: "Delivery Date" },
-            source: { name: "Source" },
-            target: { name: "Target" },
-            originalSource: { name: "Original Source" },
-            originalTarget: { name: "Original Target" },
-            incoming: { name: "Incoming" },
-            outgoing: { name: "Outgoing" },
-            contains: { name: "Contains" },
-            isMeta: { name: "Is Meta Station" },
-            forward: {
-                name: "Forward Trace",
-                color: { r: 150, g: 255, b: 75 },
-            },
+            id: { name: LABELS.id },
+            name: { name: LABELS.name },
+            lot: { name: LABELS.lot },
+            lat: { name: LABELS.lat },
+            lon: { name: LABELS.lon },
+            dateIn: { name: LABELS.dateIn },
+            dateOut: { name: LABELS.dateOut },
+            source: { name: LABELS.source },
+            target: { name: LABELS.target },
+            originalSource: { name: LABELS.originalSource },
+            originalTarget: { name: LABELS.originalTarget },
+            incoming: { name: LABELS.incoming },
+            outgoing: { name: LABELS.outgoing },
+            contains: { name: LABELS.contains },
+            isMeta: { name: LABELS.isMeta },
+            forward: { name: LABELS.forward, color: { r: 150, g: 255, b: 75 } },
             backward: {
-                name: "Backward Trace",
+                name: LABELS.backward,
                 color: { r: 255, g: 150, b: 75 },
             },
-            observed: { name: "Observed", color: { r: 75, g: 150, b: 255 } },
-            outbreak: { name: "Outbreak", color: { r: 255, g: 50, b: 50 } },
+            observed: {
+                name: LABELS.traceType,
+                color: { r: 75, g: 150, b: 255 },
+            },
+            outbreak: {
+                name: LABELS.outbreak,
+                color: { r: 255, g: 50, b: 50 },
+            },
             crossContamination: {
-                name: "Cross Contamination",
+                name: LABELS.crossContamination,
                 color: { r: 150, g: 150, b: 150 },
             },
-            killContamination: { name: "Kill Contamination" },
+            killContamination: { name: LABELS.killContamination },
             commonLink: {
-                name: "Common Link",
+                name: LABELS.commonLink,
                 color: { r: 255, g: 255, b: 75 },
             },
-            score: { name: "Score" },
-            weight: { name: "Weight", color: { r: 255, g: 0, b: 0 } },
+            score: { name: LABELS.score },
+            weight: { name: LABELS.weight, color: { r: 255, g: 0, b: 0 } },
         });
+
     static readonly PROPERTIES_WITH_COLORS = List(
         Constants.PROPERTIES.filter((p) => p?.color != null).keys(),
     );
@@ -231,36 +236,44 @@ export class Constants {
     );
 
     static readonly FAVOURITE_STAT_COLUMNS = List.of<ColumnDefinition>(
-        { id: "id", name: "ID" },
+        { id: "id", name: LABELS.id },
         {
             id: "anonymizedName",
-            name: "Anonymized Name",
+            name: LABELS.anonymizedName,
             availableForHighlighting: false,
         },
-        { id: "name", name: "Name" },
-        { id: "address", name: "Address" },
-        { id: "country", name: "Country" },
-        { id: "typeOfBusiness", name: "Type of Business" },
-        { id: "score", name: "Score" },
-        { id: "commonLink", name: "Common Link" },
-        { id: "outbreak", name: "Outbreak" },
-        { id: "weight", name: "Weight" },
+        { id: "name", name: LABELS.name },
+        { id: "address", name: LABELS.address },
+        { id: "country", name: LABELS.country },
+        { id: "typeOfBusiness", name: LABELS.typeOfBusiness },
+        { id: "score", name: LABELS.score },
+        { id: "commonLink", name: LABELS.commonLink },
+        { id: "outbreak", name: LABELS.outbreak },
+        { id: "weight", name: LABELS.weight },
     );
 
     static readonly KNOWN_OTHER_STAT_COLUMNS = List.of<ColumnDefinition>(
-        { id: "forward", name: "On Forward Trace" },
-        { id: "backward", name: "On Backward Trace" },
-        { id: "crossContamination", name: "Cross Contamination" },
-        { id: "killContamination", name: "Kill Contamination" },
-        { id: "observed", name: "Observed" },
-        { id: "selected", name: "Selected", availableForHighlighting: false },
-        { id: "invisible", name: "Invisible", availableForHighlighting: false },
-        { id: "lat", name: "Latitude" },
-        { id: "lon", name: "Longitude" },
-        { id: "isMeta", name: "Is Meta Station" },
+        { id: "forward", name: `On ${LABELS.forward}` },
+        { id: "backward", name: `On ${LABELS.backward}` },
+        { id: "crossContamination", name: LABELS.crossContamination },
+        { id: "killContamination", name: LABELS.killContamination },
+        { id: "observed", name: LABELS.traceType },
+        {
+            id: "selected",
+            name: LABELS.selected,
+            availableForHighlighting: false,
+        },
+        {
+            id: "invisible",
+            name: LABELS.invisible,
+            availableForHighlighting: false,
+        },
+        { id: "lat", name: LABELS.lat },
+        { id: "lon", name: LABELS.lon },
+        { id: "isMeta", name: LABELS.isMeta },
         {
             id: "contained",
-            name: "Is Meta Member",
+            name: LABELS.contained,
             availableForHighlighting: false,
         },
     );

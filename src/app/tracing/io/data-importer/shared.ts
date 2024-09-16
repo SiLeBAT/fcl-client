@@ -9,6 +9,7 @@ import {
     DeliveryHighlightingRule,
 } from "../../data.model";
 import { InputFormatError } from "../io-errors";
+import { LABELS } from "../../util/labels";
 
 const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "SDHR";
 const DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "DDHR";
@@ -95,7 +96,7 @@ export function createDefaultStationAnonymizationLabelHRule(): StationHighlighti
     return {
         ...createDefaultStatHRule(),
         id: "anoStatLabelRule",
-        name: "Anonymisation Label",
+        name: LABELS.anonymisationLabel,
         showInLegend: false,
         userDisabled: true,
         labelPrefix: "Station",
@@ -124,7 +125,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Outbreak",
-            name: "Outbreak",
+            name: LABELS.outbreak,
             showInLegend: true,
             color: {
                 r: 255,
@@ -144,7 +145,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Observed",
-            name: "Observed",
+            name: LABELS.observed,
             showInLegend: true,
             color: {
                 r: 0,
@@ -164,7 +165,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Forward Trace",
-            name: "Forward Trace",
+            name: LABELS.forward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -184,7 +185,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Backward Trace",
-            name: "Backward Trace",
+            name: LABELS.backward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -206,7 +207,7 @@ export function createDefaultStationHRules(
             id:
                 STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
                 "Cross Contamination",
-            name: "Cross Contamination",
+            name: LABELS.crossContamination,
             showInLegend: true,
             color: {
                 r: 0,
@@ -226,7 +227,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Common Link",
-            name: "Common Link",
+            name: LABELS.commonLink,
             showInLegend: true,
             color: {
                 r: 255,
@@ -246,7 +247,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Score",
-            name: "Score",
+            name: LABELS.score,
             showInLegend: false,
             adjustThickness: true,
             valueCondition: {
@@ -259,7 +260,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "StationLabel",
-            name: "StationLabel",
+            name: LABELS.stationLabel,
             showInLegend: false,
             labelProperty: "name",
             logicalConditions: [[]],
@@ -269,7 +270,7 @@ export function createDefaultStationHRules(
             id:
                 STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
                 "Kill Contamination",
-            name: "Kill Contamination",
+            name: LABELS.killContamination,
             showInLegend: true,
             color: { r: 153, g: 153, b: 153 },
             logicalConditions: [
@@ -294,7 +295,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Outbreak",
-            name: "Outbreak",
+            name: LABELS.outbreak,
             showInLegend: true,
             color: {
                 r: 255,
@@ -314,7 +315,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Observed",
-            name: "Observed",
+            name: LABELS.observed,
             showInLegend: true,
             color: {
                 r: 0,
@@ -334,7 +335,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Forward Trace",
-            name: "Forward Trace",
+            name: LABELS.forward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -354,7 +355,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Backward Trace",
-            name: "Backward Trace",
+            name: LABELS.backward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -376,7 +377,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id:
                 DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
                 "Kill Contamination",
-            name: "Kill Contamination",
+            name: LABELS.killContamination,
             showInLegend: true,
             color: { r: 153, g: 153, b: 153 },
             logicalConditions: [
@@ -392,7 +393,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "DeliveryLabel",
-            name: "DeliveryLabel",
+            name: LABELS.deliveryLabel,
             showInLegend: false,
             labelProperty: "name",
             logicalConditions: [[]],
