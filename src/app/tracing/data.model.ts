@@ -347,6 +347,7 @@ export enum MapType {
     // the Black & White Map might be deactivatd only temporaryly
     // BLACK_AND_WHITE,
     MAPNIK,
+    SHAPE_FILE_ON_MAPNIK
 }
 
 export enum GroupMode {

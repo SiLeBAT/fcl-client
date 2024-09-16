@@ -64,7 +64,8 @@ export class ToolbarActionComponent implements OnChanges {
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporaryly
         // [MapType.BLACK_AND_WHITE, 'Black & White'],
-        [MapType.SHAPE_FILE, "Shape File"],
+        [MapType.SHAPE_FILE, 'Shape File'],
+        [MapType.SHAPE_FILE_ON_MAPNIK, 'Shape File on Map']
     ]);
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
