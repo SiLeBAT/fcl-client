@@ -180,7 +180,7 @@ export interface ShowElementsTraceParams {
 
 export interface GraphSettings {
     type: GraphType;
-    mapType: MapType;
+    mapType: GISData;
     shapeFileData: ShapeFileData | null;
     geojsonBorderWidth: number;
     geojsonBorderColor: Color;

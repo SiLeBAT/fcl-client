@@ -19,6 +19,7 @@ import {
     DeliveryHighlightingRule,
     JsonDataExtract,
     Color,
+    GISData,
 } from "../data.model";
 import { SetStationGroupsPayload } from "./../grouping/model";
 import { ActivationStatus } from "../../shared/model/types";
@@ -161,8 +162,8 @@ export class SetGraphTypeSOA implements Action {
 export class SetMapTypeSOA implements Action {
     readonly type = TracingActionTypes.SetMapTypeSOA;
 
-    constructor(public payload: { mapType: MapType }) {
-        console.log('SetMapTypeSOA', payload)
+    constructor(public payload: { GISData: GISData }) {
+        console.log("SetMapTypeSOA tracing actions", payload);
     }
 }
 

@@ -50,9 +50,9 @@
                     <span *ngFor="let item of availableMapTypes">
                         <mat-option
                             value="{{ item }}"
-                            (click)="setMapType(mapTypeToLabelMap[item])"
+                            (click)="setMapType(mapTypes[item])"
                         >
-                            {{ mapTypeToLabelMap[item].name }}
+                            {{ mapTypes[item].name }}
                         </mat-option>
                     </span>
                     <mat-option value="" (click)="onSelectShapeFile($event)">

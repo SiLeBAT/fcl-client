@@ -53,34 +53,13 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
-    @Output() mapLayers = new EventEmitter<GISData>();
+    @Output() mapType = new EventEmitter<GISData>();
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
-
-    mapTypeToLabelMap: Record<MapType, GISData> = {
-        [MapType.MAPNIK]: {
-            mapType: MapType.MAPNIK,
-            hasShape: false,
-            name: "Mapnik",
-        },
-        // the following code is commented because
-        // the Black & White Map might be deactivatd only temporaryly
-        //[MapType.BLACK_AND_WHITE]: {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'},
-        [MapType.SHAPE_FILE]: {
-            mapType: null,
-            hasShape: true,
-            name: "Shape File",
-        },
-        [MapType.SHAPE_FILE_ON_MAP]: {
-            mapType: MapType.MAPNIK, // TO_DO: Make dynamic
-            hasShape: true,
-            name: "Shape File on Map",
-        },
-    };
-
+    mapTypes = Constants.MAP_TYPES;
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -143,8 +122,8 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     setMapType(GISData: GISData) {
-        console.log("setMapLayers", GISData.name);
-        this.mapLayers.emit(GISData);
+        console.log("toolbar action, setMapType", GISData.name);
+        this.mapType.emit(GISData);
     }
 
     onSelectShapeFile(event): void {

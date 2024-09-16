@@ -2,6 +2,7 @@ import {
     Color,
     GraphType,
     MapType,
+    GISData,
     DeliveryData,
     StationData,
     GroupType,
@@ -207,7 +208,29 @@ export class Constants {
     } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
-    static readonly DEFAULT_MAP_TYPE = MapType.MAPNIK;
+    static readonly MAP_TYPES: Record<MapType, GISData> = {
+        [MapType.MAPNIK]: {
+            mapType: MapType.MAPNIK,
+            hasShape: false,
+            name: "Mapnik",
+        },
+        // the following code is commented because
+        // the Black & White Map might be deactivatd only temporaryly
+        //[MapType.BLACK_AND_WHITE]: {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'},
+        [MapType.SHAPE_FILE]: {
+            mapType: null,
+            hasShape: true,
+            name: "Shape File",
+        },
+        [MapType.SHAPE_FILE_ON_MAP]: {
+            mapType: MapType.MAPNIK, // TO_DO: Make dynamic
+            hasShape: true,
+            name: "Shape File on Map",
+        },
+    };
+
+    static readonly DEFAULT_MAP_TYPE = Constants.MAP_TYPES[MapType.MAPNIK];
+
     static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
     static readonly DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE = true;
     static readonly DEFAULT_GRAPH_EDGE_WIDTH =

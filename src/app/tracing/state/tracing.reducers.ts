@@ -244,7 +244,7 @@ export function reducer(
             };
 
         case TracingActionTypes.SetMapTypeSOA:
-            console.log(action.payload.mapType);
+            console.log(action.payload);
             return {
                 ...state,
                 fclData: {
@@ -252,7 +252,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: action.payload.mapType,
+                        mapType: action.payload.GISData,
                     },
                 },
             };
@@ -265,7 +265,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: MapType.SHAPE_FILE,
+                        mapType: Constants.MAP_TYPES[MapType.SHAPE_FILE],
                         shapeFileData: action.payload.shapeFileData,
                         geojsonBorderWidth:
                             Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
