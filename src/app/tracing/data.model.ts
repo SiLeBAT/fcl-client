@@ -178,12 +178,8 @@ export interface ShowElementsTraceParams {
     observedType: ObservedType;
 }
 
-export interface GraphSettings {
+export interface GraphSettings extends MapSettings, ShapeFileSettings {
     type: GraphType;
-    mapType: MapType;
-    shapeFileData: ShapeFileData | null;
-    geojsonBorderWidth: number;
-    geojsonBorderColor: Color;
     nodeSize: number;
     adjustEdgeWidthToNodeSize: boolean;
     edgeWidth: number;
@@ -203,13 +199,21 @@ export interface GraphSettings {
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
-
-export interface MapConfig {
-    layout: Layout | null;
-    mapType: MapType;
+export interface ShapeStyleSettings {
+    geojsonBorderWidth: number;
+    geojsonBorderColor: Color;
+}
+export interface ShapeFileSettings extends ShapeStyleSettings {
     shapeFileData: ShapeFileData | null;
-    lineColor: Color;
-    lineWidth: number;
+}
+
+export interface MapSettings {
+    tileServer: TileServer;
+    mapType: MapType;
+}
+
+export interface MapViewConfig extends MapSettings, ShapeFileSettings {
+    layout: Layout | null;
 }
 
 export interface HighlightingSettings {
@@ -341,12 +345,23 @@ export enum GraphType {
     GIS = "GIS" as any,
 }
 
-export enum MapType {
-    SHAPE_FILE,
-    // the following code is commented because
-    // the Black & White Map might be deactivatd only temporaryly
-    // BLACK_AND_WHITE,
-    MAPNIK,
+export enum TileServer {
+    MAPNIK = "MAPNIK",
+    // the Black & White Map might be deactivatd only temporarily
+    //BLACK_AND_WHITE = "BLACK_AND_WHITE",
+}
+
+export enum MapType { // please note: the order of the keys is relevant for presentation
+    TILES_ONLY = "TILES_ONLY",
+    SHAPE_ONLY = "SHAPE_ONLY",
+    TILES_AND_SHAPE = "TILES_AND_SHAPE",
+}
+
+export interface AvailableMaps {
+    tiles: Array<TileServer>;
+    types: Array<MapType>;
+    mapTypeLabels: Record<MapType, string>;
+    tileServerLabels: Record<TileServer, string>;
 }
 
 export enum GroupMode {

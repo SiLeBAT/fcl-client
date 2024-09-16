@@ -35,6 +35,7 @@ import {
     DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP,
     DENOVO_STATION_PROP_INT_TO_EXT_MAP,
 } from "../io/data-mappings/data-mappings-v1";
+import { MAP_CONSTANTS } from "../util/map-constants";
 
 export const STATE_SLICE_NAME = "tracing";
 
@@ -147,10 +148,11 @@ export function createInitialFclDataState(): FclData {
             },
             schemaLayout: null,
             gisLayout: null,
-            mapType: Constants.DEFAULT_MAP_TYPE,
+            mapType: MAP_CONSTANTS.defaults.mapType,
+            tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: null,
-            geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
-            geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+            geojsonBorderWidth: MAP_CONSTANTS.defaults.geojsonBorderWidth,
+            geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
             ghostStation: null,
             ghostDelivery: null,
             hoverDeliveries: [],
@@ -243,7 +245,7 @@ export function reducer(
                 },
             };
 
-        case TracingActionTypes.SetMapTypeSOA:
+        case TracingActionTypes.SetMapSettingsSOA:
             return {
                 ...state,
                 fclData: {
@@ -251,7 +253,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: action.payload.mapType,
+                        ...action.payload.mapSettings,
                     },
                 },
             };
@@ -264,12 +266,12 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: MapType.SHAPE_FILE,
+                        mapType: MapType.SHAPE_ONLY,
                         shapeFileData: action.payload.shapeFileData,
                         geojsonBorderWidth:
-                            Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                            MAP_CONSTANTS.defaults.geojsonBorderWidth,
                         geojsonBorderColor:
-                            Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+                            MAP_CONSTANTS.defaults.geojsonBorderColor,
                     },
                 },
             };

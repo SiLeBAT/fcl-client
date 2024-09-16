@@ -3,7 +3,7 @@
     [tracingActive]="tracingActive$ | async"
     [graphSettings]="graphSettings"
     [hasGisInfo]="hasGisInfo"
-    [availableMapTypes]="availableMapTypes"
+    [availableMaps]="availableMaps"
     [graphEditorActive]="graphEditorActive$ | async"
     [currentUser]="currentUser$ | async"
     [fileName]="fileName$ | async"
@@ -13,7 +13,7 @@
     (openRoaLayout)="onOpenRoaLayout()"
     (loadExampleDataFile)="onLoadExampleDataFile($event)"
     (graphType)="setGraphType($event)"
-    (mapType)="setMapType($event)"
+    (mapSettings)="setMapSettings($event)"
     (loadShapeFile)="onLoadShapeFile($event)"
     (downloadFile)="onDownloadFile($event)"
 >

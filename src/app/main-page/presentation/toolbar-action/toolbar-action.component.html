@@ -41,22 +41,31 @@
                 </mat-radio-button>
                 <mat-select
                     class="fcl-map-type-select"
-                    [(value)]="selectedMapTypeOption"
+                    [(value)]="selectedMapOption"
                     disableOptionCentering
                     panelClass="fcl-mat-select-below-panel-class"
                     [disabled]="!hasGisInfo"
                     matTooltip="{{ hasGisInfo ? 'Select Map Type' : '' }}"
                 >
-                    <span *ngFor="let item of availableMapTypes">
+                    <span *ngFor="let item of availableMaps.tiles">
+                        <mat-option
+                            value="{{ item }}"
+                            (click)="setTileServer(item)"
+                        >
+                            {{ availableMaps.tileServerLabels[item] }}
+                        </mat-option>
+                    </span>
+                    <span *ngFor="let item of availableMaps.types">
                         <mat-option
                             value="{{ item }}"
                             (click)="setMapType(item)"
-                            >{{ mapTypeToLabelMap.get(item) }}</mat-option
                         >
+                            {{ availableMaps.mapTypeLabels[item] }}
+                        </mat-option>
                     </span>
-                    <mat-option value="" (click)="onSelectShapeFile($event)"
-                        >Load Shape File...</mat-option
-                    >
+                    <mat-option value="" (click)="onSelectShapeFile($event)">
+                        Load Shape File...
+                    </mat-option>
                 </mat-select>
             </span>
         </mat-radio-group>
