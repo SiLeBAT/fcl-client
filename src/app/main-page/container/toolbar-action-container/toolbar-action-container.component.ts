@@ -52,9 +52,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     availableMapTypes: MapType[] = [];
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporaryly
-    // private mapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE, MapType.SHAPE_FILE];
     private mapTypes: MapType[] = [
         MapType.MAPNIK,
+        //MapType.BLACK_AND_WHITE,
         MapType.SHAPE_FILE,
         MapType.SHAPE_FILE_ON_MAP,
     ];
@@ -127,6 +127,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     setMapType(mapType: MapType) {
+        console.log('setMapType toolbar action container', mapType)
         this.store.dispatch(
             new tracingActions.SetMapTypeSOA({ mapType: mapType }),
         );

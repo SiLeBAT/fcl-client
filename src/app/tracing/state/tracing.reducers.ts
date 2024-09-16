@@ -244,6 +244,7 @@ export function reducer(
             };
 
         case TracingActionTypes.SetMapTypeSOA:
+            console.log(action.payload.mapType);
             return {
                 ...state,
                 fclData: {

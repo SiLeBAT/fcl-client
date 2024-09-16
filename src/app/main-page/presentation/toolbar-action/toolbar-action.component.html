@@ -50,13 +50,14 @@
                     <span *ngFor="let item of availableMapTypes">
                         <mat-option
                             value="{{ item }}"
-                            (click)="setMapLayers(item)"
-                            >{{ mapTypeToLabelMap.get(item).name }}</mat-option
+                            (click)="setMapType(mapTypeToLabelMap[item])"
                         >
+                            {{ mapTypeToLabelMap[item].name }}
+                        </mat-option>
                     </span>
-                    <mat-option value="" (click)="onSelectShapeFile($event)"
-                        >Load Shape File...</mat-option
-                    >
+                    <mat-option value="" (click)="onSelectShapeFile($event)">
+                        Load Shape File...
+                    </mat-option>
                 </mat-select>
             </span>
         </mat-radio-group>

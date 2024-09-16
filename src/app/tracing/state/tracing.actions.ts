@@ -161,7 +161,9 @@ export class SetGraphTypeSOA implements Action {
 export class SetMapTypeSOA implements Action {
     readonly type = TracingActionTypes.SetMapTypeSOA;
 
-    constructor(public payload: { mapType: MapType }) {}
+    constructor(public payload: { mapType: MapType }) {
+        console.log('SetMapTypeSOA', payload)
+    }
 }
 
 export class SetNodeSizeSOA implements Action {

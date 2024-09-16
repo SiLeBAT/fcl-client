@@ -60,27 +60,26 @@ export class ToolbarActionComponent implements OnChanges {
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
 
-    mapTypeToLabelMap: Map<MapType, GISData> = new Map([
-        [
-            MapType.MAPNIK,
-            { mapType: MapType.MAPNIK, hasShape: false, name: "Mapnik" },
-        ],
+    mapTypeToLabelMap: Record<MapType, GISData> = {
+        [MapType.MAPNIK]: {
+            mapType: MapType.MAPNIK,
+            hasShape: false,
+            name: "Mapnik",
+        },
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporaryly
-        //[MapType.BLACK_AND_WHITE, {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'}],
-        [
-            MapType.SHAPE_FILE,
-            { mapType: null, hasShape: true, name: "Shape File" },
-        ],
-        [
-            MapType.SHAPE_FILE_ON_MAP,
-            {
-                mapType: MapType.MAPNIK,
-                hasShape: true,
-                name: "Shape File on Map",
-            },
-        ], // TO_DO: Make dynamic
-    ]);
+        //[MapType.BLACK_AND_WHITE]: {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'},
+        [MapType.SHAPE_FILE]: {
+            mapType: null,
+            hasShape: true,
+            name: "Shape File",
+        },
+        [MapType.SHAPE_FILE_ON_MAP]: {
+            mapType: MapType.MAPNIK, // TO_DO: Make dynamic
+            hasShape: true,
+            name: "Shape File on Map",
+        },
+    };
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
@@ -143,9 +142,8 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setMapLayers(GISData: GISData) {
-        console.log(this.availableMapTypes);
-        console.log("setMapLayers", GISData);
+    setMapType(GISData: GISData) {
+        console.log("setMapLayers", GISData.name);
         this.mapLayers.emit(GISData);
     }
 
