@@ -14,6 +14,7 @@ import * as _ from "lodash";
 import { DataService } from "./data.service";
 import { Constants } from "../util/constants";
 import { concat, entries, values } from "../util/non-ui-utils";
+import { LABELS } from "../util/labels";
 
 const COLUMNS_ANO_FLAG: StatColumnsFlag = "a";
 const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = "h";
@@ -294,18 +295,18 @@ export class TableService {
         forHighlighting: boolean,
     ): TableColumn[] {
         const favColumns: TableColumn[] = [
-            { id: "id", name: "ID" },
-            { id: "name", name: "Product" },
-            { id: "lot", name: "Lot" },
-            { id: "amount", name: "Amount" },
-            { id: "dateOut", name: "Delivery Date" },
-            { id: "dateIn", name: "Delivery Date Arrival" },
-            { id: "outbreak", name: "Outbreak" },
+            { id: "id", name: LABELS.id },
+            { id: "name", name: LABELS.product },
+            { id: "lot", name: LABELS.lot },
+            { id: "amount", name: LABELS.amount },
+            { id: "dateOut", name: LABELS.dateOut },
+            { id: "dateIn", name: LABELS.dateIn },
+            { id: "outbreak", name: LABELS.outbreak },
         ];
         if (!forHighlighting) {
             favColumns.push(
-                { id: "source.name", name: "Source" },
-                { id: "target.name", name: "Target" },
+                { id: "source.name", name: LABELS.source },
+                { id: "target.name", name: LABELS.target },
             );
         }
 
@@ -324,20 +325,20 @@ export class TableService {
         favouriteColumns: TableColumn[],
     ): TableColumn[] {
         const otherColumns: TableColumn[] = [
-            { id: "source", name: "Source ID" },
-            { id: "target", name: "Target ID" },
-            { id: "weight", name: "Weight" },
-            { id: "crossContamination", name: "Cross Contamination" },
-            { id: "killContamination", name: "Kill Contamination" },
-            { id: "observed", name: "Observed" },
-            { id: "forward", name: "On Forward Trace" },
-            { id: "backward", name: "On Backward Trace" },
-            { id: "score", name: "Score" },
+            { id: "source", name: `${LABELS.source} ID` },
+            { id: "target", name: `${LABELS.target} ID` },
+            { id: "weight", name: LABELS.weight },
+            { id: "crossContamination", name: LABELS.crossContamination },
+            { id: "killContamination", name: LABELS.killContamination },
+            { id: "observed", name: LABELS.traceType },
+            { id: "forward", name: `On ${LABELS.forward}` },
+            { id: "backward", name: `On ${LABELS.backward}` },
+            { id: "score", name: LABELS.score },
             ...(forHighlighting
                 ? []
                 : [
-                      { id: "selected", name: "Selected" },
-                      { id: "invisible", name: "Invisible" },
+                      { id: "selected", name: LABELS.selected },
+                      { id: "invisible", name: LABELS.invisible },
                   ]),
         ];
 
