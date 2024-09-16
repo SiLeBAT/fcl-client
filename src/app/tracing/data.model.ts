@@ -347,11 +347,13 @@ export enum MapType {
     // the Black & White Map might be deactivatd only temporaryly
     // BLACK_AND_WHITE,
     MAPNIK,
+    SHAPE_FILE_ON_MAP
 }
 
 export interface GISData {
-    map: MapType.MAPNIK|/*MapType.BLACK_AND_WHITE|*/null;
-    shape: MapType.SHAPE_FILE|null;
+    mapType: MapType.MAPNIK|/*MapType.BLACK_AND_WHITE|*/null;
+    hasShape: boolean;
+    name: string;
 }
 
 export enum GroupMode {

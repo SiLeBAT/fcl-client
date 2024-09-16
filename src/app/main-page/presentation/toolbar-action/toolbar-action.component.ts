@@ -46,13 +46,13 @@ export class ToolbarActionComponent implements OnChanges {
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
 
-    mapTypeToLabelMap: Map<GISData, string> = new Map([
-        [{map: MapType.MAPNIK, shape: null}, 'Mapnik'],
+    mapTypeToLabelMap: Map<MapType, GISData> = new Map([
+        [MapType.MAPNIK, {mapType: MapType.MAPNIK, hasShape: false, name: 'Mapnik'}],
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporaryly
-        // [MapType.BLACK_AND_WHITE, 'Black & White'],
-        [{map: null, shape: MapType.SHAPE_FILE}, 'Shape File'],
-        [{map: MapType.MAPNIK, shape: MapType.SHAPE_FILE}, 'Shape File on Map'] // TO_DO: Make dynamic
+        //[MapType.BLACK_AND_WHITE, {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'}],
+        [MapType.SHAPE_FILE, {mapType: null, hasShape: true, name:'Shape File' }],
+        [MapType.SHAPE_FILE_ON_MAP, {mapType: MapType.MAPNIK, hasShape: true, name: 'Shape File on Map'}] // TO_DO: Make dynamic
     ]);
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
@@ -117,7 +117,8 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     setMapLayers(GISData: GISData) { 
-        console.log(GISData)      
+        console.log(this.availableMapTypes);
+        console.log('setMapLayers', GISData)      
        this.mapLayers.emit(GISData);
     }
 
