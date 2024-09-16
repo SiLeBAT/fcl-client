@@ -1,9 +1,23 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { environment } from '@env/environment';
-import { User } from '@app/user/models/user.model';
-import { GraphSettings, GraphType, GISData, MapType } from './../../../tracing/data.model';
-import { Constants } from './../../../tracing/util/constants';
-import { ExampleData } from '../../model/types';
+import {
+    Component,
+    Output,
+    EventEmitter,
+    ViewChild,
+    ElementRef,
+    Input,
+    OnChanges,
+    SimpleChanges,
+} from "@angular/core";
+import { environment } from "@env/environment";
+import { User } from "@app/user/models/user.model";
+import {
+    GraphSettings,
+    GraphType,
+    GISData,
+    MapType,
+} from "./../../../tracing/data.model";
+import { Constants } from "./../../../tracing/util/constants";
+import { ExampleData } from "../../model/types";
 
 @Component({
     selector: "fcl-toolbar-action",
@@ -47,12 +61,25 @@ export class ToolbarActionComponent implements OnChanges {
     fileNameWoExt: string | null = null;
 
     mapTypeToLabelMap: Map<MapType, GISData> = new Map([
-        [MapType.MAPNIK, {mapType: MapType.MAPNIK, hasShape: false, name: 'Mapnik'}],
+        [
+            MapType.MAPNIK,
+            { mapType: MapType.MAPNIK, hasShape: false, name: "Mapnik" },
+        ],
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporaryly
         //[MapType.BLACK_AND_WHITE, {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'}],
-        [MapType.SHAPE_FILE, {mapType: null, hasShape: true, name:'Shape File' }],
-        [MapType.SHAPE_FILE_ON_MAP, {mapType: MapType.MAPNIK, hasShape: true, name: 'Shape File on Map'}] // TO_DO: Make dynamic
+        [
+            MapType.SHAPE_FILE,
+            { mapType: null, hasShape: true, name: "Shape File" },
+        ],
+        [
+            MapType.SHAPE_FILE_ON_MAP,
+            {
+                mapType: MapType.MAPNIK,
+                hasShape: true,
+                name: "Shape File on Map",
+            },
+        ], // TO_DO: Make dynamic
     ]);
 
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
@@ -116,10 +143,10 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setMapLayers(GISData: GISData) { 
+    setMapLayers(GISData: GISData) {
         console.log(this.availableMapTypes);
-        console.log('setMapLayers', GISData)      
-       this.mapLayers.emit(GISData);
+        console.log("setMapLayers", GISData);
+        this.mapLayers.emit(GISData);
     }
 
     onSelectShapeFile(event): void {
