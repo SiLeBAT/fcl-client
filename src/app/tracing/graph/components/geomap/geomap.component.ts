@@ -79,10 +79,12 @@ export class GeoMapComponent implements OnChanges {
 
     private initMap(mapConfig: MapConfig): void {
         this.map = createOpenLayerMap(mapConfig, this.mapElement.nativeElement);
+        console.log('initMap', this.map)
         this.updateMapView(mapConfig);
     }
 
     private updateMapType(mapConfig: MapConfig): void {
+        console.log('geomap updateMapType', this.map)
         updateMapType(this.map!, mapConfig);
     }
 

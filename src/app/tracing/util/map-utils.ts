@@ -161,24 +161,29 @@ function createVectorLayerStyle(styleConfig: ShapeMapStyleConfig): StyleLike {
     });
 }
 
-function getMapLayer(map: ol.Map): BaseLayer | null {
+function getMapLayer(map: ol.Map): Array<BaseLayer> | null {
     const layers = map
         .getLayers()
         .getArray()
         .filter((layer) => layer.get(LAYER_ID_KEY) === MAP_LAYER_ID);
-    return layers.length > 0 ? layers[0] : null;
+    return layers.length > 0 ? layers : null;
 }
 
 export function updateVectorLayerStyle(
     map: ol.Map,
     styleConfig: ShapeMapStyleConfig,
 ): void {
-    const vectorLayer = getMapLayer(map);
-    console.log('updateVectorLayerStyle', vectorLayer);
-    if (vectorLayer instanceof VectorLayer) {
-        const style = createVectorLayerStyle(styleConfig);
-        vectorLayer.setStyle(style);
+    const mapLayers = getMapLayer(map);
+    if (mapLayers === null) {
+        return;
     }
+
+    mapLayers.forEach(layer => {
+        if (layer instanceof VectorLayer) {
+            const style = createVectorLayerStyle(styleConfig);
+            layer.setStyle(style);
+        }
+    })
 }
 
 export function updateMapType(
@@ -194,9 +199,14 @@ export function updateMapType(
 }
 
 function removeMapLayer(map: ol.Map) {
-    const mapLayer = getMapLayer(map);
-    console.log('removeMapLayer', mapLayer);
-    if (mapLayer !== null) {
-        map.removeLayer(mapLayer);
+    const mapLayers = getMapLayer(map);
+    console.log('removeMapLayer');
+
+    if (mapLayers === null) {
+        return;
     }
+
+    mapLayers.forEach(mapLayer => {
+        map.removeLayer(mapLayer);
+    });
 }
