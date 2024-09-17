@@ -8,7 +8,7 @@ export function getPositionBasedFitViewPort(
     availableSpace: Size,
     zoomLimits: Range,
     defaultViewPort = DEFAULT_VIEWPORT,
-    currentZoom = 1
+    currentZoom = 1,
 ): Layout {
     if (
         positions.length > 0 &&
@@ -16,9 +16,13 @@ export function getPositionBasedFitViewPort(
         availableSpace.height > 0
     ) {
         const rect = getEnclosingRectFromPoints(positions);
-        let zoom = rect.width > 0 && rect.height > 0 ?
-            Math.min(availableSpace.width / rect.width, availableSpace.height / rect.height) :
-            defaultViewPort.zoom;
+        let zoom =
+            rect.width > 0 && rect.height > 0
+                ? Math.min(
+                      availableSpace.width / rect.width,
+                      availableSpace.height / rect.height,
+                  )
+                : defaultViewPort.zoom;
         // Current state:
         // Rect Zoom works perfectly when we are at default zoom, but breaks when we are allready zoomed in or zoomed out.
         // attempt to fix this, doesn't work so far:

@@ -1,21 +1,21 @@
-import { Layout, Position, Size, Range, PositionMap } from '../../data.model';
-import { StyleConfig } from './cy-style';
+import { Layout, Position, Size, Range, PositionMap } from "../../data.model";
+import { StyleConfig } from "./cy-style";
 import {
     getCenterFromPoints,
     getDifference,
     getDistance,
     getEnclosingRectFromPoints,
-    getRectCenter
-} from '@app/tracing/util/geometry-utils';
-import { getPositionBasedFitViewPort } from './position-based-viewport-fitting';
-import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
+    getRectCenter,
+} from "@app/tracing/util/geometry-utils";
+import { getPositionBasedFitViewPort } from "./position-based-viewport-fitting";
+import { GraphDataChange, InteractiveCyGraph } from "./interactive-cy-graph";
 import {
     GraphData,
     CyConfig,
     LayoutConfig,
-    isPresetLayoutConfig
-} from './cy-graph';
-import { addCustomZoomAdapter } from './cy-adapter';
+    isPresetLayoutConfig,
+} from "./cy-graph";
+import { addCustomZoomAdapter } from "./cy-adapter";
 import {
     bbToRect,
     createMargin,
@@ -24,13 +24,13 @@ import {
     getExtendedTargetIncludingViewPort,
     getZoomedGraphData,
     getZoomedNodePositions,
-    unzoomedToZoomedModelPosition
-} from './virtual-zoom-utils';
-import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
-import { CyEdge, CyNode, CyNodeCollection, NodeId } from '../graph.model';
-import * as _ from 'lodash';
-import { reduceElementSizeToVisibleArea } from './shared-utils';
-import { addCyBoxZoomListerner } from './cy-listeners';
+    unzoomedToZoomedModelPosition,
+} from "./virtual-zoom-utils";
+import { CY_MAX_ZOOM, CY_MIN_ZOOM } from "./cy.constants";
+import { CyEdge, CyNode, CyNodeCollection, NodeId } from "../graph.model";
+import * as _ from "lodash";
+import { reduceElementSizeToVisibleArea } from "./shared-utils";
+import { addCyBoxZoomListerner } from "./cy-listeners";
 
 const DEFAULT_VIEWPORT = {
     zoom: 1,
@@ -144,7 +144,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             addCustomZoomAdapter(
                 this.cy!,
                 () => this.zoom,
-                (zoom, position) => this.zoomWithCusorAt(zoom, position)
+                (zoom, position) => this.zoomWithCusorAt(zoom, position),
             );
         }
         if (reduceContainerSize) {
@@ -440,7 +440,11 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
-    zoomToBox(boxStartPosition: Position, boxEndPosition: Position, fitToVisibileArea = true) {
+    zoomToBox(
+        boxStartPosition: Position,
+        boxEndPosition: Position,
+        fitToVisibileArea = true,
+    ) {
         if (fitToVisibileArea) {
             this.reduceCySizeToVisibleArea();
         }
@@ -450,9 +454,9 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             { min: this.minZoom, max: this.maxZoom },
             {
                 zoom: this.zoom,
-                pan: this.pan
+                pan: this.pan,
             },
-            this.zoom
+            this.zoom,
         );
         this.setViewPort(newLayout);
         this.onLayoutChanged();
@@ -648,9 +652,15 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.cy!,
             (unzoomedFirstCorner: Position, unzoomedOppositeCorner: Position) =>
                 this.zoomToBox(
-                    unzoomedToZoomedModelPosition(unzoomedFirstCorner, this.zoom),
-                    unzoomedToZoomedModelPosition(unzoomedOppositeCorner, this.zoom)
-                )
+                    unzoomedToZoomedModelPosition(
+                        unzoomedFirstCorner,
+                        this.zoom,
+                    ),
+                    unzoomedToZoomedModelPosition(
+                        unzoomedOppositeCorner,
+                        this.zoom,
+                    ),
+                ),
         );
     }
 }

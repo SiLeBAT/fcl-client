@@ -12,8 +12,8 @@ import {
     CY_EVENT_TAP_SELECT,
     CY_EVENT_TAP_START,
     CY_EVENT_TAP_UNSELECT,
-    CY_EVENT_ZOOM
-} from './cy.constants';
+    CY_EVENT_ZOOM,
+} from "./cy.constants";
 
 export interface CyMouseEvent {
     position: Position;
@@ -27,7 +27,7 @@ interface BoxStartProps {
 export function addCyPanListeners(
     cy: Cy,
     onPanning: () => void,
-    onPanEnd: () => void
+    onPanEnd: () => void,
 ): void {
     let tapStarted = false;
     let isPanning = false;
@@ -95,7 +95,7 @@ export function addCyZoomListener(cy: Cy, onZoom: () => void): void {
 
 export function addCyBoxZoomListerner(
     cy: Cy,
-    onBoxZoom: (boxStartPosition: Position, boxEndPosition: Position) => void
+    onBoxZoom: (boxStartPosition: Position, boxEndPosition: Position) => void,
 ): void {
     let lastBoxStart: BoxStartProps | null = null;
 
@@ -105,7 +105,7 @@ export function addCyBoxZoomListerner(
             event.originalEvent.ctrlKey || event.originalEvent.metaKey;
         lastBoxStart = {
             isBoxZoom: isBoxZoom,
-            position: event.position
+            position: event.position,
         };
         if (isBoxZoom) {
             cy.elements().unselectify();

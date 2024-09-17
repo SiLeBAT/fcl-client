@@ -28,11 +28,21 @@ export function getAvailableSpace(htmlElement: HTMLElement): Size {
     };
 }
 
-export function unzoomedToZoomedModelPosition(unzoomedModelPosition: Position, zoom: number): Position {
-    return { x: unzoomedModelPosition.x / zoom, y: unzoomedModelPosition.y / zoom };
+export function unzoomedToZoomedModelPosition(
+    unzoomedModelPosition: Position,
+    zoom: number,
+): Position {
+    return {
+        x: unzoomedModelPosition.x / zoom,
+        y: unzoomedModelPosition.y / zoom,
+    };
 }
 
-export function getZoomedNodePositions(nodeData: CyNodeData[], posMap: PositionMap, zoom: number): PositionMap {
+export function getZoomedNodePositions(
+    nodeData: CyNodeData[],
+    posMap: PositionMap,
+    zoom: number,
+): PositionMap {
     const zoomedPosMap: PositionMap = { ...posMap };
     nodeData.forEach((n) => {
         const oldPos = posMap[n.id];

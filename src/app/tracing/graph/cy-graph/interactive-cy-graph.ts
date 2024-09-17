@@ -151,8 +151,8 @@ export class InteractiveCyGraph extends CyGraph {
         if (this.cy) {
             this.zoomWithCusorAt(
                 Math.exp(
-                    (value / 100) * Math.log(this.maxZoom / this.minZoom)
-                ) * this.minZoom
+                    (value / 100) * Math.log(this.maxZoom / this.minZoom),
+                ) * this.minZoom,
             );
         }
     }
