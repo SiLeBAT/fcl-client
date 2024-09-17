@@ -1,21 +1,21 @@
-import { Layout, Position, Size, Range, PositionMap } from "../../data.model";
-import { StyleConfig } from "./cy-style";
+import { Layout, Position, Size, Range, PositionMap } from '../../data.model';
+import { StyleConfig } from './cy-style';
 import {
     getCenterFromPoints,
     getDifference,
     getDistance,
     getEnclosingRectFromPoints,
-    getRectCenter,
-} from "@app/tracing/util/geometry-utils";
-import { getPositionBasedFitViewPort } from "./position-based-viewport-fitting";
-import { GraphDataChange, InteractiveCyGraph } from "./interactive-cy-graph";
+    getRectCenter
+} from '@app/tracing/util/geometry-utils';
+import { getPositionBasedFitViewPort } from './position-based-viewport-fitting';
+import { GraphDataChange, InteractiveCyGraph } from './interactive-cy-graph';
 import {
     GraphData,
     CyConfig,
     LayoutConfig,
-    isPresetLayoutConfig,
-} from "./cy-graph";
-import { addCustomZoomAdapter } from "./cy-adapter";
+    isPresetLayoutConfig
+} from './cy-graph';
+import { addCustomZoomAdapter } from './cy-adapter';
 import {
     bbToRect,
     createMargin,
@@ -24,11 +24,13 @@ import {
     getExtendedTargetIncludingViewPort,
     getZoomedGraphData,
     getZoomedNodePositions,
-} from "./virtual-zoom-utils";
-import { CY_MAX_ZOOM, CY_MIN_ZOOM } from "./cy.constants";
-import { CyEdge, CyNode, CyNodeCollection, NodeId } from "../graph.model";
-import * as _ from "lodash";
-import { reduceElementSizeToVisibleArea } from "./shared-utils";
+    unzoomedToZoomedModelPosition
+} from './virtual-zoom-utils';
+import { CY_MAX_ZOOM, CY_MIN_ZOOM } from './cy.constants';
+import { CyEdge, CyNode, CyNodeCollection, NodeId } from '../graph.model';
+import * as _ from 'lodash';
+import { reduceElementSizeToVisibleArea } from './shared-utils';
+import { addCyBoxZoomListerner } from './cy-listeners';
 
 const DEFAULT_VIEWPORT = {
     zoom: 1,
@@ -142,7 +144,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             addCustomZoomAdapter(
                 this.cy!,
                 () => this.zoom,
-                (zoom, position) => this.zoomTo(zoom, position),
+                (zoom, position) => this.zoomWithCusorAt(zoom, position)
             );
         }
         if (reduceContainerSize) {
@@ -413,7 +415,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
-    protected zoomTo(zoom: number, position?: Position): void {
+    protected zoomWithCusorAt(zoom: number, position?: Position): void {
         const oldZoom = this.zoom;
         const oldPan = this.pan;
         const newZoom = this.getNextFeasibleZoom(zoom);
@@ -435,6 +437,27 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.setViewPort({ zoom: newZoom, pan: newPan });
 
             this.onLayoutChanged();
+        }
+    }
+
+    zoomToBox(boxStartPosition: Position, boxEndPosition: Position, fitToVisibileArea = true) {
+        if (fitToVisibileArea) {
+            this.reduceCySizeToVisibleArea();
+        }
+        const newLayout = getPositionBasedFitViewPort(
+            [boxStartPosition, boxEndPosition],
+            this.getAvailableSpace(),
+            { min: this.minZoom, max: this.maxZoom },
+            {
+                zoom: this.zoom,
+                pan: this.pan
+            },
+            this.zoom
+        );
+        this.setViewPort(newLayout);
+        this.onLayoutChanged();
+        if (fitToVisibileArea) {
+            this.restoreCySize();
         }
     }
 
@@ -617,5 +640,17 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         if (graphDataChange.selectedElements) {
             this.cachedGraphData.selectedElements = super.selectedElements;
         }
+    }
+
+    protected registerCyListeners(): void {
+        super.registerCyListeners();
+        addCyBoxZoomListerner(
+            this.cy!,
+            (unzoomedFirstCorner: Position, unzoomedOppositeCorner: Position) =>
+                this.zoomToBox(
+                    unzoomedToZoomedModelPosition(unzoomedFirstCorner, this.zoom),
+                    unzoomedToZoomedModelPosition(unzoomedOppositeCorner, this.zoom)
+                )
+        );
     }
 }

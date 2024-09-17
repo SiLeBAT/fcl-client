@@ -147,6 +147,8 @@ export interface CyElementCollection<E> {
     getElementById(id: string): E;
     addClass(classes: string | string[]): void;
     removeClass(classes: string | string[]): void;
+    selectify(): void;
+    unselectify(): void;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
