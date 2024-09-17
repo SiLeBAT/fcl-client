@@ -84,15 +84,12 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             .pipe(takeWhile(() => this.componentActive))
             .subscribe(
                 ([graphSettings, dataServiceInputState]) => {
-                    this.availableMapTypes = this.mapTypes.filter((mapType) => {
-                        console.log("mapTypes", this.mapTypes);
-                        console.log("mapType", mapType);
-                        return (
+                    this.availableMapTypes = this.mapTypes.filter(
+                        (mapType) =>
                             (mapType !== MapType.SHAPE_FILE &&
                                 mapType !== MapType.SHAPE_FILE_ON_MAP) ||
-                            graphSettings.shapeFileData
-                        );
-                    });
+                            graphSettings.shapeFileData,
+                    );
                     this.graphSettings = graphSettings;
 
                     const dataServiceData: DataServiceData =
@@ -128,7 +125,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     setMapType(GISData: GISData) {
-        console.log("setMapType toolbar action container", GISData);
         this.store.dispatch(
             new tracingActions.SetMapTypeSOA({ GISData: GISData }),
         );

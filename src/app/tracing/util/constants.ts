@@ -223,7 +223,7 @@ export class Constants {
             name: "Shape File",
         },
         [MapType.SHAPE_FILE_ON_MAP]: {
-            mapLayer: MapType.MAPNIK,//TO_DO: Make dynamic 
+            mapLayer: MapType.MAPNIK, //TO_DO: Make dynamic
             shapeLayer: MapType.SHAPE_FILE,
             name: "Shape File on Map",
         },

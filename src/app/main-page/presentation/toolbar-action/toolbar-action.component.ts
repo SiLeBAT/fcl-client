@@ -122,7 +122,6 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     setMapType(GISData: GISData) {
-        console.log("toolbar action, setMapType", GISData.name);
         this.mapType.emit(GISData);
     }
 

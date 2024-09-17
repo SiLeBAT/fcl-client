@@ -53,7 +53,6 @@ export function createOpenLayerMap(
     mapConfig: MapConfigWithOptLayout,
     target?: HTMLElement,
 ): ol.Map {
-    console.log('createOpenLayerMap', mapConfig)
     const map = new ol.Map({
         target: target,
         layers: createMapLayer(mapConfig),
@@ -63,45 +62,47 @@ export function createOpenLayerMap(
 }
 
 function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
-    const { mapType: { mapLayer, shapeLayer} } = mapConfig;
-    const isMultiLayer = mapLayer !== null && shapeLayer !== null;
-    
-    if(isMultiLayer) { // create a multi-layer map
-        // create top layer
+    const {
+        mapType: { mapLayer, shapeLayer },
+    } = mapConfig;
+
+    // create a multi-layer map if both layers are present
+    if (mapLayer !== null && shapeLayer !== null) {
         const topLayer = createShapeFileLayer(mapConfig as ShapeMapConfig);
-        topLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true)
-        
-        // create bottom layer
+        topLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
+
         const bottomLayer = createTileLayer(mapConfig);
         bottomLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
 
-        console.log('isMultiLayer', topLayer, bottomLayer)
-
-        // return both layers
+        // please note: the order of the layers within the array is relevant -
+        // the shape layer needs to have a higher index than the map layer to be visible in the FE!
         return [bottomLayer, topLayer];
     }
 
     // default: create a single-layer map
-    const singleLayer = mapLayer || shapeLayer;
-    if (singleLayer === null) {
-        // TO DO what should ideally happen here?
-        throw new Error('no map selected');
-    }
-
-    const baseLayer = singleLayer !== MapType.SHAPE_FILE? createTileLayer(mapConfig) : createShapeFileLayer(mapConfig as ShapeMapConfig);
+    // please note: if both layers are null, the code will default to mapnik
+    // tbd: we might could also throw an error instead, but would need to decide on error handling in the FE then
+    const baseLayer =
+        shapeLayer !== null
+            ? createShapeFileLayer(mapConfig as ShapeMapConfig)
+            : createTileLayer(mapConfig);
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
-    console.log('singleLayer',baseLayer )
     return [baseLayer];
 }
 
 function createTileLayer(
     mapConfig: Pick<MapConfigWithOptLayout, "mapType">,
 ): BaseLayer {
-    const { mapType: { mapLayer, shapeLayer} } = mapConfig;
+    let {
+        mapType: { mapLayer },
+    } = mapConfig;
+
     if (mapLayer === null) {
-        // TO DO what should ideally happen here?
-        throw new Error('no map selected');
+        // please note: if the layer is null, the code will default to mapnik
+        // tbd: we might could also throw an error instead, but would need to decide on error handling in the FE then
+        mapLayer = MapType.MAPNIK;
     }
+
     return new Tile({
         source: MAP_SOURCE.get(mapLayer)!(),
     });
@@ -161,12 +162,11 @@ function createVectorLayerStyle(styleConfig: ShapeMapStyleConfig): StyleLike {
     });
 }
 
-function getMapLayer(map: ol.Map): Array<BaseLayer> | null {
-    const layers = map
+function getMapLayer(map: ol.Map): Array<BaseLayer> {
+    return map
         .getLayers()
         .getArray()
         .filter((layer) => layer.get(LAYER_ID_KEY) === MAP_LAYER_ID);
-    return layers.length > 0 ? layers : null;
 }
 
 export function updateVectorLayerStyle(
@@ -174,16 +174,14 @@ export function updateVectorLayerStyle(
     styleConfig: ShapeMapStyleConfig,
 ): void {
     const mapLayers = getMapLayer(map);
-    if (mapLayers === null) {
-        return;
-    }
-
-    mapLayers.forEach(layer => {
+    // loop through all layers
+    mapLayers.forEach((layer) => {
+        // apply styles only to instances of VectorLayer
         if (layer instanceof VectorLayer) {
             const style = createVectorLayerStyle(styleConfig);
             layer.setStyle(style);
         }
-    })
+    });
 }
 
 export function updateMapType(
@@ -192,21 +190,16 @@ export function updateMapType(
 ): void {
     removeMapLayer(map);
     const layers = createMapLayer(mapConfig);
-    console.log('updateMapType', mapConfig, layers);
     layers.forEach((layer, index) => {
         map.getLayers().insertAt(index, layer);
-    })
+    });
 }
 
 function removeMapLayer(map: ol.Map) {
     const mapLayers = getMapLayer(map);
-    console.log('removeMapLayer');
-
-    if (mapLayers === null) {
-        return;
-    }
-
-    mapLayers.forEach(mapLayer => {
+    // loop through all layers
+    mapLayers.forEach((mapLayer) => {
+        // remove each one from map
         map.removeLayer(mapLayer);
     });
 }
