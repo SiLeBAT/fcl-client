@@ -218,7 +218,7 @@ export class Constants {
         // the Black & White Map might be deactivatd only temporaryly
         //[MapType.BLACK_AND_WHITE]: {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'},
         [MapType.SHAPE_FILE]: {
-            mapType: null,
+            mapType: MapType.SHAPE_FILE,
             hasShape: true,
             name: "Shape File",
         },

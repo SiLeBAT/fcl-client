@@ -53,6 +53,7 @@ export function createOpenLayerMap(
     mapConfig: MapConfigWithOptLayout,
     target?: HTMLElement,
 ): ol.Map {
+    console.log('createOpenLayerMap', mapConfig)
     const map = new ol.Map({
         target: target,
         layers: [createMapLayer(mapConfig)],
@@ -63,7 +64,7 @@ export function createOpenLayerMap(
 
 function createMapLayer(mapConfig: MapConfigWithOptLayout): BaseLayer {
     const baseLayer =
-        mapConfig.mapType !== MapType.SHAPE_FILE
+        mapConfig.mapType.mapType !== MapType.SHAPE_FILE
             ? createTileLayer(mapConfig)
             : createShapeFileLayer(mapConfig as ShapeMapConfig);
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
@@ -73,8 +74,9 @@ function createMapLayer(mapConfig: MapConfigWithOptLayout): BaseLayer {
 function createTileLayer(
     mapConfig: Pick<MapConfigWithOptLayout, "mapType">,
 ): BaseLayer {
+    console.log('createTileLayer', mapConfig.mapType.mapType)
     return new Tile({
-        source: MAP_SOURCE.get(mapConfig.mapType)!(),
+        source: MAP_SOURCE.get(mapConfig.mapType.mapType)!(),
     });
 }
 

@@ -206,7 +206,7 @@ export interface GraphSettings {
 
 export interface MapConfig {
     layout: Layout | null;
-    mapType: MapType;
+    mapType: GISData;
     shapeFileData: ShapeFileData | null;
     lineColor: Color;
     lineWidth: number;
@@ -351,7 +351,7 @@ export enum MapType {
 }
 
 export interface GISData {
-    mapType: MapType | null;
+    mapType: MapType;
     hasShape: boolean;
     name: string;
 }

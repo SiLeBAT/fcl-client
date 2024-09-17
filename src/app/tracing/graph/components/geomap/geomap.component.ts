@@ -114,7 +114,7 @@ export class GeoMapComponent implements OnChanges {
         ) {
             this.updateMapType(newMapConfig);
         } else if (
-            newMapConfig.mapType === MapType.SHAPE_FILE &&
+            newMapConfig.mapType.mapType === MapType.SHAPE_FILE &&
             (newMapConfig.lineColor !== oldMapConfig.lineColor ||
                 newMapConfig.lineWidth !== oldMapConfig.lineWidth)
         ) {
