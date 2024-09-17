@@ -210,21 +210,21 @@ export class Constants {
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
     static readonly MAP_TYPES: Record<MapType, GISData> = {
         [MapType.MAPNIK]: {
-            mapType: MapType.MAPNIK,
-            hasShape: false,
+            mapLayer: MapType.MAPNIK,
+            shapeLayer: null,
             name: "Mapnik",
         },
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporaryly
-        //[MapType.BLACK_AND_WHITE]: {mapType: MapType.BLACK_AND_WHITE, hasShape: false, name: 'Black & White'},
+        //[MapType.BLACK_AND_WHITE]: {mapLayer: MapType.BLACK_AND_WHITE, shapeLayer: null, name: 'Black & White'},
         [MapType.SHAPE_FILE]: {
-            mapType: MapType.SHAPE_FILE,
-            hasShape: true,
+            mapLayer: null,
+            shapeLayer: MapType.SHAPE_FILE,
             name: "Shape File",
         },
         [MapType.SHAPE_FILE_ON_MAP]: {
-            mapType: MapType.MAPNIK, // TO_DO: Make dynamic
-            hasShape: true,
+            mapLayer: MapType.MAPNIK,//TO_DO: Make dynamic 
+            shapeLayer: MapType.SHAPE_FILE,
             name: "Shape File on Map",
         },
     };

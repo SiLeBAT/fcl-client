@@ -56,27 +56,54 @@ export function createOpenLayerMap(
     console.log('createOpenLayerMap', mapConfig)
     const map = new ol.Map({
         target: target,
-        layers: [createMapLayer(mapConfig)],
+        layers: createMapLayer(mapConfig),
         controls: [],
     });
     return map;
 }
 
-function createMapLayer(mapConfig: MapConfigWithOptLayout): BaseLayer {
-    const baseLayer =
-        mapConfig.mapType.mapType !== MapType.SHAPE_FILE
-            ? createTileLayer(mapConfig)
-            : createShapeFileLayer(mapConfig as ShapeMapConfig);
+function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
+    const { mapType: { mapLayer, shapeLayer} } = mapConfig;
+    const isMultiLayer = mapLayer !== null && shapeLayer !== null;
+    
+    if(isMultiLayer) { // create a multi-layer map
+        // create top layer
+        const topLayer = createShapeFileLayer(mapConfig as ShapeMapConfig);
+        topLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true)
+        
+        // create bottom layer
+        const bottomLayer = createShapeFileLayer(mapConfig as ShapeMapConfig);
+        bottomLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
+
+        console.log('isMultiLayer', topLayer, bottomLayer)
+
+        // return both layers
+        return [topLayer, bottomLayer];
+    }
+
+    // default: create a single-layer map
+    const singleLayer = mapLayer || shapeLayer;
+    if (singleLayer === null) {
+        // TO DO what should ideally happen here?
+        throw new Error('no map selected');
+    }
+
+    const baseLayer = singleLayer !== MapType.SHAPE_FILE? createTileLayer(mapConfig) : createShapeFileLayer(mapConfig as ShapeMapConfig);
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
-    return baseLayer;
+    console.log('singleLayer',baseLayer )
+    return [baseLayer];
 }
 
 function createTileLayer(
     mapConfig: Pick<MapConfigWithOptLayout, "mapType">,
 ): BaseLayer {
-    console.log('createTileLayer', mapConfig.mapType.mapType)
+    const { mapType: { mapLayer, shapeLayer} } = mapConfig;
+    if (mapLayer === null) {
+        // TO DO what should ideally happen here?
+        throw new Error('no map selected');
+    }
     return new Tile({
-        source: MAP_SOURCE.get(mapConfig.mapType.mapType)!(),
+        source: MAP_SOURCE.get(mapLayer)!(),
     });
 }
 
@@ -158,7 +185,10 @@ export function updateMapType(
     mapConfig: MapConfigWithOptLayout,
 ): void {
     removeMapLayer(map);
-    map.getLayers().insertAt(0, createMapLayer(mapConfig));
+    const layers = createMapLayer(mapConfig);
+    layers.forEach((layer, index) => {
+        map.getLayers().insertAt(index, layer);
+    })
 }
 
 function removeMapLayer(map: ol.Map) {

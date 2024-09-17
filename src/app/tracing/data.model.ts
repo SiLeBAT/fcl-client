@@ -351,8 +351,8 @@ export enum MapType {
 }
 
 export interface GISData {
-    mapType: MapType;
-    hasShape: boolean;
+    mapLayer: MapType.MAPNIK /*| BLACK_AND_WHITE */| null;
+    shapeLayer: MapType.SHAPE_FILE | null;
     name: string;
 }
 
