@@ -72,13 +72,13 @@ function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
         topLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true)
         
         // create bottom layer
-        const bottomLayer = createShapeFileLayer(mapConfig as ShapeMapConfig);
+        const bottomLayer = createTileLayer(mapConfig);
         bottomLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
 
         console.log('isMultiLayer', topLayer, bottomLayer)
 
         // return both layers
-        return [topLayer, bottomLayer];
+        return [bottomLayer, topLayer];
     }
 
     // default: create a single-layer map
@@ -174,6 +174,7 @@ export function updateVectorLayerStyle(
     styleConfig: ShapeMapStyleConfig,
 ): void {
     const vectorLayer = getMapLayer(map);
+    console.log('updateVectorLayerStyle', vectorLayer);
     if (vectorLayer instanceof VectorLayer) {
         const style = createVectorLayerStyle(styleConfig);
         vectorLayer.setStyle(style);
@@ -186,6 +187,7 @@ export function updateMapType(
 ): void {
     removeMapLayer(map);
     const layers = createMapLayer(mapConfig);
+    console.log('updateMapType', mapConfig, layers);
     layers.forEach((layer, index) => {
         map.getLayers().insertAt(index, layer);
     })
@@ -193,6 +195,7 @@ export function updateMapType(
 
 function removeMapLayer(map: ol.Map) {
     const mapLayer = getMapLayer(map);
+    console.log('removeMapLayer', mapLayer);
     if (mapLayer !== null) {
         map.removeLayer(mapLayer);
     }
