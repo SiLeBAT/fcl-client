@@ -23,10 +23,6 @@ export function getPositionBasedFitViewPort(
                       availableSpace.height / rect.height,
                   )
                 : defaultViewPort.zoom;
-        // Current state:
-        // Rect Zoom works perfectly when we are at default zoom, but breaks when we are allready zoomed in or zoomed out.
-        // attempt to fix this, doesn't work so far:
-        // zoom *= currentZoom;
         zoom = Math.max(Math.min(zoom, zoomLimits.max), zoomLimits.min);
 
         const layout = {
