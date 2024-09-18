@@ -51,14 +51,16 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     hasGisInfo = false;
 
     availableMapTypes: MapType[] = [];
-    // the following code is commented because
-    // the Black & White Map might be deactivatd only temporaryly
-    private mapTypes: MapType[] = [
-        MapType.MAPNIK,
-        //MapType.BLACK_AND_WHITE,
-        MapType.SHAPE_FILE,
-        MapType.SHAPE_FILE_ON_MAP,
-    ];
+    // read all map variants from constants
+    private mapTypes: MapType[] = Object.keys(Constants.MAP_VARIANTS).map(
+        (variantKey) => {
+            // convert strings to members of MapType enum
+            const convertedVariantKey: keyof typeof MapType =
+                MapType[variantKey];
+            // return Array of all MapTypes that were found in constants
+            return MapType[convertedVariantKey];
+        },
+    );
 
     private componentActive: boolean = true;
 

@@ -59,7 +59,7 @@ export class ToolbarActionComponent implements OnChanges {
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
-    mapTypes = Constants.MAP_TYPES;
+    mapTypes = Constants.MAP_VARIANTS;
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     ngOnChanges(changes: SimpleChanges): void {

@@ -28,7 +28,7 @@ export async function getShapeFileData(file: File): Promise<ShapeFileData> {
     try {
         // 1. test: can an open layer map be created
         createOpenLayerMap({
-            mapType: Constants.MAP_TYPES[MapType.SHAPE_FILE],
+            mapType: Constants.MAP_VARIANTS[MapType.SHAPE_FILE],
             shapeFileData: jsonData,
             lineColor: { r: 0, g: 0, b: 0 },
             lineWidth: 0.5,

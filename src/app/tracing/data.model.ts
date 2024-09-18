@@ -341,12 +341,12 @@ export enum GraphType {
     GIS = "GIS" as any,
 }
 
-export enum MapType {
-    SHAPE_FILE,
+export enum MapType { // please note: the order of the keys is relevant for presentation
+    MAPNIK,
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporaryly
     // BLACK_AND_WHITE,
-    MAPNIK,
+    SHAPE_FILE,
     SHAPE_FILE_ON_MAP,
 }
 

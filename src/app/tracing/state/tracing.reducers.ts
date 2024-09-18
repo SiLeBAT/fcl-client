@@ -264,7 +264,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: Constants.MAP_TYPES[MapType.SHAPE_FILE],
+                        mapType: Constants.MAP_VARIANTS[MapType.SHAPE_FILE],
                         shapeFileData: action.payload.shapeFileData,
                         geojsonBorderWidth:
                             Constants.DEFAULT_GEOJSON_BORDER_WIDTH,

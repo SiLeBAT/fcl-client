@@ -208,7 +208,7 @@ export class Constants {
     } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
-    static readonly MAP_TYPES: Record<MapType, GISData> = {
+    static readonly MAP_VARIANTS: Record<MapType, GISData> = {
         [MapType.MAPNIK]: {
             mapLayer: MapType.MAPNIK,
             shapeLayer: null,
@@ -229,7 +229,7 @@ export class Constants {
         },
     };
 
-    static readonly DEFAULT_MAP_TYPE = Constants.MAP_TYPES[MapType.MAPNIK];
+    static readonly DEFAULT_MAP_TYPE = Constants.MAP_VARIANTS[MapType.MAPNIK];
 
     static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
     static readonly DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE = true;
