@@ -32,7 +32,7 @@ const MAP_LAYER_ID = "MapLayer";
 const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
     [MapType.MAPNIK, () => new OSM()],
     // the following code is commented because
-    // the Black & White Map might be deactivatd only temporaryly
+    // the Black & White Map might be deactivatd only temporarily
     // ,
     // [MapType.BLACK_AND_WHITE, () => new OSM({
     //     url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
@@ -40,14 +40,19 @@ const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
     // })]
 ]);
 
+//* ***** Question START: Is this code still needed? It doesn't seem to be in use anywhere. ***** */
+
 // the following code is commented because
-// the Black & White Map might be deactivatd only temporaryly
-// const availableMapTypes: MapType[] = [ MapType.MAPNIK, MapType.BLACK_AND_WHITE ];
-const availableMapTypes: MapType[] = [MapType.MAPNIK];
+// the Black & White Map might be deactivatd only temporarily
+const availableMapTypes: MapType[] = [
+    MapType.MAPNIK /*MapType.BLACK_AND_WHITE*/,
+];
 
 export function getAvailableMapTypes(): MapType[] {
     return availableMapTypes;
 }
+
+//* ***** Question END: ***** */
 
 export function createOpenLayerMap(
     mapConfig: MapConfigWithOptLayout,

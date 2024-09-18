@@ -344,7 +344,7 @@ export enum GraphType {
 export enum MapType { // please note: the order of the keys is relevant for presentation
     MAPNIK,
     // the following code is commented because
-    // the Black & White Map might be deactivatd only temporaryly
+    // the Black & White Map might be deactivatd only temporarily
     // BLACK_AND_WHITE,
     SHAPE_FILE,
     SHAPE_FILE_ON_MAP,

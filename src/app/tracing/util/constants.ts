@@ -215,7 +215,7 @@ export class Constants {
             name: "Mapnik",
         },
         // the following code is commented because
-        // the Black & White Map might be deactivatd only temporaryly
+        // the Black & White Map might be deactivatd only temporarily
         //[MapType.BLACK_AND_WHITE]: {mapLayer: MapType.BLACK_AND_WHITE, shapeLayer: null, name: 'Black & White'},
         [MapType.SHAPE_FILE]: {
             mapLayer: null,
