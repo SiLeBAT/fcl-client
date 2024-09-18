@@ -121,8 +121,8 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setMapType(GISData: MapVariant) {
-        this.mapType.emit(GISData);
+    setMapType(mapVariant: MapVariant) {
+        this.mapType.emit(mapVariant);
     }
 
     onSelectShapeFile(event): void {

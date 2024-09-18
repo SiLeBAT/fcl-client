@@ -251,7 +251,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapVariant: action.payload.GISData,
+                        mapVariant: action.payload.mapVariant,
                     },
                 },
             };

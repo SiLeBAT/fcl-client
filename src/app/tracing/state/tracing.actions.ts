@@ -162,7 +162,7 @@ export class SetGraphTypeSOA implements Action {
 export class SetMapTypeSOA implements Action {
     readonly type = TracingActionTypes.SetMapTypeSOA;
 
-    constructor(public payload: { GISData: MapVariant }) {}
+    constructor(public payload: { mapVariant: MapVariant }) {}
 }
 
 export class SetNodeSizeSOA implements Action {

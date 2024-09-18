@@ -126,9 +126,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         );
     }
 
-    setMapType(GISData: MapVariant) {
+    setMapType(mapVariant: MapVariant) {
         this.store.dispatch(
-            new tracingActions.SetMapTypeSOA({ GISData: GISData }),
+            new tracingActions.SetMapTypeSOA({ mapVariant: mapVariant }),
         );
     }
 
