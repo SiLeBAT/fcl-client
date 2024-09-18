@@ -13,7 +13,7 @@ import { User } from "@app/user/models/user.model";
 import {
     GraphSettings,
     GraphType,
-    GISData,
+    MapVariant,
     MapType,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
@@ -33,7 +33,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
-        this.selectedMapTypeOption = "" + value.mapType;
+        this.selectedMapTypeOption = "" + value.mapVariant;
         this._graphSettings = value;
     }
     get graphSettings(): GraphSettings {
@@ -53,7 +53,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
-    @Output() mapType = new EventEmitter<GISData>();
+    @Output() mapType = new EventEmitter<MapVariant>();
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
@@ -121,14 +121,14 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setMapType(GISData: GISData) {
+    setMapType(GISData: MapVariant) {
         this.mapType.emit(GISData);
     }
 
     onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
         setTimeout(() => {
-            this.selectedMapTypeOption = "" + this._graphSettings.mapType;
+            this.selectedMapTypeOption = "" + this._graphSettings.mapVariant;
         }, 0);
 
         this.shapeFileInput.nativeElement.click();

@@ -13,7 +13,7 @@ import {
     GraphType,
     MapType,
     DataServiceInputState,
-    GISData,
+    MapVariant,
 } from "@app/tracing/data.model";
 import { DataService } from "./../../../tracing/services/data.service";
 import { Utils as UIUtils } from "./../../../tracing/util/ui-utils";
@@ -126,7 +126,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         );
     }
 
-    setMapType(GISData: GISData) {
+    setMapType(GISData: MapVariant) {
         this.store.dispatch(
             new tracingActions.SetMapTypeSOA({ GISData: GISData }),
         );

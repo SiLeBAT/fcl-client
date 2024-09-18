@@ -180,7 +180,7 @@ export interface ShowElementsTraceParams {
 
 export interface GraphSettings {
     type: GraphType;
-    mapType: GISData;
+    mapVariant: MapVariant;
     shapeFileData: ShapeFileData | null;
     geojsonBorderWidth: number;
     geojsonBorderColor: Color;
@@ -206,7 +206,7 @@ export interface GraphSettings {
 
 export interface MapConfig {
     layout: Layout | null;
-    mapType: GISData;
+    mapType: MapVariant;
     shapeFileData: ShapeFileData | null;
     lineColor: Color;
     lineWidth: number;
@@ -350,7 +350,7 @@ export enum MapType { // please note: the order of the keys is relevant for pres
     SHAPE_FILE_ON_MAP,
 }
 
-export interface GISData {
+export interface MapVariant {
     mapLayer: MapType.MAPNIK /*| BLACK_AND_WHITE */ | null;
     shapeLayer: MapType.SHAPE_FILE | null;
     name: string;

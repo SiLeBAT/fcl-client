@@ -147,7 +147,7 @@ export function createInitialFclDataState(): FclData {
             },
             schemaLayout: null,
             gisLayout: null,
-            mapType: Constants.DEFAULT_MAP_TYPE,
+            mapVariant: Constants.DEFAULT_MAP_TYPE,
             shapeFileData: null,
             geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
             geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
@@ -188,8 +188,8 @@ export function reducer(
             };
 
         case TracingActionTypes.LoadFclDataSuccessSOA: {
-            action.payload.fclData.graphSettings.mapType =
-                state.fclData.graphSettings.mapType;
+            action.payload.fclData.graphSettings.mapVariant =
+                state.fclData.graphSettings.mapVariant;
             action.payload.fclData.graphSettings.shapeFileData =
                 state.fclData.graphSettings.shapeFileData;
             action.payload.fclData.graphSettings.geojsonBorderColor =
@@ -251,7 +251,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: action.payload.GISData,
+                        mapVariant: action.payload.GISData,
                     },
                 },
             };
@@ -264,7 +264,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: Constants.MAP_VARIANTS[MapType.SHAPE_FILE],
+                        mapVariant: Constants.MAP_VARIANTS[MapType.SHAPE_FILE],
                         shapeFileData: action.payload.shapeFileData,
                         geojsonBorderWidth:
                             Constants.DEFAULT_GEOJSON_BORDER_WIDTH,

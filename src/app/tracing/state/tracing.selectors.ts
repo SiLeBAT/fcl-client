@@ -223,7 +223,7 @@ const selectGisGraphLayout = createSelector(
 
 const selectMapType = createSelector(
     getGraphSettings,
-    (graphSettings) => graphSettings.mapType,
+    (graphSettings) => graphSettings.mapVariant,
 );
 
 const selectShapeFileData = createSelector(

@@ -2,7 +2,7 @@ import {
     Color,
     GraphType,
     MapType,
-    GISData,
+    MapVariant,
     DeliveryData,
     StationData,
     GroupType,
@@ -208,7 +208,7 @@ export class Constants {
     } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
-    static readonly MAP_VARIANTS: Record<MapType, GISData> = {
+    static readonly MAP_VARIANTS: Record<MapType, MapVariant> = {
         [MapType.MAPNIK]: {
             mapLayer: MapType.MAPNIK,
             shapeLayer: null,
