@@ -208,11 +208,11 @@ export class Constants {
     } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
-    static readonly MAP_VARIANTS: Record<MapType, MapVariant> = {
+    static readonly MAP_VARIANTS = {
         [MapType.MAPNIK]: {
             mapLayer: MapType.MAPNIK,
             shapeLayer: null,
-            name: "Mapnik",
+            label: "Mapnik",
         },
         // the following code is commented because
         // the Black & White Map might be deactivatd only temporarily
@@ -220,14 +220,14 @@ export class Constants {
         [MapType.SHAPE_FILE]: {
             mapLayer: null,
             shapeLayer: MapType.SHAPE_FILE,
-            name: "Shape File",
+            label: "Shape File",
         },
         [MapType.SHAPE_FILE_ON_MAP]: {
             mapLayer: MapType.MAPNIK, //TO_DO: Make dynamic
             shapeLayer: MapType.SHAPE_FILE,
-            name: "Shape File on Map",
+            label: "Map & Shape File",
         },
-    };
+    } satisfies Record<MapType, MapVariant>;
 
     static readonly DEFAULT_MAP_TYPE = Constants.MAP_VARIANTS[MapType.MAPNIK];
 

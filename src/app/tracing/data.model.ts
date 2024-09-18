@@ -353,7 +353,7 @@ export enum MapType { // please note: the order of the keys is relevant for pres
 export interface MapVariant {
     mapLayer: MapType.MAPNIK /*| BLACK_AND_WHITE */ | null;
     shapeLayer: MapType.SHAPE_FILE | null;
-    name: string;
+    label: string;
 }
 
 export enum GroupMode {
