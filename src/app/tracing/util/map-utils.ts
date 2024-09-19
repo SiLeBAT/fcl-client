@@ -33,7 +33,6 @@ const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
     [MapType.MAPNIK, () => new OSM()],
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporarily
-    // ,
     // [MapType.BLACK_AND_WHITE, () => new OSM({
     //     url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
     //     crossOrigin: null

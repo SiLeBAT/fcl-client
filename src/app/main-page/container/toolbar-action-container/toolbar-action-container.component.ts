@@ -52,15 +52,14 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     availableMapTypes: MapType[] = [];
     // read all map variants from constants
-    private mapTypes: MapType[] = Object.keys(Constants.MAP_VARIANTS).map(
-        (variantKey) => {
-            // convert strings to members of MapType enum
-            const convertedVariantKey: keyof typeof MapType =
-                MapType[variantKey];
-            // return Array of all MapTypes that were found in constants
-            return MapType[convertedVariantKey];
-        },
-    );
+    private mapTypes: MapType[] = Object.keys(
+        Constants.DEFAULT_MAP_VARIANTS,
+    ).map((variantKey) => {
+        // convert strings to members of MapType enum
+        const convertedVariantKey: keyof typeof MapType = MapType[variantKey];
+        // return Array of all MapTypes that were found in constants
+        return MapType[convertedVariantKey];
+    });
 
     private componentActive: boolean = true;
 
@@ -129,6 +128,17 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     setMapType(mapVariant: MapVariant) {
         this.store.dispatch(
             new tracingActions.SetMapTypeSOA({ mapVariant: mapVariant }),
+        );
+    }
+
+    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+    setMapTypeSelected(
+        lastMapTypeSelected: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/,
+    ) {
+        this.store.dispatch(
+            new tracingActions.SetMapTypeSelectedSOA({
+                lastMapTypeSelected: lastMapTypeSelected,
+            }),
         );
     }
 

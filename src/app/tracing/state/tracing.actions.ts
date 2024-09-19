@@ -46,6 +46,7 @@ export enum TracingActionTypes {
     ShowTableSettingsSOA = "[Tracing] Show Table Settings",
     SetGraphTypeSOA = "[Tracing] Set Graph Type",
     SetMapTypeSOA = "[Tracing] Set Map Type",
+    SetMapTypeSelectedSOA = "[Tracing] Set Map Type Selected",
     SetSchemaGraphLayoutSOA = "[Tracing] Set Schema Graph Layout",
     SetGisGraphLayoutSOA = "[Tracing] Set Gis Graph Layout",
     SetNodeSizeSOA = "[Tracing] Set Node Size",
@@ -163,6 +164,17 @@ export class SetMapTypeSOA implements Action {
     readonly type = TracingActionTypes.SetMapTypeSOA;
 
     constructor(public payload: { mapVariant: MapVariant }) {}
+}
+
+export class SetMapTypeSelectedSOA implements Action {
+    readonly type = TracingActionTypes.SetMapTypeSelectedSOA;
+
+    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+    constructor(
+        public payload: {
+            lastMapTypeSelected: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/;
+        },
+    ) {}
 }
 
 export class SetNodeSizeSOA implements Action {
@@ -439,6 +451,7 @@ export type TracingActions =
     | SetGisGraphLayoutSOA
     | SetGraphTypeSOA
     | SetMapTypeSOA
+    | SetMapTypeSelectedSOA
     | SetNodeSizeSOA
     | SetAdjustEdgeWidthToNodeSizeSOA
     | SetEdgeWidthSOA

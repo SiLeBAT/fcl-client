@@ -54,12 +54,15 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapType = new EventEmitter<MapVariant>();
+    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+    @Output() mapTypeSelected =
+        new EventEmitter<MapType.MAPNIK /*|MapType.BLACK_AND_WHITE*/>();
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
-    mapTypes = Constants.MAP_VARIANTS;
+    mapTypes = Constants.DEFAULT_MAP_VARIANTS;
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -121,7 +124,57 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setMapType(mapVariant: MapVariant) {
+    setMapData(mapVariant: MapVariant): void {
+        // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+        const isMap =
+            mapVariant ===
+            Constants.DEFAULT_MAP_VARIANTS[
+                MapType.MAPNIK
+            ]; /*|| mapVariant === Constants.DEFAULT_MAP_VARIANTS[MapType.BLACK_AND_WHITE]*/
+        const isShapeFileOnMap =
+            mapVariant ===
+            Constants.DEFAULT_MAP_VARIANTS[MapType.SHAPE_FILE_ON_MAP];
+        const callback = () => {
+            this.setMapType(mapVariant);
+        };
+        let newMapVariant: MapVariant = mapVariant;
+
+        if (isMap) {
+            const { mapLayer: newMapLayer } = mapVariant;
+            this.setMapTypeSelected(newMapLayer!, callback);
+            return;
+        }
+
+        if (isShapeFileOnMap) {
+            const { lastMapTypeSelected } = this.graphSettings;
+            newMapVariant = {
+                ...mapVariant,
+                mapLayer: lastMapTypeSelected,
+            };
+        }
+
+        this.setMapType(newMapVariant);
+    }
+
+    setMapTypeSelected(
+        newMapLayer: MapType.MAPNIK /*|MapType.BLACK_AND_WHITE*/,
+        callback,
+    ): void {
+        // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+        const { lastMapTypeSelected } = this.graphSettings;
+        const differentMapSelected = newMapLayer !== lastMapTypeSelected;
+
+        if (!differentMapSelected) {
+            callback();
+            return;
+        }
+
+        this.mapTypeSelected.emit(newMapLayer);
+        callback();
+    }
+
+    setMapType(mapVariant: MapVariant): void {
+        const { mapLayer, shapeLayer } = mapVariant;
         this.mapType.emit(mapVariant);
     }
 

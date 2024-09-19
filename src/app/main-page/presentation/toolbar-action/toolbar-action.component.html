@@ -50,7 +50,7 @@
                     <span *ngFor="let item of availableMapTypes">
                         <mat-option
                             value="{{ item }}"
-                            (click)="setMapType(mapTypes[item])"
+                            (click)="setMapData(mapTypes[item])"
                         >
                             {{ mapTypes[item].label }}
                         </mat-option>

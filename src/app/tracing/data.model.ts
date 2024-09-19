@@ -181,6 +181,8 @@ export interface ShowElementsTraceParams {
 export interface GraphSettings {
     type: GraphType;
     mapVariant: MapVariant;
+    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+    lastMapTypeSelected: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/;
     shapeFileData: ShapeFileData | null;
     geojsonBorderWidth: number;
     geojsonBorderColor: Color;
@@ -345,13 +347,13 @@ export enum MapType { // please note: the order of the keys is relevant for pres
     MAPNIK,
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporarily
-    // BLACK_AND_WHITE,
+    //BLACK_AND_WHITE,
     SHAPE_FILE,
     SHAPE_FILE_ON_MAP,
 }
 
 export interface MapVariant {
-    mapLayer: MapType.MAPNIK /*| BLACK_AND_WHITE */ | null;
+    mapLayer: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/ | null;
     shapeLayer: MapType.SHAPE_FILE | null;
     label: string;
 }

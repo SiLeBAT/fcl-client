@@ -207,29 +207,34 @@ export class Constants {
         b: 0,
     } as Readonly<Color>;
 
-    static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
-    static readonly MAP_VARIANTS = {
+    static readonly DEFAULT_LAST_MAP_TYPE_SELECTED = MapType.MAPNIK;
+    static readonly DEFAULT_MAP_VARIANTS = {
         [MapType.MAPNIK]: {
             mapLayer: MapType.MAPNIK,
             shapeLayer: null,
             label: "Mapnik",
         },
-        // the following code is commented because
-        // the Black & White Map might be deactivatd only temporarily
-        //[MapType.BLACK_AND_WHITE]: {mapLayer: MapType.BLACK_AND_WHITE, shapeLayer: null, name: 'Black & White'},
+        //temporarily deactivated, therefore just a comment and not removed
+        /*[MapType.BLACK_AND_WHITE]: {
+            mapLayer: MapType.BLACK_AND_WHITE, 
+            shapeLayer: null, 
+            label: 'Black & White'
+        },*/
         [MapType.SHAPE_FILE]: {
             mapLayer: null,
             shapeLayer: MapType.SHAPE_FILE,
             label: "Shape File",
         },
         [MapType.SHAPE_FILE_ON_MAP]: {
-            mapLayer: MapType.MAPNIK, //TO_DO: Make dynamic
+            mapLayer: Constants.DEFAULT_LAST_MAP_TYPE_SELECTED, // please note: this will be overwritten dynamically on map select
             shapeLayer: MapType.SHAPE_FILE,
             label: "Map & Shape File",
         },
     } satisfies Record<MapType, MapVariant>;
+    static readonly DEFAULT_MAP_VARIANT =
+        Constants.DEFAULT_MAP_VARIANTS[MapType.MAPNIK];
 
-    static readonly DEFAULT_MAP_TYPE = Constants.MAP_VARIANTS[MapType.MAPNIK];
+    static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
 
     static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
     static readonly DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE = true;
