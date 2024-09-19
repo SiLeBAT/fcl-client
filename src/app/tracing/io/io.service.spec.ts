@@ -73,7 +73,8 @@ describe("IOService", () => {
             },
             graphSettings: {
                 type: GraphType.GRAPH,
-                mapType: MapType.MAPNIK,
+                mapVariant: Constants.DEFAULT_MAP_VARIANT,
+                lastMapTypeSelected: Constants.DEFAULT_LAST_MAP_TYPE_SELECTED,
                 shapeFileData: null,
                 geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
                 geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
