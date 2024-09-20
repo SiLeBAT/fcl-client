@@ -1,4 +1,12 @@
-<div mat-dialog-content>
+<div
+    mat-dialog-content
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragBoundary=".cdk-overlay-container"
+>
+    <div class="fcl-drag-handle">
+        <mat-icon cdkDragHandle fill="currentColor">open_with</mat-icon>
+    </div>
     <mat-card>
         <mat-card-title>
             <span>{{ data.station.name }}</span>
@@ -45,5 +53,5 @@
     </mat-card>
 </div>
 <div mat-dialog-actions>
-    <button mat-button cdkFocusInitial matDialogClose>OK</button>
+    <button mat-button cdkFocusInitial matDialogClose>Close</button>
 </div>
