@@ -174,7 +174,6 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     setMapType(mapVariant: MapVariant): void {
-        const { mapLayer, shapeLayer } = mapVariant;
         this.mapType.emit(mapVariant);
     }
 
