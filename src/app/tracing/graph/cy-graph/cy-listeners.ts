@@ -97,26 +97,24 @@ export function addCyBoxZoomListerner(
     cy: Cy,
     onBoxZoom: (boxStartPosition: Position, boxEndPosition: Position) => void,
 ): void {
-    let lastBoxStart: BoxStartProps | null = null;
+    let boxZoomStartPosition: Position | null = null;
 
     cy.on(CY_EVENT_BOX_START, (event: CyMouseEvent) => {
         // Checking both ctrl and meta key because Windows & Linux generally use ctrl, while Mac uses the Cmd key.
         const isBoxZoom =
             event.originalEvent.ctrlKey || event.originalEvent.metaKey;
-        lastBoxStart = {
-            isBoxZoom: isBoxZoom,
-            position: event.position,
-        };
         if (isBoxZoom) {
+            boxZoomStartPosition = event.position;
             cy.elements().unselectify();
         }
     });
 
     cy.on(CY_EVENT_BOX_END, (event: CyMouseEvent) => {
-        if (lastBoxStart?.isBoxZoom && lastBoxStart?.position) {
-            onBoxZoom(lastBoxStart.position, event.position);
+        if (!boxZoomStartPosition) {
+            return;
         }
-        lastBoxStart = null;
+        onBoxZoom(boxZoomStartPosition, event.position);
+        boxZoomStartPosition = null;
         window.setTimeout(() => {
             cy.elements().selectify();
         }, 0);
