@@ -24,11 +24,13 @@ import {
     getExtendedTargetIncludingViewPort,
     getZoomedGraphData,
     getZoomedNodePositions,
+    zoomedToUnzoomedModelPosition,
 } from "./virtual-zoom-utils";
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from "./cy.constants";
 import { CyEdge, CyNode, CyNodeCollection, NodeId } from "../graph.model";
 import * as _ from "lodash";
 import { reduceElementSizeToVisibleArea } from "./shared-utils";
+import { addCyBoxZoomListerner } from "./cy-listeners";
 
 const DEFAULT_VIEWPORT = {
     zoom: 1,
@@ -142,7 +144,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             addCustomZoomAdapter(
                 this.cy!,
                 () => this.zoom,
-                (zoom, position) => this.zoomTo(zoom, position),
+                (zoom, position) => this.zoomWithCursorAt(zoom, position),
             );
         }
         if (reduceContainerSize) {
@@ -413,7 +415,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
-    protected zoomTo(zoom: number, position?: Position): void {
+    protected zoomWithCursorAt(zoom: number, position?: Position): void {
         const oldZoom = this.zoom;
         const oldPan = this.pan;
         const newZoom = this.getNextFeasibleZoom(zoom);
@@ -435,6 +437,31 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.setViewPort({ zoom: newZoom, pan: newPan });
 
             this.onLayoutChanged();
+        }
+    }
+
+    zoomToBox(
+        boxStartPosition: Position,
+        boxEndPosition: Position,
+        fitToVisibileArea = true,
+    ) {
+        if (fitToVisibileArea) {
+            this.reduceCySizeToVisibleArea();
+        }
+        const newLayout = getPositionBasedFitViewPort(
+            [boxStartPosition, boxEndPosition],
+            this.getAvailableSpace(),
+            { min: this.minZoom, max: this.maxZoom },
+            {
+                zoom: this.zoom,
+                pan: this.pan,
+            },
+            this.zoom,
+        );
+        this.setViewPort(newLayout);
+        this.onLayoutChanged();
+        if (fitToVisibileArea) {
+            this.restoreCySize();
         }
     }
 
@@ -617,5 +644,20 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         if (graphDataChange.selectedElements) {
             this.cachedGraphData.selectedElements = super.selectedElements;
         }
+    }
+
+    protected registerCyListeners(): void {
+        super.registerCyListeners();
+        addCyBoxZoomListerner(
+            this.cy!,
+            (zoomedFirstCorner: Position, zoomedOppositeCorner: Position) =>
+                this.zoomToBox(
+                    zoomedToUnzoomedModelPosition(zoomedFirstCorner, this.zoom),
+                    zoomedToUnzoomedModelPosition(
+                        zoomedOppositeCorner,
+                        this.zoom,
+                    ),
+                ),
+        );
     }
 }

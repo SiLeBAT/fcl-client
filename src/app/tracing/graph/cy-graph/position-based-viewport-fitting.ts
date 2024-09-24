@@ -7,9 +7,9 @@ export function getPositionBasedFitViewPort(
     positions: Position[],
     availableSpace: Size,
     zoomLimits: Range,
-    defaultViewPort?: Layout,
+    defaultViewPort = DEFAULT_VIEWPORT,
+    currentZoom = 1,
 ): Layout {
-    defaultViewPort = defaultViewPort || DEFAULT_VIEWPORT;
     if (
         positions.length > 0 &&
         availableSpace.width > 0 &&

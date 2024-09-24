@@ -28,6 +28,16 @@ export function getAvailableSpace(htmlElement: HTMLElement): Size {
     };
 }
 
+export function zoomedToUnzoomedModelPosition(
+    zoomedModelPosition: Position,
+    zoom: number,
+): Position {
+    return {
+        x: zoomedModelPosition.x / zoom,
+        y: zoomedModelPosition.y / zoom,
+    };
+}
+
 export function getZoomedNodePositions(
     nodeData: CyNodeData[],
     posMap: PositionMap,

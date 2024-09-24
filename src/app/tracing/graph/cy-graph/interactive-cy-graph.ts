@@ -149,7 +149,7 @@ export class InteractiveCyGraph extends CyGraph {
 
     zoomToPercentage(value: number): void {
         if (this.cy) {
-            this.zoomTo(
+            this.zoomWithCursorAt(
                 Math.exp(
                     (value / 100) * Math.log(this.maxZoom / this.minZoom),
                 ) * this.minZoom,
@@ -167,12 +167,12 @@ export class InteractiveCyGraph extends CyGraph {
 
     zoomIn(): void {
         if (this.cy) {
-            this.zoomTo(this.zoom * InteractiveCyGraph.ZOOM_FACTOR);
+            this.zoomWithCursorAt(this.zoom * InteractiveCyGraph.ZOOM_FACTOR);
         }
     }
 
     zoomOut(): void {
-        this.zoomTo(this.zoom / InteractiveCyGraph.ZOOM_FACTOR);
+        this.zoomWithCursorAt(this.zoom / InteractiveCyGraph.ZOOM_FACTOR);
     }
 
     zoomFit(fitGraphToVisibleArea: boolean): void {
@@ -214,7 +214,7 @@ export class InteractiveCyGraph extends CyGraph {
         return Math.min(Math.max(zoom, this.minZoom), this.maxZoom);
     }
 
-    protected zoomTo(zoom: number, position?: Position): void {
+    protected zoomWithCursorAt(zoom: number, position?: Position): void {
         const newZoom = this.getNextFeasibleZoom(zoom);
         position = position
             ? position
@@ -253,6 +253,7 @@ export class InteractiveCyGraph extends CyGraph {
             );
             addCyZoomListener(this.cy!, () => this.onPanOrZoom());
             addCyDragListener(this.cy!, () => this.onDragEnd());
+
             addCyContextMenuRequestListener(
                 this.cy!,
                 (info: ContextMenuRequestInfo) =>

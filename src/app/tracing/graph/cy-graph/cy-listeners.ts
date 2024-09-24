@@ -1,7 +1,9 @@
 import { Cy, ContextMenuRequestInfo } from "../graph.model";
 import { Position } from "../../data.model";
 import {
+    CY_EVENT_BOX_END,
     CY_EVENT_BOX_SELECT,
+    CY_EVENT_BOX_START,
     CY_EVENT_CXT_TAP,
     CY_EVENT_DRAG_FREE_ON,
     CY_EVENT_MOUSEDOWN,
@@ -12,6 +14,15 @@ import {
     CY_EVENT_TAP_UNSELECT,
     CY_EVENT_ZOOM,
 } from "./cy.constants";
+
+export interface CyMouseEvent {
+    position: Position;
+    originalEvent: MouseEvent;
+}
+interface BoxStartProps {
+    isBoxZoom: boolean;
+    position?: Position;
+}
 
 export function addCyPanListeners(
     cy: Cy,
@@ -61,7 +72,7 @@ export function addCySelectionListener(
         }
     };
     // store shift on mouse down
-    cy.on(CY_EVENT_MOUSEDOWN, (event: { originalEvent: MouseEvent }) => {
+    cy.on(CY_EVENT_MOUSEDOWN, (event: CyMouseEvent) => {
         shiftOnLastMouseDown = event.originalEvent.shiftKey;
     });
     // click un/selection
@@ -80,6 +91,34 @@ export function addCyDragListener(cy: Cy, onDragEnd: () => void): void {
 
 export function addCyZoomListener(cy: Cy, onZoom: () => void): void {
     cy.on(CY_EVENT_ZOOM, onZoom);
+}
+
+export function addCyBoxZoomListerner(
+    cy: Cy,
+    onBoxZoom: (boxStartPosition: Position, boxEndPosition: Position) => void,
+): void {
+    let boxZoomStartPosition: Position | null = null;
+
+    cy.on(CY_EVENT_BOX_START, (event: CyMouseEvent) => {
+        // Checking both ctrl and meta key because Windows & Linux generally use ctrl, while Mac uses the Cmd key.
+        const isBoxZoom =
+            event.originalEvent.ctrlKey || event.originalEvent.metaKey;
+        if (isBoxZoom) {
+            boxZoomStartPosition = event.position;
+            cy.elements().unselectify();
+        }
+    });
+
+    cy.on(CY_EVENT_BOX_END, (event: CyMouseEvent) => {
+        if (!boxZoomStartPosition) {
+            return;
+        }
+        onBoxZoom(boxZoomStartPosition, event.position);
+        boxZoomStartPosition = null;
+        window.setTimeout(() => {
+            cy.elements().selectify();
+        }, 0);
+    });
 }
 
 export function addCyContextMenuRequestListener(
