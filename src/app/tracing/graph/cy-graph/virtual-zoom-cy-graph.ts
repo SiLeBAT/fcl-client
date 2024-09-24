@@ -652,10 +652,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             this.cy!,
             (zoomedFirstCorner: Position, zoomedOppositeCorner: Position) =>
                 this.zoomToBox(
-                    zoomedToUnzoomedModelPosition(
-                        zoomedFirstCorner,
-                        this.zoom,
-                    ),
+                    zoomedToUnzoomedModelPosition(zoomedFirstCorner, this.zoom),
                     zoomedToUnzoomedModelPosition(
                         zoomedOppositeCorner,
                         this.zoom,
