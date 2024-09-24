@@ -357,6 +357,12 @@ export enum MapType { // please note: the order of the keys is relevant for pres
     TILES_AND_SHAPE,
 }
 
+export interface MapTypeLabelDictionary {
+    mapType: MapType;
+    tileServer?: TileServer;
+    label: string;
+}
+
 export interface MapVariant {
     mapLayer: TileServer.MAPNIK /*| MapType.BLACK_AND_WHITE*/ | null;
     shapeLayer: MapType.SHAPE_ONLY | null;

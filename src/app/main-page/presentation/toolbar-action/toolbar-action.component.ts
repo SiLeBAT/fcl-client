@@ -42,7 +42,7 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     @Input() hasGisInfo: boolean;
-    @Input() availableMapTypes: MapType[];
+    @Input() availableMaps: any;
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Input() fileName: string | null = null;

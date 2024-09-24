@@ -33,7 +33,8 @@ import {
 import { Constants } from "@app/tracing/util/constants";
 import { ToolbarActionComponent } from "@app/main-page/presentation/toolbar-action/toolbar-action.component";
 import { IOService } from "@app/tracing/io/io.service";
-import { MapConstants } from "@app/tracing/util/map-constants";
+import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
+import { Map, Tile } from "ol";
 
 @Component({
     selector: "fcl-toolbar-action-container",
@@ -52,7 +53,11 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
     hasGisInfo = false;
 
-    availableMapTypes: MapType[] = [];
+    availableMaps: {
+        types: MapType[],
+        tiles: TileServer[],
+        labels: Record<TileServer|MapType, string>
+    }
     // read all map variants from constants
 
     private componentActive: boolean = true;
@@ -75,13 +80,18 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                 select(tracingSelectors.selectDataServiceInputState),
             );
 
+            this.availableMaps = {
+                tiles: MAP_CONSTANTS.tiles,
+                types: [],
+                labels: MAP_CONSTANTS.labels
+            }
+
         combineLatest([graphSettings$, dataServiceInputState$])
             .pipe(takeWhile(() => this.componentActive))
             .subscribe(
                 ([graphSettings, dataServiceInputState]) => {
                     this.graphSettings = graphSettings;
-                    this.availableMapTypes = MapConstants.TYPES.filter(item => item === MapType.MAP_ONLY || this.graphSettings.shapeFileData);
-                    this.getAvailableMapTypes();
+                    this.graphSettings.shapeFileData? this.availableMaps.types = MAP_CONSTANTS.types.filter(item => item !== MapType.MAP_ONLY) : [];
 
                     const dataServiceData: DataServiceData =
                         this.dataService.getData(dataServiceInputState);
@@ -93,26 +103,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                     throw new Error(`error loading data: ${error}`);
                 },
             );
-    }
-
-    getAvailableMapTypes () {
-        const mapTypes = MapConstants.TYPES.filter(item => item === MapType.MAP_ONLY || this.graphSettings.shapeFileData);
-        const availableMapTypes = [];
-        mapTypes.forEach(item => {
-            const mapConstants = new MapConstants();
-            const label = mapConstants.getLabel(item, this.graphSettings.tileServer);
-            const test = {
-                mapType: item,
-                label: label,
-            }
-
-            console.log(test)
-
-            if(label && label.length > 0) {
-            }
-        })
-
-        return availableMapTypes;
     }
 
     loadModelFile(fileList: FileList) {

@@ -35,7 +35,7 @@ import {
     DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP,
     DENOVO_STATION_PROP_INT_TO_EXT_MAP,
 } from "../io/data-mappings/data-mappings-v1";
-import { MapConstants } from "../util/map-constants";
+import { MAP_CONSTANTS } from "../util/map-constants";
 
 export const STATE_SLICE_NAME = "tracing";
 
@@ -123,8 +123,8 @@ export function createInitialFclDataState(): FclData {
         },
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
-            mapType: MapConstants.DEFAULTS.mapType,
-            tileServer: MapConstants.DEFAULTS.tileServer,
+            mapType: MAP_CONSTANTS.defaults.mapType,
+            tileServer: MAP_CONSTANTS.defaults.tileServer,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
             adjustEdgeWidthToNodeSize:
                 Constants.DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE,

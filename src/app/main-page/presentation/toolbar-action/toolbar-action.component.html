@@ -47,12 +47,20 @@
                     [disabled]="!hasGisInfo"
                     matTooltip="{{ hasGisInfo ? 'Select Map Type' : '' }}"
                 >
-                    <span *ngFor="let item of availableMapTypes">
+                <span *ngFor="let item of availableMaps.tiles">
+                    <mat-option
+                        value="{{ item }}"
+                        (click)="setMapData(item)"
+                    >
+                        {{ availableMaps.labels[item] }}
+                    </mat-option>
+                </span>
+                    <span *ngFor="let item of availableMaps.types">
                         <mat-option
                             value="{{ item }}"
-                            (click)="setMapData(mapTypes[item])"
+                            (click)="setMapData(item)"
                         >
-                            {{ mapTypes[item].label }}
+                            {{ availableMaps.labels[item] }}
                         </mat-option>
                     </span>
                     <mat-option value="" (click)="onSelectShapeFile($event)">
