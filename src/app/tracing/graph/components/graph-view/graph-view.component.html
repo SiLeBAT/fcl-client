@@ -5,7 +5,11 @@
     [ignoreWindowResize]="true"
     class="fcl-graph"
     #graph
-></div>
+>
+    <div class="fcl-graph-empty" *ngIf="!(graphData?.nodeData?.length > 0)">
+        <p>No nodeData</p>
+    </div>
+</div>
 
 <fcl-zoom-view
     class="fcl-graph-zoom"
