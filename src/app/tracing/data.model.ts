@@ -180,9 +180,11 @@ export interface ShowElementsTraceParams {
 
 export interface GraphSettings {
     type: GraphType;
+    tileServer:TileServer;
+    mapType: MapType;
     mapVariant: MapVariant;
     // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
-    lastMapTypeSelected: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/;
+    lastMapTypeSelected: TileServer.MAPNIK /*| MapType.BLACK_AND_WHITE*/;
     shapeFileData: ShapeFileData | null;
     geojsonBorderWidth: number;
     geojsonBorderColor: Color;
@@ -343,18 +345,21 @@ export enum GraphType {
     GIS = "GIS" as any,
 }
 
-export enum MapType { // please note: the order of the keys is relevant for presentation
+export enum TileServer {
     MAPNIK,
-    // the following code is commented because
     // the Black & White Map might be deactivatd only temporarily
     //BLACK_AND_WHITE,
-    SHAPE_FILE,
-    SHAPE_FILE_ON_MAP,
+}
+
+export enum MapType { // please note: the order of the keys is relevant for presentation
+    MAP_ONLY,
+    SHAPE_ONLY,
+    TILES_AND_SHAPE,
 }
 
 export interface MapVariant {
-    mapLayer: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/ | null;
-    shapeLayer: MapType.SHAPE_FILE | null;
+    mapLayer: TileServer.MAPNIK /*| MapType.BLACK_AND_WHITE*/ | null;
+    shapeLayer: MapType.SHAPE_ONLY | null;
     label: string;
 }
 

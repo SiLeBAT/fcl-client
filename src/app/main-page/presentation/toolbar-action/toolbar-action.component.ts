@@ -15,6 +15,7 @@ import {
     GraphType,
     MapVariant,
     MapType,
+    TileServer,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
@@ -56,7 +57,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() mapType = new EventEmitter<MapVariant>();
     // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
     @Output() mapTypeSelected =
-        new EventEmitter<MapType.MAPNIK /*|MapType.BLACK_AND_WHITE*/>();
+        new EventEmitter<TileServer.MAPNIK /*|TileServer.BLACK_AND_WHITE*/>();
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
@@ -125,15 +126,15 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     setMapData(mapVariant: MapVariant): void {
-        // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+        // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
         const isMap =
             mapVariant ===
             Constants.DEFAULT_MAP_VARIANTS[
-                MapType.MAPNIK
-            ]; /*|| mapVariant === Constants.DEFAULT_MAP_VARIANTS[MapType.BLACK_AND_WHITE]*/
+                TileServer.MAPNIK
+            ]; /*|| mapVariant === Constants.DEFAULT_MAP_VARIANTS[TileServer.BLACK_AND_WHITE]*/
         const isShapeFileOnMap =
             mapVariant ===
-            Constants.DEFAULT_MAP_VARIANTS[MapType.SHAPE_FILE_ON_MAP];
+            Constants.DEFAULT_MAP_VARIANTS[MapType.TILES_AND_SHAPE];
         const callback = () => {
             this.setMapType(mapVariant);
         };
@@ -157,10 +158,10 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     setMapTypeSelected(
-        newMapLayer: MapType.MAPNIK /*|MapType.BLACK_AND_WHITE*/,
+        newMapLayer: TileServer.MAPNIK /*|TileServer.BLACK_AND_WHITE*/,
         callback,
     ): void {
-        // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+        // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
         const { lastMapTypeSelected } = this.graphSettings;
         const differentMapSelected = newMapLayer !== lastMapTypeSelected;
 

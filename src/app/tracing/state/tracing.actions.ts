@@ -20,6 +20,7 @@ import {
     JsonDataExtract,
     Color,
     MapVariant,
+    TileServer,
 } from "../data.model";
 import { SetStationGroupsPayload } from "./../grouping/model";
 import { ActivationStatus } from "../../shared/model/types";
@@ -172,7 +173,7 @@ export class SetMapTypeSelectedSOA implements Action {
     // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
     constructor(
         public payload: {
-            lastMapTypeSelected: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/;
+            lastMapTypeSelected: TileServer.MAPNIK /*| TileServer.BLACK_AND_WHITE*/;
         },
     ) {}
 }

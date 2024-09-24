@@ -14,6 +14,7 @@ import {
     MapType,
     DataServiceInputState,
     MapVariant,
+    TileServer,
 } from "@app/tracing/data.model";
 import { DataService } from "./../../../tracing/services/data.service";
 import { Utils as UIUtils } from "./../../../tracing/util/ui-utils";
@@ -32,6 +33,7 @@ import {
 import { Constants } from "@app/tracing/util/constants";
 import { ToolbarActionComponent } from "@app/main-page/presentation/toolbar-action/toolbar-action.component";
 import { IOService } from "@app/tracing/io/io.service";
+import { MapConstants } from "@app/tracing/util/map-constants";
 
 @Component({
     selector: "fcl-toolbar-action-container",
@@ -52,14 +54,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     availableMapTypes: MapType[] = [];
     // read all map variants from constants
-    private mapTypes: MapType[] = Object.keys(
-        Constants.DEFAULT_MAP_VARIANTS,
-    ).map((variantKey) => {
-        // convert strings to members of MapType enum
-        const convertedVariantKey: keyof typeof MapType = MapType[variantKey];
-        // return Array of all MapTypes that were found in constants
-        return MapType[convertedVariantKey];
-    });
 
     private componentActive: boolean = true;
 
@@ -85,13 +79,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             .pipe(takeWhile(() => this.componentActive))
             .subscribe(
                 ([graphSettings, dataServiceInputState]) => {
-                    this.availableMapTypes = this.mapTypes.filter(
-                        (mapType) =>
-                            (mapType !== MapType.SHAPE_FILE &&
-                                mapType !== MapType.SHAPE_FILE_ON_MAP) ||
-                            graphSettings.shapeFileData,
-                    );
                     this.graphSettings = graphSettings;
+                    this.availableMapTypes = MapConstants.TYPES.filter(item => item === MapType.MAP_ONLY || this.graphSettings.shapeFileData);
+                    this.getAvailableMapTypes();
 
                     const dataServiceData: DataServiceData =
                         this.dataService.getData(dataServiceInputState);
@@ -103,6 +93,26 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                     throw new Error(`error loading data: ${error}`);
                 },
             );
+    }
+
+    getAvailableMapTypes () {
+        const mapTypes = MapConstants.TYPES.filter(item => item === MapType.MAP_ONLY || this.graphSettings.shapeFileData);
+        const availableMapTypes = [];
+        mapTypes.forEach(item => {
+            const mapConstants = new MapConstants();
+            const label = mapConstants.getLabel(item, this.graphSettings.tileServer);
+            const test = {
+                mapType: item,
+                label: label,
+            }
+
+            console.log(test)
+
+            if(label && label.length > 0) {
+            }
+        })
+
+        return availableMapTypes;
     }
 
     loadModelFile(fileList: FileList) {
@@ -131,9 +141,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         );
     }
 
-    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
+    // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
     setMapTypeSelected(
-        lastMapTypeSelected: MapType.MAPNIK /*| MapType.BLACK_AND_WHITE*/,
+        lastMapTypeSelected: TileServer.MAPNIK /*| TileServer.BLACK_AND_WHITE*/,
     ) {
         this.store.dispatch(
             new tracingActions.SetMapTypeSelectedSOA({

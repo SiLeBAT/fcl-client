@@ -7,12 +7,13 @@ import {
     GraphType,
     ObservedType,
     MergeDeliveriesType,
-    MapType,
     CrossContTraceType,
 } from "../data.model";
 import { JsonData, VERSION } from "./ext-data-model.v1";
 import { Constants } from "../util/constants";
 import { createInitialFclDataSourceInfo } from "../state/tracing.reducers";
+import { MapConstants } from '../util/map-constants';
+import { Map } from "ol";
 
 describe("IOService", () => {
     let ioService: IOService;
@@ -73,6 +74,8 @@ describe("IOService", () => {
             },
             graphSettings: {
                 type: GraphType.GRAPH,
+                mapType: MapConstants.DEFAULTS.mapType,
+                tileServer: MapConstants.DEFAULTS.tileServer,
                 mapVariant: Constants.DEFAULT_MAP_VARIANT,
                 lastMapTypeSelected: Constants.DEFAULT_LAST_MAP_TYPE_SELECTED,
                 shapeFileData: null,

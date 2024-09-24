@@ -2,6 +2,7 @@ import {
     Color,
     GraphType,
     MapType,
+    TileServer,
     MapVariant,
     DeliveryData,
     StationData,
@@ -207,10 +208,10 @@ export class Constants {
         b: 0,
     } as Readonly<Color>;
 
-    static readonly DEFAULT_LAST_MAP_TYPE_SELECTED = MapType.MAPNIK;
+    static readonly DEFAULT_LAST_MAP_TYPE_SELECTED = TileServer.MAPNIK;
     static readonly DEFAULT_MAP_VARIANTS = {
-        [MapType.MAPNIK]: {
-            mapLayer: MapType.MAPNIK,
+        [TileServer.MAPNIK]: {
+            mapLayer: TileServer.MAPNIK,
             shapeLayer: null,
             label: "Mapnik",
         },
@@ -220,19 +221,19 @@ export class Constants {
             shapeLayer: null, 
             label: 'Black & White'
         },*/
-        [MapType.SHAPE_FILE]: {
+        [MapType.SHAPE_ONLY]: {
             mapLayer: null,
-            shapeLayer: MapType.SHAPE_FILE,
+            shapeLayer: MapType.SHAPE_ONLY,
             label: "Shape File",
         },
-        [MapType.SHAPE_FILE_ON_MAP]: {
+        [MapType.TILES_AND_SHAPE]: {
             mapLayer: Constants.DEFAULT_LAST_MAP_TYPE_SELECTED, // please note: this will be overwritten dynamically on map select
-            shapeLayer: MapType.SHAPE_FILE,
+            shapeLayer: MapType.SHAPE_ONLY,
             label: "Map & Shape File",
         },
     } satisfies Record<MapType, MapVariant>;
     static readonly DEFAULT_MAP_VARIANT =
-        Constants.DEFAULT_MAP_VARIANTS[MapType.MAPNIK];
+        Constants.DEFAULT_MAP_VARIANTS[TileServer.MAPNIK];
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
 

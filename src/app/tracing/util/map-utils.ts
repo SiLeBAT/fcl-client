@@ -1,4 +1,4 @@
-import { MapConfig, MapType, ShapeFileData } from "../data.model";
+import { MapConfig, MapType, TileServer, ShapeFileData } from "../data.model";
 import { OSM } from "ol/source";
 import * as ol from "ol";
 import BaseLayer from "ol/layer/Base";
@@ -29,11 +29,11 @@ export interface RectConfig {
 const LAYER_ID_KEY = "layerId";
 const MAP_LAYER_ID = "MapLayer";
 
-const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
-    [MapType.MAPNIK, () => new OSM()],
+const MAP_SOURCE: Map<TileServer, () => OSM> = new Map([
+    [TileServer.MAPNIK, () => new OSM()],
     // the following code is commented because
     // the Black & White Map might be deactivatd only temporarily
-    // [MapType.BLACK_AND_WHITE, () => new OSM({
+    // [TileServer.BLACK_AND_WHITE, () => new OSM({
     //     url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
     //     crossOrigin: null
     // })]
@@ -43,11 +43,11 @@ const MAP_SOURCE: Map<MapType, () => OSM> = new Map([
 
 // the following code is commented because
 // the Black & White Map might be deactivatd only temporarily
-const availableMapTypes: MapType[] = [
-    MapType.MAPNIK /*MapType.BLACK_AND_WHITE*/,
+const availableMapTypes: TileServer[] = [
+    TileServer.MAPNIK /*TileServer.BLACK_AND_WHITE*/,
 ];
 
-export function getAvailableMapTypes(): MapType[] {
+export function getAvailableMapTypes(): TileServer[] {
     return availableMapTypes;
 }
 
@@ -104,7 +104,7 @@ function createTileLayer(
     if (mapLayer === null) {
         // please note: if the layer is null, the code will default to mapnik
         // tbd: we might could also throw an error instead, but would need to decide on error handling in the FE then
-        mapLayer = MapType.MAPNIK;
+        mapLayer = TileServer.MAPNIK;
     }
 
     return new Tile({
