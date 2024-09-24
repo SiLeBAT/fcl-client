@@ -24,7 +24,7 @@ import {
     getExtendedTargetIncludingViewPort,
     getZoomedGraphData,
     getZoomedNodePositions,
-    unzoomedToZoomedModelPosition,
+    zoomedToUnzoomedModelPosition,
 } from "./virtual-zoom-utils";
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from "./cy.constants";
 import { CyEdge, CyNode, CyNodeCollection, NodeId } from "../graph.model";
@@ -144,7 +144,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             addCustomZoomAdapter(
                 this.cy!,
                 () => this.zoom,
-                (zoom, position) => this.zoomWithCusorAt(zoom, position),
+                (zoom, position) => this.zoomWithCursorAt(zoom, position),
             );
         }
         if (reduceContainerSize) {
@@ -415,7 +415,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
-    protected zoomWithCusorAt(zoom: number, position?: Position): void {
+    protected zoomWithCursorAt(zoom: number, position?: Position): void {
         const oldZoom = this.zoom;
         const oldPan = this.pan;
         const newZoom = this.getNextFeasibleZoom(zoom);
@@ -650,14 +650,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         super.registerCyListeners();
         addCyBoxZoomListerner(
             this.cy!,
-            (unzoomedFirstCorner: Position, unzoomedOppositeCorner: Position) =>
+            (zoomedFirstCorner: Position, zoomedOppositeCorner: Position) =>
                 this.zoomToBox(
-                    unzoomedToZoomedModelPosition(
-                        unzoomedFirstCorner,
+                    zoomedToUnzoomedModelPosition(
+                        zoomedFirstCorner,
                         this.zoom,
                     ),
-                    unzoomedToZoomedModelPosition(
-                        unzoomedOppositeCorner,
+                    zoomedToUnzoomedModelPosition(
+                        zoomedOppositeCorner,
                         this.zoom,
                     ),
                 ),

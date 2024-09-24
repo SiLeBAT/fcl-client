@@ -28,13 +28,13 @@ export function getAvailableSpace(htmlElement: HTMLElement): Size {
     };
 }
 
-export function unzoomedToZoomedModelPosition(
-    unzoomedModelPosition: Position,
+export function zoomedToUnzoomedModelPosition(
+    zoomedModelPosition: Position,
     zoom: number,
 ): Position {
     return {
-        x: unzoomedModelPosition.x / zoom,
-        y: unzoomedModelPosition.y / zoom,
+        x: zoomedModelPosition.x / zoom,
+        y: zoomedModelPosition.y / zoom,
     };
 }
 
