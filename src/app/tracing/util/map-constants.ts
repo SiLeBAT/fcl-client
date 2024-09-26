@@ -2,7 +2,7 @@ import { MapType, TileServer } from "../data.model";
 import { COLORS } from "./colors";
 
 export const MAP_CONSTANTS = {
-    types: [ MapType.MAP_ONLY, MapType.SHAPE_ONLY, MapType.TILES_AND_SHAPE] as Array<MapType>,
+    types: [ MapType.SHAPE_ONLY, MapType.TILES_AND_SHAPE, MapType.MAP_ONLY] as Array<MapType>,
     tiles: [ TileServer.MAPNIK, /*TileServer.BLACK_AND_WHITE*/] as Array<TileServer>,
     labels: {
         [MapType.SHAPE_ONLY]: "Shape File",

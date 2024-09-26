@@ -66,12 +66,11 @@ export function createOpenLayerMap(
 }
 
 function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
-    const {
-        mapType: { mapLayer, shapeLayer },
-    } = mapConfig;
+    const { mapType } = mapConfig;
+    console.log('createMapLayer', mapConfig)
 
     // create a multi-layer map if both layers are present
-    if (mapLayer !== null && shapeLayer !== null) {
+    if (mapType === MapType.TILES_AND_SHAPE) {
         const topLayer = createShapeFileLayer(mapConfig as ShapeMapConfig);
         topLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
 
@@ -84,31 +83,20 @@ function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
     }
 
     // default: create a single-layer map
-    // please note: if both layers are null, the code will default to mapnik
-    // tbd: we might could also throw an error instead, but would need to decide on error handling in the FE then
-    const baseLayer =
-        shapeLayer !== null
-            ? createShapeFileLayer(mapConfig as ShapeMapConfig)
-            : createTileLayer(mapConfig);
+    const baseLayer = mapType === MapType.SHAPE_ONLY? createShapeFileLayer(mapConfig as ShapeMapConfig) : createTileLayer(mapConfig);
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
+
     return [baseLayer];
 }
 
 function createTileLayer(
-    mapConfig: Pick<MapConfigWithOptLayout, "mapType">,
+    mapConfig: Pick<MapConfigWithOptLayout, "tileServer">,
 ): BaseLayer {
-    let {
-        mapType: { mapLayer },
-    } = mapConfig;
-
-    if (mapLayer === null) {
-        // please note: if the layer is null, the code will default to mapnik
-        // tbd: we might could also throw an error instead, but would need to decide on error handling in the FE then
-        mapLayer = TileServer.MAPNIK;
-    }
+    let { tileServer } = mapConfig;
+    console.log('createTileLayer', tileServer)
 
     return new Tile({
-        source: MAP_SOURCE.get(mapLayer)!(),
+        source: MAP_SOURCE.get(tileServer)!(),
     });
 }
 
@@ -134,6 +122,7 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
 export function createShapeFileLayer(
     mapConfig: NotNullishPick<ShapeMapConfig, "shapeFileData">,
 ): BaseLayer {
+    console.log('createShapeFileLayer', mapConfig.shapeFileData)
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(

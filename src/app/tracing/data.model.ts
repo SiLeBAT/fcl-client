@@ -182,9 +182,6 @@ export interface GraphSettings {
     type: GraphType;
     tileServer:TileServer;
     mapType: MapType;
-    mapVariant: MapVariant;
-    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
-    lastMapTypeSelected: TileServer.MAPNIK /*| MapType.BLACK_AND_WHITE*/;
     shapeFileData: ShapeFileData | null;
     geojsonBorderWidth: number;
     geojsonBorderColor: Color;
@@ -210,7 +207,8 @@ export interface GraphSettings {
 
 export interface MapConfig {
     layout: Layout | null;
-    mapType: MapVariant;
+    mapType: MapType;
+    tileServer: TileServer;
     shapeFileData: ShapeFileData | null;
     lineColor: Color;
     lineWidth: number;

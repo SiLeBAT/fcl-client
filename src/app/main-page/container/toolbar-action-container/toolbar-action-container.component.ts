@@ -125,20 +125,16 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         );
     }
 
-    setMapType(mapVariant: MapVariant) {
+    setMapType(mapType: MapType) {
         this.store.dispatch(
-            new tracingActions.SetMapTypeSOA({ mapVariant: mapVariant }),
+            new tracingActions.SetMapTypeSOA({ mapType: mapType }),
         );
     }
 
     // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
-    setMapTypeSelected(
-        lastMapTypeSelected: TileServer.MAPNIK /*| TileServer.BLACK_AND_WHITE*/,
-    ) {
+    setTileServer(tileServer: TileServer) {
         this.store.dispatch(
-            new tracingActions.SetMapTypeSelectedSOA({
-                lastMapTypeSelected: lastMapTypeSelected,
-            }),
+            new tracingActions.SetTileServerSOA({ tileServer: tileServer }),
         );
     }
 

@@ -123,8 +123,6 @@ export function createInitialFclDataState(): FclData {
         },
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
-            mapType: MAP_CONSTANTS.defaults.mapType,
-            tileServer: MAP_CONSTANTS.defaults.tileServer,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
             adjustEdgeWidthToNodeSize:
                 Constants.DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE,
@@ -150,8 +148,8 @@ export function createInitialFclDataState(): FclData {
             },
             schemaLayout: null,
             gisLayout: null,
-            mapVariant: Constants.DEFAULT_MAP_VARIANT,
-            lastMapTypeSelected: Constants.DEFAULT_LAST_MAP_TYPE_SELECTED,
+            mapType: MAP_CONSTANTS.defaults.mapType,
+            tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: null,
             geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
             geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
@@ -192,8 +190,8 @@ export function reducer(
             };
 
         case TracingActionTypes.LoadFclDataSuccessSOA: {
-            action.payload.fclData.graphSettings.mapVariant =
-                state.fclData.graphSettings.mapVariant;
+            action.payload.fclData.graphSettings.mapType =
+                state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData =
                 state.fclData.graphSettings.shapeFileData;
             action.payload.fclData.graphSettings.geojsonBorderColor =
@@ -255,24 +253,25 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapVariant: action.payload.mapVariant,
+                        mapType: action.payload.mapType,
                     },
                 },
             };
 
-        case TracingActionTypes.SetMapTypeSelectedSOA:
+        case TracingActionTypes.SetTileServerSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        lastMapTypeSelected: action.payload.lastMapTypeSelected,
+                        tileServer: action.payload.tileServer,
                     },
                 },
             };
 
         case TracingActionTypes.LoadShapeFileSuccessSOA:
+            console.log('LoadShapeFileSuccessSOA',state.fclData.graphSettings.mapType)
             return {
                 ...state,
                 fclData: {
@@ -280,9 +279,8 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapVariant:
-                            Constants.DEFAULT_MAP_VARIANTS[MapType.SHAPE_ONLY],
                         shapeFileData: action.payload.shapeFileData,
+                        mapType: MAP_CONSTANTS.types[MapType.SHAPE_ONLY],
                         geojsonBorderWidth:
                             Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
                         geojsonBorderColor:

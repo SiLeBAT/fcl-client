@@ -19,7 +19,6 @@ import {
     DeliveryHighlightingRule,
     JsonDataExtract,
     Color,
-    MapVariant,
     TileServer,
 } from "../data.model";
 import { SetStationGroupsPayload } from "./../grouping/model";
@@ -47,7 +46,7 @@ export enum TracingActionTypes {
     ShowTableSettingsSOA = "[Tracing] Show Table Settings",
     SetGraphTypeSOA = "[Tracing] Set Graph Type",
     SetMapTypeSOA = "[Tracing] Set Map Type",
-    SetMapTypeSelectedSOA = "[Tracing] Set Map Type Selected",
+    SetTileServerSOA = "[Tracing] Set Tile Server",
     SetSchemaGraphLayoutSOA = "[Tracing] Set Schema Graph Layout",
     SetGisGraphLayoutSOA = "[Tracing] Set Gis Graph Layout",
     SetNodeSizeSOA = "[Tracing] Set Node Size",
@@ -164,18 +163,13 @@ export class SetGraphTypeSOA implements Action {
 export class SetMapTypeSOA implements Action {
     readonly type = TracingActionTypes.SetMapTypeSOA;
 
-    constructor(public payload: { mapVariant: MapVariant }) {}
+    constructor(public payload: { mapType: MapType }) {}
 }
 
-export class SetMapTypeSelectedSOA implements Action {
-    readonly type = TracingActionTypes.SetMapTypeSelectedSOA;
+export class SetTileServerSOA implements Action {
+    readonly type = TracingActionTypes.SetTileServerSOA;
 
-    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
-    constructor(
-        public payload: {
-            lastMapTypeSelected: TileServer.MAPNIK /*| TileServer.BLACK_AND_WHITE*/;
-        },
-    ) {}
+    constructor(public payload: { tileServer: TileServer }) {}
 }
 
 export class SetNodeSizeSOA implements Action {
@@ -452,7 +446,7 @@ export type TracingActions =
     | SetGisGraphLayoutSOA
     | SetGraphTypeSOA
     | SetMapTypeSOA
-    | SetMapTypeSelectedSOA
+    | SetTileServerSOA
     | SetNodeSizeSOA
     | SetAdjustEdgeWidthToNodeSizeSOA
     | SetEdgeWidthSOA

@@ -7,6 +7,7 @@ import {
 import { InputDataError, InputFormatError } from "../io-errors";
 import { getJsonFromFile } from "../io-utils";
 import geojsonHintObject from "../../../../assets/geojsonhint/object";
+import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
 
 const ERROR_OLD_STYLE_CRS = "old-style crs member is not recommended";
 const UNSUPPORTED_PROJECTION_TYPE_MSG =
@@ -28,7 +29,8 @@ export async function getShapeFileData(file: File): Promise<ShapeFileData> {
     try {
         // 1. test: can an open layer map be created
         createOpenLayerMap({
-            mapType: Constants.DEFAULT_MAP_VARIANTS[MapType.SHAPE_ONLY],
+            mapType: MAP_CONSTANTS.defaults.mapType,
+            tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: jsonData,
             lineColor: { r: 0, g: 0, b: 0 },
             lineWidth: 0.5,

@@ -13,12 +13,12 @@ import { User } from "@app/user/models/user.model";
 import {
     GraphSettings,
     GraphType,
-    MapVariant,
     MapType,
     TileServer,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
+import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
 
 @Component({
     selector: "fcl-toolbar-action",
@@ -34,7 +34,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
-        this.selectedMapTypeOption = "" + value.mapVariant;
+        this.selectedMapTypeOption = "" + value.mapType;
         this._graphSettings = value;
     }
     get graphSettings(): GraphSettings {
@@ -54,16 +54,14 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
-    @Output() mapType = new EventEmitter<MapVariant>();
-    // please note: MapType.BLACK_AND_WHITE is temporarily deactivated
-    @Output() mapTypeSelected =
-        new EventEmitter<TileServer.MAPNIK /*|TileServer.BLACK_AND_WHITE*/>();
+    @Output() mapType = new EventEmitter<MapType>();
+    @Output() tileServer = new EventEmitter<TileServer>();
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
-    mapTypes = Constants.DEFAULT_MAP_VARIANTS;
+    mapTypes = MAP_CONSTANTS.defaults.mapType;
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -125,63 +123,21 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setMapData(mapVariant: MapVariant): void {
-        // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
-        const isMap =
-            mapVariant ===
-            Constants.DEFAULT_MAP_VARIANTS[
-                TileServer.MAPNIK
-            ]; /*|| mapVariant === Constants.DEFAULT_MAP_VARIANTS[TileServer.BLACK_AND_WHITE]*/
-        const isShapeFileOnMap =
-            mapVariant ===
-            Constants.DEFAULT_MAP_VARIANTS[MapType.TILES_AND_SHAPE];
-        const callback = () => {
-            this.setMapType(mapVariant);
-        };
-        let newMapVariant: MapVariant = mapVariant;
+    setTileServer(tileServer:TileServer): void {
+        console.log(tileServer)
 
-        if (isMap) {
-            const { mapLayer: newMapLayer } = mapVariant;
-            this.setMapTypeSelected(newMapLayer!, callback);
-            return;
-        }
-
-        if (isShapeFileOnMap) {
-            const { lastMapTypeSelected } = this.graphSettings;
-            newMapVariant = {
-                ...mapVariant,
-                mapLayer: lastMapTypeSelected,
-            };
-        }
-
-        this.setMapType(newMapVariant);
+        this.tileServer.emit(tileServer);
     }
 
-    setMapTypeSelected(
-        newMapLayer: TileServer.MAPNIK /*|TileServer.BLACK_AND_WHITE*/,
-        callback,
-    ): void {
-        // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
-        const { lastMapTypeSelected } = this.graphSettings;
-        const differentMapSelected = newMapLayer !== lastMapTypeSelected;
-
-        if (!differentMapSelected) {
-            callback();
-            return;
-        }
-
-        this.mapTypeSelected.emit(newMapLayer);
-        callback();
-    }
-
-    setMapType(mapVariant: MapVariant): void {
-        this.mapType.emit(mapVariant);
+    setMapType(mapType: MapType): void {
+        console.log(mapType)
+        this.mapType.emit(mapType);
     }
 
     onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
         setTimeout(() => {
-            this.selectedMapTypeOption = "" + this._graphSettings.mapVariant;
+            this.selectedMapTypeOption = "" + this._graphSettings.mapType;
         }, 0);
 
         this.shapeFileInput.nativeElement.click();

@@ -108,20 +108,29 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private updateMap(newMapConfig: MapConfig, oldMapConfig: MapConfig): void {
-        if (
-            newMapConfig.mapType !== oldMapConfig.mapType ||
-            newMapConfig.shapeFileData !== oldMapConfig.shapeFileData
-        ) {
-            this.updateMapType(newMapConfig);
-        } else if (
-            newMapConfig.mapType.shapeLayer !== null &&
-            (newMapConfig.lineColor !== oldMapConfig.lineColor ||
-                newMapConfig.lineWidth !== oldMapConfig.lineWidth)
-        ) {
+        const shapeHasChanged =  newMapConfig.mapType !== oldMapConfig.mapType || newMapConfig.shapeFileData !== oldMapConfig.shapeFileData;
+        const shapeStyleHasChanged = newMapConfig.mapType !== MapType.MAP_ONLY && (newMapConfig.lineColor !== oldMapConfig.lineColor || newMapConfig.lineWidth !== oldMapConfig.lineWidth);
+        const layoutHasChanged = newMapConfig.layout !== oldMapConfig.layout;
+        const tileHasChanged = newMapConfig.tileServer !== oldMapConfig.tileServer || newMapConfig.lineColor !== oldMapConfig.lineColor || newMapConfig.lineWidth !== oldMapConfig.lineWidth;
+
+        if(!shapeHasChanged && !shapeStyleHasChanged && !layoutHasChanged && !tileHasChanged) {
+            console.log('updateMap A');
+            return;
+        }
+
+        if (shapeStyleHasChanged) {
+            console.log('updateMap B');
             updateVectorLayerStyle(this.map!, newMapConfig);
+            return;
         }
-        if (newMapConfig.layout !== oldMapConfig.layout) {
+
+        if (layoutHasChanged) {
+            console.log('updateMap C');
             this.updateMapView(newMapConfig);
+            return;
         }
+
+        console.log('updateMap D');
+        this.updateMapType(newMapConfig);
     }
 }
