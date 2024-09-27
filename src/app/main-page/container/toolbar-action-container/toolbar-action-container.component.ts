@@ -54,10 +54,10 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     hasGisInfo = false;
 
     availableMaps: {
-        types: MapType[],
-        tiles: TileServer[],
-        labels: Record<TileServer|MapType, string>
-    }
+        types: MapType[];
+        tiles: TileServer[];
+        labels: Record<TileServer | MapType, string>;
+    };
     // read all map variants from constants
 
     private componentActive: boolean = true;
@@ -80,18 +80,22 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                 select(tracingSelectors.selectDataServiceInputState),
             );
 
-            this.availableMaps = {
-                tiles: MAP_CONSTANTS.tiles,
-                types: [],
-                labels: MAP_CONSTANTS.labels
-            }
+        this.availableMaps = {
+            tiles: MAP_CONSTANTS.tiles,
+            types: [],
+            labels: MAP_CONSTANTS.labels,
+        };
 
         combineLatest([graphSettings$, dataServiceInputState$])
             .pipe(takeWhile(() => this.componentActive))
             .subscribe(
                 ([graphSettings, dataServiceInputState]) => {
                     this.graphSettings = graphSettings;
-                    this.graphSettings.shapeFileData? this.availableMaps.types = MAP_CONSTANTS.types.filter(item => item !== MapType.MAP_ONLY) : [];
+                    this.availableMaps.types = this.graphSettings.shapeFileData
+                        ? MAP_CONSTANTS.types.filter(
+                              (item) => item !== MapType.MAP_ONLY,
+                          )
+                        : [];
 
                     const dataServiceData: DataServiceData =
                         this.dataService.getData(dataServiceInputState);

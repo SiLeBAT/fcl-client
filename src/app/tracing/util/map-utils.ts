@@ -67,7 +67,6 @@ export function createOpenLayerMap(
 
 function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
     const { mapType } = mapConfig;
-    console.log('createMapLayer', mapConfig)
 
     // create a multi-layer map if both layers are present
     if (mapType === MapType.TILES_AND_SHAPE) {
@@ -83,7 +82,10 @@ function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
     }
 
     // default: create a single-layer map
-    const baseLayer = mapType === MapType.SHAPE_ONLY? createShapeFileLayer(mapConfig as ShapeMapConfig) : createTileLayer(mapConfig);
+    const baseLayer =
+        mapType === MapType.SHAPE_ONLY
+            ? createShapeFileLayer(mapConfig as ShapeMapConfig)
+            : createTileLayer(mapConfig);
     baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
 
     return [baseLayer];
@@ -93,7 +95,6 @@ function createTileLayer(
     mapConfig: Pick<MapConfigWithOptLayout, "tileServer">,
 ): BaseLayer {
     let { tileServer } = mapConfig;
-    console.log('createTileLayer', tileServer)
 
     return new Tile({
         source: MAP_SOURCE.get(tileServer)!(),
@@ -122,7 +123,6 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
 export function createShapeFileLayer(
     mapConfig: NotNullishPick<ShapeMapConfig, "shapeFileData">,
 ): BaseLayer {
-    console.log('createShapeFileLayer', mapConfig.shapeFileData)
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(

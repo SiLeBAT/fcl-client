@@ -242,7 +242,7 @@ export const selectGisGraphState = createSelector(
     selectMapType,
     selectShapeFileData,
     selectTileServer,
-    (sharedGraphState, layout, mapType, shapeFileData, tileServer,) => ({
+    (sharedGraphState, layout, mapType, shapeFileData, tileServer) => ({
         ...sharedGraphState,
         layout: layout,
         mapType: mapType,
@@ -268,7 +268,14 @@ export const getMapConfig = createSelector(
     selectGeojsonBorderColor,
     selectGeojsonBorderWidth,
     selectTileServer,
-    (gisLayout, mapType, shapeFileData, borderColor, borderWidth, tileServer,) => ({
+    (
+        gisLayout,
+        mapType,
+        shapeFileData,
+        borderColor,
+        borderWidth,
+        tileServer,
+    ) => ({
         layout: gisLayout,
         mapType: mapType,
         tileServer: tileServer,

@@ -180,7 +180,7 @@ export interface ShowElementsTraceParams {
 
 export interface GraphSettings {
     type: GraphType;
-    tileServer:TileServer;
+    tileServer: TileServer;
     mapType: MapType;
     shapeFileData: ShapeFileData | null;
     geojsonBorderWidth: number;

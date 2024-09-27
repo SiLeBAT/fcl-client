@@ -108,29 +108,43 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private updateMap(newMapConfig: MapConfig, oldMapConfig: MapConfig): void {
-        const shapeHasChanged =  newMapConfig.mapType !== oldMapConfig.mapType || newMapConfig.shapeFileData !== oldMapConfig.shapeFileData;
-        const shapeStyleHasChanged = newMapConfig.mapType !== MapType.MAP_ONLY && (newMapConfig.lineColor !== oldMapConfig.lineColor || newMapConfig.lineWidth !== oldMapConfig.lineWidth);
+        const mapTypeOrTileHasChanged =
+            newMapConfig.mapType !== oldMapConfig.mapType ||
+            newMapConfig.tileServer !== oldMapConfig.tileServer;
+        const shapeDataHasChanged =
+            (newMapConfig.mapType !== MapType.MAP_ONLY &&
+                newMapConfig.mapType !== oldMapConfig.mapType) ||
+            newMapConfig.shapeFileData !== oldMapConfig.shapeFileData;
+        const shapeStyleHasChanged =
+            newMapConfig.mapType !== MapType.MAP_ONLY &&
+            (newMapConfig.lineColor !== oldMapConfig.lineColor ||
+                newMapConfig.lineWidth !== oldMapConfig.lineWidth);
         const layoutHasChanged = newMapConfig.layout !== oldMapConfig.layout;
-        const tileHasChanged = newMapConfig.tileServer !== oldMapConfig.tileServer || newMapConfig.lineColor !== oldMapConfig.lineColor || newMapConfig.lineWidth !== oldMapConfig.lineWidth;
 
-        if(!shapeHasChanged && !shapeStyleHasChanged && !layoutHasChanged && !tileHasChanged) {
-            console.log('updateMap A');
+        if (
+            !mapTypeOrTileHasChanged &&
+            !shapeDataHasChanged &&
+            !shapeStyleHasChanged &&
+            !layoutHasChanged
+        ) {
+            // no changes, so return immediately
+            console.log("no changes, return immediately");
             return;
         }
 
         if (shapeStyleHasChanged) {
-            console.log('updateMap B');
+            console.log("updateMap shapeStyleHasChanged");
             updateVectorLayerStyle(this.map!, newMapConfig);
             return;
         }
 
         if (layoutHasChanged) {
-            console.log('updateMap C');
+            console.log("updateMap layoutHasChanged");
             this.updateMapView(newMapConfig);
             return;
         }
 
-        console.log('updateMap D');
+        console.log("updateMap Tile or Shape has changed");
         this.updateMapType(newMapConfig);
     }
 }

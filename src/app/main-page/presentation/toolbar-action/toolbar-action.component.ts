@@ -123,20 +123,18 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setTileServer(tileServer:TileServer): void {
+    setTileServer(tileServer: TileServer): void {
         this.tileServer.emit(tileServer);
         this.setMapType(MapType.MAP_ONLY);
     }
 
     setMapType(mapType: MapType): void {
-        console.log('setMapType: ', mapType)
         this.mapType.emit(mapType);
     }
 
     onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
         setTimeout(() => {
-            console.log('onSelectShapeFile', MAP_CONSTANTS.types[this._graphSettings.mapType])
             this.selectedMapTypeOption = "" + this._graphSettings.mapType;
         }, 0);
 

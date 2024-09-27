@@ -271,7 +271,6 @@ export function reducer(
             };
 
         case TracingActionTypes.LoadShapeFileSuccessSOA:
-            console.log('LoadShapeFileSuccessSOA',state.fclData.graphSettings.mapType)
             return {
                 ...state,
                 fclData: {

@@ -12,7 +12,7 @@ import {
 import { JsonData, VERSION } from "./ext-data-model.v1";
 import { Constants } from "../util/constants";
 import { createInitialFclDataSourceInfo } from "../state/tracing.reducers";
-import { MAP_CONSTANTS } from '../util/map-constants';
+import { MAP_CONSTANTS } from "../util/map-constants";
 import { Map } from "ol";
 
 describe("IOService", () => {
