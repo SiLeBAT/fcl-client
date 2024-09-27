@@ -16,7 +16,8 @@ import {
     MapType,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
-import { ExampleData } from "../../model/types";
+import { ExampleData, ModelFileType } from "../../model/types";
+import { FILE_INPUT_ELEMENT_SETTINGS } from "@app/main-page/consts/consts";
 
 @Component({
     selector: "fcl-toolbar-action",
@@ -47,7 +48,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() selectModelFile = new EventEmitter();
+    @Output() selectModelFile = new EventEmitter<ModelFileType>();
     @Output() saveImage = new EventEmitter();
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
@@ -94,11 +95,13 @@ export class ToolbarActionComponent implements OnChanges {
         event.target.value = null;
     }
 
-    onSelectModelFile() {
-        this.selectModelFile.emit();
+    onSelectModelFile(type: ModelFileType) {
+        this.selectModelFile.emit(type);
     }
 
-    clickModelFileInputElement() {
+    prepareAndClickModelFileInputElement(type: ModelFileType) {
+        this.modelFileInput.nativeElement.accept =
+            FILE_INPUT_ELEMENT_SETTINGS[type].accept;
         this.modelFileInput.nativeElement.click();
     }
 

@@ -10,5 +10,3 @@ export type NotNullishPick<T, K extends keyof T> = Required<{
     [Property in K]: Exclude<T[Property], undefined | null>;
 }> &
     Omit<T, K>;
-
-export type NonEmptyArray<T> = [T, ...T[]];

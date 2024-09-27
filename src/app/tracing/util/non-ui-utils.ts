@@ -98,6 +98,10 @@ export function isNotEmpty(
     return (x ?? "") !== "";
 }
 
+export function isArrayNotEmpty<T>(array: T[]): array is [T, ...T[]] {
+    return array.length > 0;
+}
+
 /**
  * This method is used to update an object in a type safe manner.
  *

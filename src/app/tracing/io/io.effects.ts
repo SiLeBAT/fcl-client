@@ -23,6 +23,7 @@ import {
     InputEncodingError,
     InputFormatError,
     InputDataError,
+    XlsxInputFormatError,
 } from "./io-errors";
 import {
     DialogOkCancelComponent,
@@ -34,6 +35,11 @@ import {
     MatLegacyDialogRef as MatDialogRef,
 } from "@angular/material/legacy-dialog";
 import { DataService } from "../services/data.service";
+import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
+
+function joinNonEmptyTexts(texts: string[], sep: string = " "): string {
+    return texts.filter((t) => t !== "").join(sep);
+}
 
 @Injectable()
 export class IOEffects {
@@ -55,9 +61,9 @@ export class IOEffects {
                 const dataSource: string | FileList = action.payload.dataSource;
                 let source: string | File;
                 if (dataSource instanceof FileList && dataSource.length === 1) {
-                    source = dataSource[0] as File;
+                    source = dataSource[0];
                 } else if (typeof dataSource === "string") {
-                    source = dataSource as string;
+                    source = dataSource;
                 } else {
                     this.alertService.error(
                         "Please select a .json file with the correct format!",
@@ -74,18 +80,37 @@ export class IOEffects {
                         ),
                     ),
                     catchError((error) => {
-                        let errorMsg = "Data cannot be uploaded.";
+                        let errorMsgs: string[] = [
+                            ERROR_TEXTS.dataUploadFailed,
+                        ];
                         if (error instanceof InputEncodingError) {
-                            errorMsg +=
-                                " Please ensure to upload only data encoded in UTF-8 format.";
+                            errorMsgs.push(ERROR_RESOLUTION_TEXTS.uploadUTF8);
+                        } else if (error instanceof XlsxInputFormatError) {
+                            errorMsgs = [
+                                ERROR_TEXTS.invalidDataFormat,
+                                ERROR_RESOLUTION_TEXTS.uploadAllInOneTemplate,
+                                error.message,
+                            ];
                         } else if (error instanceof InputFormatError) {
-                            errorMsg += ` Please select a .json file with the correct format!${error.message ? " " + error.message + "" : ""}`;
+                            errorMsgs.push(
+                                ERROR_RESOLUTION_TEXTS.uploadFclJsonWithValidFormat,
+                                error.message,
+                            );
                         } else if (error instanceof InputDataError) {
-                            errorMsg += ` Please select a .json file with valid data!${error.message ? " " + error.message + "" : ""}`;
+                            errorMsgs.push(
+                                ERROR_RESOLUTION_TEXTS.uploadFclJsonWithValidData,
+                                error.message,
+                            );
                         } else {
-                            errorMsg += ` Error: ${error.message}`;
+                            errorMsgs.push(
+                                ERROR_TEXTS.generalError,
+                                error.message,
+                            );
                         }
-                        this.alertService.error(errorMsg);
+
+                        this.alertService.error(
+                            joinNonEmptyTexts(errorMsgs, " "),
+                        );
                         return of(
                             new tracingStateActions.LoadFclDataFailureSOA(),
                         );

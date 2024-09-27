@@ -18,7 +18,7 @@ import { DataService } from "./../../../tracing/services/data.service";
 import { Utils as UIUtils } from "./../../../tracing/util/ui-utils";
 import { Observable, combineLatest } from "rxjs";
 import { take, takeWhile } from "rxjs/operators";
-import { ExampleData } from "@app/main-page/model/types";
+import { ExampleData, ModelFileType } from "@app/main-page/model/types";
 import { MainPageService } from "@app/main-page/services/main-page.service";
 import {
     MatLegacyDialog as MatDialog,
@@ -102,9 +102,15 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.loadFile(fileList);
     }
 
-    onSelectModelFile() {
+    // onSelectModelFile() {
+    //     this.checkConditionsAndLoadFile(() =>
+    //         this.toolbarActionComponent.clickModelFileInputElement(),
+    //     );
+    onSelectModelFile(type: ModelFileType) {
         this.checkConditionsAndLoadFile(() =>
-            this.toolbarActionComponent.clickModelFileInputElement(),
+            this.toolbarActionComponent.prepareAndClickModelFileInputElement(
+                type,
+            ),
         );
     }
 
