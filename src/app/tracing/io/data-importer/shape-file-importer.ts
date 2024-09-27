@@ -7,7 +7,7 @@ import {
 import { InputDataError, InputFormatError } from "../io-errors";
 import { getJsonFromFile } from "../io-utils";
 import geojsonHintObject from "../../../../assets/geojsonhint/object";
-import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
+import { MAP_CONSTANTS } from "../../../tracing/util/map-constants";
 
 const ERROR_OLD_STYLE_CRS = "old-style crs member is not recommended";
 const UNSUPPORTED_PROJECTION_TYPE_MSG =
