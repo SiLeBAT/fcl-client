@@ -108,12 +108,9 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private updateMap(newMapConfig: MapConfig, oldMapConfig: MapConfig): void {
-        const mapTypeOrTileHasChanged =
+        const shapeOrTileHasChanged =
             newMapConfig.mapType !== oldMapConfig.mapType ||
-            newMapConfig.tileServer !== oldMapConfig.tileServer;
-        const shapeDataHasChanged =
-            (newMapConfig.mapType !== MapType.MAP_ONLY &&
-                newMapConfig.mapType !== oldMapConfig.mapType) ||
+            newMapConfig.tileServer !== oldMapConfig.tileServer ||
             newMapConfig.shapeFileData !== oldMapConfig.shapeFileData;
         const shapeStyleHasChanged =
             newMapConfig.mapType !== MapType.MAP_ONLY &&
@@ -122,29 +119,27 @@ export class GeoMapComponent implements OnChanges {
         const layoutHasChanged = newMapConfig.layout !== oldMapConfig.layout;
 
         if (
-            !mapTypeOrTileHasChanged &&
-            !shapeDataHasChanged &&
+            !shapeOrTileHasChanged &&
             !shapeStyleHasChanged &&
             !layoutHasChanged
         ) {
-            // no changes, so return immediately
-            console.log("no changes, return immediately");
+            // no changes, so early return
+            return;
+        }
+
+        if (shapeOrTileHasChanged) {
+            // changes to map type, shape file data or tile server, so trigger maptype updates and leave function
+            this.updateMapType(newMapConfig);
             return;
         }
 
         if (shapeStyleHasChanged) {
-            console.log("updateMap shapeStyleHasChanged");
+            // changes to shape styles, so trigger vector style updates and leave function
             updateVectorLayerStyle(this.map!, newMapConfig);
             return;
         }
 
-        if (layoutHasChanged) {
-            console.log("updateMap layoutHasChanged");
-            this.updateMapView(newMapConfig);
-            return;
-        }
-
-        console.log("updateMap Tile or Shape has changed");
-        this.updateMapType(newMapConfig);
+        // changes to layout, so trigger view updates and leave function
+        this.updateMapView(newMapConfig);
     }
 }

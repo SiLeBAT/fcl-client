@@ -94,7 +94,7 @@ function createMapLayer(mapConfig: MapConfigWithOptLayout): Array<BaseLayer> {
 function createTileLayer(
     mapConfig: Pick<MapConfigWithOptLayout, "tileServer">,
 ): BaseLayer {
-    let { tileServer } = mapConfig;
+    const { tileServer } = mapConfig;
 
     return new Tile({
         source: MAP_SOURCE.get(tileServer)!(),
