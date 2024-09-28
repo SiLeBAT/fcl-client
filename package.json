@@ -64,7 +64,7 @@
     "material-icons": "^1.13.12",
     "moment": "^2.29.4",
     "mxgraph": "^4.2.2",
-    "ngx-color-picker": "^11.0.0",
+    "ngx-color-picker": "^15.0.0",
     "normalize.css": "^8.0.1",
     "ol": "^5.3.3",
     "roboto-fontface": "^0.10.0",
