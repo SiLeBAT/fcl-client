@@ -1,9 +1,5 @@
 import { Injectable } from "@angular/core";
-import {
-    ActivatedRouteSnapshot,
-    RouterStateSnapshot,
-    Resolve,
-} from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { catchError } from "rxjs/operators";
 import { EMPTY, Observable } from "rxjs";
 import { Faq } from "./faq.model";
@@ -13,7 +9,7 @@ import { AlertService } from "@app/shared/services/alert.service";
 @Injectable({
     providedIn: "root",
 })
-export class FaqResolverService implements Resolve<Faq> {
+export class FaqResolverService  {
     constructor(
         private faqService: FaqService,
         private alertService: AlertService,

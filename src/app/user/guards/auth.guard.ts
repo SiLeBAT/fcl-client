@@ -1,10 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import {
-    Router,
-    CanActivate,
-    ActivatedRouteSnapshot,
-    RouterStateSnapshot,
-} from "@angular/router";
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { AlertService } from "../../shared/services/alert.service";
 import { Store, select } from "@ngrx/store";
 import * as fromUser from "../state/user.reducer";
@@ -16,7 +11,7 @@ import { map, takeWhile } from "rxjs/operators";
 @Injectable({
     providedIn: "root",
 })
-export class AuthGuard implements CanActivate, OnDestroy {
+export class AuthGuard  implements OnDestroy {
     private componentActive: boolean = true;
 
     constructor(

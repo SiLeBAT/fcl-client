@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { CanDeactivate } from "@angular/router";
+
 import { Observable } from "rxjs";
 import { GraphEditorContainerComponent } from "../container/graph-editor-container/graph-editor-container.component";
 
@@ -7,7 +7,7 @@ import { GraphEditorContainerComponent } from "../container/graph-editor-contain
     providedIn: "root",
 })
 export class CanDeactivateGraphEditorGuard
-    implements CanDeactivate<GraphEditorContainerComponent>
+    
 {
     canDeactivate(
         component: GraphEditorContainerComponent,
