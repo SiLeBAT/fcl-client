@@ -3,7 +3,7 @@ import {
     SortPropDir,
     SortDirection,
     orderByComparator,
-} from "@swimlane/ngx-datatable";
+} from "@siemens/ngx-datatable";
 import { NodeShapeType, TableRow } from "@app/tracing/data.model";
 
 type SortableColumn = Pick<NgxTableColumn, "prop" | "comparator">;

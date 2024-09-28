@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { TableColumn } from "@app/tracing/data.model";
-import { SortDirection } from "@swimlane/ngx-datatable";
+import { SortDirection } from "@siemens/ngx-datatable";
 
 @Component({
     template: "",
