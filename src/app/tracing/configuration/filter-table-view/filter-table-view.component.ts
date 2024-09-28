@@ -21,7 +21,7 @@ import {
     SelectionType,
     TableColumn as NgxTableColumn,
     SortPropDir,
-} from "@swimlane/ngx-datatable";
+} from "@siemens/ngx-datatable";
 import {
     DataTable,
     TableRow,
@@ -1108,5 +1108,6 @@ export class FilterTableViewComponent
             orderedFilterColumns,
             filterColumns.filter((c) => !orderedFilterColumns.includes(c)),
         );
+        this.table.recalculate();
     }
 }

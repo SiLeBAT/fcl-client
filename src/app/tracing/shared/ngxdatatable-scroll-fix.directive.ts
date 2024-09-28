@@ -8,7 +8,7 @@ import {
     ChangeDetectorRef,
     DoCheck,
 } from "@angular/core";
-import { DatatableComponent } from "@swimlane/ngx-datatable";
+import { DatatableComponent } from "@siemens/ngx-datatable";
 import { Observable, Subscription } from "rxjs";
 import { ActivityState } from "../configuration/configuration.model";
 import { Size } from "../data.model";

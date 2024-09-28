@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { NgxDatatableModule } from "@siemens/ngx-datatable";
 import { ColorPickerModule } from "ngx-color-picker";
 import { MainTracingComponent } from "./components/main-tracing.component";
 import { SharedModule } from "../shared/shared.module";

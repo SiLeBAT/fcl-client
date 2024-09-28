@@ -46,7 +46,7 @@
         "@ngrx/effects": "^15.4.0",
         "@ngrx/store": "^15.4.0",
         "@ngrx/store-devtools": "^15.4.0",
-        "@swimlane/ngx-datatable": "^20.1.0",
+        "@siemens/ngx-datatable": "^21.3.2",
         "ajv": "^6.12.6",
         "core-js": "^3.33.0",
         "css-element-queries": "^1.2.3",

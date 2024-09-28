@@ -6,7 +6,7 @@ import {
     EventEmitter,
     Output,
 } from "@angular/core";
-import { DatatableComponent } from "@swimlane/ngx-datatable";
+import { DatatableComponent } from "@siemens/ngx-datatable";
 import { Subscription } from "rxjs";
 import { TableRow } from "../data.model";
 
