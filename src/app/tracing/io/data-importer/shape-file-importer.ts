@@ -31,8 +31,9 @@ export async function getShapeFileData(file: File): Promise<ShapeFileData> {
             mapType: MAP_CONSTANTS.defaults.mapType,
             tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: jsonData,
-            lineColor: { r: 0, g: 0, b: 0 },
-            lineWidth: 0.5,
+            geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
+            geojsonBorderWidth: MAP_CONSTANTS.defaults.geojsonBorderWidth,
+            layout: null,
         });
         return jsonData;
     } catch (error) {

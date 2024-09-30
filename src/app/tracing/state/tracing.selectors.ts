@@ -280,8 +280,8 @@ export const getMapConfig = createSelector(
         mapType: mapType,
         tileServer: tileServer,
         shapeFileData: shapeFileData,
-        lineColor: borderColor,
-        lineWidth: borderWidth,
+        geojsonBorderColor: borderColor,
+        geojsonBorderWidth: borderWidth,
     }),
 );
 

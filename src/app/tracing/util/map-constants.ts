@@ -20,7 +20,7 @@ export const MAP_CONSTANTS = {
     defaults: {
         mapType: MapType.MAP_ONLY,
         tileServer: TileServer.MAPNIK,
-        geoJSON_border_width: 0.5,
-        geoJSON_border_color: COLORS.primary_dark,
+        geojsonBorderWidth: 0.5,
+        geojsonBorderColor: COLORS.primary_dark,
     },
 };

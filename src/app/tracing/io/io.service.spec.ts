@@ -11,8 +11,8 @@ import {
 } from "../data.model";
 import { JsonData, VERSION } from "./ext-data-model.v1";
 import { Constants } from "../util/constants";
-import { MAP_CONSTANTS } from "../util/map-constants";
 import { createInitialFclDataSourceInfo } from "../state/tracing.reducers";
+import { MAP_CONSTANTS } from "../util/map-constants";
 
 describe("IOService", () => {
     let ioService: IOService;
@@ -76,8 +76,8 @@ describe("IOService", () => {
                 mapType: MAP_CONSTANTS.defaults.mapType,
                 tileServer: MAP_CONSTANTS.defaults.tileServer,
                 shapeFileData: null,
-                geojsonBorderWidth: MAP_CONSTANTS.defaults.geoJSON_border_width,
-                geojsonBorderColor: MAP_CONSTANTS.defaults.geoJSON_border_color,
+                geojsonBorderWidth: MAP_CONSTANTS.defaults.geojsonBorderWidth,
+                geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
                 adjustEdgeWidthToNodeSize: true,
                 edgeWidth: Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(

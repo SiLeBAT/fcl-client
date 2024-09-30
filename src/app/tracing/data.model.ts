@@ -178,13 +178,8 @@ export interface ShowElementsTraceParams {
     observedType: ObservedType;
 }
 
-export interface GraphSettings {
+export interface GraphSettings extends MapSettings, ShapeFileSettings {
     type: GraphType;
-    tileServer: TileServer;
-    mapType: MapType;
-    shapeFileData: ShapeFileData | null;
-    geojsonBorderWidth: number;
-    geojsonBorderColor: Color;
     nodeSize: number;
     adjustEdgeWidthToNodeSize: boolean;
     edgeWidth: number;
@@ -205,6 +200,25 @@ export interface GraphSettings {
     hoverDeliveries: DeliveryId[];
 }
 
+//New start
+export interface ShapeStyleSettings {
+    geojsonBorderWidth: number;
+    geojsonBorderColor: Color;
+}
+export interface ShapeFileSettings extends ShapeStyleSettings {
+    shapeFileData: ShapeFileData | null;
+}
+
+export interface MapSettings {
+    tileServer: TileServer;
+    mapType: MapType;
+}
+
+export interface MapViewConfig extends MapSettings, ShapeFileSettings {
+    layout: Layout | null;
+}
+
+//OLD start
 export interface MapConfig {
     layout: Layout | null;
     mapType: MapType;
@@ -213,7 +227,7 @@ export interface MapConfig {
     lineColor: Color;
     lineWidth: number;
 }
-
+//OLD end
 export interface HighlightingSettings {
     invisibleStations: StationId[];
     invisibleDeliveries: DeliveryId[];

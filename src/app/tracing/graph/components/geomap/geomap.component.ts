@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import * as ol from "ol";
 import { Utils as UIUtils } from "../../../util/ui-utils";
-import { MapType, Size, MapConfig } from "../../../data.model";
+import { MapType, Size, MapViewConfig } from "../../../data.model";
 import {
     createOpenLayerMap,
     updateMapType,
@@ -29,7 +29,7 @@ interface TypedSimpleChange<T> extends SimpleChange {
 export class GeoMapComponent implements OnChanges {
     @ViewChild("map", { static: true }) mapElement: ElementRef;
 
-    @Input() mapConfig: MapConfig;
+    @Input() mapConfig: MapViewConfig;
 
     private map: ol.Map | null = null;
 
@@ -46,7 +46,7 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private processInputChanges(
-        mapConfigChange: TypedSimpleChange<MapConfig> | undefined,
+        mapConfigChange: TypedSimpleChange<MapViewConfig> | undefined,
     ): void {
         if (
             mapConfigChange !== undefined &&
@@ -77,16 +77,16 @@ export class GeoMapComponent implements OnChanges {
         };
     }
 
-    private initMap(mapConfig: MapConfig): void {
+    private initMap(mapConfig: MapViewConfig): void {
         this.map = createOpenLayerMap(mapConfig, this.mapElement.nativeElement);
         this.updateMapView(mapConfig);
     }
 
-    private updateMapType(mapConfig: MapConfig): void {
+    private updateMapType(mapConfig: MapViewConfig): void {
         updateMapType(this.map!, mapConfig);
     }
 
-    private updateMapView(mapConfig: MapConfig) {
+    private updateMapView(mapConfig: MapViewConfig) {
         if (mapConfig.layout !== null) {
             const size = this.getSize();
             this.map!.setView(
@@ -107,15 +107,20 @@ export class GeoMapComponent implements OnChanges {
         }
     }
 
-    private updateMap(newMapConfig: MapConfig, oldMapConfig: MapConfig): void {
+    private updateMap(
+        newMapConfig: MapViewConfig,
+        oldMapConfig: MapViewConfig,
+    ): void {
         const shapeOrTileHasChanged =
             newMapConfig.mapType !== oldMapConfig.mapType ||
             newMapConfig.tileServer !== oldMapConfig.tileServer ||
             newMapConfig.shapeFileData !== oldMapConfig.shapeFileData;
         const shapeStyleHasChanged =
             newMapConfig.mapType !== MapType.MAP_ONLY &&
-            (newMapConfig.lineColor !== oldMapConfig.lineColor ||
-                newMapConfig.lineWidth !== oldMapConfig.lineWidth);
+            (newMapConfig.geojsonBorderColor !==
+                oldMapConfig.geojsonBorderColor ||
+                newMapConfig.geojsonBorderWidth !==
+                    oldMapConfig.geojsonBorderWidth);
         const layoutHasChanged = newMapConfig.layout !== oldMapConfig.layout;
 
         if (
