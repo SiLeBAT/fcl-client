@@ -198,12 +198,6 @@ export class Constants {
     );
 
     static readonly GEOJSON_BORDER_WIDTHS = Constants.EDGE_WIDTHS;
-    static readonly DEFAULT_GEOJSON_BORDER_WIDTH = 0.5;
-    static readonly DEFAULT_GEOJSON_BORDER_COLOR = {
-        r: 0,
-        g: 0,
-        b: 0,
-    } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
 

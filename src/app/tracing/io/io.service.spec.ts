@@ -76,8 +76,8 @@ describe("IOService", () => {
                 mapType: MAP_CONSTANTS.defaults.mapType,
                 tileServer: MAP_CONSTANTS.defaults.tileServer,
                 shapeFileData: null,
-                geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
-                geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+                geojsonBorderWidth: MAP_CONSTANTS.defaults.geoJSON_border_width,
+                geojsonBorderColor: MAP_CONSTANTS.defaults.geoJSON_border_color,
                 nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
                 adjustEdgeWidthToNodeSize: true,
                 edgeWidth: Constants.NODE_SIZE_TO_EDGE_WIDTH_MAP.get(

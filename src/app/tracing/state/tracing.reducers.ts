@@ -151,8 +151,8 @@ export function createInitialFclDataState(): FclData {
             mapType: MAP_CONSTANTS.defaults.mapType,
             tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: null,
-            geojsonBorderWidth: Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
-            geojsonBorderColor: Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+            geojsonBorderWidth: MAP_CONSTANTS.defaults.geoJSON_border_width,
+            geojsonBorderColor: MAP_CONSTANTS.defaults.geoJSON_border_color,
             ghostStation: null,
             ghostDelivery: null,
             hoverDeliveries: [],
@@ -281,9 +281,9 @@ export function reducer(
                         mapType: MapType.SHAPE_ONLY,
                         shapeFileData: action.payload.shapeFileData,
                         geojsonBorderWidth:
-                            Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
+                            MAP_CONSTANTS.defaults.geoJSON_border_width,
                         geojsonBorderColor:
-                            Constants.DEFAULT_GEOJSON_BORDER_COLOR,
+                            MAP_CONSTANTS.defaults.geoJSON_border_color, 
                     },
                 },
             };
