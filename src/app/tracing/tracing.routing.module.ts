@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Routes, RouterModule, mapToCanActivate } from "@angular/router";
 
 import { AuthGuard } from "./../user/guards/auth.guard";
 import { MainTracingComponent } from "./components/main-tracing.component";
@@ -9,7 +9,9 @@ const tracingRoutes: Routes = [
     {
         path: "tracing",
         component: MainTracingComponent,
-        canActivate: environment.serverless ? undefined : [AuthGuard],
+        canActivate: environment.serverless
+            ? undefined
+            : mapToCanActivate([AuthGuard]),
     },
 ];
 

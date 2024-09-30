@@ -4,8 +4,8 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
 <fcl-faq-view
   activeFragment="null"
   faq={[Function Object]}
-  faqSectionRefs={[Function QueryList]}
-  scrollPanel={[Function ElementRef]}
+  faqSectionRefs={[Function _QueryList]}
+  scrollPanel={[Function _ElementRef]}
 >
   <div
     class="fcl-scroll-panel"
@@ -87,13 +87,13 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 </span>
                 <span
                   class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform:rotate(0deg);0:transform;"
+                  style="transform: rotate(0deg);"
                 />
               </mat-expansion-panel-header>
               <div
                 class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
                 role="region"
-                style="height:0px;visibility:hidden;0:height;1:visibility;"
+                style="height: 0px; visibility: hidden;"
               >
                 <div
                   class="mat-expansion-panel-body"
@@ -129,13 +129,13 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 </span>
                 <span
                   class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform:rotate(0deg);0:transform;"
+                  style="transform: rotate(0deg);"
                 />
               </mat-expansion-panel-header>
               <div
                 class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
                 role="region"
-                style="height:0px;visibility:hidden;0:height;1:visibility;"
+                style="height: 0px; visibility: hidden;"
               >
                 <div
                   class="mat-expansion-panel-body"
@@ -187,13 +187,13 @@ exports[`FaqViewComponent should render the component correctly 1`] = `
                 </span>
                 <span
                   class="mat-expansion-indicator ng-trigger ng-trigger-indicatorRotate"
-                  style="transform:rotate(0deg);0:transform;"
+                  style="transform: rotate(0deg);"
                 />
               </mat-expansion-panel-header>
               <div
                 class="mat-expansion-panel-content ng-trigger ng-trigger-bodyExpansion"
                 role="region"
-                style="height:0px;visibility:hidden;0:height;1:visibility;"
+                style="height: 0px; visibility: hidden;"
               >
                 <div
                   class="mat-expansion-panel-body"

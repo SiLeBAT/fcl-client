@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import {
     Router,
-    CanActivate,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
 } from "@angular/router";
@@ -16,7 +15,7 @@ import { map, takeWhile } from "rxjs/operators";
 @Injectable({
     providedIn: "root",
 })
-export class AuthGuard implements CanActivate, OnDestroy {
+export class AuthGuard implements OnDestroy {
     private componentActive: boolean = true;
 
     constructor(
