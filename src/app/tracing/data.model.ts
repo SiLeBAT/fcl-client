@@ -355,6 +355,12 @@ export enum MapType { // please note: the order of the keys is relevant for pres
     TILES_AND_SHAPE,
 }
 
+export interface AvailableMaps {
+    tiles: Array<TileServer>,
+    types: Array<MapType>,
+    labels: Record<MapType, string>
+}
+
 export interface MapTypeLabelDictionary {
     mapType: MapType;
     tileServer?: TileServer;

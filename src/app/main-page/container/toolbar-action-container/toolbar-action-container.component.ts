@@ -13,8 +13,8 @@ import {
     GraphType,
     MapType,
     DataServiceInputState,
-    MapVariant,
     TileServer,
+    AvailableMaps,
 } from "@app/tracing/data.model";
 import { DataService } from "./../../../tracing/services/data.service";
 import { Utils as UIUtils } from "./../../../tracing/util/ui-utils";
@@ -34,7 +34,6 @@ import { Constants } from "@app/tracing/util/constants";
 import { ToolbarActionComponent } from "@app/main-page/presentation/toolbar-action/toolbar-action.component";
 import { IOService } from "@app/tracing/io/io.service";
 import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
-import { Map, Tile } from "ol";
 
 @Component({
     selector: "fcl-toolbar-action-container",
@@ -52,13 +51,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     graphSettings: GraphSettings;
     hasGisInfo = false;
-
-    availableMaps: {
-        types: MapType[];
-        tiles: TileServer[];
-        labels: Record<TileServer | MapType, string>;
-    };
-    // read all map variants from constants
+    availableMaps:AvailableMaps;
 
     private componentActive: boolean = true;
 

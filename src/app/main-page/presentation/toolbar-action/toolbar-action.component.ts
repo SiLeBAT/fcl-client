@@ -15,6 +15,7 @@ import {
     GraphType,
     MapType,
     TileServer,
+    AvailableMaps
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
@@ -42,7 +43,7 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     @Input() hasGisInfo: boolean;
-    @Input() availableMaps: any;
+    @Input() availableMaps: AvailableMaps;
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Input() fileName: string | null = null;
