@@ -1,5 +1,4 @@
 import {
-    MapConfig,
     MapType,
     TileServer,
     ShapeFileData,

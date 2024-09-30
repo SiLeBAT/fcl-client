@@ -199,8 +199,6 @@ export interface GraphSettings extends MapSettings, ShapeFileSettings {
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
-
-//New start
 export interface ShapeStyleSettings {
     geojsonBorderWidth: number;
     geojsonBorderColor: Color;
@@ -218,16 +216,6 @@ export interface MapViewConfig extends MapSettings, ShapeFileSettings {
     layout: Layout | null;
 }
 
-//OLD start
-export interface MapConfig {
-    layout: Layout | null;
-    mapType: MapType;
-    tileServer: TileServer;
-    shapeFileData: ShapeFileData | null;
-    lineColor: Color;
-    lineWidth: number;
-}
-//OLD end
 export interface HighlightingSettings {
     invisibleStations: StationId[];
     invisibleDeliveries: DeliveryId[];
