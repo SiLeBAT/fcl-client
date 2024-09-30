@@ -279,7 +279,7 @@ export function reducer(
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
                         shapeFileData: action.payload.shapeFileData,
-                        mapType: MAP_CONSTANTS.types[MapType.SHAPE_ONLY],
+                        mapType: MapType.SHAPE_ONLY,
                         geojsonBorderWidth:
                             Constants.DEFAULT_GEOJSON_BORDER_WIDTH,
                         geojsonBorderColor:
