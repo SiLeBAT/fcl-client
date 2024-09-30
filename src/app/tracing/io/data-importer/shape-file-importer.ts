@@ -1,5 +1,4 @@
-import { MapType, ShapeFileData } from "../../data.model";
-import { Constants } from "./../../../tracing/util/constants";
+import { ShapeFileData } from "../../data.model";
 import {
     createOpenLayerMap,
     isProjectionSupported,

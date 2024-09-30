@@ -3,9 +3,9 @@ import { COLORS } from "./colors";
 
 export const MAP_CONSTANTS = {
     types: [
-        MapType.TILES_AND_SHAPE,
         MapType.MAP_ONLY,
         MapType.SHAPE_ONLY,
+        MapType.TILES_AND_SHAPE,
     ] as Array<MapType>, // please note: array - so order is relevant!
     tiles: [
         TileServer.MAPNIK /*TileServer.BLACK_AND_WHITE*/,

@@ -361,18 +361,6 @@ export interface AvailableMaps {
     labels: Record<MapType, string>
 }
 
-export interface MapTypeLabelDictionary {
-    mapType: MapType;
-    tileServer?: TileServer;
-    label: string;
-}
-
-export interface MapVariant {
-    mapLayer: TileServer.MAPNIK /*| MapType.BLACK_AND_WHITE*/ | null;
-    shapeLayer: MapType.SHAPE_ONLY | null;
-    label: string;
-}
-
 export enum GroupMode {
     WEIGHT_ONLY = "Weight only" as any,
     PRODUCT_AND_WEIGHT = "Product name and weight" as any,
