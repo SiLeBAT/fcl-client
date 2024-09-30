@@ -356,9 +356,9 @@ export enum MapType { // please note: the order of the keys is relevant for pres
 }
 
 export interface AvailableMaps {
-    tiles: Array<TileServer>,
-    types: Array<MapType>,
-    labels: Record<MapType, string>
+    tiles: Array<TileServer>;
+    types: Array<MapType>;
+    labels: Record<MapType, string>;
 }
 
 export enum GroupMode {

@@ -283,7 +283,7 @@ export function reducer(
                         geojsonBorderWidth:
                             MAP_CONSTANTS.defaults.geoJSON_border_width,
                         geojsonBorderColor:
-                            MAP_CONSTANTS.defaults.geoJSON_border_color, 
+                            MAP_CONSTANTS.defaults.geoJSON_border_color,
                     },
                 },
             };

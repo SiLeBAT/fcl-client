@@ -51,7 +51,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     graphSettings: GraphSettings;
     hasGisInfo = false;
-    availableMaps:AvailableMaps;
+    availableMaps: AvailableMaps;
 
     private componentActive: boolean = true;
 

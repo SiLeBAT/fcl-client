@@ -15,7 +15,7 @@ import {
     GraphType,
     MapType,
     TileServer,
-    AvailableMaps
+    AvailableMaps,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
