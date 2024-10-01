@@ -86,7 +86,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                     this.graphSettings = graphSettings;
                     this.availableMaps.types = this.graphSettings.shapeFileData
                         ? MAP_CONSTANTS.types.filter(
-                              (item) => item !== MapType.MAP_ONLY,
+                              (item) => item !== MapType.TILES_ONLY,
                           )
                         : [];
 

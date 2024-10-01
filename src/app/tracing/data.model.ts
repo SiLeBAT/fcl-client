@@ -352,7 +352,7 @@ export enum TileServer {
 }
 
 export enum MapType { // please note: the order of the keys is relevant for presentation
-    MAP_ONLY,
+    TILES_ONLY,
     SHAPE_ONLY,
     TILES_AND_SHAPE,
 }

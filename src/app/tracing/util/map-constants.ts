@@ -3,7 +3,7 @@ import { COLORS } from "./colors";
 
 export const MAP_CONSTANTS = {
     types: [
-        MapType.MAP_ONLY,
+        MapType.TILES_ONLY,
         MapType.SHAPE_ONLY,
         MapType.TILES_AND_SHAPE,
     ] as Array<MapType>, // please note: array - so order is relevant!
@@ -18,7 +18,7 @@ export const MAP_CONSTANTS = {
         //[TileServer.BLACK_AND_WHITE]: "Black & White",
     } as Record<TileServer | MapType, string>,
     defaults: {
-        mapType: MapType.MAP_ONLY,
+        mapType: MapType.TILES_ONLY,
         tileServer: TileServer.MAPNIK,
         geojsonBorderWidth: 0.5,
         geojsonBorderColor: COLORS.primary_dark,

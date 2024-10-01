@@ -62,7 +62,6 @@ export class ToolbarActionComponent implements OnChanges {
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapTypeOption: string;
     fileNameWoExt: string | null = null;
-    mapTypes = MAP_CONSTANTS.defaults.mapType;
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -126,7 +125,7 @@ export class ToolbarActionComponent implements OnChanges {
 
     setTileServer(tileServer: TileServer): void {
         this.tileServer.emit(tileServer);
-        this.setMapType(MapType.MAP_ONLY);
+        this.setMapType(MapType.TILES_ONLY);
     }
 
     setMapType(mapType: MapType): void {

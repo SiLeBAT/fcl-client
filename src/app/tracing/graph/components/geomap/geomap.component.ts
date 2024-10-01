@@ -116,7 +116,7 @@ export class GeoMapComponent implements OnChanges {
             newMapConfig.tileServer !== oldMapConfig.tileServer ||
             newMapConfig.shapeFileData !== oldMapConfig.shapeFileData;
         const shapeStyleHasChanged =
-            newMapConfig.mapType !== MapType.MAP_ONLY &&
+            newMapConfig.mapType !== MapType.TILES_ONLY &&
             (newMapConfig.geojsonBorderColor !==
                 oldMapConfig.geojsonBorderColor ||
                 newMapConfig.geojsonBorderWidth !==

@@ -17,7 +17,7 @@ import { GeoJSON } from "ol/format";
 import { Stroke, Style } from "ol/style";
 import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
-import { NotNullish, NotNullishPick } from "./utility-types";
+import { NotNullish } from "./utility-types";
 
 export interface RectConfig {
     left: number;
