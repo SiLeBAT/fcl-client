@@ -21,6 +21,6 @@ export const MAP_CONSTANTS = {
         mapType: MapType.TILES_ONLY,
         tileServer: TileServer.MAPNIK,
         geojsonBorderWidth: 0.5,
-        geojsonBorderColor: COLORS.primary_dark,
+        geojsonBorderColor: COLORS.black,
     },
 };

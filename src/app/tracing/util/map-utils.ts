@@ -40,21 +40,6 @@ const MAP_SOURCE: Map<TileServer, () => OSM> = new Map([
     // })]
 ]);
 
-//* ***** Question START: Is this code still needed? It doesn't seem to be in use anywhere. ***** */
-
-// the following code is commented because
-// the Black & White Map might be deactivatd only temporarily
-const availableMapTypes: TileServer[] = [
-    TileServer.MAPNIK,
-    /* TileServer.BLACK_AND_WHITE, */
-];
-
-export function getAvailableMapTypes(): TileServer[] {
-    return availableMapTypes;
-}
-
-//* ***** Question END: ***** */
-
 export function createOpenLayerMap(
     mapConfig: MapViewConfig,
     target?: HTMLElement,

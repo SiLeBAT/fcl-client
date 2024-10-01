@@ -1,4 +1,4 @@
-import { ShapeFileData } from "../../data.model";
+import { MapType, ShapeFileData } from "../../data.model";
 import {
     createOpenLayerMap,
     isProjectionSupported,
@@ -28,7 +28,7 @@ export async function getShapeFileData(file: File): Promise<ShapeFileData> {
     try {
         // 1. test: can an open layer map be created
         createOpenLayerMap({
-            mapType: MAP_CONSTANTS.defaults.mapType,
+            mapType: MapType.SHAPE_ONLY,
             tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: jsonData,
             geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
