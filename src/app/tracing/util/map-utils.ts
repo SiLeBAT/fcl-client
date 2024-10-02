@@ -18,6 +18,8 @@ import { Stroke, Style } from "ol/style";
 import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
 import { NotNullish } from "./utility-types";
+import TileLayer from "ol/layer/Tile";
+import { indexOf } from "lodash";
 
 export interface RectConfig {
     left: number;
@@ -28,7 +30,8 @@ export interface RectConfig {
 }
 
 const LAYER_ID_KEY = "layerId";
-const MAP_LAYER_ID = "MapLayer";
+const TILE_LAYER_ID = "TileLayer";
+const SHAPE_LAYER_ID = "ShapeLayer";
 
 const MAP_SOURCE: Map<TileServer, () => OSM> = new Map([
     [TileServer.MAPNIK, () => new OSM()],
@@ -60,10 +63,10 @@ function createMapLayer(mapConfig: MapViewConfig): Array<BaseLayer> {
         const topLayer = createShapeFileLayer(
             mapConfig as NotNullish<ShapeFileSettings>,
         );
-        topLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
+        topLayer.set(LAYER_ID_KEY, SHAPE_LAYER_ID, true);
 
         const bottomLayer = createTileLayer(mapConfig);
-        bottomLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
+        bottomLayer.set(LAYER_ID_KEY, TILE_LAYER_ID, true);
 
         // please note: the order of the layers within the array is relevant -
         // the shape layer needs to have a higher index than the map layer to be visible in the FE!
@@ -71,18 +74,21 @@ function createMapLayer(mapConfig: MapViewConfig): Array<BaseLayer> {
     }
 
     // default: create a single-layer map
-    const baseLayer =
-        mapType === MapType.SHAPE_ONLY
-            ? createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)
-            : createTileLayer(mapConfig);
-    baseLayer.set(LAYER_ID_KEY, MAP_LAYER_ID, true);
+    if(mapType === MapType.SHAPE_ONLY) {
+        const baseLayer = createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)
+        baseLayer.set(LAYER_ID_KEY, SHAPE_LAYER_ID, true);
+        return [baseLayer];
+    }
 
+    const baseLayer = createTileLayer(mapConfig)
+    baseLayer.set(LAYER_ID_KEY, TILE_LAYER_ID, true);
     return [baseLayer];
 }
 
 function createTileLayer(
     mapConfig: Pick<MapSettings, "tileServer">,
 ): BaseLayer {
+    console.log('creating tile layer')
     const { tileServer } = mapConfig;
 
     return new Tile({
@@ -112,6 +118,7 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
 export function createShapeFileLayer(
     mapConfig: NotNullish<ShapeFileSettings>,
 ): BaseLayer {
+    console.log('creating shape file')
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(
@@ -132,6 +139,7 @@ export function createShapeFileLayer(
 }
 
 function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
+    console.log('creating shape style')
     return new Style({
         stroke: new Stroke({
             color: [
@@ -144,18 +152,19 @@ function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
     });
 }
 
-function getMapLayer(map: ol.Map): Array<BaseLayer> {
+function getMapLayer(map: ol.Map, layerType): Array<BaseLayer> {
+    console.log('getMapLayer')
     return map
         .getLayers()
         .getArray()
-        .filter((layer) => layer.get(LAYER_ID_KEY) === MAP_LAYER_ID);
+        .filter((layer) => layer instanceof layerType);
 }
 
 export function updateVectorLayerStyle(
     map: ol.Map,
     styleConfig: ShapeFileSettings,
 ): void {
-    const mapLayers = getMapLayer(map);
+    const mapLayers = getMapLayer(map, VectorLayer);
     // loop through all layers
     mapLayers.forEach((layer) => {
         // apply styles only to instances of VectorLayer
@@ -166,16 +175,61 @@ export function updateVectorLayerStyle(
     });
 }
 
-export function updateMapType(map: ol.Map, mapConfig: MapViewConfig): void {
-    removeMapLayer(map);
-    const layers = createMapLayer(mapConfig);
-    layers.forEach((layer, index) => {
-        map.getLayers().insertAt(index, layer);
-    });
+export const setLayerVisibility = (layer:BaseLayer, visibility:boolean):void => {
+    if (layer === undefined || layer.setVisible === undefined) {
+        return;
+    }
+
+    layer.setVisible(visibility);
 }
 
-function removeMapLayer(map: ol.Map) {
-    const mapLayers = getMapLayer(map);
+export const insertLayer = (map:ol.Map, layer:BaseLayer) => {
+    const mapLayers = map.getLayers();
+    const index = layer instanceof VectorLayer? mapLayers.getLength() : 0;
+    console.log(mapLayers.getLength(), mapLayers.getArray(), index, layer)
+    mapLayers.insertAt(index, layer);
+    console.log(mapLayers)
+}
+
+export function updateMapType(map: ol.Map, mapConfig: MapViewConfig): void {
+    //removeMapLayer(map, );
+    let tileLayer = getMapLayer(map, TileLayer);
+    let shapeLayer = getMapLayer(map, VectorLayer);
+    const layers:BaseLayer[] = [];
+
+    switch(mapConfig.mapType) {
+        case MapType.TILES_ONLY: 
+            // hide shape
+            setLayerVisibility(shapeLayer[0], false);
+            // show or create tile
+            tileLayer.length === 0 ? 
+            insertLayer(map, createTileLayer(mapConfig)) :
+            setLayerVisibility(tileLayer[0], true);
+            break;
+        case MapType.SHAPE_ONLY: 
+            // hide tile
+            setLayerVisibility(tileLayer[0], false);
+            // show or create shape
+            shapeLayer.length === 0 ? 
+            insertLayer(map, createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)) :
+            setLayerVisibility(shapeLayer[0], true);
+            break;
+        case MapType.TILES_AND_SHAPE:
+            // show or create tile
+            tileLayer.length === 0 ? 
+            insertLayer(map, createTileLayer(mapConfig)) :
+            setLayerVisibility(tileLayer[0], true);
+            // show or create shape
+            shapeLayer.length === 0 ? 
+            insertLayer(map, createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)) :
+            setLayerVisibility(shapeLayer[0], true);
+            break;
+    }
+}
+
+function removeMapLayer(map: ol.Map, layerID) {
+    const mapLayers = getMapLayer(map, layerID);
+    console.log(mapLayers);
     // loop through all layers
     mapLayers.forEach((mapLayer) => {
         // remove each one from map
