@@ -4,7 +4,7 @@ import { contentPathsSegments } from "./content.paths";
 import { DataProtectionDeclarationComponent } from "./data-protection-declaration/data-protection-declaration.component";
 import { DataProtectionNoticeComponent } from "./data-protection-notice/data-protection-notice.component";
 import { FaqComponent } from "./faq/components/faq.component";
-import { FaqResolverService } from "./faq/faq-resolver.service";
+import { FaqResolverFn } from "./faq/faq-resolver";
 
 const contentRoutes: Routes = [
     {
@@ -13,7 +13,7 @@ const contentRoutes: Routes = [
             {
                 path: contentPathsSegments.faq,
                 component: FaqComponent,
-                resolve: { faqCollection: FaqResolverService },
+                resolve: { faqCollection: FaqResolverFn },
             },
             {
                 path: contentPathsSegments.dataProtectionDeclaration,
