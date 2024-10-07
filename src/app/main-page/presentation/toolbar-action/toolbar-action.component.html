@@ -52,7 +52,7 @@
                             value="{{ item }}"
                             (click)="setMapSettings(item)"
                         >
-                            {{ availableMaps.labels[item] }}
+                            {{ availableMaps.tileServerLabels[item] }}
                         </mat-option>
                     </span>
                     <span *ngFor="let item of availableMaps.types">
@@ -60,7 +60,7 @@
                             value="{{ item }}"
                             (click)="setMapSettings(item)"
                         >
-                            {{ availableMaps.labels[item] }}
+                            {{ availableMaps.mapTypeLabels[item] }}
                         </mat-option>
                     </span>
                     <mat-option value="" (click)="onSelectShapeFile($event)">

@@ -348,7 +348,7 @@ export enum GraphType {
 export enum TileServer {
     MAPNIK = "MAPNIK",
     // the Black & White Map might be deactivatd only temporarily
-    //BLACK_AND_WHITE,
+    //BLACK_AND_WHITE = "BLACK_AND_WHITE",
 }
 
 export enum MapType { // please note: the order of the keys is relevant for presentation
@@ -360,7 +360,8 @@ export enum MapType { // please note: the order of the keys is relevant for pres
 export interface AvailableMaps {
     tiles: Array<TileServer>;
     types: Array<MapType>;
-    labels: Record<MapType, string>;
+    mapTypeLabels: Record<MapType, string>;
+    tileServerLabels: Record<TileServer, string>;
 }
 
 export enum GroupMode {

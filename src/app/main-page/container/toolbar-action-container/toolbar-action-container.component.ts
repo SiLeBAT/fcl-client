@@ -76,7 +76,8 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.availableMaps = {
             tiles: MAP_CONSTANTS.tiles,
             types: [],
-            labels: MAP_CONSTANTS.labels,
+            mapTypeLabels: MAP_CONSTANTS.mapTypeLabels,
+            tileServerLabels: MAP_CONSTANTS.tileServerLabels,
         };
 
         combineLatest([graphSettings$, dataServiceInputState$])
