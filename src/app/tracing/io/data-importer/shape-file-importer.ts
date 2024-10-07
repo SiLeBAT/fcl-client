@@ -26,7 +26,7 @@ interface Issue {
 export async function getShapeFileData(file: File): Promise<ShapeFileData> {
     const jsonData = await getJsonFromFile(file);
     try {
-        console.log('test if can be created')
+        console.log("test if can be created");
         // 1. test: can an open layer map be created
         createOpenLayerMap({
             mapType: MapType.SHAPE_ONLY,

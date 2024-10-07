@@ -79,12 +79,15 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private initMap(mapConfig: MapViewConfig): void {
-        console.log('initMap')
+        console.log("initMap");
         this.map = createOpenLayerMap(mapConfig, this.mapElement.nativeElement);
         this.updateMapView(mapConfig);
     }
 
-    private updateMapType(mapConfig: MapViewConfig, layerDataHasChanged:boolean): void {
+    private updateMapType(
+        mapConfig: MapViewConfig,
+        layerDataHasChanged: boolean,
+    ): void {
         updateMapType(this.map!, mapConfig, layerDataHasChanged);
     }
 
@@ -113,7 +116,9 @@ export class GeoMapComponent implements OnChanges {
         newMapConfig: MapViewConfig,
         oldMapConfig: MapViewConfig,
     ): void {
-        const shapeOrTileHaveChanged = newMapConfig.shapeFileData !== oldMapConfig.shapeFileData || newMapConfig.tileServer !== oldMapConfig.tileServer;
+        const shapeOrTileHaveChanged =
+            newMapConfig.shapeFileData !== oldMapConfig.shapeFileData ||
+            newMapConfig.tileServer !== oldMapConfig.tileServer;
         const mapTypeHasChanged = newMapConfig.mapType !== oldMapConfig.mapType;
         const shapeStyleHasChanged =
             newMapConfig.mapType !== MapType.TILES_ONLY &&
@@ -134,9 +139,9 @@ export class GeoMapComponent implements OnChanges {
         }
 
         if (mapTypeHasChanged || shapeOrTileHaveChanged) {
-            console.log('UPDATE MAP GEO', newMapConfig.mapType)
+            console.log("UPDATE MAP GEO", newMapConfig.mapType);
             // changes to map type, shape file data or tile server, so trigger maptype updates and leave function
-            this.updateMapType(newMapConfig, (shapeOrTileHaveChanged));
+            this.updateMapType(newMapConfig, shapeOrTileHaveChanged);
             return;
         }
 
