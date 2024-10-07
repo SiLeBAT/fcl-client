@@ -50,7 +50,7 @@
                     <span *ngFor="let item of availableMaps.tiles">
                         <mat-option
                             value="{{ item }}"
-                            (click)="setTileServer(item)"
+                            (click)="setMapSettings(item)"
                         >
                             {{ availableMaps.labels[item] }}
                         </mat-option>
@@ -58,7 +58,7 @@
                     <span *ngFor="let item of availableMaps.types">
                         <mat-option
                             value="{{ item }}"
-                            (click)="setMapType(item)"
+                            (click)="setMapSettings(item)"
                         >
                             {{ availableMaps.labels[item] }}
                         </mat-option>

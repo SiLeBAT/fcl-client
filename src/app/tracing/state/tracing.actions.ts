@@ -20,6 +20,7 @@ import {
     JsonDataExtract,
     Color,
     TileServer,
+    MapSettings,
 } from "../data.model";
 import { SetStationGroupsPayload } from "./../grouping/model";
 import { ActivationStatus } from "../../shared/model/types";
@@ -45,8 +46,7 @@ export enum TracingActionTypes {
     ShowConfigurationSideBarSOA = "[Tracing] Show Configuration Settings",
     ShowTableSettingsSOA = "[Tracing] Show Table Settings",
     SetGraphTypeSOA = "[Tracing] Set Graph Type",
-    SetMapTypeSOA = "[Tracing] Set Map Type",
-    SetTileServerSOA = "[Tracing] Set Tile Server",
+    SetMapSettingsSOA = "[Tracing] Set Map Settings",
     SetSchemaGraphLayoutSOA = "[Tracing] Set Schema Graph Layout",
     SetGisGraphLayoutSOA = "[Tracing] Set Gis Graph Layout",
     SetNodeSizeSOA = "[Tracing] Set Node Size",
@@ -160,16 +160,10 @@ export class SetGraphTypeSOA implements Action {
     constructor(public payload: { graphType: GraphType }) {}
 }
 
-export class SetMapTypeSOA implements Action {
-    readonly type = TracingActionTypes.SetMapTypeSOA;
+export class SetMapSettingsSOA implements Action {
+    readonly type = TracingActionTypes.SetMapSettingsSOA;
 
-    constructor(public payload: { mapType: MapType }) {}
-}
-
-export class SetTileServerSOA implements Action {
-    readonly type = TracingActionTypes.SetTileServerSOA;
-
-    constructor(public payload: { tileServer: TileServer }) {}
+    constructor(public payload: { mapSettings: MapSettings }) {}
 }
 
 export class SetNodeSizeSOA implements Action {
@@ -445,8 +439,7 @@ export type TracingActions =
     | SetSchemaGraphLayoutSOA
     | SetGisGraphLayoutSOA
     | SetGraphTypeSOA
-    | SetMapTypeSOA
-    | SetTileServerSOA
+    | SetMapSettingsSOA
     | SetNodeSizeSOA
     | SetAdjustEdgeWidthToNodeSizeSOA
     | SetEdgeWidthSOA

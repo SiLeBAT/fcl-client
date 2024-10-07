@@ -346,15 +346,15 @@ export enum GraphType {
 }
 
 export enum TileServer {
-    MAPNIK,
+    MAPNIK = "MAPNIK",
     // the Black & White Map might be deactivatd only temporarily
     //BLACK_AND_WHITE,
 }
 
 export enum MapType { // please note: the order of the keys is relevant for presentation
-    TILES_ONLY,
-    SHAPE_ONLY,
-    TILES_AND_SHAPE,
+    TILES_ONLY = "TILES_ONLY",
+    SHAPE_ONLY = "SHAPE_ONLY",
+    TILES_AND_SHAPE = "TILES_AND_SHAPE",
 }
 
 export interface AvailableMaps {

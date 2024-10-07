@@ -15,6 +15,7 @@ import {
     DataServiceInputState,
     TileServer,
     AvailableMaps,
+    MapSettings,
 } from "@app/tracing/data.model";
 import { DataService } from "./../../../tracing/services/data.service";
 import { Utils as UIUtils } from "./../../../tracing/util/ui-utils";
@@ -122,16 +123,9 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         );
     }
 
-    setMapType(mapType: MapType) {
+    setMapSettings(mapSettings: MapSettings) {
         this.store.dispatch(
-            new tracingActions.SetMapTypeSOA({ mapType: mapType }),
-        );
-    }
-
-    // please note: TileServer.BLACK_AND_WHITE is temporarily deactivated
-    setTileServer(tileServer: TileServer) {
-        this.store.dispatch(
-            new tracingActions.SetTileServerSOA({ tileServer: tileServer }),
+            new tracingActions.SetMapSettingsSOA({ mapSettings: mapSettings }),
         );
     }
 

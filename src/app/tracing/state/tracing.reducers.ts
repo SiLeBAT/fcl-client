@@ -245,7 +245,7 @@ export function reducer(
                 },
             };
 
-        case TracingActionTypes.SetMapTypeSOA:
+        case TracingActionTypes.SetMapSettingsSOA:
             return {
                 ...state,
                 fclData: {
@@ -253,19 +253,7 @@ export function reducer(
                     graphSettings: {
                         ...state.fclData.graphSettings,
                         type: GraphType.GIS,
-                        mapType: action.payload.mapType,
-                    },
-                },
-            };
-
-        case TracingActionTypes.SetTileServerSOA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    graphSettings: {
-                        ...state.fclData.graphSettings,
-                        tileServer: action.payload.tileServer,
+                        ...action.payload.mapSettings,
                     },
                 },
             };

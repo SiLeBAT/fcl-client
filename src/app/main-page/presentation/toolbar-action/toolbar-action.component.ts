@@ -16,6 +16,7 @@ import {
     MapType,
     TileServer,
     AvailableMaps,
+    MapSettings,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
@@ -55,8 +56,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
-    @Output() mapType = new EventEmitter<MapType>();
-    @Output() tileServer = new EventEmitter<TileServer>();
+    @Output() mapSettings = new EventEmitter<MapSettings>();
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
@@ -123,13 +123,23 @@ export class ToolbarActionComponent implements OnChanges {
         this.graphType.emit(this.graphSettings.type);
     }
 
-    setTileServer(tileServer: TileServer): void {
-        this.tileServer.emit(tileServer);
-        this.setMapType(MapType.TILES_ONLY);
-    }
+    setMapSettings(userInput: MapType | TileServer): void {
+        const inputTypeTile = Object.values(TileServer).includes(
+            TileServer[userInput],
+        );
 
-    setMapType(mapType: MapType): void {
-        this.mapType.emit(mapType);
+        if (inputTypeTile) {
+            this.mapSettings.emit({
+                mapType: MapType.TILES_ONLY,
+                tileServer: TileServer[userInput],
+            });
+            return;
+        }
+
+        this.mapSettings.emit({
+            mapType: MapType[userInput],
+            tileServer: this.graphSettings.tileServer,
+        });
     }
 
     onSelectShapeFile(event): void {
