@@ -14,7 +14,6 @@ import {
     createOpenLayerMap,
     updateMapType,
     updateVectorLayerStyle,
-    createMapLayer,
 } from "@app/tracing/util/map-utils";
 
 interface TypedSimpleChange<T> extends SimpleChange {

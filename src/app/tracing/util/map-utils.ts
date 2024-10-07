@@ -52,19 +52,19 @@ export function createOpenLayerMap(
 
 export function createMapLayer(
     mapConfig: MapViewConfig,
-    map?,
+    map?: ol.Map,
 ): Array<BaseLayer> {
     const { mapType } = mapConfig;
 
     if (mapType === MapType.SHAPE_ONLY) {
         const baseLayer = createShapeFileLayer(
             mapConfig as NotNullish<ShapeFileSettings>,
-            map ? map : null,
+            map,
         );
         return [baseLayer];
     }
 
-    const baseLayer = createTileLayer(mapConfig, map ? map : null);
+    const baseLayer = createTileLayer(mapConfig, map);
     return [baseLayer];
 }
 
@@ -169,7 +169,7 @@ export const setLayerVisibility = (
     layerDataHasChanged: boolean,
     callback,
 ): void => {
-    const layerExisits = layer !== undefined && layer.setVisible !== undefined;
+    const layerExisits = layer?.setVisible !== undefined;
     // if layer does not exist and should not be visible, do nothing
     if (!layerExisits && !visibility) {
         return;
