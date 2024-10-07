@@ -21,6 +21,7 @@ import {
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
 import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
+import { isUndefined } from "lodash";
 
 @Component({
     selector: "fcl-toolbar-action",
@@ -36,9 +37,17 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() tracingActive: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
-        this.selectedMapTypeOption = "" + value.mapType;
+        const { mapType, tileServer } = value;
+
+        if (mapType === MapType.TILES_ONLY) {
+            this.selectedOption = "" + tileServer;
+        } else {
+            this.selectedOption = "" + mapType;
+        }
+
         this._graphSettings = value;
     }
+
     get graphSettings(): GraphSettings {
         return this._graphSettings;
     }
@@ -60,7 +69,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() downloadFile = new EventEmitter<string>();
 
     graphTypes = Constants.GRAPH_TYPES;
-    selectedMapTypeOption: string;
+    selectedOption: string;
     fileNameWoExt: string | null = null;
     exampleData: ExampleData[] = Constants.EXAMPLE_DATA_FILE_STRUCTURE;
 
@@ -145,7 +154,7 @@ export class ToolbarActionComponent implements OnChanges {
     onSelectShapeFile(event): void {
         // this is necessary, otherwise the 'Load Shape File...' option might stay active
         setTimeout(() => {
-            this.selectedMapTypeOption = "" + this._graphSettings.mapType;
+            this.selectedOption = "" + MapType.SHAPE_ONLY;
         }, 0);
 
         this.shapeFileInput.nativeElement.click();
