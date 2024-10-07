@@ -57,30 +57,15 @@ export function createOpenLayerMap(
 
 function createMapLayer(mapConfig: MapViewConfig): Array<BaseLayer> {
     const { mapType } = mapConfig;
-
-    // create a multi-layer map if both layers are present
-    if (mapType === MapType.TILES_AND_SHAPE) {
-        const topLayer = createShapeFileLayer(
+    if (mapType === MapType.SHAPE_ONLY) {
+        const baseLayer = createShapeFileLayer(
             mapConfig as NotNullish<ShapeFileSettings>,
         );
-        topLayer.set(LAYER_ID_KEY, SHAPE_LAYER_ID, true);
-
-        const bottomLayer = createTileLayer(mapConfig);
-        bottomLayer.set(LAYER_ID_KEY, TILE_LAYER_ID, true);
-
-        // please note: the order of the layers within the array is relevant -
-        // the shape layer needs to have a higher index than the map layer to be visible in the FE!
-        return [bottomLayer, topLayer];
-    }
-
-    // default: create a single-layer map
-    if(mapType === MapType.SHAPE_ONLY) {
-        const baseLayer = createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)
         baseLayer.set(LAYER_ID_KEY, SHAPE_LAYER_ID, true);
         return [baseLayer];
     }
 
-    const baseLayer = createTileLayer(mapConfig)
+    const baseLayer = createTileLayer(mapConfig);
     baseLayer.set(LAYER_ID_KEY, TILE_LAYER_ID, true);
     return [baseLayer];
 }
@@ -88,7 +73,7 @@ function createMapLayer(mapConfig: MapViewConfig): Array<BaseLayer> {
 function createTileLayer(
     mapConfig: Pick<MapSettings, "tileServer">,
 ): BaseLayer {
-    console.log('creating tile layer')
+    console.log("creating tile layer");
     const { tileServer } = mapConfig;
 
     return new Tile({
@@ -118,7 +103,7 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
 export function createShapeFileLayer(
     mapConfig: NotNullish<ShapeFileSettings>,
 ): BaseLayer {
-    console.log('creating shape file')
+    console.log("creating shape file");
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(
@@ -139,7 +124,7 @@ export function createShapeFileLayer(
 }
 
 function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
-    console.log('creating shape style')
+    console.log("creating shape style");
     return new Style({
         stroke: new Stroke({
             color: [
@@ -153,7 +138,7 @@ function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
 }
 
 function getMapLayer(map: ol.Map, layerType): Array<BaseLayer> {
-    console.log('getMapLayer')
+    console.log("getMapLayer");
     return map
         .getLayers()
         .getArray()
@@ -175,55 +160,75 @@ export function updateVectorLayerStyle(
     });
 }
 
-export const setLayerVisibility = (layer:BaseLayer, visibility:boolean):void => {
-    if (layer === undefined || layer.setVisible === undefined) {
+export const setLayerVisibility = (
+    layer: BaseLayer,
+    visibility: boolean,
+    callback,
+): void => {
+    const layerExisits = layer !== undefined && layer.setVisible !== undefined;
+    // if layer does not exist and should not be visible, do nothing
+    if (!layerExisits && !visibility) {
         return;
     }
 
-    layer.setVisible(visibility);
-}
+    // if layer does not exist but should be visible, let callback handle creation of layer
+    if (!layerExisits && visibility) {
+        callback();
+        return;
+    }
 
-export const insertLayer = (map:ol.Map, layer:BaseLayer) => {
+    // if visibility setting is already correct, do nothing
+    if (layer.getVisible() === visibility) {
+        return;
+    }
+
+    // if layer exists, toggle visibility
+    layer.setVisible(visibility);
+};
+
+export const insertLayer = (map: ol.Map, layer: BaseLayer) => {
+    // make sure, shape layer is always the last element in the array,
+    // so user can see the shape layer on top of the map layer when both layers are visible
     const mapLayers = map.getLayers();
-    const index = layer instanceof VectorLayer? mapLayers.getLength() : 0;
-    console.log(mapLayers.getLength(), mapLayers.getArray(), index, layer)
+    const index = layer instanceof VectorLayer ? mapLayers.getLength() : 0;
     mapLayers.insertAt(index, layer);
-    console.log(mapLayers)
-}
+    console.log(mapLayers);
+};
 
 export function updateMapType(map: ol.Map, mapConfig: MapViewConfig): void {
-    //removeMapLayer(map, );
-    let tileLayer = getMapLayer(map, TileLayer);
-    let shapeLayer = getMapLayer(map, VectorLayer);
-    const layers:BaseLayer[] = [];
+    const tileLayer = getMapLayer(map, TileLayer);
+    const shapeLayer = getMapLayer(map, VectorLayer);
+    const { mapType } = mapConfig;
+    const createMapCallback = () => {
+        const newLayer = createMapLayer(mapConfig);
+        insertLayer(map, newLayer[0]);
+    };
 
-    switch(mapConfig.mapType) {
-        case MapType.TILES_ONLY: 
+    switch (mapType) {
+        case MapType.TILES_ONLY:
             // hide shape
-            setLayerVisibility(shapeLayer[0], false);
-            // show or create tile
-            tileLayer.length === 0 ? 
-            insertLayer(map, createTileLayer(mapConfig)) :
-            setLayerVisibility(tileLayer[0], true);
+            setLayerVisibility(shapeLayer[0], false, createMapCallback);
+            // show tile
+            setLayerVisibility(tileLayer[0], true, createMapCallback);
             break;
-        case MapType.SHAPE_ONLY: 
+        case MapType.SHAPE_ONLY:
             // hide tile
-            setLayerVisibility(tileLayer[0], false);
-            // show or create shape
-            shapeLayer.length === 0 ? 
-            insertLayer(map, createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)) :
-            setLayerVisibility(shapeLayer[0], true);
+            setLayerVisibility(tileLayer[0], false, createMapCallback);
+            // show shape
+            setLayerVisibility(shapeLayer[0], true, createMapCallback);
             break;
         case MapType.TILES_AND_SHAPE:
-            // show or create tile
-            tileLayer.length === 0 ? 
-            insertLayer(map, createTileLayer(mapConfig)) :
-            setLayerVisibility(tileLayer[0], true);
-            // show or create shape
-            shapeLayer.length === 0 ? 
-            insertLayer(map, createShapeFileLayer(mapConfig as NotNullish<ShapeFileSettings>)) :
-            setLayerVisibility(shapeLayer[0], true);
+            // show shape --> option only available, if shape file present
+            // so no additional checks necessary
+            setLayerVisibility(shapeLayer[0], true, createMapCallback);
+            console.log(map.getLayers().getArray());
+            // show tile
+            setLayerVisibility(tileLayer[0], true, createMapCallback);
             break;
+        default:
+            throw new Error(
+                `MapType ${mapType} is not currently supported. Please review code or add MapType. This error should never occur in production. You are most likely seeing this, because you have changed the code.`,
+            );
     }
 }
 
