@@ -111,7 +111,8 @@ export class LoadFclDataFailureSOA implements Action {
 export class LoadShapeFileSuccessSOA implements Action {
     readonly type = TracingActionTypes.LoadShapeFileSuccessSOA;
 
-    constructor(public payload: { shapeFileData: ShapeFileData }) {}
+    constructor(public payload: { shapeFileData: ShapeFileData }) {    console.log('2')
+}
 }
 
 export class LoadShapeFileFailureMSA implements Action {

@@ -103,6 +103,7 @@ export class IOEffects {
             mergeMap((action) => {
                 const fileList: FileList = action.payload.dataSource;
                 if (fileList.length === 1) {
+                    console.log('1')
                     return from(
                         this.ioService.getShapeFileData(fileList[0]),
                     ).pipe(
