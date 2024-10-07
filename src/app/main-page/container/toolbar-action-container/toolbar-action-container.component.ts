@@ -13,7 +13,6 @@ import {
     GraphType,
     MapType,
     DataServiceInputState,
-    TileServer,
     AvailableMaps,
     MapSettings,
 } from "@app/tracing/data.model";

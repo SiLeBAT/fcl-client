@@ -9,7 +9,6 @@ import {
     SetHighlightingSettingsPayload,
     Layout,
     MergeDeliveriesType,
-    MapType,
     ShapeFileData,
     CrossContTraceType,
     DeliveryId,
@@ -19,7 +18,6 @@ import {
     DeliveryHighlightingRule,
     JsonDataExtract,
     Color,
-    TileServer,
     MapSettings,
 } from "../data.model";
 import { SetStationGroupsPayload } from "./../grouping/model";

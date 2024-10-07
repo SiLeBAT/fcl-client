@@ -19,8 +19,6 @@ import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
 import { NotNullish } from "./utility-types";
 import TileLayer from "ol/layer/Tile";
-import { indexOf } from "lodash";
-import LayerType from "ol/LayerType";
 
 export interface RectConfig {
     left: number;

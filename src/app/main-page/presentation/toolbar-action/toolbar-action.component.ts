@@ -20,8 +20,6 @@ import {
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData } from "../../model/types";
-import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
-import { isUndefined } from "lodash";
 
 @Component({
     selector: "fcl-toolbar-action",
