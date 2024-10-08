@@ -259,7 +259,7 @@ export function importValue<X extends RefinedTypeString>(
     const inputValue = getCleanedInput(row[colIndex]);
     let value: TypeString2Type<X> | undefined;
     if (inputValue === undefined) {
-        if (required === true) {
+        if (required) {
             addIssueCb(
                 {
                     col: colIndex,
@@ -334,6 +334,8 @@ export function importRef(
     return inputValue;
 }
 
+// I wonder if it would be better if these lowest level import functions simply returned their error,
+// instead of having to handle addIssueCb and returning undefined?
 export function importPrimaryKey(
     row: Row,
     colIndex: number,
