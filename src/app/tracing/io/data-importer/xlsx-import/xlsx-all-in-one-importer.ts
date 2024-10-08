@@ -517,8 +517,8 @@ export class AllInOneImporter implements XlsxImporter {
     }
 }
 
-// Ich würde total gerne all diese "const addIssueCallback = same thing over and over" am anfang der functionen auslagern,
-// aber bin mir nicht sicher wie.
+// I would like to move all the "const addIssueCallback = same thing again" from the beggining of the functions
+// to remove repetition, but I am not certain how to go about that.
 function getEnrichedIssueCallback(
     addIssueCallback: AddIssueCallback,
     row: Row,
