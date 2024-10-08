@@ -1,7 +1,7 @@
 import { DeliveryRow, MappingDef, StationRow } from "./model";
 import { ColumnLabelTree } from "./xlsx-reader";
 
-const ADDITIONAL_FIELDS_COLUMN = "Additional Fields ->" as const;
+const ADDITIONAL_FIELDS_COLUMN = "Additional Fields ->";
 const DATE_SUB_COLUMNS: [string, string, string] = ["Day", "Month", "Year"];
 const AMOUNT_SUB_COLUMNS: [string, string] = ["Quantity", "Type / Unit"];
 
