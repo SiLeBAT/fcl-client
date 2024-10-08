@@ -9,7 +9,6 @@ import {
     MappingDef,
     NumberTypeString,
     RefinedTypeString,
-    RowWithOtherProps,
     StationRow,
 } from "./model";
 import { BasicTypeString, CellValue, Row, Table } from "./xlsx-reader";
@@ -47,15 +46,14 @@ const LONGITUDE_LIMITS = {
     max: 180,
 } as const;
 
-export function addOtherProps(
+export function getOtherPropsFromCollumnMapping(
     fromRow: Row,
     table: Table,
-    toRow: Partial<RowWithOtherProps>,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
-): void {
-    toRow.otherProps ??= {};
-    for (const columnMapping of columnMappings) {
+): Record<string, CellValue> {
+    const properties: Record<string, CellValue> = {};
+    columnMappings.forEach((columnMapping) => {
         const value = importValue(
             fromRow,
             table,
@@ -64,19 +62,20 @@ export function addOtherProps(
             addIssueCb,
         );
         if (value !== undefined) {
-            toRow.otherProps[columnMapping.toPropId] = value;
+            properties[columnMapping.toPropId] = value;
         }
-    }
+    });
+    return properties;
 }
 
-export function addOptionalColumnProps<T>(
+export function getPropsFromCollumnMapping<T>(
     fromRow: Row,
     table: Table,
-    toRow: Partial<StationRow | DeliveryRow>,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
-): void {
-    for (const columnMapping of columnMappings) {
+): Partial<T> {
+    const properties: Partial<T> = {};
+    columnMappings.forEach((columnMapping) => {
         const value = importValue(
             fromRow,
             table,
@@ -85,9 +84,10 @@ export function addOptionalColumnProps<T>(
             addIssueCb,
         );
         if (value !== undefined) {
-            toRow[columnMapping.toPropId] = value;
+            properties[columnMapping.toPropId] = value;
         }
-    }
+    });
+    return properties;
 }
 
 export function enrichImportIssue(
@@ -295,7 +295,7 @@ export function importValue<X extends RefinedTypeString>(
     return value;
 }
 
-export function importStationRef(
+export function importStationReference(
     row: Row,
     table: Table,
     colIndex: number,
@@ -332,43 +332,37 @@ export function importRef(
             },
             true,
         );
-    } else {
-        if (!allowedValues.has(inputValue)) {
-            addIssueCb(
-                {
-                    col: colIndex,
-                    type: "error",
-                    msg: IMPORT_ISSUES.invalidRef,
-                },
-                true,
-            );
-        }
+    } else if (!allowedValues.has(inputValue)) {
+        addIssueCb(
+            {
+                col: colIndex,
+                type: "error",
+                msg: IMPORT_ISSUES.invalidRef,
+            },
+            true,
+        );
     }
     return inputValue;
 }
 
-export function importPk(
+export function importPrimaryKey(
     row: Row,
-    table: Table,
     colIndex: number,
     usedPks: { has: (x: string) => boolean },
-    addIssueCb: AddIssueCallback,
-): string | undefined {
+): string | ImportIssue {
     const inputValue = getCleanedStringOrUndefined(row[colIndex]);
     if (inputValue === undefined) {
-        addIssueCb({
+        return {
             col: colIndex,
             type: "error",
             msg: IMPORT_ISSUES.missingValue,
-        });
-        return undefined;
+        };
     } else if (usedPks.has(inputValue)) {
-        addIssueCb({
+        return {
             col: colIndex,
             type: "error",
             msg: IMPORT_ISSUES.nonUniqueValue,
-        });
-        return undefined;
+        };
     }
     return inputValue;
 }
@@ -391,7 +385,7 @@ export function importMandatoryString(
     return inputValue;
 }
 
-export function importAggAmount(
+export function importAggregateAmount(
     row: Row,
     amountColumns: AmountColumns,
 ): string | undefined {
@@ -547,7 +541,7 @@ function getFormatedStrDate(
     return dateParts.length > 0 ? dateParts.join("-") : undefined;
 }
 
-export function importStrDate(
+export function importStringDate(
     row: Row,
     table: Table,
     dateCols: {
