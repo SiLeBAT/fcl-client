@@ -105,7 +105,6 @@ function importStation(
 
     extId = importPk(
         row,
-        table,
         StationColumn.EXT_ID,
         extIdRegister,
         addIssueCbWrapper,
@@ -121,14 +120,8 @@ function importStation(
         otherProps: {},
     };
 
-    addOptionalColumnProps(
-        row,
-        table,
-        statRow,
-        optionalColumnMappings,
-        addIssueCb,
-    );
-    addOtherProps(row, table, statRow, otherColumnMappings, addIssueCb);
+    addOptionalColumnProps(row, statRow, optionalColumnMappings, addIssueCb);
+    addOtherProps(row, statRow, otherColumnMappings, addIssueCb);
 
     return statRow;
 }
@@ -157,7 +150,6 @@ function importDelivery(
 
     extId = importPk(
         row,
-        table,
         DeliveryColumn.EXT_ID,
         extDeliveryIdRegister,
         addIssueCbWrapper,
@@ -166,14 +158,12 @@ function importDelivery(
         extId: extId,
         source: importStationRef(
             row,
-            table,
             DeliveryColumn.SOURCE,
             extStationIdRegister,
             addIssueCbWrapper,
         ),
         target: importStationRef(
             row,
-            table,
             DeliveryColumn.TARGET,
             extStationIdRegister,
             addIssueCbWrapper,
@@ -182,7 +172,6 @@ function importDelivery(
         lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
         dateOut: importStrDate(
             row,
-            table,
             {
                 y: DeliveryColumn.DATE_OUT_YEAR,
                 m: DeliveryColumn.DATE_OUT_MONTH,
@@ -193,7 +182,6 @@ function importDelivery(
         ),
         dateIn: importStrDate(
             row,
-            table,
             {
                 y: DeliveryColumn.DATE_IN_YEAR,
                 m: DeliveryColumn.DATE_IN_MONTH,
@@ -208,7 +196,6 @@ function importDelivery(
         }),
         lotAmountNumber: importValue(
             row,
-            table,
             DeliveryColumn.LOT_AMOUNT_NUMBER,
             "nonneg:number",
             addIssueCbWrapper,
@@ -220,12 +207,11 @@ function importDelivery(
 
     addOptionalColumnProps(
         row,
-        table,
         delRow,
         optionalColumnMappings,
         addIssueCbWrapper,
     );
-    addOtherProps(row, table, delRow, otherColumnMappings, addIssueCbWrapper);
+    addOtherProps(row, delRow, otherColumnMappings, addIssueCbWrapper);
 
     return delRow;
 }
@@ -494,14 +480,12 @@ export class AllInOneImporter implements XlsxImporter {
             const del2DelRow: Partial<Del2DelRow> = {
                 from: importDeliveryRef(
                     row,
-                    table,
                     Del2DelColumn.FROM,
                     this.extId2DeliveryRow,
                     addIssueCb,
                 ),
                 to: importDeliveryRef(
                     row,
-                    table,
                     Del2DelColumn.TO,
                     this.extId2DeliveryRow,
                     addIssueCb,

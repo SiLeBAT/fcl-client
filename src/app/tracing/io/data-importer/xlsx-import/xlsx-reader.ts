@@ -12,13 +12,13 @@ export type CellValue = number | string | boolean;
 export type BasicTypeString = "string" | "number" | "boolean";
 export type ColumnHeader = string[];
 
-export interface TablePosition {
+export interface CellPosition {
     row: number;
     col: number;
 }
 
 export interface ReadTableOptions {
-    offset?: TablePosition;
+    offset?: CellPosition;
     maxColumnIndex?: number;
 }
 
@@ -32,7 +32,7 @@ export interface Row {
     [x: number]: CellValue;
 }
 
-const DEFAULT_TABLE_POSITION: TablePosition = { col: 1, row: 1 };
+const DEFAULT_TABLE_POSITION: CellPosition = { col: 1, row: 1 };
 
 interface ColumnHeaderTree {
     label: string;
@@ -141,7 +141,7 @@ function getLeaveColumns(columnHeaders: ColumnHeaderTree[]): ColumnHeader[] {
 
 function readTableHeader(
     ws: Excel.Worksheet,
-    offset: TablePosition,
+    offset: CellPosition,
 ): TableHeader {
     const excelRow = ws.getRow(offset.row);
     const columnHeaders: ColumnHeaderTree[] = [];
@@ -283,7 +283,7 @@ export interface Table {
     header: TableHeader;
     columns: ColumnInfo[];
     rows: Row[];
-    offset: TablePosition;
+    offset: CellPosition;
 }
 
 export class XlsxSheetReader {
@@ -292,7 +292,7 @@ export class XlsxSheetReader {
     validateTableHeader(
         columnHeaders: ColumnLabelTree[],
         throwError: boolean = false,
-        offset: TablePosition = DEFAULT_TABLE_POSITION,
+        offset: CellPosition = DEFAULT_TABLE_POSITION,
     ): boolean {
         let colIndex = offset.col;
         for (const columnHeader of columnHeaders) {
@@ -355,7 +355,7 @@ export class XlsxSheetReader {
     }
 
     readTable(options: ReadTableOptions = {}): Table {
-        const offset: TablePosition = options.offset ?? DEFAULT_TABLE_POSITION;
+        const offset: CellPosition = options.offset ?? DEFAULT_TABLE_POSITION;
 
         const tableHeader = readTableHeader(this.ws, offset);
         const tableBody = readTableBody(this.ws, {

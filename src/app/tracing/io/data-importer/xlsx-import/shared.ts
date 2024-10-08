@@ -49,7 +49,6 @@ const LONGITUDE_LIMITS = {
 
 export function addOtherProps(
     fromRow: Row,
-    table: Table,
     toRow: Partial<RowWithOtherProps>,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
@@ -58,7 +57,6 @@ export function addOtherProps(
     for (const columnMapping of columnMappings) {
         const value = importValue(
             fromRow,
-            table,
             columnMapping.fromIndex,
             columnMapping.type,
             addIssueCb,
@@ -71,7 +69,6 @@ export function addOtherProps(
 
 export function addOptionalColumnProps<T>(
     fromRow: Row,
-    table: Table,
     toRow: Partial<StationRow | DeliveryRow>,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
@@ -79,7 +76,6 @@ export function addOptionalColumnProps<T>(
     for (const columnMapping of columnMappings) {
         const value = importValue(
             fromRow,
-            table,
             columnMapping.fromIndex,
             columnMapping.type,
             addIssueCb,
@@ -105,8 +101,11 @@ export function enrichImportIssue(
     if (invalidateRow) {
         issue.invalidatesRow = true;
     }
-    if (issue.col !== undefined && issue.colRef !== undefined) {
+    if (issue.col !== undefined && issue.colRef === undefined) {
         // col is supposed to be the zero based relative index in the table
+        if (row[issue.col] !== undefined) {
+            issue.value = row[issue.col];
+        }
         issue.colRef = table.header.columnHeaders[issue.col];
         issue.col += table.offset.col;
         // col is now an absolute 1 based index
@@ -177,22 +176,16 @@ export function getCleanedStringOrUndefined(
     value: CellValue | undefined,
 ): string | undefined {
     if (typeof value === "string") {
-        value = value.trim();
-        if (value === "") {
-            value = undefined;
-        }
+        return value.trim() || undefined;
     } else if (value !== undefined) {
         return `${value}`;
     }
-    return value;
+    return undefined;
 }
 
 function getCleanedInput(value: CellValue | undefined): CellValue | undefined {
     if (typeof value === "string") {
-        value = value.trim();
-        if (value === "") {
-            value = undefined;
-        }
+        return value.trim() || undefined;
     }
     return value;
 }
@@ -257,7 +250,6 @@ function conditionalConcat(
 
 export function importValue<X extends RefinedTypeString>(
     row: Row,
-    table: Table,
     colIndex: number,
     reqType: X,
     addIssueCb: AddIssueCallback,
@@ -297,27 +289,24 @@ export function importValue<X extends RefinedTypeString>(
 
 export function importStationRef(
     row: Row,
-    table: Table,
     colIndex: number,
     allowedValues: { has: (x: string) => boolean },
     addIssueCb: AddIssueCallback,
 ): string | undefined {
-    return importRef(row, table, colIndex, allowedValues, addIssueCb);
+    return importRef(row, colIndex, allowedValues, addIssueCb);
 }
 
 export function importDeliveryRef(
     row: Row,
-    table: Table,
     colIndex: number,
     allowedValues: { has: (x: string) => boolean },
     addIssueCb: AddIssueCallback,
 ): string | undefined {
-    return importRef(row, table, colIndex, allowedValues, addIssueCb);
+    return importRef(row, colIndex, allowedValues, addIssueCb);
 }
 
 export function importRef(
     row: Row,
-    table: Table,
     colIndex: number,
     allowedValues: { has: (x: string) => boolean },
     addIssueCb: AddIssueCallback,
@@ -349,7 +338,6 @@ export function importRef(
 
 export function importPk(
     row: Row,
-    table: Table,
     colIndex: number,
     usedPks: { has: (x: string) => boolean },
     addIssueCb: AddIssueCallback,
@@ -375,7 +363,6 @@ export function importPk(
 
 export function importMandatoryString(
     row: Row,
-    table: Table,
     colIndex: number,
     addIssueCb: AddIssueCallback,
 ): string | undefined {
@@ -549,7 +536,6 @@ function getFormatedStrDate(
 
 export function importStrDate(
     row: Row,
-    table: Table,
     dateCols: {
         y: number;
         m: number;

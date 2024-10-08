@@ -31,6 +31,7 @@ export interface ImportIssue {
     row?: number;
     type?: "error" | "warning";
     msg?: string;
+    value?: CellValue;
     invalidatesRow?: boolean;
 }
 
