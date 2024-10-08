@@ -460,18 +460,23 @@ function getValidIntegerInRangeOrUndefined(
     if (value === undefined) {
         return undefined;
     }
-    const valueType = typeof value;
-    const numValue =
-        valueType === "number"
-            ? value
-            : valueType === "string"
-              ? Number(value)
-              : NaN;
+    const numValue = getNumValue(value);
     return !Number.isNaN(numValue) &&
         Number.isInteger(numValue) &&
         isInRange(numValue, min, max)
         ? numValue
         : undefined;
+}
+
+function getNumValue(value) {
+    switch (typeof value) {
+        case "number":
+            return value;
+        case "string":
+            return Number(value);
+        default:
+            return NaN;
+    }
 }
 
 function getValidYearOrUndefined(
