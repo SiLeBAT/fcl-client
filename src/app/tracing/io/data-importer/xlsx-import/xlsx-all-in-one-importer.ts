@@ -120,14 +120,12 @@ function importStation(
         ),
         otherProps: getOtherPropsFromCollumnMapping(
             row,
-            table,
             otherColumnMappings,
             //This was using addIssueCallback directly before, and I am not sure if it should be changed.
             enrichedIssueCallback,
         ),
         ...getPropsFromCollumnMapping(
             row,
-            table,
             optionalColumnMappings,
             //This was using addIssueCallback directly before, and I am not sure if it should be changed.
             enrichedIssueCallback,
@@ -169,14 +167,12 @@ function importDelivery(
         extId: externalId,
         source: importStationReference(
             row,
-            table,
             DeliveryColumn.SOURCE,
             extStationIdRegister,
             enrichedIssueCallback,
         ),
         target: importStationReference(
             row,
-            table,
             DeliveryColumn.TARGET,
             extStationIdRegister,
             enrichedIssueCallback,
@@ -185,7 +181,6 @@ function importDelivery(
         lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
         dateOut: importStringDate(
             row,
-            table,
             {
                 y: DeliveryColumn.DATE_OUT_YEAR,
                 m: DeliveryColumn.DATE_OUT_MONTH,
@@ -196,7 +191,6 @@ function importDelivery(
         ),
         dateIn: importStringDate(
             row,
-            table,
             {
                 y: DeliveryColumn.DATE_IN_YEAR,
                 m: DeliveryColumn.DATE_IN_MONTH,
@@ -211,7 +205,6 @@ function importDelivery(
         }),
         lotAmountNumber: importValue(
             row,
-            table,
             DeliveryColumn.LOT_AMOUNT_NUMBER,
             "nonneg:number",
             enrichedIssueCallback,
@@ -221,13 +214,11 @@ function importDelivery(
         ),
         ...getPropsFromCollumnMapping(
             row,
-            table,
             optionalColumnMappings,
             enrichedIssueCallback,
         ),
         otherProps: getOtherPropsFromCollumnMapping(
             row,
-            table,
             otherColumnMappings,
             enrichedIssueCallback,
         ),
@@ -497,14 +488,12 @@ export class AllInOneImporter implements XlsxImporter {
             const del2DelRow: Partial<Del2DelRow> = {
                 from: importDeliveryRef(
                     row,
-                    table,
                     Del2DelColumn.FROM,
                     this.extId2DeliveryRow,
                     addIssueCallback,
                 ),
                 to: importDeliveryRef(
                     row,
-                    table,
                     Del2DelColumn.TO,
                     this.extId2DeliveryRow,
                     addIssueCallback,

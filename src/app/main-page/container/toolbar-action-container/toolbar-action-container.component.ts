@@ -102,10 +102,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.loadFile(fileList);
     }
 
-    // onSelectModelFile() {
-    //     this.checkConditionsAndLoadFile(() =>
-    //         this.toolbarActionComponent.clickModelFileInputElement(),
-    //     );
     onSelectModelFile(type: ModelFileType) {
         this.checkConditionsAndLoadFile(() =>
             this.toolbarActionComponent.prepareAndClickModelFileInputElement(
