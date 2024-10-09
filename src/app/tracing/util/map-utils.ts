@@ -167,7 +167,7 @@ export const setLayerVisibility = (
     layer: BaseLayer,
     visibility: boolean,
     layerDataHasChanged: boolean,
-    callback,
+    createMapLayerCallback,
 ): void => {
     const layerExisits = layer?.setVisible !== undefined;
     // if layer does not exist and should not be visible, do nothing
@@ -177,7 +177,7 @@ export const setLayerVisibility = (
 
     // if layer data has changed or layer does not exist but should be visible, let callback handle creation of layer
     if ((!layerExisits || layerDataHasChanged) && visibility) {
-        callback();
+        createMapLayerCallback();
         return;
     }
 
