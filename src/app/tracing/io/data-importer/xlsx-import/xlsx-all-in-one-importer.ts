@@ -17,8 +17,8 @@ import {
     StationColumn,
 } from "./xlsx-all-in-one-import-model";
 import {
-    getPropsFromCollumnMapping,
-    getOtherPropsFromCollumnMapping,
+    getOptionalPropsFromRow,
+    getOtherPropsFromRow,
     createEmptyImportTable,
     enrichImportIssue,
     getLongUniqueDeliveryId,
@@ -73,21 +73,13 @@ class Register {
     }
 }
 
-function getOptionalStationColumnMapping(table: Table): ColumnMapping[] {
-    return getOptionalColumnMapping(table, OPTIONAL_STATION_COLUMNS);
-}
-
-function getOptionalDeliveryColumnMapping(table: Table): ColumnMapping[] {
-    return getOptionalColumnMapping(table, OPTIONAL_DELIVERY_COLUMNS);
-}
-
 function importStation(
     row: Row,
     table: Table,
     optionalColumnMappings: ColumnMapping[],
     otherColumnMappings: ColumnMapping[],
     extIdRegister: Register,
-    addIssueCallback: AddIssueCallback,
+    externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneStationRow> {
     const externalIdFetch = importPrimaryKey(
         row,
@@ -95,7 +87,7 @@ function importStation(
         extIdRegister,
     );
     if (typeof externalIdFetch !== "string") {
-        addIssueCallback(
+        externalAddIssueCallback(
             enrichImportIssue(externalIdFetch, row, table, false),
             false,
         );
@@ -103,8 +95,9 @@ function importStation(
     const externalId =
         typeof externalIdFetch === "string" ? externalIdFetch : undefined;
 
-    const enrichedIssueCallback = getEnrichedIssueCallback(
-        addIssueCallback,
+    // TODO REVERT
+    const internalAddIssueCallback = getEnrichedIssueCallback(
+        externalAddIssueCallback,
         row,
         table,
         externalId,
@@ -118,17 +111,17 @@ function importStation(
         typeOfBusiness: getStringOrUndefined(
             row[StationColumn.TYPE_OF_BUSINESS],
         ),
-        otherProps: getOtherPropsFromCollumnMapping(
+        otherProps: getOtherPropsFromRow(
             row,
             otherColumnMappings,
             //This was using addIssueCallback directly before, and I am not sure if it should be changed.
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
-        ...getPropsFromCollumnMapping(
+        ...getOptionalPropsFromRow(
             row,
             optionalColumnMappings,
             //This was using addIssueCallback directly before, and I am not sure if it should be changed.
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
     };
 }
@@ -212,14 +205,14 @@ function importDelivery(
         lotAmountUnit: getStringOrUndefined(
             row[DeliveryColumn.LOT_AMOUNT_UNIT],
         ),
-        ...getPropsFromCollumnMapping(
-            row,
-            optionalColumnMappings,
-            enrichedIssueCallback,
-        ),
-        otherProps: getOtherPropsFromCollumnMapping(
+        otherProps: getOtherPropsFromRow(
             row,
             otherColumnMappings,
+            enrichedIssueCallback,
+        ),
+        ...getOptionalPropsFromRow(
+            row,
+            optionalColumnMappings,
             enrichedIssueCallback,
         ),
     };
@@ -299,26 +292,32 @@ export class AllInOneImporter implements XlsxImporter {
 
         const importTable = createEmptyImportTable<AllInOneStationRow>();
 
-        const optionalColumnMappings = getOptionalStationColumnMapping(table);
+        const optionalColumnMappings = getOptionalColumnMapping(
+            table,
+            OPTIONAL_STATION_COLUMNS,
+        );
         const otherColumnMappings = getOtherColumns(
             table,
             StationColumn.ADDCOLS + 1,
             optionalColumnMappings.map((m) => m.fromIndex),
         );
 
-        table.rows.forEach((row) => {
-            let rowIsInvalid = false;
-            const addIssueCallback: AddIssueCallback = (
-                issue: ImportIssue,
-                invalidateRow: boolean = false,
-            ) => {
-                importTable.issues.push(
-                    enrichImportIssue(issue, row, table, invalidateRow),
-                );
-                rowIsInvalid ||= invalidateRow;
-            };
+        let row: Row;
+        let rowIsInvalid: boolean;
+        const addIssueCallback: AddIssueCallback = (
+            issue: ImportIssue,
+            invalidateRow: boolean = false,
+        ) => {
+            importTable.issues.push(
+                enrichImportIssue(issue, row, table, invalidateRow),
+            );
+            rowIsInvalid ||= invalidateRow;
+        };
 
-            const statRow = importStation(
+        for (row of table.rows) {
+            rowIsInvalid = false;
+
+            const stationRow = importStation(
                 row,
                 table,
                 optionalColumnMappings,
@@ -327,14 +326,12 @@ export class AllInOneImporter implements XlsxImporter {
                 addIssueCallback,
             );
 
-            if (statRow.extId) {
-                externalIdRegister.add(statRow.extId);
+            if (stationRow.extId) {
+                externalIdRegister.add(stationRow.extId);
             }
 
-            if (rowIsInvalid) {
-                addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
-            } else {
-                const longUniqueId = getLongUniqueStationId(statRow);
+            if (!rowIsInvalid) {
+                const longUniqueId = getLongUniqueStationId(stationRow);
                 if (longUniqueId2RowIndexMap.has(longUniqueId)) {
                     addIssueCallback(
                         {
@@ -347,16 +344,20 @@ export class AllInOneImporter implements XlsxImporter {
                     );
                 } else {
                     longUniqueId2RowIndexMap.set(longUniqueId, row.rowIndex);
-                    statRow.id = getShortUniqueStationIdFromLongId(
+                    stationRow.id = getShortUniqueStationIdFromLongId(
                         longUniqueId,
                         idSet,
                     );
 
-                    idSet.add(statRow.id);
-                    importTable.rows.push(statRow as AllInOneStationRow);
+                    idSet.add(stationRow.id);
+                    importTable.rows.push(stationRow as AllInOneStationRow);
                 }
             }
-        });
+            // This is not a If-Else, check has to happen last, since the invalid state could still be modified in a callback.
+            if (rowIsInvalid) {
+                addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
+            }
+        }
 
         importTable.omittedRows = table.rows.length - importTable.rows.length;
 
@@ -392,7 +393,10 @@ export class AllInOneImporter implements XlsxImporter {
             rowIsInvalid ||= invalidateRow;
         };
 
-        const optionalColumnMappings = getOptionalDeliveryColumnMapping(table);
+        const optionalColumnMappings = getOptionalColumnMapping(
+            table,
+            OPTIONAL_DELIVERY_COLUMNS,
+        );
         const otherColumnMappings = getOtherColumns(
             table,
             DeliveryColumn.ADDCOLS + 1,
@@ -446,6 +450,7 @@ export class AllInOneImporter implements XlsxImporter {
                 }
             }
 
+            // This is not a If-Else, check has to happen last, since the invalid state could still be modified in a callback.
             if (rowIsInvalid) {
                 addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
             }

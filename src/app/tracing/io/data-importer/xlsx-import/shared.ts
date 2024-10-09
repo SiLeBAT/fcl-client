@@ -46,7 +46,9 @@ const LONGITUDE_LIMITS = {
     max: 180,
 } as const;
 
-export function getOtherPropsFromCollumnMapping(
+// I would like to have one of these functions call the other,
+// or both of them call some shared utility, since their implementation is almost identical.
+export function getOtherPropsFromRow(
     fromRow: Row,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
@@ -66,7 +68,7 @@ export function getOtherPropsFromCollumnMapping(
     return properties;
 }
 
-export function getPropsFromCollumnMapping<T>(
+export function getOptionalPropsFromRow<T>(
     fromRow: Row,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
