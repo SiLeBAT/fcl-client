@@ -95,7 +95,6 @@ function importStation(
     const externalId =
         typeof externalIdFetch === "string" ? externalIdFetch : undefined;
 
-    // TODO REVERT
     const internalAddIssueCallback = (
         issue: ImportIssue,
         invalidateRow: boolean = false,

@@ -180,12 +180,12 @@ function readTableBody(
         maxColumnIndex,
     } = options;
 
-    const columnIndex2Types: Set<BasicTypeString>[] = Array.from(
+    const columnIndex2Types = Array.from(
         { length: maxColumnIndex - columnOffset },
-        () => new Set(),
+        () => new Set<BasicTypeString>(),
     );
 
-    const startRowIndex = rowOffset ?? 1;
+    const startRowIndex = rowOffset;
     const maxRowIndex = workSheet.rowCount;
 
     for (let rowIndex = startRowIndex; rowIndex <= maxRowIndex; rowIndex++) {
@@ -201,6 +201,7 @@ function readTableBody(
             const relativeColumnIndex = colIndex - columnOffset;
             const { col: workSheetColumn, value: cellValue } =
                 workSheetRow.getCell(colIndex);
+
             if (isNullish(cellValue)) {
                 continue;
             }
@@ -231,7 +232,7 @@ function readTableBody(
         }
 
         if (isRowEmpty) {
-            break;
+            continue;
         }
 
         tableRows.push(tableRow);
