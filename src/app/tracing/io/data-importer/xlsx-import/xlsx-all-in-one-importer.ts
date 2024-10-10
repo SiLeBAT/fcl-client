@@ -31,6 +31,7 @@ import {
     getStringOrUndefined,
     importAggAmount,
     importDeliveryRef,
+    importMandatoryString,
     importPk,
     importStationRef,
     importStrDate,
@@ -169,7 +170,11 @@ function importDelivery(
             addIssueCbWrapper,
         ),
         productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
-        lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
+        lotNumber: importMandatoryString(
+            row,
+            DeliveryColumn.LOT_NUMBER,
+            addIssueCbWrapper,
+        ),
         dateOut: importStrDate(
             row,
             {

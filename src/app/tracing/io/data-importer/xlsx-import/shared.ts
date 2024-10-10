@@ -14,6 +14,11 @@ import {
 } from "./model";
 import { BasicTypeString, CellValue, Row, Table } from "./xlsx-reader";
 import * as _ from "lodash";
+import {
+    isDayValid,
+    isMonthValid,
+    isYearValid,
+} from "../../../util/date-utils";
 
 type TypeString2Type<T extends RefinedTypeString> = T extends NumberTypeString
     ? number
@@ -138,12 +143,17 @@ export function getOtherColumns(
         type: getMergedType(table.columns[index].types),
     }));
 
-    const filteredColumnMappings = columnMappings.filter(
+    let filteredColumnMappings = columnMappings.filter(
         (col) =>
             col.fromIndex >= startIndex &&
             !ignoreIndicesSet.has(col.fromIndex) &&
             col.type !== undefined,
     ) as ColumnMapping[];
+    // filters duplicates
+    filteredColumnMappings = _.uniqBy(
+        filteredColumnMappings,
+        (colMapping) => colMapping.toPropId,
+    );
     return filteredColumnMappings;
 }
 
@@ -226,17 +236,17 @@ function getNonNegNumber(value: any): number | undefined {
         : undefined;
 }
 
-const TYPESTRING_2_FUN = {
+const TYPESTRING_2_FUN: {
+    [T in RefinedTypeString]: (
+        x: CellValue | undefined,
+    ) => TypeString2Type<T> | undefined;
+} = {
     lat: getLat,
     lon: getLon,
     "nonneg:number": getNonNegNumber,
     number: getNumber,
     string: getStringOrUndefined,
     boolean: getBoolean,
-} as const satisfies {
-    [T in RefinedTypeString]: (
-        x: CellValue | undefined,
-    ) => TypeString2Type<T> | undefined;
 };
 
 function conditionalConcat(
@@ -257,22 +267,8 @@ export function importValue<X extends RefinedTypeString>(
     invalidateRow = false,
 ): TypeString2Type<X> | undefined {
     const inputValue = getCleanedInput(row[colIndex]);
-    let value: TypeString2Type<X> | undefined;
-    if (inputValue === undefined) {
-        if (required === true) {
-            addIssueCb(
-                {
-                    col: colIndex,
-                    type: "error",
-                    msg: IMPORT_ISSUES.missingValue,
-                },
-                invalidateRow,
-            );
-        }
-    } else {
-        value = TYPESTRING_2_FUN[reqType](inputValue) as
-            | TypeString2Type<X>
-            | undefined;
+    if (inputValue !== undefined) {
+        const value = TYPESTRING_2_FUN[reqType](inputValue);
         if (value === undefined) {
             addIssueCb(
                 {
@@ -283,8 +279,18 @@ export function importValue<X extends RefinedTypeString>(
                 invalidateRow,
             );
         }
+        return value;
+    } else if (required) {
+        addIssueCb(
+            {
+                col: colIndex,
+                type: "error",
+                msg: IMPORT_ISSUES.missingValue,
+            },
+            invalidateRow,
+        );
     }
-    return value;
+    return undefined;
 }
 
 export function importStationRef(
@@ -368,11 +374,14 @@ export function importMandatoryString(
 ): string | undefined {
     const inputValue = getCleanedStringOrUndefined(row[colIndex]);
     if (inputValue === undefined) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.missingValue,
-        });
+        addIssueCb(
+            {
+                col: colIndex,
+                type: "error",
+                msg: IMPORT_ISSUES.missingValue,
+            },
+            true,
+        );
         return undefined;
     }
     return inputValue;
@@ -455,42 +464,24 @@ function isInRange(value: number, min: number, max: number): boolean {
     return value >= min && value <= max;
 }
 
-function getValidIntegerInRangeOrUndefined(
-    value: any,
-    min: number,
-    max: number,
-): number | undefined {
-    if (value === undefined) {
-        return undefined;
-    }
-    const valueType = typeof value;
-    const numValue =
-        valueType === "number"
-            ? value
-            : valueType === "string"
-              ? Number(value)
-              : NaN;
-    return !Number.isNaN(numValue) &&
-        Number.isInteger(numValue) &&
-        isInRange(numValue, min, max)
-        ? numValue
-        : undefined;
-}
-
 function getValidYearOrUndefined(
-    inputYear: CellValue | undefined,
+    year: CellValue | undefined,
 ): number | undefined {
-    return getValidIntegerInRangeOrUndefined(inputYear, 1000, 9999);
+    const numYear = Number(year);
+    if (isYearValid(numYear)) {
+        return numYear;
+    }
+    return undefined;
 }
 
 function getValidMonthOrUndefined(
-    inputMonth: CellValue | undefined,
+    month: CellValue | undefined,
 ): number | undefined {
-    return getValidIntegerInRangeOrUndefined(inputMonth, 1, 12);
-}
-
-function isLeapYear(year: number): boolean {
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    const numMonth = Number(month);
+    if (isMonthValid(numMonth)) {
+        return numMonth;
+    }
+    return undefined;
 }
 
 function getValidDayOrUndefined(
@@ -498,22 +489,11 @@ function getValidDayOrUndefined(
     month: number | undefined,
     year: number | undefined,
 ): number | undefined {
-    const numDay = getValidIntegerInRangeOrUndefined(day, 1, 31);
-    if (numDay !== undefined) {
-        if (month !== undefined) {
-            if (
-                (month === 2 &&
-                    (numDay > 29 ||
-                        (numDay > 28 &&
-                            year !== undefined &&
-                            !isLeapYear(year)))) ||
-                (month > 30 && [4, 6, 9, 11].includes(month))
-            ) {
-                return undefined;
-            }
-        }
+    const numDay = Number(day);
+    if (isDayValid(numDay, month, year)) {
+        return numDay;
     }
-    return numDay;
+    return undefined;
 }
 
 function getFormatedStrDate(
