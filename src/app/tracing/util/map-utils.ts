@@ -19,6 +19,7 @@ import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
 import { NotNullish } from "./utility-types";
 import TileLayer from "ol/layer/Tile";
+import * as _ from "lodash";
 
 export interface RectConfig {
     left: number;
@@ -38,43 +39,45 @@ const MAP_SOURCE: Map<TileServer, () => OSM> = new Map([
     // })]
 ]);
 
+const LAYER_VISIBILITY: Record<
+    MapType,
+    Partial<{ showTiles: boolean; showShape: boolean }>
+> = {
+    [MapType.TILES_ONLY]: { showTiles: true },
+    [MapType.TILES_AND_SHAPE]: { showTiles: true, showShape: true },
+    [MapType.SHAPE_ONLY]: { showShape: true },
+};
+
 export function createOpenLayerMap(
     mapConfig: MapViewConfig,
     target?: HTMLElement,
 ): ol.Map {
     const map = new ol.Map({
         target: target,
-        layers: createMapLayer(mapConfig),
+        layers: createMapLayers(mapConfig),
         controls: [],
     });
     return map;
 }
 
-export function createMapLayer(
-    mapConfig: MapViewConfig,
-    map?: ol.Map,
-): Array<BaseLayer> {
-    const { mapType } = mapConfig;
-
-    if (mapType === MapType.SHAPE_ONLY) {
-        const baseLayer = createShapeFileLayer(
+export function createMapLayers(mapConfig: MapViewConfig): Array<BaseLayer> {
+    const layers: BaseLayer[] = [];
+    if (LAYER_VISIBILITY[mapConfig.mapType].showTiles) {
+        layers.push(createTileLayer(mapConfig));
+    }
+    if (LAYER_VISIBILITY[mapConfig.mapType].showShape) {
+        const shapeLayer = createShapeFileLayer(
             mapConfig as NotNullish<ShapeFileSettings>,
-            map,
         );
-        return [baseLayer];
+        layers.push(shapeLayer);
     }
 
-    const baseLayer = createTileLayer(mapConfig, map);
-    return [baseLayer];
+    return layers;
 }
 
 function createTileLayer(
     mapConfig: Pick<MapSettings, "tileServer">,
-    map?: ol.Map,
-): BaseLayer {
-    if (map) {
-        removeMapLayer(map, TileLayer);
-    }
+): TileLayer {
     const { tileServer } = mapConfig;
 
     return new Tile({
@@ -103,12 +106,7 @@ function getProjectionCode(shapeFileData: ShapeFileData): string {
 
 export function createShapeFileLayer(
     mapConfig: NotNullish<ShapeFileSettings>,
-    map?: ol.Map,
-): BaseLayer {
-    if (map) {
-        removeMapLayer(map, VectorLayer);
-    }
-
+): VectorLayer {
     const code = getProjectionCode(mapConfig.shapeFileData);
     const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(
@@ -141,7 +139,10 @@ function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
     });
 }
 
-function getMapLayer(map: ol.Map, layerType): Array<BaseLayer> {
+function getMapLayers(
+    map: ol.Map,
+    layerType: typeof VectorLayer | typeof TileLayer,
+): Array<BaseLayer> {
     return map
         .getLayers()
         .getArray()
@@ -152,43 +153,20 @@ export function updateVectorLayerStyle(
     map: ol.Map,
     styleConfig: ShapeFileSettings,
 ): void {
-    const mapLayers = getMapLayer(map, VectorLayer);
+    const mapLayers = getMapLayers(map, VectorLayer);
     // loop through all layers
     mapLayers.forEach((layer) => {
         // apply styles only to instances of VectorLayer
         if (layer instanceof VectorLayer) {
             const style = createVectorLayerStyle(styleConfig);
             layer.setStyle(style);
+            layer.setProperties({
+                ...layer.getProperties(),
+                mystyle: styleConfig,
+            });
         }
     });
 }
-
-export const setLayerVisibility = (
-    layer: BaseLayer,
-    visibility: boolean,
-    layerDataHasChanged: boolean,
-    createMapLayerCallback,
-): void => {
-    const layerExisits = layer?.setVisible !== undefined;
-    // if layer does not exist and should not be visible, do nothing
-    if (!layerExisits && !visibility) {
-        return;
-    }
-
-    // if layer data has changed or layer does not exist but should be visible, let callback handle creation of layer
-    if ((!layerExisits || layerDataHasChanged) && visibility) {
-        createMapLayerCallback();
-        return;
-    }
-
-    // if visibility setting is already correct, do nothing
-    if (layer.getVisible() === visibility) {
-        return;
-    }
-
-    // if layer exists, toggle visibility
-    layer.setVisible(visibility);
-};
 
 export const insertLayer = (map: ol.Map, layer: BaseLayer) => {
     // make sure, shape layer is always the last element in the array,
@@ -198,81 +176,78 @@ export const insertLayer = (map: ol.Map, layer: BaseLayer) => {
     mapLayers.insertAt(index, layer);
 };
 
-export function updateMapType(
-    map: ol.Map,
-    mapConfig: MapViewConfig,
-    layerDataHasChanged: boolean = false,
-): void {
-    const tileLayer = getMapLayer(map, TileLayer);
-    const shapeLayer = getMapLayer(map, VectorLayer);
-    const { mapType } = mapConfig;
-    const createMapCallback = () => {
-        const newLayer = createMapLayer(mapConfig, map);
-        insertLayer(map, newLayer[0]);
-    };
+function setLayersVisibility(layers: Array<BaseLayer>, visible: boolean): void {
+    layers.forEach((layer) => layer.setVisible(visible));
+}
 
-    switch (mapType) {
-        case MapType.TILES_ONLY:
-            // hide shape
-            setLayerVisibility(
-                shapeLayer[0],
-                false,
-                layerDataHasChanged,
-                createMapCallback,
-            );
-            // show tile
-            setLayerVisibility(
-                tileLayer[0],
-                true,
-                layerDataHasChanged,
-                createMapCallback,
-            );
-            break;
-        case MapType.SHAPE_ONLY:
-            // hide tile
-            setLayerVisibility(
-                tileLayer[0],
-                false,
-                layerDataHasChanged,
-                createMapCallback,
-            );
-            // show shape
-            setLayerVisibility(
-                shapeLayer[0],
-                true,
-                layerDataHasChanged,
-                createMapCallback,
-            );
-            break;
-        case MapType.TILES_AND_SHAPE:
-            // show shape --> option only available, if shape file present
-            // so no additional checks necessary
-            setLayerVisibility(
-                shapeLayer[0],
-                true,
-                layerDataHasChanged,
-                createMapCallback,
-            );
-            // show tile
-            setLayerVisibility(
-                tileLayer[0],
-                true,
-                layerDataHasChanged,
-                createMapCallback,
-            );
-            break;
-        default:
-            throw new Error(
-                `MapType ${mapType} is not currently supported. Please review code or add MapType. This error should never occur in production. You are most likely seeing this, because you have changed the code.`,
-            );
+function updateTileLayer(
+    map: ol.Map,
+    newMapConfig: MapViewConfig,
+    oldMapConfig: MapViewConfig,
+): void {
+    let tileLayers = getMapLayers(map, TileLayer);
+    if (newMapConfig.tileServer !== oldMapConfig.tileServer) {
+        tileLayers.forEach((layer) => map.removeLayer(layer));
+        tileLayers = [];
+    }
+    if (LAYER_VISIBILITY[newMapConfig.mapType].showTiles) {
+        if (tileLayers.length === 0) {
+            insertLayer(map, createTileLayer(newMapConfig));
+        } else {
+            setLayersVisibility(tileLayers, true);
+        }
+    } else {
+        setLayersVisibility(tileLayers, false);
     }
 }
 
-function removeMapLayer(map: ol.Map, layerType) {
-    const mapLayer = getMapLayer(map, layerType);
+function wasStyleChanged(
+    newStyle: ShapeStyleSettings,
+    oldStyle: ShapeStyleSettings,
+): boolean {
+    return (
+        newStyle.geojsonBorderColor !== oldStyle.geojsonBorderColor ||
+        newStyle.geojsonBorderWidth !== oldStyle.geojsonBorderWidth
+    );
+}
 
-    if (mapLayer.length === 0) {
-        return;
+function updateShapeLayer(
+    map: ol.Map,
+    newMapConfig: MapViewConfig,
+    oldMapConfig: MapViewConfig,
+): void {
+    let shapeLayers = getMapLayers(map, VectorLayer);
+    if (newMapConfig.shapeFileData !== oldMapConfig.shapeFileData) {
+        shapeLayers.forEach((layer) => map.removeLayer(layer));
+        shapeLayers = [];
     }
-    map.removeLayer(mapLayer[0]);
+    if (LAYER_VISIBILITY[newMapConfig.mapType].showShape) {
+        if (shapeLayers.length === 0) {
+            insertLayer(
+                map,
+                createShapeFileLayer(
+                    newMapConfig as NotNullish<ShapeFileSettings>,
+                ),
+            );
+        } else {
+            if (wasStyleChanged(newMapConfig, oldMapConfig)) {
+                updateVectorLayerStyle(map, newMapConfig);
+            }
+            setLayersVisibility(shapeLayers, true);
+        }
+    } else {
+        setLayersVisibility(shapeLayers, false);
+        if (wasStyleChanged(newMapConfig, oldMapConfig)) {
+            updateVectorLayerStyle(map, newMapConfig);
+        }
+    }
+}
+
+export function updateMapLayers(
+    map: ol.Map,
+    newMapConfig: MapViewConfig,
+    oldMapConfig: MapViewConfig,
+): void {
+    updateTileLayer(map, newMapConfig, oldMapConfig);
+    updateShapeLayer(map, newMapConfig, oldMapConfig);
 }

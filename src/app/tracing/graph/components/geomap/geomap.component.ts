@@ -9,11 +9,10 @@ import {
 } from "@angular/core";
 import * as ol from "ol";
 import { Utils as UIUtils } from "../../../util/ui-utils";
-import { MapType, Size, MapViewConfig } from "../../../data.model";
+import { Size, MapViewConfig } from "../../../data.model";
 import {
     createOpenLayerMap,
-    updateMapType,
-    updateVectorLayerStyle,
+    updateMapLayers,
 } from "@app/tracing/util/map-utils";
 
 interface TypedSimpleChange<T> extends SimpleChange {
@@ -82,13 +81,6 @@ export class GeoMapComponent implements OnChanges {
         this.updateMapView(mapConfig);
     }
 
-    private updateMapType(
-        mapConfig: MapViewConfig,
-        layerDataHasChanged: boolean,
-    ): void {
-        updateMapType(this.map!, mapConfig, layerDataHasChanged);
-    }
-
     private updateMapView(mapConfig: MapViewConfig) {
         if (mapConfig.layout !== null) {
             const size = this.getSize();
@@ -114,41 +106,10 @@ export class GeoMapComponent implements OnChanges {
         newMapConfig: MapViewConfig,
         oldMapConfig: MapViewConfig,
     ): void {
-        const shapeOrTileHaveChanged =
-            newMapConfig.shapeFileData !== oldMapConfig.shapeFileData ||
-            newMapConfig.tileServer !== oldMapConfig.tileServer;
-        const mapTypeHasChanged = newMapConfig.mapType !== oldMapConfig.mapType;
-        const shapeStyleHasChanged =
-            newMapConfig.mapType !== MapType.TILES_ONLY &&
-            (newMapConfig.geojsonBorderColor !==
-                oldMapConfig.geojsonBorderColor ||
-                newMapConfig.geojsonBorderWidth !==
-                    oldMapConfig.geojsonBorderWidth);
-        const layoutHasChanged = newMapConfig.layout !== oldMapConfig.layout;
+        updateMapLayers(this.map!, newMapConfig, oldMapConfig);
 
-        if (
-            !shapeOrTileHaveChanged &&
-            !mapTypeHasChanged &&
-            !shapeStyleHasChanged &&
-            !layoutHasChanged
-        ) {
-            // no changes, so early return
-            return;
+        if (newMapConfig.layout !== oldMapConfig.layout) {
+            this.updateMapView(newMapConfig);
         }
-
-        if (mapTypeHasChanged || shapeOrTileHaveChanged) {
-            // changes to map type, shape file data or tile server, so trigger maptype updates and leave function
-            this.updateMapType(newMapConfig, shapeOrTileHaveChanged);
-            return;
-        }
-
-        if (shapeStyleHasChanged) {
-            // changes to shape styles, so trigger vector style updates and leave function
-            updateVectorLayerStyle(this.map!, newMapConfig);
-            return;
-        }
-
-        // changes to layout, so trigger view updates and leave function
-        this.updateMapView(newMapConfig);
     }
 }
