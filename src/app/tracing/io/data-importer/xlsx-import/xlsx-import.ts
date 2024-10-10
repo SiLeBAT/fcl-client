@@ -23,8 +23,6 @@ import {
 import { XlsxReader } from "./xlsx-reader";
 import { removeUndefined } from "../../../../tracing/util/non-ui-utils";
 
-// TODO This file
-
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
 function collectDefaultProps<T extends ImportedRow, P extends keyof T & string>(

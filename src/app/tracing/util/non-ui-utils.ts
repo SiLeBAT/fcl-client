@@ -499,3 +499,6 @@ export class Utils {
         return array;
     }
 }
+export function isEmptyString(value: any): value is "" {
+    return typeof value === "string" && value === "";
+}

@@ -96,13 +96,15 @@ function importStation(
         typeof externalIdFetch === "string" ? externalIdFetch : undefined;
 
     // TODO REVERT
-    const internalAddIssueCallback = getEnrichedIssueCallback(
-        externalAddIssueCallback,
-        row,
-        table,
-        externalId,
-    );
-
+    const internalAddIssueCallback = (
+        issue: ImportIssue,
+        invalidateRow: boolean = false,
+    ) => {
+        externalAddIssueCallback(
+            enrichImportIssue(issue, row, table, invalidateRow, externalId),
+            invalidateRow,
+        );
+    };
     return {
         extId: typeof externalId === "string" ? externalId : undefined,
         name: getStringOrUndefined(row[StationColumn.NAME]),
@@ -133,7 +135,7 @@ function importDelivery(
     otherColumnMappings: ColumnMapping[],
     extDeliveryIdRegister: SetLike,
     extStationIdRegister: SetLike,
-    addIssueCallback: AddIssueCallback,
+    externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneDeliveryRow> {
     const externalIdFetch = importPrimaryKey(
         row,
@@ -141,7 +143,7 @@ function importDelivery(
         extDeliveryIdRegister,
     );
     if (typeof externalIdFetch !== "string") {
-        addIssueCallback(
+        externalAddIssueCallback(
             enrichImportIssue(externalIdFetch, row, table, false),
             false,
         );
@@ -149,12 +151,15 @@ function importDelivery(
     const externalId =
         typeof externalIdFetch === "string" ? externalIdFetch : undefined;
 
-    const enrichedIssueCallback = getEnrichedIssueCallback(
-        addIssueCallback,
-        row,
-        table,
-        externalId,
-    );
+    const internalAddIssueCallback = (
+        issue: ImportIssue,
+        invalidateRow: boolean = false,
+    ) => {
+        externalAddIssueCallback(
+            enrichImportIssue(issue, row, table, invalidateRow, externalId),
+            invalidateRow,
+        );
+    };
 
     return {
         extId: externalId,
@@ -162,13 +167,13 @@ function importDelivery(
             row,
             DeliveryColumn.SOURCE,
             extStationIdRegister,
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
         target: importStationReference(
             row,
             DeliveryColumn.TARGET,
             extStationIdRegister,
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
         productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
         lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
@@ -179,7 +184,7 @@ function importDelivery(
                 m: DeliveryColumn.DATE_OUT_MONTH,
                 d: DeliveryColumn.DATE_OUT_DAY,
             },
-            enrichedIssueCallback,
+            internalAddIssueCallback,
             true,
         ),
         dateIn: importStringDate(
@@ -189,7 +194,7 @@ function importDelivery(
                 m: DeliveryColumn.DATE_IN_MONTH,
                 d: DeliveryColumn.DATE_IN_DAY,
             },
-            enrichedIssueCallback,
+            internalAddIssueCallback,
             true,
         ),
         unitAmount: importAggregateAmount(row, {
@@ -200,7 +205,7 @@ function importDelivery(
             row,
             DeliveryColumn.LOT_AMOUNT_NUMBER,
             "nonneg:number",
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
         lotAmountUnit: getStringOrUndefined(
             row[DeliveryColumn.LOT_AMOUNT_UNIT],
@@ -208,12 +213,12 @@ function importDelivery(
         otherProps: getOtherPropsFromRow(
             row,
             otherColumnMappings,
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
         ...getOptionalPropsFromRow(
             row,
             optionalColumnMappings,
-            enrichedIssueCallback,
+            internalAddIssueCallback,
         ),
     };
 }
@@ -520,22 +525,6 @@ export class AllInOneImporter implements XlsxImporter {
 
         return importTable;
     }
-}
-
-// I would like to move all the "const addIssueCallback = same thing again" from the beggining of the functions
-// to remove repetition, but I am not certain how to go about that.
-function getEnrichedIssueCallback(
-    addIssueCallback: AddIssueCallback,
-    row: Row,
-    table: Table,
-    externalId: string | undefined,
-): AddIssueCallback {
-    return (issue: ImportIssue, invalidateRow: boolean = false) => {
-        addIssueCallback(
-            enrichImportIssue(issue, row, table, invalidateRow, externalId),
-            invalidateRow,
-        );
-    };
 }
 
 function conditionalJoinOrUndefined(

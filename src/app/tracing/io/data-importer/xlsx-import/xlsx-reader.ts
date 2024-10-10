@@ -1,7 +1,8 @@
 import {
     concat,
     isArrayNotEmpty,
-    isNotNullish,
+    isNullish,
+    isEmptyString,
 } from "../../../../tracing/util/non-ui-utils";
 import * as Excel from "exceljs";
 import * as _ from "lodash";
@@ -54,7 +55,6 @@ export type ColumnLabelTree =
     | string
     | [string, [ColumnLabelTree, ColumnLabelTree, ...ColumnLabelTree[]]];
 
-// TODO This file
 function getColumnHeaderChildren(
     row: Excel.Row,
     colStartIndex: number,
@@ -66,7 +66,7 @@ function getColumnHeaderChildren(
         const childHeader = getColumnHeader(row, colIndex);
         colIndex += childHeader.columnCount;
         if (colIndex > colEndIndex + 1) {
-            throw new Error(`A table haeder could not be parsed`);
+            throw new Error(`A table header could not be parsed`);
         }
         childHeaders.push(childHeader);
     }
@@ -78,22 +78,22 @@ function getColumnHeader(
     colStartIndex: number,
 ): ColumnHeaderTree {
     let colEndIndex = colStartIndex;
-    const refMaster = row.getCell(colStartIndex);
-    while (row.getCell(colEndIndex + 1).isMergedTo(refMaster)) {
+    const firstCellOfHeader = row.getCell(colStartIndex);
+    while (row.getCell(colEndIndex + 1).isMergedTo(firstCellOfHeader)) {
         colEndIndex++;
     }
-    const colSpan = colEndIndex - colStartIndex + 1;
+    const columnCount = colEndIndex - colStartIndex + 1;
     const columnHeader: ColumnHeaderTree = {
-        label: refMaster.text.trim(),
+        label: firstCellOfHeader.text.trim(),
         id: `c${colStartIndex}`,
         columnStartIndex: colStartIndex,
-        columnCount: colSpan,
+        columnCount: columnCount,
         rowCount: 1,
         columnLetter: row.worksheet.getColumn(colStartIndex).letter,
     };
-    if (colSpan > 1) {
+    if (columnCount > 1) {
         const nextRow = row.worksheet.getRow(row.number + 1);
-        columnHeader.id = `c${colStartIndex}-${colStartIndex + colSpan - 1}`;
+        columnHeader.id = `c${colStartIndex}-${colStartIndex + columnCount - 1}`;
         columnHeader.children = getColumnHeaderChildren(
             nextRow,
             colStartIndex,
@@ -128,23 +128,24 @@ function getColumnHeadersSpan(columnHeaders: ColumnLabelTree[]): {
     };
 }
 
-function getLeaveColumns(columnHeaders: ColumnHeaderTree[]): ColumnHeader[] {
-    const leaveColumns = columnHeaders.map((c) =>
-        c.children
-            ? getLeaveColumns(c.children).map((childColumns) => [
-                  c.label,
+// Comment this Function to explain how it works
+function getLeafColumns(columnHeaders: ColumnHeaderTree[]): ColumnHeader[] {
+    const leafColumns = columnHeaders.map((header) =>
+        header.children
+            ? getLeafColumns(header.children).map((childColumns) => [
+                  header.label,
                   ...childColumns,
               ])
-            : [[c.label]],
+            : [[header.label]],
     );
-    return concat(...leaveColumns);
+    return concat(...leafColumns);
 }
 
 function readTableHeader(
-    ws: Excel.Worksheet,
+    workSheet: Excel.Worksheet,
     offset: CellPosition,
 ): TableHeader {
-    const excelRow = ws.getRow(offset.row);
+    const excelRow = workSheet.getRow(offset.row);
     const columnHeaders: ColumnHeaderTree[] = [];
 
     let columnIndex = offset.col;
@@ -162,7 +163,7 @@ function readTableHeader(
     }
 
     const tableHeader: TableHeader = {
-        columnHeaders: getLeaveColumns(columnHeaders),
+        columnHeaders: getLeafColumns(columnHeaders),
         rowCount: Math.max(0, ...columnHeaders.map((h) => h.rowCount)),
     };
 
@@ -170,68 +171,65 @@ function readTableHeader(
 }
 
 function readTableBody(
-    ws: Excel.Worksheet,
+    workSheet: Excel.Worksheet,
     options: Required<ReadTableOptions>,
 ): TableBody {
     const tableRows: Row[] = [];
+    const {
+        offset: { col: columnOffset, row: rowOffset },
+        maxColumnIndex,
+    } = options;
 
-    const colIndex2Types: Record<number, Set<BasicTypeString>> = {};
-    for (
-        let colIndex = options.offset.col;
-        colIndex <= options.maxColumnIndex;
-        colIndex++
-    ) {
-        colIndex2Types[colIndex - options.offset.col] = new Set();
-    }
+    const columnIndex2Types: Set<BasicTypeString>[] = Array.from(
+        { length: maxColumnIndex - columnOffset },
+        () => new Set(),
+    );
 
-    const startRowIndex = options.offset?.row ?? 1;
-    const maxRowIndex = ws.rowCount;
+    const startRowIndex = rowOffset ?? 1;
+    const maxRowIndex = workSheet.rowCount;
 
     for (let rowIndex = startRowIndex; rowIndex <= maxRowIndex; rowIndex++) {
-        const wsRow = ws.getRow(rowIndex);
+        const workSheetRow = workSheet.getRow(rowIndex);
         const tableRow: Row = { rowIndex: rowIndex };
         let isRowEmpty = true;
 
         for (
-            let colIndex = options.offset.col;
-            colIndex <= options.maxColumnIndex;
+            let colIndex = columnOffset;
+            colIndex <= maxColumnIndex;
             colIndex++
         ) {
-            const relColumnIndex = colIndex - options.offset.col;
-            const wsCell = wsRow.getCell(colIndex);
-            let cellValue = wsCell.value;
-            if (isNotNullish(cellValue)) {
-                if (isCellValueOk(cellValue)) {
-                    if (cellValue instanceof Date) {
-                        tableRow[relColumnIndex] = cellValue.toISOString();
-                        colIndex2Types[relColumnIndex].add("string");
-                        isRowEmpty = false;
-                    } else {
-                        if (typeof cellValue === "string") {
-                            cellValue = cellValue.trim();
-                            if (cellValue === "") {
-                                cellValue = undefined;
-                            }
-                        }
-                        if (cellValue !== undefined) {
-                            tableRow[relColumnIndex] = cellValue;
-                            colIndex2Types[relColumnIndex].add(
-                                typeof cellValue as BasicTypeString,
-                            );
-                            isRowEmpty = false;
-                        }
-                    }
-                } else {
-                    throw new Error(
-                        IMPORT_ISSUES.invalidCellValue(
-                            wsRow.number,
-                            wsCell.col,
-                            ws.name,
-                        ),
-                    );
-                }
+            const relativeColumnIndex = colIndex - columnOffset;
+            const { col: workSheetColumn, value: cellValue } =
+                workSheetRow.getCell(colIndex);
+            if (isNullish(cellValue)) {
+                continue;
             }
+            if (isEmptyString(cellValue)) {
+                continue;
+            }
+            if (!isCellValueOk(cellValue)) {
+                throw new Error(
+                    IMPORT_ISSUES.invalidCellValue(
+                        workSheetRow.number,
+                        workSheetColumn,
+                        workSheet.name,
+                    ),
+                );
+            }
+
+            if (cellValue instanceof Date) {
+                tableRow[relativeColumnIndex] = cellValue.toISOString();
+                columnIndex2Types[relativeColumnIndex].add("string");
+            } else {
+                tableRow[relativeColumnIndex] = cellValue;
+                columnIndex2Types[relativeColumnIndex].add(
+                    typeof cellValue as BasicTypeString,
+                );
+            }
+
+            isRowEmpty = false;
         }
+
         if (isRowEmpty) {
             break;
         }
@@ -241,7 +239,7 @@ function readTableBody(
 
     return {
         rows: tableRows,
-        columns: Object.values(colIndex2Types).map((types, index) => ({
+        columns: columnIndex2Types.map((types, index) => ({
             types: types,
             columnIndex: index,
         })),
@@ -288,97 +286,155 @@ export interface Table {
 }
 
 export class XlsxSheetReader {
-    constructor(private ws: Excel.Worksheet) {}
+    constructor(private workSheet: Excel.Worksheet) {}
+
+    private validateHeaderCellMerging(
+        colSpan: number,
+        rowIndex: number,
+        columnIndex: number,
+        throwError: boolean,
+    ): boolean {
+        const topLeftCell = this.workSheet.getCell(rowIndex, columnIndex);
+        if (
+            // Either:
+            // Cell has colSpan > 1 and isn't merged with colSpan-1 cells to the right of it
+            (colSpan > 1 &&
+                !this.workSheet
+                    .getCell(rowIndex, columnIndex + colSpan - 1)
+                    .isMergedTo(topLeftCell.master)) ||
+            // Or spell shouldn't be merged at all but is
+            this.workSheet
+                .getCell(rowIndex, columnIndex + colSpan)
+                .isMergedTo(topLeftCell.master)
+        ) {
+            if (throwError) {
+                throw new XlsxInputFormatError(
+                    IMPORT_ISSUES.unexpectedCellSpan(
+                        rowIndex,
+                        columnIndex,
+                        this.workSheet.name,
+                        colSpan,
+                    ),
+                );
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private validateHeaderCellLabelMatch(
+        columnHeader: ColumnLabelTree,
+        throwError: boolean,
+        rowIndex: number,
+        columnIndex: number,
+    ): boolean {
+        const expectedCellLabel =
+            typeof columnHeader === "string" ? columnHeader : columnHeader[0];
+        const topLeftCell = this.workSheet.getCell(rowIndex, columnIndex);
+        const observedCellLabel = topLeftCell.text.trim();
+        // Validate Label match
+        if (expectedCellLabel !== observedCellLabel) {
+            if (throwError) {
+                throw new XlsxInputFormatError(
+                    IMPORT_ISSUES.unexpectedCellText(
+                        rowIndex,
+                        columnIndex,
+                        this.workSheet.name,
+                        expectedCellLabel,
+                    ),
+                );
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private validateHeaderCell(
+        columnHeader: ColumnLabelTree,
+        columnSpan: number,
+        throwError: boolean,
+        rowIndex: number,
+        columnIndex: number,
+    ) {
+        return (
+            this.validateHeaderCellLabelMatch(
+                columnHeader,
+                throwError,
+                rowIndex,
+                columnIndex,
+            ) &&
+            this.validateHeaderCellMerging(
+                columnSpan,
+                rowIndex,
+                columnIndex,
+                throwError,
+            )
+        );
+    }
 
     validateTableHeader(
         columnHeaders: ColumnLabelTree[],
         throwError: boolean = false,
         offset: CellPosition = DEFAULT_TABLE_POSITION,
     ): boolean {
-        let colIndex = offset.col;
+        let columnIndex = offset.col;
         for (const columnHeader of columnHeaders) {
-            let colSpan = 1;
-            const expectedCellLabel =
-                typeof columnHeader === "string"
-                    ? columnHeader
-                    : columnHeader[0];
-            const topLeftCell = this.ws.getCell(offset.row, colIndex);
-            const observedCellLabel = topLeftCell.text.trim();
-            if (expectedCellLabel !== observedCellLabel) {
-                if (throwError) {
-                    throw new XlsxInputFormatError(
-                        IMPORT_ISSUES.unexpectedCellText(
-                            offset.row,
-                            colIndex,
-                            this.ws.name,
-                            expectedCellLabel,
-                        ),
-                    );
-                }
+            let columnSpan = 1;
+            if (
+                !this.validateHeaderCell(
+                    columnHeader,
+                    columnSpan,
+                    throwError,
+                    offset.row,
+                    columnIndex,
+                )
+            ) {
                 return false;
             }
+
             if (typeof columnHeader !== "string") {
                 const childHeaders = columnHeader[1];
-                colSpan = getColumnHeadersSpan(childHeaders).colSpan;
+                columnSpan = getColumnHeadersSpan(childHeaders).colSpan;
                 if (
                     !this.validateTableHeader(childHeaders, throwError, {
-                        col: colIndex,
+                        col: columnIndex,
                         row: offset.row + 1,
                     })
                 ) {
                     return false;
                 }
             }
-            if (
-                (colSpan > 1 &&
-                    !this.ws
-                        .getCell(offset.row, colIndex + colSpan - 1)
-                        .isMergedTo(topLeftCell.master)) ||
-                this.ws
-                    .getCell(offset.row, colIndex + colSpan)
-                    .isMergedTo(topLeftCell.master)
-            ) {
-                if (throwError) {
-                    throw new XlsxInputFormatError(
-                        IMPORT_ISSUES.unexpectedCellSpan(
-                            offset.row,
-                            colIndex,
-                            this.ws.name,
-                            colSpan,
-                        ),
-                    );
-                }
-                return false;
-            }
-            colIndex += colSpan;
+
+            columnIndex += columnSpan;
         }
         return true;
     }
 
-    readTable(options: ReadTableOptions = {}): Table {
-        const offset: CellPosition = options.offset ?? DEFAULT_TABLE_POSITION;
-
-        const tableHeader = readTableHeader(this.ws, offset);
-        const tableBody = readTableBody(this.ws, {
-            ...options,
+    readTable({
+        offset = DEFAULT_TABLE_POSITION,
+    }: ReadTableOptions = {}): Table {
+        const tableHeader = readTableHeader(this.workSheet, offset);
+        const { rows, columns } = readTableBody(this.workSheet, {
             offset: { col: offset.col, row: offset.row + tableHeader.rowCount },
-            maxColumnIndex: tableHeader.columnHeaders.length + offset.col,
+            maxColumnIndex: offset.col + tableHeader.columnHeaders.length,
         });
-        const table: Table = {
+
+        return {
             header: tableHeader,
-            rows: tableBody.rows,
-            columns: tableBody.columns,
+            rows: rows,
+            columns: columns,
             offset: offset,
         };
-        return table;
     }
 }
 
 export class XlsxReader {
-    private wb: Excel.Workbook | undefined;
+    private workBook: Excel.Workbook | undefined;
 
     get sheetNames(): string[] {
-        return this.wb ? this.wb.worksheets.map((ws) => ws.name) : [];
+        return this.workBook
+            ? this.workBook.worksheets.map((ws) => ws.name)
+            : [];
     }
 
     async loadFile(file: File): Promise<void> {
@@ -391,11 +447,11 @@ export class XlsxReader {
             throw new XlsxInputFormatError();
         }
 
-        this.wb = excelWB;
+        this.workBook = excelWB;
     }
 
     private getWorksheet(sheetName: string): Excel.Worksheet {
-        const ws = this.wb?.getWorksheet(sheetName);
+        const ws = this.workBook?.getWorksheet(sheetName);
         if (!ws) {
             throw new InternalError(IMPORT_ISSUES.missingSheet(sheetName));
         }
@@ -411,21 +467,22 @@ export class XlsxReader {
         requiredSheetNames: string[],
         throwError: boolean = false,
     ): boolean {
-        if (this.wb) {
-            const missingSheetNames = requiredSheetNames.filter(
-                (sheet) => !this.sheetNames.includes(sheet),
-            );
-            if (isArrayNotEmpty(missingSheetNames)) {
-                if (throwError) {
-                    throw new XlsxInputFormatError(
-                        IMPORT_ISSUES.missingSheets(missingSheetNames),
-                    );
-                }
-                return false;
-            }
-            return true;
+        if (!this.workBook) {
+            throw new InternalError(IMPORT_ISSUES.wbNotLoaded);
         }
-        throw new InternalError(IMPORT_ISSUES.wbNotLoaded);
+
+        const missingSheetNames = requiredSheetNames.filter(
+            (sheet) => !this.sheetNames.includes(sheet),
+        );
+        if (isArrayNotEmpty(missingSheetNames)) {
+            if (throwError) {
+                throw new XlsxInputFormatError(
+                    IMPORT_ISSUES.missingSheets(missingSheetNames),
+                );
+            }
+            return false;
+        }
+        return true;
     }
 
     validateSheetHeader(
