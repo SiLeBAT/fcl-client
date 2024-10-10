@@ -1,5 +1,4 @@
 import { removeNullish } from "../../../util/non-ui-utils";
-import * as _ from "lodash";
 import {
     AddIssueCallback,
     ColumnMapping,
@@ -18,8 +17,6 @@ import {
     StationColumn,
 } from "./xlsx-all-in-one-import-model";
 import {
-    addOptionalColumnProps,
-    addOtherProps,
     createEmptyImportTable,
     enrichImportIssue,
     getLongUniqueDeliveryId,
@@ -29,13 +26,13 @@ import {
     getShortUniqueDeliveryIdFromLongId,
     getShortUniqueStationIdFromLongId,
     getStringOrUndefined,
-    importAggAmount,
-    importDeliveryRef,
+    importAggregatedAmount,
+    importReference,
     importMandatoryString,
-    importPk,
-    importStationRef,
-    importStrDate,
+    importPrimaryKey,
+    importStringDate,
     importValue,
+    getPropsFromRow,
 } from "./shared";
 import {
     OPTIONAL_DELIVERY_COLUMNS,
@@ -75,40 +72,32 @@ class Register {
     }
 }
 
-function getOptionalStationColumnMapping(table: Table): ColumnMapping[] {
-    return getOptionalColumnMapping(table, OPTIONAL_STATION_COLUMNS);
-}
-
-function getOptionalDeliveryColumnMapping(table: Table): ColumnMapping[] {
-    return getOptionalColumnMapping(table, OPTIONAL_DELIVERY_COLUMNS);
-}
-
 function importStation(
     row: Row,
     table: Table,
     optionalColumnMappings: ColumnMapping[],
     otherColumnMappings: ColumnMapping[],
     extIdRegister: Register,
-    addIssueCb: AddIssueCallback,
+    externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneStationRow> {
     // eslint-disable-next-line prefer-const
     let extId: string | undefined;
 
-    const addIssueCbWrapper: AddIssueCallback = (
+    const addIssueCallback: AddIssueCallback = (
         issue: ImportIssue,
         invalidateRow: boolean = false,
     ) => {
-        addIssueCb(
+        externalAddIssueCallback(
             enrichImportIssue(issue, row, table, invalidateRow, extId),
             invalidateRow,
         );
     };
 
-    extId = importPk(
+    extId = importPrimaryKey(
         row,
         StationColumn.EXT_ID,
         extIdRegister,
-        addIssueCbWrapper,
+        addIssueCallback,
     );
     const statRow: Partial<AllInOneStationRow> = {
         extId: extId,
@@ -118,12 +107,9 @@ function importStation(
         typeOfBusiness: getStringOrUndefined(
             row[StationColumn.TYPE_OF_BUSINESS],
         ),
-        otherProps: {},
+        otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
+        ...getPropsFromRow(row, optionalColumnMappings, addIssueCallback),
     };
-
-    addOptionalColumnProps(row, statRow, optionalColumnMappings, addIssueCb);
-    addOtherProps(row, statRow, otherColumnMappings, addIssueCb);
-
     return statRow;
 }
 
@@ -134,68 +120,67 @@ function importDelivery(
     otherColumnMappings: ColumnMapping[],
     extDeliveryIdRegister: SetLike,
     extStationIdRegister: SetLike,
-    addIssueCb: AddIssueCallback,
+    externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneDeliveryRow> {
     // eslint-disable-next-line prefer-const
-    let extId: string | undefined;
+    let externalId: string | undefined;
 
-    const addIssueCbWrapper: AddIssueCallback = (
+    const addIssueCallback: AddIssueCallback = (
         issue: ImportIssue,
         invalidateRow: boolean = false,
     ) => {
-        addIssueCb(
-            enrichImportIssue(issue, row, table, invalidateRow, extId),
+        externalAddIssueCallback(
+            enrichImportIssue(issue, row, table, invalidateRow, externalId),
             invalidateRow,
         );
     };
 
-    extId = importPk(
+    externalId = importPrimaryKey(
         row,
         DeliveryColumn.EXT_ID,
         extDeliveryIdRegister,
-        addIssueCbWrapper,
+        addIssueCallback,
     );
-    const delRow: Partial<AllInOneDeliveryRow> = {
-        extId: extId,
-        source: importStationRef(
+
+    return {
+        extId: externalId,
+        source: importReference(
             row,
             DeliveryColumn.SOURCE,
             extStationIdRegister,
-            addIssueCbWrapper,
+            addIssueCallback,
         ),
-        target: importStationRef(
+        target: importReference(
             row,
             DeliveryColumn.TARGET,
             extStationIdRegister,
-            addIssueCbWrapper,
+            addIssueCallback,
         ),
         productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
         lotNumber: importMandatoryString(
             row,
             DeliveryColumn.LOT_NUMBER,
-            addIssueCbWrapper,
+            addIssueCallback,
         ),
-        dateOut: importStrDate(
+        dateOut: importStringDate(
             row,
             {
                 y: DeliveryColumn.DATE_OUT_YEAR,
                 m: DeliveryColumn.DATE_OUT_MONTH,
                 d: DeliveryColumn.DATE_OUT_DAY,
             },
-            addIssueCbWrapper,
-            true,
+            addIssueCallback,
         ),
-        dateIn: importStrDate(
+        dateIn: importStringDate(
             row,
             {
                 y: DeliveryColumn.DATE_IN_YEAR,
                 m: DeliveryColumn.DATE_IN_MONTH,
                 d: DeliveryColumn.DATE_IN_DAY,
             },
-            addIssueCbWrapper,
-            true,
+            addIssueCallback,
         ),
-        unitAmount: importAggAmount(row, {
+        unitAmount: importAggregatedAmount(row, {
             number: DeliveryColumn.UNIT_AMOUNT_NUMBER,
             unit: DeliveryColumn.UNIT_AMOUNT_UNIT,
         }),
@@ -203,26 +188,18 @@ function importDelivery(
             row,
             DeliveryColumn.LOT_AMOUNT_NUMBER,
             "nonneg:number",
-            addIssueCbWrapper,
+            addIssueCallback,
         ),
         lotAmountUnit: getStringOrUndefined(
             row[DeliveryColumn.LOT_AMOUNT_UNIT],
         ),
+        otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
+        ...getPropsFromRow(row, optionalColumnMappings, addIssueCallback),
     };
-
-    addOptionalColumnProps(
-        row,
-        delRow,
-        optionalColumnMappings,
-        addIssueCbWrapper,
-    );
-    addOtherProps(row, delRow, otherColumnMappings, addIssueCbWrapper);
-
-    return delRow;
 }
 
 export class AllInOneImporter implements XlsxImporter {
-    private extId2StationRow = new Map<string, AllInOneStationRow>();
+    private externalId2StationRow = new Map<string, AllInOneStationRow>();
     private extId2DeliveryRow = new Map<string, AllInOneDeliveryRow>();
 
     isTemplateFormatValid(xlsxReader: XlsxReader): boolean {
@@ -289,16 +266,25 @@ export class AllInOneImporter implements XlsxImporter {
     ): ImportTable<AllInOneStationRow> {
         const table = xlsxSheetReader.readTable();
 
-        const extIdRegister = new Register();
+        const externalIdRegister = new Register();
         const idSet = new Set<string>();
         const longUniqueId2RowIndexMap = new Map<string, number>();
 
         const importTable = createEmptyImportTable<AllInOneStationRow>();
 
-        let row: Row;
-        let rowIsInvalid = false;
+        const optionalColumnMappings = getOptionalColumnMapping(
+            table,
+            OPTIONAL_STATION_COLUMNS,
+        );
+        const otherColumnMappings = getOtherColumns(
+            table,
+            StationColumn.ADDCOLS + 1,
+            optionalColumnMappings.map((m) => m.fromIndex),
+        );
 
-        const addIssueCb: AddIssueCallback = (
+        let row: Row;
+        let rowIsInvalid: boolean;
+        const addIssueCallback: AddIssueCallback = (
             issue: ImportIssue,
             invalidateRow: boolean = false,
         ) => {
@@ -308,33 +294,26 @@ export class AllInOneImporter implements XlsxImporter {
             rowIsInvalid ||= invalidateRow;
         };
 
-        const optionalColumnMappings = getOptionalStationColumnMapping(table);
-        const otherColumnMappings = getOtherColumns(
-            table,
-            StationColumn.ADDCOLS + 1,
-            optionalColumnMappings.map((m) => m.fromIndex),
-        );
-
         for (row of table.rows) {
             rowIsInvalid = false;
 
-            const statRow = importStation(
+            const stationRow = importStation(
                 row,
                 table,
                 optionalColumnMappings,
                 otherColumnMappings,
-                extIdRegister,
-                addIssueCb,
+                externalIdRegister,
+                addIssueCallback,
             );
 
-            if (statRow.extId) {
-                extIdRegister.add(statRow.extId);
+            if (stationRow.extId) {
+                externalIdRegister.add(stationRow.extId);
             }
 
             if (!rowIsInvalid) {
-                const longUniqueId = getLongUniqueStationId(statRow);
+                const longUniqueId = getLongUniqueStationId(stationRow);
                 if (longUniqueId2RowIndexMap.has(longUniqueId)) {
-                    addIssueCb(
+                    addIssueCallback(
                         {
                             row: row.rowIndex,
                             msg: IMPORT_ISSUES.rowIsTooSimilar(
@@ -345,25 +324,26 @@ export class AllInOneImporter implements XlsxImporter {
                     );
                 } else {
                     longUniqueId2RowIndexMap.set(longUniqueId, row.rowIndex);
-                    statRow.id = getShortUniqueStationIdFromLongId(
+                    stationRow.id = getShortUniqueStationIdFromLongId(
                         longUniqueId,
                         idSet,
                     );
 
-                    idSet.add(statRow.id);
-                    importTable.rows.push(statRow as AllInOneStationRow);
+                    idSet.add(stationRow.id);
+                    importTable.rows.push(stationRow as AllInOneStationRow);
                 }
             }
+            // This is not a If-Else, check has to happen last, since the invalid state could still be modified in a callback.
             if (rowIsInvalid) {
-                addIssueCb({ msg: IMPORT_ISSUES.omittingRow });
+                addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
             }
         }
 
         importTable.omittedRows = table.rows.length - importTable.rows.length;
 
-        this.extId2StationRow = new Map(
+        this.externalId2StationRow = new Map(
             importTable.rows
-                .filter((row) => extIdRegister.isRegisteredOnce(row.extId))
+                .filter((row) => externalIdRegister.isRegisteredOnce(row.extId))
                 .map((r) => [r.extId, r]),
         );
         return importTable;
@@ -374,16 +354,16 @@ export class AllInOneImporter implements XlsxImporter {
     ): ImportTable<AllInOneDeliveryRow> {
         const table = xlsxSheetReader.readTable();
 
-        const extIdRegister = new Register();
+        const externalIdRegister = new Register();
 
         const idSet = new Set<string>();
         const longUniqueId2RowIndexMap = new Map<string, number>();
 
         const importTable = createEmptyImportTable<AllInOneDeliveryRow>();
         let row: Row;
-        let rowIsInvalid = false;
+        let rowIsInvalid: boolean;
 
-        const addIssueCb: AddIssueCallback = (
+        const addIssueCallback: AddIssueCallback = (
             issue: ImportIssue,
             invalidateRow: boolean = false,
         ) => {
@@ -393,7 +373,10 @@ export class AllInOneImporter implements XlsxImporter {
             rowIsInvalid ||= invalidateRow;
         };
 
-        const optionalColumnMappings = getOptionalDeliveryColumnMapping(table);
+        const optionalColumnMappings = getOptionalColumnMapping(
+            table,
+            OPTIONAL_DELIVERY_COLUMNS,
+        );
         const otherColumnMappings = getOtherColumns(
             table,
             DeliveryColumn.ADDCOLS + 1,
@@ -403,26 +386,30 @@ export class AllInOneImporter implements XlsxImporter {
         for (row of table.rows) {
             rowIsInvalid = false;
 
-            const delRow = importDelivery(
+            const deliveryRow = importDelivery(
                 row,
                 table,
                 optionalColumnMappings,
                 otherColumnMappings,
-                extIdRegister,
-                this.extId2StationRow,
-                addIssueCb,
+                externalIdRegister,
+                this.externalId2StationRow,
+                addIssueCallback,
             );
 
-            if (delRow.extId) {
-                extIdRegister.add(delRow.extId);
+            if (deliveryRow.extId) {
+                externalIdRegister.add(deliveryRow.extId);
             }
 
             if (!rowIsInvalid) {
-                delRow.source = this.extId2StationRow.get(delRow.source!)?.id;
-                delRow.target = this.extId2StationRow.get(delRow.target!)?.id;
-                const longUniqueId = getLongUniqueDeliveryId(delRow);
+                deliveryRow.source = this.externalId2StationRow.get(
+                    deliveryRow.source!,
+                )?.id;
+                deliveryRow.target = this.externalId2StationRow.get(
+                    deliveryRow.target!,
+                )?.id;
+                const longUniqueId = getLongUniqueDeliveryId(deliveryRow);
                 if (longUniqueId2RowIndexMap.has(longUniqueId)) {
-                    addIssueCb(
+                    addIssueCallback(
                         {
                             row: row.rowIndex,
                             msg: IMPORT_ISSUES.rowIsTooSimilar(
@@ -433,18 +420,19 @@ export class AllInOneImporter implements XlsxImporter {
                     );
                 } else {
                     longUniqueId2RowIndexMap.set(longUniqueId, row.rowIndex);
-                    delRow.id = getShortUniqueDeliveryIdFromLongId(
+                    deliveryRow.id = getShortUniqueDeliveryIdFromLongId(
                         longUniqueId,
                         idSet,
                     );
 
-                    idSet.add(delRow.id);
-                    importTable.rows.push(delRow as AllInOneDeliveryRow);
+                    idSet.add(deliveryRow.id);
+                    importTable.rows.push(deliveryRow as AllInOneDeliveryRow);
                 }
             }
 
+            // This is not a If-Else, check has to happen last, since the invalid state could still be modified in a callback.
             if (rowIsInvalid) {
-                addIssueCb({ msg: IMPORT_ISSUES.omittingRow });
+                addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
             }
         }
 
@@ -455,7 +443,7 @@ export class AllInOneImporter implements XlsxImporter {
                 .filter(
                     (row) =>
                         row.extId !== undefined &&
-                        extIdRegister.isRegisteredOnce(row.extId),
+                        externalIdRegister.isRegisteredOnce(row.extId),
                 )
                 .map((row) => [row.extId!, row]),
         );
@@ -469,9 +457,9 @@ export class AllInOneImporter implements XlsxImporter {
         const importTable = createEmptyImportTable<Del2DelRow>();
 
         let row: Row;
-        let rowIsInvalid = false;
+        let rowIsInvalid: boolean;
 
-        const addIssueCb: AddIssueCallback = (
+        const addIssueCallback: AddIssueCallback = (
             issue: ImportIssue,
             invalidateRow: boolean = false,
         ) => {
@@ -482,18 +470,20 @@ export class AllInOneImporter implements XlsxImporter {
         };
 
         for (row of table.rows) {
+            rowIsInvalid = false;
+
             const del2DelRow: Partial<Del2DelRow> = {
-                from: importDeliveryRef(
+                from: importReference(
                     row,
                     Del2DelColumn.FROM,
                     this.extId2DeliveryRow,
-                    addIssueCb,
+                    addIssueCallback,
                 ),
-                to: importDeliveryRef(
+                to: importReference(
                     row,
                     Del2DelColumn.TO,
                     this.extId2DeliveryRow,
-                    addIssueCb,
+                    addIssueCallback,
                 ),
             };
 
@@ -504,7 +494,7 @@ export class AllInOneImporter implements XlsxImporter {
                 del2DelRow.to = this.extId2DeliveryRow.get(del2DelRow.to!)?.id;
                 importTable.rows.push(del2DelRow as Del2DelRow);
             } else {
-                addIssueCb({ msg: IMPORT_ISSUES.omittingRow });
+                addIssueCallback({ msg: IMPORT_ISSUES.omittingRow });
             }
         }
 

@@ -9,7 +9,6 @@ import {
     MappingDef,
     NumberTypeString,
     RefinedTypeString,
-    RowWithOtherProps,
     StationRow,
 } from "./model";
 import { BasicTypeString, CellValue, Row, Table } from "./xlsx-reader";
@@ -52,14 +51,13 @@ const LONGITUDE_LIMITS = {
     max: 180,
 } as const;
 
-export function addOtherProps(
+export function getPropsFromRow<T = { [key: string]: CellValue }>(
     fromRow: Row,
-    toRow: Partial<RowWithOtherProps>,
     columnMappings: ColumnMapping[],
     addIssueCb: AddIssueCallback,
-): void {
-    toRow.otherProps ??= {};
-    for (const columnMapping of columnMappings) {
+): { [key: string]: CellValue } {
+    const properties: { [key: string]: CellValue } = {};
+    columnMappings.forEach((columnMapping) => {
         const value = importValue(
             fromRow,
             columnMapping.fromIndex,
@@ -67,28 +65,10 @@ export function addOtherProps(
             addIssueCb,
         );
         if (value !== undefined) {
-            toRow.otherProps[columnMapping.toPropId] = value;
+            properties[columnMapping.toPropId] = value;
         }
-    }
-}
-
-export function addOptionalColumnProps<T>(
-    fromRow: Row,
-    toRow: Partial<StationRow | DeliveryRow>,
-    columnMappings: ColumnMapping[],
-    addIssueCb: AddIssueCallback,
-): void {
-    for (const columnMapping of columnMappings) {
-        const value = importValue(
-            fromRow,
-            columnMapping.fromIndex,
-            columnMapping.type,
-            addIssueCb,
-        );
-        if (value !== undefined) {
-            toRow[columnMapping.toPropId] = value;
-        }
-    }
+    });
+    return properties;
 }
 
 export function enrichImportIssue(
@@ -201,18 +181,18 @@ function getCleanedInput(value: CellValue | undefined): CellValue | undefined {
 }
 
 function getLat(lat: any): number | undefined {
-    return typeof lat === "number" &&
-        !Number.isNaN(lat) &&
-        isInRange(lat, LATITUDE_LIMITS.min, LATITUDE_LIMITS.max)
-        ? lat
+    const numLat = lat !== null ? undefined : Number(lat);
+    return numLat !== undefined &&
+        isInRange(numLat, LATITUDE_LIMITS.min, LATITUDE_LIMITS.max)
+        ? numLat
         : undefined;
 }
 
 function getLon(lon: any): number | undefined {
-    return typeof lon === "number" &&
-        !Number.isNaN(lon) &&
-        isInRange(lon, LONGITUDE_LIMITS.min, LONGITUDE_LIMITS.max)
-        ? lon
+    const numLon = lon !== null ? undefined : Number(lon);
+    return numLon !== undefined &&
+        isInRange(numLon, LONGITUDE_LIMITS.min, LONGITUDE_LIMITS.max)
+        ? numLon
         : undefined;
 }
 
@@ -293,25 +273,7 @@ export function importValue<X extends RefinedTypeString>(
     return undefined;
 }
 
-export function importStationRef(
-    row: Row,
-    colIndex: number,
-    allowedValues: { has: (x: string) => boolean },
-    addIssueCb: AddIssueCallback,
-): string | undefined {
-    return importRef(row, colIndex, allowedValues, addIssueCb);
-}
-
-export function importDeliveryRef(
-    row: Row,
-    colIndex: number,
-    allowedValues: { has: (x: string) => boolean },
-    addIssueCb: AddIssueCallback,
-): string | undefined {
-    return importRef(row, colIndex, allowedValues, addIssueCb);
-}
-
-export function importRef(
+export function importReference(
     row: Row,
     colIndex: number,
     allowedValues: { has: (x: string) => boolean },
@@ -327,22 +289,20 @@ export function importRef(
             },
             true,
         );
-    } else {
-        if (!allowedValues.has(inputValue)) {
-            addIssueCb(
-                {
-                    col: colIndex,
-                    type: "error",
-                    msg: IMPORT_ISSUES.invalidRef,
-                },
-                true,
-            );
-        }
+    } else if (!allowedValues.has(inputValue)) {
+        addIssueCb(
+            {
+                col: colIndex,
+                type: "error",
+                msg: IMPORT_ISSUES.invalidRef,
+            },
+            true,
+        );
     }
     return inputValue;
 }
 
-export function importPk(
+export function importPrimaryKey(
     row: Row,
     colIndex: number,
     usedPks: { has: (x: string) => boolean },
@@ -387,7 +347,7 @@ export function importMandatoryString(
     return inputValue;
 }
 
-export function importAggAmount(
+export function importAggregatedAmount(
     row: Row,
     amountColumns: AmountColumns,
 ): string | undefined {
@@ -514,7 +474,7 @@ function getFormatedStrDate(
     return dateParts.length > 0 ? dateParts.join("-") : undefined;
 }
 
-export function importStrDate(
+export function importStringDate(
     row: Row,
     dateCols: {
         y: number;
