@@ -10,15 +10,15 @@ import {
 import { OSM } from "ol/source";
 import * as ol from "ol";
 import BaseLayer from "ol/layer/Base";
+import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import { Tile } from "ol/layer";
+// import { Tile } from "ol/layer";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
 import { Stroke, Style } from "ol/style";
 import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
 import { NotNullish } from "./utility-types";
-import TileLayer from "ol/layer/Tile";
 import * as _ from "lodash";
 
 export interface RectConfig {
@@ -80,7 +80,7 @@ function createTileLayer(
 ): TileLayer {
     const { tileServer } = mapConfig;
 
-    return new Tile({
+    return new TileLayer({
         source: MAP_SOURCE.get(tileServer)!(),
     });
 }
@@ -139,32 +139,30 @@ function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
     });
 }
 
-function getMapLayers(
+function isVectorLayer(layer: BaseLayer): layer is VectorLayer {
+    return layer instanceof VectorLayer;
+}
+
+function isTileLayer(layer: BaseLayer): layer is TileLayer {
+    return layer instanceof TileLayer;
+}
+
+function getMapLayers<T extends BaseLayer>(
     map: ol.Map,
-    layerType: typeof VectorLayer | typeof TileLayer,
-): Array<BaseLayer> {
-    return map
-        .getLayers()
-        .getArray()
-        .filter((layer) => layer instanceof layerType);
+    layerTypePredicate: (layer: BaseLayer) => layer is T,
+): Array<T> {
+    return map.getLayers().getArray().filter(layerTypePredicate);
 }
 
 export function updateVectorLayerStyle(
     map: ol.Map,
     styleConfig: ShapeFileSettings,
 ): void {
-    const mapLayers = getMapLayers(map, VectorLayer);
-    // loop through all layers
-    mapLayers.forEach((layer) => {
-        // apply styles only to instances of VectorLayer
-        if (layer instanceof VectorLayer) {
-            const style = createVectorLayerStyle(styleConfig);
-            layer.setStyle(style);
-            layer.setProperties({
-                ...layer.getProperties(),
-                mystyle: styleConfig,
-            });
-        }
+    const vectorLayers = getMapLayers(map, isVectorLayer);
+
+    vectorLayers.forEach((layer) => {
+        const style = createVectorLayerStyle(styleConfig);
+        layer.setStyle(style);
     });
 }
 
@@ -185,7 +183,7 @@ function updateTileLayer(
     newMapConfig: MapViewConfig,
     oldMapConfig: MapViewConfig,
 ): void {
-    let tileLayers = getMapLayers(map, TileLayer);
+    let tileLayers = getMapLayers(map, isTileLayer);
     if (newMapConfig.tileServer !== oldMapConfig.tileServer) {
         tileLayers.forEach((layer) => map.removeLayer(layer));
         tileLayers = [];
@@ -216,7 +214,7 @@ function updateShapeLayer(
     newMapConfig: MapViewConfig,
     oldMapConfig: MapViewConfig,
 ): void {
-    let shapeLayers = getMapLayers(map, VectorLayer);
+    let shapeLayers = getMapLayers(map, isVectorLayer);
     if (newMapConfig.shapeFileData !== oldMapConfig.shapeFileData) {
         shapeLayers.forEach((layer) => map.removeLayer(layer));
         shapeLayers = [];
