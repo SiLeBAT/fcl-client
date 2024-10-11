@@ -24,7 +24,11 @@
                             "pixelworks/lib/index",
                             "javascript-lp-solver",
                             "lodash",
-                            "seedrandom"
+                            "seedrandom",
+                            "html2canvas",
+                            "moment",
+                            "exceljs",
+                            "immutable"
                         ],
                         "outputPath": "dist",
                         "index": "src/index.html",
