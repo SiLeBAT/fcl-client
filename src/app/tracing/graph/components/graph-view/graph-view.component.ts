@@ -154,6 +154,18 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
+    isGraphNonEmpty(): boolean {
+        const nodeCount = this.graphData?.nodeData.length ?? 0;
+        return nodeCount > 0;
+    }
+
+    private isGraphChanged() {
+        return (
+            this.graphData !== this.cyGraph_?.data ||
+            this.styleConfig !== this.cyGraph_.style
+        );
+    }
+
     private isSizePositive(): boolean {
         const size = this.getSize();
         return size.width > 0 && size.height > 0;
@@ -248,21 +260,26 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     }
 
     private processGraphInputUpdate(): void {
-        if (this.graphData && this.styleConfig) {
-            if (this.cyGraph_ && !this.graphData.layout) {
-                // clean cyGraph if the viewport(layout) is unknown
-                this.cleanCyGraph();
-            }
-            if (!this.cyGraph_) {
-                this.createCyGraph(this.graphData, this.styleConfig);
-            } else if (
-                this.graphData !== this.cyGraph_.data ||
-                this.styleConfig !== this.cyGraph_.style
-            ) {
-                this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
-            }
-        } else if (this.cyGraph_) {
+        if (
+            this.cyGraph_ &&
+            (!this.graphData || !this.styleConfig || !this.graphData.layout)
+        ) {
+            // clean cyGraph if graphData, styleConfig, or the viewport(layout) is unknown.
             this.cleanCyGraph();
+        }
+
+        if (!this.graphData || !this.styleConfig) {
+            return;
+        }
+
+        if (!this.cyGraph_ && this.isGraphNonEmpty()) {
+            this.createCyGraph(this.graphData, this.styleConfig);
+            return;
+        }
+
+        if (this.cyGraph_ && this.isGraphChanged()) {
+            this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
+            return;
         }
     }
 }
