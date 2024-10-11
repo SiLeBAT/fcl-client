@@ -1,5 +1,9 @@
 import { CellValue, XlsxReader } from "./xlsx-reader";
 
+export interface SetLike {
+    has: (x: string) => boolean;
+}
+
 export type AddIssueCallback = (
     issue: ImportIssue,
     invalidateRow?: boolean,

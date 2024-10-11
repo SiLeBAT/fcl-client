@@ -1,4 +1,4 @@
-import { removeUndefined } from "../../../../tracing/util/non-ui-utils";
+import { getFiniteNumberOrUndefined, removeUndefined } from "../../../../tracing/util/non-ui-utils";
 import { IMPORT_ISSUES, IMPORT_PREFIXES } from "./consts";
 import {
     AddIssueCallback,
@@ -181,7 +181,7 @@ function getCleanedInput(value: CellValue | undefined): CellValue | undefined {
 }
 
 function getLat(lat: any): number | undefined {
-    const numLat = lat !== null ? undefined : Number(lat);
+    const numLat = getFiniteNumberOrUndefined(lat);
     return numLat !== undefined &&
         isInRange(numLat, LATITUDE_LIMITS.min, LATITUDE_LIMITS.max)
         ? numLat
@@ -189,7 +189,7 @@ function getLat(lat: any): number | undefined {
 }
 
 function getLon(lon: any): number | undefined {
-    const numLon = lon !== null ? undefined : Number(lon);
+    const numLon = getFiniteNumberOrUndefined(lon);
     return numLon !== undefined &&
         isInRange(numLon, LONGITUDE_LIMITS.min, LONGITUDE_LIMITS.max)
         ? numLon

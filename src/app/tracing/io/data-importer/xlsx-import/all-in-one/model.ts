@@ -1,5 +1,5 @@
-import { DeliveryRow, ImportTable, StationRow } from "./model";
-import { CellValue } from "./xlsx-reader";
+import { DeliveryRow, ImportTable, StationRow } from "../model";
+import { CellValue } from "../xlsx-reader";
 
 export enum StationColumn {
     EXT_ID,

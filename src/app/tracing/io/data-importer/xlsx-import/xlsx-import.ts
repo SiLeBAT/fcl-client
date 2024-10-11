@@ -11,7 +11,7 @@ import {
     EXTOUT_STATION_PROP_IDS,
     IMPORT_PREFIXES,
 } from "./consts";
-import { AllInOneImporter } from "./xlsx-all-in-one-importer";
+import { AllInOneImporter } from "./all-in-one/importer";
 import {
     Del2DelRow,
     DeliveryRow,
@@ -21,7 +21,7 @@ import {
     StationRow,
 } from "./model";
 import { XlsxReader } from "./xlsx-reader";
-import { removeUndefined } from "../../../../tracing/util/non-ui-utils";
+import { getKeys, removeUndefined } from "../../../../tracing/util/non-ui-utils";
 
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
@@ -109,22 +109,14 @@ function mapRows(
     });
 }
 
-function filterProps(
-    props: ColumnProperty[],
-    propMap: Map<string, string>,
-): ColumnProperty[] {
-    const filteredProps = props.filter((p) => propMap.get(p.id) !== undefined);
-    return filteredProps;
-}
-
 function convertDeliveriesToExtDataTable(
     importTable: ImportTable<DeliveryRow>,
 ): DataTable {
-    let availableDefaultProps = collectDefaultProps(
+    const availableDefaultProps = collectDefaultProps(
         importTable,
-        keys(EXTOUT_DELIVERY_PROP_IDS),
+        getKeysWithStringValueMapping(EXTOUT_DELIVERY_PROP_IDS),
     );
-    let availableOtherProps = collectOtherProps(importTable);
+    const availableOtherProps = collectOtherProps(importTable);
     const propMap = new Map<string, string>();
     availableDefaultProps.forEach((p) =>
         propMap.set(p.id, EXTOUT_DELIVERY_PROP_IDS[p.id]),
@@ -132,8 +124,6 @@ function convertDeliveriesToExtDataTable(
     availableOtherProps.forEach((p) =>
         propMap.set(p.id, `${IMPORT_PREFIXES.otherDeliveryProp}${p.id}`),
     );
-    availableDefaultProps = filterProps(availableDefaultProps, propMap);
-    availableOtherProps = filterProps(availableOtherProps, propMap);
     const extTable: DataTable = {
         columnProperties: mapProps(
             [...availableDefaultProps, ...availableOtherProps],
@@ -149,18 +139,18 @@ function convertDeliveriesToExtDataTable(
     return extTable;
 }
 
-function keys<T extends Record<string, unknown>>(obj: T): (keyof T & string)[] {
-    return Object.keys(obj) as (keyof T & string)[];
+function getKeysWithStringValueMapping<T extends Record<string, unknown>>(object: T): (keyof T & string)[] {
+    return getKeys(object).filter(key => typeof object[key] === "string");
 }
 
 function convertStationsToExtDataTable(
     importTable: ImportTable<StationRow>,
 ): DataTable {
-    let availableDefaultProps = collectDefaultProps(
+    const availableDefaultProps = collectDefaultProps(
         importTable,
-        keys(EXTOUT_STATION_PROP_IDS),
+        getKeysWithStringValueMapping(EXTOUT_STATION_PROP_IDS),
     );
-    let availableOtherProps = collectOtherProps(importTable);
+    const availableOtherProps = collectOtherProps(importTable);
     const propMap = new Map<string, string>();
     availableOtherProps.forEach((p) =>
         propMap.set(p.id, `${IMPORT_PREFIXES.otherStationProp}${p.id}`),
@@ -168,8 +158,6 @@ function convertStationsToExtDataTable(
     availableDefaultProps.forEach((p) =>
         propMap.set(p.id, EXTOUT_STATION_PROP_IDS[p.id]),
     );
-    availableDefaultProps = filterProps(availableDefaultProps, propMap);
-    availableOtherProps = filterProps(availableOtherProps, propMap);
     const extTable: DataTable = {
         columnProperties: mapProps(
             [...availableDefaultProps, ...availableOtherProps],
@@ -190,7 +178,7 @@ function convertDel2DelsToExtDataTable(
 ): DataTable {
     const availableDefaultProps = collectDefaultProps(
         importTable,
-        keys(EXTOUT_DEL2DEL_PROP_IDS),
+        getKeysWithStringValueMapping(EXTOUT_DEL2DEL_PROP_IDS),
     );
     const propMap = new Map<string, string>();
     availableDefaultProps.forEach((p) =>

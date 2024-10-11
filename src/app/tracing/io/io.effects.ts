@@ -36,10 +36,7 @@ import {
 } from "@angular/material/legacy-dialog";
 import { DataService } from "../services/data.service";
 import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
-
-function joinNonEmptyTexts(texts: string[], sep: string = " "): string {
-    return texts.filter((t) => t !== "").join(sep);
-}
+import { joinNonEmptyTexts } from "../util/non-ui-utils";
 
 @Injectable()
 export class IOEffects {

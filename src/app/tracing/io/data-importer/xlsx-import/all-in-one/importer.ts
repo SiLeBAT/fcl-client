@@ -1,21 +1,19 @@
-import { removeNullish } from "../../../util/non-ui-utils";
 import {
     AddIssueCallback,
-    ColumnMapping,
     Del2DelRow,
     ImportIssue,
     ImportResult,
     ImportTable,
     XlsxImporter,
-} from "./model";
-import { Row, Table, XlsxReader, XlsxSheetReader } from "./xlsx-reader";
+} from "../model";
+import { Row, XlsxReader, XlsxSheetReader } from "../xlsx-reader";
 import {
     AllInOneDeliveryRow,
     AllInOneStationRow,
     Del2DelColumn,
     DeliveryColumn,
     StationColumn,
-} from "./xlsx-all-in-one-import-model";
+} from "./model";
 import {
     createEmptyImportTable,
     enrichImportIssue,
@@ -25,15 +23,8 @@ import {
     getOtherColumns,
     getShortUniqueDeliveryIdFromLongId,
     getShortUniqueStationIdFromLongId,
-    getStringOrUndefined,
-    importAggregatedAmount,
     importReference,
-    importMandatoryString,
-    importPrimaryKey,
-    importStringDate,
-    importValue,
-    getPropsFromRow,
-} from "./shared";
+} from "../shared";
 import {
     OPTIONAL_DELIVERY_COLUMNS,
     OPTIONAL_STATION_COLUMNS,
@@ -41,162 +32,15 @@ import {
     REQUIRED_DELIVERY_COLUMN_HEADERS,
     REQUIRED_STATION_COLUMN_HEADERS,
     SHEET_LABELS,
-} from "./xlsx-all-in-one-import-const";
-import { IMPORT_ISSUES } from "./consts";
+} from "./const";
+import { IMPORT_ISSUES } from "../consts";
 import {
     AllInOneXlsxInputFormatError,
     XlsxInputFormatError,
-} from "../../io-errors";
-
-interface SetLike {
-    has: (x: string) => boolean;
-}
-
-class Register {
-    private map = new Map<string, number>();
-
-    has(id: string): boolean {
-        return this.map.has(id);
-    }
-
-    private getCount(id: string): number {
-        return this.map.get(id) ?? 0;
-    }
-
-    add(id: string): void {
-        this.map.set(id, this.getCount(id) + 1);
-    }
-
-    isRegisteredOnce(id: string): boolean {
-        return this.getCount(id) === 1;
-    }
-}
-
-function importStation(
-    row: Row,
-    table: Table,
-    optionalColumnMappings: ColumnMapping[],
-    otherColumnMappings: ColumnMapping[],
-    extIdRegister: Register,
-    externalAddIssueCallback: AddIssueCallback,
-): Partial<AllInOneStationRow> {
-    // eslint-disable-next-line prefer-const
-    let extId: string | undefined;
-
-    const addIssueCallback: AddIssueCallback = (
-        issue: ImportIssue,
-        invalidateRow: boolean = false,
-    ) => {
-        externalAddIssueCallback(
-            enrichImportIssue(issue, row, table, invalidateRow, extId),
-            invalidateRow,
-        );
-    };
-
-    extId = importPrimaryKey(
-        row,
-        StationColumn.EXT_ID,
-        extIdRegister,
-        addIssueCallback,
-    );
-    const statRow: Partial<AllInOneStationRow> = {
-        extId: extId,
-        name: getStringOrUndefined(row[StationColumn.NAME]),
-        address: createStationAddress(row),
-        country: getStringOrUndefined(row[StationColumn.COUNTRY]),
-        typeOfBusiness: getStringOrUndefined(
-            row[StationColumn.TYPE_OF_BUSINESS],
-        ),
-        otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
-        ...getPropsFromRow(row, optionalColumnMappings, addIssueCallback),
-    };
-    return statRow;
-}
-
-function importDelivery(
-    row: Row,
-    table: Table,
-    optionalColumnMappings: ColumnMapping[],
-    otherColumnMappings: ColumnMapping[],
-    extDeliveryIdRegister: SetLike,
-    extStationIdRegister: SetLike,
-    externalAddIssueCallback: AddIssueCallback,
-): Partial<AllInOneDeliveryRow> {
-    // eslint-disable-next-line prefer-const
-    let externalId: string | undefined;
-
-    const addIssueCallback: AddIssueCallback = (
-        issue: ImportIssue,
-        invalidateRow: boolean = false,
-    ) => {
-        externalAddIssueCallback(
-            enrichImportIssue(issue, row, table, invalidateRow, externalId),
-            invalidateRow,
-        );
-    };
-
-    externalId = importPrimaryKey(
-        row,
-        DeliveryColumn.EXT_ID,
-        extDeliveryIdRegister,
-        addIssueCallback,
-    );
-
-    return {
-        extId: externalId,
-        source: importReference(
-            row,
-            DeliveryColumn.SOURCE,
-            extStationIdRegister,
-            addIssueCallback,
-        ),
-        target: importReference(
-            row,
-            DeliveryColumn.TARGET,
-            extStationIdRegister,
-            addIssueCallback,
-        ),
-        productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
-        lotNumber: importMandatoryString(
-            row,
-            DeliveryColumn.LOT_NUMBER,
-            addIssueCallback,
-        ),
-        dateOut: importStringDate(
-            row,
-            {
-                y: DeliveryColumn.DATE_OUT_YEAR,
-                m: DeliveryColumn.DATE_OUT_MONTH,
-                d: DeliveryColumn.DATE_OUT_DAY,
-            },
-            addIssueCallback,
-        ),
-        dateIn: importStringDate(
-            row,
-            {
-                y: DeliveryColumn.DATE_IN_YEAR,
-                m: DeliveryColumn.DATE_IN_MONTH,
-                d: DeliveryColumn.DATE_IN_DAY,
-            },
-            addIssueCallback,
-        ),
-        unitAmount: importAggregatedAmount(row, {
-            number: DeliveryColumn.UNIT_AMOUNT_NUMBER,
-            unit: DeliveryColumn.UNIT_AMOUNT_UNIT,
-        }),
-        lotAmountNumber: importValue(
-            row,
-            DeliveryColumn.LOT_AMOUNT_NUMBER,
-            "nonneg:number",
-            addIssueCallback,
-        ),
-        lotAmountUnit: getStringOrUndefined(
-            row[DeliveryColumn.LOT_AMOUNT_UNIT],
-        ),
-        otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
-        ...getPropsFromRow(row, optionalColumnMappings, addIssueCallback),
-    };
-}
+} from "../../../io-errors";
+import { importStation } from "./station-import";
+import { importDelivery } from "./delivery-import";
+import { Register } from "./shared";
 
 export class AllInOneImporter implements XlsxImporter {
     private externalId2StationRow = new Map<string, AllInOneStationRow>();
@@ -502,26 +346,4 @@ export class AllInOneImporter implements XlsxImporter {
 
         return importTable;
     }
-}
-
-function conditionalJoinOrUndefined(
-    arr: any[],
-    sep: string,
-): string | undefined {
-    const filteredArr = removeNullish(arr);
-    return filteredArr.length === 0 ? undefined : filteredArr.join(sep);
-}
-
-function createStationAddress(row: Row): string | undefined {
-    const street = getStringOrUndefined(row[StationColumn.STREET]);
-    const streetNo = getStringOrUndefined(row[StationColumn.STREET_NUMBER]);
-    const streetWithNo = conditionalJoinOrUndefined([street, streetNo], " ");
-    const zip = getStringOrUndefined(row[StationColumn.ZIP]);
-    const city = getStringOrUndefined(row[StationColumn.CITY]);
-    const zipWithCity = conditionalJoinOrUndefined([zip, city], " ");
-    const address = conditionalJoinOrUndefined(
-        [streetWithNo, zipWithCity],
-        ", ",
-    );
-    return address;
 }
