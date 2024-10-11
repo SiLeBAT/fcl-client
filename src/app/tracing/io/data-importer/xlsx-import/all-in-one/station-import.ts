@@ -1,15 +1,22 @@
-import { joinNonEmptyElementsOrUndefined } from "@app/tracing/util/non-ui-utils";
+import { joinNonEmptyElementsOrUndefined } from "../../../../util/non-ui-utils";
 import { AddIssueCallback, ColumnMapping, ImportIssue } from "../model";
-import { enrichImportIssue, getPropsFromRow, getStringOrUndefined, importPrimaryKey } from "../shared";
+import {
+    enrichImportIssue,
+    getPropsFromRow,
+    getStringOrUndefined,
+    importPrimaryKey,
+} from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneStationRow, StationColumn } from "./model";
 import { Register } from "./shared";
 
-
 function createStationAddress(row: Row): string | undefined {
     const street = getStringOrUndefined(row[StationColumn.STREET]);
     const streetNo = getStringOrUndefined(row[StationColumn.STREET_NUMBER]);
-    const streetWithNo = joinNonEmptyElementsOrUndefined([street, streetNo], " ");
+    const streetWithNo = joinNonEmptyElementsOrUndefined(
+        [street, streetNo],
+        " ",
+    );
     const zip = getStringOrUndefined(row[StationColumn.ZIP]);
     const city = getStringOrUndefined(row[StationColumn.CITY]);
     const zipWithCity = joinNonEmptyElementsOrUndefined([zip, city], " ");

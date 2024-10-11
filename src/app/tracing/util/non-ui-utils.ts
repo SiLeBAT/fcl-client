@@ -106,7 +106,9 @@ export function joinNonEmptyTexts(texts: string[], sep: string = " "): string {
     return texts.filter((t) => t !== "").join(sep);
 }
 
-export function getKeys<T extends Record<string, unknown>>(obj: T): (keyof T & string)[] {
+export function getKeys<T extends Record<string, unknown>>(
+    obj: T,
+): (keyof T & string)[] {
     return Object.keys(obj) as (keyof T & string)[];
 }
 
@@ -122,7 +124,7 @@ export function joinNonEmptyElementsOrUndefined(
     array: any[],
     sep: string,
 ): string | undefined {
-    const filteredArr = array.filter(x => isNotNullish(x) && x !== "");
+    const filteredArr = array.filter((x) => isNotNullish(x) && x !== "");
     return filteredArr.length === 0 ? undefined : filteredArr.join(sep);
 }
 

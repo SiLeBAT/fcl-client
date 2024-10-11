@@ -393,7 +393,10 @@ export class XlsxSheetReader {
     ): boolean {
         let columnIndex = offset.col;
         for (const columnHeader of columnHeaders) {
-            const columnSpan = typeof columnHeader === "string" ? 1 : getColumnHeadersSpan(columnHeader[1]).colSpan;
+            const columnSpan =
+                typeof columnHeader === "string"
+                    ? 1
+                    : getColumnHeadersSpan(columnHeader[1]).colSpan;
             if (
                 !this.validateHeaderCell(
                     columnHeader,

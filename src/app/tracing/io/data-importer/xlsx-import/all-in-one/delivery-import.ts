@@ -1,5 +1,20 @@
-import { AddIssueCallback, ColumnMapping, ImportIssue, SetLike } from "../model";
-import { enrichImportIssue, getPropsFromRow, getStringOrUndefined, importAggregatedAmount, importMandatoryString, importPrimaryKey, importReference, importStringDate, importValue } from "../shared";
+import {
+    AddIssueCallback,
+    ColumnMapping,
+    ImportIssue,
+    SetLike,
+} from "../model";
+import {
+    enrichImportIssue,
+    getPropsFromRow,
+    getStringOrUndefined,
+    importAggregatedAmount,
+    importMandatoryString,
+    importPrimaryKey,
+    importReference,
+    importStringDate,
+    importValue,
+} from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneDeliveryRow, DeliveryColumn } from "./model";
 

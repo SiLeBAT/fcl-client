@@ -21,7 +21,10 @@ import {
     StationRow,
 } from "./model";
 import { XlsxReader } from "./xlsx-reader";
-import { getKeys, removeUndefined } from "../../../../tracing/util/non-ui-utils";
+import {
+    getKeys,
+    removeUndefined,
+} from "../../../../tracing/util/non-ui-utils";
 
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
@@ -139,8 +142,10 @@ function convertDeliveriesToExtDataTable(
     return extTable;
 }
 
-function getKeysWithStringValueMapping<T extends Record<string, unknown>>(object: T): (keyof T & string)[] {
-    return getKeys(object).filter(key => typeof object[key] === "string");
+function getKeysWithStringValueMapping<T extends Record<string, unknown>>(
+    object: T,
+): (keyof T & string)[] {
+    return getKeys(object).filter((key) => typeof object[key] === "string");
 }
 
 function convertStationsToExtDataTable(

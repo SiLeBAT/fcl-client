@@ -1,4 +1,7 @@
-import { getFiniteNumberOrUndefined, removeUndefined } from "../../../../tracing/util/non-ui-utils";
+import {
+    getFiniteNumberOrUndefined,
+    removeUndefined,
+} from "../../../../tracing/util/non-ui-utils";
 import { IMPORT_ISSUES, IMPORT_PREFIXES } from "./consts";
 import {
     AddIssueCallback,
