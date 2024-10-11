@@ -23,6 +23,14 @@ export async function getJsonFromFile(file: File): Promise<any> {
     }
 }
 
+export function isJsonFileType(file: File): boolean {
+    return file.name.endsWith(".json");
+}
+
+export function isExcelFileType(file: File): boolean {
+    return file.name.endsWith(".xlsx");
+}
+
 export async function getTextFromUtf8EncodedFile(file: File): Promise<string> {
     const arrBuf = await new Response(file).arrayBuffer();
     const textDecoder = new TextDecoder(undefined, { fatal: true });

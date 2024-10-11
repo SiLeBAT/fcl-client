@@ -6,9 +6,10 @@ import { DataImporter } from "./data-importer/data-importer";
 import { DataExporter } from "./data-exporter";
 import { DataImporterV1 } from "./data-importer/data-importer-v1";
 import * as shapeFileImporter from "./data-importer/shape-file-importer";
-import { getJsonFromFile } from "./io-utils";
+import { getJsonFromFile, isJsonFileType } from "./io-utils";
 import { JsonData } from "./ext-data-model.v1";
 import * as _ from "lodash";
+import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
 
 @Injectable({
     providedIn: "root",
@@ -21,6 +22,19 @@ export class IOService {
     }
 
     constructor(private httpClient: HttpClient) {}
+
+    private async getFclDataFromFile(file: File): Promise<FclData> {
+        let fclData: FclData;
+        if (isJsonFileType(file)) {
+            const jsonData = await getJsonFromFile(file);
+            fclData = await this.preprocessData(jsonData);
+        } else {
+            const jsonData = await importXlsxFile(file);
+            fclData = await this.preprocessData(jsonData);
+        }
+        fclData.source.name = file.name;
+        return fclData;
+    }
 
     async getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === "string") {
@@ -36,15 +50,8 @@ export class IOService {
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
-                getJsonFromFile(file)
-                    .then((jsonData) => {
-                        this.preprocessData(jsonData)
-                            .then((data) => {
-                                data.source.name = file.name;
-                                resolve(data);
-                            })
-                            .catch((e) => reject(e));
-                    })
+                this.getFclDataFromFile(file)
+                    .then((fclData) => resolve(fclData))
                     .catch((e) => reject(e));
             });
         } else {

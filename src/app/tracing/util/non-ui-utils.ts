@@ -98,6 +98,55 @@ export function isNotEmpty(
     return (x ?? "") !== "";
 }
 
+export function isArrayNotEmpty<T>(array: T[]): array is [T, ...T[]] {
+    return array.length > 0;
+}
+
+export function joinNonEmptyTexts(texts: string[], sep: string = " "): string {
+    return texts.filter((t) => t !== "").join(sep);
+}
+
+export function getKeys<T extends Record<string, unknown>>(
+    obj: T,
+): (keyof T & string)[] {
+    return Object.keys(obj) as (keyof T & string)[];
+}
+
+/**
+ * Adds all the non empty elements of an array into a string, separated by the specified separator string.
+ * If the array has no non empty elements than undefined is returned otherwise the join result.
+ * An element is considered as empty if it is nullish or an empty string.
+ * @param array
+ * @param sep
+ * @returns
+ */
+export function joinNonEmptyElementsOrUndefined(
+    array: any[],
+    sep: string,
+): string | undefined {
+    const filteredArr = array.filter((x) => isNotNullish(x) && x !== "");
+    return filteredArr.length === 0 ? undefined : filteredArr.join(sep);
+}
+
+/**
+ * Returns a finite number if the passed value is a finite number or
+ * is a string which can be converted to a finit number otherwise undefined.
+ *
+ * String conversions are done with Number.parseFloat.
+ * Finite checks are done with Number.isFinite
+ *
+ * @param value Some value representing the number.
+ */
+export function getFiniteNumberOrUndefined(value: any): number | undefined {
+    if (typeof value === "string") {
+        const numValue = Number.parseFloat(value);
+        return Number.isFinite(numValue) ? numValue : undefined;
+    } else if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+    }
+    return undefined;
+}
+
 /**
  * This method is used to update an object in a type safe manner.
  *
@@ -494,4 +543,8 @@ export class Utils {
         });
         return array;
     }
+}
+
+export function isEmptyString(value: any): value is "" {
+    return typeof value === "string" && value === "";
 }
