@@ -2,8 +2,8 @@
 
 exports[`AppComponent should render correctlu 1`] = `
 <fcl-root
-  elementRef={[Function ElementRef]}
-  overlayContainer={[Function OverlayContainer]}
+  elementRef={[Function _ElementRef]}
+  overlayContainer={[Function _OverlayContainer]}
 >
   <fcl-main-page />
 </fcl-root>

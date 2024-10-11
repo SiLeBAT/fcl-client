@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Routes, RouterModule, mapToCanActivate } from "@angular/router";
 
 import { LoginViewComponent } from "./presentation/login-view/login-view.component";
 import { RegisterViewComponent } from "./presentation/register-view/register-view.component";
@@ -19,7 +19,9 @@ const userRoutes: Routes = [
             {
                 path: "profile",
                 component: ProfileContainerComponent,
-                canActivate: environment.serverless ? undefined : [AuthGuard],
+                canActivate: environment.serverless
+                    ? undefined
+                    : mapToCanActivate([AuthGuard]),
             },
             {
                 path: "login",
