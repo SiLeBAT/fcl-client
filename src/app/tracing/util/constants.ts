@@ -1,7 +1,6 @@
 import {
     Color,
     GraphType,
-    MapType,
     DeliveryData,
     StationData,
     GroupType,
@@ -199,15 +198,9 @@ export class Constants {
     );
 
     static readonly GEOJSON_BORDER_WIDTHS = Constants.EDGE_WIDTHS;
-    static readonly DEFAULT_GEOJSON_BORDER_WIDTH = 0.5;
-    static readonly DEFAULT_GEOJSON_BORDER_COLOR = {
-        r: 0,
-        g: 0,
-        b: 0,
-    } as Readonly<Color>;
 
     static readonly DEFAULT_GRAPH_TYPE = GraphType.GRAPH;
-    static readonly DEFAULT_MAP_TYPE = MapType.MAPNIK;
+
     static readonly DEFAULT_GRAPH_NODE_SIZE = 14;
     static readonly DEFAULT_GRAPH_ADJUST_EDGE_WIDTH_TO_NODE_SIZE = true;
     static readonly DEFAULT_GRAPH_EDGE_WIDTH =

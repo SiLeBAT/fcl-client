@@ -37,7 +37,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
 
     get isShapeFileMapActive(): boolean {
         return (
-            this.graphSettings.mapType === MapType.SHAPE_FILE &&
+            this.graphSettings.mapType !== MapType.TILES_ONLY &&
             this.graphSettings.type === GraphType.GIS
         );
     }

@@ -9,11 +9,10 @@ import {
 } from "@angular/core";
 import * as ol from "ol";
 import { Utils as UIUtils } from "../../../util/ui-utils";
-import { MapType, Size, MapConfig } from "../../../data.model";
+import { Size, MapViewConfig } from "../../../data.model";
 import {
     createOpenLayerMap,
-    updateMapType,
-    updateVectorLayerStyle,
+    updateMapLayers,
 } from "@app/tracing/util/map-utils";
 
 interface TypedSimpleChange<T> extends SimpleChange {
@@ -29,7 +28,7 @@ interface TypedSimpleChange<T> extends SimpleChange {
 export class GeoMapComponent implements OnChanges {
     @ViewChild("map", { static: true }) mapElement: ElementRef;
 
-    @Input() mapConfig: MapConfig;
+    @Input() mapConfig: MapViewConfig;
 
     private map: ol.Map | null = null;
 
@@ -46,7 +45,7 @@ export class GeoMapComponent implements OnChanges {
     }
 
     private processInputChanges(
-        mapConfigChange: TypedSimpleChange<MapConfig> | undefined,
+        mapConfigChange: TypedSimpleChange<MapViewConfig> | undefined,
     ): void {
         if (
             mapConfigChange !== undefined &&
@@ -77,16 +76,12 @@ export class GeoMapComponent implements OnChanges {
         };
     }
 
-    private initMap(mapConfig: MapConfig): void {
+    private initMap(mapConfig: MapViewConfig): void {
         this.map = createOpenLayerMap(mapConfig, this.mapElement.nativeElement);
         this.updateMapView(mapConfig);
     }
 
-    private updateMapType(mapConfig: MapConfig): void {
-        updateMapType(this.map!, mapConfig);
-    }
-
-    private updateMapView(mapConfig: MapConfig) {
+    private updateMapView(mapConfig: MapViewConfig) {
         if (mapConfig.layout !== null) {
             const size = this.getSize();
             this.map!.setView(
@@ -107,19 +102,12 @@ export class GeoMapComponent implements OnChanges {
         }
     }
 
-    private updateMap(newMapConfig: MapConfig, oldMapConfig: MapConfig): void {
-        if (
-            newMapConfig.mapType !== oldMapConfig.mapType ||
-            newMapConfig.shapeFileData !== oldMapConfig.shapeFileData
-        ) {
-            this.updateMapType(newMapConfig);
-        } else if (
-            newMapConfig.mapType === MapType.SHAPE_FILE &&
-            (newMapConfig.lineColor !== oldMapConfig.lineColor ||
-                newMapConfig.lineWidth !== oldMapConfig.lineWidth)
-        ) {
-            updateVectorLayerStyle(this.map!, newMapConfig);
-        }
+    private updateMap(
+        newMapConfig: MapViewConfig,
+        oldMapConfig: MapViewConfig,
+    ): void {
+        updateMapLayers(this.map!, newMapConfig, oldMapConfig);
+
         if (newMapConfig.layout !== oldMapConfig.layout) {
             this.updateMapView(newMapConfig);
         }
