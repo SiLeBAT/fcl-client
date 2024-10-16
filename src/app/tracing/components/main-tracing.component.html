@@ -6,6 +6,19 @@
     >
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
+                <div class="fcl-graph-empty" *ngIf="!isGraphNonEmpty()">
+                    <img
+                        class="fcl-logo-soft"
+                        mat-card-image
+                        src="../../assets/fcl_logo_soft_transparent.svg"
+                        alt="FCL logo"
+                    />
+                    <h2>Welcome to FCL Web!</h2>
+                    <p>
+                        Let's get started by loading an example dataset or
+                        uploading your own data.
+                    </p>
+                </div>
                 <fcl-schema-graph
                     #schemaGraph
                     [hidden]="(showSchemaGraph$ | async) === false"

@@ -23,4 +23,5 @@ export interface TracingState extends ModelDependentState {
     animatingTabCount: number;
     isConfSideBarOpening: boolean;
     tracingActive: boolean;
+    isModelLoaded: boolean;
 }
