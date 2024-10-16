@@ -98,6 +98,7 @@ const initialState: TracingState = {
     animatingTabCount: 0,
     isConfSideBarOpening: false,
     showGraphSettings: false,
+    isModelLoaded: false,
 };
 
 export function createDefaultPropMappings(): PropMaps {
@@ -202,6 +203,7 @@ export function reducer(
             let newState: TracingState = {
                 ...state,
                 fclData: action.payload.fclData,
+                isModelLoaded: true,
                 ...initialModelDependentState,
             };
 
