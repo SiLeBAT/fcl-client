@@ -154,18 +154,6 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
-    isGraphNonEmpty(): boolean {
-        const nodeCount = this.graphData?.nodeData.length ?? 0;
-        const ghostCount = this.graphData?.ghostData?.nodeData.length ?? 0;
-        return nodeCount + ghostCount > 0;
-    }
-
-    isGraphFullyInvisible(): boolean {
-        const nodeCount = this.graphData?.nodeData.length ?? 0;
-        const ghostCount = this.graphData?.ghostData?.nodeData.length ?? 0;
-        return nodeCount === 0 && ghostCount > 0;
-    }
-
     private isGraphChanged() {
         return (
             this.graphData !== this.cyGraph_?.data ||
@@ -279,7 +267,7 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
             return;
         }
 
-        if (!this.cyGraph_ && this.isGraphNonEmpty()) {
+        if (!this.cyGraph_) {
             this.createCyGraph(this.graphData, this.styleConfig);
             return;
         }
