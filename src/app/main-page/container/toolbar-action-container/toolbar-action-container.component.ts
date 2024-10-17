@@ -54,7 +54,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     availableMaps: AvailableMaps;
 
     private componentActive: boolean = true;
-    private confirmationNeedeed: boolean = false;
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -106,10 +105,6 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     loadModelFile(fileList: FileList) {
         this.loadFile(fileList);
-    }
-
-    openUploadMenu() {
-        this.confirmationNeedeed = true;
     }
 
     onSelectModelFile(type: ModelFileType) {
@@ -172,21 +167,35 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                     if (_.isEmpty(lastUnchangedJsonDataExtract)) {
                         loadFun();
                     } else {
-                        const dialogRef: MatDialogRef<
-                            DialogOkCancelComponent,
-                            any
-                        > = this.openConfirmDiscardChangesDialog();
+                        this.ioService
+                            .hasDataChanged(
+                                fclData,
+                                lastUnchangedJsonDataExtract,
+                            )
+                            .then((dataHasChanged: boolean) => {
+                                if (dataHasChanged) {
+                                    const dialogRef: MatDialogRef<
+                                        DialogOkCancelComponent,
+                                        any
+                                    > = this.openConfirmDiscardChangesDialog();
 
-                        if (dialogRef !== null) {
-                            dialogRef
-                                .afterClosed()
-                                // eslint-disable-next-line rxjs/no-nested-subscribe
-                                .subscribe((result) => {
-                                    if (result === Constants.DIALOG_OK) {
-                                        loadFun();
+                                    if (dialogRef !== null) {
+                                        dialogRef
+                                            .afterClosed()
+                                            // eslint-disable-next-line rxjs/no-nested-subscribe
+                                            .subscribe((result) => {
+                                                if (
+                                                    result ===
+                                                    Constants.DIALOG_OK
+                                                ) {
+                                                    loadFun();
+                                                }
+                                            });
                                     }
-                                });
-                        }
+                                } else {
+                                    loadFun();
+                                }
+                            });
                     }
                 },
                 (error) => {
