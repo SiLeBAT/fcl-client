@@ -103,16 +103,14 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             );
     }
 
-    loadModelFile(fileList: FileList) {
-        this.loadFile(fileList);
+    onSelectModelFileOpenMenu() {
+        this.checkConditionsAndLoadFile(() => {
+            this.toolbarActionComponent.openSelectModelFileMenu();
+        });
     }
 
-    onSelectModelFile(type: ModelFileType) {
-        this.checkConditionsAndLoadFile(() =>
-            this.toolbarActionComponent.prepareAndClickModelFileInputElement(
-                type,
-            ),
-        );
+    loadModelFile(fileList: FileList) {
+        this.loadFile(fileList);
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
