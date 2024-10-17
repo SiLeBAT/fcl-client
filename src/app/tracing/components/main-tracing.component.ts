@@ -55,6 +55,7 @@ export class MainTracingComponent implements OnInit, OnDestroy {
     appName: string = environment.appName;
     private subscriptions: Subscription[] = [];
 
+    isModelLoaded$ = this.store.select(tracingSelectors.getModelLoaded);
     graphType$ = this.store.select(tracingSelectors.getGraphType);
     showGisGraph$ = this.graphType$.pipe(
         map((graphType) => graphType === GraphType.GIS),

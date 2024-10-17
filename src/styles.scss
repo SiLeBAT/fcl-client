@@ -25,7 +25,7 @@ $roboto-font-path: "~roboto-fontface/fonts" !default;
 @include mat.all-legacy-component-themes(fcl.$fcl-theme);
 
 body {
-    font-family: fcl.$fcl-font-family;
+    font-family: #{fcl.$fcl-font-family};
 }
 
 *,
