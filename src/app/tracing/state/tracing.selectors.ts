@@ -28,6 +28,11 @@ export const getTracingActive = createSelector(
     (state) => state.tracingActive,
 );
 
+export const getModelLoaded = createSelector(
+    selectTracingFeatureState,
+    (state) => state.isModelLoaded,
+);
+
 export const getVisioReport = createSelector(
     selectTracingFeatureState,
     (state) => state.visioReport,

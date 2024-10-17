@@ -203,8 +203,8 @@ export function reducer(
             let newState: TracingState = {
                 ...state,
                 fclData: action.payload.fclData,
-                isModelLoaded: true,
                 ...initialModelDependentState,
+                isModelLoaded: true,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
