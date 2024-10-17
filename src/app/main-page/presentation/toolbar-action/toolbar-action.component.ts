@@ -21,6 +21,7 @@ import {
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData, ModelFileType } from "../../model/types";
 import { FILE_INPUT_ELEMENT_SETTINGS } from "@app/main-page/consts/consts";
+import {MatMenuTrigger} from '@angular/material/menu'; 
 @Component({
     selector: "fcl-toolbar-action",
     templateUrl: "./toolbar-action.component.html",
@@ -59,12 +60,14 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
     @Output() selectModelFile = new EventEmitter<ModelFileType>();
+    @Output() selectModelFileMenuOpened = new EventEmitter<void>();
     @Output() saveImage = new EventEmitter();
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapSettings = new EventEmitter<Partial<MapSettings>>();
     @Output() downloadFile = new EventEmitter<string>();
+
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapOption: string;
@@ -87,6 +90,12 @@ export class ToolbarActionComponent implements OnChanges {
         }
     }
 
+    
+    onSelectModelFileMenuOpened() {
+        console.log('component: onSelectModelFileMenuOpened')
+        this.selectModelFileMenuOpened.emit();
+    }
+
     isServerLess(): boolean {
         return environment.serverless;
     }
@@ -104,6 +113,7 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onSelectModelFile(type: ModelFileType) {
+        console.log('component: onSelectModelFile')
         this.selectModelFile.emit(type);
     }
 

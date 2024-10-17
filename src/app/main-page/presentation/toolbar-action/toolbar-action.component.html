@@ -104,6 +104,7 @@
         data-cy="fcl-upload-model-button"
         [matMenuTriggerFor]="uploadMenu"
         matTooltip="Upload data"
+        (menuOpened)="onSelectModelFileMenuOpened()"
     >
         <mat-icon>file_upload</mat-icon>
         Upload Data

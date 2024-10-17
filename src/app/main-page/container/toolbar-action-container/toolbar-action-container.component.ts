@@ -41,6 +41,7 @@ import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
     styleUrls: ["./toolbar-action-container.component.scss"],
 })
 export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
+
     @ViewChild(ToolbarActionComponent)
     toolbarActionComponent: ToolbarActionComponent;
 
@@ -54,6 +55,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     availableMaps: AvailableMaps;
 
     private componentActive: boolean = true;
+    private hasDataChanged: boolean = false;
 
     constructor(
         private store: Store<fromTracing.State>,
@@ -103,16 +105,23 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             );
     }
 
+    onSelectModelFileMenuOpened() {
+        console.log('container: selectModelFileMenuOpened'); 
+        this.checkConditionsAndLoadFile((hasDataChanged) => {
+            console.log('callback fires', hasDataChanged)
+            this.hasDataChanged = hasDataChanged;
+        });
+    }
+
     loadModelFile(fileList: FileList) {
         this.loadFile(fileList);
     }
 
     onSelectModelFile(type: ModelFileType) {
-        this.checkConditionsAndLoadFile(() =>
-            this.toolbarActionComponent.prepareAndClickModelFileInputElement(
-                type,
-            ),
-        );
+        console.log('container: onSelectModelFile', this.hasDataChanged)
+        if(!this.hasDataChanged) {
+            this.toolbarActionComponent.prepareAndClickModelFileInputElement(type);
+        }
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
@@ -153,7 +162,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         this.componentActive = false;
     }
 
-    private checkConditionsAndLoadFile(loadFun: () => void): void {
+    private checkConditionsAndLoadFile(loadFun: (hasDataChanged:boolean) => void): void {
         combineLatest([
             this.store.select(tracingSelectors.getFclData),
             this.store.select(tracingSelectors.getLastUnchangedJsonDataExtract),
@@ -165,7 +174,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             .subscribe(
                 ([fclData, lastUnchangedJsonDataExtract]) => {
                     if (_.isEmpty(lastUnchangedJsonDataExtract)) {
-                        loadFun();
+                        loadFun(false);
                     } else {
                         this.ioService
                             .hasDataChanged(
@@ -188,12 +197,12 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
                                                     result ===
                                                     Constants.DIALOG_OK
                                                 ) {
-                                                    loadFun();
+                                                    loadFun(dataHasChanged);
                                                 }
                                             });
                                     }
                                 } else {
-                                    loadFun();
+                                    loadFun(dataHasChanged);
                                 }
                             });
                     }
