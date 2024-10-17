@@ -21,6 +21,7 @@ import {
 import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData, ModelFileType } from "../../model/types";
 import { FILE_INPUT_ELEMENT_SETTINGS } from "@app/main-page/consts/consts";
+import { MatMenuTrigger } from "@angular/material/menu";
 @Component({
     selector: "fcl-toolbar-action",
     templateUrl: "./toolbar-action.component.html",
@@ -31,6 +32,7 @@ export class ToolbarActionComponent implements OnChanges {
 
     @ViewChild("modelFileInput") modelFileInput: ElementRef<HTMLInputElement>;
     @ViewChild("shapeFileInput") shapeFileInput: ElementRef<HTMLInputElement>;
+    @ViewChild("openUploadMenu") openUploadMenuTrigger: MatMenuTrigger;
 
     @Input() tracingActive: boolean;
     @Input() isModelLoaded: boolean;
@@ -60,6 +62,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
     @Output() selectModelFile = new EventEmitter<ModelFileType>();
+    @Output() selectModelFileOpenMenu = new EventEmitter<void>();
     @Output() saveImage = new EventEmitter();
     @Output() openRoaLayout = new EventEmitter();
     @Output() loadExampleDataFile = new EventEmitter<ExampleData>();
@@ -88,6 +91,16 @@ export class ToolbarActionComponent implements OnChanges {
         }
     }
 
+    openSelectModelFileMenu() {
+        this.openUploadMenuTrigger.openMenu();
+    }
+
+    onSelectModelFileOpenMenu(event) {
+        // prevent menu from opening, before we check if data has been loaded and altered
+        event.stopPropagation();
+        this.selectModelFileOpenMenu.emit();
+    }
+
     isServerLess(): boolean {
         return environment.serverless;
     }
@@ -105,10 +118,6 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onSelectModelFile(type: ModelFileType) {
-        this.selectModelFile.emit(type);
-    }
-
-    prepareAndClickModelFileInputElement(type: ModelFileType) {
         this.modelFileInput.nativeElement.accept =
             FILE_INPUT_ELEMENT_SETTINGS[type].accept;
         this.modelFileInput.nativeElement.click();
