@@ -14,6 +14,7 @@ import * as tracingActions from "../../../tracing/state/tracing.actions";
 })
 export class PageHeaderContainerComponent {
     appName = environment.appName;
+    isModelLoaded$ = this.store.select(TracingSelectors.getModelLoaded);
     tracingActive$ = this.store.pipe(select(TracingSelectors.getTracingActive));
     dashboardActive$ = this.store.pipe(select(fromMainPage.getDashboardActive));
     loginActive$ = this.store.pipe(select(fromUser.getLoginActive));
