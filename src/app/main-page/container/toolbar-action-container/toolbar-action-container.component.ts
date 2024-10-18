@@ -44,6 +44,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     @ViewChild(ToolbarActionComponent)
     toolbarActionComponent: ToolbarActionComponent;
 
+    isModelLoaded$ = this.store.select(tracingSelectors.selectIsModelLoaded);
     tracingActive$ = this.store.pipe(select(tracingSelectors.getTracingActive));
     graphEditorActive$ = this.store.pipe(select(fromEditor.isActive));
     currentUser$ = this.store.pipe(select(fromUser.getCurrentUser));

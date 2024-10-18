@@ -123,6 +123,7 @@
         (click)="onDownloadDataFile()"
         data-cy="fcl-download-model-button"
         matTooltip="Download data"
+        [disabled]="!isModelLoaded"
     >
         <mat-icon>file_download</mat-icon>
         Download Data
@@ -132,6 +133,7 @@
         mat-button
         (click)="onSaveImage()"
         matTooltip="Save image"
+        [disabled]="!isModelLoaded"
     >
         <mat-icon>image</mat-icon>
         Save Image

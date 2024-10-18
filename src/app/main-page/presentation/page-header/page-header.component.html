@@ -57,6 +57,7 @@
             mat-icon-button
             data-cy="fcl-toggle-conf-sidebar-button"
             (click)="onToggleRightSideBar()"
+            [disabled]="!isModelLoaded"
             matTooltip="Show/Hide Configuration Settings"
             [ngStyle]="{ visibility: tracingActive ? 'visible' : 'hidden' }"
         >

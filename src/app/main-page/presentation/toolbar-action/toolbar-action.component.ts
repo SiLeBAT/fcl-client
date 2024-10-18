@@ -33,6 +33,7 @@ export class ToolbarActionComponent implements OnChanges {
     @ViewChild("shapeFileInput") shapeFileInput: ElementRef<HTMLInputElement>;
 
     @Input() tracingActive: boolean;
+    @Input() isModelLoaded: boolean;
     @Input()
     set graphSettings(value: GraphSettings) {
         const { mapType, tileServer } = value;
