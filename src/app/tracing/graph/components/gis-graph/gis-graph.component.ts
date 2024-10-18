@@ -30,7 +30,7 @@ import { State } from "@app/tracing/state/tracing.reducers";
 import { SetGisGraphLayoutSOA } from "@app/tracing/state/tracing.actions";
 import {
     selectGisGraphState,
-    getGraphType,
+    selectGraphType,
     getMapConfig,
     getShowLegend,
     getShowZoom,
@@ -61,7 +61,7 @@ export class GisGraphComponent implements OnInit, OnDestroy {
     @ViewChild("graph", { static: true })
     graphViewComponent: GraphViewComponent;
 
-    graphType$ = this.store.select(getGraphType);
+    graphType$ = this.store.select(selectGraphType);
     isGraphActive$ = this.graphType$.pipe(
         map((graphType) => graphType === GraphType.GIS),
     );

@@ -6,14 +6,21 @@
     >
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
+                <fcl-graph-empty [hidden]="(isModelLoaded$ | async) === true" />
                 <fcl-schema-graph
                     #schemaGraph
-                    [hidden]="(showSchemaGraph$ | async) === false"
-                ></fcl-schema-graph>
+                    [hidden]="
+                        (isModelLoaded$ | async) === false ||
+                        (showSchemaGraph$ | async) === false
+                    "
+                />
                 <fcl-gis-graph
                     #gisGraph
-                    [hidden]="(showGisGraph$ | async) === false"
-                ></fcl-gis-graph>
+                    [hidden]="
+                        (isModelLoaded$ | async) === false ||
+                        (showGisGraph$ | async) === false
+                    "
+                />
             </div>
         </mat-sidenav-content>
 
