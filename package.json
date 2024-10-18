@@ -103,7 +103,7 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-preset-angular": "^13.1.6",
     "prettier": "3.3.3",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.0.0",
     "rxjs-tslint": "^0.1.8",
     "rxjs-tslint-rules": "^4.34.8",
     "stylelint": "^15.11.0",
