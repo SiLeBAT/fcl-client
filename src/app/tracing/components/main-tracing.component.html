@@ -6,38 +6,21 @@
     >
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
-                <div
-                    class="fcl-graph-empty-wrapper"
-                    [hidden]="(isModelLoaded$ | async) === true"
-                >
-                    <div class="fcl-graph-empty">
-                        <img
-                            class="fcl-logo-soft"
-                            mat-card-image
-                            src="../../../assets/fcl_logo_soft_transparent.svg"
-                            alt="FCL logo"
-                        />
-                        <h2>Welcome to FCL Web!</h2>
-                        <p>
-                            Let's get started by loading an example dataset or
-                            uploading your own data.
-                        </p>
-                    </div>
-                </div>
+                <fcl-graph-empty [hidden]="(isModelLoaded$ | async) === true" />
                 <fcl-schema-graph
                     #schemaGraph
                     [hidden]="
                         (isModelLoaded$ | async) === false ||
                         (showSchemaGraph$ | async) === false
                     "
-                ></fcl-schema-graph>
+                />
                 <fcl-gis-graph
                     #gisGraph
                     [hidden]="
                         (isModelLoaded$ | async) === false ||
                         (showGisGraph$ | async) === false
                     "
-                ></fcl-gis-graph>
+                />
             </div>
         </mat-sidenav-content>
 
