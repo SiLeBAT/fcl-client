@@ -28,7 +28,7 @@ export const getTracingActive = createSelector(
     (state) => state.tracingActive,
 );
 
-export const getModelLoaded = createSelector(
+export const selectIsModelLoaded = createSelector(
     selectTracingFeatureState,
     (state) => state.isModelLoaded,
 );
@@ -134,12 +134,12 @@ export const getFontSize = createSelector(
     (graphSettings) => graphSettings.fontSize,
 );
 
-export const getGraphType = createSelector(
+export const selectGraphType = createSelector(
     getGraphSettings,
     (graphSettings) => graphSettings.type,
 );
 
-export const getShowConfigurationSideBar = createSelector(
+export const selectShowConfigurationSideBar = createSelector(
     selectTracingFeatureState,
     (state) => state.showConfigurationSideBar,
 );

@@ -31,7 +31,7 @@ import {
 import { State } from "@app/tracing/state/tracing.reducers";
 import { SetSchemaGraphLayoutSOA } from "@app/tracing/state/tracing.actions";
 import {
-    getGraphType,
+    selectGraphType,
     selectSchemaGraphState,
     getShowLegend,
     getShowZoom,
@@ -72,7 +72,7 @@ export class SchemaGraphComponent implements OnInit, OnDestroy {
     @ViewChild("graph", { static: true })
     graphViewComponent: GraphViewComponent;
 
-    private graphType$ = this.store.select(getGraphType);
+    private graphType$ = this.store.select(selectGraphType);
     isGraphActive$ = this.graphType$.pipe(
         map((graphType) => graphType === GraphType.GRAPH),
     );
