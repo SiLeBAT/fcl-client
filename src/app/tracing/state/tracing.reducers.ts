@@ -98,6 +98,7 @@ const initialState: TracingState = {
     animatingTabCount: 0,
     isConfSideBarOpening: false,
     showGraphSettings: false,
+    isModelLoaded: false,
 };
 
 export function createDefaultPropMappings(): PropMaps {
@@ -203,6 +204,7 @@ export function reducer(
                 ...state,
                 fclData: action.payload.fclData,
                 ...initialModelDependentState,
+                isModelLoaded: true,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
