@@ -15,6 +15,7 @@ import { AllInOneImporter } from "./all-in-one/importer";
 import {
     Del2DelRow,
     DeliveryRow,
+    ImportIssue,
     ImportResult,
     ImportTable,
     RowWithOtherProps,
@@ -25,6 +26,7 @@ import {
     getKeys,
     removeUndefined,
 } from "../../../../tracing/util/non-ui-utils";
+import { IOState } from "../../io.reducers";
 
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
@@ -214,11 +216,29 @@ function convertImportResultToJsonData(importResult: ImportResult): JsonData {
     return data;
 }
 
+export function getIssues(importResult: ImportResult): IOState {
+    return {
+        omittedRowsInImport:
+            importResult.stations.omittedRows +
+            importResult.deliveries.omittedRows +
+            importResult.del2Dels.omittedRows,
+        issuesInImport: [
+            ...importResult.stations.issues,
+            ...importResult.stations.issues,
+            ...importResult.del2Dels.issues,
+        ],
+    };
+}
+
 export async function importXlsxFile(file: File): Promise<JsonData> {
     const xlsxReader = new XlsxReader();
     await xlsxReader.loadFile(file);
 
     const importResult = new AllInOneImporter().importTemplate(xlsxReader);
+
+    getIssues(importResult);
+    // throw these in the store I guess.
+
     const jsonData = convertImportResultToJsonData(importResult);
 
     return jsonData;
