@@ -36,11 +36,13 @@ import {
     DENOVO_STATION_PROP_INT_TO_EXT_MAP,
 } from "../io/data-mappings/data-mappings-v1";
 import { MAP_CONSTANTS } from "../util/map-constants";
+import { IOState } from "../io/io.reducers";
 
 export const STATE_SLICE_NAME = "tracing";
 
 export interface State {
     tracing: TracingState;
+    io: IOState;
 }
 
 export const complexFilterSettings: ComplexRowFilterSettings = {
