@@ -98,16 +98,18 @@
         #modelFileInput
         data-cy="fcl-upload-model-fileinput"
     />
-    <button
-        class="fcl-no-shrink"
-        mat-button
-        data-cy="fcl-upload-model-button"
-        [matMenuTriggerFor]="uploadMenu"
-        matTooltip="Upload data"
-    >
-        <mat-icon>file_upload</mat-icon>
-        Upload Data
-    </button>
+    <div #openUploadMenu="matMenuTrigger" [matMenuTriggerFor]="uploadMenu">
+        <button
+            class="fcl-no-shrink"
+            mat-button
+            data-cy="fcl-upload-model-button"
+            matTooltip="Upload data"
+            (click)="onSelectModelFileOpenMenu($event)"
+        >
+            <mat-icon>file_upload</mat-icon>
+            Upload Data
+        </button>
+    </div>
     <!-- (click)="onSelectModelFile()" -->
     <mat-menu #uploadMenu="matMenu">
         <button mat-menu-item (click)="onSelectModelFile('json-fcl')">
@@ -115,6 +117,14 @@
         </button>
         <button mat-menu-item (click)="onSelectModelFile('xlsx-all-in-one')">
             FCL All-in-one template (.xlsx)
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSelectModelFile('json-fcl')"
+            matTooltip="Coming soon"
+            disabled
+        >
+            UTX file (.json)
         </button>
     </mat-menu>
     <button
