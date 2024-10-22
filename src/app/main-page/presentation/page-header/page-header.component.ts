@@ -10,6 +10,7 @@ import { User } from "../../../user/models/user.model";
 export class PageHeaderComponent {
     @Input() appName: string;
     @Input() tracingActive: boolean;
+    @Input() isModelLoaded: boolean;
     @Input() dashboardActive: boolean;
     @Input() loginActive: boolean;
     @Input() currentUser: User | null;

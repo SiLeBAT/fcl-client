@@ -46,7 +46,9 @@
 .fcl-toolbar-menu-bottom:active,
 .fcl-toolbar-title:hover,
 .fcl-toolbar-title:active {
-    color: fcl.$fcl-primary-hover;
+    :enabled {
+        color: fcl.$fcl-primary-hover;
+    }
 }
 
 .no-hover {
