@@ -29,6 +29,7 @@ export class IOService {
             const jsonData = await getJsonFromFile(file);
             fclData = await this.preprocessData(jsonData);
         } else {
+            // When we return the data and warnings here, how can we handle the warnings and where can we actually access state?
             const jsonData = await importXlsxFile(file);
             fclData = await this.preprocessData(jsonData);
         }

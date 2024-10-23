@@ -216,7 +216,7 @@ function convertImportResultToJsonData(importResult: ImportResult): JsonData {
     return data;
 }
 
-export function getIssues(importResult: ImportResult): IOState {
+export function getWarnings(importResult: ImportResult): IOState {
     return {
         omittedRowsInImport:
             importResult.stations.omittedRows +
@@ -230,16 +230,15 @@ export function getIssues(importResult: ImportResult): IOState {
     };
 }
 
-export async function importXlsxFile(file: File): Promise<JsonData> {
+export async function importXlsxFile(
+    file: File,
+): Promise<{ data: JsonData; warnings: IOState }> {
     const xlsxReader = new XlsxReader();
     await xlsxReader.loadFile(file);
 
     const importResult = new AllInOneImporter().importTemplate(xlsxReader);
 
-    getIssues(importResult);
-    // throw these in the store I guess.
-
     const jsonData = convertImportResultToJsonData(importResult);
 
-    return jsonData;
+    return { data: jsonData, warnings: getWarnings(importResult) };
 }
