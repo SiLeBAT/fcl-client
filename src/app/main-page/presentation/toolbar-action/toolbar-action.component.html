@@ -6,8 +6,22 @@
         *ngIf="fileName !== null"
         class="fcl-file-name-wrapper fcl-separator mat-body"
     >
-        <div class="fcl-file-name" [matTooltip]="fileName">
-            File: {{ fileNameWoExt }}
+        <div class="fcl-file-name-inner-wrapper">
+            <div class="fcl-file-name" [matTooltip]="fileName">
+                <span>File: {{ fileNameWoExt }}</span>
+            </div>
+            <button
+                class="fcl-file-name-warning"
+                *ngIf="dataImportHasWarnings"
+                (click)="openWarningsDialog()"
+                matTooltip="Data import warnings"
+            >
+                <mat-icon
+                    aria-hidden="false"
+                    aria-label="Data import warnings icon"
+                    fontIcon="warning"
+                ></mat-icon>
+            </button>
         </div>
     </div>
     <div class="fcl-graph-type fcl-separator mat-body">

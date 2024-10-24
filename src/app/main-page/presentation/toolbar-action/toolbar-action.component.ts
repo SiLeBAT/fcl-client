@@ -22,6 +22,9 @@ import { Constants } from "./../../../tracing/util/constants";
 import { ExampleData, ModelFileType } from "../../model/types";
 import { FILE_INPUT_ELEMENT_SETTINGS } from "@app/main-page/consts/consts";
 import { MatMenuTrigger } from "@angular/material/menu";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { DialogMovableComponent } from "@app/tracing/dialog/dialog-movable/dialog-movable.component";
+import { template } from "lodash";
 @Component({
     selector: "fcl-toolbar-action",
     templateUrl: "./toolbar-action.component.html",
@@ -58,6 +61,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Input() fileName: string | null = null;
+    @Input() dataImportHasWarnings: boolean = false;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
@@ -82,6 +86,8 @@ export class ToolbarActionComponent implements OnChanges {
                 : this._graphSettings.mapType;
     }
 
+    constructor(private dialogService: MatDialog) {}
+
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.fileName !== undefined) {
             this.fileNameWoExt =
@@ -89,6 +95,15 @@ export class ToolbarActionComponent implements OnChanges {
                     ? null
                     : this.fileName.replace(/\.[^\.]+$/, "");
         }
+    }
+
+    openWarningsDialog() {
+        this.dialogService.open(DialogMovableComponent, {
+            data: {
+                template: "dataImportWarning",
+                additionalData: null,
+            },
+        });
     }
 
     openSelectModelFileMenu() {
