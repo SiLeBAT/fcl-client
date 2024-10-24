@@ -84,6 +84,8 @@ import { CollapseStatusCellViewComponent } from "./configuration/table-cells/col
 import { SymbolHeaderCellViewComponent } from "./configuration/table-cells/symbol-header-cell-view/symbol-header-cell-view.component";
 import { PrefixEditorViewComponent } from "./configuration/prefix-editor-view/prefix-editor-view.component";
 import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.component";
+import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.component";
+import { DataImportWarningModalComponent } from "./dialog/data-import-warning-modal/data-import-warning-modal.component";
 
 @NgModule({
     imports: [
@@ -108,6 +110,8 @@ import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.
         DialogAlertComponent,
         DialogPromptComponent,
         DialogSelectComponent,
+        DialogMovableComponent,
+        DataImportWarningModalComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,

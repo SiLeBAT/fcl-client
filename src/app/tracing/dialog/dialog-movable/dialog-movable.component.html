@@ -1,0 +1,18 @@
+<div class="fcl-dialog-movable">
+    <div
+        mat-dialog-content
+        cdkDrag
+        cdkDragRootElement=".cdk-overlay-pane"
+        cdkDragBoundary=".cdk-overlay-container"
+    >
+        <div class="fcl-drag-handle">
+            <mat-icon cdkDragHandle fill="currentColor">open_with</mat-icon>
+        </div>
+        <ng-template [ngIf]="template === 'dataImportWarning'">
+            <fcl-data-import-warning-modal></fcl-data-import-warning-modal>
+        </ng-template>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button cdkFocusInitial matDialogClose>Close</button>
+    </div>
+</div>
