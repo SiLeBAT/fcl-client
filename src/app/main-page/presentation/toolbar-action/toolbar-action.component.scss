@@ -63,7 +63,8 @@ $marker-offset-right: -1.5ch;
     border: 0;
     padding: 0;
     margin: 0;
-    @include common-marker-styles();
+
+    @include common-marker-styles;
 }
 
 .fcl-graph-type {
@@ -103,7 +104,8 @@ $marker-offset-right: -1.5ch;
 }
 
 .fcl-draft-marker {
-    @include common-marker-styles();
+    @include common-marker-styles;
+
     display: block;
     position: relative;
     left: 0;
