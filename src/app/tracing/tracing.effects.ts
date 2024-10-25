@@ -32,6 +32,7 @@ import { EditHighlightingService } from "./configuration/edit-highlighting.servi
 import { GraphService } from "./graph/graph.service";
 import { TableService } from "./services/table.service";
 import { IOService } from "./io/io.service";
+import { DialogMovableComponent, DialogMovableTemplate, StationPropertiesDialog } from "./dialog/dialog-movable/dialog-movable.component";
 
 @Injectable()
 export class TracingEffects {
@@ -92,20 +93,23 @@ export class TracingEffects {
                             );
                         }
 
-                        const dialogData: StationPropertiesData = {
-                            station: station,
-                            deliveries: deliveries,
-                            connectedStations: connectedStations,
-                            stationColumns:
-                                this.tableService.getStationColumnSets(
-                                    state,
-                                    data,
-                                    false,
-                                ).columns,
+                        const dialogData: StationPropertiesDialog = {
+                            template: DialogMovableTemplate.fclStationProperties,
+                            content: {
+                                station: station,
+                                deliveries: deliveries,
+                                connectedStations: connectedStations,
+                                stationColumns:
+                                    this.tableService.getStationColumnSets(
+                                        state,
+                                        data,
+                                        false,
+                                    ).columns,
+                            }
                         };
 
-                        this.dialogService.open(StationPropertiesComponent, {
-                            data: dialogData,
+                        this.dialogService.open(DialogMovableComponent, {
+                            data: dialogData
                         });
                     }
                     return EMPTY;

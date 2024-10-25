@@ -24,6 +24,7 @@ import { concat, Utils } from "../../util/non-ui-utils";
 import { State } from "@app/tracing/state/tracing.reducers";
 import { Store } from "@ngrx/store";
 import { SetHoverDeliveriesSOA } from "@app/tracing/state/tracing.actions";
+import { StationPropertiesDialog } from "../dialog-movable/dialog-movable.component";
 
 export interface StationPropertiesData {
     station: StationData;
@@ -203,6 +204,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private nodesOutG: d3.Selection<SVGElement, NodeDatum, any, any>;
     private edgesG: d3.Selection<SVGElement, EdgeDatum, any, any>;
     private connectLine: d3.Selection<SVGElement, any, any, any>;
+    contentData:StationPropertiesData;
 
     private static line(x1: number, y1: number, x2: number, y2: number) {
         return "M" + x1 + "," + y1 + "L" + x2 + "," + y2;
@@ -210,14 +212,15 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     constructor(
         public dialogRef: MatDialogRef<StationPropertiesComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData,
+        @Inject(MAT_DIALOG_DATA) public data: StationPropertiesDialog,
         private store: Store<State>,
     ) {
-        this.initProperties(this.data.station, this.data.stationColumns);
+        this.contentData = this.data.content;
+        this.initProperties(this.contentData.station, this.contentData.stationColumns);
 
         if (
-            data.station.incoming.length > 0 ||
-            data.station.outgoing.length > 0
+            data.content.station.incoming.length > 0 ||
+            data.content.station.outgoing.length > 0
         ) {
             const ingredientsByLotKey = this.getIngredientsByLotKey();
 
@@ -409,9 +412,9 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
-        const delivery = this.data.deliveries.get(deliveryId)!;
-        const otherStation = this.data.connectedStations.get(
-            delivery.source !== this.data.station.id
+        const delivery = this.contentData.deliveries.get(deliveryId)!;
+        const otherStation = this.contentData.connectedStations.get(
+            delivery.source !== this.contentData.station.id
                 ? delivery.source
                 : delivery.target,
         )!;
@@ -443,11 +446,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             Set<DeliveryId>
         > = new Map();
 
-        for (const deliveryId of this.data.station.outgoing) {
+        for (const deliveryId of this.contentData.station.outgoing) {
             ingredientsByDelivery.set(deliveryId, new Set());
         }
 
-        for (const connection of this.data.station.connections) {
+        for (const connection of this.contentData.station.connections) {
             ingredientsByDelivery
                 .get(connection.target)!
                 .add(connection.source);
@@ -457,7 +460,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         let valid = true;
 
         ingredientsByDelivery.forEach((ingredientsIds, deliveryId) => {
-            const delivery = this.data.deliveries.get(deliveryId)!;
+            const delivery = this.contentData.deliveries.get(deliveryId)!;
 
             if (delivery.lot == null || delivery.name == null) {
                 valid = false;
@@ -488,11 +491,11 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const nodeInMap = new Map<DeliveryId, NodeDatum>();
         const nodeOutMap = new Map<DeliveryId, NodeDatum>();
 
-        for (const deliveryId of this.data.station.incoming) {
+        for (const deliveryId of this.contentData.station.incoming) {
             nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
         }
 
-        for (const deliveryId of this.data.station.outgoing) {
+        for (const deliveryId of this.contentData.station.outgoing) {
             nodeOutMap.set(deliveryId, this.createDeliveryNode(deliveryId));
         }
 
@@ -500,7 +503,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         this.nodeOutData = Array.from(nodeOutMap.values());
         this.edgeData = [];
 
-        for (const connection of this.data.station.connections) {
+        for (const connection of this.contentData.station.connections) {
             const source = nodeInMap.get(connection.source)!;
             const target = nodeOutMap.get(connection.target)!;
             this.edgeData.push({
@@ -516,7 +519,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     ) {
         const deliveriesByLotKey: Map<LotKey, DeliveryId[]> = new Map();
 
-        this.data.deliveries.forEach((delivery) => {
+        this.contentData.deliveries.forEach((delivery) => {
             const lotKey = this.getInternalLotKey(delivery);
 
             if (deliveriesByLotKey.has(lotKey)) {
@@ -529,7 +532,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const nodeInMap = new Map<DeliveryId, NodeDatum>();
         const nodeOutMap = new Map<LotKey, NodeDatum>();
 
-        for (const deliveryId of this.data.station.incoming) {
+        for (const deliveryId of this.contentData.station.incoming) {
             nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
         }
 
@@ -541,7 +544,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             const lotDeliveryIds = deliveriesByLotKey.get(lotKey);
             if (lotDeliveryIds) {
                 const lotDeliveries = lotDeliveryIds.map((deliveryId) =>
-                    this.data.deliveries.get(deliveryId),
+                    this.contentData.deliveries.get(deliveryId),
                 );
                 for (const delivery of lotDeliveries) {
                     names.add(delivery!.name ?? "");
