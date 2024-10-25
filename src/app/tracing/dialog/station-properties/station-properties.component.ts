@@ -204,7 +204,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private nodesOutG: d3.Selection<SVGElement, NodeDatum, any, any>;
     private edgesG: d3.Selection<SVGElement, EdgeDatum, any, any>;
     private connectLine: d3.Selection<SVGElement, any, any, any>;
-    contentData:StationPropertiesData;
+    contentData: StationPropertiesData;
 
     private static line(x1: number, y1: number, x2: number, y2: number) {
         return "M" + x1 + "," + y1 + "L" + x2 + "," + y2;
@@ -216,7 +216,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         private store: Store<State>,
     ) {
         this.contentData = this.data.content;
-        this.initProperties(this.contentData.station, this.contentData.stationColumns);
+        this.initProperties(
+            this.contentData.station,
+            this.contentData.stationColumns,
+        );
 
         if (
             data.content.station.incoming.length > 0 ||

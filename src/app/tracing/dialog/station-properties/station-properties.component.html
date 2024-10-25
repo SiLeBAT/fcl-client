@@ -1,45 +1,44 @@
 <mat-card>
     <mat-card-title>
-            <span>{{ contentData.station.name }}</span>
-        </mat-card-title>
-        <mat-card-content>
-            <table>
-                <tr *ngFor="let prop of vipProperties">
-                    <td>{{ properties[prop].label }}</td>
-                    <td>{{ properties[prop].value }}</td>
-                </tr>
-                <tr *ngIf="!otherPropertiesHidden">
-                    <td
-                        colspan="2"
-                        class="fcl-station-properties-horizontal-line-cell"
-                    >
-                        <hr class="fcl-station-properties-horizontal-line" />
-                    </td>
-                </tr>
-                <tr
-                    *ngFor="
-                        let prop of !otherPropertiesHidden
-                            ? getOtherPropertiesOri()
-                            : []
-                    "
+        <span>{{ contentData.station.name }}</span>
+    </mat-card-title>
+    <mat-card-content>
+        <table>
+            <tr *ngFor="let prop of vipProperties">
+                <td>{{ properties[prop].label }}</td>
+                <td>{{ properties[prop].value }}</td>
+            </tr>
+            <tr *ngIf="!otherPropertiesHidden">
+                <td
+                    colspan="2"
+                    class="fcl-station-properties-horizontal-line-cell"
                 >
-                    <td>{{ properties[prop].label }}</td>
-                    <td>{{ properties[prop].value }}</td>
-                </tr>
-            </table>
-            <button
-                mat-button
-                *ngIf="otherProperties.length > 0"
-                (click)="toggleOtherProperties()"
+                    <hr class="fcl-station-properties-horizontal-line" />
+                </td>
+            </tr>
+            <tr
+                *ngFor="
+                    let prop of !otherPropertiesHidden
+                        ? getOtherPropertiesOri()
+                        : []
+                "
             >
-                <span *ngIf="otherPropertiesHidden">More properties</span>
-                <span *ngIf="!otherPropertiesHidden">Less properties</span>
-            </button>
-        </mat-card-content>
-    </mat-card>
-    <mat-card>
-        <mat-card-content>
-            <div #inOutConnector></div>
-        </mat-card-content>
-    </mat-card>
-
+                <td>{{ properties[prop].label }}</td>
+                <td>{{ properties[prop].value }}</td>
+            </tr>
+        </table>
+        <button
+            mat-button
+            *ngIf="otherProperties.length > 0"
+            (click)="toggleOtherProperties()"
+        >
+            <span *ngIf="otherPropertiesHidden">More properties</span>
+            <span *ngIf="!otherPropertiesHidden">Less properties</span>
+        </button>
+    </mat-card-content>
+</mat-card>
+<mat-card>
+    <mat-card-content>
+        <div #inOutConnector></div>
+    </mat-card-content>
+</mat-card>

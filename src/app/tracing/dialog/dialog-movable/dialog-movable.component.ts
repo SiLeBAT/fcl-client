@@ -18,7 +18,7 @@ interface DialogMovableData {
 @Component({
     selector: "fcl-dialog-movable",
     templateUrl: "./dialog-movable.component.html",
-    styleUrls: ["./dialog-movable.component.scss"]
+    styleUrls: ["./dialog-movable.component.scss"],
 })
 export class DialogMovableComponent {
     dialogData: any;
