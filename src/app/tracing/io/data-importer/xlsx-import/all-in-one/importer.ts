@@ -23,6 +23,7 @@ import {
     getOtherColumns,
     getShortUniqueDeliveryIdFromLongId,
     getShortUniqueStationIdFromLongId,
+    importMandatoryString,
     importReference,
 } from "../shared";
 import {
@@ -227,22 +228,46 @@ export class AllInOneImporter implements XlsxImporter {
             optionalColumnMappings.map((m) => m.fromIndex),
         );
 
+        const rowIndexToExternalIds = new Map<number, string>();
+
+        for (row of table.rows) {
+            const id = importMandatoryString(
+                row,
+                DeliveryColumn.EXT_ID,
+                addIssueCallback,
+            );
+            if (id !== undefined) {
+                rowIndexToExternalIds.set(row.rowIndex, id);
+                externalIdRegister.add(id);
+            }
+        }
+
         for (row of table.rows) {
             rowIsInvalid = false;
+            const externalId = rowIndexToExternalIds.get(row.rowIndex);
+
+            if (externalId === undefined) {
+                rowIsInvalid = true;
+            } else if (!externalIdRegister.isRegisteredOnce(externalId)) {
+                addIssueCallback(
+                    {
+                        col: DeliveryColumn.EXT_ID,
+                        type: "error",
+                        msg: IMPORT_ISSUES.nonUniquePrimaryKey,
+                    },
+                    true,
+                );
+            }
 
             const deliveryRow = importDelivery(
                 row,
                 table,
+                rowIndexToExternalIds.get(row.rowIndex),
                 optionalColumnMappings,
                 otherColumnMappings,
-                externalIdRegister,
                 this.externalId2StationRow,
                 addIssueCallback,
             );
-
-            if (deliveryRow.extId) {
-                externalIdRegister.add(deliveryRow.extId);
-            }
 
             if (!rowIsInvalid) {
                 deliveryRow.source = this.externalId2StationRow.get(

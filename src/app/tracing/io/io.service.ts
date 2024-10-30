@@ -10,6 +10,7 @@ import { getJsonFromFile, isJsonFileType } from "./io-utils";
 import { JsonData } from "./ext-data-model.v1";
 import * as _ from "lodash";
 import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
+import { ModelImportResult } from "./io.model";
 
 @Injectable({
     providedIn: "root",
@@ -23,36 +24,37 @@ export class IOService {
 
     constructor(private httpClient: HttpClient) {}
 
-    private async getFclDataFromFile(file: File): Promise<FclData> {
+    private async getFclDataFromFile(file: File): Promise<ModelImportResult> {
         let fclData: FclData;
         if (isJsonFileType(file)) {
             const jsonData = await getJsonFromFile(file);
             fclData = await this.preprocessData(jsonData);
         } else {
             // When we return the data and warnings here, how can we handle the warnings and where can we actually access state?
-            const jsonData = await importXlsxFile(file);
+            const { data: jsonData, warnings } = await importXlsxFile(file);
             fclData = await this.preprocessData(jsonData);
+            fclData.importWarnings = [...fclData.importWarnings, ...warnings];
         }
         fclData.source.name = file.name;
-        return fclData;
+        return { fclData: fclData, warnings: [] };
     }
 
-    async getFclData(dataSource: string | File): Promise<FclData> {
+    async getFclData(dataSource: string | File): Promise<ModelImportResult> {
         if (typeof dataSource === "string") {
             return this.httpClient
                 .get(dataSource)
                 .toPromise()
                 .then(async (response) => this.preprocessData(response))
-                .then((data) => {
-                    data.source.name = this.getFileName(dataSource);
-                    return data;
+                .then((fclData) => {
+                    fclData.source.name = this.getFileName(dataSource);
+                    return { fclData: fclData };
                 })
                 .catch(async (e) => Promise.reject(e));
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
                 this.getFclDataFromFile(file)
-                    .then((fclData) => resolve(fclData))
+                    .then((importResult) => resolve(importResult))
                     .catch((e) => reject(e));
             });
         } else {

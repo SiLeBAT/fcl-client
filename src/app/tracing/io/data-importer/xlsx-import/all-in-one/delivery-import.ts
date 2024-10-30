@@ -10,7 +10,6 @@ import {
     getStringOrUndefined,
     importAggregatedAmount,
     importMandatoryString,
-    importPrimaryKey,
     importReference,
     importStringDate,
     importValue,
@@ -21,14 +20,13 @@ import { AllInOneDeliveryRow, DeliveryColumn } from "./model";
 export function importDelivery(
     row: Row,
     table: Table,
+    externalId: string | undefined,
     optionalColumnMappings: ColumnMapping[],
     otherColumnMappings: ColumnMapping[],
-    extDeliveryIdRegister: SetLike,
     extStationIdRegister: SetLike,
     externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneDeliveryRow> {
     // eslint-disable-next-line prefer-const
-    let externalId: string | undefined;
 
     const addIssueCallback: AddIssueCallback = (
         issue: ImportIssue,
@@ -39,13 +37,6 @@ export function importDelivery(
             invalidateRow,
         );
     };
-
-    externalId = importPrimaryKey(
-        row,
-        DeliveryColumn.EXT_ID,
-        extDeliveryIdRegister,
-        addIssueCallback,
-    );
 
     return {
         extId: externalId,

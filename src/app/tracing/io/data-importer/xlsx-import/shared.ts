@@ -313,18 +313,24 @@ export function importPrimaryKey(
 ): string | undefined {
     const inputValue = getCleanedStringOrUndefined(row[colIndex]);
     if (inputValue === undefined) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.missingValue,
-        });
+        addIssueCb(
+            {
+                col: colIndex,
+                type: "error",
+                msg: IMPORT_ISSUES.missingValue,
+            },
+            true,
+        );
         return undefined;
     } else if (usedPks.has(inputValue)) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.nonUniqueValue,
-        });
+        addIssueCb(
+            {
+                col: colIndex,
+                type: "error",
+                msg: IMPORT_ISSUES.nonUniquePrimaryKey,
+            },
+            true,
+        );
         return undefined;
     }
     return inputValue;

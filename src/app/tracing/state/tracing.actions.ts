@@ -30,6 +30,7 @@ import {
 } from "../configuration/configuration.model";
 import { ROASettings } from "../visio/model";
 import { DeliveryEditRule, StationEditRule } from "../configuration/model";
+import { ModelImportResult } from "../io/io.model";
 
 export enum TracingActionTypes {
     TracingActivated = "[Tracing] Tracing active",
@@ -99,7 +100,7 @@ export class TracingActivated implements Action {
 export class LoadFclDataSuccessSOA implements Action {
     readonly type = TracingActionTypes.LoadFclDataSuccessSOA;
 
-    constructor(public payload: { fclData: FclData }) {}
+    constructor(public payload: ModelImportResult) {}
 }
 
 export class LoadFclDataFailureSOA implements Action {

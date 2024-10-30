@@ -9,13 +9,14 @@ import {
     EXTOUT_DEL2DEL_PROP_IDS,
     EXTOUT_DELIVERY_PROP_IDS,
     EXTOUT_STATION_PROP_IDS,
+    IMPORT_ISSUES,
     IMPORT_PREFIXES,
+    ISSUE_AGGREGATORS,
 } from "./consts";
 import { AllInOneImporter } from "./all-in-one/importer";
 import {
     Del2DelRow,
     DeliveryRow,
-    ImportIssue,
     ImportResult,
     ImportTable,
     RowWithOtherProps,
@@ -26,7 +27,6 @@ import {
     getKeys,
     removeUndefined,
 } from "../../../../tracing/util/non-ui-utils";
-import { IOState } from "../../io.reducers";
 
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
@@ -216,23 +216,34 @@ function convertImportResultToJsonData(importResult: ImportResult): JsonData {
     return data;
 }
 
-export function getWarnings(importResult: ImportResult): IOState {
-    return {
-        omittedRowsInImport:
-            importResult.stations.omittedRows +
-            importResult.deliveries.omittedRows +
-            importResult.del2Dels.omittedRows,
-        issuesInImport: [
-            ...importResult.stations.issues,
-            ...importResult.stations.issues,
-            ...importResult.del2Dels.issues,
-        ],
-    };
+export function getWarnings(importResult: ImportResult): string[] {
+    const filteredIssues = [
+        ...importResult.stations.issues,
+        ...importResult.deliveries.issues,
+        ...importResult.del2Dels.issues,
+    ].filter((issue) => issue.msg === IMPORT_ISSUES.nonUniquePrimaryKey);
+
+    const affectedSheets = Array.from(
+        new Set(removeUndefined(filteredIssues.map((issue) => issue.sheet))),
+    );
+
+    return [
+        ISSUE_AGGREGATORS.duplicatePrimaryIDs(
+            affectedSheets.map((affectedSheet) => ({
+                name: affectedSheet,
+                duplicateIds: removeUndefined(
+                    filteredIssues
+                        .filter((issue) => issue.sheet === affectedSheet)
+                        .map((issue) => issue.ref?.toString()),
+                ),
+            })),
+        ),
+    ];
 }
 
 export async function importXlsxFile(
     file: File,
-): Promise<{ data: JsonData; warnings: IOState }> {
+): Promise<{ data: JsonData; warnings: string[] }> {
     const xlsxReader = new XlsxReader();
     await xlsxReader.loadFile(file);
 

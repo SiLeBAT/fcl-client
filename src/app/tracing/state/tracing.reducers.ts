@@ -36,13 +36,11 @@ import {
     DENOVO_STATION_PROP_INT_TO_EXT_MAP,
 } from "../io/data-mappings/data-mappings-v1";
 import { MAP_CONSTANTS } from "../util/map-constants";
-import { IOState } from "../io/io.reducers";
 
 export const STATE_SLICE_NAME = "tracing";
 
 export interface State {
     tracing: TracingState;
-    io: IOState;
 }
 
 export const complexFilterSettings: ComplexRowFilterSettings = {
@@ -124,6 +122,7 @@ export function createInitialFclDataState(): FclData {
             deliveries: [],
             samples: [],
         },
+        importWarnings: [],
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,

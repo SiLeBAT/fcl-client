@@ -37,6 +37,7 @@ import {
 import { DataService } from "../services/data.service";
 import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";
+import { ModelImportResult } from "./io.model";
 
 @Injectable()
 export class IOEffects {
@@ -68,11 +69,11 @@ export class IOEffects {
                     return of(new tracingStateActions.LoadFclDataFailureSOA());
                 }
                 return from(this.ioService.getFclData(source)).pipe(
-                    concatMap((data: FclData) =>
+                    concatMap((result: ModelImportResult) =>
                         of(
-                            new tracingStateActions.LoadFclDataSuccessSOA({
-                                fclData: data,
-                            }),
+                            new tracingStateActions.LoadFclDataSuccessSOA(
+                                result,
+                            ),
                             new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA(),
                         ),
                     ),

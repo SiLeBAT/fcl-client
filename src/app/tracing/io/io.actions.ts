@@ -1,5 +1,4 @@
 import { Action } from "@ngrx/store";
-import { IssueState } from "./data-importer/xlsx-import/xlsx-import";
 
 export enum IOActionTypes {
     LoadFclDataMSA = "[Tracing][IO] Load Fcl Data",
@@ -13,11 +12,6 @@ export class LoadFclDataMSA implements Action {
     readonly type = IOActionTypes.LoadFclDataMSA;
 
     constructor(public payload: { dataSource: string | FileList }) {}
-}
-
-export class ImportWithIssuesMSA implements Action {
-    readonly type = IOActionTypes.ImportWithIssuesMSA;
-    constructor(public payload: { issues: IssueState }) {}
 }
 
 export class LoadShapeFileMSA implements Action {
@@ -43,8 +37,4 @@ export class SaveGraphImageMSA implements Action {
     constructor(public payload: { canvas: any }) {}
 }
 
-export type IOActions =
-    | LoadFclDataMSA
-    | SaveFclDataMSA
-    | SaveGraphImageMSA
-    | ImportWithIssuesMSA;
+export type IOActions = LoadFclDataMSA | SaveFclDataMSA | SaveGraphImageMSA;
