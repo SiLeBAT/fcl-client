@@ -217,6 +217,8 @@ function convertImportResultToJsonData(importResult: ImportResult): JsonData {
 }
 
 export function getWarnings(importResult: ImportResult): string[] {
+    // TODO: Remove the filter once all issue types have handling, or implement default handling for not yet supported Issue types.
+    // Temporary Solution used to only display the warnings we currently have text for.
     const filteredIssues = [
         ...importResult.stations.issues,
         ...importResult.deliveries.issues,
