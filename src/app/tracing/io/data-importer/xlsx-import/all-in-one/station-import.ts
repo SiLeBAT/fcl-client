@@ -4,7 +4,6 @@ import {
     enrichImportIssue,
     getPropsFromRow,
     getStringOrUndefined,
-    importPrimaryKey,
 } from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneStationRow, StationColumn } from "./model";
@@ -30,32 +29,23 @@ function createStationAddress(row: Row): string | undefined {
 export function importStation(
     row: Row,
     table: Table,
+    externalId: string | undefined,
     optionalColumnMappings: ColumnMapping[],
     otherColumnMappings: ColumnMapping[],
-    extIdRegister: Register,
     externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneStationRow> {
-    // eslint-disable-next-line prefer-const
-    let extId: string | undefined;
-
     const addIssueCallback: AddIssueCallback = (
         issue: ImportIssue,
         invalidateRow: boolean = false,
     ) => {
         externalAddIssueCallback(
-            enrichImportIssue(issue, row, table, invalidateRow, extId),
+            enrichImportIssue(issue, row, table, invalidateRow, externalId),
             invalidateRow,
         );
     };
 
-    extId = importPrimaryKey(
-        row,
-        StationColumn.EXT_ID,
-        extIdRegister,
-        addIssueCallback,
-    );
     const stationRow: Partial<AllInOneStationRow> = {
-        extId: extId,
+        extId: externalId,
         name: getStringOrUndefined(row[StationColumn.NAME]),
         address: createStationAddress(row),
         country: getStringOrUndefined(row[StationColumn.COUNTRY]),

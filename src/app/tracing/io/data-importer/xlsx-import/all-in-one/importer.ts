@@ -139,15 +139,43 @@ export class AllInOneImporter implements XlsxImporter {
             rowIsInvalid ||= invalidateRow;
         };
 
+        const stationIndexToExternalIds = new Map<number, string>();
+
+        for (row of table.rows) {
+            const id = importMandatoryString(
+                row,
+                StationColumn.EXT_ID,
+                addIssueCallback,
+            );
+            if (id !== undefined) {
+                stationIndexToExternalIds.set(row.rowIndex, id);
+                externalIdRegister.add(id);
+            }
+        }
+
         for (row of table.rows) {
             rowIsInvalid = false;
+            const externalId = stationIndexToExternalIds.get(row.rowIndex);
+
+            if (externalId === undefined) {
+                rowIsInvalid = true;
+            } else if (!externalIdRegister.isRegisteredOnce(externalId)) {
+                addIssueCallback(
+                    {
+                        col: StationColumn.EXT_ID,
+                        type: "error",
+                        msg: IMPORT_ISSUES.nonUniquePrimaryKey,
+                    },
+                    true,
+                );
+            }
 
             const stationRow = importStation(
                 row,
                 table,
+                externalId,
                 optionalColumnMappings,
                 otherColumnMappings,
-                externalIdRegister,
                 addIssueCallback,
             );
 
@@ -262,7 +290,7 @@ export class AllInOneImporter implements XlsxImporter {
             const deliveryRow = importDelivery(
                 row,
                 table,
-                rowIndexToExternalIds.get(row.rowIndex),
+                externalId,
                 optionalColumnMappings,
                 otherColumnMappings,
                 this.externalId2StationRow,
