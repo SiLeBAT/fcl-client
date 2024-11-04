@@ -119,6 +119,14 @@ mat-form-field.less-bottom-padding {
     opacity: 0.5;
 }
 
+.fcl-toolbar-item {
+    .mat-button.mat-button-disabled.mat-button-disabled,
+    .mat-icon-button.mat-button-disabled.mat-button-disabled,
+    .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-label-content {
+        color: rgb(255 255 255 / 0.5);
+    }
+}
+
 .fcl-toolbar-item .mat-radio-button.mat-accent .mat-radio-outer-circle {
     border-color: white;
 }
@@ -126,13 +134,6 @@ mat-form-field.less-bottom-padding {
 .fcl-toolbar-item
     .mat-radio-button.mat-radio-disabled.mat-accent
     .mat-radio-outer-circle {
-    opacity: 0.5;
-}
-
-.fcl-toolbar-item
-    .mat-radio-button.mat-radio-disabled.mat-accent
-    .mat-radio-label-content {
-    color: white;
     opacity: 0.5;
 }
 
