@@ -10,8 +10,7 @@ export enum DialogMovableTemplate {
 }
 
 interface DialogMovableData {
-    template: DialogMovableTemplate;
-    additionalData: any;
+    data: any;
 }
 
 @Component({
@@ -19,13 +18,11 @@ interface DialogMovableData {
     templateUrl: "./dialog-movable.component.html",
 })
 export class DialogMovableComponent {
-    template: DialogMovableTemplate;
-    additionalData: any;
+    dialogData: any;
     constructor(
         public dialogRef: MatDialogRef<DialogMovableComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogMovableData,
     ) {
-        this.template = data.template;
-        this.additionalData = data.additionalData;
+        this.dialogData = data;
     }
 }
