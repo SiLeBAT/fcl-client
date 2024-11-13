@@ -192,18 +192,18 @@ export function reducer(
             };
 
         case TracingActionTypes.LoadFclDataSuccessSOA: {
-            action.payload.fclData.graphSettings.mapType =
+            action.payload.graphSettings.mapType =
                 state.fclData.graphSettings.mapType;
-            action.payload.fclData.graphSettings.shapeFileData =
+            action.payload.graphSettings.shapeFileData =
                 state.fclData.graphSettings.shapeFileData;
-            action.payload.fclData.graphSettings.geojsonBorderColor =
+            action.payload.graphSettings.geojsonBorderColor =
                 state.fclData.graphSettings.geojsonBorderColor;
-            action.payload.fclData.graphSettings.geojsonBorderWidth =
+            action.payload.graphSettings.geojsonBorderWidth =
                 state.fclData.graphSettings.geojsonBorderWidth;
 
             let newState: TracingState = {
                 ...state,
-                fclData: action.payload.fclData,
+                fclData: action.payload,
                 ...initialModelDependentState,
                 isModelLoaded: true,
             };

@@ -10,7 +10,6 @@ import { getJsonFromFile, isJsonFileType } from "./io-utils";
 import { JsonData } from "./ext-data-model.v1";
 import * as _ from "lodash";
 import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
-import { ModelImportResult } from "./io.model";
 
 @Injectable({
     providedIn: "root",
@@ -24,7 +23,7 @@ export class IOService {
 
     constructor(private httpClient: HttpClient) {}
 
-    private async getFclDataFromFile(file: File): Promise<ModelImportResult> {
+    private async getFclDataFromFile(file: File): Promise<FclData> {
         let fclData: FclData;
         if (isJsonFileType(file)) {
             const jsonData = await getJsonFromFile(file);
@@ -35,10 +34,10 @@ export class IOService {
             fclData.importWarnings = [...fclData.importWarnings, ...warnings];
         }
         fclData.source.name = file.name;
-        return { fclData: fclData, warnings: [] };
+        return fclData;
     }
 
-    async getFclData(dataSource: string | File): Promise<ModelImportResult> {
+    async getFclData(dataSource: string | File): Promise<FclData> {
         if (typeof dataSource === "string") {
             return this.httpClient
                 .get(dataSource)
@@ -46,7 +45,7 @@ export class IOService {
                 .then(async (response) => this.preprocessData(response))
                 .then((fclData) => {
                     fclData.source.name = this.getFileName(dataSource);
-                    return { fclData: fclData };
+                    return fclData;
                 })
                 .catch(async (e) => Promise.reject(e));
         } else if (dataSource instanceof File) {
