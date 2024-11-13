@@ -94,14 +94,14 @@ export class TracingEffects {
 
                         const dialogData: StationPropertiesData = {
                             station: station,
-                                deliveries: deliveries,
-                                connectedStations: connectedStations,
-                                stationColumns:
-                                    this.tableService.getStationColumnSets(
-                                        state,
-                                        data,
-                                        false,
-                                    ).columns,
+                            deliveries: deliveries,
+                            connectedStations: connectedStations,
+                            stationColumns:
+                                this.tableService.getStationColumnSets(
+                                    state,
+                                    data,
+                                    false,
+                                ).columns,
                         };
 
                         this.dialogService.open(StationPropertiesComponent, {
