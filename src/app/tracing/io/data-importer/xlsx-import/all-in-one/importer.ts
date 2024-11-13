@@ -139,6 +139,7 @@ export class AllInOneImporter implements XlsxImporter {
             rowIsInvalid ||= invalidateRow;
         };
 
+        // TODO: Move ID logic and ID issuecallback and checking to it's own function.
         const stationIndexToExternalIds = new Map<number, string>();
 
         for (row of table.rows) {

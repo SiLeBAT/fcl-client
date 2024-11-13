@@ -9,9 +9,7 @@ import {
     EXTOUT_DEL2DEL_PROP_IDS,
     EXTOUT_DELIVERY_PROP_IDS,
     EXTOUT_STATION_PROP_IDS,
-    IMPORT_ISSUES,
     IMPORT_PREFIXES,
-    ISSUE_AGGREGATORS,
 } from "./consts";
 import { AllInOneImporter } from "./all-in-one/importer";
 import {
@@ -27,6 +25,7 @@ import {
     getKeys,
     removeUndefined,
 } from "../../../../tracing/util/non-ui-utils";
+import { getWarnings } from "./getWarnings";
 
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
@@ -214,33 +213,6 @@ function convertImportResultToJsonData(importResult: ImportResult): JsonData {
         },
     };
     return data;
-}
-
-export function getWarnings(importResult: ImportResult): string[] {
-    // TODO: Remove the filter once all issue types have handling, or implement default handling for not yet supported Issue types.
-    // Temporary Solution used to only display the warnings we currently have text for.
-    const filteredIssues = [
-        ...importResult.stations.issues,
-        ...importResult.deliveries.issues,
-        ...importResult.del2Dels.issues,
-    ].filter((issue) => issue.msg === IMPORT_ISSUES.nonUniquePrimaryKey);
-
-    const affectedSheets = Array.from(
-        new Set(removeUndefined(filteredIssues.map((issue) => issue.sheet))),
-    );
-
-    return [
-        ISSUE_AGGREGATORS.duplicatePrimaryIDs(
-            affectedSheets.map((affectedSheet) => ({
-                name: affectedSheet,
-                duplicateIds: removeUndefined(
-                    filteredIssues
-                        .filter((issue) => issue.sheet === affectedSheet)
-                        .map((issue) => issue.ref?.toString()),
-                ),
-            })),
-        ),
-    ];
 }
 
 export async function importXlsxFile(
