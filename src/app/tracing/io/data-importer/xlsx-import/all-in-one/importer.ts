@@ -6,7 +6,7 @@ import {
     ImportTable,
     XlsxImporter,
 } from "../model";
-import { Row, XlsxReader, XlsxSheetReader } from "../xlsx-reader";
+import { Row, Table, XlsxReader, XlsxSheetReader } from "../xlsx-reader";
 import {
     AllInOneDeliveryRow,
     AllInOneStationRow,
@@ -111,7 +111,6 @@ export class AllInOneImporter implements XlsxImporter {
     ): ImportTable<AllInOneStationRow> {
         const table = xlsxSheetReader.readTable();
 
-        const externalIdRegister = new Register();
         const idSet = new Set<string>();
         const longUniqueId2RowIndexMap = new Map<string, number>();
 
@@ -139,36 +138,15 @@ export class AllInOneImporter implements XlsxImporter {
             rowIsInvalid ||= invalidateRow;
         };
 
-        // TODO: Move ID logic and ID issuecallback and checking to it's own function.
-        const stationIndexToExternalIds = new Map<number, string>();
-
-        for (row of table.rows) {
-            const id = importMandatoryString(
-                row,
-                StationColumn.EXT_ID,
-                addIssueCallback,
-            );
-            if (id !== undefined) {
-                stationIndexToExternalIds.set(row.rowIndex, id);
-                externalIdRegister.add(id);
-            }
-        }
+        const { rowIndexToExternalIds, externalIdRegister } =
+            registerExternalIds(table, addIssueCallback, StationColumn.EXT_ID);
 
         for (row of table.rows) {
             rowIsInvalid = false;
-            const externalId = stationIndexToExternalIds.get(row.rowIndex);
+            const externalId = rowIndexToExternalIds.get(row.rowIndex);
 
             if (externalId === undefined) {
                 rowIsInvalid = true;
-            } else if (!externalIdRegister.isRegisteredOnce(externalId)) {
-                addIssueCallback(
-                    {
-                        col: StationColumn.EXT_ID,
-                        type: "error",
-                        msg: IMPORT_ISSUES.nonUniquePrimaryKey,
-                    },
-                    true,
-                );
             }
 
             const stationRow = importStation(
@@ -228,8 +206,6 @@ export class AllInOneImporter implements XlsxImporter {
     ): ImportTable<AllInOneDeliveryRow> {
         const table = xlsxSheetReader.readTable();
 
-        const externalIdRegister = new Register();
-
         const idSet = new Set<string>();
         const longUniqueId2RowIndexMap = new Map<string, number>();
 
@@ -257,19 +233,8 @@ export class AllInOneImporter implements XlsxImporter {
             optionalColumnMappings.map((m) => m.fromIndex),
         );
 
-        const rowIndexToExternalIds = new Map<number, string>();
-
-        for (row of table.rows) {
-            const id = importMandatoryString(
-                row,
-                DeliveryColumn.EXT_ID,
-                addIssueCallback,
-            );
-            if (id !== undefined) {
-                rowIndexToExternalIds.set(row.rowIndex, id);
-                externalIdRegister.add(id);
-            }
-        }
+        const { rowIndexToExternalIds, externalIdRegister } =
+            registerExternalIds(table, addIssueCallback, DeliveryColumn.EXT_ID);
 
         for (row of table.rows) {
             rowIsInvalid = false;
@@ -277,15 +242,6 @@ export class AllInOneImporter implements XlsxImporter {
 
             if (externalId === undefined) {
                 rowIsInvalid = true;
-            } else if (!externalIdRegister.isRegisteredOnce(externalId)) {
-                addIssueCallback(
-                    {
-                        col: DeliveryColumn.EXT_ID,
-                        type: "error",
-                        msg: IMPORT_ISSUES.nonUniquePrimaryKey,
-                    },
-                    true,
-                );
             }
 
             const deliveryRow = importDelivery(
@@ -400,4 +356,42 @@ export class AllInOneImporter implements XlsxImporter {
 
         return importTable;
     }
+}
+
+function registerExternalIds(
+    table: Table,
+    addIssueCallback: AddIssueCallback,
+    colIndex: number,
+) {
+    const externalIdRegister = new Register();
+    const rowIndexToExternalIds = new Map<number, string>();
+
+    const hasDuplicateId = (row: Row) =>
+        rowIndexToExternalIds.get(row.rowIndex) !== undefined &&
+        !externalIdRegister.isRegisteredOnce(
+            rowIndexToExternalIds.get(row.rowIndex)!,
+        );
+
+    for (const row of table.rows) {
+        const id = importMandatoryString(row, colIndex, addIssueCallback);
+        if (id !== undefined) {
+            rowIndexToExternalIds.set(row.rowIndex, id);
+            externalIdRegister.add(id);
+        }
+    }
+
+    for (const row of table.rows) {
+        if (hasDuplicateId(row)) {
+            rowIndexToExternalIds.delete(row.rowIndex);
+            addIssueCallback(
+                {
+                    col: colIndex,
+                    type: "error",
+                    msg: IMPORT_ISSUES.nonUniquePrimaryKey,
+                },
+                true,
+            );
+        }
+    }
+    return { rowIndexToExternalIds, externalIdRegister };
 }
