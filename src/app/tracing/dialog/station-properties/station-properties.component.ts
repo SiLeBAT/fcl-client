@@ -24,7 +24,6 @@ import { concat, Utils } from "../../util/non-ui-utils";
 import { State } from "@app/tracing/state/tracing.reducers";
 import { Store } from "@ngrx/store";
 import { SetHoverDeliveriesSOA } from "@app/tracing/state/tracing.actions";
-import { StationPropertiesDialog } from "../dialog-movable/dialog-movable.component";
 
 export interface StationPropertiesData {
     station: StationData;
@@ -212,18 +211,18 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
     constructor(
         public dialogRef: MatDialogRef<StationPropertiesComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: StationPropertiesDialog,
+        @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData,
         private store: Store<State>,
     ) {
-        this.contentData = this.data.content;
+        this.contentData = this.data;
         this.initProperties(
             this.contentData.station,
             this.contentData.stationColumns,
         );
 
         if (
-            data.content.station.incoming.length > 0 ||
-            data.content.station.outgoing.length > 0
+            data.station.incoming.length > 0 ||
+            data.station.outgoing.length > 0
         ) {
             const ingredientsByLotKey = this.getIngredientsByLotKey();
 

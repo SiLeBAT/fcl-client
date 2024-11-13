@@ -35,7 +35,6 @@ import { IOService } from "./io/io.service";
 import {
     DialogMovableComponent,
     DialogMovableTemplate,
-    StationPropertiesDialog,
 } from "./dialog/dialog-movable/dialog-movable.component";
 
 @Injectable()
@@ -97,11 +96,8 @@ export class TracingEffects {
                             );
                         }
 
-                        const dialogData: StationPropertiesDialog = {
-                            template:
-                                DialogMovableTemplate.fclStationProperties,
-                            content: {
-                                station: station,
+                        const dialogData: StationPropertiesData = {
+                            station: station,
                                 deliveries: deliveries,
                                 connectedStations: connectedStations,
                                 stationColumns:
@@ -110,7 +106,6 @@ export class TracingEffects {
                                         data,
                                         false,
                                     ).columns,
-                            },
                         };
 
                         this.dialogService.open(DialogMovableComponent, {

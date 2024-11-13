@@ -3,8 +3,6 @@ import {
     MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
     MatLegacyDialogRef as MatDialogRef,
 } from "@angular/material/legacy-dialog";
-import { StationPropertiesData } from "../station-properties/station-properties.component";
-import { DataImportWarningModalComponent } from "../data-import-warning-modal/data-import-warning-modal.component";
 
 export enum DialogMovableTemplate {
     fclStationProperties = "fclStationProperties",
