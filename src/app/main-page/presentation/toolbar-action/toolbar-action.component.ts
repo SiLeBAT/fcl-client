@@ -58,7 +58,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Input() fileName: string | null = null;
-    @Input() dataImportHasWarnings: boolean = true;
+    @Input() dataImportHasWarnings: boolean = false;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();

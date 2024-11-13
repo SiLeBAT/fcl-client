@@ -32,10 +32,6 @@ import { EditHighlightingService } from "./configuration/edit-highlighting.servi
 import { GraphService } from "./graph/graph.service";
 import { TableService } from "./services/table.service";
 import { IOService } from "./io/io.service";
-import {
-    DialogMovableComponent,
-    DialogMovableTemplate,
-} from "./dialog/dialog-movable/dialog-movable.component";
 
 @Injectable()
 export class TracingEffects {
@@ -108,7 +104,7 @@ export class TracingEffects {
                                     ).columns,
                         };
 
-                        this.dialogService.open(DialogMovableComponent, {
+                        this.dialogService.open(StationPropertiesComponent, {
                             data: dialogData,
                         });
                     }
