@@ -52,7 +52,7 @@ export class IOService {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
                 this.getFclDataFromFile(file)
-                    .then((importResult) => resolve(importResult))
+                    .then((fclData) => resolve(fclData))
                     .catch((e) => reject(e));
             });
         } else {

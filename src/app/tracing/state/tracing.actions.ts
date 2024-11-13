@@ -99,7 +99,7 @@ export class TracingActivated implements Action {
 export class LoadFclDataSuccessSOA implements Action {
     readonly type = TracingActionTypes.LoadFclDataSuccessSOA;
 
-    constructor(public payload: FclData) {}
+    constructor(public payload: { fclData: FclData }) {}
 }
 
 export class LoadFclDataFailureSOA implements Action {

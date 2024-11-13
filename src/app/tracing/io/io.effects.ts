@@ -69,9 +69,9 @@ export class IOEffects {
                 return from(this.ioService.getFclData(source)).pipe(
                     concatMap((result: FclData) =>
                         of(
-                            new tracingStateActions.LoadFclDataSuccessSOA(
-                                result,
-                            ),
+                            new tracingStateActions.LoadFclDataSuccessSOA({
+                                fclData: result,
+                            }),
                             new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA(),
                         ),
                     ),
