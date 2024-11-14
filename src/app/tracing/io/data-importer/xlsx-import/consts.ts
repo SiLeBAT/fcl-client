@@ -94,7 +94,7 @@ export const IMPORT_ISSUES = {
             : `Sheets '${sheetNames.join("', '")}' are missing.`,
 } as const;
 
-export const ISSUE_AGGREGATORS = {
+export const ISSUE_TEXT_AGGREGATORS = {
     duplicatePrimaryIDs: (
         sheets: { name: string; duplicateIds: string[] }[],
     ) => {

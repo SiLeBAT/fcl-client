@@ -1,7 +1,6 @@
-import { IMPORT_ISSUES, ISSUE_AGGREGATORS } from "./consts";
+import { IMPORT_ISSUES, ISSUE_TEXT_AGGREGATORS } from "./consts";
 import { ImportIssue, ImportResult } from "./model";
 import { removeUndefined } from "../../../../tracing/util/non-ui-utils";
-import { SHEET_LABELS } from "./all-in-one/const";
 
 interface IssueGroup {
     msg: string;
@@ -13,11 +12,11 @@ interface IssueGroup {
 function getTextForIssueGroup(issueGroup: IssueGroup): string {
     switch (issueGroup.msg) {
         case IMPORT_ISSUES.nonUniquePrimaryKey:
-            return ISSUE_AGGREGATORS.duplicatePrimaryIDs([
+            return ISSUE_TEXT_AGGREGATORS.duplicatePrimaryIDs([
                 ...(issueGroup.stationIssues.length > 0
                     ? [
                           {
-                              name: SHEET_LABELS.stations,
+                              name: issueGroup.stationIssues[0].sheet,
                               duplicateIds: Array.from(
                                   new Set(
                                       issueGroup.stationIssues.map(
@@ -32,7 +31,7 @@ function getTextForIssueGroup(issueGroup: IssueGroup): string {
                 ...(issueGroup.deliveryIssues.length > 0
                     ? [
                           {
-                              name: SHEET_LABELS.deliveries,
+                              name: issueGroup.deliveryIssues[0].sheet,
                               duplicateIds: Array.from(
                                   new Set(
                                       issueGroup.deliveryIssues.map(

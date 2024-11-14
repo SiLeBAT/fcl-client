@@ -1,5 +1,5 @@
 import { joinNonEmptyElementsOrUndefined } from "../../../../util/non-ui-utils";
-import { AddIssueCallback, ColumnMapping, ImportIssue } from "../model";
+import { AddIssueCallback, ColumnMapping } from "../model";
 import {
     enrichImportIssue,
     getPropsFromRow,
@@ -7,7 +7,6 @@ import {
 } from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneStationRow, StationColumn } from "./model";
-import { Register } from "./shared";
 
 function createStationAddress(row: Row): string | undefined {
     const street = getStringOrUndefined(row[StationColumn.STREET]);
@@ -35,8 +34,8 @@ export function importStation(
     externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneStationRow> {
     const addIssueCallback: AddIssueCallback = (
-        issue: ImportIssue,
-        invalidateRow: boolean = false,
+        issue,
+        invalidateRow = false,
     ) => {
         externalAddIssueCallback(
             enrichImportIssue(issue, row, table, invalidateRow, externalId),

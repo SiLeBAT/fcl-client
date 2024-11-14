@@ -1,5 +1,6 @@
 import {
     AddIssueCallback,
+    AddIssueToTable,
     Del2DelRow,
     ImportIssue,
     ImportResult,
@@ -126,28 +127,31 @@ export class AllInOneImporter implements XlsxImporter {
             optionalColumnMappings.map((m) => m.fromIndex),
         );
 
-        let row: Row;
-        let rowIsInvalid: boolean;
-        const addIssueCallback: AddIssueCallback = (
-            issue: ImportIssue,
-            invalidateRow: boolean = false,
+        const addIssueToTable: AddIssueToTable = (
+            issue,
+            row,
+            invalidateRow = false,
         ) => {
             importTable.issues.push(
                 enrichImportIssue(issue, row, table, invalidateRow),
             );
-            rowIsInvalid ||= invalidateRow;
         };
 
         const { rowIndexToExternalIds, externalIdRegister } =
-            registerExternalIds(table, addIssueCallback, StationColumn.EXT_ID);
+            registerExternalIds(table, addIssueToTable, StationColumn.EXT_ID);
 
-        for (row of table.rows) {
-            rowIsInvalid = false;
+        for (const row of table.rows) {
+            let rowIsInvalid = false;
+            const addIssueCallback: AddIssueCallback = (
+                issue,
+                invalidateRow = false,
+            ) => {
+                addIssueToTable(issue, row, invalidateRow);
+                rowIsInvalid ||= invalidateRow;
+            };
+
             const externalId = rowIndexToExternalIds.get(row.rowIndex);
-
-            if (externalId === undefined) {
-                rowIsInvalid = true;
-            }
+            rowIsInvalid ||= externalId === undefined;
 
             const stationRow = importStation(
                 row,
@@ -210,17 +214,15 @@ export class AllInOneImporter implements XlsxImporter {
         const longUniqueId2RowIndexMap = new Map<string, number>();
 
         const importTable = createEmptyImportTable<AllInOneDeliveryRow>();
-        let row: Row;
-        let rowIsInvalid: boolean;
 
-        const addIssueCallback: AddIssueCallback = (
-            issue: ImportIssue,
-            invalidateRow: boolean = false,
+        const addIssueToTable: AddIssueToTable = (
+            issue,
+            row,
+            invalidateRow = false,
         ) => {
             importTable.issues.push(
                 enrichImportIssue(issue, row, table, invalidateRow),
             );
-            rowIsInvalid ||= invalidateRow;
         };
 
         const optionalColumnMappings = getOptionalColumnMapping(
@@ -234,10 +236,17 @@ export class AllInOneImporter implements XlsxImporter {
         );
 
         const { rowIndexToExternalIds, externalIdRegister } =
-            registerExternalIds(table, addIssueCallback, DeliveryColumn.EXT_ID);
+            registerExternalIds(table, addIssueToTable, DeliveryColumn.EXT_ID);
 
-        for (row of table.rows) {
-            rowIsInvalid = false;
+        for (const row of table.rows) {
+            let rowIsInvalid = false;
+            const addIssueCallback: AddIssueCallback = (
+                issue,
+                invalidateRow = false,
+            ) => {
+                addIssueToTable(issue, row, invalidateRow);
+                rowIsInvalid ||= invalidateRow;
+            };
             const externalId = rowIndexToExternalIds.get(row.rowIndex);
 
             if (externalId === undefined) {
@@ -314,8 +323,8 @@ export class AllInOneImporter implements XlsxImporter {
         let rowIsInvalid: boolean;
 
         const addIssueCallback: AddIssueCallback = (
-            issue: ImportIssue,
-            invalidateRow: boolean = false,
+            issue,
+            invalidateRow = false,
         ) => {
             importTable.issues.push(
                 enrichImportIssue(issue, row, table, invalidateRow),
@@ -360,8 +369,8 @@ export class AllInOneImporter implements XlsxImporter {
 
 function registerExternalIds(
     table: Table,
-    addIssueCallback: AddIssueCallback,
-    colIndex: number,
+    addIssueCallback: AddIssueToTable,
+    externalIdColumnIndex: number,
 ) {
     const externalIdRegister = new Register();
     const rowIndexToExternalIds = new Map<number, string>();
@@ -373,7 +382,19 @@ function registerExternalIds(
         );
 
     for (const row of table.rows) {
-        const id = importMandatoryString(row, colIndex, addIssueCallback);
+        const id = importMandatoryString(
+            row,
+            externalIdColumnIndex,
+            (issue, invalidateRow) =>
+                addIssueCallback(
+                    {
+                        row: row.rowIndex,
+                        ...issue,
+                    },
+                    row,
+                    invalidateRow,
+                ),
+        );
         if (id !== undefined) {
             rowIndexToExternalIds.set(row.rowIndex, id);
             externalIdRegister.add(id);
@@ -385,10 +406,13 @@ function registerExternalIds(
             rowIndexToExternalIds.delete(row.rowIndex);
             addIssueCallback(
                 {
-                    col: colIndex,
+                    col: externalIdColumnIndex,
+                    row: row.rowIndex,
+                    value: row[externalIdColumnIndex],
                     type: "error",
                     msg: IMPORT_ISSUES.nonUniquePrimaryKey,
                 },
+                row,
                 true,
             );
         }

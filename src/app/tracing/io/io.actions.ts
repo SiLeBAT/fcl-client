@@ -2,7 +2,6 @@ import { Action } from "@ngrx/store";
 
 export enum IOActionTypes {
     LoadFclDataMSA = "[Tracing][IO] Load Fcl Data",
-    ImportWithIssuesMSA = "[Tracing][IO] imported Data with Issues",
     LoadShapeFileMSA = "[Tracing][IO] Load Shape File",
     SaveFclDataMSA = "[Tracing][IO] Save Fcl Data",
     SaveGraphImageMSA = "[Tracing][IO] Save Graph Image",

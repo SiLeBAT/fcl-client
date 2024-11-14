@@ -1,9 +1,4 @@
-import {
-    AddIssueCallback,
-    ColumnMapping,
-    ImportIssue,
-    SetLike,
-} from "../model";
+import { AddIssueCallback, ColumnMapping, SetLike } from "../model";
 import {
     enrichImportIssue,
     getPropsFromRow,
@@ -26,11 +21,9 @@ export function importDelivery(
     extStationIdRegister: SetLike,
     externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneDeliveryRow> {
-    // eslint-disable-next-line prefer-const
-
     const addIssueCallback: AddIssueCallback = (
-        issue: ImportIssue,
-        invalidateRow: boolean = false,
+        issue,
+        invalidateRow = false,
     ) => {
         externalAddIssueCallback(
             enrichImportIssue(issue, row, table, invalidateRow, externalId),
