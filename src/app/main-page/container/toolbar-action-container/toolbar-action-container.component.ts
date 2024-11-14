@@ -34,6 +34,7 @@ import { Constants } from "@app/tracing/util/constants";
 import { ToolbarActionComponent } from "@app/main-page/presentation/toolbar-action/toolbar-action.component";
 import { IOService } from "@app/tracing/io/io.service";
 import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
+import { DialogImportWarningsComponent } from "@app/tracing/dialog/dialog-import-warnings/dialog-import-warnings.component";
 
 @Component({
     selector: "fcl-toolbar-action-container",
@@ -146,6 +147,13 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     onOpenRoaLayout() {
         this.mainPageService.onROALayout();
+    }
+
+    onOpenWarningsDialog() {
+        this.dialog.open(DialogImportWarningsComponent, {
+            // to do: add issues
+            data: "add issues here",
+        });
     }
 
     ngOnDestroy() {
