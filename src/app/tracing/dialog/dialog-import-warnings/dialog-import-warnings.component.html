@@ -5,7 +5,14 @@
                 <span>Data import warnings</span>
             </mat-card-title>
             <mat-card-content>
-                {{ data }}
+                <span *ngIf="fileName">
+                    The following warnings occurred during the import of file
+                    {{ fileName }}
+                </span>
+                <ul *ngFor="let warning of warnings">
+                    <li *ngIf="warning.trim().length > 0">{{ warning }}</li>
+                    <li *ngIf="warning.trim().length === 0">unknown warning</li>
+                </ul>
             </mat-card-content>
         </mat-card>
     </div>
