@@ -84,6 +84,7 @@ import { CollapseStatusCellViewComponent } from "./configuration/table-cells/col
 import { SymbolHeaderCellViewComponent } from "./configuration/table-cells/symbol-header-cell-view/symbol-header-cell-view.component";
 import { PrefixEditorViewComponent } from "./configuration/prefix-editor-view/prefix-editor-view.component";
 import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.component";
+import { LoadingGraphComponent } from "./graph/components/loading-state/graph-loading.component";
 
 @NgModule({
     imports: [
@@ -118,6 +119,7 @@ import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.
         GraphSettingsComponent,
         NestedMatMenuViewComponent,
         EmptyGraphComponent,
+        LoadingGraphComponent,
         SchemaGraphComponent,
         GisGraphComponent,
         GraphLegendViewComponent,

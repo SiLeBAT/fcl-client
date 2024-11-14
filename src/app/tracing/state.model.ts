@@ -24,4 +24,5 @@ export interface TracingState extends ModelDependentState {
     isConfSideBarOpening: boolean;
     tracingActive: boolean;
     isModelLoaded: boolean;
+    isModelLoading: boolean;
 }

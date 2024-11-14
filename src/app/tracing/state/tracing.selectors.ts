@@ -33,6 +33,11 @@ export const selectIsModelLoaded = createSelector(
     (state) => state.isModelLoaded,
 );
 
+export const selectIsModelLoading = createSelector(
+    selectTracingFeatureState,
+    (state) => state.isModelLoading,
+);
+
 export const getVisioReport = createSelector(
     selectTracingFeatureState,
     (state) => state.visioReport,
