@@ -69,10 +69,7 @@ function collectIssues(importResult: ImportResult): IssueGroup[] {
     const { issues: deliveryIssues } = importResult.deliveries;
     const { issues: del2delIssues } = importResult.del2Dels;
     const allIssues = [...stationIssues, ...deliveryIssues, ...del2delIssues];
-    const types = removeUndefined(
-        Array.from(new Set(allIssues.map((issue) => issue.msg))),
-    );
-
+    const types = Array.from(new Set(allIssues.map((issue) => issue.msg)));
     return types.map((type) =>
         getIssuesByType(stationIssues, deliveryIssues, del2delIssues, type),
     );

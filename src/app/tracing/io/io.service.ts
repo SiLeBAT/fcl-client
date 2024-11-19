@@ -31,7 +31,7 @@ export class IOService {
         } else {
             const { data: jsonData, warnings } = await importXlsxFile(file);
             fclData = await this.preprocessData(jsonData);
-            fclData.importWarnings = [...fclData.importWarnings, ...warnings];
+            fclData.importWarnings = [...warnings, ...fclData.importWarnings];
         }
         fclData.source.name = file.name;
         return fclData;

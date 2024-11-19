@@ -311,37 +311,6 @@ export function importReference(
     return inputValue;
 }
 
-export function importPrimaryKey(
-    row: Row,
-    colIndex: number,
-    usedPks: { has: (x: string) => boolean },
-    addIssueCb: AddIssueCallback,
-): string | undefined {
-    const inputValue = getCleanedStringOrUndefined(row[colIndex]);
-    if (inputValue === undefined) {
-        addIssueCb(
-            {
-                col: colIndex,
-                type: "error",
-                msg: IMPORT_ISSUES.missingValue,
-            },
-            true,
-        );
-        return undefined;
-    } else if (usedPks.has(inputValue)) {
-        addIssueCb(
-            {
-                col: colIndex,
-                type: "error",
-                msg: IMPORT_ISSUES.nonUniquePrimaryKey,
-            },
-            true,
-        );
-        return undefined;
-    }
-    return inputValue;
-}
-
 export function importMandatoryString(
     row: Row,
     colIndex: number,

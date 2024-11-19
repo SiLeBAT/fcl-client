@@ -248,10 +248,7 @@ export class AllInOneImporter implements XlsxImporter {
                 rowIsInvalid ||= invalidateRow;
             };
             const externalId = rowIndexToExternalIds.get(row.rowIndex);
-
-            if (externalId === undefined) {
-                rowIsInvalid = true;
-            }
+            rowIsInvalid ||= externalId === undefined;
 
             const deliveryRow = importDelivery(
                 row,
@@ -388,7 +385,6 @@ function registerExternalIds(
             (issue, invalidateRow) =>
                 addIssueCallback(
                     {
-                        row: row.rowIndex,
                         ...issue,
                     },
                     row,
@@ -407,8 +403,6 @@ function registerExternalIds(
             addIssueCallback(
                 {
                     col: externalIdColumnIndex,
-                    row: row.rowIndex,
-                    value: row[externalIdColumnIndex],
                     type: "error",
                     msg: IMPORT_ISSUES.nonUniquePrimaryKey,
                 },
