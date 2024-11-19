@@ -8,8 +8,7 @@
             <div id="mainContent">
                 <fcl-graph-empty
                     [hidden]="
-                        (isModelLoaded$ | async) === true ||
-                        (isModelLoading$ | async) === true
+                        (isModelLoaded$ | async) === true 
                     "
                 />
                 <fcl-graph-loading
@@ -19,16 +18,14 @@
                     #schemaGraph
                     [hidden]="
                         (isModelLoaded$ | async) === false ||
-                        (showSchemaGraph$ | async) === false ||
-                        (isModelLoading$ | async) === true
+                        (showSchemaGraph$ | async) === false 
                     "
                 />
                 <fcl-gis-graph
                     #gisGraph
                     [hidden]="
                         (isModelLoaded$ | async) === false ||
-                        (showGisGraph$ | async) === false ||
-                        (isModelLoading$ | async) === true
+                        (showGisGraph$ | async) === false 
                     "
                 />
             </div>
