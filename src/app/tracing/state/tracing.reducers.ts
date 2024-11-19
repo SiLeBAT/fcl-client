@@ -123,6 +123,7 @@ export function createInitialFclDataState(): FclData {
             deliveries: [],
             samples: [],
         },
+        importWarnings: [],
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,

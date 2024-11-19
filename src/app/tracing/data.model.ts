@@ -21,6 +21,7 @@ export interface FclDataSourceInfo {
 
 export interface FclData {
     source: FclDataSourceInfo;
+    importWarnings: string[];
     fclElements: FclElements;
     graphSettings: GraphSettings;
     tracingSettings: TracingSettings;

@@ -1,11 +1,18 @@
-import { CellValue, XlsxReader } from "./xlsx-reader";
+import { PartialPick } from "@app/tracing/util/utility-types";
+import { CellValue, Row, XlsxReader } from "./xlsx-reader";
 
 export interface SetLike {
     has: (x: string) => boolean;
 }
 
 export type AddIssueCallback = (
-    issue: ImportIssue,
+    issue: PartialPick<ImportIssue, "sheet">,
+    invalidateRow?: boolean,
+) => void;
+
+export type AddIssueToTable = (
+    issue: PartialPick<ImportIssue, "sheet">,
+    row: Row,
     invalidateRow?: boolean,
 ) => void;
 
@@ -29,12 +36,12 @@ export interface ColumnMapping {
 
 export interface ImportIssue {
     ref?: string | number;
-    sheet?: string;
+    sheet: string;
     col?: number;
     colRef?: string[];
     row?: number;
     type?: "error" | "warning";
-    msg?: string;
+    msg: string;
     value?: CellValue;
     invalidatesRow?: boolean;
 }

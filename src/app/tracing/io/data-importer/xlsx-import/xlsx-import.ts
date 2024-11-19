@@ -25,6 +25,7 @@ import {
     getKeys,
     removeUndefined,
 } from "../../../../tracing/util/non-ui-utils";
+import { getWarnings } from "./getWarnings";
 
 type ImportedRow = StationRow | DeliveryRow | Del2DelRow;
 
@@ -214,12 +215,15 @@ function convertImportResultToJsonData(importResult: ImportResult): JsonData {
     return data;
 }
 
-export async function importXlsxFile(file: File): Promise<JsonData> {
+export async function importXlsxFile(
+    file: File,
+): Promise<{ data: JsonData; warnings: string[] }> {
     const xlsxReader = new XlsxReader();
     await xlsxReader.loadFile(file);
 
     const importResult = new AllInOneImporter().importTemplate(xlsxReader);
+
     const jsonData = convertImportResultToJsonData(importResult);
 
-    return jsonData;
+    return { data: jsonData, warnings: getWarnings(importResult) };
 }

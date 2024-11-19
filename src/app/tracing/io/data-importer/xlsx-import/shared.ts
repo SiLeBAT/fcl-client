@@ -21,6 +21,7 @@ import {
     isMonthValid,
     isYearValid,
 } from "../../../util/date-utils";
+import { PartialPick } from "@app/tracing/util/utility-types";
 
 type TypeString2Type<T extends RefinedTypeString> = T extends NumberTypeString
     ? number
@@ -75,30 +76,35 @@ export function getPropsFromRow<T = { [key: string]: CellValue }>(
 }
 
 export function enrichImportIssue(
-    issue: ImportIssue,
+    issue: PartialPick<ImportIssue, "sheet">,
     row: Row,
     table: Table,
     invalidateRow: boolean,
     ref?: string | undefined,
 ): ImportIssue {
-    issue = { ...issue };
-    issue.row ??= row?.rowIndex;
+    const enrichedIssue: ImportIssue = {
+        ...issue,
+        sheet: issue.sheet ?? table.sheet,
+    };
+
+    enrichedIssue.row ??= row?.rowIndex;
     if (ref !== undefined) {
-        issue.ref ??= ref;
+        enrichedIssue.ref ??= ref;
     }
     if (invalidateRow) {
-        issue.invalidatesRow = true;
+        enrichedIssue.invalidatesRow = true;
     }
-    if (issue.col !== undefined && issue.colRef === undefined) {
+    if (enrichedIssue.col !== undefined && enrichedIssue.colRef === undefined) {
         // col is supposed to be the zero based relative index in the table
-        if (row[issue.col] !== undefined) {
-            issue.value = row[issue.col];
+        if (row[enrichedIssue.col] !== undefined) {
+            enrichedIssue.value = row[enrichedIssue.col];
         }
-        issue.colRef = table.header.columnHeaders[issue.col];
-        issue.col += table.offset.col;
+        enrichedIssue.colRef = table.header.columnHeaders[enrichedIssue.col];
+        enrichedIssue.col += table.offset.col;
         // col is now an absolute 1 based index
     }
-    return issue;
+
+    return enrichedIssue;
 }
 
 function getMergedType(
@@ -301,31 +307,6 @@ export function importReference(
             },
             true,
         );
-    }
-    return inputValue;
-}
-
-export function importPrimaryKey(
-    row: Row,
-    colIndex: number,
-    usedPks: { has: (x: string) => boolean },
-    addIssueCb: AddIssueCallback,
-): string | undefined {
-    const inputValue = getCleanedStringOrUndefined(row[colIndex]);
-    if (inputValue === undefined) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.missingValue,
-        });
-        return undefined;
-    } else if (usedPks.has(inputValue)) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.nonUniqueValue,
-        });
-        return undefined;
     }
     return inputValue;
 }

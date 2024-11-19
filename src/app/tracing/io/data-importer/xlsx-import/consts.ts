@@ -63,6 +63,7 @@ function formatCellAddress(
 export const IMPORT_ISSUES = {
     wbNotLoaded: "Workbook is not loaded into Reader.",
     nonUniqueValue: "Value is not unique.",
+    nonUniquePrimaryKey: "Primary key is not unique.",
     invalidValue: "Invalid value.",
     missingValue: "Missing value.",
     invalidRef: "Invalid reference.",
@@ -92,6 +93,20 @@ export const IMPORT_ISSUES = {
             ? `Sheet '${sheetNames[0]}' is missing.`
             : `Sheets '${sheetNames.join("', '")}' are missing.`,
 } as const;
+
+export const ISSUE_TEXT_AGGREGATORS = {
+    duplicatePrimaryIDs: (
+        sheets: { name: string; duplicateIds: string[] }[],
+    ) => {
+        if (sheets.length === 0) {
+            return "";
+        }
+        if (sheets.length === 1) {
+            return `There are duplicate IDs in the ${sheets[0].name} spreadsheet (${sheets[0].duplicateIds.join(", ")}). Data lines with Duplicate IDs were discarded and not imported.`;
+        }
+        return `There are duplicate IDs in the ${sheets[0].name} spreadsheet (${sheets[0].duplicateIds.join(", ")}) and in the ${sheets[1].name} spreadsheet (${sheets[1].duplicateIds.join(", ")}). Data lines with Duplicate IDs were discarded and not imported.`;
+    },
+};
 
 export const IMPORT_PREFIXES = {
     stationId: "S",
