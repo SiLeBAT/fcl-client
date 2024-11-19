@@ -71,6 +71,7 @@ describe("IOService", () => {
                 ],
                 samples: [],
             },
+            importWarnings: [],
             graphSettings: {
                 type: GraphType.GRAPH,
                 mapType: MAP_CONSTANTS.defaults.mapType,
