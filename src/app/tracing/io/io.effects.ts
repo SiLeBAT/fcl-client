@@ -12,6 +12,7 @@ import {
     withLatestFrom,
     concatMap,
     take,
+    tap,
 } from "rxjs/operators";
 import { of, from, EMPTY } from "rxjs";
 import { IOService } from "./io.service";
@@ -71,6 +72,13 @@ export class IOEffects {
                     return of(new tracingStateActions.LoadFclDataFailureSOA());
                 }
                 return from(this.ioService.getFclData(source)).pipe(
+                    tap(
+                        (data) =>
+                            data.importWarnings.length > 0 &&
+                            this.alertService.warn(
+                                "Data import completed with warnings",
+                            ),
+                    ),
                     concatMap((result: FclData) =>
                         of(
                             new tracingStateActions.LoadFclDataSuccessSOA({
