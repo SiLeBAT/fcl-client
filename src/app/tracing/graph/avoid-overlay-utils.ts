@@ -1,16 +1,15 @@
-import { Position, PositionMap } from '@app/tracing/data.model';
-import { CyNodeData } from './graph.model';
-import * as seedrandom from 'seedrandom';
-import { getDistance } from '@app/tracing/util/geometry-utils';
+import { Position, PositionMap } from "@app/tracing/data.model";
+import { CyNodeData } from "./graph.model";
+import * as seedrandom from "seedrandom";
+import { getDistance } from "@app/tracing/util/geometry-utils";
 
 export function getNonOverlayPositions(
     nodes: CyNodeData[],
     posMap: PositionMap,
     nodeSize: number,
-    zoom: number
+    zoom: number,
 ): PositionMap {
-
-    const rand = seedrandom('0');
+    const rand = seedrandom("0");
 
     const newPosMap: PositionMap = { ...posMap };
     const maxMove = nodeSize / zoom;
@@ -41,12 +40,19 @@ export function getNonOverlayPositions(
             let bestPoint: Position | null = null;
 
             for (let x = xLeft + randX * stepSize; x <= xRight; x += stepSize) {
-                for (let y = yTop + randY * stepSize; y <= yBottom; y += stepSize) {
+                for (
+                    let y = yTop + randY * stepSize;
+                    y <= yBottom;
+                    y += stepSize
+                ) {
                     let distToClosestNeighbour = Number.POSITIVE_INFINITY;
                     const newPosCandidate = { x: x, y: y };
 
                     for (const neighbourPos of neighborPositions) {
-                        distToClosestNeighbour = Math.min(distToClosestNeighbour, getDistance(neighbourPos, newPosCandidate));
+                        distToClosestNeighbour = Math.min(
+                            distToClosestNeighbour,
+                            getDistance(neighbourPos, newPosCandidate),
+                        );
                     }
 
                     if (distToClosestNeighbour > bestDistance) {
@@ -56,7 +62,7 @@ export function getNonOverlayPositions(
                 }
             }
 
-            newPosMap[node1.id] = bestPoint;
+            newPosMap[node1.id] = bestPoint!;
         }
     }
 

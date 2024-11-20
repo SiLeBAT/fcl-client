@@ -1,7 +1,7 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter } from "@angular/core";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class MainPageService {
     doSaveImage: EventEmitter<any>;

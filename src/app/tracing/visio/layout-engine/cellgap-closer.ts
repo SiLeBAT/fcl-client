@@ -1,7 +1,6 @@
-import { Utils } from '../../util/non-ui-utils';
+import { Utils } from "../../util/non-ui-utils";
 
 export class CellGapCloser {
-
     static closeGaps(matrix: number[][]): number[][] {
         if (matrix.length === 0 || matrix[0].length === 0) {
             return matrix;
@@ -10,7 +9,6 @@ export class CellGapCloser {
     }
 
     private static fillUGaps(matrix: number[][]): number[][] {
-
         this.fillBottomUpUGaps(matrix);
         matrix = Utils.getTranspose(matrix);
         this.fillBottomUpUGaps(matrix);
@@ -20,12 +18,11 @@ export class CellGapCloser {
         matrix.reverse();
         this.fillBottomUpUGaps(matrix);
         matrix.reverse();
-        matrix.forEach(row => row.reverse());
+        matrix.forEach((row) => row.reverse());
         return matrix;
     }
 
     private static fillBottomUpUGaps(matrix: number[][]) {
-
         const rowCount = matrix.length;
         const columnCount = matrix[0].length;
         const lastVGroupIndices = matrix[0].slice();

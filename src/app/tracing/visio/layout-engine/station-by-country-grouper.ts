@@ -1,5 +1,5 @@
-import { StationGrouper } from './datatypes';
-import { StationData } from '../../data.model';
+import { StationGrouper } from "./datatypes";
+import { StationData } from "../../data.model";
 
 interface StationGroup {
     label: string;
@@ -7,7 +7,6 @@ interface StationGroup {
 }
 
 export class StationByCountryGrouper implements StationGrouper {
-
     areStationsInTheSameGroup(s1: StationData, s2: StationData): boolean {
         const countryPropertyS1 = this.getCountryProperty(s1);
         const countryPropertyS2 = this.getCountryProperty(s2);
@@ -21,22 +20,26 @@ export class StationByCountryGrouper implements StationGrouper {
 
     getGroupLabel(station: StationData): string {
         const countryProperty = this.getCountryProperty(station);
-        return (countryProperty !== null ? countryProperty : 'Country: Unknown');
+        return countryProperty ?? "Country: Unknown";
     }
 
-    private getCountryProperty(station: StationData): string {
-        const countryProperties = station.properties.filter(p => p.name.toLocaleLowerCase() === 'country');
-        return (countryProperties.length > 0 ? countryProperties[0].value as string : null);
+    private getCountryProperty(station: StationData): string | undefined {
+        const countryProperties = station.properties.filter(
+            (p) => p.name.toLocaleLowerCase() === "country",
+        );
+        return countryProperties.length > 0
+            ? (countryProperties[0].value as string)
+            : undefined;
     }
 
     groupStations(stations: StationData[]): StationGroup[] {
         const map: Map<string, StationData[]> = new Map();
 
-        stations.forEach(station => {
+        stations.forEach((station) => {
             const label = this.getGroupLabel(station);
 
             if (map.has(label)) {
-                map.get(label).push(station);
+                map.get(label)!.push(station);
             } else {
                 map.set(label, [station]);
             }
@@ -44,7 +47,7 @@ export class StationByCountryGrouper implements StationGrouper {
 
         return Array.from(map.entries()).map(([key, value]) => ({
             label: key,
-            stations: value
+            stations: value,
         }));
     }
 }

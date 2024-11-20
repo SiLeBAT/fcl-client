@@ -1,10 +1,26 @@
 <div class="fcl-tracing-container">
-    <mat-sidenav-container id="mainContainer" #mainContainer hasBackdrop="false" >
-
+    <mat-sidenav-container
+        id="mainContainer"
+        #mainContainer
+        hasBackdrop="false"
+    >
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
-                <fcl-schema-graph #schemaGraph [hidden]="(showSchemaGraph$ | async) === false"></fcl-schema-graph>
-                <fcl-gis-graph #gisGraph [hidden]="(showGisGraph$ | async) === false"></fcl-gis-graph>
+                <fcl-graph-empty [hidden]="(isModelLoaded$ | async) === true" />
+                <fcl-schema-graph
+                    #schemaGraph
+                    [hidden]="
+                        (isModelLoaded$ | async) === false ||
+                        (showSchemaGraph$ | async) === false
+                    "
+                />
+                <fcl-gis-graph
+                    #gisGraph
+                    [hidden]="
+                        (isModelLoaded$ | async) === false ||
+                        (showGisGraph$ | async) === false
+                    "
+                />
             </div>
         </mat-sidenav-content>
 
@@ -15,7 +31,8 @@
             mode="over"
             disableClose="true"
             [opened]="showConfigurationSideBar$ | async"
-            (openedChange)="onConfigurationSideBarOpened()">
+            (openedChange)="onConfigurationSideBarOpened()"
+        >
             <fcl-configuration></fcl-configuration>
         </mat-sidenav>
     </mat-sidenav-container>

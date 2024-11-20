@@ -1,20 +1,49 @@
-<form [formGroup]="resetForm" (ngSubmit)="onReset()" fclDisableSubscriptWrapperTabFocus>
+<form
+    [formGroup]="resetForm"
+    (ngSubmit)="onReset()"
+    fclDisableSubscriptWrapperTabFocus
+>
     <div class="fcl-mat-card-content">
         <div class="fcl-reset-text">
             <div class="mat-subheading-2">Please enter a new password.</div>
         </div>
 
-        <div class="form-group" [ngClass]="{ error: !validateField('password1') }">
+        <div
+            class="form-group"
+            [ngClass]="{ error: !validateField('password1') }"
+        >
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>New password</mat-label>
-                <input matInput #message formControlName="password1" type="password" name="password1" required fclFocusAfterViewInit/>
+                <input
+                    matInput
+                    #message
+                    formControlName="password1"
+                    type="password"
+                    name="password1"
+                    required
+                    fclFocusAfterViewInit
+                />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password1') && resetForm.controls.password1.errors.required && serverValidationErrors.length === 0">
+                <mat-error
+                    *ngIf="
+                        !validateField('password1') &&
+                        resetForm.controls.password1?.errors?.required &&
+                        serverValidationErrors.length === 0
+                    "
+                >
                     Password is required
                 </mat-error>
-                <mat-hint *ngIf="serverValidationErrors.length > 0" class="mat-error">
-                    <ng-container *ngFor="let error of serverValidationErrors; let i=index">
-                        <br *ngIf="i>0"><span>{{ error.message }}</span>
+                <mat-hint
+                    *ngIf="serverValidationErrors.length > 0"
+                    class="mat-error"
+                >
+                    <ng-container
+                        *ngFor="
+                            let error of serverValidationErrors;
+                            let i = index
+                        "
+                    >
+                        <br *ngIf="i > 0" /><span>{{ error.message }}</span>
                     </ng-container>
                 </mat-hint>
             </mat-form-field>
@@ -22,9 +51,21 @@
         <div class="form-group">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Confirm Password</mat-label>
-                <input matInput formControlName="password2" type="password" name="password2" required />
+                <input
+                    matInput
+                    formControlName="password2"
+                    type="password"
+                    name="password2"
+                    required
+                />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password2') && resetForm.controls.password2.errors.validatePasswordConfirm">
+                <mat-error
+                    *ngIf="
+                        !validateField('password2') &&
+                        resetForm.controls.password2?.errors
+                            ?.validatePasswordConfirm
+                    "
+                >
                     Passwords must match
                 </mat-error>
             </mat-form-field>
@@ -32,14 +73,17 @@
 
         <div class="fcl-card-action fcl-card-action-container">
             <div class="form-group fcl-reset-button">
-                <button mat-raised-button color="primary" type="submit" [disabled]="!resetForm.valid">
+                <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="!resetForm.valid"
+                >
                     Recover password
                 </button>
             </div>
             <div>
-                <a mat-button [routerLink]="['/']">
-                    Cancel
-                </a>
+                <a mat-button [routerLink]="['/']"> Cancel </a>
             </div>
         </div>
     </div>

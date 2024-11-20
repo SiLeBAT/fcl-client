@@ -1,18 +1,29 @@
-import { OperationType, TableColumn } from './../../data.model';
-import { Component, Input, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
-import { ComplexFilterCondition, JunktorType } from '../configuration.model';
-import { ComplexFilterUtils } from '../shared/complex-filter-utils';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { OperationType, TableColumn } from "./../../data.model";
+import {
+    Component,
+    Input,
+    ViewEncapsulation,
+    Output,
+    EventEmitter,
+    ChangeDetectionStrategy,
+    ViewChild,
+    AfterViewChecked,
+    OnChanges,
+    SimpleChanges,
+} from "@angular/core";
+import { ComplexFilterCondition, JunktorType } from "../configuration.model";
+import { ComplexFilterUtils } from "../shared/complex-filter-utils";
+import { CdkVirtualScrollViewport } from "@angular/cdk/scrolling";
+import { concat } from "@app/tracing/util/non-ui-utils";
 
 @Component({
-    selector: 'fcl-complex-filter-view',
-    templateUrl: './complex-filter-view.component.html',
-    styleUrls: ['./complex-filter-view.component.scss'],
+    selector: "fcl-complex-filter-view",
+    templateUrl: "./complex-filter-view.component.html",
+    styleUrls: ["./complex-filter-view.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
-
     private static readonly MAX_VIEW_PORT_LENGTH = 5;
     private static readonly ROW_HEIGHT = 39;
     private static readonly MAX_VIEW_PORT_HEIGHT =
@@ -29,11 +40,10 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     @Input() availableOperatorTypes: OperationType[] = [];
 
     @Input() set conditions(value: ComplexFilterCondition[]) {
-        this.conditions_ = (
-            value && value.length > 0 ?
-                value.slice() :
-                ComplexFilterUtils.createDefaultComplexFilterConditions()
-        );
+        this.conditions_ =
+            value && value.length > 0
+                ? value.slice()
+                : ComplexFilterUtils.createDefaultComplexFilterConditions();
     }
 
     get conditions(): ComplexFilterCondition[] {
@@ -55,13 +65,14 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     // the scrollbars are shown permanently and do reduce the width of the inner content
     hideScrollbar = false;
 
-    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT; // 38.39;
+    rowHeight = ComplexFilterViewComponent.ROW_HEIGHT;
     viewportHeight = ComplexFilterViewComponent.ROW_HEIGHT;
 
     private scrollDown = false;
     private updateScrollIndicatorsAfterViewChecked = false;
 
-    private conditions_ = ComplexFilterUtils.createDefaultComplexFilterConditions();
+    private conditions_ =
+        ComplexFilterUtils.createDefaultComplexFilterConditions();
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.conditions !== undefined) {
@@ -90,22 +101,21 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
         if (index === this.conditions.length - 1) {
             this.scrollDown = true;
         }
-        const conditions = this.conditions_.map(c => ({ ...c }));
+        const conditions = this.conditions_.map((c) => ({ ...c }));
         const propertyName = conditions[index].propertyName;
         const operationType = conditions[index].operationType;
 
-        const junktorType = (
-            index > 0 ?
-                conditions[index - 1].junktorType :
-                ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
-        );
+        const junktorType =
+            index > 0
+                ? conditions[index - 1].junktorType
+                : ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE;
 
         conditions[index].junktorType = junktorType;
         conditions[index + 1] = {
             propertyName: propertyName,
             operationType: operationType,
-            value: '',
-            junktorType: ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE
+            value: "",
+            junktorType: ComplexFilterUtils.DEFAULT_JUNKTOR_TYPE,
         };
 
         this.conditions_ = conditions;
@@ -113,15 +123,14 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     }
 
     onRemoveFilterCondition(index: number) {
-        const conditions = [].concat(
+        const conditions = concat(
             this.conditions_.slice(0, index),
-            this.conditions_.slice(index + 1)
+            this.conditions_.slice(index + 1),
         );
-        this.conditions_ = (
-            conditions.length === 0 ?
-                ComplexFilterUtils.createDefaultComplexFilterConditions() :
-                conditions
-        );
+        this.conditions_ =
+            conditions.length === 0
+                ? ComplexFilterUtils.createDefaultComplexFilterConditions()
+                : conditions;
         if (this.useListMode && !this.hasViewportFixedScrollbar()) {
             // here we hide the scrollbar, otherwise it might block the use
             // to remove conditions in quick successioon
@@ -133,28 +142,28 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     onPropertyChange(propertyName: string, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            propertyName: propertyName
+            propertyName: propertyName,
         });
     }
 
     onOperatorChange(operatorType: OperationType, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            operationType: operatorType
+            operationType: operatorType,
         });
     }
 
     onValueChange(value: string, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            value: value
+            value: value,
         });
     }
 
     onJunktorChange(junktorType: JunktorType, index: number) {
         this.changeConditionAndEmit(index, {
             ...this.conditions_[index],
-            junktorType: junktorType
+            junktorType: junktorType,
         });
     }
 
@@ -164,28 +173,35 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
 
     private hasViewportFixedScrollbar(): boolean {
         const viewportElement = this.viewport.elementRef.nativeElement;
-        const contentWrapperElements = viewportElement.getElementsByClassName('cdk-virtual-scroll-content-wrapper');
+        const contentWrapperElements = viewportElement.getElementsByClassName(
+            "cdk-virtual-scroll-content-wrapper",
+        );
         if (contentWrapperElements.length > 0) {
-            const contentWrapperElement = contentWrapperElements.item(0);
+            const contentWrapperElement = contentWrapperElements.item(0)!;
             const viewportWidth = viewportElement.getBoundingClientRect().width;
-            const contentWrapperWidth = contentWrapperElement.getBoundingClientRect().width;
+            const contentWrapperWidth =
+                contentWrapperElement.getBoundingClientRect().width;
             return viewportWidth > contentWrapperWidth;
         }
         return false;
     }
 
-    private changeConditionAndEmit(index: number, newCondition: ComplexFilterCondition): void {
-        const conditions = this.conditions_.map(c => ({ ...c }));
+    private changeConditionAndEmit(
+        index: number,
+        newCondition: ComplexFilterCondition,
+    ): void {
+        const conditions = this.conditions_.map((c) => ({ ...c }));
         conditions[index] = newCondition;
         this.conditions_ = conditions;
         this.conditionsChange.emit(conditions);
     }
 
     private updateStyleParams(): void {
-        const listHeight = ComplexFilterViewComponent.ROW_HEIGHT * this.conditions.length;
+        const listHeight =
+            ComplexFilterViewComponent.ROW_HEIGHT * this.conditions.length;
         this.viewportHeight = Math.min(
             ComplexFilterViewComponent.MAX_VIEW_PORT_HEIGHT,
-            listHeight
+            listHeight,
         );
         this.useListMode = this.viewportHeight < listHeight;
         if (!this.useListMode) {
@@ -197,11 +213,17 @@ export class ComplexFilterViewComponent implements AfterViewChecked, OnChanges {
     }
 
     private updateScrollIndicators(): void {
-        this.isScrollDownIndicatorVisible = this.viewport && !(
-            this.viewport.measureScrollOffset('bottom') < ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
-        );
-        this.isScrollUpIndicatorVisible = this.viewport && !(
-            this.viewport.measureScrollOffset('top') < ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
-        );
+        this.isScrollDownIndicatorVisible =
+            this.viewport &&
+            !(
+                this.viewport.measureScrollOffset("bottom") <
+                ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
+            );
+        this.isScrollUpIndicatorVisible =
+            this.viewport &&
+            !(
+                this.viewport.measureScrollOffset("top") <
+                ComplexFilterViewComponent.SCROLL_INDICATOR_TRIGGER_OFFSET
+            );
     }
 }

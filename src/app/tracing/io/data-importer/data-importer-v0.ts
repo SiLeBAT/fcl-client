@@ -1,37 +1,47 @@
-import { FclData, GraphSettings, ObservedType, MergeDeliveriesType, PropMap } from '../../data.model';
+import {
+    FclData,
+    GraphSettings,
+    ObservedType,
+    MergeDeliveriesType,
+    PropMap,
+} from "../../data.model";
 
-import { Utils } from './../../util/non-ui-utils';
-import { Constants } from './../../util/constants';
+import { Utils } from "./../../util/non-ui-utils";
+import { Constants } from "./../../util/constants";
 
-import { IDataImporter } from './datatypes';
-import { importSamples } from './sample-importer-v1';
-import { createDefaultHighlights } from './shared';
-import { InputFormatError, InputDataError } from '../io-errors';
-import { DENOVO_STATION_PROP_INT_TO_EXT_MAP, DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP } from '../data-mappings/data-mappings-v1';
-import { DELIVERY_PROP_V0_TO_V1_MAP } from '../data-mappings/data-mappings-v0-to-v1';
+import { IDataImporter } from "./datatypes";
+import { importSamples } from "./sample-importer-v1";
+import { createDefaultHighlights } from "./shared";
+import { InputFormatError, InputDataError } from "../io-errors";
+import {
+    DENOVO_STATION_PROP_INT_TO_EXT_MAP,
+    DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP,
+} from "../data-mappings/data-mappings-v1";
+import { DELIVERY_PROP_V0_TO_V1_MAP } from "../data-mappings/data-mappings-v0-to-v1";
 
 export class DataImporterV0 implements IDataImporter {
-
     async isDataFormatSupported(data: any): Promise<boolean> {
         const containsRawData =
-            Object.prototype.hasOwnProperty.call(data, 'stations') &&
-            Object.prototype.hasOwnProperty.call(data, 'deliveries') &&
-            Object.prototype.hasOwnProperty.call(data, 'deliveriesRelations');
+            Object.prototype.hasOwnProperty.call(data, "stations") &&
+            Object.prototype.hasOwnProperty.call(data, "deliveries") &&
+            Object.prototype.hasOwnProperty.call(data, "deliveriesRelations");
         const containsDataWithSettings =
-            Object.prototype.hasOwnProperty.call(data, 'elements') &&
-            Object.prototype.hasOwnProperty.call(data, 'layout') &&
-            Object.prototype.hasOwnProperty.call(data, 'gisLayout') &&
-            Object.prototype.hasOwnProperty.call(data, 'graphSettings');
+            Object.prototype.hasOwnProperty.call(data, "elements") &&
+            Object.prototype.hasOwnProperty.call(data, "layout") &&
+            Object.prototype.hasOwnProperty.call(data, "gisLayout") &&
+            Object.prototype.hasOwnProperty.call(data, "graphSettings");
         return containsRawData || containsDataWithSettings;
     }
 
     async preprocessData(data: any, fclData: FclData): Promise<void> {
         if (await this.isDataFormatSupported(data)) {
-
             const containsRawData =
-                Object.prototype.hasOwnProperty.call(data, 'stations') &&
-                Object.prototype.hasOwnProperty.call(data, 'deliveries') &&
-                Object.prototype.hasOwnProperty.call(data, 'deliveriesRelations');
+                Object.prototype.hasOwnProperty.call(data, "stations") &&
+                Object.prototype.hasOwnProperty.call(data, "deliveries") &&
+                Object.prototype.hasOwnProperty.call(
+                    data,
+                    "deliveriesRelations",
+                );
 
             if (containsRawData) {
                 this.preprocessRawData(data, fclData);
@@ -39,11 +49,11 @@ export class DataImporterV0 implements IDataImporter {
                 this.preprocessDataWithSettings(data, fclData);
             }
             importSamples(data, fclData);
-            fclData.graphSettings.highlightingSettings = createDefaultHighlights();
+            fclData.graphSettings.highlightingSettings =
+                createDefaultHighlights();
         } else {
             throw new InputFormatError();
         }
-
     }
 
     private preprocessRawData(data: any, fclData: FclData): boolean {
@@ -60,12 +70,16 @@ export class DataImporterV0 implements IDataImporter {
         for (const d of data.deliveries) {
             const source = stationsById[d.source];
             if (source === undefined) {
-                throw new InputDataError(`The delivery with id '${ d.id }' references a source (with id '${d.source }') which does not exist.`);
+                throw new InputDataError(
+                    `The delivery with id '${d.id}' references a source (with id '${d.source}') which does not exist.`,
+                );
             }
             source.outgoing.push(d.id);
             const target = stationsById[d.target];
             if (target === undefined) {
-                throw new InputDataError(`The delivery with id '${ d.id }' references a target (with id '${d.target }') which does not exist.`);
+                throw new InputDataError(
+                    `The delivery with id '${d.id}' references a target (with id '${d.target}') which does not exist.`,
+                );
             }
             target.incoming.push(d.id);
 
@@ -75,15 +89,21 @@ export class DataImporterV0 implements IDataImporter {
         for (const r of data.deliveriesRelations) {
             const sourceD = deliveriesById[r.source];
             if (sourceD === undefined) {
-                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.source }' which does not exist.`);
+                throw new InputDataError(
+                    `A delivery relation references a delivery (with id '${r.source}' which does not exist.`,
+                );
             }
             const targetD = deliveriesById[r.target];
             if (targetD === undefined) {
-                throw new InputDataError(`A delivery relation references a delivery (with id '${ r.target }' which does not exist.`);
+                throw new InputDataError(
+                    `A delivery relation references a delivery (with id '${r.target}' which does not exist.`,
+                );
             }
 
             if (sourceD.target !== targetD.source) {
-                throw new InputDataError('Invalid delivery relation: ' + JSON.stringify(r));
+                throw new InputDataError(
+                    "Invalid delivery relation: " + JSON.stringify(r),
+                );
             }
 
             stationsById[sourceD.target].connections.push(r);
@@ -96,25 +116,35 @@ export class DataImporterV0 implements IDataImporter {
         const graphSettings: GraphSettings = {
             ...fclData.graphSettings,
             type: data.graphSettings.type || fclData.graphSettings.type,
-            nodeSize: data.graphSettings.nodeSize || fclData.graphSettings.nodeSize,
-            fontSize: data.graphSettings.fontSize || fclData.graphSettings.fontSize,
-            mergeDeliveriesType: (
-                data.graphSettings.mergeDeliveries !== null && data.graphSettings.mergeDeliveries !== undefined ?
-                    (data.graphSettings.mergeDeliveries ? MergeDeliveriesType.MERGE_ALL : MergeDeliveriesType.NO_MERGE) :
-                    fclData.graphSettings.mergeDeliveriesType
-            ),
+            nodeSize:
+                data.graphSettings.nodeSize || fclData.graphSettings.nodeSize,
+            fontSize:
+                data.graphSettings.fontSize || fclData.graphSettings.fontSize,
+            mergeDeliveriesType:
+                data.graphSettings.mergeDeliveries !== null &&
+                data.graphSettings.mergeDeliveries !== undefined
+                    ? data.graphSettings.mergeDeliveries
+                        ? MergeDeliveriesType.MERGE_ALL
+                        : MergeDeliveriesType.NO_MERGE
+                    : fclData.graphSettings.mergeDeliveriesType,
             skipUnconnectedStations:
-                data.graphSettings.skipUnconnectedStations != null ?
-                    data.graphSettings.skipUnconnectedStations :
-                    fclData.graphSettings.skipUnconnectedStations,
-            showLegend: data.graphSettings.showLegend != null ? data.graphSettings.showLegend : fclData.graphSettings.showLegend,
-            showZoom: data.graphSettings.showZoom != null ? data.graphSettings.showZoom : fclData.graphSettings.showZoom,
+                data.graphSettings.skipUnconnectedStations ??
+                fclData.graphSettings.skipUnconnectedStations,
+            showLegend:
+                data.graphSettings.showLegend ??
+                fclData.graphSettings.showLegend,
+            showZoom:
+                data.graphSettings.showZoom ?? fclData.graphSettings.showZoom,
             schemaLayout: data.layout,
-            gisLayout: data.gisLayout
+            gisLayout: data.gisLayout,
         };
 
         fclData.graphSettings = graphSettings;
-        this.applyElements(data.elements.stations, data.elements.deliveries, fclData);
+        this.applyElements(
+            data.elements.stations,
+            data.elements.deliveries,
+            fclData,
+        );
         return true;
     }
 
@@ -123,29 +153,40 @@ export class DataImporterV0 implements IDataImporter {
         const capContext = context[0].toUpperCase() + context.slice(1);
         for (const id of ids) {
             if (id === undefined) {
-                throw new InputDataError(`${ capContext } id is undefined.`);
+                throw new InputDataError(`${capContext} id is undefined.`);
             }
             if (id === null) {
-                throw new InputDataError(`${ capContext } id is null.`);
+                throw new InputDataError(`${capContext} id is null.`);
             }
             if (idMap[id] !== undefined) {
-                throw new InputDataError(`Duplicate ${ context } id is null.`);
+                throw new InputDataError(`Duplicate ${context} id is null.`);
             }
             idMap[id] = true;
         }
-
     }
 
-    private applyElements(stationElements: any[], deliveryElements: any[], fclData: FclData) {
-        this.checkIds(stationElements.map(s => s.id), 'station');
-        this.checkIds(deliveryElements.map(d => d.id), 'delivery');
+    private applyElements(
+        stationElements: any[],
+        deliveryElements: any[],
+        fclData: FclData,
+    ) {
+        this.checkIds(
+            stationElements.map((s) => s.id),
+            "station",
+        );
+        this.checkIds(
+            deliveryElements.map((d) => d.id),
+            "delivery",
+        );
 
         this.applyStations(stationElements, fclData);
         this.applyDeliveries(deliveryElements, fclData);
     }
 
     private applyStations(elements: any[], fclData: FclData) {
-        const defaultKeys: Set<string> = new Set(Constants.STATION_PROPERTIES.toArray());
+        const defaultKeys: Set<string> = new Set(
+            Constants.STATION_PROPERTIES.toArray(),
+        );
         const propMap: PropMap = DENOVO_STATION_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
@@ -172,53 +213,52 @@ export class DataImporterV0 implements IDataImporter {
                     incoming: e.incoming,
                     outgoing: e.outgoing,
                     connections: e.connections,
-                    properties: e.properties != null ? e.properties : properties
+                    properties: e.properties ?? properties,
                 });
             } else {
                 fclData.groupSettings.push({
                     id: e.id,
                     name: e.name,
                     contains: e.contains,
-                    groupType: null
                 });
             }
-            const weight = e.weight != null ? e.weight : (e.outbreak ? 1 : 0);
+            const weight = e.weight ?? (e.outbreak ? 1 : 0);
             fclData.tracingSettings.stations.push({
                 id: e.id,
                 weight: weight,
                 outbreak: weight > 0,
-                observed: e.observed != null ? e.observed : ObservedType.NONE,
-                crossContamination: e.crossContamination != null ? e.crossContamination : false,
-                killContamination: e.killContamination != null ? e.killContamination : false
+                observed: e.observed ?? ObservedType.NONE,
+                crossContamination: e.crossContamination ?? false,
+                killContamination: e.killContamination ?? false,
             });
 
             if (e.invisible) {
-                fclData.graphSettings.highlightingSettings.invisibleStations.push(e.id);
+                fclData.graphSettings.highlightingSettings.invisibleStations.push(
+                    e.id,
+                );
             }
             if (e.selected) {
-                fclData.graphSettings.highlightingSettings.invisibleStations.push(e.id);
+                fclData.graphSettings.highlightingSettings.invisibleStations.push(
+                    e.id,
+                );
             }
             if (e.position) {
                 fclData.graphSettings.stationPositions[e.id] = e.position;
             }
         }
 
-        if (fclData.source === undefined) {
-            fclData.source = {};
-        }
-        if (fclData.source.propMaps === undefined) {
-            fclData.source.propMaps = {};
-        }
-        fclData.source.propMaps.stationPropMap = propMap;
+        fclData.source.int2ExtPropMaps.stations = propMap;
     }
 
     private applyDeliveries(elements: any[], fclData: FclData) {
-        const v0ToV1PropMap: Record<string, string> = DELIVERY_PROP_V0_TO_V1_MAP.toObject();
+        const v0ToV1PropMap: Record<string, string> =
+            DELIVERY_PROP_V0_TO_V1_MAP.toObject();
         const v1ToV0PropMap = Utils.getReversedRecord(v0ToV1PropMap);
         const defaultKeys: Set<string> = new Set(
             Constants.DELIVERY_PROPERTIES.toArray().map(
-                p => v1ToV0PropMap[p] !== undefined ? v1ToV0PropMap[p] : p
-            ));
+                (p) => v1ToV0PropMap[p] ?? p,
+            ),
+        );
         const propMap: PropMap = DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP.toObject();
 
         for (const e of elements) {
@@ -238,21 +278,29 @@ export class DataImporterV0 implements IDataImporter {
 
             fclData.fclElements.deliveries.push({
                 id: e.id,
-                name: e.name != null ? e.name : e.id,
+                name: e.name ?? e.id,
                 lot: e.lot,
-                lotKey: (e.originalSource || e.source) + '|' + (e.name || e.id) + '|' + (e.lot || e.id),
-                dateOut: Utils.dateToString(Utils.stringToDate(e.date)),
+                lotKey:
+                    (e.originalSource || e.source) +
+                    "|" +
+                    (e.name || e.id) +
+                    "|" +
+                    (e.lot || e.id),
+                dateOut:
+                    Utils.dateToString(Utils.stringToDate(e.date)) ?? undefined,
                 source: e.originalSource || e.source,
                 target: e.originalTarget || e.target,
-                properties: e.properties != null ? e.properties : properties
+                properties: e.properties ?? properties,
             });
 
+            const weight = (e.weight ?? 0) as number;
             fclData.tracingSettings.deliveries.push({
                 id: e.id,
-                weight: e.weight != null ? e.weight : 0,
-                observed: e.observed != null ? e.observed : ObservedType.NONE,
-                crossContamination: e.crossContamination != null ? e.crossContamination : false,
-                killContamination: e.killContamination != null ? e.killContamination : false
+                weight: weight,
+                observed: e.observed ?? ObservedType.NONE,
+                crossContamination: e.crossContamination ?? false,
+                killContamination: e.killContamination ?? false,
+                outbreak: weight > 0,
             });
 
             if (e.selected) {
@@ -260,12 +308,6 @@ export class DataImporterV0 implements IDataImporter {
             }
         }
 
-        if (fclData.source === undefined) {
-            fclData.source = {};
-        }
-        if (fclData.source.propMaps === undefined) {
-            fclData.source.propMaps = {};
-        }
-        fclData.source.propMaps.deliveryPropMap = propMap;
+        fclData.source.int2ExtPropMaps.deliveries = propMap;
     }
 }

@@ -1,7 +1,7 @@
-import { JsonData } from './io/ext-data-model.v1';
+import { JsonData } from "./io/ext-data-model.v1";
 
 export type HighlightingRuleId = string;
-export type JsonDataExtract = Pick<JsonData, 'settings' | 'tracing'>;
+export type JsonDataExtract = Pick<JsonData, "settings" | "tracing">;
 
 interface ViewData {
     selected: boolean;
@@ -16,10 +16,7 @@ export interface PropMap {
 export interface FclDataSourceInfo {
     name?: string;
     data?: any;
-    propMaps?: {
-        stationPropMap?: PropMap;
-        deliveryPropMap?: PropMap;
-    };
+    int2ExtPropMaps: PropMaps;
 }
 
 export interface FclData {
@@ -37,17 +34,17 @@ export interface StandardFilterSettings {
 export interface TableColumn {
     id: string;
     name: string;
-    unavailable?: boolean;
+    dataIsUnavailable?: boolean;
 }
 
 export type Property = TableColumn;
 
 export interface RowHighlightingInfo {
-    color: number[][];
-    shape?: NodeShapeType;
+    color: Color[];
+    shape?: NodeShapeType | null;
 }
 
-export type TreeStatus = 'collapsed' | 'expanded';
+export type TreeStatus = "collapsed" | "expanded";
 
 export interface TableRow {
     id: string;
@@ -55,17 +52,23 @@ export interface TableRow {
     parentRow?: TableRow;
     parentRowId?: string;
     treeStatus?: TreeStatus;
-    [key: string]: string | number | boolean | RowHighlightingInfo | TableRow;
+    [key: string]:
+        | string
+        | number
+        | boolean
+        | RowHighlightingInfo
+        | TableRow
+        | undefined;
 }
 
-export interface ColumnSubSets {
+export interface ColumnSets {
+    columns: TableColumn[];
     favouriteColumns: TableColumn[];
     otherColumns: TableColumn[];
 }
 
-export interface DataTable extends ColumnSubSets{
+export interface DataTable extends ColumnSets {
     modelFlag: Record<string, never>;
-    columns: TableColumn[];
     rows: TableRow[];
 }
 
@@ -130,27 +133,43 @@ export interface Connection {
 }
 
 export enum SampleResultType {
-    Confirmed, Negative, Probable, Unkown
+    Confirmed,
+    Negative,
+    Probable,
+    Unknown,
 }
 
 export interface SampleData {
     station: string;
-    lot: string;
-    type: string;
-    material: string;
-    time: string;
-    amount: string;
-    result: string;
+    lot?: string;
+    type?: string;
+    material?: string;
+    time?: string;
+    amount?: string;
+    result?: string;
     resultType: SampleResultType;
 }
+
 export interface SelectedElements {
     stations: StationId[];
     deliveries: DeliveryId[];
 }
 
-export interface ClearInvisibilitiesOptions {
-    clearStationInvs: boolean;
-    clearDeliveryInvs: boolean;
+export interface FoodChainElementTypeSelection {
+    stations: boolean;
+    deliveries: boolean;
+}
+
+export interface SetOutbreaksOptions {
+    stationIds?: string[];
+    deliveryIds?: string[];
+    outbreak: boolean;
+}
+
+export interface SetKillContaminationOptions {
+    stationIds?: string[];
+    deliveryIds?: string[];
+    killContamination: boolean;
 }
 
 export interface ShowElementsTraceParams {
@@ -159,12 +178,8 @@ export interface ShowElementsTraceParams {
     observedType: ObservedType;
 }
 
-export interface GraphSettings {
+export interface GraphSettings extends MapSettings, ShapeFileSettings {
     type: GraphType;
-    mapType: MapType;
-    shapeFileData: ShapeFileData | null;
-    geojsonBorderWidth: number;
-    geojsonBorderColor: Color;
     nodeSize: number;
     adjustEdgeWidthToNodeSize: boolean;
     edgeWidth: number;
@@ -176,7 +191,7 @@ export interface GraphSettings {
     fitGraphToVisibleArea: boolean;
     skipUnconnectedStations: boolean;
     selectedElements: SelectedElements;
-    stationPositions: {[key: string]: Position};
+    stationPositions: { [key: string]: Position };
     highlightingSettings: HighlightingSettings;
     schemaLayout: Layout | null;
     gisLayout: Layout | null;
@@ -184,20 +199,28 @@ export interface GraphSettings {
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
-
-export interface MapConfig {
-    layout: Layout | null;
-    mapType: MapType;
+export interface ShapeStyleSettings {
+    geojsonBorderWidth: number;
+    geojsonBorderColor: Color;
+}
+export interface ShapeFileSettings extends ShapeStyleSettings {
     shapeFileData: ShapeFileData | null;
-    lineColor: Color;
-    lineWidth: number;
+}
+
+export interface MapSettings {
+    tileServer: TileServer;
+    mapType: MapType;
+}
+
+export interface MapViewConfig extends MapSettings, ShapeFileSettings {
+    layout: Layout | null;
 }
 
 export interface HighlightingSettings {
     invisibleStations: StationId[];
     invisibleDeliveries: DeliveryId[];
-    stations?: StationHighlightingRule[];
-    deliveries?: DeliveryHighlightingRule[];
+    stations: StationHighlightingRule[];
+    deliveries: DeliveryHighlightingRule[];
 }
 
 export interface MakeElementsInvisibleInputState {
@@ -206,7 +229,7 @@ export interface MakeElementsInvisibleInputState {
 }
 
 export interface LabelPart {
-    property?: string;
+    property?: string | null;
     prefix: string;
     useIndex?: boolean;
 }
@@ -215,35 +238,35 @@ export interface HighlightingRule {
     id: HighlightingRuleId;
     name: string;
     showInLegend: boolean;
-    color: number[];
+    color: Color | null;
     invisible: boolean;
     userDisabled: boolean;
     autoDisabled: boolean;
     adjustThickness: boolean;
-    labelProperty: string;
+    labelProperty: string | null;
     labelPrefix?: string;
     labelParts?: LabelPart[];
-    valueCondition: ValueCondition;
-    logicalConditions: LogicalCondition[][];
+    valueCondition: ValueCondition | null;
+    logicalConditions: LogicalCondition[][] | null;
 }
 
 export interface DeliveryHighlightingRule extends HighlightingRule {
-    linePattern: LinePatternType;
+    linePattern: LinePatternType | null;
 }
 
 export interface StationHighlightingRule extends HighlightingRule {
-    shape: NodeShapeType;
+    shape: NodeShapeType | null;
 }
 
 export enum NodeShapeType {
-    CIRCLE = 'ellipse',
-    SQUARE = 'rectangle',
-    TRIANGLE = 'triangle',
-    PENTAGON = 'pentagon',
-    HEXAGON = 'hexagon',
-    OCTAGON = 'octagon',
-    STAR = 'star',
-    DIAMOND = 'diamond'
+    CIRCLE = "ellipse",
+    SQUARE = "rectangle",
+    TRIANGLE = "triangle",
+    PENTAGON = "pentagon",
+    HEXAGON = "hexagon",
+    OCTAGON = "octagon",
+    STAR = "star",
+    DIAMOND = "diamond",
 }
 
 export enum MergeDeliveriesType {
@@ -251,7 +274,7 @@ export enum MergeDeliveriesType {
     MERGE_LOT_WISE,
     MERGE_PRODUCT_WISE,
     MERGE_LABEL_WISE,
-    NO_MERGE
+    NO_MERGE,
 }
 
 export interface LogicalCondition {
@@ -261,15 +284,15 @@ export interface LogicalCondition {
 }
 
 export enum OperationType {
-    EQUAL = '==',
-    CONTAINS = 'contains',
-    GREATER = '>',
-    NOT_EQUAL = '!=',
-    LESS = '<',
-    REGEX_EQUAL = '== (Regex)',
-    REGEX_NOT_EQUAL = '!= (Regex)',
-    REGEX_EQUAL_IGNORE_CASE = '== (Regex Ignore Case)',
-    REGEX_NOT_EQUAL_IGNORE_CASE = '!= (Regex Ignore Case)'
+    EQUAL = "==",
+    CONTAINS = "contains",
+    GREATER = ">",
+    NOT_EQUAL = "!=",
+    LESS = "<",
+    REGEX_EQUAL = "== (Regex)",
+    REGEX_NOT_EQUAL = "!= (Regex)",
+    REGEX_EQUAL_IGNORE_CASE = "== (Regex Ignore Case)",
+    REGEX_NOT_EQUAL_IGNORE_CASE = "!= (Regex Ignore Case)",
 }
 
 export interface ValueCondition {
@@ -279,30 +302,26 @@ export interface ValueCondition {
 }
 
 export enum ValueType {
-    VALUE = 'Value',
-    LOG_VALUE = 'Log Value'
+    VALUE = "Value",
+    LOG_VALUE = "Log Value",
 }
 
-interface TraceableElementSettings {
+export interface ElementTracingSettings {
     id: StationId | DeliveryId;
     observed: ObservedType;
     crossContamination: boolean;
     killContamination: boolean;
     weight: number;
-}
-
-export interface StationTracingSettings extends TraceableElementSettings {
     outbreak: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DeliveryTracingSettings extends TraceableElementSettings {
-}
+export type StationTracingSettings = ElementTracingSettings;
+export type DeliveryTracingSettings = ElementTracingSettings;
 
 export enum CrossContTraceType {
     USE_EXPLICIT_DELIVERY_DATES,
     USE_INFERED_DELIVERY_DATES_LIMITS,
-    DO_NOT_CONSIDER_DELIVERY_DATES
+    DO_NOT_CONSIDER_DELIVERY_DATES,
 }
 
 export interface GlobalTracingSettings {
@@ -318,40 +337,51 @@ export interface GroupData {
     id: StationId;
     name?: string;
     contains: string[];
-    groupType: GroupType;
+    groupType?: GroupType;
 }
 
 export enum GraphType {
-    GRAPH = 'Graph' as any,
-    GIS = 'GIS' as any
+    GRAPH = "Graph" as any,
+    GIS = "GIS" as any,
 }
 
-export enum MapType {
-    SHAPE_FILE,
-    // the following code is commented because
-    // the Black & White Map might be deactivatd only temporaryly
-    // BLACK_AND_WHITE,
-    MAPNIK
+export enum TileServer {
+    MAPNIK = "MAPNIK",
+    // the Black & White Map might be deactivatd only temporarily
+    //BLACK_AND_WHITE = "BLACK_AND_WHITE",
+}
+
+export enum MapType { // please note: the order of the keys is relevant for presentation
+    TILES_ONLY = "TILES_ONLY",
+    SHAPE_ONLY = "SHAPE_ONLY",
+    TILES_AND_SHAPE = "TILES_AND_SHAPE",
+}
+
+export interface AvailableMaps {
+    tiles: Array<TileServer>;
+    types: Array<MapType>;
+    mapTypeLabels: Record<MapType, string>;
+    tileServerLabels: Record<TileServer, string>;
 }
 
 export enum GroupMode {
-    WEIGHT_ONLY = 'Weight only' as any,
-    PRODUCT_AND_WEIGHT = 'Product name and weight' as any,
-    LOT_AND_WEIGHT = 'Lot and weight' as any
+    WEIGHT_ONLY = "Weight only" as any,
+    PRODUCT_AND_WEIGHT = "Product name and weight" as any,
+    LOT_AND_WEIGHT = "Lot and weight" as any,
 }
 
 export enum GroupType {
-    SOURCE_GROUP = 'Source group' as any,
-    TARGET_GROUP = 'Target group' as any,
-    ISOLATED_GROUP = 'Isolated subgraph' as any,
-    SIMPLE_CHAIN = 'Simple chain' as any
+    SOURCE_GROUP = "Source group" as any,
+    TARGET_GROUP = "Target group" as any,
+    ISOLATED_GROUP = "Isolated subgraph" as any,
+    SIMPLE_CHAIN = "Simple chain" as any,
 }
 
 export enum ObservedType {
-    NONE = 'none' as any,
-    FULL = 'full' as any,
-    FORWARD = 'forward' as any,
-    BACKWARD = 'backward' as any
+    NONE = "none" as any,
+    FULL = "full" as any,
+    FORWARD = "forward" as any,
+    BACKWARD = "backward" as any,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -374,10 +404,10 @@ export interface DataServiceData {
     delSel: Record<DeliveryId, boolean>;
     statVis: Record<StationId, boolean>;
     delVis: Record<DeliveryId, boolean>;
-    legendInfo: LegendInfo;
+    legendInfo?: LegendDisplayEntry[] | null;
     tracingPropsUpdatedFlag: Record<string, never>;
     stationAndDeliveryHighlightingUpdatedFlag: Record<string, never>;
-    highlightingStats: HighlightingStats;
+    highlightingStats?: HighlightingStats;
     getStatById(ids: string[]): StationData[];
     getDelById(ids: string[]): DeliveryData[];
 }
@@ -395,7 +425,11 @@ export interface DeliveryTracingData extends DeliveryTracingSettings {
     score: number;
 }
 
-export interface StationData extends StationStoreData, StationTracingData, ViewData, GroupData {
+export interface StationData
+    extends StationStoreData,
+        StationTracingData,
+        ViewData,
+        GroupData {
     anonymizedName?: string;
     isMeta: boolean;
     contained: boolean;
@@ -404,11 +438,11 @@ export interface StationData extends StationStoreData, StationTracingData, ViewD
 
 export interface HighlightingInfo {
     label: string;
-    color: number[][];
+    color: Color[];
 }
 
 export interface StationHighlightingInfo extends HighlightingInfo {
-    shape: NodeShapeType;
+    shape: NodeShapeType | null;
     size: number;
 }
 
@@ -417,24 +451,16 @@ export interface DeliveryHighlightingInfo extends HighlightingInfo {
 }
 
 export enum LinePatternType {
-    SOLID
+    SOLID,
 }
 
-export interface DeliveryData extends DeliveryStoreData, DeliveryTracingData, ViewData {
+export interface DeliveryData
+    extends DeliveryStoreData,
+        DeliveryTracingData,
+        ViewData {
     originalSource: StationId;
     originalTarget: StationId;
     highlightingInfo?: DeliveryHighlightingInfo;
-}
-
-export interface SampleData {
-    station: string;
-    lot: string;
-    type: string;
-    material: string;
-    time: string;
-    amount: string;
-    result: string;
-    resultType: SampleResultType;
 }
 
 export interface SelectedElements {
@@ -443,10 +469,18 @@ export interface SelectedElements {
 }
 
 export enum DialogAlignment {
-    LEFT, CENTER, RIGHT
+    LEFT,
+    CENTER,
+    RIGHT,
+}
+
+export interface PropMaps {
+    stations: Record<string, string>;
+    deliveries: Record<string, string>;
 }
 
 export interface DataServiceInputState {
+    int2ExtPropMaps: PropMaps;
     fclElements: FclElements;
     groupSettings: GroupData[];
     tracingSettings: TracingSettings;
@@ -463,11 +497,11 @@ export interface SharedGraphState extends DataServiceInputState {
 }
 
 export interface GisGraphState extends SharedGraphState {
-    layout: Layout;
+    layout: Layout | null;
 }
 export interface SchemaGraphState extends SharedGraphState {
     stationPositions: Record<StationId, Position>;
-    layout: Layout;
+    layout: Layout | null;
 }
 
 export interface SetTracingSettingsPayload {
@@ -483,24 +517,6 @@ export interface SetInvisibleElementsPayload {
     tracingSettings: TracingSettings;
 }
 
-interface LegendEntry {
-    label: string;
-    color: Color;
-}
-
-interface StationLegendEntry extends LegendEntry {
-    shape: NodeShapeType;
-}
-
-export interface DeliveryLegendEntry extends LegendEntry {
-    linePattern: LinePatternType;
-}
-
-export interface LegendInfo {
-    stations: StationLegendEntry[];
-    deliveries: DeliveryLegendEntry[];
-}
-
 export interface Size {
     width: number;
     height: number;
@@ -509,4 +525,11 @@ export interface Size {
 export interface Range {
     min: number;
     max: number;
+}
+
+export interface LegendDisplayEntry {
+    name: string;
+    stationColor?: Color;
+    deliveryColor?: Color;
+    shape?: NodeShapeType;
 }

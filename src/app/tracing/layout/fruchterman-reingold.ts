@@ -3,7 +3,6 @@ export function FruchtermanLayout(options) {
 }
 
 class Graph {
-
     vertices: Vertex[] = [];
     edges: { vertex1: Vertex; vertex2: Vertex }[] = [];
 
@@ -21,7 +20,6 @@ class Graph {
 }
 
 class Vertex {
-
     x: number;
     y: number;
     fixed: boolean;
@@ -39,7 +37,6 @@ class Vertex {
 }
 
 class ForceDirectedVertexLayout {
-
     private graph: Graph;
 
     constructor(graph: Graph) {
@@ -47,8 +44,8 @@ class ForceDirectedVertexLayout {
     }
 
     layout(width: number, height: number, iterations: number) {
-    // Initiate component identification and virtual vertex creation
-    // to prevent disconnected graph components from drifting too far apart
+        // Initiate component identification and virtual vertex creation
+        // to prevent disconnected graph components from drifting too far apart
         this.connectComponents();
 
         const area = width * height;
@@ -81,8 +78,11 @@ class ForceDirectedVertexLayout {
                         const difx = v.x - u.x;
                         const dify = v.y - u.y;
                         /* Length of the dif vector. */
-                        const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
-                        const force = R * k * k / d;
+                        const d = Math.max(
+                            eps,
+                            Math.sqrt(difx * difx + dify * dify),
+                        );
+                        const force = (R * k * k) / d;
 
                         u.dx = u.dx - (difx / d) * force;
                         u.dy = u.dy - (dify / d) * force;
@@ -103,8 +103,11 @@ class ForceDirectedVertexLayout {
                     const difx = v.x - u.x;
                     const dify = v.y - u.y;
                     /* Length of the dif vector. */
-                    const d = Math.max(eps, Math.sqrt(difx * difx + dify * dify));
-                    const force = A * d * d / k;
+                    const d = Math.max(
+                        eps,
+                        Math.sqrt(difx * difx + dify * dify),
+                    );
+                    const force = (A * d * d) / k;
 
                     u.dx = u.dx + (difx / d) * force;
                     u.dy = u.dy + (dify / d) * force;
@@ -119,7 +122,10 @@ class ForceDirectedVertexLayout {
             for (const v of this.graph.vertices) {
                 if (!v.fixed) {
                     /* Length of the displacement vector. */
-                    const d = Math.max(eps, Math.sqrt(v.dx * v.dx + v.dy * v.dy));
+                    const d = Math.max(
+                        eps,
+                        Math.sqrt(v.dx * v.dx + v.dy * v.dy),
+                    );
 
                     /* Limit to the temperature t. */
                     v.x = Math.round(v.x + (v.dx / d) * Math.min(d, t));
@@ -148,11 +154,11 @@ class ForceDirectedVertexLayout {
                 const stack: Vertex[] = [v];
 
                 while (stack.length > 0) {
-                    const u = stack.pop();
+                    const u = stack.pop()!;
 
                     component.push(u);
                     u.visited = true;
-                    u.connections.forEach(e => {
+                    u.connections.forEach((e) => {
                         if (!e.visited) {
                             stack.push(e);
                         }
@@ -187,9 +193,8 @@ class ForceDirectedVertexLayout {
 }
 
 class FruchtermanLayoutClass {
-
     private static DEFAULTS = {
-        fit: true
+        fit: true,
     };
 
     private layout: any;
@@ -218,13 +223,17 @@ class FruchtermanLayoutClass {
         const vertices: Map<string, Vertex> = new Map();
         const elementIds: Set<string> = new Set();
 
-        this.options.eles.each(e => elementIds.add(e.id()));
+        this.options.eles.each((e) => elementIds.add(e.id()));
 
-        cy.nodes().forEach(node => {
+        cy.nodes().forEach((node) => {
             let v: Vertex;
 
             if (elementIds.has(node.id())) {
-                v = new Vertex(Math.random() * width, Math.random() * height, false);
+                v = new Vertex(
+                    Math.random() * width,
+                    Math.random() * height,
+                    false,
+                );
             } else {
                 v = new Vertex(node.position().x, node.position().y, true);
             }
@@ -233,20 +242,23 @@ class FruchtermanLayoutClass {
             graph.insertVertex(v);
         });
 
-        cy.edges().forEach(edge => {
-            graph.insertEdge(vertices.get(edge.source().id()), vertices.get(edge.target().id()));
+        cy.edges().forEach((edge) => {
+            graph.insertEdge(
+                vertices.get(edge.source().id())!,
+                vertices.get(edge.target().id())!,
+            );
         });
 
         const layoutManager = new ForceDirectedVertexLayout(graph);
 
         layoutManager.layout(width, height, 100);
 
-        cy.nodes().layoutPositions(this.layout, this.options, node => {
-            const vertex = vertices.get(node.id());
+        cy.nodes().layoutPositions(this.layout, this.options, (node) => {
+            const vertex = vertices.get(node.id())!;
 
             return {
                 x: vertex.x,
-                y: vertex.y
+                y: vertex.y,
             };
         });
 

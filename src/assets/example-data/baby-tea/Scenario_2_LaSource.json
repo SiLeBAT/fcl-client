@@ -13935,8 +13935,8 @@
                         "showInLegend": true,
                         "color": [
                             0,
-                            0,
-                            255
+                            255,
+                            0
                         ],
                         "invisible": false,
                         "adjustThickness": false,
@@ -13992,6 +13992,29 @@
                             [
                                 {
                                     "propertyName": "Backward",
+                                    "operationType": "EQUAL",
+                                    "value": "1"
+                                }
+                            ]
+                        ],
+                        "linePattern": null
+                    },
+                    {
+                        "name": "Kill Contamination",
+                        "showInLegend": true,
+                        "color": [
+                            153,
+                            153,
+                            153
+                        ],
+                        "invisible": false,
+                        "adjustThickness": false,
+                        "labelProperty": null,
+                        "valueCondition": null,
+                        "logicalConditions": [
+                            [
+                                {
+                                    "propertyName": "Kill Contamination",
                                     "operationType": "EQUAL",
                                     "value": "1"
                                 }

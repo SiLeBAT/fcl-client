@@ -153,4 +153,12 @@ $fcl-accent: mat.define-palette($fcl-darkgrey);
 $fcl-warn: mat.define-palette($fcl-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$fcl-theme: mat.define-light-theme($fcl-primary, $fcl-accent, $fcl-warn);
+$fcl-theme: mat.define-light-theme((
+    color: (
+        primary: $fcl-primary,
+        accent: $fcl-accent,
+        warn: $fcl-warn,
+    ),
+    typography: mat.define-typography-config(),
+    density: 0,
+));

@@ -15,12 +15,12 @@ exports[`AdminActivateComponent should display admin activation failure if token
       <p
         class="mat-subheading-1"
       >
-         Your admin activation failed. 
+        Your admin activation failed.
       </p>
       <p
         class="mat-subheading-1"
       >
-         Please let the user register again. 
+        Please let the user register again.
       </p>
     </div>
   </div>
@@ -42,7 +42,7 @@ exports[`AdminActivateComponent should display the app name and name if admin to
       <p
         class="mat-subheading-1"
       >
-        You have activated the testApp account for testName.
+         You have activated the testApp account for testName. 
       </p>
     </div>
   </div>

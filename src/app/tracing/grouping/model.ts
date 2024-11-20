@@ -1,6 +1,11 @@
 import {
-    StationData, GroupType, GroupData, StationTracingSettings, Position, DataServiceInputState
-} from '../data.model';
+    StationData,
+    GroupType,
+    GroupData,
+    StationTracingSettings,
+    Position,
+    DataServiceInputState,
+} from "../data.model";
 
 export interface SetStationGroupsPayload {
     groupSettings: GroupData[];
@@ -27,7 +32,10 @@ export interface LinkGroup {
     }[];
 }
 
-export type GroupInfoFun = (linkGroup: LinkGroup, groupNumber: number) => { id: string; name: string; groupType: GroupType };
+export type GroupInfoFun = (
+    linkGroup: LinkGroup,
+    groupNumber: number,
+) => { id: string; name: string; groupType: GroupType };
 
 export interface IsolatedComponent {
     ids: string[];

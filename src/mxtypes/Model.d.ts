@@ -1,8 +1,6 @@
-
 /******************      Model         **************/
 
 declare class mxGeometry extends mxRectangle {
-
     /**
      * Constructs a new object to describe the size and location of a vertex or the control points of an edge.
      * @param x
@@ -20,7 +18,7 @@ declare class mxGeometry extends mxRectangle {
     /**
      * Stores alternate values for x, y, width and height in a rectangle. Default is null.
      */
-    alternateBounds: { x: number, y: number, width: number, height: number };
+    alternateBounds: { x: number; y: number; width: number; height: number };
 
     /**
      * Defines the source mxPoint of the edge.  This is used if the corresponding edge does not have a source vertex.
@@ -120,7 +118,6 @@ declare class mxGeometry extends mxRectangle {
 }
 
 declare class mxCell {
-
     id: any;
     value;
     geometry: mxGeometry;
@@ -174,9 +171,9 @@ declare class mxCell {
     getAttribute(name, defaultValue);
     setAttribute(name, value);
 
-  /**
-   * Returns a clone of the cell.  Uses cloneValue to clone the user object.  All fields in mxTransient are ignored during the cloning.
-   */
+    /**
+     * Returns a clone of the cell.  Uses cloneValue to clone the user object.  All fields in mxTransient are ignored during the cloning.
+     */
     clone(): mxCell;
 
     cloneValue();

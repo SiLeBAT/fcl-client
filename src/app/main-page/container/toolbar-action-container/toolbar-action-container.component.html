@@ -1,19 +1,21 @@
 <fcl-toolbar-action
     class="fcl-toolbar-action-item fcl-toolbar-action-container"
     [tracingActive]="tracingActive$ | async"
+    [isModelLoaded]="isModelLoaded$ | async"
     [graphSettings]="graphSettings"
     [hasGisInfo]="hasGisInfo"
-    [availableMapTypes]="availableMapTypes"
+    [availableMaps]="availableMaps"
     [graphEditorActive]="graphEditorActive$ | async"
     [currentUser]="currentUser$ | async"
     [fileName]="fileName$ | async"
     (loadModelFile)="loadModelFile($event)"
-    (selectModelFile)="onSelectModelFile()"
+    (selectModelFileOpenMenu)="onSelectModelFileOpenMenu()"
     (saveImage)="onSaveImage()"
     (openRoaLayout)="onOpenRoaLayout()"
     (loadExampleDataFile)="onLoadExampleDataFile($event)"
     (graphType)="setGraphType($event)"
-    (mapType)="setMapType($event)"
+    (mapSettings)="setMapSettings($event)"
     (loadShapeFile)="onLoadShapeFile($event)"
-    (downloadFile)="onDownloadFile($event)">
+    (downloadFile)="onDownloadFile($event)"
+>
 </fcl-toolbar-action>

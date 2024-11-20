@@ -1,13 +1,17 @@
-import { InvalidServerInputHttpErrorResponse } from '@app/core/errors';
-import { ValidationError } from '@app/core/model';
-import { CODE_TO_FIELD_MAP } from './consts/error-code-mappings.consts';
-import { RegistrationCredentials } from './models/user.model';
+import { InvalidServerInputHttpErrorResponse } from "@app/core/errors";
+import { ValidationError } from "@app/core/model";
+import { CODE_TO_FIELD_MAP } from "./consts/error-code-mappings.consts";
+import { RegistrationCredentials } from "./models/user.model";
 
 export class InvalidRegistrationInput {
-    private _errors: Partial<Record<keyof RegistrationCredentials, ValidationError[]>> = {};
+    private _errors: Partial<
+        Record<keyof RegistrationCredentials, ValidationError[]>
+    > = {};
     private _message: string | null = null;
 
-    get errors(): Partial<Record<keyof RegistrationCredentials, ValidationError[]>> {
+    get errors(): Partial<
+        Record<keyof RegistrationCredentials, ValidationError[]>
+    > {
         return this._errors;
     }
 
@@ -22,8 +26,10 @@ export class InvalidRegistrationInput {
 
     private mapErrors(validationErrors: ValidationError[]): void {
         this._errors = {};
-        validationErrors.forEach(error => {
-            const field = CODE_TO_FIELD_MAP[error.code] as undefined | keyof RegistrationCredentials;
+        validationErrors.forEach((error) => {
+            const field = CODE_TO_FIELD_MAP[error.code] as
+                | undefined
+                | keyof RegistrationCredentials;
             if (field !== undefined) {
                 const fieldErrors = this._errors[field];
                 if (fieldErrors !== undefined) {

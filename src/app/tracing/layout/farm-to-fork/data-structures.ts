@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 export class Graph {
     vertices: Vertex[] = [];
     layers: Vertex[][];
@@ -49,7 +47,7 @@ export type VertexIndex = number;
 
 export class Vertex {
     index: number;
-    name: string;
+    name?: string;
     x: number;
     y: number;
     inEdges: Edge[] = [];
@@ -57,7 +55,7 @@ export class Vertex {
     layerIndex: number;
     weight: number;
     indexInLayer: number;
-    typeCode: number;
+    typeCode?: number;
     isVirtual: boolean = false;
 
     outerSize: number = 0;
@@ -71,13 +69,13 @@ export class Vertex {
 export enum CompressionType {
     SOURCE_COMPRESSION = 0 as number,
     TARGET_COMPRESSION = 1 as number,
-    SIMPLE_CONNECTED_COMPONENT = 2 as number
+    SIMPLE_CONNECTED_COMPONENT = 2 as number,
 }
 
 export class CompressedVertexGroup extends Vertex {
     constructor(
         public compressedVertices: Vertex[],
-        public compressionType: CompressionType
+        public compressionType: CompressionType,
     ) {
         super();
     }
@@ -89,7 +87,7 @@ export class Edge {
     constructor(
         public source: Vertex,
         public target: Vertex,
-        public isVirtual: boolean
+        public isVirtual: boolean,
     ) {
         if (isVirtual == null) {
             isVirtual = false;
@@ -98,7 +96,7 @@ export class Edge {
 }
 
 export class VertexCounter {
-    private positionCount: Map<number, number> = new Map();
+    private positionCount = new Map<number, number>();
     private positions: number[] = [];
     private lastPositionRequest: number = -1;
     private lastAboveIndex: number = -1;
@@ -106,9 +104,12 @@ export class VertexCounter {
 
     insertVertex(position: number) {
         if (this.positionCount.has(position)) {
-            this.positionCount.set(position, this.positionCount.get(position) + 1);
+            this.positionCount.set(
+                position,
+                this.positionCount.get(position)! + 1,
+            );
         } else {
-            let index: number = this.positions.findIndex(x => x > position);
+            let index: number = this.positions.findIndex((x) => x > position);
             if (index < 0) {
                 index = this.positions.push(position) - 1;
             } else {
@@ -130,9 +131,9 @@ export class VertexCounter {
         }
 
         let index: number =
-      position > this.lastPositionRequest && this.lastAboveIndex >= 0
-          ? this.lastAboveIndex
-          : 0;
+            position > this.lastPositionRequest && this.lastAboveIndex >= 0
+                ? this.lastAboveIndex
+                : 0;
         const n: number = this.positions.length;
         while (index < n && this.positions[index] <= position) {
             index++;
@@ -140,7 +141,7 @@ export class VertexCounter {
 
         let result: number = 0;
         for (let i: number = n - 1; i >= index; i--) {
-            result += this.positionCount.get(this.positions[i]);
+            result += this.positionCount.get(this.positions[i])!;
         }
 
         this.lastPositionRequest = position;

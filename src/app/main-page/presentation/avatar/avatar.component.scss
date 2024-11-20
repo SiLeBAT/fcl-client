@@ -9,8 +9,8 @@
     // the row height for the 3rd row to be 0
     // but we need here the distance to the mat-divider so we chose 8 instead of 0
     grid-template-areas:
-        'icon name'
-        'icon email';
+        "icon name"
+        "icon email";
     color: rgb(0 0 0 / 0.7);
     font-size: smaller;
 }

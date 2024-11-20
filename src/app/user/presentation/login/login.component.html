@@ -3,12 +3,28 @@
         <div class="form-group fcl-form-email">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Email</mat-label>
-                <input matInput formControlName="email" name="email" required fclFocusAfterViewInit/>
+                <input
+                    matInput
+                    formControlName="email"
+                    name="email"
+                    required
+                    fclFocusAfterViewInit
+                />
                 <mat-icon matPrefix>mail</mat-icon>
-                <mat-error *ngIf="!validateField('email') && loginForm.controls.email.errors.email">
+                <mat-error
+                    *ngIf="
+                        !validateField('email') &&
+                        loginForm.controls.email.errors?.email
+                    "
+                >
                     Not a valid email
                 </mat-error>
-                <mat-error *ngIf="!validateField('email') && loginForm.controls.email.errors.required">
+                <mat-error
+                    *ngIf="
+                        !validateField('email') &&
+                        loginForm.controls.email.errors?.required
+                    "
+                >
                     You must enter a valid email
                 </mat-error>
             </mat-form-field>
@@ -17,9 +33,20 @@
         <div class="form-group">
             <mat-form-field class="fcl-form-field" appearance="standard">
                 <mat-label>Password</mat-label>
-                <input matInput formControlName="password" type="password" name="password" required />
+                <input
+                    matInput
+                    formControlName="password"
+                    type="password"
+                    name="password"
+                    required
+                />
                 <mat-icon matPrefix>lock</mat-icon>
-                <mat-error *ngIf="!validateField('password') && loginForm.controls.password.errors.required">
+                <mat-error
+                    *ngIf="
+                        !validateField('password') &&
+                        loginForm.controls.password.errors?.required
+                    "
+                >
                     Password is required
                 </mat-error>
             </mat-form-field>
@@ -27,7 +54,13 @@
 
         <div class="fcl-card-action fcl-card-action-container">
             <div class="form-group">
-                <button class="fcl-login-form__submit-button" mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
+                <button
+                    class="fcl-login-form__submit-button"
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="!loginForm.valid"
+                >
                     Login
                 </button>
             </div>

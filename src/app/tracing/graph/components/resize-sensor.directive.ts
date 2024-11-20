@@ -1,11 +1,18 @@
-import { Directive, Output, EventEmitter, ElementRef, AfterViewChecked, AfterViewInit, Input } from '@angular/core';
-import { Size } from '@app/tracing/data.model';
+import {
+    Directive,
+    Output,
+    EventEmitter,
+    ElementRef,
+    AfterViewChecked,
+    AfterViewInit,
+    Input,
+} from "@angular/core";
+import { Size } from "@app/tracing/data.model";
 
 @Directive({
-    selector: '[fclResizeSensor]'
+    selector: "[fclResizeSensor]",
 })
 export class ResizeSensorDirective implements AfterViewChecked, AfterViewInit {
-
     @Input() ignoreWindowResize = false;
     @Input() ignoreNonPositiveResize = false;
 
@@ -14,7 +21,7 @@ export class ResizeSensorDirective implements AfterViewChecked, AfterViewInit {
     private elementSize: Size;
     private windowSize: Size;
 
-    constructor(private elementRef: ElementRef) { }
+    constructor(private elementRef: ElementRef) {}
 
     ngAfterViewInit(): void {
         this.elementSize = this.getCurrentElementSize();
@@ -22,17 +29,18 @@ export class ResizeSensorDirective implements AfterViewChecked, AfterViewInit {
     }
 
     private getCurrentElementSize(): Size {
-        const clientRect: Size = this.elementRef.nativeElement.getBoundingClientRect();
+        const clientRect: Size =
+            this.elementRef.nativeElement.getBoundingClientRect();
         return {
             width: clientRect.width,
-            height: clientRect.height
+            height: clientRect.height,
         };
     }
 
     private getCurrentWindowSize(): Size {
         return {
             height: window.innerHeight,
-            width: window.innerWidth
+            width: window.innerWidth,
         };
     }
 
@@ -45,9 +53,15 @@ export class ResizeSensorDirective implements AfterViewChecked, AfterViewInit {
         const oldWindowSize = this.windowSize;
         this.windowSize = this.getCurrentWindowSize();
         if (this.isSizeDifferent(this.elementSize, newElementSize)) {
-            if (!this.ignoreNonPositiveResize || !this.isNonPositiveSize(newElementSize)) {
+            if (
+                !this.ignoreNonPositiveResize ||
+                !this.isNonPositiveSize(newElementSize)
+            ) {
                 this.elementSize = newElementSize;
-                if (!this.ignoreWindowResize || !this.isSizeDifferent(oldWindowSize, this.windowSize)) {
+                if (
+                    !this.ignoreWindowResize ||
+                    !this.isSizeDifferent(oldWindowSize, this.windowSize)
+                ) {
                     this.resized.emit();
                 }
             }

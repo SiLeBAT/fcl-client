@@ -1,6 +1,5 @@
-import * as _ from 'lodash';
-import { Graph, Vertex, Edge } from './data-structures';
-import { BusinessTypeRanker } from './business-type-ranker';
+import * as _ from "lodash";
+import { Graph, Vertex, Edge } from "./data-structures";
 
 class LayerAssignment {
     private vertexOutEdgeCounts: number[];
@@ -13,13 +12,15 @@ class LayerAssignment {
             i < n;
             ++i
         ) {
-            if (this.vertexOutEdgeCounts[i] < 1) { result.push(graph.vertices[i]); }
+            if (this.vertexOutEdgeCounts[i] < 1) {
+                result.push(graph.vertices[i]);
+            }
         }
         return result;
     }
 
     getIncomingEdges(vertices: Vertex[]): Edge[] {
-        return _.flatten(vertices.map(v => v.inEdges));
+        return _.flatten(vertices.map((v) => v.inEdges));
     }
 
     init(graph: Graph) {
@@ -29,8 +30,7 @@ class LayerAssignment {
         }
     }
 
-    assignLayers(graph: Graph, typeRanker: BusinessTypeRanker): Vertex[][] {
-
+    assignLayers(graph: Graph): Vertex[][] {
         this.init(graph);
 
         const layers: Vertex[][] = [];
@@ -64,7 +64,7 @@ class LayerAssignment {
     }
 }
 
-export function assignLayers(graph: Graph, typeRanker): Vertex[][] {
+export function assignLayers(graph: Graph): Vertex[][] {
     const layerAssignment = new LayerAssignment();
-    return layerAssignment.assignLayers(graph, typeRanker);
+    return layerAssignment.assignLayers(graph);
 }

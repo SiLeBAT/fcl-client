@@ -1,8 +1,8 @@
-import { Action } from '@ngrx/store';
-import { ActivationStatus } from '../../shared/model/types';
+import { Action } from "@ngrx/store";
+import { ActivationStatus } from "../../shared/model/types";
 
 export enum MainPageActionTypes {
-    DashboardActivated = '[Dashboard] Dashboard active'
+    DashboardActivated = "[Dashboard] Dashboard active",
 }
 
 export class DashboardActivated implements Action {
@@ -11,5 +11,4 @@ export class DashboardActivated implements Action {
     constructor(public payload: ActivationStatus) {}
 }
 
-export type MainPageActions =
-      DashboardActivated;
+export type MainPageActions = DashboardActivated;

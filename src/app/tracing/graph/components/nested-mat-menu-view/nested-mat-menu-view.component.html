@@ -8,14 +8,18 @@
                     color="primary"
                     data-cy="fcl-graph-menu-item-button"
                     [matMenuTriggerFor]="subMenu.matMenu"
-                    [matMenuTriggerData]="{ menuItems : item.children }"
-                    [disabled] = "item.disabled"
+                    [matMenuTriggerData]="{ menuItems: item.children }"
+                    [disabled]="item.disabled"
                     [matTooltip]="item.toolTip"
                     matTooltipPosition="right"
-                    matTooltipShowDelay="1500">
-                    {{item.displayName}}
+                    matTooltipShowDelay="1500"
+                >
+                    {{ item.displayName }}
                 </button>
-                <fcl-nested-mat-menu-view #subMenu (actionSelected)="forwardAction($event)"></fcl-nested-mat-menu-view>
+                <fcl-nested-mat-menu-view
+                    #subMenu
+                    (actionSelected)="forwardAction($event)"
+                ></fcl-nested-mat-menu-view>
             </span>
             <!-- Leaf node buttons here -->
             <span *ngIf="!item.children || item.children.length === 0">
@@ -24,11 +28,12 @@
                     color="primary"
                     data-cy="fcl-graph-menu-item-button"
                     (click)="itemSelected(item)"
-                    [disabled] = "item.disabled"
+                    [disabled]="item.disabled"
                     [matTooltip]="item.toolTip"
                     matTooltipPosition="right"
-                    matTooltipShowDelay="500">
-                    {{item.displayName}}
+                    matTooltipShowDelay="500"
+                >
+                    {{ item.displayName }}
                 </button>
             </span>
         </span>

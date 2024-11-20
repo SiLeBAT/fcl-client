@@ -8,16 +8,38 @@
         panelClass="fcl-mat-select-below-panel-class"
         matTooltip="Select property"
     >
-    <mat-select-trigger *ngIf="prop !== null && !isActivePropAvailable()">
-        {{prop}}
-    <span><mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></span>
-    </mat-select-trigger>
+        <mat-select-trigger *ngIf="prop !== null && !isActivePropAvailable()">
+            {{ prop }}
+            <span
+                ><mat-icon
+                    class="fcl-warning-icon"
+                    matTooltip="Data is not available."
+                    >warning</mat-icon
+                ></span
+            >
+        </mat-select-trigger>
         <mat-option *ngIf="enableNullProp" value="">None</mat-option>
-        <mat-option *ngIf="prop !== null && !isActivePropAvailable()" value="{{prop}}">{{prop}}<mat-icon class="fcl-warning-icon" matTooltip="Data is not available.">warning</mat-icon></mat-option>
+        <mat-option
+            *ngIf="prop !== null && !isActivePropAvailable()"
+            value="{{ prop }}"
+            >{{ prop
+            }}<mat-icon
+                class="fcl-warning-icon"
+                matTooltip="Data is not available."
+                >warning</mat-icon
+            ></mat-option
+        >
         <span *ngFor="let prop of availableProps">
-            <mat-option value="{{prop.prop}}">{{prop.label || prop.prop}}</mat-option>
+            <mat-option value="{{ prop.prop }}">{{
+                prop.label || prop.prop
+            }}</mat-option>
         </span>
     </mat-select>
     &nbsp;/&nbsp;
-    <fcl-text-element-view class="fcl-alt-text-box" [value]="altText" (valueChange)="onAltTextChange($event)" matTooltip="Enter alternative text"></fcl-text-element-view>
+    <fcl-text-element-view
+        class="fcl-alt-text-box"
+        [value]="altText"
+        (valueChange)="onAltTextChange($event)"
+        matTooltip="Enter alternative text"
+    ></fcl-text-element-view>
 </div>

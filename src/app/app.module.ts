@@ -1,44 +1,42 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app.routing.module';
-import { NgModule } from '@angular/core';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { EffectsModule } from '@ngrx/effects';
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { AppRoutingModule } from "./app.routing.module";
+import { NgModule } from "@angular/core";
+import { StoreModule } from "@ngrx/store";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import { EffectsModule } from "@ngrx/effects";
 
-import { UserModule } from './user/user.module';
+import { UserModule } from "./user/user.module";
 
-import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
-import { MainPageModule } from './main-page/main-page.module';
+import { AppComponent } from "./app.component";
+import { environment } from "../environments/environment";
+import { MainPageModule } from "./main-page/main-page.module";
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         MainPageModule,
         UserModule,
-        StoreModule.forRoot({}, {
-            runtimeChecks: {
-                strictStateImmutability: false,
-                strictActionImmutability: false
-            }
-        }),
+        StoreModule.forRoot(
+            {},
+            {
+                runtimeChecks: {
+                    strictStateImmutability: false,
+                    strictActionImmutability: false,
+                },
+            },
+        ),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({
-            name: 'FCL Devtools',
+            name: "FCL Devtools",
             maxAge: 25,
-            logOnly: environment.production
+            logOnly: environment.production,
         }),
         // AppRoutingModule needs to be at the end
-        AppRoutingModule
+        AppRoutingModule,
     ],
-    bootstrap: [
-        AppComponent
-    ]
+    bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

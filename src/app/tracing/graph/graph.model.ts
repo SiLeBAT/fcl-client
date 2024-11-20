@@ -1,9 +1,17 @@
 import {
-    StationData, DeliveryData, DataServiceData,
-    Position, SelectedElements, StationId, DeliveryId, PositionMap
-} from '../data.model';
+    StationData,
+    DeliveryData,
+    DataServiceData,
+    Position,
+    SelectedElements,
+    StationId,
+    DeliveryId,
+    PositionMap,
+} from "../data.model";
 
-class None { private ___ = {}; }
+class None {
+    private ___ = {};
+}
 
 interface CyElementDef<T> {
     group: string;
@@ -17,7 +25,7 @@ export interface CyNodeDef extends CyElementDef<CyNodeData> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface CyEdgeDef extends CyElementDef<CyEdgeData> { }
+export interface CyEdgeDef extends CyElementDef<CyEdgeData> {}
 
 export interface BoundingBoxOptions {
     includeNodes?: boolean;
@@ -42,20 +50,34 @@ export interface Cy {
     batch(a: () => void): void;
     reset(): void;
     fit(): void;
-    zoom<T extends number | { level: number } | None>(a?: T): None extends T ? number : void;
-    maxZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
-    minZoom<T extends number | unknown>(newZoom?: T): T extends number ? void : number;
+    zoom<T extends number | { level: number } | None>(
+        a?: T,
+    ): None extends T ? number : void;
+    maxZoom<T extends number | unknown>(
+        newZoom?: T,
+    ): T extends number ? void : number;
+    minZoom<T extends number | unknown>(
+        newZoom?: T,
+    ): T extends number ? void : number;
     pan<T extends Position | None>(a?: T): None extends T ? Position : void;
     panBy(renderedPos: Position): void;
     add(a: CyNodeDef[] | CyEdgeDef[]): CyElementCollection<CyNode | CyEdge>;
     on<
         T extends string | CyCallBackFun,
-        K extends (T extends string ? CyCallBackFun : None)
-    >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
+        K extends T extends string ? CyCallBackFun : None,
+    >(
+        eventName: string,
+        eventFilterOrCallBack: T,
+        eventCallBack?: K,
+    ): void;
     one<
         T extends string | CyCallBackFun,
-        K extends (T extends string ? CyCallBackFun : None)
-    >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
+        K extends T extends string ? CyCallBackFun : None,
+    >(
+        eventName: string,
+        eventFilterOrCallBack: T,
+        eventCallBack?: K,
+    ): void;
     removeListener(events: string, handler: (event?: any) => void): void;
     removeAllListeners(): void;
     getElementById(id: string): CyNode | CyEdge;
@@ -64,10 +86,16 @@ export interface Cy {
     setStyle(style: Record<string, unknown>): void;
     width(): number;
     height(): number;
-    userPanningEnabled<T extends boolean | None>(a?: T): None extends T ? boolean : void;
-    autoungrabify<T extends boolean | None>(a?: T): None extends T ? boolean : void;
+    userPanningEnabled<T extends boolean | None>(
+        a?: T,
+    ): None extends T ? boolean : void;
+    autoungrabify<T extends boolean | None>(
+        a?: T,
+    ): None extends T ? boolean : void;
     layout(options: { name: string; [key: string]: any }): CyLayout;
-    zoomingEnabled<T extends boolean | unknown>(a?: T): T extends boolean ? void : boolean;
+    zoomingEnabled<T extends boolean | unknown>(
+        a?: T,
+    ): T extends boolean ? void : boolean;
     viewport(zoom: number, pan: Position): void;
     extent(): CyExtent;
     remove(selectorOrEles: string | CyElementCollection<CyNode | CyEdge>): void;
@@ -110,11 +138,17 @@ export interface CyElementCollection<E> {
     first(): E;
     toggleClass(a: string, b?: boolean): void;
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
-    union(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
-    difference(elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string): CyElementCollection<CyNode | CyEdge>;
+    union(
+        elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string,
+    ): CyElementCollection<CyNode | CyEdge>;
+    difference(
+        elementsOrSelector: CyElementCollection<CyNode | CyEdge> | string,
+    ): CyElementCollection<CyNode | CyEdge>;
     getElementById(id: string): E;
     addClass(classes: string | string[]): void;
     removeClass(classes: string | string[]): void;
+    selectify(): void;
+    unselectify(): void;
 }
 
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
@@ -129,8 +163,10 @@ export interface CyEdgeCollection extends CyElementCollection<CyEdge> {
     connectedNodes(a?: string): CyNodeCollection;
     parallelEdges(selector?: string): CyEdgeCollection;
     union<T extends CyElementCollection<CyNode | CyEdge>>(
-        elements: T
-    ): T extends CyEdgeCollection ? CyEdgeCollection : CyElementCollection<CyNode | CyEdge>;
+        elements: T,
+    ): T extends CyEdgeCollection
+        ? CyEdgeCollection
+        : CyElementCollection<CyNode | CyEdge>;
     difference(elementsOrSelector: CyEdgeCollection | string): CyEdgeCollection;
 }
 
@@ -141,15 +177,30 @@ export interface CyElement {
     data(a?: string): any;
     selected(): boolean;
     style<
-        T extends string | {[key: string]: any} | None,
-        K extends (None extends T ? None : T extends string ? number | string | boolean | None : None)
-    >(a?: T, b?: K): None extends T ?
-        Record<string, unknown> :
-        (T extends string ? (None extends K ? number | string | boolean : void) : void);
+        T extends string | { [key: string]: any } | None,
+        K extends None extends T
+            ? None
+            : T extends string
+              ? number | string | boolean | None
+              : None,
+    >(
+        a?: T,
+        b?: K,
+    ): None extends T
+        ? Record<string, unknown>
+        : T extends string
+          ? None extends K
+              ? number | string | boolean
+              : void
+          : void;
     on<
         T extends string | CyCallBackFun,
-        K extends (T extends string ? CyCallBackFun : None)
-    >(eventName: string, eventFilterOrCallBack: T, eventCallBack?: K): void;
+        K extends T extends string ? CyCallBackFun : None,
+    >(
+        eventName: string,
+        eventFilterOrCallBack: T,
+        eventCallBack?: K,
+    ): void;
     removeListener(events: string, handler: (event?: any) => void): void;
     renderedBoundingBox(options?: BoundingBoxOptions): BoundingBox;
     visible(): boolean;
@@ -223,12 +274,12 @@ export interface GraphElementData {
 
 export interface GraphServiceData extends GraphElementData, DataServiceData {
     statIdToNodeDataMap: Record<StationId, CyNodeData>;
-    idToNodeMap?: Record<NodeId, CyNodeData>;
+    idToNodeMap: Record<NodeId, CyNodeData>;
     delIdToEdgeDataMap: Record<DeliveryId, CyEdgeData>;
     nodeSel: Record<NodeId, boolean>;
     edgeSel: Record<EdgeId, boolean>;
     nodeAndEdgePropsUpdatedFlag: Record<string, never>;
-    ghostElements: GraphElementData;
+    ghostElements: GraphElementData | null;
     hoverEdges: EdgeId[];
     selectedElements: SelectedGraphElements;
 }
@@ -257,4 +308,6 @@ export interface SelectedGraphElements {
     edges: EdgeId[];
 }
 
-export interface ContextSelection extends SelectedElements, SelectedGraphElements {}
+export interface ContextSelection
+    extends SelectedElements,
+        SelectedGraphElements {}

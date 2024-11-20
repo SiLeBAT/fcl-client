@@ -1,17 +1,42 @@
 import {
-    Component, ElementRef, ViewChild, OnDestroy, Input, Output,
-    EventEmitter, OnChanges, ChangeDetectionStrategy, SimpleChanges
-} from '@angular/core';
-import { Size, Layout, PositionMap } from '../../../data.model';
-import _ from 'lodash';
-import { ContextMenuRequestInfo, EdgeId, NodeId, SelectedGraphElements } from '../../graph.model';
-import { StyleConfig } from '../../cy-graph/cy-style';
-import { VirtualZoomCyGraph } from '../../cy-graph/virtual-zoom-cy-graph';
-import { GraphEventType, InteractiveCyGraph, LayoutOption } from '../../cy-graph/interactive-cy-graph';
-import { CyConfig, GraphData, LayoutConfig, LayoutName } from '../../cy-graph/cy-graph';
-import { LAYOUT_FARM_TO_FORK, LAYOUT_FRUCHTERMAN, LAYOUT_PRESET } from '../../cy-graph/cy.constants';
-import { isPosMapEmpty } from '../../cy-graph/shared-utils';
-import { getLayoutConfig } from '../../cy-graph/layouting-utils';
+    Component,
+    ElementRef,
+    ViewChild,
+    OnDestroy,
+    Input,
+    Output,
+    EventEmitter,
+    OnChanges,
+    ChangeDetectionStrategy,
+    SimpleChanges,
+} from "@angular/core";
+import { Size, Layout, PositionMap } from "../../../data.model";
+import {
+    ContextMenuRequestInfo,
+    EdgeId,
+    NodeId,
+    SelectedGraphElements,
+} from "../../graph.model";
+import { StyleConfig } from "../../cy-graph/cy-style";
+import { VirtualZoomCyGraph } from "../../cy-graph/virtual-zoom-cy-graph";
+import {
+    GraphEventType,
+    InteractiveCyGraph,
+    LayoutOption,
+} from "../../cy-graph/interactive-cy-graph";
+import {
+    CyConfig,
+    GraphData,
+    LayoutConfig,
+    LayoutName,
+} from "../../cy-graph/cy-graph";
+import {
+    LAYOUT_FARM_TO_FORK,
+    LAYOUT_FRUCHTERMAN,
+    LAYOUT_PRESET,
+} from "../../cy-graph/cy.constants";
+import { isPosMapEmpty } from "../../cy-graph/shared-utils";
+import { getLayoutConfig } from "../../cy-graph/layouting-utils";
 
 export interface GraphSelectionChange {
     selectedElements: SelectedGraphElements;
@@ -24,18 +49,17 @@ export interface GraphDataChange {
 }
 
 @Component({
-    selector: 'fcl-graph-view',
-    templateUrl: './graph-view.component.html',
-    styleUrls: ['./graph-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-graph-view",
+    templateUrl: "./graph-view.component.html",
+    styleUrls: ["./graph-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphViewComponent implements OnDestroy, OnChanges {
-
     private static readonly MAX_FARM_TO_FORK_NODE_COUNT = 100;
 
-    private cyGraph_: InteractiveCyGraph = null;
+    private cyGraph_: InteractiveCyGraph | null = null;
 
-    @ViewChild('graph', { static: true }) graphElement: ElementRef;
+    @ViewChild("graph", { static: true }) graphElement: ElementRef;
 
     @Input() graphData: GraphData | null = null;
     @Input() styleConfig: StyleConfig | null = null;
@@ -56,7 +80,10 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     /** --- life cycle hooks */
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.graphData !== undefined || changes.styleConfig !== undefined) {
+        if (
+            changes.graphData !== undefined ||
+            changes.styleConfig !== undefined
+        ) {
             this.processGraphInputUpdate();
         }
     }
@@ -102,18 +129,36 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
         }
     }
 
-    runLayoutManager(layoutName: LayoutName, nodesToLayout: NodeId[]): null | (() => void) {
-        return this.cyGraph_ === null ?
-            null :
-            this.cyGraph_.runLayout(layoutName, nodesToLayout, this.fitGraphToVisibleArea);
+    runLayoutManager(
+        layoutName: LayoutName,
+        nodesToLayout: NodeId[],
+    ): null | (() => void) {
+        return this.cyGraph_ === null
+            ? null
+            : this.cyGraph_.runLayout(
+                  layoutName,
+                  nodesToLayout,
+                  this.fitGraphToVisibleArea,
+              );
     }
 
     getLayoutOptions(nodesToLayout: NodeId[]): LayoutOption[] | null {
-        return this.cyGraph_ === null ? null : this.cyGraph_.getLayoutOptions(nodesToLayout);
+        return this.cyGraph_ === null
+            ? null
+            : this.cyGraph_.getLayoutOptions(nodesToLayout);
     }
 
     focusElement(elementId: NodeId | EdgeId): void {
-        this.cyGraph_.focusElement(elementId);
+        if (this.cyGraph_) {
+            this.cyGraph_.focusElement(elementId);
+        }
+    }
+
+    private isGraphChanged() {
+        return (
+            this.graphData !== this.cyGraph_?.data ||
+            this.styleConfig !== this.cyGraph_.style
+        );
     }
 
     private isSizePositive(): boolean {
@@ -122,34 +167,36 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     }
 
     private getSize(): Size {
-        const size: Size = this.elementRef.nativeElement.getBoundingClientRect();
+        const size: Size =
+            this.elementRef.nativeElement.getBoundingClientRect();
         return {
             width: size.width,
-            height: size.height
+            height: size.height,
         };
     }
 
     private onGraphDataChange(): void {
         this.graphDataChange.emit({
             layout:
-                this.graphData.layout !== this.cyGraph_.layout ?
-                    this.cyGraph_.layout :
-                    undefined
-            ,
+                this.graphData!.layout !== this.cyGraph_!.layout
+                    ? this.cyGraph_!.layout
+                    : undefined,
             nodePositions:
-                this.graphData.nodePositions !== this.cyGraph_.nodePositions ?
-                    this.cyGraph_.nodePositions :
-                    undefined
+                this.graphData!.nodePositions !== this.cyGraph_!.nodePositions
+                    ? this.cyGraph_!.nodePositions
+                    : undefined,
         });
     }
 
     private onGraphSelectionChange(isShiftSelection: boolean): void {
-        if (this.graphData.selectedElements !== this.cyGraph_.selectedElements) {
+        if (
+            this.graphData!.selectedElements !== this.cyGraph_!.selectedElements
+        ) {
             this.graphDataChange.emit({
                 selectionChange: {
-                    selectedElements: this.cyGraph_.selectedElements,
-                    isShiftSelection: isShiftSelection
-                }
+                    selectedElements: this.cyGraph_!.selectedElements,
+                    isShiftSelection: isShiftSelection,
+                },
             });
         }
     }
@@ -160,37 +207,46 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
 
     private createPresetLayoutConfig(viewport: Layout | null): LayoutConfig {
         return {
-            ...(viewport === null ? {} : viewport),
+            ...(viewport ?? {}),
             name: LAYOUT_PRESET,
-            fit: viewport === null
+            fit: viewport === null,
         };
     }
 
-    private createLayoutConfig(): LayoutConfig {
-        if (isPosMapEmpty(this.graphData.nodePositions)) {
-            return this.graphData.nodeData.length > GraphViewComponent.MAX_FARM_TO_FORK_NODE_COUNT ?
-                getLayoutConfig(LAYOUT_FRUCHTERMAN) :
-                getLayoutConfig(LAYOUT_FARM_TO_FORK);
+    private createLayoutConfig(graphData: GraphData): LayoutConfig {
+        if (isPosMapEmpty(graphData.nodePositions)) {
+            return graphData.nodeData.length >
+                GraphViewComponent.MAX_FARM_TO_FORK_NODE_COUNT
+                ? getLayoutConfig(LAYOUT_FRUCHTERMAN)
+                : getLayoutConfig(LAYOUT_FARM_TO_FORK);
         } else {
-            return this.createPresetLayoutConfig(this.graphData.layout);
+            return this.createPresetLayoutConfig(graphData.layout);
         }
     }
 
-    private createCyGraph(): void {
+    private createCyGraph(
+        graphData: GraphData,
+        styleConfig: StyleConfig,
+    ): void {
         this.cyGraph_ = new VirtualZoomCyGraph(
             this.graphElement.nativeElement,
-            this.graphData,
-            this.styleConfig,
-            this.createLayoutConfig(),
+            graphData,
+            styleConfig,
+            this.createLayoutConfig(graphData),
             this.cyConfig,
-            this.fitGraphToVisibleArea
+            this.fitGraphToVisibleArea,
         );
 
-        this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () => this.onGraphDataChange());
-        this.cyGraph_.registerListener(GraphEventType.SELECTION_CHANGE, (shift: boolean) => this.onGraphSelectionChange(shift));
+        this.cyGraph_.registerListener(GraphEventType.LAYOUT_CHANGE, () =>
+            this.onGraphDataChange(),
+        );
+        this.cyGraph_.registerListener(
+            GraphEventType.SELECTION_CHANGE,
+            (shift: boolean) => this.onGraphSelectionChange(shift),
+        );
         this.cyGraph_.registerListener(
             GraphEventType.CONTEXT_MENU_REQUEST,
-            (info: ContextMenuRequestInfo) => this.onContextMenuRequest(info)
+            (info: ContextMenuRequestInfo) => this.onContextMenuRequest(info),
         );
 
         if (this.graphData !== this.cyGraph_.data) {
@@ -199,18 +255,26 @@ export class GraphViewComponent implements OnDestroy, OnChanges {
     }
 
     private processGraphInputUpdate(): void {
-        if (this.graphData && this.styleConfig) {
-            if (this.cyGraph_ && !this.graphData.layout) {
-                // clean cyGraph if the viewport(layout) is unknown
-                this.cleanCyGraph();
-            }
-            if (!this.cyGraph_) {
-                this.createCyGraph();
-            } else if (this.graphData !== this.cyGraph_.data || this.styleConfig !== this.cyGraph_.style) {
-                this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
-            }
-        } else if (this.cyGraph_) {
+        if (
+            this.cyGraph_ &&
+            (!this.graphData || !this.styleConfig || !this.graphData.layout)
+        ) {
+            // clean cyGraph if graphData, styleConfig, or the viewport(layout) is unknown.
             this.cleanCyGraph();
+        }
+
+        if (!this.graphData || !this.styleConfig) {
+            return;
+        }
+
+        if (!this.cyGraph_) {
+            this.createCyGraph(this.graphData, this.styleConfig);
+            return;
+        }
+
+        if (this.cyGraph_ && this.isGraphChanged()) {
+            this.cyGraph_.updateGraph(this.graphData, this.styleConfig);
+            return;
         }
     }
 }

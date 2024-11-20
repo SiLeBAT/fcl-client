@@ -1,17 +1,25 @@
-import { StationData, DeliveryData, SampleData, StationId, Position } from '../data.model';
-import { VisioReport, VisioEngineConfiguration, StationGroupType } from './layout-engine/datatypes';
-import { VisioReporter } from './layout-engine/visio-reporter';
-import { StationByCountryGrouper } from './layout-engine/station-by-country-grouper';
-import { ROASettings } from './model';
+import {
+    StationData,
+    DeliveryData,
+    SampleData,
+    StationId,
+    Position,
+} from "../data.model";
+import {
+    VisioReport,
+    VisioEngineConfiguration,
+    StationGroupType,
+} from "./layout-engine/datatypes";
+import { VisioReporter } from "./layout-engine/visio-reporter";
+import { StationByCountryGrouper } from "./layout-engine/station-by-country-grouper";
+import { ROASettings } from "./model";
+import { TempCanvas } from "./layout-engine/temp-canvas";
 
 interface FclElements {
     stations: StationData[];
     deliveries: DeliveryData[];
     samples: SampleData[];
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function getFontMetricCanvas(): any { }
 
 function getStationGrouperFromType(groupType: StationGroupType) {
     switch (groupType) {
@@ -23,25 +31,33 @@ function getStationGrouperFromType(groupType: StationGroupType) {
 function createReport(
     data: FclElements,
     stationIdToPosMap: Record<StationId, Position>,
-    engineConf: VisioEngineConfiguration
+    engineConf: VisioEngineConfiguration,
 ): VisioReport {
     const stationGrouper = getStationGrouperFromType(engineConf.groupType);
-    const report: VisioReport = VisioReporter.createReport(
-        data, stationIdToPosMap, getFontMetricCanvas, engineConf.roaSettings, stationGrouper
-    );
-
+    const canvas = new TempCanvas();
+    let report: VisioReport | undefined;
+    try {
+        report = VisioReporter.createReport(
+            data,
+            stationIdToPosMap,
+            canvas.getCanvasElement(),
+            engineConf.roaSettings,
+            stationGrouper,
+        );
+    } finally {
+        canvas.destroy();
+    }
     return report;
 }
 
 export function generateVisioReport(
     data: FclElements,
     stationIdToPosMap: Record<StationId, Position>,
-    roaSettings: ROASettings
+    roaSettings: ROASettings,
 ): VisioReport {
-
     const engineConf: VisioEngineConfiguration = {
         groupType: StationGroupType.Country,
-        roaSettings: roaSettings
+        roaSettings: roaSettings,
     };
 
     return createReport(data, stationIdToPosMap, engineConf);

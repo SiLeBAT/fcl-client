@@ -3,10 +3,17 @@
         <button
             class="fcl-toolbar-title"
             mat-button
-            [ngClass]="{'no-hover': (dashboardActive || loginActive)}"
-            [routerLink]="isServerLess() || currentUser ? ['/dashboard'] : ['/']"
-            matTooltip="{{isServerLess() || currentUser ? 'Go To Dashboard' : 'Go To Login'}}"
-            id="homeButton">
+            [ngClass]="{ 'no-hover': dashboardActive || loginActive }"
+            [routerLink]="
+                isServerLess() || currentUser ? ['/dashboard'] : ['/']
+            "
+            matTooltip="{{
+                isServerLess() || currentUser
+                    ? 'Go To Dashboard'
+                    : 'Go To Login'
+            }}"
+            id="homeButton"
+        >
             <span class="mat-title">{{ appName }}</span>
         </button>
     </div>
@@ -15,7 +22,7 @@
     <fcl-toolbar-action-container
         *ngIf="tracingActive"
         class="fcl-toolbar-action-item fcl-toolbar-action-container fcl-tracing-view-menu-container"
-        >
+    >
     </fcl-toolbar-action-container>
     <!-- or a tracing view link or a placeholder is inserted-->
     <div
@@ -24,10 +31,14 @@
     >
         <!-- a link to tracing view feature is inserted -->
         <button
-            *ngIf="(isServerLess() || currentUser) && !dashboardActive; else placeholder_content"
+            *ngIf="
+                (isServerLess() || currentUser) && !dashboardActive;
+                else placeholder_content
+            "
             mat-button
             [routerLink]="['/tracing']"
-            matTooltip="Tracing view">
+            matTooltip="Tracing view"
+        >
             <mat-icon>track_changes</mat-icon>
             Tracing View
         </button>
@@ -37,15 +48,19 @@
         </ng-template>
     </div>
     <!-- dirty fix end-->
-    <fcl-avatar-container class="fcl-toolbar-avatar-container"></fcl-avatar-container>
+    <fcl-avatar-container
+        class="fcl-toolbar-avatar-container"
+    ></fcl-avatar-container>
     <div class="fcl-toolbar-menu-container">
         <button
             class="fcl-toolbar-menu-bottom"
             mat-icon-button
             data-cy="fcl-toggle-conf-sidebar-button"
             (click)="onToggleRightSideBar()"
+            [disabled]="!isModelLoaded"
             matTooltip="Show/Hide Configuration Settings"
-            [ngStyle]="{'visibility': tracingActive ? 'visible' : 'hidden'}">
+            [ngStyle]="{ visibility: tracingActive ? 'visible' : 'hidden' }"
+        >
             <mat-icon>menu</mat-icon>
         </button>
     </div>

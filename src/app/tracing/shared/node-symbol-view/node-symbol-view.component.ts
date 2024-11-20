@@ -1,15 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { NodeShapeType, Color } from '@app/tracing/data.model';
-import { Map as ImmutableMap } from 'immutable';
-import { Utils } from '@app/tracing/util/non-ui-utils';
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { NodeShapeType, Color } from "@app/tracing/data.model";
+import { Map as ImmutableMap } from "immutable";
+import { Utils } from "@app/tracing/util/non-ui-utils";
 
 interface GradientStop {
     offset: string;
     style: string;
-}
-
-function arrayToColor(color: number[]): Color {
-    return { r: color[0], g: color[1], b: color[2] };
 }
 
 function isColorWhite(color: Color): boolean {
@@ -17,28 +13,31 @@ function isColorWhite(color: Color): boolean {
 }
 
 @Component({
-    selector: 'fcl-node-symbol-view',
-    templateUrl: './node-symbol-view.component.html',
-    styleUrls: ['./node-symbol-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: "fcl-node-symbol-view",
+    templateUrl: "./node-symbol-view.component.html",
+    styleUrls: ["./node-symbol-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NodeSymbolViewComponent {
+    private static readonly DEFAULT_COLOR_WHITE = "rgb(255, 255, 255)";
 
-    private static readonly DEFAULT_COLOR_WHITE = 'rgb(255, 255, 255)';
-
-    private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<string, string>({
-        [NodeShapeType.CIRCLE]: 'circle',
-        [NodeShapeType.SQUARE]: 'square',
-        [NodeShapeType.TRIANGLE]: 'triangle',
-        [NodeShapeType.DIAMOND]: 'diamond',
-        [NodeShapeType.PENTAGON]: 'pentagon',
-        [NodeShapeType.HEXAGON]: 'hexagon',
-        [NodeShapeType.OCTAGON]: 'octagon',
-        [NodeShapeType.STAR]: 'star'
+    private readonly ShapeMap: ImmutableMap<string, string> = ImmutableMap<
+        string,
+        string
+    >({
+        [NodeShapeType.CIRCLE]: "circle",
+        [NodeShapeType.SQUARE]: "square",
+        [NodeShapeType.TRIANGLE]: "triangle",
+        [NodeShapeType.DIAMOND]: "diamond",
+        [NodeShapeType.PENTAGON]: "pentagon",
+        [NodeShapeType.HEXAGON]: "hexagon",
+        [NodeShapeType.OCTAGON]: "octagon",
+        [NodeShapeType.STAR]: "star",
     });
 
     private svgShapeType_: string | null = null;
-    private fillColor_ = NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
+    private fillColor_: string | null =
+        NodeSymbolViewComponent.DEFAULT_COLOR_WHITE;
     private isFillColorNonWhite_ = false;
     private gradientId_: string | null = null;
     private gradientStops_: GradientStop[] = [];
@@ -51,23 +50,25 @@ export class NodeSymbolViewComponent {
         this.setFillColor(color);
     }
 
-    @Input() set mapStationColor(colors: number[][]) {
+    @Input() set mapStationColor(colors: Color[]) {
         this.setFillColor(colors);
     }
 
-    @Input() set dataTableShapeType(shape: NodeShapeType) {
-        this.svgShapeType_ = shape ? this.ShapeMap.get(shape) : this.ShapeMap.get(NodeShapeType.CIRCLE);
+    @Input() set dataTableShapeType(shape: NodeShapeType | undefined | null) {
+        this.svgShapeType_ = shape
+            ? this.ShapeMap.get(shape)
+            : this.ShapeMap.get(NodeShapeType.CIRCLE);
     }
 
-    getShapeType(): string {
+    getShapeType(): string | null {
         return this.svgShapeType_;
     }
 
     getFillColor(): string {
-        return this.fillColor_ || `url(#${this.gradientId_})`;
+        return this.fillColor_ ?? `url(#${this.gradientId_})`;
     }
 
-    get gradientId(): string {
+    get gradientId(): string | null {
         return this.gradientId_;
     }
 
@@ -86,7 +87,6 @@ export class NodeSymbolViewComponent {
     private resetColors(): void {
         this.fillColor_ = null;
         this.isFillColorNonWhite_ = true;
-        this.gradientStops_ = null;
         this.gradientStops_ = [];
     }
 
@@ -95,25 +95,22 @@ export class NodeSymbolViewComponent {
         this.isFillColorNonWhite_ = false;
     }
 
-    private setFillColor(colorOrColors: Color | number[][] | null): void {
+    private setFillColor(colorOrColors: Color | Color[] | null): void {
         this.resetColors();
 
-        if (colorOrColors === null) {
+        if (!colorOrColors) {
             this.setDefaultColor();
-        } else {
-            if (Array.isArray(colorOrColors)) {
-                const colors: number[][] = colorOrColors;
-                if (colors.length === 0) {
-                    this.setDefaultColor();
-                } else if (colors.length === 1) {
-                    this.setSimpleFillColor(arrayToColor(colors[0]));
-                } else {
-                    this.setGradientFillColor(colors);
-                }
+        } else if (Array.isArray(colorOrColors)) {
+            if (colorOrColors.length === 0) {
+                this.setDefaultColor();
+            } else if (colorOrColors.length === 1) {
+                this.setSimpleFillColor(colorOrColors[0]);
             } else {
-                const color: Color = colorOrColors;
-                this.setSimpleFillColor(color);
+                this.setGradientFillColor(colorOrColors);
             }
+        } else {
+            const color: Color = colorOrColors;
+            this.setSimpleFillColor(color);
         }
     }
 
@@ -122,23 +119,23 @@ export class NodeSymbolViewComponent {
         this.isFillColorNonWhite_ = !isColorWhite(color);
     }
 
-    private setGradientFillColor(colors: number[][]): void {
-        let gradientId: string = 'col';
+    private setGradientFillColor(colors: Color[]): void {
+        let gradientId: string = "col";
         let gradientStops: GradientStop[] = [];
 
         const percent = 100 / colors.length;
-        gradientStops = colors.flatMap((c: number[], index) => {
-            gradientId += `r${c[0]}g${c[1]}b${c[2]}`;
+        gradientStops = colors.flatMap((c: Color, index) => {
+            gradientId += `r${c.r}g${c.g}b${c.b}`;
 
             return [
                 {
                     offset: `${index * percent}%`,
-                    style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                    style: `rgb(${c.r}, ${c.g}, ${c.b})`,
                 },
                 {
                     offset: `${(index + 1) * percent}%`,
-                    style: `rgb(${c[0]}, ${c[1]}, ${c[2]})`
-                }
+                    style: `rgb(${c.r}, ${c.g}, ${c.b})`,
+                },
             ];
         });
         this.isFillColorNonWhite_ = true;

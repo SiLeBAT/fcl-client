@@ -1,40 +1,47 @@
-import { SampleData, FclData, SampleResultType } from '../../data.model';
-import * as Constants from './../ext-data-constants.v1';
+import {
+    SampleData as IntSampleData,
+    FclData,
+    SampleResultType,
+} from "../../data.model";
+import { JsonData } from "../ext-data-model.v1";
 
 export function importSamples(rawData: any, fclData: FclData) {
     fclData.fclElements.samples = convertRawSamples(rawData);
 }
 
-function convertRawSamples(rawData: any): SampleData[] {
-    if (rawData != null && rawData[Constants.SAMPLEDATA] !== undefined) {
-        const result: SampleData[] = [];
-        for (const rawSample of rawData[Constants.SAMPLEDATA]) {
-            result.push({
-                station: rawSample.sampleStation || null,
-                lot: rawSample.sampledLot || null,
-                result: rawSample.result || null,
-                resultType: convertRawSampleResultType(rawSample.resultType),
-                time: rawSample.time || null,
-                amount: rawSample.amount || null,
-                type: rawSample.type || null,
-                material: rawSample.material || null
-            });
+function convertRawSamples(jsonData: JsonData): IntSampleData[] {
+    if (jsonData.samples) {
+        const intSamples: IntSampleData[] = [];
+        for (const extSample of jsonData.samples) {
+            const intSample: IntSampleData = {
+                station: extSample.sampleStation,
+                lot: extSample.sampledLot ?? undefined,
+                result: extSample.result ?? undefined,
+                resultType: convertRawSampleResultType(extSample.resultType),
+                time: extSample.time ?? undefined,
+                amount: extSample.amount ?? undefined,
+                type: extSample.type ?? undefined,
+                material: extSample.material ?? undefined,
+            };
+            intSamples.push(intSample);
         }
-        return result;
+        return intSamples;
     }
     return [];
 }
 
-function convertRawSampleResultType(type: string): SampleResultType {
+function convertRawSampleResultType(
+    type: string | undefined | null,
+): SampleResultType {
     if (type == null) {
-        return SampleResultType.Unkown;
-    } else if (type === 'C') {
+        return SampleResultType.Unknown;
+    } else if (type === "C") {
         return SampleResultType.Confirmed;
-    } else if (type === 'N') {
+    } else if (type === "N") {
         return SampleResultType.Negative;
-    } else if (type === 'P') {
+    } else if (type === "P") {
         return SampleResultType.Probable;
     } else {
-        return SampleResultType.Unkown;
+        return SampleResultType.Unknown;
     }
 }

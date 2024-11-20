@@ -1,10 +1,11 @@
-export const VERSION = '1.2.0';
+export const VERSION = "1.2.0";
 
 export interface JsonData {
     version: string;
     data: Data;
-    tracing?: TracingData;
-    settings?: SettingsData;
+    tracing?: TracingData | null;
+    settings?: SettingsData | null;
+    samples?: SampleData[] | null;
 }
 
 export interface ColumnProperty {
@@ -24,7 +25,7 @@ export interface DataTable {
     data: DataRow[];
 }
 
-interface Data {
+export interface Data {
     version: string;
     stations: DataTable;
     deliveries: DataTable;
@@ -49,12 +50,12 @@ export interface TracingData {
 export interface MetaNodeData {
     id: string;
     name?: string;
-    type: string;
+    type?: string | null;
     members: string[];
 }
 
 export interface SettingsData {
-    version: string;
+    version?: string;
     metaNodes: MetaNodeData[];
     view?: ViewData;
 }
@@ -67,8 +68,8 @@ export interface ViewData {
     // label?: string;
     edge: EdgeViewData;
     node: NodeViewData;
-    gis?: GisGraphViewData;
-    graph?: SchemaGraphViewData;
+    gis?: GisGraphViewData | null;
+    graph?: SchemaGraphViewData | null;
     // explosions?: ExplosionViewData[];
 }
 
@@ -79,10 +80,10 @@ export interface LabelPart {
 }
 
 export interface AnonymizationRule {
-    labelParts: LabelPart[];
-    labelPrefix: string;
-    disabled: boolean;
-    logicalConditions: LogicalCondition[][];
+    labelParts?: LabelPart[];
+    labelPrefix?: string;
+    disabled?: boolean;
+    logicalConditions?: LogicalCondition[][] | null;
 }
 
 export interface NodeViewData {
@@ -109,8 +110,8 @@ export interface EdgeViewData {
     // filter: EdgeFilterData;
 }
 
-interface GraphViewData {
-    transformation: Transformation;
+export interface GraphViewData {
+    transformation?: Transformation;
     edge?: {
         minWidth?: number;
         maxWidth?: number;
@@ -150,23 +151,23 @@ interface EdgeDateFilterData {
 }
 
 export interface HighlightingRule {
-    name: string;
+    name: string | null;
     showInLegend: boolean;
     disabled?: boolean;
-    color: number[];
+    color: number[] | null;
     invisible: boolean;
     adjustThickness: boolean;
-    labelProperty: string;
-    valueCondition: ValueCondition;
-    logicalConditions: LogicalCondition[][];
+    labelProperty: string | null;
+    valueCondition: ValueCondition | null;
+    logicalConditions: LogicalCondition[][] | null;
 }
 
 export interface DeliveryHighlightingRule extends HighlightingRule {
-    linePattern: string;
+    linePattern: string | null;
 }
 
 export interface StationHighlightingRule extends HighlightingRule {
-    shape: string;
+    shape: string | null;
 }
 
 export interface LogicalCondition {
@@ -182,9 +183,7 @@ export interface ValueCondition {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ExplosionViewData {
-
-}
+interface ExplosionViewData {}
 
 interface DateData {
     year: number;
@@ -192,7 +191,7 @@ interface DateData {
     day: number;
 }
 
-interface Transformation {
+export interface Transformation {
     scale: XY;
     translation: XY;
 }
@@ -200,4 +199,15 @@ interface Transformation {
 interface XY {
     x: number;
     y: number;
+}
+
+export interface SampleData {
+    sampleStation: string;
+    sampledLot?: string | null;
+    result?: string | null;
+    resultType?: string | null;
+    time?: string | null;
+    amount?: string | null;
+    type?: string | null;
+    material?: string | null;
 }

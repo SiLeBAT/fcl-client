@@ -1,0 +1,40 @@
+name: Pull Request Checks
+on: pull_request
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 16
+            - run: npm ci
+            - run: npm run build:qa
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 16
+            - run: npm ci
+            - run: npm run test
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 16
+            - run: npm ci
+            - run: npm run lint
+    audit:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 16
+            - run: npm ci
+            - run: npm run audit -- --level=high --production

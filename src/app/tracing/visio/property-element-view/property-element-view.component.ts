@@ -1,14 +1,20 @@
-import { Component, Output, Input, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
-import { PropInfo } from '@app/tracing/shared/property-info';
+import {
+    Component,
+    Output,
+    Input,
+    EventEmitter,
+    OnChanges,
+    SimpleChanges,
+} from "@angular/core";
+import { MatSelectChange } from "@angular/material/select";
+import { PropInfo } from "@app/tracing/shared/property-info";
 
 @Component({
-    selector: 'fcl-property-element-view',
-    templateUrl: './property-element-view.component.html',
-    styleUrls: ['./property-element-view.component.scss']
+    selector: "fcl-property-element-view",
+    templateUrl: "./property-element-view.component.html",
+    styleUrls: ["./property-element-view.component.scss"],
 })
 export class PropertyElementViewComponent implements OnChanges {
-
     @Input() availableProps: PropInfo[];
     @Input() prop: string | null = null;
     @Input() altText: string;
@@ -17,14 +23,14 @@ export class PropertyElementViewComponent implements OnChanges {
     @Output() propChange = new EventEmitter<string | null>();
     @Output() altTextChange = new EventEmitter<string>();
 
-    private propWrapper_: string = '';
+    private propWrapper_: string = "";
 
     get propWrapper(): string {
         return this.propWrapper_;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.propWrapper_ = this.prop || '';
+        this.propWrapper_ = this.prop ?? "";
     }
 
     isActivePropAvailable(): boolean {

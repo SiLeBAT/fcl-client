@@ -1,20 +1,36 @@
 <div class="fcl-box">
-    <div class="fcl-label-row" *ngFor="let labelElementRow of labelElements; index as rowIndex">
-        <div class="fcl-label-item" *ngFor="let labelElement of labelElementRow; index as elementIndex">
-            <div *ngIf="labelElement.prop !== undefined;then propElement else textElement">
-            </div>
+    <div
+        class="fcl-label-row"
+        *ngFor="let labelElementRow of labelElements; index as rowIndex"
+    >
+        <div
+            class="fcl-label-item"
+            *ngFor="let labelElement of labelElementRow; index as elementIndex"
+        >
+            <div
+                *ngIf="
+                    labelElement.prop !== undefined;
+                    then propElement;
+                    else textElement
+                "
+            ></div>
             <ng-template #propElement>
                 <fcl-property-element-view
                     [prop]="labelElement.prop"
                     [altText]="labelElement.altText"
                     (propChange)="onPropElementPropChange(labelElement, $event)"
-                    (altTextChange)="onPropElementAltTextChange(labelElement, $event)"
+                    (altTextChange)="
+                        onPropElementAltTextChange(labelElement, $event)
+                    "
                     [availableProps]="availableProps"
                     [enableNullProp]="labelElement.isNullable"
                 ></fcl-property-element-view>
             </ng-template>
             <ng-template #textElement>
-                <fcl-text-element-view [(value)]="labelElement.text" matTooltip="Enter label text"></fcl-text-element-view>
+                <fcl-text-element-view
+                    [(value)]="labelElement.text"
+                    matTooltip="Enter label text"
+                ></fcl-text-element-view>
             </ng-template>
         </div>
     </div>

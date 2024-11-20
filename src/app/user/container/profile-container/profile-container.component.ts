@@ -1,20 +1,14 @@
-import { Component } from '@angular/core';
-import { TokenizedUser } from '../../models/user.model';
-import * as fromUser from '../../../user/state/user.reducer';
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import * as _ from 'lodash';
+import { Component } from "@angular/core";
+import * as fromUser from "../../../user/state/user.reducer";
+import { Store, select } from "@ngrx/store";
 
 @Component({
-    selector: 'fcl-profile-container',
-    templateUrl: './profile-container.component.html',
-    styleUrls: ['./profile-container.component.scss']
+    selector: "fcl-profile-container",
+    templateUrl: "./profile-container.component.html",
+    styleUrls: ["./profile-container.component.scss"],
 })
 export class ProfileContainerComponent {
-    currentUser$ = this.store.pipe(
-        select(fromUser.getCurrentUser)
-    );
+    currentUser$ = this.store.pipe(select(fromUser.getCurrentUser));
 
-    constructor(private store: Store<fromUser.State>) { }
-
+    constructor(private store: Store<fromUser.State>) {}
 }

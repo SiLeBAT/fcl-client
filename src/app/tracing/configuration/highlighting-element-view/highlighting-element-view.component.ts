@@ -1,11 +1,23 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { TableColumn } from '@app/tracing/data.model';
-import { HighlightingRuleDeleteRequestData, PropToValuesMap } from '../configuration.model';
-import * as _ from 'lodash';
-import { EditRule, RuleId, RuleListItem, RuleType } from '../model';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from "@angular/core";
+import { TableColumn } from "@app/tracing/data.model";
+import {
+    HighlightingRuleDeleteRequestData,
+    PropToValuesMap,
+} from "../configuration.model";
+import { EditRule, RuleId, RuleListItem, RuleType } from "../model";
+import { removeNullishPick } from "@app/tracing/util/non-ui-utils";
 
-@Component({ template: '' })
-export class HighlightingElementViewComponent<T extends EditRule> implements OnChanges {
+@Component({ template: "" })
+export class HighlightingElementViewComponent<T extends EditRule>
+    implements OnChanges
+{
     RuleType = RuleType;
 
     @Input() favouriteProperties: TableColumn[] = [];
@@ -17,7 +29,8 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
     @Output() ruleOrderChange = new EventEmitter<RuleId[]>();
     @Output() toggleRuleIsDisabled = new EventEmitter<RuleId>();
     @Output() toggleShowRuleInLegend = new EventEmitter<RuleId>();
-    @Output() deleteRule = new EventEmitter<HighlightingRuleDeleteRequestData>();
+    @Output() deleteRule =
+        new EventEmitter<HighlightingRuleDeleteRequestData>();
 
     @Output() newRule = new EventEmitter<RuleType>();
     @Output() startEdit = new EventEmitter<RuleId>();
@@ -29,7 +42,8 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
     @Output() removeSelectionFromRuleConditions = new EventEmitter<T>();
 
     private openState_: Record<string, boolean> = {};
-    private typeToListItemsMap_: Record<RuleType, RuleListItem[]> = {} as Record<RuleType, RuleListItem[]>;
+    private typeToListItemsMap_: Record<RuleType, RuleListItem[]> =
+        {} as Record<RuleType, RuleListItem[]>;
     private typeToEditRuleMap_: Record<RuleType, T> = {} as Record<RuleType, T>;
     private emptyArray = [];
 
@@ -42,7 +56,9 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
         }
     }
 
-    onDeleteRule(deleteRuleRequestData: HighlightingRuleDeleteRequestData): void {
+    onDeleteRule(
+        deleteRuleRequestData: HighlightingRuleDeleteRequestData,
+    ): void {
         this.deleteRule.emit(deleteRuleRequestData);
     }
 
@@ -105,8 +121,12 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
 
     private updateTypeToListItemsMap(): void {
         this.typeToListItemsMap_ = {} as Record<RuleType, RuleListItem[]>;
-        this.ruleListItems.filter(item => item.ruleType !== null).forEach(item => {
-            const list = this.typeToListItemsMap_[item.ruleType];
+        const ruleListItemsWithRuleType = removeNullishPick(
+            this.ruleListItems,
+            "ruleType",
+        );
+        ruleListItemsWithRuleType.forEach((item) => {
+            const list = this.typeToListItemsMap_[item.ruleType!];
             if (list === undefined) {
                 this.typeToListItemsMap_[item.ruleType] = [item];
             } else {
@@ -117,7 +137,7 @@ export class HighlightingElementViewComponent<T extends EditRule> implements OnC
 
     private updateTypeToEditRuleMap(): void {
         this.typeToEditRuleMap_ = {} as Record<RuleType, T>;
-        this.editRules.forEach(rule => {
+        this.editRules.forEach((rule) => {
             this.typeToEditRuleMap_[rule.type] = rule;
         });
     }

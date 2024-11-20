@@ -1,4 +1,4 @@
-@use '../../../../assets/sass/base' as fcl;
+@use "../../../../assets/sass/base" as fcl;
 
 $fcl-col-legend-width: 27px;
 $fcl-col-edit-width: 24px;
@@ -105,7 +105,10 @@ $fcl-font-size: 0.8rem;
     place-items: center center;
 }
 
-.fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+.fcl-rules-list-item-activated-slider.mat-slide-toggle.mat-checked:not(
+        .mat-disabled
+    )
+    .mat-slide-toggle-thumb {
     background-color: fcl.$fcl-primary-500;
 }
 

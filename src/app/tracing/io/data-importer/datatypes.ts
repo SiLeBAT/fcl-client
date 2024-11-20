@@ -1,4 +1,4 @@
-import { FclData } from '../../data.model';
+import { FclData } from "../../data.model";
 
 export interface IDataImporter {
     isDataFormatSupported(data: any): Promise<boolean>;

@@ -1,7 +1,11 @@
-import { FclData, JsonDataExtract } from './data.model';
-import { VisioReport } from './visio/layout-engine/datatypes';
-import { ConfigurationTabIndex, FilterSettings, HighlightingConfigurationSettings } from './configuration/configuration.model';
-import { ROASettings } from './visio/model';
+import { FclData, JsonDataExtract } from "./data.model";
+import { VisioReport } from "./visio/layout-engine/datatypes";
+import {
+    ConfigurationTabIndex,
+    FilterSettings,
+    HighlightingConfigurationSettings,
+} from "./configuration/configuration.model";
+import { ROASettings } from "./visio/model";
 
 export interface ModelDependentState {
     visioReport: VisioReport | null;
@@ -19,4 +23,5 @@ export interface TracingState extends ModelDependentState {
     animatingTabCount: number;
     isConfSideBarOpening: boolean;
     tracingActive: boolean;
+    isModelLoaded: boolean;
 }

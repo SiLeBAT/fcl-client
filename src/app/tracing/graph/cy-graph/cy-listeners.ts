@@ -1,12 +1,34 @@
-import { Cy, ContextMenuRequestInfo } from '../graph.model';
-import { Position } from '../../data.model';
+import { Cy, ContextMenuRequestInfo } from "../graph.model";
+import { Position } from "../../data.model";
 import {
-    CY_EVENT_BOX_SELECT, CY_EVENT_CXT_TAP, CY_EVENT_DRAG_FREE_ON, CY_EVENT_MOUSEDOWN, CY_EVENT_PAN,
-    CY_EVENT_TAP_END, CY_EVENT_TAP_SELECT, CY_EVENT_TAP_START, CY_EVENT_TAP_UNSELECT,
-    CY_EVENT_ZOOM
-} from './cy.constants';
+    CY_EVENT_BOX_END,
+    CY_EVENT_BOX_SELECT,
+    CY_EVENT_BOX_START,
+    CY_EVENT_CXT_TAP,
+    CY_EVENT_DRAG_FREE_ON,
+    CY_EVENT_MOUSEDOWN,
+    CY_EVENT_PAN,
+    CY_EVENT_TAP_END,
+    CY_EVENT_TAP_SELECT,
+    CY_EVENT_TAP_START,
+    CY_EVENT_TAP_UNSELECT,
+    CY_EVENT_ZOOM,
+} from "./cy.constants";
 
-export function addCyPanListeners(cy: Cy, onPanning: () => void, onPanEnd: () => void): void {
+export interface CyMouseEvent {
+    position: Position;
+    originalEvent: MouseEvent;
+}
+interface BoxStartProps {
+    isBoxZoom: boolean;
+    position?: Position;
+}
+
+export function addCyPanListeners(
+    cy: Cy,
+    onPanning: () => void,
+    onPanEnd: () => void,
+): void {
     let tapStarted = false;
     let isPanning = false;
     cy.on(CY_EVENT_PAN, () => {
@@ -31,7 +53,10 @@ export function addCyPanListeners(cy: Cy, onPanning: () => void, onPanEnd: () =>
     });
 }
 
-export function addCySelectionListener(cy: Cy, onSelectionChanged: (shift: boolean) => void): void {
+export function addCySelectionListener(
+    cy: Cy,
+    onSelectionChanged: (shift: boolean) => void,
+): void {
     let triggerListener = true;
     let shiftOnLastMouseDown = false;
 
@@ -47,12 +72,14 @@ export function addCySelectionListener(cy: Cy, onSelectionChanged: (shift: boole
         }
     };
     // store shift on mouse down
-    cy.on(CY_EVENT_MOUSEDOWN, (event: { originalEvent: MouseEvent }) => {
+    cy.on(CY_EVENT_MOUSEDOWN, (event: CyMouseEvent) => {
         shiftOnLastMouseDown = event.originalEvent.shiftKey;
     });
     // click un/selection
     cy.on(CY_EVENT_TAP_SELECT, () => selectionProcessor(shiftOnLastMouseDown));
-    cy.on(CY_EVENT_TAP_UNSELECT, () => selectionProcessor(shiftOnLastMouseDown));
+    cy.on(CY_EVENT_TAP_UNSELECT, () =>
+        selectionProcessor(shiftOnLastMouseDown),
+    );
 
     // box selection
     cy.on(CY_EVENT_BOX_SELECT, () => selectionProcessor(true));
@@ -66,25 +93,59 @@ export function addCyZoomListener(cy: Cy, onZoom: () => void): void {
     cy.on(CY_EVENT_ZOOM, onZoom);
 }
 
+export function addCyBoxZoomListerner(
+    cy: Cy,
+    onBoxZoom: (boxStartPosition: Position, boxEndPosition: Position) => void,
+): void {
+    let boxZoomStartPosition: Position | null = null;
+
+    cy.on(CY_EVENT_BOX_START, (event: CyMouseEvent) => {
+        // Checking both ctrl and meta key because Windows & Linux generally use ctrl, while Mac uses the Cmd key.
+        const isBoxZoom =
+            event.originalEvent.ctrlKey || event.originalEvent.metaKey;
+        if (isBoxZoom) {
+            boxZoomStartPosition = event.position;
+            cy.elements().unselectify();
+        }
+    });
+
+    cy.on(CY_EVENT_BOX_END, (event: CyMouseEvent) => {
+        if (!boxZoomStartPosition) {
+            return;
+        }
+        onBoxZoom(boxZoomStartPosition, event.position);
+        boxZoomStartPosition = null;
+        window.setTimeout(() => {
+            cy.elements().selectify();
+        }, 0);
+    });
+}
+
 export function addCyContextMenuRequestListener(
     cy: Cy,
-    onContextMenuRequest: (info: ContextMenuRequestInfo) => void
+    onContextMenuRequest: (info: ContextMenuRequestInfo) => void,
 ) {
     // context menu open
-    cy.on(CY_EVENT_CXT_TAP, event => {
+    cy.on(CY_EVENT_CXT_TAP, (event) => {
         const contextElement = event.target;
 
         const position: Position = {
             x: event.originalEvent.offsetX,
-            y: event.originalEvent.offsetY
+            y: event.originalEvent.offsetY,
         };
 
         onContextMenuRequest({
             position: position,
             hoverContext: {
-                nodeId: contextElement.isNode && contextElement.isNode() ? contextElement.id() : undefined,
-                edgeId: contextElement.isEdge && contextElement.isEdge() ? contextElement.id() : undefined
-            }
+                nodeId:
+                    contextElement.isNode && contextElement.isNode()
+                        ? contextElement.id()
+                        : undefined,
+                edgeId:
+                    contextElement.isEdge && contextElement.isEdge()
+                        ? contextElement.id()
+                        : undefined,
+            },
         });
     });
 }

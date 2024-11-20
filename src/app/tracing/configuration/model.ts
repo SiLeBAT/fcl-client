@@ -1,8 +1,12 @@
 import {
-    Color, DataServiceInputState, LabelPart,
-    NodeShapeType, TableColumn, TableRow
-} from '../data.model';
-import { ComplexFilterCondition, PropToValuesMap } from './configuration.model';
+    Color,
+    DataServiceInputState,
+    LabelPart,
+    NodeShapeType,
+    TableColumn,
+    TableRow,
+} from "../data.model";
+import { ComplexFilterCondition, PropToValuesMap } from "./configuration.model";
 
 export interface RowFilter<T> {
     filter(arr: TableRow[]): TableRow[];
@@ -15,10 +19,11 @@ export interface TextFilterSettings {
 }
 
 export enum TableType {
-    STATIONS, DELIVERIES
+    STATIONS,
+    DELIVERIES,
 }
 
-export type TreeStatus = 'collapsed' | 'expanded';
+export type TreeStatus = "collapsed" | "expanded";
 
 export interface EditHighlightingServiceData {
     favouriteProperties: TableColumn[];
@@ -50,10 +55,17 @@ export interface EditRuleCore {
     isValid: boolean;
 }
 
-export type EditRule = ColorAndShapeEditRule | ColorEditRule | LabelEditRule | InvEditRule;
+export type EditRule =
+    | ColorAndShapeEditRule
+    | ColorEditRule
+    | LabelEditRule
+    | InvEditRule;
 
 export enum RuleType {
-    INVISIBILITY, LABEL, COLOR_AND_SHAPE, COLOR
+    INVISIBILITY,
+    LABEL,
+    COLOR_AND_SHAPE,
+    COLOR,
 }
 
 export interface ColorAndShapeEditRule extends EditRuleCore {
@@ -87,7 +99,10 @@ export interface InvEditRule extends EditRuleCore {
     type: RuleType.INVISIBILITY;
 }
 
-export type StationEditRule = ColorAndShapeEditRule | LabelEditRule | InvEditRule; //  | ComposedLabelEditRule;
+export type StationEditRule =
+    | ColorAndShapeEditRule
+    | LabelEditRule
+    | InvEditRule;
 export type DeliveryEditRule = LabelEditRule | InvEditRule | ColorEditRule;
 
 export type DeliveryRuleType = RuleType.LABEL | RuleType.COLOR;

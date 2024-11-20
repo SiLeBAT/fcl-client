@@ -1,21 +1,31 @@
-@use '@angular/material' as mat;
-@use 'node_modules/normalize.css/normalize.css';
-@use 'node_modules/@swimlane/ngx-datatable/index.css';
-@use 'node_modules/@swimlane/ngx-datatable/assets/icons.css';
-@use 'node_modules/ol/ol.css';
-@use 'assets/sass/base' as fcl;
-@use 'material-style';
-@use 'ngx-datatable-style';
+@use "@angular/material" as mat;
+@use "node_modules/normalize.css/normalize.css";
+@use "node_modules/@siemens/ngx-datatable/index.css";
+@use "node_modules/@siemens/ngx-datatable/assets/icons.css";
+@use "node_modules/ol/ol.css";
+@use "assets/sass/base" as fcl;
+@use "material-style";
+@use "ngx-datatable-style";
 
-$roboto-font-path: '~roboto-fontface/fonts' !default;
+$roboto-font-path: "~roboto-fontface/fonts" !default;
 /* stylelint-disable-next-line at-rule-empty-line-before */
-@import '~roboto-fontface/css/roboto/sass/roboto-fontface';
+@import "roboto-fontface/css/roboto/sass/roboto-fontface";
 
-@include mat.core(fcl.$fcl-typography);
-@include mat.all-component-themes(fcl.$fcl-theme);
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(fcl.$fcl-typography);`
+@include mat.all-legacy-component-typographies(fcl.$fcl-typography);
+/* stylelint-disable-next-line scss/at-mixin-argumentless-call-parentheses */
+@include mat.legacy-core();
+@include mat.all-legacy-component-themes(fcl.$fcl-theme);
 
 body {
-    font-family: fcl.$fcl-font-family;
+    font-family: #{fcl.$fcl-font-family};
 }
 
 *,
@@ -109,16 +119,21 @@ mat-form-field.less-bottom-padding {
     opacity: 0.5;
 }
 
+.fcl-toolbar-item {
+    .mat-button.mat-button-disabled.mat-button-disabled,
+    .mat-icon-button.mat-button-disabled.mat-button-disabled,
+    .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-label-content {
+        color: rgb(255 255 255 / 0.5);
+    }
+}
+
 .fcl-toolbar-item .mat-radio-button.mat-accent .mat-radio-outer-circle {
     border-color: white;
 }
 
-.fcl-toolbar-item .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-outer-circle {
-    opacity: 0.5;
-}
-
-.fcl-toolbar-item .mat-radio-button.mat-radio-disabled.mat-accent .mat-radio-label-content {
-    color: white;
+.fcl-toolbar-item
+    .mat-radio-button.mat-radio-disabled.mat-accent
+    .mat-radio-outer-circle {
     opacity: 0.5;
 }
 
@@ -194,4 +209,8 @@ mat-form-field.less-bottom-padding {
 
 .cdk-virtual-scrollable.fcl-condition-list-container {
     contain: none;
+}
+
+.mat-checkbox.fcl-option-unsupported .mat-checkbox-label {
+    color: fcl.$fcl-foreground-color--disabled;
 }

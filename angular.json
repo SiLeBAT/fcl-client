@@ -1,216 +1,225 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-    "fcl-web-app": {
-      "root": "",
-      "sourceRoot": "src",
-      "projectType": "application",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "allowedCommonJsDependencies": [
-              "cytoscape",
-              "cytoscape-cola",
-              "cytoscape-dagre",
-              "cytoscape-spread",
-              "rbush",
-              "ajv",
-              "css-element-queries",
-              "assert",
-              "pbf",
-              "pixelworks/lib/index",
-              "javascript-lp-solver",
-              "lodash",
-              "seedrandom"
-            ],
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "src/assets/",
-                "output": "/assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/mxgraph/javascript/src",
-                "output": "/assets/mxgraph"
-              },
-              "src/favicon.png"
-            ],
-            "styles": [
-              "src/styles.scss",
-              "src/assets/mxgraph-grapheditor/styles/grapheditor.css"
-            ],
-            "scripts": [
-              "node_modules/hammerjs/hammer.min.js",
-              "src/assets/mxgraph-grapheditor/js/Init.js",
-              "src/assets/mxgraph-grapheditor/deflate/pako.min.js",
-              "src/assets/mxgraph-grapheditor/deflate/base64.js",
-              "src/assets/mxgraph-grapheditor/jscolor/jscolor.js",
-              "src/assets/mxgraph-grapheditor/sanitizer/sanitizer.min.js",
-              "src/assets/js/mxgraph.conf.js",
-              "node_modules/mxgraph/javascript/mxClient.js",
-              "src/assets/mxgraph-grapheditor/js/EditorUi.js",
-              "src/assets/mxgraph-grapheditor/js/Editor.js",
-              "src/assets/mxgraph-grapheditor/js/Sidebar.js",
-              "src/assets/mxgraph-grapheditor/js/Graph.js",
-              "src/assets/mxgraph-grapheditor/js/Format.js",
-              "src/assets/mxgraph-grapheditor/js/Shapes.js",
-              "src/assets/mxgraph-grapheditor/js/Actions.js",
-              "src/assets/mxgraph-grapheditor/js/Menus.js",
-              "src/assets/mxgraph-grapheditor/js/Toolbar.js",
-              "src/assets/mxgraph-grapheditor/js/Dialogs.js"
-            ],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "fcl-web-app": {
+            "root": "",
+            "sourceRoot": "src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "allowedCommonJsDependencies": [
+                            "cytoscape",
+                            "cytoscape-cola",
+                            "cytoscape-dagre",
+                            "cytoscape-spread",
+                            "rbush",
+                            "ajv",
+                            "css-element-queries",
+                            "assert",
+                            "pbf",
+                            "pixelworks/lib/index",
+                            "javascript-lp-solver",
+                            "lodash",
+                            "seedrandom",
+                            "html2canvas",
+                            "moment",
+                            "exceljs",
+                            "immutable"
+                        ],
+                        "outputPath": "dist",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "tsConfig": "src/tsconfig.app.json",
+                        "polyfills": "src/polyfills.ts",
+                        "assets": [
+                            {
+                                "glob": "**/*",
+                                "input": "src/assets/",
+                                "output": "/assets/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/mxgraph/javascript/src",
+                                "output": "/assets/mxgraph"
+                            },
+                            "src/favicon.png"
+                        ],
+                        "styles": [
+                            "src/styles.scss",
+                            "src/assets/mxgraph-grapheditor/styles/grapheditor.css"
+                        ],
+                        "scripts": [
+                            "node_modules/hammerjs/hammer.min.js",
+                            "src/assets/mxgraph-grapheditor/js/Init.js",
+                            "src/assets/mxgraph-grapheditor/deflate/pako.min.js",
+                            "src/assets/mxgraph-grapheditor/deflate/base64.js",
+                            "src/assets/mxgraph-grapheditor/jscolor/jscolor.js",
+                            "src/assets/mxgraph-grapheditor/sanitizer/sanitizer.min.js",
+                            "src/assets/js/mxgraph.conf.js",
+                            "node_modules/mxgraph/javascript/mxClient.js",
+                            "src/assets/mxgraph-grapheditor/js/EditorUi.js",
+                            "src/assets/mxgraph-grapheditor/js/Editor.js",
+                            "src/assets/mxgraph-grapheditor/js/Sidebar.js",
+                            "src/assets/mxgraph-grapheditor/js/Graph.js",
+                            "src/assets/mxgraph-grapheditor/js/Format.js",
+                            "src/assets/mxgraph-grapheditor/js/Shapes.js",
+                            "src/assets/mxgraph-grapheditor/js/Actions.js",
+                            "src/assets/mxgraph-grapheditor/js/Menus.js",
+                            "src/assets/mxgraph-grapheditor/js/Toolbar.js",
+                            "src/assets/mxgraph-grapheditor/js/Dialogs.js"
+                        ],
+                        "vendorChunk": true,
+                        "extractLicenses": false,
+                        "buildOptimizer": false,
+                        "sourceMap": true,
+                        "optimization": false,
+                        "namedChunks": true,
+                        "stylePreprocessorOptions": {
+                            "includePaths": ["node_modules/"]
+                        }
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ]
+                        },
+                        "qa": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.qa.ts"
+                                }
+                            ]
+                        },
+                        "development": {
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "buildOptimizer": false,
+                            "sourceMap": true,
+                            "optimization": false,
+                            "namedChunks": true
+                        },
+                        "serverless": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.serverless.ts"
+                                }
+                            ]
+                        },
+                        "serverlessprod": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.serverlessprod.ts"
+                                }
+                            ]
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "browserTarget": "fcl-web-app:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "fcl-web-app:build:production"
+                        },
+                        "qa": {
+                            "browserTarget": "fcl-web-app:build:qa"
+                        },
+                        "development": {
+                            "browserTarget": "fcl-web-app:build:development"
+                        },
+                        "serverless": {
+                            "browserTarget": "fcl-web-app:build:serverless"
+                        },
+                        "serverelessprod": {
+                            "browserTarget": "fcl-web-app:build:serverlessprod"
+                        }
+                    },
+                    "defaultConfiguration": "development"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "fcl-web-app:build"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+                    }
                 }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
-            },
-            "qa": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.qa.ts"
-                }
-              ]
-            },
-            "development": {
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "buildOptimizer": false,
-              "sourceMap": true,
-              "optimization": false,
-              "namedChunks": true
-            },
-            "serverless": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.serverless.ts"
-                }
-              ]
-            },
-            "serverlessprod": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.serverlessprod.ts"
-                }
-              ]
             }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "fcl-web-app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "fcl-web-app:build:production"
-            },
-            "qa": {
-              "browserTarget": "fcl-web-app:build:qa"
-            },
-            "development": {
-              "browserTarget": "fcl-web-app:build:development"
-            },
-            "serverless": {
-              "browserTarget": "fcl-web-app:build:serverless"
-            },
-            "serverelessprod": {
-              "browserTarget": "fcl-web-app:build:serverlessprod"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "fcl-web-app:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
-          }
         }
-      }
-    }
-  },
-  "schematics": {
-    "@schematics/angular:component": {
-      "prefix": "fcl",
-      "style": "scss"
     },
-    "@schematics/angular:directive": {
-      "prefix": "fcl"
+    "schematics": {
+        "@schematics/angular:component": {
+            "prefix": "fcl",
+            "style": "scss"
+        },
+        "@schematics/angular:directive": {
+            "prefix": "fcl"
+        },
+        "@angular-eslint/schematics:application": {
+            "setParserOptionsProject": true
+        },
+        "@angular-eslint/schematics:library": {
+            "setParserOptionsProject": true
+        }
+    },
+    "cli": {
+        "schematicCollections": ["@angular-eslint/schematics"],
+        "analytics": false
     }
-  },
-  "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
-  }
 }

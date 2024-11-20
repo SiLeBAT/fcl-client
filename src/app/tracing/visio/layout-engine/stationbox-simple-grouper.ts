@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
-import { VisioBox, Position, Size, BoxType } from './datatypes';
-import { LabelCreator } from './label-creator';
-import { GraphSettings } from './graph-settings';
-import { getDifference } from '@app/tracing/util/geometry-utils';
+import { VisioBox, Position, Size, BoxType } from "./datatypes";
+import { LabelCreator } from "./label-creator";
+import { GraphSettings } from "./graph-settings";
+import { getDifference } from "@app/tracing/util/geometry-utils";
+import { concat } from "@app/tracing/util/non-ui-utils";
 
 interface BoxGroup {
     label: string;
@@ -17,41 +17,58 @@ interface VisualBoxGroup {
     boxes: VisioBox[];
 }
 
-export function groupStationBoxes(logicalBoxGroups: BoxGroup[], labelCreator: LabelCreator): VisioBox[] {
-    addTopAndLeftMargin([].concat(...logicalBoxGroups.map(g => g.boxes)));
+export function groupStationBoxes(
+    logicalBoxGroups: BoxGroup[],
+    labelCreator: LabelCreator,
+): VisioBox[] {
+    addTopAndLeftMargin(concat(...logicalBoxGroups.map((g) => g.boxes)));
     let visGroups = initVisualGroups(logicalBoxGroups);
     visGroups = aggregateVisualGroups(visGroups);
-    return visGroups.map(g => convertToVisioBox(g, labelCreator));
+    return visGroups.map((g) => convertToVisioBox(g, labelCreator));
 }
 
 function addTopAndLeftMargin(boxes: VisioBox[]) {
-    const left = Math.min(...boxes.map(b => b.position.x)) - GraphSettings.GRID_MARGIN - GraphSettings.GROUP_MARGIN;
-    boxes.forEach(b => b.position = getDifference(b.position, { x: left, y: 0 }));
+    const left =
+        Math.min(...boxes.map((b) => b.position!.x)) -
+        GraphSettings.GRID_MARGIN -
+        GraphSettings.GROUP_MARGIN;
+    boxes.forEach(
+        (b) => (b.position = getDifference(b.position!, { x: left, y: 0 })),
+    );
 }
 
-function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): VisioBox {
+function convertToVisioBox(
+    visBox: VisualBoxGroup,
+    labelCreator: LabelCreator,
+): VisioBox {
     const LEFTMARGIN = GraphSettings.GROUP_MARGIN;
     const RIGHTMARGIN = GraphSettings.GROUP_MARGIN;
-    const TOPMARGIN = GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT;
+    const TOPMARGIN =
+        GraphSettings.GROUP_MARGIN + GraphSettings.GROUP_HEADER_HEIGHT;
     const BOTTOMMARGIN = GraphSettings.GROUP_MARGIN;
     const visioBox: VisioBox = {
         type: BoxType.StationGroup,
         relPosition: {
             x: visBox.position.x - LEFTMARGIN,
-            y: visBox.position.y - TOPMARGIN
+            y: visBox.position.y - TOPMARGIN,
         },
         size: {
             width: visBox.size.width + LEFTMARGIN + RIGHTMARGIN,
-            height: visBox.size.height + TOPMARGIN + BOTTOMMARGIN
+            height: visBox.size.height + TOPMARGIN + BOTTOMMARGIN,
         },
-        position: null,
         ports: [],
         elements: visBox.boxes,
-        shape: null,
-        label: labelCreator.getLabel([visBox.label], GraphSettings.GROUP_MARGIN)
+        labels: [
+            labelCreator.getLabel([visBox.label], GraphSettings.GROUP_MARGIN, {
+                bold: true,
+            }),
+        ],
     };
 
-    visioBox.elements.forEach(b => b.relPosition = getDifference(b.position, visioBox.relPosition));
+    visioBox.elements.forEach(
+        (b) =>
+            (b.relPosition = getDifference(b.position!, visioBox.relPosition)),
+    );
 
     return visioBox;
 }
@@ -59,15 +76,15 @@ function convertToVisioBox(visBox: VisualBoxGroup, labelCreator: LabelCreator): 
 function initVisualGroups(logicalBoxGroups: BoxGroup[]): VisualBoxGroup[] {
     const result: VisualBoxGroup[] = [];
     logicalBoxGroups.forEach((logBoxGroup, groupIndex) =>
-        logBoxGroup.boxes.forEach(box => {
+        logBoxGroup.boxes.forEach((box) => {
             result.push({
-                position: { ...box.position },
+                position: { ...box.position! },
                 size: { ...box.size },
                 logicalGroupIndex: groupIndex,
                 label: logBoxGroup.label,
-                boxes: [box]
+                boxes: [box],
             });
-        })
+        }),
     );
     return result;
 }
@@ -79,20 +96,20 @@ function aggregateVisualGroups(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
 }
 
 function aggregateHorizontally(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
-    visGroups.sort(
-        (b1: VisualBoxGroup, b2: VisualBoxGroup) =>
-            b1.position.y !== b2.position.y ? b1.position.y - b2.position.y : b1.position.x - b2.position.x
+    visGroups.sort((b1: VisualBoxGroup, b2: VisualBoxGroup) =>
+        b1.position.y !== b2.position.y
+            ? b1.position.y - b2.position.y
+            : b1.position.x - b2.position.x,
     );
     let i = 0;
     while (i < visGroups.length - 1) {
         if (
-            visGroups[i].logicalGroupIndex === visGroups[i + 1].logicalGroupIndex &&
+            visGroups[i].logicalGroupIndex ===
+                visGroups[i + 1].logicalGroupIndex &&
             visGroups[i].position.y === visGroups[i + 1].position.y
         ) {
-
-            visGroups[i] = mergeGroups([ visGroups[i], visGroups[i + 1] ]);
+            visGroups[i] = mergeGroups([visGroups[i], visGroups[i + 1]]);
             visGroups.splice(i + 1, 1);
-
         } else {
             i++;
         }
@@ -109,7 +126,10 @@ function aggregateVertically(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
             const mergeBox2 = visGroups[i2];
             if (
                 mergeBox1.logicalGroupIndex === mergeBox2.logicalGroupIndex &&
-                !visGroups.some((testBox) => !doesMergeRespectBox(mergeBox1, mergeBox2, testBox))
+                !visGroups.some(
+                    (testBox) =>
+                        !doesMergeRespectBox(mergeBox1, mergeBox2, testBox),
+                )
             ) {
                 // mergeGroups
                 visGroups[i1] = mergeGroups([mergeBox1, mergeBox2]);
@@ -123,40 +143,60 @@ function aggregateVertically(visGroups: VisualBoxGroup[]): VisualBoxGroup[] {
     return visGroups;
 }
 
-function doesMergeRespectBox(mergeBox1: VisualBoxGroup, mergeBox2: VisualBoxGroup, testBox: VisualBoxGroup): boolean {
+function doesMergeRespectBox(
+    mergeBox1: VisualBoxGroup,
+    mergeBox2: VisualBoxGroup,
+    testBox: VisualBoxGroup,
+): boolean {
     if (testBox === mergeBox1 || testBox === mergeBox2) {
         return true;
     } else {
-        const MARGIN = GraphSettings.GROUP_MARGIN + GraphSettings.GRID_MARGIN / 2;
-        const mergeLeft = Math.min(mergeBox1.position.x, mergeBox2.position.x) - MARGIN;
-        const mergeTop = Math.min(mergeBox1.position.y, mergeBox2.position.y)
-            - (MARGIN + GraphSettings.GROUP_HEADER_HEIGHT);
-        const mergeRight = Math.max(mergeBox1.position.x + mergeBox1.size.width, mergeBox2.position.x + mergeBox2.size.width) + MARGIN;
-        const mergeBottom = Math.max(mergeBox1.position.y + mergeBox1.size.height, mergeBox2.position.y + mergeBox2.size.height) + MARGIN;
+        const MARGIN =
+            GraphSettings.GROUP_MARGIN + GraphSettings.GRID_MARGIN / 2;
+        const mergeLeft =
+            Math.min(mergeBox1.position.x, mergeBox2.position.x) - MARGIN;
+        const mergeTop =
+            Math.min(mergeBox1.position.y, mergeBox2.position.y) -
+            (MARGIN + GraphSettings.GROUP_HEADER_HEIGHT);
+        const mergeRight =
+            Math.max(
+                mergeBox1.position.x + mergeBox1.size.width,
+                mergeBox2.position.x + mergeBox2.size.width,
+            ) + MARGIN;
+        const mergeBottom =
+            Math.max(
+                mergeBox1.position.y + mergeBox1.size.height,
+                mergeBox2.position.y + mergeBox2.size.height,
+            ) + MARGIN;
 
         const testLeft = testBox.position.x - MARGIN;
-        const testTop = testBox.position.y - (MARGIN + GraphSettings.GROUP_HEADER_HEIGHT);
+        const testTop =
+            testBox.position.y - (MARGIN + GraphSettings.GROUP_HEADER_HEIGHT);
         const testRight = testBox.position.x + testBox.size.width + MARGIN;
         const testBottom = testBox.position.y + testBox.size.height + MARGIN;
 
-        return testLeft > mergeRight || testRight < mergeLeft || testTop > mergeBottom || testBottom < mergeTop;
-
+        return (
+            testLeft > mergeRight ||
+            testRight < mergeLeft ||
+            testTop > mergeBottom ||
+            testBottom < mergeTop
+        );
     }
 }
 
 function mergeGroups(groups: VisualBoxGroup[]): VisualBoxGroup {
-    const left = Math.min(...groups.map(g => g.position.x));
-    const top = Math.min(...groups.map(g => g.position.y));
-    const right = Math.max(...groups.map(g => g.position.x + g.size.width));
-    const bottom = Math.max(...groups.map(g => g.position.y + g.size.height));
+    const left = Math.min(...groups.map((g) => g.position.x));
+    const top = Math.min(...groups.map((g) => g.position.y));
+    const right = Math.max(...groups.map((g) => g.position.x + g.size.width));
+    const bottom = Math.max(...groups.map((g) => g.position.y + g.size.height));
     return {
         position: { x: left, y: top },
         size: {
             width: right - left,
-            height: bottom - top
+            height: bottom - top,
         },
         logicalGroupIndex: groups[0].logicalGroupIndex,
         label: groups[0].label,
-        boxes: [].concat(...groups.map(g => g.boxes))
+        boxes: concat(...groups.map((g) => g.boxes)),
     };
 }

@@ -5,5 +5,7 @@
     [dashboardActive]="dashboardActive$ | async"
     [loginActive]="loginActive$ | async"
     [currentUser]="currentUser$ | async"
-    (toggleRightSideBar)="toggleRightSideBar($event)">
+    (toggleRightSideBar)="toggleRightSideBar($event)"
+    [isModelLoaded]="isModelLoaded$ | async"
+>
 </fcl-page-header>

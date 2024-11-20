@@ -60,7 +60,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 <span
                   class="mat-button-wrapper"
                 >
-                  Register
+                   Register 
                 </span>
                 <span
                   class="mat-ripple mat-button-ripple"
@@ -79,7 +79,7 @@ exports[`LoginViewComponent should render the component correctly 1`] = `
                 <span
                   class="mat-button-wrapper"
                 >
-                  Password forgotten?
+                   Password forgotten? 
                 </span>
                 <span
                   class="mat-ripple mat-button-ripple"

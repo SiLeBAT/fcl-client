@@ -2,7 +2,6 @@
 
 exports[`ResetComponent should render the component correctly 1`] = `
 <fcl-reset
-  elementRef={[Function ElementRef]}
   reset={[Function EventEmitter_]}
   resetForm={[Function FormGroup]}
   serverValidationErrors={[Function Array]}
@@ -29,6 +28,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
         <mat-form-field
           appearance="standard"
           class="mat-form-field fcl-form-field mat-primary"
+          ngskiphydration=""
         >
           <div
             class="mat-form-field-wrapper"
@@ -40,7 +40,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   fclfocusafterviewinit=""
                   formcontrolname="password1"
                   matinput=""
@@ -67,6 +67,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
         <mat-form-field
           appearance="standard"
           class="mat-form-field fcl-form-field mat-primary"
+          ngskiphydration=""
         >
           <div
             class="mat-form-field-wrapper"
@@ -78,7 +79,7 @@ exports[`ResetComponent should render the component correctly 1`] = `
                 class="mat-form-field-infix"
               >
                 <input
-                  class="mat-input-element mat-form-field-autofill-control"
+                  class="mat-input-element mat-form-field-autofill-control mat-mdc-input-element"
                   formcontrolname="password2"
                   matinput=""
                   name="password2"

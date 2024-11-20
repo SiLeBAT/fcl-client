@@ -1,15 +1,15 @@
-<ng-container *ngIf="row.parentRowId === undefined">
+<ng-container *ngIf="row && row.parentRowId === undefined">
     <!-- No child row -->
     <fcl-node-symbol-view
         *ngIf="!row.invisible"
         class="fcl-row-symbol"
         [dataTableShapeType]="row.highlightingInfo.shape"
         [mapStationColor]="row.highlightingInfo.color"
-    ></fcl-node-symbol-view>
+    />
     <fcl-node-symbol-view
         *ngIf="row.invisible"
         class="fcl-row-symbol fcl-column-visibility-header-icon unsorted pointable fcl-invisible-data-row-cell"
         [dataTableShapeType]="row.highlightingInfo.shape"
-        [mapStationColor]="[[211, 211, 211]]"
-    ></fcl-node-symbol-view>
+        [mapStationColor]="[invisibleColor]"
+    />
 </ng-container>

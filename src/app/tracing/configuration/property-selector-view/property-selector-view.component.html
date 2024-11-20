@@ -1,7 +1,8 @@
 <mat-form-field
     class="fcl-complex-filter-form-field"
     appearance="outline"
-    color="primary">
+    color="primary"
+>
     <mat-label *ngIf="label !== null">{{ label }}</mat-label>
     <mat-select
         [ngClass]="isPropDataUnavailable ? 'fcl-option-unsupported' : ''"
@@ -9,32 +10,45 @@
         [value]="value"
         (valueChange)="onValueChange($event)"
         [disabled]="disabled"
-        placeholder="property">
+        placeholder="property"
+    >
         <ng-container *ngFor="let property of favouriteProperties">
             <mat-option
                 class="fcl-filter-select-option"
-                [ngClass]="property.unavailable ? 'fcl-option-unsupported' : ''"
-                matTooltip="{{ property.unavailable ? 'Data is not available.' : '' }}"
-                [value]="property.id">
+                [ngClass]="
+                    property.dataIsUnavailable ? 'fcl-option-unsupported' : ''
+                "
+                matTooltip="{{
+                    property.dataIsUnavailable ? 'Data is not available.' : ''
+                }}"
+                [value]="property.id"
+            >
                 {{ property.name }}
             </mat-option>
         </ng-container>
         <mat-option disabled>
-            <hr>
+            <hr />
         </mat-option>
         <ng-container *ngFor="let property of otherProperties">
             <mat-option
                 class="fcl-filter-select-option"
-                [ngClass]="property.unavailable ? 'fcl-option-unsupported' : ''"
-                matTooltip="{{ property.unavailable ? 'Data is not available.' : '' }}"
-                [value]="property.id">
+                [ngClass]="
+                    property.dataIsUnavailable ? 'fcl-option-unsupported' : ''
+                "
+                matTooltip="{{
+                    property.dataIsUnavailable ? 'Data is not available.' : ''
+                }}"
+                [value]="property.id"
+            >
                 {{ property.name }}
             </mat-option>
         </ng-container>
         <mat-option
             *ngIf="isPropNotListed"
-            class="fcl-filter-select-option"
-            [value]="value">
+            class="fcl-filter-select-option fcl-option-unsupported"
+            matTooltip="Data is not available."
+            [value]="value"
+        >
             {{ value }}
         </mat-option>
     </mat-select>

@@ -1,15 +1,18 @@
 <div class="fcl-box">
-    <div class="fcl-text-box"
+    <div
+        class="fcl-text-box"
         contenteditable="true"
         (paste)="onPaste($event)"
-        style="user-drag: none;"
+        style="user-drag: none"
         (keydown)="onKeyDown($event)"
         (input)="onInput($event)"
         ondragenter="return false;"
         ondragleave="return false;"
         ondragover="return false;"
         ondrop="return false;"
-    >{{initialValue}}</div>
+    >
+        {{ initialValue }}
+    </div>
     <div class="fcl-inline-block">&zwnj;</div>
     <!-- the zero width symbol here is needed, otherwise an empty text content in the above box would cause
          alignment problems, size problems, caret positions problems  -->

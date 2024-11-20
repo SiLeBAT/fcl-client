@@ -1,13 +1,29 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import * as d3 from 'd3-selection';
+import {
+    Component,
+    ElementRef,
+    Inject,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from "@angular/core";
+import {
+    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+    MatLegacyDialogRef as MatDialogRef,
+} from "@angular/material/legacy-dialog";
+import * as d3 from "d3-selection";
 
-import { DeliveryData, StationData, DeliveryId, StationId, TableColumn } from '../../data.model';
-import { Constants } from '../../util/constants';
-import { Utils } from '../../util/non-ui-utils';
-import { State } from '@app/tracing/state/tracing.reducers';
-import { Store } from '@ngrx/store';
-import { SetHoverDeliveriesSOA } from '@app/tracing/state/tracing.actions';
+import {
+    DeliveryData,
+    StationData,
+    DeliveryId,
+    StationId,
+    TableColumn,
+} from "../../data.model";
+import { Constants } from "../../util/constants";
+import { concat, Utils } from "../../util/non-ui-utils";
+import { State } from "@app/tracing/state/tracing.reducers";
+import { Store } from "@ngrx/store";
+import { SetHoverDeliveriesSOA } from "@app/tracing/state/tracing.actions";
 
 export interface StationPropertiesData {
     station: StationData;
@@ -29,11 +45,12 @@ interface Properties {
 
 interface NodeDatum {
     id: DeliveryId | LotKey;
-    name: string;
-    station: string;
+    name?: string;
+    station?: string;
     deliveryIds: DeliveryId[];
-    lot: string;
-    date: string;
+    lot?: string;
+    date?: string;
+    invisible: boolean;
     x: number;
     y: number;
 }
@@ -41,16 +58,20 @@ interface NodeDatum {
 interface EdgeDatum {
     source: NodeDatum;
     target: NodeDatum;
+    invisible: boolean;
 }
 
 class DataOptimizer {
-
     private inIds: string[];
     private inConnections: Map<string, string[]>;
     private outIds: string[];
     private outConnections: Map<string, string[]>;
 
-    constructor(private nodeInData: NodeDatum[], private nodeOutData: NodeDatum[], private edgeData: EdgeDatum[]) {
+    constructor(
+        private nodeInData: NodeDatum[],
+        private nodeOutData: NodeDatum[],
+        private edgeData: EdgeDatum[],
+    ) {
         this.inIds = [];
         this.inConnections = new Map();
         this.outIds = [];
@@ -67,8 +88,8 @@ class DataOptimizer {
         }
 
         for (const e of edgeData) {
-            this.inConnections.get(e.source.id).push(e.target.id);
-            this.outConnections.get(e.target.id).push(e.source.id);
+            this.inConnections.get(e.source.id)!.push(e.target.id);
+            this.outConnections.get(e.target.id)!.push(e.source.id);
         }
     }
 
@@ -76,8 +97,8 @@ class DataOptimizer {
         this.step(this.inIds, this.inConnections, this.outIds);
         this.step(this.outIds, this.outConnections, this.inIds);
 
-        const nodesInById: Map<string, NodeDatum> = new Map();
-        const nodesOutById: Map<string, NodeDatum> = new Map();
+        const nodesInById = new Map<string, NodeDatum>();
+        const nodesOutById = new Map<string, NodeDatum>();
 
         for (const n of this.nodeInData) {
             nodesInById.set(n.id, n);
@@ -88,30 +109,37 @@ class DataOptimizer {
         }
 
         this.inIds.forEach((id, index) => {
-            this.nodeInData[index] = nodesInById.get(id);
+            this.nodeInData[index] = nodesInById.get(id)!;
         });
 
         this.outIds.forEach((id, index) => {
-            this.nodeOutData[index] = nodesOutById.get(id);
+            this.nodeOutData[index] = nodesOutById.get(id)!;
         });
     }
 
-    private step(ids1: string[], connections1: Map<string, string[]>, ids2: string[]) {
-        const indices2: Map<string, number> = new Map();
+    private step(
+        ids1: string[],
+        connections1: Map<string, string[]>,
+        ids2: string[],
+    ) {
+        const indices2 = new Map<string, number>();
 
         ids2.forEach((id, index) => indices2.set(id, index));
 
-        const centers1: Map<string, number> = new Map();
+        const centers1 = new Map<string, number>();
 
         for (const id of ids1) {
-            const connections = connections1.get(id);
+            const connections = connections1.get(id)!;
             let sum = 0;
 
             for (const c of connections) {
-                sum += indices2.get(c);
+                sum += indices2.get(c)!;
             }
 
-            centers1.set(id, connections.length > 0 ? sum / connections.length : Infinity);
+            centers1.set(
+                id,
+                connections.length > 0 ? sum / connections.length : Infinity,
+            );
         }
 
         const sortedCenters1 = Array.from(centers1.entries());
@@ -124,40 +152,49 @@ class DataOptimizer {
 }
 
 @Component({
-    selector: 'fcl-station-properties',
-    templateUrl: './station-properties.component.html',
-    styleUrls: ['./station-properties.component.scss']
+    selector: "fcl-station-properties",
+    templateUrl: "./station-properties.component.html",
+    styleUrls: ["./station-properties.component.scss"],
 })
 export class StationPropertiesComponent implements OnInit, OnDestroy {
-
     private static readonly SVG_WIDTH = 600;
     private static readonly NODE_PADDING = 15;
     private static readonly NODE_WIDTH = 200;
     private static readonly NODE_HEIGHT = 50;
     private static readonly TEXT_X_PADDING = 5;
-    private static readonly INCOMING_HEADER = 'Incoming Deliveries:';
-    private static readonly OUTGOING_HEADER = 'Outgoing Deliveries:';
+    private static readonly INCOMING_HEADER = "Incoming Deliveries:";
+    private static readonly OUTGOING_HEADER = "Outgoing Deliveries:";
     private static readonly DELIVERIES_HEADER_HEIGHT = 14;
+    private static readonly CONTAINER_PADDING = 1;
 
-    @ViewChild('inOutConnector', { static: true }) inOutConnector: ElementRef;
+    @ViewChild("inOutConnector", { static: true }) inOutConnector: ElementRef;
 
     otherPropertiesHidden = true;
     properties: Properties = {};
 
-    vipProperties: string[] = ['id', 'address', 'country', 'typeOfBusiness', 'score', 'commonLink', 'outbreak', 'weight'];
+    vipProperties: string[] = [
+        "id",
+        "address",
+        "country",
+        "typeOfBusiness",
+        "score",
+        "commonLink",
+        "outbreak",
+        "weight",
+    ];
 
-    notListedProps: string[] = ['name', 'incoming', 'outgoing'];
+    notListedProps: string[] = ["name", "incoming", "outgoing"];
     otherProperties: string[] = [];
 
-    conditionalNotListedPropsMap = new Map<string, (station: StationData) => boolean>([
-        ['contains', (station: StationData) => station.isMeta === false]
-    ]);
+    conditionalNotListedPropsMap = new Map<
+        string,
+        (station: StationData) => boolean
+    >([["contains", (station: StationData) => station.isMeta === false]]);
 
     private nodeInData: NodeDatum[];
     private nodeOutData: NodeDatum[];
     private edgeData: EdgeDatum[];
     private lotBased: boolean;
-    private deliveriesByLotKey: Map<LotKey, DeliveryId[]>;
     private height: number;
     private selected: NodeDatum;
 
@@ -168,47 +205,66 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private connectLine: d3.Selection<SVGElement, any, any, any>;
 
     private static line(x1: number, y1: number, x2: number, y2: number) {
-        return 'M' + x1 + ',' + y1 + 'L' + x2 + ',' + y2;
+        return "M" + x1 + "," + y1 + "L" + x2 + "," + y2;
     }
 
     constructor(
         public dialogRef: MatDialogRef<StationPropertiesComponent>,
         @Inject(MAT_DIALOG_DATA) public data: StationPropertiesData,
-        private store: Store<State>
+        private store: Store<State>,
     ) {
         this.initProperties(this.data.station, this.data.stationColumns);
 
-        if (data.station.incoming.length > 0 || data.station.outgoing.length > 0) {
+        if (
+            data.station.incoming.length > 0 ||
+            data.station.outgoing.length > 0
+        ) {
             const ingredientsByLotKey = this.getIngredientsByLotKey();
 
             this.lotBased = ingredientsByLotKey != null;
 
             if (this.lotBased) {
-                this.initLotBasedData(ingredientsByLotKey);
+                this.initLotBasedData(ingredientsByLotKey!);
             } else {
                 this.initDeliveryBasedData();
             }
 
-            const optimizer = new DataOptimizer(this.nodeInData, this.nodeOutData, this.edgeData);
-
+            const optimizer = new DataOptimizer(
+                this.nodeInData,
+                this.nodeOutData,
+                this.edgeData,
+            );
             optimizer.optimize();
 
-            let yIn = 1 + StationPropertiesComponent.DELIVERIES_HEADER_HEIGHT + StationPropertiesComponent.NODE_PADDING;
-            let yOut = yIn;
+            let currentYPositionIncoming =
+                StationPropertiesComponent.CONTAINER_PADDING +
+                StationPropertiesComponent.DELIVERIES_HEADER_HEIGHT +
+                StationPropertiesComponent.NODE_PADDING;
+            let currentYPositionOutgoing = currentYPositionIncoming;
 
-            for (const n of this.nodeInData) {
-                n.x = 1;
-                n.y = yIn;
-                yIn += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+            for (const node of this.nodeInData) {
+                node.x = StationPropertiesComponent.CONTAINER_PADDING;
+                node.y = currentYPositionIncoming;
+                currentYPositionIncoming +=
+                    StationPropertiesComponent.NODE_HEIGHT +
+                    StationPropertiesComponent.NODE_PADDING;
             }
 
-            for (const n of this.nodeOutData) {
-                n.x = StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH - 1;
-                n.y = yOut;
-                yOut += StationPropertiesComponent.NODE_HEIGHT + StationPropertiesComponent.NODE_PADDING;
+            for (const node of this.nodeOutData) {
+                node.x =
+                    StationPropertiesComponent.SVG_WIDTH -
+                    StationPropertiesComponent.NODE_WIDTH -
+                    StationPropertiesComponent.CONTAINER_PADDING;
+                node.y = currentYPositionOutgoing;
+                currentYPositionOutgoing +=
+                    StationPropertiesComponent.NODE_HEIGHT +
+                    StationPropertiesComponent.NODE_PADDING;
             }
 
-            this.height = Math.max(yIn, yOut) - StationPropertiesComponent.NODE_PADDING + 1;
+            this.height =
+                Math.max(currentYPositionIncoming, currentYPositionOutgoing) -
+                StationPropertiesComponent.NODE_PADDING +
+                StationPropertiesComponent.CONTAINER_PADDING;
         }
     }
 
@@ -216,58 +272,73 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         const properties: Properties = {};
         const hiddenProps = Utils.createSimpleStringSet(this.notListedProps);
 
-        this.conditionalNotListedPropsMap.forEach((isHiddenFun, propId) => hiddenProps[propId] = isHiddenFun(station));
+        this.conditionalNotListedPropsMap.forEach(
+            (isHiddenFun, propId) =>
+                (hiddenProps[propId] = isHiddenFun(station)),
+        );
 
-        Object.keys(station).filter(key => Constants.PROPERTIES.has(key) && !hiddenProps[key])
-            .forEach(key => {
-                const column: TableColumn = columns.find(column => column.id === key);
-                const label = column !== undefined ? column.name : Constants.PROPERTIES.get(key).name;
+        Object.keys(station)
+            .filter((key) => Constants.PROPERTIES.has(key) && !hiddenProps[key])
+            .forEach((key) => {
+                const column = columns.find((column) => column.id === key);
+                const label =
+                    column !== undefined
+                        ? column.name
+                        : Constants.PROPERTIES.get(key).name;
                 const value = station[key];
                 properties[key] = {
                     label: label,
-                    value: value != null ? value + '' : ''
+                    value: value != null ? value + "" : "",
                 };
             });
 
-        station.properties.forEach(prop => {
-            const column: TableColumn = columns.find(column => column.id === prop.name);
-            const label = column !== undefined ? column.name : this.convertPropNameToLabel(prop.name);
+        station.properties.forEach((prop) => {
+            const column = columns.find((column) => column.id === prop.name);
+            const label =
+                column !== undefined
+                    ? column.name
+                    : this.convertPropNameToLabel(prop.name);
             properties[prop.name] = {
                 label: label,
-                value: prop.value + ''
+                value: prop.value + "",
             };
         });
 
         const vipProps = Utils.createSimpleStringSet(this.vipProperties);
-        this.otherProperties = Object
-            .keys(properties)
-            .filter(key => !vipProps[key])
+        this.otherProperties = Object.keys(properties)
+            .filter((key) => !vipProps[key])
             .slice()
-            .map(property => {
-                const column: TableColumn = columns.find(column => column.id === property);
-                return column !== undefined ? column.name : Constants.PROPERTIES.get(property).name;
+            .map((property) => {
+                const column = columns.find((column) => column.id === property);
+                return column !== undefined
+                    ? column.name
+                    : Constants.PROPERTIES.get(property).name;
             });
         this.otherProperties.sort();
         // add default for missing props
-        this.vipProperties.filter(key => !properties[key]).forEach(key => {
-            const tmp = Constants.PROPERTIES.get(key);
-            properties[key] = {
-                label: tmp ? tmp.name : this.convertPropNameToLabel(key),
-                value: ''
-            };
-        });
+        this.vipProperties
+            .filter((key) => !properties[key])
+            .forEach((key) => {
+                const tmp = Constants.PROPERTIES.get(key);
+                properties[key] = {
+                    label: tmp ? tmp.name : this.convertPropNameToLabel(key),
+                    value: "",
+                };
+            });
         this.properties = properties;
     }
 
     private capitelizeFirstLetter(str: string): string {
-        return str && str.length > 0 ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+        return str && str.length > 0
+            ? str.charAt(0).toUpperCase() + str.slice(1)
+            : str;
     }
 
     private decamelize(str: string): string {
-        const separator = ' ';
+        const separator = " ";
         return str
-            .replace(/([a-z\d])([A-Z])/g, '$1' + separator + '$2')
-            .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1' + separator + '$2');
+            .replace(/([a-z\d])([A-Z])/g, "$1" + separator + "$2")
+            .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, "$1" + separator + "$2");
     }
 
     private convertPropNameToLabel(str: string): string {
@@ -277,40 +348,51 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     ngOnInit() {
         if (this.height != null) {
             this.svg = d3
-                .select(this.inOutConnector.nativeElement).append<SVGGElement>('svg')
-                .attr('display', 'block')
-                .attr('width', StationPropertiesComponent.SVG_WIDTH).attr('height', this.height);
+                .select(this.inOutConnector.nativeElement)
+                .append<SVGGElement>("svg")
+                .attr("display", "block")
+                .attr("width", StationPropertiesComponent.SVG_WIDTH)
+                .attr("height", this.height);
 
-            const defs = this.svg.append<SVGElement>('defs');
-            const g = this.svg.append<SVGElement>('g');
+            const defs = this.svg.append<SVGElement>("defs");
+            const g = this.svg.append<SVGElement>("g");
 
-            defs.append('marker')
-                .attr('id', 'end-arrow')
-                .attr('viewBox', '0 -5 10 10')
-                .attr('refX', 7)
-                .attr('markerWidth', 3.5)
-                .attr('markerHeight', 3.5)
-                .attr('orient', 'auto')
-                .append('path')
-                .attr('d', 'M0,-5L10,0L0,5')
-                .attr('fill', 'rgb(0, 0, 0)');
+            defs.append("marker")
+                .attr("id", "end-arrow")
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 7)
+                .attr("markerWidth", 3.5)
+                .attr("markerHeight", 3.5)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5")
+                .attr("fill", Utils.colorToCss(Constants.DEFAULT_STROKE_COLOR));
 
-            this.connectLine = g.append<SVGElement>('path').attr('marker-end', 'url(#end-arrow)').attr('visibility', 'hidden')
-                .attr('fill', 'none').attr('stroke', 'rgb(0, 0, 0)').attr('stroke-width', '6px').attr('cursor', 'default');
-            this.edgesG = g.append<SVGElement>('g');
-            this.nodesInG = g.append<SVGElement>('g');
-            this.nodesOutG = g.append<SVGElement>('g');
+            this.connectLine = g
+                .append<SVGElement>("path")
+                .attr("marker-end", "url(#end-arrow)")
+                .attr("visibility", "hidden")
+                .attr("fill", "none")
+                .attr(
+                    "stroke",
+                    Utils.colorToCss(Constants.DEFAULT_STROKE_COLOR),
+                )
+                .attr("stroke-width", "6px")
+                .attr("cursor", "default");
+            this.edgesG = g.append<SVGElement>("g");
+            this.nodesInG = g.append<SVGElement>("g");
+            this.nodesOutG = g.append<SVGElement>("g");
 
             this.addNodesHeader();
             this.addNodes();
             this.updateEdges();
 
-            d3.select('body').on('mousemove', () => this.updateConnectLine());
+            d3.select("body").on("mousemove", () => this.updateConnectLine());
         }
     }
 
     ngOnDestroy() {
-        d3.select('body').on('mousemove', null);
+        d3.select("body").on("mousemove", null);
         this.hoverDeliveries([]);
     }
 
@@ -319,14 +401,20 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     getOtherPropertiesOri() {
-        return this.otherProperties
-            .map(property => Object.keys(this.properties)
-                .find(key => this.properties[key].label === property));
+        return this.otherProperties.map((property) =>
+            Object.keys(this.properties).find(
+                (key) => this.properties[key].label === property,
+            ),
+        );
     }
 
     private createDeliveryNode(deliveryId: DeliveryId): NodeDatum {
-        const delivery = this.data.deliveries.get(deliveryId);
-        const otherStation = this.data.connectedStations.get(delivery.source !== this.data.station.id ? delivery.source : delivery.target);
+        const delivery = this.data.deliveries.get(deliveryId)!;
+        const otherStation = this.data.connectedStations.get(
+            delivery.source !== this.data.station.id
+                ? delivery.source
+                : delivery.target,
+        )!;
 
         return {
             id: deliveryId,
@@ -335,31 +423,41 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
             lot: delivery.lot,
             deliveryIds: [deliveryId],
             date: delivery.dateOut,
-            x: null,
-            y: null
+            invisible: delivery.invisible,
+            x: 0,
+            y: 0,
         };
     }
 
     private getInternalLotKey(delivery: DeliveryData): LotKey {
-        return JSON.stringify([ delivery.originalSource, delivery.name || delivery.id, delivery.lot || delivery.id ]);
+        return JSON.stringify([
+            delivery.originalSource,
+            delivery.name ?? delivery.id,
+            delivery.lot ?? delivery.id,
+        ]);
     }
 
-    private getIngredientsByLotKey(): Map<LotKey, Set<DeliveryId>> {
-        const ingredientsByDelivery: Map<DeliveryId, Set<DeliveryId>> = new Map();
+    private getIngredientsByLotKey(): Map<LotKey, Set<DeliveryId>> | null {
+        const ingredientsByDelivery: Map<
+            DeliveryId,
+            Set<DeliveryId>
+        > = new Map();
 
         for (const deliveryId of this.data.station.outgoing) {
             ingredientsByDelivery.set(deliveryId, new Set());
         }
 
         for (const connection of this.data.station.connections) {
-            ingredientsByDelivery.get(connection.target).add(connection.source);
+            ingredientsByDelivery
+                .get(connection.target)!
+                .add(connection.source);
         }
 
         const ingredientsByLotKey: Map<LotKey, Set<DeliveryId>> = new Map();
         let valid = true;
 
         ingredientsByDelivery.forEach((ingredientsIds, deliveryId) => {
-            const delivery = this.data.deliveries.get(deliveryId);
+            const delivery = this.data.deliveries.get(deliveryId)!;
 
             if (delivery.lot == null || delivery.name == null) {
                 valid = false;
@@ -368,10 +466,13 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                 if (!ingredientsByLotKey.has(lotKey)) {
                     ingredientsByLotKey.set(lotKey, ingredientsIds);
                 } else {
-                    const expectedIngredientsIds = ingredientsByLotKey.get(lotKey);
+                    const expectedIngredientsIds =
+                        ingredientsByLotKey.get(lotKey)!;
                     const areEqual =
                         ingredientsIds.size === expectedIngredientsIds.size &&
-                        Array.from(ingredientsIds).find(id => !expectedIngredientsIds.has(id)) == null;
+                        Array.from(ingredientsIds).find(
+                            (id) => !expectedIngredientsIds.has(id),
+                        ) == null;
 
                     if (!areEqual) {
                         valid = false;
@@ -384,8 +485,8 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     }
 
     private initDeliveryBasedData() {
-        const nodeInMap: Map<DeliveryId, NodeDatum> = new Map();
-        const nodeOutMap: Map<DeliveryId, NodeDatum> = new Map();
+        const nodeInMap = new Map<DeliveryId, NodeDatum>();
+        const nodeOutMap = new Map<DeliveryId, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
             nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
@@ -400,27 +501,33 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
         this.edgeData = [];
 
         for (const connection of this.data.station.connections) {
+            const source = nodeInMap.get(connection.source)!;
+            const target = nodeOutMap.get(connection.target)!;
             this.edgeData.push({
-                source: nodeInMap.get(connection.source),
-                target: nodeOutMap.get(connection.target)
+                source: source,
+                target: target,
+                invisible: source.invisible || target.invisible,
             });
         }
     }
 
-    private initLotBasedData(ingredientsByLotKey: Map<LotKey, Set<DeliveryId>>) {
-        this.deliveriesByLotKey = new Map();
+    private initLotBasedData(
+        ingredientsByLotKey: Map<LotKey, Set<DeliveryId>>,
+    ) {
+        const deliveriesByLotKey: Map<LotKey, DeliveryId[]> = new Map();
 
-        this.data.deliveries.forEach(delivery => {
+        this.data.deliveries.forEach((delivery) => {
             const lotKey = this.getInternalLotKey(delivery);
-            if (this.deliveriesByLotKey.has(lotKey)) {
-                this.deliveriesByLotKey.get(lotKey).push(delivery.id);
+
+            if (deliveriesByLotKey.has(lotKey)) {
+                deliveriesByLotKey.get(lotKey)!.push(delivery.id);
             } else {
-                this.deliveriesByLotKey.set(lotKey, [delivery.id]);
+                deliveriesByLotKey.set(lotKey, [delivery.id]);
             }
         });
 
-        const nodeInMap: Map<DeliveryId, NodeDatum> = new Map();
-        const nodeOutMap: Map<LotKey, NodeDatum> = new Map();
+        const nodeInMap = new Map<DeliveryId, NodeDatum>();
+        const nodeOutMap = new Map<LotKey, NodeDatum>();
 
         for (const deliveryId of this.data.station.incoming) {
             nodeInMap.set(deliveryId, this.createDeliveryNode(deliveryId));
@@ -431,152 +538,299 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
 
         ingredientsByLotKey.forEach((ingredientsIds, lotKey) => {
             const names: Set<string> = new Set();
+            const lotDeliveryIds = deliveriesByLotKey.get(lotKey);
+            if (lotDeliveryIds) {
+                const lotDeliveries = lotDeliveryIds.map((deliveryId) =>
+                    this.data.deliveries.get(deliveryId),
+                );
+                for (const delivery of lotDeliveries) {
+                    names.add(delivery!.name ?? "");
+                }
 
-            const lotDeliveryIds = this.deliveriesByLotKey.get(lotKey);
-            for (const deliveryId of lotDeliveryIds) {
-                names.add(this.data.deliveries.get(deliveryId).name);
-            }
-
-            nodeOutMap.set(lotKey, {
-                id: lotKey,
-                name: Array.from(names).join('/'),
-                station: null,
-                lot: this.data.deliveries.get(Array.from(lotDeliveryIds)[0]).lot,
-                deliveryIds: lotDeliveryIds,
-                date: null,
-                x: null,
-                y: null
-            });
-            ingredientsIds.forEach(ingredientId => {
-                this.edgeData.push({
-                    source: nodeInMap.get(ingredientId),
-                    target: nodeOutMap.get(lotKey)
+                nodeOutMap.set(lotKey, {
+                    id: lotKey,
+                    name: Array.from(names).join("/"),
+                    lot: lotDeliveries[0]!.lot,
+                    deliveryIds: lotDeliveryIds,
+                    invisible: lotDeliveries.every(
+                        (delivery) => delivery?.invisible,
+                    ),
+                    x: 0,
+                    y: 0,
                 });
-            });
+
+                ingredientsIds.forEach((ingredientId) => {
+                    const source = nodeInMap.get(ingredientId);
+                    const target = nodeOutMap.get(lotKey);
+                    if (source && target) {
+                        this.edgeData.push({
+                            source: source,
+                            target: target,
+                            invisible: source.invisible || target.invisible,
+                        });
+                    }
+                });
+            }
         });
 
         this.nodeOutData = Array.from(nodeOutMap.values());
     }
 
     private addNodesHeader(): void {
-
         const headers = [
             {
                 x: StationPropertiesComponent.TEXT_X_PADDING,
-                label: StationPropertiesComponent.INCOMING_HEADER
+                label: StationPropertiesComponent.INCOMING_HEADER,
             },
             {
-                x: StationPropertiesComponent.SVG_WIDTH - StationPropertiesComponent.NODE_WIDTH - 1 +
+                x:
+                    StationPropertiesComponent.SVG_WIDTH -
+                    StationPropertiesComponent.NODE_WIDTH -
+                    1 +
                     StationPropertiesComponent.TEXT_X_PADDING,
-                label: StationPropertiesComponent.OUTGOING_HEADER
-            }
+                label: StationPropertiesComponent.OUTGOING_HEADER,
+            },
         ];
 
-        const nodesHeaderG = this.svg.append<SVGElement>('g');
+        const nodesHeaderG = this.svg.append<SVGElement>("g");
 
-        headers.forEach(header => {
-            const text = nodesHeaderG.append('text').attr('text-anchor', 'left');
-            text.append('tspan').attr('x', header.x).attr('dy', 15).attr('font-size', '14px').attr('font-weight', 'bold')
+        headers.forEach((header) => {
+            const text = nodesHeaderG
+                .append("text")
+                .attr("text-anchor", "left");
+            text.append("tspan")
+                .attr("x", header.x)
+                .attr("dy", 15)
+                .attr("font-size", "14px")
+                .attr("font-weight", "bold")
                 .text(header.label);
         });
     }
 
     private addNodes() {
-        const updateColor = (nodes: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
-            nodes.selectAll('rect')
-                .attr('fill', hovered ? 'rgb(128, 128, 255)' : 'rgb(255, 255, 255)')
-                .attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
+        const updateColor = (
+            nodes: d3.Selection<SVGElement, any, any, any>,
+            hovered: boolean,
+            invisible: boolean,
+        ) => {
+            nodes
+                .selectAll("rect")
+                .attr(
+                    "fill",
+                    Utils.colorToCss(
+                        hovered
+                            ? Constants.HOVER_FILL_COLOR
+                            : Constants.DEFAULT_FILL_COLOR,
+                    ),
+                )
+                .attr(
+                    "stroke",
+                    Utils.colorToCss(
+                        hovered
+                            ? Constants.HOVER_STROKE_COLOR
+                            : invisible
+                              ? Constants.INVISIBLE_COLOR
+                              : Constants.DEFAULT_STROKE_COLOR,
+                    ),
+                );
         };
-        const initRectAndText = (nodes: d3.Selection<SVGElement, NodeDatum, any, any>, isIncoming: boolean) => {
-            nodes.attr('transform', d => 'translate(' + d.x + ',' + d.y + ')');
-            nodes.append('rect').attr('stroke-width', '2px')
-                .attr('width', StationPropertiesComponent.NODE_WIDTH).attr('height', StationPropertiesComponent.NODE_HEIGHT);
+        const initRectAndText = (
+            nodes: d3.Selection<SVGElement, NodeDatum, any, any>,
+            isIncoming: boolean,
+        ) => {
+            nodes.attr(
+                "transform",
+                (d) => "translate(" + d.x + "," + d.y + ")",
+            );
+            nodes
+                .append("rect")
+                .attr("stroke-width", "2px")
+                .attr("width", StationPropertiesComponent.NODE_WIDTH)
+                .attr("height", StationPropertiesComponent.NODE_HEIGHT)
+                .attr("fill", Utils.colorToCss(Constants.DEFAULT_FILL_COLOR))
+                .attr("stroke", (datum) =>
+                    Utils.colorToCss(
+                        datum.invisible
+                            ? Constants.INVISIBLE_COLOR
+                            : Constants.DEFAULT_STROKE_COLOR,
+                    ),
+                );
 
-            updateColor(nodes, false);
+            const text = nodes.append("text").attr("text-anchor", "left");
 
-            const text = nodes.append('text').attr('text-anchor', 'left');
-
-            text.append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING).attr('dy', 15).attr('font-size', '14px')
-                .text(d => d.lot != null ? d.name + ' (' + d.lot + ')' : d.name);
-            text.filter(d => d.station != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
-                .attr('dy', 15).attr('font-size', '14px')
-                .text(d => isIncoming ? 'from: ' + d.station : 'to: ' + d.station);
-            text.filter(d => d.date != null).append('tspan').attr('x', StationPropertiesComponent.TEXT_X_PADDING)
-                .attr('dy', 15).attr('font-size', '12px').text(d => d.date);
+            text.append("tspan")
+                .attr("x", StationPropertiesComponent.TEXT_X_PADDING)
+                .attr("dy", 15)
+                .attr("font-size", "14px")
+                .text((d) =>
+                    d.lot != null
+                        ? d.name + " (" + d.lot + ")"
+                        : (d.name ?? ""),
+                );
+            text.filter((d) => d.station != null)
+                .append("tspan")
+                .attr("x", StationPropertiesComponent.TEXT_X_PADDING)
+                .attr("dy", 15)
+                .attr("font-size", "14px")
+                .text((d) =>
+                    isIncoming ? "from: " + d.station : "to: " + d.station,
+                );
+            text.filter((d) => d.date != null)
+                .append("tspan")
+                .attr("x", StationPropertiesComponent.TEXT_X_PADDING)
+                .attr("dy", 15)
+                .attr("font-size", "12px")
+                .text((d) => d.date ?? "");
         };
 
-        const newNodesIn = this.nodesInG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeInData, d => d.id).enter()
-            .append<SVGElement>('g');
-        const newNodesOut = this.nodesOutG.selectAll<SVGElement, NodeDatum>('g').data(this.nodeOutData, d => d.id).enter()
-            .append<SVGElement>('g');
+        const newNodesIn = this.nodesInG
+            .selectAll<SVGElement, NodeDatum>("g")
+            .data(this.nodeInData, (d) => d.id)
+            .enter()
+            .append<SVGElement>("g");
+        const newNodesOut = this.nodesOutG
+            .selectAll<SVGElement, NodeDatum>("g")
+            .data(this.nodeOutData, (d) => d.id)
+            .enter()
+            .append<SVGElement>("g");
 
         initRectAndText(newNodesIn, true);
         initRectAndText(newNodesOut, false);
 
-        newNodesIn.on('mouseover', (event, inNode: NodeDatum) => {
-            updateColor(d3.select(event.currentTarget), true);
-            this.hoverDeliveries(inNode.deliveryIds);
-        }).on('mouseout', (event) => {
-            updateColor(d3.select(event.currentTarget), false);
-            this.hoverDeliveries([]);
-        });
+        newNodesIn
+            .on("mouseover", (event, inNode: NodeDatum) => {
+                updateColor(
+                    d3.select(event.currentTarget),
+                    true,
+                    inNode.invisible,
+                );
+                this.hoverDeliveries(inNode.deliveryIds);
+            })
+            .on("mouseout", (event, inNode) => {
+                updateColor(
+                    d3.select(event.currentTarget),
+                    false,
+                    inNode.invisible,
+                );
+                this.hoverDeliveries([]);
+            });
 
-        newNodesOut.on('mouseover', (event, outNode: NodeDatum) => {
-            updateColor(d3.select(event.currentTarget), true);
-            this.hoverDeliveries(outNode.deliveryIds);
-        }).on('mouseout', (event) => {
-            updateColor(d3.select(event.currentTarget), false);
-            this.hoverDeliveries([]);
-        });
+        newNodesOut
+            .on("mouseover", (event, outNode: NodeDatum) => {
+                updateColor(
+                    d3.select(event.currentTarget),
+                    true,
+                    outNode.invisible,
+                );
+                this.hoverDeliveries(outNode.deliveryIds);
+            })
+            .on("mouseout", (event, outNode) => {
+                updateColor(
+                    d3.select(event.currentTarget),
+                    false,
+                    outNode.invisible,
+                );
+                this.hoverDeliveries([]);
+            });
     }
 
     private updateEdges() {
         // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
-        const updateColor = (edges: d3.Selection<SVGElement, any, any, any>, hovered: boolean) => {
-            edges.attr('stroke', hovered ? 'rgb(0, 0, 255)' : 'rgb(0, 0, 0)');
+        const updateColor = (
+            edges: d3.Selection<SVGElement, any, any, any>,
+            hovered: boolean,
+            invisible: boolean,
+        ) => {
+            edges.attr(
+                "stroke",
+                Utils.colorToCss(
+                    hovered
+                        ? Constants.HOVER_STROKE_COLOR
+                        : invisible
+                          ? Constants.INVISIBLE_COLOR
+                          : Constants.DEFAULT_STROKE_COLOR,
+                ),
+            );
         };
 
-        const edges = this.edgesG.selectAll<SVGElement, EdgeDatum>('path')
-            .data(this.edgeData, d => d.source.id + Constants.ARROW_STRING + d.target.id);
-        const newEdges = edges.enter().append<SVGElement>('path').attr('d', d => StationPropertiesComponent.line(
-            d.source.x + StationPropertiesComponent.NODE_WIDTH,
-            d.source.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-            d.target.x,
-            d.target.y + StationPropertiesComponent.NODE_HEIGHT / 2
-        )).attr('fill', 'none').attr('stroke-width', '6px').attr('cursor', 'default');
+        const edges = this.edgesG
+            .selectAll<SVGElement, EdgeDatum>("path")
+            .data(
+                this.edgeData,
+                (d) => d.source.id + Constants.ARROW_STRING + d.target.id,
+            );
+        const newEdges = edges
+            .enter()
+            .append<SVGElement>("path")
+            .attr("d", (edgeDatum) =>
+                StationPropertiesComponent.line(
+                    edgeDatum.source.x + StationPropertiesComponent.NODE_WIDTH,
+                    edgeDatum.source.y +
+                        StationPropertiesComponent.NODE_HEIGHT / 2,
+                    edgeDatum.target.x,
+                    edgeDatum.target.y +
+                        StationPropertiesComponent.NODE_HEIGHT / 2,
+                ),
+            )
+            .attr("stroke", (edgeDatum) =>
+                Utils.colorToCss(
+                    edgeDatum.invisible
+                        ? Constants.INVISIBLE_COLOR
+                        : Constants.DEFAULT_STROKE_COLOR,
+                ),
+            )
+            .attr("fill", "none")
+            .attr("stroke-width", "6px")
+            .attr("cursor", "default");
 
-        updateColor(newEdges, false);
         edges.exit().remove();
 
-        newEdges.on('mouseover', (event, edge: EdgeDatum) => {
-            if (this.selected == null) {
-                updateColor(d3.select(event.currentTarget), true);
-                this.hoverDeliveries(
-                    [].concat(
-                        edge.source.deliveryIds,
-                        edge.target.deliveryIds
-                    ));
-            }
-        }).on('mouseout', (event) => {
-            updateColor(d3.select(event.currentTarget), false);
-            this.hoverDeliveries([]);
-        });
+        newEdges
+            .on("mouseover", (event, edge: EdgeDatum) => {
+                if (this.selected == null) {
+                    updateColor(
+                        d3.select(event.currentTarget),
+                        true,
+                        edge.invisible,
+                    );
+                    this.hoverDeliveries(
+                        concat(
+                            edge.source.deliveryIds,
+                            edge.target.deliveryIds,
+                        ),
+                    );
+                }
+            })
+            .on("mouseout", (event, edge) => {
+                updateColor(
+                    d3.select(event.currentTarget),
+                    false,
+                    edge.invisible,
+                );
+                this.hoverDeliveries([]);
+            });
     }
 
     private hoverDeliveries(deliveryIds: DeliveryId[]): void {
-        this.store.dispatch(new SetHoverDeliveriesSOA({ deliveryIds: deliveryIds }));
+        this.store.dispatch(
+            new SetHoverDeliveriesSOA({ deliveryIds: deliveryIds }),
+        );
     }
 
     private updateConnectLine() {
         if (this.selected != null) {
             const mousePos = d3.pointer(this.svg.node());
 
-            this.connectLine.attr('d', StationPropertiesComponent.line(
-                this.selected.x + StationPropertiesComponent.NODE_WIDTH,
-                this.selected.y + StationPropertiesComponent.NODE_HEIGHT / 2,
-                mousePos[0],
-                mousePos[1]
-            ));
+            this.connectLine.attr(
+                "d",
+                StationPropertiesComponent.line(
+                    this.selected.x + StationPropertiesComponent.NODE_WIDTH,
+                    this.selected.y +
+                        StationPropertiesComponent.NODE_HEIGHT / 2,
+                    mousePos[0],
+                    mousePos[1],
+                ),
+            );
         }
     }
 }

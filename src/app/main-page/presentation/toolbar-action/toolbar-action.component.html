@@ -1,10 +1,25 @@
-<div class="fcl-action-item fcl-action-container" *ngIf="(isServerLess() || currentUser) && tracingActive">
-    <div *ngIf="fileName !== null" class="fcl-file-name-wrapper fcl-separator mat-body">
-        <div class="fcl-file-name" [matTooltip]="fileName">File: {{ fileNameWoExt }}</div>
+<div
+    class="fcl-action-item fcl-action-container"
+    *ngIf="(isServerLess() || currentUser) && tracingActive"
+>
+    <div
+        *ngIf="fileName !== null"
+        class="fcl-file-name-wrapper fcl-separator mat-body"
+    >
+        <div class="fcl-file-name" [matTooltip]="fileName">
+            File: {{ fileNameWoExt }}
+        </div>
     </div>
     <div class="fcl-graph-type fcl-separator mat-body">
-        <mat-radio-group [(ngModel)]="graphSettings.type" (ngModelChange)="setGraphType()">
-            <mat-radio-button class="fcl-graph-type-button" [value]="'Graph'" matTooltip="Show Schematic Graph">
+        <mat-radio-group
+            [(ngModel)]="graphSettings.type"
+            (ngModelChange)="setGraphType()"
+        >
+            <mat-radio-button
+                class="fcl-graph-type-button"
+                [value]="'Graph'"
+                matTooltip="Show Schematic Graph"
+            >
                 Graph
             </mat-radio-button>
             <input
@@ -15,16 +30,42 @@
                 (change)="onShapeFileInput($event)"
                 #shapeFileInput
                 data-cy="fcl-upload-shape-fileinput"
-            >
+            />
             <span class="fcl-graph-type-button">
-                <mat-radio-button [value]="'GIS'" [disabled]="!hasGisInfo" [matTooltip]="!hasGisInfo ? '': 'Show GIS Graph'">
+                <mat-radio-button
+                    [value]="'GIS'"
+                    [disabled]="!hasGisInfo"
+                    [matTooltip]="!hasGisInfo ? '' : 'Show GIS Graph'"
+                >
                     GIS
                 </mat-radio-button>
-                <mat-select class="fcl-map-type-select" [(value)]="selectedMapTypeOption" disableOptionCentering panelClass="fcl-mat-select-below-panel-class" [disabled]="!hasGisInfo" matTooltip="{{hasGisInfo ? 'Select Map Type' : ''}}">
-                    <span *ngFor="let item of availableMapTypes">
-                        <mat-option value="{{item}}" (click)="setMapType(item)">{{mapTypeToLabelMap.get(item)}}</mat-option>
+                <mat-select
+                    class="fcl-map-type-select"
+                    [(value)]="selectedMapOption"
+                    disableOptionCentering
+                    panelClass="fcl-mat-select-below-panel-class"
+                    [disabled]="!hasGisInfo"
+                    matTooltip="{{ hasGisInfo ? 'Select Map Type' : '' }}"
+                >
+                    <span *ngFor="let item of availableMaps.tiles">
+                        <mat-option
+                            value="{{ item }}"
+                            (click)="setTileServer(item)"
+                        >
+                            {{ availableMaps.tileServerLabels[item] }}
+                        </mat-option>
                     </span>
-                    <mat-option value="" (click)="onSelectShapeFile($event)">Load Shape File...</mat-option>
+                    <span *ngFor="let item of availableMaps.types">
+                        <mat-option
+                            value="{{ item }}"
+                            (click)="setMapType(item)"
+                        >
+                            {{ availableMaps.mapTypeLabels[item] }}
+                        </mat-option>
+                    </span>
+                    <mat-option value="" (click)="onSelectShapeFile($event)">
+                        Load Shape File...
+                    </mat-option>
                 </mat-select>
             </span>
         </mat-radio-group>
@@ -35,7 +76,8 @@
         mat-button
         matTooltip="Load Example Data"
         data-cy="fcl-load-example-button"
-        [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu">
+        [matMenuTriggerFor]="exampleMenuComponent.exampleDataMenu"
+    >
         <mat-icon>wb_sunny</mat-icon>
         Load Example Data
         <mat-icon>arrow_drop_down</mat-icon>
@@ -43,33 +85,56 @@
     <fcl-example-menu
         #exampleMenuComponent
         [exampleData]="exampleData"
-        (loadExampleDataFile)="onLoadExampleDataFile($event)">
+        (loadExampleDataFile)="onLoadExampleDataFile($event)"
+    >
     </fcl-example-menu>
 
     <input
         type="file"
-        accept=".json"
+        accept="FCL file (.json)"
         class="fcl-fileinput"
         id="modelFileInput"
         (change)="onModelFileInput($event)"
         #modelFileInput
         data-cy="fcl-upload-model-fileinput"
-    >
-    <button
-        class="fcl-no-shrink"
-        mat-button
-        data-cy="fcl-upload-model-button"
-        (click)="onSelectModelFile()"
-        matTooltip="Upload data">
-        <mat-icon>file_upload</mat-icon>
-        Upload Data
-    </button>
+    />
+    <div #openUploadMenu="matMenuTrigger" [matMenuTriggerFor]="uploadMenu">
+        <button
+            class="fcl-no-shrink"
+            mat-button
+            data-cy="fcl-upload-model-button"
+            matTooltip="Upload data"
+            (click)="onSelectModelFileOpenMenu($event)"
+        >
+            <mat-icon>file_upload</mat-icon>
+            Upload Data
+        </button>
+    </div>
+    <!-- (click)="onSelectModelFile()" -->
+    <mat-menu #uploadMenu="matMenu">
+        <button mat-menu-item (click)="onSelectModelFile('json-fcl')">
+            FCL file (.json)
+        </button>
+        <button mat-menu-item (click)="onSelectModelFile('xlsx-all-in-one')">
+            FCL All-in-one template (.xlsx)
+        </button>
+        <!-- <button
+            mat-menu-item
+            (click)="onSelectModelFile('json-fcl')"
+            matTooltip="Coming soon"
+            disabled
+        >
+            UTX file (.json)
+        </button> -->
+    </mat-menu>
     <button
         class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="onDownloadDataFile()"
         data-cy="fcl-download-model-button"
-        matTooltip="Download data">
+        matTooltip="Download data"
+        [disabled]="!isModelLoaded"
+    >
         <mat-icon>file_download</mat-icon>
         Download Data
     </button>
@@ -77,7 +142,9 @@
         class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="onSaveImage()"
-        matTooltip="Save image">
+        matTooltip="Save image"
+        [disabled]="!isModelLoaded"
+    >
         <mat-icon>image</mat-icon>
         Save Image
     </button>
@@ -85,7 +152,8 @@
         class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="onOpenRoaLayout()"
-        matTooltip="Generate ROA Layout">
+        matTooltip="Generate ROA Layout"
+    >
         <mat-icon>grid_on</mat-icon>
         ROA Style
         <span class="fcl-draft-marker-wrapper">

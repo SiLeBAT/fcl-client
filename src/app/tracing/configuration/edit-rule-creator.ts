@@ -1,14 +1,18 @@
-import { COLOR_BFR_BLUE } from './constants';
+import { COLOR_BFR_BLUE } from "./constants";
 import {
-    ColorAndShapeEditRule, ColorEditRule, EditRuleCore,
-    InvEditRule, RuleType, SimpleLabelEditRule
-} from './model';
-import { EditRuleOfType } from './shared';
+    ColorAndShapeEditRule,
+    ColorEditRule,
+    EditRuleCore,
+    InvEditRule,
+    RuleType,
+    SimpleLabelEditRule,
+} from "./model";
+import { EditRuleOfType } from "./shared";
 
 export class EditRuleCreator {
     private static readonly DEFAULT_COLOR = COLOR_BFR_BLUE;
     private static ID_COUNTER = 0;
-    private static ID_PREFIX = 'R';
+    private static ID_PREFIX = "R";
 
     private static getNextId(): string {
         return this.ID_PREFIX + this.ID_COUNTER++;
@@ -17,10 +21,10 @@ export class EditRuleCreator {
     private static createEditRuleCore(): EditRuleCore {
         return {
             id: this.getNextId(),
-            name: '',
+            name: "",
             userDisabled: false,
             complexFilterConditions: [],
-            isValid: false
+            isValid: false,
         };
     }
 
@@ -30,7 +34,7 @@ export class EditRuleCreator {
             type: RuleType.COLOR_AND_SHAPE,
             showInLegend: true,
             color: this.DEFAULT_COLOR,
-            shape: null
+            shape: null,
         };
     }
 
@@ -39,7 +43,7 @@ export class EditRuleCreator {
             ...this.createEditRuleCore(),
             type: RuleType.COLOR,
             showInLegend: true,
-            color: this.DEFAULT_COLOR
+            color: this.DEFAULT_COLOR,
         };
     }
 
@@ -47,18 +51,20 @@ export class EditRuleCreator {
         return {
             ...this.createEditRuleCore(),
             type: RuleType.LABEL,
-            labelProperty: null
+            labelProperty: null,
         };
     }
 
     static createInvEditRule(): InvEditRule {
         return {
             ...this.createEditRuleCore(),
-            type: RuleType.INVISIBILITY
+            type: RuleType.INVISIBILITY,
         };
     }
 
-    static createNewEditRule<T extends RuleType, R extends EditRuleOfType<T>>(ruleType: RuleType): R | null {
+    static createNewEditRule<T extends RuleType, R extends EditRuleOfType<T>>(
+        ruleType: RuleType,
+    ): R {
         switch (ruleType) {
             case RuleType.COLOR_AND_SHAPE:
                 return this.createColorAndShapeEditRule() as R;
@@ -69,7 +75,9 @@ export class EditRuleCreator {
             case RuleType.INVISIBILITY:
                 return this.createInvEditRule() as R;
             default:
-                return null;
+                throw new Error(
+                    `Cannot create edit rule for rule type '${RuleType[ruleType]} (Rule type is not supported yet)'.`,
+                );
         }
     }
 }

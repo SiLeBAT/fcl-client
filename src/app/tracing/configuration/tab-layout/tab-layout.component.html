@@ -9,19 +9,19 @@
     (selectedIndexChange)="onSelectedIndexChange($event)"
     (animationDone)="onAnimationDone()"
     animationDuration="0ms"
-    preserveContent="true">
-
+    preserveContent="true"
+>
     <ng-container *ngFor="let tab of tabConfigs; index as i">
         <!--
             if the active tab has not finished animation all other tabs are blocked
             in firefox the user can otherwise switch in fast succession tabs and the system may become
             inresponsive for a short time due to procession of the different tab activations for big models
         -->
-        <mat-tab [label]="tab.tabLabel" [disabled]="animatingTabIndex !== null && i !== animatingTabIndex" (click)="onTabClick($event)">
-            <ng-container [ngTemplateOutlet]="tab.tabTemplate">
-            </ng-container>
+        <mat-tab
+            [label]="tab.tabLabel"
+            [disabled]="animatingTabIndex !== null && i !== animatingTabIndex"
+        >
+            <ng-container [ngTemplateOutlet]="tab.tabTemplate"> </ng-container>
         </mat-tab>
-
     </ng-container>
-
 </mat-tab-group>
