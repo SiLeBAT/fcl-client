@@ -77,6 +77,14 @@ export class IOEffects {
                             data.importWarnings.length > 0 &&
                             this.alertService.warn(
                                 "Data import completed with warnings",
+                                {
+                                    action: "Show More",
+                                    onClick: () =>
+                                        this.store.dispatch(
+                                            // TODO: Change to ShowDataImportWarningsMSA once that one is merged.
+                                            new tracingEffectActions.ClearTraceMSA(),
+                                        ),
+                                },
                             ),
                     ),
                     concatMap((result: FclData) =>
