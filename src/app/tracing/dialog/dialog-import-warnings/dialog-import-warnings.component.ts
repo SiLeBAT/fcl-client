@@ -2,7 +2,7 @@ import { Component, Inject } from "@angular/core";
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
 
 export interface DialogImportWarningsData {
-    fileName: string | null;
+    description: string | null;
     warnings: string[];
 }
 
@@ -12,13 +12,13 @@ export interface DialogImportWarningsData {
     styleUrls: ["./dialog-import-warnings.component.scss"],
 })
 export class DialogImportWarningsComponent {
-    fileName: string | null;
+    description: string | null;
     warnings: string[];
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: DialogImportWarningsData,
     ) {
-        this.fileName = data.fileName;
+        this.description = data.description;
         this.warnings = data.warnings;
     }
 }

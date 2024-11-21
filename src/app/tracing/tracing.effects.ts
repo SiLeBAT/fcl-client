@@ -696,13 +696,10 @@ export class TracingEffects {
                     this.store.pipe(
                         select(tracingSelectors.selectImportWarnings),
                     ),
-                    this.store.pipe(
-                        select(tracingSelectors.selectSourceFileName),
-                    ),
                 ),
-                mergeMap(([, warnings, fileName]) => {
+                mergeMap(([action, warnings]) => {
                     const data: DialogImportWarningsData = {
-                        fileName: fileName,
+                        description: action.payload.description,
                         warnings: warnings,
                     };
 

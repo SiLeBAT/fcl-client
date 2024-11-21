@@ -2,15 +2,14 @@
     <div mat-dialog-content>
         <mat-card>
             <mat-card-title>
-                <span>Data import warnings</span>
+                <h2>Data import warnings</h2>
             </mat-card-title>
             <mat-card-content>
-                <span *ngIf="fileName">
-                    The following warnings occurred during the import of file
-                    {{ fileName }}
+                <span>
+                    {{ description }}
                 </span>
-                <ul *ngFor="let warning of warnings">
-                    <li>{{ warning }}</li>
+                <ul>
+                    <li *ngFor="let warning of warnings">{{ warning }}</li>
                 </ul>
             </mat-card-content>
         </mat-card>
