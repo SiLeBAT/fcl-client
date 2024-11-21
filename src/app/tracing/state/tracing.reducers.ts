@@ -99,6 +99,7 @@ const initialState: TracingState = {
     isConfSideBarOpening: false,
     showGraphSettings: false,
     isModelLoaded: false,
+    isModelLoading: false,
 };
 
 export function createDefaultPropMappings(): PropMaps {
@@ -189,7 +190,11 @@ export function reducer(
                 ...state,
                 tracingActive: action.payload.isActivated,
             };
-
+        case TracingActionTypes.SetFclDataLoadingSOA:
+            return {
+                ...state,
+                isModelLoading: true,
+            };
         case TracingActionTypes.LoadFclDataSuccessSOA: {
             action.payload.fclData.graphSettings.mapType =
                 state.fclData.graphSettings.mapType;
@@ -205,12 +210,18 @@ export function reducer(
                 fclData: action.payload.fclData,
                 ...initialModelDependentState,
                 isModelLoaded: true,
+                isModelLoading: false,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
 
             return newState;
         }
+        case TracingActionTypes.LoadFclDataFailureSOA:
+            return {
+                ...state,
+                isModelLoading: false,
+            };
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,

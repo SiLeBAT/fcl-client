@@ -55,6 +55,10 @@ export class IOEffects {
                 ioActions.IOActionTypes.LoadFclDataMSA,
             ),
             mergeMap((action) => {
+                this.store.dispatch(
+                    new tracingStateActions.SetFclDataLoadingSOA(),
+                );
+
                 const dataSource: string | FileList = action.payload.dataSource;
                 let source: string | File;
                 if (dataSource instanceof FileList && dataSource.length === 1) {

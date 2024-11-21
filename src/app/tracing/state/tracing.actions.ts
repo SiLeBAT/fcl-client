@@ -55,6 +55,7 @@ export enum TracingActionTypes {
     ShowMergedDeliveriesCountsSOA = "[Tracing] Show Merged Deliveries Counts",
     ShowLegendSOA = "[Tracing] Show Legend",
     ShowZoomSOA = "[Tracing] Show Zoom",
+    SetFclDataLoadingSOA = "[Tracing] Set loading state",
     SetFitGraphToVisibleAreaSOA = "[Tracing] Set Fit Graph To Visible Area",
     SetSelectedElementsSOA = "[Tracing] Set Element Selection",
     SetSelectedStationsSOA = "[Tracing] Set Station Selection",
@@ -180,6 +181,10 @@ export class SetAdjustEdgeWidthToNodeSizeSOA implements Action {
     readonly type = TracingActionTypes.SetAdjustEdgeWidthToNodeSizeSOA;
 
     constructor(public payload: { adjustEdgeWidthToNodeSize: boolean }) {}
+}
+
+export class SetFclDataLoadingSOA implements Action {
+    readonly type = TracingActionTypes.SetFclDataLoadingSOA;
 }
 
 export class SetFontSizeSOA implements Action {
@@ -453,6 +458,7 @@ export type TracingActions =
     | SetStationPositionsSOA
     | SetStationPositionsAndLayoutSOA
     | SetStationGroupsSOA
+    | SetFclDataLoadingSOA
     | SetTracingSettingsSOA
     | SetCrossContTraceTypeSOA
     | SetHighlightingSettingsSOA
