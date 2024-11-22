@@ -45,7 +45,7 @@ function getTextForIssueGroup(issueGroup: IssueGroup): string {
                     : []),
             ]);
         default:
-            return "";
+            return issueGroup.msg;
     }
 }
 
