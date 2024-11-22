@@ -61,6 +61,12 @@ export class Constants {
     static readonly DIALOG_OK = "Ok";
     static readonly DIALOG_SAVE = "Save";
     static readonly DIALOG_DONT_SAVE = "Don't save and proceed";
+    static readonly DIALOG_SHOW_MORE = "Show More";
+
+    static readonly ALERT_FILETYPE_NOT_JSON =
+        "Please select a .json file with the correct format!";
+    static readonly ALERT_IMPORT_WARNINGS =
+        "Data import completed with warnings";
 
     private static readonly STATION_DATA: StationData = {
         id: "",
