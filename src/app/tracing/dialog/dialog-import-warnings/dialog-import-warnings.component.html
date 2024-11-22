@@ -2,10 +2,15 @@
     <div mat-dialog-content>
         <mat-card>
             <mat-card-title>
-                <span>Data import warnings</span>
+                <h2>Data import warnings</h2>
             </mat-card-title>
             <mat-card-content>
-                {{ data }}
+                <span>
+                    {{ description }}
+                </span>
+                <ul>
+                    <li *ngFor="let warning of warnings">{{ warning }}</li>
+                </ul>
             </mat-card-content>
         </mat-card>
     </div>
