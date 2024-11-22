@@ -150,7 +150,6 @@ export class SetStationPositionsAndLayoutMSA implements Action {
 
 export class ShowDataImportWarningsMSA implements Action {
     readonly type = TracingActionTypes.ShowDataImportWarningsMSA;
-    constructor(public payload: { description: string }) {}
 }
 
 export type TracingActions =

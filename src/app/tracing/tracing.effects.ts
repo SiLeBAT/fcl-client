@@ -696,10 +696,20 @@ export class TracingEffects {
                     this.store.pipe(
                         select(tracingSelectors.selectImportWarnings),
                     ),
+                    this.store.pipe(
+                        select(tracingSelectors.selectSourceFileName),
+                    ),
                 ),
-                mergeMap(([action, warnings]) => {
+                mergeMap(([, warnings, fileName]) => {
+                    const fileNameExists =
+                        fileName && fileName.trim().length > 0;
+                    const description =
+                        "The following warnings occurred while importing";
+
                     const data: DialogImportWarningsData = {
-                        description: action.payload.description,
+                        description: fileNameExists
+                            ? `${description} ${fileName}`
+                            : description,
                         warnings: warnings,
                     };
 

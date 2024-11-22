@@ -153,20 +153,7 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     }
 
     onOpenWarningsDialog() {
-        let fileName = "";
-
-        this.fileName$
-            .pipe(takeWhile(() => this.componentActive))
-            .subscribe((value) => {
-                if (value && value.trim().length > 0) {
-                    fileName = value;
-                }
-            });
-
-        const description = `The following warnings occurred while importing ${fileName}`;
-        this.store.dispatch(
-            new ShowDataImportWarningsMSA({ description: description }),
-        );
+        this.store.dispatch(new ShowDataImportWarningsMSA());
     }
 
     ngOnDestroy() {
