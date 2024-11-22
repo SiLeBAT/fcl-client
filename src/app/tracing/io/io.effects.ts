@@ -81,8 +81,7 @@ export class IOEffects {
                                     action: "Show More",
                                     onClick: () =>
                                         this.store.dispatch(
-                                            // TODO: Change to ShowDataImportWarningsMSA once that one is merged.
-                                            new tracingEffectActions.ClearTraceMSA(),
+                                            new tracingEffectActions.ShowDataImportWarningsMSA(),
                                         ),
                                 },
                             ),
