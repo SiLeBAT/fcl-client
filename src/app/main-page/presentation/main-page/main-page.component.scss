@@ -1,7 +1,13 @@
 .fcl-wrapper {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 18fr 1fr;
+    grid-template-rows: auto 1fr auto;
+
+    /* Please note: 
+        Header and footer contain components using mat-toolbar styles, setting the height of these components.
+        We therefore need to use auto here rather than a fraction as a row height value, as the child components
+        (row content) will not grow with their parent (row), resulting in excess white space on large screens.
+    */
     grid-template-areas:
         "head"
         "body"
