@@ -1,6 +1,5 @@
 import { IMPORT_ISSUES, ISSUE_TEXT_AGGREGATORS } from "./consts";
 import { ImportIssue, ImportResult } from "./model";
-import { removeUndefined } from "../../../../tracing/util/non-ui-utils";
 
 interface IssueGroup {
     msg: string;
@@ -45,7 +44,7 @@ function getTextForIssueGroup(issueGroup: IssueGroup): string {
                     : []),
             ]);
         default:
-            return issueGroup.msg;
+            return "";
     }
 }
 
@@ -76,5 +75,7 @@ function collectIssues(importResult: ImportResult): IssueGroup[] {
 }
 
 export function getWarnings(importResult: ImportResult): string[] {
-    return collectIssues(importResult).map(getTextForIssueGroup);
+    return collectIssues(importResult)
+        .map(getTextForIssueGroup)
+        .filter((message) => message !== "");
 }
