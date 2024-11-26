@@ -12,6 +12,7 @@ import {
     withLatestFrom,
     concatMap,
     take,
+    tap,
 } from "rxjs/operators";
 import { of, from, EMPTY } from "rxjs";
 import { IOService } from "./io.service";
@@ -37,7 +38,6 @@ import {
 import { DataService } from "../services/data.service";
 import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";
-
 @Injectable()
 export class IOEffects {
     constructor(
@@ -66,16 +66,28 @@ export class IOEffects {
                 } else if (typeof dataSource === "string") {
                     source = dataSource;
                 } else {
-                    this.alertService.error(
-                        "Please select a .json file with the correct format!",
-                    );
+                    this.alertService.error(Constants.ALERT_FILETYPE_NOT_JSON);
                     return of(new tracingStateActions.LoadFclDataFailureSOA());
                 }
                 return from(this.ioService.getFclData(source)).pipe(
-                    concatMap((data: FclData) =>
+                    tap(
+                        (data) =>
+                            data.importWarnings.length > 0 &&
+                            this.alertService.warn(
+                                Constants.ALERT_IMPORT_WARNINGS,
+                                {
+                                    action: Constants.DIALOG_SHOW_MORE,
+                                    onClick: () =>
+                                        this.store.dispatch(
+                                            new tracingEffectActions.ShowDataImportWarningsMSA(),
+                                        ),
+                                },
+                            ),
+                    ),
+                    concatMap((result: FclData) =>
                         of(
                             new tracingStateActions.LoadFclDataSuccessSOA({
-                                fclData: data,
+                                fclData: result,
                             }),
                             new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA(),
                         ),

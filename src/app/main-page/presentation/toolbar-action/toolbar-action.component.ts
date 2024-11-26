@@ -58,6 +58,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Input() fileName: string | null = null;
+    @Input() dataImportHasWarnings: boolean = false;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
     @Output() loadModelFile = new EventEmitter<FileList>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
@@ -69,6 +70,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapSettings = new EventEmitter<Partial<MapSettings>>();
     @Output() downloadFile = new EventEmitter<string>();
+    @Output() openWarningsDialog = new EventEmitter<void>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapOption: string;
@@ -89,6 +91,10 @@ export class ToolbarActionComponent implements OnChanges {
                     ? null
                     : this.fileName.replace(/\.[^\.]+$/, "");
         }
+    }
+
+    onOpenWarningsDialog() {
+        this.openWarningsDialog.emit();
     }
 
     openSelectModelFileMenu() {

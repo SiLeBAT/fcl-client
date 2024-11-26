@@ -29,8 +29,9 @@ export class IOService {
             const jsonData = await getJsonFromFile(file);
             fclData = await this.preprocessData(jsonData);
         } else {
-            const jsonData = await importXlsxFile(file);
+            const { data: jsonData, warnings } = await importXlsxFile(file);
             fclData = await this.preprocessData(jsonData);
+            fclData.importWarnings = [...warnings, ...fclData.importWarnings];
         }
         fclData.source.name = file.name;
         return fclData;
@@ -42,9 +43,9 @@ export class IOService {
                 .get(dataSource)
                 .toPromise()
                 .then(async (response) => this.preprocessData(response))
-                .then((data) => {
-                    data.source.name = this.getFileName(dataSource);
-                    return data;
+                .then((fclData) => {
+                    fclData.source.name = this.getFileName(dataSource);
+                    return fclData;
                 })
                 .catch(async (e) => Promise.reject(e));
         } else if (dataSource instanceof File) {

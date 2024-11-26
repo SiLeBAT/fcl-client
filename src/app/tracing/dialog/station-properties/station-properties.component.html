@@ -1,57 +1,53 @@
-<div
-    mat-dialog-content
-    cdkDrag
-    cdkDragRootElement=".cdk-overlay-pane"
-    cdkDragBoundary=".cdk-overlay-container"
->
-    <div class="fcl-drag-handle">
-        <mat-icon cdkDragHandle fill="currentColor">open_with</mat-icon>
-    </div>
-    <mat-card>
-        <mat-card-title>
-            <span>{{ data.station.name }}</span>
-        </mat-card-title>
-        <mat-card-content>
-            <table>
-                <tr *ngFor="let prop of vipProperties">
-                    <td>{{ properties[prop].label }}</td>
-                    <td>{{ properties[prop].value }}</td>
-                </tr>
-                <tr *ngIf="!otherPropertiesHidden">
-                    <td
-                        colspan="2"
-                        class="fcl-station-properties-horizontal-line-cell"
+<fcl-dialog-movable>
+    <div mat-dialog-content>
+        <mat-card>
+            <mat-card-title>
+                <span>{{ data.station.name }}</span>
+            </mat-card-title>
+            <mat-card-content>
+                <table>
+                    <tr *ngFor="let prop of vipProperties">
+                        <td>{{ properties[prop].label }}</td>
+                        <td>{{ properties[prop].value }}</td>
+                    </tr>
+                    <tr *ngIf="!otherPropertiesHidden">
+                        <td
+                            colspan="2"
+                            class="fcl-station-properties-horizontal-line-cell"
+                        >
+                            <hr
+                                class="fcl-station-properties-horizontal-line"
+                            />
+                        </td>
+                    </tr>
+                    <tr
+                        *ngFor="
+                            let prop of !otherPropertiesHidden
+                                ? getOtherPropertiesOri()
+                                : []
+                        "
                     >
-                        <hr class="fcl-station-properties-horizontal-line" />
-                    </td>
-                </tr>
-                <tr
-                    *ngFor="
-                        let prop of !otherPropertiesHidden
-                            ? getOtherPropertiesOri()
-                            : []
-                    "
+                        <td>{{ properties[prop].label }}</td>
+                        <td>{{ properties[prop].value }}</td>
+                    </tr>
+                </table>
+                <button
+                    mat-button
+                    *ngIf="otherProperties.length > 0"
+                    (click)="toggleOtherProperties()"
                 >
-                    <td>{{ properties[prop].label }}</td>
-                    <td>{{ properties[prop].value }}</td>
-                </tr>
-            </table>
-            <button
-                mat-button
-                *ngIf="otherProperties.length > 0"
-                (click)="toggleOtherProperties()"
-            >
-                <span *ngIf="otherPropertiesHidden">More properties</span>
-                <span *ngIf="!otherPropertiesHidden">Less properties</span>
-            </button>
-        </mat-card-content>
-    </mat-card>
-    <mat-card>
-        <mat-card-content>
-            <div #inOutConnector></div>
-        </mat-card-content>
-    </mat-card>
-</div>
-<div mat-dialog-actions>
-    <button mat-button cdkFocusInitial matDialogClose>Close</button>
-</div>
+                    <span *ngIf="otherPropertiesHidden">More properties</span>
+                    <span *ngIf="!otherPropertiesHidden">Less properties</span>
+                </button>
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-content>
+                <div #inOutConnector></div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button cdkFocusInitial matDialogClose>Close</button>
+    </div>
+</fcl-dialog-movable>

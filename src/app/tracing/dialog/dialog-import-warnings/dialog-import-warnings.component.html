@@ -1,0 +1,20 @@
+<fcl-dialog-movable>
+    <div mat-dialog-content>
+        <mat-card>
+            <mat-card-title>
+                <h2>Data import warnings</h2>
+            </mat-card-title>
+            <mat-card-content>
+                <span>
+                    {{ description }}
+                </span>
+                <ul>
+                    <li *ngFor="let warning of warnings">{{ warning }}</li>
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button cdkFocusInitial matDialogClose>Close</button>
+    </div>
+</fcl-dialog-movable>

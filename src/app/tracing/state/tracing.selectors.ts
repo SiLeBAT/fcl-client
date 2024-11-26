@@ -449,3 +449,13 @@ export const selectDeliveryFilterState = createSelector(
         filterTableState: deliveryFilterSettings,
     }),
 );
+
+export const selectImportWarnings = createSelector(
+    getFclData,
+    (fclData) => fclData.importWarnings,
+);
+
+export const selectImportHasWarnings = createSelector(
+    selectImportWarnings,
+    (importWarnings) => importWarnings.length > 0,
+);

@@ -4,7 +4,6 @@ import {
     isNullish,
 } from "../../../../tracing/util/non-ui-utils";
 import * as Excel from "exceljs";
-import * as _ from "lodash";
 import { InternalError, XlsxInputFormatError } from "../../io-errors";
 import { IMPORT_ISSUES } from "./consts";
 
@@ -292,6 +291,7 @@ export interface Table {
     columns: ColumnInfo[];
     rows: Row[];
     offset: CellPosition;
+    sheet: string;
 }
 
 export class XlsxSheetReader {
@@ -440,6 +440,7 @@ export class XlsxSheetReader {
             rows: rows,
             columns: columns,
             offset: offset,
+            sheet: this.workSheet.name,
         };
     }
 }

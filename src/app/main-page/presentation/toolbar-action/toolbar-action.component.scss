@@ -1,5 +1,15 @@
 @use "../../../../assets/sass/base" as fcl;
 
+@mixin common-marker-styles {
+    background-color: rgb(192 0 0);
+    color: white;
+    padding-left: 0.5ch;
+    padding-right: 0.5ch;
+    bottom: 0.9em;
+}
+
+$marker-offset-right: -1.5ch;
+
 .fcl-action-item {
     flex: 1;
 }
@@ -34,10 +44,27 @@
     padding-right: 1rem;
 }
 
+.fcl-file-name-inner-wrapper {
+    position: relative;
+}
+
 .fcl-file-name {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+
+.fcl-file-name-warning {
+    position: absolute;
+    right: $marker-offset-right;
+    display: flex;
+    align-items: center;
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+
+    @include common-marker-styles;
 }
 
 .fcl-graph-type {
@@ -77,19 +104,16 @@
 }
 
 .fcl-draft-marker {
+    @include common-marker-styles;
+
     display: block;
     position: relative;
     left: 0;
-    bottom: 0.9em;
     line-height: 1.2em;
-    background-color: rgb(192 0 0);
-    color: white;
-    padding-left: 0.5ch;
-    padding-right: 0.5ch;
 }
 
 .fcl-draft-marker-wrapper {
     display: inline-block;
     margin-left: -2.5ch;
-    margin-right: -1.5ch;
+    margin-right: $marker-offset-right;
 }

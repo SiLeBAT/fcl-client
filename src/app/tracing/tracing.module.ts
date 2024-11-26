@@ -85,6 +85,8 @@ import { SymbolHeaderCellViewComponent } from "./configuration/table-cells/symbo
 import { PrefixEditorViewComponent } from "./configuration/prefix-editor-view/prefix-editor-view.component";
 import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.component";
 import { LoadingGraphComponent } from "./graph/components/graph-loading/graph-loading.component";
+import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.component";
+import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
 
 @NgModule({
     imports: [
@@ -109,6 +111,8 @@ import { LoadingGraphComponent } from "./graph/components/graph-loading/graph-lo
         DialogAlertComponent,
         DialogPromptComponent,
         DialogSelectComponent,
+        DialogMovableComponent,
+        DialogImportWarningsComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,

@@ -34,6 +34,7 @@ import { Constants } from "@app/tracing/util/constants";
 import { ToolbarActionComponent } from "@app/main-page/presentation/toolbar-action/toolbar-action.component";
 import { IOService } from "@app/tracing/io/io.service";
 import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
+import { ShowDataImportWarningsMSA } from "@app/tracing/tracing.actions";
 
 @Component({
     selector: "fcl-toolbar-action-container",
@@ -45,10 +46,13 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     toolbarActionComponent: ToolbarActionComponent;
 
     isModelLoaded$ = this.store.select(tracingSelectors.selectIsModelLoaded);
-    tracingActive$ = this.store.pipe(select(tracingSelectors.getTracingActive));
-    graphEditorActive$ = this.store.pipe(select(fromEditor.isActive));
-    currentUser$ = this.store.pipe(select(fromUser.getCurrentUser));
-    fileName$ = this.store.pipe(select(tracingSelectors.selectSourceFileName));
+    tracingActive$ = this.store.select(tracingSelectors.getTracingActive);
+    graphEditorActive$ = this.store.select(fromEditor.isActive);
+    currentUser$ = this.store.select(fromUser.getCurrentUser);
+    fileName$ = this.store.select(tracingSelectors.selectSourceFileName);
+    dataImportHasWarnings$ = this.store.select(
+        tracingSelectors.selectImportHasWarnings,
+    );
 
     graphSettings: GraphSettings;
     hasGisInfo = false;
@@ -146,6 +150,10 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     onOpenRoaLayout() {
         this.mainPageService.onROALayout();
+    }
+
+    onOpenWarningsDialog() {
+        this.store.dispatch(new ShowDataImportWarningsMSA());
     }
 
     ngOnDestroy() {

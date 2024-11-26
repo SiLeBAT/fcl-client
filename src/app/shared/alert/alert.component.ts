@@ -31,17 +31,19 @@ export class AlertComponent implements OnInit {
     }
 
     showToaster(notification: INotification) {
-        const text = notification.text;
-        const config: MatSnackBarConfig = notification.config;
+        const { text, config, action } = notification;
         const autoDismiss = !!config.duration;
         const snackBarRef = this.snackBar.open(
             text,
-            !autoDismiss ? "Ok" : "",
+            action?.action ?? (!autoDismiss ? "Ok" : ""),
             config,
         );
 
         if (!autoDismiss) {
             this.dismissSnackBarOnOutsideSnackBarClick(snackBarRef);
+        }
+        if (action?.onClick) {
+            snackBarRef.onAction().subscribe(action.onClick);
         }
     }
 

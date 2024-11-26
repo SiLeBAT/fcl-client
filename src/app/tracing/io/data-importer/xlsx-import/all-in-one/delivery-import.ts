@@ -1,16 +1,10 @@
-import {
-    AddIssueCallback,
-    ColumnMapping,
-    ImportIssue,
-    SetLike,
-} from "../model";
+import { AddIssueCallback, ColumnMapping, SetLike } from "../model";
 import {
     enrichImportIssue,
     getPropsFromRow,
     getStringOrUndefined,
     importAggregatedAmount,
     importMandatoryString,
-    importPrimaryKey,
     importReference,
     importStringDate,
     importValue,
@@ -21,31 +15,21 @@ import { AllInOneDeliveryRow, DeliveryColumn } from "./model";
 export function importDelivery(
     row: Row,
     table: Table,
+    externalId: string | undefined,
     optionalColumnMappings: ColumnMapping[],
     otherColumnMappings: ColumnMapping[],
-    extDeliveryIdRegister: SetLike,
     extStationIdRegister: SetLike,
     externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneDeliveryRow> {
-    // eslint-disable-next-line prefer-const
-    let externalId: string | undefined;
-
     const addIssueCallback: AddIssueCallback = (
-        issue: ImportIssue,
-        invalidateRow: boolean = false,
+        issue,
+        invalidateRow = false,
     ) => {
         externalAddIssueCallback(
             enrichImportIssue(issue, row, table, invalidateRow, externalId),
             invalidateRow,
         );
     };
-
-    externalId = importPrimaryKey(
-        row,
-        DeliveryColumn.EXT_ID,
-        extDeliveryIdRegister,
-        addIssueCallback,
-    );
 
     return {
         extId: externalId,

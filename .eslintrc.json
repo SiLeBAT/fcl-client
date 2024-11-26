@@ -48,7 +48,7 @@
                 "no-useless-constructor": "off",
                 "no-var": "error",
                 "no-void": "error",
-                "object-shorthand": ["error", "never"],
+                "object-shorthand": ["error", "consistent"],
                 "one-var": ["error", "never"],
                 "prefer-const": "error",
                 "radix": "error",
