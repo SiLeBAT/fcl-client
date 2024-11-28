@@ -66,6 +66,7 @@ export enum RuleType {
     LABEL,
     COLOR_AND_SHAPE,
     COLOR,
+    EDGE_WIDTH,
 }
 
 export interface ColorAndShapeEditRule extends EditRuleCore {

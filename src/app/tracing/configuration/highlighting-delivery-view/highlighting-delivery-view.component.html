@@ -30,6 +30,23 @@
     </fcl-edge-color-edit-view>
 </ng-template>
 
+<ng-template let-editRule="editRule" #edgeWidthEditTemplate>
+    <!-- TODO Switch this to it's own component. -->
+    <fcl-edge-color-edit-view
+        *ngIf="editRule !== null"
+        [rule]="editRule"
+        [favouriteProperties]="favouriteProperties"
+        [otherProperties]="otherProperties"
+        [propToValuesMap]="propToValuesMap"
+        (addSelection)="onAddSelectionToRuleConditions($event)"
+        (removeSelection)="onRemoveSelectionFromRuleConditions($event)"
+        (applyRule)="onApplyEdit($event)"
+        (cancelEdit)="onCancelEdit(editRule.id)"
+        (okRule)="onOkEdit($event)"
+    >
+    </fcl-edge-color-edit-view>
+</ng-template>
+
 <ng-template let-item="item" #edgeSymbolTemplate>
     <fcl-edge-symbol-view
         *ngIf="item.color !== null"
@@ -93,20 +110,16 @@
     >
     </ng-container>
 
-    <mat-expansion-panel
-        class="fcl-highlighting-expansion-panels fcl-border-radius-zero"
-        (opened)="widthOpenState = true"
-        (closed)="widthOpenState = false"
+    <ng-container
+        [ngTemplateOutlet]="panelTemplate"
+        [ngTemplateOutletContext]="{
+            ruleType: RuleType.EDGE_WIDTH,
+            title: 'Delivery Width',
+            editTemplate: edgeWidthEditTemplate,
+            symbolTemplate: edgeWidthEditTemplate,
+        }"
     >
-        <mat-expansion-panel-header>
-            <mat-panel-title class="fcl-font-size-08">
-                Delivery Width... click to
-                {{ widthOpenState ? "close" : "open" }}
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-
-        Delivery Width Configurations ... coming soon
-    </mat-expansion-panel>
+    </ng-container>
 
     <ng-container
         [ngTemplateOutlet]="panelTemplate"
