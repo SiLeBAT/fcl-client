@@ -27,7 +27,6 @@ import { concat, isNullish, Utils } from "../../util/non-ui-utils";
 import * as ExtDataConstants from "../ext-data-constants.v1";
 import { IDataImporter } from "./datatypes";
 import {
-    isValidJson,
     checkVersionFormat,
     areMajorVersionsMatching,
     createDefaultStationAnonymizationLabelHRule,
@@ -51,6 +50,7 @@ import { getCenterFromPoints, getDifference } from "../../util/geometry-utils";
 import * as _ from "lodash";
 import { Constants } from "../../util/constants";
 import { PartialPick } from "@app/tracing/util/utility-types";
+import { isValidJsonSchemaV7 } from "./json-schema-validation";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";
 
@@ -65,7 +65,7 @@ export class DataImporterV1 implements IDataImporter {
             areMajorVersionsMatching(data.version, VERSION)
         ) {
             const schema = await this.loadSchema();
-            return isValidJson(schema, data, true);
+            return isValidJsonSchemaV7(schema, data, true);
         } else {
             return false;
         }

@@ -10,6 +10,11 @@ import { getJsonFromFile, isJsonFileType } from "./io-utils";
 import { JsonData } from "./ext-data-model.v1";
 import * as _ from "lodash";
 import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
+import {
+    hasUtxCore,
+    UtxImporter,
+} from "./data-importer/utx-import/utx-importer";
+import { RelaxedUtxImporter } from "./data-importer/utx-import/relaxed-utx-importer";
 
 @Injectable({
     providedIn: "root",
@@ -17,7 +22,14 @@ import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
 export class IOService {
     private async preprocessData(data: any): Promise<FclData> {
         const fclData: FclData = createInitialFclDataState();
-        await DataImporter.preprocessData(data, fclData, this.httpClient);
+        if (hasUtxCore(data)) {
+            await new RelaxedUtxImporter(this.httpClient).preprocessData(
+                data,
+                fclData,
+            );
+        } else {
+            await DataImporter.preprocessData(data, fclData, this.httpClient);
+        }
         return fclData;
     }
 

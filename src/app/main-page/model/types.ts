@@ -4,7 +4,7 @@ export interface ExampleData {
     children?: ExampleData[];
 }
 
-export type ModelFileType = "json-fcl" | "xlsx-all-in-one";
+export type ModelFileType = "json-fcl" | "xlsx-all-in-one" | "json-utx";
 
 export interface FileInputElementSettings {
     accept: string;
