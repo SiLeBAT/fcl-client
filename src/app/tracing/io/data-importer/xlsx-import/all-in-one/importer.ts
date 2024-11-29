@@ -162,10 +162,6 @@ export class AllInOneImporter implements XlsxImporter {
                 addIssueCallback,
             );
 
-            if (stationRow.extId) {
-                externalIdRegister.add(stationRow.extId);
-            }
-
             if (!rowIsInvalid) {
                 const longUniqueId = getLongUniqueStationId(stationRow);
                 if (longUniqueId2RowIndexMap.has(longUniqueId)) {
