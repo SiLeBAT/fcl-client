@@ -62,12 +62,10 @@ function formatCellAddress(
 
 export const IMPORT_ISSUES = {
     wbNotLoaded: "Workbook is not loaded into Reader.",
-    nonUniqueValue: "Value is not unique.",
     nonUniquePrimaryKey: "Primary key is not unique.",
     invalidValue: "Invalid value.",
     missingValue: "Missing value.",
     invalidRef: "Invalid reference.",
-    omittingValue: "Value was omitted.",
     omittingRow: "Row was omitted.",
     rowIsTooSimilar: (indexOfSimilarRow: number) =>
         `Row is too similar to row ${indexOfSimilarRow}.`,
