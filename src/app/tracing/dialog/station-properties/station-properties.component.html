@@ -43,7 +43,11 @@
         </mat-card>
         <mat-card>
             <mat-card-content>
-                <div #inOutConnector></div>
+                <div
+                    #inOutConnector
+                    #tooltip="matTooltip"
+                    [matTooltip]="tooltipContent"
+                ></div>
             </mat-card-content>
         </mat-card>
     </div>
