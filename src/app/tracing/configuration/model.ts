@@ -6,6 +6,7 @@ import {
     TableColumn,
     TableRow,
 } from "../data.model";
+import { PartialPick } from "../util/utility-types";
 import { ComplexFilterCondition, PropToValuesMap } from "./configuration.model";
 
 export interface RowFilter<T> {
@@ -59,7 +60,8 @@ export type EditRule =
     | ColorAndShapeEditRule
     | ColorEditRule
     | LabelEditRule
-    | InvEditRule;
+    | InvEditRule
+    | EdgeWidthEditRule;
 
 export enum RuleType {
     INVISIBILITY,
@@ -67,6 +69,20 @@ export enum RuleType {
     COLOR_AND_SHAPE,
     COLOR,
     EDGE_WIDTH,
+}
+
+export type EdgeWidthEditRule = PartialPick<
+    ValidEdgeWidthEditRule,
+    "scale" | "propertyName"
+>;
+
+export type Scale = "linear" | "log";
+export interface ValidEdgeWidthEditRule extends EditRuleCore {
+    type: RuleType.EDGE_WIDTH;
+    propertyName: string;
+    scale: Scale;
+    minimumZero: boolean;
+    maximum?: number;
 }
 
 export interface ColorAndShapeEditRule extends EditRuleCore {
