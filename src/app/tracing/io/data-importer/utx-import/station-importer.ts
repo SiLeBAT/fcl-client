@@ -24,14 +24,14 @@ function createContactAddress(contact: Contact): string | undefined {
     return address;
 }
 
-export function applyUtxStations(
+export function applyUtxStationsToFclData(
     utxData: UtxData,
     fclData: FclData,
     coreMaps: UtxCoreMaps,
-): void {
+): FclData {
     const utxStations = utxData.utxCore.station?.current ?? [];
     const contactMap = coreMaps.contact;
-    const registrationSchemeMap = coreMaps.registrationScheme; // this.createRegistrationSchemeMap(utxData);
+    const registrationSchemeMap = coreMaps.registrationScheme;
     const fclStations: StationStoreData[] = utxStations.map((utxStation) => {
         const stationContact = contactMap.get(
             utxStation.stationNameAddress ?? "",
@@ -85,5 +85,11 @@ export function applyUtxStations(
             ]),
         };
     });
-    fclData.fclElements.stations = fclStations;
+    return {
+        ...fclData,
+        fclElements: {
+            ...fclData.fclElements,
+            stations: fclStations,
+        },
+    };
 }

@@ -60,11 +60,10 @@ describe("DataImporterV1", () => {
         const extData: JsonData = require(exampleDataPath);
         // simulate no tracing settings in the external model
         extData.tracing = null;
-        let fclData = createInitialFclDataState();
 
         return dataImporterV1
-            .preprocessData(extData, fclData)
-            .then(async () => {
+            .importData(extData)
+            .then(async (fclData) => {
                 checkElementTracSettingsCompleteness(fclData);
 
                 const allStatIds = ([] as string[]).concat(
@@ -94,11 +93,9 @@ describe("DataImporterV1", () => {
                         .slice(0, fclData.fclElements.deliveries.length - 1),
                 };
 
-                fclData = createInitialFclDataState();
-
-                return dataImporterV1.preprocessData(extData, fclData);
+                return dataImporterV1.importData(extData);
             })
-            .then(() => {
+            .then((fclData) => {
                 checkElementTracSettingsCompleteness(fclData);
             })
             .catch((error) => {

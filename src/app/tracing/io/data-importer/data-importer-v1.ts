@@ -51,6 +51,7 @@ import * as _ from "lodash";
 import { Constants } from "../../util/constants";
 import { PartialPick } from "@app/tracing/util/utility-types";
 import { isValidJsonSchemaV7 } from "./json-schema-validation";
+import { createInitialFclDataState } from "../../state/tracing.reducers";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";
 
@@ -71,9 +72,11 @@ export class DataImporterV1 implements IDataImporter {
         }
     }
 
-    async preprocessData(data: any, fclData: FclData): Promise<void> {
+    async importData(data: any): Promise<FclData> {
+        const fclData = createInitialFclDataState();
         if (await this.isDataFormatSupported(data)) {
             this.convertExternalData(data, fclData);
+            return fclData;
         } else {
             throw new InputFormatError();
         }

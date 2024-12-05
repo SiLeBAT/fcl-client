@@ -26,11 +26,13 @@ export async function isValidJsonSchemaV7(
     return valid;
 }
 
-export async function validateJsonSchemaV2019(
-    schema: any,
-    data: any,
-    throwError?: boolean,
-): Promise<{ isValid: boolean; errors?: ValidationError[] }> {
+export async function validateJsonSchemaV2019<
+    T extends boolean,
+    R extends {
+        isValid: T extends true ? true : boolean;
+        errors?: ValidationError[];
+    },
+>(schema: any, data: any, throwError?: T): Promise<R> {
     const ajv = new Ajv2019({ allErrors: true, strictSchema: true });
     addFormats(ajv);
 
@@ -41,7 +43,7 @@ export async function validateJsonSchemaV2019(
     return {
         isValid: valid,
         errors: (ajv.errors as ValidationError[]) ?? undefined,
-    };
+    } as R;
 }
 
 function throwSchemaValidationError(ajv: Ajv): void {

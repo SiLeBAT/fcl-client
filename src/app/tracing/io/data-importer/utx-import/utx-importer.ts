@@ -1,14 +1,16 @@
 import { FclData, ObservedType } from "../../../data.model";
 import { Utils } from "../../../util/non-ui-utils";
 import { createDefaultHighlights } from "../shared";
-import { InputFormatError } from "../../io-errors";
 import { UtxData } from "./utx-model";
 import { validateJsonSchemaV2019 } from "../json-schema-validation";
 import { createUtxCoreMaps } from "./create-core-maps";
-import { applyUtxDeliveries } from "./delivery-importer";
-import { applyUtxStations } from "./station-importer";
+import { applyUtxDeliveriesToFclData } from "./delivery-importer";
+import { applyUtxStationsToFclData } from "./station-importer";
 import { HttpClient } from "@angular/common/http";
+import { fixUtxData } from "./fix-utx-data";
+import { createInitialFclDataState } from "../../../state/tracing.reducers";
 
+type NotValidatedUtxData = any;
 // this schema does not take care about the
 // - date or time formats
 // - the controlled vocabularies
@@ -23,33 +25,43 @@ export function hasUtxCore(data: any): data is { utxCore: any } {
 export class UtxImporter {
     constructor(private httpClient: HttpClient) {}
 
-    async loadUtxSchema(): Promise<any> {
+    private async loadUtxSchema(): Promise<any> {
         return Utils.getJson(UTX_SCHEMA_FILE, this.httpClient);
     }
 
-    async isDataFormatSupported(data: any): Promise<boolean> {
+    private async getValidUtxData(data: NotValidatedUtxData): Promise<UtxData> {
         const schema = await this.loadUtxSchema();
-        return (await validateJsonSchemaV2019(schema, data, true)).isValid;
-    }
+        let { isValid, errors } = await validateJsonSchemaV2019(schema, data);
+        let fixedData: any;
 
-    preprocessValidatedData(data: UtxData, fclData: FclData): void {
-        const coreMaps = createUtxCoreMaps(data);
-        applyUtxStations(data, fclData, coreMaps);
-        applyUtxDeliveries(data, fclData, coreMaps);
-        initTracingSettings(fclData);
-        fclData.graphSettings.highlightingSettings = createDefaultHighlights();
-    }
-
-    async preprocessData(data: any, fclData: FclData): Promise<void> {
-        if (await this.isDataFormatSupported(data)) {
-            this.preprocessValidatedData(data, fclData);
-            return;
+        if (!isValid) {
+            fixedData = fixUtxData(data, errors!);
+            ({ isValid, errors } = await validateJsonSchemaV2019(
+                schema,
+                fixedData,
+                true,
+            ));
         }
-        throw new InputFormatError();
+        return fixedData ?? data;
+    }
+
+    async importData(data: NotValidatedUtxData): Promise<FclData> {
+        const utxData = await this.getValidUtxData(data);
+        return this.convertUtxDataToFclData(utxData);
+    }
+
+    private convertUtxDataToFclData(data: UtxData): FclData {
+        let fclData = createInitialFclDataState();
+        const coreMaps = createUtxCoreMaps(data);
+        fclData = applyUtxStationsToFclData(data, fclData, coreMaps);
+        fclData = applyUtxDeliveriesToFclData(data, fclData, coreMaps);
+        fclData = initTracingSettings(fclData);
+        fclData.graphSettings.highlightingSettings = createDefaultHighlights();
+        return fclData;
     }
 }
 
-function initTracingSettings(fclData: FclData): void {
+function initTracingSettings(fclData: FclData): FclData {
     const createElementSettings = (id: string) => ({
         id: id,
         crossContamination: false,
@@ -58,10 +70,16 @@ function initTracingSettings(fclData: FclData): void {
         killContamination: false,
         observed: ObservedType.NONE,
     });
-    fclData.tracingSettings.stations = fclData.fclElements.stations.map((s) =>
-        createElementSettings(s.id),
-    );
-    fclData.tracingSettings.deliveries = fclData.fclElements.deliveries.map(
-        (d) => createElementSettings(d.id),
-    );
+    return {
+        ...fclData,
+        tracingSettings: {
+            ...fclData.tracingSettings,
+            stations: fclData.fclElements.stations.map((s) =>
+                createElementSettings(s.id),
+            ),
+            deliveries: fclData.fclElements.deliveries.map((d) =>
+                createElementSettings(d.id),
+            ),
+        },
+    };
 }

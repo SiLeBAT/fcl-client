@@ -1,4 +1,9 @@
-import { DeliveryId, DeliveryStoreData, FclData } from "../../../data.model";
+import {
+    DeliveryId,
+    DeliveryStoreData,
+    FclData,
+    StationStoreData,
+} from "../../../data.model";
 import {
     areSetsEqual,
     removeUndefined,
@@ -157,20 +162,26 @@ function getTru2AncestorsMap(truRecipes: Map<Tru, Set<Tru>>): Map<Tru, Tru[]> {
     return tru2Ancestors;
 }
 
-export function applyUtxDeliveries(
+export function applyUtxDeliveriesToFclData(
     utxData: UtxData,
     fclData: FclData,
     coreMaps: UtxCoreMaps,
-): void {
+): FclData {
     const { deliveries, truRecipes } = getDeliveriesAndRecipes(
         utxData.utxCore.activity?.current ?? [],
         coreMaps,
     );
 
-    const delId2Delivery = new Map<DeliveryId, Delivery>();
-    const id2FclStation = new Map(
-        fclData.fclElements.stations.map((s) => [s.id, s]),
+    const fclStations: StationStoreData[] = fclData.fclElements.stations.map(
+        (fclStation) => ({
+            ...fclStation,
+            incoming: [],
+            outgoing: [],
+            connections: [],
+        }),
     );
+    const delId2Delivery = new Map<DeliveryId, Delivery>();
+    const id2FclStation = new Map(fclStations.map((s) => [s.id, s]));
 
     const fclDeliveries: DeliveryStoreData[] = deliveries.map(
         (delivery, index) => {
@@ -229,7 +240,7 @@ export function applyUtxDeliveries(
     );
 
     const tru2AncestorsMap = getTru2AncestorsMap(truRecipes);
-    fclData.fclElements.stations.forEach((fclStation) => {
+    fclStations.forEach((fclStation) => {
         const tru2DeliverId = new Map(
             fclStation.incoming.map((inDelId) => [
                 delId2Delivery.get(inDelId)!.toTru,
@@ -252,5 +263,12 @@ export function applyUtxDeliveries(
             );
         });
     });
-    fclData.fclElements.deliveries = fclDeliveries;
+    return {
+        ...fclData,
+        fclElements: {
+            ...fclData.fclElements,
+            stations: fclStations,
+            deliveries: fclDeliveries,
+        },
+    };
 }
