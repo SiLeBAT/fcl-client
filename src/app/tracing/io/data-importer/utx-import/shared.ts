@@ -1,8 +1,7 @@
 import { PropertyEntry } from "@app/tracing/data.model";
 import { Registration, RegistrationScheme } from "./utx-model";
 
-type JSON_VALUE = string | number | boolean | object;
-type SIMPLE_TYPE = string | number | boolean;
+type SimpleType = string | number | boolean;
 
 export function getRegistration(
     registrations: Registration[],
@@ -56,11 +55,11 @@ export function mergeCVsAndTreeTexts(
     return mergedValues;
 }
 
-export function value2SimpleType(
-    value: JSON_VALUE | undefined,
-): SIMPLE_TYPE | undefined {
-    if (typeof value === "object") {
-        if (Array.isArray(value) && value.length > 0) {
+export function convertToSimpleType<T extends SimpleType>(
+    value: T | T[] | undefined,
+): T | undefined {
+    if (Array.isArray(value)) {
+        if (value.length > 0) {
             return value[0];
         }
         return undefined;
@@ -69,11 +68,11 @@ export function value2SimpleType(
 }
 
 export function createProperties(
-    entries: { id: string; value: JSON_VALUE | undefined }[],
+    entries: { id: string; value: SimpleType | SimpleType[] | undefined }[],
 ): PropertyEntry[] {
     const properties = entries.map((e) => ({
         name: e.id,
-        value: value2SimpleType(e.value),
+        value: convertToSimpleType(e.value),
     }));
     const propertiesWithValues = properties.filter(
         (p) => p.value !== undefined,

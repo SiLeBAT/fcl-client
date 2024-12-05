@@ -38,10 +38,6 @@ function cleanData(data: any): any {
     return cleanedData;
 }
 
-function replaceArrayIndices(instancePath: string): string {
-    return instancePath.replace(/(?<=\/)\d+(?=\/)/, "*");
-}
-
 function getObjAndProperty(
     data: any,
     path: string,
