@@ -5,5 +5,6 @@ export const FILE_INPUT_ELEMENT_SETTINGS: Record<
     FileInputElementSettings
 > = {
     "json-fcl": { accept: "application/json,.json" },
+    "json-utx": { accept: "application/json,.json" },
     "xlsx-all-in-one": { accept: ".xlsx" },
 };

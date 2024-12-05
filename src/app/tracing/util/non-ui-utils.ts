@@ -27,6 +27,32 @@ export function values<T extends string, K>(
     return Object.values(object) as K[];
 }
 
+export function areSetsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+    return a.size === b.size && Array.from(a).every((x) => b.has(x));
+}
+
+export function areSetsDisjoint<T>(a: Set<T>, b: Set<T>): boolean {
+    return a.size > 0 && b.size > 0 && !Array.from(a).some((x) => b.has(x));
+}
+
+export function unionOfSets<T>(...sets: Set<T>[]): Set<T> {
+    if (sets.length === 0) {
+        return new Set<T>();
+    }
+    if (sets.length === 1) {
+        return sets[0];
+    }
+    const result = new Set(Array.from(sets[0]));
+    for (let i = 1; i < sets.length; i++) {
+        sets[i].forEach((element) => result.add(element));
+    }
+    return result;
+}
+
+export function difference<T>(set1: Set<T>, set2: Set<T>): Set<T> {
+    return new Set(Array.from(set1).filter((x) => !set2.has(x)));
+}
+
 export function isNullish(x: any): x is undefined | null {
     return x === null || x === undefined;
 }
@@ -159,6 +185,14 @@ export function getUpdatedObject<T>(obj: T, update: Partial<T>): T {
     return { ...obj, ...update };
 }
 
+export function getReverseRecord<
+    K extends string | number,
+    V extends string | number,
+>(record: Record<K, V>): Record<V, K> {
+    return Object.fromEntries(
+        entries(record).map(([key, value]) => [value, key]),
+    ) as Record<V, K>;
+}
 export class Utils {
     static rgbArrayToColor(color: number[]): Color {
         return { r: color[0], g: color[1], b: color[2] };
