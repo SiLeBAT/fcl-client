@@ -55,7 +55,7 @@ export function mergeCVsAndTreeTexts(
     return mergedValues;
 }
 
-export function convertToSimpleType<T extends SimpleType>(
+export function convertToSimpleTypeOrUndefined<T extends SimpleType>(
     value: T | T[] | undefined,
 ): T | undefined {
     if (Array.isArray(value)) {
@@ -72,7 +72,7 @@ export function createProperties(
 ): PropertyEntry[] {
     const properties = entries.map((e) => ({
         name: e.id,
-        value: convertToSimpleType(e.value),
+        value: convertToSimpleTypeOrUndefined(e.value),
     }));
     const propertiesWithValues = properties.filter(
         (p) => p.value !== undefined,
