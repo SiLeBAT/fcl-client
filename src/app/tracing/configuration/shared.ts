@@ -10,12 +10,12 @@ import { PropToValuesMap } from "./configuration.model";
 import {
     ColorAndShapeEditRule,
     ColorEditRule,
-    EdgeWidthEditRule,
     InvEditRule,
     LabelEditRule,
     RowFilter,
     RuleType,
     SimpleLabelEditRule,
+    ValidEdgeWidthEditRule,
 } from "./model";
 import * as _ from "lodash";
 import { NotNullishPick } from "../util/utility-types";
@@ -30,7 +30,7 @@ export type EditRuleOfType<T extends RuleType> = T extends RuleType.LABEL
         : T extends RuleType.INVISIBILITY
           ? InvEditRule
           : T extends RuleType.EDGE_WIDTH
-            ? EdgeWidthEditRule
+            ? ValidEdgeWidthEditRule
             : never;
 
 export function filterTableRows(

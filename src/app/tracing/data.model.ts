@@ -1,3 +1,4 @@
+import { Scale } from "./configuration/model";
 import { JsonData } from "./io/ext-data-model.v1";
 
 export type HighlightingRuleId = string;
@@ -253,6 +254,10 @@ export interface HighlightingRule {
 
 export interface DeliveryHighlightingRule extends HighlightingRule {
     linePattern: LinePatternType | null;
+    widthPropertyName?: string;
+    widthScale?: Scale;
+    widthMinZero?: boolean;
+    widthMax?: number;
 }
 
 export interface StationHighlightingRule extends HighlightingRule {

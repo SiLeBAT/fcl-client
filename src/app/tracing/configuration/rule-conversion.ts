@@ -19,6 +19,7 @@ import {
     RuleType,
     StationEditRule,
     StationRuleType,
+    ValidEdgeWidthEditRule,
 } from "./model";
 import { isSimpleLabelRule } from "./shared";
 import { ComplexFilterUtils } from "./shared/complex-filter-utils";
@@ -86,6 +87,20 @@ function convertLabelEditRuleToDeliveryHRule(
     editRule: LabelEditRule,
 ): DeliveryHighlightingRule {
     return convertHRuleToDeliveryHRule(convertLabelEditRuleToHRule(editRule));
+}
+
+function convertEdgeWidthEditRuleToHighlitingRule(
+    editRule: ValidEdgeWidthEditRule,
+): DeliveryHighlightingRule {
+    return {
+        ...convertEditRuleToHRule(editRule),
+        linePattern: null,
+        adjustThickness: true,
+        widthMax: editRule.maximum,
+        widthMinZero: editRule.minimumZero,
+        widthPropertyName: editRule.propertyName,
+        widthScale: editRule.scale,
+    };
 }
 
 function convertInvEditRuleToHRule(editRule: InvEditRule): HighlightingRule {
@@ -162,6 +177,8 @@ export function convertDeliveryEditRuleToHRule(
             );
         case RuleType.INVISIBILITY:
             return convertInvEditRuleToDeliveryHRule(editRule as InvEditRule);
+        case RuleType.EDGE_WIDTH:
+            return convertEdgeWidthEditRuleToHighlitingRule(editRule);
         default:
             throw new Error("Rule not convertable.");
     }
@@ -286,6 +303,8 @@ export function getDeliveryRuleType(
         return RuleType.COLOR;
     } else if (rule.labelProperty) {
         return RuleType.LABEL;
+    } else if (rule.adjustThickness) {
+        return RuleType.EDGE_WIDTH;
     } else {
         return null;
     }

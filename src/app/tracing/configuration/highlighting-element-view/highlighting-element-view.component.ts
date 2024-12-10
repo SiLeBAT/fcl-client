@@ -133,6 +133,11 @@ export class HighlightingElementViewComponent<T extends EditRule>
                 list.push(item);
             }
         });
+        console.log(
+            "typeToListItemsMap_",
+            this.ruleListItems,
+            this.typeToListItemsMap_,
+        );
     }
 
     private updateTypeToEditRuleMap(): void {
