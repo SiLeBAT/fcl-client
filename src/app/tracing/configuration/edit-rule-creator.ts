@@ -68,6 +68,8 @@ export class EditRuleCreator {
             ...this.createEditRuleCore(),
             type: RuleType.EDGE_WIDTH,
             minimumZero: false,
+            propertyName: null,
+            scale: null,
         };
     }
 

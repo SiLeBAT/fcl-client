@@ -71,18 +71,18 @@ export enum RuleType {
     EDGE_WIDTH,
 }
 
-export type EdgeWidthEditRule = PartialPick<
-    ValidEdgeWidthEditRule,
-    "scale" | "propertyName"
->;
-
 export type Scale = "linear" | "log";
-export interface ValidEdgeWidthEditRule extends EditRuleCore {
+export interface EdgeWidthEditRule extends EditRuleCore {
     type: RuleType.EDGE_WIDTH;
-    propertyName: string;
-    scale: Scale;
     minimumZero: boolean;
     maximum?: number;
+    scale: Scale | null;
+    propertyName: string | null;
+}
+
+export interface ValidEdgeWidthEditRule extends EdgeWidthEditRule {
+    propertyName: string;
+    scale: Scale;
 }
 
 export interface ColorAndShapeEditRule extends EditRuleCore {

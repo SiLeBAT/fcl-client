@@ -28,10 +28,10 @@ export class EdgeWidthEditViewComponent
     get edgeWidths(): number[] {
         return EdgeWidthEditViewComponent.EDGEWIDTHS;
     }
-    get propertyName(): string | undefined {
+    get propertyName(): string | undefined | null {
         return this.rule?.propertyName;
     }
-    get scale(): Scale | undefined {
+    get scale(): Scale | undefined | null {
         return this.rule?.scale;
     }
     get minimumZero(): boolean | undefined {
