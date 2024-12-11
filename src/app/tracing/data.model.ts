@@ -449,6 +449,7 @@ export interface StationHighlightingInfo extends HighlightingInfo {
 
 export interface DeliveryHighlightingInfo extends HighlightingInfo {
     linePattern?: LinePatternType;
+    calculatedWidth?: number;
 }
 
 export enum LinePatternType {

@@ -141,7 +141,7 @@ export class CyStyle {
                 "line-gradient-stop-colors": "data(stopColors)",
                 "line-gradient-stop-positions": "data(stopPositions)",
                 "z-index": "data(zindex)",
-                width: edgeWidth,
+                width: this.createEdgeWidthMapString(), //edgeWidth,
                 "arrow-scale": CyStyle.ARROW_SCALE,
             })
 
@@ -213,6 +213,17 @@ export class CyStyle {
             });
 
         return style;
+    }
+
+    private createEdgeWidthMapString(): string {
+        const condition = false;
+        if(condition) {
+            console.log(`mapData(width, ${0}, ${1}, ${1}, ${5})`)
+            return `mapData(width, ${0}, ${1}, ${1}, ${5})`;
+        }
+
+        console.log('test', this.styleConfig.edgeWidth.toString())
+        return this.styleConfig.edgeWidth.toString();
     }
 
     private createNodeSizeMapString(): string {

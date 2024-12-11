@@ -18,6 +18,7 @@ import {
     LegendDisplayEntry,
 } from "../data.model";
 import { removeNullish, Utils } from "../util/non-ui-utils";
+import { calculateLinearEdgeWidth, DeliveriesValueRange, extractAmountFromProps, getAmountsRange } from "../util/calculate-edge-width";
 
 type PropertyValueType = number | string | boolean;
 type RuleId = string;
@@ -202,11 +203,13 @@ export class HighlightingService {
                 );
             });
 
+
         data.deliveries.forEach((delivery: DeliveryData) => {
             delivery.highlightingInfo = this.createDeliveryHightlightingInfo(
                 delivery,
                 state,
                 effElementsStats,
+                getAmountsRange(data.deliveries)
             );
         });
 
@@ -471,14 +474,24 @@ export class HighlightingService {
         delivery: DeliveryData,
         state: DataServiceInputState,
         effElementsStats: HighlightingStats,
+        range:DeliveriesValueRange,
     ) {
         const activeHighlightingRules = this.getActiveHighlightingRules(
             delivery,
             this.enabledDelHRules,
         );
 
+        const amountExtractedFromProps = extractAmountFromProps(delivery.properties);
+        const test = calculateLinearEdgeWidth(amountExtractedFromProps, range.max);
+        console.log(test);
+
+        // CALCULATION GOES HERE
+        // maxValue needed!
+
         const deliveryHighlightingInfo: DeliveryHighlightingInfo =
-            this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
+        {
+            ...this.getCommonHighlightingInfo(delivery, activeHighlightingRules),
+        }
 
         activeHighlightingRules.forEach(
             (rule) =>
