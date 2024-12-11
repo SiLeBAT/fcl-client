@@ -5,8 +5,8 @@ import {
     NodeShapeType,
     TableColumn,
     TableRow,
+    ValueType,
 } from "../data.model";
-import { PartialPick } from "../util/utility-types";
 import { ComplexFilterCondition, PropToValuesMap } from "./configuration.model";
 
 export interface RowFilter<T> {
@@ -71,18 +71,12 @@ export enum RuleType {
     EDGE_WIDTH,
 }
 
-export type Scale = "linear" | "log";
 export interface EdgeWidthEditRule extends EditRuleCore {
     type: RuleType.EDGE_WIDTH;
     minimumZero: boolean;
     maximum?: number;
-    scale: Scale | null;
+    scale: ValueType | null;
     propertyName: string | null;
-}
-
-export interface ValidEdgeWidthEditRule extends EdgeWidthEditRule {
-    propertyName: string;
-    scale: Scale;
 }
 
 export interface ColorAndShapeEditRule extends EditRuleCore {
@@ -124,7 +118,7 @@ export type DeliveryEditRule =
     | LabelEditRule
     | InvEditRule
     | ColorEditRule
-    | ValidEdgeWidthEditRule;
+    | EdgeWidthEditRule;
 
 export type DeliveryRuleType =
     | RuleType.LABEL

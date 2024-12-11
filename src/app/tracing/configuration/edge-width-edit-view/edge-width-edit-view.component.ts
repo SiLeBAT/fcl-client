@@ -5,7 +5,8 @@ import {
     SimpleChanges,
 } from "@angular/core";
 import { AbstractRuleEditViewComponent } from "../abstract-rule-edit-view";
-import { EdgeWidthEditRule, Scale } from "../model";
+import { EdgeWidthEditRule } from "../model";
+import { ValueType } from "@app/tracing/data.model";
 
 @Component({
     selector: "fcl-edge-width-edit-view",
@@ -19,20 +20,16 @@ export class EdgeWidthEditViewComponent
 {
     private static readonly DISABLED_ACTION_TOOLTIP =
         "Please enter name, select a property as well as a value type";
-    private static readonly EDGEWIDTHS = [0, 1, 2, 3, 4, 5];
 
     get disabledActionToolTip(): string {
         return EdgeWidthEditViewComponent.DISABLED_ACTION_TOOLTIP;
     }
 
-    get edgeWidths(): number[] {
-        return EdgeWidthEditViewComponent.EDGEWIDTHS;
+    get propertyName(): string | null {
+        return this.rule?.propertyName ?? null;
     }
-    get propertyName(): string | undefined | null {
-        return this.rule?.propertyName;
-    }
-    get scale(): Scale | undefined | null {
-        return this.rule?.scale;
+    get scale(): ValueType | null {
+        return this.rule?.scale ?? null;
     }
     get minimumZero(): boolean | undefined {
         return this.rule?.minimumZero;
@@ -52,7 +49,7 @@ export class EdgeWidthEditViewComponent
     onPropertyChange(property: string): void {
         this.changeRule({ propertyName: property });
     }
-    onScaleChange(scale: Scale): void {
+    onScaleChange(scale: ValueType): void {
         this.changeRule({ scale: scale });
     }
     onMinimumZeroChange(minimumZero: boolean): void {

@@ -1,4 +1,8 @@
 <div class="fcl-edit-rule">
+    <!-- TODO: 
+     Problem here, this view is attempted to be used both as the edit 
+     and as the preview for the created rule. 
+     Not sure why. -->
     <fcl-rule-name-view
         class="fcl-edit-rule-name-field"
         [ruleName]="ruleName"
@@ -36,36 +40,15 @@
         </mat-form-field>
     </div>
     <div class="fcl-rule-container">
-        <div class="fcl-rule-container">
-            <mat-checkbox
-                class="fcl-edit-rule-zero-minimum fcl-checkbox-wo-ripple"
-                [checked]="minimumZero"
-                (change)="onMinimumZeroChange($event.checked)"
-            >
-                Zero as minimum
-            </mat-checkbox>
-            <p>Maximum</p>
-        </div>
-
-        <mat-form-field
-            class="fcl-maximum-selector fcl-dropdown"
-            appearance="outline"
-            color="primary"
+        <mat-checkbox
+            class="fcl-edit-rule-zero-minimum fcl-checkbox-wo-ripple"
+            [checked]="minimumZero"
+            (change)="onMinimumZeroChange($event.checked)"
         >
-            <mat-select
-                [value]="maximum"
-                (valueChange)="onMaximumChange($event)"
-                placeholder=""
-            >
-                <mat-option
-                    *ngFor="let edgeWidth of edgeWidths"
-                    [value]="edgeWidth"
-                >
-                    {{ edgeWidth }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+            Zero as minimum
+        </mat-checkbox>
     </div>
+
     <div class="fcl-edit-rule-action-button-container">
         <div
             class="fcl-edit-rule-action-button-wrapper"

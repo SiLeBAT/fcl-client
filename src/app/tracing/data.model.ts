@@ -1,4 +1,3 @@
-import { Scale } from "./configuration/model";
 import { JsonData } from "./io/ext-data-model.v1";
 
 export type HighlightingRuleId = string;
@@ -254,10 +253,6 @@ export interface HighlightingRule {
 
 export interface DeliveryHighlightingRule extends HighlightingRule {
     linePattern: LinePatternType | null;
-    widthPropertyName?: string;
-    widthScale?: Scale;
-    widthMinZero?: boolean;
-    widthMax?: number;
 }
 
 export interface StationHighlightingRule extends HighlightingRule {
@@ -307,6 +302,7 @@ export interface ValueCondition {
     useZeroAsMinimum: boolean;
 }
 
+// TODO: Update old "Scale" to match ValueType
 export enum ValueType {
     VALUE = "Value",
     LOG_VALUE = "Log Value",

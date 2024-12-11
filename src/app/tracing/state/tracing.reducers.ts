@@ -672,7 +672,6 @@ export function reducer(
             };
 
         case TracingActionTypes.SetDeliveryHighlightingRulesSOA:
-            console.log("Updating Rules state:", action.payload.rules);
             return {
                 ...state,
                 fclData: {
