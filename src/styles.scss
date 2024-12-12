@@ -46,26 +46,6 @@ body {
     text-align: center;
 }
 
-.snackbar-error {
-    background-color: #c62828;
-    font-weight: 500;
-}
-
-.snackbar-success {
-    background-color: #c8e6c9;
-    color: black;
-}
-
-.snackbar-warn {
-    background-color: #fff9c4;
-    color: black;
-}
-
-.snackbar-info {
-    background-color: #bbdefb;
-    color: black;
-}
-
 // improves multiline error messages
 fcl-register,
 fcl-reset {

@@ -36,25 +36,25 @@
 }
 
 .snackbar-error {
-    background-color: #c62828;
-    font-weight: 500;
+    background-color: #c62828 !important;
+    font-weight: 500 !important;
 
     .mat-button-wrapper {
-        color: white;
+        color: white !important;
     }
 }
 
 .snackbar-success {
-    background-color: #c8e6c9;
-    color: black;
+    background-color: #c8e6c9 !important;
+    color: black !important;
 }
 
 .snackbar-warn {
-    background-color: #fff9c4;
-    color: black;
+    background-color: rgb(255 221 0) !important;
+    color: black !important;
 }
 
 .snackbar-info {
-    background-color: #bbdefb;
-    color: black;
+    background-color: #bbdefb !important;
+    color: black !important;
 }
