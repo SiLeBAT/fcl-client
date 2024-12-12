@@ -21,6 +21,10 @@ export class EdgeWidthEditViewComponent
     private static readonly DISABLED_ACTION_TOOLTIP =
         "Please enter name, select a property as well as a value type";
 
+    get valueType(): typeof ValueType {
+        return ValueType;
+    }
+
     get disabledActionToolTip(): string {
         return EdgeWidthEditViewComponent.DISABLED_ACTION_TOOLTIP;
     }

@@ -30,10 +30,16 @@
                 (valueChange)="onScaleChange($event)"
                 placeholder="Select value type"
             >
-                <mat-option class="fcl-filter-select-option" value="linear">
+                <mat-option
+                    class="fcl-filter-select-option"
+                    [value]="valueType.VALUE"
+                >
                     Linear
                 </mat-option>
-                <mat-option class="fcl-filter-select-option" value="log">
+                <mat-option
+                    class="fcl-filter-select-option"
+                    [value]="valueType.LOG_VALUE"
+                >
                     Log
                 </mat-option>
             </mat-select>

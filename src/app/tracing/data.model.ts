@@ -302,7 +302,6 @@ export interface ValueCondition {
     useZeroAsMinimum: boolean;
 }
 
-// TODO: Update old "Scale" to match ValueType
 export enum ValueType {
     VALUE = "Value",
     LOG_VALUE = "Log Value",
