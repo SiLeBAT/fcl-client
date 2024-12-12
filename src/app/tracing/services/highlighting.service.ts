@@ -18,7 +18,7 @@ import {
     LegendDisplayEntry,
 } from "../data.model";
 import { removeNullish, Utils } from "../util/non-ui-utils";
-import { calculateLinearEdgeWidth, DeliveriesValueRange, extractAmountFromProps, getAmountsRange } from "../util/calculate-edge-width";
+import { calculateLinearEdgeWidth, DeliveriesValueRange, extractNumericAmountFromProps, getNumericAmountsRangeFromDeliveries } from "../util/calculate-edge-width";
 
 type PropertyValueType = number | string | boolean;
 type RuleId = string;
@@ -209,7 +209,7 @@ export class HighlightingService {
                 delivery,
                 state,
                 effElementsStats,
-                getAmountsRange(data.deliveries)
+                getNumericAmountsRangeFromDeliveries(data.deliveries)
             );
         });
 
@@ -481,7 +481,7 @@ export class HighlightingService {
             this.enabledDelHRules,
         );
 
-        const amountExtractedFromProps = extractAmountFromProps(delivery.properties);
+        const amountExtractedFromProps = extractNumericAmountFromProps(delivery.properties);
         const test = calculateLinearEdgeWidth(amountExtractedFromProps, range.max);
         console.log(test);
 

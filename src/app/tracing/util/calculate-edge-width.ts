@@ -6,7 +6,7 @@ export interface DeliveriesValueRange {
 }
 
 export const calculateLinearEdgeWidth = (currentValue:number|null, maxValue:number|null):number|null => {
-    if(!currentValue || !maxValue) {
+    if (!currentValue || !maxValue) {
         return null;
     }
 
@@ -14,35 +14,34 @@ export const calculateLinearEdgeWidth = (currentValue:number|null, maxValue:numb
 }
 
 export const calculateLogarithmicEdgeWidth = (currentValue:number|null, maxValue:number|null):number|null => {
-    if(!currentValue || !maxValue) {
+    if (!currentValue || !maxValue) {
         return null;
     }
 
-    const logBase = Math.log(maxValue);
-    return Math.pow(currentValue, logBase);
+    return Math.pow(currentValue, Math.log(maxValue));
 }
 
-export const extractAmountFromProps = (properties:PropertyEntry[]):number|null => {
+export const extractNumericAmountFromProps = (properties:PropertyEntry[]):number|null => {
     const amount = properties.find(({name, value}) => name === 'amount' && typeof value === 'number' && !Number.isNaN(value));
-
-    if (typeof amount === 'undefined') {
-        return null;
-    }
-
-    return amount.value as number; // see type guard in properties.find array method
+    
+    return amount === undefined? null : amount.value as number; // see type guard in amounts.find array method
 }
 
-export const getAmountsRange = (deliveries:DeliveryData[]):DeliveriesValueRange => {
-    const amounts = deliveries
-    .map(({properties}):number|null => extractAmountFromProps(properties))
-    .filter(amount => amount !== null);
+const collectNumericAmountsFromDeliveries = (deliveries:DeliveryData[]):number[] => {
+    return deliveries
+    .map(({properties}):number|null => extractNumericAmountFromProps(properties))
+    .filter(amount => amount !== null) as number[];  // see type guard in amounts.filter array method
+}
+
+export const getNumericAmountsRangeFromDeliveries = (deliveries:DeliveryData[]):DeliveriesValueRange => {
+    const amounts = collectNumericAmountsFromDeliveries(deliveries);
 
     if (amounts.length < 2) {
-        return { min: null, max: null}
+        return { min: null, max: null };
     }
 
    return { 
-            min: Math.min(...amounts as number[]), 
-            max: Math.max(...amounts as number[]),
-        } // see type guard in amounts.find array method
+            min: Math.min(...amounts), 
+            max: Math.max(...amounts),
+        }
 }
