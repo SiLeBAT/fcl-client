@@ -187,6 +187,7 @@ export class HighlightingService {
         data: DataServiceData,
     ): void {
         this.preprocessHighlightings(state);
+        const deliveriesAmountRange = getNumericAmountsRangeFromDeliveries(data.deliveries);
 
         const effElementsStats: HighlightingStats = {
             counts: {},
@@ -209,7 +210,7 @@ export class HighlightingService {
                 delivery,
                 state,
                 effElementsStats,
-                getNumericAmountsRangeFromDeliveries(data.deliveries)
+                deliveriesAmountRange,
             );
         });
 
@@ -476,21 +477,26 @@ export class HighlightingService {
         effElementsStats: HighlightingStats,
         range:DeliveriesValueRange,
     ) {
+        const amountExtractedFromProps = extractNumericAmountFromProps(delivery.properties);
+        const test = calculateLinearEdgeWidth(amountExtractedFromProps, range.max);
+        let calculatedData = {};
+        if (test !== null) {
+            calculatedData = {
+                edgeWidth: test,
+            }
+        }
+
+        console.log(calculatedData, test)
+        
         const activeHighlightingRules = this.getActiveHighlightingRules(
             delivery,
             this.enabledDelHRules,
         );
 
-        const amountExtractedFromProps = extractNumericAmountFromProps(delivery.properties);
-        const test = calculateLinearEdgeWidth(amountExtractedFromProps, range.max);
-        console.log(test);
-
-        // CALCULATION GOES HERE
-        // maxValue needed!
-
         const deliveryHighlightingInfo: DeliveryHighlightingInfo =
         {
             ...this.getCommonHighlightingInfo(delivery, activeHighlightingRules),
+            ...calculatedData,
         }
 
         activeHighlightingRules.forEach(
@@ -498,6 +504,8 @@ export class HighlightingService {
                 (effElementsStats.counts[rule.id] =
                     (effElementsStats.counts[rule.id] || 0) + 1),
         );
+
+        console.log(deliveryHighlightingInfo)
 
         return deliveryHighlightingInfo;
     }

@@ -276,6 +276,7 @@ export class GraphService {
                     for (const deliveries of deliveryGroups) {
                         if (deliveries.length === 1) {
                             const delivery = deliveries[0];
+                            console.log('calculatedWidth', delivery.highlightingInfo?.edgeWidth, 279)
                             const selected = !!selDel[delivery.id];
                             edgeData.push({
                                 id: "E" + iEdge++,
@@ -326,6 +327,7 @@ export class GraphService {
             )) {
                 const sourceData = statMap[delivery.source];
                 const targetData = statMap[delivery.target];
+                console.log('calculatedWidth', delivery.highlightingInfo?.edgeWidth, 330)
 
                 if (sourceData && targetData) {
                     edgeData.push({
@@ -342,6 +344,7 @@ export class GraphService {
                         zindex: 0,
                         selected: delivery.selected,
                         wLabelSpace: false,
+                        edgeWidth: delivery.highlightingInfo?.edgeWidth
                     });
                 }
             }

@@ -77,6 +77,7 @@ export class CyStyle {
         const fontSize = this.styleConfig.fontSize;
         const nodeSize = this.styleConfig.nodeSize;
         const edgeWidth = this.styleConfig.edgeWidth;
+        console.log(edgeWidth)
         const selectedEdgeWidth =
             edgeWidth * CyStyle.SELECTED_EDGE_WIDTH_FACTOR;
         // usually a bad style to have magic numbers within code
@@ -222,7 +223,9 @@ export class CyStyle {
             return `mapData(width, ${0}, ${1}, ${1}, ${5})`;
         }
 
-        console.log('test', this.styleConfig.edgeWidth.toString())
+        // deliveries [0] highlighting info edgeWidth
+
+        console.log('cy-style', this.graphData.edgeData, this.styleConfig.edgeWidth.toString())
         return this.styleConfig.edgeWidth.toString();
     }
 
