@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { FclData, ShapeFileData, JsonDataExtract } from "../data.model";
-import { createInitialFclDataState } from "../state/tracing.reducers";
 import { DataImporter } from "./data-importer/data-importer";
 import { DataExporter } from "./data-exporter";
 import { DataImporterV1 } from "./data-importer/data-importer-v1";
@@ -10,15 +9,27 @@ import { getJsonFromFile, isJsonFileType } from "./io-utils";
 import { JsonData } from "./ext-data-model.v1";
 import * as _ from "lodash";
 import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
+import {
+    hasUtxCore,
+    UtxImporter,
+} from "./data-importer/utx-import/utx-importer";
 
 @Injectable({
     providedIn: "root",
 })
 export class IOService {
-    private async preprocessData(data: any): Promise<FclData> {
-        const fclData: FclData = createInitialFclDataState();
-        await DataImporter.preprocessData(data, fclData, this.httpClient);
-        return fclData;
+    private async getFclDataFromFclJson(data: any): Promise<FclData> {
+        return DataImporter.loadData(data, this.httpClient);
+    }
+
+    private async getFclDataFromUtxJson(data: any): Promise<FclData> {
+        return new UtxImporter(this.httpClient).importData(data);
+    }
+
+    private async getFclDataFromJson(data: any): Promise<FclData> {
+        return hasUtxCore(data)
+            ? this.getFclDataFromUtxJson(data)
+            : this.getFclDataFromFclJson(data);
     }
 
     constructor(private httpClient: HttpClient) {}
@@ -27,10 +38,10 @@ export class IOService {
         let fclData: FclData;
         if (isJsonFileType(file)) {
             const jsonData = await getJsonFromFile(file);
-            fclData = await this.preprocessData(jsonData);
+            fclData = await this.getFclDataFromJson(jsonData);
         } else {
             const { data: jsonData, warnings } = await importXlsxFile(file);
-            fclData = await this.preprocessData(jsonData);
+            fclData = await this.getFclDataFromFclJson(jsonData);
             fclData.importWarnings = [...warnings, ...fclData.importWarnings];
         }
         fclData.source.name = file.name;
@@ -42,7 +53,7 @@ export class IOService {
             return this.httpClient
                 .get(dataSource)
                 .toPromise()
-                .then(async (response) => this.preprocessData(response))
+                .then(async (response) => this.getFclDataFromJson(response))
                 .then((fclData) => {
                     fclData.source.name = this.getFileName(dataSource);
                     return fclData;

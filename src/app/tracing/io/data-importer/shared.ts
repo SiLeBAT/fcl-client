@@ -1,4 +1,3 @@
-import Ajv from "ajv";
 import {
     HighlightingSettings,
     OperationType,
@@ -8,26 +7,10 @@ import {
     HighlightingRule,
     DeliveryHighlightingRule,
 } from "../../data.model";
-import { InputFormatError } from "../io-errors";
 import { LABELS } from "../../util/labels";
 
 const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "SDHR";
 const DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "DDHR";
-
-export async function isValidJson(
-    schema: any,
-    data: any,
-    throwError?: boolean,
-): Promise<boolean> {
-    const ajv = new Ajv();
-    const valid = ajv.validate(schema, data);
-    if (!valid && throwError) {
-        throw new InputFormatError(
-            "Invalid json schema: " + ajv.errorsText(ajv.errors),
-        );
-    }
-    return valid;
-}
 
 export function compareVersions(version1: string, version2: string): number {
     const versionNumbers1: number[] = version1.split(".").map((s) => Number(s));

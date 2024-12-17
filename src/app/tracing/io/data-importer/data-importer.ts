@@ -6,18 +6,14 @@ import { HttpClient } from "@angular/common/http";
 import { InputFormatError } from "../io-errors";
 
 export class DataImporter {
-    static async preprocessData(
-        data: any,
-        fclData: FclData,
-        httpClient: HttpClient,
-    ): Promise<void> {
+    static async loadData(data: any, httpClient: HttpClient): Promise<FclData> {
         for (const importer of this.getDataImporter(httpClient)) {
             const formatIsValid: boolean =
                 await importer.isDataFormatSupported(data);
             if (formatIsValid) {
-                await importer.preprocessData(data, fclData);
+                const fclData = await importer.importData(data);
                 fclData.source.data = data;
-                return;
+                return fclData;
             }
         }
         throw new InputFormatError("Invalid data format.");

@@ -18,6 +18,7 @@ import {
     DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP,
 } from "../data-mappings/data-mappings-v1";
 import { DELIVERY_PROP_V0_TO_V1_MAP } from "../data-mappings/data-mappings-v0-to-v1";
+import { createInitialFclDataState } from "../../state/tracing.reducers";
 
 export class DataImporterV0 implements IDataImporter {
     async isDataFormatSupported(data: any): Promise<boolean> {
@@ -33,7 +34,8 @@ export class DataImporterV0 implements IDataImporter {
         return containsRawData || containsDataWithSettings;
     }
 
-    async preprocessData(data: any, fclData: FclData): Promise<void> {
+    async importData(data: any): Promise<FclData> {
+        const fclData = createInitialFclDataState();
         if (await this.isDataFormatSupported(data)) {
             const containsRawData =
                 Object.prototype.hasOwnProperty.call(data, "stations") &&
@@ -54,6 +56,7 @@ export class DataImporterV0 implements IDataImporter {
         } else {
             throw new InputFormatError();
         }
+        return fclData;
     }
 
     private preprocessRawData(data: any, fclData: FclData): boolean {
