@@ -217,10 +217,12 @@ export class CyStyle {
     }
 
     private createEdgeWidthMapString(): string {
-        const condition = false;
+        const condition = true;
         if(condition) {
-            console.log(`mapData(width, ${0}, ${1}, ${1}, ${5})`)
-            return `mapData(width, ${0}, ${1}, ${1}, ${5})`;
+            return `mapData(edgeWidth, ${0}, ${1}, ${1}, ${10})`;
+
+            // min  = breite graph settings
+            // max = vielfaches des min, noch festzulegen
         }
 
         // deliveries [0] highlighting info edgeWidth

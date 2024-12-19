@@ -205,7 +205,6 @@ export class CyGraph {
         if (reduceContainerSize && htmlContainerElement) {
             reduceElementSizeToVisibleArea(htmlContainerElement);
         }
-        console.log(this.graphData) // deliveries [0] highlighting info edgeWidth
         this.cy_ = cytoscape({
             ...cyConfig,
             container: htmlContainerElement,

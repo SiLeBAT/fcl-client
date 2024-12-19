@@ -277,6 +277,7 @@ export class GraphService {
                         if (deliveries.length === 1) {
                             const delivery = deliveries[0];
                             console.log('calculatedWidth', delivery.highlightingInfo?.edgeWidth, 279)
+                            // edgewidth wie im else 2, --> 1 del, same edge 
                             const selected = !!selDel[delivery.id];
                             edgeData.push({
                                 id: "E" + iEdge++,
@@ -293,7 +294,7 @@ export class GraphService {
                                 selected: selected,
                                 wLabelSpace: false,
                             });
-                        } else {
+                        } else { // hier max zahl der edgewidth nehmen 
                             edgeData.push({
                                 id: "E" + iEdge++,
                                 labelWoPrefix:
