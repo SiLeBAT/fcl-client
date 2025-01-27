@@ -1,5 +1,6 @@
 import { FclData, StationStoreData } from "../../../data.model";
 import { joinNonEmptyElementsOrUndefined } from "../../../util/non-ui-utils";
+import { FCL_STATION_PROPS, UTX_PROP_VALUES } from "./consts";
 import { UtxCoreMaps } from "./create-core-maps";
 import {
     createProperties,
@@ -8,13 +9,15 @@ import {
 } from "./shared";
 import { Contact, UtxData } from "./utx-model";
 
-function createContactAddress(contact: Contact): string | undefined {
+function createContactAddress(
+    contact: Contact | undefined,
+): string | undefined {
     const streetWithNo = joinNonEmptyElementsOrUndefined(
-        [contact.addressStreet, contact.addressNumber],
+        [contact?.addressStreet, contact?.addressNumber],
         " ",
     );
     const zipWithCity = joinNonEmptyElementsOrUndefined(
-        [contact.addressZip, contact.addressCity],
+        [contact?.addressZip, contact?.addressCity],
         " ",
     );
     const address = joinNonEmptyElementsOrUndefined(
@@ -35,11 +38,12 @@ export function applyUtxStationsToFclData(
     const fclStations: StationStoreData[] = utxStations.map((utxStation) => {
         const stationContact = contactMap.get(
             utxStation.stationNameAddress ?? "",
-        )!;
+        );
         const stationRegistration = getRegistration(
             utxStation.registrations ?? [],
             registrationSchemeMap,
         );
+
         return {
             id: utxStation.id,
             name: stationContact?.name,
@@ -50,38 +54,50 @@ export function applyUtxStationsToFclData(
             connections: [],
             properties: createProperties([
                 {
-                    id: "typeOfBusiness",
+                    id: FCL_STATION_PROPS.typeOfBusiness,
                     value: mergeCVsAndTreeTexts(
                         utxStation.stageCV,
                         utxStation.stageFreeText,
-                        "other",
+                        UTX_PROP_VALUES.other,
                     ),
                 },
-                { id: "address", value: createContactAddress(stationContact) },
-                { id: "country", value: stationContact.addressCountry },
                 {
-                    id: "sector",
+                    id: FCL_STATION_PROPS.address,
+                    value: createContactAddress(stationContact),
+                },
+                {
+                    id: FCL_STATION_PROPS.country,
+                    value: stationContact?.addressCountry,
+                },
+                {
+                    id: FCL_STATION_PROPS.sector,
                     value: mergeCVsAndTreeTexts(
                         utxStation.sectorCV,
                         utxStation.sectorFreeText,
-                        "other",
+                        UTX_PROP_VALUES.other,
                     ),
                 },
                 {
-                    id: "transportationMean",
+                    id: FCL_STATION_PROPS.transportationMean,
                     value: mergeCVsAndTreeTexts(
                         utxStation.transportationMeanCV,
                         utxStation.transportationMeanFreeText,
-                        "other",
+                        UTX_PROP_VALUES.other,
                     ),
                 },
-                { id: "class", value: utxStation.class },
+                { id: FCL_STATION_PROPS.class, value: utxStation.class },
                 {
-                    id: "registrationNumber",
+                    id: FCL_STATION_PROPS.registrationNumber,
                     value: stationRegistration?.number,
                 },
-                { id: "registrationType", value: stationRegistration?.type },
-                { id: "registeredAt", value: stationRegistration?.registry },
+                {
+                    id: FCL_STATION_PROPS.registrationType,
+                    value: stationRegistration?.type,
+                },
+                {
+                    id: FCL_STATION_PROPS.registeredAt,
+                    value: stationRegistration?.registry,
+                },
             ]),
         };
     });

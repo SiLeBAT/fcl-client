@@ -1,0 +1,22 @@
+mat-card {
+    margin-top: 10px;
+}
+
+.fcl-issue-list {
+    border-radius: 2px;
+    max-height: max(2.5lh, min(20.5lh, calc(100vh - 290px)));
+    overflow-y: scroll;
+}
+
+.fcl-group-header {
+    position: sticky;
+    top: 0;
+    font-weight: bold;
+    background: white;
+    list-style-type: square;
+    margin-left: -20px;
+}
+
+.fcl-group-header:not(:first-child) {
+    margin-top: 5px;
+}

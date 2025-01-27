@@ -193,6 +193,26 @@ export function getReverseRecord<
         entries(record).map(([key, value]) => [value, key]),
     ) as Record<V, K>;
 }
+
+export function at<T>(array: T[], index: number): T | undefined {
+    if (Math.abs(index) >= array.length) {
+        return undefined;
+    }
+    return index < 0 ? array[array.length + index] : array[index];
+}
+
+export function isObject(x: any): boolean {
+    return typeof x === "object" && x !== null;
+}
+
+export function getValueFromPath(data: any, path: string[]): any {
+    return path.reduce((pV, cV) => pV?.[cV], data);
+}
+
+export function isElementOf<T>(element: any, array: T[]): element is T {
+    return array.includes(element);
+}
+
 export class Utils {
     static rgbArrayToColor(color: number[]): Color {
         return { r: color[0], g: color[1], b: color[2] };

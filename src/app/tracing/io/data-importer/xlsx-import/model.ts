@@ -1,4 +1,4 @@
-import { PartialPick } from "@app/tracing/util/utility-types";
+import { PartialPick } from "../../../../tracing/util/utility-types";
 import { CellValue, Row, XlsxReader } from "./xlsx-reader";
 
 export interface SetLike {

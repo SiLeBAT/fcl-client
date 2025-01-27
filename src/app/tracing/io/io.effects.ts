@@ -38,6 +38,11 @@ import {
 import { DataService } from "../services/data.service";
 import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";
+import {
+    DialogIssueReportComponent,
+    DialogIssueReportData,
+} from "../dialog/dialog-issue-report/dialog-issue-report.component";
+
 @Injectable()
 export class IOEffects {
     constructor(
@@ -69,7 +74,9 @@ export class IOEffects {
                     this.alertService.error(Constants.ALERT_FILETYPE_NOT_JSON);
                     return of(new tracingStateActions.LoadFclDataFailureSOA());
                 }
-                return from(this.ioService.getFclData(source)).pipe(
+                return from(
+                    this.ioService.getFclData(source, action.payload.type),
+                ).pipe(
                     tap(
                         (data) =>
                             data.importWarnings.length > 0 &&
@@ -96,6 +103,7 @@ export class IOEffects {
                         let errorMsgs: string[] = [
                             ERROR_TEXTS.dataUploadFailed,
                         ];
+                        let errorDetails: string[] | undefined;
                         if (error instanceof InputEncodingError) {
                             errorMsgs.push(ERROR_RESOLUTION_TEXTS.uploadUTF8);
                         } else if (error instanceof XlsxInputFormatError) {
@@ -105,13 +113,18 @@ export class IOEffects {
                                 error.message,
                             ];
                         } else if (error instanceof InputFormatError) {
-                            errorMsgs.push(
-                                ERROR_RESOLUTION_TEXTS.uploadFclJsonWithValidFormat,
-                                error.message,
-                            );
+                            errorMsgs = [
+                                ERROR_TEXTS.invalidDataFormat,
+                                ERROR_RESOLUTION_TEXTS.uploadFileWithValidFormatOfType(
+                                    action.payload.type,
+                                ),
+                            ];
+                            errorDetails = error.details;
                         } else if (error instanceof InputDataError) {
                             errorMsgs.push(
-                                ERROR_RESOLUTION_TEXTS.uploadFclJsonWithValidData,
+                                ERROR_RESOLUTION_TEXTS.uploadFileWithValidDataOfType(
+                                    action.payload.type,
+                                ),
                                 error.message,
                             );
                         } else {
@@ -123,6 +136,29 @@ export class IOEffects {
 
                         this.alertService.error(
                             joinNonEmptyTexts(errorMsgs, " "),
+                            errorDetails
+                                ? {
+                                      action: Constants.DIALOG_SHOW_MORE,
+                                      onClick: () =>
+                                          this.dialog.open(
+                                              DialogIssueReportComponent,
+                                              {
+                                                  data: {
+                                                      title:
+                                                          error instanceof
+                                                          InputFormatError
+                                                              ? "Schema Violation Report"
+                                                              : "Issue Report",
+                                                      description:
+                                                          errorDetails?.length
+                                                              ? error.message
+                                                              : undefined,
+                                                      issues: errorDetails,
+                                                  } as DialogIssueReportData,
+                                              },
+                                          ),
+                                  }
+                                : undefined,
                         );
                         return of(
                             new tracingStateActions.LoadFclDataFailureSOA(),

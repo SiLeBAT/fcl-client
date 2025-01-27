@@ -49,8 +49,8 @@ import { InputFormatError, InputDataError } from "../io-errors";
 import { getCenterFromPoints, getDifference } from "../../util/geometry-utils";
 import * as _ from "lodash";
 import { Constants } from "../../util/constants";
-import { PartialPick } from "@app/tracing/util/utility-types";
-import { isValidJsonSchemaV7 } from "./json-schema-validation";
+import { PartialPick } from "../../../tracing/util/utility-types";
+import { isValidJsonSchemaV7 } from "./json-validation/json-schema-validation";
 import { createInitialFclDataState } from "../../state/tracing.reducers";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";

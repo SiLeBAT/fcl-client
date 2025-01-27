@@ -1,4 +1,4 @@
-import { PropertyEntry } from "@app/tracing/data.model";
+import { PropertyEntry } from "../../../../tracing/data.model";
 import { Registration, RegistrationScheme } from "./utx-model";
 
 type SimpleType = string | number | boolean;
@@ -78,4 +78,26 @@ export function createProperties(
         (p) => p.value !== undefined,
     ) as PropertyEntry[];
     return propertiesWithValues;
+}
+
+export function maskPathIndexes(path: string): string {
+    return path.replace(/\/\d+(?=(\/|$))/g, "/*");
+}
+
+export function maskPathsIndexesInMsg(msg: string): string {
+    const PATH_REGEX = /(?<=(^| ))\/?utxCore(\/[\da-z]+)*(?=(\/ | |$))/i;
+    const match = msg.match(PATH_REGEX);
+    if (match) {
+        const path = match[0];
+        const maskedPath = maskPathIndexes(path);
+        const remainingMsg = `${msg.slice(0, match.index!)}${msg.slice(match.index! + path.length)}`;
+        const maskedRemainingMsg = maskPathsIndexesInMsg(remainingMsg);
+        const maskedMsg = `${maskedRemainingMsg.slice(0, match.index!)}${maskedPath}${maskedRemainingMsg.slice(match.index!)}`;
+        return maskedMsg;
+    }
+    return msg;
+}
+
+export function maskPathsIndexes(msgs: string[]): string[] {
+    return Array.from(new Set(msgs.map(maskPathsIndexesInMsg)));
 }

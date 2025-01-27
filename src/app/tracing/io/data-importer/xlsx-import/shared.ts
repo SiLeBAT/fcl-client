@@ -21,7 +21,7 @@ import {
     isMonthValid,
     isYearValid,
 } from "../../../util/date-utils";
-import { PartialPick } from "@app/tracing/util/utility-types";
+import { PartialPick } from "../../../../tracing/util/utility-types";
 
 type TypeString2Type<T extends RefinedTypeString> = T extends NumberTypeString
     ? number

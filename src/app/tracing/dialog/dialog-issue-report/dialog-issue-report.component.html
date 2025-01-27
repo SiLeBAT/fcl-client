@@ -1,0 +1,38 @@
+<ng-template #simpleStringListTemplate>
+    <ul class="fcl-issue-list">
+        <li *ngFor="let issue of issues">{{ issue }}</li>
+    </ul>
+</ng-template>
+
+<ng-template #groupListTemplate>
+    <ul class="fcl-issue-list">
+        <ng-container *ngFor="let group of issues">
+            <li class="fcl-group-header">{{ group.label }}</li>
+            <li *ngFor="let issue of group.issues">{{ issue }}</li>
+        </ng-container>
+    </ul>
+</ng-template>
+
+<fcl-dialog-movable>
+    <mat-card>
+        <mat-card-title>
+            {{ title }}
+        </mat-card-title>
+        <mat-card-content>
+            <p *ngIf="description !== undefined">
+                {{ description }}
+            </p>
+            <ng-container
+                *ngIf="
+                    useSimpleStringList;
+                    then simpleStringListTemplate;
+                    else groupListTemplate
+                "
+            >
+            </ng-container>
+        </mat-card-content>
+    </mat-card>
+    <div mat-dialog-actions>
+        <button mat-button cdkFocusInitial matDialogClose>Close</button>
+    </div>
+</fcl-dialog-movable>

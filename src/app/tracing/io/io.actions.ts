@@ -1,4 +1,5 @@
 import { Action } from "@ngrx/store";
+import { ModelInputType } from "./model";
 
 export enum IOActionTypes {
     LoadFclDataMSA = "[Tracing][IO] Load Fcl Data",
@@ -10,7 +11,12 @@ export enum IOActionTypes {
 export class LoadFclDataMSA implements Action {
     readonly type = IOActionTypes.LoadFclDataMSA;
 
-    constructor(public payload: { dataSource: string | FileList }) {}
+    constructor(
+        public payload: {
+            dataSource: string | FileList;
+            type?: ModelInputType;
+        },
+    ) {}
 }
 
 export class LoadShapeFileMSA implements Action {

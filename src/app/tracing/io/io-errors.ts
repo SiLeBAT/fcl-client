@@ -31,11 +31,13 @@ export class InputEncodingError extends Error {
 }
 
 export class InputFormatError extends Error {
-    // eslint-disable-next-line
-    constructor(...args: any[]) {
+    private errorDetails: string[] | undefined;
+
+    constructor(message?: string, details?: string[]) {
         // Calling parent constructor of base Error class.
-        super(...args);
+        super(message);
         Object.setPrototypeOf(this, InputFormatError.prototype);
+        this.errorDetails = details;
         // Saving class name in the property of our custom error as a shortcut.
         this.name = this.constructor.name;
 
@@ -44,13 +46,16 @@ export class InputFormatError extends Error {
             Error.captureStackTrace(this, this.constructor);
         }
     }
+
+    get details(): string[] | undefined {
+        return this.errorDetails;
+    }
 }
 
 export class XlsxInputFormatError extends InputFormatError {
-    // eslint-disable-next-line
-    constructor(...args: any[]) {
+    constructor(message?: string, details?: string[]) {
         // Calling parent constructor of base Error class.
-        super(...args);
+        super(message, details);
         Object.setPrototypeOf(this, XlsxInputFormatError.prototype);
         // Saving class name in the property of our custom error as a shortcut.
         this.name = this.constructor.name;
@@ -79,10 +84,9 @@ export class AllInOneXlsxInputFormatError extends XlsxInputFormatError {
 }
 
 export class FclJsonInputFormatError extends InputFormatError {
-    // eslint-disable-next-line
-    constructor(...args: any[]) {
+    constructor(message?: string, details?: string[]) {
         // Calling parent constructor of base Error class.
-        super(...args);
+        super(message, details);
         Object.setPrototypeOf(this, FclJsonInputFormatError.prototype);
         // Saving class name in the property of our custom error as a shortcut.
         this.name = this.constructor.name;

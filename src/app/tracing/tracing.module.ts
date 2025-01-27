@@ -87,6 +87,7 @@ import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.
 import { LoadingGraphComponent } from "./graph/components/graph-loading/graph-loading.component";
 import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.component";
 import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
+import { DialogIssueReportComponent } from "./dialog/dialog-issue-report/dialog-issue-report.component";
 
 @NgModule({
     imports: [
@@ -113,6 +114,7 @@ import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/d
         DialogSelectComponent,
         DialogMovableComponent,
         DialogImportWarningsComponent,
+        DialogIssueReportComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,

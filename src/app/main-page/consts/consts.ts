@@ -1,8 +1,8 @@
-import { FileInputElementSettings, ModelFileType } from "../model/types";
+import { ModelInputType } from "../../tracing/io/model";
 
 export const FILE_INPUT_ELEMENT_SETTINGS: Record<
-    ModelFileType,
-    FileInputElementSettings
+    ModelInputType,
+    { accept: string }
 > = {
     "json-fcl": { accept: "application/json,.json" },
     "json-utx": { accept: "application/json,.json" },
