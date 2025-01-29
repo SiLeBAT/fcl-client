@@ -114,7 +114,9 @@ export class IOEffects {
                             ];
                         } else if (error instanceof InputFormatError) {
                             errorMsgs = [
-                                ERROR_TEXTS.invalidDataFormat,
+                                error.details
+                                    ? ERROR_TEXTS.invalidDataFormat
+                                    : error.message,
                                 ERROR_RESOLUTION_TEXTS.uploadFileWithValidFormatOfType(
                                     action.payload.type,
                                 ),

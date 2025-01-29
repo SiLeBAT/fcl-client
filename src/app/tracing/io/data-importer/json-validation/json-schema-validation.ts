@@ -13,10 +13,8 @@ export async function isValidJsonSchemaV7(
 ): Promise<boolean> {
     const ajv = new Ajv({ allErrors: true, strict: false });
     const valid = ajv.validate(schema, data);
-    let errors = (ajv.errors as ValidationError[]) ?? undefined;
-    if (errors) {
-        errors = postprocessErrors(ajv, schema);
-    }
+    const errors = (ajv.errors as ValidationError[]) ?? undefined;
+
     if (!valid && throwError) {
         throwSchemaValidationError(errors);
     }
