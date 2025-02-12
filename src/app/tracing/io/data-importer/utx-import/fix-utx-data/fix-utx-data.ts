@@ -7,11 +7,8 @@ import { cleanData } from "./clean-data";
 import {
     FixIssueHandler,
     mustBeArrayHandler,
-    mustBeGreaterThanZeroHandler,
     mustBeObjectHandler,
     mustBeOfTypeHandler,
-    mustMatchEmailHandler,
-    mustMatchUriHandler,
     mustNotHaveAdditionalPropertiesHandler,
     unevaluatedPropertyHandler,
 } from "./fix-issue-handler";
@@ -19,13 +16,9 @@ import { IssueFix } from "./model";
 
 const msg2IssueHandler: Record<string, FixIssueHandler> = {
     [AJV_VALIDATION_ERROR_MSGS.mustBeArray]: mustBeArrayHandler,
-    [AJV_VALIDATION_ERROR_MSGS.mustBeGreaterThanZero]:
-        mustBeGreaterThanZeroHandler,
-    [AJV_VALIDATION_ERROR_MSGS.mustMatchEmail]: mustMatchEmailHandler,
     [AJV_VALIDATION_ERROR_MSGS.mustBeObject]: mustBeObjectHandler,
     [AJV_VALIDATION_ERROR_MSGS.mustNotHaveAdditionalProperties]:
         mustNotHaveAdditionalPropertiesHandler,
-    [AJV_VALIDATION_ERROR_MSGS.mustMatchUri]: mustMatchUriHandler,
 };
 
 const otherIssueHandlers: {

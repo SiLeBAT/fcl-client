@@ -289,30 +289,6 @@ export const mustBeArrayHandler: FixIssueHandler = (
     }
 };
 
-export const mustBeGreaterThanZeroHandler: FixIssueHandler = (
-    data,
-    issue,
-    addIssueFixCb,
-) => {
-    const { obj, property } = getObjAndProperty(data, issue.instancePath);
-    if (property && typeof obj?.[property] === "number" && obj[property] <= 0) {
-        delete obj[property];
-        addIssueFixCb(createDeletionFix(issue.instancePath, issue.message!));
-    }
-};
-
-export const mustMatchEmailHandler: FixIssueHandler = (
-    data,
-    issue,
-    addIssueFixCb,
-) => {
-    const { obj, property } = getObjAndProperty(data, issue.instancePath);
-    if (property && obj?.[property] !== undefined) {
-        delete obj[property];
-        addIssueFixCb(createDeletionFix(issue.instancePath, issue.message!));
-    }
-};
-
 export const mustBeObjectHandler: FixIssueHandler = (
     data,
     issue,
@@ -390,14 +366,6 @@ export const mustNotHaveAdditionalPropertiesHandler: FixIssueHandler = (
     }
 };
 
-export const mustMatchUriHandler = (data, issue, addIssueFixCb) => {
-    const { obj, property } = getObjAndProperty(data, issue.instancePath);
-    if (property && obj?.[property]) {
-        delete obj[property];
-        addIssueFixCb(createDeletionFix(issue.instancePath, issue.message!));
-    }
-};
-
 export const mustBeOfTypeHandler: FixIssueHandler = (
     data,
     issue,
@@ -412,12 +380,7 @@ export const mustBeOfTypeHandler: FixIssueHandler = (
         const converter = type ? ValueType2FixFunction[type] : undefined;
         if (converter) {
             const newValue = converter(value);
-            if (newValue === undefined || newValue === value) {
-                addIssueFixCb(
-                    createDeletionFix(issue.instancePath, issue.message!),
-                );
-                delete obj[property];
-            } else {
+            if (newValue !== undefined && newValue !== value) {
                 addIssueFixCb(
                     createCorrectionFix(issue.instancePath, issue.message!),
                 );

@@ -17,6 +17,23 @@ function convertToIncompleteDateTime(
             hour: ignoreNA(match[7]),
             minute: ignoreNA(match[9]),
         };
+        if (
+            [
+                partialDateTime.year,
+                partialDateTime.month,
+                partialDateTime.day,
+                partialDateTime.hour,
+                partialDateTime.minute,
+            ].some(
+                (part, index, array) =>
+                    part !== undefined &&
+                    index > 0 &&
+                    array[index - 1] === undefined,
+            )
+        ) {
+            // the value is missing less specific parts
+            return undefined;
+        }
         let result = partialDateTime.year;
         if (partialDateTime.month) {
             result += `-${partialDateTime.month.padStart(2, "0")}`;

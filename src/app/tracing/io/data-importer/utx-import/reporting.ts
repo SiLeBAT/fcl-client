@@ -1,5 +1,7 @@
-import { FIX_MSGS } from "./consts";
-import { CleaningFix, ErrorFix, IssueFix } from "./model";
+import { error2Text } from "../json-validation/json-schema-validation";
+import { ValidationError } from "../json-validation/model";
+import { FIX_MSGS } from "./fix-utx-data/consts";
+import { CleaningFix, ErrorFix, IssueFix } from "./fix-utx-data/model";
 
 function isCleaningFix(fix: IssueFix): fix is CleaningFix {
     return (fix as CleaningFix).isCleaningFix;
@@ -32,10 +34,14 @@ const fixPriorities: (typeof FIX_MSGS)[keyof typeof FIX_MSGS][] = [
     FIX_MSGS.corrected,
 ];
 
-export function issueFix2String(fix: IssueFix): string {
+function issueFix2String(fix: IssueFix): string {
     return fix.isCleaningFix
         ? `Removed ${fix.cleanedValue}: ${fix.path}`
         : `Fixed schema violation (${fix.fixDetails ?? fix.fix}): '${fix.path} ${fix.issueMsg}'`;
+}
+
+function ignoredError2String(error: ValidationError): string {
+    return `Ignored schema violation: '${error2Text(error)}'`;
 }
 
 function sortFixes(fixes: IssueFix[]): IssueFix[] {
@@ -58,9 +64,12 @@ function sortFixes(fixes: IssueFix[]): IssueFix[] {
                     fix2.fixDetails ?? "",
                 );
                 if (result === 0) {
-                    result = (fix1.issueMsg ?? "").localeCompare(
-                        fix2.issueMsg ?? "",
-                    );
+                    result = fix1.path.localeCompare(fix2.path);
+                    if (result === 0) {
+                        result = (fix1.issueMsg ?? "").localeCompare(
+                            fix2.issueMsg ?? "",
+                        );
+                    }
                 }
             }
         }
@@ -69,8 +78,40 @@ function sortFixes(fixes: IssueFix[]): IssueFix[] {
     return [...cleanings, ...errorFixes];
 }
 
-export function fixes2Strings(fixes: IssueFix[]): string[] {
+function fixes2Strings(fixes: IssueFix[]): string[] {
     const preprocessedFixes = fixes.map(preprocessIssueMsg);
     const sortedFixes = sortFixes(preprocessedFixes);
     return sortedFixes.map(issueFix2String);
+}
+
+function sortErrors(errors: ValidationError[]): ValidationError[] {
+    return errors.slice().sort((error1, error2) => {
+        let result = (error1.message ?? "").localeCompare(error2.message ?? "");
+        if (result === 0) {
+            result = error1.instancePath.localeCompare(error2.instancePath);
+        }
+        return result;
+    });
+}
+
+function ignoredErrors2Strings(errors: ValidationError[]): string[] {
+    return sortErrors(errors).map(ignoredError2String);
+}
+
+export function fixesAndIgnoredErrors2Strings(
+    fixes: IssueFix[] | undefined,
+    errors: ValidationError[] | undefined,
+): string[] | undefined {
+    if (
+        fixes === undefined ||
+        fixes.length === 0 ||
+        errors === undefined ||
+        errors.length === 0
+    ) {
+        return undefined;
+    }
+    return [
+        ...fixes2Strings(fixes ?? []),
+        ...ignoredErrors2Strings(errors ?? []),
+    ];
 }

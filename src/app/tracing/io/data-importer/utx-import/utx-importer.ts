@@ -8,16 +8,17 @@ import { applyUtxStationsToFclData } from "./station-importer";
 import { HttpClient } from "@angular/common/http";
 import { fixUtxData } from "./fix-utx-data/fix-utx-data";
 import { createInitialFclDataState } from "../../../state/tracing.reducers";
-import { fixes2Strings } from "./fix-utx-data/report-fixes";
 import { validateUtxSchema } from "./utx-schema-validation";
 import { IssueFix } from "./fix-utx-data/model";
+import { relaxSchema } from "./relax-schema";
+import { fixesAndIgnoredErrors2Strings } from "./reporting";
 
 type NotValidatedUtxData = any;
 // this schema does not take care about the
 // - the controlled vocabularies
 // - mandatory properties (with the exception of primary keys)
 const UTX_SCHEMA_FILE =
-    "../../../../assets/schema/UTXSchema_20240208-woM-woCV.json";
+    "../../../../assets/schema/UTXSchema_20240208-woM-woCVChecks-woCVTypes.json";
 
 export function hasUtxCore(data: any): data is { utxCore: any } {
     return (data as UtxData).utxCore !== undefined;
@@ -33,13 +34,17 @@ export class UtxImporter {
     private async getValidUtxData(
         data: NotValidatedUtxData,
     ): Promise<{ utxData: UtxData; issues?: string[] }> {
-        const schema = await this.loadUtxSchema();
-        let { isValid, errors } = await validateUtxSchema(schema, data);
+        const fullSchema = await this.loadUtxSchema();
+        const relaxedSchema = relaxSchema(fullSchema); // strips off soft rules
+        let { isValid, errors } = await validateUtxSchema(relaxedSchema, data);
 
         let fixedData: any;
         let totalFixes: IssueFix[] | undefined;
 
         if (!isValid) {
+            // try to fix hard schema violations
+            // fixes are preformed iteratively because some fixes might
+            // cause other issues
             let iteration = 0;
             do {
                 iteration++;
@@ -48,16 +53,26 @@ export class UtxImporter {
                 totalFixes = [...(totalFixes ?? []), ...fixResult.fixes];
 
                 ({ isValid, errors } = await validateUtxSchema(
-                    schema,
+                    relaxedSchema,
                     fixedData,
                     iteration > 5 || fixResult.fixes.length === 0,
                 ));
             } while (!isValid);
         }
+        ({ isValid, errors } = await validateUtxSchema(fullSchema, fixedData));
+        if (!isValid) {
+            // try to fix soft schema violations
+            const fixResult = fixUtxData(fixedData ?? data, errors!);
+            if (fixResult.fixes.length > 0) {
+                fixedData = fixResult.fixedData;
+                totalFixes = [...(totalFixes ?? []), ...fixResult.fixes];
+                ({ errors } = await validateUtxSchema(fullSchema, fixedData));
+            }
+        }
 
         return {
             utxData: fixedData ?? data,
-            issues: totalFixes ? fixes2Strings(totalFixes) : undefined,
+            issues: fixesAndIgnoredErrors2Strings(totalFixes, errors),
         };
     }
 

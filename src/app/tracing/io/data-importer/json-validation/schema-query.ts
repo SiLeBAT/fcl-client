@@ -43,7 +43,7 @@ function isRefSchema(
     return typeof schema.$ref === "string";
 }
 
-function isAllOfSchema(
+export function isAllOfSchema(
     schema: SchemaObject | AllOfSchemaObject,
 ): schema is AllOfSchemaObject {
     return Array.isArray(schema.allOf);
