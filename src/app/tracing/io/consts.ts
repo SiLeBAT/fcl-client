@@ -1,5 +1,9 @@
 import { ModelInputType } from "./model";
 
+export const DIALOG_TITLES = {
+    dataImportErrors: "Data import errors",
+} as const;
+
 export const ERROR_TEXTS = {
     dataUploadFailed: `Data cannot be uploaded.`,
     invalidDataFormat: `Invalid data format.`,

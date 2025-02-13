@@ -22,13 +22,15 @@
             <p *ngIf="description !== undefined">
                 {{ description }}
             </p>
-            <ng-container
-                *ngIf="
-                    useSimpleStringList;
-                    then simpleStringListTemplate;
-                    else groupListTemplate
-                "
-            >
+            <ng-container *ngIf="issues?.length">
+                <ng-container
+                    *ngIf="
+                        useSimpleStringList;
+                        then simpleStringListTemplate;
+                        else groupListTemplate
+                    "
+                >
+                </ng-container>
             </ng-container>
         </mat-card-content>
     </mat-card>

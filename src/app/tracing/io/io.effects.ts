@@ -36,7 +36,7 @@ import {
     MatLegacyDialogRef as MatDialogRef,
 } from "@angular/material/legacy-dialog";
 import { DataService } from "../services/data.service";
-import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
+import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS, DIALOG_TITLES } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";
 import {
     DialogIssueReportComponent,
@@ -100,63 +100,56 @@ export class IOEffects {
                         ),
                     ),
                     catchError((error) => {
-                        let errorMsgs: string[] = [
+                        let errorToasterMsgs: string[] = [
                             ERROR_TEXTS.dataUploadFailed,
                         ];
-                        let errorDetails: string[] | undefined;
+                        const errorReport: Partial<DialogIssueReportData> = {
+                            title: DIALOG_TITLES.dataImportErrors,
+                        };
                         if (error instanceof InputEncodingError) {
-                            errorMsgs.push(ERROR_RESOLUTION_TEXTS.uploadUTF8);
+                            errorToasterMsgs.push(
+                                ERROR_RESOLUTION_TEXTS.uploadUTF8,
+                            );
                         } else if (error instanceof XlsxInputFormatError) {
-                            errorMsgs = [
+                            errorToasterMsgs = [
                                 ERROR_TEXTS.invalidDataFormat,
                                 ERROR_RESOLUTION_TEXTS.uploadAllInOneTemplate,
                                 error.message,
                             ];
                         } else if (error instanceof InputFormatError) {
-                            errorMsgs = [
-                                error.details
-                                    ? ERROR_TEXTS.invalidDataFormat
-                                    : error.message,
+                            errorToasterMsgs = [
+                                ERROR_TEXTS.invalidDataFormat,
                                 ERROR_RESOLUTION_TEXTS.uploadFileWithValidFormatOfType(
                                     action.payload.type,
                                 ),
                             ];
-                            errorDetails = error.details;
+                            errorReport.description = error.message;
+                            errorReport.issues = error.details ?? [];
                         } else if (error instanceof InputDataError) {
-                            errorMsgs.push(
+                            errorToasterMsgs.push(
                                 ERROR_RESOLUTION_TEXTS.uploadFileWithValidDataOfType(
                                     action.payload.type,
                                 ),
                                 error.message,
                             );
                         } else {
-                            errorMsgs.push(
+                            errorToasterMsgs.push(
                                 ERROR_TEXTS.generalError,
                                 error.message,
                             );
                         }
 
                         this.alertService.error(
-                            joinNonEmptyTexts(errorMsgs, " "),
-                            errorDetails
+                            joinNonEmptyTexts(errorToasterMsgs, " "),
+                            errorReport.description ||
+                                errorReport.issues?.length
                                 ? {
                                       action: Constants.DIALOG_SHOW_MORE,
                                       onClick: () =>
                                           this.dialog.open(
                                               DialogIssueReportComponent,
                                               {
-                                                  data: {
-                                                      title:
-                                                          error instanceof
-                                                          InputFormatError
-                                                              ? "Schema Violation Report"
-                                                              : "Issue Report",
-                                                      description:
-                                                          errorDetails?.length
-                                                              ? error.message
-                                                              : undefined,
-                                                      issues: errorDetails,
-                                                  } as DialogIssueReportData,
+                                                  data: errorReport,
                                               },
                                           ),
                                   }
