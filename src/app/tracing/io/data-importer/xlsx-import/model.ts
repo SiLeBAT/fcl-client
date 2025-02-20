@@ -25,7 +25,13 @@ export type MappingDef<T> = Partial<
     >
 >;
 
-export type NumberTypeString = "number" | "lat" | "lon" | "nonneg:number";
+export type NumberTypeString =
+    | "number"
+    | "lat"
+    | "lon"
+    | "nonneg:number"
+    | "pos:number";
+
 export type RefinedTypeString = "string" | NumberTypeString | "boolean";
 
 export interface ColumnMapping {
@@ -90,9 +96,12 @@ export interface DeliveryRow extends Partial<RowWithOtherProps> {
     lotNumber?: string;
     dateOut?: string;
     dateIn?: string;
+    unitAmountNumber?: number;
+    unitAmountUnit?: string;
     unitAmount?: string;
     lotAmountNumber?: number;
     lotAmountUnit?: string;
+    lotAmount?: string;
     lotTreatment?: string;
     lotSampling?: string;
     lotProductionDate?: string;

@@ -3,14 +3,57 @@ import {
     enrichImportIssue,
     getPropsFromRow,
     getStringOrUndefined,
-    importAggregatedAmount,
+    importAmount,
     importMandatoryString,
     importReference,
     importStringDate,
-    importValue,
 } from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneDeliveryRow, DeliveryColumn } from "./model";
+
+function importLotAmount(
+    row: Row,
+    addIssueCb: AddIssueCallback,
+): Pick<
+    AllInOneDeliveryRow,
+    "lotAmountNumber" | "lotAmountUnit" | "lotAmount"
+> {
+    const amount = importAmount(
+        row,
+        {
+            number: DeliveryColumn.LOT_AMOUNT_NUMBER,
+            unit: DeliveryColumn.LOT_AMOUNT_UNIT,
+        },
+        addIssueCb,
+    );
+    return {
+        lotAmount: amount.text,
+        lotAmountNumber: amount.number,
+        lotAmountUnit: amount.unit,
+    };
+}
+
+function importDeliveryAmount(
+    row: Row,
+    addIssueCb: AddIssueCallback,
+): Pick<
+    AllInOneDeliveryRow,
+    "unitAmountNumber" | "unitAmountUnit" | "unitAmount"
+> {
+    const amount = importAmount(
+        row,
+        {
+            number: DeliveryColumn.UNIT_AMOUNT_NUMBER,
+            unit: DeliveryColumn.UNIT_AMOUNT_UNIT,
+        },
+        addIssueCb,
+    );
+    return {
+        unitAmount: amount.text,
+        unitAmountNumber: amount.number,
+        unitAmountUnit: amount.unit,
+    };
+}
 
 export function importDelivery(
     row: Row,
@@ -69,19 +112,8 @@ export function importDelivery(
             },
             addIssueCallback,
         ),
-        unitAmount: importAggregatedAmount(row, {
-            number: DeliveryColumn.UNIT_AMOUNT_NUMBER,
-            unit: DeliveryColumn.UNIT_AMOUNT_UNIT,
-        }),
-        lotAmountNumber: importValue(
-            row,
-            DeliveryColumn.LOT_AMOUNT_NUMBER,
-            "nonneg:number",
-            addIssueCallback,
-        ),
-        lotAmountUnit: getStringOrUndefined(
-            row[DeliveryColumn.LOT_AMOUNT_UNIT],
-        ),
+        ...importLotAmount(row, addIssueCallback),
+        ...importDeliveryAmount(row, addIssueCallback),
         otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
         ...getPropsFromRow(row, optionalColumnMappings, addIssueCallback),
     };

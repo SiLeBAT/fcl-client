@@ -1,3 +1,4 @@
+import { RULE_LABELS } from "../../util/labels";
 import {
     HighlightingSettings,
     OperationType,
@@ -7,7 +8,6 @@ import {
     HighlightingRule,
     DeliveryHighlightingRule,
 } from "../../data.model";
-import { LABELS } from "../../util/labels";
 
 const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "SDHR";
 const DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "DDHR";
@@ -79,7 +79,7 @@ export function createDefaultStationAnonymizationLabelHRule(): StationHighlighti
     return {
         ...createDefaultStatHRule(),
         id: "anoStatLabelRule",
-        name: LABELS.anonymisationLabel,
+        name: RULE_LABELS.anonymisationLabel,
         showInLegend: false,
         userDisabled: true,
         labelPrefix: "Station",
@@ -108,7 +108,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Outbreak",
-            name: LABELS.outbreak,
+            name: RULE_LABELS.outbreak,
             showInLegend: true,
             color: {
                 r: 255,
@@ -128,7 +128,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Observed",
-            name: LABELS.observed,
+            name: RULE_LABELS.observed,
             showInLegend: true,
             color: {
                 r: 0,
@@ -148,7 +148,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Forward Trace",
-            name: LABELS.forward,
+            name: RULE_LABELS.forward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -168,7 +168,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Backward Trace",
-            name: LABELS.backward,
+            name: RULE_LABELS.backward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -190,7 +190,7 @@ export function createDefaultStationHRules(
             id:
                 STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
                 "Cross Contamination",
-            name: LABELS.crossContamination,
+            name: RULE_LABELS.crossContamination,
             showInLegend: true,
             color: {
                 r: 0,
@@ -210,7 +210,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Common Link",
-            name: LABELS.commonLink,
+            name: RULE_LABELS.commonLink,
             showInLegend: true,
             color: {
                 r: 255,
@@ -230,7 +230,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Score",
-            name: LABELS.score,
+            name: RULE_LABELS.stationSize,
             showInLegend: false,
             adjustThickness: true,
             valueCondition: {
@@ -243,7 +243,7 @@ export function createDefaultStationHRules(
         {
             ...createDefaultStatHRule(),
             id: STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "StationLabel",
-            name: LABELS.stationLabel,
+            name: RULE_LABELS.stationLabel,
             showInLegend: false,
             labelProperty: "name",
             logicalConditions: [[]],
@@ -253,7 +253,7 @@ export function createDefaultStationHRules(
             id:
                 STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
                 "Kill Contamination",
-            name: LABELS.killContamination,
+            name: RULE_LABELS.killContamination,
             showInLegend: true,
             color: { r: 153, g: 153, b: 153 },
             logicalConditions: [
@@ -278,7 +278,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Outbreak",
-            name: LABELS.outbreak,
+            name: RULE_LABELS.outbreak,
             showInLegend: true,
             color: {
                 r: 255,
@@ -298,7 +298,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Observed",
-            name: LABELS.observed,
+            name: RULE_LABELS.observed,
             showInLegend: true,
             color: {
                 r: 0,
@@ -318,7 +318,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Forward Trace",
-            name: LABELS.forward,
+            name: RULE_LABELS.forward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -338,7 +338,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "Backward Trace",
-            name: LABELS.backward,
+            name: RULE_LABELS.backward,
             showInLegend: true,
             color: {
                 r: 255,
@@ -360,7 +360,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
             id:
                 DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
                 "Kill Contamination",
-            name: LABELS.killContamination,
+            name: RULE_LABELS.killContamination,
             showInLegend: true,
             color: { r: 153, g: 153, b: 153 },
             logicalConditions: [
@@ -376,7 +376,7 @@ export function createDefaultDeliveryHRules(): DeliveryHighlightingRule[] {
         {
             ...createDefaultDelHRule(),
             id: DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX + "DeliveryLabel",
-            name: LABELS.deliveryLabel,
+            name: RULE_LABELS.deliveryLabel,
             showInLegend: false,
             labelProperty: "name",
             logicalConditions: [[]],

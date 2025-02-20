@@ -71,7 +71,12 @@ function createStationTable(fclData: FclData): DataTable {
             }
             station.properties.forEach((prop) => {
                 dataRow.push({
-                    id: propMap[prop.name] || prop.name,
+                    id:
+                        propMap[prop.name] ||
+                        DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.get(
+                            prop.name,
+                        ) ||
+                        prop.name,
                     value: prop.value,
                 });
             });
@@ -97,7 +102,12 @@ function createDeliveryTable(fclData: FclData): DataTable {
             }
             delivery.properties.forEach((prop) => {
                 dataRow.push({
-                    id: propMap[prop.name] || prop.name,
+                    id:
+                        propMap[prop.name] ||
+                        DataMapper.DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.get(
+                            prop.name,
+                        ) ||
+                        prop.name,
                     value: prop.value,
                 });
             });

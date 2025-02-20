@@ -1,8 +1,15 @@
-import { PropInfo } from "../shared/property-info";
-import { ROASettings } from "./model";
+import {
+    LabelElementInfo,
+    PropElementInfo,
+    PropInfo,
+    ROASettings,
+    TextElementInfo,
+} from "./model";
 
-const LCASE_AMOUNT_PROP_SUFFIX = "amount";
-const LCASE_UNIT_PROP_SUFFIX = "unit";
+const LCASE_NUMBER_UNIT_SUFFIX_PAIRS = [
+    { numberSuffix: "number", unitSuffix: "unit" },
+    { numberSuffix: "amount", unitSuffix: "unit" },
+];
 
 export function getUnitPropFromAmountProp(
     amountProp: string | null,
@@ -10,15 +17,19 @@ export function getUnitPropFromAmountProp(
 ): string | null {
     if (amountProp !== null) {
         const lCaseAmountProp = amountProp.toLowerCase();
-        if (lCaseAmountProp.endsWith(LCASE_AMOUNT_PROP_SUFFIX)) {
-            const lCasePropPrefix = lCaseAmountProp.substr(
-                0,
-                amountProp.length - LCASE_AMOUNT_PROP_SUFFIX.length,
-            );
-            const lCaseUnitProp = lCasePropPrefix + LCASE_UNIT_PROP_SUFFIX;
-            for (const propInfo of availableProps) {
-                if (propInfo.prop.toLowerCase() === lCaseUnitProp) {
-                    return propInfo.prop;
+        for (const numberUnitSuffixPair of LCASE_NUMBER_UNIT_SUFFIX_PAIRS) {
+            if (lCaseAmountProp.endsWith(numberUnitSuffixPair.numberSuffix)) {
+                const lCasePropPrefix = lCaseAmountProp.slice(
+                    0,
+                    amountProp.length -
+                        numberUnitSuffixPair.numberSuffix.length,
+                );
+                const lCaseUnitProp =
+                    lCasePropPrefix + numberUnitSuffixPair.unitSuffix;
+                for (const propInfo of availableProps) {
+                    if (propInfo.prop.toLowerCase() === lCaseUnitProp) {
+                        return propInfo.prop;
+                    }
                 }
             }
         }
@@ -56,7 +67,7 @@ export function createDefaultROASettings(): ROASettings {
                 [
                     { text: "Amount: " },
                     {
-                        prop: "lotQuantity",
+                        prop: "lotAmount",
                         altText: "unknown",
                         isNullable: false,
                     },
@@ -112,4 +123,22 @@ export function createDefaultROASettings(): ROASettings {
         },
         roundNumbers: true,
     };
+}
+
+export function isTextElementInfo(
+    element: LabelElementInfo,
+): element is TextElementInfo {
+    return (element as PropElementInfo).prop === undefined;
+}
+
+export function isPropElementInfo(
+    element: LabelElementInfo,
+): element is PropElementInfo {
+    return (element as PropElementInfo).prop !== undefined;
+}
+
+export function isPropElementInfoWithProp(
+    element: LabelElementInfo | (PropElementInfo & { prop: string }),
+): element is PropElementInfo & { prop: string } {
+    return isPropElementInfo(element) && element.prop != null;
 }

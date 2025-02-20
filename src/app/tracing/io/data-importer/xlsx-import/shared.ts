@@ -36,6 +36,12 @@ interface AmountColumns {
     unit: number;
 }
 
+interface Amount {
+    number?: number;
+    unit?: string;
+    text?: string;
+}
+
 export function createEmptyImportTable<T>(): ImportTable<T> {
     return {
         issues: [],
@@ -233,6 +239,7 @@ const TYPESTRING_2_FUN: {
     lat: getLat,
     lon: getLon,
     "nonneg:number": getNonNegNumber,
+    "pos:number": getNonNegNumber,
     number: getNumber,
     string: getStringOrUndefined,
     boolean: getBoolean,
@@ -329,6 +336,40 @@ export function importMandatoryString(
         return undefined;
     }
     return inputValue;
+}
+
+export function importAmount(
+    row: Row,
+    amountColumns: AmountColumns,
+    addIssueCb: AddIssueCallback,
+): Amount {
+    const amount: Amount = {
+        number: importValue(
+            row,
+            amountColumns.number,
+            "pos:number",
+            addIssueCb,
+        ),
+        unit: getCleanedStringOrUndefined(row[amountColumns.unit]),
+    };
+    if (
+        amount.unit !== undefined &&
+        getCleanedInput(row[amountColumns.number]) === undefined
+    ) {
+        // unit without number
+        addIssueCb({
+            col: amountColumns.number,
+            msg: IMPORT_ISSUES.missingNumberForUnit,
+        });
+    }
+    amount.text = conditionalConcat(
+        [
+            getCleanedStringOrUndefined(row[amountColumns.number]),
+            getCleanedStringOrUndefined(row[amountColumns.unit]),
+        ],
+        " ",
+    );
+    return amount;
 }
 
 export function importAggregatedAmount(

@@ -7,7 +7,7 @@ import {
     SimpleChanges,
 } from "@angular/core";
 import { MatSelectChange } from "@angular/material/select";
-import { PropInfo } from "@app/tracing/shared/property-info";
+import { PropInfo } from "../model";
 
 @Component({
     selector: "fcl-property-element-view",
@@ -24,17 +24,31 @@ export class PropertyElementViewComponent implements OnChanges {
     @Output() altTextChange = new EventEmitter<string>();
 
     private propWrapper_: string = "";
+    private activeProp_: PropInfo | undefined;
 
     get propWrapper(): string {
         return this.propWrapper_;
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        this.propWrapper_ = this.prop ?? "";
+    get activeProp(): PropInfo | undefined {
+        return this.activeProp_;
     }
 
-    isActivePropAvailable(): boolean {
-        return this.availableProps.some((p) => p.prop === this.prop);
+    ngOnChanges(changes: SimpleChanges): void {
+        this.propWrapper_ = this.prop ?? "";
+        if (changes.prop) {
+            this.activeProp_ =
+                this.prop === null
+                    ? undefined
+                    : (this.availableProps.find(
+                          (p) => p.prop === this.prop,
+                      ) ?? {
+                          prop: this.prop,
+                          label: this.prop,
+                          isDataUnavailable: true,
+                          warnings: "Data is not available.",
+                      });
+        }
     }
 
     onAltTextChange(altText: string): void {

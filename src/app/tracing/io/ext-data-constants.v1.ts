@@ -35,6 +35,10 @@ export const DELIVERY_OUT_DATE_REGEX = /^Date\s*Delivery$/i;
 export const DELIVERY_REF_ID = "Refid"; // Needed as destiller output marker
 export const DELIVERY_LOT_ID = "Lot ID";
 export const DELIVERY_LOT_NUMBER = "Lot Number";
+export const DELIVERY_LOT_AMOUNT = "Lot Amount";
+export const DELIVERY_LOT_QUANTITY = "lotQuantity";
+export const DELIVERY_LOT_AMOUNT_NUMBER = "Lot Amount Number";
+export const DELIVERY_LOT_AMOUNT_UNIT = "Lot Amount Unit";
 export const DELIVERY_PRODUCT_K = "Product_k";
 export const DELIVERY_WEIGHT = "Weight";
 export const DELIVERY_CROSSCONTAMINATION = "CrossContamination";
@@ -46,6 +50,14 @@ export const DELIVERY_NORM_SCORE = "Normalized Score";
 export const DELIVERY_POS_SCORE = "Positive Score";
 export const DELIVERY_NEG_SCORE = "Negative Score";
 export const DELIVERY_AMOUNT = "Amount";
+export const DELIVERY_AMOUNT_NUMBER = "Amount Number";
+export const DELIVERY_AMOUNT_UNIT = "Amount Unit";
+export const DELIVERY_DELIVERY_AMOUNT = "Delivery Amount";
+export const DELIVERY_DELIVERY_AMOUNT_NUMBER = "Delivery Amount Number";
+export const DELIVERY_DELIVERY_AMOUNT_UNIT = "Delivery Amount Unit";
+export const DELIVERY_LIEFERUNGEN_DELIVERY_AMOUNT =
+    "_Lieferungen.Delivery_Amount";
+export const DELIVERY_LIEFERUNGEN_DELIVERY_UNIT = "_Lieferungen.Delivery_Unit";
 
 export const DEL2DEL_ID = "ID";
 export const DEL2DEL_NEXT = "Next";

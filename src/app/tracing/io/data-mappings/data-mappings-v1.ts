@@ -144,7 +144,12 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     observed: ExtDataConstants.DELIVERY_OBSERVED,
     dateOut: ExtDataConstants.DELIVERY_OUT_DATE,
     dateIn: ExtDataConstants.DELIVERY_IN_DATE,
-    amount: ExtDataConstants.DELIVERY_AMOUNT,
+    amount: ExtDataConstants.DELIVERY_DELIVERY_AMOUNT,
+    amountNumber: ExtDataConstants.DELIVERY_DELIVERY_AMOUNT_NUMBER,
+    amountUnit: ExtDataConstants.DELIVERY_DELIVERY_AMOUNT_UNIT,
+    lotAmount: ExtDataConstants.DELIVERY_LOT_AMOUNT,
+    lotAmountNumber: ExtDataConstants.DELIVERY_LOT_AMOUNT_NUMBER,
+    lotAmountUnit: ExtDataConstants.DELIVERY_LOT_AMOUNT_UNIT,
 });
 
 export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<string, string> =
@@ -177,6 +182,20 @@ const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP = ImmutableList<{
         // fall back to lot ID
         lot: ExtDataConstants.DELIVERY_LOT_ID,
     },
+    {
+        lotAmount: ExtDataConstants.DELIVERY_LOT_QUANTITY,
+    },
+    {
+        amount: ExtDataConstants.DELIVERY_AMOUNT,
+    },
+    {
+        amountNumber: ExtDataConstants.DELIVERY_AMOUNT_NUMBER,
+        amountUnit: ExtDataConstants.DELIVERY_AMOUNT_UNIT,
+    },
+    {
+        amountNumber: ExtDataConstants.DELIVERY_LIEFERUNGEN_DELIVERY_AMOUNT,
+        amountUnit: ExtDataConstants.DELIVERY_LIEFERUNGEN_DELIVERY_UNIT,
+    },
 ]);
 
 function getMatchingProp(
@@ -205,14 +224,16 @@ function getPropMap(
     explicitProps: string[],
 ): PropMap {
     const availableExtProps = Object.keys(getAvailableProps(table));
-    const availableExtPropsSet = Utils.createSimpleStringSet(availableExtProps);
+    const availableExtPropsSet = new Set(availableExtProps);
     const availableExtPropsLC = availableExtProps.map((extProp) =>
         extProp.toLowerCase(),
     );
-    const propMap = defaultMap.toObject();
-    for (const [intProp, defaultExtProp] of Object.entries(propMap)) {
+    const propMap: { [key in string]: string } = {};
+    for (const [intProp, defaultExtProp] of Object.entries(
+        defaultMap.toObject(),
+    )) {
         // check for availability of default mapping
-        if (availableExtPropsSet[defaultExtProp] === undefined) {
+        if (!availableExtPropsSet.has(defaultExtProp)) {
             // default mapping is not available, try lower case match
             const matchingExtPropIndex = availableExtPropsLC.indexOf(
                 defaultExtProp.toLowerCase(),
@@ -220,6 +241,8 @@ function getPropMap(
             if (matchingExtPropIndex >= 0) {
                 propMap[intProp] = availableExtProps[matchingExtPropIndex];
             }
+        } else {
+            propMap[intProp] = defaultExtProp;
         }
     }
     // look for alternative mappings
@@ -228,8 +251,7 @@ function getPropMap(
         // Check whether all (internal) props of the propSet are already mapped to an available external prop
         if (
             intProps.some(
-                (intProp) =>
-                    availableExtPropsSet[propMap[intProp]] === undefined,
+                (intProp) => !availableExtPropsSet.has(propMap[intProp]),
             )
         ) {
             // At least one internal prop of the propSet is not mapped to an available external prop yet
@@ -256,6 +278,7 @@ function getPropMap(
     );
     unmappedExtProps.forEach((extProp) => {
         if (
+            !defaultMap.has(extProp) &&
             propMap[extProp] === undefined && // extProp is not an internal prop
             !explicitProps.includes(extProp) // extProp is not an explicit prop
         ) {
