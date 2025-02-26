@@ -265,6 +265,7 @@ export interface CyEdgeData {
     zindex: number;
     relZindex: number;
     wLabelSpace: boolean;
+    edgeWidth?: number;
 }
 
 export interface GraphElementData {

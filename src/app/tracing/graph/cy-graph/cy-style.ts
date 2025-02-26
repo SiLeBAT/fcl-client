@@ -77,6 +77,7 @@ export class CyStyle {
         const fontSize = this.styleConfig.fontSize;
         const nodeSize = this.styleConfig.nodeSize;
         const edgeWidth = this.styleConfig.edgeWidth;
+        console.log(edgeWidth)
         const selectedEdgeWidth =
             edgeWidth * CyStyle.SELECTED_EDGE_WIDTH_FACTOR;
         // usually a bad style to have magic numbers within code
@@ -141,7 +142,7 @@ export class CyStyle {
                 "line-gradient-stop-colors": "data(stopColors)",
                 "line-gradient-stop-positions": "data(stopPositions)",
                 "z-index": "data(zindex)",
-                width: edgeWidth,
+                width: this.createEdgeWidthMapString(), //edgeWidth,
                 "arrow-scale": CyStyle.ARROW_SCALE,
             })
 
@@ -213,6 +214,21 @@ export class CyStyle {
             });
 
         return style;
+    }
+
+    private createEdgeWidthMapString(): string {
+        const condition = true;
+        if(condition) {
+            return `mapData(edgeWidth, ${0}, ${1}, ${1}, ${10})`;
+
+            // min  = breite graph settings
+            // max = vielfaches des min, noch festzulegen
+        }
+
+        // deliveries [0] highlighting info edgeWidth
+
+        console.log('cy-style', this.graphData.edgeData, this.styleConfig.edgeWidth.toString())
+        return this.styleConfig.edgeWidth.toString();
     }
 
     private createNodeSizeMapString(): string {

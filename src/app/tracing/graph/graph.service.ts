@@ -276,6 +276,8 @@ export class GraphService {
                     for (const deliveries of deliveryGroups) {
                         if (deliveries.length === 1) {
                             const delivery = deliveries[0];
+                            console.log('calculatedWidth', delivery.highlightingInfo?.edgeWidth, 279)
+                            // edgewidth wie im else 2, --> 1 del, same edge 
                             const selected = !!selDel[delivery.id];
                             edgeData.push({
                                 id: "E" + iEdge++,
@@ -292,7 +294,7 @@ export class GraphService {
                                 selected: selected,
                                 wLabelSpace: false,
                             });
-                        } else {
+                        } else { // hier max zahl der edgewidth nehmen 
                             edgeData.push({
                                 id: "E" + iEdge++,
                                 labelWoPrefix:
@@ -326,6 +328,7 @@ export class GraphService {
             )) {
                 const sourceData = statMap[delivery.source];
                 const targetData = statMap[delivery.target];
+                console.log('calculatedWidth', delivery.highlightingInfo?.edgeWidth, 330)
 
                 if (sourceData && targetData) {
                     edgeData.push({
@@ -342,6 +345,7 @@ export class GraphService {
                         zindex: 0,
                         selected: delivery.selected,
                         wLabelSpace: false,
+                        edgeWidth: delivery.highlightingInfo?.edgeWidth
                     });
                 }
             }

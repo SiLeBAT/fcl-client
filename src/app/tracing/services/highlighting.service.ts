@@ -18,6 +18,7 @@ import {
     LegendDisplayEntry,
 } from "../data.model";
 import { removeNullish, Utils } from "../util/non-ui-utils";
+import {DeliveriesValueRange, getNumericAmountsRangeFromDeliveries, calculateLinearEdgeWidth, calculateLogarithmicEdgeWidth } from "../util/calculate-edge-width";
 
 type PropertyValueType = number | string | boolean;
 type RuleId = string;
@@ -186,6 +187,7 @@ export class HighlightingService {
         data: DataServiceData,
     ): void {
         this.preprocessHighlightings(state);
+        const deliveriesAmountRange = getNumericAmountsRangeFromDeliveries(data.deliveries);
 
         const effElementsStats: HighlightingStats = {
             counts: {},
@@ -202,13 +204,17 @@ export class HighlightingService {
                 );
             });
 
+
         data.deliveries.forEach((delivery: DeliveryData) => {
             delivery.highlightingInfo = this.createDeliveryHightlightingInfo(
                 delivery,
                 state,
                 effElementsStats,
+                deliveriesAmountRange,
             );
         });
+        
+        this.normalizeEdgeWidths(data.deliveries);
 
         data.isStationAnonymizationActive = this.anonymizeStationsIfApplicable(
             data.stations,
@@ -227,6 +233,18 @@ export class HighlightingService {
             ),
         });
         data.highlightingStats = effElementsStats;
+    }
+
+    private normalizeEdgeWidths(deliveries) {
+        const range = getNumericAmountsRangeFromDeliveries(deliveries);
+
+        deliveries.forEach(delivery => {
+           delivery.highlightingInfo.edgeWidth = 
+           //calculateLinearEdgeWidth(delivery.highlightingInfo.edgeWidth, range.min, range.max, 0, 1);
+           calculateLogarithmicEdgeWidth(delivery.highlightingInfo.edgeWidth, range.min, range.max, 0, 1)
+        });
+
+        console.log(deliveries)
     }
 
     private getRuleIdToIsActiveMap(
@@ -471,14 +489,20 @@ export class HighlightingService {
         delivery: DeliveryData,
         state: DataServiceInputState,
         effElementsStats: HighlightingStats,
+        range:DeliveriesValueRange,
     ) {
+        const amountExtractedFromProps = this.getPropertyValueFromElement(delivery, 'amount'); // to do: get property name from userinput!
+                
         const activeHighlightingRules = this.getActiveHighlightingRules(
             delivery,
             this.enabledDelHRules,
         );
 
         const deliveryHighlightingInfo: DeliveryHighlightingInfo =
-            this.getCommonHighlightingInfo(delivery, activeHighlightingRules);
+        {
+            ...this.getCommonHighlightingInfo(delivery, activeHighlightingRules),
+            edgeWidth: Number.isNaN(amountExtractedFromProps) || typeof amountExtractedFromProps !== 'number'? undefined : amountExtractedFromProps,
+        };
 
         activeHighlightingRules.forEach(
             (rule) =>
