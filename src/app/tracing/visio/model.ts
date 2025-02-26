@@ -37,6 +37,7 @@ export interface LabelInfo {
     title: string;
     disabled?: boolean;
     warning?: string;
+    tooltip?: string;
     labelElements: LabelElementInfo[][];
     availableProps: PropInfo[];
     amountUnitPairs: AmountUnitPair[];

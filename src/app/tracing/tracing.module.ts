@@ -88,6 +88,7 @@ import { LoadingGraphComponent } from "./graph/components/graph-loading/graph-lo
 import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.component";
 import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
 import { DialogIssueReportComponent } from "./dialog/dialog-issue-report/dialog-issue-report.component";
+import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon-view.component";
 
 @NgModule({
     imports: [
@@ -182,6 +183,7 @@ import { DialogIssueReportComponent } from "./dialog/dialog-issue-report/dialog-
         VisibilityCellViewComponent,
         RowCellViewComponent,
         PrefixEditorViewComponent,
+        WarningIconViewComponent,
     ],
     exports: [],
 })

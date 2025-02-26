@@ -1,5 +1,6 @@
 @use "material-icons/iconfont/filled";
 @use "material-icons/iconfont/round";
+@use "assets/sass/base" as fcl;
 
 .mat-tooltip {
     font-size: 14px !important;
@@ -51,11 +52,25 @@
 }
 
 .snackbar-warn {
-    background-color: rgb(255 221 0) !important;
+    background-color: fcl.$fcl-warning-color !important;
     color: black !important;
 }
 
 .snackbar-info {
     background-color: #bbdefb !important;
     color: black !important;
+}
+
+// visually disabled mat select option
+
+.mat-select.fcl-option--disabled-appearance .mat-select-value {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
+.mat-select-panel .mat-option.fcl-option--disabled-appearance {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
+.mat-select-panel .mat-option.fcl-option--disabled-appearance.mat-selected {
+    color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
 }

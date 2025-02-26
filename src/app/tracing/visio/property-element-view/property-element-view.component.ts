@@ -9,6 +9,8 @@ import {
 import { MatSelectChange } from "@angular/material/select";
 import { PropInfo } from "../model";
 
+const DEFAULT_MAT_SELECT_TOOLTIP = "Select property";
+
 @Component({
     selector: "fcl-property-element-view",
     templateUrl: "./property-element-view.component.html",
@@ -23,8 +25,16 @@ export class PropertyElementViewComponent implements OnChanges {
     @Output() propChange = new EventEmitter<string | null>();
     @Output() altTextChange = new EventEmitter<string>();
 
+    useActivePropWarningAsMatSelectTooltip = false;
     private propWrapper_: string = "";
     private activeProp_: PropInfo | undefined;
+
+    get matSelectTooltip(): string | undefined {
+        return this.useActivePropWarningAsMatSelectTooltip &&
+            this.activeProp_?.warnings
+            ? this.activeProp_.warnings
+            : DEFAULT_MAT_SELECT_TOOLTIP;
+    }
 
     get propWrapper(): string {
         return this.propWrapper_;

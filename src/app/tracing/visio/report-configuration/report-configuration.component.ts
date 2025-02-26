@@ -26,12 +26,26 @@ import {
 } from "../model";
 import { ReportConfigurationService } from "../report-configuration-service";
 
+const WARNING_LABEL_HAS_WARNINGS = "Label configuration with warnings(s).";
+const WARNING_NO_DATA_AVAILABLE = "No data available.";
 const WARNING_STATION_ANONYMIZATION_IS_ACTIVE =
     "Anonymisation Label is activated. To configure the station information shown in the ROA Style, deactivate this label in the station highlighting menu.";
-const WARNING_DATA_IS_NOT_AVAILABLE = "Some data is not available.";
 
 const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
 
+function haveLabelElementsWarnings(
+    elements: LabelElementInfo[],
+    availableProps: PropInfo[],
+): boolean {
+    const propElements = elements.filter(isPropElementInfoWithProp);
+    return propElements.some((e) => {
+        const propInfo = availableProps.find((p) => p.prop === e.prop);
+        if (!propInfo) {
+            return true;
+        }
+        return propInfo.warnings !== undefined;
+    });
+}
 @Component({
     selector: "fcl-report-configuration",
     templateUrl: "./report-configuration.component.html",
@@ -187,12 +201,15 @@ export class ReportConfigurationComponent implements DoCheck {
                 (p) => !p.isDataUnavailable,
             );
             labelInfo.disabled = noAvailableProps;
-            labelInfo.warning = noAvailableProps
-                ? WARNING_DATA_IS_NOT_AVAILABLE
+            labelInfo.tooltip = noAvailableProps
+                ? WARNING_NO_DATA_AVAILABLE
                 : undefined;
         });
 
-        if (this.isStationAnonymizationActive) {
+        if (
+            this.isStationAnonymizationActive &&
+            !this.labelInfos.stationLabel.disabled
+        ) {
             this.labelInfos.stationLabel.disabled = true;
             this.labelInfos.stationLabel.warning =
                 WARNING_STATION_ANONYMIZATION_IS_ACTIVE;
@@ -279,22 +296,16 @@ export class ReportConfigurationComponent implements DoCheck {
     private updateLabelInfoWarnings(): void {
         const labelInfos = Object.values(this.labelInfos);
         const enabledLabelInfos = labelInfos.filter((x) => !x.disabled);
-        labelInfoLoop: for (const labelInfo of enabledLabelInfos) {
-            const propSet = new Set(
-                labelInfo.availableProps.map((p) => p.prop),
-            );
-
-            for (const labelElementRow of labelInfo.labelElements) {
-                const propElementsWithProps = labelElementRow.filter(
-                    isPropElementInfoWithProp,
+        for (const labelInfo of enabledLabelInfos) {
+            if (!labelInfo.disabled) {
+                const someIssueExist = haveLabelElementsWarnings(
+                    labelInfo.labelElements.flat(),
+                    labelInfo.availableProps,
                 );
-                if (propElementsWithProps.some((e) => !propSet.has(e.prop))) {
-                    labelInfo.warning = WARNING_DATA_IS_NOT_AVAILABLE;
-                    continue labelInfoLoop;
-                }
+                labelInfo.warning = someIssueExist
+                    ? WARNING_LABEL_HAS_WARNINGS
+                    : undefined;
             }
-
-            labelInfo.warning = undefined;
         }
     }
 

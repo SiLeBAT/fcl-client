@@ -33,11 +33,16 @@
     background-color: white;
 }
 
-.fcl-warning-icon {
-    font-size: 1.2em;
-    color: red;
-    height: 1em;
-    width: 1em;
-    display: inline-flex;
-    vertical-align: middle;
+mat-select-trigger,
+.fcl-mat-option-content {
+    display: flex;
+    align-items: center;
+}
+
+fcl-warning-icon-view {
+    display: flex;
+}
+
+.fcl-mat-option-content fcl-warning-icon-view {
+    margin-left: 0.5ch;
 }

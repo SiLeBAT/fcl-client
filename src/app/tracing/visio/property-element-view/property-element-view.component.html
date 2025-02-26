@@ -1,33 +1,50 @@
 <div class="fcl-box">
     <mat-select
         class="fcl-property-selector fcl-compact-mat-select"
+        [ngClass]="
+            activeProp?.isDataUnavailable
+                ? 'fcl-option--disabled-appearance'
+                : ''
+        "
         [value]="activeProp?.prop ?? ''"
         (selectionChange)="onSelectionChange($event)"
         placeholder="Select property"
         disableOptionCentering
         panelClass="fcl-mat-select-below-panel-class"
-        matTooltip="Select property"
+        [matTooltip]="matSelectTooltip"
     >
-        <mat-select-trigger *ngIf="activeProp?.warnings">
-            {{ activeProp?.label }}
-            <span
-                ><mat-icon
-                    class="fcl-warning-icon"
-                    [matTooltip]="activeProp?.warnings"
-                    >warning</mat-icon
-                ></span
-            >
+        <mat-select-trigger
+            *ngIf="activeProp?.warnings"
+            [ngClass]="
+                activeProp?.isDataUnavailable
+                    ? 'fcl-option--disabled-appearance'
+                    : ''
+            "
+        >
+            <span>{{ activeProp?.label }}</span>
+            <fcl-warning-icon-view
+                *ngIf="activeProp?.warnings"
+                (mouseenter)="useActivePropWarningAsMatSelectTooltip = true"
+                (mouseleave)="useActivePropWarningAsMatSelectTooltip = false"
+            />
         </mat-select-trigger>
         <mat-option *ngIf="enableNullProp" value="">None</mat-option>
         <span *ngFor="let prop of availableProps">
-            <mat-option value="{{ prop.prop }}">
-                {{ prop.label || prop.prop }}
-                <mat-icon
-                    *ngIf="prop.warnings"
-                    class="fcl-warning-icon"
-                    [matTooltip]="prop.warnings"
-                    >warning</mat-icon
-                >
+            <mat-option
+                value="{{ prop.prop }}"
+                [ngClass]="
+                    prop.isDataUnavailable
+                        ? 'fcl-option--disabled-appearance'
+                        : ''
+                "
+            >
+                <div class="fcl-mat-option-content">
+                    <span>{{ prop.label || prop.prop }}</span>
+                    <fcl-warning-icon-view
+                        *ngIf="prop?.warnings"
+                        [matTooltip]="prop.warnings"
+                    />
+                </div>
             </mat-option>
         </span>
     </mat-select>
