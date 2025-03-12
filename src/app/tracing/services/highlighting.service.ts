@@ -19,7 +19,12 @@ import {
     Range,
     ValueType,
 } from "../data.model";
-import { getRange, isArrayNotEmpty, removeNullish, Utils } from "../util/non-ui-utils";
+import {
+    getRange,
+    isArrayNotEmpty,
+    removeNullish,
+    Utils,
+} from "../util/non-ui-utils";
 
 type PropertyValueType = number | string | boolean;
 type RuleId = string;
@@ -176,7 +181,9 @@ export class HighlightingService {
                     (this.delRuleIdToEvaluatorFunMap[rule.id] =
                         this.getEvaluatorFunFromRule(rule)),
             );
-            this.activeDeliveryWidthRule = this.enabledDelHRules.find(rule => rule.adjustThickness);
+            this.activeDeliveryWidthRule = this.enabledDelHRules.find(
+                (rule) => rule.adjustThickness,
+            );
         }
         if (statRulesChanged || delRulesChanged) {
             this.ruleIdToEvaluatorFunMap = {
@@ -216,15 +223,20 @@ export class HighlightingService {
         });
 
         if (this.activeDeliveryWidthRule) {
-            const widthProperty = this.activeDeliveryWidthRule.valueCondition?.propertyName ?? '';
+            const widthProperty =
+                this.activeDeliveryWidthRule.valueCondition?.propertyName ?? "";
             const id2Width = new Map<string, number>();
-            const useLog = this.activeDeliveryWidthRule.valueCondition?.valueType === ValueType.LOG_VALUE;
-            const useZeroAsMin = this.activeDeliveryWidthRule.valueCondition?.useZeroAsMinimum === true;
+            const useLog =
+                this.activeDeliveryWidthRule.valueCondition?.valueType ===
+                ValueType.LOG_VALUE;
+            const useZeroAsMin =
+                this.activeDeliveryWidthRule.valueCondition
+                    ?.useZeroAsMinimum === true;
 
-            for(const delivery of data.deliveries) {
+            for (const delivery of data.deliveries) {
                 const value = this.getPropertyValueFromElement(
                     delivery,
-                    widthProperty
+                    widthProperty,
                 );
                 if (typeof value === "number" && Number.isFinite(value)) {
                     let width = value;
@@ -251,10 +263,12 @@ export class HighlightingService {
                 id2Width.forEach((width, id) => {
                     const hInfo = data.delMap[id].highlightingInfo;
                     if (hInfo) {
-                        hInfo.width = normRangeWidth * (width - range.min) / (rangeWidth || 1) + normRange.min;
-                        console.log(`Set width of delivery '${id}' to ${hInfo.width}.`);
+                        hInfo.width =
+                            (normRangeWidth * (width - range.min)) /
+                                (rangeWidth || 1) +
+                            normRange.min;
                     }
-                })
+                });
             }
         }
 

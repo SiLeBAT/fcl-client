@@ -308,7 +308,8 @@ export class GraphService {
                                 ),
                                 source: sourceDataId,
                                 target: targetDataId,
-                                width: this.getMaxDeliveriesWidth(deliveries) ?? 0,
+                                width:
+                                    this.getMaxDeliveriesWidth(deliveries) ?? 0,
                                 deliveries: deliveries,
                                 relZindex: 0,
                                 zindex: 0,
@@ -366,7 +367,9 @@ export class GraphService {
         }
         this.updateEdgeLabels(state, edgeData);
 
-        edgeData.forEach(edge => console.log(`Set widht of edge '${edge.id} to ${edge.width}.`));
+        // edgeData.forEach((edge) =>
+        //     console.log(`Set widht of edge '${edge.id} to ${edge.width}.`),
+        // );
 
         return {
             edgeData: edgeData,
@@ -381,10 +384,14 @@ export class GraphService {
         return element.highlightingInfo!.label;
     }
 
-    private getMaxDeliveriesWidth(deliveries: DeliveryData[]): number | undefined {
-        const widths = deliveries.map(d => d.highlightingInfo?.width);
+    private getMaxDeliveriesWidth(
+        deliveries: DeliveryData[],
+    ): number | undefined {
+        const widths = deliveries.map((d) => d.highlightingInfo?.width);
         const definedWidths = removeUndefined(widths);
-        return definedWidths.length === 0 ? undefined : Math.max(...definedWidths);
+        return definedWidths.length === 0
+            ? undefined
+            : Math.max(...definedWidths);
     }
 
     private createMergedLabelWoPrefix(deliveries: DeliveryData[]): string {
@@ -729,7 +736,6 @@ export class GraphService {
                 GraphService.DEFAULT_EDGE_COLOR,
             );
             edge.width = this.getMaxDeliveriesWidth(edge.deliveries) ?? 0;
-            console.log(`Set width of edge '${edge.id}' to ${edge.width}.`);
             edge.stopColors = colorInfo.stopColors;
             edge.stopPositions = colorInfo.stopPositions;
             edge.labelWoPrefix = this.createMergedLabelWoPrefix(

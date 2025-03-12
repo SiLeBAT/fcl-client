@@ -20,9 +20,10 @@
 .fcl-edit-rule-properties {
     display: grid;
     grid-template-areas: // "rulename nodesymbol rest";
-      "rulename rest"
-      "property  scale"
-      "zeromin  maximum";
+
+        "rulename rest"
+        "property  scale"
+        "zeromin  maximum";
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 1ch;
     padding-bottom: 0.5rem;
@@ -48,12 +49,10 @@
 
 .fcl-edit-rule-name-field {
     grid-area: rulename;
-    // margin-right: 1ch;
 }
 
 .fcl-property-selector {
     grid-area: property;
-    // margin-right: 1ch;
 }
 
 .fcl-scale-selector {

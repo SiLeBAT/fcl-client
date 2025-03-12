@@ -632,9 +632,9 @@ export class InteractiveCyGraph extends CyGraph {
                 ? [0]
                 : graphData.nodeData.map((n) => n.size);
         const edgeWidths =
-                graphData.edgeData.length === 0
-                    ? [0]
-                    : graphData.edgeData.map((e) => e.width);
+            graphData.edgeData.length === 0
+                ? [0]
+                : graphData.edgeData.map((e) => e.width);
         this.cachedHProps = {
             nodeProps: graphData.nodeData.map((n) => ({
                 stopColors: n.stopColors,
@@ -654,7 +654,7 @@ export class InteractiveCyGraph extends CyGraph {
             minNodeSize: Math.min(...nodeSizes),
             maxNodeSize: Math.max(...nodeSizes),
             minEdgeWidth: Math.min(...edgeWidths),
-            maxEdgeWidth: Math.max(...edgeWidths)
+            maxEdgeWidth: Math.max(...edgeWidths),
         };
     }
 
@@ -713,7 +713,10 @@ export class InteractiveCyGraph extends CyGraph {
                     oldHProps,
                     this.cachedHProps!,
                 );
-                if (propChange.nodeSizeLimitsChanged || propChange.edgeWidthLimitsChanged) {
+                if (
+                    propChange.nodeSizeLimitsChanged ||
+                    propChange.edgeWidthLimitsChanged
+                ) {
                     updateStyle = true;
                 }
             }

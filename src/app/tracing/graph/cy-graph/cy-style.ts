@@ -30,10 +30,14 @@ function getScaledRange(range: Range, scale: number): Range {
     return { min: range.min * scale, max: range.max * scale };
 }
 
-function getMapDataString(property: string, fromRange: Range, toRange: Range): string {
-    return isZeroRange(fromRange) ?
-        toRange.min.toString() :
-        `mapData(${property}, ${fromRange.min}, ${fromRange.max}, ${toRange.min}, ${toRange.max})`;
+function getMapDataString(
+    property: string,
+    fromRange: Range,
+    toRange: Range,
+): string {
+    return isZeroRange(fromRange)
+        ? toRange.min.toString()
+        : `mapData(${property}, ${fromRange.min}, ${fromRange.max}, ${toRange.min}, ${toRange.max})`;
 }
 
 //function getRangeOrZeroRange(values: )
@@ -79,8 +83,12 @@ export class CyStyle {
         // this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
         // this.minWidth = widths.length === 0 ? 0 : Math.min(...widths);
         // this.maxWidth = widths.length === 0 ? 0 : Math.max(...widths);
-        this.fromNodeSizeRange = isArrayNotEmpty(sizes) ? getRange(sizes) : getZeroRange(0);
-        this.fromEdgeWidthRange = isArrayNotEmpty(widths) ? getRange(widths) : getZeroRange(0);
+        this.fromNodeSizeRange = isArrayNotEmpty(sizes)
+            ? getRange(sizes)
+            : getZeroRange(0);
+        this.fromEdgeWidthRange = isArrayNotEmpty(widths)
+            ? getRange(widths)
+            : getZeroRange(0);
     }
 
     createCyStyle(): Record<string, unknown> {
@@ -135,7 +143,8 @@ export class CyStyle {
         // const stepSizeWithLabelSpace =
         //     Math.max(selectedEdgeWidth * 1.7, 5) + fontSize * 2.0;
         const stepSizeWithLabelSpace =
-            Math.max(this.getSelectedEdgeWidthRange().max * 1.7, 5) + fontSize * 2.0;
+            Math.max(this.getSelectedEdgeWidthRange().max * 1.7, 5) +
+            fontSize * 2.0;
 
         const style = cytoscape
             .stylesheet()
@@ -214,7 +223,8 @@ export class CyStyle {
                 color: "rgb(0, 0, 255)",
                 "overlay-color": "rgb(0, 0, 255)",
                 // "overlay-padding": selectedEdgeWidth / 5.0,
-                "overlay-padding": this.createSelectedEdgeOverlayPaddingMapString(),
+                "overlay-padding":
+                    this.createSelectedEdgeOverlayPaddingMapString(),
                 "overlay-opacity": 1,
                 // "underlay-color": "rgb(255, 0, 0)",
                 // "underlay-padding": 20,
@@ -277,14 +287,21 @@ export class CyStyle {
             const minNodeSize = this.styleConfig.nodeSize;
             return {
                 min: minNodeSize,
-                max: minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR * this.fromNodeSizeRange.max
-            }
+                max:
+                    minNodeSize *
+                    CyStyle.SIZE_ONE_SIZE_FACTOR *
+                    this.fromNodeSizeRange.max,
+            };
         }
         return getZeroRange(this.styleConfig.nodeSize);
     }
 
     private createNodeSizeMapString(): string {
-        return getMapDataString('size', this.fromNodeSizeRange, this.getProjectedNodeSizeRange());
+        return getMapDataString(
+            "size",
+            this.fromNodeSizeRange,
+            this.getProjectedNodeSizeRange(),
+        );
     }
 
     private getProjectedEdgeWidthRange(): Range {
@@ -294,30 +311,48 @@ export class CyStyle {
                 min: minEdgeWidth,
                 max: Math.max(
                     minEdgeWidth,
-                    Math.min(minEdgeWidth * CyStyle.MAX_WIDTH_FACTOR, CyStyle.MAX_WIDTH)
-                )
+                    Math.min(
+                        minEdgeWidth * CyStyle.MAX_WIDTH_FACTOR,
+                        CyStyle.MAX_WIDTH,
+                    ),
+                ),
             };
         }
         return getZeroRange(this.styleConfig.edgeWidth);
     }
 
     private getSelectedEdgeWidthRange(): Range {
-        return getScaledRange(this.getProjectedEdgeWidthRange(), CyStyle.SELECTED_EDGE_WIDTH_FACTOR);
+        return getScaledRange(
+            this.getProjectedEdgeWidthRange(),
+            CyStyle.SELECTED_EDGE_WIDTH_FACTOR,
+        );
     }
 
     private getSelectedEdgeOverlayPaddingRange(): Range {
-        return getScaledRange(this.getSelectedEdgeWidthRange(), 1/5.0);
+        return getScaledRange(this.getSelectedEdgeWidthRange(), 1 / 5.0);
     }
 
     private createEdgeWidthMapString(): string {
-        return getMapDataString("width", this.fromEdgeWidthRange, this.getProjectedEdgeWidthRange());
+        return getMapDataString(
+            "width",
+            this.fromEdgeWidthRange,
+            this.getProjectedEdgeWidthRange(),
+        );
     }
 
     private createSelectedEdgeWidthString(): string {
-        return getMapDataString("width", this.fromEdgeWidthRange, this.getSelectedEdgeWidthRange());
+        return getMapDataString(
+            "width",
+            this.fromEdgeWidthRange,
+            this.getSelectedEdgeWidthRange(),
+        );
     }
 
     private createSelectedEdgeOverlayPaddingMapString(): string {
-        return getMapDataString("width", this.fromEdgeWidthRange, this.getSelectedEdgeOverlayPaddingRange());
+        return getMapDataString(
+            "width",
+            this.fromEdgeWidthRange,
+            this.getSelectedEdgeOverlayPaddingRange(),
+        );
     }
 }

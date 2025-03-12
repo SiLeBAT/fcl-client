@@ -216,7 +216,7 @@ export function isElementOf<T>(element: any, array: T[]): element is T {
 export function getRange(values: [number, ...number[]]): Range {
     return {
         min: Math.min(...values),
-        max: Math.max(...values)
+        max: Math.max(...values),
     };
 }
 
