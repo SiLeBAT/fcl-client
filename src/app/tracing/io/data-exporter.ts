@@ -194,7 +194,11 @@ export class DataExporter {
         const intToExtShapeMap = Utils.createReverseMap(
             DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP,
         );
-        const intToExtStatPropMap = fclData.source.int2ExtPropMaps.stations;
+        DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject();
+        const intToExtStatPropMap = {
+            ...DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject(),
+            ...fclData.source.int2ExtPropMaps.stations,
+        };
         const intStatRules =
             fclData.graphSettings.highlightingSettings.stations;
         const exportableIntStatRules = intStatRules.filter(
@@ -223,7 +227,10 @@ export class DataExporter {
             );
             viewData.node.anonymizationRule = extAnoStatRule;
         }
-        const intToExtDelPropMap = fclData.source.int2ExtPropMaps.deliveries;
+        const intToExtDelPropMap = {
+            ...DataMapper.DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP.toObject(),
+            ...fclData.source.int2ExtPropMaps.deliveries,
+        };
         viewData.edge!.highlightConditions =
             fclData.graphSettings.highlightingSettings.deliveries.map(
                 (rule) => ({

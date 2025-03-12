@@ -57,6 +57,8 @@ export const DONT_APPLY_VALUES_FOR_EXT_STATION_COLS: ImmutableList<string> =
         ExtDataConstants.STATION_OBSERVED,
         ExtDataConstants.STATION_SCORE,
         ExtDataConstants.STATION_WEIGHT,
+        ExtDataConstants.STATION_OUTBREAK,
+        ExtDataConstants.STATION_COMMON_LINK,
         ExtDataConstants.STATION_CROSSCONTAMINATION,
         ExtDataConstants.STATION_NORM_SCORE,
         ExtDataConstants.STATION_MAX_LOT_SCORE,
@@ -72,6 +74,7 @@ export const DONT_APPLY_VALUES_FOR_EXT_DELIVERY_COLS: ImmutableList<string> =
         ExtDataConstants.DELIVERY_OBSERVED,
         ExtDataConstants.DELIVERY_SCORE,
         ExtDataConstants.DELIVERY_WEIGHT,
+        ExtDataConstants.DELIVERY_OUTBREAK,
         ExtDataConstants.DELIVERY_CROSSCONTAMINATION,
         ExtDataConstants.DELIVERY_NORM_SCORE,
         ExtDataConstants.DELIVERY_LOT_SCORE,
@@ -96,6 +99,8 @@ export const DEFAULT_STATION_PROP_INT_TO_EXT_MAP: ImmutableMap<string, string> =
         forward: ExtDataConstants.STATION_FORWARD,
         backward: ExtDataConstants.STATION_BACKWARD,
         isMeta: ExtDataConstants.STATION_ISMETA,
+        outbreak: ExtDataConstants.STATION_OUTBREAK,
+        commonLink: ExtDataConstants.STATION_COMMON_LINK,
     });
 
 export const DENOVO_STATION_PROP_INT_TO_EXT_MAP =
@@ -136,6 +141,7 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     target: ExtDataConstants.DELIVERY_TO,
     lotKey: ExtDataConstants.DELIVERY_PRODUCT_K,
     weight: ExtDataConstants.DELIVERY_WEIGHT,
+    outbreak: ExtDataConstants.DELIVERY_OUTBREAK,
     crossContamination: ExtDataConstants.DELIVERY_CROSSCONTAMINATION,
     killContamination: ExtDataConstants.DELIVERY_KILLCONTAMINATION,
     forward: ExtDataConstants.DELIVERY_FORWARD,
@@ -224,55 +230,57 @@ function getPropMap(
     explicitProps: string[],
 ): PropMap {
     const availableExtProps = Object.keys(getAvailableProps(table));
-    const availableExtPropsSet = new Set(availableExtProps);
-    const availableExtPropsLC = availableExtProps.map((extProp) =>
-        extProp.toLowerCase(),
-    );
     const propMap: { [key in string]: string } = {};
-    for (const [intProp, defaultExtProp] of Object.entries(
-        defaultMap.toObject(),
-    )) {
-        // check for availability of default mapping
-        if (!availableExtPropsSet.has(defaultExtProp)) {
-            // default mapping is not available, try lower case match
-            const matchingExtPropIndex = availableExtPropsLC.indexOf(
-                defaultExtProp.toLowerCase(),
-            );
-            if (matchingExtPropIndex >= 0) {
-                propMap[intProp] = availableExtProps[matchingExtPropIndex];
+
+    for (const extProps of [availableExtProps, referencedProps]) {
+        const extPropsSet = new Set(extProps);
+        const extPropsLC = extProps.map((extProp) => extProp.toLowerCase());
+
+        for (const [intProp, defaultExtProp] of Object.entries(
+            defaultMap.toObject(),
+        )) {
+            // check for availability of default mapping
+            if (!extPropsSet.has(defaultExtProp)) {
+                // default mapping is not available, try lower case match
+                const matchingExtPropIndex = extPropsLC.indexOf(
+                    defaultExtProp.toLowerCase(),
+                );
+                if (matchingExtPropIndex >= 0) {
+                    propMap[intProp] = extProps[matchingExtPropIndex];
+                }
+            } else {
+                propMap[intProp] = defaultExtProp;
             }
-        } else {
-            propMap[intProp] = defaultExtProp;
         }
-    }
-    // look for alternative mappings
-    altMapList.forEach((propSet: AltPropMap | undefined) => {
-        const intProps = Object.keys(propSet!);
-        // Check whether all (internal) props of the propSet are already mapped to an available external prop
-        if (
-            intProps.some(
-                (intProp) => !availableExtPropsSet.has(propMap[intProp]),
-            )
-        ) {
-            // At least one internal prop of the propSet is not mapped to an available external prop yet
-            // get an alternative map
-            const altPropMap = Utils.createObjectFromArray(
-                intProps,
-                (intProp) => intProp,
-                (intProp) =>
-                    getMatchingProp(availableExtProps, propSet![intProp]),
-            );
-            // are all alternative mappings for all props in the set available
+        // look for alternative mappings
+        altMapList.forEach((propSet: AltPropMap | undefined) => {
+            const intProps = Object.keys(propSet!);
+            // Check whether all (internal) props of the propSet are already mapped to an available external prop
             if (
-                intProps.every((intProp) => altPropMap[intProp] !== undefined)
+                intProps.some((intProp) => !extPropsSet.has(propMap[intProp]))
             ) {
-                // yes, apply alternative mappings
-                intProps.forEach((intProp) => {
-                    propMap[intProp] = altPropMap[intProp]!;
-                });
+                // At least one internal prop of the propSet is not mapped to an available external prop yet
+                // get an alternative map
+                const altPropMap = Utils.createObjectFromArray(
+                    intProps,
+                    (intProp) => intProp,
+                    (intProp) => getMatchingProp(extProps, propSet![intProp]),
+                );
+                // are all alternative mappings for all props in the set available
+                if (
+                    intProps.every(
+                        (intProp) => altPropMap[intProp] !== undefined,
+                    )
+                ) {
+                    // yes, apply alternative mappings
+                    intProps.forEach((intProp) => {
+                        propMap[intProp] = altPropMap[intProp]!;
+                    });
+                }
             }
-        }
-    });
+        });
+    }
+
     const unmappedExtProps = [...availableExtProps, ...referencedProps].filter(
         (extProp) => !Object.values(propMap).includes(extProp),
     );
@@ -293,7 +301,6 @@ function getPropMap(
     });
     return new Map(Object.entries(propMap));
 }
-
 // retrieves all props referenced in HighlightingData
 function getReferencedProps(
     highlightingConditions: ExtHighlightingRule[],
