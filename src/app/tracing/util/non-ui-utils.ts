@@ -1,4 +1,4 @@
-import { DeliveryData, Color, HighlightingRule } from "../data.model";
+import { DeliveryData, Color, HighlightingRule, Range } from "../data.model";
 import { HttpClient } from "@angular/common/http";
 import { Map as ImmutableMap } from "immutable";
 import * as _ from "lodash";
@@ -211,6 +211,13 @@ export function getValueFromPath(data: any, path: string[]): any {
 
 export function isElementOf<T>(element: any, array: T[]): element is T {
     return array.includes(element);
+}
+
+export function getRange(values: [number, ...number[]]): Range {
+    return {
+        min: Math.min(...values),
+        max: Math.max(...values)
+    };
 }
 
 export class Utils {

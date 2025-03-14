@@ -16,8 +16,10 @@ import {
     HighlightingStats,
     LabelPart,
     LegendDisplayEntry,
+    Range,
+    ValueType,
 } from "../data.model";
-import { removeNullish, Utils } from "../util/non-ui-utils";
+import { getRange, isArrayNotEmpty, removeNullish, Utils } from "../util/non-ui-utils";
 
 type PropertyValueType = number | string | boolean;
 type RuleId = string;
@@ -48,6 +50,8 @@ export class HighlightingService {
         RuleId,
         RuleConditionsEvaluatorFun
     > = {};
+
+    private activeDeliveryWidthRule: DeliveryHighlightingRule | undefined;
 
     applyVisibilities(state: DataServiceInputState, data: DataServiceData) {
         data.stations.forEach((s) => {
@@ -172,6 +176,7 @@ export class HighlightingService {
                     (this.delRuleIdToEvaluatorFunMap[rule.id] =
                         this.getEvaluatorFunFromRule(rule)),
             );
+            this.activeDeliveryWidthRule = this.enabledDelHRules.find(rule => rule.adjustThickness);
         }
         if (statRulesChanged || delRulesChanged) {
             this.ruleIdToEvaluatorFunMap = {
@@ -209,6 +214,49 @@ export class HighlightingService {
                 effElementsStats,
             );
         });
+
+        if (this.activeDeliveryWidthRule) {
+            const widthProperty = this.activeDeliveryWidthRule.valueCondition?.propertyName ?? '';
+            const id2Width = new Map<string, number>();
+            const useLog = this.activeDeliveryWidthRule.valueCondition?.valueType === ValueType.LOG_VALUE;
+            const useZeroAsMin = this.activeDeliveryWidthRule.valueCondition?.useZeroAsMinimum === true;
+
+            for(const delivery of data.deliveries) {
+                const value = this.getPropertyValueFromElement(
+                    delivery,
+                    widthProperty
+                );
+                if (typeof value === "number" && Number.isFinite(value)) {
+                    let width = value;
+                    if (useLog) {
+                        if (width <= 0) {
+                            continue;
+                        }
+                        width = Math.log10(width);
+                    }
+                    id2Width.set(delivery.id, width);
+                }
+            }
+            const widths = Array.from(id2Width.values());
+            if (isArrayNotEmpty(widths)) {
+                const range = getRange(widths);
+
+                if (range.min > 0 && useZeroAsMin) {
+                    range.min = 0;
+                }
+                // normalize widths
+                const normRange: Range = { min: 0, max: 1 };
+                const rangeWidth = range.max - range.min;
+                const normRangeWidth = normRange.max - normRange.min;
+                id2Width.forEach((width, id) => {
+                    const hInfo = data.delMap[id].highlightingInfo;
+                    if (hInfo) {
+                        hInfo.width = normRangeWidth * (width - range.min) / (rangeWidth || 1) + normRange.min;
+                        console.log(`Set width of delivery '${id}' to ${hInfo.width}.`);
+                    }
+                })
+            }
+        }
 
         data.isStationAnonymizationActive = this.anonymizeStationsIfApplicable(
             data.stations,
