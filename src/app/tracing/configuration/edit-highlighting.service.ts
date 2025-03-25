@@ -15,11 +15,22 @@ import {
     StationHighlightingRule,
     HighlightingStats,
     FoodChainElementTypeSelection,
+    DataTable,
+    PropertySets,
 } from "../data.model";
 import { DataService } from "../services/data.service";
 import { EditTracingSettingsService } from "../services/edit-tracing-settings.service";
 import { TableService } from "../services/table.service";
-import { concat, Utils } from "../util/non-ui-utils";
+import {
+    isEnabledAdjustThicknessRule,
+    updateDisabledFlags,
+} from "../util/highlighting-utils";
+import {
+    concat,
+    getUpdatedArray,
+    removeUndefined,
+    Utils,
+} from "../util/non-ui-utils";
 import {
     ComplexFilterCondition,
     JunktorType,
@@ -36,6 +47,7 @@ import {
     StationEditRule,
     StationRuleType,
     EditRuleCore,
+    RuleType,
 } from "./model";
 import {
     convertDeliveryHRuleToEditRule,
@@ -55,6 +67,7 @@ interface UnsharedData {
 interface PropData {
     favouriteProperties: TableColumn[];
     otherProperties: TableColumn[];
+    propertiesForThickness: PropertySets;
     propToValuesMap: PropToValuesMap;
 }
 
@@ -64,6 +77,17 @@ interface CachedData {
     highlightingStats: HighlightingStats;
     tracingPropsUpdatedFlag: Record<string, never>;
 }
+
+const PREFERRED_DELIVERY_THICKNESS_PROP_IDS = [
+    "score",
+    "amountNumber",
+    "lotAmountNumber",
+];
+
+const EMPTY_STATION_THICKNESS_PROPERTIES: PropertySets = {
+    favouriteProperties: [],
+    otherProperties: [],
+};
 
 @Injectable({
     providedIn: "root",
@@ -206,8 +230,16 @@ export class EditHighlightingService {
                 ...rule,
                 ...update,
             };
+            if (isEnabledAdjustThicknessRule(newRule)) {
+                rules = getUpdatedArray(
+                    rules,
+                    (r) =>
+                        r.id !== newRule.id && isEnabledAdjustThicknessRule(r),
+                    { userDisabled: true } as Partial<T>,
+                );
+            }
             rules = this.applyRule(newRule, rules);
-            rules = this.updateAutoDisabledFlag(rules);
+            rules = updateDisabledFlags(rules);
         }
         return rules;
     }
@@ -394,7 +426,7 @@ export class EditHighlightingService {
     ): DeliveryHighlightingRule[] {
         const rule = convertDeliveryEditRuleToHRule(editRule);
         rules = this.applyRule(rule, rules);
-        rules = this.updateAutoDisabledFlag(rules);
+        rules = updateDisabledFlags(rules);
         return rules;
     }
 
@@ -404,7 +436,7 @@ export class EditHighlightingService {
     ): StationHighlightingRule[] {
         const rule = convertStationEditRuleToHRule(editRule);
         rules = this.applyRule(rule, rules);
-        rules = this.updateAutoDisabledFlag(rules);
+        rules = updateDisabledFlags(rules);
         return rules;
     }
 
@@ -417,47 +449,6 @@ export class EditHighlightingService {
             newRules.push(rule);
         }
         return newRules;
-    }
-
-    private isLabelHRule(hRule: HighlightingRule): boolean {
-        return !!hRule.labelProperty || !!hRule.labelParts;
-    }
-
-    private isAnonymizationRule(hRule: HighlightingRule): boolean {
-        return !!hRule.labelParts;
-    }
-
-    private updateAutoDisabledFlag<T extends HighlightingRule>(
-        rules: T[],
-    ): T[] {
-        const hasActiveAnoRule = rules.some(
-            (r) => this.isAnonymizationRule(r) && !r.userDisabled,
-        );
-        let indicesOfRulesToUpdate: number[] = [];
-        const isUpdateRequiredCheckFun = hasActiveAnoRule
-            ? (r: T) =>
-                  !r.autoDisabled &&
-                  !this.isAnonymizationRule(r) &&
-                  this.isLabelHRule(r)
-            : (r: T) => r.autoDisabled;
-        indicesOfRulesToUpdate = rules.reduce(
-            (prevResult, rule, index) =>
-                isUpdateRequiredCheckFun(rule)
-                    ? [...prevResult, index]
-                    : prevResult,
-            [] as number[],
-        );
-        if (indicesOfRulesToUpdate.length > 0) {
-            rules = rules.slice();
-            indicesOfRulesToUpdate.forEach(
-                (i) =>
-                    (rules[i] = {
-                        ...rules[i],
-                        autoDisabled: hasActiveAnoRule,
-                    }),
-            );
-        }
-        return rules;
     }
 
     removeRule<T extends EditRule | HighlightingRule>(
@@ -519,6 +510,7 @@ export class EditHighlightingService {
                         dataServiceData.highlightingStats!,
                     ),
             );
+
             stationRuleListItems = state.highlightingSettings.stations.map(
                 (rule) =>
                     convertStationHRuleToRuleListItem(
@@ -537,6 +529,7 @@ export class EditHighlightingService {
             deliveryPropData = this.createDeliveryPropData(state);
             stationPropData = this.createStationPropData(state);
         }
+
         this.cachedData = {
             deliverySpecificData: {
                 propData: deliveryPropData!,
@@ -551,11 +544,43 @@ export class EditHighlightingService {
         };
     }
 
+    private getPropertiesForThickness(
+        dataTable: DataTable,
+        rules: HighlightingRule[],
+        favouritePropIds: string[],
+    ): PropertySets {
+        const usedPropIds = new Set(
+            removeUndefined(
+                rules
+                    .filter((r) => r.adjustThickness)
+                    .map((r) => r.valueCondition?.propertyName),
+            ),
+        );
+        const favPropIds = new Set(favouritePropIds);
+        const favColumns = dataTable.columns.filter((c) =>
+            favPropIds.has(c.id),
+        );
+        const otherColumns = dataTable.columns.filter(
+            (c) =>
+                !favPropIds.has(c.id) &&
+                (c.type === "number" || usedPropIds.has(c.id)),
+        );
+        return {
+            favouriteProperties: [],
+            otherProperties: [...favColumns, ...otherColumns],
+        };
+    }
+
     private createDeliveryPropData(state: DataServiceInputState): PropData {
         const dataTable = this.tableService.getDeliveryTable(state, true);
         return {
             favouriteProperties: dataTable.favouriteColumns,
             otherProperties: dataTable.otherColumns,
+            propertiesForThickness: this.getPropertiesForThickness(
+                dataTable,
+                state.highlightingSettings.deliveries,
+                PREFERRED_DELIVERY_THICKNESS_PROP_IDS,
+            ),
             propToValuesMap: extractPropToValuesMap(
                 dataTable.rows,
                 dataTable.columns,
@@ -568,6 +593,7 @@ export class EditHighlightingService {
         return {
             favouriteProperties: dataTable.favouriteColumns,
             otherProperties: dataTable.otherColumns,
+            propertiesForThickness: EMPTY_STATION_THICKNESS_PROPERTIES,
             propToValuesMap: extractPropToValuesMap(
                 dataTable.rows,
                 dataTable.columns,

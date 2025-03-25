@@ -12,6 +12,7 @@ import { HighlightingElementViewComponent } from "../highlighting-element-view/h
     templateUrl: "./highlighting-delivery-view.component.html",
     styleUrls: [
         "../highlighting-element-view/highlighting-element-view.component.scss",
+        "./highlighting-delivery-view.component.scss",
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

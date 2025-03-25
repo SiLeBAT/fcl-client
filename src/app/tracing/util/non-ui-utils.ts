@@ -1,4 +1,4 @@
-import { DeliveryData, Color, HighlightingRule } from "../data.model";
+import { DeliveryData, Color, HighlightingRule, Range } from "../data.model";
 import { HttpClient } from "@angular/common/http";
 import { Map as ImmutableMap } from "immutable";
 import * as _ from "lodash";
@@ -185,6 +185,35 @@ export function getUpdatedObject<T>(obj: T, update: Partial<T>): T {
     return { ...obj, ...update };
 }
 
+/**
+ * This method is used to update an array if required.
+ *
+ * @param array Array to update
+ * @param isUpdateRequiredFun predicate to identify elements that require an update
+ * @param update Either a function that provides the updated part to an element or an object
+ * that represents the updated part itself
+ * @returns Updated Array, if some element was updated
+ *          otherwise the provided array itself
+ *
+ */
+export function getUpdatedArray<T>(
+    array: T[],
+    isUpdateRequiredFun: (e: T) => boolean,
+    update: Partial<T> | ((e: T) => Partial<T>),
+): T[] {
+    const elementsToUpdate = new Set(array.filter(isUpdateRequiredFun));
+    if (elementsToUpdate.size > 0) {
+        return typeof update === "function"
+            ? array.map((x) =>
+                  elementsToUpdate.has(x) ? getUpdatedObject(x, update(x)) : x,
+              )
+            : array.map((x) =>
+                  elementsToUpdate.has(x) ? getUpdatedObject(x, update) : x,
+              );
+    }
+    return array;
+}
+
 export function getReverseRecord<
     K extends string | number,
     V extends string | number,
@@ -211,6 +240,13 @@ export function getValueFromPath(data: any, path: string[]): any {
 
 export function isElementOf<T>(element: any, array: T[]): element is T {
     return array.includes(element);
+}
+
+export function getRange(values: [number, ...number[]]): Range {
+    return {
+        min: Math.min(...values),
+        max: Math.max(...values),
+    };
 }
 
 export class Utils {

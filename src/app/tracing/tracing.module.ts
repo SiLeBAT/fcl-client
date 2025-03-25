@@ -89,6 +89,7 @@ import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.c
 import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
 import { DialogIssueReportComponent } from "./dialog/dialog-issue-report/dialog-issue-report.component";
 import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon-view.component";
+import { EdgeWidthEditViewComponent } from "./configuration/edge-width-edit-view/edge-width-edit-view.component";
 
 @NgModule({
     imports: [
@@ -174,6 +175,7 @@ import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon
         HighlightingRulesListViewComponent,
         HighlightingDeliveryViewComponent,
         EdgeColorEditViewComponent,
+        EdgeWidthEditViewComponent,
         TextFilterHeaderCellViewComponent,
         VisibilityFilterHeaderCellViewComponent,
         SymbolHeaderCellViewComponent,

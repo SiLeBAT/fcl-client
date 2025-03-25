@@ -32,13 +32,29 @@ export interface StandardFilterSettings {
     filterTerm: string;
 }
 
+export type JSType =
+    | "undefined"
+    | "object"
+    | "boolean"
+    | "number"
+    | "bigint"
+    | "string"
+    | "symbol"
+    | "function";
+
 export interface TableColumn {
     id: string;
     name: string;
     dataIsUnavailable?: boolean;
+    type?: JSType;
 }
 
 export type Property = TableColumn;
+
+export interface PropertySets {
+    favouriteProperties: Property[];
+    otherProperties: Property[];
+}
 
 export interface RowHighlightingInfo {
     color: Color[];
@@ -440,6 +456,7 @@ export interface StationData
 export interface HighlightingInfo {
     label: string;
     color: Color[];
+    thickness?: number;
 }
 
 export interface StationHighlightingInfo extends HighlightingInfo {

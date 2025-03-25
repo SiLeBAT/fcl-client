@@ -2,6 +2,7 @@ import { COLOR_BFR_BLUE } from "./constants";
 import {
     ColorAndShapeEditRule,
     ColorEditRule,
+    EdgeWidthEditRule,
     EditRuleCore,
     InvEditRule,
     RuleType,
@@ -62,8 +63,18 @@ export class EditRuleCreator {
         };
     }
 
+    static createEdgeWidthEditRule(): EdgeWidthEditRule {
+        return {
+            ...this.createEditRuleCore(),
+            type: RuleType.EDGE_WIDTH,
+            minimumZero: false,
+            propertyName: null,
+            scale: null,
+        };
+    }
+
     static createNewEditRule<T extends RuleType, R extends EditRuleOfType<T>>(
-        ruleType: RuleType,
+        ruleType: T,
     ): R {
         switch (ruleType) {
             case RuleType.COLOR_AND_SHAPE:
@@ -74,6 +85,8 @@ export class EditRuleCreator {
                 return this.createSimpleLabelEditRule() as R;
             case RuleType.INVISIBILITY:
                 return this.createInvEditRule() as R;
+            case RuleType.EDGE_WIDTH:
+                return this.createEdgeWidthEditRule() as R;
             default:
                 throw new Error(
                     `Cannot create edit rule for rule type '${RuleType[ruleType]} (Rule type is not supported yet)'.`,

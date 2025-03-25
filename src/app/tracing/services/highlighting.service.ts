@@ -16,8 +16,15 @@ import {
     HighlightingStats,
     LabelPart,
     LegendDisplayEntry,
+    Range,
+    ValueType,
 } from "../data.model";
-import { removeNullish, Utils } from "../util/non-ui-utils";
+import {
+    getRange,
+    isArrayNotEmpty,
+    removeNullish,
+    Utils,
+} from "../util/non-ui-utils";
 
 type PropertyValueType = number | string | boolean;
 type RuleId = string;
@@ -48,6 +55,8 @@ export class HighlightingService {
         RuleId,
         RuleConditionsEvaluatorFun
     > = {};
+
+    private activeDeliveryWidthRule: DeliveryHighlightingRule | undefined;
 
     applyVisibilities(state: DataServiceInputState, data: DataServiceData) {
         data.stations.forEach((s) => {
@@ -172,6 +181,9 @@ export class HighlightingService {
                     (this.delRuleIdToEvaluatorFunMap[rule.id] =
                         this.getEvaluatorFunFromRule(rule)),
             );
+            this.activeDeliveryWidthRule = this.enabledDelHRules.find(
+                (rule) => rule.adjustThickness,
+            );
         }
         if (statRulesChanged || delRulesChanged) {
             this.ruleIdToEvaluatorFunMap = {
@@ -209,6 +221,14 @@ export class HighlightingService {
                 effElementsStats,
             );
         });
+
+        if (this.activeDeliveryWidthRule) {
+            this.applyThicknessRule(
+                data.deliveries,
+                this.activeDeliveryWidthRule,
+                effElementsStats,
+            );
+        }
 
         data.isStationAnonymizationActive = this.anonymizeStationsIfApplicable(
             data.stations,
@@ -351,6 +371,61 @@ export class HighlightingService {
                 (!rule.logicalConditions ||
                     this.ruleIdToEvaluatorFunMap[rule.id](fclElement)),
         );
+    }
+
+    private applyThicknessRule<T extends StationData | DeliveryData>(
+        elements: T[],
+        rule: HighlightingRule,
+        effElementsStats: HighlightingStats,
+    ): void {
+        const thicknessProperty = rule.valueCondition?.propertyName ?? "";
+        const id2Thickness = new Map<string, number>();
+        const useLog = rule.valueCondition?.valueType === ValueType.LOG_VALUE;
+        const useZeroAsMin = rule.valueCondition?.useZeroAsMinimum === true;
+
+        const visibleElements = elements.filter((e) => !e.invisible);
+        effElementsStats.counts[rule.id] = visibleElements.length;
+
+        for (const element of visibleElements) {
+            const value = this.getPropertyValueFromElement(
+                element,
+                thicknessProperty,
+            );
+            if (typeof value === "number" && Number.isFinite(value)) {
+                let thickness = value;
+                if (useLog) {
+                    if (thickness <= 0) {
+                        continue;
+                    }
+                    thickness = Math.log10(thickness);
+                }
+                id2Thickness.set(element.id, thickness);
+            }
+        }
+        const thicknesses = Array.from(id2Thickness.values());
+        if (isArrayNotEmpty(thicknesses)) {
+            const range = getRange(thicknesses);
+
+            if (range.min > 0 && useZeroAsMin) {
+                range.min = 0;
+            }
+            // normalize thickness
+            const normRange: Range = { min: 0, max: 1 };
+            const rangeWidth = range.max - range.min;
+            const normRangeWidth = normRange.max - normRange.min;
+            elements.forEach((element) => {
+                const thickness = id2Thickness.get(element.id);
+                if (thickness !== undefined) {
+                    const hInfo = element.highlightingInfo;
+                    if (hInfo) {
+                        hInfo.thickness =
+                            (normRangeWidth * (thickness - range.min)) /
+                                (rangeWidth || 1) +
+                            normRange.min;
+                    }
+                }
+            });
+        }
     }
 
     private anonymizeStationsIfApplicable<T extends StationData[]>(

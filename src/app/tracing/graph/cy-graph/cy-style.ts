@@ -1,3 +1,5 @@
+import { Range } from "@app/tracing/data.model";
+import { getRange, isArrayNotEmpty } from "@app/tracing/util/non-ui-utils";
 import cytoscape from "cytoscape";
 import { GraphElementData } from "../graph.model";
 import { CSS_CLASS_HOVER } from "./cy.constants";
@@ -14,6 +16,28 @@ export interface StyleConfig {
     fontSize: number;
 }
 
+function isZeroRange(range: Range): boolean {
+    return range.min === range.max;
+}
+
+function getZeroRange(value: number): Range {
+    return { min: value, max: value };
+}
+
+function getScaledRange(range: Range, scale: number): Range {
+    return { min: range.min * scale, max: range.max * scale };
+}
+
+function getMapDataString(
+    property: string,
+    fromRange: Range,
+    toRange: Range,
+): string {
+    return isZeroRange(fromRange)
+        ? toRange.min.toString()
+        : `mapData(${property}, ${fromRange.min}, ${fromRange.max}, ${toRange.min}, ${toRange.max})`;
+}
+
 export class CyStyle {
     private static readonly NODE_SIZE_TO_BORDER_WIDTH_FACTOR = 1 / 20;
     private static readonly SELECTED_EDGE_WIDTH_FACTOR = 3;
@@ -22,14 +46,17 @@ export class CyStyle {
     private static readonly MAX_STATION_NUMBER_FOR_SMALL_GRAPHS = 1000;
     private static readonly MAX_DELIVERIES_NUMBER_FOR_SMALL_GRAPHS = 3000;
     private static readonly SIZE_ONE_SIZE_FACTOR = 2;
+    private static readonly MAX_EDGE_WIDTH = 20;
+    private static readonly DEFAULT_EDGE_WIDTH_RANGE_LENGTH = 10;
+
     private static readonly DEFAULT_ACTIVE_OVERLAY_OPACITY = 0.5;
     private static readonly DEFAULT_ACTIVE_OVERLAY_COLOR = "rgb(0, 0, 255)";
     private static readonly DEFAULT_ACTIVE_OVERLAY_PADDING = 10;
     private static readonly MIN_STEP_SIZE = 20;
     private static readonly ARROW_SCALE = 1.0;
 
-    private maxSize: number;
-    private minSize: number;
+    private fromNodeSizeRange: Range = { min: 0, max: 0 };
+    private fromEdgeWidthRange: Range = { min: 0, max: 0 };
 
     constructor(
         private graphData: GraphElementData,
@@ -40,8 +67,14 @@ export class CyStyle {
 
     private initSizeLimits(): void {
         const sizes = this.graphData.nodeData.map((n) => n.size);
-        this.minSize = sizes.length === 0 ? 0 : Math.min(...sizes);
-        this.maxSize = sizes.length === 0 ? 0 : Math.max(...sizes);
+        const widths = this.graphData.edgeData.map((e) => e.width);
+
+        this.fromNodeSizeRange = isArrayNotEmpty(sizes)
+            ? getRange(sizes)
+            : getZeroRange(0);
+        this.fromEdgeWidthRange = isArrayNotEmpty(widths)
+            ? getRange(widths)
+            : getZeroRange(0);
     }
 
     createCyStyle(): Record<string, unknown> {
@@ -76,15 +109,13 @@ export class CyStyle {
     private createXGraphStyle(graphSize: GraphSize): any {
         const fontSize = this.styleConfig.fontSize;
         const nodeSize = this.styleConfig.nodeSize;
-        const edgeWidth = this.styleConfig.edgeWidth;
-        const selectedEdgeWidth =
-            edgeWidth * CyStyle.SELECTED_EDGE_WIDTH_FACTOR;
         // usually a bad style to have magic numbers within code
         // but here it might be more convenient in this way
         const stepSizeWithoutLabelSpace =
-            selectedEdgeWidth * 2 + CyStyle.MIN_STEP_SIZE;
+            this.getSelectedEdgeWidthRange().max * 2 + CyStyle.MIN_STEP_SIZE;
         const stepSizeWithLabelSpace =
-            Math.max(selectedEdgeWidth * 1.7, 5) + fontSize * 2.0;
+            Math.max(this.getSelectedEdgeWidthRange().max * 1.7, 5) +
+            fontSize * 2.0;
 
         const style = cytoscape
             .stylesheet()
@@ -141,7 +172,7 @@ export class CyStyle {
                 "line-gradient-stop-colors": "data(stopColors)",
                 "line-gradient-stop-positions": "data(stopPositions)",
                 "z-index": "data(zindex)",
-                width: edgeWidth,
+                width: this.createEdgeWidthMapString(),
                 "arrow-scale": CyStyle.ARROW_SCALE,
             })
 
@@ -157,10 +188,11 @@ export class CyStyle {
             })
             .selector("edge:selected:inactive")
             .style({
-                width: selectedEdgeWidth,
+                width: this.createSelectedEdgeWidthString(),
                 color: "rgb(0, 0, 255)",
                 "overlay-color": "rgb(0, 0, 255)",
-                "overlay-padding": selectedEdgeWidth / 5.0,
+                "overlay-padding":
+                    this.createSelectedEdgeOverlayPaddingMapString(),
                 "overlay-opacity": 1,
                 "target-arrow-color": "rgb(0, 0, 255)",
             })
@@ -215,24 +247,77 @@ export class CyStyle {
         return style;
     }
 
-    private createNodeSizeMapString(): string {
-        if (this.maxSize > this.minSize) {
+    private getProjectedNodeSizeRange(): Range {
+        if (!isZeroRange(this.fromNodeSizeRange)) {
             const minNodeSize = this.styleConfig.nodeSize;
-            const maxNodeSize =
-                minNodeSize * CyStyle.SIZE_ONE_SIZE_FACTOR * this.maxSize;
-            return (
-                "mapData(size, " +
-                this.minSize +
-                ", " +
-                this.maxSize +
-                ", " +
-                minNodeSize +
-                "," +
-                maxNodeSize +
-                ")"
-            );
-        } else {
-            return this.styleConfig.nodeSize.toString();
+            return {
+                min: minNodeSize,
+                max:
+                    minNodeSize *
+                    CyStyle.SIZE_ONE_SIZE_FACTOR *
+                    this.fromNodeSizeRange.max,
+            };
         }
+        return getZeroRange(this.styleConfig.nodeSize);
+    }
+
+    private createNodeSizeMapString(): string {
+        return getMapDataString(
+            "size",
+            this.fromNodeSizeRange,
+            this.getProjectedNodeSizeRange(),
+        );
+    }
+
+    private getProjectedEdgeWidthRange(): Range {
+        if (!isZeroRange(this.fromEdgeWidthRange)) {
+            const minEdgeWidth = this.styleConfig.edgeWidth;
+            return {
+                min: minEdgeWidth,
+                max: Math.max(
+                    minEdgeWidth,
+                    Math.min(
+                        minEdgeWidth + CyStyle.DEFAULT_EDGE_WIDTH_RANGE_LENGTH,
+                        CyStyle.MAX_EDGE_WIDTH,
+                    ),
+                ),
+            };
+        }
+        return getZeroRange(this.styleConfig.edgeWidth);
+    }
+
+    private getSelectedEdgeWidthRange(): Range {
+        return getScaledRange(
+            this.getProjectedEdgeWidthRange(),
+            CyStyle.SELECTED_EDGE_WIDTH_FACTOR,
+        );
+    }
+
+    private getSelectedEdgeOverlayPaddingRange(): Range {
+        return getScaledRange(this.getSelectedEdgeWidthRange(), 1 / 5.0);
+    }
+
+    private createEdgeWidthMapString(): string {
+        return getMapDataString(
+            "width",
+            this.fromEdgeWidthRange,
+            this.getProjectedEdgeWidthRange(),
+        );
+    }
+
+    private createSelectedEdgeWidthString(): string {
+        return getMapDataString(
+            "width",
+            this.fromEdgeWidthRange,
+            this.getSelectedEdgeWidthRange(),
+        );
+    }
+
+    private createSelectedEdgeOverlayPaddingMapString(): string {
+        return getMapDataString(
+            "width",
+            this.fromEdgeWidthRange,
+            this.getSelectedEdgeOverlayPaddingRange(),
+        );
     }
 }

@@ -6,7 +6,7 @@ import {
     Output,
     SimpleChanges,
 } from "@angular/core";
-import { TableColumn } from "@app/tracing/data.model";
+import { PropertySets, TableColumn } from "@app/tracing/data.model";
 import {
     HighlightingRuleDeleteRequestData,
     PropToValuesMap,
@@ -22,6 +22,10 @@ export class HighlightingElementViewComponent<T extends EditRule>
 
     @Input() favouriteProperties: TableColumn[] = [];
     @Input() otherProperties: TableColumn[] = [];
+    @Input() propertiesForThickness: PropertySets = {
+        favouriteProperties: [],
+        otherProperties: [],
+    };
     @Input() propToValuesMap: PropToValuesMap = {};
     @Input() editRules: T[] = [];
     @Input() ruleListItems: RuleListItem[] = [];
@@ -108,7 +112,7 @@ export class HighlightingElementViewComponent<T extends EditRule>
 
     getOpenState(ruleType: RuleType): boolean {
         const openState = this.openState_[ruleType];
-        return openState === undefined ? false : true;
+        return openState ?? false;
     }
 
     getListItemsOfType(ruleType: RuleType): RuleListItem[] {

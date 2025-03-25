@@ -9,26 +9,23 @@ import {
     NodeShapeType,
     DataServiceInputState,
     ColumnSets,
+    JSType,
 } from "../data.model";
 import * as _ from "lodash";
 import { DataService } from "./data.service";
 import { Constants } from "../util/constants";
-import { concat, entries, values } from "../util/non-ui-utils";
+import { concat, entries, isNullish, values } from "../util/non-ui-utils";
 import { DELIVERY_PROP_LABELS, STATION_PROP_LABELS } from "../util/labels";
 
 type StatColumnsFlag = "h" | "" | "a" | "ah";
 type DeliveryColumnsFlag = "h" | "";
 
-function isNullish(x: unknown): boolean {
-    return x === undefined || x === null;
-}
-
 interface Cache {
     modelFlag: Record<string, never>;
     stationColumnSets: Partial<Record<StatColumnsFlag, ColumnSets>>;
     deliveryColumnSets: Partial<Record<DeliveryColumnsFlag, ColumnSets>>;
-    availableStatProps: Set<string>;
-    availableDeliveryProps: Set<string>;
+    stationProp2Type: Map<string, JSType>;
+    deliveryProp2Type: Map<string, JSType>;
 }
 
 @Injectable({
@@ -42,9 +39,8 @@ export class TableService {
     private checkCache(data: DataServiceData): void {
         if (this.cache.modelFlag !== data.modelFlag) {
             this.cache = this.createEmptyCache(data.modelFlag);
-            this.cache.availableStatProps = this.getAvailableStationProps(data);
-            this.cache.availableDeliveryProps =
-                this.getAvailableDeliveryProps(data);
+            this.cache.stationProp2Type = this.getStationProp2TypeMap(data);
+            this.cache.deliveryProp2Type = this.getDeliveryProp2TypeMap(data);
         } else {
             this.updateColsDataAvailability(data);
         }
@@ -55,35 +51,48 @@ export class TableService {
             modelFlag: modelFlag || {},
             stationColumnSets: {},
             deliveryColumnSets: {},
-            availableStatProps: new Set(),
-            availableDeliveryProps: new Set(),
+            stationProp2Type: new Map(),
+            deliveryProp2Type: new Map(),
         };
     }
 
-    private getAvailableProps<T extends StationData | DeliveryData>(
+    private getProps2TypeMap<T extends StationData | DeliveryData>(
         elements: T[],
-        requiredProps: (keyof T)[],
-        optProps: (keyof T)[],
-    ): Set<string> {
-        const availablePropsSet = new Set<string>();
-        if (elements.length >= 1) {
-            requiredProps.forEach((p) => availablePropsSet.add(p as string));
+        requiredProps: (keyof T & string)[],
+        optProps: (keyof T & string)[],
+    ): Map<string, JSType> {
+        const prop2TypeMap = new Map<string, JSType>();
 
-            const availableProps = optProps.filter((p) =>
-                elements.some((e) => !isNullish(e[p])),
-            );
-            availableProps.forEach((p) => availablePropsSet.add(p as string));
+        if (elements.length >= 1) {
+            const refElement = elements[0];
+            requiredProps.forEach((p) => {
+                const value = refElement[p];
+                if (!isNullish(value)) {
+                    prop2TypeMap.set(p, typeof value);
+                }
+            });
+
+            for (const optProp of optProps) {
+                for (const element of elements) {
+                    const value = element[optProp];
+                    if (!isNullish(value)) {
+                        prop2TypeMap.set(optProp, typeof value);
+                        break;
+                    }
+                }
+            }
+
             for (const element of elements) {
                 element.properties.forEach((pe) =>
-                    availablePropsSet.add(pe.name),
+                    prop2TypeMap.set(pe.name, typeof pe.value),
                 );
             }
         }
-        return availablePropsSet;
+        return prop2TypeMap;
     }
 
-    private getAvailableStationProps(data: DataServiceData): Set<string> {
-        return this.getAvailableProps(
+    private getStationProp2TypeMap(data: DataServiceData): Map<string, JSType> {
+        return this.getProps2TypeMap(
             data.stations,
             [
                 "id",
@@ -105,8 +114,10 @@ export class TableService {
         );
     }
 
-    private getAvailableDeliveryProps(data: DataServiceData): Set<string> {
-        const availableProps = this.getAvailableProps(
+    private getDeliveryProp2TypeMap(
+        data: DataServiceData,
+    ): Map<string, JSType> {
+        const props2TypeMap = this.getProps2TypeMap(
             data.deliveries,
             [
                 "id",
@@ -132,55 +143,60 @@ export class TableService {
         if (
             data.deliveries.some((d) => !isNullish(data.statMap[d.source].name))
         ) {
-            availableProps.add("source.name");
+            props2TypeMap.set("source.name", "string");
         }
         if (
             data.deliveries.some((d) => !isNullish(data.statMap[d.target].name))
         ) {
-            availableProps.add("target.name");
+            props2TypeMap.set("target.name", "string");
         }
-        return availableProps;
+        return props2TypeMap;
     }
 
     private updateDelColsDataAvailability(data: DataServiceData): void {
-        const prevAvailableProps = new Set(this.cache.availableDeliveryProps);
+        const prevProp2TypeMap = new Map(this.cache.deliveryProp2Type);
         const props2Check: [keyof DeliveryData, keyof StationData, string][] = [
             ["source", "name", "source.name"],
             ["target", "name", "target.name"],
         ];
         props2Check.forEach(([dKey, sKey, p]) => {
-            const isDataAvailable = data.deliveries.some(
-                (d) => !isNullish(data.statMap[d[dKey] as string][sKey]),
-            );
+            let type: JSType | undefined;
+            for (const delivery of data.deliveries) {
+                const value = data.statMap[delivery[dKey] as string][sKey];
+                if (!isNullish(value)) {
+                    type = typeof value;
+                    break;
+                }
+            }
             const isCacheUpdateRequired =
-                isDataAvailable !== this.cache.availableDeliveryProps.has(p);
+                type !== this.cache.deliveryProp2Type.get(p);
             if (isCacheUpdateRequired) {
-                if (isDataAvailable) {
-                    this.cache.availableDeliveryProps.add(p);
+                if (type !== undefined) {
+                    this.cache.deliveryProp2Type.set(p, type);
                 } else {
-                    this.cache.availableDeliveryProps.delete(p);
+                    this.cache.deliveryProp2Type.delete(p);
                 }
             }
         });
         this.setColumnSetsDataAvailability(
             this.cache.deliveryColumnSets,
-            this.cache.availableDeliveryProps,
-            prevAvailableProps,
+            this.cache.deliveryProp2Type,
+            prevProp2TypeMap,
         );
     }
 
     private setColumnSetsDataAvailability<T extends string>(
         flag2ColSets: Partial<Record<T, ColumnSets>>,
-        availableProps: Set<string>,
-        prevAvailableProps: Set<string>,
+        prop2TypeMap: Map<string, JSType>,
+        prevProp2TypeMap: Map<string, JSType>,
     ): void {
         const propsWithChangedAvailabilities = new Set(
             concat(
-                Array.from(prevAvailableProps).filter(
-                    (p) => !availableProps.has(p),
+                Array.from(prevProp2TypeMap.keys()).filter(
+                    (p) => !prop2TypeMap.has(p),
                 ),
-                Array.from(availableProps).filter(
-                    (p) => !prevAvailableProps.has(p),
+                Array.from(prop2TypeMap.keys()).filter(
+                    (p) => !prevProp2TypeMap.has(p),
                 ),
             ),
         );
@@ -193,7 +209,7 @@ export class TableService {
                             propsWithChangedAvailabilities.has(c.id),
                         )
                     ) {
-                        this.setColumnDataAvailibility(cols, availableProps);
+                        this.setColumnDataAvailibility(cols, prop2TypeMap);
                         columnSets[subSetKey] = cols.slice();
                     }
                 }
@@ -202,25 +218,32 @@ export class TableService {
     }
 
     private updateStatColsDataAvailability(data: DataServiceData): void {
-        const prevAvailableStatProps = new Set(this.cache.availableStatProps);
+        const prevStationProp2TypeMap = new Map(this.cache.stationProp2Type);
         const props2Check: (keyof StationData)[] = ["name", "anonymizedName"];
         props2Check.forEach((p) => {
-            const isDataAvailable = data.stations.some((s) => !isNullish(s[p]));
+            let type: JSType | undefined;
+            for (const station of data.stations) {
+                const value = station[p];
+                if (!isNullish(value)) {
+                    type = typeof value;
+                    break;
+                }
+            }
             const isCacheUpdateRequired =
-                isDataAvailable !== this.cache.availableStatProps.has(p);
+                type !== this.cache.stationProp2Type.get(p);
             if (isCacheUpdateRequired) {
-                if (isDataAvailable) {
-                    this.cache.availableStatProps.add(p);
+                if (type !== undefined) {
+                    this.cache.stationProp2Type.set(p, type);
                 } else {
-                    this.cache.availableStatProps.delete(p);
+                    this.cache.stationProp2Type.delete(p);
                 }
             }
         });
 
         this.setColumnSetsDataAvailability(
             this.cache.stationColumnSets,
-            this.cache.availableStatProps,
-            prevAvailableStatProps,
+            this.cache.stationProp2Type,
+            prevStationProp2TypeMap,
         );
     }
 
@@ -231,11 +254,12 @@ export class TableService {
 
     private setColumnDataAvailibility(
         columns: TableColumn[],
-        availablePropsSet: Set<string>,
+        prop2TypeMap: Map<string, JSType>,
     ): void {
-        columns.forEach(
-            (c) => (c.dataIsUnavailable = !availablePropsSet.has(c.id)),
-        );
+        columns.forEach((c) => {
+            c.dataIsUnavailable = !prop2TypeMap.has(c.id);
+            c.type = prop2TypeMap.get(c.id);
+        });
     }
 
     getDeliveryTable(
@@ -280,10 +304,7 @@ export class TableService {
             name: c.name,
         })) as TableColumn[];
 
-        this.setColumnDataAvailibility(
-            favColumns,
-            this.cache.availableStatProps,
-        );
+        this.setColumnDataAvailibility(favColumns, this.cache.stationProp2Type);
 
         return favColumns;
     }
@@ -305,17 +326,19 @@ export class TableService {
                 {
                     id: "source.name",
                     name: DELIVERY_PROP_LABELS["source.name"],
+                    type: "string",
                 },
                 {
                     id: "target.name",
                     name: DELIVERY_PROP_LABELS["target.name"],
+                    type: "string",
                 },
             );
         }
 
         this.setColumnDataAvailibility(
             favColumns,
-            this.cache.availableDeliveryProps,
+            this.cache.deliveryProp2Type,
         );
 
         return favColumns;
@@ -371,7 +394,7 @@ export class TableService {
 
         this.setColumnDataAvailibility(
             cleanedOtherColumns,
-            this.cache.availableDeliveryProps,
+            this.cache.deliveryProp2Type,
         );
 
         return cleanedOtherColumns;
@@ -440,7 +463,7 @@ export class TableService {
 
         this.setColumnDataAvailibility(
             cleanedOtherColumns,
-            this.cache.availableStatProps,
+            this.cache.stationProp2Type,
         );
 
         return cleanedOtherColumns;
