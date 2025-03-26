@@ -47,11 +47,20 @@ type ColumnHeaderTreeGroup = [
     ...ColumnHeaderTree[],
 ];
 
+type CellLabelVariants = [string, string, ...string[]];
+type CellLabel = string | CellLabelVariants;
+
 export type ColumnLabelTree =
-    | string
-    | [string, [ColumnLabelTree, ColumnLabelTree, ...ColumnLabelTree[]]];
+    | CellLabel
+    | [CellLabel, [ColumnLabelTree, ColumnLabelTree, ...ColumnLabelTree[]]];
 
 const DEFAULT_TABLE_POSITION: CellPosition = { col: 1, row: 1 };
+
+function isColumnHeaderNested(
+    columnHeader: ColumnLabelTree,
+): columnHeader is Exclude<ColumnLabelTree, CellLabel> {
+    return Array.isArray(columnHeader) && Array.isArray(columnHeader[1]);
+}
 
 function getColumnHeaderChildren(
     row: Excel.Row,
@@ -111,13 +120,13 @@ function getColumnHeadersSpan(columnHeaders: ColumnLabelTree[]): {
     let rowSpan = 0;
     let colSpan = 0;
     for (const columnHeader of columnHeaders) {
-        if (typeof columnHeader === "string") {
-            rowSpan = Math.max(rowSpan, 1);
-            colSpan++;
-        } else {
+        if (isColumnHeaderNested(columnHeader)) {
             const headerSpan = this.getColumnHeadersSpan(columnHeader[1]);
             rowSpan = Math.max(rowSpan, headerSpan.rowSpan + 1);
             colSpan += headerSpan.colSpan;
+        } else {
+            rowSpan = Math.max(rowSpan, 1);
+            colSpan++;
         }
     }
     return {
@@ -333,20 +342,32 @@ export class XlsxSheetReader {
         return true;
     }
 
+    private getExpectedCellLabelVariants(
+        columnHeader: ColumnLabelTree,
+    ): [string, ...string[]] {
+        const cellLabel = isColumnHeaderNested(columnHeader)
+            ? columnHeader[0]
+            : columnHeader;
+        return typeof cellLabel === "string" ? [cellLabel] : cellLabel;
+    }
+
     private validateHeaderCellLabelMatch(
         columnHeader: ColumnLabelTree,
         throwError: boolean,
         rowIndex: number,
         columnIndex: number,
     ): boolean {
-        const expectedCellLabel =
-            typeof columnHeader === "string" ? columnHeader : columnHeader[0];
+        const expectedCellLabelVariants =
+            this.getExpectedCellLabelVariants(columnHeader);
+        const expectedLowerCaseCellLabelVariants =
+            expectedCellLabelVariants.map((x) => x.toLowerCase());
         const topLeftCell = this.workSheet.getCell(rowIndex, columnIndex);
         const observedCellLabel = topLeftCell.text.trim();
         // Validate Label match
         if (
-            expectedCellLabel.toLocaleLowerCase() !==
-            observedCellLabel.toLocaleLowerCase()
+            !expectedLowerCaseCellLabelVariants.includes(
+                observedCellLabel.toLocaleLowerCase(),
+            )
         ) {
             if (throwError) {
                 throw new XlsxInputFormatError(
@@ -354,7 +375,7 @@ export class XlsxSheetReader {
                         rowIndex,
                         columnIndex,
                         this.workSheet.name,
-                        expectedCellLabel,
+                        expectedCellLabelVariants,
                     ),
                 );
             }
@@ -393,10 +414,10 @@ export class XlsxSheetReader {
     ): boolean {
         let columnIndex = offset.col;
         for (const columnHeader of columnHeaders) {
-            const columnSpan =
-                typeof columnHeader === "string"
-                    ? 1
-                    : getColumnHeadersSpan(columnHeader[1]).colSpan;
+            const isNested = isColumnHeaderNested(columnHeader);
+            const columnSpan = isNested
+                ? getColumnHeadersSpan(columnHeader[1]).colSpan
+                : 1;
             if (
                 !this.validateHeaderCell(
                     columnHeader,
@@ -409,7 +430,7 @@ export class XlsxSheetReader {
                 return false;
             }
 
-            if (typeof columnHeader !== "string") {
+            if (isNested) {
                 const childHeaders = columnHeader[1];
                 if (
                     !this.validateTableHeader(childHeaders, throwError, {

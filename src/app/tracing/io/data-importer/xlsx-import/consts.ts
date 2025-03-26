@@ -63,6 +63,12 @@ function formatCellAddress(
     return `(row: ${row}, column: ${col}, sheet: '${sheet}')`;
 }
 
+function formatTextVariants(texts: [string, ...string[]]): string {
+    return texts.length > 1
+        ? `'${texts.slice(0, -1).join("', '")}' or '${texts[texts.length - 1]}'`
+        : `'${texts[0]}'`;
+}
+
 export const IMPORT_ISSUES = {
     wbNotLoaded: "Workbook is not loaded into Reader.",
     nonUniquePrimaryKey: "Primary key is not unique.",
@@ -77,9 +83,9 @@ export const IMPORT_ISSUES = {
         row: number,
         col: number,
         sheet: string,
-        expectedText: string,
+        expectedTextVariants: [string, ...string[]],
     ) =>
-        `Unexpected cell text. Text in cell ${formatCellAddress(row, col, sheet)} does not match '${expectedText}'.`,
+        `Unexpected cell text. Text in cell ${formatCellAddress(row, col, sheet)} does not match ${formatTextVariants(expectedTextVariants)}.`,
     unexpectedCellSpan: (
         row: number,
         col: number,

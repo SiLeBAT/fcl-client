@@ -21,7 +21,7 @@ export const REQUIRED_STATION_COLUMN_HEADERS: ColumnLabelTree[] = [
 
 export const REQUIRED_DELIVERY_COLUMN_HEADERS: ColumnLabelTree[] = [
     "DeliveryID",
-    "Station",
+    ["Sender", "Station"],
     "Product Name",
     "Lot Number",
     ["Lot size", AMOUNT_SUB_COLUMNS],
