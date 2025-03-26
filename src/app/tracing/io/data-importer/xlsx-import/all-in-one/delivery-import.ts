@@ -89,11 +89,7 @@ export function importDelivery(
             addIssueCallback,
         ),
         productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
-        lotNumber: importMandatoryString(
-            row,
-            DeliveryColumn.LOT_NUMBER,
-            addIssueCallback,
-        ),
+        lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
         dateOut: importStringDate(
             row,
             {
