@@ -18,7 +18,9 @@ import {
     LegendDisplayEntry,
     Range,
     ValueType,
+    IndexType,
 } from "../data.model";
+import { convertIndexToLetterCode } from "../util/highlighting-utils";
 import {
     getRange,
     isArrayNotEmpty,
@@ -446,9 +448,14 @@ export class HighlightingService {
             effElementsStats[anoRule.id] = indexedElements.length;
 
             const indexPartIndex = anoRule.labelParts!.findIndex(
-                (p) => p.useIndex,
+                (p) =>
+                    p.indexType !== undefined &&
+                    p.indexType !== IndexType.NO_INDEX,
             );
             if (indexPartIndex >= 0) {
+                const useLetters =
+                    anoRule.labelParts![indexPartIndex].indexType ===
+                    IndexType.LETTER;
                 const preIndexParts = anoRule.labelParts!.slice(
                     0,
                     indexPartIndex,
@@ -482,8 +489,11 @@ export class HighlightingService {
                     const formatIndexFun =
                         prefixElements.length === 1
                             ? (i: number) => ""
-                            : (i: number) =>
-                                  `${anoRule.labelParts![indexPartIndex].prefix}${String(i).padStart(places, "0")}`;
+                            : useLetters
+                              ? (i: number) =>
+                                    `${anoRule.labelParts![indexPartIndex].prefix}${convertIndexToLetterCode(i)}`
+                              : (i: number) =>
+                                    `${anoRule.labelParts![indexPartIndex].prefix}${String(i).padStart(places, "0")}`;
 
                     prefixElements.forEach((element, elementIndex) => {
                         const suffix = this.getComposedLabel(
@@ -502,7 +512,7 @@ export class HighlightingService {
                 });
             } else {
                 const labelPartsWoIndex = anoRule.labelParts!.filter(
-                    (p) => p.useIndex === undefined,
+                    (p) => p.indexType === undefined,
                 );
                 indexedElements.forEach((element: StationData) => {
                     const anoName =

@@ -7,7 +7,12 @@ import {
     StationHighlightingRule,
     HighlightingRule,
     DeliveryHighlightingRule,
+    IndexType,
 } from "../../data.model";
+import {
+    LabelPart as ExtLabelPart,
+    PropertyLabelPart as ExtPropertyLabelPart,
+} from "../ext-data-model.v1";
 
 const STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "SDHR";
 const DELIVERY_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX = "DDHR";
@@ -94,7 +99,7 @@ export function createDefaultStationAnonymizationLabelHRule(): StationHighlighti
             },
             {
                 prefix: " ",
-                useIndex: true,
+                indexType: IndexType.NUMBER,
             },
         ],
         logicalConditions: [[]],
@@ -394,4 +399,10 @@ export function createDefaultHighlights(): HighlightingSettings {
     };
 
     return defaultHighlights;
+}
+
+export function isPropertyLabelPart(
+    labelPart: ExtLabelPart,
+): labelPart is ExtPropertyLabelPart {
+    return (labelPart as ExtPropertyLabelPart).property !== undefined;
 }

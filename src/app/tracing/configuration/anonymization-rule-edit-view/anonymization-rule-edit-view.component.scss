@@ -63,6 +63,7 @@ $fcl-form-field-padding-left-mimic: 0.75em;
 .fcl-label-preview {
     margin-top: 1rem;
     margin-bottom: 1em;
+    overflow-wrap: break-word;
 
     .fcl-label-preview-header {
         font-weight: bold;

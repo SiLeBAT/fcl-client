@@ -20,6 +20,7 @@ import {
     LabelPart as IntLabelPart,
     StationHighlightingRule as IntStationHighlightingRule,
     Color,
+    IndexType,
 } from "../../data.model";
 import { HttpClient } from "@angular/common/http";
 
@@ -32,6 +33,7 @@ import {
     createDefaultStationAnonymizationLabelHRule,
     createDefaultStationHRules,
     createDefaultDeliveryHRules,
+    isPropertyLabelPart,
 } from "./shared";
 import { importSamples } from "./sample-importer-v1";
 import {
@@ -847,34 +849,40 @@ export class DataImporterV1 implements IDataImporter {
     ): HighlightingRule {
         const defaultIntAnoHRule =
             createDefaultStationAnonymizationLabelHRule();
-        let labelParts = (extAnoRule.labelParts ?? []).map(
-            (p) =>
-                (p.property
-                    ? {
-                          prefix: p.prefix,
-                          property: extToIntPropMap.get(p.property),
-                      }
-                    : {
-                          prefix: p.prefix,
-                          useIndex: p.useIndex || false,
-                      }) as IntLabelPart,
+        let intLabelParts = (extAnoRule.labelParts ?? []).map((p) => {
+            const intLabelPart: IntLabelPart = isPropertyLabelPart(p)
+                ? {
+                      prefix: p.prefix ?? "",
+                      property: extToIntPropMap.get(p.property),
+                  }
+                : {
+                      prefix: p.prefix ?? "",
+                      indexType: !p.useIndex
+                          ? IndexType.NO_INDEX
+                          : !p.indexType
+                            ? IndexType.NUMBER
+                            : this.mapIndexType(p.indexType),
+                  };
+            return intLabelPart;
+        });
+        const indexParts = intLabelParts.filter(
+            (p) => p.indexType !== undefined,
         );
-        const indexParts = labelParts.filter((p) => p.useIndex !== undefined);
         if (indexParts.length === 0) {
-            labelParts.push(
+            intLabelParts.push(
                 ...defaultIntAnoHRule.labelParts!.filter(
-                    (p) => p.useIndex !== undefined,
+                    (p) => p.indexType !== undefined,
                 ),
             );
         } else if (indexParts.length > 1) {
-            labelParts = _.difference(labelParts, indexParts.slice(1));
+            intLabelParts = _.difference(intLabelParts, indexParts.slice(1));
         }
 
         const intAnoHRule: HighlightingRule = {
             ...defaultIntAnoHRule,
             labelPrefix: extAnoRule.labelPrefix,
             userDisabled: extAnoRule.disabled === true,
-            labelParts: labelParts,
+            labelParts: intLabelParts,
             logicalConditions: this.mapLogicalConditions(
                 extAnoRule.logicalConditions ?? null,
                 extToIntPropMap,
@@ -1028,6 +1036,23 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         return null as R;
+    }
+
+    private mapIndexType<
+        T extends string | undefined,
+        R extends T extends undefined ? undefined : IndexType,
+    >(extIndexType: T): R {
+        if (extIndexType !== undefined) {
+            if (DataMapper.INDEX_TYPE_EXT_TO_INT_MAP.has(extIndexType)) {
+                const intIndexType =
+                    DataMapper.INDEX_TYPE_EXT_TO_INT_MAP.get(extIndexType);
+                return intIndexType as R;
+            } else {
+                throw new InputDataError(`Invalid index type: ${extIndexType}`);
+            }
+        }
+
+        return undefined as R;
     }
 
     private convertExternalPositions(

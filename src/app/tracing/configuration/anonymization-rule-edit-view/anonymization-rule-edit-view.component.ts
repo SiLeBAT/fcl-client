@@ -5,13 +5,13 @@ import {
     SimpleChanges,
 } from "@angular/core";
 import * as _ from "lodash";
-import { ComposedLabelEditRule } from "../model";
+import { ComposedLabelEditRule, EditRule } from "../model";
 import { AbstractRuleEditViewComponent } from "../abstract-rule-edit-view";
 import {
     getCompleteConditionsCount,
     getNonEmptyConditionCount,
 } from "../edit-rule-validaton";
-import { LabelPart } from "@app/tracing/data.model";
+import { IndexType, LabelPart } from "@app/tracing/data.model";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { concat } from "@app/tracing/util/non-ui-utils";
 
@@ -33,6 +33,18 @@ export class AnonymizationRuleEditViewComponent
     private useConditions_ = false;
     private _labelPreview = "";
     private _propId2Name: Record<string, string> = {};
+
+    indexType2Label: Record<IndexType, string> = {
+        [IndexType.NO_INDEX]: "No Index",
+        [IndexType.NUMBER]: "Numerical Index",
+        [IndexType.LETTER]: "Letter Index",
+    };
+
+    availableIndexTypes: IndexType[] = [
+        IndexType.NO_INDEX,
+        IndexType.NUMBER,
+        IndexType.LETTER,
+    ];
 
     get labelPreview(): string {
         return this._labelPreview;
@@ -80,6 +92,9 @@ export class AnonymizationRuleEditViewComponent
                 props.forEach((p) => (this._propId2Name[p.id] = p.name)),
             );
         }
+        if (changes.rule !== undefined) {
+            this.updateLabelPreview();
+        }
 
         super.ngOnChanges(changes);
     }
@@ -89,7 +104,7 @@ export class AnonymizationRuleEditViewComponent
             let labelParts = this.rule.labelParts.slice();
             const indexOfLastPropertyPart = _.findLastIndex(
                 labelParts,
-                (p: LabelPart) => p.useIndex === undefined,
+                (p: LabelPart) => p.indexType === undefined,
             );
             const newPartIndex = indexOfLastPropertyPart + 1;
             const newPart: LabelPart = {
@@ -128,8 +143,13 @@ export class AnonymizationRuleEditViewComponent
         this.changeLabelPart({ prefix: prefix }, index);
     }
 
-    onUseIndexChange(useIndex: boolean, index: number): void {
-        this.changeLabelPart({ useIndex: useIndex }, index);
+    onIndexTypeChange(indexType: IndexType, index: number): void {
+        this.changeLabelPart(
+            {
+                indexType: indexType,
+            },
+            index,
+        );
     }
 
     onUseConditionsChange(useConditions: boolean): void {
@@ -159,6 +179,48 @@ export class AnonymizationRuleEditViewComponent
         return this._propId2Name[propertyId];
     }
 
+    isPropertyLabelPart(labelPart: LabelPart): boolean {
+        return labelPart.property !== undefined;
+    }
+
+    isIndexLabelPart(labelPart: LabelPart): boolean {
+        return labelPart.indexType !== undefined;
+    }
+
+    isLabelPartPrefixDisabled(labelPart: LabelPart): boolean {
+        return labelPart.indexType === IndexType.NO_INDEX;
+    }
+
+    getLabelPartPrefix(labelPart: LabelPart): string {
+        return this.isLabelPartPrefixDisabled(labelPart)
+            ? " "
+            : labelPart.prefix;
+    }
+
+    private getLabelPartPreview(labelPart: LabelPart): string {
+        if (labelPart.indexType === IndexType.NO_INDEX) {
+            return "";
+        }
+        if (labelPart.indexType !== undefined) {
+            return (
+                labelPart.prefix +
+                `[${this.indexType2Label[labelPart.indexType]}]`
+            );
+        }
+        return (
+            labelPart.prefix +
+            `[${!labelPart.property ? "?" : this.getPropertyName(labelPart.property)}]`
+        );
+    }
+
+    private updateLabelPreview(): void {
+        this._labelPreview =
+            (this.rule?.labelPrefix ?? "") +
+                this.rule?.labelParts
+                    .map((p) => this.getLabelPartPreview(p))
+                    .join("") ?? "";
+    }
+
     private changeLabelPart(change: Partial<LabelPart>, index: number): void {
         const labelParts = this.rule!.labelParts.slice();
         labelParts[index] = {
@@ -173,5 +235,10 @@ export class AnonymizationRuleEditViewComponent
         if (!useConditions) {
             this.changeRule({ complexFilterConditions: [] });
         }
+    }
+
+    protected changeRule(ruleChange: Partial<EditRule>): void {
+        super.changeRule(ruleChange);
+        this.updateLabelPreview();
     }
 }

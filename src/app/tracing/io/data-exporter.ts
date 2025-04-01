@@ -14,6 +14,7 @@ import {
     PropMap,
     LabelPart,
     HighlightingRule,
+    IndexType,
 } from "../data.model";
 import * as DataMapper from "./data-mappings/data-mappings-v1";
 import { Utils } from "./../util/non-ui-utils";
@@ -25,8 +26,8 @@ import {
     ValueCondition as ExtValueCondition,
     LogicalCondition as ExtLogicalCondition,
     HighlightingRule as ExtHighlightingRule,
-    AnonymizationRule as ExtAnonymizationRule,
-    LabelPart as ExtLabelPart,
+    NewAnonymizationRule as NewExtAnonymizationRule,
+    NewLabelPart as NewExtLabelPart,
     Transformation as ExtViewPort,
     Data as ExtData,
 } from "./ext-data-model.v1";
@@ -194,6 +195,9 @@ export class DataExporter {
         const intToExtShapeMap = Utils.createReverseMap(
             DataMapper.NODE_SHAPE_TYPE_EXT_TO_INT_MAP,
         );
+        const intToExtIndexTypeMap = Utils.createReverseMap(
+            DataMapper.INDEX_TYPE_EXT_TO_INT_MAP,
+        );
         DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject();
         const intToExtStatPropMap = {
             ...DataMapper.DEFAULT_STATION_PROP_INT_TO_EXT_MAP.toObject(),
@@ -224,6 +228,7 @@ export class DataExporter {
                 intAnoStatRule,
                 intToExtStatPropMap,
                 intToExtOpTypeMap,
+                intToExtIndexTypeMap,
             );
             viewData.node.anonymizationRule = extAnoStatRule;
         }
@@ -249,8 +254,9 @@ export class DataExporter {
         intAnoRule: HighlightingRule,
         intToExtPropMap: PropMap,
         intToExtOpTypeMap: Map<OperationType, string>,
-    ): ExtAnonymizationRule {
-        const extLabelParts: ExtLabelPart[] = intAnoRule.labelParts!.map(
+        intToExtIndexTypeMap: Map<IndexType, string>,
+    ): NewExtAnonymizationRule {
+        const extLabelParts: NewExtLabelPart[] = intAnoRule.labelParts!.map(
             (part: LabelPart) => {
                 if (part.property) {
                     return {
@@ -258,12 +264,23 @@ export class DataExporter {
                         property: intToExtPropMap[part.property],
                     };
                 } else {
-                    return { prefix: part.prefix, useIndex: part.useIndex };
+                    return {
+                        prefix: part.prefix,
+                        useIndex: part.indexType !== IndexType.NO_INDEX,
+                        ...(part.indexType === undefined ||
+                        !intToExtIndexTypeMap.has(part.indexType)
+                            ? {}
+                            : {
+                                  indexType: intToExtIndexTypeMap.get(
+                                      part.indexType,
+                                  ),
+                              }),
+                    };
                 }
             },
         );
 
-        const extAnoRule: ExtAnonymizationRule = {
+        const extAnoRule: NewExtAnonymizationRule = {
             labelPrefix: intAnoRule.labelPrefix || "",
             labelParts: extLabelParts,
             disabled: intAnoRule.userDisabled,

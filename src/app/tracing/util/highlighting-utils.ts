@@ -1,6 +1,9 @@
 import { HighlightingRule } from "../data.model";
 import { getUpdatedArray } from "./non-ui-utils";
 
+const LETTER_ALPHABET_LENGTH = 26;
+const LETTER_ALPHABET_START_CODE = 65;
+
 type AdujstThicknessRule = HighlightingRule & {
     [key in keyof Pick<HighlightingRule, "adjustThickness">]: true;
 };
@@ -101,4 +104,19 @@ function updateUserDisabledFlag<T extends HighlightingRule>(rules: T[]): T[] {
         } as Partial<T>);
     }
     return rules;
+}
+
+export function convertIndexToLetterCode(oneBasedIndex: number): string {
+    let remainingIndex = oneBasedIndex;
+    const codes = [(remainingIndex - 1) % LETTER_ALPHABET_LENGTH];
+    remainingIndex = (remainingIndex - codes[0] - 1) / LETTER_ALPHABET_LENGTH;
+    while (remainingIndex > 0) {
+        codes.push((remainingIndex - 1) % LETTER_ALPHABET_LENGTH);
+        remainingIndex =
+            (remainingIndex - codes[codes.length - 1] - 1) /
+            LETTER_ALPHABET_LENGTH;
+    }
+    return String.fromCharCode(
+        ...codes.map((code) => code + LETTER_ALPHABET_START_CODE).reverse(),
+    );
 }

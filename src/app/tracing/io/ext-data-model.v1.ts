@@ -1,4 +1,4 @@
-export const VERSION = "1.2.0";
+export const VERSION = "1.3.0";
 
 export interface JsonData {
     version: string;
@@ -73,10 +73,37 @@ export interface ViewData {
     // explosions?: ExplosionViewData[];
 }
 
-export interface LabelPart {
-    prefix: string;
-    property?: string;
-    useIndex?: boolean;
+interface GeneralLabelPart {
+    prefix?: string;
+}
+
+export interface PropertyLabelPart extends GeneralLabelPart {
+    property: string;
+}
+
+interface IndexLabelPart extends GeneralLabelPart {
+    useIndex: boolean;
+    indexType?: string;
+}
+
+interface NewPropertyLabelPart extends GeneralLabelPart {
+    property: string;
+}
+
+interface NewIndexLabelPart extends GeneralLabelPart {
+    useIndex: boolean;
+    indexType?: string;
+}
+
+export type LabelPart = PropertyLabelPart | IndexLabelPart;
+
+export type NewLabelPart = NewPropertyLabelPart | NewIndexLabelPart;
+
+export interface NewAnonymizationRule {
+    labelParts?: NewLabelPart[];
+    labelPrefix?: string;
+    disabled?: boolean;
+    logicalConditions?: LogicalCondition[][] | null;
 }
 
 export interface AnonymizationRule {

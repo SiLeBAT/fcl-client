@@ -82,8 +82,10 @@ function isComposedLabelEditRuleValid(
         editRule.labelParts !== null &&
         editRule.labelParts.length > 0 &&
         editRule.labelParts.every(
-            (p) => typeof p.property === "string" || p.useIndex !== undefined,
-        )
+            (p) => typeof p.property === "string" || p.indexType !== undefined,
+        ) &&
+        editRule.labelParts.filter((p) => p.indexType !== undefined).length ===
+            1
     );
 }
 

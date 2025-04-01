@@ -7,6 +7,7 @@ import {
     Connection,
     StationStoreData,
     DeliveryStoreData,
+    IndexType,
 } from "../../data.model";
 import { Map as ImmutableMap, List as ImmutableList } from "immutable";
 import * as ExtDataConstants from "./../ext-data-constants.v1";
@@ -19,7 +20,7 @@ import {
     HighlightingRule as ExtHighlightingRule,
     LogicalCondition as ExtLogicalCondition,
 } from "../ext-data-model.v1";
-import { concat, removeNullish, Utils } from "../../util/non-ui-utils";
+import { concat, Utils } from "../../util/non-ui-utils";
 import {
     STATION_PROP_TO_REQ_TYPE_MAP,
     DELIVERY_PROP_TO_REQ_TYPE_MAP,
@@ -27,6 +28,7 @@ import {
 } from "../int-data-constants";
 import { isValueTypeValid } from "./shared";
 import { InputDataError } from "../io-errors";
+import { isPropertyLabelPart } from "../data-importer/shared";
 
 export interface ColumnInfo {
     columnId: string;
@@ -355,14 +357,14 @@ export function getStationPropMap(jsonData: JsonData): PropMap {
             const logicalConditionProps = anoRule.logicalConditions
                 ? getLogicalConditionsProps(anoRule.logicalConditions)
                 : [];
-            const labelPartProps = (anoRule.labelParts || []).map(
-                (p) => p.property,
-            );
-            const nonNullishLabelPartProps = removeNullish(labelPartProps);
+            const labelPartProps = (anoRule.labelParts || [])
+                .filter(isPropertyLabelPart)
+                .map((p) => p.property);
+
             referencedProps = concat(
                 referencedProps,
                 logicalConditionProps,
-                nonNullishLabelPartProps,
+                labelPartProps,
             );
         }
     }
@@ -517,6 +519,12 @@ export const NODE_SHAPE_TYPE_EXT_TO_INT_MAP: ImmutableMap<
     STAR: NodeShapeType.STAR,
     DIAMOND: NodeShapeType.DIAMOND,
 });
+
+export const INDEX_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, IndexType> =
+    ImmutableMap({
+        NUMERICAL: IndexType.NUMBER,
+        LETTER: IndexType.LETTER,
+    });
 
 export class PropMapper {
     private extToIntPropMap: Map<string, string>;

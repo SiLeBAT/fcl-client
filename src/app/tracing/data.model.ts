@@ -245,10 +245,16 @@ export interface MakeElementsInvisibleInputState {
     tracingSettings: TracingSettings;
 }
 
+export enum IndexType {
+    NO_INDEX,
+    NUMBER,
+    LETTER,
+}
+
 export interface LabelPart {
     property?: string | null;
     prefix: string;
-    useIndex?: boolean;
+    indexType?: IndexType;
 }
 
 export interface HighlightingRule {
