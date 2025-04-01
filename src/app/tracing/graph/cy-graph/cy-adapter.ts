@@ -14,9 +14,27 @@ export function addCustomZoomAdapter(
     cy: Cy,
     getCurrentZoom: () => number,
     zoomTo: (zoom: number, zPos: Position) => void,
+    zoomingStarted: () => void,
+    zoomingEnded: () => void
 ): void {
     const container = cy.container();
     if (container) {
+        //let endZoomTOHandle;
+        // const startEndZoomTO = () => {
+        //     if (endZoomTOHandle === undefined && zoomingStarted) {
+        //         zoomingStarted();
+        //     }
+        //     if (endZoomTOHandle) {
+        //         clearTimeout(endZoomTOHandle);
+        //         endZoomTOHandle = undefined;
+        //     }
+        //     endZoomTOHandle = setTimeout(() => {
+        //         if (zoomingEnded) {
+        //             zoomingEnded();
+        //         }
+        //         endZoomTOHandle = undefined;
+        //     }, 200);
+        // }
         const canvasElement = container.children.item(0)?.children.item(0);
         if (!canvasElement || !(canvasElement instanceof HTMLCanvasElement)) {
             throw new Error(
@@ -32,7 +50,8 @@ export function addCustomZoomAdapter(
 
         hammer.on(HAMMER_EVENT_PINCH_START, (e) => {
             cy.userPanningEnabled(false);
-
+            // console.log(`pinch start`);
+            //startEndZoomTO();
             const cyRect = container.getBoundingClientRect();
 
             pinchCenter = {
@@ -44,6 +63,8 @@ export function addCustomZoomAdapter(
         hammer.on(
             [HAMMER_EVENT_PINCH_IN, HAMMER_EVENT_PINCH_OUT].join(" "),
             (e) => {
+                // console.log(`pinch in | out`);
+                //startEndZoomTO();
                 zoomTo((getCurrentZoom() * e.scale) / pinchScale, {
                     x: pinchCenter.x,
                     y: pinchCenter.y,
@@ -54,11 +75,14 @@ export function addCustomZoomAdapter(
         hammer.on(
             [HAMMER_EVENT_PINCH_END, HAMMER_EVENT_PINCH_CANCEL].join(" "),
             () => {
+                //console.log(`pinch end | cancel`);
                 cy.userPanningEnabled(true);
             },
         );
 
         const wheelListener = (e: WheelEvent) => {
+            // console.log(`wheel`);
+            //startEndZoomTO();
             zoomTo(
                 getCurrentZoom() *
                     Math.pow(

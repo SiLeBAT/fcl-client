@@ -114,6 +114,7 @@ export class EdgeLabelOffsetUpdater {
     }
 
     update(useBatch: boolean) {
+        //console.log(`EdgeLabelOffsetUpdater.update entered`);
         if (this.cy !== null) {
             if (useBatch) {
                 this.cy.batch(() =>

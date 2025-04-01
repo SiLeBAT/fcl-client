@@ -233,6 +233,12 @@ export class GraphService {
     ): CyDataEdges {
         const edgeData: CyEdgeData[] = [];
 
+        // return {
+        //     edgeData: edgeData,
+        //     delIdToEdgeDataMap: {},
+        //     edgeSel: {},
+        // };
+
         const sourceTargetDelMap: {
             [key: string]: { [key: string]: DeliveryData[] };
         } = {};

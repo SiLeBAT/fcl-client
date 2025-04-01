@@ -4,6 +4,7 @@ import {
     Input,
     ViewChild,
     EventEmitter,
+    ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatLegacySlider as MatSlider } from "@angular/material/legacy-slider";
 
@@ -11,23 +12,24 @@ import { MatLegacySlider as MatSlider } from "@angular/material/legacy-slider";
     selector: "fcl-zoom-view",
     templateUrl: "./zoom-view.component.html",
     styleUrls: ["./zoom-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoomViewComponent {
-    @Input() zoomValue: number;
+    // @Input() zoomValue: number;
 
     @Output() zoomReset = new EventEmitter();
     @Output() zoomIn = new EventEmitter();
     @Output() zoomOut = new EventEmitter();
-    @Output() zoomSlide = new EventEmitter();
-    @Output() zoomSlided = new EventEmitter();
+    // @Output() zoomSlide = new EventEmitter();
+    // @Output() zoomSlided = new EventEmitter();
 
     @ViewChild("slider", { static: true }) slider: MatSlider;
 
-    slide() {
-        this.zoomSlide.emit(this.slider.value.toString());
-    }
+    // slide() {
+    //     this.zoomSlide.emit(this.slider.value.toString());
+    // }
 
-    sliderChanged() {
-        this.zoomSlided.emit(this.slider.value.toString());
-    }
+    // sliderChanged() {
+    //     this.zoomSlided.emit(this.slider.value.toString());
+    // }
 }

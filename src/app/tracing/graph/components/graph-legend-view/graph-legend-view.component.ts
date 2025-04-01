@@ -1,10 +1,11 @@
-import { Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { LegendDisplayEntry } from "@app/tracing/data.model";
 
 @Component({
     selector: "fcl-graph-legend-view",
     templateUrl: "./graph-legend-view.component.html",
     styleUrls: ["./graph-legend-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphLegendViewComponent {
     private legendInfo_: LegendDisplayEntry[] | null = null;

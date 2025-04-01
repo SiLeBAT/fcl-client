@@ -50,6 +50,12 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     private cachedGraphData: GraphData;
     private zoomLimits: Range;
 
+    private endPreviewTimountHandle: number | undefined;
+
+    private get isPreviewActive(): boolean {
+        return this.endPreviewTimountHandle !== undefined;
+    }
+
     constructor(
         htmlContainerElement: HTMLElement,
         graphData: GraphData,
@@ -145,10 +151,34 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 this.cy!,
                 () => this.zoom,
                 (zoom, position) => this.zoomWithCursorAt(zoom, position),
+                () => this.startPreview(),
+                () => this.stopPreview(),
             );
         }
         if (reduceContainerSize) {
             this.restoreCySize();
+        }
+    }
+
+    private startPreview(): void {
+        if (!this.isPreviewActive) {
+            // console.log(`Zooming started. (Time: ${(new Date()).toISOString()})`);
+            this.cy?.elements().addClass('preview');
+        } else {
+            window.clearTimeout(this.endPreviewTimountHandle);
+        }
+        this.endPreviewTimountHandle = window.setTimeout(() => this.stopPreview(), 300);
+    }
+
+    private stopPreview(): void {
+        if (this.isPreviewActive) {
+            // console.log(`Zooming ended. (Time: ${(new Date()).toISOString()})`);
+            this.cy?.elements().removeClass('preview');
+            this.endPreviewTimountHandle = undefined;
+            // setTimeout(() => {
+            //     console.log(`UI ready & cleaned up after zooming: (Time: ${(new Date()).toISOString()}))`);
+            // }, 0);
+        // console.log(`Zooming cleaned up. (Time: ${(new Date()).toISOString()}))`);
         }
     }
 
@@ -434,6 +464,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             newPan.x !== oldPan.x ||
             newPan.y !== oldPan.y
         ) {
+            this.startPreview();
             this.setViewPort({ zoom: newZoom, pan: newPan });
 
             this.onLayoutChanged();
