@@ -26,7 +26,7 @@ const DEFAULT_GEOJSON_FILL_COLOR = {
     r: 255,
     g: 0,
     b: 0,
-    a: 0.2
+    a: 0.2,
 };
 
 @Component({
@@ -38,8 +38,7 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
     tracingSettings: TracingSettings;
 
-    private lastActiveGeojsonFillColor: RGBAColor =
-        DEFAULT_GEOJSON_FILL_COLOR;
+    private lastActiveGeojsonFillColor: RGBAColor = DEFAULT_GEOJSON_FILL_COLOR;
 
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
@@ -200,10 +199,13 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
 
     onEnableGeojsonFillColor(enable: boolean) {
         if (!enable && this.graphSettings.shapeStyle.fillColor) {
-            this.lastActiveGeojsonFillColor = this.graphSettings.shapeStyle.fillColor;
+            this.lastActiveGeojsonFillColor =
+                this.graphSettings.shapeStyle.fillColor;
         }
         this.store.dispatch(
-            new tracingActions.SetGeojsonStyleSOA({ fillColor: enable ? this.lastActiveGeojsonFillColor : undefined }),
+            new tracingActions.SetGeojsonStyleSOA({
+                fillColor: enable ? this.lastActiveGeojsonFillColor : undefined,
+            }),
         );
     }
 

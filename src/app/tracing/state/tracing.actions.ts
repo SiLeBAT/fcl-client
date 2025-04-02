@@ -140,7 +140,13 @@ export class GenerateVisioLayoutSuccess implements Action {
 export class SetGeojsonStyleSOA implements Action {
     readonly type = TracingActionTypes.SetGeojsonStyleSOA;
 
-    constructor(public payload: { borderColor?: Color; borderWidth?: number; fillColor?: RGBAColor }) {}
+    constructor(
+        public payload: {
+            borderColor?: Color;
+            borderWidth?: number;
+            fillColor?: RGBAColor;
+        },
+    ) {}
 }
 
 export class ShowGraphSettingsSOA implements Action {

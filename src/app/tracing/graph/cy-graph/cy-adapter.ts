@@ -15,7 +15,7 @@ export function addCustomZoomAdapter(
     getCurrentZoom: () => number,
     zoomTo: (zoom: number, zPos: Position) => void,
     zoomingStarted: () => void,
-    zoomingEnded: () => void
+    zoomingEnded: () => void,
 ): void {
     const container = cy.container();
     if (container) {

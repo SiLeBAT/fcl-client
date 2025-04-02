@@ -231,7 +231,8 @@ export interface ShapeStyle {
     borderColor: Color;
     fillColor?: RGBAColor;
 }
-export interface ShapeFileSettings { //extends ShapeStyleSettings {
+export interface ShapeFileSettings {
+    //extends ShapeStyleSettings {
     shapeFileData: ShapeFileData | null;
     shapeStyle: ShapeStyle;
 }

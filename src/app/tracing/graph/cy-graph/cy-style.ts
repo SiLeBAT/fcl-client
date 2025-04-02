@@ -246,7 +246,7 @@ export class CyStyle {
             .selector("edge.preview")
             .style({
                 content: "",
-                display: "none"
+                display: "none",
             })
             .selector("node.preview")
             .style({
@@ -260,10 +260,8 @@ export class CyStyle {
                 "border-color": "red",
                 "border-width": 0,
                 color: "rgb(0, 0, 0)",
-                size: nodeSize
-            })
-            ;
-
+                size: nodeSize,
+            });
         return style;
     }
 

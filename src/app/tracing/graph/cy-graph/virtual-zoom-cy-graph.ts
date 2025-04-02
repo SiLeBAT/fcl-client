@@ -163,22 +163,25 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     private startPreview(): void {
         if (!this.isPreviewActive) {
             // console.log(`Zooming started. (Time: ${(new Date()).toISOString()})`);
-            this.cy?.elements().addClass('preview');
+            this.cy?.elements().addClass("preview");
         } else {
             window.clearTimeout(this.endPreviewTimountHandle);
         }
-        this.endPreviewTimountHandle = window.setTimeout(() => this.stopPreview(), 300);
+        this.endPreviewTimountHandle = window.setTimeout(
+            () => this.stopPreview(),
+            300,
+        );
     }
 
     private stopPreview(): void {
         if (this.isPreviewActive) {
             // console.log(`Zooming ended. (Time: ${(new Date()).toISOString()})`);
-            this.cy?.elements().removeClass('preview');
+            this.cy?.elements().removeClass("preview");
             this.endPreviewTimountHandle = undefined;
             // setTimeout(() => {
             //     console.log(`UI ready & cleaned up after zooming: (Time: ${(new Date()).toISOString()}))`);
             // }, 0);
-        // console.log(`Zooming cleaned up. (Time: ${(new Date()).toISOString()}))`);
+            // console.log(`Zooming cleaned up. (Time: ${(new Date()).toISOString()}))`);
         }
     }
 

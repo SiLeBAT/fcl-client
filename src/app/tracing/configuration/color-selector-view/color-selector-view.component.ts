@@ -104,7 +104,11 @@ export class ColorSelectorViewComponent {
 
     get style(): any {
         return this.rgbColorStr_
-            ? { "background-color": this.useAlphaChannel ? this.rgbaColorStr_ : this.rgbColorStr_ }
+            ? {
+                  "background-color": this.useAlphaChannel
+                      ? this.rgbaColorStr_
+                      : this.rgbColorStr_,
+              }
             : {};
     }
 
@@ -160,7 +164,7 @@ export class ColorSelectorViewComponent {
                 if (!Number.isNaN(opacity)) {
                     const rgbaColor: RGBAColor = {
                         ...rgbColor,
-                        a: opacity
+                        a: opacity,
                     };
                     return rgbaColor;
                 }
@@ -175,9 +179,8 @@ export class ColorSelectorViewComponent {
     private convertColorToRGBAStr(color: Color | RGBAColor): string {
         // return `rgba(${color.r}, ${color.g}, ${color.b})`;
         return isRGBAColor(color)
-           ? `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
-           : `rgba(${color.r}, ${color.g}, ${color.b})`;
-
+            ? `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+            : `rgba(${color.r}, ${color.g}, ${color.b})`;
     }
 
     private convertColorToRGBStr(color: Color): string {

@@ -154,7 +154,12 @@ export interface CyElementCollection<E> {
 export interface CyNodeCollection extends CyElementCollection<CyNode> {
     layout(options: { name: string; [key: string]: any }): CyLayout;
     positions(a: (b: CyNode) => Position): void;
-    filter(a: ((b: CyNode) => boolean) | ((b: CyNode, i: number) => boolean) | string): CyNodeCollection;
+    filter(
+        a:
+            | ((b: CyNode) => boolean)
+            | ((b: CyNode, i: number) => boolean)
+            | string,
+    ): CyNodeCollection;
     edgesWith(a: string | CyNodeCollection): CyEdgeCollection;
     connectedEdges(a?: string): CyEdgeCollection;
 }

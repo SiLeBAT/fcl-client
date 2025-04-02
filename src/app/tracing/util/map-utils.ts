@@ -145,12 +145,18 @@ function createVectorLayerStyle(shapeStyle: ShapeStyle): StyleLike {
             // width: styleConfig.geojsonBorderWidth,
             width: shapeStyle.borderWidth,
         }),
-        ...(!shapeStyle.fillColor ? {} : { fill: new Fill({ color: [
-            shapeStyle.fillColor.r,
-            shapeStyle.fillColor.g,
-            shapeStyle.fillColor.b,
-            shapeStyle.fillColor.a,
-        ]})})
+        ...(!shapeStyle.fillColor
+            ? {}
+            : {
+                  fill: new Fill({
+                      color: [
+                          shapeStyle.fillColor.r,
+                          shapeStyle.fillColor.g,
+                          shapeStyle.fillColor.b,
+                          shapeStyle.fillColor.a,
+                      ],
+                  }),
+              }),
     });
 }
 
@@ -172,7 +178,7 @@ function getMapLayers<T extends BaseLayer>(
 export function updateVectorLayerStyle(
     map: ol.Map,
     // styleConfig: ShapeFileSettings,
-    shapeStyle: ShapeStyle
+    shapeStyle: ShapeStyle,
 ): void {
     const vectorLayers = getMapLayers(map, isVectorLayer);
 
@@ -226,10 +232,7 @@ function updateTileLayer(
 //     );
 // }
 
-function wasStyleChanged(
-    newStyle: ShapeStyle,
-    oldStyle: ShapeStyle,
-): boolean {
+function wasStyleChanged(newStyle: ShapeStyle, oldStyle: ShapeStyle): boolean {
     return (
         newStyle.borderColor !== oldStyle.borderColor ||
         newStyle.borderWidth !== oldStyle.borderWidth ||
@@ -259,7 +262,12 @@ function updateShapeLayer(
             // if (wasStyleChanged(newMapConfig, oldMapConfig)) {
             //     updateVectorLayerStyle(map, newMapConfig);
             // }
-            if (wasStyleChanged(newMapConfig.shapeStyle, oldMapConfig.shapeStyle)) {
+            if (
+                wasStyleChanged(
+                    newMapConfig.shapeStyle,
+                    oldMapConfig.shapeStyle,
+                )
+            ) {
                 updateVectorLayerStyle(map, newMapConfig.shapeStyle);
             }
             setLayersVisibility(shapeLayers, true);

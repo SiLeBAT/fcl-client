@@ -335,8 +335,8 @@ export function reducer(
                         ...state.fclData.graphSettings,
                         shapeStyle: {
                             ...state.fclData.graphSettings.shapeStyle,
-                            ...action.payload
-                        }
+                            ...action.payload,
+                        },
                     },
                 },
             };

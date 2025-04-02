@@ -29,7 +29,7 @@ export const MAP_CONSTANTS = {
         shapeStyle: {
             borderWidth: 3,
             borderColor: COLORS.shapeBorderGrey,
-            fillColor: undefined
-        }
+            fillColor: undefined,
+        },
     },
 };
