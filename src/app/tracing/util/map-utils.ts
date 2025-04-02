@@ -4,8 +4,9 @@ import {
     ShapeFileData,
     MapViewConfig,
     ShapeFileSettings,
-    ShapeStyleSettings,
+    // ShapeStyleSettings,
     MapSettings,
+    ShapeStyle,
 } from "../data.model";
 import { OSM } from "ol/source";
 import * as ol from "ol";
@@ -15,7 +16,7 @@ import VectorLayer from "ol/layer/Vector";
 // import { Tile } from "ol/layer";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
-import { Stroke, Style } from "ol/style";
+import { Fill, Stroke, Style } from "ol/style";
 import { InputDataError } from "../io/io-errors";
 import { StyleLike } from "ol/style/Style";
 import { NotNullish } from "./utility-types";
@@ -117,7 +118,8 @@ export function createShapeFileLayer(
         ),
     });
 
-    const style = createVectorLayerStyle(mapConfig);
+    // const style = createVectorLayerStyle(mapConfig);
+    const style = createVectorLayerStyle(mapConfig.shapeStyle);
 
     const vectorLayer = new VectorLayer({
         source: vectorSource,
@@ -126,16 +128,29 @@ export function createShapeFileLayer(
     return vectorLayer;
 }
 
-function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
+// function createVectorLayerStyle(styleConfig: ShapeStyleSettings): StyleLike {
+function createVectorLayerStyle(shapeStyle: ShapeStyle): StyleLike {
     return new Style({
         stroke: new Stroke({
             color: [
-                styleConfig.geojsonBorderColor.r,
-                styleConfig.geojsonBorderColor.g,
-                styleConfig.geojsonBorderColor.b,
+                // styleConfig.geojsonBorderColor.r,
+                // styleConfig.geojsonBorderColor.g,
+                // styleConfig.geojsonBorderColor.b,
+                shapeStyle.borderColor.r,
+                shapeStyle.borderColor.g,
+                shapeStyle.borderColor.b,
+                // styleConfig.geojsonBorderColor.g,
+                // styleConfig.geojsonBorderColor.b,
             ],
-            width: styleConfig.geojsonBorderWidth,
+            // width: styleConfig.geojsonBorderWidth,
+            width: shapeStyle.borderWidth,
         }),
+        ...(!shapeStyle.fillColor ? {} : { fill: new Fill({ color: [
+            shapeStyle.fillColor.r,
+            shapeStyle.fillColor.g,
+            shapeStyle.fillColor.b,
+            shapeStyle.fillColor.a,
+        ]})})
     });
 }
 
@@ -156,12 +171,14 @@ function getMapLayers<T extends BaseLayer>(
 
 export function updateVectorLayerStyle(
     map: ol.Map,
-    styleConfig: ShapeFileSettings,
+    // styleConfig: ShapeFileSettings,
+    shapeStyle: ShapeStyle
 ): void {
     const vectorLayers = getMapLayers(map, isVectorLayer);
 
     vectorLayers.forEach((layer) => {
-        const style = createVectorLayerStyle(styleConfig);
+        // const style = createVectorLayerStyle(styleConfig);
+        const style = createVectorLayerStyle(shapeStyle);
         layer.setStyle(style);
     });
 }
@@ -199,13 +216,24 @@ function updateTileLayer(
     }
 }
 
+// function wasStyleChanged(
+//     newStyle: ShapeStyleSettings,
+//     oldStyle: ShapeStyleSettings,
+// ): boolean {
+//     return (
+//         newStyle.geojsonBorderColor !== oldStyle.geojsonBorderColor ||
+//         newStyle.geojsonBorderWidth !== oldStyle.geojsonBorderWidth
+//     );
+// }
+
 function wasStyleChanged(
-    newStyle: ShapeStyleSettings,
-    oldStyle: ShapeStyleSettings,
+    newStyle: ShapeStyle,
+    oldStyle: ShapeStyle,
 ): boolean {
     return (
-        newStyle.geojsonBorderColor !== oldStyle.geojsonBorderColor ||
-        newStyle.geojsonBorderWidth !== oldStyle.geojsonBorderWidth
+        newStyle.borderColor !== oldStyle.borderColor ||
+        newStyle.borderWidth !== oldStyle.borderWidth ||
+        newStyle.fillColor !== oldStyle.fillColor
     );
 }
 
@@ -228,15 +256,18 @@ function updateShapeLayer(
                 ),
             );
         } else {
-            if (wasStyleChanged(newMapConfig, oldMapConfig)) {
-                updateVectorLayerStyle(map, newMapConfig);
+            // if (wasStyleChanged(newMapConfig, oldMapConfig)) {
+            //     updateVectorLayerStyle(map, newMapConfig);
+            // }
+            if (wasStyleChanged(newMapConfig.shapeStyle, oldMapConfig.shapeStyle)) {
+                updateVectorLayerStyle(map, newMapConfig.shapeStyle);
             }
             setLayersVisibility(shapeLayers, true);
         }
     } else {
         setLayersVisibility(shapeLayers, false);
-        if (wasStyleChanged(newMapConfig, oldMapConfig)) {
-            updateVectorLayerStyle(map, newMapConfig);
+        if (wasStyleChanged(newMapConfig.shapeStyle, oldMapConfig.shapeStyle)) {
+            updateVectorLayerStyle(map, newMapConfig.shapeStyle);
         }
     }
 }

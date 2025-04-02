@@ -137,6 +137,10 @@ export interface Color {
     b: number;
 }
 
+export interface RGBAColor extends Color {
+    a: number;
+}
+
 export interface Position {
     x: number;
     y: number;
@@ -216,12 +220,20 @@ export interface GraphSettings extends MapSettings, ShapeFileSettings {
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
-export interface ShapeStyleSettings {
-    geojsonBorderWidth: number;
-    geojsonBorderColor: Color;
+// export interface ShapeStyleSettings {
+//     geojsonBorderWidth: number;
+//     geojsonBorderColor: Color;
+//     geojsonFillColor?: RGBAColor;
+// }
+
+export interface ShapeStyle {
+    borderWidth: number;
+    borderColor: Color;
+    fillColor?: RGBAColor;
 }
-export interface ShapeFileSettings extends ShapeStyleSettings {
+export interface ShapeFileSettings { //extends ShapeStyleSettings {
     shapeFileData: ShapeFileData | null;
+    shapeStyle: ShapeStyle;
 }
 
 export interface MapSettings {

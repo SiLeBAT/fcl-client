@@ -13,6 +13,7 @@ import {
     Color,
     MapType,
     GraphType,
+    RGBAColor,
 } from "../data.model";
 
 interface Option<T> {
@@ -20,6 +21,13 @@ interface Option<T> {
     label: string;
     toolTip: string;
 }
+
+const DEFAULT_GEOJSON_FILL_COLOR = {
+    r: 255,
+    g: 0,
+    b: 0,
+    a: 0.2
+};
 
 @Component({
     selector: "fcl-graph-settings",
@@ -29,6 +37,9 @@ interface Option<T> {
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
     tracingSettings: TracingSettings;
+
+    private lastActiveGeojsonFillColor: RGBAColor =
+        DEFAULT_GEOJSON_FILL_COLOR;
 
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
@@ -182,13 +193,30 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
 
     onGeojsonBorderColorChange(color: Color) {
         this.store.dispatch(
-            new tracingActions.SetGeojsonBorderColorSOA({ color: color }),
+            // new tracingActions.SetGeojsonBorderColorSOA({ color: color }),
+            new tracingActions.SetGeojsonStyleSOA({ borderColor: color }),
+        );
+    }
+
+    onEnableGeojsonFillColor(enable: boolean) {
+        if (!enable && this.graphSettings.shapeStyle.fillColor) {
+            this.lastActiveGeojsonFillColor = this.graphSettings.shapeStyle.fillColor;
+        }
+        this.store.dispatch(
+            new tracingActions.SetGeojsonStyleSOA({ fillColor: enable ? this.lastActiveGeojsonFillColor : undefined }),
+        );
+    }
+
+    onGeojsonFillColorChange(color: RGBAColor) {
+        this.store.dispatch(
+            new tracingActions.SetGeojsonStyleSOA({ fillColor: color }),
         );
     }
 
     onGeojsonBorderWidthChange(borderWidth: number): void {
         this.store.dispatch(
-            new tracingActions.SetGeojsonBorderWidthSOA({ width: borderWidth }),
+            // new tracingActions.SetGeojsonBorderWidthSOA({ width: borderWidth }),
+            new tracingActions.SetGeojsonStyleSOA({ borderWidth: borderWidth }),
         );
     }
 

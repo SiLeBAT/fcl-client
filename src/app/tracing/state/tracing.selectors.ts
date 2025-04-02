@@ -261,37 +261,45 @@ export const selectGisGraphState = createSelector(
     }),
 );
 
-const selectGeojsonBorderWidth = createSelector(
-    getGraphSettings,
-    (graphSettings) => graphSettings.geojsonBorderWidth,
-);
+// const selectGeojsonBorderWidth = createSelector(
+//     getGraphSettings,
+//     (graphSettings) => graphSettings.geojsonBorderWidth,
+// );
 
-const selectGeojsonBorderColor = createSelector(
+// const selectGeojsonBorderColor = createSelector(
+//     getGraphSettings,
+//     (graphSettings) => graphSettings.geojsonBorderColor,
+// );
+
+const selectShapeStyle = createSelector(
     getGraphSettings,
-    (graphSettings) => graphSettings.geojsonBorderColor,
+    (graphSettings) => graphSettings.shapeStyle,
 );
 
 export const getMapConfig = createSelector(
     selectGisGraphLayout,
     selectMapType,
     selectShapeFileData,
-    selectGeojsonBorderColor,
-    selectGeojsonBorderWidth,
+    selectShapeStyle,
+    // selectGeojsonBorderColor,
+    // selectGeojsonBorderWidth,
     selectTileServer,
     (
         gisLayout,
         mapType,
         shapeFileData,
-        borderColor,
-        borderWidth,
+        shapeStyle,
+        // borderColor,
+        // borderWidth,
         tileServer,
     ) => ({
         layout: gisLayout,
         mapType: mapType,
         tileServer: tileServer,
         shapeFileData: shapeFileData,
-        geojsonBorderColor: borderColor,
-        geojsonBorderWidth: borderWidth,
+        shapeStyle: shapeStyle
+        // geojsonBorderColor: borderColor,
+        // geojsonBorderWidth: borderWidth,
     }),
 );
 
