@@ -154,8 +154,7 @@ export function createInitialFclDataState(): FclData {
             mapType: MAP_CONSTANTS.defaults.mapType,
             tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: null,
-            geojsonBorderWidth: MAP_CONSTANTS.defaults.geojsonBorderWidth,
-            geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
+            shapeStyle: { ...MAP_CONSTANTS.defaults.shapeStyle },
             ghostStation: null,
             ghostDelivery: null,
             hoverDeliveries: [],
@@ -201,10 +200,8 @@ export function reducer(
                 state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData =
                 state.fclData.graphSettings.shapeFileData;
-            action.payload.fclData.graphSettings.geojsonBorderColor =
-                state.fclData.graphSettings.geojsonBorderColor;
-            action.payload.fclData.graphSettings.geojsonBorderWidth =
-                state.fclData.graphSettings.geojsonBorderWidth;
+            action.payload.fclData.graphSettings.shapeStyle =
+                state.fclData.graphSettings.shapeStyle;
 
             let newState: TracingState = {
                 ...state,
@@ -282,34 +279,22 @@ export function reducer(
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_ONLY,
                         shapeFileData: action.payload.shapeFileData,
-                        geojsonBorderWidth:
-                            MAP_CONSTANTS.defaults.geojsonBorderWidth,
-                        geojsonBorderColor:
-                            MAP_CONSTANTS.defaults.geojsonBorderColor,
+                        shapeStyle: { ...MAP_CONSTANTS.defaults.shapeStyle },
                     },
                 },
             };
 
-        case TracingActionTypes.SetGeojsonShapeBorderWidthSOA:
+        case TracingActionTypes.SetGeojsonStyleSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        geojsonBorderWidth: action.payload.width,
-                    },
-                },
-            };
-
-        case TracingActionTypes.SetGeojsonShapeBorderColorSOA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    graphSettings: {
-                        ...state.fclData.graphSettings,
-                        geojsonBorderColor: action.payload.color,
+                        shapeStyle: {
+                            ...state.fclData.graphSettings.shapeStyle,
+                            ...action.payload,
+                        },
                     },
                 },
             };

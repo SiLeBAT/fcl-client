@@ -17,7 +17,7 @@ import {
     IndexType,
 } from "../data.model";
 import * as DataMapper from "./data-mappings/data-mappings-v1";
-import { Utils } from "./../util/non-ui-utils";
+import { colorToRGBArray, Utils } from "./../util/non-ui-utils";
 import { createFclElements } from "./fcl-elements-creator";
 import {
     VERSION,
@@ -306,7 +306,7 @@ export class DataExporter {
             disabled: rule.userDisabled,
             invisible: rule.invisible,
             adjustThickness: rule.adjustThickness,
-            color: rule.color ? Utils.colorToRGBArray(rule.color) : null,
+            color: rule.color ? colorToRGBArray(rule.color) : null,
             labelProperty:
                 rule.labelProperty === null
                     ? null

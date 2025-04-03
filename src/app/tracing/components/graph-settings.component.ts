@@ -13,7 +13,9 @@ import {
     Color,
     MapType,
     GraphType,
+    RGBAColor,
 } from "../data.model";
+import { MAP_CONSTANTS } from "../util/map-constants";
 
 interface Option<T> {
     value: T;
@@ -29,6 +31,9 @@ interface Option<T> {
 export class GraphSettingsComponent implements OnInit, OnDestroy {
     graphSettings: GraphSettings;
     tracingSettings: TracingSettings;
+
+    private lastActiveGeojsonFillColor: RGBAColor =
+        MAP_CONSTANTS.defaults.shapeFillColor;
 
     fontSizes = Constants.FONT_SIZES;
     nodeSizes = Constants.NODE_SIZES;
@@ -182,13 +187,31 @@ export class GraphSettingsComponent implements OnInit, OnDestroy {
 
     onGeojsonBorderColorChange(color: Color) {
         this.store.dispatch(
-            new tracingActions.SetGeojsonBorderColorSOA({ color: color }),
+            new tracingActions.SetGeojsonStyleSOA({ borderColor: color }),
+        );
+    }
+
+    onEnableGeojsonFillColor(enable: boolean) {
+        if (!enable && this.graphSettings.shapeStyle.fillColor) {
+            this.lastActiveGeojsonFillColor =
+                this.graphSettings.shapeStyle.fillColor;
+        }
+        this.store.dispatch(
+            new tracingActions.SetGeojsonStyleSOA({
+                fillColor: enable ? this.lastActiveGeojsonFillColor : undefined,
+            }),
+        );
+    }
+
+    onGeojsonFillColorChange(color: RGBAColor) {
+        this.store.dispatch(
+            new tracingActions.SetGeojsonStyleSOA({ fillColor: color }),
         );
     }
 
     onGeojsonBorderWidthChange(borderWidth: number): void {
         this.store.dispatch(
-            new tracingActions.SetGeojsonBorderWidthSOA({ width: borderWidth }),
+            new tracingActions.SetGeojsonStyleSOA({ borderWidth: borderWidth }),
         );
     }
 

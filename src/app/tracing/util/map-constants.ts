@@ -1,5 +1,5 @@
 import { MapType, TileServer } from "../data.model";
-import { COLORS } from "./colors";
+import { COLORS, RGBA_COLORS } from "./colors";
 
 export const MAP_CONSTANTS = {
     types: [
@@ -23,7 +23,11 @@ export const MAP_CONSTANTS = {
     defaults: {
         mapType: MapType.TILES_ONLY,
         tileServer: TileServer.MAPNIK,
-        geojsonBorderWidth: 3,
-        geojsonBorderColor: COLORS.shapeBorderGrey,
+        shapeFillColor: RGBA_COLORS.shapeFillColor,
+        shapeStyle: {
+            borderWidth: 3,
+            borderColor: COLORS.shapeBorderGrey,
+            fillColor: undefined,
+        },
     },
 };

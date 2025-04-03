@@ -1,4 +1,10 @@
-import { DeliveryData, Color, HighlightingRule, Range } from "../data.model";
+import {
+    DeliveryData,
+    Color,
+    HighlightingRule,
+    Range,
+    RGBAColor,
+} from "../data.model";
 import { HttpClient } from "@angular/common/http";
 import { Map as ImmutableMap } from "immutable";
 import * as _ from "lodash";
@@ -249,13 +255,19 @@ export function getRange(values: [number, ...number[]]): Range {
     };
 }
 
+export function colorToRGBArray(color: Color): [number, number, number] {
+    return [color.r, color.g, color.b];
+}
+
+export function colorToRGBAArray(
+    color: RGBAColor,
+): [number, number, number, number] {
+    return [...colorToRGBArray(color), color.a];
+}
+
 export class Utils {
     static rgbArrayToColor(color: number[]): Color {
         return { r: color[0], g: color[1], b: color[2] };
-    }
-
-    static colorToRGBArray(color: Color): number[] {
-        return [color.r, color.g, color.b];
     }
 
     static colorToCss(color: Color): string {
