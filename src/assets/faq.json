@@ -29,6 +29,10 @@
                     "a": "Before being able to login you need to register. On the <a href=\"https://fcl-portal.bfr.berlin/users/login\" target=\"_blank\" rel=\"noopener\">login page</a> click 'Register' and fill in the form. After you have clicked 'Submit', you will receive an email to confirm your registration. Please click on the link in this email. After this, the FoodChain-Lab team is prompted to authorise your registration. After this manual step you will receive an email informing you that you are now able to login."
                 },
                 {
+                    "q": "How does FCL Web handle accounts using disposable email addresses?",
+                    "a": "Accounts using disposable email addresses will be activated but will be deleted after 7 days."
+                },
+                {
                     "q": "I have confirmed my registration. Why does the login not work?",
                     "a": "First, the FoodChain-Lab team needs to authorise your registration manually. Afterwards, you will receive an email informing you that you are now able to login."
                 }
@@ -93,6 +97,16 @@
                 {
                     "q": "I would like to logout. Where is the button?",
                     "a": "In the blue menu bar on the right you will find the profile button. Click this button and select 'Logout' from the dropdown menu."
+                }
+            ]
+        },
+        {
+            "title": "Compatibility between FCL Desktop and FCL Web",
+            "url": "compatibility",
+            "faq": [
+                {
+                    "q": "Are data and settings compatible between FCL Desktop and FCL Web?",
+                    "a": "The data are fully compatible and can be exchanged between FCL Web and FCL Desktop (and vice versa) without any data loss. Some features (Highlighting settings, rules for invisibility) are not fully compatible and need to be checked when loading data from FCL Desktop in FCL Web (and vice versa)."
                 }
             ]
         }
