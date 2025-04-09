@@ -44,7 +44,7 @@ export class ConfigurationComponent implements OnInit {
         this.tabConfigs = [
             {
                 id: FilterTabId,
-                tabLabel: "Filter",
+                tabLabel: "Data Table",
                 tabTemplate: this.filterTemplate,
             },
             {

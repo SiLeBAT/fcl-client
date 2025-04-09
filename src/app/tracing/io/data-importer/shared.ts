@@ -194,7 +194,7 @@ export function createDefaultStationHRules(
             ...createDefaultStatHRule(),
             id:
                 STATION_DEFAULT_HIGHLIGHTING_RULE_ID_PREFIX +
-                "Cross Contamination",
+                "Cross-contamination",
             name: RULE_LABELS.crossContamination,
             showInLegend: true,
             color: {

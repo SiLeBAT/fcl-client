@@ -6,7 +6,7 @@ export const SHARED_PROP_LABELS = {
     observed: "Observed",
     outbreak: "Outbreak",
     commonLink: "Common Link",
-    crossContamination: "Cross Contamination",
+    crossContamination: "Cross-contamination",
     killContamination: "Kill Contamination",
     score: "Score",
     weight: "Weight",
