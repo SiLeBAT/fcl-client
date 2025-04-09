@@ -14,6 +14,7 @@ import {
     CyConfig,
     LayoutConfig,
     isPresetLayoutConfig,
+    LayoutName,
 } from "./cy-graph";
 import { addCustomZoomAdapter } from "./cy-adapter";
 import {
@@ -27,10 +28,17 @@ import {
     zoomedToUnzoomedModelPosition,
 } from "./virtual-zoom-utils";
 import { CY_MAX_ZOOM, CY_MIN_ZOOM } from "./cy.constants";
-import { CyEdge, CyNode, CyNodeCollection, NodeId } from "../graph.model";
+import {
+    CyEdge,
+    CyNode,
+    CyNodeCollection,
+    EdgeId,
+    NodeId,
+} from "../graph.model";
 import * as _ from "lodash";
 import { reduceElementSizeToVisibleArea } from "./shared-utils";
 import { addCyBoxZoomListerner } from "./cy-listeners";
+import { createPreviewHandler, IPreviewHandler } from "./preview-utils";
 
 const DEFAULT_VIEWPORT = {
     zoom: 1,
@@ -49,6 +57,14 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
     private cachedGraphData: GraphData;
     private zoomLimits: Range;
+
+    // private endPreviewTimountHandle: number | undefined;
+    // private previewViewport: Layout | undefined;
+    private previewHandler: IPreviewHandler | undefined;
+
+    // private get isPreviewActive(): boolean {
+    //     return this.previewHandler !== undefined;
+    // }
 
     constructor(
         htmlContainerElement: HTMLElement,
@@ -164,7 +180,10 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     get zoom(): number {
-        return this.cachedGraphData.layout!.zoom;
+        return (
+            this.previewHandler?.viewport.zoom ??
+            this.cachedGraphData.layout!.zoom
+        );
     }
 
     get minZoom(): number {
@@ -184,7 +203,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
     }
 
     get layout(): Layout {
-        return this.cachedGraphData.layout!;
+        return this.previewHandler?.viewport ?? this.cachedGraphData.layout!;
     }
 
     protected setViewPort(viewport: Layout): void {
@@ -373,8 +392,24 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         }
     }
 
+    runLayout(
+        layoutName: LayoutName,
+        nodeIds: NodeId[],
+        fitGraphToVisibleArea: boolean,
+    ): null | (() => void) {
+        this.previewHandler?.stopPreview();
+        return super.runLayout(layoutName, nodeIds, fitGraphToVisibleArea);
+    }
+
+    focusElement(elementId: NodeId | EdgeId): void {
+        this.previewHandler?.stopPreview();
+        super.focusElement(elementId);
+    }
+
     zoomFit(fitGraphToVisibleArea: boolean): void {
         if (this.cy && this.cachedGraphData.nodeData.length > 0) {
+            this.previewHandler?.stopPreview();
+
             if (fitGraphToVisibleArea) {
                 this.reduceCySizeToVisibleArea();
             }
@@ -417,7 +452,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
     protected zoomWithCursorAt(zoom: number, position?: Position): void {
         const oldZoom = this.zoom;
-        const oldPan = this.pan;
+        const oldPan = this.previewHandler?.viewport.pan ?? this.pan;
         const newZoom = this.getNextFeasibleZoom(zoom);
 
         position = position
@@ -434,7 +469,27 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
             newPan.x !== oldPan.x ||
             newPan.y !== oldPan.y
         ) {
-            this.setViewPort({ zoom: newZoom, pan: newPan });
+            const newViewport: Layout = { zoom: newZoom, pan: newPan };
+            if (!this.previewHandler) {
+                this.previewHandler = createPreviewHandler(
+                    this.cy!,
+                    newViewport,
+                    this.cachedGraphData,
+                    this.style,
+                    (zoom, pos) => this.zoomWithCursorAt(zoom, pos),
+                    (graphData, styleConfig) => {
+                        this.previewHandler = undefined;
+                        this.updateGraph(graphData, styleConfig);
+                    },
+                );
+                if (!this.previewHandler) {
+                    this.setViewPort(newViewport);
+                }
+            } else {
+                this.previewHandler.viewport = newViewport;
+            }
+
+            // this.setViewPort({ zoom: newZoom, pan: newPan });
 
             this.onLayoutChanged();
         }
@@ -445,6 +500,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         boxEndPosition: Position,
         fitToVisibileArea = true,
     ) {
+        this.previewHandler?.stopPreview();
         if (fitToVisibileArea) {
             this.reduceCySizeToVisibleArea();
         }
@@ -463,6 +519,11 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
         if (fitToVisibileArea) {
             this.restoreCySize();
         }
+    }
+
+    destroy(): void {
+        this.previewHandler?.destroy();
+        super.destroy();
     }
 
     protected startLayouting(
@@ -573,6 +634,13 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
 
     updateGraph(graphData: GraphData, styleConfig: StyleConfig): void {
         if (this.cy) {
+            if (this.previewHandler) {
+                this.previewHandler.setSuspendedGraphUpdate(
+                    graphData,
+                    styleConfig,
+                );
+                return;
+            }
             const oldGraphData = this.cachedGraphData;
             this.cachedGraphData = graphData;
 
@@ -621,6 +689,7 @@ export class VirtualZoomCyGraph extends InteractiveCyGraph {
                 styleConfig,
             );
         }
+        // console.log(`${(new Date()).valueOf()}: updateGraph completed.`);
     }
 
     protected applyGraphDataChangeBottomUp(

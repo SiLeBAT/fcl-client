@@ -242,8 +242,26 @@ export class CyStyle {
             .selector(":active")
             .style({
                 "overlay-opacity": 0.5,
+            })
+            .selector("edge.preview")
+            .style({
+                content: "",
+                display: "none",
+            })
+            .selector("node.preview")
+            .style({
+                content: "",
+                shape: "ellipse",
+                // "display": "none",
+                "background-fill": "solid",
+                //"background-gradient-stop-colors": "",
+                //"background-gradient-stop-positions": "",
+                //"background-gradient-direction": "",
+                "border-color": "red",
+                "border-width": 0,
+                color: "rgb(0, 0, 0)",
+                size: nodeSize,
             });
-
         return style;
     }
 

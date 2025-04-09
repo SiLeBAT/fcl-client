@@ -220,12 +220,13 @@ export class CyGraph {
                 this.graphData,
                 this.styleConfig,
             ).createCyStyle(),
-            wheelSensitivity: CyGraph.WHEEL_SENSITIVITY,
+            //wheelSensitivity: CyGraph.WHEEL_SENSITIVITY,
             minZoom: cyConfig.minZoom,
             maxZoom: cyConfig.maxZoom,
             autoungrabify: cyConfig.autoungrabify,
             userZoomingEnabled: cyConfig.userZoomingEnabled,
             zoomingEnabled: cyConfig.zoomingEnabled,
+            textureOnViewport: true,
         });
 
         this.edgeLabelOffsetUpdater.connectTo(this.cy!);
