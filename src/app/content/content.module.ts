@@ -13,6 +13,7 @@ import { FaqComponent } from "./faq/components/faq.component";
 import { FaqViewComponent } from "./faq/components/faq-view.component";
 import { FaqSectionViewComponent } from "./faq/components/faq-section-view.component";
 import { SharedModule } from "../shared/shared.module";
+import { HelpComponent } from "./help/help.component";
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { SharedModule } from "../shared/shared.module";
         DataProtectionNoticeComponent,
         FundingSourcesViewComponent,
         MaintenanceNotificationViewComponent,
+        HelpComponent,
         FaqComponent,
         FaqViewComponent,
         FaqSectionViewComponent,
