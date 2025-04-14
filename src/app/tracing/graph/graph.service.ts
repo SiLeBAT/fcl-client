@@ -21,7 +21,7 @@ import {
     SelectedGraphElements,
     NodeId,
 } from "./graph.model";
-import { concat, removeUndefined, Utils } from "../util/non-ui-utils";
+import { concat, Utils } from "../util/non-ui-utils";
 import * as _ from "lodash";
 
 interface CyDataNodes {
@@ -287,8 +287,6 @@ export class GraphService {
                                 source: sourceDataId,
                                 target: targetDataId,
                                 deliveries: [delivery],
-                                width:
-                                    delivery.highlightingInfo?.thickness ?? 0,
                                 zindex: 0,
                                 relZindex: 0,
                                 selected: selected,
@@ -309,10 +307,6 @@ export class GraphService {
                                 ),
                                 source: sourceDataId,
                                 target: targetDataId,
-                                width:
-                                    this.getMaxDeliveriesThickness(
-                                        deliveries,
-                                    ) ?? 0,
                                 deliveries: deliveries,
                                 relZindex: 0,
                                 zindex: 0,
@@ -343,7 +337,6 @@ export class GraphService {
                         ),
                         source: sourceData.id,
                         target: targetData.id,
-                        width: delivery.highlightingInfo?.thickness ?? 0,
                         deliveries: [delivery],
                         relZindex: 0,
                         zindex: 0,
@@ -381,18 +374,6 @@ export class GraphService {
 
     private createLabel(element: DeliveryData | StationData): string {
         return element.highlightingInfo!.label;
-    }
-
-    private getMaxDeliveriesThickness(
-        deliveries: DeliveryData[],
-    ): number | undefined {
-        const thicknesses = deliveries.map(
-            (d) => d.highlightingInfo?.thickness,
-        );
-        const definedThicknesses = removeUndefined(thicknesses);
-        return definedThicknesses.length === 0
-            ? undefined
-            : Math.max(...definedThicknesses);
     }
 
     private createMergedLabelWoPrefix(deliveries: DeliveryData[]): string {
@@ -442,7 +423,6 @@ export class GraphService {
             ...this.getColorInfo([], GraphService.DEFAULT_GHOST_COLOR),
             source: source.id,
             target: target.id,
-            width: 0,
             deliveries: deliveries,
             selected: false,
             wLabelSpace: false,
@@ -734,7 +714,6 @@ export class GraphService {
                     : edge.deliveries[0].highlightingInfo!.color,
                 GraphService.DEFAULT_EDGE_COLOR,
             );
-            edge.width = this.getMaxDeliveriesThickness(edge.deliveries) ?? 0;
             edge.stopColors = colorInfo.stopColors;
             edge.stopPositions = colorInfo.stopPositions;
             edge.labelWoPrefix = this.createMergedLabelWoPrefix(
@@ -804,7 +783,6 @@ export class GraphService {
             const edgeFrom = edgesFrom[i];
             edgeTo.labelWoPrefix = edgeFrom.labelWoPrefix;
             edgeTo.label = edgeFrom.label;
-            edgeTo.width = edgeFrom.width;
             edgeTo.wLabelSpace = edgeFrom.wLabelSpace;
             edgeTo.stopColors = edgeFrom.stopColors;
             edgeTo.stopPositions = edgeFrom.stopPositions;

@@ -10,7 +10,7 @@
         [value]="value"
         (valueChange)="onValueChange($event)"
         [disabled]="disabled"
-        [placeholder]="placeholder ?? 'property'"
+        placeholder="placeholder ?? 'property'"
     >
         <ng-container *ngFor="let property of favouriteProperties">
             <mat-option
@@ -26,10 +26,7 @@
                 {{ property.name }}
             </mat-option>
         </ng-container>
-        <mat-option
-            disabled
-            *ngIf="favouriteProperties.length > 0 && otherProperties.length > 0"
-        >
+        <mat-option disabled>
             <hr />
         </mat-option>
         <ng-container *ngFor="let property of otherProperties">
