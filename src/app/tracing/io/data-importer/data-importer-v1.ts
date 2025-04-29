@@ -54,6 +54,7 @@ import { Constants } from "../../util/constants";
 import { PartialPick } from "../../../tracing/util/utility-types";
 import { isValidJsonSchemaV7 } from "./json-validation/json-schema-validation";
 import { createInitialFclDataState } from "../../state/tracing.reducers";
+import { isSimpleLabelHRule } from "../../configuration/shared";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";
 
@@ -778,9 +779,11 @@ export class DataImporterV1 implements IDataImporter {
             : createDefaultStationAnonymizationLabelHRule();
 
         if (intStatAnoHRule.userDisabled === false) {
-            fclData.graphSettings.highlightingSettings.stations.forEach(
-                (r) => (r.autoDisabled = true),
-            );
+            fclData.graphSettings.highlightingSettings.stations.forEach((r) => {
+                if (isSimpleLabelHRule(r)) {
+                    r.autoDisabled = true;
+                }
+            });
         }
 
         fclData.graphSettings.highlightingSettings.stations.push(
