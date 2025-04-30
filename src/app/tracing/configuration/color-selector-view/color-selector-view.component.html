@@ -2,7 +2,7 @@
     #colorpicker
     class="fcl-color-picker"
     [ngClass]="ngClass"
-    [matTooltip]="'Choose Colour'"
+    [matTooltip]="disabled ? '' : 'Choose Colour'"
 >
     <!--
         Here 2 identical color picker buttons are used.
@@ -25,14 +25,15 @@
         [cpPosition]="cpPosition"
         [cpPositionOffset]="cpPositionOffset"
         [cpPositionRelativeToArrow]="true"
+        [cpSaveClickOutside]="false"
         (colorPickerClose)="onColorPickerClose()"
         [cpOutputFormat]="'rgba'"
         [cpOKButton]="true"
         [cpCancelButton]="true"
-        [cpAlphaChannel]="'disabled'"
+        [cpAlphaChannel]="cpAlphaChannel"
         (colorPickerSelect)="onColorPickerSelect($event)"
         (click)="onClick($event)"
-        [ngStyle]="style"
+        [ngStyle]="buttonStyle"
     >
         &nbsp;
     </button>
@@ -48,14 +49,15 @@
         [cpPosition]="cpPosition"
         [cpPositionOffset]="cpPositionOffset"
         [cpPositionRelativeToArrow]="true"
+        [cpSaveClickOutside]="false"
         (colorPickerClose)="onColorPickerClose()"
         [cpOutputFormat]="'rgba'"
         [cpOKButton]="true"
         [cpCancelButton]="true"
-        [cpAlphaChannel]="'disabled'"
+        [cpAlphaChannel]="cpAlphaChannel"
         (colorPickerSelect)="onColorPickerSelect($event)"
         (click)="onClick($event)"
-        [ngStyle]="style"
+        [ngStyle]="buttonStyle"
     >
         &nbsp;
     </button>

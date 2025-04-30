@@ -14,10 +14,7 @@ import * as _ from "lodash";
 import { DataService } from "./data.service";
 import { Constants } from "../util/constants";
 import { concat, entries, values } from "../util/non-ui-utils";
-import { LABELS } from "../util/labels";
-
-const COLUMNS_ANO_FLAG: StatColumnsFlag = "a";
-const COLUMNS_HIGHLIGHTING_FLAG: StatColumnsFlag = "h";
+import { DELIVERY_PROP_LABELS, STATION_PROP_LABELS } from "../util/labels";
 
 type StatColumnsFlag = "h" | "" | "a" | "ah";
 type DeliveryColumnsFlag = "h" | "";
@@ -295,18 +292,24 @@ export class TableService {
         forHighlighting: boolean,
     ): TableColumn[] {
         const favColumns: TableColumn[] = [
-            { id: "id", name: LABELS.id },
-            { id: "name", name: LABELS.product },
-            { id: "lot", name: LABELS.lot },
-            { id: "amount", name: LABELS.amount },
-            { id: "dateOut", name: LABELS.dateOut },
-            { id: "dateIn", name: LABELS.dateIn },
-            { id: "outbreak", name: LABELS.outbreak },
+            { id: "id", name: DELIVERY_PROP_LABELS.id },
+            { id: "name", name: DELIVERY_PROP_LABELS.product },
+            { id: "lot", name: DELIVERY_PROP_LABELS.lot },
+            { id: "amount", name: DELIVERY_PROP_LABELS.amount },
+            { id: "dateOut", name: DELIVERY_PROP_LABELS.dateOut },
+            { id: "dateIn", name: DELIVERY_PROP_LABELS.dateIn },
+            { id: "outbreak", name: DELIVERY_PROP_LABELS.outbreak },
         ];
         if (!forHighlighting) {
             favColumns.push(
-                { id: "source.name", name: LABELS.source },
-                { id: "target.name", name: LABELS.target },
+                {
+                    id: "source.name",
+                    name: DELIVERY_PROP_LABELS["source.name"],
+                },
+                {
+                    id: "target.name",
+                    name: DELIVERY_PROP_LABELS["target.name"],
+                },
             );
         }
 
@@ -325,28 +328,40 @@ export class TableService {
         favouriteColumns: TableColumn[],
     ): TableColumn[] {
         const otherColumns: TableColumn[] = [
-            { id: "source", name: `${LABELS.source} ID` },
-            { id: "target", name: `${LABELS.target} ID` },
-            { id: "weight", name: LABELS.weight },
-            { id: "crossContamination", name: LABELS.crossContamination },
-            { id: "killContamination", name: LABELS.killContamination },
-            { id: "observed", name: LABELS.traceType },
-            { id: "forward", name: `On ${LABELS.forward}` },
-            { id: "backward", name: `On ${LABELS.backward}` },
-            { id: "score", name: LABELS.score },
+            { id: "source", name: DELIVERY_PROP_LABELS.source },
+            { id: "target", name: DELIVERY_PROP_LABELS.target },
+            { id: "weight", name: DELIVERY_PROP_LABELS.weight },
+            {
+                id: "crossContamination",
+                name: DELIVERY_PROP_LABELS.crossContamination,
+            },
+            {
+                id: "killContamination",
+                name: DELIVERY_PROP_LABELS.killContamination,
+            },
+            { id: "observed", name: DELIVERY_PROP_LABELS.traceType },
+            { id: "forward", name: DELIVERY_PROP_LABELS.forward },
+            { id: "backward", name: DELIVERY_PROP_LABELS.backward },
+            { id: "score", name: DELIVERY_PROP_LABELS.score },
+            { id: "lotAmount", name: DELIVERY_PROP_LABELS.lotAmount },
             ...(forHighlighting
                 ? []
                 : [
-                      { id: "selected", name: LABELS.selected },
-                      { id: "invisible", name: LABELS.invisible },
+                      { id: "selected", name: DELIVERY_PROP_LABELS.selected },
+                      { id: "invisible", name: DELIVERY_PROP_LABELS.invisible },
                   ]),
         ];
 
-        this.addColumnsForProperties(otherColumns, data.deliveries);
+        this.addColumnsForProperties(
+            otherColumns,
+            data.deliveries,
+            DELIVERY_PROP_LABELS,
+        );
         this.addColumnsForOtherMappings(
             otherColumns,
             state.int2ExtPropMaps.deliveries,
             new Set(Constants.DELIVERY_PROPERTIES.toArray()),
+            DELIVERY_PROP_LABELS,
         );
 
         const cleanedOtherColumns = this.getCleanedAndSortedOtherColumns(
@@ -406,11 +421,16 @@ export class TableService {
 
         const otherColumns = colDefs.map((c) => ({ id: c.id, name: c.name }));
 
-        this.addColumnsForProperties(otherColumns, data.stations);
+        this.addColumnsForProperties(
+            otherColumns,
+            data.stations,
+            STATION_PROP_LABELS,
+        );
         this.addColumnsForOtherMappings(
             otherColumns,
             state.int2ExtPropMaps.stations,
             new Set(Constants.STATION_PROPERTIES.toArray()),
+            STATION_PROP_LABELS,
         );
 
         const cleanedOtherColumns = this.getCleanedAndSortedOtherColumns(
@@ -478,13 +498,14 @@ export class TableService {
     private addColumnsForProperties(
         columns: TableColumn[],
         arr: (StationData | DeliveryData)[],
+        preferredLabels: Record<string, string>,
     ): void {
         const props = this.collectProps(arr);
         props.forEach((prop) => {
             if (!columns.some((c) => c.id === prop.id)) {
                 columns.push({
                     id: prop.id,
-                    name: this.decamelize(prop.id),
+                    name: preferredLabels[prop.id] ?? this.decamelize(prop.id),
                 });
             }
         });
@@ -494,13 +515,16 @@ export class TableService {
         columns: TableColumn[],
         int2ExtPropMap: Record<string, string>,
         ignoreProps: Set<string>,
+        preferredLabels: Record<string, string>,
     ): void {
         const mappedProps = Object.keys(int2ExtPropMap);
         mappedProps.forEach((prop) => {
             if (!ignoreProps.has(prop) && !columns.some((c) => c.id === prop)) {
                 columns.push({
                     id: prop,
-                    name: this.decamelize(int2ExtPropMap[prop]),
+                    name:
+                        preferredLabels[prop] ??
+                        this.decamelize(int2ExtPropMap[prop]),
                 });
             }
         });
@@ -633,9 +657,10 @@ export class TableService {
             .replace(
                 /(^\_lieferungen\.)(.*)/gi,
                 (match: string, p1: string, p2: string) =>
-                    "Delivery " + p2.charAt(0).toUpperCase() + p2.slice(1),
+                    p2.charAt(0).toUpperCase() + p2.slice(1),
             )
-            .replace(/lot id/gi, "Lot ID");
+            .replace(/lot id/gi, "Lot ID")
+            .replace(/_+/, " ");
     }
 
     private collectProps(

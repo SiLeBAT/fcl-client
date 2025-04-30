@@ -77,7 +77,7 @@
 
     <mat-form-field>
         <mat-select
-            placeholder="Cross Contamination Tracing"
+            placeholder="Cross-contamination Tracing"
             [ngModel]="tracingSettings.crossContTraceType"
             (ngModelChange)="setCrossContTraceType($event)"
         >
@@ -98,16 +98,27 @@
         <div class="fcl-geojson-color-conf-container">
             <div>Geojson border colour:</div>
             <fcl-color-selector-view
-                [color]="graphSettings.geojsonBorderColor"
+                [color]="graphSettings.shapeStyle.borderColor"
                 preferredColorPickerPosition="top"
                 (colorChange)="onGeojsonBorderColorChange($event)"
+            ></fcl-color-selector-view>
+            <mat-checkbox
+                [ngModel]="graphSettings.shapeStyle.fillColor !== undefined"
+                (ngModelChange)="onEnableGeojsonFillColor($event)"
+            >
+                Use Fill Color
+            </mat-checkbox>
+            <fcl-color-selector-view
+                [disabled]="!graphSettings.shapeStyle.fillColor"
+                [color]="graphSettings.shapeStyle.fillColor"
+                (colorChange)="onGeojsonFillColorChange($event)"
             ></fcl-color-selector-view>
         </div>
 
         <mat-form-field>
             <mat-select
                 placeholder="Geojson border width"
-                [ngModel]="graphSettings.geojsonBorderWidth"
+                [ngModel]="graphSettings.shapeStyle.borderWidth"
                 (ngModelChange)="onGeojsonBorderWidthChange($event)"
             >
                 <mat-option

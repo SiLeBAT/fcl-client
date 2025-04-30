@@ -8,7 +8,7 @@ import { catchError } from "rxjs/operators";
 import { EMPTY } from "rxjs";
 import { Faq } from "./faq.model";
 import { FaqService } from "./faq.service";
-import { AlertService } from "@app/shared/services/alert.service";
+import { AlertService } from "../../shared/services/alert.service";
 
 export const FaqResolverFn: ResolveFn<Faq> = (
     route: ActivatedRouteSnapshot,

@@ -11,6 +11,7 @@ import {
     MatLegacyDialogRef as MatDialogRef,
 } from "@angular/material/legacy-dialog";
 import * as d3 from "d3-selection";
+import { MatTooltip } from "@angular/material/tooltip";
 
 import {
     DeliveryData,
@@ -24,7 +25,6 @@ import { concat, Utils } from "../../util/non-ui-utils";
 import { State } from "@app/tracing/state/tracing.reducers";
 import { Store } from "@ngrx/store";
 import { SetHoverDeliveriesSOA } from "@app/tracing/state/tracing.actions";
-
 export interface StationPropertiesData {
     station: StationData;
     deliveries: Map<DeliveryId, DeliveryData>;
@@ -166,8 +166,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
     private static readonly OUTGOING_HEADER = "Outgoing Deliveries:";
     private static readonly DELIVERIES_HEADER_HEIGHT = 14;
     private static readonly CONTAINER_PADDING = 1;
+    tooltipContent = "";
 
     @ViewChild("inOutConnector", { static: true }) inOutConnector: ElementRef;
+    @ViewChild("tooltip") manualTooltip: MatTooltip;
 
     otherPropertiesHidden = true;
     properties: Properties = {};
@@ -634,6 +636,25 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     ),
                 );
         };
+
+        const createNodeText = (
+            node: NodeDatum,
+            incoming: boolean = false,
+        ): { line1: string; line2: string; line3: string } => {
+            const { lot, name, station, date } = node;
+
+            const line1 = lot ? name + " (" + lot + ")" : (name ?? "");
+            const line2Prefix = incoming ? "from:" : "to:";
+            const line2 = station ? `${line2Prefix} ${station}` : "";
+            const line3 = date ?? "";
+
+            return {
+                line1,
+                line2,
+                line3,
+            };
+        };
+
         const initRectAndText = (
             nodes: d3.Selection<SVGElement, NodeDatum, any, any>,
             isIncoming: boolean,
@@ -656,31 +677,34 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     ),
                 );
 
-            const text = nodes.append("text").attr("text-anchor", "left");
+            const textContent = nodes
+                .append("foreignObject")
+                .attr("width", StationPropertiesComponent.NODE_WIDTH)
+                .attr("height", StationPropertiesComponent.NODE_HEIGHT)
+                .append("xhtml:div")
+                .attr(
+                    "style",
+                    `padding: 2px ${StationPropertiesComponent.TEXT_X_PADDING}px; font-size: 14px; width: 100%; height: 100%;`,
+                );
 
-            text.append("tspan")
-                .attr("x", StationPropertiesComponent.TEXT_X_PADDING)
-                .attr("dy", 15)
-                .attr("font-size", "14px")
-                .text((d) =>
-                    d.lot != null
-                        ? d.name + " (" + d.lot + ")"
-                        : (d.name ?? ""),
-                );
-            text.filter((d) => d.station != null)
-                .append("tspan")
-                .attr("x", StationPropertiesComponent.TEXT_X_PADDING)
-                .attr("dy", 15)
-                .attr("font-size", "14px")
-                .text((d) =>
-                    isIncoming ? "from: " + d.station : "to: " + d.station,
-                );
-            text.filter((d) => d.date != null)
-                .append("tspan")
-                .attr("x", StationPropertiesComponent.TEXT_X_PADDING)
-                .attr("dy", 15)
-                .attr("font-size", "12px")
-                .text((d) => d.date ?? "");
+            const paragraphStyles = `margin: 0; padding: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;`;
+
+            textContent
+                .append("xhtml:p")
+                .attr("style", paragraphStyles)
+                .text((d) => createNodeText(d, isIncoming).line1);
+
+            textContent
+                .filter((d) => d.station != null)
+                .append("xhtml:p")
+                .attr("style", paragraphStyles)
+                .text((d) => createNodeText(d, isIncoming).line2);
+
+            textContent
+                .filter((d) => d.date != null)
+                .append("xhtml:p")
+                .attr("style", `${paragraphStyles} font-size: 12px;`)
+                .text((d) => createNodeText(d, isIncoming).line3);
         };
 
         const newNodesIn = this.nodesInG
@@ -705,6 +729,9 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     inNode.invisible,
                 );
                 this.hoverDeliveries(inNode.deliveryIds);
+                const { line1, line2, line3 } = createNodeText(inNode, true);
+                this.tooltipContent = `${line1}\n${line2}\n${line3}`;
+                this.manualTooltip.show();
             })
             .on("mouseout", (event, inNode) => {
                 updateColor(
@@ -713,6 +740,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     inNode.invisible,
                 );
                 this.hoverDeliveries([]);
+                this.manualTooltip.hide();
             });
 
         newNodesOut
@@ -722,7 +750,10 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     true,
                     outNode.invisible,
                 );
+                const { line1, line2, line3 } = createNodeText(outNode, false);
+                this.tooltipContent = `${line1}\n${line2}\n${line3}`;
                 this.hoverDeliveries(outNode.deliveryIds);
+                this.manualTooltip.show();
             })
             .on("mouseout", (event, outNode) => {
                 updateColor(
@@ -731,6 +762,7 @@ export class StationPropertiesComponent implements OnInit, OnDestroy {
                     outNode.invisible,
                 );
                 this.hoverDeliveries([]);
+                this.manualTooltip.hide();
             });
     }
 

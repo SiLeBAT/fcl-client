@@ -10,7 +10,11 @@ import { List, Map } from "immutable";
 import { ExampleData } from "@app/main-page/model/types";
 import * as _ from "lodash";
 import { concat, Utils } from "./non-ui-utils";
-import { LABELS } from "./labels";
+import {
+    DELIVERY_PROP_LABELS,
+    SHARED_PROP_LABELS,
+    STATION_PROP_LABELS,
+} from "./labels";
 
 interface ColumnDefinition {
     id: string;
@@ -61,6 +65,12 @@ export class Constants {
     static readonly DIALOG_OK = "Ok";
     static readonly DIALOG_SAVE = "Save";
     static readonly DIALOG_DONT_SAVE = "Don't save and proceed";
+    static readonly DIALOG_SHOW_MORE = "Show More";
+
+    static readonly ALERT_FILETYPE_NOT_JSON =
+        "Please select a .json file with the correct format!";
+    static readonly ALERT_IMPORT_WARNINGS =
+        "Data import completed with warnings";
 
     private static readonly STATION_DATA: StationData = {
         id: "",
@@ -127,45 +137,51 @@ export class Constants {
 
     static readonly PROPERTIES: Map<string, { name: string; color?: Color }> =
         Map({
-            id: { name: LABELS.id },
-            name: { name: LABELS.name },
-            lot: { name: LABELS.lot },
-            lat: { name: LABELS.lat },
-            lon: { name: LABELS.lon },
-            dateIn: { name: LABELS.dateIn },
-            dateOut: { name: LABELS.dateOut },
-            source: { name: LABELS.source },
-            target: { name: LABELS.target },
-            originalSource: { name: LABELS.originalSource },
-            originalTarget: { name: LABELS.originalTarget },
-            incoming: { name: LABELS.incoming },
-            outgoing: { name: LABELS.outgoing },
-            contains: { name: LABELS.contains },
-            isMeta: { name: LABELS.isMeta },
-            forward: { name: LABELS.forward, color: { r: 150, g: 255, b: 75 } },
+            id: { name: SHARED_PROP_LABELS.id },
+            name: { name: SHARED_PROP_LABELS.name },
+            lot: { name: DELIVERY_PROP_LABELS.lot },
+            lat: { name: STATION_PROP_LABELS.lat },
+            lon: { name: STATION_PROP_LABELS.lon },
+            dateIn: { name: DELIVERY_PROP_LABELS.dateIn },
+            dateOut: { name: DELIVERY_PROP_LABELS.dateOut },
+            source: { name: DELIVERY_PROP_LABELS.source },
+            target: { name: DELIVERY_PROP_LABELS.target },
+            originalSource: { name: DELIVERY_PROP_LABELS.originalSource },
+            originalTarget: { name: DELIVERY_PROP_LABELS.originalTarget },
+            incoming: { name: STATION_PROP_LABELS.incoming },
+            outgoing: { name: STATION_PROP_LABELS.outgoing },
+            contains: { name: STATION_PROP_LABELS.contains },
+            isMeta: { name: STATION_PROP_LABELS.isMeta },
+            forward: {
+                name: SHARED_PROP_LABELS.forward,
+                color: { r: 150, g: 255, b: 75 },
+            },
             backward: {
-                name: LABELS.backward,
+                name: SHARED_PROP_LABELS.backward,
                 color: { r: 255, g: 150, b: 75 },
             },
             observed: {
-                name: LABELS.traceType,
+                name: SHARED_PROP_LABELS.traceType,
                 color: { r: 75, g: 150, b: 255 },
             },
             outbreak: {
-                name: LABELS.outbreak,
+                name: SHARED_PROP_LABELS.outbreak,
                 color: { r: 255, g: 50, b: 50 },
             },
             crossContamination: {
-                name: LABELS.crossContamination,
+                name: SHARED_PROP_LABELS.crossContamination,
                 color: { r: 150, g: 150, b: 150 },
             },
-            killContamination: { name: LABELS.killContamination },
+            killContamination: { name: SHARED_PROP_LABELS.killContamination },
             commonLink: {
-                name: LABELS.commonLink,
+                name: STATION_PROP_LABELS.commonLink,
                 color: { r: 255, g: 255, b: 75 },
             },
-            score: { name: LABELS.score },
-            weight: { name: LABELS.weight, color: { r: 255, g: 0, b: 0 } },
+            score: { name: SHARED_PROP_LABELS.score },
+            weight: {
+                name: SHARED_PROP_LABELS.weight,
+                color: { r: 255, g: 0, b: 0 },
+            },
         });
 
     static readonly PROPERTIES_WITH_COLORS = List(
@@ -229,44 +245,50 @@ export class Constants {
     );
 
     static readonly FAVOURITE_STAT_COLUMNS = List.of<ColumnDefinition>(
-        { id: "id", name: LABELS.id },
+        { id: "id", name: STATION_PROP_LABELS.id },
         {
             id: "anonymizedName",
-            name: LABELS.anonymizedName,
+            name: STATION_PROP_LABELS.anonymizedName,
             availableForHighlighting: false,
         },
-        { id: "name", name: LABELS.name },
-        { id: "address", name: LABELS.address },
-        { id: "country", name: LABELS.country },
-        { id: "typeOfBusiness", name: LABELS.typeOfBusiness },
-        { id: "score", name: LABELS.score },
-        { id: "commonLink", name: LABELS.commonLink },
-        { id: "outbreak", name: LABELS.outbreak },
-        { id: "weight", name: LABELS.weight },
+        { id: "name", name: STATION_PROP_LABELS.name },
+        { id: "address", name: STATION_PROP_LABELS.address },
+        { id: "country", name: STATION_PROP_LABELS.country },
+        { id: "typeOfBusiness", name: STATION_PROP_LABELS.typeOfBusiness },
+        { id: "score", name: STATION_PROP_LABELS.score },
+        { id: "commonLink", name: STATION_PROP_LABELS.commonLink },
+        { id: "outbreak", name: STATION_PROP_LABELS.outbreak },
+        { id: "weight", name: STATION_PROP_LABELS.weight },
     );
 
     static readonly KNOWN_OTHER_STAT_COLUMNS = List.of<ColumnDefinition>(
-        { id: "forward", name: `On ${LABELS.forward}` },
-        { id: "backward", name: `On ${LABELS.backward}` },
-        { id: "crossContamination", name: LABELS.crossContamination },
-        { id: "killContamination", name: LABELS.killContamination },
-        { id: "observed", name: LABELS.traceType },
+        { id: "forward", name: STATION_PROP_LABELS.forward }, //`On ${LABELS.forward}` },
+        { id: "backward", name: STATION_PROP_LABELS.backward }, // `On ${LABELS.backward}` },
+        {
+            id: "crossContamination",
+            name: STATION_PROP_LABELS.crossContamination,
+        },
+        {
+            id: "killContamination",
+            name: STATION_PROP_LABELS.killContamination,
+        },
+        { id: "observed", name: STATION_PROP_LABELS.traceType },
         {
             id: "selected",
-            name: LABELS.selected,
+            name: STATION_PROP_LABELS.selected,
             availableForHighlighting: false,
         },
         {
             id: "invisible",
-            name: LABELS.invisible,
+            name: STATION_PROP_LABELS.invisible,
             availableForHighlighting: false,
         },
-        { id: "lat", name: LABELS.lat },
-        { id: "lon", name: LABELS.lon },
-        { id: "isMeta", name: LABELS.isMeta },
+        { id: "lat", name: STATION_PROP_LABELS.lat },
+        { id: "lon", name: STATION_PROP_LABELS.lon },
+        { id: "isMeta", name: STATION_PROP_LABELS.isMeta },
         {
             id: "contained",
-            name: LABELS.contained,
+            name: STATION_PROP_LABELS.contained,
             availableForHighlighting: false,
         },
     );

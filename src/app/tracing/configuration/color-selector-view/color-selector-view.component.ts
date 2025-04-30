@@ -8,10 +8,15 @@ import {
     ViewChild,
     ChangeDetectorRef,
 } from "@angular/core";
-import { Color } from "@app/tracing/data.model";
+import { Color, RGBAColor } from "@app/tracing/data.model";
 import { ColorPickerDirective } from "ngx-color-picker";
 
 export type ColorPickerPosition = "left" | "top" | "right" | "bottom";
+type AlphaChannel = "disabled" | "always";
+
+function isRGBAColor(color: Color | RGBAColor): color is RGBAColor {
+    return (color as RGBAColor).a !== undefined;
+}
 
 @Component({
     selector: "fcl-color-selector-view",
@@ -24,12 +29,6 @@ export class ColorSelectorViewComponent {
     private static readonly COLOR_PICKER_WIDTH = 230;
     private static readonly MAT_EXPANSION_PANEL_TAGNAME = "MAT-EXPANSION-PANEL";
     private static readonly WO_SPACE_CLASS = "fcl-color-picker--wo-space";
-
-    private static readonly DEFAULT_COLOR: Color = {
-        r: 3,
-        g: 78,
-        b: 162,
-    };
 
     private colorPickerPositionOffsets: Record<ColorPickerPosition, string> = {
         left: "-390%",
@@ -45,42 +44,43 @@ export class ColorSelectorViewComponent {
         "bottom",
     ];
 
-    private rgbaColorStr_ = this.convertColorToRGBAStr(
-        ColorSelectorViewComponent.DEFAULT_COLOR,
-    );
-    private rgbColorStr_: string | undefined = this.convertColorToRGBStr(
-        ColorSelectorViewComponent.DEFAULT_COLOR,
-    );
+    private rgbaColorStr_: string | undefined;
+    private buttonStyle_: { "background-color"?: string } = {};
+
     private colorPickerPosition: ColorPickerPosition =
         this.defaultColorPickerPositions[0];
     private spaceIsNotAvailable = false;
+
+    private useAlphaChannel = false;
 
     useFirstColorPickerButton = true;
 
     @Input() preferredColorPickerPosition: ColorPickerPosition =
         this.defaultColorPickerPositions[0];
 
-    @Input() set color(color: Color | null) {
-        if (color !== null) {
+    @Input() set color(color: Color | RGBAColor | null | undefined) {
+        if (color !== null && color !== undefined) {
+            this.useAlphaChannel = isRGBAColor(color);
             this.rgbaColorStr_ = this.convertColorToRGBAStr(color);
-            this.rgbColorStr_ = this.convertColorToRGBStr(color);
+            this.buttonStyle_ = { "background-color": this.rgbaColorStr_ };
         } else {
-            this.rgbColorStr_ = undefined;
+            this.rgbaColorStr_ = undefined;
+            this.buttonStyle_ = {};
         }
     }
     @Input() disabled: boolean = false;
-    @Output() colorChange = new EventEmitter<Color>();
+    @Output() colorChange = new EventEmitter<Color | RGBAColor>();
 
     @ViewChild("colorpicker", { static: false }) colorPickerElement: ElementRef;
     @ViewChild(ColorPickerDirective, { static: false })
     colorPickerDirective: ColorPickerDirective;
 
-    get rgbaColorStr(): string {
-        return this.rgbaColorStr_;
+    get cpAlphaChannel(): AlphaChannel {
+        return this.useAlphaChannel ? "always" : "disabled";
     }
 
-    get rgbColorStr(): string | undefined {
-        return this.rgbColorStr_;
+    get rgbaColorStr(): string | undefined {
+        return this.rgbaColorStr_;
     }
 
     get cpPosition(): ColorPickerPosition {
@@ -91,10 +91,8 @@ export class ColorSelectorViewComponent {
         return this.colorPickerPositionOffsets[this.colorPickerPosition];
     }
 
-    get style(): any {
-        return this.rgbColorStr_
-            ? { "background-color": this.rgbColorStr_ }
-            : {};
+    get buttonStyle(): any {
+        return this.buttonStyle_;
     }
 
     get ngClass(): string {
@@ -131,30 +129,39 @@ export class ColorSelectorViewComponent {
         this.useFirstColorPickerButton = !this.useFirstColorPickerButton;
     }
 
-    private convertRGBAStrToColor(rgbaColorStr: string): Color {
-        // e.g.: rgb(3,162,96)
+    private convertRGBAStrToColor(rgbaColorStr: string): Color | RGBAColor {
+        // e.g.: rgba(3,162,96) or rgba(5,4,3,0.85)
         const matchArray = rgbaColorStr.match(
-            /^rgba?\(\s*(?<r>\d{1,3}),\s*(?<g>\d{1,3}),\s*(?<b>\d{1,3})(,[^\)]+)?\)$/,
+            /^rgba?\(\s*(?<r>\d{1,3}),\s*(?<g>\d{1,3}),\s*(?<b>\d{1,3})(,\s*(?<a>[^\)]+))?\)$/,
         );
         if (matchArray && matchArray.length >= 4) {
             const rgbArray = matchArray.slice(1, 4).map((x) => parseInt(x, 10));
-            return {
+            const rgbColor = {
                 r: rgbArray[0],
                 g: rgbArray[1],
                 b: rgbArray[2],
             };
+            if (matchArray.length >= 6) {
+                const opacity = parseFloat(matchArray[5]);
+                if (!Number.isNaN(opacity)) {
+                    const rgbaColor: RGBAColor = {
+                        ...rgbColor,
+                        a: opacity,
+                    };
+                    return rgbaColor;
+                }
+            }
+            return rgbColor;
         }
         throw new Error(
             `RGB Values cannot be extracted from rgb/rgba color string '${rgbaColorStr}'`,
         );
     }
 
-    private convertColorToRGBAStr(color: Color): string {
-        return `rgba(${color.r}, ${color.g}, ${color.b})`;
-    }
-
-    private convertColorToRGBStr(color: Color): string {
-        return `rgb(${color.r},${color.g},${color.b})`;
+    private convertColorToRGBAStr(color: Color | RGBAColor): string {
+        return isRGBAColor(color)
+            ? `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+            : `rgba(${color.r}, ${color.g}, ${color.b})`;
     }
 
     private getPreferredPositions(): ColorPickerPosition[] {

@@ -1,7 +1,11 @@
 @use "material-icons/iconfont/filled";
+@use "material-icons/iconfont/round";
+@use "assets/sass/base" as fcl;
 
 .mat-tooltip {
     font-size: 14px !important;
+    white-space: pre-line;
+    word-break: break-word;
 }
 
 .mat-toolbar {
@@ -34,25 +38,39 @@
 }
 
 .snackbar-error {
-    background-color: #c62828;
-    font-weight: 500;
+    background-color: #c62828 !important;
+    font-weight: 500 !important;
 
     .mat-button-wrapper {
-        color: white;
+        color: white !important;
     }
 }
 
 .snackbar-success {
-    background-color: #c8e6c9;
-    color: black;
+    background-color: #c8e6c9 !important;
+    color: black !important;
 }
 
 .snackbar-warn {
-    background-color: #fff9c4;
-    color: black;
+    background-color: fcl.$fcl-warning-color !important;
+    color: black !important;
 }
 
 .snackbar-info {
-    background-color: #bbdefb;
-    color: black;
+    background-color: #bbdefb !important;
+    color: black !important;
+}
+
+// visually disabled mat select option
+
+.mat-select.fcl-option--disabled-appearance .mat-select-value {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
+.mat-select-panel .mat-option.fcl-option--disabled-appearance {
+    color: fcl.$fcl-foreground-color--disabled;
+}
+
+.mat-select-panel .mat-option.fcl-option--disabled-appearance.mat-selected {
+    color: rgba(fcl.$fcl-mat-option-selected-color, fcl.$fcl-opacity--disabled);
 }

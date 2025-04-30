@@ -20,6 +20,7 @@ import {
     LabelPart as IntLabelPart,
     StationHighlightingRule as IntStationHighlightingRule,
     Color,
+    IndexType,
 } from "../../data.model";
 import { HttpClient } from "@angular/common/http";
 
@@ -27,12 +28,12 @@ import { concat, isNullish, Utils } from "../../util/non-ui-utils";
 import * as ExtDataConstants from "../ext-data-constants.v1";
 import { IDataImporter } from "./datatypes";
 import {
-    isValidJson,
     checkVersionFormat,
     areMajorVersionsMatching,
     createDefaultStationAnonymizationLabelHRule,
     createDefaultStationHRules,
     createDefaultDeliveryHRules,
+    isPropertyLabelPart,
 } from "./shared";
 import { importSamples } from "./sample-importer-v1";
 import {
@@ -50,7 +51,10 @@ import { InputFormatError, InputDataError } from "../io-errors";
 import { getCenterFromPoints, getDifference } from "../../util/geometry-utils";
 import * as _ from "lodash";
 import { Constants } from "../../util/constants";
-import { PartialPick } from "@app/tracing/util/utility-types";
+import { PartialPick } from "../../../tracing/util/utility-types";
+import { isValidJsonSchemaV7 } from "./json-validation/json-schema-validation";
+import { createInitialFclDataState } from "../../state/tracing.reducers";
+import { isSimpleLabelHRule } from "../../configuration/shared";
 
 const JSON_SCHEMA_FILE = "../../../../assets/schema/schema-v1.json";
 
@@ -65,15 +69,17 @@ export class DataImporterV1 implements IDataImporter {
             areMajorVersionsMatching(data.version, VERSION)
         ) {
             const schema = await this.loadSchema();
-            return isValidJson(schema, data, true);
+            return isValidJsonSchemaV7(schema, data, true);
         } else {
             return false;
         }
     }
 
-    async preprocessData(data: any, fclData: FclData): Promise<void> {
+    async importData(data: any): Promise<FclData> {
+        const fclData = createInitialFclDataState();
         if (await this.isDataFormatSupported(data)) {
             this.convertExternalData(data, fclData);
+            return fclData;
         } else {
             throw new InputFormatError();
         }
@@ -773,9 +779,11 @@ export class DataImporterV1 implements IDataImporter {
             : createDefaultStationAnonymizationLabelHRule();
 
         if (intStatAnoHRule.userDisabled === false) {
-            fclData.graphSettings.highlightingSettings.stations.forEach(
-                (r) => (r.autoDisabled = true),
-            );
+            fclData.graphSettings.highlightingSettings.stations.forEach((r) => {
+                if (isSimpleLabelHRule(r)) {
+                    r.autoDisabled = true;
+                }
+            });
         }
 
         fclData.graphSettings.highlightingSettings.stations.push(
@@ -835,34 +843,40 @@ export class DataImporterV1 implements IDataImporter {
     ): HighlightingRule {
         const defaultIntAnoHRule =
             createDefaultStationAnonymizationLabelHRule();
-        let labelParts = (extAnoRule.labelParts ?? []).map(
-            (p) =>
-                (p.property
-                    ? {
-                          prefix: p.prefix,
-                          property: extToIntPropMap.get(p.property),
-                      }
-                    : {
-                          prefix: p.prefix,
-                          useIndex: p.useIndex || false,
-                      }) as IntLabelPart,
+        let intLabelParts = (extAnoRule.labelParts ?? []).map((p) => {
+            const intLabelPart: IntLabelPart = isPropertyLabelPart(p)
+                ? {
+                      prefix: p.prefix ?? "",
+                      property: extToIntPropMap.get(p.property),
+                  }
+                : {
+                      prefix: p.prefix ?? "",
+                      indexType: !p.useIndex
+                          ? IndexType.NO_INDEX
+                          : !p.indexType
+                            ? IndexType.NUMBER
+                            : this.mapIndexType(p.indexType),
+                  };
+            return intLabelPart;
+        });
+        const indexParts = intLabelParts.filter(
+            (p) => p.indexType !== undefined,
         );
-        const indexParts = labelParts.filter((p) => p.useIndex !== undefined);
         if (indexParts.length === 0) {
-            labelParts.push(
+            intLabelParts.push(
                 ...defaultIntAnoHRule.labelParts!.filter(
-                    (p) => p.useIndex !== undefined,
+                    (p) => p.indexType !== undefined,
                 ),
             );
         } else if (indexParts.length > 1) {
-            labelParts = _.difference(labelParts, indexParts.slice(1));
+            intLabelParts = _.difference(intLabelParts, indexParts.slice(1));
         }
 
         const intAnoHRule: HighlightingRule = {
             ...defaultIntAnoHRule,
             labelPrefix: extAnoRule.labelPrefix,
             userDisabled: extAnoRule.disabled === true,
-            labelParts: labelParts,
+            labelParts: intLabelParts,
             logicalConditions: this.mapLogicalConditions(
                 extAnoRule.logicalConditions ?? null,
                 extToIntPropMap,
@@ -1016,6 +1030,23 @@ export class DataImporterV1 implements IDataImporter {
         }
 
         return null as R;
+    }
+
+    private mapIndexType<
+        T extends string | undefined,
+        R extends T extends undefined ? undefined : IndexType,
+    >(extIndexType: T): R {
+        if (extIndexType !== undefined) {
+            if (DataMapper.INDEX_TYPE_EXT_TO_INT_MAP.has(extIndexType)) {
+                const intIndexType =
+                    DataMapper.INDEX_TYPE_EXT_TO_INT_MAP.get(extIndexType);
+                return intIndexType as R;
+            } else {
+                throw new InputDataError(`Invalid index type: ${extIndexType}`);
+            }
+        }
+
+        return undefined as R;
     }
 
     private convertExternalPositions(

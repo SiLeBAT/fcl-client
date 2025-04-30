@@ -2531,7 +2531,7 @@
                         "shape": null
                     },
                     {
-                        "name": "Cross Contamination",
+                        "name": "Cross-contamination",
                         "showInLegend": true,
                         "color": [
                             0,

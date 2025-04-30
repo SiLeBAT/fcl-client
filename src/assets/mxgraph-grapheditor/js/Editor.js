@@ -21,7 +21,7 @@ Editor = function(chromeless, themes, model, graph, editable)
         const formatNumber = (x) => (x < 10 ? '0' : '') + x;
 		const d = new Date();
         return this.filename ||
-            'ROA_report_' + (d.getFullYear()) +
+            'FCL_report_view_' + (d.getFullYear()) +
             formatNumber(d.getMonth() + 1) +
             formatNumber(d.getDate()) + '.xml';
 	};

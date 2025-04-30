@@ -7,6 +7,7 @@ import {
     Connection,
     StationStoreData,
     DeliveryStoreData,
+    IndexType,
 } from "../../data.model";
 import { Map as ImmutableMap, List as ImmutableList } from "immutable";
 import * as ExtDataConstants from "./../ext-data-constants.v1";
@@ -19,7 +20,7 @@ import {
     HighlightingRule as ExtHighlightingRule,
     LogicalCondition as ExtLogicalCondition,
 } from "../ext-data-model.v1";
-import { concat, removeNullish, Utils } from "../../util/non-ui-utils";
+import { concat, Utils } from "../../util/non-ui-utils";
 import {
     STATION_PROP_TO_REQ_TYPE_MAP,
     DELIVERY_PROP_TO_REQ_TYPE_MAP,
@@ -27,6 +28,7 @@ import {
 } from "../int-data-constants";
 import { isValueTypeValid } from "./shared";
 import { InputDataError } from "../io-errors";
+import { isPropertyLabelPart } from "../data-importer/shared";
 
 export interface ColumnInfo {
     columnId: string;
@@ -57,6 +59,8 @@ export const DONT_APPLY_VALUES_FOR_EXT_STATION_COLS: ImmutableList<string> =
         ExtDataConstants.STATION_OBSERVED,
         ExtDataConstants.STATION_SCORE,
         ExtDataConstants.STATION_WEIGHT,
+        ExtDataConstants.STATION_OUTBREAK,
+        ExtDataConstants.STATION_COMMON_LINK,
         ExtDataConstants.STATION_CROSSCONTAMINATION,
         ExtDataConstants.STATION_NORM_SCORE,
         ExtDataConstants.STATION_MAX_LOT_SCORE,
@@ -72,6 +76,7 @@ export const DONT_APPLY_VALUES_FOR_EXT_DELIVERY_COLS: ImmutableList<string> =
         ExtDataConstants.DELIVERY_OBSERVED,
         ExtDataConstants.DELIVERY_SCORE,
         ExtDataConstants.DELIVERY_WEIGHT,
+        ExtDataConstants.DELIVERY_OUTBREAK,
         ExtDataConstants.DELIVERY_CROSSCONTAMINATION,
         ExtDataConstants.DELIVERY_NORM_SCORE,
         ExtDataConstants.DELIVERY_LOT_SCORE,
@@ -96,6 +101,8 @@ export const DEFAULT_STATION_PROP_INT_TO_EXT_MAP: ImmutableMap<string, string> =
         forward: ExtDataConstants.STATION_FORWARD,
         backward: ExtDataConstants.STATION_BACKWARD,
         isMeta: ExtDataConstants.STATION_ISMETA,
+        outbreak: ExtDataConstants.STATION_OUTBREAK,
+        commonLink: ExtDataConstants.STATION_COMMON_LINK,
     });
 
 export const DENOVO_STATION_PROP_INT_TO_EXT_MAP =
@@ -136,6 +143,7 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     target: ExtDataConstants.DELIVERY_TO,
     lotKey: ExtDataConstants.DELIVERY_PRODUCT_K,
     weight: ExtDataConstants.DELIVERY_WEIGHT,
+    outbreak: ExtDataConstants.DELIVERY_OUTBREAK,
     crossContamination: ExtDataConstants.DELIVERY_CROSSCONTAMINATION,
     killContamination: ExtDataConstants.DELIVERY_KILLCONTAMINATION,
     forward: ExtDataConstants.DELIVERY_FORWARD,
@@ -144,7 +152,12 @@ export const DEFAULT_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<
     observed: ExtDataConstants.DELIVERY_OBSERVED,
     dateOut: ExtDataConstants.DELIVERY_OUT_DATE,
     dateIn: ExtDataConstants.DELIVERY_IN_DATE,
-    amount: ExtDataConstants.DELIVERY_AMOUNT,
+    amount: ExtDataConstants.DELIVERY_DELIVERY_AMOUNT,
+    amountNumber: ExtDataConstants.DELIVERY_DELIVERY_AMOUNT_NUMBER,
+    amountUnit: ExtDataConstants.DELIVERY_DELIVERY_AMOUNT_UNIT,
+    lotAmount: ExtDataConstants.DELIVERY_LOT_AMOUNT,
+    lotAmountNumber: ExtDataConstants.DELIVERY_LOT_AMOUNT_NUMBER,
+    lotAmountUnit: ExtDataConstants.DELIVERY_LOT_AMOUNT_UNIT,
 });
 
 export const DENOVO_DELIVERY_PROP_INT_TO_EXT_MAP: ImmutableMap<string, string> =
@@ -177,6 +190,20 @@ const DELIVERY_PROPS_INT_TO_EXT_ALT_MAP = ImmutableList<{
         // fall back to lot ID
         lot: ExtDataConstants.DELIVERY_LOT_ID,
     },
+    {
+        lotAmount: ExtDataConstants.DELIVERY_LOT_QUANTITY,
+    },
+    {
+        amount: ExtDataConstants.DELIVERY_AMOUNT,
+    },
+    {
+        amountNumber: ExtDataConstants.DELIVERY_AMOUNT_NUMBER,
+        amountUnit: ExtDataConstants.DELIVERY_AMOUNT_UNIT,
+    },
+    {
+        amountNumber: ExtDataConstants.DELIVERY_LIEFERUNGEN_DELIVERY_AMOUNT,
+        amountUnit: ExtDataConstants.DELIVERY_LIEFERUNGEN_DELIVERY_UNIT,
+    },
 ]);
 
 function getMatchingProp(
@@ -205,57 +232,63 @@ function getPropMap(
     explicitProps: string[],
 ): PropMap {
     const availableExtProps = Object.keys(getAvailableProps(table));
-    const availableExtPropsSet = Utils.createSimpleStringSet(availableExtProps);
-    const availableExtPropsLC = availableExtProps.map((extProp) =>
-        extProp.toLowerCase(),
-    );
-    const propMap = defaultMap.toObject();
-    for (const [intProp, defaultExtProp] of Object.entries(propMap)) {
-        // check for availability of default mapping
-        if (availableExtPropsSet[defaultExtProp] === undefined) {
-            // default mapping is not available, try lower case match
-            const matchingExtPropIndex = availableExtPropsLC.indexOf(
-                defaultExtProp.toLowerCase(),
-            );
-            if (matchingExtPropIndex >= 0) {
-                propMap[intProp] = availableExtProps[matchingExtPropIndex];
+    const propMap: { [key in string]: string } = {};
+
+    for (const extProps of [availableExtProps, referencedProps]) {
+        const extPropsSet = new Set(extProps);
+        const extPropsLC = extProps.map((extProp) => extProp.toLowerCase());
+
+        for (const [intProp, defaultExtProp] of Object.entries(
+            defaultMap.toObject(),
+        )) {
+            // check for availability of default mapping
+            if (!extPropsSet.has(defaultExtProp)) {
+                // default mapping is not available, try lower case match
+                const matchingExtPropIndex = extPropsLC.indexOf(
+                    defaultExtProp.toLowerCase(),
+                );
+                if (matchingExtPropIndex >= 0) {
+                    propMap[intProp] = extProps[matchingExtPropIndex];
+                }
+            } else {
+                propMap[intProp] = defaultExtProp;
             }
         }
-    }
-    // look for alternative mappings
-    altMapList.forEach((propSet: AltPropMap | undefined) => {
-        const intProps = Object.keys(propSet!);
-        // Check whether all (internal) props of the propSet are already mapped to an available external prop
-        if (
-            intProps.some(
-                (intProp) =>
-                    availableExtPropsSet[propMap[intProp]] === undefined,
-            )
-        ) {
-            // At least one internal prop of the propSet is not mapped to an available external prop yet
-            // get an alternative map
-            const altPropMap = Utils.createObjectFromArray(
-                intProps,
-                (intProp) => intProp,
-                (intProp) =>
-                    getMatchingProp(availableExtProps, propSet![intProp]),
-            );
-            // are all alternative mappings for all props in the set available
+        // look for alternative mappings
+        altMapList.forEach((propSet: AltPropMap | undefined) => {
+            const intProps = Object.keys(propSet!);
+            // Check whether all (internal) props of the propSet are already mapped to an available external prop
             if (
-                intProps.every((intProp) => altPropMap[intProp] !== undefined)
+                intProps.some((intProp) => !extPropsSet.has(propMap[intProp]))
             ) {
-                // yes, apply alternative mappings
-                intProps.forEach((intProp) => {
-                    propMap[intProp] = altPropMap[intProp]!;
-                });
+                // At least one internal prop of the propSet is not mapped to an available external prop yet
+                // get an alternative map
+                const altPropMap = Utils.createObjectFromArray(
+                    intProps,
+                    (intProp) => intProp,
+                    (intProp) => getMatchingProp(extProps, propSet![intProp]),
+                );
+                // are all alternative mappings for all props in the set available
+                if (
+                    intProps.every(
+                        (intProp) => altPropMap[intProp] !== undefined,
+                    )
+                ) {
+                    // yes, apply alternative mappings
+                    intProps.forEach((intProp) => {
+                        propMap[intProp] = altPropMap[intProp]!;
+                    });
+                }
             }
-        }
-    });
+        });
+    }
+
     const unmappedExtProps = [...availableExtProps, ...referencedProps].filter(
         (extProp) => !Object.values(propMap).includes(extProp),
     );
     unmappedExtProps.forEach((extProp) => {
         if (
+            !defaultMap.has(extProp) &&
             propMap[extProp] === undefined && // extProp is not an internal prop
             !explicitProps.includes(extProp) // extProp is not an explicit prop
         ) {
@@ -270,7 +303,6 @@ function getPropMap(
     });
     return new Map(Object.entries(propMap));
 }
-
 // retrieves all props referenced in HighlightingData
 function getReferencedProps(
     highlightingConditions: ExtHighlightingRule[],
@@ -325,14 +357,14 @@ export function getStationPropMap(jsonData: JsonData): PropMap {
             const logicalConditionProps = anoRule.logicalConditions
                 ? getLogicalConditionsProps(anoRule.logicalConditions)
                 : [];
-            const labelPartProps = (anoRule.labelParts || []).map(
-                (p) => p.property,
-            );
-            const nonNullishLabelPartProps = removeNullish(labelPartProps);
+            const labelPartProps = (anoRule.labelParts || [])
+                .filter(isPropertyLabelPart)
+                .map((p) => p.property);
+
             referencedProps = concat(
                 referencedProps,
                 logicalConditionProps,
-                nonNullishLabelPartProps,
+                labelPartProps,
             );
         }
     }
@@ -487,6 +519,12 @@ export const NODE_SHAPE_TYPE_EXT_TO_INT_MAP: ImmutableMap<
     STAR: NodeShapeType.STAR,
     DIAMOND: NodeShapeType.DIAMOND,
 });
+
+export const INDEX_TYPE_EXT_TO_INT_MAP: ImmutableMap<string, IndexType> =
+    ImmutableMap({
+        NUMERICAL: IndexType.NUMBER,
+        LETTER: IndexType.LETTER,
+    });
 
 export class PropMapper {
     private extToIntPropMap: Map<string, string>;

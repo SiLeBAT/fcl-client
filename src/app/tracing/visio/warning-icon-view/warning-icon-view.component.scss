@@ -1,0 +1,5 @@
+@use "../../../../assets/sass/base" as fcl;
+
+mat-icon {
+    color: fcl.$fcl-warning-color;
+}

@@ -19,9 +19,14 @@ import {
     MapSettings,
 } from "./../../../tracing/data.model";
 import { Constants } from "./../../../tracing/util/constants";
-import { ExampleData, ModelFileType } from "../../model/types";
-import { FILE_INPUT_ELEMENT_SETTINGS } from "@app/main-page/consts/consts";
+import { ExampleData } from "../../model/types";
+import { FILE_INPUT_ELEMENT_SETTINGS } from "../../../main-page/consts/consts";
 import { MatMenuTrigger } from "@angular/material/menu";
+import { ModelInputType } from "../../../tracing/io/model";
+import { isElementOf } from "@app/tracing/util/non-ui-utils";
+
+const MODEL_INPUT_TYPE_ATTR = "data-fcl-modelinputtype";
+
 @Component({
     selector: "fcl-toolbar-action",
     templateUrl: "./toolbar-action.component.html",
@@ -58,10 +63,14 @@ export class ToolbarActionComponent implements OnChanges {
     @Input() graphEditorActive: boolean;
     @Input() currentUser: User;
     @Input() fileName: string | null = null;
+    @Input() dataImportHasWarnings: boolean = false;
     @Output() toggleRightSidebar = new EventEmitter<boolean>();
-    @Output() loadModelFile = new EventEmitter<FileList>();
+    @Output() loadModelFile = new EventEmitter<{
+        fileList: FileList;
+        type?: ModelInputType;
+    }>();
     @Output() loadShapeFile = new EventEmitter<FileList>();
-    @Output() selectModelFile = new EventEmitter<ModelFileType>();
+    @Output() selectModelFile = new EventEmitter<ModelInputType>();
     @Output() selectModelFileOpenMenu = new EventEmitter<void>();
     @Output() saveImage = new EventEmitter();
     @Output() openRoaLayout = new EventEmitter();
@@ -69,6 +78,7 @@ export class ToolbarActionComponent implements OnChanges {
     @Output() graphType = new EventEmitter<GraphType>();
     @Output() mapSettings = new EventEmitter<Partial<MapSettings>>();
     @Output() downloadFile = new EventEmitter<string>();
+    @Output() openWarningsDialog = new EventEmitter<void>();
 
     graphTypes = Constants.GRAPH_TYPES;
     selectedMapOption: string;
@@ -91,6 +101,10 @@ export class ToolbarActionComponent implements OnChanges {
         }
     }
 
+    onOpenWarningsDialog() {
+        this.openWarningsDialog.emit();
+    }
+
     openSelectModelFileMenu() {
         this.openUploadMenuTrigger.openMenu();
     }
@@ -106,8 +120,17 @@ export class ToolbarActionComponent implements OnChanges {
     }
 
     onModelFileInput(event: any) {
+        const modelInputTypes = Object.keys(
+            FILE_INPUT_ELEMENT_SETTINGS,
+        ) as ModelInputType[];
+        const providedType = this.modelFileInput.nativeElement.getAttribute(
+            MODEL_INPUT_TYPE_ATTR,
+        );
+        const modelInputType = isElementOf(providedType, modelInputTypes)
+            ? providedType
+            : undefined;
         const fileList: FileList = event.target.files;
-        this.loadModelFile.emit(fileList);
+        this.loadModelFile.emit({ fileList: fileList, type: modelInputType });
         event.target.value = null;
     }
 
@@ -117,9 +140,17 @@ export class ToolbarActionComponent implements OnChanges {
         event.target.value = null;
     }
 
-    onSelectModelFile(type: ModelFileType) {
+    onSelectModelFile(type: ModelInputType) {
         this.modelFileInput.nativeElement.accept =
             FILE_INPUT_ELEMENT_SETTINGS[type].accept;
+
+        // here we use an attribute instead of a variable
+        // because we can use this mechanism for external manipulation (cypress test)
+        this.modelFileInput.nativeElement.setAttribute(
+            MODEL_INPUT_TYPE_ATTR,
+            type,
+        );
+
         this.modelFileInput.nativeElement.click();
     }
 

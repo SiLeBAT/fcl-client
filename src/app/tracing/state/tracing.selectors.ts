@@ -33,6 +33,11 @@ export const selectIsModelLoaded = createSelector(
     (state) => state.isModelLoaded,
 );
 
+export const selectIsModelLoading = createSelector(
+    selectTracingFeatureState,
+    (state) => state.isModelLoading,
+);
+
 export const getVisioReport = createSelector(
     selectTracingFeatureState,
     (state) => state.visioReport,
@@ -256,37 +261,23 @@ export const selectGisGraphState = createSelector(
     }),
 );
 
-const selectGeojsonBorderWidth = createSelector(
+const selectShapeStyle = createSelector(
     getGraphSettings,
-    (graphSettings) => graphSettings.geojsonBorderWidth,
-);
-
-const selectGeojsonBorderColor = createSelector(
-    getGraphSettings,
-    (graphSettings) => graphSettings.geojsonBorderColor,
+    (graphSettings) => graphSettings.shapeStyle,
 );
 
 export const getMapConfig = createSelector(
     selectGisGraphLayout,
     selectMapType,
     selectShapeFileData,
-    selectGeojsonBorderColor,
-    selectGeojsonBorderWidth,
+    selectShapeStyle,
     selectTileServer,
-    (
-        gisLayout,
-        mapType,
-        shapeFileData,
-        borderColor,
-        borderWidth,
-        tileServer,
-    ) => ({
+    (gisLayout, mapType, shapeFileData, shapeStyle, tileServer) => ({
         layout: gisLayout,
         mapType: mapType,
         tileServer: tileServer,
         shapeFileData: shapeFileData,
-        geojsonBorderColor: borderColor,
-        geojsonBorderWidth: borderWidth,
+        shapeStyle: shapeStyle,
     }),
 );
 
@@ -443,4 +434,14 @@ export const selectDeliveryFilterState = createSelector(
         dataServiceInputState: dataServiceInputState,
         filterTableState: deliveryFilterSettings,
     }),
+);
+
+export const selectImportWarnings = createSelector(
+    getFclData,
+    (fclData) => fclData.importWarnings,
+);
+
+export const selectImportHasWarnings = createSelector(
+    selectImportWarnings,
+    (importWarnings) => importWarnings.length > 0,
 );

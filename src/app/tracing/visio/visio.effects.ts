@@ -36,9 +36,8 @@ export class VisioEffects {
                     visioActions.VisioActionTypes.OpenROAReportConfigurationMSA,
                 ),
                 mergeMap((action) => {
-                    this.dialogService.open(ReportConfigurationComponent, {
-                        data: null,
-                    });
+                    this.dialogService.open(ReportConfigurationComponent);
+
                     return EMPTY;
                 }),
             ),

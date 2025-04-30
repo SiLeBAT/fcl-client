@@ -99,6 +99,7 @@ const initialState: TracingState = {
     isConfSideBarOpening: false,
     showGraphSettings: false,
     isModelLoaded: false,
+    isModelLoading: false,
 };
 
 export function createDefaultPropMappings(): PropMaps {
@@ -122,6 +123,7 @@ export function createInitialFclDataState(): FclData {
             deliveries: [],
             samples: [],
         },
+        importWarnings: [],
         graphSettings: {
             type: Constants.DEFAULT_GRAPH_TYPE,
             nodeSize: Constants.DEFAULT_GRAPH_NODE_SIZE,
@@ -152,8 +154,7 @@ export function createInitialFclDataState(): FclData {
             mapType: MAP_CONSTANTS.defaults.mapType,
             tileServer: MAP_CONSTANTS.defaults.tileServer,
             shapeFileData: null,
-            geojsonBorderWidth: MAP_CONSTANTS.defaults.geojsonBorderWidth,
-            geojsonBorderColor: MAP_CONSTANTS.defaults.geojsonBorderColor,
+            shapeStyle: { ...MAP_CONSTANTS.defaults.shapeStyle },
             ghostStation: null,
             ghostDelivery: null,
             hoverDeliveries: [],
@@ -189,28 +190,36 @@ export function reducer(
                 ...state,
                 tracingActive: action.payload.isActivated,
             };
-
+        case TracingActionTypes.SetFclDataLoadingSOA:
+            return {
+                ...state,
+                isModelLoading: true,
+            };
         case TracingActionTypes.LoadFclDataSuccessSOA: {
             action.payload.fclData.graphSettings.mapType =
                 state.fclData.graphSettings.mapType;
             action.payload.fclData.graphSettings.shapeFileData =
                 state.fclData.graphSettings.shapeFileData;
-            action.payload.fclData.graphSettings.geojsonBorderColor =
-                state.fclData.graphSettings.geojsonBorderColor;
-            action.payload.fclData.graphSettings.geojsonBorderWidth =
-                state.fclData.graphSettings.geojsonBorderWidth;
+            action.payload.fclData.graphSettings.shapeStyle =
+                state.fclData.graphSettings.shapeStyle;
 
             let newState: TracingState = {
                 ...state,
                 fclData: action.payload.fclData,
                 ...initialModelDependentState,
                 isModelLoaded: true,
+                isModelLoading: false,
             };
 
             newState = updateStationAutoColumnsIfRequired(newState);
 
             return newState;
         }
+        case TracingActionTypes.LoadFclDataFailureSOA:
+            return {
+                ...state,
+                isModelLoading: false,
+            };
         case TracingActionTypes.GenerateVisioLayoutSuccess:
             return {
                 ...state,
@@ -270,34 +279,22 @@ export function reducer(
                         type: GraphType.GIS,
                         mapType: MapType.SHAPE_ONLY,
                         shapeFileData: action.payload.shapeFileData,
-                        geojsonBorderWidth:
-                            MAP_CONSTANTS.defaults.geojsonBorderWidth,
-                        geojsonBorderColor:
-                            MAP_CONSTANTS.defaults.geojsonBorderColor,
+                        shapeStyle: { ...MAP_CONSTANTS.defaults.shapeStyle },
                     },
                 },
             };
 
-        case TracingActionTypes.SetGeojsonShapeBorderWidthSOA:
+        case TracingActionTypes.SetGeojsonStyleSOA:
             return {
                 ...state,
                 fclData: {
                     ...state.fclData,
                     graphSettings: {
                         ...state.fclData.graphSettings,
-                        geojsonBorderWidth: action.payload.width,
-                    },
-                },
-            };
-
-        case TracingActionTypes.SetGeojsonShapeBorderColorSOA:
-            return {
-                ...state,
-                fclData: {
-                    ...state.fclData,
-                    graphSettings: {
-                        ...state.fclData.graphSettings,
-                        geojsonBorderColor: action.payload.color,
+                        shapeStyle: {
+                            ...state.fclData.graphSettings.shapeStyle,
+                            ...action.payload,
+                        },
                     },
                 },
             };

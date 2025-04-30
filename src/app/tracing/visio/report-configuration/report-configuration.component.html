@@ -1,4 +1,4 @@
-<h1 matDialogTitle>ROA Report Configuration</h1>
+<h1 matDialogTitle>Report View Configuration</h1>
 <form>
     <div mat-dialog-content>
         <mat-accordion>
@@ -8,16 +8,13 @@
             >
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <div>
-                            {{ labelInfo.title }}
-                            <span *ngIf="labelInfo.warning"
-                                ><mat-icon
-                                    class="fcl-warning-icon"
-                                    [matTooltip]="labelInfo.warning"
-                                    >warning</mat-icon
-                                ></span
-                            >
-                        </div>
+                        <span [matTooltip]="labelInfo.tooltip">{{
+                            labelInfo.title
+                        }}</span>
+                        <fcl-warning-icon-view
+                            *ngIf="labelInfo.warning"
+                            [matTooltip]="labelInfo.warning"
+                        />
                     </mat-panel-title>
                 </mat-expansion-panel-header>
 

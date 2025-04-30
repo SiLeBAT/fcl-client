@@ -21,6 +21,7 @@ import {
     isMonthValid,
     isYearValid,
 } from "../../../util/date-utils";
+import { PartialPick } from "../../../../tracing/util/utility-types";
 
 type TypeString2Type<T extends RefinedTypeString> = T extends NumberTypeString
     ? number
@@ -33,6 +34,12 @@ type TypeString2Type<T extends RefinedTypeString> = T extends NumberTypeString
 interface AmountColumns {
     number: number;
     unit: number;
+}
+
+interface Amount {
+    number?: number;
+    unit?: string;
+    text?: string;
 }
 
 export function createEmptyImportTable<T>(): ImportTable<T> {
@@ -75,30 +82,35 @@ export function getPropsFromRow<T = { [key: string]: CellValue }>(
 }
 
 export function enrichImportIssue(
-    issue: ImportIssue,
+    issue: PartialPick<ImportIssue, "sheet">,
     row: Row,
     table: Table,
     invalidateRow: boolean,
     ref?: string | undefined,
 ): ImportIssue {
-    issue = { ...issue };
-    issue.row ??= row?.rowIndex;
+    const enrichedIssue: ImportIssue = {
+        ...issue,
+        sheet: issue.sheet ?? table.sheet,
+    };
+
+    enrichedIssue.row ??= row?.rowIndex;
     if (ref !== undefined) {
-        issue.ref ??= ref;
+        enrichedIssue.ref ??= ref;
     }
     if (invalidateRow) {
-        issue.invalidatesRow = true;
+        enrichedIssue.invalidatesRow = true;
     }
-    if (issue.col !== undefined && issue.colRef === undefined) {
+    if (enrichedIssue.col !== undefined && enrichedIssue.colRef === undefined) {
         // col is supposed to be the zero based relative index in the table
-        if (row[issue.col] !== undefined) {
-            issue.value = row[issue.col];
+        if (row[enrichedIssue.col] !== undefined) {
+            enrichedIssue.value = row[enrichedIssue.col];
         }
-        issue.colRef = table.header.columnHeaders[issue.col];
-        issue.col += table.offset.col;
+        enrichedIssue.colRef = table.header.columnHeaders[enrichedIssue.col];
+        enrichedIssue.col += table.offset.col;
         // col is now an absolute 1 based index
     }
-    return issue;
+
+    return enrichedIssue;
 }
 
 function getMergedType(
@@ -227,6 +239,7 @@ const TYPESTRING_2_FUN: {
     lat: getLat,
     lon: getLon,
     "nonneg:number": getNonNegNumber,
+    "pos:number": getNonNegNumber,
     number: getNumber,
     string: getStringOrUndefined,
     boolean: getBoolean,
@@ -305,31 +318,6 @@ export function importReference(
     return inputValue;
 }
 
-export function importPrimaryKey(
-    row: Row,
-    colIndex: number,
-    usedPks: { has: (x: string) => boolean },
-    addIssueCb: AddIssueCallback,
-): string | undefined {
-    const inputValue = getCleanedStringOrUndefined(row[colIndex]);
-    if (inputValue === undefined) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.missingValue,
-        });
-        return undefined;
-    } else if (usedPks.has(inputValue)) {
-        addIssueCb({
-            col: colIndex,
-            type: "error",
-            msg: IMPORT_ISSUES.nonUniqueValue,
-        });
-        return undefined;
-    }
-    return inputValue;
-}
-
 export function importMandatoryString(
     row: Row,
     colIndex: number,
@@ -348,6 +336,40 @@ export function importMandatoryString(
         return undefined;
     }
     return inputValue;
+}
+
+export function importAmount(
+    row: Row,
+    amountColumns: AmountColumns,
+    addIssueCb: AddIssueCallback,
+): Amount {
+    const amount: Amount = {
+        number: importValue(
+            row,
+            amountColumns.number,
+            "pos:number",
+            addIssueCb,
+        ),
+        unit: getCleanedStringOrUndefined(row[amountColumns.unit]),
+    };
+    if (
+        amount.unit !== undefined &&
+        getCleanedInput(row[amountColumns.number]) === undefined
+    ) {
+        // unit without number
+        addIssueCb({
+            col: amountColumns.number,
+            msg: IMPORT_ISSUES.missingNumberForUnit,
+        });
+    }
+    amount.text = conditionalConcat(
+        [
+            getCleanedStringOrUndefined(row[amountColumns.number]),
+            getCleanedStringOrUndefined(row[amountColumns.unit]),
+        ],
+        " ",
+    );
+    return amount;
 }
 
 export function importAggregatedAmount(

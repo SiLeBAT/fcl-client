@@ -5,9 +5,14 @@ import {
 } from "@angular/material/legacy-snack-bar";
 import { Subject } from "rxjs";
 
+export interface AlertAction {
+    action: string;
+    onClick?: () => void;
+}
 export interface INotification {
     text: string;
     config: MatSnackBarConfig;
+    action?: AlertAction;
 }
 
 @Injectable({
@@ -19,26 +24,27 @@ export class AlertService {
     private verticalPosition: MatSnackBarVerticalPosition = "bottom";
     notification$ = this.subjNotification.asObservable();
 
-    success(message: string) {
-        this.publishNotification(message, ["snackbar-success"], true);
+    success(message: string, action?: AlertAction) {
+        this.publishNotification(message, ["snackbar-success"], true, action);
     }
 
-    error(message: string) {
-        this.publishNotification(message, ["snackbar-error"], false);
+    error(message: string, action?: AlertAction) {
+        this.publishNotification(message, ["snackbar-error"], false, action);
     }
 
-    warn(message: string) {
-        this.publishNotification(message, ["snackbar-warn"], true);
+    warn(message: string, action?: AlertAction) {
+        this.publishNotification(message, ["snackbar-warn"], false, action);
     }
 
-    info(message: string) {
-        this.publishNotification(message, ["snackbar-info"], true);
+    info(message: string, action?: AlertAction) {
+        this.publishNotification(message, ["snackbar-info"], true, action);
     }
 
     private publishNotification(
         message: string,
         panelClass: string[],
         autoDismiss: boolean,
+        action?: AlertAction,
     ) {
         const config = new MatSnackBarConfig();
         if (autoDismiss) {
@@ -50,6 +56,7 @@ export class AlertService {
         const notification: INotification = {
             text: message,
             config: config,
+            action: action,
         };
 
         this.subjNotification.next(notification);

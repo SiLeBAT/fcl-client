@@ -47,39 +47,45 @@
                     <fcl-prefix-editor-view
                         class="fcl-label-part-form-field"
                         placeholder="No prefix"
-                        [disabled]="item.useIndex === false"
-                        [value]="item.useIndex === false ? ' ' : item.prefix"
+                        [disabled]="isLabelPartPrefixDisabled(item)"
+                        [value]="getLabelPartPrefix(item)"
                         (valueChange)="onLabelPartPrefixChange($event, i)"
                     ></fcl-prefix-editor-view>
                 </div>
 
                 <div class="fcl-label-part-property">
                     <fcl-property-selector-view
-                        *ngIf="item.property !== undefined"
+                        *ngIf="isPropertyLabelPart(item)"
                         class="fcl-label-part-property-form-field"
                         [value]="item.property"
                         (valueChange)="onPropertyChange($event, i)"
                         [favouriteProperties]="favouriteProperties"
                         [otherProperties]="otherProperties"
                     ></fcl-property-selector-view>
-                    <div
-                        *ngIf="item.useIndex !== undefined"
-                        class="fcl-useindex-checkbox-wrapper"
+                    <mat-form-field
+                        *ngIf="isIndexLabelPart(item)"
+                        class="fcl-complex-filter-form-field"
+                        appearance="outline"
+                        color="primary"
                     >
-                        <mat-checkbox
-                            *ngIf="item.useIndex !== undefined"
-                            class="fcl-label-part-useindex-checkbox"
-                            [checked]="item.useIndex"
-                            (change)="onUseIndexChange($event.checked, i)"
+                        <mat-select
+                            [value]="item.indexType"
+                            (valueChange)="onIndexTypeChange($event, i)"
+                            placeholder="Select index type"
                         >
-                            Use index
-                        </mat-checkbox>
-                    </div>
+                            <mat-option
+                                *ngFor="let type of availableIndexTypes"
+                                [value]="type"
+                            >
+                                {{ indexType2Label[type] }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
 
                 <button
                     mat-stroked-button
-                    *ngIf="item.property !== undefined"
+                    *ngIf="isPropertyLabelPart(item)"
                     class="fcl-label-part-remove-button fcl-label-part-list-button"
                     matTooltip="Remove Label Part"
                     matTooltipPosition="above"
@@ -106,18 +112,7 @@
     </div>
     <div class="fcl-label-preview">
         <span class="fcl-label-preview-header">Label preview:</span><br />
-        <ng-container *ngIf="rule !== null">
-            <span>{{ rule.labelPrefix }}</span>
-            <ng-container *ngFor="let item of rule.labelParts">
-                <span *ngIf="item.useIndex !== false">{{ item.prefix }}</span>
-                <span *ngIf="item.useIndex === undefined"
-                    >[{{
-                        item.property ? getPropertyName(item.property) : "?"
-                    }}]</span
-                >
-                <span *ngIf="item.useIndex === true">[Index]</span>
-            </ng-container>
-        </ng-container>
+        <span>{{ labelPreview }}</span>
     </div>
 
     <div class="fcl-edit-rule-useconditions-and-ruleservice-fields">

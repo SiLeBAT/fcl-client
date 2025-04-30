@@ -21,6 +21,7 @@ export interface FclDataSourceInfo {
 
 export interface FclData {
     source: FclDataSourceInfo;
+    importWarnings: string[];
     fclElements: FclElements;
     graphSettings: GraphSettings;
     tracingSettings: TracingSettings;
@@ -120,6 +121,10 @@ export interface Color {
     b: number;
 }
 
+export interface RGBAColor extends Color {
+    a: number;
+}
+
 export interface Position {
     x: number;
     y: number;
@@ -199,12 +204,16 @@ export interface GraphSettings extends MapSettings, ShapeFileSettings {
     ghostDelivery: DeliveryId | null;
     hoverDeliveries: DeliveryId[];
 }
-export interface ShapeStyleSettings {
-    geojsonBorderWidth: number;
-    geojsonBorderColor: Color;
+
+export interface ShapeStyle {
+    borderWidth: number;
+    borderColor: Color;
+    fillColor?: RGBAColor;
 }
-export interface ShapeFileSettings extends ShapeStyleSettings {
+
+export interface ShapeFileSettings {
     shapeFileData: ShapeFileData | null;
+    shapeStyle: ShapeStyle;
 }
 
 export interface MapSettings {
@@ -228,10 +237,16 @@ export interface MakeElementsInvisibleInputState {
     tracingSettings: TracingSettings;
 }
 
+export enum IndexType {
+    NO_INDEX,
+    NUMBER,
+    LETTER,
+}
+
 export interface LabelPart {
     property?: string | null;
     prefix: string;
-    useIndex?: boolean;
+    indexType?: IndexType;
 }
 
 export interface HighlightingRule {

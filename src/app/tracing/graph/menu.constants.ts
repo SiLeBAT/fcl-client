@@ -45,7 +45,7 @@ export class MenuItemStrings {
     };
 
     static readonly clearCrossContaminations: ItemInfo = {
-        displayName: "Clear Cross Contaminations",
+        displayName: "Clear Cross-contaminations",
     };
 
     static readonly clearInvisibility: ItemInfo = {
@@ -117,11 +117,11 @@ export class MenuItemStrings {
     };
 
     static readonly unsetStationCrossContamination: ItemInfo = {
-        displayName: "Unset Cross Contamination",
+        displayName: "Unset Cross-contamination",
     };
 
     static readonly setStationCrossContamination: ItemInfo = {
-        displayName: "Set Cross Contamination",
+        displayName: "Set Cross-contamination",
     };
 
     static readonly unsetKillContamination: ItemInfo = {

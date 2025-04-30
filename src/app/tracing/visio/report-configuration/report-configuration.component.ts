@@ -1,8 +1,5 @@
-import { Component, Inject, DoCheck } from "@angular/core";
-import {
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-    MatLegacyDialogRef as MatDialogRef,
-} from "@angular/material/legacy-dialog";
+import { Component, DoCheck } from "@angular/core";
+import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
 import { Store } from "@ngrx/store";
 import * as storeActions from "../../state/tracing.actions";
 import * as roaActions from "../visio.actions";
@@ -11,52 +8,44 @@ import { take } from "rxjs/operators";
 import * as TracingSelectors from "../../state/tracing.selectors";
 import { State } from "@app/tracing/state/tracing.reducers";
 import * as _ from "lodash";
-import {
-    getPublicStationProperties,
-    getLotProperties,
-    getSampleProperties,
-    PropInfo,
-} from "@app/tracing/shared/property-info";
 import { DataService } from "@app/tracing/services/data.service";
 import { combineLatest } from "rxjs";
-import { createDefaultROASettings, getUnitPropFromAmountProp } from "../shared";
 import {
-    AmountUnitPair,
+    createDefaultROASettings,
+    getUnitPropFromAmountProp,
+    isPropElementInfo,
+    isPropElementInfoWithProp,
+    isTextElementInfo,
+} from "../shared";
+import {
     LabelElementInfo,
-    PropElementInfo,
+    LabelInfo,
+    PropInfo,
     ROALabelSettings,
     ROASettings,
-    TextElementInfo,
 } from "../model";
+import { ReportConfigurationService } from "../report-configuration-service";
 
-function propCompare(propA: PropInfo, propB: PropInfo): number {
-    const textA = propA.label ?? propA.prop;
-    const textB = propB.label ?? propB.prop;
-    return textA.toUpperCase().localeCompare(textB.toUpperCase());
-}
-
-function sortProps(props: PropInfo[]): PropInfo[] {
-    return props.sort(propCompare);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ReportConfigurationData {}
-
-interface LabelInfo {
-    title: string;
-    disabled?: boolean;
-    warning?: string;
-    labelElements: LabelElementInfo[][];
-    availableProps: PropInfo[];
-    amountUnitPairs: AmountUnitPair[];
-}
-
+const WARNING_LABEL_HAS_WARNINGS = "Label configuration with warnings(s).";
+const WARNING_NO_DATA_AVAILABLE = "No data available.";
 const WARNING_STATION_ANONYMIZATION_IS_ACTIVE =
     "Anonymisation Label is activated. To configure the station information shown in the ROA Style, deactivate this label in the station highlighting menu.";
-const WARNING_DATA_IS_NOT_AVAILABLE = "Some data is not available.";
 
 const AMOUNT_PROP_MATCHER_REGEXP = /.*amount$/i;
 
+function haveLabelElementsWarnings(
+    elements: LabelElementInfo[],
+    availableProps: PropInfo[],
+): boolean {
+    const propElements = elements.filter(isPropElementInfoWithProp);
+    return propElements.some((e) => {
+        const propInfo = availableProps.find((p) => p.prop === e.prop);
+        if (!propInfo) {
+            return true;
+        }
+        return propInfo.warnings !== undefined;
+    });
+}
 @Component({
     selector: "fcl-report-configuration",
     templateUrl: "./report-configuration.component.html",
@@ -86,8 +75,8 @@ export class ReportConfigurationComponent implements DoCheck {
     constructor(
         private store: Store<State>,
         private dataService: DataService,
+        private reportConfigurationService: ReportConfigurationService,
         public dialogRef: MatDialogRef<ReportConfigurationComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: ReportConfigurationData,
     ) {
         this.init();
     }
@@ -125,22 +114,17 @@ export class ReportConfigurationComponent implements DoCheck {
         const data = this.dataService.getData(dataServiceInputState);
         this.isStationAnonymizationActive = data.isStationAnonymizationActive;
 
-        this.availableProps = {
-            companyProps: sortProps(getPublicStationProperties(data.stations)),
-            lotProps: sortProps(getLotProperties(data.deliveries)),
-            sampleProps: sortProps(
-                getSampleProperties(dataServiceInputState.fclElements.samples),
-            ),
-        };
+        this.availableProps = this.reportConfigurationService.getAvailableProps(
+            dataServiceInputState,
+        );
     }
 
     private setAmountUnitPairs(): void {
         if (this.labelInfos.lotLabel.labelElements.length >= 3) {
             const propElements =
                 this.labelInfos.lotLabel.labelElements[2].filter(
-                    (element) =>
-                        (element as PropElementInfo).prop !== undefined,
-                ) as PropElementInfo[];
+                    isPropElementInfo,
+                );
             if (propElements.length >= 2) {
                 this.labelInfos.lotLabel.amountUnitPairs = [
                     {
@@ -213,14 +197,19 @@ export class ReportConfigurationComponent implements DoCheck {
 
         // set initial labelInfo disabled and warning values
         this.orderedLabelInfos.forEach((labelInfo) => {
-            labelInfo.disabled = labelInfo.availableProps.length === 0;
-            labelInfo.warning =
-                labelInfo.availableProps.length === 0
-                    ? WARNING_DATA_IS_NOT_AVAILABLE
-                    : undefined;
+            const noAvailableProps = !labelInfo.availableProps.some(
+                (p) => !p.isDataUnavailable,
+            );
+            labelInfo.disabled = noAvailableProps;
+            labelInfo.tooltip = noAvailableProps
+                ? WARNING_NO_DATA_AVAILABLE
+                : undefined;
         });
 
-        if (this.isStationAnonymizationActive) {
+        if (
+            this.isStationAnonymizationActive &&
+            !this.labelInfos.stationLabel.disabled
+        ) {
             this.labelInfos.stationLabel.disabled = true;
             this.labelInfos.stationLabel.warning =
                 WARNING_STATION_ANONYMIZATION_IS_ACTIVE;
@@ -257,11 +246,12 @@ export class ReportConfigurationComponent implements DoCheck {
         const labelElements: LabelElementInfo[][][] = Object.values(
             roaSettings.labelSettings,
         );
-        const flattenedLabelElements = _.flattenDeep(labelElements);
-        const propElements = flattenedLabelElements.filter(
-            (e) => (e as PropElementInfo).prop != null,
-        ) as PropElementInfo[];
-        for (const propElement of propElements) {
+        const flattenedLabelElements = labelElements.flat(2);
+
+        const propElementsWithProp = flattenedLabelElements.filter(
+            isPropElementInfoWithProp,
+        );
+        for (const propElement of propElementsWithProp) {
             if (propElement.prop!.match(AMOUNT_PROP_MATCHER_REGEXP)) {
                 propElement.interpretAsNumber = true;
             }
@@ -269,11 +259,11 @@ export class ReportConfigurationComponent implements DoCheck {
 
         const expectedAmountPropElement =
             roaSettings.labelSettings.lotSampleLabel[2].find(
-                (e) => (e as PropElementInfo).prop != null,
+                isPropElementInfoWithProp,
             );
+
         if (expectedAmountPropElement !== undefined) {
-            (expectedAmountPropElement as PropElementInfo).interpretAsNumber =
-                true;
+            expectedAmountPropElement.interpretAsNumber = true;
         }
     }
 
@@ -284,18 +274,16 @@ export class ReportConfigurationComponent implements DoCheck {
         for (const labelRow of labelElements) {
             const row: LabelElementInfo[] = [];
             for (const labelElement of labelRow) {
-                if ((labelElement as PropElementInfo).prop === undefined) {
-                    const textElement = labelElement as TextElementInfo;
+                if (isTextElementInfo(labelElement)) {
                     row.push({
-                        text: textElement.text,
+                        text: labelElement.text,
                         dependendOnProp: labelElement.dependendOnProp,
                     });
                 } else {
-                    const propElement = labelElement as PropElementInfo;
                     row.push({
-                        prop: propElement.prop,
-                        altText: propElement.altText,
-                        isNullable: propElement.isNullable,
+                        prop: labelElement.prop,
+                        altText: labelElement.altText,
+                        isNullable: labelElement.isNullable,
                         dependendOnProp: labelElement.dependendOnProp,
                     });
                 }
@@ -308,25 +296,16 @@ export class ReportConfigurationComponent implements DoCheck {
     private updateLabelInfoWarnings(): void {
         const labelInfos = Object.values(this.labelInfos);
         const enabledLabelInfos = labelInfos.filter((x) => !x.disabled);
-        labelInfoLoop: for (const labelInfo of enabledLabelInfos) {
-            const propSet = new Set(
-                labelInfo.availableProps.map((p) => p.prop),
-            );
-
-            for (const labelElementRow of labelInfo.labelElements) {
-                const propElements = labelElementRow.filter(
-                    (e) => (e as PropElementInfo).prop !== undefined,
-                ) as PropElementInfo[];
-                const nonNullPropElements = propElements.filter(
-                    (e) => e.prop !== null,
+        for (const labelInfo of enabledLabelInfos) {
+            if (!labelInfo.disabled) {
+                const someIssueExist = haveLabelElementsWarnings(
+                    labelInfo.labelElements.flat(),
+                    labelInfo.availableProps,
                 );
-                if (nonNullPropElements.some((e) => !propSet.has(e.prop!))) {
-                    labelInfo.warning = WARNING_DATA_IS_NOT_AVAILABLE;
-                    continue labelInfoLoop;
-                }
+                labelInfo.warning = someIssueExist
+                    ? WARNING_LABEL_HAS_WARNINGS
+                    : undefined;
             }
-
-            labelInfo.warning = undefined;
         }
     }
 

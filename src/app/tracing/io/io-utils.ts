@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { InputEncodingError, InputFormatError } from "./io-errors";
+import { ModelInputType } from "./model";
 
 export async function getDataFromPath(
     filePath: string,
@@ -29,6 +30,12 @@ export function isJsonFileType(file: File): boolean {
 
 export function isExcelFileType(file: File): boolean {
     return file.name.endsWith(".xlsx");
+}
+
+export function isJsonInputType(
+    type: ModelInputType,
+): type is "json-fcl" | "json-utx" {
+    return type === "json-fcl" || type === "json-utx";
 }
 
 export async function getTextFromUtf8EncodedFile(file: File): Promise<string> {

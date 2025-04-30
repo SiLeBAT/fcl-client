@@ -1,56 +1,83 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { FclData, ShapeFileData, JsonDataExtract } from "../data.model";
-import { createInitialFclDataState } from "../state/tracing.reducers";
 import { DataImporter } from "./data-importer/data-importer";
 import { DataExporter } from "./data-exporter";
 import { DataImporterV1 } from "./data-importer/data-importer-v1";
 import * as shapeFileImporter from "./data-importer/shape-file-importer";
-import { getJsonFromFile, isJsonFileType } from "./io-utils";
+import { getJsonFromFile, isJsonFileType, isJsonInputType } from "./io-utils";
 import { JsonData } from "./ext-data-model.v1";
 import * as _ from "lodash";
 import { importXlsxFile } from "./data-importer/xlsx-import/xlsx-import";
+import {
+    hasUtxCore,
+    UtxImporter,
+} from "./data-importer/utx-import/utx-importer";
+import { ModelInputType } from "./model";
 
 @Injectable({
     providedIn: "root",
 })
 export class IOService {
-    private async preprocessData(data: any): Promise<FclData> {
-        const fclData: FclData = createInitialFclDataState();
-        await DataImporter.preprocessData(data, fclData, this.httpClient);
-        return fclData;
+    private async getFclDataFromFclJson(data: any): Promise<FclData> {
+        return DataImporter.loadData(data, this.httpClient);
+    }
+
+    private async getFclDataFromUtxJson(data: any): Promise<FclData> {
+        return new UtxImporter(this.httpClient).importData(data);
+    }
+
+    private async getFclDataFromJson(
+        data: any,
+        type: ModelInputType | undefined,
+    ): Promise<FclData> {
+        return type === "json-utx" || (type === undefined && hasUtxCore(data))
+            ? this.getFclDataFromUtxJson(data)
+            : this.getFclDataFromFclJson(data);
     }
 
     constructor(private httpClient: HttpClient) {}
 
-    private async getFclDataFromFile(file: File): Promise<FclData> {
+    private async getFclDataFromFile(
+        file: File,
+        type?: ModelInputType,
+    ): Promise<FclData> {
         let fclData: FclData;
-        if (isJsonFileType(file)) {
+        if (
+            (type !== undefined && isJsonInputType(type)) ||
+            (type === undefined && isJsonFileType(file))
+        ) {
             const jsonData = await getJsonFromFile(file);
-            fclData = await this.preprocessData(jsonData);
+            fclData = await this.getFclDataFromJson(jsonData, type);
         } else {
-            const jsonData = await importXlsxFile(file);
-            fclData = await this.preprocessData(jsonData);
+            const { data: jsonData, warnings } = await importXlsxFile(file);
+            fclData = await this.getFclDataFromFclJson(jsonData);
+            fclData.importWarnings = [...warnings, ...fclData.importWarnings];
         }
         fclData.source.name = file.name;
         return fclData;
     }
 
-    async getFclData(dataSource: string | File): Promise<FclData> {
+    async getFclData(
+        dataSource: string | File,
+        type?: ModelInputType,
+    ): Promise<FclData> {
         if (typeof dataSource === "string") {
             return this.httpClient
                 .get(dataSource)
                 .toPromise()
-                .then(async (response) => this.preprocessData(response))
-                .then((data) => {
-                    data.source.name = this.getFileName(dataSource);
-                    return data;
+                .then(async (response) =>
+                    this.getFclDataFromJson(response, type),
+                )
+                .then((fclData) => {
+                    fclData.source.name = this.getFileName(dataSource);
+                    return fclData;
                 })
                 .catch(async (e) => Promise.reject(e));
         } else if (dataSource instanceof File) {
             const file: File = dataSource;
             return new Promise((resolve, reject) => {
-                this.getFclDataFromFile(file)
+                this.getFclDataFromFile(file, type)
                     .then((fclData) => resolve(fclData))
                     .catch((e) => reject(e));
             });

@@ -17,5 +17,7 @@
     (mapSettings)="setMapSettings($event)"
     (loadShapeFile)="onLoadShapeFile($event)"
     (downloadFile)="onDownloadFile($event)"
+    (openWarningsDialog)="onOpenWarningsDialog()"
+    [dataImportHasWarnings]="dataImportHasWarnings$ | async"
 >
 </fcl-toolbar-action>

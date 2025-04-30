@@ -1,51 +1,78 @@
-import {
-    AddIssueCallback,
-    ColumnMapping,
-    ImportIssue,
-    SetLike,
-} from "../model";
+import { AddIssueCallback, ColumnMapping, SetLike } from "../model";
 import {
     enrichImportIssue,
     getPropsFromRow,
     getStringOrUndefined,
-    importAggregatedAmount,
+    importAmount,
     importMandatoryString,
-    importPrimaryKey,
     importReference,
     importStringDate,
-    importValue,
 } from "../shared";
 import { Row, Table } from "../xlsx-reader";
 import { AllInOneDeliveryRow, DeliveryColumn } from "./model";
 
+function importLotAmount(
+    row: Row,
+    addIssueCb: AddIssueCallback,
+): Pick<
+    AllInOneDeliveryRow,
+    "lotAmountNumber" | "lotAmountUnit" | "lotAmount"
+> {
+    const amount = importAmount(
+        row,
+        {
+            number: DeliveryColumn.LOT_AMOUNT_NUMBER,
+            unit: DeliveryColumn.LOT_AMOUNT_UNIT,
+        },
+        addIssueCb,
+    );
+    return {
+        lotAmount: amount.text,
+        lotAmountNumber: amount.number,
+        lotAmountUnit: amount.unit,
+    };
+}
+
+function importDeliveryAmount(
+    row: Row,
+    addIssueCb: AddIssueCallback,
+): Pick<
+    AllInOneDeliveryRow,
+    "unitAmountNumber" | "unitAmountUnit" | "unitAmount"
+> {
+    const amount = importAmount(
+        row,
+        {
+            number: DeliveryColumn.UNIT_AMOUNT_NUMBER,
+            unit: DeliveryColumn.UNIT_AMOUNT_UNIT,
+        },
+        addIssueCb,
+    );
+    return {
+        unitAmount: amount.text,
+        unitAmountNumber: amount.number,
+        unitAmountUnit: amount.unit,
+    };
+}
+
 export function importDelivery(
     row: Row,
     table: Table,
+    externalId: string | undefined,
     optionalColumnMappings: ColumnMapping[],
     otherColumnMappings: ColumnMapping[],
-    extDeliveryIdRegister: SetLike,
     extStationIdRegister: SetLike,
     externalAddIssueCallback: AddIssueCallback,
 ): Partial<AllInOneDeliveryRow> {
-    // eslint-disable-next-line prefer-const
-    let externalId: string | undefined;
-
     const addIssueCallback: AddIssueCallback = (
-        issue: ImportIssue,
-        invalidateRow: boolean = false,
+        issue,
+        invalidateRow = false,
     ) => {
         externalAddIssueCallback(
             enrichImportIssue(issue, row, table, invalidateRow, externalId),
             invalidateRow,
         );
     };
-
-    externalId = importPrimaryKey(
-        row,
-        DeliveryColumn.EXT_ID,
-        extDeliveryIdRegister,
-        addIssueCallback,
-    );
 
     return {
         extId: externalId,
@@ -62,11 +89,7 @@ export function importDelivery(
             addIssueCallback,
         ),
         productName: getStringOrUndefined(row[DeliveryColumn.PRODUCT_NAME]),
-        lotNumber: importMandatoryString(
-            row,
-            DeliveryColumn.LOT_NUMBER,
-            addIssueCallback,
-        ),
+        lotNumber: getStringOrUndefined(row[DeliveryColumn.LOT_NUMBER]),
         dateOut: importStringDate(
             row,
             {
@@ -85,19 +108,8 @@ export function importDelivery(
             },
             addIssueCallback,
         ),
-        unitAmount: importAggregatedAmount(row, {
-            number: DeliveryColumn.UNIT_AMOUNT_NUMBER,
-            unit: DeliveryColumn.UNIT_AMOUNT_UNIT,
-        }),
-        lotAmountNumber: importValue(
-            row,
-            DeliveryColumn.LOT_AMOUNT_NUMBER,
-            "nonneg:number",
-            addIssueCallback,
-        ),
-        lotAmountUnit: getStringOrUndefined(
-            row[DeliveryColumn.LOT_AMOUNT_UNIT],
-        ),
+        ...importLotAmount(row, addIssueCallback),
+        ...importDeliveryAmount(row, addIssueCallback),
         otherProps: getPropsFromRow(row, otherColumnMappings, addIssueCallback),
         ...getPropsFromRow(row, optionalColumnMappings, addIssueCallback),
     };

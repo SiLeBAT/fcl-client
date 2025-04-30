@@ -1,0 +1,8 @@
+.fcl-drag-handle {
+    display: flex;
+    justify-content: flex-end;
+
+    mat-icon {
+        cursor: move;
+    }
+}

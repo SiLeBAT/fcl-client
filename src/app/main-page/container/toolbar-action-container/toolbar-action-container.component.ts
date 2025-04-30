@@ -20,7 +20,7 @@ import { DataService } from "./../../../tracing/services/data.service";
 import { Utils as UIUtils } from "./../../../tracing/util/ui-utils";
 import { Observable, combineLatest } from "rxjs";
 import { take, takeWhile } from "rxjs/operators";
-import { ExampleData, ModelFileType } from "@app/main-page/model/types";
+import { ExampleData } from "@app/main-page/model/types";
 import { MainPageService } from "@app/main-page/services/main-page.service";
 import {
     MatLegacyDialog as MatDialog,
@@ -34,6 +34,8 @@ import { Constants } from "@app/tracing/util/constants";
 import { ToolbarActionComponent } from "@app/main-page/presentation/toolbar-action/toolbar-action.component";
 import { IOService } from "@app/tracing/io/io.service";
 import { MAP_CONSTANTS } from "@app/tracing/util/map-constants";
+import { ShowDataImportWarningsMSA } from "@app/tracing/tracing.actions";
+import { ModelInputType } from "../../../tracing/io/model";
 
 @Component({
     selector: "fcl-toolbar-action-container",
@@ -45,10 +47,13 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
     toolbarActionComponent: ToolbarActionComponent;
 
     isModelLoaded$ = this.store.select(tracingSelectors.selectIsModelLoaded);
-    tracingActive$ = this.store.pipe(select(tracingSelectors.getTracingActive));
-    graphEditorActive$ = this.store.pipe(select(fromEditor.isActive));
-    currentUser$ = this.store.pipe(select(fromUser.getCurrentUser));
-    fileName$ = this.store.pipe(select(tracingSelectors.selectSourceFileName));
+    tracingActive$ = this.store.select(tracingSelectors.getTracingActive);
+    graphEditorActive$ = this.store.select(fromEditor.isActive);
+    currentUser$ = this.store.select(fromUser.getCurrentUser);
+    fileName$ = this.store.select(tracingSelectors.selectSourceFileName);
+    dataImportHasWarnings$ = this.store.select(
+        tracingSelectors.selectImportHasWarnings,
+    );
 
     graphSettings: GraphSettings;
     hasGisInfo = false;
@@ -110,8 +115,14 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
         });
     }
 
-    loadModelFile(fileList: FileList) {
-        this.loadFile(fileList);
+    loadModelFile({
+        fileList,
+        type,
+    }: {
+        fileList: FileList;
+        type?: ModelInputType;
+    }) {
+        this.loadFile(fileList, type);
     }
 
     onLoadExampleDataFile(exampleData: ExampleData) {
@@ -146,6 +157,10 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
 
     onOpenRoaLayout() {
         this.mainPageService.onROALayout();
+    }
+
+    onOpenWarningsDialog() {
+        this.store.dispatch(new ShowDataImportWarningsMSA());
     }
 
     ngOnDestroy() {
@@ -205,9 +220,12 @@ export class ToolbarActionContainerComponent implements OnInit, OnDestroy {
             );
     }
 
-    private loadFile(dataSource: string | FileList) {
+    private loadFile(dataSource: string | FileList, type?: ModelInputType) {
         this.store.dispatch(
-            new tracingIOActions.LoadFclDataMSA({ dataSource: dataSource }),
+            new tracingIOActions.LoadFclDataMSA({
+                dataSource: dataSource,
+                type: type,
+            }),
         );
     }
 

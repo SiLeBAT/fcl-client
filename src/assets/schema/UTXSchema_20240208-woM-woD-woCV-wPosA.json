@@ -1,0 +1,3172 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$defs": {
+        "types": {
+            "Uuid": {
+                "type": "string",
+                "format": "uuid"
+            },
+            "Duration1": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^\\d{2}-\\d{2}$"
+            },
+            "Duration2": {
+                "type": "string",
+                "format": "regex",
+                "pattern": "^\\d{2}-\\d{2} \\d{2}:\\d{2}$"
+            },
+            "FoodEx2Code": {
+                "type": "string"
+            },
+            "Url": {
+                "type": "string",
+                "format": "uri"
+            },
+            "Email": {
+                "type": "string",
+                "format": "email"
+            },
+            "CompleteDate": {
+                "allOf": [
+                    {
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 10
+                    },
+                    {
+                        "$ref": "#/$defs/types/PartialDateTime"
+                    }
+                ]
+            },
+            "PartialDate": {
+                "allOf": [
+                    {
+                        "type": "string",
+                        "maxLength": 10
+                    },
+                    {
+                        "$ref": "#/$defs/types/PartialDateTime"
+                    }
+                ]
+            },
+            "Date": {
+                "$ref": "#/$defs/types/PartialDate"
+            },
+            "CompleteDateTime": {
+                "allOf": [
+                    {
+                        "type": "string",
+                        "minLength": 16
+                    },
+                    {
+                        "$ref": "#/$defs/types/PartialDateTime"
+                    }
+                ]
+            },
+            "PartialDateTime": {
+                "type": "string",
+                "title": "title PartialDateTime",
+                "description": "descr. partial date time",
+                "minLength": 4,
+                "maxLength": 19,
+                "format": "regex",
+                "pattern": "^(((\\d{4}-((0[13578]-|1[02]-)(0[1-9]|[12]\\d|3[01])|(0[13456789]-|1[012]-)(0[1-9]|[12]\\d|30)|02-(0[1-9]|1\\d|2[0-8])))|((([02468][048]|[13579][26])00|\\d{2}([13579][26]|0[48]|[2468][048])))-02-29)( ([0-1]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?)?|\\d{4}(-(0[1-9]|1[0-2]))?)$"
+            },
+            "DateTime": {
+                "$ref": "#/$defs/types/PartialDateTime"
+            },
+            "PositiveNumber": {
+                "type": "number",
+                "exclusiveMinimum": 0
+            },
+            "NonNegativeInteger": {
+                "type": "integer",
+                "minimum": 0
+            }
+        },
+        "cvs": {
+            "ActivityPrimaryType": {
+                "type": "string",
+                "enum": [
+                    "assemble",
+                    "join/merge",
+                    "mix",
+                    "blend",
+                    "split/divide",
+                    "distribute",
+                    "unload",
+                    "transport",
+                    "store",
+                    "trade",
+                    "import",
+                    "export",
+                    "relabel",
+                    "repack",
+                    "collecting",
+                    "primarily produce",
+                    "primarily process",
+                    "produce/manufacture",
+                    "process/transform",
+                    "retail",
+                    "catering",
+                    "deplete",
+                    "consume",
+                    "other"
+                ]
+            },
+            "AmbientControl": {
+                "type": "string",
+                "enum": [
+                    "none",
+                    "climate control (humidity and temperature)",
+                    "chilled",
+                    "frozen",
+                    "other"
+                ]
+            },
+            "ProcessingStep": {
+                "type": "string",
+                "enum": [
+                    "picking/harvesting",
+                    "catching/slaughtering",
+                    "washing",
+                    "gutting / bleeding",
+                    "sorting/grading",
+                    "cutting/slicing",
+                    "mincing/macerating",
+                    "heating/ pasteurizing/ sterilising",
+                    "freezing/cooling",
+                    "pickling/salting/other preservations",
+                    "packing",
+                    "preparing",
+                    "other"
+                ]
+            },
+            "FoodSafetyChange": {
+                "type": "string",
+                "enum": [
+                    "increase",
+                    "equal",
+                    "decrease",
+                    "potential safe"
+                ]
+            },
+            "TransportationMean": {
+                "type": "string",
+                "enum": [
+                    "Plane",
+                    "Ship / vessel",
+                    "Train",
+                    "Lorry",
+                    "other"
+                ]
+            },
+            "FoodChainSector": {
+                "type": "string",
+                "enum": [
+                    "Meat/meat products",
+                    "Fish/fishery products/molluscs",
+                    "Products of animal origin, excl. meat, fish",
+                    "Sprouts",
+                    "Products of non-animal origin",
+                    "Complex products",
+                    "Retail/catering",
+                    "Consumer",
+                    "Feed",
+                    "other"
+                ]
+            },
+            "FoodChainStage": {
+                "type": "string",
+                "enum": [
+                    "Primary producer",
+                    "Consolidator",
+                    "Processor",
+                    "Wholesaler",
+                    "Distributor",
+                    "Retailer/Cash and Carry",
+                    "Caterer",
+                    "Consumer",
+                    "other"
+                ]
+            },
+            "StorageSeparation": {
+                "type": "string",
+                "enum": [
+                    "Open air",
+                    "Silo",
+                    "Tank",
+                    "storehouse:",
+                    "cold/freezing store",
+                    "other"
+                ]
+            },
+            "StorageRotationRules": {
+                "type": "string",
+                "enum": [
+                    "None",
+                    "First-in-first-out",
+                    "First-expired-first-out",
+                    "other"
+                ]
+            },
+            "AuditOutcomeClassification": {
+                "type": "string",
+                "enum": [
+                    "Inspected  no action",
+                    "Inspected  suspicion",
+                    "Inspected – enforcement action taken",
+                    "Not inspected"
+                ]
+            },
+            "ExpiryDateType": {
+                "type": "string",
+                "enum": [
+                    "No expiry date (fresh product)",
+                    "Best before date",
+                    "Use by date",
+                    "other"
+                ]
+            },
+            "LogisticUnitType": {
+                "type": "string",
+                "enum": [
+                    "Vessel",
+                    "Container",
+                    "Wagon",
+                    "Lorry",
+                    "Palette",
+                    "Trade Unit",
+                    "other"
+                ]
+            },
+            "ProtectionType": {
+                "type": "string",
+                "enum": [
+                    "Open",
+                    "Closed",
+                    "Sealed",
+                    "other"
+                ]
+            },
+            "ProductPackageType": {
+                "type": "string",
+                "enum": [
+                    "Unpacked",
+                    "Intermediate packed",
+                    "Pre-packed",
+                    "Packed at point of sale",
+                    "Packed at sale",
+                    "Food / self-service",
+                    "other"
+                ]
+            },
+            "DocumentType": {
+                "type": "string",
+                "enum": [
+                    "Report",
+                    "Product specification",
+                    "Material order",
+                    "Invoice",
+                    "Certificate of loading",
+                    "Receipt of loading",
+                    "Quality report",
+                    "Monitoring result",
+                    "Inspection report",
+                    "Audit result",
+                    "Laboratory report",
+                    "other"
+                ]
+            },
+            "InvestigationType": {
+                "type": "string",
+                "enum": [
+                    "Outbreak investigation / incident",
+                    "Forward tracing / recall / withdrawal",
+                    "other"
+                ]
+            },
+            "ContaminationType": {
+                "type": "string",
+                "enum": [
+                    "Microbial",
+                    "Chemical",
+                    "other"
+                ]
+            },
+            "CorrectionType": {
+                "type": "string",
+                "enum": [
+                    "split",
+                    "merge",
+                    "undelete",
+                    "delete",
+                    "edit"
+                ]
+            },
+            "ContactType": {
+                "type": "string",
+                "enum": [
+                    "Station",
+                    "Fbo",
+                    "Personal"
+                ]
+            },
+            "BorderEu": {
+                "type": "string",
+                "enum": [
+                    "Within the EU",
+                    "Import in the EU",
+                    "Export from EU"
+                ]
+            },
+            "AddressCountry": {
+                "type": "string",
+                "description": "ISO 3166-1 alpha 2 country code",
+                "enum": [
+                    "AB",
+                    "AF",
+                    "AN",
+                    "AX",
+                    "AL",
+                    "DZ",
+                    "AS",
+                    "AD",
+                    "AO",
+                    "AI",
+                    "AQ",
+                    "AG",
+                    "AR",
+                    "AM",
+                    "AW",
+                    "AU",
+                    "AT",
+                    "AZ",
+                    "BS",
+                    "BH",
+                    "BD",
+                    "BB",
+                    "BY",
+                    "BE",
+                    "BZ",
+                    "BJ",
+                    "BM",
+                    "BT",
+                    "BO",
+                    "BQ",
+                    "BA",
+                    "BW",
+                    "BV",
+                    "BR",
+                    "IO",
+                    "BN",
+                    "BG",
+                    "BF",
+                    "BI",
+                    "KH",
+                    "CM",
+                    "CA",
+                    "CV",
+                    "KY",
+                    "CF",
+                    "TD",
+                    "CL",
+                    "CN",
+                    "CX",
+                    "CC",
+                    "CO",
+                    "CS",
+                    "KM",
+                    "CG",
+                    "CD",
+                    "CK",
+                    "CR",
+                    "CI",
+                    "HR",
+                    "CU",
+                    "CW",
+                    "CY",
+                    "CZ",
+                    "DK",
+                    "DJ",
+                    "DM",
+                    "DO",
+                    "EC",
+                    "EG",
+                    "SV",
+                    "GQ",
+                    "ER",
+                    "EE",
+                    "ET",
+                    "FK",
+                    "FO",
+                    "FJ",
+                    "FI",
+                    "FR",
+                    "GF",
+                    "PF",
+                    "TF",
+                    "GA",
+                    "GM",
+                    "GE",
+                    "DE",
+                    "GH",
+                    "GI",
+                    "GR",
+                    "GL",
+                    "GD",
+                    "GP",
+                    "GU",
+                    "GT",
+                    "GG",
+                    "GN",
+                    "GW",
+                    "GY",
+                    "HT",
+                    "HM",
+                    "VA",
+                    "HN",
+                    "HK",
+                    "HU",
+                    "IS",
+                    "IN",
+                    "ID",
+                    "IR",
+                    "IQ",
+                    "IE",
+                    "IM",
+                    "IL",
+                    "IT",
+                    "JM",
+                    "JP",
+                    "JE",
+                    "JO",
+                    "KZ",
+                    "KE",
+                    "KI",
+                    "KP",
+                    "KR",
+                    "KW",
+                    "KG",
+                    "LA",
+                    "LV",
+                    "LB",
+                    "LS",
+                    "LR",
+                    "LY",
+                    "LI",
+                    "LT",
+                    "LU",
+                    "MO",
+                    "MK",
+                    "MG",
+                    "MW",
+                    "MY",
+                    "MV",
+                    "ML",
+                    "MT",
+                    "MH",
+                    "MQ",
+                    "MR",
+                    "MU",
+                    "YT",
+                    "MX",
+                    "FM",
+                    "MD",
+                    "MC",
+                    "MN",
+                    "ME",
+                    "MS",
+                    "MA",
+                    "MZ",
+                    "MM",
+                    "NA",
+                    "NR",
+                    "NP",
+                    "NL",
+                    "NC",
+                    "NT",
+                    "NZ",
+                    "NI",
+                    "NE",
+                    "NG",
+                    "NU",
+                    "NF",
+                    "MP",
+                    "NO",
+                    "OM",
+                    "PK",
+                    "PW",
+                    "PS",
+                    "PA",
+                    "PG",
+                    "PY",
+                    "PE",
+                    "PH",
+                    "PN",
+                    "PL",
+                    "PT",
+                    "PR",
+                    "QA",
+                    "RE",
+                    "RO",
+                    "RU",
+                    "RW",
+                    "BL",
+                    "SH",
+                    "KN",
+                    "LC",
+                    "MF",
+                    "PM",
+                    "VC",
+                    "WS",
+                    "SM",
+                    "ST",
+                    "SA",
+                    "SN",
+                    "RS",
+                    "SC",
+                    "SL",
+                    "SG",
+                    "SX",
+                    "SK",
+                    "SI",
+                    "SB",
+                    "SO",
+                    "ZA",
+                    "GS",
+                    "SS",
+                    "ES",
+                    "LK",
+                    "SD",
+                    "SR",
+                    "SJ",
+                    "SU",
+                    "SZ",
+                    "SE",
+                    "CH",
+                    "SY",
+                    "TW",
+                    "TJ",
+                    "TZ",
+                    "TH",
+                    "TL",
+                    "TG",
+                    "TK",
+                    "TO",
+                    "TT",
+                    "TN",
+                    "TR",
+                    "TM",
+                    "TC",
+                    "TV",
+                    "UG",
+                    "UA",
+                    "AE",
+                    "GB",
+                    "US",
+                    "UM",
+                    "UY",
+                    "UZ",
+                    "VU",
+                    "VE",
+                    "VN",
+                    "VG",
+                    "VI",
+                    "WF",
+                    "EH",
+                    "YE",
+                    "YU",
+                    "ZM",
+                    "ZW"
+                ]
+            },
+            "StationClass": {
+                "type": "string",
+                "enum": [
+                    "Actor",
+                    "Storage",
+                    "Transport",
+                    "Trader/Consumer"
+                ]
+            },
+            "RegistrationType": {
+                "type": "string",
+                "enum": [
+                    "Individual",
+                    "Cooperative"
+                ]
+            },
+            "PointType": {
+                "type": "string",
+                "enum": [
+                    "No start or end point",
+                    "Primary product",
+                    "Consumption",
+                    "Depletion"
+                ]
+            },
+            "ProductionMethod-General": {
+                "enum": [
+                    "ecological",
+                    "conventional",
+                    "farmed",
+                    "wild"
+                ],
+                "description": "General production methods"
+            },
+            "ProductionMethod": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/cvs/ProductionMethod-General"
+                    }
+                ],
+                "description": "Production methods"
+            },
+            "InvestigationStatusType": {
+                "type": "string",
+                "enum": [
+                    "On-going",
+                    "On hold",
+                    "Completed"
+                ]
+            },
+            "ReferenceActivityType": {
+                "type": "string",
+                "enum": [
+                    "consume (back tracing)",
+                    "produce (forward tracing)",
+                    "all activities"
+                ]
+            },
+            "RegistrationLevel": {
+                "type": "string",
+                "enum": [
+                    "FBO",
+                    "Station",
+                    "ProductionLine",
+                    "Product",
+                    "LogisticUnit"
+                ]
+            },
+            "AmountUnit": {
+                "type": "string",
+                "enum": [
+                    "#",
+                    "t",
+                    "kg",
+                    "g",
+                    "mg",
+                    "l",
+                    "ml",
+                    "m³"
+                ]
+            }
+        },
+        "UuidArray": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/types/Uuid"
+            }
+        },
+        "MandatoryUuidArray": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/UuidArray"
+                },
+                {
+                    "type": "array",
+                    "minItems": 1
+                }
+            ]
+        },
+        "AddressCounty": {
+            "type": "string"
+        },
+        "CorrectionRemark": {
+            "type": "object",
+            "required": [
+                "correctionOf",
+                "correctionType"
+            ],
+            "properties": {
+                "correctionOf": {
+                    "$ref": "#/$defs/MandatoryUuidArray"
+                },
+                "correctionType": {
+                    "$ref": "#/$defs/cvs/CorrectionType"
+                },
+                "correctionReason": {
+                    "type": "string"
+                }
+            }
+        },
+        "NonDeleteCorrectionRemark": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/CorrectionRemark"
+                },
+                {
+                    "not": {
+                        "type": "object",
+                        "properties": {
+                            "correctionType": {
+                                "const": "delete"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OptionalNonDeleteCorrectionRemark": {
+            "if": {
+                "type": "object",
+                "required": [
+                    "correctionOf"
+                ]
+            },
+            "then": {
+                "$ref": "#/$defs/NonDeleteCorrectionRemark"
+            }
+        },
+        "RecordDeletion": {
+            "type": "object",
+            "allOf": [
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "informationSources",
+                        "evaluatedAt"
+                    ],
+                    "properties": {
+                        "id": {
+                            "$ref": "#/$defs/types/Uuid"
+                        },
+                        "informationSources": {
+                            "$ref": "#/$defs/MandatoryUuidArray"
+                        },
+                        "evaluatedAt": {
+                            "$ref": "#/$defs/types/DateTime"
+                        },
+                        "correctionType": {
+                            "const": "delete"
+                        }
+                    }
+                },
+                {
+                    "$ref": "#/$defs/CorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "IsDeletionRecord": {
+            "type": "object",
+            "properties": {
+                "correctionType": {
+                    "const": "delete"
+                }
+            },
+            "required": [
+                "correctionType"
+            ]
+        },
+        "UtxCore": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "activity": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/ActivityRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/ActivityRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "station": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/StationRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/StationRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "fbo": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/FboRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/FboRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tru": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/TruRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/TruRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "lot": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/LotRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/LotRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "logisticUnit": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/LogisticUnitRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/LogisticUnitRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "product": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/ProductRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/ProductRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "informationSource": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/InformationSourceRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/InformationSourceRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "investigation": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/InvestigationRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/InvestigationRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "registrationScheme": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/RegistrationSchemeRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/RegistrationSchemeRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "contact": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "current": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/ContactRecord"
+                            }
+                        },
+                        "history": {
+                            "type": "array",
+                            "items": {
+                                "if": {
+                                    "$ref": "#/$defs/IsDeletionRecord"
+                                },
+                                "then": {
+                                    "$ref": "#/$defs/RecordDeletion"
+                                },
+                                "else": {
+                                    "$ref": "#/$defs/ContactRecord"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Activity": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "activityDescription": {
+                    "type": "string",
+                    "description": "Short description of the activity to distinguish different activities in the establishment. Use of food sector specific terminology. E.g. definition of the production lot."
+                },
+                "stationId": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "This parameter describes the station, where the activity is performed. This could be an establishment, a storage facility, a transportation mean, or a virtual station in case of trade and consumption."
+                },
+                "activityStart": {
+                    "type": "string",
+                    "description": "Start of time period, when the activity was performed, e.g. the time a new lot was produced. For continuous production this would be the lot defining period."
+                },
+                "activityEnd": {
+                    "type": "string",
+                    "description": "End of time period, when the activity was performed, e.g. the time a new lot was produced. For continuous production this would be the lot defining period."
+                },
+                "activityPrimaryTypeCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Set of primary activities, which constitute the reported activity in terms of traceability. \nDepending on the primary activities specific characteristics of the input items will be changed during their transformation into the output items."
+                    },
+                    "description": "Set of primary activities, which constitute the reported activity in terms of traceability. \nDepending on the primary activities specific characteristics of the input items will be changed during their transformation into the output items."
+                },
+                "activityPrimaryTypeFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Set of custom/freetext primary activities, which constitute the reported activity in terms of traceability and cannot be covered by using the controlled entries in activityPrimaryTypeCV.\nDepending on the primary activities specific characteristics of the input items will be changed during their transformation into the output items."
+                    },
+                    "description": "Set of custom/freetext primary activities, which constitute the reported activity in terms of traceability and cannot be covered by using the controlled entries in activityPrimaryTypeCV.\nDepending on the primary activities specific characteristics of the input items will be changed during their transformation into the output items."
+                },
+                "truInput": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "truIds": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/UuidArray"
+                                    }
+                                ],
+                                "description": "Input traceable resources units possibly used in the activity. The data structure allows specifying more input TRUs than actually used."
+                            },
+                            "quantityNumber": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/PositiveNumber"
+                                    }
+                                ],
+                                "description": "The quantity of the input resource used in the activity"
+                            },
+                            "quantityUnit": {
+                                "type": "string",
+                                "description": "The measurement unit of the net quantity"
+                            },
+                            "isNetQuantity": {
+                                "type": "boolean",
+                                "description": "Indicates, whether the quantity is given as a net value."
+                            },
+                            "tradeUnitCount": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/PositiveNumber"
+                                    }
+                                ],
+                                "description": "The number of trade units with known net quantities, used in the activity"
+                            },
+                            "tradeUnits": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity actually used in the activity, e.g. the serial extended GTINs of all TUs."
+                                },
+                                "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity actually used in the activity, e.g. the serial extended GTINs of all TUs."
+                            },
+                            "useStart": {
+                                "type": "string",
+                                "description": "Start of time period, when the resource unit was used in the activity"
+                            },
+                            "useEnd": {
+                                "type": "string",
+                                "description": "End of time period, when the resource unit was used in the activity"
+                            },
+                            "ambientControlCV": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage of inputs, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "ambientControlFreeText": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage of inputs, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "storageRotationRulesCV": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage of inputs, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "storageRotationRulesFreeText": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage of inputs, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "turnover": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/Duration2"
+                                    }
+                                ],
+                                "description": "Time that all input resource units possibly used in the activity are completely replaced by new resource units; reasonable worst case estimator"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "truOutput": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "truIds": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/UuidArray"
+                                    }
+                                ],
+                                "description": "Output traceable resource unit as result of the activity; status after the completion of the activity. For production steps this is usually one production lot, but also parts of it are possible."
+                            },
+                            "quantityNumber": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/PositiveNumber"
+                                    }
+                                ],
+                                "description": "The net quantity of the output resource transformed in the activity."
+                            },
+                            "quantityUnit": {
+                                "type": "string",
+                                "description": "The measurement unit of the net quantity"
+                            },
+                            "isNetQuantity": {
+                                "type": "boolean",
+                                "description": "Indicates, whether the quantity is given as a net value."
+                            },
+                            "tradeUnitCount": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/PositiveNumber"
+                                    }
+                                ],
+                                "description": "The number of trade units with known net quantities, transformed in the activity"
+                            },
+                            "tradeUnits": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity transformed in the activity, e.g. the serial extended GTINs of all TUs. Usually an identifiable TU will form their own TRU and listed as separate outputs."
+                                },
+                                "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity transformed in the activity, e.g. the serial extended GTINs of all TUs. Usually an identifiable TU will form their own TRU and listed as separate outputs."
+                            },
+                            "useStart": {
+                                "type": "string",
+                                "description": "Start of time period, when the output resource unit was transformed in the activity"
+                            },
+                            "useEnd": {
+                                "type": "string",
+                                "description": "End of time period, when the output resource unit was transformed in the activity"
+                            },
+                            "ambientControlCV": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "ambientControlFreeText": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "storageRotationRulesCV": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            },
+                            "storageRotationRulesFreeText": {
+                                "type": "string",
+                                "description": "Conditions of short-term storage, if the storage is integrated part of the activity. Description of the facilities and storage rotation rules"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "productionLineDescription": {
+                    "type": "string",
+                    "description": "Identification of the production line, if not sufficient specified in the establishment, e.g. several production lines in one establishment. "
+                },
+                "productionLinePictures": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Pictures of the production line to support verbal description"
+                },
+                "equipment": {
+                    "type": "string",
+                    "description": "Short description of the equipment, devices and manual processing of the production line"
+                },
+                "cleaning": {
+                    "type": "string",
+                    "description": "Date and time of the last complete cleaning of the production line, storage facility, or transportation mean before the activity"
+                },
+                "extent": {
+                    "type": "string",
+                    "description": "Description of similar activities in the context of the actual one, e.g. production of similar lots, other products on same production line, using the same devices etc."
+                },
+                "continuousActivity": {
+                    "type": "boolean",
+                    "description": "Is the activity a continuous process?"
+                },
+                "processingStepsCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Treatments influencing the food safety, direct handling of ingredients. "
+                    },
+                    "description": "Treatments influencing the food safety, direct handling of ingredients. "
+                },
+                "processingStepsFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Treatments influencing the food safety, direct handling of ingredients. Only for values which cannot be covered by processingStepsCV."
+                    },
+                    "description": "Treatments influencing the food safety, direct handling of ingredients. Only for values which cannot be covered by processingStepsCV."
+                },
+                "foodSafetyChange": {
+                    "type": "string",
+                    "description": "Judgement on the change of risk in general terms"
+                },
+                "foodSafetyChangeReasoning": {
+                    "type": "string",
+                    "description": "Reasoning for the judgement on the change of risk in general terms"
+                },
+                "hygiene": {
+                    "type": "string",
+                    "description": "Important criteria to check the activity, parameters to control food hygiene"
+                },
+                "qualityControlCompliance": {
+                    "type": "string",
+                    "description": "Any information showing compliance or non-compliance of results of process / quality control of the actual activity"
+                },
+                "hygieneControlCompliance": {
+                    "type": "string",
+                    "description": "Any information showing compliance or non-compliance of  results of hygiene control of the actual activity"
+                },
+                "auditTraceability": {
+                    "type": "string",
+                    "description": "Description of quality of the traceability system at the establishment according to the audit."
+                },
+                "storageConditionsCompliance": {
+                    "type": "string",
+                    "description": "Any information showing compliance or non-compliance of storage conditions, when part of the actual activity"
+                },
+                "transportConditionsCompliance": {
+                    "type": "string",
+                    "description": "Any information showing compliance or non-compliance of transport conditions, when part of the actual activity"
+                },
+                "borderEu": {
+                    "type": "string",
+                    "description": "Indicator if activity includes import or export of products in or out of the EU"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "investigationId": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Investigation under which the activity was traced"
+                },
+                "documentation": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Documentation of the corresponding process of the actual activity, e.g. detailed description of processing steps and parameters"
+                },
+                "monitoringQuality": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Results of process / quality monitoring of the actual activity"
+                },
+                "monitoringHygiene": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Results of hygiene monitoring of the actual activity"
+                },
+                "monitoringStorage": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Results of storage monitoring, when part of the actual activity"
+                },
+                "monitoringTransport": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Results of transport monitoring, when part of the actual activity"
+                },
+                "certificate": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Declarations and certificates for import or export "
+                },
+                "order": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the motive of the activity"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Station": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Short description of the establishment or transportation mean to distinguish different establishments or transportation means of the same food business operator (transportation: of the same forwarding company, e.g. trailer, truck; trader: e.g. consumer, case of the disease/outbreak)"
+                },
+                "contactFbo": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Responsible food business operator, contact for information; if transport: forwarding company"
+                },
+                "nonFboContacts": {
+                    "$ref": "#/$defs/UuidArray"
+                },
+                "transportationMeanCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "The transportation mean is the unit moving one or several logistic units. "
+                    },
+                    "description": "The transportation mean is the unit moving one or several logistic units. "
+                },
+                "transportationMeanFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "The transportation mean is the unit moving one or several logistic units. Only for values which cannot be covered by transportationMeanCV. "
+                    },
+                    "description": "The transportation mean is the unit moving one or several logistic units. Only for values which cannot be covered by transportationMeanCV. "
+                },
+                "stationNameAddress": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Name and address of the establishment, preferable as registered in official registers, e.g. approval according EC853/2004, national farm register etc."
+                },
+                "class": {
+                    "type": "string",
+                    "description": "Classification of stations / establishments"
+                },
+                "sectorCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Division of the food chain into sectors; where actors have to follow specific legislations."
+                    },
+                    "description": "Division of the food chain into sectors; where actors have to follow specific legislations."
+                },
+                "sectorFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Division of the food chain into sectors; where actors have to follow specific legislations. Only for values which cannot be covered by sectorCV. "
+                    },
+                    "description": "Division of the food chain into sectors; where actors have to follow specific legislations. Only for values which cannot be covered by sectorCV. "
+                },
+                "stageCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Stages adapted to the food chains of specific sectors. Products will follow these typical stages through the food chain."
+                    },
+                    "description": "Stages adapted to the food chains of specific sectors. Products will follow these typical stages through the food chain."
+                },
+                "stageFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Stages adapted to the food chains of specific sectors. Products will follow these typical stages through the food chain. Only for values which cannot be covered by stageCV. "
+                    },
+                    "description": "Stages adapted to the food chains of specific sectors. Products will follow these typical stages through the food chain. Only for values which cannot be covered by stageCV. "
+                },
+                "pictures": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Pictures of the establishment to support the verbal description"
+                },
+                "activityStart": {
+                    "type": "string",
+                    "description": "Time when the establishment started to become active"
+                },
+                "activityEnd": {
+                    "type": "string",
+                    "description": "Time, when establishment stopped being active"
+                },
+                "extent": {
+                    "type": "string",
+                    "description": "Station_Actor: Description of the stages in the food chain done in the establishment, including a summary on production lines\nStation_Storage: Detailed description of the storage facilities e.g. separated locations, buildings, stores, their storage conditions. Additional activities being done in the establishment, e.g.  freezing, sorting, splitting, mixing, packing.\nStation_Transport: Description of regular use of the transportation mean, other transportation means of the forwarding company\nStation_Trader: Detailed description of the activities of the trader or consumer."
+                },
+                "storageDescription": {
+                    "type": "string",
+                    "description": "Description of the intermediate (short-term) storage facilities and storage rotation rules, if storage is not main purpose of the establishment (Class not Storage)"
+                },
+                "transportDescription": {
+                    "type": "string",
+                    "description": "Description of the intermediate transport means and conditions, if transport is not main purpose of the establishment (Class not Transport)"
+                },
+                "storageSeparationCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "CV storage conditions regarding separation of products"
+                    },
+                    "description": "CV storage conditions regarding separation of products"
+                },
+                "storageSeparationFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Free text storage conditions regarding separation of products. Only for values which cannot be covered by storageSeparationCV. "
+                    },
+                    "description": "Free text storage conditions regarding separation of products. Only for values which cannot be covered by storageSeparationCV. "
+                },
+                "ambientControlCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "CV storage / transport conditions regarding ambient control"
+                    },
+                    "description": "CV storage / transport conditions regarding ambient control"
+                },
+                "ambientControlFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Free text storage / transport conditions regarding ambient control. Only for values which cannot be covered by ambientControlCV. "
+                    },
+                    "description": "Free text storage / transport conditions regarding ambient control. Only for values which cannot be covered by ambientControlCV. "
+                },
+                "storageRotationRulesCV": {
+                    "type": "string",
+                    "description": "System in place to manage storage rotation"
+                },
+                "storageRotationRulesFreeText": {
+                    "type": "string",
+                    "description": "System in place to manage storage rotation. Only for values which cannot be covered by storageRotationRulesCV. "
+                },
+                "cleaningPeriodDescription": {
+                    "type": "string",
+                    "description": "Time between two complete cleanings of the storage"
+                },
+                "cleaningPeriodDays": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/NonNegativeInteger"
+                        }
+                    ],
+                    "description": "Time between two complete cleanings of the storage"
+                },
+                "hygieneCriteria": {
+                    "type": "string",
+                    "description": "Description of hygiene criteria"
+                },
+                "hygieneControlCompliance": {
+                    "type": "string",
+                    "description": "Any information showing compliance or non-compliance of results of hygiene control"
+                },
+                "auditDate": {
+                    "type": "string",
+                    "description": "Date of the last audit"
+                },
+                "auditTraceability": {
+                    "type": "string",
+                    "description": "Description of quality of the traceability system at the establishment according to the audit."
+                },
+                "auditOutcomeSummary": {
+                    "type": "string",
+                    "description": "Summary of the general audit"
+                },
+                "auditOutcomeClassification": {
+                    "type": "string",
+                    "description": "Summary of the final result"
+                },
+                "registrations": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "registrationScheme": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/Uuid"
+                                    }
+                                ],
+                                "description": "The scheme where the establishment is registered. This could be the e.g. approval according EC853/2004 for establishments handling products of animal origin, national farm register, certification schemes for primary production etc. (\"offical/legal registration\"); transport: The scheme where the transportation mean is registered, e.g. the registration number of a lorry, flight number. Further registrations, certifications or other identifications of the establishment; Station_Actor, Station_Storage: E.g. the Global Location Number (GLN) (not an official/legal registration); Station_Transport: E.g. for vessels International Maritime Organisation (IMO) number or the International Radio Call Sign (IRCS)."
+                            },
+                            "registrationNumber": {
+                                "type": "string",
+                                "description": "Registration number in the scheme, e.g. the approval number, the GLOBALG.A.P. number etc.; also the Global Location Number (GLN)"
+                            },
+                            "registrationType": {
+                                "type": "string",
+                                "description": "Indicator if the registration is done individually or on cooperative level. (Station_Transport: E.g. forwarding company)"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "haccp": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant parts of the HACCP plan, if available."
+                },
+                "qualityPlan": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant parts of the quality plan, if available."
+                },
+                "hygieneMonitoring": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Results of hygiene monitoring of the actual activity"
+                },
+                "storageMonitoring": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Results of monitoring, when part of the actual activity"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the establishment, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Fbo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Short description of the food business, e.g. usual or brand names"
+                },
+                "fboNameAddress": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Official food business name and address as registered, see table Contact"
+                },
+                "website": {
+                    "type": "string",
+                    "description": "Website of the food business"
+                },
+                "activityStart": {
+                    "type": "string",
+                    "description": "Start of time period, when the food business was active, or time, when establishment started"
+                },
+                "activityEnd": {
+                    "type": "string",
+                    "description": "End of time period, when the food business was active, or time, when establishment started"
+                },
+                "registrations": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "registrationScheme": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/Uuid"
+                                    }
+                                ],
+                                "description": "Registration of the food or feed business or case identification for consumer; also other registrations, certifications or other identifications of the food business, e.g. the first digits of the Global Trade Item Number (GTIN) identifying the company"
+                            },
+                            "registrationNumber": {
+                                "type": "string",
+                                "description": "Registration number in the scheme, e.g. the approval number, the GLOBALG.A.P. number etc.; also the Global Location Number (GLN)"
+                            },
+                            "registrationType": {
+                                "type": "string",
+                                "description": "Indicator if the registration is done individually or on cooperative level."
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "personalContacts": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Contact persons in the food business or responsible authority to contact for retrieval of information"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Tru": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "statusDescription": {
+                    "type": "string",
+                    "description": "Short description of the status to distinguish different TRUs of the same lot at the same location and time"
+                },
+                "lotId": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Lot/LogisticUnit of the traceable resource unit (only one of the fields may contain a value)"
+                },
+                "luId": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Lot/LogisticUnit of the traceable resource unit (only one of the fields may contain a value)"
+                },
+                "stationId": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Location of the traceable resource unit "
+                },
+                "statusStart": {
+                    "type": "string",
+                    "description": "Start of time period, when the traceable resource unit was in this status, esp. when the status comprises not recorded storage. \nElsewise, end is missing"
+                },
+                "statusEnd": {
+                    "type": "string",
+                    "description": "End of time period, when the traceable resource unit was in this status, esp. when the status comprises not recorded storage. \nElsewise, end is missing"
+                },
+                "netAmountQuantity": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "The net quantity of the traceable resource unit at this status"
+                },
+                "netAmountUnit": {
+                    "type": "string",
+                    "description": "The measurement unit of the net quantity"
+                },
+                "tradeUnitCount": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "The number of trade units with known net quantities of the traceable resource unit at this status"
+                },
+                "tradeUnits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity of the traceable resource unit at this status, e.g. the serial extended GTINs of all TUs"
+                    },
+                    "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity of the traceable resource unit at this status, e.g. the serial extended GTINs of all TUs"
+                },
+                "pointType": {
+                    "type": "string"
+                },
+                "extent": {
+                    "type": "string",
+                    "description": "Similar traceable resource units of the same lot at the same location"
+                },
+                "pictures": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Pictures of the traceable resource unit to support verbal description"
+                },
+                "qualityControl": {
+                    "type": "string",
+                    "description": "Results from freshness, quality control"
+                },
+                "hygieneControl": {
+                    "type": "string",
+                    "description": "Results from hygiene control"
+                },
+                "storageConditionsCompliance": {
+                    "type": "string",
+                    "description": "Results showing compliance or non-compliance of previous storage conditions"
+                },
+                "transportConditionsCompliance": {
+                    "type": "string",
+                    "description": "Results showing compliance or non-compliance of previous transport conditions"
+                },
+                "imexportRegulationsCompliance": {
+                    "type": "string",
+                    "description": "Results showing compliance or non-compliance of import / export regulation"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Lot": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "shortDescription": {
+                    "type": "string",
+                    "description": "Short description of the lot to distinguish from other lots of the same product"
+                },
+                "lotIdentifier": {
+                    "type": "string",
+                    "description": "Lot identifier as given by the producer, e.g. the extended GTIN"
+                },
+                "productId": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Product of the lot"
+                },
+                "netAmountQuantity": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "The net quantity of the complete lot"
+                },
+                "netAmountUnit": {
+                    "type": "string",
+                    "description": "The measurement unit of the net quantity"
+                },
+                "tradeUnitCount": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "The number of trade units produced"
+                },
+                "tradeUnits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity, e.g. the serial extended GTINs of all TUs"
+                    },
+                    "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity, e.g. the serial extended GTINs of all TUs"
+                },
+                "labelPictures": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Pictures of the label to document lot information"
+                },
+                "productionPeriodStart": {
+                    "type": "string",
+                    "description": "Start of time period, when the lot was produced"
+                },
+                "productionPeriodEnd": {
+                    "type": "string",
+                    "description": "End of time period, when the lot was produced"
+                },
+                "firstSaleOn": {
+                    "type": "string",
+                    "description": "Date, when the lot was first on the market"
+                },
+                "durabilityDate": {
+                    "type": "string",
+                    "description": "Expiry date, if exist"
+                },
+                "durabilityTypeCV": {
+                    "type": "string",
+                    "description": "CV type of expiry date"
+                },
+                "durabilityTypeFreeText": {
+                    "type": "string",
+                    "description": "Free text type of expiry date. Only for values which cannot be covered by expiryDateCV. "
+                },
+                "productionMethodsClassCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Specific CV production methods, if not part of the product specification"
+                    },
+                    "description": "Specific CV production methods, if not part of the product specification"
+                },
+                "productionMethodsClassFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Specific free text production methods, if not part of the product specification.  Only for values which cannot be covered by expiryDateCV. "
+                    },
+                    "description": "Specific free text production methods, if not part of the product specification.  Only for values which cannot be covered by expiryDateCV. "
+                },
+                "productionMethodDescription": {
+                    "type": "string"
+                },
+                "certificates": {
+                    "type": "string",
+                    "description": "Specific certificates of origin, traditional production etc., if not part of the product specification"
+                },
+                "countryOfOrigin": {
+                    "type": "string",
+                    "description": "Country of origin, if not part of the product specification"
+                },
+                "qualityAndGradingClass": {
+                    "type": "string",
+                    "description": "Quality and size of the lot, if not part of the product specification"
+                },
+                "additionalSpecifications": {
+                    "type": "string",
+                    "description": "Other amendments to the product specifications relevant for this lot"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "LogisticUnit": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "typeCV": {
+                    "type": "string"
+                },
+                "typeFreeText": {
+                    "type": "string"
+                },
+                "logisticProvider": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Logistic company providing the service"
+                },
+                "registrationScheme": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Identification scheme and number of the logistic unit, as container number, Serial shipping Container Code (SSCC), Postage ID, or internal number of the logistic provider"
+                },
+                "registrationNumber": {
+                    "type": "string",
+                    "description": "Identification scheme and number of the logistic unit, as container number, Serial shipping Container Code (SSCC), Postage ID, or internal number of the logistic provider"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Description of constitution, packing material, total weight etc."
+                },
+                "pictures": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Pictures of the logistic unit to support verbal description"
+                },
+                "loadingDate": {
+                    "type": "string",
+                    "description": "Start of time period, when the logistic unit was formed"
+                },
+                "unloadingDate": {
+                    "type": "string",
+                    "description": "Time when logistic unit was unloaded"
+                },
+                "protectionTypeCV": {
+                    "type": "string",
+                    "description": "CV description of measures to protect the logistic unit against unauthorized opening"
+                },
+                "protectionTypeFreeText": {
+                    "type": "string",
+                    "description": "Free text description of measures to protect the logistic unit against unauthorized opening"
+                },
+                "sealNumber": {
+                    "type": "string",
+                    "description": "Number of protection seal, if applicable"
+                },
+                "trus": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "truId": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/Uuid"
+                                    }
+                                ],
+                                "description": "Traceable resource unit, packed into the LU"
+                            },
+                            "netAmountQuantity": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/PositiveNumber"
+                                    }
+                                ],
+                                "description": "The net quantity of the resource unit."
+                            },
+                            "netAmountUnit": {
+                                "type": "string",
+                                "description": "The measurement unit of the net quantity"
+                            },
+                            "tradeUnitCount": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/PositiveNumber"
+                                    }
+                                ],
+                                "description": "The number of trade units with known net quantities, packed into the LU"
+                            },
+                            "tradeUnits": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity packed into the LU, e.g. the serial extended GTINs of all TUs."
+                                },
+                                "description": "If the trade units are individually identifiable, a list of TU identifiers of trade units with known net quantity packed into the LU, e.g. the serial extended GTINs of all TUs."
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "packingList": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Packing list"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Product": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Short description of the product, e.g. as given in the product specification of the producer"
+                },
+                "producer": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Food business operator responsible for the production of the product"
+                },
+                "brandName": {
+                    "type": "string",
+                    "description": "Brand name of the product"
+                },
+                "labelName": {
+                    "type": "string",
+                    "description": "Product name as given on the label and/or to the consumer"
+                },
+                "registrationScheme": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Global or internal identification of the product, e.g. GTIN, article number "
+                },
+                "registrationNumber": {
+                    "type": "string",
+                    "description": "Global or internal identification of the product, e.g. GTIN, article number "
+                },
+                "productionPeriodFrom": {
+                    "type": "string",
+                    "description": "Period when the product was produced according this specification"
+                },
+                "productionPeriodUntil": {
+                    "type": "string",
+                    "description": "Period when the product was produced according this specification"
+                },
+                "packageTypeCV": {
+                    "type": "string",
+                    "description": "CV classification of the product according to packaging status for the consumer."
+                },
+                "packageTypeFreeText": {
+                    "type": "string",
+                    "description": "Free text classification of the product according to packaging status for the consumer"
+                },
+                "foodEx2Code": {
+                    "type": "string",
+                    "description": "Classification of products according to main ingredients / types of products"
+                },
+                "isReadyToEat": {
+                    "type": "boolean",
+                    "description": "Indicator, if the product is ready-to-eat"
+                },
+                "productionExtent": {
+                    "type": "string",
+                    "description": "Description of similar products, e.g. only different consumer packages, slightly different recipes"
+                },
+                "productPictures": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Pictures of the product to support verbal description"
+                },
+                "otherIdentifiers": {
+                    "type": "string",
+                    "description": "Additional identification numbers, mainly internal identification by producer, wholesaler, clients"
+                },
+                "legalName": {
+                    "type": "string",
+                    "description": "Product name according to the appropriate legislation"
+                },
+                "speciesName": {
+                    "type": "string",
+                    "description": "Scientific name for products of one main ingredient, if applicable"
+                },
+                "productionMethods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Specific production methods, if not part of the product specification"
+                    },
+                    "description": "Specific production methods, if not part of the product specification"
+                },
+                "productionMethodsOther": {
+                    "type": "string",
+                    "description": "Specific production methods, if not part of the product specification"
+                },
+                "certificates": {
+                    "type": "string",
+                    "description": "Specific certificates of origin, traditional production etc., if not part of the product specification"
+                },
+                "countryOfOrigin": {
+                    "type": "string",
+                    "description": "Country of origin, if not part of the product specification"
+                },
+                "lotQualityAndGrading": {
+                    "type": "string",
+                    "description": "Quality and size of the lot, if not part of the product specification"
+                },
+                "typeOfTradeUnits": {
+                    "type": "string",
+                    "description": "Description of trade units"
+                },
+                "tradeUnitNetAmountQuantity": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "The net quantity of one trade unit"
+                },
+                "tradeUnitNetAmountUnit": {
+                    "type": "string",
+                    "description": "The measurement unit of the net quantity"
+                },
+                "tradeUnitCode": {
+                    "type": "string",
+                    "description": "Product number (GTIN) of the trade unit, if applicable"
+                },
+                "consumerUnitsPerTradeUnit": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "Number of consumer units per trade unit"
+                },
+                "typeOfConsumerUnits": {
+                    "type": "string",
+                    "description": "Description of consumer units"
+                },
+                "consumerUnitNetAmountQuantity": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/PositiveNumber"
+                        }
+                    ],
+                    "description": "The net quantity of one consumer unit"
+                },
+                "consumerUnitNetAmountUnit": {
+                    "type": "string",
+                    "description": "The measurement unit of the net quantity"
+                },
+                "consumerUnitCode": {
+                    "type": "string",
+                    "description": "Product number (GTIN) of the consumer unit, if applicable"
+                },
+                "productConditions": {
+                    "type": "string",
+                    "description": "Description of product conditions, e.g. fresh, frozen, protected atmosphere etc."
+                },
+                "durability": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Duration1"
+                        }
+                    ],
+                    "description": "Durability in months and days from date of production, if applicable"
+                },
+                "durabilityTypeCV": {
+                    "type": "string",
+                    "description": "CV type of expiry date"
+                },
+                "durabilityTypeFreeText": {
+                    "type": "string",
+                    "description": "Free text type of expiry date"
+                },
+                "intendedUse": {
+                    "type": "string",
+                    "description": "Description of the intended use"
+                },
+                "storageRecommendationsForConsumer": {
+                    "type": "string",
+                    "description": "Description of storage recommendations for consumer, as written on the label"
+                },
+                "preparationRecommendationsForConsumer": {
+                    "type": "string",
+                    "description": "Description of recommended preparation for consumer, as written on the label"
+                },
+                "logisticUnitPackingInstructions": {
+                    "type": "string",
+                    "description": "Instructions given for forming of logistic units"
+                },
+                "storageMethod": {
+                    "type": "string",
+                    "description": "Description of storage conditions"
+                },
+                "storageTemperature": {
+                    "type": "string",
+                    "description": "Description of storage temperature"
+                },
+                "storageHumidity": {
+                    "type": "string",
+                    "description": "Description of storage humidity"
+                },
+                "transportConditions": {
+                    "type": "string",
+                    "description": "Description of transport conditions"
+                },
+                "qualityControlPhysicalParameter": {
+                    "type": "string",
+                    "description": "Physical parameter for quality control,  tolerance ranges"
+                },
+                "qualityControlMicrobialParameter": {
+                    "type": "string",
+                    "description": "Microbial parameter for quality control, maximum values"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "order": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/NonNegativeInteger"
+                                    }
+                                ],
+                                "description": "Based on the Food Information Regulation (EU) No 1169/2011 (FIC), the ingredients list on a product package is sorted in descending order of weight as recorded at the time of production."
+                            },
+                            "ingredient": {
+                                "type": "string",
+                                "description": "Ingredients as listed in the product specification, e.g. product label, product information sheet, recipies, etc."
+                            },
+                            "percentage": {
+                                "type": "string",
+                                "description": "Percentage of content as listed in the product specification, e.g. product label, product information sheet, recipies, etc."
+                            },
+                            "hasAllergenicPotential": {
+                                "type": "boolean",
+                                "description": "Allergenic potential of the ingredient"
+                            },
+                            "isGeneticallyModified": {
+                                "type": "boolean",
+                                "description": "Ingredient genetically modified"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "allergens": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "allergen": {
+                                "type": "string",
+                                "description": "Allergen as listed in the product specification"
+                            },
+                            "isIngredient": {
+                                "type": "boolean",
+                                "description": "Allergen is ingredient"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "specification": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Product information sheet"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the product, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "InformationSource": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "dataInputByName": {
+                    "type": "string",
+                    "description": "Name of person who uploads data"
+                },
+                "dataInputByInstitution": {
+                    "type": "string",
+                    "description": "Institution of person who uploads data"
+                },
+                "dataInputByUnit": {
+                    "type": "string",
+                    "description": "Unit of person who uploads data"
+                },
+                "dataInputByEmail": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Email"
+                        }
+                    ],
+                    "description": "Email of person who uploads data"
+                },
+                "dataInputByPhone": {
+                    "type": "string",
+                    "description": "Phone of person who uploads data"
+                },
+                "dataInputTime": {
+                    "type": "string",
+                    "description": "When data is attached / put in "
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Short description of the information source, e.g. report, product specification, invoice etc."
+                },
+                "informationOwner": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Owner of the information; this is usually the responsible person who created the information source and is able to correct it."
+                },
+                "informationNumber": {
+                    "type": "string",
+                    "description": "Internal identification number of the information owner, e.g. invoice number, version number etc."
+                },
+                "createdOn": {
+                    "type": "string",
+                    "description": "Creation date of the information source"
+                },
+                "documentTypeCV": {
+                    "type": "string"
+                },
+                "documentTypeFreeText": {
+                    "type": "string"
+                },
+                "updatedOn": {
+                    "type": "string",
+                    "description": "Date of the current version of the information source"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "webSourceUrl": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Url"
+                        }
+                    ],
+                    "description": "Internet access point to retrieve current versions of the information source with access details"
+                },
+                "webSourceAccessDetails": {
+                    "type": "string",
+                    "description": "Internet information"
+                },
+                "fileSource": {
+                    "type": "string",
+                    "description": "Electronic copy of the document in common file format"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the information source, which might have impact on the investigations."
+                },
+                "investigations": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Investigation, when entry was evaluated and eventually updated"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Investigation": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "contextDescription": {
+                    "type": "string",
+                    "description": "Short description of the context of the investigations, e.g. food sectors, countries involved, first observations, cases etc."
+                },
+                "contaminationDescription": {
+                    "type": "string",
+                    "description": "Description of the contamination"
+                },
+                "findings": {
+                    "type": "string",
+                    "description": "Case definition and description of suspected food and feed items. Summary of epidemiological results on foodborne incident."
+                },
+                "typeCV": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "CV type of investigations: Forward or backward tracing"
+                    },
+                    "description": "CV type of investigations: Forward or backward tracing"
+                },
+                "typeFreeText": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Free text type of investigations: Forward or backward tracing"
+                    },
+                    "description": "Free text type of investigations: Forward or backward tracing"
+                },
+                "statusType": {
+                    "type": "string",
+                    "description": "Status of investigations"
+                },
+                "contaminationTypeCV": {
+                    "type": "string",
+                    "description": "CV classification in chemical and microbial contaminations"
+                },
+                "contaminationTypeFreeText": {
+                    "type": "string",
+                    "description": "Free text classification in chemical and microbial contaminations"
+                },
+                "leadingAuthority": {
+                    "type": "string",
+                    "description": "Leading authority for the investigation"
+                },
+                "contactDetails": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Contact details, esp. electronic access"
+                },
+                "referenceActivity": {
+                    "type": "string",
+                    "description": "Activity, for which the investigation period is evaluated, e.g. consumption during the investigation period. In outbreak investigations this is consuming. For recall this is producing."
+                },
+                "start": {
+                    "type": "string",
+                    "description": "Time period for investigating the food and feed supply chain."
+                },
+                "end": {
+                    "type": "string",
+                    "description": "Time period for investigating the food and feed supply chain."
+                },
+                "ecdcEpisId": {
+                    "type": "string",
+                    "description": "Outbreak/incident number from the ECDC"
+                },
+                "rasffNotifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "number": {
+                                "type": "string",
+                                "description": "Number and title of RASFF notification"
+                            },
+                            "title": {
+                                "type": "string",
+                                "description": "Number and title of RASFF notification"
+                            },
+                            "notificationDate": {
+                                "type": "string",
+                                "description": "Date of RASFF notification"
+                            },
+                            "notificationUrl": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/types/Url"
+                                    }
+                                ],
+                                "description": "Link to the RASFF notification"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "mandates": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Mandates and Term of References for the investigation"
+                },
+                "reports": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "All relevant reports related to the investigations"
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation / update of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "RegistrationScheme": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Automatically assigned identifier"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Description of any register to obtain external for tracing, e.g. national list of approved establishments, regional FBO register, certification schemes, national case register etc."
+                },
+                "isLegalRegister": {
+                    "type": "boolean",
+                    "description": "Flag indicates, whether this register is an offical/legal registration scheme, e.g. from a federal state of municipality (in contrast to other registration schemes like organic food labels)."
+                },
+                "levelOfRegistration": {
+                    "type": "string",
+                    "description": "Sets the level the register is focused on."
+                },
+                "institution": {
+                    "type": "string",
+                    "description": "Competent authority or institution maintaining the register"
+                },
+                "contact": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Uuid"
+                        }
+                    ],
+                    "description": "Contact details, esp. electronic access"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the activity, mentionable factors, which might have impact on the investigations."
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "Contact": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/types/Uuid"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the responsible contact person or unit for functional contacts; company name if contactType =\"Station\""
+                },
+                "role": {
+                    "type": "string",
+                    "description": "Short description on responsibilities at FBO, e.g. general contact, contact for specific food sectors, establishments, investigations etc., deputy"
+                },
+                "contactType": {
+                    "type": "string",
+                    "description": "Needed to differentiate a personal contact from a company contact (company address); automatically assigned: \"Station\" if linked to Station.stationNameAddress, \"FBO\" if linked to FBO.fboNameAddress, else \"Personal\""
+                },
+                "addressStreet": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; transport: where the transportation mean is regularly checked, cleaned, maintained, supplied; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: ThoroughfareName"
+                },
+                "addressNumber": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: Locator Designator Type 1"
+                },
+                "addressOther": {
+                    "type": "string",
+                    "description": "Anything in addition to the address information; or postal address for sending letters; if FBO: Official postal address of the food business as registered"
+                },
+                "addressBuilding": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: Locator Name Type 2 + Local Designator Type 5 (building name plus number)"
+                },
+                "addressZip": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: not found"
+                },
+                "addressCity": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: AddressAreaName1"
+                },
+                "addressCounty": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: AdminUnitNameLevel2"
+                },
+                "addressCountry": {
+                    "type": "string",
+                    "description": "Address to identify the physical location of the establishment; or postal address for sending letters; if FBO: Official postal address of the food business as registered; INSPIRE component: AdminUnitNameLevel1"
+                },
+                "latitude": {
+                    "type": "number",
+                    "description": "Geospatial coordinates for use in GIS systems, e.g. taken from registration or generated from the address or GPS information"
+                },
+                "longitude": {
+                    "type": "number",
+                    "description": "Geospatial coordinates for use in GIS systems, e.g. taken from registration or generated from the address or GPS information"
+                },
+                "addressStreetVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person; INSPIRE component: ThoroughfareName"
+                },
+                "addressNumberVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person; INSPIRE component: Locator Designator Type 1"
+                },
+                "addressOtherVisitor": {
+                    "type": "string",
+                    "description": "Anything in addition to the visitor's address information"
+                },
+                "addressBuildingVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person; INSPIRE component: Local Designator Type 5"
+                },
+                "addressZipVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person"
+                },
+                "addressCityVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person; INSPIRE component: AddressAreaName1"
+                },
+                "addressCountyVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person; INSPIRE component: AdminUnitNameLevel2"
+                },
+                "addressCountryVisitor": {
+                    "type": "string",
+                    "description": "Visitor's address to meet in person; INSPIRE component: AdminUnitNameLevel1"
+                },
+                "phoneNumberWork": {
+                    "type": "string",
+                    "description": "Phone numbers with international prefixes"
+                },
+                "phoneNumberMobile": {
+                    "type": "string",
+                    "description": "Phone numbers with international prefixes"
+                },
+                "phoneNumber3": {
+                    "type": "string",
+                    "description": "Phone numbers with international prefixes"
+                },
+                "phoneNumber4": {
+                    "type": "string",
+                    "description": "Phone numbers with international prefixes"
+                },
+                "faxNumber": {
+                    "type": "string",
+                    "description": "Fax number with international prefix"
+                },
+                "emailWork": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Email"
+                        }
+                    ],
+                    "description": "Email address"
+                },
+                "emailPrivate": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/types/Email"
+                        }
+                    ],
+                    "description": "Email address"
+                },
+                "informationSources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UuidArray"
+                        }
+                    ],
+                    "description": "Relevant information describing the FBO."
+                },
+                "comments": {
+                    "type": "string",
+                    "description": "Any comments regarding the contact"
+                },
+                "lastEvaluationAt": {
+                    "type": "string",
+                    "description": "Date and time of the last evaluation of this entry"
+                }
+            },
+            "required": [
+                "id"
+            ]
+        },
+        "ActivityRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Activity"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "StationRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Station"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "FboRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Fbo"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "TruRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Tru"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "LotRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Lot"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "LogisticUnitRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/LogisticUnit"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "ProductRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Product"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "InformationSourceRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/InformationSource"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "InvestigationRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Investigation"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "RegistrationSchemeRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/RegistrationScheme"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        },
+        "ContactRecord": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Contact"
+                },
+                {
+                    "$ref": "#/$defs/OptionalNonDeleteCorrectionRemark"
+                }
+            ],
+            "unevaluatedProperties": false
+        }
+    },
+    "type": "object",
+    "required": [
+        "utxCore"
+    ],
+    "properties": {
+        "utxCore": {
+            "$ref": "#/$defs/UtxCore"
+        }
+    }
+}

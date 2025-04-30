@@ -30,3 +30,22 @@ export interface AmountUnitPair {
     amount: PropElementInfo;
     unit: PropElementInfo;
 }
+
+export type ROALabelType = keyof ROALabelSettings;
+
+export interface LabelInfo {
+    title: string;
+    disabled?: boolean;
+    warning?: string;
+    tooltip?: string;
+    labelElements: LabelElementInfo[][];
+    availableProps: PropInfo[];
+    amountUnitPairs: AmountUnitPair[];
+}
+
+export interface PropInfo {
+    prop: string;
+    label: string;
+    warnings?: string;
+    isDataUnavailable?: boolean;
+}

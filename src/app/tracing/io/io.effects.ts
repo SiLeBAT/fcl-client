@@ -12,6 +12,7 @@ import {
     withLatestFrom,
     concatMap,
     take,
+    tap,
 } from "rxjs/operators";
 import { of, from, EMPTY } from "rxjs";
 import { IOService } from "./io.service";
@@ -35,8 +36,12 @@ import {
     MatLegacyDialogRef as MatDialogRef,
 } from "@angular/material/legacy-dialog";
 import { DataService } from "../services/data.service";
-import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS } from "./consts";
+import { ERROR_TEXTS, ERROR_RESOLUTION_TEXTS, DIALOG_TITLES } from "./consts";
 import { joinNonEmptyTexts } from "../util/non-ui-utils";
+import {
+    DialogIssueReportComponent,
+    DialogIssueReportData,
+} from "../dialog/dialog-issue-report/dialog-issue-report.component";
 
 @Injectable()
 export class IOEffects {
@@ -55,6 +60,10 @@ export class IOEffects {
                 ioActions.IOActionTypes.LoadFclDataMSA,
             ),
             mergeMap((action) => {
+                this.store.dispatch(
+                    new tracingStateActions.SetFclDataLoadingSOA(),
+                );
+
                 const dataSource: string | FileList = action.payload.dataSource;
                 let source: string | File;
                 if (dataSource instanceof FileList && dataSource.length === 1) {
@@ -62,51 +71,89 @@ export class IOEffects {
                 } else if (typeof dataSource === "string") {
                     source = dataSource;
                 } else {
-                    this.alertService.error(
-                        "Please select a .json file with the correct format!",
-                    );
+                    this.alertService.error(Constants.ALERT_FILETYPE_NOT_JSON);
                     return of(new tracingStateActions.LoadFclDataFailureSOA());
                 }
-                return from(this.ioService.getFclData(source)).pipe(
-                    concatMap((data: FclData) =>
+                return from(
+                    this.ioService.getFclData(source, action.payload.type),
+                ).pipe(
+                    tap(
+                        (data) =>
+                            data.importWarnings.length > 0 &&
+                            this.alertService.warn(
+                                Constants.ALERT_IMPORT_WARNINGS,
+                                {
+                                    action: Constants.DIALOG_SHOW_MORE,
+                                    onClick: () =>
+                                        this.store.dispatch(
+                                            new tracingEffectActions.ShowDataImportWarningsMSA(),
+                                        ),
+                                },
+                            ),
+                    ),
+                    concatMap((result: FclData) =>
                         of(
                             new tracingStateActions.LoadFclDataSuccessSOA({
-                                fclData: data,
+                                fclData: result,
                             }),
                             new tracingEffectActions.SetLastUnchangedJsonDataExtractMSA(),
                         ),
                     ),
                     catchError((error) => {
-                        let errorMsgs: string[] = [
+                        let errorToasterMsgs: string[] = [
                             ERROR_TEXTS.dataUploadFailed,
                         ];
+                        const errorReport: Partial<DialogIssueReportData> = {
+                            title: DIALOG_TITLES.dataImportErrors,
+                        };
                         if (error instanceof InputEncodingError) {
-                            errorMsgs.push(ERROR_RESOLUTION_TEXTS.uploadUTF8);
+                            errorToasterMsgs.push(
+                                ERROR_RESOLUTION_TEXTS.uploadUTF8,
+                            );
                         } else if (error instanceof XlsxInputFormatError) {
-                            errorMsgs = [
+                            errorToasterMsgs = [
                                 ERROR_TEXTS.invalidDataFormat,
                                 ERROR_RESOLUTION_TEXTS.uploadAllInOneTemplate,
                                 error.message,
                             ];
                         } else if (error instanceof InputFormatError) {
-                            errorMsgs.push(
-                                ERROR_RESOLUTION_TEXTS.uploadFclJsonWithValidFormat,
-                                error.message,
-                            );
+                            errorToasterMsgs = [
+                                ERROR_TEXTS.invalidDataFormat,
+                                ERROR_RESOLUTION_TEXTS.uploadFileWithValidFormatOfType(
+                                    action.payload.type,
+                                ),
+                            ];
+                            errorReport.description = error.message;
+                            errorReport.issues = error.details ?? [];
                         } else if (error instanceof InputDataError) {
-                            errorMsgs.push(
-                                ERROR_RESOLUTION_TEXTS.uploadFclJsonWithValidData,
+                            errorToasterMsgs.push(
+                                ERROR_RESOLUTION_TEXTS.uploadFileWithValidDataOfType(
+                                    action.payload.type,
+                                ),
                                 error.message,
                             );
                         } else {
-                            errorMsgs.push(
+                            errorToasterMsgs.push(
                                 ERROR_TEXTS.generalError,
                                 error.message,
                             );
                         }
 
                         this.alertService.error(
-                            joinNonEmptyTexts(errorMsgs, " "),
+                            joinNonEmptyTexts(errorToasterMsgs, " "),
+                            errorReport.description ||
+                                errorReport.issues?.length
+                                ? {
+                                      action: Constants.DIALOG_SHOW_MORE,
+                                      onClick: () =>
+                                          this.dialog.open(
+                                              DialogIssueReportComponent,
+                                              {
+                                                  data: errorReport,
+                                              },
+                                          ),
+                                  }
+                                : undefined,
                         );
                         return of(
                             new tracingStateActions.LoadFclDataFailureSOA(),

@@ -6,8 +6,21 @@
         *ngIf="fileName !== null"
         class="fcl-file-name-wrapper fcl-separator mat-body"
     >
+        <button
+            class="fcl-file-name-warning"
+            *ngIf="dataImportHasWarnings"
+            (click)="onOpenWarningsDialog()"
+            matTooltip="Data import warnings"
+        >
+            <span
+                class="material-icons-round"
+                aria-hidden="false"
+                aria-label="Data import warnings icon"
+                >warning</span
+            >
+        </button>
         <div class="fcl-file-name" [matTooltip]="fileName">
-            File: {{ fileNameWoExt }}
+            <span>File: {{ fileNameWoExt }}</span>
         </div>
     </div>
     <div class="fcl-graph-type fcl-separator mat-body">
@@ -118,12 +131,7 @@
         <button mat-menu-item (click)="onSelectModelFile('xlsx-all-in-one')">
             FCL All-in-one template (.xlsx)
         </button>
-        <!-- <button
-            mat-menu-item
-            (click)="onSelectModelFile('json-fcl')"
-            matTooltip="Coming soon"
-            disabled
-        >
+        <!-- <button mat-menu-item (click)="onSelectModelFile('json-utx')">
             UTX file (.json)
         </button> -->
     </mat-menu>
@@ -152,10 +160,10 @@
         class="fcl-separator fcl-no-shrink"
         mat-button
         (click)="onOpenRoaLayout()"
-        matTooltip="Generate ROA Layout"
+        matTooltip="Generate Report View"
     >
         <mat-icon>grid_on</mat-icon>
-        ROA Style
+        Report View
         <span class="fcl-draft-marker-wrapper">
             <span class="fcl-draft-marker">draft</span>
         </span>

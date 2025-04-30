@@ -7,6 +7,9 @@
         <mat-sidenav-content class="mat-sidenav-content-container">
             <div id="mainContent">
                 <fcl-graph-empty [hidden]="(isModelLoaded$ | async) === true" />
+                <fcl-graph-loading
+                    [hidden]="(isModelLoading$ | async) === false"
+                />
                 <fcl-schema-graph
                     #schemaGraph
                     [hidden]="

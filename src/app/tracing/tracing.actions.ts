@@ -31,6 +31,7 @@ export enum TracingActionTypes {
     FocusGraphElementSSA = "[Graph] Focus Graph Element",
     SetLastUnchangedJsonDataExtractMSA = "[Tracing] Set Last Unchanged JsonData Extract",
     SetStationPositionsAndLayoutMSA = "[Tracing] Set Station Positions And Layout MSA",
+    ShowDataImportWarningsMSA = "[Data Import] Show warnings",
 }
 
 export class ClearTraceMSA implements Action {
@@ -147,6 +148,10 @@ export class SetStationPositionsAndLayoutMSA implements Action {
     ) {}
 }
 
+export class ShowDataImportWarningsMSA implements Action {
+    readonly type = TracingActionTypes.ShowDataImportWarningsMSA;
+}
+
 export type TracingActions =
     | ClearTraceMSA
     | ClearKillContaminationsMSA
@@ -163,4 +168,5 @@ export type TracingActions =
     | FocusDeliverySSA
     | FocusGraphElementSSA
     | SetLastUnchangedJsonDataExtractMSA
-    | SetStationPositionsAndLayoutMSA;
+    | SetStationPositionsAndLayoutMSA
+    | ShowDataImportWarningsMSA;

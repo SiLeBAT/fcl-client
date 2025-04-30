@@ -27,8 +27,8 @@
 .fcl-file-name-wrapper {
     font-weight: 500;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    align-items: center;
     min-width: 0;
     padding-left: 1rem;
     padding-right: 1rem;
@@ -38,6 +38,17 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+
+.fcl-file-name-warning {
+    display: flex;
+    align-items: center;
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0 0.2rem 0 0;
+    color: fcl.$fcl-warning-color;
 }
 
 .fcl-graph-type {
@@ -77,15 +88,15 @@
 }
 
 .fcl-draft-marker {
-    display: block;
-    position: relative;
-    left: 0;
-    bottom: 0.9em;
-    line-height: 1.2em;
     background-color: rgb(192 0 0);
     color: white;
     padding-left: 0.5ch;
     padding-right: 0.5ch;
+    bottom: 0.9em;
+    display: block;
+    position: relative;
+    left: 0;
+    line-height: 1.2em;
 }
 
 .fcl-draft-marker-wrapper {

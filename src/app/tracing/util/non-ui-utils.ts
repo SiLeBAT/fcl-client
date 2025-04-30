@@ -1,4 +1,10 @@
-import { DeliveryData, Color, HighlightingRule } from "../data.model";
+import {
+    DeliveryData,
+    Color,
+    HighlightingRule,
+    Range,
+    RGBAColor,
+} from "../data.model";
 import { HttpClient } from "@angular/common/http";
 import { Map as ImmutableMap } from "immutable";
 import * as _ from "lodash";
@@ -25,6 +31,32 @@ export function values<T extends string, K>(
     object: Record<T, K> | Partial<Record<T, K>>,
 ): K[] {
     return Object.values(object) as K[];
+}
+
+export function areSetsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+    return a.size === b.size && Array.from(a).every((x) => b.has(x));
+}
+
+export function areSetsDisjoint<T>(a: Set<T>, b: Set<T>): boolean {
+    return a.size > 0 && b.size > 0 && !Array.from(a).some((x) => b.has(x));
+}
+
+export function unionOfSets<T>(...sets: Set<T>[]): Set<T> {
+    if (sets.length === 0) {
+        return new Set<T>();
+    }
+    if (sets.length === 1) {
+        return sets[0];
+    }
+    const result = new Set(Array.from(sets[0]));
+    for (let i = 1; i < sets.length; i++) {
+        sets[i].forEach((element) => result.add(element));
+    }
+    return result;
+}
+
+export function difference<T>(set1: Set<T>, set2: Set<T>): Set<T> {
+    return new Set(Array.from(set1).filter((x) => !set2.has(x)));
 }
 
 export function isNullish(x: any): x is undefined | null {
@@ -159,13 +191,83 @@ export function getUpdatedObject<T>(obj: T, update: Partial<T>): T {
     return { ...obj, ...update };
 }
 
+/**
+ * This method is used to update an array if required.
+ *
+ * @param array Array to update
+ * @param isUpdateRequiredFun predicate to identify elements that require an update
+ * @param update Either a function that provides the updated part to an element or an object
+ * that represents the updated part itself
+ * @returns Updated Array, if some element was updated
+ *          otherwise the provided array itself
+ *
+ */
+export function getUpdatedArray<T>(
+    array: T[],
+    isUpdateRequiredFun: (e: T) => boolean,
+    update: Partial<T> | ((e: T) => Partial<T>),
+): T[] {
+    const elementsToUpdate = new Set(array.filter(isUpdateRequiredFun));
+    if (elementsToUpdate.size > 0) {
+        return typeof update === "function"
+            ? array.map((x) =>
+                  elementsToUpdate.has(x) ? getUpdatedObject(x, update(x)) : x,
+              )
+            : array.map((x) =>
+                  elementsToUpdate.has(x) ? getUpdatedObject(x, update) : x,
+              );
+    }
+    return array;
+}
+
+export function getReverseRecord<
+    K extends string | number,
+    V extends string | number,
+>(record: Record<K, V>): Record<V, K> {
+    return Object.fromEntries(
+        entries(record).map(([key, value]) => [value, key]),
+    ) as Record<V, K>;
+}
+
+export function at<T>(array: T[], index: number): T | undefined {
+    if (Math.abs(index) >= array.length) {
+        return undefined;
+    }
+    return index < 0 ? array[array.length + index] : array[index];
+}
+
+export function isObject(x: any): boolean {
+    return typeof x === "object" && x !== null;
+}
+
+export function getValueFromPath(data: any, path: string[]): any {
+    return path.reduce((pV, cV) => pV?.[cV], data);
+}
+
+export function isElementOf<T>(element: any, array: T[]): element is T {
+    return array.includes(element);
+}
+
+export function getRange(values: [number, ...number[]]): Range {
+    return {
+        min: Math.min(...values),
+        max: Math.max(...values),
+    };
+}
+
+export function colorToRGBArray(color: Color): [number, number, number] {
+    return [color.r, color.g, color.b];
+}
+
+export function colorToRGBAArray(
+    color: RGBAColor,
+): [number, number, number, number] {
+    return [...colorToRGBArray(color), color.a];
+}
+
 export class Utils {
     static rgbArrayToColor(color: number[]): Color {
         return { r: color[0], g: color[1], b: color[2] };
-    }
-
-    static colorToRGBArray(color: Color): number[] {
-        return [color.r, color.g, color.b];
     }
 
     static colorToCss(color: Color): string {

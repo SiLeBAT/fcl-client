@@ -22,12 +22,3 @@ td.fcl-station-properties-horizontal-line-cell {
     width: 100%;
     margin: 1rem 0;
 }
-
-.fcl-drag-handle {
-    display: flex;
-    justify-content: flex-end;
-
-    mat-icon {
-        cursor: move;
-    }
-}

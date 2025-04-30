@@ -1,0 +1,38 @@
+@use "@angular/material" as mat;
+@use "../../../assets/sass/base" as fcl;
+
+:host {
+    width: 100vw;
+}
+
+.fcl-container {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(30em, 50%);
+    padding-top: 3rem;
+}
+
+.fcl-title {
+    text-align: center;
+}
+
+.fcl-toc {
+    display: grid;
+    padding-bottom: fcl.$quadruple-space;
+    justify-content: center;
+    gap: fcl.$single-space;
+}
+
+.fcl-toc-link {
+    display: block;
+    margin: 0;
+    padding: 0 fcl.$double-space;
+    text-align: center;
+    text-decoration: none;
+    background-color: mat.get-color-from-palette(fcl.$fcl-primary, "default");
+    color: white;
+}
+
+.fcl-toc-link:hover {
+    color: mat.get-color-from-palette(fcl.$fcl-accent, "lighter");
+}

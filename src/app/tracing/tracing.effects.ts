@@ -32,6 +32,10 @@ import { EditHighlightingService } from "./configuration/edit-highlighting.servi
 import { GraphService } from "./graph/graph.service";
 import { TableService } from "./services/table.service";
 import { IOService } from "./io/io.service";
+import {
+    DialogImportWarningsComponent,
+    DialogImportWarningsData,
+} from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
 
 @Injectable()
 export class TracingEffects {
@@ -679,5 +683,43 @@ export class TracingEffects {
                 ),
             ),
         ),
+    );
+
+    showDataImportWarningsMSA$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType<tracingEffectActions.ShowDataImportWarningsMSA>(
+                    tracingEffectActions.TracingActionTypes
+                        .ShowDataImportWarningsMSA,
+                ),
+                withLatestFrom(
+                    this.store.pipe(
+                        select(tracingSelectors.selectImportWarnings),
+                    ),
+                    this.store.pipe(
+                        select(tracingSelectors.selectSourceFileName),
+                    ),
+                ),
+                mergeMap(([, warnings, fileName]) => {
+                    const fileNameExists =
+                        fileName && fileName.trim().length > 0;
+                    const description =
+                        "The following warnings occurred while importing";
+
+                    const data: DialogImportWarningsData = {
+                        description: fileNameExists
+                            ? `${description} ${fileName}`
+                            : description,
+                        warnings: warnings,
+                    };
+
+                    this.dialogService.open(DialogImportWarningsComponent, {
+                        data: data,
+                    });
+
+                    return EMPTY;
+                }),
+            ),
+        { dispatch: false },
     );
 }

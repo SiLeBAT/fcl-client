@@ -1,0 +1,26 @@
+<div class="fcl-container">
+    <div class="fcl-title mat-headline">Help</div>
+
+    <div><hr /></div>
+
+    <!-- Help navigation bar-->
+    <nav class="fcl-toc">
+        <a
+            class="fcl-toc-link mat-h4"
+            href="../../assets/quick_guide.pdf"
+            target="_blank"
+        >
+            Quick Guide
+        </a>
+
+        <a class="fcl-toc-link mat-h4" [routerLink]="['/content/faq']"> FAQ </a>
+
+        <a
+            class="fcl-toc-link mat-h4"
+            href="mailto:{{ supportContact }}"
+            target="_top"
+        >
+            Report a Problem
+        </a>
+    </nav>
+</div>

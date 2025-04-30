@@ -40,7 +40,10 @@ export const EXTOUT_DELIVERY_PROP_IDS = {
     dateOut: DELIVERY_OUT_DATE,
     lotAmountNumber: "Lot Amount Number",
     lotAmountUnit: "Lot Amount Unit",
-    unitAmount: "Amount",
+    lotAmount: "Lot Amount",
+    unitAmountNumber: "Delivery Amount Number",
+    unitAmountUnit: "Delivery Amount Unit",
+    unitAmount: "Delivery Amount",
     lotTreatment: "Treatment of product during production",
     lotBestBeforeDate: "Best before date",
     lotProductionDate: "Production date",
@@ -60,13 +63,19 @@ function formatCellAddress(
     return `(row: ${row}, column: ${col}, sheet: '${sheet}')`;
 }
 
+function formatTextVariants(texts: [string, ...string[]]): string {
+    return texts.length > 1
+        ? `'${texts.slice(0, -1).join("', '")}' or '${texts[texts.length - 1]}'`
+        : `'${texts[0]}'`;
+}
+
 export const IMPORT_ISSUES = {
     wbNotLoaded: "Workbook is not loaded into Reader.",
-    nonUniqueValue: "Value is not unique.",
+    nonUniquePrimaryKey: "Primary key is not unique.",
     invalidValue: "Invalid value.",
     missingValue: "Missing value.",
+    missingNumberForUnit: "Missing number for unit.",
     invalidRef: "Invalid reference.",
-    omittingValue: "Value was omitted.",
     omittingRow: "Row was omitted.",
     rowIsTooSimilar: (indexOfSimilarRow: number) =>
         `Row is too similar to row ${indexOfSimilarRow}.`,
@@ -74,9 +83,9 @@ export const IMPORT_ISSUES = {
         row: number,
         col: number,
         sheet: string,
-        expectedText: string,
+        expectedTextVariants: [string, ...string[]],
     ) =>
-        `Unexpected cell text. Text in cell ${formatCellAddress(row, col, sheet)} does not match '${expectedText}'.`,
+        `Unexpected cell text. Text in cell ${formatCellAddress(row, col, sheet)} does not match ${formatTextVariants(expectedTextVariants)}.`,
     unexpectedCellSpan: (
         row: number,
         col: number,
@@ -92,6 +101,20 @@ export const IMPORT_ISSUES = {
             ? `Sheet '${sheetNames[0]}' is missing.`
             : `Sheets '${sheetNames.join("', '")}' are missing.`,
 } as const;
+
+export const ISSUE_TEXT_AGGREGATORS = {
+    duplicatePrimaryIDs: (
+        sheets: { name: string; duplicateIds: string[] }[],
+    ) => {
+        if (sheets.length === 0) {
+            return "";
+        }
+        if (sheets.length === 1) {
+            return `There are duplicate IDs in the ${sheets[0].name} spreadsheet (${sheets[0].duplicateIds.join(", ")}). Data lines with Duplicate IDs were discarded and not imported.`;
+        }
+        return `There are duplicate IDs in the ${sheets[0].name} spreadsheet (${sheets[0].duplicateIds.join(", ")}) and in the ${sheets[1].name} spreadsheet (${sheets[1].duplicateIds.join(", ")}). Data lines with Duplicate IDs were discarded and not imported.`;
+    },
+};
 
 export const IMPORT_PREFIXES = {
     stationId: "S",

@@ -84,6 +84,11 @@ import { CollapseStatusCellViewComponent } from "./configuration/table-cells/col
 import { SymbolHeaderCellViewComponent } from "./configuration/table-cells/symbol-header-cell-view/symbol-header-cell-view.component";
 import { PrefixEditorViewComponent } from "./configuration/prefix-editor-view/prefix-editor-view.component";
 import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.component";
+import { LoadingGraphComponent } from "./graph/components/graph-loading/graph-loading.component";
+import { DialogMovableComponent } from "./dialog/dialog-movable/dialog-movable.component";
+import { DialogImportWarningsComponent } from "./dialog/dialog-import-warnings/dialog-import-warnings.component";
+import { DialogIssueReportComponent } from "./dialog/dialog-issue-report/dialog-issue-report.component";
+import { WarningIconViewComponent } from "./visio/warning-icon-view/warning-icon-view.component";
 
 @NgModule({
     imports: [
@@ -108,6 +113,9 @@ import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.
         DialogAlertComponent,
         DialogPromptComponent,
         DialogSelectComponent,
+        DialogMovableComponent,
+        DialogImportWarningsComponent,
+        DialogIssueReportComponent,
         StationPropertiesComponent,
         DeliveryPropertiesComponent,
         DeliveriesPropertiesComponent,
@@ -118,6 +126,7 @@ import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.
         GraphSettingsComponent,
         NestedMatMenuViewComponent,
         EmptyGraphComponent,
+        LoadingGraphComponent,
         SchemaGraphComponent,
         GisGraphComponent,
         GraphLegendViewComponent,
@@ -174,6 +183,7 @@ import { EmptyGraphComponent } from "./graph/components/empty-state/graph-empty.
         VisibilityCellViewComponent,
         RowCellViewComponent,
         PrefixEditorViewComponent,
+        WarningIconViewComponent,
     ],
     exports: [],
 })
