@@ -191,7 +191,7 @@ export class Constants {
     static readonly GRAPH_TYPES = List.of(GraphType.GRAPH, GraphType.GIS);
     static readonly FONT_SIZES = List.of(10, 12, 14, 18, 24, 48);
     static readonly NODE_SIZES = List.of(4, 6, 10, 14, 20, 30, 50);
-    private static readonly EXPLICIT_EDGE_WIDTHS = [1, 2, 3, 5, 10]; // from da (minimal), da allows additionally 20 as maximum edge width
+    private static readonly EXPLICIT_EDGE_WIDTHS = [1, 2, 3, 5, 10, 20]; // from da
     private static readonly NODE_SIZE_TO_EDGE_WIDTH_FACTOR = 20;
     static readonly NODE_SIZE_TO_EDGE_WIDTH_MAP = Map<number, number>(
         Constants.NODE_SIZES.toArray().map((nodeSize) => [

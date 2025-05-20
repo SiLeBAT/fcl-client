@@ -30,7 +30,6 @@ export class HighlightingRulesListViewComponent<T extends EditRule>
     @Input() editTemplate: TemplateRef<HTMLElement> | null = null;
     @Input() symbolTemplate: TemplateRef<HTMLElement> | null = null;
     @Input() editRule: T | null = null;
-    @Input() addRuleTooltip: string | undefined;
 
     @Output() ruleOrderChange = new EventEmitter<RuleId[]>();
     @Output() toggleRuleIsDisabled = new EventEmitter<RuleId>();

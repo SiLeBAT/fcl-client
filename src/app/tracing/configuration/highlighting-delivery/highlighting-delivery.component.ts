@@ -1,8 +1,4 @@
-import {
-    DeliveryHighlightingRule,
-    Property,
-    PropertySets,
-} from "./../../data.model";
+import { DeliveryHighlightingRule, Property } from "./../../data.model";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
@@ -36,10 +32,6 @@ type CachedData = EditHighlightingServiceData;
 export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
     private emptyArray_ = [];
     private emptyObject_ = {};
-    private emptyPropertySets_: PropertySets = {
-        favouriteProperties: [],
-        otherProperties: [],
-    };
 
     get ruleListItems(): RuleListItem[] {
         return this.cachedData === null
@@ -63,12 +55,6 @@ export class HighlightingDeliveryComponent implements OnInit, OnDestroy {
         return this.cachedData === null
             ? this.emptyArray_
             : this.cachedData.otherProperties;
-    }
-
-    get propertiesForThickness(): PropertySets {
-        return (
-            this.cachedData?.propertiesForThickness ?? this.emptyPropertySets_
-        );
     }
 
     get propToValuesMap(): PropToValuesMap {

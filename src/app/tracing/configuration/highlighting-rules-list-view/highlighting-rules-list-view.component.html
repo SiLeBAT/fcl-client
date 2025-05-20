@@ -8,11 +8,7 @@
             >drag_indicator</mat-icon
         >
     </div>
-    <div
-        class="fcl-rules-list-item-name"
-        cdkDragHandle
-        [matTooltip]="item.nameTooltip"
-    >
+    <div class="fcl-rules-list-item-name" cdkDragHandle>
         {{ item.name }}
     </div>
 
@@ -69,12 +65,11 @@
         [matTooltip]="
             isEditRuleModeActive
                 ? ''
-                : (item.enableTriggerTooltip ??
-                  (item.autoDisabled
-                      ? 'Highlighting Rule is auto inactivated'
-                      : item.disabled
-                        ? 'Activate Highlighting Rule'
-                        : 'Deactivate Highlighting Rule'))
+                : item.autoDisabled
+                  ? 'Highlighting Rule is auto inactivated'
+                  : item.disabled
+                    ? 'Activate Highlighting Rule'
+                    : 'Deactivate Highlighting Rule'
         "
         matTooltipPosition="above"
         [checked]="!item.disabled"
@@ -86,17 +81,11 @@
         <button
             class="fcl-rules-list-item-edit-button"
             mat-button
-            [matTooltip]="
-                isEditRuleModeActive
-                    ? ''
-                    : (item.editTriggerTooltip ?? 'Edit Highlighting Rule')
-            "
+            matTooltip="Edit Highlighting Rule"
             matTooltipPosition="above"
             color="accent"
             (click)="onStartEdit(item.id)"
-            [disabled]="
-                isEditRuleModeActive || editTemplate === null || !item.editable
-            "
+            [disabled]="isEditRuleModeActive || editTemplate === null"
         >
             <mat-icon>edit</mat-icon>
         </button>
@@ -185,7 +174,7 @@
     *ngIf="showAddRuleButton"
     mat-stroked-button
     class="fcl-add-rule-button"
-    [matTooltip]="addRuleTooltip ?? 'Add Highlighting Rule'"
+    matTooltip="Add Highlighting Rule"
     matTooltipPosition="above"
     color="primary"
     (click)="onNewRule()"
